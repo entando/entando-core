@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.entando.entando</groupId>
+	<artifactId>entando-core</artifactId>
+	<version>4.1.2-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Entando Core</name>
+	<description>Entando Core: an agile, modern and user-centric open source Portal platform.</description>
+	<url>http://www.entando.com/</url>
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE,  Version 2, June 1991</name>
+			<url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>e.santoboni</id>
+			<name>Eugenio Santoboni</name>
+			<email>e.santoboni@entando.com</email>
+		</developer>
+		<developer>
+			<id>w.ghelfi</id>
+			<name>William Ghelfi</name>
+			<email>w.ghelfi@entando.com</email>
+		</developer>
+	</developers>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<modules>
+		<module>engine</module>
+		<module>admin-console</module>
+		<module>portal-ui</module>
+	</modules>
+</project>

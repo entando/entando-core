@@ -1,0 +1,22 @@
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+	.settings-row .icon {
+		font-size: 2em;
+		display: block;
+	}
+	.settings-row .btn {
+		/* font-size: 1.4em; */
+	}
+
+}
+
+/* Small devices */
+@media (max-width: 992px) {
+	.settings-row .btn {
+		text-align: left;
+		text-indent: 0.25em;
+	}
+	.settings-row .text-muted {
+		text-align: right;
+	}
+}

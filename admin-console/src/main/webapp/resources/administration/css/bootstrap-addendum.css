@@ -1,0 +1,113 @@
+#sidebar {
+	background-color: #f8f8f8;
+	padding-bottom: 15px;
+	-webkit-border-radius: 0px 0px 0px 10px;
+	        border-radius: 0px 0px 0px 12px;
+	border-left: 1px solid #e7e7e7;
+	border-bottom: 1px solid #e7e7e7;
+}
+
+#sidebar:before {
+	content: " ";
+	position: absolute;
+	width: 4px;
+	height: 51px;
+	background-color: #f8f8f8;
+	top: 0;
+	left: -4px;
+	margin-top: 0;
+}
+
+/* dl used as list/table
+========================
+
+<div class="dl-list">
+	<dl class="dl-horizontal dl-striped panel">
+		<dt class="hidden-sm">Key</dt>
+			<dd>MY_LABEL</dd>
+		<dt><abbr title="English">english</abbr></dt>
+			<dd>Label</dd>
+		<dt><abbr title="Italiano">italiano</abbr></dt>
+			<dd>Etichetta</dd>
+		<dt class="noscreen">Actions</dt>
+			<dd>
+				<button class="btn btn-default btn-small"><span class="icon icont-edit">Edit</span></button>
+				<button class="btn btn-default btn-small"><span class="icon icont-remove">Delete</span></button>
+			</dd>
+	</dl>
+	[........]
+</div>
+
+*/
+
+.dl-list > :nth-child(even) {
+	background-color: #dddddd;
+}
+
+.dl-striped > dd {
+	font-weight: bold;
+	max-width: 100%;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	min-width: 10px;
+}
+
+.dl-striped > dt {
+	font-weight: normal;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+}
+
+#user-avatar {
+	position: relative;
+}
+
+#user-avatar img {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+}
+
+@media (max-width: 768px) {
+	.dl-striped > dt {
+		padding-top: 0.4em;
+		vertical-align: bottom;
+	}
+
+	.dl-striped > dd {
+		padding-bottom: 0.4em;
+		vertical-align: top;
+	}
+
+}
+
+/* shortcuts */
+.shortcuts-container .sc-hidden {
+	display: none;
+}
+.shortcuts-container.edit-mode .sc-hidden {
+	display: inherit;
+}
+.shortcuts-container [data-entando] {
+	text-overflow:ellipsis;
+}
+.shortcuts-container .shortcut-text {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: block;
+	text-align: left;
+}
+.shortcuts-container .shortcut-item {
+	-webkit-transition: all 250ms ease-out;
+	-moz-transition: all 250ms ease-out;
+	-ms-transition: all 250ms ease-out;
+	-o-transition: all 250ms ease-out;
+	transition: all 250ms ease-out;
+	opacity: 1;
+}
+.shortcuts-container .shortcut-item.fadeIn {
+	opacity: 1;
+}
+.shortcuts-container .shortcut-item.fadeOut {
+	opacity: 0;
+}

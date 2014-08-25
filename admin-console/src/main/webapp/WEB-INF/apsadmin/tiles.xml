@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+    "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+    "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+
+    <definition name="layout.default" template="/WEB-INF/apsadmin/jsp/common/layouts/default.jsp">
+        <put-attribute name="title" value="document.title.main" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-common.jsp" />
+        <put-attribute name="shortcuts-quickbar" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/shortcuts-quickbar.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/menu.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/mainBody.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/footer.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="layout.settings">
+        <put-attribute name="title" value="document.title.main" />
+        <put-attribute name="cssSpecial" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/settings.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-common.jsp" />
+        <put-attribute name="shortcuts-quickbar" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/shortcuts-quickbar.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/menu.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/mainBody.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/footer.jsp" />
+    </definition>
+
+	<!-- temporary addition -->
+	<definition extends="layout.default" name="main.layout" />
+
+    <definition extends="layout.default" name="admin.intro">
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/startPage.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.Common.Password.entry">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/entryUserPassword.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.Common.Password.changingConfirm">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/passwordChangingConfirm.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.common.profile.entry">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/profile-entry.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userProfile-entry.jsp" />
+    </definition>
+
+    <!-- ********* INIZIO Area Gestione Utenti ********* -->
+
+    <definition extends="layout.settings" name="admin.User.intro">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/user-intro.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.User.list">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/user-list.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/user-list.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.User.entry">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/entryUser.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.User.trash">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/trashUser.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.UserAuth.entry">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/configUserAuthorities.jsp" />
+    </definition>
+
+	<definition extends="layout.settings" name="admin.UserProfile.view">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/profile-view.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.UserProfile.chooseType">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/profile-chooseType.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.UserProfile.entry">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/profile-entry.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/profile-entry.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Gestione Utenti ********* -->
+
+    <!-- ********* INIZIO Area Gestione Ruoli ********* -->
+
+    <definition extends="layout.settings" name="admin.Role.intro">
+        <put-attribute name="title" value="title.roleManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/role-intro.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.Role.list">
+        <put-attribute name="title" value="title.roleManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/roleFinding.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.Role.entry">
+        <put-attribute name="title" value="title.roleManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/entryRole.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.Role.view">
+        <put-attribute name="title" value="title.roleManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/viewRole.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.Role.trash">
+        <put-attribute name="title" value="title.roleManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/trashRole.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.AuthRole.configure">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/configAuthority.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Gestione Ruoli ********* -->
+
+    <!-- ********* INIZIO Area Gestione Gruppi ********* -->
+
+    <definition extends="layout.default" name="admin.Group.list">
+        <put-attribute name="title" value="title.groupManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/groupFinding.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Group.entry">
+        <put-attribute name="title" value="title.groupManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/entryGroup.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Group.trash">
+        <put-attribute name="title" value="title.groupManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/trashGroup.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Group.references">
+        <put-attribute name="title" value="title.groupManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/groupReferences.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Group.detail">
+        <put-attribute name="title" value="title.groupManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/groupDetails.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.AuthGroup.configure">
+        <put-attribute name="title" value="title.groupManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/configAuthority.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Gestione Gruppi ********* -->
+
+    <!-- ********* INIZIO Area Gestione Servizi Portale ********* -->
+
+    <!-- ********* START API MANAGEMENT ********* -->
+
+    <definition extends="layout.default" name="admin.api.resource.list">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/resource-list.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.api.resource.detail">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/api-resource-detail-extras.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/resource-detail.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.api.service.list">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/service-list.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.api.service.entry">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/service-entry.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/api-service-entry-extras.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.api.service.trash">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/service-delete-confirm.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.api.consumer.list">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/consumer-list.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.api.consumer.entry">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/calendar.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/consumer-entry.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.api.consumer.trash">
+        <put-attribute name="title" value="title.apiManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/api/consumer-delete-confirm.jsp" />
+    </definition>
+
+    <!-- ********* END API MANAGEMENT ********* -->
+
+    <!-- ********* INIZIO Area Gestione Pagine ********* -->
+
+    <definition extends="layout.default" name="admin.Page.viewTree">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageTree.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageTree.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.entry">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/entryPage.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.trash">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/trashPage.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.references">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageReferences.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.detail">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/detailPage.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.searchResult">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageSearchResult.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageSearchResult.jsp" />
+    </definition>
+
+    <definition extends="layout.default" name="admin.Page.configure">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/configPage.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.showlet.trash">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/position-clear-confirm.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.editFrame">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/editFrame.jsp" />
+    </definition>
+
+    <!-- INIZIO Area Gestione Configurazione Widget Speciali -->
+
+    <definition extends="layout.default" name="admin.Page.Showlet.configSimpleParameter">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/specialwidget/configSimpleParameter.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.Showlet.Navigator.config">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/specialwidget/navigatorConfig.jsp" />
+    </definition>
+
+    <!-- FINE Area Gestione Configurazione Widget Speciali -->
+
+    <!-- ********* FINE Area Gestione Pagine ********* -->
+
+    <definition extends="layout.default" name="admin.Portal.viewWidgets">
+        <put-attribute name="title" value="title.widgetManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/widget-list.jsp" />
+    </definition>
+	<!-- admin.Portal.viewShowlets - deprecated -->
+	<definition extends="admin.Portal.viewWidgets" name="admin.Portal.viewShowlets" />
+	
+    <definition extends="layout.default" name="admin.Portal.viewWidgetUtilizers">
+        <put-attribute name="title" value="title.widgetManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/widget-list-using.jsp" />
+    </definition>
+	<!-- admin.Portal.viewShowletUtilizers - deprecated -->
+	<definition extends="admin.Portal.viewWidgetUtilizers" name="admin.Portal.viewShowletUtilizers" />
+	
+    <definition extends="layout.default" name="admin.Portal.widgetType.trash">
+        <put-attribute name="title" value="title.widgetManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/widget-delete-confirm.jsp" />
+    </definition>
+	<!-- admin.Portal.showletType.trash - deprecated -->
+	<definition extends="admin.Portal.widgetType.trash" name="admin.Portal.showletType.trash" />
+	
+    <definition extends="layout.default" name="admin.Portal.widgetType.entry">
+        <put-attribute name="title" value="title.widgetManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/widget-entry.jsp" />
+    </definition>
+	<!-- admin.Portal.showletType.entry - deprecated -->
+	<definition extends="admin.Portal.widgetType.entry" name="admin.Portal.showletType.entry" />
+	
+	
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.list">
+		<put-attribute name="title" value="title.guiFragmentManagement" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-list.jsp" />
+	</definition>
+	
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.entry">
+		<put-attribute name="title" value="title.guiFragmentManagement" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-entry.jsp" />
+	</definition>
+	
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.trash">
+		<put-attribute name="title" value="title.guiFragmentManagement" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-trash.jsp" />
+	</definition>
+
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.detail">
+		<put-attribute name="title" value="title.guiFragmentManagement" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-detail.jsp" />
+	</definition>
+
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.references">
+		<put-attribute name="title" value="title.guiFragmentManagement" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-references.jsp" />
+	</definition>
+	
+	
+    <definition extends="layout.default" name="admin.PageModel.list">
+        <put-attribute name="title" value="title.pageModelManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-list.jsp" />
+    </definition>
+	
+    <definition extends="layout.default" name="admin.PageModel.entry">
+        <put-attribute name="title" value="title.pageModelManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-entry.jsp" />
+    </definition>
+	
+    <definition extends="layout.default" name="admin.PageModel.details">
+        <put-attribute name="title" value="title.pageModelManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-details.jsp" />
+    </definition>
+	
+	<definition extends="layout.default" name="admin.PageModel.trash">
+        <put-attribute name="title" value="title.pageModelManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-trash.jsp" />
+    </definition>
+	
+	<definition extends="layout.default" name="admin.PageModel.references">
+        <put-attribute name="title" value="title.pageModelManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-references.jsp" />
+    </definition>
+	
+    <!-- ********* FINE Area Gestione Servizi Portale ********* -->
+
+    <!-- ********* INIZIO Area Gestione Categorie ********* -->
+
+    <definition extends="layout.default" name="admin.Category.viewTree">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/categoryTree.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryTree.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Category.entry">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/entryCategory.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Category.references">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryReferences.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Category.trash">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/trashCategory.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Category.detail">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryDetails.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Gestione Categorie ********* -->
+
+
+    <!-- ********* INIZIO Area Amministrazione Sistema ********* -->
+
+    <definition extends="layout.settings" name="admin.BaseAdmin.settings">
+        <put-attribute name="title" value="title.generalSettings.settings" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/settings.jsp" />
+    </definition>
+
+    <definition extends="layout.settings" name="admin.BaseAdmin.reloadConfigResult">
+        <put-attribute name="title" value="menu.reload.config" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/reloadConfig.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.BaseAdmin.reloadEntitiesReferencesResult">
+        <put-attribute name="title" value="menu.reload.entities" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/entity-type-references-reload-ok.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.BaseAdmin.configSystemParams">
+        <put-attribute name="title" value="title.generalSettings.settings" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/configSystemParams.jsp" />
+    </definition>
+
+    <definition extends="layout.settings" name="admin.database.entry">
+        <put-attribute name="title" value="menu.database.admin" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/database-admin.jsp" />
+    </definition>
+
+    <definition extends="layout.settings" name="admin.database.backup.details">
+        <put-attribute name="title" value="menu.database.admin" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/database-backup-details.jsp" />
+    </definition>
+
+    <definition extends="layout.settings" name="admin.database.backup.trash">
+        <put-attribute name="title" value="menu.database.admin" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/database-backup-trash.jsp" />
+    </definition>
+
+    <definition extends="layout.settings" name="admin.database.backup.intro">
+        <put-attribute name="title" value="menu.database.admin" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/database-backup-intro.jsp" />
+    </definition>
+
+    <definition extends="layout.settings" name="admin.database.restore.intro">
+        <put-attribute name="title" value="menu.database.admin" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/database-restore-intro.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Amministrazione Sistema ********* -->
+
+    <!-- ********* INIZIO Area Gestione Lingue ********* -->
+
+    <definition extends="layout.settings" name="admin.Lang.summary">
+        <put-attribute name="title" value="title.languageAdmin" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/lang/langFinding.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Gestione Lingue ********* -->
+
+    <!-- ********* INIZIO Area Gestione Etichette ********* -->
+
+    <definition extends="layout.settings" name="admin.LocaleString.intro">
+        <put-attribute name="title" value="title.languageAdmin" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeString-intro.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.LocaleString.summary">
+        <put-attribute name="title" value="title.languageAdmin.labels" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringFinding.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.LocaleString.entry">
+        <put-attribute name="title" value="title.languageAdmin.labels" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringEntry.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Gestione Etichette ********* -->
+
+    <!-- ********* INIZIO Area Gestione Entità ********* -->
+
+    <definition extends="layout.default" name="admin.entityManagement.viewManagers">
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/manager-list.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.search">
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/entityFinding.jsp" />
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/entityFinding.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.viewEntityTypes">
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/entity-type-list.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.entryEntityType">
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/entity-type-entry.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.entryEntityAttributeType">
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/calendar.jsp" />
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/attribute-type-entry.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.removeEntityTypeConfirm">
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/entity-type-delete-confirm.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.removeEntityTypeWithReferences">
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/entity-type-references-list.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.textListElement.entryEntityAttributeType">
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/attribute-type-entry-element.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.compositeAttribute.entry">
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/attribute-type-entry-composite.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.entityManagement.compositeAttribute.entryAttributeElementType">
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/calendar.jsp" />
+        <put-attribute name="title" value="title.entityManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/entity/attribute-type-entry-composite-element.jsp" />
+    </definition>
+
+    <!-- ********* FINE Area Gestione Entità ********* -->
+
+	<!-- ********* Inizio Area Gestione Key ********* -->
+	<definition extends="layout.default" name="admin.LicenseKey.intro">
+	    <put-attribute name="title" value="title.licenseKeyManagement" />
+	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/licensekey/key-intro.jsp" />
+	</definition>
+	<!-- ********* FINE Area Gestione Key ********* -->
+	
+	<!-- ********* START Filebrowser ********* -->
+	
+	<definition extends="layout.default" name="admin.Filebrowser.list">
+	    <put-attribute name="title" value="title.fileManagement" />
+	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/filebrowser/filebrowser-list.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.Filebrowser.upload">
+	    <put-attribute name="title" value="title.fileManagement" />
+	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/filebrowser/filebrowser-upload.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.Filebrowser.delete">
+	    <put-attribute name="title" value="title.fileManagement" />
+	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/filebrowser/filebrowser-delete.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.Filebrowser.entryFile">
+	    <put-attribute name="title" value="title.fileManagement" />
+	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/filebrowser/filebrowser-entryFile.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.Filebrowser.newDir">
+	    <put-attribute name="title" value="title.fileManagement" />
+	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/filebrowser/filebrowser-newdir.jsp" />
+	</definition>
+	
+	<!-- ********* END Filebrowser ********* -->
+	
+    <definition extends="layout.default" name="admin.userNotAllowedMessage">
+        <put-attribute name="title" value="document.title.main" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userNotAllowedMessage.jsp" />
+    </definition>
+
+</tiles-definitions>

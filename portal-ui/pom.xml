@@ -294,7 +294,6 @@
 			<groupId>org.entando.entando</groupId>
 			<artifactId>entando-engine</artifactId>
 			<version>4.1.2-SNAPSHOT</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.entando.entando</groupId>
@@ -307,7 +306,6 @@
 			<groupId>org.entando.entando</groupId>
 			<artifactId>entando-admin-console</artifactId>
 			<version>4.1.2-SNAPSHOT</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.entando.entando</groupId>

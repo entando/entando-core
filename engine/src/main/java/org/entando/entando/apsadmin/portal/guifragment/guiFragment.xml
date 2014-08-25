@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="core_do/Portal/GuiFragment" namespace="/do/Portal/GuiFragment" extends="entando-default">
+    	
+    	<action name="list" class="guiFragmentFinderAction">
+            <result type="tiles">admin.Portal.GuiFragment.list</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+        		<param name="requestAuth.requiredPermission">superuser</param>
+        	</interceptor-ref>
+        </action>
+        
+        <action name="search" class="guiFragmentFinderAction">
+            <result type="tiles">admin.Portal.GuiFragment.list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+        <action name="new" class="guiFragmentAction" method="newGuiFragment">
+            <result type="tiles">admin.Portal.GuiFragment.entry</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<action name="edit" class="guiFragmentAction" method="edit">
+            <result type="tiles">admin.Portal.GuiFragment.entry</result>
+            <result name="input" type="redirectAction">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="save" class="guiFragmentAction" method="save">
+        	<result name="input" type="tiles">admin.Portal.GuiFragment.entry</result>
+        	<result type="redirectAction">list</result>
+        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="trash" class="guiFragmentAction" method="trash">
+            <result type="tiles">admin.Portal.GuiFragment.trash</result>
+            <result name="references" type="tiles">admin.Portal.GuiFragment.references</result>
+        	<result name="input" type="redirectAction">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="delete" class="guiFragmentAction" method="delete">
+        	<result type="redirectAction">list</result>
+    		<result name="references" type="tiles">admin.Portal.GuiFragment.references</result>
+        	<result name="input" type="redirectAction">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<action name="detail" class="guiFragmentAction" method="showDetail">
+            <result type="tiles">admin.Portal.GuiFragment.detail</result>
+            <result name="guiFragmentsList" type="chain">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    </package>
+   
+</struts>

@@ -1,0 +1,74 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="filterKey">
+		<field-validator type="requiredstring">
+			<message key="requiredstring"/>
+		</field-validator>
+	</field>
+	
+	<!-- INIZIO VALIDAZIONI OPZIONE VALUE -->
+	
+	<!-- Controllo presenza scelta tipo valore data per filtro su attributo tipo Data e opzione "value" -->
+	<field name="dateValueType">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(filterTypeId == 4 && filterOptionId == 1 && (dateValueType < 2 || dateValueType > 3))]]></param>
+			<message key="error.widget.listViewer.filter.requiredDateValueType" />
+		</field-validator>
+	</field>
+	
+	<!-- Controllo presenza valore data per filtro su attributo tipo Data e opzione "value" -->
+	<field name="dateValue">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(filterTypeId == 4 && filterOptionId == 1 && dateValueType == 3 && dateValue == null)]]></param>
+			<message key="error.widget.listViewer.filter.requiredDateValue" />
+		</field-validator>
+	</field>
+	
+	<!-- FINE VALIDAZIONI OPZIONE VALUE -->
+	
+	<!-- INIZIO VALIDAZIONI OPZIONE RANGE -->
+	
+	<!-- Controllo presenza scelta tipo data Inizio per filtro su attributo tipo Data e opzione "range" -->
+	<field name="dateStartType">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(filterTypeId == 4 && filterOptionId == 2 && (dateStartType < 1 || dateStartType > 3))]]></param>
+			<message key="error.widget.listViewer.filter.requiredDateStartType" />
+		</field-validator>
+	</field>
+	
+	<!-- Controllo presenza data Inizio per filtro su attributo tipo Data e opzione "RANGE" -->
+	<field name="dateStart">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(filterTypeId == 4 && filterOptionId == 2 && dateStartType == 3 && dateStart == null)]]></param>
+			<message key="error.widget.listViewer.filter.requiredDateStart" />
+		</field-validator>
+	</field>
+	
+	<!-- Controllo presenza scelta tipo data Fine per filtro su attributo tipo Data e opzione "range" -->
+	<field name="dateEndType">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(filterTypeId == 4 && filterOptionId == 2 && (dateEndType < 1 || dateEndType > 3))]]></param>
+			<message key="error.widget.listViewer.filter.requiredDateEndType" />
+		</field-validator>
+	</field>
+	
+	<!-- Controllo presenza data Fine per filtro su attributo tipo Data e opzione "RANGE" -->
+	<field name="dateEnd">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(filterTypeId == 4 && filterOptionId == 2 && dateEndType == 3 && dateEnd == null)]]></param>
+			<message key="error.widget.listViewer.filter.requiredDateEnd" />
+		</field-validator>
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(filterTypeId == 4 && filterOptionId == 2 && dateEndType == 3 && dateEnd != null 
+				&& dateStartType == 3 && dateStart != null && dateStart.after(dateEnd))]]></param>
+			<message key="error.widget.listViewer.filter.dateStartAfterDateEnd" />
+		</field-validator>
+	</field>
+	
+	<!-- FINE VALIDAZIONI OPZIONE RANGE -->
+	
+</validators>

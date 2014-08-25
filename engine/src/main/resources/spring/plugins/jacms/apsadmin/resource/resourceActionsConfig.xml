@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<bean id="jacmsResourceActionHelper" parent="abstractBaseActionHelper"
+			class="com.agiletec.plugins.jacms.apsadmin.resource.helper.ResourceActionHelper">
+		<property name="resourceManager" ref="jacmsResourceManager"/>
+		<property name="categoryManager" ref="CategoryManager"/>
+	</bean>
+
+	<bean id="jacmsAbstractResourceAction" abstract="true"
+			class="com.agiletec.plugins.jacms.apsadmin.resource.AbstractResourceAction" parent="abstractBaseAction" >
+		<property name="resourceActionHelper" ref="jacmsResourceActionHelper"/>
+		<property name="resourceManager" ref="jacmsResourceManager"/>
+		<property name="categoryManager" ref="CategoryManager"/>
+		<property name="treeHelper" ref="categoryActionHelper"/>
+	</bean>
+
+	<bean id="jacmsResourceFinderAction" scope="prototype"
+			class="com.agiletec.plugins.jacms.apsadmin.resource.ResourceFinderAction"
+			parent="jacmsAbstractResourceAction" >
+		<property name="resourceIconUtil" ref="jacmsResourceIconUtil" />
+		<property name="imageDimensionManager" ref="jacmsImageDimensionReader" />
+	</bean>
+
+	<bean id="jacmsResourceAction" scope="prototype"
+			class="com.agiletec.plugins.jacms.apsadmin.resource.ResourceAction"
+			parent="jacmsAbstractResourceAction" >
+		<property name="groupManager" ref="GroupManager" />
+	</bean>
+
+	<bean id="jacmsResourceAdminAction" scope="prototype"
+			class="com.agiletec.plugins.jacms.apsadmin.resource.ResourceAdminAction"
+			parent="jacmsAbstractResourceAction" >
+	</bean>
+
+	<bean id="jacmsPortingResource22Action" scope="prototype"
+			class="com.agiletec.plugins.jacms.apsadmin.resource.Porting22Action"
+			parent="abstractBaseAction" >
+		<property name="resourceManager" ref="jacmsResourceManager"/>
+		<property name="groupManager" ref="GroupManager" />
+	</bean>
+
+</beans>

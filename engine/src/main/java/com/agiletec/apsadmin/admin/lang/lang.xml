@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="core_do/Lang" namespace="/do/Lang" extends="entando-default">
+    	
+    	<action name="list" class="langFinderAction">
+            <result type="tiles">admin.Lang.summary</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">superuser</param>
+        		<param name="chain.includeParameters">actionErrors</param>
+        	</interceptor-ref>
+        </action>
+        
+    	<action name="add" class="langAction" method="add">
+        	<result name="input" type="chain">list</result>
+        	<result type="redirectAction">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<action name="remove" class="langAction" method="remove">
+        	<result name="input" type="chain">list</result>
+        	<result type="chain">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    </package>
+    
+</struts>

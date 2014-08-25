@@ -1,0 +1,65 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="strutsAction">
+		<field-validator type="required">
+			<message key="required" />
+		</field-validator>
+	</field>
+	
+	<field name="resourceTypeCode">
+		<field-validator type="requiredstring">
+			<message key="requiredstring" />
+		</field-validator>
+	</field>
+	
+	<field name="descr">
+		<field-validator type="requiredstring" short-circuit="true">
+			<message key="requiredstring" />
+        </field-validator>
+        <field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[([^\"])+]]></param>
+           <message key="wrongCharacters" />
+        </field-validator>
+        <field-validator type="stringlength" short-circuit="true">
+        	<param name="maxLength">250</param>
+        	<message key="wrongMaxLength" />
+        </field-validator>  
+	</field>
+	
+	<field name="mainGroup">
+		<field-validator type="requiredstring">
+            <message key="requiredstring" />
+        </field-validator>
+	</field>
+	
+	<field name="upload">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 1 && upload == null)]]></param>
+			<message key="error.resource.file.required" />
+		</field-validator>
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 1 && inputStream == null)]]></param>
+			<message key="error.resource.file.void" />
+		</field-validator>
+	</field>
+	
+	<field name="fileName">
+		<field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[(^[\w|\.|\-| ]+?)\.([\w|\-]+?$)]]></param>
+           <message key="error.resource.filename.wrongCharacters" />
+        </field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+           <param name="expression"><![CDATA[!(strutsAction == 1 && null != fileName && !normalizeFileName && fileName.indexOf(' ') >= 0)]]></param>
+           <message key="error.resource.filename.blankSpace" />
+        </field-validator>
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(strutsAction == 1 && null != fileName && fileName.length() > 100)]]></param>
+			<message key="error.resource.filename.tooLong" />
+		</field-validator>
+	</field>
+	
+</validators>

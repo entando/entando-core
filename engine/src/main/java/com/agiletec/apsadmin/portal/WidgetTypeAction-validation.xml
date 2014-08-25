@@ -1,0 +1,33 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+    <field name="widgetTypeCode">
+        <field-validator type="requiredstring">
+            <message key="requiredstring" />
+        </field-validator>
+        <field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[([a-zA-Z0-9_\-])*]]></param>
+           <message key="error.widgetType.typeCode.wrongCharacters" />
+        </field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction != 2 && getShowletType(showletTypeCode) != null)]]></param>
+			<message key="error.widgetType.invalidTypeCode" />
+		</field-validator>
+    </field>
+    
+    <field name="englishTitle">
+        <field-validator type="requiredstring">
+            <message key="requiredstring" />
+        </field-validator>
+    </field>
+    
+    <field name="italianTitle">
+        <field-validator type="requiredstring">
+            <message key="requiredstring" />
+        </field-validator>
+    </field>
+    
+</validators>

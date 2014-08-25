@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="core_do/Entity" namespace="/do/Entity" extends="entando-default">
+		
+		<action name="viewManagers" class="entityManagersAction">
+			<result type="tiles">admin.entityManagement.viewManagers</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="reloadEntityManagerReferences" class="entityManagersAction" method="reloadEntityManagerReferences">
+			<result name="input" type="tiles">admin.entityManagement.viewManagers</result>
+			<result type="redirectAction">
+				<param name="actionName">viewManagers</param>
+				<param name="entityManagerName">${entityManagerName}</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- INIT : objects operation -->
+		
+		<action name="search" class="defaultEntityFinderAction" >
+			<result type="tiles">admin.entityManagement.search</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="changeEntityType" class="defaultEntityFinderAction" >
+			<result type="redirectAction">search</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    </package>
+    
+</struts>

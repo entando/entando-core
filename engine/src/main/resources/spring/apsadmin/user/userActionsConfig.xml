@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+    <bean id="userFinderAction" scope="prototype" 
+            class="org.entando.entando.apsadmin.user.UserProfileFinderAction" 
+            parent="abstractBaseAction" >
+        <property name="userProfileManager" ref="UserProfileManager" />
+        <property name="userManager" ref="UserManager" />
+        <property name="entityActionHelper" ref="entityActionHelper" />
+    </bean>
+    
+	<bean id="userAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.user.UserAction" parent="abstractBaseAction" >
+		<property name="userManager" ref="UserManager" />
+		<property name="userProfileManager" ref="UserProfileManager" />
+	</bean>
+	
+    <bean id="userProfileAction" class="org.entando.entando.apsadmin.user.UserProfileAction" 
+            scope="prototype" parent="abstractEntityAction" >
+        <property name="userProfileManager" ref="UserProfileManager" />
+        <property name="entityActionHelper" ref="entityActionHelper"/>
+    </bean>
+    
+    <bean id="userProfileListAttributeAction" scope="prototype" 
+            class="org.entando.entando.apsadmin.user.attribute.action.list.ListAttributeAction" 
+            parent="abstractBaseAction" >
+        <property name="entityActionHelper" ref="entityActionHelper"/>
+    </bean>
+    
+	<bean id="userToAuthoritiesAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.user.UserToAuthoritiesAction" parent="abstractBaseAction" >
+		<property name="userManager" ref="UserManager" />
+		<property name="roleManager" ref="RoleManager" />
+		<property name="groupManager" ref="GroupManager" />
+	</bean>
+	
+	<bean id="abstractAuthorityToUsersAction" abstract="true" 
+			class="org.entando.entando.apsadmin.user.AuthorityToUsersAction" parent="abstractBaseAction" >
+		<property name="userProfileManager" ref="UserProfileManager" />
+        <property name="userManager" ref="UserManager" />
+        <property name="entityActionHelper" ref="entityActionHelper" />
+	</bean>
+	
+</beans>

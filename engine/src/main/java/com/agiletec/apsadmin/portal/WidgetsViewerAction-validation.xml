@@ -1,0 +1,17 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+    <field name="showletTypeCode">
+        <field-validator type="requiredstring" short-circuit="true">
+            <message key="requiredstring"/>
+        </field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(getShowletType(showletTypeCode) == null)]]></param>
+			<message key="error.widgetType.invalidTypeCode" />
+		</field-validator>
+    </field>
+    
+</validators>

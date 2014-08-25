@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="core_do/PageModel" namespace="/do/PageModel" extends="entando-default">
+    	
+		<action name="list" class="pageModelFinderAction">
+			<result type="tiles">admin.PageModel.list</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">superuser</param>
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+			</interceptor-ref>
+		</action>
+		
+    	<action name="new" class="pageModelAction" method="newModel">
+            <result type="tiles">admin.PageModel.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="edit" class="pageModelAction" method="edit">
+            <result name="pageModelList" type="chain">list</result>
+        	<result type="tiles">admin.PageModel.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="save" class="pageModelAction" method="save">
+			<result name="input" type="tiles">admin.PageModel.entry</result>
+            <result type="chain">list</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="details" class="pageModelAction" method="showDetails">
+            <result name="pageModelList" type="chain">list</result>
+        	<result type="tiles">admin.PageModel.details</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="trash" class="pageModelAction" method="trash">
+            <result name="pageModelList" type="chain">list</result>
+        	<result name="references" type="tiles">admin.PageModel.references</result>
+        	<result type="tiles">admin.PageModel.trash</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="delete" class="pageModelAction" method="delete">
+        	<result name="references" type="tiles">admin.PageModel.references</result>
+            <result name="groupList" type="chain">list</result>
+        	<result type="redirectAction">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+	</package>
+	
+</struts>

@@ -1,0 +1,37 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+    <field name="oldPassword">
+        <field-validator type="requiredstring">
+            <message key="requiredstring"/>
+        </field-validator>
+    </field>
+    
+    <field name="password" >
+    	<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(password.trim().equals(oldPassword.trim()))]]></param><!-- IN CASO DI AGGIUNTA, LA PASSWORD é OBBLIGATORIA -->
+			<message key="error.user.changePassword.passwordUnchanged" />
+        </field-validator>
+		<field-validator type="requiredstring" short-circuit="true">
+			<message key="requiredstring" />
+        </field-validator>
+		<field-validator type="stringlength" short-circuit="true">
+			<param name="minLength">8</param>
+			<param name="maxLength">20</param>
+			<param name="trim">true</param>
+			<message key="error.user.changePassword.wrongPasswordLength" />
+		</field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+            <param name="expression">(password == passwordConfirm)</param>
+            <message key="error.user.changePassword.wrongPasswordConfirm" />
+        </field-validator>
+        <field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[([a-zA-Z0-9_])+]]></param>
+           <message key="wrongCharacters" />
+        </field-validator>
+    </field>
+    
+</validators>

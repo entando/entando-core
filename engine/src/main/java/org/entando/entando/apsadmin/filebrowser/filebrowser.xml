@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+	<package name="core_do/FileBrowser" namespace="/do/FileBrowser" extends="entando-default">
+		
+		<action name="list" class="filebrowserAction" method="list">
+			<result type="tiles">admin.Filebrowser.list</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="edit" class="filebrowserAction" method="edit">
+			<result name="input" type="tiles">admin.Filebrowser.list</result>
+			<result type="tiles">admin.Filebrowser.entryFile</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="newFileEntry" class="filebrowserAction" method="newFile">
+			<result type="tiles">admin.Filebrowser.entryFile</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="newDirEntry" class="filebrowserAction" method="newDirectory">
+			<result type="tiles">admin.Filebrowser.newDir</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="uploadNewFileEntry" class="filebrowserAction" method="uploadNewFile">
+			<result type="tiles">admin.Filebrowser.upload</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="createDir" class="filebrowserAction" method="createDir">
+			<result name="input" type="tiles">admin.Filebrowser.newDir</result>
+			<result type="redirectAction">
+    			<param name="actionName">list</param>
+    			<param name="currentPath">${currentPath}</param>
+    			<param name="protectedFolder">${protectedFolder}</param>
+            </result>
+			<interceptor-ref name="entandoValidationStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="save" class="filebrowserAction" method="save">
+			<result name="input" type="tiles">admin.Filebrowser.entryFile</result>
+			<result type="redirectAction">
+    			<param name="actionName">list</param>
+    			<param name="currentPath">${currentPath}</param>
+    			<param name="protectedFolder">${protectedFolder}</param>
+            </result>
+			<interceptor-ref name="entandoValidationStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<!-- deprecated - use trash -->
+		<action name="deleteEntry" class="filebrowserAction" method="trash">
+			<result type="tiles">admin.Filebrowser.delete</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="trash" class="filebrowserAction" method="trash">
+			<result type="tiles">admin.Filebrowser.delete</result>
+			<result name="input" type="redirectAction">list</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="delete" class="filebrowserAction" method="delete">
+			<result name="input" type="tiles">admin.Filebrowser.list</result>
+			<result type="redirectAction">
+    			<param name="actionName">list</param>
+    			<param name="currentPath">${currentPath}</param>
+    			<param name="protectedFolder">${protectedFolder}</param>
+            </result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="upload" class="filebrowserAction" method="upload">
+			<result name="input" type="tiles">admin.Filebrowser.upload</result>
+			<result type="redirectAction">
+    			<param name="actionName">list</param>
+    			<param name="currentPath">${currentPath}</param>
+    			<param name="protectedFolder">${protectedFolder}</param>
+            </result>
+			<interceptor-ref name="apsFileUpload" />
+			<interceptor-ref name="entandoValidationStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="download" class="filebrowserAction" method="download">
+			<result name="input" type="tiles">admin.Filebrowser.list</result>
+			<result name="success" type="stream">
+				<param name="contentType">${downloadContentType}</param>
+				<param name="inputName">downloadInputStream</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+        
+	</package>
+	
+</struts>

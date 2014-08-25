@@ -1,0 +1,38 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+    <field name="serviceKey">
+    	<field-validator type="requiredstring" short-circuit="true">
+            <message key="requiredstring"/>
+        </field-validator>
+        <field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[([a-zA-Z0-9_])*]]></param>
+           <message key="wrongCharacters" />
+        </field-validator>
+		<field-validator type="stringlength" short-circuit="true">
+			<param name="maxLength">50</param>
+			<param name="trim">true</param>
+			<message key="wrongMaxLength" />
+		</field-validator>
+    </field>
+    
+    <field name="requiredPermission">
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(null != requiredPermission 
+				&& requiredPermission.trim().length() > 0 && null == getPermission(requiredPermission))]]></param>
+			<message key="error.api.service.invalidRequiredPermission" />
+		</field-validator>
+    </field>
+    
+    <field name="requiredGroup">
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(null != requiredGroup 
+				&& requiredGroup.trim().length() > 0 && null == getGroup(requiredGroup))]]></param>
+			<message key="error.api.service.invalidRequiredGroup" />
+		</field-validator>
+    </field>
+    
+</validators>

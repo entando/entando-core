@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="shortcut-def">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="menusections" minOccurs="0" />
+        <xs:element ref="shortcuts" minOccurs="1" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="menusections">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="menusection"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="menusection">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="description" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="longdesc" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="longdesc">
+    <xs:complexType mixed="true">
+      <xs:attribute name="key" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="shortcuts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="shortcut"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="shortcut">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="description" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="longdesc" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="url" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+      <xs:attribute name="menusection" use="required" type="xs:string"/>
+      <xs:attribute name="requiredPermission" type="xs:string"/>
+      <xs:attribute name="source" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="url">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="param"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="param">
+    <xs:complexType mixed="true">
+      <xs:attribute name="name" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="description">
+    <xs:complexType mixed="true">
+      <xs:attribute name="key" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

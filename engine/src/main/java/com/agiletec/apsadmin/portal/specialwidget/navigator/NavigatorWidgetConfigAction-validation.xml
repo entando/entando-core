@@ -1,0 +1,34 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="specId">
+        <field-validator type="fieldexpression">
+            <param name="expression"><![CDATA[!(specId < 1)]]></param>
+            <message key="error.widget.configNavigator.requiredSpecId" />
+        </field-validator>
+    </field>
+	
+	<validator type="expression">
+		<param name="expression"><![CDATA[!(specId == 3 && specSuperLevel < 0)]]></param>
+		<message key="error.widget.configNavigator.wrongSpecSuperLevel" />
+	</validator>
+	
+	<validator type="expression">
+		<param name="expression"><![CDATA[!(specId == 4 && specAbsLevel < 0)]]></param>
+		<message key="error.widget.configNavigator.wrongSpecAbsLevel" />
+	</validator>
+	
+	<validator type="expression">
+		<param name="expression"><![CDATA[!((specId == 5) && (specCode == null || specCode.trim().length() == 0))]]></param>
+		<message key="error.widget.configNavigator.wrongSpecCode" />
+	</validator>
+	
+	<validator type="expression">
+		<param name="expression"><![CDATA[!(operatorId == 3 && operatorSubtreeLevel < 0)]]></param>
+		<message key="error.widget.configNavigator.wrongOperatorSubtreeLevel" />
+	</validator>
+	
+</validators>

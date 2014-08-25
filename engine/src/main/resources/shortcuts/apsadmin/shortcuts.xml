@@ -1,0 +1,202 @@
+<shortcut-def>
+	<menusections>
+		<menusection id="components">
+			<description key="core.components.menuSection.shortDesc" />
+			<longdesc key="core.components.menuSection.longDesc" />
+		</menusection>
+		<menusection id="plugins">
+			<description>Plugins</description>
+			<longdesc>Plugins</longdesc>
+		</menusection>
+		<menusection id="tools">
+			<description key="core.tools.menuSection.shortDesc" />
+			<longdesc key="core.tools.menuSection.longDesc" />
+		</menusection>
+		<menusection id="portal">
+			<description key="core.portal.menuSection.shortDesc" />
+			<longdesc key="core.portal.menuSection.longDesc" />
+		</menusection>
+	</menusections>
+
+	<shortcuts>
+
+		<!-- Component short-cut -->
+		<shortcut id="core.component.user.new" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.user.new.shortDesc" >New User</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.user.new.longDesc">
+				<![CDATA[Insert a new User.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/User</param>
+				<param name="actionName">new</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.user.list" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.user.list.shortDesc" >User List</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.user.list.longDesc">
+				<![CDATA[Manage Users. With details, Permissions, Roles, and Groups.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/User</param>
+				<param name="actionName">list</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.group.new" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.group.new.shortDesc" >New Group</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.group.new.longDesc">
+				<![CDATA[Insert a new Group.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Group</param>
+				<param name="actionName">new</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.group.list" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.group.list.shortDesc" >Group List</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.group.list.longDesc">
+				<![CDATA[Manage Groups: you can insert, modify, assign and delete the Groups.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Group</param>
+				<param name="actionName">list</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.role.new" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.role.new.shortDesc" >New Role</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.role.new.longDesc">
+				<![CDATA[Insert a new Role.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Role</param>
+				<param name="actionName">new</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.role.list" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.role.list.shortDesc" >Role List</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.role.list.longDesc">
+				<![CDATA[Manage Roles: you can modify, add Permission and delete the Roles.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Role</param>
+				<param name="actionName">list</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.categories" requiredPermission="manageCategories" menusection="components" source="core">
+			<description key="core.shortcut.component.categories.shortDesc" >Categories</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.categories.longDesc">
+				<![CDATA[Manage Categories: inspect the Category Tree, create, delete, modify Categories.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Category</param>
+				<param name="actionName">viewTree</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.labels.new" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.labels.new.shortDesc" >New Label</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.labels.new.longDesc">
+				<![CDATA[Insert a new Label.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/LocaleString</param>
+				<param name="actionName">new</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.labels.list" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.labels.list.shortDesc" >Labels</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.labels.list.longDesc">
+				<![CDATA[Manage Labels: you can edit or delete Labels.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/LocaleString</param>
+				<param name="actionName">list</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.component.lang" requiredPermission="superuser" menusection="components" source="core">
+			<description key="core.shortcut.component.lang.shortDesc" >Languages</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.component.lang.longDesc">
+				<![CDATA[Manage Languages of system: you can add or remove Languages.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Lang</param>
+				<param name="actionName">list</param>
+			</url>
+		</shortcut>
+
+		<!-- Portal Management short-cut -->
+		<shortcut id="core.portal.pageTree" requiredPermission="managePages" menusection="portal" source="core">
+			<description key="core.shortcut.portal.pageTree.shortDesc" >Pages</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.portal.pageTree.longDesc">
+				<![CDATA[Manage Pages: inspect the Page Tree, create, delete, modify Pages, publish a content or place Widgets on Pages.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Page</param>
+				<param name="actionName">viewTree</param>
+			</url>
+		</shortcut>
+		<shortcut id="core.portal.widgetType" requiredPermission="managePages" menusection="portal" source="core">
+			<description key="core.shortcut.portal.widgetType.shortDesc" >Widgets</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.portal.widgetType.longDesc">
+				<![CDATA[Manage the Widgets. See what Widgets are installed, grouped by component or Plugin]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Portal/WidgetType</param>
+				<param name="actionName">viewWidgets</param>
+			</url>
+		</shortcut>
+
+		<!-- System short-cut -->
+		<shortcut id="core.tools.setting" requiredPermission="superuser" menusection="tools" source="core">
+			<description key="core.shortcut.tools.setting.shortDesc" >Settings</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.tools.setting.longDesc"><![CDATA[Set various system-wide useful bits]]></longdesc>
+			<url>
+				<param name="namespace">/do/BaseAdmin</param>
+				<param name="actionName">configSystemParams</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.tools.entities" requiredPermission="superuser" menusection="tools" source="core">
+			<description key="core.shortcut.tools.entities.shortDesc" >Entities</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.tools.entities.longDesc">
+				<![CDATA[Manage Entities, like Content Types or any other Entity Type that comes with a certain Plugin]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Entity</param>
+				<param name="actionName">viewManagers</param>
+			</url>
+		</shortcut>
+
+		<shortcut id="core.tools.entities" requiredPermission="superuser" menusection="tools" source="core">
+			<description key="core.shortcut.tools.reload.shortDesc" >Reload Configuration</description><!-- key e corpo alternativo -->
+			<longdesc key="core.shortcut.tools.reload.longDesc">
+				<![CDATA[Reload the System Configuration.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/BaseAdmin</param>
+				<param name="actionName">reloadConfig</param>
+			</url>
+		</shortcut>
+
+		<!--
+		<shortcut id="userprofile.profile.current.entry" requiredPermission="superuser" menusection="plugins" source="userprofile">
+			<description key="userprofile.shortcut.profile.current.entry.shortDesc" >Your Profile</description>
+			<longdesc key="userprofile.shortcut.profile.current.entry.longDesc">
+				<![CDATA[Edit your profile]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/userprofile/MyProfile</param>
+				<param name="actionName">edit</param>
+			</url>
+		</shortcut>
+		-->
+
+	</shortcuts>
+</shortcut-def>

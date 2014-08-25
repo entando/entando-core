@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="abstractBaseAction" abstract="true" class="com.agiletec.apsadmin.system.BaseAction">
+		<property name="langManager" ref="LangManager" />
+		<property name="authorizationManager" ref="AuthorizationManager" />
+	</bean>
+	
+	<bean id="abstractBaseActionHelper" abstract="true" class="com.agiletec.apsadmin.system.BaseActionHelper">
+		<property name="groupManager" ref="GroupManager" />
+		<property name="authorizationManager" ref="AuthorizationManager" />
+		<property name="langManager" ref="LangManager" />
+	</bean>
+	
+	<bean id="dispatchAction" scope="prototype" 
+			class="com.agiletec.apsadmin.common.DispatchAction" parent="abstractBaseAction">
+		<property name="authenticationProvider" ref="AuthenticationProviderManager"/>
+	</bean>
+	
+	<bean id="userAvatarAction" 
+			class="org.entando.entando.apsadmin.common.UserAvatarAction" 
+			scope="prototype" parent="abstractBaseAction" >
+		<property name="userProfileManager" ref="UserProfileManager" />
+		<property name="gravatarUrl"><value>http://www.gravatar.com/avatar/</value></property>
+	</bean>
+	
+	<!-- *************************** -->
+	
+	<bean id="baseCommonAction" class="com.agiletec.apsadmin.common.BaseCommonAction" scope="prototype" 
+			parent="abstractBaseAction">
+		<property name="userManager" ref="UserManager"/>
+	</bean>
+	
+	<bean id="currentUserProfileAction" 
+			class="org.entando.entando.apsadmin.common.currentuser.CurrentUserProfileAction" 
+			scope="prototype" parent="abstractEntityAction" >
+		<property name="userProfileManager" ref="UserProfileManager" />
+		<property name="i18nManager" ref="I18nManager" />
+	</bean>
+	
+	<bean id="currentUserAvatarAction" 
+			class="org.entando.entando.apsadmin.common.currentuser.CurrentAvatarAction" 
+			scope="prototype" parent="userAvatarAction" >
+	</bean>
+	
+	<bean id="currentUserProfileListAttributeAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.common.currentuser.attribute.action.list.ListAttributeAction" 
+			parent="abstractBaseAction" >
+		<property name="entityActionHelper" ref="entityActionHelper"/>
+	</bean>
+	
+	<!-- *************************** -->
+	
+	<bean id="myShortcutConfigAction" scope="prototype" 
+			class="com.agiletec.apsadmin.common.MyShortcutConfigAction" parent="abstractBaseAction">
+		<property name="shortcutManager" ref="ShortcutAdminAreaManager"/>
+	</bean>
+	
+	<!-- *************************** -->
+	
+	<bean id="activityStreamCommentAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.common.ActivityStreamCommentAction" parent="abstractBaseAction">
+		<property name="actionLogManager" ref="ActionLogManager"/>
+	</bean>
+	
+	<bean id="activityStreamLikeAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.common.ActivityStreamLikeAction" parent="abstractBaseAction">
+		<property name="actionLogManager" ref="ActionLogManager"/>
+	</bean>
+	
+	<bean id="activityStreamAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.common.ActivityStreamAction" parent="abstractBaseAction">
+		<property name="actionLogManager" ref="ActionLogManager"/>
+	</bean>
+	
+</beans>

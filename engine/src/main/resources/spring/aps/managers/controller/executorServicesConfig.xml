@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context" 
+		xmlns:util="http://www.springframework.org/schema/util" 
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	
+	<bean id="ContentNegotiationExecutorService" 
+		  class="org.entando.entando.aps.system.services.controller.executor.ContentNegotiationExecutorService" />
+	
+	<bean id="WidgetExecutorService" 
+		  class="org.entando.entando.aps.system.services.controller.executor.WidgetExecutorService" />
+	
+	<bean id="PageExecutorService" 
+		  class="org.entando.entando.aps.system.services.controller.executor.PageExecutorService" />
+	
+	<util:list id="ExecutorServices" >
+		<ref bean="ContentNegotiationExecutorService"/>
+		<ref bean="WidgetExecutorService"/>
+		<ref bean="PageExecutorService"/>
+	</util:list>
+	
+</beans>

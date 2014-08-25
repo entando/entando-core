@@ -1,0 +1,6 @@
+<disablingcodes>
+	<disablingcode>
+		<name>userprofile:onEdit</name>
+		<description>Disable attribute on edit interface</description>
+	</disablingcode>
+</disablingcodes>

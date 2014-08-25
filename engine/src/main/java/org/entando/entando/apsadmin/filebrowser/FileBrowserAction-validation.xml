@@ -1,0 +1,50 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="filename">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 11 && (filename == null || filename.trim().length() == 0))]]></param>
+			<message key="requiredstring" />
+		</field-validator>
+	</field>
+	
+	<field name="textFileExtension">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 11 && (textFileExtension == null || textFileExtension.trim().length() == 0))]]></param>
+			<message key="requiredstring" />
+		</field-validator>
+	</field>
+	
+	<field name="fileText">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 11 && fileText == null)]]></param>
+			<message key="requiredstring" />
+		</field-validator>
+	</field>
+	
+	<field name="dirname">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 12 && (dirname == null || dirname.trim().length() == 0))]]></param>
+			<message key="requiredstring" />
+		</field-validator>
+		<field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[(^[\w|\.|\-| ]+?$)]]></param>
+           <message key="error.filebrowser.dirname.wrongCharacters" />
+        </field-validator>
+	</field>
+	
+	<field name="upload">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 13 && upload == null)]]></param>
+			<message key="error.filebrowser.file.required" />
+		</field-validator>
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(strutsAction == 13 && inputStream == null)]]></param>
+			<message key="error.filebrowser.file.void" />
+		</field-validator>
+	</field>
+	
+</validators>

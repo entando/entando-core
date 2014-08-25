@@ -1,0 +1,50 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+    <field name="username">
+        <field-validator type="requiredstring" short-circuit="true">
+            <message key="requiredstring"/>
+        </field-validator>
+		<field-validator type="stringlength" short-circuit="true">
+			<param name="maxLength">20</param>
+			<param name="trim">true</param>
+           <message key="stringlength" />
+		</field-validator>
+        <field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[([a-zA-Z0-9_\.])+]]></param>
+           <message key="wrongCharacters" />
+        </field-validator>
+    </field>
+    
+    <field name="password" >
+    	<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(strutsAction == 1 && password.trim().length() == 0)]]></param><!-- IN CASO DI AGGIUNTA, LA PASSWORD é OBBLIGATORIA -->
+			<message key="requiredstring" />
+        </field-validator>
+		<field-validator type="stringlength" short-circuit="true">
+			<param name="minLength">8</param>
+			<param name="maxLength">20</param>
+			<param name="trim">true</param>
+			<message key="error.user.wrongPasswordLength" />
+		</field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+            <param name="expression">(password == passwordConfirm)</param>
+            <message key="error.user.wrongPasswordConfirm" />
+        </field-validator>
+        <field-validator type="regex" short-circuit="true">
+           <param name="regex"><![CDATA[([a-zA-Z0-9_])+]]></param>
+           <message key="wrongCharacters" />
+        </field-validator>
+    </field>
+    
+    <field name="active" >
+    	<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(strutsAction == 2 && username == 'admin' && !active)]]></param>
+			<message key="error.user.cannotDisableAdminUser"/>
+        </field-validator>
+    </field>
+    
+</validators>

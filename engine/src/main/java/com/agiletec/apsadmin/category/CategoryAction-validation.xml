@@ -1,0 +1,15 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="categoryCode">
+		<field-validator type="stringlength" short-circuit="true">
+			<param name="maxLength">30</param>
+			<param name="trim">true</param>
+			<message key="wrongMaxLength" />
+		</field-validator>
+	</field>
+	
+</validators>

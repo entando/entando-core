@@ -1,0 +1,30 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="filterKey">
+		<field-validator type="requiredstring">
+			<message key="requiredstring"/>
+		</field-validator>
+	</field>
+	
+	<!-- Controllo presenza valore stringa per filtro su attributo tipo Testo e opzione "value" -->
+	<field name="stringValue">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(filterTypeId == 1 && filterOptionId == 1 && (stringValue == null || stringValue.trim().length() == 0))]]></param>
+			<message key="error.widget.listViewer.filter.requiredStringValue" />
+		</field-validator>
+	</field>
+	
+	<field name="stringEnd">
+		<!-- Controllo presenza stringa Inizio o numero Fine per filtro su attributo tipo Stringa e opzione "RANGE" -->
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(filterTypeId == 1 && filterOptionId == 2 && 
+					(stringStart == null || stringStart.trim().length() == 0) && (stringEnd == null || stringEnd.trim().length() == 0))]]></param>
+			<message key="error.widget.listViewer.filter.requiredOneOfStringRange" />
+		</field-validator>
+	</field>
+	
+</validators>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:element name="component">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="code" />
+				<xs:element ref="description" />
+				<xs:element ref="dependencies" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="installation" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="description" type="xs:string"/>
+	<xs:element name="dependencies">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" ref="code"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="installation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="tableMapping" minOccurs="0" maxOccurs="1"  />
+				<xs:element ref="environment" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="tableMapping">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" ref="datasource"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="environment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="defaultSqlResources"/>
+				<xs:element minOccurs="0" ref="postProcesses"/>
+			</xs:sequence>
+			<xs:attribute name="code" use="required" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="defaultSqlResources">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" ref="datasource"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="postProcesses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" ref="selfRestCall"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="selfRestCall">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="0" maxOccurs="1" ref="query"/>
+				<xs:element ref="contentBody"/>
+			</xs:sequence>
+			<xs:attribute name="expected" use="required" type="xs:integer"/>
+			<xs:attribute name="langCode" type="xs:NCName"/>
+			<xs:attribute name="method" use="required" type="xs:NCName"/>
+			<xs:attribute name="namespace" use="required" type="xs:NCName"/>
+			<xs:attribute name="printresponse" type="xs:boolean"/>
+			<xs:attribute name="failonerror" type="xs:boolean"/>
+			<xs:attribute name="resourceName" use="required" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="query">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" ref="parameter"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="parameter">
+		<xs:complexType>
+			<xs:attribute name="name" use="required" type="xs:NCName"/>
+			<xs:attribute name="value" use="required" type="xs:NMTOKEN"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="contentBody">
+		<xs:complexType mixed="true">
+			<xs:attribute name="content-type" use="required"/>
+			<xs:attribute name="path" type="xs:anyURI"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="code" type="xs:NCName"/>
+	<xs:element name="datasource">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element minOccurs="0" maxOccurs="unbounded" ref="class"/>
+			</xs:sequence>
+			<xs:attribute name="name" use="required" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="class" type="xs:string"/>
+</xs:schema>

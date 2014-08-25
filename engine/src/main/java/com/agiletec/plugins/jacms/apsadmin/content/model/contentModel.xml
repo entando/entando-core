@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+	<package name="jacms_do/jacms/ContentModel" namespace="/do/jacms/ContentModel" extends="entando-default">
+		
+		<action name="intro" class="jacmsContentModelAction">
+            <result type="tiles">admin.jacms.contentModel.intro</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>		
+		
+    	<action name="list" class="jacmsContentModelFinderAction">
+            <result type="tiles">admin.jacms.contentModel.list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="search" class="jacmsContentModelFinderAction">
+            <result type="tiles">admin.jacms.contentModel.list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+		<action name="new" class="jacmsContentModelAction" method="newModel">
+            <result type="tiles">admin.jacms.contentModel.entry</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+     	<action name="lockContentType" class="jacmsContentModelAction">
+            <result type="tiles">admin.jacms.contentModel.entry</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+     	<action name="edit" class="jacmsContentModelAction" method="edit">
+            <result type="tiles">admin.jacms.contentModel.entry</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+    	<action name="save" class="jacmsContentModelAction" method="save">
+            <result type="tiles" name="input">admin.jacms.contentModel.entry</result>
+        	<result type="redirectAction">list</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="trash" class="jacmsContentModelAction" method="trash">
+            <result type="tiles" name="references">admin.jacms.contentModel.reference</result>
+            <result type="tiles">admin.jacms.contentModel.trash</result>
+        	<result type="redirectAction" name="noModel">list</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="delete" class="jacmsContentModelAction" method="delete">
+    		<result type="tiles" name="references">admin.jacms.contentModel.reference</result>
+            <result type="chain">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+	</package>
+	
+</struts>

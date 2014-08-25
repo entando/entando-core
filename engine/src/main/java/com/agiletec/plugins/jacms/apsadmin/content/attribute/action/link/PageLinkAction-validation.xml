@@ -1,0 +1,17 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+    <field name="selectedNode" >
+        <field-validator type="fieldexpression" short-circuit="true">
+            <param name="expression">((linkType != 1) or (linkType != 4))</param>
+            <message key="error.content.linkToPage.wrongLinkType" />
+        </field-validator>
+        <field-validator type="requiredstring" short-circuit="true">
+            <message key="error.content.linkToPage.requiredPageDestination" />
+        </field-validator>
+    </field>
+    
+</validators>

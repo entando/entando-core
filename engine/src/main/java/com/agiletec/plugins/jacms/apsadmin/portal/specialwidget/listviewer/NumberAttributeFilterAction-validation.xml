@@ -1,0 +1,35 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="filterKey">
+		<field-validator type="requiredstring">
+			<message key="requiredstring"/>
+		</field-validator>
+	</field>
+	
+	<!-- Controllo presenza valore numero per filtro su attributo tipo Numero e opzione "value" -->
+	<field name="numberValue">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(filterTypeId == 2 && filterOptionId == 1 && numberValue == null)]]></param>
+			<message key="error.widget.listViewer.filter.requiredNumberValue" />
+		</field-validator>
+	</field>
+	
+	<field name="numberEnd">
+		<!-- Controllo presenza numero Inizio o numero Fine per filtro su attributo tipo Numero e opzione "RANGE" -->
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(filterTypeId == 2 && filterOptionId == 2 && numberStart == null && numberEnd == null)]]></param>
+			<message key="requiredOneOfNumberRange" />
+		</field-validator>
+		<!-- Controllo presenza intervallo corretto (inizio non maggiore di fine) per filtro su attributo tipo Numero e opzione "RANGE" -->
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(filterTypeId == 2 && filterOptionId == 2 && numberEnd != null 
+				&& numberStart != null && numberStart > numberEnd)]]></param>
+			<message key="numberStartUpperThenNumberEnd" />
+		</field-validator>
+	</field>
+	
+</validators>

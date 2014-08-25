@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="entityActionHelper" parent="abstractBaseActionHelper" 
+			class="com.agiletec.apsadmin.system.entity.EntityActionHelper" >
+	</bean>
+	
+	<bean id="abstractEntityAction" abstract="true" parent="abstractBaseAction" 
+			class="com.agiletec.apsadmin.system.entity.AbstractApsEntityAction">
+		<property name="langManager" ref="LangManager" />
+		<property name="entityActionHelper" ref="entityActionHelper" />
+		<property name="configManager" ref="BaseConfigManager" />
+	</bean>
+	
+</beans>

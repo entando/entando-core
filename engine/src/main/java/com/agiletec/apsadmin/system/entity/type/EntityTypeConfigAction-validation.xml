@@ -1,0 +1,29 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="entityTypeCode">
+		<field-validator type="requiredstring" short-circuit="true">
+			<message key="requiredstring"/>
+		</field-validator>
+		<field-validator type="regex" short-circuit="true">
+			<param name="regex"><![CDATA[[A-Z\d]+]]></param>
+			<message key="error.entity.wrongTypeCodeCharacter" />
+		</field-validator>
+		<field-validator type="stringlength" short-circuit="true">
+			<param name="minLength">3</param>
+			<param name="maxLength">3</param>
+			<param name="trim">true</param>
+			<message key="error.entity.wrongTypeCodeLength" />
+		</field-validator>
+	</field>
+	
+	<field name="entityTypeDescription">
+		<field-validator type="requiredstring" short-circuit="true">
+			<message key="requiredstring"/>
+		</field-validator>
+	</field>
+	
+</validators>

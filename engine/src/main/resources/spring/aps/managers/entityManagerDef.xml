@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="baseEntityTypeDom" class="com.agiletec.aps.system.common.entity.parse.EntityTypeDOM" scope="prototype">
+		<property name="attributeTypes">
+		<map>
+			<entry key="Date"><ref bean="DateAttribute" /></entry>
+			<entry key="Timestamp"><ref bean="TimestampAttribute" /></entry>
+			<entry key="Number"><ref bean="NumberAttribute" /></entry>
+			<entry key="Monotext"><ref bean="MonoTextAttribute" /></entry>
+			<entry key="Enumerator"><ref bean="EnumeratorAttribute" /></entry>
+			<entry key="Text"><ref bean="TextAttribute" /></entry>
+			<entry key="Longtext"><ref bean="LongtextAttribute" /></entry>
+			<entry key="Hypertext"><ref bean="HypertextAttribute" /></entry>
+			<entry key="Boolean"><ref bean="BooleanAttribute" /></entry>
+			<entry key="CheckBox"><ref bean="CheckBoxAttribute"/></entry>
+			<entry key="ThreeState"><ref bean="ThreeStateBooleanAttribute" /></entry>
+			<entry key="Composite"><ref bean="CompositeAttribute" /></entry>
+			<entry key="Monolist"><ref bean="MonoListAttribute" /></entry>
+			<entry key="List"><ref bean="ListAttribute" /></entry>
+		</map>
+		</property>
+	</bean>
+	
+	<bean id="abstractEntityManager" class="com.agiletec.aps.system.common.entity.ApsEntityManager" 
+			abstract="true" parent="abstractService" >
+		<property name="entityClassName" value="com.agiletec.aps.system.common.entity.model.ApsEntity"/>
+		<property name="entityTypeDom" ref="baseEntityTypeDom" />
+		<property name="categoryManager" ref="CategoryManager" />
+		<property name="entityTypeFactory">
+			<bean class="com.agiletec.aps.system.common.entity.parse.EntityTypeFactory">
+				<property name="configManager" ref="BaseConfigManager" />
+			</bean>
+		</property>
+		<property name="xmlAttributeRootElementName" value="entity" />
+		<property name="entityHandler">
+			<bean class="com.agiletec.aps.system.common.entity.parse.EntityHandler" />
+		</property>
+		<property name="entityDom">
+			<bean class="com.agiletec.aps.system.common.entity.parse.ApsEntityDOM" />
+		</property>
+	</bean>
+	
+	<bean id="abstractEntityDAO" class="com.agiletec.aps.system.common.entity.AbstractEntityDAO" abstract="true">
+		<property name="langManager" ref="LangManager" />
+	</bean>
+	
+	<bean id="BaseEntityRenderer" class="com.agiletec.aps.system.common.renderer.BaseEntityRenderer" 
+			abstract="true" parent="abstractService" >
+		<property name="i18nManager" ref="I18nManager" />
+		<property name="langManager" ref="LangManager" />
+	</bean>
+	
+</beans>

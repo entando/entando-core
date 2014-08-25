@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    
+    <package name="core_do/Front/Api/Resource" namespace="/do/Front/Api/Resource" extends="entando-front-default">
+        
+        <action name="list" class="frontApiResourceFinderAction">
+            <result type="guiFragment">
+				<param name="code">entandoapi_is_resource_list</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/api/resource-list.jsp</param>
+			</result>
+            <interceptor-ref name="entandoFrontEndFreeStack">
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action>
+        
+        <action name="detail" class="frontApiResourceAction">
+            <result name="input" type="chain">list</result>
+			<result type="guiFragment">
+				<param name="code">entandoapi_is_resource_detail</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/api/resource-detail.jsp</param>
+			</result>
+            <interceptor-ref name="entandoFrontEndFreeValidationStack" >
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action>
+        
+        <action name="requestSchema" class="frontApiResourceAction" method="generateRequestBodySchema">
+            <result name="input" type="chain">detail</result>
+            <interceptor-ref name="entandoFrontEndFreeValidationStack" />
+        </action>
+        
+        <action name="executeRequestSchema" class="frontApiResourceAction" method="executeRequestBodySchema">
+            <result name="input" type="chain">detail</result>
+            <result type="stream">
+                <param name="contentType">application/xml</param>
+                <param name="inputName">schemaStream</param>
+				<param name="contentDisposition">filename="${schemaFilePrefix}_requestSchema.xsd"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+            <interceptor-ref name="entandoFrontEndFreeValidationStack" />
+        </action>
+        
+        <action name="responseSchema" class="frontApiResourceAction" method="generateResponseBodySchema">
+            <result name="input" type="chain">detail</result>
+            <interceptor-ref name="entandoFrontEndFreeValidationStack" />
+        </action>
+        
+        <action name="executeResponseSchema" class="frontApiResourceAction" method="executeResponseBodySchema">
+            <result name="input" type="chain">detail</result>
+            <result type="stream">
+                <param name="contentType">application/xml</param>
+                <param name="inputName">schemaStream</param>
+				<param name="contentDisposition">filename="${schemaFilePrefix}_responseSchema.xsd"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+            <interceptor-ref name="entandoFrontEndFreeValidationStack" />
+        </action>
+        
+    </package>
+	
+    <package name="core_do/Front/Api/Service" namespace="/do/Front/Api/Service" extends="entando-front-default">
+    	
+		<action name="list" class="frontApiServiceFinderAction">
+            <result type="guiFragment">
+				<param name="code">entandoapi_is_service_list</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/api/service-list.jsp</param>
+			</result>
+            <interceptor-ref name="entandoFrontEndFreeStack">
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action>
+		
+        <action name="detail" class="frontApiServiceAction" method="detail">
+            <result name="input" type="guiFragment">
+				<param name="code">entandoapi_is_service_list</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/api/service-list.jsp</param>
+			</result>
+            <result type="guiFragment">
+				<param name="code">entandoapi_is_service_detail</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/api/service-detail.jsp</param>
+			</result>
+            <interceptor-ref name="entandoFrontEndFreeStack" />
+        </action> 
+		
+        <action name="responseSchema" class="frontApiServiceAction" method="generateResponseBodySchema">
+            <result name="input" type="chain">detail</result>
+            <interceptor-ref name="entandoFrontEndFreeStack" />
+        </action>
+        
+        <action name="executeResponseSchema" class="frontApiServiceAction" method="executeResponseBodySchema">
+            <result name="input" type="chain">detail</result>
+            <result type="stream">
+                <param name="contentType">application/xml</param>
+                <param name="inputName">schemaStream</param>
+				<param name="contentDisposition">filename="${serviceKey}_responseSchema.xsd"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+            <interceptor-ref name="entandoFrontEndFreeStack" />
+        </action>
+        
+    </package>
+	
+</struts>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="core_do/Front/CurrentUser" namespace="/do/Front/CurrentUser"
+		extends="entando-front-default">
+
+		<action name="edit">
+			<!-- <result type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/editCurrentUser.jsp</result> -->
+			<result type="guiFragment">
+				<param name="code">userprofile_editCurrentUser</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/editCurrentUser.jsp</param>
+			</result>
+
+			<interceptor-ref name="entandoFrontEndFreeStack"></interceptor-ref>
+		</action>
+
+		<action name="editPassword" class="baseCommonAction" method="editPassword">
+			<!-- <result type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/entryUserPassword.jsp</result> -->
+			<result type="guiFragment">
+				<param name="code">userprofile_editCurrentUser_password</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/entryUserPassword.jsp</param>
+			</result>
+			<interceptor-ref name="entandoFrontEndFreeStack"></interceptor-ref>
+		</action>
+
+		<action name="changePassword" class="baseCommonAction" method="changePassword">
+			<!--
+			<result name="input" type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/entryUserPassword.jsp</result> 
+			<result type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/passwordChangingConfirm.jsp</result>
+			 -->
+			<result name="input" type="guiFragment">
+				<param name="code">userprofile_editCurrentUser_password</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/entryUserPassword.jsp</param>
+			</result>
+			<result type="guiFragment">
+				<param name="code">userprofile_is_passwordChanged</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/passwordChangingConfirm.jsp</param>
+			</result>
+			<interceptor-ref name="entandoFrontEndFreeValidationStack"></interceptor-ref>
+		</action>
+
+	</package>
+
+	<package name="core_do/Front/CurrentUser/Profile" namespace="/do/Front/CurrentUser/Profile"
+		extends="entando-front-default">
+
+		<action name="edit" class="currentUserProfileAction" method="edit">
+			<!-- 
+			<result type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/entryCurrentProfile.jsp</result> 
+			<result name="currentUserWithoutProfile" type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/currentWithoutProfile.jsp</result>
+			-->
+			<result type="guiFragment">
+				<param name="code">userprofile_editCurrentUser_profile</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/entryCurrentProfile.jsp</param>
+			</result>
+			<result name="currentUserWithoutProfile" type="guiFragment">
+				<param name="code">userprofile_is_currentWithoutProfile</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/currentWithoutProfile.jsp</param>
+			</result>
+			<interceptor-ref name="entandoFrontEndFreeStack"></interceptor-ref>
+		</action>
+
+		<action name="save" class="currentUserProfileAction" method="save">
+			<!-- <result name="input" type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/entryCurrentProfile.jsp</result> 
+				<result type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/profileChangingConfirm.jsp</result> -->
+
+			<result name="input" type="guiFragment">
+				<param name="code">userprofile_editCurrentUser_profile</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/entryCurrentProfile.jsp</param>
+			</result>
+			<result type="guiFragment">
+				<param name="code">userprofile_is_profileChangeConfirmation</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/profileChangingConfirm.jsp</param>
+			</result>
+
+
+			<interceptor-ref name="entandoFrontEndFreeValidationStack"></interceptor-ref>
+		</action>
+
+		<action name="entryProfile" class="currentUserProfileAction">
+			<!-- <result type="dispatcher">/WEB-INF/aps/jsp/internalservlet/user/entryCurrentProfile.jsp</result> -->
+
+			<result type="guiFragment">
+				<param name="code">userprofile_is_entryCurrentProfile</param>
+				<param name="jspLocation">/WEB-INF/aps/jsp/internalservlet/user/entryCurrentProfile.jsp</param>
+			</result>
+
+			<interceptor-ref name="entandoFrontEndFreeStack"></interceptor-ref>
+		</action>
+
+		<!-- ######## INIZIO GESTIONE ATTRIBUTI IN LISTA ######## -->
+
+		<action name="addListElement*" class="currentUserProfileListAttributeAction"
+			method="addListElement">
+			<result type="chain">entryProfile</result>
+			<interceptor-ref name="entandoFrontEndFreeStack"></interceptor-ref>
+		</action>
+
+		<action name="removeListElement*" class="currentUserProfileListAttributeAction"
+			method="removeListElement">
+			<result type="chain">entryProfile</result>
+			<interceptor-ref name="entandoFrontEndFreeStack"></interceptor-ref>
+		</action>
+
+		<action name="moveListElement*" class="currentUserProfileListAttributeAction"
+			method="moveListElement">
+			<result type="chain">entryProfile</result>
+			<interceptor-ref name="entandoFrontEndFreeStack"></interceptor-ref>
+		</action>
+
+		<!-- ######## FINE GESTIONE ATTRIBUTI IN LISTA ######## -->
+
+	</package>
+
+</struts>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+	<package name="core_do/currentuser/avatar" namespace="/do/currentuser/avatar" extends="entando-default">
+		
+		<action name="avatarStream" class="currentUserAvatarAction" method="returnAvatarStream" >
+			<result type="stream">
+				<param name="contentDisposition">inline;filename="avatar.png"</param>
+				<param name="contentType">${mimeType}</param>
+			</result>
+			<interceptor-ref name="entandoFreeStack"></interceptor-ref>
+    	</action>
+		
+	</package>
+	
+    <package name="core_do/currentuser/profile" namespace="/do/currentuser/profile" extends="entando-default">
+    	
+        <action name="edit" class="currentUserProfileAction" method="edit">
+            <result>/WEB-INF/apsadmin/jsp/common/userProfile-profile-entry.jsp</result>
+			<result name="currentUserWithoutProfile">/WEB-INF/apsadmin/jsp/common/userProfile-profile-missing.jsp</result>
+            <interceptor-ref name="entandoDefaultStack"></interceptor-ref>
+        </action>
+        
+        <action name="save" class="currentUserProfileAction" method="save">
+            <result name="input" type="tiles">admin.common.profile.entry</result>
+			<result type="tiles">admin.common.profile.entry</result>
+			<interceptor-ref name="entandoValidationStack"></interceptor-ref>
+        </action>
+    	
+        <action name="entryProfile" class="currentUserProfileAction">
+            <result type="tiles">admin.common.profile.entry</result>
+            <interceptor-ref name="entandoDefaultStack"></interceptor-ref>
+        </action>
+    	
+    	<!-- ######## INIZIO GESTIONE ATTRIBUTI IN LISTA ######## -->
+        
+        <action name="addListElement*" class="currentUserProfileListAttributeAction" method="addListElement">
+            <result type="redirectActionWithAnchor">
+				<param name="actionName">entryProfile</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack"></interceptor-ref>
+        </action>
+        
+        <action name="removeListElement*" class="currentUserProfileListAttributeAction" method="removeListElement">
+            <result type="redirectAction">
+				<param name="actionName">entryProfile</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack"></interceptor-ref>
+        </action>
+        
+        <action name="moveListElement*" class="currentUserProfileListAttributeAction" method="moveListElement">
+            <result type="redirectAction">
+				<param name="actionName">entryProfile</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack"></interceptor-ref>
+        </action>
+        
+        <!-- ######## FINE GESTIONE ATTRIBUTI IN LISTA ######## -->
+    	
+    </package>
+    
+</struts>

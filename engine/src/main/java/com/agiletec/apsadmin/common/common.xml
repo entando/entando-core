@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+	<package name="core_do" namespace="/do" extends="entando-default">
+		
+		<interceptors>
+			
+			<interceptor-stack name="entandoLoginStack">
+				<interceptor-ref name="entandoFreeStack" />
+				<interceptor-ref name="validation">
+					<param name="excludeMethods">input,back,cancel</param>
+				</interceptor-ref>
+				<interceptor-ref name="workflow">
+					<param name="excludeMethods">input,back,cancel</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		
+		<action name="login">
+			<result>/WEB-INF/apsadmin/jsp/common/login.jsp</result>
+		</action>
+		
+		<action name="doLogin" class="dispatchAction" method="doLogin">
+			<result name="input">/WEB-INF/apsadmin/jsp/common/login.jsp</result>
+			<result type="redirectAction">main</result>
+			<interceptor-ref name="entandoLoginStack" />
+		</action>
+		
+		<action name="logout" class="dispatchAction" method="doLogout">
+			<interceptor-ref name="entandoFreeStack" />
+		</action>
+		
+		<action name="main" class="myShortcutConfigAction">
+			<result type="tiles">admin.intro</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">enterBackend</param></interceptor-ref>
+		</action>
+		
+		<action name="editPassword" class="baseCommonAction" method="editPassword">
+			<result type="tiles">admin.Common.Password.entry</result>
+			<interceptor-ref name="entandoFreeStack"></interceptor-ref>
+		</action>
+	
+		<action name="changePassword" class="baseCommonAction" method="changePassword">
+			<result name="input" type="tiles">admin.Common.Password.entry</result>
+			<result type="tiles">admin.Common.Password.changingConfirm</result>
+			<interceptor-ref name="entandoFreeValidationStack"></interceptor-ref>
+		</action>
+	
+	</package>
+	
+	<package name="core_do/CurrentUser" namespace="/do/CurrentUser" extends="entando-default">
+		
+		<action name="editProfile" class="baseCommonAction" >
+			<result type="tiles">admin.common.profile.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">enterBackend</param></interceptor-ref>
+		</action>
+		
+		<action name="changePassword" class="baseCommonAction" method="changePassword">
+			<result name="input" type="tiles">admin.common.profile.entry</result>
+			<result type="tiles">admin.common.profile.entry</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">enterBackend</param></interceptor-ref>
+		</action>
+		
+	</package>
+	
+	<package name="core_do/MyShortcut" namespace="/do/MyShortcut" extends="entando-default">
+		
+		<action name="configPosition" class="myShortcutConfigAction" >
+			<result name="input" type="tiles">admin.intro</result>
+			<result type="tiles">admin.intro</result>
+			<interceptor-ref name="entandoDefaultStack" />
+		</action>
+		
+		<action name="joinMyShortcut" class="myShortcutConfigAction" method="joinMyShortcut" >
+			<result name="input" type="dispatcher">/WEB-INF/apsadmin/jsp/common/shortcut/ajax/shortcut-result.jsp</result>
+			<result type="dispatcher">/WEB-INF/apsadmin/jsp/common/shortcut/ajax/shortcut-result.jsp</result>
+			<interceptor-ref name="entandoValidationStack" />
+		</action>
+		
+		<action name="removeMyShortcut" class="myShortcutConfigAction" method="removeMyShortcut" >
+			<result name="input" type="dispatcher">/WEB-INF/apsadmin/jsp/common/shortcut/ajax/shortcut-result.jsp</result>
+			<result type="dispatcher">/WEB-INF/apsadmin/jsp/common/shortcut/ajax/shortcut-result.jsp</result>
+			<interceptor-ref name="entandoValidationStack" />
+		</action>
+		
+		<action name="swapMyShortcut" class="myShortcutConfigAction" method="swapMyShortcut" >
+			<result name="input" type="tiles">admin.intro</result>
+			<result type="tiles">admin.intro</result>
+			<interceptor-ref name="entandoValidationStack" />
+		</action>
+		
+		<action name="swapMyShortcutAjax" class="myShortcutConfigAction" method="swapMyShortcut" >
+			<result name="input" type="dispatcher">/WEB-INF/apsadmin/jsp/common/template/mainBody-shortcut-swap-result-ajax.jsp</result>
+			<result type="dispatcher">/WEB-INF/apsadmin/jsp/common/template/mainBody-shortcut-swap-result-ajax.jsp</result>
+			<interceptor-ref name="entandoValidationStack" />
+		</action>
+
+		<action name="configureMyShortcutAjax" class="myShortcutConfigAction" method="joinMyShortcut" >
+			<result name="input" type="dispatcher">/WEB-INF/apsadmin/jsp/common/template/mainBody-shortcut-configure-result-ajax.jsp</result>
+			<result type="dispatcher">/WEB-INF/apsadmin/jsp/common/template/mainBody-shortcut-configure-result-ajax.jsp</result>
+			<interceptor-ref name="entandoValidationStack" />
+		</action>
+
+	</package>
+	
+</struts>

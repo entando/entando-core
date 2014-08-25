@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    
+    <package name="core_do/Admin/Database" namespace="/do/Admin/Database" extends="entando-default">
+        
+        <action name="entry" class="databaseAdminAction">
+            <result type="tiles">admin.database.entry</result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">superuser</param>
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="backupIntro" class="databaseAdminAction">
+            <result type="tiles">admin.database.backup.intro</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+        <action name="executeBackup" class="databaseAdminAction" method="executeBackup">
+            <result type="tiles">admin.database.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+        <action name="entryBackupDetails" class="databaseAdminAction" method="entryBackupDetails">
+			<result name="input" type="chain">entry</result>
+            <result type="tiles">admin.database.backup.details</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+		<action name="extractTableDump" class="databaseAdminAction" method="extractTableDump">
+			<result name="input" type="chain">entry</result>
+			<result name="success" type="stream">
+				<param name="contentType">text/plain</param>
+				<!-- <param name="inputName">inputStream</param> -->
+				<param name="contentDisposition">inline;filename="${tableName}.sql"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+        
+        <action name="restoreIntro" class="databaseAdminAction" method="redirectRestoreIntro">
+            <result name="input" type="chain">entry</result>
+			<result type="tiles">admin.database.restore.intro</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+		<action name="restoreBackup" class="databaseAdminAction" method="restoreBackup">
+            <result name="input" type="chain">entry</result>
+			<result type="tiles">admin.database.backup.details</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+		<action name="trashBackup" class="databaseAdminAction" method="trashBackup">
+            <result name="input" type="chain">entry</result>
+			<result type="tiles">admin.database.backup.trash</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+		<action name="deleteBackup" class="databaseAdminAction" method="deleteBackup">
+			<result name="input" type="chain">entry</result>
+			<result type="tiles">admin.database.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+		
+    </package>
+	
+</struts>

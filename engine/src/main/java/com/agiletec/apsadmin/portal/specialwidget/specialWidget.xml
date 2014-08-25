@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <package name="core_do/Page/SpecialWidget" namespace="/do/Page/SpecialWidget" extends="entando-default">
+
+    	<global-results>
+    		<result name="pageTree" type="chain">
+    			<param name="namespace">/do/Page</param>
+    			<param name="actionName">viewTree</param>
+    		</result>
+    		<result name="configure" type="chain">
+            	<param name="namespace">/do/Page</param>
+    			<param name="actionName">configure</param>
+            </result>
+		</global-results>
+
+    	<!-- ##### WIDGET WITH SIMPLE PARAMETERS **** START ##### -->
+    	<action name="configSimpleParameter" class="simpleWidgetAction" method="init">
+        	<result type="tiles">admin.Page.Showlet.configSimpleParameter</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+    	<action name="saveConfigSimpleParameter" class="simpleWidgetAction" method="save">
+    		<interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+    	<!-- ##### WIDGET WITH SIMPLE PARAMETERS **** END ##### -->
+
+    	<!-- ##### WIDGET NAVIGATOR **** ENTRY POINT ##### -->
+    	<action name="navigatorConfig" class="navigatorWidgetAction" method="init">
+        	<result type="tiles">admin.Page.Showlet.Navigator.config</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+
+    </package>
+
+	<package name="core_do/Page/SpecialWidget/Navigator" namespace="/do/Page/SpecialWidget/Navigator" extends="entando-default">
+
+		<global-results>
+    		<result name="pageTree" type="chain">
+    			<param name="namespace">/do/Page</param>
+    			<param name="actionName">viewTree</param>
+    		</result>
+    		<result name="configure" type="chain">
+            	<param name="namespace">/do/Page</param>
+    			<param name="actionName">configure</param>
+            </result>
+		</global-results>
+
+		<action name="addExpression" class="navigatorWidgetAction" method="addExpression">
+        	<result name="input" type="tiles">admin.Page.Showlet.Navigator.config</result>
+            <result type="tiles">admin.Page.Showlet.Navigator.config</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+
+		<action name="removeExpression*" class="navigatorWidgetAction" method="removeExpression">
+        	<result type="tiles">admin.Page.Showlet.Navigator.config</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+
+		<action name="moveExpression*" class="navigatorWidgetAction" method="moveExpression">
+        	<result type="tiles">admin.Page.Showlet.Navigator.config</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+
+		<action name="saveNavigatorConfig" class="navigatorWidgetAction" method="save">
+			<result name="input" type="tiles">admin.Page.Showlet.Navigator.config</result>
+    		<interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+
+	</package>
+
+</struts>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="jacmsDetailPageHookPoint" class="com.agiletec.apsadmin.system.plugin.HookPointElementContainer" >
+		<property name="filePath"><value>/WEB-INF/plugins/jacms/apsadmin/jsp/portal/detailPage-jack.jsp</value></property>
+		<property name="hookPointKey"><value>core.detailPage</value></property>
+	</bean>
+	
+	<bean id="jacmsPageReferencesHookPoint" class="com.agiletec.apsadmin.system.plugin.HookPointElementContainer" >
+		<property name="filePath"><value>/WEB-INF/plugins/jacms/apsadmin/jsp/portal/pageReferences-jack.jsp</value></property>
+		<property name="hookPointKey"><value>core.pageReferences</value></property>
+	</bean>
+	
+	<bean id="pageAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.PageAction" parent="abstractPortalAction">
+		<property name="pageModelManager" ref="PageModelManager" />
+		<property name="contentManager" ref="jacmsContentManager" />
+		<property name="helper" ref="pageActionHelper" />
+		<property name="viewerWidgetCode"><value>${widgets.viewer}</value></property>
+		<property name="allowedMimeTypesCSV"><value>${page.mimeType.allowedValues}</value></property>
+		<property name="allowedCharsetsCSV"><value>${page.charset.allowedValues}</value></property>
+	</bean>
+	
+</beans>

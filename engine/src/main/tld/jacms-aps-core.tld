@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	version="2.0"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+
+	<description><![CDATA[jACMS Aps Core Tag Library]]></description>
+	<display-name>jACMS Aps Core Tag Library</display-name>
+	<tlib-version>2.2</tlib-version>
+	<short-name>jacmsaps</short-name>
+	<uri>/jacms-aps-core</uri>
+
+	<tag>
+		<description>
+			<![CDATA[Displays the content given its ID.]]>
+		</description>
+		<name>content</name>
+		<tag-class>com.agiletec.plugins.jacms.aps.tags.ContentTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[ID of the content to display. It can accept "expression language".]]>
+			</description>
+			<name>contentId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Id of the model to use to display the content. The model ID can be either specified
+				explicitly (the model must match the content to serve) or the type name
+				("list" or "default"); in the latter case the model specified in the configuration will
+				be used. The model must adhere to the content being returned.<br/>
+				"Expression language" is accepted.]]>
+			</description>
+			<name>modelId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Toggles the insertion of the values of the titles in the Request Context.
+				The title values are extracted from the attribute marked with the role "jacms:title".
+				Admitted values are (true|false), default 'false'.]]>
+			</description>
+			<name>publishExtraTitle</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Inserts the rendered content in a variable of the page context with the name provided.]]>
+			</description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Inserts the map of the attribute values indexed by the attribute role,
+				in a variable of the page context with the name provided.]]>
+			</description>
+			<name>attributeValuesByRoleVar</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Return an information of a specified content.
+				The content can will be extracted by id from widget parameters or from request parameter.
+				The tag extract any specific parameter (by "param" attribute)
+				or entire ContentAuthorizationInfo object (setting "var" attribute and anything on "param" attribute).]]>
+		</description>
+		<name>contentInfo</name>
+		<tag-class>com.agiletec.plugins.jacms.aps.tags.ContentInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[ID of the content]]>
+			</description>
+			<name>contentId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Admitted values for "param" attribute are: 'contentId' (returns the code of content id),
+				'mainGroup' (returns the code of owner group),
+				'authToEdit' (returns true if the current user can edit the content, else false).]]>
+			</description>
+			<name>param</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Inserts the required parameter (or the entire authorization info object)
+				in a variable of the page context with the name provided.]]>
+			</description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Loads a list of contents IDs by applying the filters (if any).
+			Only the IDs of the contents accessible in the portal can be loaded.]]>
+		</description>
+		<name>contentList</name>
+		<tag-class>com.agiletec.plugins.jacms.aps.tags.ContentListTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>
+			<![CDATA[Name of the variable in the page context that holds the search result.]]>
+			</description>
+			<name>listName</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Sets the code of the content types to search.<br/>
+				The name must match the configured one, respecting capital letters and spaces.]]>
+			</description>
+			<name>contentType</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Identifier string of the category of the content to search.]]>
+			</description>
+			<name>category</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Toggles the system caching usage when retrieving the list.
+				Admitted values (true|false), default "true".]]>
+			</description>
+			<name>cacheable</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Inserts the title on a variable of the page context with the name provided.]]></description>
+			  <name>titleVar</name>
+			  <required>false</required>
+			  <rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			  <description><![CDATA[Inserts the code of the page to link on a variable of the page context with the name provided.]]></description>
+			  <name>pageLinkVar</name>
+			  <required>false</required>
+			  <rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			  <description><![CDATA[Inserts the description of the page to link on a variable of the page context with the name provided.]]></description>
+			  <name>pageLinkDescriptionVar</name>
+			  <required>false</required>
+			  <rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			  <description><![CDATA[Name of the variable in the page context that holds the user filter options]]></description>
+			  <name>userFilterOptionsVar</name>
+			  <required>false</required>
+			  <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA["ContentListTag" sub-tag, it creates a filter
+			to restrict the result of the content search.<br/>
+			Please note that the filters will be applied in the same order they are
+			declared and the result of the search will reflect this fact.]]>
+		</description>
+		<name>contentListFilter</name>
+		<tag-class>com.agiletec.plugins.jacms.aps.tags.ContentListFilterTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[String used to filter and sort the contents.<br/>
+				This string can be:<br/>
+				- the name of a content attribute compatible with the type declared in the "contentListTag" (it requires the "attributeFilter" attribute to be "true")<br/>
+				- the ID of one of the content metadata (the "attributeFilter" must be false)<br/>
+				The allowed filter key that can be applied to content metadata are:<br/>
+				- "created" allows sorting by date of creation of content
+				- "modified" allows sorting by date of modification of content.]]>
+			</description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Decides whether the filter must be applied to an attribute or to a
+				content metadata, admitted values are (true|false).<br/>
+				The "key" attribute will be checked for validity if the filter is going to be applied to a metadata]]>
+			</description>
+			<name>attributeFilter</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The filtering value.]]></description>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Filters the contents by attribute type or by the field specified with the key
+				(<b>respect</b> the following matches):<br/>
+				<b>Text</b> field --> <b>start Text</b><br/>
+				<b>Text</b> attribute type --> <b>start Text</b><br/>
+				<b>Numeric</b> attribute type --> <b>start Numeric</b><br/>
+				<b>date</b> attribute type --> <b>start data</b><br/>
+				If the data filter is used:<br>
+				- <b>today</b>, <b>oggi</b> or <b>odierna</b> will select all the contents with a date greater
+				or equal to the system date<br/>
+				- using date with the pattern "dd/MM/yyyy" will select all the contents
+				with a date greater or equal to the one inserted.]]>
+			</description>
+			<name>start</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Similar the the "start" attribute but with the opposite behaviur.]]>
+			</description>
+			<name>end</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Specifies the sorting behaviour of the IDs found: "ASC"ending or "DESC"ending.
+				By default no ordering is performed.]]>
+			</description>
+			<name>order</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Toggles the 'like' functionality. Admitted values: (true|false). Default: false.
+				The option is available for metadata and on Text Content attributes.]]>
+			</description>
+			<name>likeOption</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA["ContentListTag" sub-tag, it creates a custom user filter
+			to restrict the result of the content search by front-end user.]]>
+		</description>
+		<name>contentListUserFilterOption</name>
+		<tag-class>com.agiletec.plugins.jacms.aps.tags.ContentListUserFilterOptionTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[The key of the filter.<br/>
+				This string can be:<br/>
+				- the name of a content attribute compatible with the type declared in the "contentListTag" (it requires the "attributeFilter" attribute to be "true")<br/>
+				- the ID of one of the content metadata (the "attributeFilter" must be false)<br/>
+				The allowed filter key that can be applied to content metadata are:<br/>
+				- "fulltext" allows filter by full-text search<br />
+				- "category" allows filter by a system category.]]>
+			</description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Decides whether the filter must be applied to an attribute or to a
+				content metadata, admitted values are (true|false).<br/>
+				The "key" attribute will be checked for validity if the filter is going to be applied to a metadata.]]>
+			</description>
+			<name>attributeFilter</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Generates a list of content IDs, restricting them to the key word
+			contained in the "search" parameter of the http request.]]>
+		</description>
+		<name>searcher</name>
+		<tag-class>com.agiletec.plugins.jacms.aps.tags.SearcherTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[Name of the variable, stored in the page context, containing the list of content IDs.]]>
+			</description>
+			<name>listName</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+</taglib>

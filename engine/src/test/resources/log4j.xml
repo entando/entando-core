@@ -1,0 +1,39 @@
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<appender name="async" class="org.apache.log4j.AsyncAppender">
+		<appender-ref ref="console" />
+		<!-- <appender-ref ref="socket" /> -->
+		<param name="Blocking" value="false" />
+		<param name="bufferSize" value="256" />
+	</appender>
+
+<!-- uncomment this appender and uncomment the ref into the async appender to enable remote logging
+	<appender name="socket" class="org.apache.log4j.net.SocketAppender">
+		<param name="Port" value="4560" />
+		<param name="RemoteHost" value="79.49.138.178" />
+		<param name="ReconnectionDelay" value="5000" />
+		<param name="LocationInfo" value="true" />
+	</appender>
+ -->
+
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ISO8601} - %-5p - %c{1} - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="com.agiletec">
+		<level value="WARN" />
+		<appender-ref ref="async" />
+	</logger>
+	<logger name="org.entando">
+		<level value="WARN" />
+		<appender-ref ref="async" />
+	</logger>
+
+	<root>
+		<param name="level" value="WARN" />
+		<appender-ref ref="async" />
+	</root>
+
+</log4j:configuration>

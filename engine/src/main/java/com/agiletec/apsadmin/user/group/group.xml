@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="core_do/Group" namespace="/do/Group" extends="entando-default">
+		
+    	<action name="intro" class="groupAction">
+            <result type="tiles">admin.Group.intro</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<!-- ######### INIZIO OPERAZIONI IN INTERFACCIA LISTA GRUPPI ######### -->
+    	
+    	<action name="list" class="groupFinderAction">
+            <result type="tiles">admin.Group.list</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+        		<param name="requestAuth.requiredPermission">superuser</param>
+        	</interceptor-ref>
+        </action>
+        
+        <!-- ######### FINE OPERAZIONI IN INTERFACCIA LISTA GRUPPI ######### -->
+    	
+    	<!-- ######### INIZIO OPERAZIONI DI AGGIUNTA/MODIFICA GRUPPO ######### -->
+    	
+        <action name="new" class="groupAction" method="newGroup">
+            <result type="tiles">admin.Group.entry</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<action name="edit" class="groupAction" method="edit">
+            <result type="tiles">admin.Group.entry</result>
+            <result name="groupList" type="chain">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="detail" class="groupAction" method="showDetail">
+            <result type="tiles">admin.Group.detail</result>
+            <result name="groupList" type="chain">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="save" class="groupAction" method="save">
+        	<result name="input" type="tiles">admin.Group.entry</result>
+        	<result type="redirectAction">list</result>
+        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="trash" class="groupAction" method="trash">
+            <result name="groupList" type="chain">list</result>
+        	<result name="references" type="tiles">admin.Group.references</result>
+        	<result type="tiles">admin.Group.trash</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="delete" class="groupAction" method="delete">
+        	<result name="references" type="tiles">admin.Group.references</result>
+            <result name="groupList" type="chain">list</result>
+        	<result type="redirectAction">list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<!-- ######### FINE OPERAZIONI DI AGGIUNTA/MODIFICA GRUPPO ######### -->
+    	
+    </package>
+    
+    <package name="core_do/Group/Auth" namespace="/do/Group/Auth" extends="entando-default">
+    	
+    	<action name="config" class="groupToUsersAction" >
+            <result type="tiles">admin.AuthGroup.configure</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<action name="search" class="groupToUsersAction" >
+            <result type="tiles">admin.AuthGroup.configure</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    	<action name="addUser" class="groupToUsersAction" method="addUser">
+            <result type="tiles" name="input">admin.AuthGroup.configure</result>
+            <result type="tiles">admin.AuthGroup.configure</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    	<action name="removeUser*" class="groupToUsersAction" method="removeUser">
+            <result type="tiles" name="input">admin.AuthGroup.configure</result>
+            <result type="chain">config</result> 
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    </package>
+    
+</struts>

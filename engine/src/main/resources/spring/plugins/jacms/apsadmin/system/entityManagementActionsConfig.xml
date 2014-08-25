@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="jacmsContentManagerNamespaceInfoBean" 
+			class="com.agiletec.apsadmin.system.entity.type.EntityTypeNamespaceInfoBean">
+		<property name="entityManagerName"><value>jacmsContentManager</value></property>
+		<property name="namespacePrefix"><value>/jacms</value></property>
+	</bean>
+	
+	<bean id="jacmsContentTypesAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.system.ContentTypesAction" parent="abstractBaseAction">
+		<property name="searchEngineManager" ref="jacmsSearchEngineManager"/>
+	</bean>
+	
+	<bean id="jacmsContentTypeConfigAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.system.ContentTypeConfigAction" parent="abstractBaseAction">
+		<property name="pageManager" ref="PageManager" />
+		<property name="contentModelManager" ref="jacmsContentModelManager" />
+	</bean>
+	
+</beans>

@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	version="2.0"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<description><![CDATA[Apsadmin Core Tag Library]]></description>
+	<display-name>Apsadmin Core Tag Library</display-name>
+	<tlib-version>2.2</tlib-version>
+	<short-name>wpsa</short-name>
+	<uri>/apsadmin-core</uri>
+
+	<tag>
+		<description><![CDATA[Handles the submit in the administration interface,
+			building the name of the action with a defined sequence of parameters.<br/>
+			The single parameters are added using the "actionSubParam" tag.]]></description>
+		<name>actionParam</name>
+		<tag-class>com.agiletec.apsadmin.tags.ApsActionParamTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description></description>
+			<name>action</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the variable in the value stack where to store the result.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Adds a single parameter to the submit action.<br/>Must be used in conjunction with the "actionParam" tag.]]>
+		</description>
+		<name>actionSubParam</name>
+		<tag-class>com.agiletec.apsadmin.tags.ApsActionParamSubTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Name of the parameter.]]></description>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Value of the parameter.]]></description>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[DEPRECATED, Unnecessary for UX Backoffice of entando 4.0.0. Print the style of the back-office. Can be normal|advanced.]]>
+		</description>
+		<name>backendGuiClient</name>
+		<tag-class>com.agiletec.apsadmin.tags.BackendGuiClientTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the value of the gui client code pushed into the Value Stack.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Print the current value of the counter.
+			The counter should be used inside the tabindex attribute in HTML tags that allow the use.]]>
+		</description>
+		<name>counter</name>
+		<tag-class>com.agiletec.apsadmin.tags.CounterTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[Specifies the numeric value for single step increment/decrement.]]>
+			</description>
+			<name>step</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns a entity (or one of its property) through the code and the entity service name.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property using the "property" attribute.]]>
+		</description>
+		<name>entity</name>
+		<tag-class>com.agiletec.apsadmin.tags.EntityInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The code of the entity to return.]]></description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The entity manager name.]]></description>
+			<name>entityManagerName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the entity (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value,.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the property to return. It can be one of the following:<br/>
+			"id"<br/>
+			"typeCode"<br/>
+			"typeDescr"<br/>
+			"attributeMap" (map of attributes indexed by the name)<br/>
+			"attributeList" (list of attributes)<br/>
+			<b>any other propety</b> of a custom entity type.]]></description>
+			<name>property</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns a entity type (or one of its property) through the code and the entity service name.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property using
+			the "property" attribute.]]>
+		</description>
+		<name>entityType</name>
+		<tag-class>com.agiletec.apsadmin.tags.EntityTypeInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The code of the entity type to return.]]></description>
+			<name>typeCode</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The entity manager name.]]></description>
+			<name>entityManagerName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the entity type (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the property to return. It can be one of the following:<br/>
+			"typeCode"<br/>
+			"typeDescr"<br/>
+			"attributeMap" (map of attributes indexed by the name)<br/>
+			"attributeList" (list of attributes).]]></description>
+			<name>property</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns the list of entity types through the code and the entity service name. 
+				This tag can be used only in jsp rendered by Struts2 context.]]>
+		</description>
+		<name>entityTypes</name>
+		<tag-class>org.entando.entando.apsadmin.tags.EntityTypesInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The entity manager name.]]></description>
+			<name>entityManagerName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the list of entity types pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The property of the entity type that will be used to order the required list. default value "typeDescr".]]></description>
+			<name>orderBy</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Defines a hookpoint]]></description>
+		<name>hookPoint</name>
+		<tag-class>com.agiletec.apsadmin.tags.HookPointTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[The name of the object]]></description>
+			<name>objectName</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[key]]></description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Includes a servlet's output (result of servlet or a JSP page).]]></description>
+		<name>include</name>
+		<tag-class>com.agiletec.apsadmin.tags.IncludeTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[id for referencing element. For UI and form tags it will be used as HTML id attribute.]]></description>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The jsp/servlet output to include.]]></description>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns a page (or one of its property) through the code.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property through the "property" attribute.]]>
+		</description>
+		<name>page</name>
+		<tag-class>com.agiletec.apsadmin.tags.PageInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The code of the page to return.]]></description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the page (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the property to return. It can be one of the following:<br/>
+			"code" (the code page)<br/> "parent" (the parent page)<br/> "children" (the list of child pages)<br/>
+			"position" (the position relative to other pages)<br/>
+			"titles" (map of titles indexed by the system languages)<br/>
+			"model" (the page model)<br/>
+			"group" (the code of the owner group)<br/>
+			"extraGroups" (the list of extra group codes)<br/>
+			"showable" (whether to be displayed in the menu)<br/>
+			"useExtraTitles" (if the page must use any extra titles)<br/>
+			"widgets" (the widgets applied to the page).]]></description>
+			<name>property</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Tag used to parameterize other tags with a map of parameters.]]>
+		</description>
+		<name>paramMap</name>
+		<tag-class>com.agiletec.apsadmin.tags.ParamMapTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The map of parameters.]]></description>
+			<name>map</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Generates through successive iterations the list of the plugin submenu.]]></description>
+		<name>pluginsSubMenu</name>
+		<tag-class>com.agiletec.apsadmin.tags.PluginsSubMenuTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>
+			<![CDATA[Name of the variable pushed in the Value Stack holding the current object.]]>
+			</description>
+			<name>objectName</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Assigns a value to a variable in a specified scope<br/>
+		<b>DEPRECATED</b> - use the original s:set tag.]]></description>
+		<name>set</name>
+		<tag-class>org.apache.struts2.views.jsp.SetTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Deprecated. Use 'var' instead.]]></description>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Deprecated. Use 'var' instead.]]></description>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The scope of the variable. Can be <b>application</b>, <b>session</b>, <b>request</b>, <b>page</b>, or <b>action</b>.]]></description>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The value assigned to the variable.]]></description>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the value pushed into the Value Stack.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns a widget type (or one of its property) given its code.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property
+			using the "property" attribute.]]>
+		</description>
+		<name>widgetType</name>
+		<tag-class>com.agiletec.apsadmin.tags.WidgetTypeInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The code of the widget type to return.]]></description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the widget type (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the property to return. It can be one of the following:<br/>
+			The available properties of "WidgetType" are:
+			"code"<br/> "titles" (map of titles indexed by the system languages)<br/>
+			"parameters" (list of object "WidgetTypeParameter")<br/>
+			"action" (the code of the action used to manage the type)<br/>
+			"pluginCode"<br/> "parentTypeCode"<br/>
+			"config" (map of default parameter values indexed by the key)<br/>
+			"locked".]]></description>
+			<name>property</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[<b>DEPRECATED</b>; Since Entando 4.0.0, use "widgetType" instead.<br />Returns a widget type (or one of its property) given its code.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property
+			using the "property" attribute.]]>
+		</description>
+		<name>showletType</name>
+		<tag-class>com.agiletec.apsadmin.tags.WidgetTypeInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The code of the widget type to return.]]></description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the widget type (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the property to return. It can be one of the following:<br/>
+			The available properties of "WidgetType" are:
+			"code"<br/> "titles" (map of titles indexed by the system languages)<br/>
+			"parameters" (list of object "WidgetTypeParameter")<br/>
+			"action" (the code of the action used to manage the type)<br/>
+			"pluginCode"<br/> "parentTypeCode"<br/>
+			"config" (map of default parameter values indexed by the key)<br/>
+			"locked".]]></description>
+			<name>property</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Takes an iterator and outputs a subset of it.]]></description>
+		<name>subset</name>
+		<tag-class>com.agiletec.apsadmin.tags.AdminPagerTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Indicate the number of entries to be in the resulting subset iterator.]]></description>
+			<name>count</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The id of the tag element.]]></description>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Indicate the source of which the resulting subset iterator is to be derived base on.]]></description>
+			<name>source</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[The name assigned to the current object, which exposes the following methods:<br/>
+				getMax, getPrevItem, getNextItem, getCurrItem, getSize, getBegin, getEnd, getMaxItem, getPagerId.]]>
+			</description>
+			<name>objectName</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Toggles the advanced mode. Values admitted (true|false).]]></description>
+			<name>advanced</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Offset value used when the subset is used in advanced mode.]]></description>
+			<name>offset</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Sets the ID of the pager itself, it has to be used when two or more pagers exist in the same page.]]></description>
+			<name>pagerId</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Inits the Tracer before rendering Entity fields.]]></description>
+		<name>tracerFactory</name>
+		<tag-class>com.agiletec.apsadmin.tags.TracerFactoryTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[The lang code.]]></description>
+			<name>lang</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name used to reference the value pushed into the Value Stack.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- SHORTCUT START -->
+	<tag>
+		<description>
+			<![CDATA[Returns a shortcut (or one of its property) through the code.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property using the "property" attribute.]]>
+		</description>
+		<name>shortcut</name>
+		<tag-class>com.agiletec.apsadmin.tags.ShortcutInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The code of the shortcut to return.]]></description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the shortcut (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the property to return. It can be one of the following:<br/>
+				"id", "descriptionKey", "description", "longDescription", "longDescriptionKey",
+				"requiredPermission", "menuSectionCode", "menuSection", "source", "namespace", "actionName", "parameters".]]></description>
+			<name>property</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns the configured shortcuts of the current user.]]>
+		</description>
+		<name>userShortcutsConfig</name>
+		<tag-class>com.agiletec.apsadmin.tags.UserShortcutsConfigTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the configured shortcuts (of the current user) pushed into the Value Stack.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Entando Shortcuts utility tag]]></description>
+		<name>shortcutList</name>
+		<tag-class>org.entando.entando.apsadmin.tags.ShortcutListTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name of the type to extract. 'list_items' extract a List<SelectItem>, 'list_object' to extract a List<Shortcut>]]></description>
+			<name>type</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the value pushed into the Value Stack]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<dynamic-attributes>false</dynamic-attributes>
+	</tag>
+	<!-- SHORTCUT END -->
+	
+	
+	<tag>
+		<description>
+			<![CDATA[Return the list (of integer) for the activity stream of the current user.]]>
+		</description>
+		<name>activityStream</name>
+		<tag-class>org.entando.entando.apsadmin.tags.ActivityStreamTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the list (of integer) for the activity stream of the current user.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Return the date of the last update activity stream for the current user.]]>
+		</description>
+		<name>activityStreamLastUpdateDate</name>
+		<tag-class>org.entando.entando.apsadmin.tags.ActivityStreamLastUpdateTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the update date.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns a single record of Action Logger Manager (or one of its property) through the code.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property.
+			The names of the available property of "ActivityStream": "id", "actionDate", "username", "namespace", "actionName", "parameters", "activityStreamInfo".]]>
+		</description>
+		<name>actionLogRecord</name>
+		<tag-class>org.entando.entando.apsadmin.tags.ActionLogRecordTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The id of the action log record to return.]]></description>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the logger info (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the property to return. It can be one of the following:<br/>
+				"id", "actionDate", "username", "namespace", "actionName", "parameters", "activityStreamInfo".]]></description>
+			<name>property</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns the list of comment records (ActivityStreamComment objects) of an activity through the code. 
+			Availables properties: "id", "commentDate", "commentText", "username", "displayName"]]>
+		</description>
+		<name>activityStreamCommentRecords</name>
+		<tag-class>org.entando.entando.apsadmin.tags.ActivityStreamCommentRecordsTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The id of the action log record.]]></description>
+			<name>recordId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the info pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns the list of like records (ActivityStreamLikeInfo objects) of an activity through the code. 
+			Availables properties: "username", "displayName"]]>
+		</description>
+		<name>activityStreamLikeRecords</name>
+		<tag-class>org.entando.entando.apsadmin.tags.ActivityStreamLikeRecordsTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The id of the action log record.]]></description>
+			<name>recordId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the info pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Render a title of the traced activity]]></description>
+		<name>activityTitle</name>
+		<tag-class>org.entando.entando.apsadmin.tags.ActivityTitleTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name of the executed action and traced by the log.]]></description>
+			<name>actionName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Namespace of the executed action and traced by the log.]]></description>
+			<name>namespace</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Type of the executed action and traced by the log.]]></description>
+			<name>actionType</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the value pushed into the Value Stack]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<dynamic-attributes>false</dynamic-attributes>
+	</tag>
+	
+</taglib>

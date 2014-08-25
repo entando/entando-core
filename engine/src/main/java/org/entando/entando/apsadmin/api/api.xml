@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    
+    <package name="core_do/Api/Resource" namespace="/do/Api/Resource" extends="entando-default">
+        
+        <action name="list" class="apiResourceFinderAction">
+            <result type="tiles">admin.api.resource.list</result>
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+                <param name="requestAuth.requiredPermission">superuser</param>
+            </interceptor-ref>
+        </action>
+        
+        <action name="detail" class="apiResourceAction">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.resource.detail</result>
+            <interceptor-ref name="entandoValidationStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+                <param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="requestSchema" class="apiResourceAction" method="generateRequestBodySchema">
+            <result name="input" type="chain">detail</result>
+            <result type="stream">
+                <param name="contentType">application/xml</param>
+                <param name="inputName">schemaStream</param>
+                <param name="contentDisposition">filename="${schemaFilePrefix}_requestSchema.xsd"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="responseSchema" class="apiResourceAction" method="generateResponseBodySchema">
+            <result name="input" type="chain">detail</result>
+            <result type="stream">
+                <param name="contentType">application/xml</param>
+                <param name="inputName">schemaStream</param>
+                <param name="contentDisposition">filename="${schemaFilePrefix}_responseSchema.xsd"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="updateMethodStatus" class="apiResourceAction" method="updateMethodStatus">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.resource.detail</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="resetMethodStatus" class="apiResourceAction" method="resetMethodStatus">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.resource.detail</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="updateAllMethodStatus" class="apiResourceAction" method="updateAllMethodStatus">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.resource.detail</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="resetAllMethodStatus" class="apiResourceAction" method="resetAllMethodStatus">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.resource.detail</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+    </package>
+    
+    <package name="core_do/Api/Service" namespace="/do/Api/Service" extends="entando-default">
+    	
+        <action name="list" class="apiServiceFinderAction">
+            <result type="tiles">admin.api.service.list</result>
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="requestAuth.requiredPermission">superuser</param>
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action>
+		
+        <action name="updateAllStatusOfGroup" class="apiServiceFinderAction" method="updateAllStatusOfGroup">
+            <result name="input" type="tiles">admin.api.service.list</result>
+            <result type="tiles">admin.api.service.list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action> 
+		
+	<!-- *********** -->
+		
+        <action name="newService" class="apiServiceAction" method="newService">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.service.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action> 
+		
+        <action name="edit" class="apiServiceAction" method="edit">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.service.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action> 
+		
+        <action name="copyFromWidget" class="apiServiceAction" method="copyFromWidget">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.service.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action> 
+		
+        <action name="save" class="apiServiceAction" method="save">
+            <result name="input" type="tiles">admin.api.service.entry</result>
+            <result type="redirectAction">list</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action> 
+		
+        <action name="trash" class="apiServiceAction" method="trash">
+            <result name="input" type="chain">list</result>
+            <result type="tiles">admin.api.service.trash</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action> 
+		
+        <action name="delete" class="apiServiceAction" method="delete">
+            <result name="input" type="chain">list</result>
+            <result type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action> 
+		
+    </package>
+    
+    <package name="core_do/Api/Consumer" namespace="/do/Api/Consumer" extends="entando-default">
+        
+        <action name="list" class="apiConsumerFinderAction">
+            <result type="tiles">admin.api.consumer.list</result>
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+                <param name="requestAuth.requiredPermission">superuser</param>
+            </interceptor-ref>
+        </action>
+    	
+        <action name="search" class="apiConsumerFinderAction">
+            <result type="tiles">admin.api.consumer.list</result>
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+                <param name="requestAuth.requiredPermission">superuser</param>
+            </interceptor-ref>
+        </action>
+    	
+        <action name="new" class="apiConsumerAction" method="newConsumer">
+            <result type="tiles">admin.api.consumer.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+        <action name="edit" class="apiConsumerAction" method="edit">
+            <result type="tiles">admin.api.consumer.entry</result>
+            <result name="list" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="save" class="apiConsumerAction" method="save">
+            <result name="input" type="tiles">admin.api.consumer.entry</result>
+            <result type="redirectAction">list</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="trash" class="apiConsumerAction" method="trash">
+            <result name="list" type="chain">list</result>
+            <result type="tiles">admin.api.consumer.trash</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+        
+        <action name="delete" class="apiConsumerAction" method="delete">
+            <result name="list" type="chain">list</result>
+            <result type="redirectAction">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+    	
+    </package>
+    
+</struts>

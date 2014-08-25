@@ -1,0 +1,32 @@
+<#assign wp=JspTaglibs["/aps-core"]>
+
+<@wp.pageWithWidget var="searchResultPageVar" widgetTypeCode="search_result" />
+<form class="navbar-search pull-left" action="<@wp.url page="${searchResultPageVar.code}" />" method="get">
+<input type="text" name="search" class="search-query span2" placeholder="Give me A word for" x-webkit-speech="x-webkit-speech" />
+</form> 
+
+<@wp.fragment       code="PLACECHOLDER_A"  />
+
+
+
+<@wp.pageWithWidget var="searchResultPageVar" widgetTypeCode="search_result" />
+<form class="navbar-search pull-left" action="<@wp.url page="${searchResultPageVar.code}" />" method="get">
+<input type="text" name="search" class="search-query span2" placeholder="Give me A word for" x-webkit-speech="x-webkit-speech" />
+</form> 
+
+<@wp.fragment    code="PLACECHOLDER_B" escapeXml=false />
+
+<@wp.pageWithWidget var="searchResultPageVar" widgetTypeCode="search_result" />
+<form class="navbar-search pull-left" action="<@wp.url page="${searchResultPageVar.code}" />" method="get">
+<input type="text" name="search" class="search-query span2" placeholder="Give me A word for" x-webkit-speech="x-webkit-speech" />
+</form> 
+
+
+<@wp.fragment     escapeXml=false       code="PLACECHOLDER_C" />
+
+
+<@wp.pageWithWidget var="searchResultPageVar" widgetTypeCode="search_result" />
+<form class="navbar-search pull-left" action="<@wp.url page="${searchResultPageVar.code}" />" method="get">
+<input type="text" name="search" class="search-query span2" placeholder="Give me A word for" x-webkit-speech="x-webkit-speech" />
+<@wp.fragment code="PLACECHOLDER_D" />
+</form>

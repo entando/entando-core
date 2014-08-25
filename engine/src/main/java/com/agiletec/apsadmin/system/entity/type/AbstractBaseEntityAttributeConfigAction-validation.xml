@@ -1,0 +1,217 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+	<field name="attributeName">
+		<field-validator type="requiredstring" short-circuit="true">
+			<message key="requiredstring" />
+		</field-validator>
+		<field-validator type="regex" short-circuit="true">
+			<param name="regex"><![CDATA[\w+]]></param>
+			<message key="error.entity.attribute.wrongAttributeCodeCharacter" />
+		</field-validator>
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!( strutsAction == 1 && attributeName.trim().length() > 10)]]></param>
+			<message key="error.entity.attribute.wrongMaxLength" />
+		</field-validator>
+	</field>
+	
+    <field name="attributeDescription">
+        <field-validator type="stringlength" short-circuit="true">
+			<param name="maxLength">50</param>
+			<param name="trim">true</param>
+			<message key="wrongMaxLength" />
+		</field-validator>
+    </field>
+    
+	<!-- OGNL - START VALIDATION BLOCK -->
+	
+	<!-- ognlValidationRule.expression -->
+	<field name="ognlValidationRule.expression">
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!( ognlValidationRule != null 
+				&& ognlValidationRule.expression != null && ognlValidationRule.expression.trim().length() > 0   
+				&& (
+				((ognlValidationRule.errorMessage == null || ognlValidationRule.errorMessage.trim().length() == 0) 
+					&& (ognlValidationRule.errorMessageKey == null || ognlValidationRule.errorMessageKey.trim().length() == 0))
+					||
+				((ognlValidationRule.helpMessage == null || ognlValidationRule.helpMessage.trim().length() == 0) 
+					&& (ognlValidationRule.helpMessageKey == null || ognlValidationRule.helpMessageKey.trim().length() == 0))
+					)                          )]]></param>
+			<message key="error.entity.attribute.ognlValidation.requiredHelpMessage" />
+		</field-validator>
+    </field>
+	
+	<field name="ognlValidationRule.evalExpressionOnValuedAttribute">
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(ognlValidationRule != null 
+				&& ognlValidationRule.evalExpressionOnValuedAttribute   
+				&& (ognlValidationRule.expression != null && ognlValidationRule.expression.trim().length() == 0) )]]></param>
+			<message key="error.entity.attribute.ognlValidation.requiredExpression" />
+		</field-validator>
+    </field>
+	
+	<!-- ognlValidationRule.errorMessage -->
+	<field name="ognlValidationRule.errorMessage">
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(ognlValidationRule != null 
+				&& (ognlValidationRule.errorMessage != null && ognlValidationRule.errorMessage.trim().length() > 0) 
+				&& (ognlValidationRule.errorMessageKey != null && ognlValidationRule.errorMessageKey.trim().length() > 0) )]]></param>
+			<message key="error.entity.attribute.ognlValidation.requiredErrorMessage" />
+		</field-validator>
+    </field>
+    
+    <!-- ognlValidationRule.helpMessage -->
+	<field name="ognlValidationRule.helpMessage">
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(ognlValidationRule != null 
+				&& (ognlValidationRule.helpMessage != null && ognlValidationRule.helpMessage.trim().length() > 0) 
+				&& (ognlValidationRule.helpMessageKey != null && ognlValidationRule.helpMessageKey.trim().length() > 0) )]]></param>
+			<message key="error.entity.attribute.ognlValidation.invalidHelpMessages" />
+		</field-validator>
+    </field>
+    
+    <!-- OGNL - END VALIDATION BLOCK -->
+	
+	<!-- TEXT TYPE - START VALIDATION BLOCK -->
+	
+	<field name="minLength">
+		<field-validator type="int">
+			<param name="min">0</param>
+			<message key="error.entity.attribute.wrongTextAttributeMinLength" />
+		</field-validator>
+	</field>
+	
+	<field name="maxLength">
+		<field-validator type="int" short-circuit="true">
+			<param name="min">0</param>
+			<message key="error.entity.attribute.wrongTextAttributeMaxLength" />
+		</field-validator>
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(maxLength != null && minLength != null && minLength > maxLength)]]></param>
+			<message key="error.entity.attribute.minLengthUpperThenMaxLength" />
+		</field-validator>
+	</field>
+	
+	<field name="rangeStartString">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!((rangeStartString != null && rangeStartString.trim().length() > 0) && 
+				(rangeStartStringAttribute != null && rangeStartStringAttribute.trim().length() > 0))]]></param>
+			<message key="error.entity.attribute.invalidRangeStartString" />
+		</field-validator>
+	</field>
+	
+	<field name="rangeEndString">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!((rangeEndString != null && rangeEndString.trim().length() > 0) && 
+				(rangeEndStringAttribute != null && rangeEndStringAttribute.trim().length() > 0))]]></param>
+			<message key="error.entity.attribute.invalidRangeEndString" />
+		</field-validator>
+	</field>
+	
+	<field name="equalString">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(((rangeStartString != null && rangeStartString.trim().length() > 0) || 
+				(rangeEndString != null && rangeEndString.trim().length() > 0) || 
+				(rangeStartStringAttribute != null && rangeStartStringAttribute.trim().length() > 0) || (rangeEndStringAttribute != null && rangeEndStringAttribute.trim().length() > 0)) && 
+				(equalString != null && equalString.trim().length() > 0))]]></param>
+			<message key="error.entity.attribute.invalidEqualString" />
+		</field-validator>
+	</field>
+	
+	<field name="equalStringAttribute">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(((rangeStartString != null && rangeStartString.trim().length() > 0) || 
+				(rangeEndString != null && rangeEndString.trim().length() > 0) || 
+				(rangeStartStringAttribute != null && rangeStartStringAttribute.trim().length() > 0) || (rangeEndStringAttribute != null && rangeEndStringAttribute.trim().length() > 0)) && 
+				((equalStringAttribute != null && equalStringAttribute.trim().length() > 0)))]]></param>
+			<message key="error.entity.attribute.invalidEqualStringAttribute" />
+		</field-validator>
+	</field>
+		
+	<!-- TEXT TYPE - END VALIDATION BLOCK -->
+	
+	<!-- NUMBER TYPE - START VALIDATION BLOCK -->
+	
+	<field name="rangeStartNumber">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(rangeStartNumber != null && (rangeStartNumberAttribute != null && rangeStartNumberAttribute.trim().length() > 0))]]></param>
+			<message key="error.entity.attribute.invalidRangeStartNumber" />
+		</field-validator>
+	</field>
+	
+	<field name="rangeEndNumber">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(rangeEndNumber != null && (rangeEndNumberAttribute != null && rangeEndNumberAttribute.trim().length() > 0))]]></param>
+			<message key="error.entity.attribute.invalidRangeEndNumber" />
+		</field-validator>
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(rangeEndNumber != null && rangeStartNumber != null && rangeEndNumber < rangeStartNumber)]]></param>
+			<message key="error.entity.attribute.invalidRangeNumber" />
+		</field-validator>
+	</field>
+	
+	<field name="equalNumber">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!((rangeStartNumber != null || rangeEndNumber != null || 
+				(rangeStartNumberAttribute != null && rangeStartNumberAttribute.trim().length() > 0) || (rangeEndNumberAttribute != null && rangeEndNumberAttribute.trim().length() > 0)) && 
+				(equalNumber != null))]]></param>
+			<message key="error.entity.attribute.invalidEqualNumber" />
+		</field-validator>
+	</field>
+	
+	<field name="equalNumberAttribute">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!((rangeStartNumber != null || rangeEndNumber != null || 
+				(rangeStartNumberAttribute != null && rangeStartNumberAttribute.trim().length() > 0) || (rangeEndNumberAttribute != null && rangeEndNumberAttribute.trim().length() > 0)) && 
+				((equalNumberAttribute != null && equalNumberAttribute.trim().length() > 0)))]]></param>
+			<message key="error.entity.attribute.invalidEqualNumberAttribute" />
+		</field-validator>
+	</field>
+	
+	<!-- NUMBER TYPE - END VALIDATION BLOCK -->
+	
+	
+	<!-- DATE TYPE - START VALIDATION BLOCK -->
+	
+	<field name="rangeStartDate">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(rangeStartDate != null && (rangeStartDateAttribute != null && rangeStartDateAttribute.trim().length() > 0))]]></param>
+			<message key="error.entity.attribute.invalidRangeStartDate" />
+		</field-validator>
+	</field>
+	
+	<field name="rangeEndDate">
+		<field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(rangeEndDate != null && (rangeEndDateAttribute != null && rangeEndDateAttribute.trim().length() > 0))]]></param>
+			<message key="error.entity.attribute.invalidRangeEndDate" />
+		</field-validator>
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(rangeEndDate != null && rangeStartDate != null && rangeEndDate.before(rangeStartDate))]]></param>
+			<message key="error.entity.attribute.invalidRangeDate" />
+		</field-validator>
+	</field>
+	
+	<field name="equalDate">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!((rangeStartDate != null || rangeEndDate != null || 
+				(rangeStartDateAttribute != null && rangeStartDateAttribute.trim().length() > 0) || (rangeEndDateAttribute != null && rangeEndDateAttribute.trim().length() > 0)) && 
+				(equalDate != null))]]></param>
+			<message key="error.entity.attribute.invalidEqualDate" />
+		</field-validator>
+	</field>
+	
+	<field name="equalDateAttribute">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!((rangeStartDate != null || rangeEndDate != null || 
+				(rangeStartDateAttribute != null && rangeStartDateAttribute.trim().length() > 0) || (rangeEndDateAttribute != null && rangeEndDateAttribute.trim().length() > 0)) && 
+				((equalDateAttribute != null && equalDateAttribute.trim().length() > 0)))]]></param>
+			<message key="error.entity.attribute.invalidEqualNumberDate" />
+		</field-validator>
+	</field>
+	
+	<!-- DATE TYPE - END VALIDATION BLOCK -->
+	
+</validators>

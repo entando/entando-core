@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="jacms_do/jacms/Entity" namespace="/do/jacms/Entity" extends="entando-default">
+		
+		<action name="viewEntityTypes" class="jacmsContentTypesAction">
+			<result name="input" type="chain">
+				<param name="namespace">/do/Entity</param>
+				<param name="actionName">viewManagers</param>
+			</result>
+			<result type="tiles">admin.jacms.entityManagement.viewEntityTypes</result>
+			<interceptor-ref name="entandoValidationStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="reloadContentsIndex" class="jacmsContentTypesAction" method="reloadContentsIndexes">
+			<result name="input" type="chain">
+				<param name="namespace">/do/jacms/Entity</param>
+				<param name="actionName">viewEntityTypes</param>
+			</result>
+			<result type="redirectAction">
+				<param name="namespace">/do/jacms/Entity</param>
+				<param name="actionName">viewEntityTypes</param>
+				<param name="entityManagerName">${entityManagerName}</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="addEntityType" class="jacmsContentTypeConfigAction" method="addEntityType">
+			<result name="wrongEntityManager" type="chain">
+				<param name="namespace">/do/Entity</param>
+				<param name="actionName">viewManagers</param>
+			</result>
+			<result type="tiles">admin.jacms.entityManagement.viewEntityType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="editEntityType" class="jacmsContentTypeConfigAction" method="editEntityType">
+			<result name="wrongEntityManager" type="chain">
+				<param name="namespace">/do/Entity</param>
+				<param name="actionName">viewManagers</param>
+			</result>
+			<result name="input" type="chain">
+				<param name="namespace">/do/jacms/Entity</param>
+				<param name="actionName">viewEntityTypes</param>
+			</result>
+			<result type="tiles">admin.jacms.entityManagement.viewEntityType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="entryEntityType" class="jacmsContentTypeConfigAction" >
+			<result type="tiles">admin.jacms.entityManagement.viewEntityType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="addAttribute" class="jacmsContentTypeConfigAction" method="addAttribute">
+			<result name="input" type="tiles">admin.jacms.entityManagement.viewEntityType</result>
+			<result type="redirectAction">
+				<param name="namespace">/do/Entity/Attribute</param>
+				<param name="actionName">addAttribute</param>
+				<param name="attributeTypeCode">${attributeTypeCode}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="editAttribute*" class="jacmsContentTypeConfigAction" method="editAttribute">
+			<result name="input" type="tiles">admin.jacms.entityManagement.viewEntityType</result>
+			<result type="redirectAction">
+				<param name="namespace">/do/Entity/Attribute</param>
+				<param name="actionName">editAttribute</param>
+				<param name="attributeName">${attributeName}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="moveAttribute*" class="jacmsContentTypeConfigAction" method="moveAttribute">
+			<result type="redirectActionWithAnchor">
+        		<param name="actionName">entryEntityType</param>
+        		<param name="anchorDest">fagiano_entityTypesList</param>
+        	</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="removeAttribute*" class="jacmsContentTypeConfigAction" method="removeAttribute">
+			<result type="redirectActionWithAnchor">
+        		<param name="actionName">entryEntityType</param>
+        		<param name="anchorDest">fagiano_entityTypesList</param>
+        	</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="saveEntityType" class="jacmsContentTypeConfigAction" method="saveEntityType">
+			<result name="input" type="tiles">admin.jacms.entityManagement.viewEntityType</result>
+			<result type="redirectAction">
+				<param name="namespace">/do/Entity</param>
+				<param name="actionName">initViewEntityTypes</param>
+				<param name="entityManagerName">${entityManagerName}</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    </package>
+    
+</struts>

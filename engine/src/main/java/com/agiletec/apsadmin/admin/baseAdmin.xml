@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <package name="core_do/BaseAdmin" namespace="/do/BaseAdmin" extends="entando-default">
+
+        <action name="settings" class="baseAdminAction">
+            <result type="tiles">admin.BaseAdmin.settings</result>
+                <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+        <action name="reloadConfig" class="baseAdminAction" method="reloadConfig">
+            <result type="tiles">admin.BaseAdmin.reloadConfigResult</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+        <action name="reloadEntitiesReferences" class="baseAdminAction" method="reloadEntitiesReferences">
+            <result type="tiles">admin.BaseAdmin.reloadEntitiesReferencesResult</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+        <action name="configSystemParams" class="baseAdminAction" method="configSystemParams">
+            <result type="tiles">admin.BaseAdmin.configSystemParams</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+        <action name="updateSystemParams" class="baseAdminAction" method="updateSystemParams">
+            <result type="tiles">admin.BaseAdmin.configSystemParams</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+    </package>
+
+    <package name="core_do/BaseAdmin/Ajax" namespace="/do/BaseAdmin/Ajax" extends="entando-default">
+
+        <action name="updateSystemParams" class="baseAdminAction" method="updateSystemParamsForAjax">
+            <result type="dispatcher">/WEB-INF/apsadmin/jsp/admin/ajax/updateSystemParams-result.jsp</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+    </package>
+
+</struts>

@@ -1,0 +1,428 @@
+<apiMethodDefinitions>
+    
+	<resource name="getServices">
+		<description>The services configured in this instance of Entando.</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" canSpawnOthers="false">
+			<description>Returns the services configured in this instance of Entando.</description>
+			<springBean name="ApiServiceInterface" method="getServices" />
+			<responseClass>org.entando.entando.aps.system.services.api.response.ServicesResponse</responseClass>
+			<parameters>
+				<parameter key="tag" required="false">
+					<description>The tag (or part thereof) of the services to return.</description>
+				</parameter>
+				<parameter key="myentando" required="false">
+					<description>Filters the services based on compatibility with MyEntando. Entries true or false</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+    
+	<resource name="getService">
+		<description>A service configured in this instance of Entando.</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" canSpawnOthers="false">
+			<description>Returns one of the services configured in this instance of Entando.</description>
+			<springBean name="ApiServiceInterface" method="getService" />
+			<parameters>
+				<parameter key="key" required="true">
+					<description>The unique key of the wanted service.</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+    
+	<resource name="myOAuthAccessToken">
+		<description>My OAuth Access Token</description>
+		<source>core</source>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" hidden="true">
+			<description>Delete his Access Token</description>
+			<springBean name="OAuthConsumerManager" method="deleteMyAccessToken" />
+			<parameters>
+				<parameter key="accessToken" required="true" />
+			</parameters>
+		</method>
+	</resource>
+    
+	<!--
+	<resource name="entandoEntity">
+		<source>core</source>
+		<method httpMethod="GET" active="true">
+			<description>Return an entity</description>
+			<springBean name="ApiEntityManagerInterface" method="getEntity" />
+			<parameters>
+				<parameter key="entityManagerName" required="true">
+					<description>The Entity Manager Bean Name</description>
+				</parameter>
+				<parameter key="id" required="true">
+					<description>The id of the entity to return</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Add an entity</description>
+			<springBean name="ApiEntityManagerInterface" method="addEntity" />
+			<expectedType>org.entando.entando.aps.system.common.entity.api.JAXBEntityType</expectedType>
+		</method>
+		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Update an entity</description>
+			<springBean name="ApiEntityManagerInterface" method="updateEntity" />
+			<expectedType>org.entando.entando.aps.system.common.entity.api.JAXBEntityType</expectedType>
+		</method>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Delete an entity</description>
+			<springBean name="ApiEntityManagerInterface" method="deleteEntity" />
+			<parameters>
+				<parameter key="entityManagerName" required="true">
+					<description>The Entity Manager Bean Name</description>
+				</parameter>
+				<parameter key="id" required="true">
+					<description>The code of the type to delete</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	-->
+    
+	<!-- *********** I18N Labels *********** -->
+	
+	<resource name="i18nlabel" namespace="core">
+		<description>The representation of the i18n label resource</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true">
+			<description>Return an i18n label</description>
+			<springBean name="ApiI18nLabelInterface" method="getLabel" />
+			<responseClass>org.entando.entando.aps.system.services.i18n.response.I18nLabelResponse</responseClass>
+			<parameters>
+				<parameter key="key" required="true">
+					<description>The Label key</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Add an i18n label</description>
+			<springBean name="ApiI18nLabelInterface" method="addLabel" />
+			<expectedType>org.entando.entando.aps.system.services.i18n.model.JAXBI18nLabel</expectedType>
+		</method>
+		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Update an i18n label</description>
+			<springBean name="ApiI18nLabelInterface" method="updateLabel" />
+			<expectedType>org.entando.entando.aps.system.services.i18n.model.JAXBI18nLabel</expectedType>
+		</method>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Delete an i18n label</description>
+			<springBean name="ApiI18nLabelInterface" method="deleteLabel" />
+			<parameters>
+				<parameter key="key" required="true">
+					<description>The Label key</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	
+	<!-- *********** User Profile *********** -->
+	
+	<resource name="myUserProfile" namespace="core">
+		<description>The User profile of the current user</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true">
+			<description>Return current user profile</description>
+			<springBean name="ApiMyProfileInterface" method="getMyUserProfile" />
+		</method>
+	</resource>
+    
+	<resource name="userProfileType" namespace="core">
+		<description>The representation of the user profile type</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true">
+			<description>Return an user profile type</description>
+			<springBean name="ApiUserProfileTypeInterface" method="getUserProfileType" />
+			<responseClass>org.entando.entando.aps.system.services.userprofile.api.response.UserProfileTypeResponse</responseClass>
+			<parameters>
+				<parameter key="typeCode" required="true">
+					<description>The code of the type to return</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Add an user profile type</description>
+			<springBean name="ApiUserProfileTypeInterface" method="addUserProfileType" />
+			<expectedType>org.entando.entando.aps.system.services.userprofile.api.model.JAXBUserProfileType</expectedType>
+		</method>
+		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Update an user profile type</description>
+			<springBean name="ApiUserProfileTypeInterface" method="updateUserProfileType" />
+			<expectedType>org.entando.entando.aps.system.services.userprofile.api.model.JAXBUserProfileType</expectedType>
+		</method>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Delete an user profile type</description>
+			<springBean name="ApiUserProfileTypeInterface" method="deleteUserProfileType" />
+			<parameters>
+				<parameter key="typeCode" required="true">
+					<description>The code of the type to delete</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+    
+	<resource name="userProfiles" namespace="core">
+		<description>The list of usernames, composed using the specified filters to user profiles.</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true">
+			<description>Returns a list of usernames, composed using the specified filters to user profiles.</description>
+			<springBean name="ApiUserProfileInterface" method="getUserProfiles" />
+			<responseClass>org.entando.entando.aps.system.services.api.model.StringListApiResponse</responseClass>
+			<parameters>
+				<parameter key="typeCode" required="true">
+					<description>The code of a user profile type.</description>
+				</parameter>
+				<parameter key="filters" required="false">
+					<description>The filters (Example: "(order=DESC;attributeFilter=true;key=Date)+(order=ASC;attributeFilter=true;key=Title)" )</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+    
+	<resource name="userProfile" namespace="core">
+		<description>The representation of the user profile</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true">
+			<description>Return a public user profile</description>
+			<springBean name="ApiUserProfileInterface" method="getUserProfile" />
+			<responseClass>org.entando.entando.aps.system.services.userprofile.api.response.UserProfileResponse</responseClass>
+			<parameters>
+				<parameter key="username" required="true">
+					<description>The username of the profile to return</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="editUserProfile">
+			<description>Add an user profile</description>
+			<springBean name="ApiUserProfileInterface" method="addUserProfile" />
+			<expectedType>org.entando.entando.aps.system.services.userprofile.api.model.JAXBUserProfile</expectedType>
+		</method>
+		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="editUserProfile">
+			<description>Update an user profile</description>
+			<springBean name="ApiUserProfileInterface" method="updateUserProfile" />
+			<expectedType>org.entando.entando.aps.system.services.userprofile.api.model.JAXBUserProfile</expectedType>
+		</method>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="editUserProfile">
+			<description>Delete an user profile</description>
+			<springBean name="ApiUserProfileInterface" method="deleteUserProfile" />
+			<parameters>
+				<parameter key="username" required="true">
+					<description>The username of the profile to delete</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	
+	<!-- *********** Gui Fragment *********** -->
+	
+	<resource name="guiFragment" namespace="core">
+		<description>The representation of the gui fragment</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true">
+			<description>Return a gui fragment by code</description>
+			<springBean name="ApiGuiFragmentInterface" method="getGuiFragment" />
+			<responseClass>org.entando.entando.aps.system.services.guifragment.api.GuiFragmentResponse</responseClass>
+			<parameters>
+				<parameter key="code" required="true">
+					<description>The code of the gui fragment to return</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Add a gui fragment</description>
+			<springBean name="ApiGuiFragmentInterface" method="addGuiFragment" />
+			<expectedType>org.entando.entando.aps.system.services.guifragment.api.JAXBGuiFragment</expectedType>
+		</method>
+		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Update a gui fragment</description>
+			<springBean name="ApiGuiFragmentInterface" method="updateGuiFragment" />
+			<expectedType>org.entando.entando.aps.system.services.guifragment.api.JAXBGuiFragment</expectedType>
+		</method>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Delete a gui fragment by code</description>
+			<springBean name="ApiGuiFragmentInterface" method="deleteGuiFragment" />
+			<parameters>
+				<parameter key="code" required="true">
+					<description>The code of the gui fragment to delete</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	
+	<resource name="guiFragments" namespace="core">
+		<description>Return the gui fragment list</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true" canSpawnOthers="true">
+			<description>Return the gui fragment list</description>
+			<springBean name="ApiGuiFragmentInterface" method="getGuiFragments" />
+			<responseClass>org.entando.entando.aps.system.services.api.model.LinkedListApiResponse</responseClass>
+			<parameters>
+				<parameter key="code" required="false">
+					<description>The code (or its part) of fragment codes to return</description>
+				</parameter>
+				<parameter key="widgettypecode" required="false">
+					<description>The widget type code (or its part) associated with fragment codes to return</description>
+				</parameter>
+				<parameter key="plugincode" required="false">
+					<description>The plugin code (or its part) associated with fragment codes to return</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	
+	<!-- *********** Page Model *********** -->
+	
+	<resource name="pageModel" namespace="core">
+		<description>The representation of the page model</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true">
+			<description>Return a page model by code</description>
+			<springBean name="ApiPageModelInterface" method="getPageModel" />
+			<responseClass>org.entando.entando.aps.system.services.pagemodel.api.PageModelResponse</responseClass>
+			<parameters>
+				<parameter key="code" required="true">
+					<description>The code of the page model to return</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Add a page model</description>
+			<springBean name="ApiPageModelInterface" method="addPageModel" />
+			<expectedType>com.agiletec.aps.system.services.pagemodel.PageModel</expectedType>
+		</method>
+		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Update a page model</description>
+			<springBean name="ApiPageModelInterface" method="updatePageModel" />
+			<expectedType>com.agiletec.aps.system.services.pagemodel.PageModel</expectedType>
+		</method>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Delete a page model by code</description>
+			<springBean name="ApiPageModelInterface" method="deletePageModel" />
+			<parameters>
+				<parameter key="code" required="true">
+					<description>The code of the page model to delete</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	
+	<resource name="pageModels" namespace="core">
+		<description>Return the page model list</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true" canSpawnOthers="true">
+			<description>Return the page model list</description>
+			<springBean name="ApiPageModelInterface" method="getPageModels" />
+			<responseClass>org.entando.entando.aps.system.services.api.model.LinkedListApiResponse</responseClass>
+		</method>
+	</resource>
+	
+	<!-- *********** Widget Type *********** -->
+	
+	<resource name="widgetType" namespace="core">
+		<description>The representation of the widget type</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true">
+			<description>Return a widget type by code</description>
+			<springBean name="ApiWidgetTypeInterface" method="getWidgetType" />
+			<responseClass>org.entando.entando.aps.system.services.widgettype.api.WidgetTypeResponse</responseClass>
+			<parameters>
+				<parameter key="code" required="true">
+					<description>The code of the page model to return</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Add a widget type</description>
+			<springBean name="ApiWidgetTypeInterface" method="addWidgetType" />
+			<expectedType>org.entando.entando.aps.system.services.widgettype.api.JAXBWidgetType</expectedType>
+		</method>
+		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Update a widget type</description>
+			<springBean name="ApiWidgetTypeInterface" method="updateWidgetType" />
+			<expectedType>org.entando.entando.aps.system.services.widgettype.api.JAXBWidgetType</expectedType>
+		</method>
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Delete a widget type by code</description>
+			<springBean name="ApiWidgetTypeInterface" method="deleteWidgetType" />
+			<parameters>
+				<parameter key="code" required="true">
+					<description>The code of the widget type to delete</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	
+	<resource name="widgetTypes" namespace="core">
+		<description>Return the widget type list</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true" canSpawnOthers="true">
+			<description>Return the widget type list</description>
+			<springBean name="ApiWidgetTypeInterface" method="getWidgetTypes" />
+			<responseClass>org.entando.entando.aps.system.services.api.model.LinkedListApiResponse</responseClass>
+		</method>
+	</resource>
+
+
+	<!-- *********** FileBrowser *********** -->
+
+	<resource name="storage" namespace="core">
+		<description>Browse the storage</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Return the widget type list</description>
+			<springBean name="LocalStorageManagerInterface" method="getListDirectory" />
+			<responseClass>org.entando.entando.aps.system.services.api.model.LinkedListApiResponse</responseClass>
+			<parameters>
+				<parameter key="path" required="false">
+					<description>root folder to browse. Can be null</description>
+				</parameter>
+				<parameter key="protected" required="true">
+					<description>defines the workspace. When 'true' points to the 'protected' area.</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+
+	<resource name="storageResource" namespace="core">
+		<description>Handle the storage items</description>
+		<source>core</source>
+		<method httpMethod="GET" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Return the widget type list</description>
+			<springBean name="LocalStorageManagerInterface" method="getFile" />
+			<responseClass>org.entando.entando.aps.system.services.storage.api.BasicFileAttributeViewApiResponse</responseClass>
+			<parameters>
+				<parameter key="path" required="true">
+					<description>Path to the object</description>
+				</parameter>
+				<parameter key="protected" required="true">
+					<description>defines the workspace. When 'true' points to the 'protected' area.</description>
+				</parameter>
+			</parameters>
+		</method>
+		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>Add a storage resource</description>
+			<springBean name="LocalStorageManagerInterface" method="addResource" />
+			<expectedType>org.entando.entando.aps.system.services.storage.api.JAXBStorageResource</expectedType>
+		</method>	
+		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+			<description>delete a storage resource</description>
+			<springBean name="LocalStorageManagerInterface" method="deleteResource" />
+			<parameters>
+				<parameter key="path" required="true">
+					<description>Path to the object</description>
+				</parameter>
+				<parameter key="protected" required="true">
+					<description>by default is false</description>
+				</parameter>
+				<parameter key="recursive" required="false">
+					<description>When 'true', if the resource to delete is a folder, all the nested resources (if present) will be deleted. By default is 'false'.</description>
+				</parameter>
+			</parameters>
+		</method>
+	</resource>
+	
+</apiMethodDefinitions>

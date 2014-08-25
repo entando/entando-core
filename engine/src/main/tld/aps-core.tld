@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<description><![CDATA[Aps Core Tag Library]]></description>
+	<display-name>Aps Core Tag Library</display-name>
+	<tlib-version>2.2</tlib-version>
+	<short-name>wp</short-name>
+	<uri>/aps-core</uri>
+	
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within widgets -->
+		<description><![CDATA[Build the URL to call a jsp or a functionality of a servlet defined within the system.<br/>
+			This tag can use the ParameterTag sub-tag to add url parameters.]]></description>
+		<name>action</name>
+		<tag-class>com.agiletec.aps.tags.ActionURLTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[The relative path of jsp or servlet to invoke, relative to the context of web-application (es.: /do/myAction or /WEB-INF/jsp/myJSP.jsp).]]></description>
+			<name>path</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page-scoped variable where to place the URL.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Return the list of the system categories on SelectItem objects.]]></description>
+		<name>categories</name>
+		<tag-class>com.agiletec.aps.tags.CategoriesTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The style of the single select item. Currently it can be 'default' (single title node),
+				'full' (title with all parents) or 'prettyFull' (title with all parents in form of '..').
+				The default when none is given is 'default'.]]></description>
+			<name>titleStyle</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[the separator beetwen the titles when 'titleStyle' is 'full' or 'prettyFull'.]]></description>
+			<name>fullTitleSeparator</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page-scoped variable where to place the list of categories.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The root of the categories to show. The default is the system root categories]]></description>
+			<name>root</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within pagemodels -->
+		<description><![CDATA[This sub-tag verifies the availability of the information to display.<br/>
+			This sub-tag can be used <b>only</b> in a page model, in conjunction with 'outputHeadInfo'.]]></description>
+		<name>checkHeadInfoOuputter</name>
+		<tag-class>com.agiletec.aps.tags.CheckHeadInfoOutputterTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Specifies the type of information to analyse.]]></description>
+			<name>type</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<description><![CDATA[<b>DEPRECATED</b>; Since Entando 4.1.0, moved function into executor service.
+			DO NOTHING.]]></description>
+		<name>contentNegotiation</name>
+		<tag-class>com.agiletec.aps.tags.ContentNegotiationTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The wanted Mime-Type.]]></description>
+			<name>mimeType</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The wanted charset.]]></description>
+			<name>charset</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<description><![CDATA[Extension of the ResourceURL tag. It returns the URL of the css files.]]></description>
+		<name>cssURL</name>
+		<tag-class>com.agiletec.aps.tags.CssURLTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+	<tag>
+		<description><![CDATA[Returns the requested information held by the current page bean.]]></description>
+		<name>currentPage</name>
+		<tag-class>com.agiletec.aps.tags.CurrentPageTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The wanted parameter: actually can be either "title", "owner" (group), "code", "hasChild" or "childOf" (with attribute "targetPage").<br/>
+				The default when none is given is "title".]]></description>
+			<name>param</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Code of the language to use for the page information being returned.]]></description>
+			<name>langCode</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page context variable where the informations
+				are placed. Please note that the in this case the special
+				characters <b>will not</b> be escaped.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Target page when "param" is "childOf".]]></description>
+			<name>targetPage</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Decides whether to escape the special characters in the information retrieved or not.
+				Value admitted (true|false), the default is true.]]></description>
+			<name>escapeXml</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns informations about the widget where the tag resides.
+			To obtain information about a widget placed in a frame other than the current, use the "frame" attribute.]]>
+		</description>
+		<name>currentWidget</name>
+		<tag-class>com.agiletec.aps.tags.CurrentWidgetTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The requested parameter. It can assume one of the following values:<br/>
+				- "code" returns the code of the associated widget type (empty if none associated)<br/>
+				- "title" returns the name of the associated widget type (empty if none associated)<br/>
+				- "config" returns the value of the configuration parameter declared in the "configParam" attribute<br/>
+				The default is "title".]]></description>
+			<name>param</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the configuration parameter request. This attribute is mandatory when
+				the attribute "param" is set to "config".]]></description>
+			<name>configParam</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page context variable where the requested information is pushed.
+				In this case the special characters <b>will not</b> be escaped.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Id of the frame hosting the widget with the desired informations.]]></description>
+			<name>frame</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Toggles the escape of the special characters. Admitted value are (true|false), the
+				default is "true".]]></description>
+			<name>escapeXml</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[<b>DEPRECATED</b>; Since Entando 4.0.0, use "currentWidget" instead.<br />Returns informations about the widget where the tag resides.
+			To obtain information about a widget placed in a frame other than the current, use the "frame" attribute.]]>
+		</description>
+		<name>currentShowlet</name>
+		<tag-class>com.agiletec.aps.tags.CurrentWidgetTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The requested parameter. It can assume one of the following values:<br/>
+				- "code" returns the code of the associated widget type (empty if none associated)<br/>
+				- "title" returns the name of the associated widget type (empty if none associated)<br/>
+				- "config" returns the value of the configuration parameter declared in the "configParam" attribute<br/>
+				The default is "title".]]></description>
+			<name>param</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the configuration parameter request. This attribute is mandatory when
+				the attribute "param" is set to "config".]]></description>
+			<name>configParam</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page context variable where the requested information is pushed.
+				In this case the special characters <b>will not</b> be escaped.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Id of the frame hosting the widget with the desired informations.]]></description>
+			<name>frame</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Toggles the escape of the special characters. Admitted value are (true|false), the
+				default is "true".]]></description>
+			<name>escapeXml</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<description>
+			<![CDATA[Print a gui fragment by the given code.]]>
+		</description>
+		<name>fragment</name>
+		<tag-class>org.entando.entando.aps.tags.GuiFragmentTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The code of the fragment to return.]]></description>
+			<name>code</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page context variable where the requested information is pushed.
+				In this case the special characters <b>will not</b> be escaped.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Toggles the escape of the special characters. Admitted value are (true|false), the
+				default is "true".]]></description>
+			<name>escapeXml</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<description><![CDATA[Add a parameter into the Freemarker's TemplateModel Map.]]></description>
+		<name>freemarkerTemplateParameter</name>
+		<tag-class>org.entando.entando.aps.tags.FreemarkerTemplateParameterTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Name of the variable where the requested information is pushed.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the variable of the page context where extract the information.]]></description>
+			<name>valueName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Whether to remove the parameter on end of Tag. 
+				Possible entries (true|false). Default value: false.]]></description>
+			<name>removeOnEndTag</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within widgets -->
+		<description><![CDATA[Declares the information to insert in the header of the HTML page.
+			The information can be passed as an attribute or, in an indirect manner,
+			through a variable of the page context.<br/>
+			It is mandatory to specify the type of the information.]]></description>
+		<name>headInfo</name>
+		<tag-class>com.agiletec.aps.tags.HeadInfoTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Declaration of the information type. Currently only "CSS" is currently supported.]]></description>
+			<name>type</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Information to declare. This is an alternative of the "var" attribute.]]></description>
+			<name>info</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the variable holding the information to declare.
+				This attribute is the alternative of the "info" one.
+				This variable can be used for those types of information that cannot be held by an attribute.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Return the string associated to the given key in the specified language.
+			This string is either returned (and rendered) or can be optionally placed
+			in a page context variable.]]></description>
+		<name>i18n</name>
+		<tag-class>com.agiletec.aps.tags.I18nTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Key of the label to return.]]></description>
+			<name>key</name>
+			<required>yes</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Code of the language requested for the lable.]]></description>
+			<name>lang</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the variable (page scope) where to store the wanted information.
+				In this case the special characters <b>will not</b> be escaped.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Toggles the escape of the special characters of the returned label.
+				Admitted values (true|false), the default is true.]]></description>
+			<name>escapeXml</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Toggles the visibility of the elements contained in its body, depending on user permissions.]]></description>
+		<name>ifauthorized</name>
+		<tag-class>com.agiletec.aps.tags.CheckPermissionTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[The code of the permission required.]]></description>
+			<name>permission</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the group membership required.]]></description>
+			<name>groupName</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The name of the (boolean) page context parameter where the result of the authorisation check is placed.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Extension of the ResourceURL tag. It returns the URL of the images to display
+			as static content outside the cms.]]></description>
+		<name>imgURL</name>
+		<tag-class>com.agiletec.aps.tags.ImgURLTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+	<tag>
+		<description><![CDATA[Returns the information of the desired system parameter.]]></description>
+		<name>info</name>
+		<tag-class>com.agiletec.aps.tags.InfoTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>
+				<![CDATA[Key of the desired system parameter, admitted values are:<br/>
+				"startLang" returns the code of start language of web browsing<br/>
+				"defaultLang" returns the code of default language<br/>
+				"currentLang" returns the code of current language<br/>
+				"langs" returns the list of the languages defined in the system<br/>
+				"systemParam" returns the value of the system param specified in the "paramName" attribute.]]>
+			</description>
+			<name>key</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the variable where to store the retrieved information (page scope).
+				In this case the special characters <b>will not</b> be escaped.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the wanted system parameter; it is mandatory if the "key" attribute is "systemParam", otherwise it is ignored.]]></description>
+			<name>paramName</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Toggles the escape of the special characters in the information returned.
+				Admitted values are (true|false), the former being the default value.]]></description>
+			<name>escapeXml</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within widgets -->
+		<description><![CDATA[Tag for the "Internal Servlet" functionality.<br/>
+			Publishes a function served by an internal Servlet;
+			the servlet is invoked from a path specified in the attribute "actionPath"
+			or by the widget parameter sharing the same name.<br/>
+			This tag can be used <b>only</b> in a widgets.]]></description>
+		<name>internalServlet</name>
+		<tag-class>com.agiletec.aps.tags.InternalServletTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The init action path.]]></description>
+			<name>actionPath</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Whether to execute only the given action path. 
+				Possible entries (true|false). Default value: false.]]></description>
+			<name>staticAction</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within widgets -->
+		<description><![CDATA[Tag for the "External Framework" widget.
+			<br/><b>DEPRECATED</b>; use "internalServlet" instead.]]></description>
+		<name>externalFramework</name>
+		<tag-class>com.agiletec.aps.tags.ExternalFrameworkTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+	<tag>
+		<description><![CDATA[Generates through successive iterations the so called "navigation" list.<br/>
+			For every target/page being iterated (inserted in the page context) are made
+			available the page code, the title (in the current language) and the link.
+			Is it also possible to check whether the target page is empty -that is, with no
+			configured positions- or not.]]></description>
+		<name>nav</name>
+		<tag-class>com.agiletec.aps.tags.NavigatorTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Declares the set of the pages to generate.]]></description>
+			<name>spec</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page context variable where the data of target being iterated are made available.]]></description>
+			<name>var</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within pagemodels -->
+		<description><![CDATA[Iterates over various information in HTML header displaying them;
+			this tag works in conjunction with other specific sub-tags.<br/>
+			Please note that the body can contain <b>only</b> a sub-tag, or information, at once.<br/>
+			This tag must be used <b>only</b> in a page model.]]></description>
+		<name>outputHeadInfo</name>
+		<tag-class>com.agiletec.aps.tags.HeadInfoOutputterTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Specifies the type of information to return, in accordance with the sub-tag to use.]]></description>
+			<name>type</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Returns the information of the specified page.
+			This tag can use the sub-tag "ParameterTag" to add url parameters
+			if the info attribute is set to 'url'.]]></description>
+		<name>pageInfo</name>
+		<tag-class>com.agiletec.aps.tags.PageInfoTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[The code of the page.]]></description>
+			<name>pageCode</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Code of required page parameter.
+				Possible entries: "code" (default value) , "title", "owner" (group), "url", "hasChild" or "childOf" (with attribute "targetPage").]]></description>
+			<name>info</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Code of the language to use for the returned information.]]></description>
+			<name>langCode</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name used to reference the value pushed into the pageContext.
+				In this case, the system <b>will not</b> escape the special characters in the value entered in pageContext.]]></description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Target page when "param" is "childOf".]]></description>
+			<name>targetPage</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Whether to escape HTML. Possible entries (true|false). Default value: true.]]></description>
+			<name>escapeXml</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[List pager.]]></description>
+		<name>pager</name>
+		<tag-class>com.agiletec.aps.tags.PagerTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[The maximum value for each object group.]]></description>
+			<name>max</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+		<description><![CDATA[Name of the list as found in the request.]]></description>
+			<name>listName</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the object currently iterated. The following methods are exposed:&nbsp;
+				getMax, getPrevItem, getNextItem, getCurrItem, getSize, getBegin, getEnd, getMaxItem, getPagerId.]]></description>
+			<name>objectName</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Sets the ID of the pager itself, it has to be used when two or more pagers exist in the same page.<br/>
+				This attributes overrides "pagerIdFromFrame".]]></description>
+			<name>pagerId</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Sets the ID of the pager (mandatory when two or more pagers share the same page) based upon the frame where the tag is placed.
+				Admitted values are (true|false), the latter being the default.<br/>
+				Please note that the "pagerId" attribute takes precedence over this one.]]></description>
+			<name>pagerIdFromFrame</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Toggles the pager in advanced mode. Admitted values are (true|false).
+			the advanced mode of the tag is used when the list to iterate over is huge.]]></description>
+			<name>advanced</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[This attribute is considered <b>only</b> when the pager is in advanced mode.
+			This is the numeric value of the single step increment (or decrement) when iterating over the list]]></description>
+			<name>offset</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[This tag can be used to parameterise other tags.<br/>
+			The parameter value can be added through the 'value' attribute or the body tag.
+			When you declare the param tag, the value can be defined in either
+			a value attribute or as text between the start and the ending of the tag.]]></description>
+		<name>parameter</name>
+		<tag-class>com.agiletec.aps.tags.ParameterTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[The name of the parameter.]]></description>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The value of the parameter.]]></description>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within pagemodels -->
+		<description><![CDATA[Returns the information to display.<br/>
+			This sub-tag must be used <b>only</b> in a page model, in conjunction with 'outputHeadInfo'.]]></description>
+		<name>printHeadInfo</name>
+		<tag-class>com.agiletec.aps.tags.HeadInfoPrinterTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+	<tag>
+		<description><![CDATA[Returns URL of the resources.]]></description>
+		<name>resourceURL</name>
+		<tag-class>com.agiletec.aps.tags.ResourceURLTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Declares the resource root. If not otherwise specified, the value of SystemConstants.PAR_RESOURCES_ROOT_URL is used.]]></description>
+			<name>root</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Declares a specific directory for the desired resources. Unless specified,
+				the value "" (empty string) is used in the generation of the URL.]]></description>
+			<name>folder</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag><!--  SPECIAL SYSTEM TAG // Use only within pagemodels -->
+		<description><![CDATA[Defines the position of inclusion of a widget.<br/>
+		This tag can be used <b>only</b> in a page model.]]></description>
+		<name>show</name>
+		<tag-class>com.agiletec.aps.tags.WidgetTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[The positional number of the frame, starting from 0.]]></description>
+			<name>frame</name>
+			<required>yes</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Generates the complete URL of a portal page.<br/>
+			The URL returned is either returned (and rendered) or placed in the given variable.<br/>
+			To insert parameters in the query string the sub-tag "ParameterTag" is provided.]]></description>
+		<name>url</name>
+		<tag-class>com.agiletec.aps.tags.URLTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Code of the destination page. The default is the current page.]]></description>
+			<name>page</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Code of the language to use in the destination page.]]></description>
+			<name>lang</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the page-scoped variable where to place the URL.]]></description>
+			<name>var</name>
+			<required>no</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Repeats in the URL all the parameters of the actual request.]]></description>
+			<name>paramRepeat</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Sets the list of parameter names (comma separated) to exclude from repeating. 
+				By default, this attribute excludes only the password parameter of the login form. 
+				Used only when paramRepeat="true".]]></description>
+			<name>excludeParameters</name>
+			<required>no</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[This is the sub-tag of the "url" tag.<br/>
+			Adds a parameter in the URL query string generated.
+			<br/><b>DEPRECATED</b>; use ParameterTag instead
+		.]]></description>
+		<name>urlPar</name>
+		<tag-class>com.agiletec.aps.tags.URLParTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Name of the parameter.]]></description>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+    	<description>
+			Search and return the page (or the list of pages) with the given widget type. When "filterParamName" and "filterParamValue" attributes are present, the returned list will be filtered by a specific widget configuration.
+    	</description>
+    	<name>pageWithWidget</name>
+    	<tag-class>com.agiletec.aps.tags.PageWithWidgetTag</tag-class>
+    	<body-content>empty</body-content>
+    	<attribute>
+      		<description></description>
+      		<name>var</name>
+      		<required>true</required>
+      		<rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+      		<description>The code of the widget to search</description>
+      		<name>widgetTypeCode</name>
+      		<required>true</required>
+      		<rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+      		<description>Optional widget config param name</description>
+      		<name>filterParamName</name>
+      		<required>false</required>
+      		<rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+      		<description>Optional widget config param value</description>
+      		<name>filterParamValue</name>
+      		<required>false</required>
+      		<rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+      		<description>Optional, dafault false. When true the result is a list of pages, when false the returned page is the first occurence</description>
+      		<name>listResult</name>
+      		<required>false</required>
+      		<rtexprvalue>false</rtexprvalue>
+    	</attribute>
+    </tag>
+	<tag>
+		<description>
+			<![CDATA[Current User Profile tag. Return a attribute value of the current user profile.]]>
+		</description>
+		<name>currentUserProfileAttribute</name>
+		<tag-class>org.entando.entando.aps.tags.CurrentUserProfileAttributeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[the name of the attribute from which extract the value.]]>
+			</description>
+			<name>attributeName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[the name of the attribute role from which extract the value.]]>
+			</description>
+			<name>attributeRoleName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Name used to reference the value pushed into the pageContext.]]>
+			</description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Decides whether to escape the special characters in the information retrieved or not.
+				Value admitted (true|false), the default is true.]]></description>
+			<name>escapeXml</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[User Profile tag. Return a attribute value from the profile givea an username.]]>
+		</description>
+		<name>userProfileAttribute</name>
+		<tag-class>org.entando.entando.aps.tags.UserProfileAttributeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description>
+				<![CDATA[the username]]>
+			</description>
+			<name>username</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[the name of the attribute from which extract the value.]]>
+			</description>
+			<name>attributeName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[the name of the attribute role from which extract the value.]]>
+			</description>
+			<name>attributeRoleName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				<![CDATA[Name used to reference the value pushed into the pageContext.]]>
+			</description>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Decides whether to escape the special characters in the information retrieved or not.
+				Value admitted (true|false), the default is true.]]></description>
+			<name>escapeXml</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+</taglib>

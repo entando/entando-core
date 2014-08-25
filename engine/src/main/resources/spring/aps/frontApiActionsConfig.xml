@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+    
+    <bean id="frontApiResourceFinderAction" scope="prototype" 
+            class="org.entando.entando.aps.internalservlet.api.ApiResourceFinderAction" parent="abstractBaseAction">
+        <property name="apiCatalogManager" ref="ApiCatalogManager" />
+    </bean>
+    
+    <bean id="frontApiResourceAction" scope="prototype" 
+            class="org.entando.entando.aps.internalservlet.api.ApiResourceAction" parent="abstractBaseAction">
+        <property name="apiCatalogManager" ref="ApiCatalogManager" />
+        <property name="roleManager" ref="RoleManager" />
+		<property name="configManager" ref="BaseConfigManager"/>
+    </bean>
+	
+    <bean id="frontApiServiceFinderAction" scope="prototype"
+			class="org.entando.entando.aps.internalservlet.api.ApiServiceFinderAction" parent="apiServiceFinderAction">
+    </bean>
+    
+    <bean id="frontApiServiceAction" scope="prototype"
+			class="org.entando.entando.aps.internalservlet.api.ApiServiceAction" parent="apiServiceAction">
+		<property name="configManager" ref="BaseConfigManager"/>
+    </bean>
+    
+</beans>

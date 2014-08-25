@@ -1,0 +1,118 @@
+<shortcut-def>
+	<menusections>
+		<!-- sono sempre possibili casi di acronimi -->
+		<menusection id="cms">
+			<description key="jacms.menuSection.shortDesc" >C.M.S</description>
+			<longdesc key="jacms.menuSection.longDesc">Content Management System</longdesc>
+		</menusection>
+	</menusections>
+	<shortcuts>
+		<!-- new content at the moment is deprecated
+		<shortcut id="jacms.content.new" requiredPermission="editContents" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.content.new.shortDesc" >New Content</description>
+			<longdesc key="jacms.shortcut.content.new.longDesc">
+				<![CDATA[Insert new Contents into the Content archive (also known as "Content List").]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/Content</param>
+				<param name="actionName">new</param>
+			</url>
+		</shortcut>
+		-->
+		<shortcut id="jacms.content.list" requiredPermission="editContents" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.content.list.shortDesc" >Content List</description>
+			<longdesc key="jacms.shortcut.content.list.longDesc">
+				<![CDATA[Manage Contents: you can edit, approve, suspend, delete the Contents.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/Content</param>
+				<param name="actionName">list</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.content.reload" requiredPermission="superuser" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.content.reload.shortDesc" >Content Reload</description>
+			<longdesc key="jacms.shortcut.content.reload.longDesc">
+				<![CDATA[Reload the Contents.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/Content/Admin</param>
+				<param name="actionName">openIndexProspect</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.resources.image.new" requiredPermission="manageResources" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.resources.newImage.shortDesc" >New Image</description>
+			<longdesc key="jacms.shortcut.resources.newImage.longDesc">
+				<![CDATA[Insert new Image into Image archive.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/Resource</param>
+				<param name="actionName">new</param>
+				<param name="resourceTypeCode">Image</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.resources.image.list" requiredPermission="manageResources" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.resources.listImage.shortDesc" >Image List</description>
+			<longdesc key="jacms.shortcut.resources.listImage.longDesc">
+				<![CDATA[Manage Images: you can insert, modify and delete Images.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/Resource</param>
+				<param name="actionName">list</param>
+				<param name="resourceTypeCode">Image</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.resources.attach.new" requiredPermission="manageResources" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.resources.newAttach.shortDesc" >New Attach</description>
+			<longdesc key="jacms.shortcut.resources.newAttach.longDesc">
+				<![CDATA[Insert new Attach into Attach archive.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/Resource</param>
+				<param name="actionName">new</param>
+				<param name="resourceTypeCode">Attach</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.resources.Attach.list" requiredPermission="manageResources" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.resources.listAttach.shortDesc" >Attach List</description>
+			<longdesc key="jacms.shortcut.resources.listAttach.longDesc">
+				<![CDATA[Manage Attachs: you can insert, modify and delete Attachs.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/Resource</param>
+				<param name="actionName">list</param>
+				<param name="resourceTypeCode">Attach</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.contentModel.new" requiredPermission="superuser" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.contentModel.new.shortDesc" >New Content Model</description>
+			<longdesc key="jacms.shortcut.contentModel.new.longDesc">
+				<![CDATA[Insert a new Content Model.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/ContentModel</param>
+				<param name="actionName">new</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.contentModel.list" requiredPermission="superuser" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.contentModel.list.shortDesc" >CNT Model List</description>
+			<longdesc key="jacms.shortcut.contentModel.list.longDesc">
+				<![CDATA[Manage ContentModels: you can edit or delete the ContentModels.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/jacms/ContentModel</param>
+				<param name="actionName">list</param>
+			</url>
+		</shortcut>
+		<shortcut id="jacms.contentType" requiredPermission="superuser" menusection="cms" source="jacms">
+			<description key="jacms.shortcut.contentType.shortDesc" >Content Types</description>
+			<longdesc key="jacms.shortcut.contentType.longDesc">
+				<![CDATA[Manage ContentTypes: you can edit or delete the Content Types.]]>
+			</longdesc>
+			<url>
+				<param name="namespace">/do/Entity</param>
+				<param name="actionName">initViewEntityTypes</param>
+				<param name="entityManagerName">jacmsContentManager</param>
+			</url>
+		</shortcut>
+	</shortcuts>
+</shortcut-def>

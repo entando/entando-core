@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="abstractPortalAction" abstract="true" class="com.agiletec.apsadmin.portal.AbstractPortalAction" parent="abstractBaseAction" >
+		<property name="groupManager" ref="GroupManager" />
+		<property name="pageManager" ref="PageManager" />
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+		<property name="apiCatalogManager" ref="ApiCatalogManager" />
+		<property name="pageActionHelper" ref="pageActionHelper" />
+		<property name="stockWidgetCodes"><value>${widgets.stock}</value></property>
+		<property name="internalServletWidgetCode"><value>${widgets.internalServlet}</value></property>
+	</bean>
+	
+	<bean id="pageActionHelper" class="com.agiletec.apsadmin.portal.helper.PageActionHelper" parent="abstractBaseActionHelper">
+		<property name="pageManager" ref="PageManager" />
+		<property name="configService" ref="BaseConfigManager" />
+	</bean>
+	
+	<bean id="pageTreeAction" scope="prototype" 
+			class="com.agiletec.apsadmin.portal.PageTreeAction" parent="abstractBaseAction">
+		<property name="treeHelper" ref="pageActionHelper" />
+		<property name="pageManager" ref="PageManager" />
+	</bean>
+	
+	<bean id="pageFinderAction" scope="prototype"
+			class="com.agiletec.apsadmin.portal.PageFinderAction" parent="abstractPortalAction">
+	</bean>
+	
+	<bean id="pageAction" scope="prototype" 
+			class="com.agiletec.apsadmin.portal.PageAction" parent="abstractPortalAction">
+		<property name="pageModelManager" ref="PageModelManager" />
+		<property name="pageActionHelper" ref="pageActionHelper" />
+		<property name="allowedMimeTypesCSV"><value>${page.mimeType.allowedValues}</value></property>
+		<property name="allowedCharsetsCSV"><value>${page.charset.allowedValues}</value></property>
+	</bean>
+	
+	<bean id="pageConfigAction" scope="prototype" 
+			class="com.agiletec.apsadmin.portal.PageConfigAction" parent="abstractPortalAction">
+	</bean>
+	
+	<bean id="widgetsViewerAction" scope="prototype" 
+			class="com.agiletec.apsadmin.portal.WidgetsViewerAction" parent="abstractPortalAction">
+	</bean>
+	
+	<bean id="widgetTypeAction" scope="prototype" 
+			class="com.agiletec.apsadmin.portal.WidgetTypeAction" parent="abstractPortalAction">
+		<property name="guiFragmentManager" ref="GuiFragmentManager" />
+	</bean>
+	
+	<bean id="guiFragmentFinderAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.portal.guifragment.GuiFragmentFinderAction" 
+			parent="abstractPortalAction" >
+		<property name="guiFragmentManager" ref="GuiFragmentManager" />
+	</bean>
+	
+	<bean id="guiFragmentAction" scope="prototype" 
+			class="org.entando.entando.apsadmin.portal.guifragment.GuiFragmentAction" 
+			parent="abstractBaseAction" >
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+		<property name="guiFragmentManager" ref="GuiFragmentManager" />
+		<property name="actionHelper" ref="guiFragmentActionHelper" />
+	</bean>
+	
+	<bean id="guiFragmentActionHelper" class="org.entando.entando.apsadmin.portal.guifragment.helper.GuiFragmentActionHelper" 
+		parent="abstractBaseActionHelper">
+	</bean>
+	
+	
+</beans>

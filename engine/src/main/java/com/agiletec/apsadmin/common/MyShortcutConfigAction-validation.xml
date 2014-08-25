@@ -1,0 +1,61 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+    
+    <field name="strutsAction">
+        <field-validator type="required" short-circuit="true">
+        	<message key="requiredstring" />
+        </field-validator>
+         <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[(strutsAction == 1 || strutsAction == 2 || strutsAction == 4)]]></param>
+			<message key="requiredstring" />
+		</field-validator>
+    </field>
+    
+    <field name="position">
+    	<field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(position < 0 || position >= userShortcutsMaxNumber)]]></param>
+        	<message key="error.myShortcut.wrongPosition" />
+		</field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(strutsAction == 1 && null == position)]]></param>
+            <message key="requiredstring"/>
+        </field-validator>
+    </field>
+    
+    <field name="shortcutCode">
+        <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(strutsAction == 1 && (null == shortcutCode || null == getShortcut(shortcutCode)))]]></param>
+        	<message key="requiredstring" />
+		</field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(strutsAction == 1 && !isShortcutAllowed(shortcutCode))]]></param>
+        	<message key="error.myShortcut.shortcutNotAllowed" />
+		</field-validator>
+    </field>
+    
+    <field name="positionTarget">
+        <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(positionTarget < 0 || positionTarget >= userShortcutsMaxNumber)]]></param>
+        	<message key="error.myShortcut.wrongPositionTarget" />
+		</field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(strutsAction == 2 && null == positionTarget)]]></param>
+        	<message key="requiredstring" />
+        </field-validator>
+    </field>
+    
+    <field name="positionDest">
+        <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(positionDest < 0 || positionDest >= userShortcutsMaxNumber)]]></param>
+        	<message key="error.myShortcut.wrongPositionDest" />
+		</field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+        	<param name="expression"><![CDATA[!(strutsAction == 2 && null == positionDest)]]></param>
+        	<message key="requiredstring" />
+        </field-validator>
+    </field>
+    
+</validators>

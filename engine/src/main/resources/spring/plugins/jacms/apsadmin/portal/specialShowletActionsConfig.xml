@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="jacmsContentViewerWidgetAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.viewer.ContentViewerWidgetAction" parent="simpleWidgetAction" >
+		<property name="contentManager" ref="jacmsContentManager" />
+		<property name="contentModelManager" ref="jacmsContentModelManager" />
+	</bean>
+	
+	<bean id="jacmsContentFinderViewerWidgetAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.viewer.ContentFinderViewerAction" parent="abstractBaseAction" >
+		<property name="contentManager" ref="jacmsContentManager"/>
+		<property name="groupManager" ref="GroupManager"/>
+		<property name="entityActionHelper" ref="jacmsContentActionHelper"/>
+		<property name="pageManager" ref="PageManager" />
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+	</bean>
+	
+	<bean id="jacmsContentListViewerWidgetAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.ContentListViewerWidgetAction" parent="simpleWidgetAction" >
+		<property name="contentManager" ref="jacmsContentManager" />
+		<property name="contentModelManager" ref="jacmsContentModelManager" />
+		<property name="categoryManager" ref="CategoryManager" />
+	</bean>
+	
+	<bean id="jacmsContentListFilterAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.BaseFilterAction" parent="simpleWidgetAction" >
+		<property name="contentManager" ref="jacmsContentManager" />
+	</bean>
+	
+	<bean id="jacmsContentListTextFilterAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.TextAttributeFilterAction" parent="jacmsContentListFilterAction" >
+	</bean>
+	
+	<bean id="jacmsContentListNumberFilterAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.NumberAttributeFilterAction" parent="jacmsContentListFilterAction" >
+	</bean>
+	
+	<bean id="jacmsContentListBooleanFilterAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.BooleanAttributeFilterAction" parent="jacmsContentListFilterAction" >
+	</bean>
+	
+	<bean id="jacmsContentListDateFilterAction" scope="prototype" 
+			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.DateAttributeFilterAction" parent="jacmsContentListFilterAction" >
+	</bean>
+		
+</beans>

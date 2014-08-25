@@ -1,0 +1,23 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	<field name="code">
+		<field-validator type="requiredstring" short-circuit="true">
+			<message key="requiredstring"/>
+		</field-validator>
+		<field-validator type="stringlength" short-circuit="true">
+			<param name="maxLength">50</param>
+			<param name="trim">true</param>
+           <message key="stringlength" />
+		</field-validator>
+	</field>
+	<!--
+	<field name="gui">
+		<field-validator type="requiredstring" short-circuit="true">
+			<message key="requiredstring"/>
+		</field-validator>
+	</field>
+	-->
+</validators>

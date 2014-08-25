@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="core_do/Portal/WidgetType" namespace="/do/Portal/WidgetType" extends="entando-default">
+		
+		<global-results>
+			<result name="pageTree" type="chain">
+				<param name="namespace">/do/Page</param>
+				<param name="actionName">viewTree</param>
+			</result>
+			<result name="inputWidgetTypes" type="chain">
+				<param name="actionName">viewWidgets</param>
+			</result>
+			<!-- 'inputShowletTypes' deprecated - use inputWidgetTypes -->
+			<result name="inputShowletTypes" type="chain">
+				<param name="actionName">viewWidgets</param>
+			</result>
+		</global-results>
+		
+		<action name="viewWidgets" class="widgetsViewerAction" method="viewWidgets">
+			<result type="tiles">admin.Portal.viewShowlets</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">managePages</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="viewWidgetUtilizers" class="widgetsViewerAction" method="viewWidgetUtilizers">
+			<result name="input" type="tiles">admin.Portal.viewShowlets</result>
+			<result type="tiles">admin.Portal.viewShowletUtilizers</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+		</action>
+		
+		<action name="trashWidgetFromPage" class="pageConfigAction" method="trashWidget">
+			<result type="tiles">admin.Page.showlet.trash</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+		</action>
+		
+		<action name="deleteWidgetFromPage" class="pageConfigAction" method="deleteWidget">
+			<result type="redirectAction">
+				<param name="actionName">viewWidgetUtilizers</param>
+				<param name="showletTypeCode">${showletTypeCode}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+		</action>
+		
+		<!-- edit/create/delete widget Type - start section -->
+		
+		<action name="newWidget" class="widgetTypeAction" method="newWidget">
+			<result type="tiles">admin.Portal.showletType.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="edit" class="widgetTypeAction" method="edit">
+			<result type="tiles">admin.Portal.showletType.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+		</action>
+		
+		<action name="newUserWidget" class="widgetTypeAction" method="newUserWidget">
+			<result type="tiles">admin.Portal.showletType.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="copy" class="widgetTypeAction" method="copy">
+			<result type="tiles">admin.Portal.showletType.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="save*" class="widgetTypeAction" method="save">
+			<result name="input" type="tiles">admin.Portal.showletType.entry</result>
+			<result name="replaceOnPage" type="redirectAction">
+				<param name="namespace">/do/Page</param>
+				<param name="actionName">configure</param>
+				<param name="pageCode">${pageCode}</param>
+			</result>
+			<result type="redirectAction">viewWidgets</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+		</action>
+		
+		<action name="trash" class="widgetTypeAction" method="trash">
+			<result type="tiles">admin.Portal.showletType.trash</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="delete" class="widgetTypeAction" method="delete">
+			<result type="redirectAction">
+				<param name="actionName">viewWidgets</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- create/delete user showlet - end section -->
+		
+	</package>
+	
+</struts>

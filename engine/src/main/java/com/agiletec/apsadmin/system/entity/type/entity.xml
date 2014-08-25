@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="core_do/Entity/Type" namespace="/do/Entity" extends="entando-default">
+		
+		<action name="initViewEntityTypes" class="entityTypesAction">
+			<result name="input" type="chain">viewManagers</result>
+			<result type="chain">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">viewEntityTypes</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="viewEntityTypes" class="entityTypesAction">
+			<result name="input" type="chain">viewManagers</result>
+			<result type="tiles">admin.entityManagement.viewEntityTypes</result>
+			<interceptor-ref name="entandoValidationStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">superuser</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="reloadEntityTypeReferences" class="entityTypesAction" method="reloadEntityManagerReferences">
+			<result name="input" type="chain">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">viewEntityTypes</param>
+				<!-- <param name="entityManagerName">${entityManagerName}</param> -->
+			</result>
+			<result type="redirectAction">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">viewEntityTypes</param>
+				<param name="entityManagerName">${entityManagerName}</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="initAddEntityType" class="entityTypesAction" method="initAddEntityType">
+			<result name="input" type="chain">viewManagers</result>
+			<result type="chain">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">addEntityType</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="initEditEntityType" class="entityTypesAction" method="initEditEntityType">
+			<result name="input" type="chain">viewManagers</result>
+			<result name="wrongEntityType" type="chain">initViewEntityTypes</result>
+			<result type="chain">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">editEntityType</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="trashEntityType" class="entityTypesAction" method="trashEntityType" >
+			<result name="input" type="chain">initViewEntityTypes</result>
+			<result name="hasReferences" type="tiles">admin.entityManagement.removeEntityTypeWithReferences</result>
+			<result type="tiles">admin.entityManagement.removeEntityTypeConfirm</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="removeEntityType" class="entityTypesAction" method="removeEntityType" >
+			<result name="input" type="chain">initViewEntityTypes</result>
+			<result name="hasReferences" type="tiles">admin.entityManagement.removeEntityTypeWithReferences</result>
+			<result type="redirectAction">
+				<param name="actionName">initViewEntityTypes</param>
+				<param name="entityManagerName">${entityManagerName}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- ****** -->
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="addEntityType" class="entityTypeConfigAction" method="addEntityType">
+			<result name="wrongEntityManager" type="chain">viewManagers</result>
+			<result type="tiles">admin.entityManagement.entryEntityType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="editEntityType" class="entityTypeConfigAction" method="editEntityType">
+			<result name="wrongEntityManager" type="chain">viewManagers</result>
+			<result name="input" type="chain">initViewEntityTypes</result>
+			<result type="tiles">admin.entityManagement.entryEntityType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="entryEntityType" class="entityTypeConfigAction" >
+			<result type="tiles">admin.entityManagement.entryEntityType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- INIZIO operazioni su attributi -->
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="addAttribute" class="entityTypeConfigAction" method="addAttribute">
+			<result name="input" type="tiles">admin.entityManagement.entryEntityType</result>
+			<result type="redirectAction">
+				<param name="namespace">/do/Entity/Attribute</param>
+				<param name="actionName">addAttribute</param>
+				<param name="attributeTypeCode">${attributeTypeCode}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="editAttribute*" class="entityTypeConfigAction" method="editAttribute">
+			<result name="input" type="tiles">admin.entityManagement.entryEntityType</result>
+			<result type="redirectAction">
+				<param name="namespace">/do/Entity/Attribute</param>
+				<param name="actionName">editAttribute</param>
+				<param name="attributeName">${attributeName}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="moveAttribute*" class="entityTypeConfigAction" method="moveAttribute">
+			<result type="redirectActionWithAnchor">
+        		<param name="actionName">entryEntityType</param>
+        		<param name="anchorDest">fagiano_entityTypesList</param>
+        	</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="removeAttribute*" class="entityTypeConfigAction" method="removeAttribute">
+			<result type="redirectActionWithAnchor">
+        		<param name="actionName">entryEntityType</param>
+        		<param name="anchorDest">fagiano_entityTypesList</param>
+        	</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<!-- FINE operazioni su attributi -->
+		
+		<!-- you have to rewrite this action to manage custom entity types -->
+		<action name="saveEntityType" class="entityTypeConfigAction" method="saveEntityType">
+			<result name="input" type="tiles">admin.entityManagement.entryEntityType</result>
+			<result type="redirectAction">
+				<param name="actionName">initViewEntityTypes</param>
+				<param name="entityManagerName">${entityManagerName}</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    </package>
+    
+    <package name="core_do/Entity/Attribute" namespace="/do/Entity/Attribute" extends="entando-default">
+    	
+    	<action name="addAttribute" class="entityAttributeConfigAction" method="addAttribute">
+			<result type="tiles">admin.entityManagement.entryEntityAttributeType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+    	
+    	<action name="editAttribute" class="entityAttributeConfigAction" method="editAttribute">
+			<result type="tiles">admin.entityManagement.entryEntityAttributeType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="addAttributeRole" class="entityAttributeConfigAction" method="addAttributeRole">
+			<result type="tiles">admin.entityManagement.entryEntityAttributeType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    	<action name="removeAttributeRole*" class="entityAttributeConfigAction" method="removeAttributeRole">
+			<result type="tiles">admin.entityManagement.entryEntityAttributeType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+    	
+		<action name="addAttributeDisablingCode" class="entityAttributeConfigAction" method="addAttributeDisablingCode">
+			<result type="tiles">admin.entityManagement.entryEntityAttributeType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    	<action name="removeAttributeDisablingCode*" class="entityAttributeConfigAction" method="removeAttributeDisablingCode">
+			<result type="tiles">admin.entityManagement.entryEntityAttributeType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+    	
+    	<action name="saveAttribute" class="entityAttributeConfigAction" method="saveAttribute">
+			<result name="input" type="tiles">admin.entityManagement.entryEntityAttributeType</result>
+			<result name="configureListElementAttribute" type="redirectAction">
+				<param name="namespace">/do/Entity/ListAttribute/</param>
+				<param name="actionName">configureListElement</param>
+			</result>
+			<result name="configureCompositeAttribute" type="redirectAction">
+				<param name="namespace">/do/Entity/CompositeAttribute/</param>
+				<param name="actionName">entryCompositeAttribute</param>
+			</result>
+			<result type="redirectAction">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">entryEntityType</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    </package>
+    
+    <package name="core_do/Entity/ListAttribute" namespace="/do/Entity/ListAttribute" extends="entando-default">
+    	
+    	<action name="configureListElement" class="listElementAttributeConfigAction" method="configureListElement">
+			<result type="tiles">admin.entityManagement.textListElement.entryEntityAttributeType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+    	
+    	<action name="saveListElement" class="listElementAttributeConfigAction" method="saveListElement">
+			<result name="input" type="tiles">admin.entityManagement.textListElement.entryEntityAttributeType</result>
+			<result type="redirectAction">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">entryEntityType</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    </package>
+    
+    <package name="core_do/Entity/CompositeAttribute" namespace="/do/Entity/CompositeAttribute" extends="entando-default">
+		
+		<action name="entryCompositeAttribute" class="entityCompositeAttributeConfigAction">
+			<result type="tiles">admin.entityManagement.compositeAttribute.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="moveAttributeElement*" class="entityCompositeAttributeConfigAction" method="moveAttributeElement">
+			<result type="redirectActionWithAnchor">
+        		<param name="actionName">entryCompositeAttribute</param>
+        		<param name="anchorDest">fagiano_compositeTypesList</param>
+        	</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="removeAttributeElement*" class="entityCompositeAttributeConfigAction" method="removeAttributeElement">
+			<result type="redirectActionWithAnchor">
+        		<param name="actionName">entryCompositeAttribute</param>
+        		<param name="anchorDest">fagiano_compositeTypesList</param>
+        	</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="saveCompositeAttribute" class="entityCompositeAttributeConfigAction" method="saveCompositeAttribute">
+			<result type="redirectAction">
+				<param name="namespace">/do${entityTypeManagementNamespacePrefix}/Entity</param>
+				<param name="actionName">entryEntityType</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="addAttributeElement" class="entityCompositeAttributeConfigAction" method="addAttributeElement">
+			<result type="tiles">admin.entityManagement.compositeAttribute.entryAttributeElementType</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+		<action name="saveAttributeElement" class="entityCompositeAttributeConfigAction" method="saveAttributeElement">
+			<result name="input" type="tiles">admin.entityManagement.compositeAttribute.entryAttributeElementType</result>
+			<result type="redirectAction">entryCompositeAttribute</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
+    </package>
+    
+</struts>

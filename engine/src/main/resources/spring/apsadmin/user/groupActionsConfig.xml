@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<bean id="groupFinderAction" scope="prototype" 
+			class="com.agiletec.apsadmin.user.group.GroupFinderAction" parent="abstractBaseAction" >
+		<property name="groupManager" ref="GroupManager" />
+	</bean>
+	
+	<bean id="groupActionHelper" class="com.agiletec.apsadmin.user.group.helper.GroupActionHelper" 
+			parent="abstractBaseActionHelper">
+	</bean>
+	
+	<bean id="groupAction" scope="prototype" 
+			class="com.agiletec.apsadmin.user.group.GroupAction" parent="abstractBaseAction" >
+		<property name="helper" ref="groupActionHelper" />
+		<property name="groupManager" ref="GroupManager" />
+	</bean>
+	
+	<bean id="groupToUsersAction" scope="prototype" parent="abstractAuthorityToUsersAction" >
+		<property name="authorizatorManager" ref="GroupManager" />
+	</bean>
+	
+</beans>

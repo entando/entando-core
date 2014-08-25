@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:util="http://www.springframework.org/schema/util"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	
+	<bean id="jacmsGroupReferencesHookPoint" class="com.agiletec.apsadmin.system.plugin.HookPointElementContainer" >
+		<property name="filePath"><value>/WEB-INF/plugins/jacms/apsadmin/jsp/user/group/groupReferences-jack.jsp</value></property>
+		<property name="hookPointKey"><value>core.groupReferences</value></property>
+	</bean>
+	
+	<bean id="jacmsCategoryReferencesHookPoint" class="com.agiletec.apsadmin.system.plugin.HookPointElementContainer" >
+		<property name="filePath"><value>/WEB-INF/plugins/jacms/apsadmin/jsp/category/categoryReferences-jack.jsp</value></property>
+		<property name="hookPointKey"><value>core.categoryReferences</value></property>
+	</bean>
+	
+	<util:map id="jacmsResourceTypesIconFiles" map-class="java.util.Properties">
+		<entry>
+			<key><value>tar,gz,zip,rar</value></key>
+			<value>package-x-generic.png</value>
+		</entry>
+		<entry>
+			<key><value>doc,odt,sxw,rtf</value></key>
+			<value>x-office-document.png</value>
+		</entry>
+		<entry>
+			<key><value>sxc,ods,xls</value></key>
+			<value>x-office-spreadsheet.png</value>
+		</entry>
+		<entry>
+			<key><value>ppt,odp</value></key>
+			<value>x-office-presentation.png</value>
+		</entry>
+		<entry>
+			<key><value>txt</value></key>
+			<value>text-x-generic.png</value>
+		</entry>
+		<entry>
+			<key><value>pdf</value></key>
+			<value>application-pdf.png</value>
+		</entry>
+	</util:map>
+	
+	<bean id="jacmsResourceIconUtil" class="com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil">
+		<property name="resourceTypesIconFiles" ref="jacmsResourceTypesIconFiles" />
+		<property name="defaultResourceIcon"><value>help-browser.png</value></property>
+	</bean>
+	
+</beans>

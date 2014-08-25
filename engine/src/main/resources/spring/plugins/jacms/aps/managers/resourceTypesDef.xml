@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd">
+	
+	<bean id="jacmsImageDimensionReader" class="com.agiletec.plugins.jacms.aps.system.services.resource.model.util.ImageDimensionReader" 
+			init-method="init" >
+		<property name="configManager" ref="BaseConfigManager"/>
+	</bean>
+	
+	<bean id="jacmsAbstractResource" abstract="true" 
+			class="com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractResource" >
+		<property name="storageManager" ref="StorageManager" />
+		<property name="protectedBaseURL" ><jee:jndi-lookup jndi-name="java:comp/env/protectedResourceRootURL" /></property>
+	</bean>
+	
+	<bean id="jacmsAttachResource" class="com.agiletec.plugins.jacms.aps.system.services.resource.model.AttachResource" parent="jacmsAbstractResource" >
+		<property name="type" value="Attach" />
+		<property name="folder" value="cms/documents" />
+		<property name="allowedExtensions"><value>${jacms.attachResource.allowedExtensions}</value></property>
+	</bean>
+	
+	<bean id="jacmsImageResource" class="com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResource" parent="jacmsAbstractResource" >
+		<property name="type" value="Image" />
+		<property name="folder" value="cms/images" />
+		<property name="allowedExtensions"><value>${jacms.imageResource.allowedExtensions}</value></property>
+		<property name="imageDimensionReader" ref="jacmsImageDimensionReader" />
+		<property name="imageResizerClasses">
+		<map>
+			<entry key="DEFAULT_RESIZER"><value>com.agiletec.plugins.jacms.aps.system.services.resource.model.imageresizer.DefaultImageResizer</value></entry>
+			<entry key="png"><value>com.agiletec.plugins.jacms.aps.system.services.resource.model.imageresizer.PNGImageResizer</value></entry>
+		</map>
+		</property>
+		<property name="imageMagickEnabled"><value>${imagemagick.enabled}</value></property>
+		<property name="imageMagickWindows"><value>${imagemagick.windows}</value></property>
+		<property name="imageMagickPath"><value>${imagemagick.path}</value></property>
+	</bean>
+	
+</beans>

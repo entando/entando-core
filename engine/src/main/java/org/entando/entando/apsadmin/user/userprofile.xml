@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    
+    <package name="core_do/userprofile" namespace="/do/userprofile" extends="entando-default">
+        <!--
+		<action name="list" class="UserFinderAction">
+			<result type="tiles">admin.User.list</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+		</action>
+		<action name="search" class="UserFinderAction">
+			<result type="tiles">admin.User.list</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+		</action>
+		<action name="changeProfileType" class="UserFinderAction" >
+			<result type="tiles">admin.User.list</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+		</action>
+        -->
+        <action name="view" class="userProfileAction" method="view">
+            <result type="tiles">admin.UserProfile.view</result>
+            <result name="input" type="chain">
+                <param name="namespace">/do/User</param>
+                <param name="actionName">list</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="edit" class="userProfileAction" method="edit">
+            <result type="tiles">admin.UserProfile.entry</result>
+            <result name="chooseType" type="tiles">admin.UserProfile.chooseType</result>
+            <result name="input" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="new" class="userProfileAction" method="createNew" >
+            <result type="tiles">admin.UserProfile.entry</result>
+            <result name="edit" type="tiles">admin.UserProfile.entry</result>
+            <result name="input" type="tiles">admin.UserProfile.chooseType</result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="save" class="userProfileAction" method="save">
+            <result type="redirectAction">
+                <param name="namespace">/do/User</param>
+                <param name="actionName">list</param>
+            </result>
+            <result name="input" type="tiles">admin.UserProfile.entry</result>
+            <interceptor-ref name="entandoValidationStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="entryProfile" class="userProfileAction">
+            <result type="tiles">admin.UserProfile.entry</result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+    	
+    	<!-- ######## Attribute List Management - Start ######## -->
+        
+        <action name="addListElement*" class="userProfileListAttributeAction" method="addListElement">
+            <result type="redirectActionWithAnchor">
+                <param name="actionName">entryProfile</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="removeListElement*" class="userProfileListAttributeAction" method="removeListElement">
+            <result type="redirectAction">
+                <param name="actionName">entryProfile</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="moveListElement*" class="userProfileListAttributeAction" method="moveListElement">
+            <result type="redirectAction">
+                <param name="actionName">entryProfile</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <!-- ######## Attribute List Management - End ######## -->
+    	
+    </package>
+	
+</struts>

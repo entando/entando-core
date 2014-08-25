@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="apiMethodDefinitions">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="method"/>
+        <xs:element ref="resource"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="resource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="description"/>
+        <xs:element ref="source"/>
+        <xs:element maxOccurs="unbounded" ref="method"/>
+      </xs:sequence>
+      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="namespace" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="method">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="source"/>
+        <xs:element minOccurs="0" ref="description"/>
+        <xs:element ref="springBean"/>
+        <xs:choice minOccurs="0">
+          <xs:element ref="expectedType"/>
+          <xs:element ref="responseClass"/>
+        </xs:choice>
+        <xs:element minOccurs="0" ref="parameters"/>
+        <xs:choice>
+          <xs:element ref="relatedWidget"/>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="parameter"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="active" use="required" type="xs:boolean"/>
+      <xs:attribute name="canSpawnOthers" type="xs:boolean"/>
+      <xs:attribute name="hidden" type="xs:boolean"/>
+      <xs:attribute name="httpMethod" type="xs:NCName"/>
+      <xs:attribute name="name" type="xs:NCName"/>
+      <xs:attribute name="namespace" type="xs:NCName"/>
+      <xs:attribute name="requiredAuth" type="xs:boolean"/>
+      <xs:attribute name="requiredPermission" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="springBean">
+    <xs:complexType>
+      <xs:attribute name="method" use="required" type="xs:NCName"/>
+      <xs:attribute name="name" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="expectedType" type="xs:string"/>
+  <xs:element name="responseClass" type="xs:string"/>
+  <xs:element name="parameters">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="parameter"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="relatedWidget">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="mapParameter"/>
+      </xs:sequence>
+      <xs:attribute name="code" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="mapParameter">
+    <xs:complexType>
+      <xs:attribute name="method" use="required" type="xs:NCName"/>
+      <xs:attribute name="widget" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="description" type="xs:string"/>
+  <xs:element name="source">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NCName">
+          <xs:attribute name="pluginCode" type="xs:NCName"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="parameter">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="description"/>
+      </xs:sequence>
+      <xs:attribute name="canOverrided"/>
+      <xs:attribute name="key" use="required" type="xs:NCName"/>
+      <xs:attribute name="override"/>
+      <xs:attribute name="required" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

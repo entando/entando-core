@@ -1,0 +1,33 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	
+    <field name="contentTypeCode">
+        <field-validator type="requiredstring" >
+            <message key="requiredstring" />
+        </field-validator>
+    </field>
+    
+    <field name="contentDescription">
+        <field-validator type="requiredstring" >
+            <message key="requiredstring" />
+        </field-validator>
+    </field>
+    
+    <field name="contentMainGroup">
+        <field-validator type="requiredstring" short-circuit="true">
+            <message key="requiredstring" />
+        </field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[!(null == getGroup(contentMainGroup))]]></param>
+			<message key="error.content.mainGroup.invalid" />
+		</field-validator>
+        <field-validator type="fieldexpression" short-circuit="true">
+			<param name="expression"><![CDATA[(getAllowedGroups().contains(getGroup(contentMainGroup)))]]></param>
+			<message key="error.content.mainGroup.notAllowed" />
+		</field-validator>
+    </field>
+    
+</validators>

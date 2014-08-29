@@ -15,13 +15,20 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.aps.servlet;
+package org.entando.entando.aps.system;
+
+import com.agiletec.aps.BaseTestCase;
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.controller.ControllerManager;
 
 /**
- * Init the system when the web application is started
- * @deprecated Since Entando 4.1.0, use org.entando.entando.aps.servlet.ControllerServlet
- * @author
+ * @author E.Santoboni
  */
-public class StartupListener extends org.entando.entando.aps.servlet.StartupListener {
+public class TestApplicationContext extends BaseTestCase {
 	
+    public void testGetServices() {
+        ControllerManager controller = (ControllerManager) this.getService(SystemConstants.CONTROLLER_MANAGER);
+        assertNotNull(controller);
+    }
+    
 }

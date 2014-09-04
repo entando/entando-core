@@ -33,7 +33,7 @@ import com.agiletec.aps.system.services.group.GroupManager;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.role.RoleManager;
 import com.agiletec.aps.util.DateConverter;
-import com.agiletec.apsadmin.admin.SystemParamsUtils;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 
 /**
  * @version 1.0

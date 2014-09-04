@@ -90,6 +90,7 @@ public class ConfigTestUtils {
 			
 			this.createDatasources(builder, testConfig);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			throw new RuntimeException("Error on creation naming context", t);
 		}
 		return builder;

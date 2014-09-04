@@ -82,6 +82,7 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestEntityManager.class);
 		//
+		/*
 		suite.addTestSuite(TestApiCatalogManager.class);
 		//
 		suite.addTestSuite(TestAuthorizationManager.class);
@@ -153,7 +154,7 @@ public class AllTests {
 		suite.addTestSuite(TestGuiFragmentManager.class);
 		//
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
-		
+		*/
 		return suite;
 	}
 	

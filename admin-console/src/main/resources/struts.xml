@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    
+	<include file="com/agiletec/apsadmin/admin/baseAdmin.xml" />
+	<include file="com/agiletec/apsadmin/admin/lang/lang.xml" />
+	<include file="org/entando/entando/apsadmin/admin/database.xml" />
+	<include file="com/agiletec/apsadmin/admin/localestring/localeString.xml" />
+    
+	<include file="com/agiletec/apsadmin/common/common.xml" />
+	<include file="org/entando/entando/apsadmin/common/common.xml"/>
+	<include file="org/entando/entando/apsadmin/common/currentuser/currentUserProfile.xml" />
+	
+	<include file="com/agiletec/apsadmin/category/category.xml" />
+    
+	<include file="com/agiletec/apsadmin/portal/page.xml" />
+	<include file="com/agiletec/apsadmin/portal/specialwidget/specialWidget.xml" />
+	<include file="com/agiletec/apsadmin/portal/widgetType.xml" />
+	<include file="org/entando/entando/apsadmin/portal/guifragment/guiFragment.xml"/>
+	<include file="org/entando/entando/apsadmin/portal/model/pageModel.xml" />
+	
+	<include file="org/entando/entando/apsadmin/user/user.xml" />
+	<include file="org/entando/entando/apsadmin/user/userprofile.xml" />
+	<include file="com/agiletec/apsadmin/user/role/role.xml" />
+	<include file="com/agiletec/apsadmin/user/group/group.xml" />
+    
+	<include file="com/agiletec/apsadmin/system/entity/entity.xml"/>
+	<include file="com/agiletec/apsadmin/system/entity/type/entity.xml"/>
+	
+	<include file="org/entando/entando/apsadmin/api/api.xml" />
+	
+	<include file="org/entando/entando/apsadmin/filebrowser/filebrowser.xml"/>
+	
+	
+	
+	<include file="org/entando/entando/aps/internalservlet/api/api.xml" />
+	<include file="org/entando/entando/aps/internalservlet/user/currentUserProfile.xml"/>
+    
+</struts>

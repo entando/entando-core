@@ -38,7 +38,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.DateConverter;
-import com.agiletec.apsadmin.util.CheckFormatUtil;
+import com.agiletec.aps.util.CheckFormatUtil;
 
 /**
  * A user filter option of the list viewer showlet

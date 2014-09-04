@@ -56,7 +56,7 @@
 		<value>org.entando.entando.aps.system.init.model.servdb.User</value>
 		<value>org.entando.entando.aps.system.init.model.servdb.UserGroupReference</value>
 		<value>org.entando.entando.aps.system.init.model.servdb.UserRoleReference</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.UserShortcut</value>
+		<!-- <value>org.entando.entando.aps.system.init.model.servdb.UserShortcut</value> -->
 		<value>org.entando.entando.aps.system.init.model.servdb.ApiOAuthConsumer</value>
 		<value>org.entando.entando.aps.system.init.model.servdb.ApiOAuthToken</value>
 		<value>org.entando.entando.aps.system.init.model.servdb.ApiCatalogMethod</value>

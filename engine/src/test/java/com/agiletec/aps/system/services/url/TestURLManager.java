@@ -23,7 +23,7 @@ import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
-import com.agiletec.apsadmin.admin.SystemParamsUtils;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 
 /**
  * @version 1.0

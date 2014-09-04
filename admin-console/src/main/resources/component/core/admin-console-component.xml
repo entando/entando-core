@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<code>entando-admin-console</code>
+	<description>Entando Admin Console</description>
+	<installation>
+		<tableMapping>
+			<datasource name="servDataSource">
+				<class>org.entando.entando.aps.system.init.model.servdb.UserShortcut</class>
+				<!--
+				<class>org.entando.entando.aps.system.init.model.servdb.ActionLogLikeRecord</class>
+				<class>org.entando.entando.aps.system.init.model.servdb.ActionLogCommentRecord</class>
+				-->
+			</datasource>
+		</tableMapping>
+		<environment code="production">
+			<defaultSqlResources>
+				<datasource name="portDataSource">
+classpath:sql/core/admin-console_port_data_production.sql
+				</datasource>
+				<datasource name="servDataSource">
+classpath:sql/core/admin-console_serv_data_production.sql
+				</datasource>
+			</defaultSqlResources>
+		</environment>
+		<environment code="test">
+			<defaultSqlResources>
+				<datasource name="portDataSource">
+classpath:sql/core/admin-console_port_data_test.sql
+				</datasource>
+				<datasource name="servDataSource">
+classpath:sql/core/admin-console_serv_data_test.sql
+				</datasource>
+			</defaultSqlResources>
+		</environment>
+	</installation>
+</component>

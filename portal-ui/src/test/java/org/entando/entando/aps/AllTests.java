@@ -45,7 +45,7 @@ public class AllTests {
 		suite.addTestSuite(TestRequestValidator.class);
 		suite.addTestSuite(TestControllerManager.class);
 		//
-		suite.addTestSuite(TestApplicationContext.class);
+		//suite.addTestSuite(TestApplicationContext.class);
 		//
 		suite.addTestSuite(TestWidgetExecutorService.class);
 		

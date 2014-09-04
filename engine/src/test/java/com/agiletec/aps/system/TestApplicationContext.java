@@ -23,7 +23,6 @@ import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.category.ICategoryManager;
-import com.agiletec.aps.system.services.controller.ControllerManager;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
@@ -59,8 +58,8 @@ public class TestApplicationContext extends BaseTestCase {
         assertNotNull(urlManager);
         II18nManager i18nManager = (II18nManager) this.getService(SystemConstants.I18N_MANAGER);
         assertNotNull(i18nManager);
-        ControllerManager controller = (ControllerManager) this.getService(SystemConstants.CONTROLLER_MANAGER);
-        assertNotNull(controller);
+        //ControllerManager controller = (ControllerManager) this.getService(SystemConstants.CONTROLLER_MANAGER);
+        //assertNotNull(controller);
         IKeyGeneratorManager keyGeneratorManager = (IKeyGeneratorManager) this.getService(SystemConstants.KEY_GENERATOR_MANAGER);
         assertNotNull(keyGeneratorManager);
         ICategoryManager categoryManager = (ICategoryManager) this.getService(SystemConstants.CATEGORY_MANAGER);

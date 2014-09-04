@@ -15,7 +15,7 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.aps.system.services.controller.control;
+package org.entando.entando.aps.system.services.controller.control;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -23,6 +23,7 @@ import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.controller.ControllerManager;
+import com.agiletec.aps.system.services.controller.control.ControlServiceInterface;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 

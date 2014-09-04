@@ -32,12 +32,6 @@ import com.agiletec.aps.system.services.baseconfig.TestBaseConfigService;
 import com.agiletec.aps.system.services.baseconfig.TestConfigItemDAO;
 import com.agiletec.aps.system.services.cache.TestCacheManager;
 import com.agiletec.aps.system.services.category.TestCategoryManager;
-import com.agiletec.aps.system.services.controller.TestControllerManager;
-import com.agiletec.aps.system.services.controller.control.TestAuthenticator;
-import com.agiletec.aps.system.services.controller.control.TestErrorManager;
-import com.agiletec.aps.system.services.controller.control.TestExecutor;
-import com.agiletec.aps.system.services.controller.control.TestRequestAuthorizator;
-import com.agiletec.aps.system.services.controller.control.TestRequestValidator;
 import com.agiletec.aps.system.services.group.TestGroupManager;
 import com.agiletec.aps.system.services.group.TestGroupUtilizer;
 import com.agiletec.aps.system.services.i18n.TestI18nManager;
@@ -66,7 +60,6 @@ import com.agiletec.aps.util.TestHtmlHandler;
 
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
-import org.entando.entando.aps.system.services.controller.executor.TestWidgetExecutorService;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
@@ -94,13 +87,6 @@ public class AllTests {
 		suite.addTestSuite(TestCacheManager.class);
 		//
 		suite.addTestSuite(TestCategoryManager.class);
-		//
-		suite.addTestSuite(TestAuthenticator.class);
-		suite.addTestSuite(TestRequestAuthorizator.class);
-		suite.addTestSuite(TestErrorManager.class);
-		suite.addTestSuite(TestExecutor.class);
-		suite.addTestSuite(TestRequestValidator.class);
-		suite.addTestSuite(TestControllerManager.class);
 		//
 		suite.addTestSuite(TestGroupManager.class);
 		suite.addTestSuite(TestGroupUtilizer.class);
@@ -143,8 +129,6 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestActionLogDAO.class);
 		suite.addTestSuite(TestActionLogManager.class);
-		//
-		suite.addTestSuite(TestWidgetExecutorService.class);
 		//
 		suite.addTestSuite(TestLocalStorageManager.class);
 		//

@@ -55,7 +55,6 @@ public class AllTests {
 		
 		// 
 		suite.addTestSuite(TestContentAuthorization.class);
-		/*
 		suite.addTestSuite(TestContentEntityManager.class);
 		suite.addTestSuite(TestContentDOM.class);
 		suite.addTestSuite(TestContentListHelper.class);
@@ -89,7 +88,7 @@ public class AllTests {
 		suite.addTestSuite(TestGroupUtilizer.class);
 		
 		suite.addTestSuite(TestCacheInfoManager.class);
-		*/
+		
 		return suite;
 	}
 

@@ -70,7 +70,6 @@ public class AllTests {
 		
 		// Lang
 		suite.addTestSuite(TestLangAction.class);
-		/*
 		suite.addTestSuite(TestLangFinderAction.class);
 		
 		// LocalString
@@ -136,7 +135,7 @@ public class AllTests {
 		
 		//Fragment
 		suite.addTestSuite(TestGuiFragmentAction.class);
-		*/
+		
 		return suite;
 	}
     

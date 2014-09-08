@@ -96,7 +96,6 @@ public class AllTests {
 		
 		// 
 		suite.addTestSuite(TestContentAuthorization.class);
-		/*
 		suite.addTestSuite(TestContentEntityManager.class);
 		suite.addTestSuite(TestContentDOM.class);
 		suite.addTestSuite(TestContentListHelper.class);
@@ -181,7 +180,7 @@ public class AllTests {
 		
 		//Group
 		suite.addTestSuite(TestTrashReferencedGroup.class);
-		*/
+		
 		return suite;
 	}
 

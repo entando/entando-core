@@ -28,8 +28,6 @@ import org.entando.entando.aps.system.services.controller.control.TestRequestVal
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.entando.entando.aps.system.services.controller.executor.TestWidgetExecutorService;
-
 /**
  * @author E.Santoboni
  */

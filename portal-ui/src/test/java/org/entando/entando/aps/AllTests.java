@@ -47,7 +47,7 @@ public class AllTests {
 		//
 		//suite.addTestSuite(TestApplicationContext.class);
 		//
-		suite.addTestSuite(TestWidgetExecutorService.class);
+		//suite.addTestSuite(TestWidgetExecutorService.class);
 		
 		return suite;
 	}

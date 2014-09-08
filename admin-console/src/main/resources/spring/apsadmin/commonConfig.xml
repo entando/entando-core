@@ -8,6 +8,7 @@
 	<bean id="abstractBaseAction" abstract="true" class="com.agiletec.apsadmin.system.BaseAction">
 		<property name="langManager" ref="LangManager" />
 		<property name="authorizationManager" ref="AuthorizationManager" />
+		<property name="componentManager" ref="ComponentManager" />
 	</bean>
 	
 	<bean id="abstractBaseActionHelper" abstract="true" class="com.agiletec.apsadmin.system.BaseActionHelper">

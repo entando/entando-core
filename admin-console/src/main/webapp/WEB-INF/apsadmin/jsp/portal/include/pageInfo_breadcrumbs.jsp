@@ -18,7 +18,7 @@
 			<s:property value="getTitle(#target.code, #target.titles)" />
 		</a>
 		<wpsa:page key="%{#target.code}" property="void" var="isVoid" />
-		<s:if test="!#isVoid">
+		<s:if test="%{!#isVoid && isComponentInstalled('entando-portal-ui')}">
 			<a href="<wp:info key="systemParam" paramName="applicationBaseURL" /><s:property value="currentLang.code"/>/<s:property value="#target.code" />.page"
 				title="<s:text name="note.goToPortal" />: <s:property value="getTitle(#target.code, #target.titles)" />">
 				<span class="icon fa fa-globe"></span>

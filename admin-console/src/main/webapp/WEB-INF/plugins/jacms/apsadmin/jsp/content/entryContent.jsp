@@ -191,6 +191,7 @@
 								</div><%-- contentedit div --%>
 							</s:iterator><%-- attributes iterator --%>
 							<%-- preview --%>
+							<s:if test="%{isComponentInstalled('entando-portal-ui')}">
 								<s:set var="showingPageSelectItems" value="showingPageSelectItems" />
 								<wpsa:actionParam action="preview" var="previewActionName" >
 									<wpsa:actionSubParam name="%{'jacmsPreviewActionLangCode_' + #lang.code}" value="%{#lang.code}" />
@@ -228,7 +229,7 @@
 										<p class="static-control text-center text-info"><s:text name="label.preview.noPreviewPages" /></p>
 									</s:else>
 								</div>
-
+							</s:if>
 						</div><%-- tab --%>
 					</s:iterator><%-- lang iterator --%>
 				</div><%-- tabs container --%>

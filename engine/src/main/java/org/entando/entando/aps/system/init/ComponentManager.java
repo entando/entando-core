@@ -29,9 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.exception.ApsSystemException;
-
 /**
  * @author E.Santoboni
  */
@@ -65,7 +62,6 @@ public class ComponentManager implements IComponentManager {
 			this.setComponents(components);
         } catch (Throwable t) {
         	_logger.error("Error loading components definitions", t);
-            //ApsSystemUtils.logThrowable(t, this, "loadComponents", "Error loading components definitions");
             throw new ApsSystemException("Error loading components definitions", t);
         }
     }
@@ -88,8 +84,22 @@ public class ComponentManager implements IComponentManager {
 	}
 	
 	@Override
-	public List<Component> getCurrentComponents() throws ApsSystemException {
+	public List<Component> getCurrentComponents() {
 		return this.getComponents();
+	}
+	
+	@Override
+	public boolean isComponentInstalled(String componentCode) {
+		List<Component> components = this.getComponents();
+		if (null != components) {
+			for (int i = 0; i < components.size(); i++) {
+				Component component = components.get(i);
+				if (null != component && component.getCode().equals(componentCode)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
     protected String getLocationPatterns() {

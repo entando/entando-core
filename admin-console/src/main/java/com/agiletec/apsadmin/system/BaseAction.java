@@ -38,6 +38,7 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.opensymphony.xwork2.ActionSupport;
+import org.entando.entando.aps.system.init.IComponentManager;
 
 /**
  * Class beneath all actions.
@@ -121,9 +122,8 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	 */
 	public String getTitle(String defaultValue, Properties titles) {
 		if (null == titles) return defaultValue;
-		String title = null;
 		Lang currentLang = this.getCurrentLang();
-		title = titles.getProperty(currentLang.getCode());
+		String title = titles.getProperty(currentLang.getCode());
 		if (null == title) {
 			Lang defaultLang = this.getLangManager().getDefaultLang();
 			title = titles.getProperty(defaultLang.getCode());
@@ -153,6 +153,10 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 		this._activityStreamInfos.add(asi);
 	}
 	
+	public boolean isComponentInstalled(String componentName) {
+		return this.getComponentManager().isComponentInstalled(componentName);
+	}
+	
 	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this._request = request;
@@ -179,9 +183,17 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 		this._authorizationManager = authorizationManager;
 	}
 	
+	protected IComponentManager getComponentManager() {
+		return _componentManager;
+	}
+	public void setComponentManager(IComponentManager componentManager) {
+		this._componentManager = componentManager;
+	}
+	
 	private ILangManager _langManager;
 	
 	private IAuthorizationManager _authorizationManager;
+	private IComponentManager _componentManager;
 	
 	public static final String FAILURE = "failure";
 	

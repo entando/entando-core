@@ -58,7 +58,6 @@ import com.agiletec.plugins.jacms.apsadmin.content.TestContentAdminAction;
 import com.agiletec.plugins.jacms.apsadmin.content.TestContentFinderAction;
 import com.agiletec.plugins.jacms.apsadmin.content.TestContentGroupAction;
 import com.agiletec.plugins.jacms.apsadmin.content.TestContentInspectionAction;
-import com.agiletec.plugins.jacms.apsadmin.content.TestContentPreviewAction;
 import com.agiletec.plugins.jacms.apsadmin.content.TestIntroNewContentAction;
 import com.agiletec.plugins.jacms.apsadmin.content.attribute.TestContentLinkAction;
 import com.agiletec.plugins.jacms.apsadmin.content.attribute.TestExtendedResourceAction;
@@ -155,7 +154,6 @@ public class AllTests {
 		suite.addTestSuite(TestContentFinderAction.class);
 		suite.addTestSuite(TestContentGroupAction.class);
 		suite.addTestSuite(TestContentInspectionAction.class);
-		suite.addTestSuite(TestContentPreviewAction.class);
 		suite.addTestSuite(TestIntroNewContentAction.class);
 		
 		// Page

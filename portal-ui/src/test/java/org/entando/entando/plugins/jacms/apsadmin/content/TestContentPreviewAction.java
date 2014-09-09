@@ -15,27 +15,25 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.plugins.jacms.apsadmin.content;
+package org.entando.entando.plugins.jacms.apsadmin.content;
 
 import java.util.List;
 import java.util.Map;
 
 import com.agiletec.aps.system.RequestContext;
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import com.agiletec.plugins.jacms.apsadmin.content.AbstractContentAction;
 import com.agiletec.plugins.jacms.apsadmin.content.util.AbstractBaseTestContentAction;
 import com.opensymphony.xwork2.Action;
-import static junit.framework.Assert.assertNull;
 
 /**
  * @author E.Santoboni
  */
 public class TestContentPreviewAction extends AbstractBaseTestContentAction {
-
+	
 	public void testPreviewNewContent() throws Throwable {
 		String insertedDescr = "XXX Prova preview XXX";
 		String contentTypeCode = "ART";
@@ -106,7 +104,7 @@ public class TestContentPreviewAction extends AbstractBaseTestContentAction {
 		result = this.executePreviewPage(null, contentOnSessionMarker);
 		assertNull(result);
 	}
-
+	
 	public void testExecutePreviewContent_3() throws Throwable {
 		String contentId = "ART187";
 		Content contentForTest = this.getContentManager().loadContent(contentId, true);
@@ -118,7 +116,7 @@ public class TestContentPreviewAction extends AbstractBaseTestContentAction {
 		result = this.executePreviewPage("pagina_2", contentOnSessionMarker);
 		assertNull(result);
 	}
-
+	
 	public void testFailureExecutePreviewContent() throws Throwable {
 		String contentId = "ART187";
 		Content contentForTest = this.getContentManager().loadContent(contentId, true);
@@ -136,11 +134,11 @@ public class TestContentPreviewAction extends AbstractBaseTestContentAction {
 		assertEquals(1, fieldErrors.size());
 		assertEquals(1, fieldErrors.get("previewPageCode").size());
 	}
-
+	
 	private String executePreviewPage(String pageDest, String contentOnSessionMarker) throws Throwable {
 		this.initContentAction("/do/jacms/Content", "executePreview", contentOnSessionMarker);
 		this.addParameter("previewPageCode", pageDest);
 		return this.executeAction();
 	}
-
+	
 }

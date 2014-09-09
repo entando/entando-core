@@ -184,26 +184,6 @@
         	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
         </action>
 		
-        <!-- INIZIO Azioni di preview contenuti -->
-        
-    	<action name="preview*" class="jacmsContentPreviewAction" method="preview">
-        	<result type="redirectActionWithAnchor">
-        		<param name="actionName">executePreview</param>
-        		<param name="previewPageCode">${previewPageCode}</param>
-        		<param name="previewLangCode">${previewLangCode}</param>
-        		<param name="anchorDest">entandoContentPreview</param>
-				<param name="contentOnSessionMarker">${contentOnSessionMarker}</param>
-        	</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
-        </action>
-        
-        <action name="executePreview" class="jacmsContentPreviewAction" method="executePreview">
-        	<result name="input" type="chain">entryContent</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
-        </action>    
-        
-        <!-- FINE Azioni di preview contenuti -->
-        
         <!-- ######## INIZIO GESTIONE ATTRIBUTI IN LISTA ######## -->
         
         <action name="addListElement*" class="jacmsListAttributeAction" method="addListElement">

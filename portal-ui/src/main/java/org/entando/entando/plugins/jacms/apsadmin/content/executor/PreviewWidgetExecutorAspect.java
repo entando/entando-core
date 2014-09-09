@@ -15,7 +15,7 @@
 * Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.plugins.jacms.apsadmin.content.executor;
+package org.entando.entando.plugins.jacms.apsadmin.content.executor;
 
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
@@ -23,9 +23,6 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-
-import freemarker.template.Configuration;
-import freemarker.template.TemplateModel;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,8 +42,8 @@ public class PreviewWidgetExecutorAspect extends WidgetExecutorService {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(PreviewWidgetExecutorAspect.class);
 	
-	@After("execution(* org.entando.entando.aps.system.services.controller.executor.WidgetExecutorService.service(..)) && args(freemarkerConfig, templateModel, reqCtx)")
-	public void checkContentPreview(Configuration freemarkerConfig, TemplateModel templateModel, RequestContext reqCtx) {
+	@After("execution(* org.entando.entando.aps.system.services.controller.executor.WidgetExecutorService.service(..)) && args(reqCtx)")
+	public void checkContentPreview(RequestContext reqCtx) {
 		HttpServletRequest request = reqCtx.getRequest();
 		String contentOnSessionMarker = (String) request.getAttribute("contentOnSessionMarker");
 		if (null == contentOnSessionMarker || contentOnSessionMarker.trim().length() == 0) {

@@ -15,7 +15,7 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.plugins.jacms.apsadmin.tags;
+package org.entando.entando.plugins.jacms.apsadmin.tags;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
@@ -35,7 +35,7 @@ import com.agiletec.plugins.jacms.aps.tags.ContentTag;
  * @author E.Santoboni
  */
 public class ContentPreviewTag extends ContentTag {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentPreviewTag.class);
 			
 	@Override
@@ -48,7 +48,6 @@ public class ContentPreviewTag extends ContentTag {
 			this.pageContext.getOut().print(renderedContent);
 		} catch (Throwable t) {
 			_logger.error("error in doStartTag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error detected during tag initialisation", t);
 		}
 		return EVAL_PAGE;

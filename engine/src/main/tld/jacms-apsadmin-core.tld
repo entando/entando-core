@@ -64,6 +64,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
+	<!--
 	<tag>
 		<description>
 			<![CDATA[This returns the content ready for the preview functionality.
@@ -73,6 +74,7 @@
 		<tag-class>com.agiletec.plugins.jacms.apsadmin.tags.ContentPreviewTag</tag-class>
 		<body-content>empty</body-content>
 	</tag>
+	-->
 	<tag>
 		<description>
 			<![CDATA[Returns a content type (or one of its property) through the code.

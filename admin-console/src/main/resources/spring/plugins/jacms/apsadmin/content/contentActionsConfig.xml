@@ -59,33 +59,6 @@
 		<property name="hookPointKey"><value>jacms.entryContent.actions</value></property>
 	</bean>
 	
-	<bean id="jacmsContentPreviewAction" scope="prototype" 
-			class="com.agiletec.plugins.jacms.apsadmin.content.ContentPreviewAction" 
-			parent="jacmsAbstractContentAction">
-		<property name="authorizationManager" ref="AuthorizationManager"/>
-		<property name="pageManager" ref="PageManager" />
-		<property name="urlManager" ref="URLManager"/>
-  	</bean>
-  	<!--
-	<bean id="jacmsPreviewWidgetExecutorAspect" 
-		  class="com.agiletec.plugins.jacms.apsadmin.content.executor.PreviewWidgetExecutorAspect" />
-	-->
-  	<!-- Servizi e bean appositi per Content Preview - INIZIO -->
-	
-	<bean id="jacmsContentPreviewViewerHelper" class="com.agiletec.plugins.jacms.apsadmin.content.preview.ContentPreviewViewerHelper" >
-		<property name="contentDispenser" ref="jacmsContentPreviewDispenser" />
-		<property name="contentManager" ref="jacmsContentManager" />
-		<property name="contentModelManager" ref="jacmsContentModelManager" />
-	</bean>
-	
-	<bean id="jacmsContentPreviewDispenser" class="com.agiletec.plugins.jacms.apsadmin.content.preview.ContentPreviewDispenser" 
-			parent="abstractService" >
-		<property name="contentRenderer" ref="jacmsBaseContentRenderer" />
-		<property name="linkResolver" ref="jacmsLinkResolverManager" />
-	</bean>
-  	
-  	<!-- Servizi e bean appositi per Content Preview - FINE -->
-  	
 	<bean id="jacmsContentAdminAction" scope="prototype" 
 			class="com.agiletec.plugins.jacms.apsadmin.content.ContentAdminAction">
 		<property name="contentManager" ref="jacmsContentManager"/>

@@ -15,7 +15,7 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.plugins.jacms.apsadmin.content.preview;
+package org.entando.entando.plugins.jacms.apsadmin.content.preview;
 
 import javax.servlet.http.HttpServletRequest;
 

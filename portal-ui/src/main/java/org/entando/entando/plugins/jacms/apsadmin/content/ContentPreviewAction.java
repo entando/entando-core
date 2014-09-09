@@ -15,13 +15,14 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.plugins.jacms.apsadmin.content;
+package org.entando.entando.plugins.jacms.apsadmin.content;
 
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.url.IURLManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import com.agiletec.plugins.jacms.apsadmin.content.AbstractContentAction;
 
 import java.io.IOException;
 
@@ -36,16 +37,14 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Classe action delegate alla gestione della funzione di preview contenuti.
  * @author E.Santoboni
  */
-public class ContentPreviewAction extends AbstractContentAction implements IContentPreviewAction, ServletResponseAware {
+public class ContentPreviewAction extends AbstractContentAction implements ServletResponseAware {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentFinderAction.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ContentPreviewAction.class);
 	
-	@Override
 	public String preview() {
 		Content content = this.getContent();
 		this.getContentActionHelper().updateEntity(content, this.getRequest());
@@ -82,7 +81,6 @@ public class ContentPreviewAction extends AbstractContentAction implements ICont
 		return previewLangCode;
 	}
 	
-	@Override
 	public String executePreview() {
 		try {
 			String pageDestCode = this.getCheckPageDestinationCode();
@@ -171,5 +169,9 @@ public class ContentPreviewAction extends AbstractContentAction implements ICont
 	
 	private IPageManager _pageManager;
 	private IURLManager _urlManager;
+	
+	public static final String PAGE_CODE_PARAM_PREFIX = "jacmsPreviewActionPageCode";
+	
+	public static final String LANG_CODE_PARAM_PREFIX = "jacmsPreviewActionLangCode";
 	
 }

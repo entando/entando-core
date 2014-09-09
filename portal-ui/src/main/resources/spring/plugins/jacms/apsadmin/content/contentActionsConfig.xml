@@ -34,7 +34,10 @@
 	<bean id="jacmsContentPreviewDispenser" class="org.entando.entando.plugins.jacms.apsadmin.content.preview.ContentPreviewDispenser" 
 			parent="abstractService" >
 		<property name="contentRenderer" ref="jacmsBaseContentRenderer" />
-		<property name="linkResolver" ref="jacmsLinkResolverManager" />
+        <property name="contentManager" ref="jacmsContentManager" />
+        <property name="contentAuthorizationHelper" ref="jacmsContentAuthorizationHelper" />
+        <property name="linkResolver" ref="jacmsLinkResolverManager" />
+		<property name="authorizationManager" ref="AuthorizationManager" />
 	</bean>
   	
 </beans>

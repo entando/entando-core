@@ -8,7 +8,7 @@
 			<wpsf:hidden name="lastGroupBy" />
 			<wpsf:hidden name="lastOrder" />
 			<wpsf:hidden name="activeTab" value="2" />
-			<wpsf:hidden name="internalActionName" value="entandoSearch" />
+			<wpsf:hidden name="internalContentActionName" value="entandoContentSearch" />
 			<wpsf:hidden name="contentOnSessionMarker" />
 		</p>
 		<div class="form-group">
@@ -23,38 +23,38 @@
 						<span class="icon fa fa-search"></span>
 						<span class="sr-only"><s:text name="label.search" /></span>
 					</wpsf:submit>
-					<button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="collapse" data-target="#search-advanced" title="<s:text name="title.searchFilters" />">
+					<button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="collapse" data-target="#search-content-advanced" title="<s:text name="title.searchFilters" />">
 						<span class="sr-only"><s:text name="title.searchFilters" /></span>
 						<span class="caret"></span>
 					</button>
 				</span>
 			</div>
 			<div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<div id="search-advanced" class="collapse well collapse-input-group">
+				<div id="search-content-advanced" class="collapse well collapse-input-group">
 					<%-- content id --%>
-						<div class="form-group">
-							<label class="control-label col-sm-2 text-right" for="contentIdToken"><s:text name="label.code"/></label>
-							<div class="col-sm-5 input-group">
-								<wpsf:textfield name="contentIdToken" id="contentIdToken" cssClass="form-control" />
-							</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2 text-right" for="contentIdToken"><s:text name="label.code"/></label>
+						<div class="col-sm-5 input-group">
+							<wpsf:textfield name="contentIdToken" id="contentIdToken" cssClass="form-control" />
 						</div>
+					</div>
 					<%-- type --%>
-						<div class="form-group">
-							<label class="control-label col-sm-2 text-right" for="contentType"><s:text name="label.type"/></label>
-							<div class="col-sm-5 input-group">
-								<wpsf:select name="contentType" id="contentType"
-									list="contentTypes" listKey="code" listValue="descr"
-									headerKey="" headerValue="%{getText('label.all')}" cssClass="form-control" />
-							</div>
+					<div class="form-group">
+						<label class="control-label col-sm-2 text-right" for="contentType"><s:text name="label.type"/></label>
+						<div class="col-sm-5 input-group">
+							<wpsf:select name="contentType" id="contentType"
+								list="contentTypes" listKey="code" listValue="descr"
+								headerKey="" headerValue="%{getText('label.all')}" cssClass="form-control" />
 						</div>
+					</div>
 					<%-- search --%>
-						<div class="form-group">
-							<div class="col-sm-5 col-sm-offset-2">
-								<wpsf:submit type="button" cssClass="btn btn-primary">
-									<span class="icon fa fa-search"></span>&#32;<s:text name="label.search" />
-								</wpsf:submit>
-							</div>
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-2">
+							<wpsf:submit type="button" cssClass="btn btn-primary">
+								<span class="icon fa fa-search"></span>&#32;<s:text name="label.search" />
+							</wpsf:submit>
 						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -75,7 +75,7 @@
 				<wpsf:hidden name="lastOrder" />
 				<wpsf:hidden name="contentIdToken" />
 				<wpsf:hidden name="activeTab" value="2" />
-				<wpsf:hidden name="internalActionName" value="entandoSearch" />
+				<wpsf:hidden name="internalContentActionName" value="entandoContentSearch" />
 				<wpsf:hidden name="contentOnSessionMarker" />
 			</p>
 			<wpsa:subset source="contents" count="10" objectName="groupContent" advanced="true" offset="5">

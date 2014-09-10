@@ -37,7 +37,7 @@ import com.agiletec.plugins.jacms.apsadmin.resource.ResourceFinderAction;
  * @author E.Santoboni
  */
 public class ExtendedResourceFinderAction extends ResourceFinderAction {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ExtendedResourceFinderAction.class);
 	
 	public String entryFindResource() {
@@ -58,15 +58,14 @@ public class ExtendedResourceFinderAction extends ResourceFinderAction {
 					this.getText(), this.getCategoryCode(), groupCodes);
 		} catch (Throwable t) {
 			_logger.error("error in getResources", t);
-			//ApsSystemUtils.logThrowable(t, this, "getResources");
 			throw t;
 		}
 		return resourcesId;
 	}
 	
 	/**
-	 * Restituisce il contenuto in sesione.
-	 * @return Il contenuto in sesione.
+	 * Restituisce il contenuto in sessione.
+	 * @return Il contenuto in sessione.
 	 */
 	public Content getContent() {
 		return (Content) this.getRequest().getSession()
@@ -85,7 +84,6 @@ public class ExtendedResourceFinderAction extends ResourceFinderAction {
 			ResourceAttributeActionHelper.joinResource(resource, this.getRequest());
 		} catch (Throwable t) {
 			_logger.error("error in joinResource", t);
-			//ApsSystemUtils.logThrowable(t, this, "joinResource");
 			return FAILURE;
 		}
 		return SUCCESS;

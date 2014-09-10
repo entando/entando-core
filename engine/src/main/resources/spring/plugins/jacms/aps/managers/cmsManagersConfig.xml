@@ -75,6 +75,7 @@
     <bean id="jacmsContentAuthorizationHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.ContentAuthorizationHelper" >
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="authorizationManager" ref="AuthorizationManager" />
+        <property name="langManager" ref="LangManager" />
     </bean>
     
     <bean id="jacmsBaseContentRenderer" class="com.agiletec.plugins.jacms.aps.system.services.renderer.BaseContentRenderer" 

@@ -29,6 +29,7 @@ import org.springframework.cache.annotation.Cacheable;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
@@ -107,14 +108,14 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 	}
 	
 	@Override
-	@Cacheable(value = ICacheInfoManager.CACHE_NAME, 
+	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, 
 			key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_AUTH_INFO_CACHE_PREFIX.concat(#contentId)")
 	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#contentId)")
 	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId) {
 		PublicContentAuthorizationInfo authInfo = null;
 		try {
 			Content content = this.getContentManager().loadContent(contentId, true);
-			authInfo = new PublicContentAuthorizationInfo(content);
+			authInfo = new PublicContentAuthorizationInfo(content, this.getLangManager().getLangs());
 		} catch (Throwable t) {
 			_logger.error("error in getAuthorizationInfo for content {}", contentId, t);
 		}
@@ -128,6 +129,13 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 		this._contentManager = contentManager;
 	}
 	
+	protected ILangManager getLangManager() {
+		return _langManager;
+	}
+	public void setLangManager(ILangManager langManager) {
+		this._langManager = langManager;
+	}
+	
 	protected IAuthorizationManager getAuthorizationManager() {
 		return _authorizationManager;
 	}
@@ -136,6 +144,7 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 	}
 	
 	private IContentManager _contentManager;
+	private ILangManager _langManager;
 	private IAuthorizationManager _authorizationManager;
 	
 }

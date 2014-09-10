@@ -20,7 +20,7 @@ package com.agiletec.plugins.jacms.apsadmin.content.attribute.action.hypertext;
 import com.agiletec.apsadmin.system.BaseAction;
 
 /**
- * Classe action delegata alla gestione generale dei jAPSLinks (link interni al testo degli attributi Hypertext).
+ * Classe action delegata alla gestione generale dei EntandoLink (link interni al testo degli attributi Hypertext).
  * @author E.Santoboni
  */
 public class HypertextAttributeAction extends BaseAction {

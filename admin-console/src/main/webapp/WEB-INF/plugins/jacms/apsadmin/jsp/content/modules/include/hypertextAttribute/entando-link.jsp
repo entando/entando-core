@@ -102,43 +102,56 @@
 					'</div>').prependTo(target);
 			};
 			//link to url
-				$('#form_externalUrl').on('submit', function(ev){
-					ev.preventDefault();
-					if ( $('#txtName').val().length == 0 ) {
-						insertAlert('<s:property value="%{getText('note.typeValidURL')}" escapeJavaScript="true" />', $('#form_externalUrl')) ;
-					}
-					else {
-						var hrefValue = "#!U;" + $('#txtName').val() + "!#";
-						entandoApplyLinkToEditor(hrefValue);
-						window.close();
-					}
-				});
+			$('#form_externalUrl').on('submit', function(ev){
+				ev.preventDefault();
+				if ( $('#txtName').val().length == 0 ) {
+					insertAlert('<s:property value="%{getText('note.typeValidURL')}" escapeJavaScript="true" />', $('#form_externalUrl')) ;
+				}
+				else {
+					var hrefValue = "#!U;" + $('#txtName').val() + "!#";
+					entandoApplyLinkToEditor(hrefValue);
+					window.close();
+				}
+			});
 			//link to page
-				$('#form_pageLink').on('submit', function(ev){
-					ev.preventDefault();
-					var checkedPage = $('[name="selectedNode"]:checked', '#pageTree').first();
-					if (checkedPage.length==0) {
-							insertAlert("<s:property value="%{getText('note.choosePageToLink')}" escapeJavaScript="true" />", $('#form_pageLink'));
-					}
-					else {
-						var hrefValue = "#!P;" + checkedPage.val() + "!#";
-						entandoApplyLinkToEditor(hrefValue);
-						window.close();
-					}
-				});
+			$('#form_pageLink').on('submit', function(ev){
+				ev.preventDefault();
+				var checkedPage = $('[name="selectedNode"]:checked', '#pageTree').first();
+				if (checkedPage.length==0) {
+						insertAlert("<s:property value="%{getText('note.choosePageToLink')}" escapeJavaScript="true" />", $('#form_pageLink'));
+				}
+				else {
+					var hrefValue = "#!P;" + checkedPage.val() + "!#";
+					entandoApplyLinkToEditor(hrefValue);
+					window.close();
+				}
+			});
 			//link to content
-				$('#button_contentLink').on('click touchstart keypress', function(ev){
-						ev.preventDefault();
-						var checkedContent = $('[name="contentId"]:checked', '#contentListTable').first();
-						if (checkedContent.length==0) {
-							insertAlert("<s:property value="%{getText('note.chooseContentToLink')}" escapeJavaScript="true" />", $('#content-link'));
-						}
-						else {
-							var hrefValue = "#!C;" + checkedContent.val() + "!#";
-							entandoApplyLinkToEditor(hrefValue);
-							window.close();
-						}
-				});
+			$('#button_contentLink').on('click touchstart keypress', function(ev){
+				ev.preventDefault();
+				var checkedContent = $('[name="contentId"]:checked', '#contentListTable').first();
+				if (checkedContent.length==0) {
+					insertAlert("<s:property value="%{getText('note.chooseContentToLink')}" escapeJavaScript="true" />", $('#content-link'));
+				}
+				else {
+					var hrefValue = "#!C;" + checkedContent.val() + "!#";
+					entandoApplyLinkToEditor(hrefValue);
+					window.close();
+				}
+			});
+			//link to resource
+			$('#button_resourceLink').on('click touchstart keypress', function(ev){
+				ev.preventDefault();
+				var checkedResource = $('[name="resourceId"]:checked', '#resourceListTable').first();
+				if (checkedResource.length==0) {
+					insertAlert("<s:property value="%{getText('note.chooseResourceToLink')}" escapeJavaScript="true" />", $('#resource-link'));
+				}
+				else {
+					var hrefValue = "#!R;" + checkedResource.val() + "!#";
+					entandoApplyLinkToEditor(hrefValue);
+					window.close();
+				}
+			});
 		});
 	</script>
 </head>
@@ -160,45 +173,56 @@
 							<li><a data-toggle="tab" href="#url-link"><s:text name="note.URLLinkTo" /></a></li>
 							<li><a data-toggle="tab" href="#page-link"><s:text name="note.pageLinkTo" /></a></li>
 							<li><a data-toggle="tab" href="#content-link"><s:text name="note.contentLinkTo" /></a></li>
+							<li><a data-toggle="tab" href="#resource-link"><s:text name="note.resourceLinkTo" /></a></li>
 						</ul>
 						<div class="panel panel-default" id="tab-container"><%-- panel --%>
 							<div class="panel-body"><%-- panel body --%>
 								<div class="tab-content"><%-- tabs container --%>
 									<%-- link to url --%>
-										<div id="url-link" class="tab-pane">
-											<form id="form_externalUrl">
-												<div class="col-xs-12">
-													<div class="form-group">
-														<label class="display-block" for="txtName">
-															<s:text name="label.url" />
-														</label>
-														<input type="hidden" name="contentOnSessionMarker" value="<s:property value="contentOnSessionMarker" />" />
-														<wpsf:textfield id="txtName" name="txtName" maxlength="255" cssClass="form-control" />
-														<span class="help help-block">
-															<s:text name="note.typeValidURL" />
-														</span>
-													</div>
-												</div>
+									<div id="url-link" class="tab-pane">
+										<form id="form_externalUrl">
+											<div class="col-xs-12">
 												<div class="form-group">
-													<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-														<button type="submit" id="button_externalURL" name="button_externalURL" class="btn btn-primary btn-block">
-															<span class="icon fa fa-floppy-o"></span>&#32;
-															<s:text name="label.confirm" />
-														</button>
-													</div>
+													<label class="display-block" for="txtName">
+														<s:text name="label.url" />
+													</label>
+													<input type="hidden" name="contentOnSessionMarker" value="<s:property value="contentOnSessionMarker" />" />
+													<wpsf:textfield id="txtName" name="txtName" maxlength="255" cssClass="form-control" />
+													<span class="help help-block">
+														<s:text name="note.typeValidURL" />
+													</span>
 												</div>
-											</form>
-										</div>
+											</div>
+											<div class="form-group">
+												<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
+													<button type="submit" id="button_externalURL" name="button_externalURL" class="btn btn-primary btn-block">
+														<span class="icon fa fa-floppy-o"></span>&#32;
+														<s:text name="label.confirm" />
+													</button>
+												</div>
+											</div>
+										</form>
+									</div>
 									<%-- link to page --%>
-										<s:action name="entandoPageLink" executeResult="true" />
+									<s:action name="entandoPageLink" executeResult="true" />
+									
 									<%-- link to content --%>
-										<s:if test="#request.activeTab == 2 && null != #request.internalActionName">
-											<s:set var="introContentLinkActionName" value="#request.internalActionName" />
-										</s:if>
-										<s:else>
-											<s:set var="introContentLinkActionName" value="%{'entandoIntroContentLink'}" />
-										</s:else>
-										<s:action name="%{#introContentLinkActionName}" executeResult="true" />
+									<s:if test="#request.activeTab == 2 && null != #request.internalContentActionName">
+										<s:set var="introContentLinkActionName" value="#request.internalContentActionName" />
+									</s:if>
+									<s:else>
+										<s:set var="introContentLinkActionName" value="%{'entandoIntroContentLink'}" />
+									</s:else>
+									<s:action name="%{#introContentLinkActionName}" executeResult="true" />
+									
+									<%-- link to resource --%>
+									<s:if test="#request.activeTab == 3 && null != #request.internalResourceActionName">
+										<s:set var="introResourceLinkActionName" value="#request.internalResourceActionName" />
+									</s:if>
+									<s:else>
+										<s:set var="introResourceLinkActionName" value="%{'entandoIntroResourceLink'}" />
+									</s:else>
+									<s:action name="%{#introResourceLinkActionName}" executeResult="true" />
 								</div><%-- panel body --%>
 							</div><%-- tabs container --%>
 						</div><%-- panel --%>

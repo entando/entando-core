@@ -39,6 +39,7 @@ public class ResourceFinderAction extends AbstractResourceAction implements IRes
  
 	private static final Logger _logger = LoggerFactory.getLogger(ResourceFinderAction.class);
 	
+	@Override
     public List<String> getResources() throws Throwable {
         List<String> resources = null;
         try {
@@ -46,7 +47,6 @@ public class ResourceFinderAction extends AbstractResourceAction implements IRes
                     this.getText(), this.getOwnerGroupName(), this.getFileName(), this.getCategoryCode(), this.getCurrentUser());
         } catch (Throwable t) {
         	_logger.error("error in getResources", t);
-            //ApsSystemUtils.logThrowable(t, this, "getResources");
             throw t;
         }
         return resources;

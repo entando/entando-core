@@ -33,6 +33,10 @@ import com.agiletec.plugins.jacms.apsadmin.resource.helper.IResourceActionHelper
  */
 public abstract class AbstractResourceAction extends AbstractTreeAction {
 	
+	public List<String> getResourceTypeCodes() {
+		return this.getResourceManager().getResourceTypeCodes();
+	}
+	
 	public List<Group> getAllowedGroups() {
 		return this.getResourceActionHelper().getAllowedGroups(this.getCurrentUser());
 	}

@@ -53,6 +53,7 @@ public class ContentLinkAttributeAction extends ContentFinderAction {
 	 * Sovrascrittura del metodo della {@link ContentFinderAction}.
 	 * Il metodo fà in modo di ricercare i contenuti che hanno, come gruppo proprietario o gruppo abilitato alla visualizzazione, 
 	 * o il gruppo "free" o il gruppo proprietario del contenuto in redazione.
+	 * @return La lista dei codici dei gruppi del contenuto.
 	 */
 	@Override
 	protected List<String> getContentGroupCodes() {

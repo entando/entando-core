@@ -28,8 +28,11 @@ import java.util.Set;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.util.EntityAttributeIterator;
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.lang.Lang;
+
+import com.agiletec.plugins.jacms.aps.system.services.content.model.CmsAttributeReference;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.AbstractResourceAttribute;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.IReferenceableAttribute;
 
 /**
  * Represents the authorization information of a content.
@@ -40,7 +43,12 @@ public class PublicContentAuthorizationInfo implements Serializable {
 	
 	private static final long serialVersionUID = -5241592759371755368L;
 	
+	@Deprecated
 	public PublicContentAuthorizationInfo(Content content) {
+		this(content, null);
+	}
+	
+	public PublicContentAuthorizationInfo(Content content, List<Lang> langs) {
 		this._contentId = content.getId();
 		this._contentType = content.getTypeCode();
 		this._mainGroup = content.getMainGroup();
@@ -52,14 +60,25 @@ public class PublicContentAuthorizationInfo implements Serializable {
 			allowedGroups[index++] = iterGroup.next();
 		}
 		this.setAllowedGroups(allowedGroups);
+		if (null == langs) {
+			return;
+		}
+		List<CmsAttributeReference> references = new ArrayList<CmsAttributeReference>();
 		EntityAttributeIterator attributeIter = new EntityAttributeIterator(content);
 		while (attributeIter.hasNext()) {
 			AttributeInterface currAttribute = (AttributeInterface) attributeIter.next();
-			if (currAttribute instanceof AbstractResourceAttribute) {
-				AbstractResourceAttribute abstrResAttr = (AbstractResourceAttribute) currAttribute;
-				if (abstrResAttr.getResource() != null) {
-					this.addProtectedResourceId(abstrResAttr.getResource().getId());
+			if (currAttribute instanceof IReferenceableAttribute) {
+				IReferenceableAttribute referenceableAttr = (IReferenceableAttribute) currAttribute;
+				List<CmsAttributeReference> attributeReferences = referenceableAttr.getReferences(langs);
+				if (null != attributeReferences) {
+					references.addAll(attributeReferences);
 				}
+			}
+		}
+		for (int i = 0; i < references.size(); i++) {
+			CmsAttributeReference cmsAttributeReference = references.get(i);
+			if (null != cmsAttributeReference.getRefResource()) {
+				this.addProtectedResourceId(cmsAttributeReference.getRefResource());
 			}
 		}
 	}
@@ -119,7 +138,7 @@ public class PublicContentAuthorizationInfo implements Serializable {
 	protected void addProtectedResourceId(String resourceId) {
 		int len = this._protectedResourcesId.length;
 		String[] newArray = new String[len + 1];
-		for(int i=0; i < len; i++){
+		for (int i=0; i < len; i++){
 			newArray[i] = this._protectedResourcesId[i];
 		}
 		newArray[len] = resourceId;
@@ -135,7 +154,9 @@ public class PublicContentAuthorizationInfo implements Serializable {
 	 */
 	public boolean isProtectedResourceReference(String resourceId) {
 		for (int i=0; i<this._protectedResourcesId.length; i++) {
-			if (this._protectedResourcesId[i].equals(resourceId)) return true;
+			if (this._protectedResourcesId[i].equals(resourceId)) {
+				return true;
+			}
 		}
 		return false;
 	}

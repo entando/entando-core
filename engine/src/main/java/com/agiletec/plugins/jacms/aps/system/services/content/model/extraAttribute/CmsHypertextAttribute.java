@@ -130,7 +130,7 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
                     SymbolicLink symbLink = links.get(j);
                     if (symbLink.getDestType() != SymbolicLink.URL_TYPE) {
                         CmsAttributeReference ref = new CmsAttributeReference(symbLink.getPageDest(),
-                                symbLink.getContentDest(), null);
+                                symbLink.getContentDest(), symbLink.getResourceDest());
                         refs.add(ref);
                     }
                 }

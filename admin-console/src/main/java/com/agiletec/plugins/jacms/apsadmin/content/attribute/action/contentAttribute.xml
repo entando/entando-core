@@ -219,7 +219,7 @@
 			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-contentLink.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
-
+		
 		<action name="search" class="jacmsContentLinkHypertextAttributeAction">
 			<!-- search is deprecated, use entandoSearch -->
 			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/contentLink.jsp</result>
@@ -229,7 +229,7 @@
 			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-contentLink.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
-
+		
 		<action name="changeOrder" class="jacmsContentLinkHypertextAttributeAction" method="changeOrder">
 			<!-- changeOrder is deprecated, use entandoChangeOrder -->
 			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/contentLink.jsp</result>
@@ -239,6 +239,16 @@
 			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-contentLink.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
+		
+		<action name="entandoIntroResourceLink" class="jacmsExtendedResourceFinderAction">
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-resourceLink.jsp</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+		<action name="entandoResourceSearch" class="jacmsExtendedResourceFinderAction">
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-resourceLink.jsp</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+		
 	</package>
 
 </struts>

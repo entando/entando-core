@@ -116,6 +116,8 @@ public interface ResourceInterface {
 	public InputStream getResourceStream(ResourceInstance instance);
     
     public InputStream getResourceStream(int size, String langCode);
+	
+	public String getDefaultUrlPath();
     
     /**
      * Restituisce la cartella (a partire dalla cartella delle risorse) 
@@ -130,16 +132,6 @@ public interface ResourceInterface {
      * @param folder La cartella dove è posizionata la risorsa. 
      */
     public void setFolder(String folder);
-    
-    /**
-     * Restituisce il path assoluto su disco del folder contenitore 
-     * dei file delle istanze relative alla risorsa specificata. 
-     * Questo path è necessario al salvataggio o alla rimozione
-     * dei file associati ad ogni istanza della risorse.
-     * @return Il path assoluto su disco completo.
-	 * @deprecated since Entando 3.2.1. Use IStorageManager
-     */
-    public String getDiskFolder();
     
 	/**
 	 * Aggiunge una categoria alla lista delle categorie della risorsa.
@@ -202,5 +194,7 @@ public interface ResourceInterface {
 	public void reloadResourceInstances() throws ApsSystemException;
 	
 	public boolean exists(String masterFormFileName) throws ApsSystemException;
+	
+	public ResourceInstance getDefaultInstance();
     
 }

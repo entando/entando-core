@@ -65,7 +65,6 @@ public class ResourceInstanceFileHelper implements IResourceInstanceHelper {
             is.close();
         } catch (Throwable t) {
         	_logger.error("Error on saving file {}", filePath, t);
-            //ApsSystemUtils.logThrowable(t, this, "save");
             throw new ApsSystemException("Error on saving file", t);
         }
     }
@@ -80,12 +79,7 @@ public class ResourceInstanceFileHelper implements IResourceInstanceHelper {
 	@Override
     @Deprecated
     public String getResourceDiskFolder(ResourceInterface resource) {
-        String resDiskFolder = resource.getDiskFolder();
-        File dir = new File(resDiskFolder);
-        if (!dir.exists() || !dir.isDirectory()) {
-            dir.mkdirs();
-        }
-        return resDiskFolder;
+        throw new RuntimeException("getResourceDiskFolder - Deprecated method");
     }
     
 	@Override

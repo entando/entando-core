@@ -54,7 +54,7 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
     public String getTextPLess() {
         String masterText = this.getText();
         String text = masterText.replaceFirst("<p>", "");
-        StringBuffer sbuffer = new StringBuffer(text);
+        StringBuilder sbuffer = new StringBuilder(text);
         int lastIndexOfP = sbuffer.lastIndexOf("</p>");
         if (lastIndexOfP != -1) {
             sbuffer.replace(lastIndexOfP, lastIndexOfP + 4, "");
@@ -118,6 +118,7 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
         return textByRange;
     }
     
+	@Override
     public List<CmsAttributeReference> getReferences(List<Lang> systemLangs) {
         List<CmsAttributeReference> refs = new ArrayList<CmsAttributeReference>();
         for (int i = 0; i < systemLangs.size(); i++) {
@@ -138,6 +139,7 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
         return refs;
     }
     
+	@Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
         try {
@@ -168,7 +170,6 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
             }
         } catch (Throwable t) {
         	_logger.error("Error validating Attribute '{}'", this.getName(), t);
-            //ApsSystemUtils.logThrowable(t, this, "validate", "Error validating Attribute '" + this.getName() + "'");
             throw new RuntimeException("Error validating Attribute '" + this.getName() + "'", t);
         }
         return errors;

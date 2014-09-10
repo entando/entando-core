@@ -59,7 +59,6 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
 			return this.getStorageManager().getStream(subPath, this.isProtectedResource());
 		} catch (Throwable t) {
 			_logger.error("Error on extracting resource Stream", t);
-			//ApsSystemUtils.logThrowable(t, this, "getResourceStream");
 			throw new RuntimeException("Error on extracting resource Stream", t);
 		}
 	}
@@ -76,7 +75,6 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
 			return null;
 		} catch (Throwable t) {
 			_logger.error("Error on extracting file", t);
-			//ApsSystemUtils.logThrowable(t, this, "getFile");
 			throw new RuntimeException("Error on extracting file", t);
 		}
 	}
@@ -93,7 +91,6 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
 			this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
 		} catch (Throwable t) {
 			_logger.error("Error on deleting resource instances", t);
-			//ApsSystemUtils.logThrowable(t, this, "deleteResourceInstances");
 			throw new ApsSystemException("Error on deleting resource instances", t);
 		}
 	}
@@ -121,6 +118,11 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
     public ResourceInstance getInstance() {
     	return _instance ;
     }
+	
+	@Override
+	public ResourceInstance getDefaultInstance() {
+		return this.getInstance();
+	}
     
     @Override
 	public String getXML() {

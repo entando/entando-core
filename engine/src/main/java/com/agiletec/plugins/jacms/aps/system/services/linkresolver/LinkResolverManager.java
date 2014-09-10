@@ -24,6 +24,7 @@ import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.url.IURLManager;
@@ -32,7 +33,10 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.AbstractResourceAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.IContentPageMapperManager;
+import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 
 /**
  * Servizio gestore della risoluzione dei link sinbolici.
@@ -50,15 +54,21 @@ public class LinkResolverManager extends AbstractService implements ILinkResolve
 		_logger.debug("{} ready.", this.getClass().getName());
 	}
 	
+	@Override
+	public String resolveLinks(String text, RequestContext reqCtx) {
+		return this.resolveLinks(text, null, reqCtx);
+	}
+	
 	/**
 	 * Sotituisce nel testo i link simbolici con URL reali.
 	 * @param text Il testo che può contenere link simbolici.
+	 * @param contentId The id of content that contains the link to resolve
 	 * @param reqCtx Il contesto di richiesta
 	 * @return Il testo in cui i link simbolici sono sostituiti con URL reali.
 	 */
 	@Override
-	public String resolveLinks(String text, RequestContext reqCtx) {
-		StringBuffer resolvedText = new StringBuffer();
+	public String resolveLinks(String text, String contentId, RequestContext reqCtx) {
+		StringBuilder resolvedText = new StringBuilder();
 		int postfixLen = SymbolicLink.SYMBOLIC_DEST_POSTFIX.length();
 		int end = 0;
 		int parsed = 0;
@@ -68,7 +78,7 @@ public class LinkResolverManager extends AbstractService implements ILinkResolve
 			if(end >= 0) {
 				end = end + postfixLen;
 				String symbolicString = text.substring(start, end);
-				String url = this.convertToURL(symbolicString, reqCtx);
+				String url = this.convertToURL(symbolicString, contentId, reqCtx);
 				if(url != null){
 					String invariantText = text.substring(parsed, start);
 					resolvedText.append(invariantText);
@@ -87,17 +97,22 @@ public class LinkResolverManager extends AbstractService implements ILinkResolve
 		return resolvedText.toString();
 	}
 	
-	protected String convertToURL(String symbolicString, RequestContext reqCtx) {
+	protected String convertToURL(String symbolicString, String contentId, RequestContext reqCtx) {
 		String url = null;
 		SymbolicLink symbolicLink = new SymbolicLink();
 		if (symbolicLink.setSymbolicDestination(symbolicString)) {
-			url = this.resolveLink(symbolicLink, reqCtx);
+			url = this.resolveLink(symbolicLink, contentId, reqCtx);
 		}
 		return url;
 	}
 	
 	@Override
 	public String resolveLink(SymbolicLink symbolicLink, RequestContext reqCtx) {
+		return this.resolveLink(symbolicLink, null, reqCtx);
+	}
+	
+	@Override
+	public String resolveLink(SymbolicLink symbolicLink, String contentId, RequestContext reqCtx) {
 		if (null == symbolicLink) {
 			_logger.error("Null Symbolic Link");
 			return "";
@@ -117,21 +132,31 @@ public class LinkResolverManager extends AbstractService implements ILinkResolve
 				url = pageUrl.getURL();
 			} else if (symbolicLink.getDestType() == SymbolicLink.CONTENT_TYPE) {
 				PageURL pageUrl = this.getUrlManager().createURL(reqCtx);
-				String contentId = symbolicLink.getContentDest();
-				String pageCode = this.getContentPageMapperManager().getPageCode(contentId);
+				String contentIdDest = symbolicLink.getContentDest();
+				String pageCode = this.getContentPageMapperManager().getPageCode(contentIdDest);
 				boolean forwardToDefaultPage = !this.isPageAllowed(reqCtx, pageCode);
 				if (forwardToDefaultPage) {
-					String viewPageCode = this.getContentManager().getViewPage(contentId);
+					String viewPageCode = this.getContentManager().getViewPage(contentIdDest);
 					pageUrl.setPageCode(viewPageCode);
-					pageUrl.addParam(SystemConstants.K_CONTENT_ID_PARAM, contentId);
+					pageUrl.addParam(SystemConstants.K_CONTENT_ID_PARAM, contentIdDest);
 				} else {
 					pageUrl.setPageCode(pageCode);
 				}
 				url = pageUrl.getURL();
+			} else if (symbolicLink.getDestType() == SymbolicLink.RESOURCE_TYPE) {
+				ResourceInterface resource = this.getResourceManager().loadResource(symbolicLink.getResourceDest());
+				if (null != resource) {
+					url = resource.getDefaultUrlPath();
+					if (!resource.getMainGroup().equals(Group.FREE_GROUP_NAME)) {
+						if (!url.endsWith("/")) {
+							url += "/";
+						}
+						url += AbstractResourceAttribute.REFERENCED_RESOURCE_INDICATOR + "/" + contentId + "/";
+					}
+				}
 			}
 		} catch (Throwable t) {
 			_logger.error("Error resolve link from SymbolicLink", t);
-			//ApsSystemUtils.logThrowable(t, this, "resolveLink", "Error resolve link from SymbolicLink");
 			throw new RuntimeException("Error resolve link from SymbolicLink", t);
 		}
 		return url;
@@ -179,6 +204,13 @@ public class LinkResolverManager extends AbstractService implements ILinkResolve
 		this._contentManager = contentManager;
 	}
 	
+	protected IResourceManager getResourceManager() {
+		return _resourceManager;
+	}
+	public void setResourceManager(IResourceManager resourceManager) {
+		this._resourceManager = resourceManager;
+	}
+	
 	protected IContentPageMapperManager getContentPageMapperManager() {
 		return _contentPageMapperManager;
 	}
@@ -216,6 +248,7 @@ public class LinkResolverManager extends AbstractService implements ILinkResolve
 	
 	private IPageManager _pageManager;
 	private IContentManager _contentManager;
+	private IResourceManager _resourceManager;
 	private IContentPageMapperManager _contentPageMapperManager;
 	private IURLManager _urlManager;
 	

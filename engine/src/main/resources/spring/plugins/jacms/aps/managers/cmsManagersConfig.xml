@@ -90,6 +90,7 @@
     <bean id="jacmsLinkResolverManager" class="com.agiletec.plugins.jacms.aps.system.services.linkresolver.LinkResolverManager" 
 			parent="abstractService" >
         <property name="contentManager" ref="jacmsContentManager" />
+		<property name="resourceManager" ref="jacmsResourceManager" />
         <property name="contentPageMapperManager" ref="jacmsContentPageMapperManager" />
         <property name="pageManager" ref="PageManager" />
         <property name="urlManager" ref="URLManager" />

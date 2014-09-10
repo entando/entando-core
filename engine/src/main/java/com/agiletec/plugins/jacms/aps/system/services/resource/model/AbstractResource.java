@@ -297,40 +297,6 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		return new ResourceDOM();
 	}
 	
-	/**
-     * Restituisce il path assoluto su disco del folder contenitore 
-     * dei file delle istanze relative alla risorsa specificata. 
-     * Questo path è necessario al salvataggio o alla rimozione
-     * dei file associati ad ogni istanza della risorse.
-     * @return Il path assoluto su disco completo.
-	 * @deprecated Since Entando 3.2.1. Use StrorageManager
-     */
-	@Override
-	public String getDiskFolder() {
-		/*
-    	StringBuilder diskFolder = new StringBuilder();
-    	if (!Group.FREE_GROUP_NAME.equals(this.getMainGroup())) {
-    		//RISORSA PROTETTA
-    		diskFolder.append(this.getProtectedBaseDiskRoot());
-    	} else {
-    		//RISORSA LIBERA
-    		diskFolder.append(this.getBaseDiskRoot());
-    	}
-    	String folder = this.getFolder();
-    	if ((!diskFolder.toString().endsWith("\\") || !diskFolder.toString().endsWith("/")) 
-    			&& (!folder.startsWith("\\") || !folder.startsWith("/"))) {
-    		diskFolder.append(File.separator);
-    	}
-    	diskFolder.append(folder);
-    	if (!Group.FREE_GROUP_NAME.equals(this.getMainGroup())) {
-    		//RISORSA PROTETTA
-    		diskFolder.append(this.getMainGroup() + File.separator);
-    	}
-    	return diskFolder.toString();
-		*/
-		throw new RuntimeException("Deprecated method");
-    }
-    
     protected String getDiskSubFolder() {
     	StringBuilder diskFolder = new StringBuilder(this.getFolder());
     	if (this.isProtectedResource()) {
@@ -356,6 +322,12 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		String instanceFileName = masterFileName.replaceAll("[^ _.a-zA-Z0-9]", "");
 		instanceFileName = instanceFileName.trim().replace(' ', '_');
 		return instanceFileName;
+	}
+	
+	@Override
+	public String getDefaultUrlPath() {
+		ResourceInstance defaultInstance = this.getDefaultInstance();
+		return this.getUrlPath(defaultInstance);
 	}
     
     /**
@@ -416,7 +388,6 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 			is.close();
 		} catch (Throwable t) {
 			_logger.error("Error on saving temporary file '{}'", filename, t);
-			//ApsSystemUtils.logThrowable(t, this, "saveTempFile");
 			throw new ApsSystemException("Error on saving temporary file", t);
 		}
 		return new File(filePath);

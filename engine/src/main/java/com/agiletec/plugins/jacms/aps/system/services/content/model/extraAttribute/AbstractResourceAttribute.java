@@ -299,6 +299,7 @@ public abstract class AbstractResourceAttribute extends TextAttribute
     }
     
     private Map<String, ResourceInterface> _resources = new HashMap<String, ResourceInterface>();
-    public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
+    
+	public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
     
 }

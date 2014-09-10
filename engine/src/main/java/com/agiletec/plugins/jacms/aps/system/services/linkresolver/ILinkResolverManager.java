@@ -27,19 +27,25 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink
 public interface ILinkResolverManager {
 	
 	/**
-	 * Sotituisce nel testo i link simbolici con URL reali.
+	 * Sostituisce nel testo i link simbolici con URL reali.
 	 * @param text Il testo che può contenere link simbolici.
+	 * @param contentId The id of content that contains the link to resolve
 	 * @param reqCtx Il contesto di richiesta
 	 * @return Il testo in cui i link simbolici sono sostituiti con URL reali.
 	 */
+	public String resolveLinks(String text, String contentId, RequestContext reqCtx);
+	
 	public String resolveLinks(String text, RequestContext reqCtx);
 	
 	/**
-	 * restituisce il link risolto sulla base del symbolic link.
+	 * Restituisce il link risolto sulla base del symbolic link.
 	 * @param symbolicLink Il symbolic linj da risolvere.
+	 * @param contentId The id of content that contains the link to resolve
 	 * @param reqCtx Il contesto della richiesta. Può essere null. 
 	 * @return Il link generato.
 	 */
+	public String resolveLink(SymbolicLink symbolicLink, String contentId, RequestContext reqCtx);
+	
 	public String resolveLink(SymbolicLink symbolicLink, RequestContext reqCtx);
 	
 }

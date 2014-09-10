@@ -113,7 +113,7 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 			return;
 		}
 		try {
-			String finalRenderedContent = this.getLinkResolverManager().resolveLinks(renderizationInfo.getCachedRenderedContent(), reqCtx);
+			String finalRenderedContent = this.getLinkResolverManager().resolveLinks(renderizationInfo.getCachedRenderedContent(), renderizationInfo.getContentId(), reqCtx);
 			renderizationInfo.setRenderedContent(finalRenderedContent);
 		} catch (Throwable t) {
 			_logger.error("Error while resolve links for content {}", renderizationInfo.getContentId(), t);

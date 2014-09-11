@@ -36,6 +36,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Data Access Object per gli oggetti risorsa.
@@ -61,7 +64,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 			this.executeRollback(conn);
 			_logger.error("Error adding resource",  t);
 			throw new RuntimeException("Error adding resource", t);
-			//processDaoException(t, "Error adding risorsa", "addResource");
 		} finally {
 			closeConnection(conn);
 		}
@@ -91,7 +93,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
         } catch (Throwable t) {
             _logger.error("Error adding resource record",  t);
 			throw new RuntimeException("Error adding resource record", t);
-			//processDaoException(t, "Errore in aggiunta record risorsa", "addResourceRecord");
         } finally {
             closeDaoResources(null, stat);
         }
@@ -102,6 +103,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 	 * @param resource La risorsa da aggiornare nel db.
 	 */
     @Override
+	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#resource.id)")
 	public void updateResource(ResourceInterface resource) {
 		Connection conn = null;
 		try {
@@ -113,7 +115,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 			this.executeRollback(conn);
 			_logger.error("Error updating resource",  t);
 			throw new RuntimeException("Error updating resource", t);
-			//processDaoException(t, "Error updating resource", "updateResource");
 		} finally {
 			closeConnection(conn);
 		}
@@ -144,7 +145,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
         } catch (Throwable t) {
             _logger.error("Error updating resource record",  t);
 			throw new RuntimeException("Error updating resource record", t);
-			//processDaoException(t, "Errore in aggiornamento record risorsa", "updateResourceRecord");
         } finally {
             closeDaoResources(null, stat);
         }
@@ -155,6 +155,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 	 * @param id L'identificativo della risorsa da cancellare.
 	 */
     @Override
+	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)")
 	public void deleteResource(String id) {
 		Connection conn = null;
 		try {
@@ -166,7 +167,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 			this.executeRollback(conn);
 			_logger.error("Error deleting resource {}", id,  t);
 			throw new RuntimeException("Error deleting resource " + id, t);
-			//processDaoException(t, "Error deleting resource", "deleteResource");
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -183,7 +183,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		} catch (Throwable t) {
 			_logger.error("Error deleting resource {}", resourceId,  t);
 			throw new RuntimeException("Error deleting resource " + resourceId, t);
-			//processDaoException(t, "Error deleting resource", "executeDeleteResource");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -253,7 +252,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading resources id",  t);
 			throw new RuntimeException("Error loading resources id", t);
-			//processDaoException(t, "Error loading resources id", "searchResourcesId");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -273,7 +271,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		} catch (Throwable t) {
 			_logger.error("Error while creating the statement",  t);
 			throw new RuntimeException("Error while creating the statement", t);
-			//processDaoException(t, "Error while creating the statement", "buildStatement");
 		}
 		return stat;
 	}
@@ -298,13 +295,14 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 	}
     
 	/**
-	 * Carica un record di risorse in funzione dell'idRisorsa. Questo record è 
+	 * Carica un record di risorse in funzione dell'id Risorsa. Questo record è 
 	 * necessario per l'estrazione della risorse in oggetto tipo AbstractResource 
 	 * da parte del ResourceManager. 
 	 * @param id L'identificativo della risorsa.
 	 * @return Il record della risorsa.
 	 */
 	@Override
+	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)")
 	public ResourceRecordVO loadResourceVo(String id) {
 		Connection conn = null;
 		ResourceRecordVO resourceVo = null;
@@ -329,7 +327,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		} catch (Throwable t) {
 			_logger.error("Errore loading resource {}", id,  t);
 			throw new RuntimeException("Errore loading resource" + id, t);
-			//processDaoException(t, "Errore in caricamento risorsa", "loadResourceVo");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -344,8 +341,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 	 * @param conn La connessione con il db.
 	 * @throws ApsSystemException
 	 */
-	protected void addCategoryRelationsRecord(ResourceInterface resource, Connection conn) 
-			throws ApsSystemException {
+	protected void addCategoryRelationsRecord(ResourceInterface resource, Connection conn) throws ApsSystemException {
 		if (resource.getCategories().size()>0) {
 			PreparedStatement stat = null;
 			try {
@@ -362,8 +358,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 				stat.executeBatch();
 			} catch (Throwable t) {
 				_logger.error("Error adding resourcerelations record for {}",  resource.getId(),  t);
-			throw new RuntimeException("Error adding resourcerelations record for " + resource.getId(), t);
-			//processDaoException(t, "Errore in aggiunta record tabella resourcerelations", "addCategoryRelationsRecord");
+				throw new RuntimeException("Error adding resourcerelations record for " + resource.getId(), t);
 			} finally {
 				closeDaoResources(null, stat);
 			}
@@ -405,7 +400,6 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		} catch (Throwable t) {
 			_logger.error("Error deleting resource records for resource {}", resourceId,  t);
 			throw new RuntimeException("Error deleting resource records for resource " + resourceId, t);
-			//processDaoException(t, "Error deleting resource records by id " + resourceId, "deleteRecordsById");
 		} finally {
 			closeDaoResources(null, stat);
 		}

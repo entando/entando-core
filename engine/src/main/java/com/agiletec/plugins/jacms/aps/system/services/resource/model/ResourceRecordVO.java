@@ -17,6 +17,7 @@
 */
 package com.agiletec.plugins.jacms.aps.system.services.resource.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Date;
  * (tra dati estratti da db e parser) nel caricamento di una risorsa completa.
  * @author E.Santoboni
  */
-public class ResourceRecordVO {
+public class ResourceRecordVO implements Serializable {
 	
 	/**
 	 * Restituisce l'id della risorsa.

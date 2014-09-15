@@ -18,19 +18,16 @@
 package org.entando.entando.aps.system.services.actionlog;
 
 import java.util.List;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.Date;
+
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamComment;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamLikeInfo;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.Set;
 
 /**
  * Interface for the service that manages the {@link ActionLogRecord}
@@ -73,7 +70,7 @@ public interface IActionLogManager {
 	public List<Integer> getActivityStream(UserDetails loggedUser) throws ApsSystemException;
 	
 	public List<Integer> getActivityStream(IActivityStreamSearchBean activityStreamSearchBean) throws ApsSystemException;
-	
+	/*
 	public void editActionLikeRecord(int id, String username, boolean add) throws ApsSystemException;
 	
 	public List<ActivityStreamLikeInfo> getActionLikeRecords(int id) throws ApsSystemException;
@@ -83,6 +80,11 @@ public interface IActionLogManager {
 	public void deleteActionCommentRecord(int id, int streamId) throws ApsSystemException;
 	
 	public List<ActivityStreamComment> getActionCommentRecords(int id) throws ApsSystemException;
+	*/
+	
+	public Set<Integer> extractOldRecords(Integer maxActivitySizeByGroup) throws ApsSystemException;
+	
+	public void updateRecordDate(int id) throws ApsSystemException;
 	
 	public Date lastUpdateDate(UserDetails loggedUser) throws ApsSystemException;
 	

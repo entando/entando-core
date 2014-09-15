@@ -16,7 +16,7 @@
 *
 */
 
-package org.entando.entando.aps.system.services.actionlog.model;
+package org.entando.entando.apsadmin.system.services.activitystream.model;
 
 import java.util.Date;
 

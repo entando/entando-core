@@ -15,7 +15,7 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package org.entando.entando.aps.system.services.actionlog;
+package org.entando.entando.apsadmin.system.services.activitystream;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.util.DateConverter;
@@ -23,12 +23,13 @@ import com.agiletec.aps.util.DateConverter;
 import java.util.List;
 
 import javax.sql.DataSource;
+import org.entando.entando.aps.system.services.actionlog.ActionLogDAO;
+import org.entando.entando.aps.system.services.actionlog.IActionLogDAO;
 
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
-import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
-import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
+import org.entando.entando.apsadmin.system.services.activitystream.model.ActivityStreamComment;
 
-public class TestActionLogDAO extends BaseTestCase {
+public class TestSocialActivityStreamDAO extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
@@ -36,8 +37,8 @@ public class TestActionLogDAO extends BaseTestCase {
 		this.init();
 		this._helper.cleanRecords();
 	}
-
-	public void testGetActionRecords() {
+	/*
+	public void _testGetActionRecords() {
 		IActionLogRecordSearchBean bean = null;
 		List<Integer> ids = this._actionLoggerDAO.getActionRecords(bean);
 		this.compareIds(new Integer[]{}, ids);
@@ -73,7 +74,7 @@ public class TestActionLogDAO extends BaseTestCase {
 
 	}
 
-	public void testActionLogSearch() {
+	public void _testActionLogSearch() {
 		IActionLogRecordSearchBean bean = null;
 		List<Integer> ids = this._actionLoggerDAO.getActionRecords(bean);
 		this.compareIds(new Integer[]{}, ids);
@@ -93,7 +94,7 @@ public class TestActionLogDAO extends BaseTestCase {
 		this.compareIds(new Integer[]{3}, ids);
 	}
 
-	public void testAddGetDeleteActionRecord() {
+	public void _testAddGetDeleteActionRecord() {
 		ActionLogRecord record1 = this._helper.createActionRecord(1, "username1", "actionName1",
 				"namespace1", DateConverter.parseDate("01/01/2009 00:00", "dd/MM/yyyy HH:mm"), "params1");
 		ActionLogRecord record2 = this._helper.createActionRecord(2, "username2", "actionName2",
@@ -112,38 +113,33 @@ public class TestActionLogDAO extends BaseTestCase {
 		this._actionLoggerDAO.deleteActionRecord(record2.getId());
 		assertNull(this._actionLoggerDAO.getActionRecord(record2.getId()));
 	}
-	/*
+	*/
 	public void testAddDeleteCommentRecord() {
 		ActionLogRecord record1 = this._helper.createActionRecord(1, "username1", "actionName1",
 				"namespace1", DateConverter.parseDate("01/01/2009 00:00", "dd/MM/yyyy HH:mm"), "params1");
 		ActionLogRecord record2 = this._helper.createActionRecord(2, "username2", "actionName2",
 				"namespace2", DateConverter.parseDate("01/02/2009 00:00", "dd/MM/yyyy HH:mm"), "params2");
-
 		this._actionLoggerDAO.addActionRecord(record1);
 		this._actionLoggerDAO.addActionRecord(record2);
 		ActionLogRecord addedRecord1 = this._actionLoggerDAO.getActionRecord(record1.getId());
 		this.compareActionRecords(record1, addedRecord1);
 		ActionLogRecord addedRecord2 = this._actionLoggerDAO.getActionRecord(record2.getId());
 		this.compareActionRecords(record2, addedRecord2);
-
-		this._actionLoggerDAO.addActionCommentRecord(100, addedRecord1.getId(), "admin", "test comment 1");
-
-		this._actionLoggerDAO.addActionCommentRecord(101, addedRecord1.getId(), "admin", "test comment 2");
-		List<ActivityStreamComment> actionCommentRecords = this._actionLoggerDAO.getActionCommentRecords(addedRecord1.getId());
-
+		this._socialActivityStreamDAO.addActionCommentRecord(100, addedRecord1.getId(), "admin", "test comment 1");
+		this._socialActivityStreamDAO.addActionCommentRecord(101, addedRecord1.getId(), "admin", "test comment 2");
+		List<ActivityStreamComment> actionCommentRecords = this._socialActivityStreamDAO.getActionCommentRecords(addedRecord1.getId());
+		
 		assertEquals(2, actionCommentRecords.size());
 		assertEquals(100, actionCommentRecords.get(0).getId());
 		assertEquals(101, actionCommentRecords.get(1).getId());
 		
-		this._actionLoggerDAO.deleteActionCommentRecord(100,addedRecord1.getId());
+		this._socialActivityStreamDAO.deleteActionCommentRecord(100,addedRecord1.getId());
 		
-		actionCommentRecords = this._actionLoggerDAO.getActionCommentRecords(addedRecord1.getId());
-
+		actionCommentRecords = this._socialActivityStreamDAO.getActionCommentRecords(addedRecord1.getId());
 		assertEquals(1, actionCommentRecords.size());
-		
 		assertEquals("test comment 2", actionCommentRecords.get(0).getCommentText());
 	}
-	*/
+	/*
 	private void compareIds(Integer[] expected, List<Integer> received) {
 		assertEquals(expected.length, received.size());
 		for (Integer id : expected) {
@@ -152,7 +148,7 @@ public class TestActionLogDAO extends BaseTestCase {
 			}
 		}
 	}
-
+	*/
 	private void compareActionRecords(ActionLogRecord expected, ActionLogRecord received) {
 		assertEquals(expected.getId(), received.getId());
 		assertEquals(expected.getUsername(), received.getUsername());
@@ -162,14 +158,19 @@ public class TestActionLogDAO extends BaseTestCase {
 		assertEquals(DateConverter.getFormattedDate(expected.getActionDate(), "ddMMyyyyHHmm"),
 				DateConverter.getFormattedDate(received.getActionDate(), "ddMMyyyyHHmm"));
 	}
-
+	
 	private void init() {
-		ActionLogDAO actionLoggerDAO = new ActionLogDAO();
 		DataSource dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
+		
+		SocialActivityStreamDAO socialActivityStreamDAO = new SocialActivityStreamDAO();
+		socialActivityStreamDAO.setDataSource(dataSource);
+		this._socialActivityStreamDAO = socialActivityStreamDAO;
+		
+		ActionLogDAO actionLoggerDAO = new ActionLogDAO();
 		actionLoggerDAO.setDataSource(dataSource);
 		this._actionLoggerDAO = actionLoggerDAO;
-
-		this._helper = new ActionLoggerTestHelper(this.getApplicationContext());
+		
+		this._helper = new SocialStreamTestHelper(this.getApplicationContext());
 	}
 
 	@Override
@@ -177,8 +178,9 @@ public class TestActionLogDAO extends BaseTestCase {
 		this._helper.cleanRecords();
 		super.tearDown();
 	}
-
+	
 	private IActionLogDAO _actionLoggerDAO;
-	private ActionLoggerTestHelper _helper;
-
+	private ISocialActivityStreamDAO _socialActivityStreamDAO;
+	private SocialStreamTestHelper _helper;
+	
 }

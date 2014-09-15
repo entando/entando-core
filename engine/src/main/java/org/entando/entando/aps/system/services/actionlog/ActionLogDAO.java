@@ -37,9 +37,8 @@ import java.util.Set;
 
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamLikeInfo;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamLikeInfos;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,6 @@ import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.group.Group;
 
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamComment;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
 
 /**
@@ -374,24 +372,22 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			this.executeRollback(conn);
 			_logger.error("Error on delete record: {}", id, t);
 			throw new RuntimeException("Error on delete record: " + id , t);
-			//processDaoException(t, "Error on delete record: " + id , "deleteActionRecord");
 		} finally {
 			closeConnection(conn);
 		}
 	}
-
+	
 	private void deleteActionRecord(int id, Connection conn) {
 		try {
-			this.deleteRecord(id, conn, DELETE_LOG_LIKE_RECORDS);
+			//this.deleteRecord(id, conn, DELETE_LOG_LIKE_RECORDS);
 			this.deleteRecord(id, conn, DELETE_LOG_RECORD_RELATIONS);
 			this.deleteRecord(id, conn, DELETE_LOG_RECORD);
 		} catch (Throwable t) {
 			_logger.error("Error on delete record: {}", id, t);
 			throw new RuntimeException("Error on delete record: " + id, t);
-			//processDaoException(t, "Error on delete record: " + id , "deleteActionRecord");
 		}
 	}
-
+	/*
 	@Override
 	public void editActionLikeRecord(int id, String username, boolean add) {
 		if (add) {
@@ -400,7 +396,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			this.deleteActionLikeRecord(id, username);
 		}
 	}
-
+	
 	@Override
 	public void addActionLikeRecord(int id, String username) {
 		Connection conn = null;
@@ -418,7 +414,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			Timestamp timestamp = new Timestamp(new Date().getTime());
 			stat.setTimestamp(3, timestamp);
 			stat.executeUpdate();
-			updateRecordUpdateDate(conn, id);
+			updateRecordDate(conn, id);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -441,7 +437,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			stat.setInt(1, id);
 			stat.setString(2, username);
 			stat.executeUpdate();
-			updateRecordUpdateDate(conn, id);
+			updateRecordDate(conn, id);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -452,9 +448,26 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-
+	*/
 	
-	protected void updateRecordUpdateDate(Connection conn, int recordid){
+	@Override
+	public void updateRecordDate(int id) {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			this.updateRecordDate(conn, id);
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error updating record date: {}", id, t);
+			throw new RuntimeException("Error updating record date: id " + id , t);
+		} finally {
+			closeConnection(conn);
+		}
+	}
+	
+	protected void updateRecordDate(Connection conn, int recordid) {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(UPDATE_UPDATEDATE_ACTION_RECORD);
@@ -464,8 +477,8 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			stat.executeUpdate();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on insert actionlogger like record",  t);
-			throw new RuntimeException("Error on insert actionlogger like record", t);
+			_logger.error("Error updating record date: {}", recordid, t);
+			throw new RuntimeException("Error updating record date: id " + recordid , t);
 		} 
 	}
 			
@@ -482,7 +495,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			closeDaoResources(null, stat);
 		}
 	}
-
+	/*
 	@Override
 	public List<ActivityStreamLikeInfo> getActionLikeRecords(int id) {
 		List<ActivityStreamLikeInfo> infos = new ActivityStreamLikeInfos();
@@ -507,7 +520,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		}
 		return infos;
 	}
-
+	
 	@Override
 	public List<ActivityStreamComment> getActionCommentRecords(int id) {
 		List<ActivityStreamComment> comments = new ArrayList<ActivityStreamComment>();
@@ -537,7 +550,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		}
 		return comments;
 	}
-
+	
 	@Override
 	public void addActionCommentRecord(int id, int recordId, String username, String comment) {
 		Connection conn = null;
@@ -553,18 +566,17 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			Timestamp timestamp = new Timestamp(new Date().getTime());
 			stat.setTimestamp(5, timestamp);
 			stat.executeUpdate();
-			updateRecordUpdateDate(conn, recordId);
+			updateRecordDate(conn, recordId);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on insert actionlogger comment record",  t);
 			throw new RuntimeException("Error on insert actionlogger comment record", t);
-			//processDaoException(t, "Error on insert actionlogger comment record", "addActionCommentRecord");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-
+	
 	@Override
 	public void deleteActionCommentRecord(int id, int streamId) {
 		Connection conn = null;
@@ -575,7 +587,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			stat = conn.prepareStatement(DELETE_ACTION_COMMENT_RECORD);
 			stat.setInt(1, id);
 			stat.executeUpdate();
-			updateRecordUpdateDate(conn, streamId);
+			updateRecordDate(conn, streamId);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -585,8 +597,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-	
-	
+	*/
 	@Override
 	protected String getMasterTableName() {
 		return "actionlogrecords";
@@ -606,7 +617,28 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 	protected boolean isForceCaseInsensitiveLikeSearch() {
 		return true;
 	}
-
+	
+	@Override
+	public Set<Integer> extractOldRecords(Integer maxActivitySizeByGroup) {
+		Set<Integer> recordsToDelete = new HashSet<Integer>();
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			Map<String, Integer> occurrences = this.getOccurrences(maxActivitySizeByGroup, conn);
+			Iterator<String> groupIter = occurrences.keySet().iterator();
+			while (groupIter.hasNext()) {
+				String groupName = groupIter.next();
+				this.extractRecordToDelete(groupName, maxActivitySizeByGroup, recordsToDelete, conn);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error extracting old Stream logs",  t);
+			throw new RuntimeException("Error cleaning old Stream logs", t);
+		} finally {
+			this.closeConnection(conn);
+		}
+		return recordsToDelete;
+	}
+	/*
 	@Override
 	public synchronized void cleanOldActivityStreamLogs(int maxActivitySizeByGroup) {
 		Connection conn = null;
@@ -630,12 +662,11 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			this.executeRollback(conn);
 			_logger.error("Error cleaning old Stream logs",  t);
 			throw new RuntimeException("Error cleaning old Stream logs", t);
-			//processDaoException(t, "Error cleaning old Stream logs" , "cleanOldActivityStreamLogs");
 		} finally {
 			closeConnection(conn);
 		}
 	}
-
+	*/
 	private Map<String, Integer> getOccurrences(Integer maxActivitySizeByGroup, Connection conn) {
 		Map<String, Integer> occurrences = new HashMap<String, Integer>();
 		Statement stat = null;
@@ -653,7 +684,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading actionlogger occurrences",  t);
 			throw new RuntimeException("Error loading actionlogger occurrences", t);
-			//processDaoException(t, "Error loading actionlogger occurrences", "getOccurrences");
 		} finally {
 			closeDaoResources(res, stat);
 		}
@@ -689,7 +719,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while loading activity stream records to delete : group {}", groupName,  t);
-			//processDaoException(t, "Error while loading activity stream records to delete : group " + groupName, "extractRecordToDelete");
+			throw new RuntimeException("Error while loading activity stream records to delete : group '" + groupName + "'", t);
 		} finally {
 			closeDaoResources(result, stat);
 		}
@@ -699,8 +729,8 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			= "INSERT INTO actionlogrecords ( id, username, actiondate, namespace, actionname, parameters, activitystreaminfo, updatedate) "
 			+ "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
 
-	private static final String ADD_ACTION_LIKE_RECORD
-			= "INSERT INTO actionloglikerecords ( recordid, username, likedate) VALUES ( ? , ? , ? )";
+	//private static final String ADD_ACTION_LIKE_RECORD
+	//		= "INSERT INTO actionloglikerecords ( recordid, username, likedate) VALUES ( ? , ? , ? )";
 
 	private static final String GET_ACTION_RECORD
 			= "SELECT username, actiondate, updatedate, namespace, actionname, parameters, activitystreaminfo FROM actionlogrecords WHERE id = ?";
@@ -714,14 +744,14 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 	private final String ADD_LOG_RECORD_RELATION
 			= "INSERT INTO actionlogrelations (recordid, refgroup) VALUES ( ? , ? )";
 
-	private static final String DELETE_LOG_LIKE_RECORDS
-			= "DELETE from actionloglikerecords where recordid = ? ";
+	//private static final String DELETE_LOG_LIKE_RECORDS
+	//		= "DELETE from actionloglikerecords where recordid = ? ";
 
-	private static final String DELETE_LOG_LIKE_RECORD
-			= DELETE_LOG_LIKE_RECORDS + "AND username = ? ";
+	//private static final String DELETE_LOG_LIKE_RECORD
+	//		= DELETE_LOG_LIKE_RECORDS + "AND username = ? ";
 
-	private static final String GET_ACTION_LIKE_RECORDS
-			= "SELECT username from actionloglikerecords where recordid = ? ";
+	//private static final String GET_ACTION_LIKE_RECORDS
+	//		= "SELECT username from actionloglikerecords where recordid = ? ";
 
 	private static final String GET_GROUP_OCCURRENCES
 			= "SELECT refgroup, count(refgroup) FROM actionlogrelations GROUP BY refgroup";
@@ -729,13 +759,13 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 	private static final String UPDATE_UPDATEDATE_ACTION_RECORD
 			= "UPDATE actionlogrecords SET updatedate = ? WHERE id = ?";
 	
-	private static final String ADD_ACTION_COMMENT_RECORD
-			= "INSERT INTO actionlogcommentrecords (id, recordid, username, comment, commentdate) VALUES ( ? , ? , ? , ? , ? )";
+	//private static final String ADD_ACTION_COMMENT_RECORD
+	//		= "INSERT INTO actionlogcommentrecords (id, recordid, username, comment, commentdate) VALUES ( ? , ? , ? , ? , ? )";
 	
-	private static final String DELETE_ACTION_COMMENT_RECORD
-			= "DELETE from actionlogcommentrecords where id = ?";
+	//private static final String DELETE_ACTION_COMMENT_RECORD
+	//		= "DELETE from actionlogcommentrecords where id = ?";
 	
-	private static final String GET_ACTION_COMMENT_RECORDS
-			= "SELECT id, username, comment, commentdate FROM actionlogcommentrecords WHERE recordid = ? ORDER BY commentdate ASC";
+	//private static final String GET_ACTION_COMMENT_RECORDS
+	//		= "SELECT id, username, comment, commentdate FROM actionlogcommentrecords WHERE recordid = ? ORDER BY commentdate ASC";
 	
 }

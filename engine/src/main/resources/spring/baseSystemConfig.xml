@@ -66,8 +66,10 @@
 		<value>org.entando.entando.aps.system.init.model.servdb.UserProfileAttributeRole</value>
 		<value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecord</value>
 		<value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecordRelation</value>
+		<!--
 		<value>org.entando.entando.aps.system.init.model.servdb.ActionLogLikeRecord</value>
 		<value>org.entando.entando.aps.system.init.model.servdb.ActionLogCommentRecord</value>
+		-->
 	</util:list>
 	
 	<bean id="StorageManager" class="org.entando.entando.aps.system.services.storage.LocalStorageManager" 

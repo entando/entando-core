@@ -17,12 +17,13 @@
 */
 package org.entando.entando.apsadmin.common;
 
-import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.system.BaseAction;
+
+import org.entando.entando.apsadmin.system.services.activitystream.ISocialActivityStreamManager;
 
 /**
  * @author E.Santoboni
@@ -46,10 +47,9 @@ public class ActivityStreamLikeAction extends BaseAction {
 				return SUCCESS;
 			}
 			UserDetails user = super.getCurrentUser();
-			this.getActionLogManager().editActionLikeRecord(this.getRecordId(), user.getUsername(), add);
+			this.getSocialActivityStreamManager().editActionLikeRecord(this.getRecordId(), user.getUsername(), add);
 		} catch (Throwable t) {
 			_logger.error("Error on like/unlike activity", t);
-            //ApsSystemUtils.logThrowable(t, this, "editLikeActivity", "Error on like/unlike activity");
             return FAILURE;
         }
 		return SUCCESS;
@@ -62,15 +62,15 @@ public class ActivityStreamLikeAction extends BaseAction {
 		this._recordId = recordId;
 	}
 	
-	protected IActionLogManager getActionLogManager() {
-		return _actionLogManager;
+	protected ISocialActivityStreamManager getSocialActivityStreamManager() {
+		return _socialActivityStreamManager;
 	}
-	public void setActionLogManager(IActionLogManager actionLogManager) {
-		this._actionLogManager = actionLogManager;
+	public void setSocialActivityStreamManager(ISocialActivityStreamManager socialActivityStreamManager) {
+		this._socialActivityStreamManager = socialActivityStreamManager;
 	}
 	
 	private Integer _recordId;
 	
-	private IActionLogManager _actionLogManager;
+	private ISocialActivityStreamManager _socialActivityStreamManager;
 	
 }

@@ -17,6 +17,9 @@
 */
 package org.entando.entando.aps.system.services.actionlog;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,26 +27,32 @@ import org.slf4j.LoggerFactory;
  * @author E.Santoboni
  */
 public class ActivityStreamCleanerThread extends Thread {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ActivityStreamCleanerThread.class);
 	
-	public ActivityStreamCleanerThread(Integer maxActivitySizeByGroup, 
-			IActionLogDAO actionLogDAO) {
+	public ActivityStreamCleanerThread(Integer maxActivitySizeByGroup, IActionLogManager actionLogManager) {
 		this._maxActivitySizeByGroup = maxActivitySizeByGroup;
-		this._actionLogDAO = actionLogDAO;
+		this._actionLogManager = actionLogManager;
 	}
 	
 	@Override
 	public void run() {
 		try {
-			this._actionLogDAO.cleanOldActivityStreamLogs(this._maxActivitySizeByGroup);
+			Set<Integer> ids = this._actionLogManager.extractOldRecords(this._maxActivitySizeByGroup);
+			if (null != ids) {
+				Iterator<Integer> iter = ids.iterator();
+				while (iter.hasNext()) {
+					Integer id = iter.next();
+					this._actionLogManager.deleteActionRecord(id);
+				}
+			}
 		} catch (Throwable t) {
-			_logger.error("error in run ", t);
+			_logger.error("Error in run ", t);
 			//ApsSystemUtils.logThrowable(t, this, "run");
 		}
 	}
 	
 	private Integer _maxActivitySizeByGroup;
-	private IActionLogDAO _actionLogDAO;
+	private IActionLogManager _actionLogManager;
 	
 }

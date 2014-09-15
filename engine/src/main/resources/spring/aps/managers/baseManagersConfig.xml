@@ -229,7 +229,6 @@
 	<bean id="ActionLogManager" class="org.entando.entando.aps.system.services.actionlog.ActionLogManager" 
 			parent="abstractService" >
 		<property name="keyGeneratorManager" ref="KeyGeneratorManager" />
-		<property name="userProfileManager" ref="UserProfileManager" />
 		<property name="actionLogDAO">
 			<bean class="org.entando.entando.aps.system.services.actionlog.ActionLogDAO">
 				<property name="dataSource" ref="servDataSource" />

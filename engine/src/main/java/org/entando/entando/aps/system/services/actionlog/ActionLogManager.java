@@ -17,26 +17,6 @@
 */
 package org.entando.entando.aps.system.services.actionlog;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamLikeInfo;
-import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
-import org.entando.entando.aps.system.services.actionlog.model.ManagerConfiguration;
-import org.entando.entando.aps.system.services.cache.CacheableInfo;
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
-import org.entando.entando.aps.system.services.userprofile.event.ProfileChangedEvent;
-import org.entando.entando.aps.system.services.userprofile.event.ProfileChangedObserver;
-import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -45,14 +25,29 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.DateConverter;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamComment;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
+import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
+import org.entando.entando.aps.system.services.actionlog.model.ManagerConfiguration;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * @author E.Santoboni - S.Puddu
  */
-public class ActionLogManager extends AbstractService implements IActionLogManager, ProfileChangedObserver {
+public class ActionLogManager extends AbstractService implements IActionLogManager/*, ProfileChangedObserver*/ {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ActionLogManager.class);
 	
@@ -73,7 +68,17 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 			throw new ApsSystemException("Error adding an actionlogger record", t);
 		}
 	}
-
+	
+	@Override
+	public void updateRecordDate(int id) throws ApsSystemException {
+		try {
+			this.getActionLogDAO().updateRecordDate(id);
+		} catch (Throwable t) {
+			_logger.error("Error updating data record", t);
+			throw new ApsSystemException("Error updating data record", t);
+		}
+	}
+	
 	protected synchronized void addActionRecordByThread(ActionLogRecord actionRecord) throws ApsSystemException {
 		try {
 			Integer key = null;
@@ -103,7 +108,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 			throw new ApsSystemException("Error deleting the actionlogger record: " + id, t);
 		}
 	}
-
+	
 	@Override
 	public List<Integer> getActionRecords(IActionLogRecordSearchBean searchBean) throws ApsSystemException {
 		List<Integer> records = new ArrayList<Integer>();
@@ -115,8 +120,9 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 		}
 		return records;
 	}
-
+	
 	@Override
+	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActionLogRecord_'.concat(#id)")
 	public ActionLogRecord getActionRecord(int id) throws ApsSystemException {
 		ActionLogRecord record = null;
 		try {
@@ -136,7 +142,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 			ManagerConfiguration config = this.getManagerConfiguration();
 			if (null != recordIds && null != config &&
 					config.getCleanOldActivities() && config.getMaxActivitySizeByGroup() < recordIds.size()) {
-				ActivityStreamCleanerThread thread = new ActivityStreamCleanerThread(config.getNumberOfStreamsOnHistory(), this.getActionLogDAO());
+				ActivityStreamCleanerThread thread = new ActivityStreamCleanerThread(config.getNumberOfStreamsOnHistory(), this);
 				String threadName = LOG_CLEANER_THREAD_NAME_PREFIX + DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
     			thread.setName(threadName);
     			thread.start();
@@ -161,7 +167,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 		}
 		return recordIds;
 	}
-	
+	/*
 	@Override
 	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamLikeRecords_id_'.concat(#id)")
 	public void editActionLikeRecord(int id, String username, boolean add) throws ApsSystemException {
@@ -205,13 +211,13 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 			_logger.error("Error flushing cache group", t);
 		}
 	}
-	
+	*/
 	@Override
 	public List<Integer> getActivityStream(UserDetails loggedUser) throws ApsSystemException {
 		List<String> userGroupCodes = this.extractUserGroupCodes(loggedUser);
 		return this.getActivityStream(userGroupCodes);
 	}
-	
+	/*
 	@Override
 	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamCommentRecords_id_'.concat(#streamId)")
 	public void addActionCommentRecord(String username, String commentText, int streamId) throws ApsSystemException {
@@ -241,7 +247,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 			throw new ApsSystemException("Error deleting comment", t);
 		}
 	}
-	
+	*/
 	@Override
 	public Date lastUpdateDate(UserDetails loggedUser) throws ApsSystemException {
 		List<Integer> actionRecordIds = null;
@@ -261,7 +267,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
         }
 		return lastUpdate;
 	}
-	
+	/*
 	@Override
 	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamCommentRecords_id_'.concat(#id)")
 	@CacheableInfo(groups = "'ActivityStreamCommentRecords_cacheGroup'")
@@ -284,7 +290,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 		}
 		return infos;
 	}
-
+	*/
 	private List<String> extractUserGroupCodes(UserDetails loggedUser) {
 		List<String> codes = new ArrayList<String>();
 		IApsAuthority[] autorities = loggedUser.getAuthorities();
@@ -301,7 +307,19 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 		}
 		return codes;
 	}
-
+	
+	@Override
+	public Set<Integer> extractOldRecords(Integer maxActivitySizeByGroup) throws ApsSystemException {
+		Set<Integer> actionRecordIds = null;
+		try {
+			actionRecordIds = this.getActionLogDAO().extractOldRecords(maxActivitySizeByGroup);
+		} catch (Throwable t) {
+			_logger.error("Error extracting old records", t);
+			throw new ApsSystemException("Error extracting old records", t);
+        }
+		return actionRecordIds;
+	}
+	
 	protected ManagerConfiguration getManagerConfiguration() {
 		return _managerConfiguration;
 	}
@@ -322,18 +340,10 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 	public void setKeyGeneratorManager(IKeyGeneratorManager keyGeneratorManager) {
 		this._keyGeneratorManager = keyGeneratorManager;
 	}
-
-	protected IUserProfileManager getUserProfileManager() {
-		return _userProfileManager;
-	}
-	public void setUserProfileManager(IUserProfileManager userProfileManager) {
-		this._userProfileManager = userProfileManager;
-	}
-
+	
 	private ManagerConfiguration _managerConfiguration;
 
 	private IActionLogDAO _actionLogDAO;
 	private IKeyGeneratorManager _keyGeneratorManager;
-	private IUserProfileManager _userProfileManager;
 
 }

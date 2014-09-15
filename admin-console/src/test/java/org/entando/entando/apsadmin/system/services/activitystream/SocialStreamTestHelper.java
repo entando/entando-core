@@ -15,7 +15,7 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package org.entando.entando.aps.system.services.actionlog;
+package org.entando.entando.apsadmin.system.services.activitystream;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,36 +30,43 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.agiletec.aps.system.common.AbstractDAO;
+import org.entando.entando.aps.system.services.actionlog.ActionLogDAO;
+import org.entando.entando.aps.system.services.actionlog.ActionLoggerTestHelper;
+import org.entando.entando.aps.system.services.actionlog.IActionLogDAO;
 
 /**
  * @author E.Santoboni
  */
-public class ActionLoggerTestHelper extends AbstractDAO {
-
-	private static final Logger _logger =  LoggerFactory.getLogger(ActionLoggerTestHelper.class);
+public class SocialStreamTestHelper extends ActionLoggerTestHelper {
 	
-	public ActionLoggerTestHelper(ApplicationContext applicationContext) {
+	private static final Logger _logger =  LoggerFactory.getLogger(SocialStreamTestHelper.class);
+	
+	public SocialStreamTestHelper(ApplicationContext applicationContext) {
+		super(applicationContext);
+		/*
 		DataSource dataSource = (DataSource) applicationContext.getBean("servDataSource");
 		this.setDataSource(dataSource);
 		
-		ActionLogDAO actionLoggerDAO = new ActionLogDAO();
+		SocialActivityStreamDAO actionLoggerDAO = new SocialActivityStreamDAO();
 		actionLoggerDAO.setDataSource(dataSource);
 		this._actionLoggerDAO = actionLoggerDAO;
+		*/
 	}
-	
+	/*
 	public void addActionRecord(ActionLogRecord actionRecord) {
 		this._actionLoggerDAO.addActionRecord(actionRecord);
 	}
-	
+	*/
+	@Override
 	public void cleanRecords() {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			//this.deleteRecords(conn, DELETE_LOG_COMMENT_RECORDS);
-			//this.deleteRecords(conn, DELETE_LOG_LIKE_RECORDS);
-			this.deleteRecords(conn, DELETE_LOG_RECORD_RELATIONS);
-			this.deleteRecords(conn, DELETE_LOG_RECORDS);
+			this.deleteRecords(conn, DELETE_LOG_COMMENT_RECORDS);
+			this.deleteRecords(conn, DELETE_LOG_LIKE_RECORDS);
+			//this.deleteRecords(conn, DELETE_LOG_RECORD_RELATIONS);
+			//this.deleteRecords(conn, DELETE_LOG_RECORDS);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -69,8 +76,9 @@ public class ActionLoggerTestHelper extends AbstractDAO {
 		} finally {
 			closeConnection(conn);
 		}
+		super.cleanRecords();
 	}
-	
+	/*
 	public void deleteRecords(Connection conn, String query) {
 		PreparedStatement stat = null;
 		try {
@@ -108,16 +116,18 @@ public class ActionLoggerTestHelper extends AbstractDAO {
 		searchBean.setEndCreation(end);
 		return searchBean;
 	}
+	*/
+	//private static final String DELETE_LOG_RECORDS = 
+	//	"DELETE from actionlogrecords";
+	//private static final String DELETE_LOG_RECORD_RELATIONS = 
+	//	"DELETE from actionlogrelations";
 	
-	private static final String DELETE_LOG_RECORDS = 
-		"DELETE from actionlogrecords";
-	private static final String DELETE_LOG_RECORD_RELATIONS = 
-		"DELETE from actionlogrelations";
-	//private static final String DELETE_LOG_LIKE_RECORDS = 
-	//	"DELETE from actionloglikerecords";
-	//private static final String DELETE_LOG_COMMENT_RECORDS = 
-	//	"DELETE from actionlogcommentrecords";
+	private static final String DELETE_LOG_LIKE_RECORDS = 
+		"DELETE from actionloglikerecords";
 	
-	private IActionLogDAO _actionLoggerDAO;
+	private static final String DELETE_LOG_COMMENT_RECORDS = 
+		"DELETE from actionlogcommentrecords";
+	
+	//private ISocialActivityStreamDAO _actionLoggerDAO;
 	
 }

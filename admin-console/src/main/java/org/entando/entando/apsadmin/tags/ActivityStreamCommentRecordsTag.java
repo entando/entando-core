@@ -17,11 +17,10 @@
 */
 package org.entando.entando.apsadmin.tags;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.tags.AbstractObjectInfoTag;
 
-import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
+import org.entando.entando.apsadmin.system.services.activitystream.ISocialActivityStreamManager;
 
 /**
  * Returns the list of like records of an activity through the code.
@@ -32,8 +31,9 @@ public class ActivityStreamCommentRecordsTag extends AbstractObjectInfoTag {
 	@Override
 	protected Object getMasterObject(String keyValue) throws Throwable {
 		Integer recordId = Integer.parseInt(keyValue);
-		IActionLogManager loggerManager = (IActionLogManager) ApsWebApplicationUtils.getBean(SystemConstants.ACTION_LOGGER_MANAGER, this.pageContext);
-		return loggerManager.getActionCommentRecords(recordId);
+		ISocialActivityStreamManager socialActivityStreamManager = 
+				(ISocialActivityStreamManager) ApsWebApplicationUtils.getBean("SocialActivityStreamManager", this.pageContext);
+		return socialActivityStreamManager.getActionCommentRecords(recordId);
 	}
 	
 	public String getRecordId() {

@@ -120,6 +120,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -127,7 +128,9 @@
 				<executions>
 					<execution>
 						<id>copy-resources-test</id>
+			-->
 						<!-- here the phase you need -->
+			<!--
 						<phase>generate-test-resources</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -145,7 +148,9 @@
 					</execution>
 					<execution>
 						<id>copy-resources-file-test-</id>
+			-->
 						<!-- here the phase you need -->
+			<!--
 						<phase>generate-test-resources</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -163,6 +168,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

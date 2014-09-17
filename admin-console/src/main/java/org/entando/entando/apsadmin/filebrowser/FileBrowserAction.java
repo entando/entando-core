@@ -255,17 +255,17 @@ public class FileBrowserAction extends BaseAction {
 		if (StringUtils.isEmpty(currentPath)) {
 			return items;
 		}
-		String[] folders = currentPath.split(File.separator);
+		String[] folders = currentPath.split("/");
 		for (int i = 0; i < folders.length; i++) {
 			String folderName = folders[i];
 			String subpath = null;
 			if (i == 0) {
-				subpath = folderName + File.separator;
+				subpath = folderName + "/";
 			} else if (i == (folders.length-1)) {
 				subpath = currentPath;
 			} else {
 				int index = currentPath.indexOf(folderName) + folderName.length();
-				subpath = currentPath.substring(0, index) + File.separator;
+				subpath = currentPath.substring(0, index) + "/";
 			}
 			items.add(new SelectItem(subpath, folderName));
 		}
@@ -295,8 +295,8 @@ public class FileBrowserAction extends BaseAction {
 	public String getCurrentPath() {
 		if (StringUtils.isBlank(_currentPath) || null == this.getProtectedFolder()) {
 			_currentPath = "";
-		} else if (!_currentPath.endsWith(File.separator)) {
-			_currentPath = _currentPath + File.separator;
+		} else if (!_currentPath.endsWith("/")) {
+			_currentPath = _currentPath + "/";
 		}
 		return _currentPath;
 	}

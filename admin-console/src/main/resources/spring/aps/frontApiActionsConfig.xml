@@ -14,7 +14,7 @@
             class="org.entando.entando.aps.internalservlet.api.ApiResourceAction" parent="abstractBaseAction">
         <property name="apiCatalogManager" ref="ApiCatalogManager" />
         <property name="roleManager" ref="RoleManager" />
-		<property name="configManager" ref="BaseConfigManager"/>
+		<property name="urlManager" ref="URLManager"/>
     </bean>
 	
     <bean id="frontApiServiceFinderAction" scope="prototype"
@@ -23,7 +23,7 @@
     
     <bean id="frontApiServiceAction" scope="prototype"
 			class="org.entando.entando.aps.internalservlet.api.ApiServiceAction" parent="apiServiceAction">
-		<property name="configManager" ref="BaseConfigManager"/>
+		<property name="urlManager" ref="URLManager"/>
     </bean>
     
 </beans>

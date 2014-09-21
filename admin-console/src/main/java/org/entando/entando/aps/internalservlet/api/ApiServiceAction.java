@@ -17,16 +17,16 @@
 */
 package org.entando.entando.aps.internalservlet.api;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.url.IURLManager;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.api.model.ApiService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 
 /**
  * @author E.Santoboni
@@ -41,7 +41,6 @@ public class ApiServiceAction extends org.entando.entando.apsadmin.api.ApiServic
 			if (null != check) return check;
 		} catch (Throwable t) {
 			_logger.error("error in detail", t);
-			//ApsSystemUtils.logThrowable(t, this, "detail");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -67,7 +66,6 @@ public class ApiServiceAction extends org.entando.entando.apsadmin.api.ApiServic
 			this.getResponse().sendRedirect(this.generateRedirectUrl("executeResponseSchema"));
 		} catch (Throwable t) {
 			_logger.error("error in generateRequestBodySchema", t);
-			//ApsSystemUtils.logThrowable(t, this, "generateRequestBodySchema");
 			return FAILURE;
 		}
 		return null;
@@ -80,7 +78,7 @@ public class ApiServiceAction extends org.entando.entando.apsadmin.api.ApiServic
 	private String generateRedirectUrl(String actionName) throws ApsSystemException {
 		String url = null;
 		try {
-			String applicationBaseUrl = this.getConfigManager().getParam(SystemConstants.PAR_APPL_BASE_URL);
+			String applicationBaseUrl = this.getUrlManager().getApplicationBaseURL(this.getRequest());
 			StringBuilder builder = new StringBuilder(applicationBaseUrl);
 			if (!builder.toString().endsWith("/")) builder.append("/");
 			builder.append("do/Front/Api/Service/").append(actionName).append(".action");
@@ -88,7 +86,6 @@ public class ApiServiceAction extends org.entando.entando.apsadmin.api.ApiServic
 			url = this.getResponse().encodeRedirectURL(builder.toString());
 		} catch (Throwable t) {
 			_logger.error("Error generating redirect url", t);
-			//ApsSystemUtils.logThrowable(t, this, "generateRedirectUrl");
 			throw new ApsSystemException("Error generating redirect url", t);
 		}
 		return url;
@@ -101,16 +98,16 @@ public class ApiServiceAction extends org.entando.entando.apsadmin.api.ApiServic
 	public void setServletResponse(HttpServletResponse response) {
 		this._response = response;
 	}
-	
-	protected ConfigInterface getConfigManager() {
-		return _configManager;
+
+	protected IURLManager getUrlManager() {
+		return _urlManager;
 	}
-	public void setConfigManager(ConfigInterface configManager) {
-		this._configManager = configManager;
+	public void setUrlManager(IURLManager urlManager) {
+		this._urlManager = urlManager;
 	}
 	
 	private HttpServletResponse _response;
 	
-	private ConfigInterface _configManager;
+	private IURLManager _urlManager;
 	
 }

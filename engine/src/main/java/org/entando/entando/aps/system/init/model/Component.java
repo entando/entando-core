@@ -26,12 +26,10 @@ import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-
 /**
  * @author E.Santoboni
  */
-public class Component implements Comparable<Component> {
+public class Component {
 
 	private static final Logger _logger = LoggerFactory.getLogger(Component.class);
 	
@@ -66,7 +64,6 @@ public class Component implements Comparable<Component> {
 			}
         } catch (Throwable t) {
         	_logger.error("Error loading component", t);
-            //ApsSystemUtils.logThrowable(t, this, "Component", "Error loading component");
         }
 	}
 	
@@ -133,20 +130,6 @@ public class Component implements Comparable<Component> {
 	}
 	protected void setEnvironments(Map<String, ComponentEnvironment> environments) {
 		this._environments = environments;
-	}
-	
-	@Override
-	public int compareTo(Component other) {
-		boolean depsEmpty = (null == this.getDependencies() || this.getDependencies().isEmpty());
-		boolean otherDepsEmpty = (null == other.getDependencies() || other.getDependencies().isEmpty());
-		if (!depsEmpty && 
-				(otherDepsEmpty || this.getDependencies().contains(other.getCode()))) {
-			return 1;
-		} else if (!otherDepsEmpty && 
-				(depsEmpty || other.getDependencies().contains(this.getCode()))) {
-			return -1;
-		}
-		return 0;
 	}
 	
 	private String _code;

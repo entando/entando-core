@@ -18,12 +18,12 @@
 package org.entando.entando.aps.system.init;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.init.util.ComponentLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,39 +48,32 @@ public class ComponentManager implements IComponentManager {
 			Map<String, Component> componentMap = loader.getComponents();
 			List<Component> components = new ArrayList<Component>();
 			components.addAll(componentMap.values());
-			for (int i = 0; i < components.size(); i++) {
-				Component component = components.get(i);
-				List<String> dependencies = component.getDependencies();
-				if (null != dependencies && !dependencies.isEmpty()) {
-					for (int j = 0; j < dependencies.size(); j++) {
-						String dependency = dependencies.get(j);
-						this.checkSubDependency(componentMap, dependency, dependencies);
-					}
-				}
-			}
-			Collections.sort(components);
-			this.setComponents(components);
+			List<Component> orderedComponents = this.getOrderedComponents(components);
+			this.setComponents(orderedComponents);
         } catch (Throwable t) {
         	_logger.error("Error loading components definitions", t);
             throw new ApsSystemException("Error loading components definitions", t);
         }
     }
 	
-	private void checkSubDependency(Map<String, Component> componentMap, String dependency, List<String> masterDependencies) {
-		Component component = componentMap.get(dependency);
-		if (null == component) {
-			return;
-		}
-		List<String> subDependencies = component.getDependencies();
-		if (null != subDependencies && !subDependencies.isEmpty()) {
-			for (int i = 0; i < subDependencies.size(); i++) {
-				String subDependency = subDependencies.get(i);
-				if (!masterDependencies.contains(subDependency)) {
-					masterDependencies.add(subDependency);
+	private List<Component> getOrderedComponents(List<Component> components) {
+		List<Component> ordered = new ArrayList<Component>();
+		for (int i = 0; i < components.size(); i++) {
+			Component component = components.get(i);
+			boolean added = false;
+			for (int j = 0; j < ordered.size(); j++) {
+				Component current = ordered.get(j);
+				if (null != current.getDependencies() && current.getDependencies().contains(component.getCode())) {
+					ordered.add(j, component);
+					added = true;
+					break;
 				}
-				this.checkSubDependency(componentMap, subDependency, masterDependencies);
+			}
+			if (!added) {
+				ordered.add(component);
 			}
 		}
+		return ordered;
 	}
 	
 	@Override
@@ -132,4 +125,5 @@ public class ComponentManager implements IComponentManager {
 	private Map<String, String> _postProcessClasses;
 	
 	public static final String DEFAULT_LOCATION_PATTERN = "classpath*:component/**/**component.xml";
+	
 }

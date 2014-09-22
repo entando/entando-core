@@ -103,7 +103,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 	 * @param resource La risorsa da aggiornare nel db.
 	 */
     @Override
-	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#resource.id)")
+	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#resource.id)", condition = "null != #resource")
 	public void updateResource(ResourceInterface resource) {
 		Connection conn = null;
 		try {
@@ -155,7 +155,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 	 * @param id L'identificativo della risorsa da cancellare.
 	 */
     @Override
-	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)")
+	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)", condition = "null != #id")
 	public void deleteResource(String id) {
 		Connection conn = null;
 		try {
@@ -302,7 +302,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 	 * @return Il record della risorsa.
 	 */
 	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)")
+	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)", condition = "null != #id")
 	public ResourceRecordVO loadResourceVo(String id) {
 		Connection conn = null;
 		ResourceRecordVO resourceVo = null;

@@ -92,7 +92,7 @@ public class FileBrowserAction extends BaseAction {
 				this.addActionError(this.getText("error.filebrowser.filepath.invalid"));
 				return INPUT;
 			}
-			String result = this.checkExistingFileExtension(this.getCurrentPath(), this.getUploadFileName(), this.getProtectedFolderBoolean());
+			String result = this.checkExistingFileExtension(this.getCurrentPath(), this.getUploadFileName(), false);
 			if (null != result) return result;
 			this.getStorageManager().saveFile(this.getCurrentPath() + this.getUploadFileName(), this.getProtectedFolderBoolean(), this.getInputStream());
 		} catch (Throwable t) {

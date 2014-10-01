@@ -46,7 +46,7 @@
 					<s:set var="filenameVar" value="''" />
 				</s:if>
 				<s:else>
-					<s:set var="isProtectedFileVar" value="protectedFolder" />
+					<s:set var="isProtectedFileVar" value="%{getProtectedFolder()}" />
 					<s:set var="filenameVar" value="#fileVar.name" />
 				</s:else>
 				<tr>
@@ -177,29 +177,29 @@
 	<s:if test="%{null != getProtectedFolder()}">
 	<div class="">
 		<p class="margin-large-top btn-group btn-group-sm">
-			<a
-				class="btn btn-default"
+			<a 
+				class="btn btn-default" 
 				href="<s:url namespace="/do/FileBrowser" action="uploadNewFileEntry" >
 					<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
-					<s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
+					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 				<span class="icon fa fa-upload"></span>&#32;
 				Upload a file
 			</a>
-			<a
-				class="btn btn-default"
+			<a 
+				class="btn btn-default" 
 				href="<s:url namespace="/do/FileBrowser" action="newFileEntry" >
 					<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
-					<s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
+					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 				<span class="icon fa fa-file-text"></span>&#32;
 				New Text File
 			</a>
-			<a
-				class="btn btn-default"
+			<a 
+				class="btn btn-default" 
 				href="<s:url namespace="/do/FileBrowser" action="newDirEntry" >
 					<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
-					<s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
+					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 				<span class="icon fa fa-folder"></span>&#32;
 				New Dir

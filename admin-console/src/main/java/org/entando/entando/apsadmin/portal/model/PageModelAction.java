@@ -73,6 +73,9 @@ public class PageModelAction extends AbstractPageModelAction {
 						this.addFieldError("template", this.getText("error.pageModel.templateRequired"));
 					}
 				}
+				if (!this.checkModelConfiguration()) {
+					this.addFieldError("xmlConfiguration", this.getText("error.pageModel.invalidConfiguration"));
+				}
 			} catch (Throwable t) {
 				_logger.error("error in validate", t);
 			}
@@ -93,6 +96,17 @@ public class PageModelAction extends AbstractPageModelAction {
 			}
 		}
 		return false;
+	}
+	
+	private boolean checkModelConfiguration() throws Throwable {
+		try {
+			String xml = this.getXmlConfiguration();
+			PageModelDOM dom = new PageModelDOM(xml, this.getWidgetTypeManager());
+			Frame[] configuration = dom.getConfiguration();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public String newModel() {

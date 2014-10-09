@@ -13,5 +13,7 @@
 	<include file="com/agiletec/plugins/jacms/apsadmin/portal/specialwidget/specialWidget.xml"/>
 	
     <include file="com/agiletec/plugins/jacms/apsadmin/system/entity.xml" />
+	
+	<include file="org/entando/entando/plugins/jacms/apsadmin/portal/specialwidget/specialWidget.xml" />
     
 </struts>

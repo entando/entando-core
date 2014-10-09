@@ -9,7 +9,7 @@
 	<tlib-version>2.2</tlib-version>
 	<short-name>jacmsaps</short-name>
 	<uri>/jacms-aps-core</uri>
-
+	
 	<tag>
 		<description>
 			<![CDATA[Displays the content given its ID.]]>
@@ -65,6 +65,7 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
+	
 	<tag>
 		<description>
 			<![CDATA[Return an information of a specified content.
@@ -103,6 +104,7 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
+	
 	<tag>
 		<description>
 			<![CDATA[Loads a list of contents IDs by applying the filters (if any).
@@ -170,6 +172,7 @@
 			  <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
+	
 	<tag>
 		<description>
 			<![CDATA["ContentListTag" sub-tag, it creates a filter
@@ -255,6 +258,7 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
+	
 	<tag>
 		<description>
 			<![CDATA["ContentListTag" sub-tag, it creates a custom user filter
@@ -288,6 +292,7 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
+	
 	<tag>
 		<description>
 			<![CDATA[Generates a list of content IDs, restricting them to the key word
@@ -305,5 +310,38 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
-
+	
+	<tag>
+		<description><![CDATA[Publish a list of contents.]]></description>
+		<name>rowContentList</name>
+		<tag-class>org.entando.entando.plugins.jacms.aps.tags.RowContentListTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>
+			<![CDATA[Name of the variable in the page context that holds the contents (list of properties of key "contentId" and "modelId").]]>
+			</description>
+			<name>listName</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Inserts the title on a variable of the page context with the name provided.]]></description>
+			  <name>titleVar</name>
+			  <required>false</required>
+			  <rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			  <description><![CDATA[Inserts the code of the page to link on a variable of the page context with the name provided.]]></description>
+			  <name>pageLinkVar</name>
+			  <required>false</required>
+			  <rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			  <description><![CDATA[Inserts the description of the page to link on a variable of the page context with the name provided.]]></description>
+			  <name>pageLinkDescriptionVar</name>
+			  <required>false</required>
+			  <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
 </taglib>

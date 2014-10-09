@@ -20,6 +20,8 @@
 		<property name="widgetTypeManager" ref="WidgetTypeManager" />
 	</bean>
 	
+	<!-- ********************* -->
+	
 	<bean id="jacmsContentListViewerWidgetAction" scope="prototype" 
 			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.ContentListViewerWidgetAction" parent="simpleWidgetAction" >
 		<property name="contentManager" ref="jacmsContentManager" />
@@ -47,5 +49,13 @@
 	<bean id="jacmsContentListDateFilterAction" scope="prototype" 
 			class="com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.DateAttributeFilterAction" parent="jacmsContentListFilterAction" >
 	</bean>
-		
+	
+	<!-- ********************* -->
+	
+	<bean id="jacmsRowContentListViewerWidgetAction" scope="prototype" 
+			class="org.entando.entando.plugins.jacms.apsadmin.portal.specialwidget.rowcontentlist.RowContentListViewerWidgetAction" parent="simpleWidgetAction" >
+		<property name="contentManager" ref="jacmsContentManager" />
+		<property name="contentModelManager" ref="jacmsContentModelManager" />
+	</bean>
+	
 </beans>

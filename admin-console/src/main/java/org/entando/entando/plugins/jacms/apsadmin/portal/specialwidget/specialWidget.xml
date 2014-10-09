@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	
+    <package name="entando_jacms_do/Page/SpecialWidget" namespace="/do/Page/SpecialWidget" extends="core_do/Page/SpecialWidget">
+		
+    	<!-- ##### WIDGET ROW CONTENT LIST VIEWER **** ENTRY POINT ##### -->
+    	<action name="rowListViewerConfig" class="jacmsRowContentListViewerWidgetAction" method="init">
+        	<result type="tiles">admin.jacms.page.widget.rowContentListViewer.config</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+    </package>
+	
+	<package name="jacms_do/jacms/Page/SpecialWidget/RowListViewer" namespace="/do/jacms/Page/SpecialWidget/RowListViewer" extends="entando-default">
+		
+		<global-results>
+			<result name="pageTree" type="chain">
+				<param name="namespace">/do/Page</param>
+				<param name="actionName">viewTree</param>
+			</result>
+			<result name="configure" type="chain">
+				<param name="namespace">/do/Page</param>
+				<param name="actionName">configure</param>
+			</result>
+		</global-results>
+		
+		<action name="addContent" class="jacmsContentFinderViewerWidgetAction">
+            <!-- <result name="input" type="tiles">admin.jacms.page.widget.contentViewer.searchContents</result> -->
+        	<result type="tiles">admin.jacms.page.widget.rowContentListViewer.searchContents</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+        <action name="searchContents" class="jacmsContentFinderViewerWidgetAction">
+            <!-- <result name="input" type="tiles">admin.jacms.page.widget.contentViewer.searchContents</result> -->
+        	<result type="tiles">admin.jacms.page.widget.rowContentListViewer.searchContents</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+        <action name="changeContentListOrder" class="jacmsContentFinderViewerWidgetAction" method="changeOrder">
+            <result type="tiles">admin.jacms.page.widget.rowContentListViewer.searchContents</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+		<action name="joinContent" class="jacmsContentFinderViewerWidgetAction" method="joinContent">
+			<result type="tiles" name="input">admin.jacms.page.widget.rowContentListViewer.searchContents</result>
+            <result type="chain">chooseContentModel</result>
+        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+		<action name="chooseContentModel" class="jacmsRowContentListViewerWidgetAction" >
+        	<result type="tiles">admin.jacms.page.widget.rowContentListViewer.chooseContentModel</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+		<action name="executeJoinContent" class="jacmsRowContentListViewerWidgetAction" method="joinContent">
+        	<!-- <result type="tiles" name="input">admin.jacms.page.widget.rowContentListViewer.searchContents</result> -->
+            <result type="tiles">admin.jacms.page.widget.rowContentListViewer.config</result>
+        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+		<action name="removeContent*" class="jacmsRowContentListViewerWidgetAction" method="removeContent">
+        	<result type="tiles">admin.jacms.page.widget.rowContentListViewer.config</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+		<action name="moveContent*" class="jacmsRowContentListViewerWidgetAction" method="moveContent">
+        	<result type="tiles">admin.jacms.page.widget.rowContentListViewer.config</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+		<action name="saveRowListViewerConfig" class="jacmsRowContentListViewerWidgetAction" method="save">
+    		<result type="tiles" name="input">admin.jacms.page.widget.rowContentListViewer.config</result>
+        	<interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+	</package>
+	
+</struts>

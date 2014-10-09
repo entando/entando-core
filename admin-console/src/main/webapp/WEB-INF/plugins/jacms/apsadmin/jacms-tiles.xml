@@ -143,6 +143,11 @@
 		<put-attribute name="title" value="title.pageManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/contentViewer/configContentViewer.jsp" />
 	</definition>
+	<definition extends="layout.default" name="admin.jacms.page.widget.contentViewer.searchContents">
+		<put-attribute name="title" value="title.pageManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/contentViewer/contentFinding.jsp" />
+	</definition>
+	
 	<definition extends="layout.default" name="admin.jacms.page.widget.contentListViewer.config">
 		<put-attribute name="title" value="title.pageManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/contentListViewer/configContentListViewer.jsp" />
@@ -151,14 +156,23 @@
 		<put-attribute name="title" value="title.pageManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/contentListViewer/userFilter/entryCategory.jsp" />
 	</definition>
-	<definition extends="layout.default" name="admin.jacms.page.widget.contentViewer.searchContents">
-		<put-attribute name="title" value="title.pageManagement" />
-		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/contentViewer/contentFinding.jsp" />
-	</definition>
 	<definition extends="layout.default" name="admin.jacms.page.widget.contentListViewer.entryFilter">
 		<put-attribute name="title" value="title.pageManagement" />
 		<put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/entryFilter.jsp" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/contentListViewer/entryFilter.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.jacms.page.widget.rowContentListViewer.config">
+		<put-attribute name="title" value="title.pageManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/rowContentViewer/configRowContentListViewer.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.page.widget.rowContentListViewer.searchContents">
+		<put-attribute name="title" value="title.pageManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/rowContentViewer/contentFinding.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.page.widget.rowContentListViewer.chooseContentModel">
+		<put-attribute name="title" value="title.pageManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/specialwidget/rowContentViewer/chooseContentModel.jsp" />
 	</definition>
 
 	<!-- FINE Area Gestione Configurazione Widget Speciali -->

@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.entando.entando.plugins.jacms.aps.system.services.cache.TestCacheInfoManager;
+import org.entando.entando.plugins.jacms.aps.system.services.page.TestCmsPageManagerWrapper;
 
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestCategoryUtilizer;
@@ -40,7 +41,6 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.TestContentMo
 import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.TestContentPageMapperManager;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.TestContentDispenser;
 import com.agiletec.plugins.jacms.aps.system.services.linkresolver.TestLinkResolverManager;
-import com.agiletec.plugins.jacms.aps.system.services.page.TestCmsPageDAO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceDAO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.TestResourceDOM;
@@ -74,7 +74,7 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestLinkResolverManager.class);
 		//
-		suite.addTestSuite(TestCmsPageDAO.class);
+		suite.addTestSuite(TestCmsPageManagerWrapper.class);
 		//
 		suite.addTestSuite(TestResourceDOM.class);
 		suite.addTestSuite(TestResourceDAO.class);

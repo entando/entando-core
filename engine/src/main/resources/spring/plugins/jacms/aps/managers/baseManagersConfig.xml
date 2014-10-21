@@ -16,16 +16,8 @@
 		<property name="configManager" ref="BaseConfigManager" />
 	</bean>
 	
-	<!-- Override of the Entando Core PageManager Bean -->
-	<bean id="PageManager" class="com.agiletec.plugins.jacms.aps.system.services.page.CmsPageManager" 
-			parent="abstractService" >
-		<property name="pageDAO" >
-			<bean class="com.agiletec.plugins.jacms.aps.system.services.page.CmsPageDAO">
-				<property name="dataSource" ref="portDataSource" />
-				<property name="widgetTypeManager" ref="WidgetTypeManager" />
-				<property name="pageModelManager" ref="PageModelManager" />
-			</bean>
-		</property>
+	<bean id="jacmPageManagerWrapper" class="org.entando.entando.plugins.jacms.aps.system.services.page.CmsPageManagerWrapper" >
+		<property name="pageManager" ref="PageManager" />
 	</bean>
 	
 </beans>

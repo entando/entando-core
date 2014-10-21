@@ -24,10 +24,10 @@
 	<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
 </s:if>
 
-<s:if test="references['PageManagerUtilizers']">
+<s:if test="references['CmsPageManagerWrapperUtilizers']">
 <div class="subsection-light">
 <h3><s:text name="title.referencingPages" /></h3>
-	<wpsa:subset source="references['PageManagerUtilizers']" count="10" objectName="pageReferences" advanced="true" offset="5" pagerId="pageManagerReferences">
+	<wpsa:subset source="references['CmsPageManagerWrapperUtilizers']" count="10" objectName="pageReferences" advanced="true" offset="5" pagerId="pageManagerReferences">
 	<s:set name="group" value="#pageReferences" />
 	
 	<div class="text-center">

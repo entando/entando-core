@@ -575,7 +575,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 			ContentAction action = (ContentAction) this.getAction();
 			List contentUtilizers = (List) action.getReferences().get("jacmsContentManagerUtilizers");
 			assertEquals(2, contentUtilizers.size());
-			List pegeUtilizers = (List) action.getReferences().get("PageManagerUtilizers");
+			List pegeUtilizers = (List) action.getReferences().get("CmsPageManagerWrapperUtilizers");
 			assertEquals(1, pegeUtilizers.size());
 			IPage pageUtilizer = (IPage) pegeUtilizers.get(0);
 			assertEquals("homepage", pageUtilizer.getCode());

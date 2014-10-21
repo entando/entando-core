@@ -8,7 +8,7 @@
 	<bean id="jacmsContentActionHelper" parent="entityActionHelper" 
 			class="com.agiletec.plugins.jacms.apsadmin.content.helper.ContentActionHelper" >
 		<property name="contentManager" ref="jacmsContentManager" />
-		<property name="pageManager" ref="PageManager" />
+		<!-- <property name="pageManager" ref="PageManager" /> -->
 		<property name="contentAuthorizationHelper" ref="jacmsContentAuthorizationHelper" />
 	</bean>
 	
@@ -40,6 +40,7 @@
 			class="com.agiletec.plugins.jacms.apsadmin.content.ContentInspectionAction" 
 			parent="jacmsAbstractContentAction">
 		<property name="pageManager" ref="PageManager" />
+		<property name="pageManagerWrapper" ref="jacmPageManagerWrapper" />
   	</bean>
 	
 	<bean id="jacmsIntroNewContentAction" scope="prototype" 

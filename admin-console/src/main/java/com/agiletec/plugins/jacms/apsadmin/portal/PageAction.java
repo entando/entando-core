@@ -39,6 +39,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
+import java.util.Properties;
+import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 
 /**
  * @author E.Santoboni
@@ -141,14 +143,21 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			Widget[] widgets = page.getWidgets();
 			for (int i=0; i<widgets.length; i++) {
 				Widget widget = widgets[i];
-				if (null != widget) {
-					String contentId = widget.getPublishedContent();
-					if (null != contentId) {
-						Content content = this.getContentManager().loadContent(contentId, true);
-						if (null != content) {
-							contents.add(content);
-						}
-					}
+				ApsProperties config = (null != widget) ? widget.getConfig() : null;
+				if (null == config || config.isEmpty()) {
+					continue;
+				}
+				String extracted = config.getProperty("contentId");
+				this.addContent(contents, extracted);
+				String contentsParam = config.getProperty("contents");
+				List<Properties> properties = (null != contentsParam) ? RowContentListHelper.fromParameterToContents(contentsParam) : null;
+				if (null == properties || properties.isEmpty()) {
+					continue;
+				}
+				for (int j = 0; j < properties.size(); j++) {
+					Properties widgProp = properties.get(j);
+					String extracted2 = widgProp.getProperty("contentId");
+					this.addContent(contents, extracted2);
 				}
 			}
 		} catch (Throwable t) {
@@ -157,6 +166,19 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			throw new RuntimeException(msg, t);
 		}
 		return contents;
+	}
+	
+	private void addContent(List<Content> contents, String contentId) {
+		try {
+			if (null != contentId) {
+				Content content = this.getContentManager().loadContent(contentId, true);
+				if (null != content) {
+					contents.add(content);
+				}
+			}
+		} catch (Throwable t) {
+			_logger.error("Error extracting published content '{}'", contentId, t);
+		}
 	}
 	
 	public List<ContentRecordVO> getReferencingContents(String pageCode) {

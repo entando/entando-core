@@ -32,23 +32,23 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.CmsAttribute
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.IReferenceableAttribute;
+import org.entando.entando.plugins.jacms.aps.system.services.page.CmsPageManagerWrapper;
 
 /**
  * @author E.Santoboni - M.E.Minnai
  */
 public class ContentInspectionAction extends AbstractContentAction {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentFinderAction.class);
 	
 	public List<IPage> getReferencingPages() {
 		List<IPage> referencingPages;
 		try {
-			referencingPages = ((ContentUtilizer) this.getPageManager()).getContentUtilizers(this.getContentId());
+			referencingPages = ((ContentUtilizer) this.getPageManagerWrapper()).getContentUtilizers(this.getContentId());
 		} catch (Throwable t) {
 			_logger.error("Error getting referencing pages by content {}", this.getContentId(), t);
 			String msg = "Error getting referencing pages by content " + this.getContentId();
 			throw new RuntimeException(msg, t);
-			//ApsSystemUtils.logThrowable(t, this, "setReferencingPages", msg );
 		}
 		return referencingPages;
 	}
@@ -64,7 +64,6 @@ public class ContentInspectionAction extends AbstractContentAction {
 		} catch (Throwable t) {
 			_logger.error("Error getting referencing contents id by content {}", this.getContentId(), t);
 			String msg = "Error getting referencing contents id by content " + this.getContentId();
-			//ApsSystemUtils.logThrowable(t, this, "getReferencingContentsId", msg );
 			throw new RuntimeException(msg, t);
 		}
 		return referencingContentsId;
@@ -88,7 +87,6 @@ public class ContentInspectionAction extends AbstractContentAction {
 		} catch (Throwable t) {
 			_logger.error("Error getting referencing contents by content {}", this.getContentId(), t);
 			String msg = "Error getting referencing contents by content " + this.getContentId();
-			//ApsSystemUtils.logThrowable(t, this, "getReferencingContents", msg );
 			throw new RuntimeException(msg, t);
 		}
 		return referencingContents;
@@ -120,7 +118,6 @@ public class ContentInspectionAction extends AbstractContentAction {
 		} catch (Throwable t) {
 			_logger.error("Error getting referenced contents id by content {}", this.getContentId(), t);
 			String msg = "Error getting referenced contents id by content " + this.getContentId();
-			//ApsSystemUtils.logThrowable(t, this, "getReferencedContents", msg );
 			throw new RuntimeException(msg, t);
 		}
 		return referencedContentsId;
@@ -144,7 +141,6 @@ public class ContentInspectionAction extends AbstractContentAction {
 		} catch (Throwable t) {
 			_logger.error("Error getting referenced contents by content {}", this.getContentId(), t);
 			String msg = "Error getting referenced contents by content " + this.getContentId();
-			//ApsSystemUtils.logThrowable(t, this, "getReferencedContents", msg );
 			throw new RuntimeException(msg, t);
 		}
 		return referencedContents;
@@ -175,7 +171,6 @@ public class ContentInspectionAction extends AbstractContentAction {
 		} catch (Throwable t) {
 			_logger.error("Error getting referenced pages by content {}", this.getContentId(), t);
 			String msg = "Error getting referenced pages by content " + this.getContentId();
-			//ApsSystemUtils.logThrowable(t, this, "getReferencedPages", msg );
 			throw new RuntimeException(msg, t);
 		}
 		return referencedPages;
@@ -189,7 +184,6 @@ public class ContentInspectionAction extends AbstractContentAction {
 		} catch (Throwable t) {
 			_logger.error("Error getting the content {}", this.getContentId(), t);
 			String msg = "Error getting the content " + this.getContentId();
-			//ApsSystemUtils.logThrowable(t, this, "getContent", msg);
 			throw new RuntimeException(msg, t);
 		}
 		return _content;
@@ -215,11 +209,19 @@ public class ContentInspectionAction extends AbstractContentAction {
 	public IPageManager getPageManager() {
 		return _pageManager;
 	}
+
+	protected CmsPageManagerWrapper getPageManagerWrapper() {
+		return _pageManagerWrapper;
+	}
+	public void setPageManagerWrapper(CmsPageManagerWrapper pageManagerWrapper) {
+		this._pageManagerWrapper = pageManagerWrapper;
+	}
 	
 	private String _contentId;
 	private boolean _currentPublicVersion;
 	private Content _content;
 	
 	private IPageManager _pageManager;
+	private CmsPageManagerWrapper _pageManagerWrapper;
 	
 }

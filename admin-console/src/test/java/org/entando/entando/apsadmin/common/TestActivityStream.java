@@ -204,7 +204,6 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
 		}
 	}
 	
-	
 	public void testActivityStreamSearchBean() throws Throwable {
 		Content content = this._contentManager.loadContent("EVN41", false);//"coach" group
 		String contentOnSessionMarker = AbstractContentAction.buildContentOnSessionMarker(content, ApsAdminSystemConstants.ADD);

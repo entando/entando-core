@@ -28,6 +28,7 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import com.agiletec.aps.system.services.page.events.PageChangedObserver;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.util.ApsProperties;
 
 /**
  * Servizio gestore della mappa dei contenuti pubblicati nelle pagine. 
@@ -81,26 +82,24 @@ public class ContentPageMapperManager extends AbstractService
      * e la ricerca viene estesa anche alle pagine figlie di quella specificate. 
      * @param page La pagina nel qual cercare i contenuti pubblicati.
      */
-    private void searchPublishedContents(IPage page) {
-    	PageModel pageModel = page.getModel();
-        int mainFrame = pageModel.getMainFrame();
-        Widget[] widgets = page.getWidgets();
-        Widget widget = null;
-        if (null != widgets && mainFrame != -1){
-            widget = widgets[mainFrame];
-        }
-        String contentId = null;
-        if (null != widget) {
-            contentId = widget.getPublishedContent();
-        }
-        if (null != contentId) {
-        	this.getContentPageMapper().add(contentId, page.getCode());
-        }
-        IPage[] children = page.getChildren();
-        for (int i=0; i<children.length; i++) {
-        	this.searchPublishedContents(children[i]);
-        }
-    }
+	private void searchPublishedContents(IPage page) {
+		PageModel pageModel = page.getModel();
+		int mainFrame = pageModel.getMainFrame();
+		Widget[] widgets = page.getWidgets();
+		Widget widget = null;
+		if (null != widgets && mainFrame != -1) {
+			widget = widgets[mainFrame];
+		}
+		ApsProperties config = (null != widget) ? widget.getConfig() : null;
+		String contentId = (null != config) ? config.getProperty("contentId") : null;
+		if (null != contentId) {
+			this.getContentPageMapper().add(contentId, page.getCode());
+		}
+		IPage[] children = page.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			this.searchPublishedContents(children[i]);
+		}
+	}
     
     @Override
 	public void updateFromPageChanged(PageChangedEvent event) {

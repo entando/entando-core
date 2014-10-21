@@ -440,7 +440,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 
 
 
-INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config, publishedcontent) VALUES ('homepage', 0, 'content_viewer', NULL, NULL);
+INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('homepage', 0, 'content_viewer', NULL);
 
 
 

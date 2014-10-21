@@ -84,7 +84,6 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 		if (null != widget.getConfig()) {
 			clone.setConfig((ApsProperties) widget.getConfig().clone());
 		}
-		clone.setPublishedContent(widget.getPublishedContent());
 		return clone;
 	}
 	
@@ -122,9 +121,6 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 			String value = this.getRequest().getParameter(paramName);
 			if (value != null && value.trim().length()>0) {
 				widget.getConfig().setProperty(paramName, value);
-				if ("contentId".equals(paramName)) {
-					widget.setPublishedContent(value);
-				}
 			}
 		}
 		this.setShowlet(widget);

@@ -87,11 +87,10 @@ public class TestPageDAO extends BaseTestCase {
 			assertEquals(extractedPage.getTitle("it"), "pagina temporanea");
 			assertEquals(extractedPage.getModel().getCode(), "service");
 			assertTrue(extractedPage.isShowable());
-			Widget[] showlets = extractedPage.getWidgets();
-			boolean contains = showlets[0].getConfig().contains("temp");
+			Widget[] widgets = extractedPage.getWidgets();
+			boolean contains = widgets[0].getConfig().contains("temp");
 			assertEquals(contains, true);
-			assertEquals(showlets[0].getPublishedContent(), "ART1");
-			assertEquals(showlets[0].getType().getCode(), "content_viewer");
+			assertEquals(widgets[0].getType().getCode(), "content_viewer");
 			this.updatePage(extractedPage, this._pageDao);
 		} catch (Throwable t) {
 			throw t;
@@ -107,14 +106,14 @@ public class TestPageDAO extends BaseTestCase {
 		pageToUpdate.setShowable(false);
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
-		config.setProperty("temp1", "temp1");		
+		config.setProperty("temp1", "temp1");
+		config.setProperty("contentId", "ART11");
 		widget.setConfig(config);
-		widget.setPublishedContent("ART11");
-		WidgetType showletType = new WidgetType();
-		showletType.setCode("content_viewer");
-		widget.setType(showletType);
-		Widget[] modifiesShowlets = {widget};
-		pageToUpdate.setWidgets(modifiesShowlets);
+		WidgetType widgetType = new WidgetType();
+		widgetType.setCode("content_viewer");
+		widget.setType(widgetType);
+		Widget[] modifiesWidgets = {widget};
+		pageToUpdate.setWidgets(modifiesWidgets);
 		try {
 			pageDAO.updatePage(pageToUpdate);
 			List<IPage> pages = pageDAO.loadPages();
@@ -133,7 +132,7 @@ public class TestPageDAO extends BaseTestCase {
 			assertFalse(extractedPage.isShowable());
 			Widget[] showlets = extractedPage.getWidgets();
 			assertTrue(showlets[0].getConfig().contains("temp1"));
-			assertEquals(showlets[0].getPublishedContent(), "ART11");
+			assertTrue(showlets[0].getConfig().contains("contentId"));
 			assertEquals(showlets[0].getType().getCode(), "content_viewer");
         } catch (Throwable t) {
             throw t;
@@ -183,11 +182,11 @@ public class TestPageDAO extends BaseTestCase {
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
 		config.setProperty("temp", "temp");		
+		config.setProperty("contentId", "ART1");		
 		widget.setConfig(config);
-		widget.setPublishedContent("ART1");
-		WidgetType showletType = new WidgetType();
-		showletType.setCode("content_viewer");
-		widget.setType(showletType);
+		WidgetType widgetType = new WidgetType();
+		widgetType.setCode("content_viewer");
+		widget.setType(widgetType);
 		Widget[] showlets = {widget};
 		page.setWidgets(showlets);
 		return page;

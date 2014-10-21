@@ -51,20 +51,15 @@ public class WidgetConfig implements ExtendedColumnDefinition {
 			dataType = DataType.LONG_STRING)
 	private String _config;
 	
-	@DatabaseField(columnName = "publishedcontent", 
-			dataType = DataType.STRING, 
-			width = 30)
-	private String _publishedContent;
-	
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
 		String pageTableName = Page.TABLE_NAME;
-		String showletCatalogTableName = WidgetCatalog.TABLE_NAME;
+		String widgetCatalogTableName = WidgetCatalog.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
 			pageTableName = "`" + pageTableName + "`";
-			showletCatalogTableName = "`" + showletCatalogTableName + "`";
+			widgetCatalogTableName = "`" + widgetCatalogTableName + "`";
 		}
 		String[] queries = new String[3];
 		queries[0] = "ALTER TABLE " + TABLE_NAME + " ADD CONSTRAINT " + 
@@ -73,8 +68,8 @@ public class WidgetConfig implements ExtendedColumnDefinition {
 				+ "ADD CONSTRAINT " + TABLE_NAME + "_pagecode_fkey FOREIGN KEY (pagecode) "
 				+ "REFERENCES " + pageTableName + " (code)";
 		queries[2] = "ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_showletcode_fkey FOREIGN KEY (widgetcode) "
-				+ "REFERENCES " + showletCatalogTableName + " (code)";
+				+ "ADD CONSTRAINT " + TABLE_NAME + "_widgetcode_fkey FOREIGN KEY (widgetcode) "
+				+ "REFERENCES " + widgetCatalogTableName + " (code)";
 		return queries;
 	}
 	
@@ -88,13 +83,10 @@ CREATE TABLE widgetconfig
   framepos integer NOT NULL,
   widgetcode character varying(40) NOT NULL,
   config character varying,
-  publishedcontent character varying(30),
-  CONSTRAINT showletconfig_pkey PRIMARY KEY (pagecode , framepos ),
-  CONSTRAINT showletconfig_pagecode_fkey FOREIGN KEY (pagecode)
-      REFERENCES pages (code) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT showletconfig_showletcode_fkey FOREIGN KEY (widgetcode)
-      REFERENCES widgetcatalog (code) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT widgetconfig_pkey PRIMARY KEY (pagecode , framepos ),
+  CONSTRAINT widgetconfig_pagecode_fkey FOREIGN KEY (pagecode)
+      REFERENCES pages (code),
+  CONSTRAINT widgetconfig_widgetcode_fkey FOREIGN KEY (widgetcode)
+      REFERENCES widgetcatalog (code)
 )
 */

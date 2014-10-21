@@ -65,22 +65,6 @@ public class Widget implements Serializable {
 	}
 	
 	/**
-     * Return the id of the content published in the widget, if any.
-     * @return The id of the published content 
-     */
-    public String getPublishedContent() {
-        return _publishedContent;
-    }
-    
-    /**
-     * Set the id of the content to publish in the current widget.
-     * @param publishedContent The id of the content to publish
-     */
-    public void setPublishedContent(String publishedContent) {
-        this._publishedContent = publishedContent;
-    }
-	
-	/**
 	 * The type of the widget
 	 */
 	private WidgetType _type;
@@ -89,10 +73,5 @@ public class Widget implements Serializable {
 	 * The configuration properties; the configuration may be null
 	 */
 	private ApsProperties _config;
-	
-	/**
-	 * id of the content published in this widget
-	 */
-	private String _publishedContent;
 	
 }

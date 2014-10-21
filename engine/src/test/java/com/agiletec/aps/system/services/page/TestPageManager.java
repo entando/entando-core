@@ -39,6 +39,7 @@ import com.agiletec.aps.util.ApsProperties;
  */
 public class TestPageManager extends BaseTestCase {
 	
+	@Override
 	protected void setUp() throws Exception {
         super.setUp();
         this.init();
@@ -69,14 +70,14 @@ public class TestPageManager extends BaseTestCase {
 		page.setTitles(titles);
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
-		config.setProperty("temp", "temp");		
+		config.setProperty("temp", "temp");
+		config.setProperty("contentId", "ART11");
 		widget.setConfig(config);
-		widget.setPublishedContent("ART1");
 		WidgetType showletType = new WidgetType();
 		showletType.setCode("content_viewer");
 		widget.setType(showletType);
-		Widget[] showlets = {widget};
-		page.setWidgets(showlets);
+		Widget[] widgets = {widget};
+		page.setWidgets(widgets);
 		_pageManager.addPage(page);
 		parentPage = _pageManager.getPage("service");
 		page.setParent(parentPage);		
@@ -94,11 +95,10 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals(extractedPage.getTitle("it"), "pagina temporanea");
 		assertEquals(extractedPage.getModel().getCode(), "service");
 		assertEquals(extractedPage.isShowable(), true);
-		showlets = extractedPage.getWidgets();
-		boolean contains = showlets[0].getConfig().contains("temp");
-		assertEquals(contains, true);
-		assertEquals(showlets[0].getPublishedContent(), "ART1");
-		assertEquals(showlets[0].getType().getCode(), "content_viewer");
+		widgets = extractedPage.getWidgets();
+		assertTrue(widgets[0].getConfig().contains("temp1"));
+		assertTrue(widgets[0].getConfig().contains("contentId"));
+		assertEquals(widgets[0].getType().getCode(), "content_viewer");
 		this.updatePage();
 		this.movePage();
 		this.deletePage();
@@ -122,14 +122,14 @@ public class TestPageManager extends BaseTestCase {
 		page.setTitles(titles);
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
-		config.setProperty("temp1", "temp1");		
+		config.setProperty("temp1", "temp1");
+		config.setProperty("contentId", "ART11");
 		widget.setConfig(config);
-		widget.setPublishedContent("ART1");
 		WidgetType showletType = new WidgetType();
 		showletType.setCode("content_viewer");
 		widget.setType(showletType);
-		Widget[] showlets = {widget};
-		page.setWidgets(showlets);
+		Widget[] widgets = {widget};
+		page.setWidgets(widgets);
 		_pageManager.updatePage(page);
 		
 		IPage extractedPage = _pageManager.getPage("temp");
@@ -139,11 +139,10 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals(extractedPage.getTitle("it"), "pagina temporanea1");
 		assertEquals(extractedPage.getModel().getCode(), "service");
 		assertEquals(extractedPage.isShowable(), false);
-		showlets = extractedPage.getWidgets();
-		boolean contains = showlets[0].getConfig().contains("temp1");
-		assertEquals(contains, true);
-		assertEquals(showlets[0].getPublishedContent(), "ART1");
-		assertEquals(showlets[0].getType().getCode(), "content_viewer");
+		widgets = extractedPage.getWidgets();
+		assertTrue(widgets[0].getConfig().contains("temp1"));
+		assertTrue(widgets[0].getConfig().contains("contentId"));
+		assertEquals(widgets[0].getType().getCode(), "content_viewer");
 	}	
 	
 	private void movePage() throws Exception {

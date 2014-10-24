@@ -327,19 +327,19 @@ INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode,
 
 
 
-INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config, publishedcontent) VALUES ('pagina_1', 2, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagina_1', 2, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="navSpec">abs(1).subtree(2)</property>
 </properties>
 
-', NULL);
-INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config, publishedcontent) VALUES ('contentview', 1, 'login_form', NULL, NULL);
-INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config, publishedcontent) VALUES ('pagina_2', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
+');
+INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('contentview', 1, 'login_form', NULL);
+INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="actionPath">/do/login</property>
 </properties>
 
-', NULL);
+');
 
 
 

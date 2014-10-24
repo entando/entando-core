@@ -28,12 +28,7 @@ INSERT INTO authrolepermissions (rolename, permissionname) VALUES ('admin', 'sup
 
 
 
-INSERT INTO authusergroups (username, groupname) VALUES ('admin', 'administrators');
-
-
-
-
-INSERT INTO authuserroles (username, rolename) VALUES ('admin', 'admin');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('admin', 'administrators', 'admin');
 
 
 

@@ -21,7 +21,6 @@ import java.util.List;
 
 /**
  * Interfaccia base per Data Access Object degli oggetti User (User). 
- * @version 1.0
  * @author M.Diana - E.Santoboni
  */
 public interface IUserDAO {
@@ -87,20 +86,20 @@ public interface IUserDAO {
 	 */
 	public void updateUser(UserDetails user);
 	
-	/**
+	/*
 	 * Carica gli utenti membri di un gruppo.
 	 * @param groupName Il nome del grupo tramite il quale cercare gli utenti.
 	 * @return La lista degli utenti (oggetti User) membri del gruppo specificato.
 	 * @deprecated USE loadUsernamesForGroup and load single users from current UserManager.
 	 */
-	public List<UserDetails> loadUsersForGroup(String groupName);
+	//public List<UserDetails> loadUsersForGroup(String groupName);
 	
-	/**
+	/*
 	 * Carica la lista di usernames correlati con il gruppo specificato.
 	 * @param groupName Il nome del gruppo tramite il quale cercare i nomi utenti.
 	 * @return La lista di usernames correlati con il gruppo specificato.
 	 */
-	public List<String> loadUsernamesForGroup(String groupName);
+	//public List<String> loadUsernamesForGroup(String groupName);
 	
 	/**
 	 * Effettua l'aggiornamento della password di un'utente.

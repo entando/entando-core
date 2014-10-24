@@ -36,6 +36,7 @@ import com.agiletec.aps.system.services.user.UserDetails;
  */
 public class TestAuthorizationManager extends BaseTestCase {
 	
+	@Override
     protected void setUp() throws Exception {
         super.setUp();
         this.init();
@@ -45,7 +46,7 @@ public class TestAuthorizationManager extends BaseTestCase {
     	UserDetails adminUser = this._authenticationProvider.getUser("admin", "admin");//nel database di test, username e password sono uguali
     	assertEquals("admin", adminUser.getUsername());
     	assertEquals("admin", adminUser.getPassword());
-    	assertEquals(2, adminUser.getAuthorities().length);
+    	assertEquals(1, adminUser.getAuthorizations().size());
     	
     	List<Group> groups = this._groupManager.getGroups();
     	for (int i=0; i<groups.size(); i++) {
@@ -64,15 +65,13 @@ public class TestAuthorizationManager extends BaseTestCase {
         	check = this._authorizationManager.isAuthOnPermission(adminUser, perm.getName());
         	assertTrue(check);
     	}
-   
     }
-    
     
     public void testCheckCustomerUser() throws Throwable {
     	UserDetails extractedUser = this._authenticationProvider.getUser("pageManagerCustomers", "pageManagerCustomers");
     	assertEquals("pageManagerCustomers", extractedUser.getUsername());
     	assertEquals("pageManagerCustomers", extractedUser.getPassword());
-    	assertEquals(2, extractedUser.getAuthorities().length);
+    	assertEquals(1, extractedUser.getAuthorizations().size());
     	
     	Group group = this._groupManager.getGroup("coach");
 		boolean checkGroup = this._authorizationManager.isAuth(extractedUser, group);
@@ -105,7 +104,7 @@ public class TestAuthorizationManager extends BaseTestCase {
 			extractedUser = this._authenticationProvider.getUser(username, password);
 			assertEquals(username, extractedUser.getUsername());
 			assertNotNull(extractedUser);
-			assertEquals(2, extractedUser.getAuthorities().length);
+			assertEquals(1, extractedUser.getAuthorizations().size());
 			
 			Group group = this._groupManager.getGroup("coach");
     		boolean checkGroup = this._authorizationManager.isAuth(extractedUser, group);
@@ -150,14 +149,18 @@ public class TestAuthorizationManager extends BaseTestCase {
 		user.setUsername(username);
         user.setPassword(password);
         user.setDisabled(false);
-        user.addRole(this._roleManager.getRole("editor"));
-        user.addGroup(this._groupManager.getGroup(Group.FREE_GROUP_NAME));
+		Authorization auth = new Authorization(this._groupManager.getGroup(Group.FREE_GROUP_NAME), 
+				this._roleManager.getRole("editor"));
+        //user.addRole(this._roleManager.getRole("editor"));
+        //user.addGroup(this._groupManager.getGroup(Group.FREE_GROUP_NAME));
+		user.addAuthorization(auth);
         this._userManager.removeUser(user);
 		UserDetails extractedUser = _userManager.getUser(username);
 		assertNull(extractedUser);
 		this._userManager.addUser(user);
-		this._roleManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getRoles()));
-		this._groupManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getGroups()));
+		this._authorizationManager.addUserAuthorization(username, auth);
+		//this._roleManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getRoles()));
+		//this._groupManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getGroups()));
 	}
 	
     private IAuthorizationManager _authorizationManager;

@@ -19,11 +19,13 @@ package com.agiletec.aps.system.services.group;
 
 import com.agiletec.aps.system.services.authorization.IApsAuthority;
 
+import java.io.Serializable;
+
 /**
  * Rappresentazione di un'oggetto "Gruppo".
  * @author E.Santoboni
  */
-public class Group implements IApsAuthority {
+public class Group implements IApsAuthority, Serializable {
 	
 	@Override
 	public String getAuthority() {

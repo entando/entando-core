@@ -17,6 +17,7 @@
 */
 package com.agiletec.aps.system.services.user;
 
+import com.agiletec.aps.system.services.authorization.Authorization;
 import java.util.List;
 
 import com.agiletec.aps.system.services.authorization.IApsAuthority;
@@ -37,22 +38,22 @@ public interface UserDetails {
 	public boolean isEntandoUser();
 	
 	/**
-	 * Get the authorities of the current user
-	 * @return
+	 * Get the authorizations of the current user
+	 * @return The user authorizations
 	 */
-	public IApsAuthority[] getAuthorities();
+	public List<Authorization> getAuthorizations();
 	
 	/**
-	 * Add an authority to the current user
-	 * @param auth
+	 * Add an authorization to the current user
+	 * @param auth The authorization to add
 	 */
-	public void addAutority(IApsAuthority auth);
+	public void addAuthorization(Authorization auth);
     
 	/**
-	 * Add a list of authorities to the current user
-	 * @param auths
+	 * Add a list of authorizations to the current user
+	 * @param auths The authorizations to set
 	 */
-    public void addAutorities(List<IApsAuthority> auths);
+    public void addAuthorizations(List<Authorization> auths);
     
     /**
      * Return the plain password (that is, NOT decrypted) of the current user

@@ -37,6 +37,7 @@ import com.agiletec.aps.system.common.entity.helper.BaseFilterUtils;
 import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IApsAuthority;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -102,7 +103,6 @@ public class BaseContentListHelper implements IContentListHelper {
             contentsId = this.getContentManager().loadPublicContentsId(bean.getContentType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
         } catch (Throwable t) {
         	_logger.error("Error extracting contents id", t);
-            //ApsSystemUtils.logThrowable(t, this, "extractContentsId");
             throw new ApsSystemException("Error extracting contents id", t);
         }
         return contentsId;
@@ -121,17 +121,18 @@ public class BaseContentListHelper implements IContentListHelper {
     }
 	
     public static Collection<String> getAllowedGroupCodes(UserDetails user) {
-        Set<String> allowedGroup = new HashSet<String>();
-		allowedGroup.add(Group.FREE_GROUP_NAME);
-        if (null != user && null != user.getAuthorities()) {
-			for (int i = 0; i < user.getAuthorities().length; i++) {
-				IApsAuthority authority = user.getAuthorities()[i];
-				if (authority instanceof Group) {
-					allowedGroup.add(authority.getAuthority());
+        Set<String> codes = new HashSet<String>();
+		codes.add(Group.FREE_GROUP_NAME);
+		List<Authorization> auths = (null != user) ? user.getAuthorizations() : null;
+        if (null != auths) {
+			for (int i = 0; i < auths.size(); i++) {
+				Authorization auth = auths.get(i);
+				if (null != auth && null != auth.getGroup()) {
+					codes.add(auth.getGroup().getName());
 				}
 			}
         }
-        return allowedGroup;
+        return codes;
     }
 	
 	public static String buildCacheKey(IContentListBean bean, UserDetails user) {

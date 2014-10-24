@@ -88,8 +88,7 @@ public class TestPageDAO extends BaseTestCase {
 			assertEquals(extractedPage.getModel().getCode(), "service");
 			assertTrue(extractedPage.isShowable());
 			Widget[] widgets = extractedPage.getWidgets();
-			boolean contains = widgets[0].getConfig().contains("temp");
-			assertEquals(contains, true);
+			assertTrue(widgets[0].getConfig().containsKey("temp"));
 			assertEquals(widgets[0].getType().getCode(), "content_viewer");
 			this.updatePage(extractedPage, this._pageDao);
 		} catch (Throwable t) {
@@ -130,10 +129,11 @@ public class TestPageDAO extends BaseTestCase {
 			assertEquals(extractedPage.getTitle("it"), "pagina temporanea1");
 			assertEquals(extractedPage.getModel().getCode(), "service");
 			assertFalse(extractedPage.isShowable());
-			Widget[] showlets = extractedPage.getWidgets();
-			assertTrue(showlets[0].getConfig().contains("temp1"));
-			assertTrue(showlets[0].getConfig().contains("contentId"));
-			assertEquals(showlets[0].getType().getCode(), "content_viewer");
+			Widget[] widgets = extractedPage.getWidgets();
+			ApsProperties extractedConfig = widgets[0].getConfig();
+			assertTrue(extractedConfig.containsKey("temp1"));
+			assertTrue(extractedConfig.containsKey("contentId"));
+			assertEquals(widgets[0].getType().getCode(), "content_viewer");
         } catch (Throwable t) {
             throw t;
         }
@@ -161,7 +161,7 @@ public class TestPageDAO extends BaseTestCase {
 				contains = true;
 			}
 		}
-		assertEquals(contains, false);        
+		assertFalse(contains);        
 	}
 	
 	private Page createPageForTest(String code) {
@@ -187,8 +187,8 @@ public class TestPageDAO extends BaseTestCase {
 		WidgetType widgetType = new WidgetType();
 		widgetType.setCode("content_viewer");
 		widget.setType(widgetType);
-		Widget[] showlets = {widget};
-		page.setWidgets(showlets);
+		Widget[] widgets = {widget};
+		page.setWidgets(widgets);
 		return page;
 	}
 	

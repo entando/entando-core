@@ -83,7 +83,7 @@ public class TestUserManager extends BaseTestCase {
 			extractedUser = this._userManager.getUser(username);
 			assertEquals(user.getUsername(), extractedUser.getUsername());
 			assertNotNull(extractedUser);
-			assertEquals(0, extractedUser.getAuthorities().length);
+			assertEquals(0, extractedUser.getAuthorizations().size());
 			user.setPassword("changedPassword");
 			IUserProfile extractedProfile = (IUserProfile) extractedUser.getProfile();
 			assertNotNull(extractedProfile);

@@ -31,23 +31,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.authorizator.AbstractApsAutorityDAO;
+import com.agiletec.aps.system.common.AbstractDAO;
 
 /**
  * Data Access Object per gli oggetti ruolo (Role).
- * @version 1.0
  * @author E.Santoboni
  */
-public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
-
+public class RoleDAO extends AbstractDAO implements IRoleDAO {
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(RoleDAO.class);
 	
 	/**
-	 * Carica da db una mappa completa di tutti i ruoli. Nella mappa, la chiave 
-	 * è costituita dal nome del ruolo. Nei ruoli sono caricati tutti i permessi 
-	 * assegnati al ruolo. 
+	 * Carica da db una mappa completa di tutti i ruoli. Nella mappa, 
+	 * la chiave è costituita dal nome del ruolo. 
+	 * Nei ruoli sono caricati tutti i permessi assegnati al ruolo. 
 	 * @return La mappa completa di tutti i ruoli.
 	 */
+	@Override
 	public Map<String, Role> loadRoles() {
 		Connection conn = null;
 		Statement stat = null;
@@ -61,7 +61,6 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading roles",  t);
 			throw new RuntimeException("Error loading roles", t);
-			//processDaoException(t, "Error loading roles", "loadRoles");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -114,7 +113,6 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 		} catch (Throwable t) {
 			_logger.error("Error while deleting permissions",  t);
 			throw new RuntimeException("Error while deleting permissions", t);
-			//processDaoException(t, "Error while deleting permissions", "deleteRolesPermission");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -144,7 +142,6 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 			} catch (Throwable t) {
 				_logger.error("Error while adding permissions to a role",  t);
 				throw new RuntimeException("Error while adding permissions to a role", t);
-				//processDaoException(t, "Error while adding permissions to a role", "addRolePermissions");
 			} finally {
 				closeDaoResources(null, stat);
 			}
@@ -155,6 +152,7 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 	 * Aggiunge un ruolo ad db.
 	 * @param role Oggetto di tipo Role relativo al ruolo da aggiungere.
 	 */
+	@Override
 	public void addRole(Role role) {
 		Connection conn = null;
 		PreparedStatement stat = null;
@@ -171,7 +169,6 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 			this.executeRollback(conn);
 			_logger.error("Error while adding a role",  t);
 			throw new RuntimeException("Error while adding a role", t);
-			//processDaoException(t, "Error while adding a role", "addRole");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -181,6 +178,7 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 	 * Elimima un ruolo dal db.
 	 * @param role Il ruolo (oggetto Role) da eliminare dal db.
 	 */
+	@Override
 	public void deleteRole(Role role) {
 		Connection conn = null;
 		PreparedStatement stat = null;
@@ -196,7 +194,6 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 			this.executeRollback(conn);
 			_logger.error("Error while deleting a role",  t);
 			throw new RuntimeException("Error while deleting a role", t);
-			//processDaoException(t, "Error while deleting a role", "deleteRole");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -206,6 +203,7 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 	 * Aggiorna un ruolo nel db.
 	 * @param role Il ruolo (oggetto Role) da aggiornare nel db.
 	 */
+	@Override
 	public void updateRole(Role role) {
 		Connection conn = null;
 		PreparedStatement stat = null;
@@ -223,17 +221,11 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 			this.executeRollback(conn);
 			_logger.error("Error while updating a role",  t);
 			throw new RuntimeException("Error while updating a role", t);
-			//processDaoException(t, "Error while updating a role", "updateRole");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-
-	/**
-	 * Restituisce il numero di utenti che utilizzano il ruolo immesso.
-	 * @param role Il ruolo di cui trovate il numero di utenti che lo utilizzano.
-	 * @return Il numero di utenti che utilizzano quel ruolo.
-	 */
+	/*
 	public int getRoleUses(Role role) {
 		Connection conn = null;
 		int num = 0;
@@ -249,13 +241,13 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 		} catch (Throwable t) {
 			_logger.error("Error getting the users sharing the same role",  t);
 			throw new RuntimeException("Error getting the users sharing the same role", t);
-			//processDaoException(t, "Error getting the users sharing the same role", "getNumberOfUserWithRole");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
 		return num;
 	}
-
+	*/
+	/*
 	@Override
 	protected String getAddUserAuthorizationQuery() {
 		return ADD_USER_ROLE;
@@ -280,10 +272,11 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 	protected String getUserAuthorizatedQuery() {
 		return SELECT_USERS_FOR_ROLE;
 	}
-
+	*/
+	/*
 	private final String NUMBER_OF_USER_WITH_ROLE = 
 		"SELECT COUNT(*) FROM authuserroles WHERE rolename = ? ";
-
+	*/
 	private final String LOAD_ROLES = 
 		"SELECT authroles.rolename, authroles.descr,  " +
 		"authrolepermissions.permissionname " +
@@ -305,7 +298,7 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 
 	private final String DELETE_ROLE = 
 		"DELETE FROM authroles WHERE rolename = ? ";
-
+	/*
 	private final String ADD_USER_ROLE =
 		"INSERT INTO authuserroles (username, rolename) VALUES ( ? , ? )";
 
@@ -320,5 +313,5 @@ public class RoleDAO extends AbstractApsAutorityDAO implements IRoleDAO {
 
 	private final String SELECT_USERS_FOR_ROLE =
 		"SELECT username FROM authuserroles WHERE rolename = ? ";
-
+	*/
 }

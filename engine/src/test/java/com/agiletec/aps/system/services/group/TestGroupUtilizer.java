@@ -33,7 +33,7 @@ public class TestGroupUtilizer extends BaseTestCase {
     	for (int i=0; i<names.length; i++) {
 			GroupUtilizer service = (GroupUtilizer) this.getApplicationContext().getBean(names[i]);
 			List utilizers = service.getGroupUtilizers(Group.FREE_GROUP_NAME);
-			if (names[i].equals(SystemConstants.USER_MANAGER)) {
+			if (names[i].equals(SystemConstants.AUTHORIZATION_SERVICE)) {
 				assertEquals(0, utilizers.size());
 			} else {
 				assertTrue(utilizers.size()>0);

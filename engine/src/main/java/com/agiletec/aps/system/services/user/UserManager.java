@@ -17,7 +17,6 @@
 */
 package com.agiletec.aps.system.services.user;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,13 +26,12 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
-import com.agiletec.aps.system.services.group.GroupUtilizer;
 
 /**
  * Servizio di gestione degli utenti.
  * @author M.Diana - E.Santoboni
  */
-public class UserManager extends AbstractService implements IUserManager, GroupUtilizer {
+public class UserManager extends AbstractService implements IUserManager/*, GroupUtilizer*/ {
 
 	private static final Logger _logger =  LoggerFactory.getLogger(UserManager.class);
 	
@@ -54,7 +52,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			usernames = this.getUserDAO().searchUsernames(text);
 		} catch (Throwable t) {
 			_logger.error("Error searching usernames by text '{}'", text,  t);
-			//ApsSystemUtils.logThrowable(t, this, "searchUsernames");
 			throw new ApsSystemException("Error loading the username list", t);
 		}
 		return usernames;
@@ -80,7 +77,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			}
 		} catch (Throwable t) {
 			_logger.error("Error searching users by text '{}'", text,  t);
-			//ApsSystemUtils.logThrowable(t, this, "searchUsers");
 			throw new ApsSystemException("Error loading the user list", t);
 		}
 		return users;
@@ -97,7 +93,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			this.getUserDAO().deleteUser(user);
 		} catch (Throwable t) {
 			_logger.error("Error deleting user '{}'", user,  t);
-			//ApsSystemUtils.logThrowable(t, this, "removeUser");
 			throw new ApsSystemException("Error deleting a user", t);
 		}
 	}
@@ -108,7 +103,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			this.getUserDAO().deleteUser(username);
 		} catch (Throwable t) {
 			_logger.error("Error deleting user '{}'", username,  t);
-			//ApsSystemUtils.logThrowable(t, this, "removeUser");
 			throw new ApsSystemException("Error deleting a user", t);
 		}
 	}
@@ -124,7 +118,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			this.getUserDAO().updateUser(user);
 		} catch (Throwable t) {
 			_logger.error("Error updating user '{}'", user,  t);
-			//ApsSystemUtils.logThrowable(t, this, "updateUser");
 			throw new ApsSystemException("Error updating the User", t);
 		}
 	}
@@ -135,19 +128,17 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			this.getUserDAO().changePassword(username, password);
 		} catch (Throwable t) {
 			_logger.error("Error on change password for user '{}'", username,  t);
-			//ApsSystemUtils.logThrowable(t, this, "changePassword");
 			throw new ApsSystemException("Error updating the password of the User" + username, t);
 		}
 	}
 
 	@Override
 	public void updateLastAccess(UserDetails user) throws ApsSystemException {
-		if (!user.isJapsUser()) return;
+		if (!user.isEntandoUser()) return;
 		try {
 			this.getUserDAO().updateLastAccess(user.getUsername());
 		} catch (Throwable t) {
 			_logger.error("Error on update last access for user '{}'", user,  t);
-			//ApsSystemUtils.logThrowable(t, this, "updateLastAccess");
 			throw new ApsSystemException("Error while refreshing the last access date of the User " + user.getUsername(), t);
 		}
 	}
@@ -163,7 +154,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			this.getUserDAO().addUser(user);
 		} catch (Throwable t) {
 			_logger.error("Error on add user '{}'", user,  t);
-			//ApsSystemUtils.logThrowable(t, this, "addUser");
 			throw new ApsSystemException("Error adding a new user ", t);
 		}
 	}
@@ -183,7 +173,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			user = this.getUserDAO().loadUser(username);
 		} catch (Throwable t) {
 			_logger.error("Error loading user by username '{}'", username,  t);
-			//ApsSystemUtils.logThrowable(t, this, "getUser");
 			throw new ApsSystemException("Error loading user", t);
 		}
 		this.setUserCredentialCheckParams(user);
@@ -206,7 +195,6 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 			user = this.getUserDAO().loadUser(username, password);
 		} catch (Throwable t) {
 			_logger.error("Error loading user by username and password. username: '{}'", username,  t);
-			//ApsSystemUtils.logThrowable(t, this, "getUser");
 			throw new ApsSystemException("Error loading user", t);
 		}
 		this.setUserCredentialCheckParams(user);
@@ -222,7 +210,7 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 	 * per la verifica della validità delle credenziali.
 	 */
 	protected void setUserCredentialCheckParams(UserDetails user) {
-		if (null != user && user.isJapsUser()) {
+		if (null != user && user.isEntandoUser()) {
 			User japsUser = (User) user;
 			String enabledPrivacyModuleParValue = this.getConfigManager().getParam(SystemConstants.CONFIG_PARAM_PM_ENABLED);
 			boolean enabledPrivacyModule = Boolean.parseBoolean(enabledPrivacyModuleParValue);
@@ -260,7 +248,7 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 		user.setUsername(SystemConstants.GUEST_USER_NAME);
 		return user;
 	}
-	
+	/*
 	@Override
 	public List<UserDetails> getGroupUtilizers(String groupName) throws ApsSystemException {
 		List<String> usernames = null;
@@ -274,20 +262,18 @@ public class UserManager extends AbstractService implements IUserManager, GroupU
 					if (null != user) {
 						utilizers.add(user);
 					} else {
-						//ApsSystemUtils.getLogger().info("Searching for the references of the group '" + groupName +	 "' - The username '" + username + "'referenced does not correspond to any valid user."+ "Deleting reference!");
 						_logger.info("Searching for the references of the group '{}' - The username '{}'referenced does not correspond to any valid user. Deleting reference!", groupName, username);
 						this.getUserDAO().deleteUser(username);
 					}
 				}
 			}
 		} catch (Throwable t) {
-			//ApsSystemUtils.logThrowable(t, this, "getGroupUtilizers");
 			_logger.error("Error while loading the members of the group: '{}'", groupName,  t);
 			throw new ApsSystemException("Error while loading the members of the group "+ groupName, t);
 		}
 		return utilizers;
 	}
-
+	*/
 	protected ConfigInterface getConfigManager() {
 		return _configManager;
 	}

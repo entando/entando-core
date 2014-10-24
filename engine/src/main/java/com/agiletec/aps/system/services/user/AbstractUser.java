@@ -17,10 +17,11 @@
 */
 package com.agiletec.aps.system.services.user;
 
+import com.agiletec.aps.system.services.authorization.Authorization;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import java.util.ArrayList;
 
 /**
  * Rappresentazione di un'utente astratto.
@@ -72,25 +73,22 @@ public abstract class AbstractUser implements UserDetails, Serializable {
 	 * @return true se l'utente è "guest", false in caso contrario.
 	 */
 	public boolean isGuest() {
-		return (this.getAuthorities().length == 0);
+		return (this.getAuthorizations().isEmpty());
 	}
 	
 	@Override
-	public void addAutority(IApsAuthority auth) {
-		int len = this.getAuthorities().length;
-		IApsAuthority[] newAuths = new IApsAuthority[len + 1];
-		for (int i=0; i < len; i++){
-			newAuths[i] = this.getAuthorities()[i];
+	public void addAuthorization(Authorization auth) {
+		if (null == auth) return;
+		if (!this.getAuthorizations().contains(auth)) {
+			this.getAuthorizations().add(auth);
 		}
-		newAuths[len] = auth;
-		this._authorities = newAuths;
 	}
-
+	
 	@Override
-	public void addAutorities(List<IApsAuthority> auths) {
+	public void addAuthorizations(List<Authorization> auths) {
 		for (int i=0; i<auths.size(); i++) {
-			IApsAuthority auth = auths.get(i);
-			this.addAutority(auth);
+			Authorization auth = auths.get(i);
+			this.addAuthorization(auth);
 		}
 	}
 
@@ -108,21 +106,21 @@ public abstract class AbstractUser implements UserDetails, Serializable {
 	public boolean isCredentialsNotExpired() {
 		return true;
 	}
-
-	public void setAuthorities(IApsAuthority[] authorities) {
-		this._authorities = authorities;
-	}
-
+	
 	@Override
-	public IApsAuthority[] getAuthorities() {
-		return _authorities;
+	public List<Authorization> getAuthorizations() {
+		return _authorizations;
 	}
-
+	
+	public void setAuthorizations(List<Authorization> authorizations) {
+		this._authorizations = authorizations;
+	}
+	
 	@Override
 	public Object getProfile() {
 		return _profile;
 	}
-
+	
 	public void setProfile(Object profile) {
 		this._profile = profile;
 	}
@@ -131,7 +129,7 @@ public abstract class AbstractUser implements UserDetails, Serializable {
 	private String _password;
 
 	private Object _profile;
-
-	private IApsAuthority[] _authorities = new IApsAuthority[0];
-
+	
+	private List<Authorization> _authorizations = new ArrayList<Authorization>();
+	
 }

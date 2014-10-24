@@ -31,10 +31,9 @@ import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
@@ -164,29 +163,24 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 		StringBuffer key = new StringBuffer();
 		key.append(contentId).append("_").append(modelId).append("_").append(langCode).append("_RENDER_INFO_CacheKey");
 		if (null != currentUser && !currentUser.getUsername().equals(SystemConstants.GUEST_USER_NAME)) {
-			List<String> groupCodes = new ArrayList<String>();
-			List<String> roleCodes = new ArrayList<String>();
-			if (null != currentUser.getAuthorities()) {
-				for (int i = 0; i < currentUser.getAuthorities().length; i++) {
-					IApsAuthority auth = currentUser.getAuthorities()[i];
-					if (auth instanceof Group) {
-						groupCodes.add(auth.getAuthority());
-					} if (auth instanceof Role) {
-						roleCodes.add(auth.getAuthority());
+			List<String> codes = new ArrayList<String>();
+			if (null != currentUser.getAuthorizations()) {
+				for (int i = 0; i < currentUser.getAuthorizations().size(); i++) {
+					Authorization auth = currentUser.getAuthorizations().get(i);
+					if (null != auth && null != auth.getGroup()) {
+						String code = auth.getGroup().getAuthority() + "_";
+						if (null != auth.getRole()) {
+							code += auth.getRole().getAuthority();
+						} else {
+							code += "null";
+						}
+						codes.add(code);
 					}
 				}
 			}
-			if (!groupCodes.isEmpty()) {
-				if (groupCodes.contains(Group.ADMINS_GROUP_NAME)) {
-					groupCodes.clear();
-					groupCodes.add(Group.ADMINS_GROUP_NAME);
-				}
-				key.append("_GROUPS:");
-				appendAuthCodes(groupCodes, key);
-			}
-			if (!roleCodes.isEmpty()) {
-				key.append("_ROLES:");
-				appendAuthCodes(roleCodes, key);
+			if (!codes.isEmpty()) {
+				key.append("_AUTHS:");
+				appendAuthCodes(codes, key);
 			}
 		}
 		return key.toString();

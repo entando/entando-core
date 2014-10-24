@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.sql.PreparedStatement;
 
 /**
  * Classe contenente alcuni metodi di utilita per i DAO.
@@ -64,7 +65,6 @@ public abstract class AbstractDAO implements Serializable {
 			conn = this.getDataSource().getConnection();
 		} catch (SQLException e) {
 			_logger.error("Error getting connection to the datasource", e);
-			//ApsSystemUtils.logThrowable(e, this, "getConnection");
 			throw new ApsSystemException("Error getting connection to the datasource", e);
 		}
 		return conn;
@@ -96,7 +96,6 @@ public abstract class AbstractDAO implements Serializable {
 				res.close();
 			} catch (Throwable t) {
 				_logger.error("Error while closing the resultset", t);
-				//ApsSystemUtils.logThrowable(t, this, "closeDaoResources", "Error while closing the resultset");
 			}
 		}
 		if (stat != null) {
@@ -104,7 +103,6 @@ public abstract class AbstractDAO implements Serializable {
 				stat.close();
 			} catch (Throwable t) {
 				_logger.error("Error while closing the resultset", t);
-				//ApsSystemUtils.logThrowable(t, this, "closeDaoResources", "Error while closing the resultset");
 			}
 		}
 	}
@@ -118,8 +116,7 @@ public abstract class AbstractDAO implements Serializable {
 		try {
 			if (conn != null) conn.rollback();
 		} catch (SQLException e) {
-			_logger.error("Error on connection rollback", e);			
-			//ApsSystemUtils.logThrowable(e, this, "executeRollback");
+			_logger.error("Error on connection rollback", e);
 		}
 	}
 
@@ -133,11 +130,43 @@ public abstract class AbstractDAO implements Serializable {
 		try {
 			if (conn != null) conn.close();
 		} catch (Throwable t) {
-			_logger.error("Error closing the connection", t);			
-			//ApsSystemUtils.logThrowable(t, this, "closeDaoStatement", "Error closing the connection");
+			_logger.error("Error closing the connection", t);
 		}
 	}
-
+	
+	protected void executeQueryWithoutResultset(String query, Object... args) {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			this.executeQueryWithoutResultset(conn, query, args);
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error executing query",  t);
+			throw new RuntimeException("Error executing query", t);
+		} finally {
+			this.closeConnection(conn);
+		}
+	}
+	
+	protected void executeQueryWithoutResultset(Connection conn, String query, Object... args) {
+		PreparedStatement stat = null;
+    	try {
+    		stat = conn.prepareStatement(query);
+			for (int i = 0; i < args.length; i++) {
+				Object object = args[i];
+				stat.setObject(i+1, object);
+			}
+    		stat.executeUpdate();
+    	} catch (Throwable t) {
+    		_logger.error("Error executing query",  t);
+			throw new RuntimeException("Error executing query", t);
+    	} finally {
+    		closeDaoResources(null, stat);
+    	}
+	}
+	
 	protected DataSource getDataSource() {
 		return this._dataSource;
 	}

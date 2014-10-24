@@ -27,10 +27,10 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = UserGroupReference.TABLE_NAME)
-public class UserGroupReference implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = UserGroupRoleReference.TABLE_NAME)
+public class UserGroupRoleReference implements ExtendedColumnDefinition {
 	
-	public UserGroupReference() {}
+	public UserGroupRoleReference() {}
 	
 	@DatabaseField(columnName = "username", 
 			dataType = DataType.STRING, 
@@ -42,32 +42,48 @@ public class UserGroupReference implements ExtendedColumnDefinition {
 			foreign = true,
 			width = 20, 
 			canBeNull = false)
-	private Group _permission;
+	private Group _group;
+	
+	@DatabaseField(columnName = "rolename", 
+			foreign = true,
+			width = 20, 
+			canBeNull = true)
+	private Role _role;
 	
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
 		String groupTableName = Group.TABLE_NAME;
+		String roleTableName = Role.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
 			groupTableName = "`" + groupTableName + "`";
+			roleTableName = "`" + roleTableName + "`";
 		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_group_fkey FOREIGN KEY (groupname) "
-				+ "REFERENCES " + groupTableName + " (groupname)"};
+		return new String[]{/*"ALTER TABLE " + tableName + " " 
+				+ "ADD CONSTRAINT " + TABLE_NAME + "_pkey PRIMARY KEY "
+				+ "(username , groupname, rolename)",*/ 
+			"ALTER TABLE " + tableName + " " 
+				+ "ADD CONSTRAINT " + TABLE_NAME + "_grn_fkey FOREIGN KEY (groupname) "
+				+ "REFERENCES " + groupTableName + " (groupname)", 
+			"ALTER TABLE " + tableName + " " 
+				+ "ADD CONSTRAINT " + TABLE_NAME + "_rln_fkey FOREIGN KEY (rolename) "
+				+ "REFERENCES " + roleTableName + " (rolename)"};
 	}
 	
-	public static final String TABLE_NAME = "authusergroups";
+	public static final String TABLE_NAME = "authusergrouprole";
 	
 }
 /*
-CREATE TABLE authusergroups
+CREATE TABLE authusergrouprole
 (
   username character varying(40) NOT NULL,
   groupname character varying(20) NOT NULL,
-  CONSTRAINT authusergroups_pkey PRIMARY KEY (username , groupname ),
-  CONSTRAINT authusergroups_groupname_fkey FOREIGN KEY (groupname)
-      REFERENCES authgroups (groupname) MATCH SIMPLE
-      ON UPDATE RESTRICT ON DELETE RESTRICT
+  rolename character varying(20),
+  CONSTRAINT authusergrouprole_pkey PRIMARY KEY (username , groupname, rolename ),
+  CONSTRAINT authusergrouprole_grn_fkey FOREIGN KEY (groupname)
+      REFERENCES authgroups (groupname),
+  CONSTRAINT authusergrouprole_rln_fkey FOREIGN KEY (rolename)
+      REFERENCES authroles (rolename)
 )
  */

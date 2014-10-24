@@ -17,11 +17,9 @@
 */
 package com.agiletec.plugins.jacms.aps.system.services.content.authorization;
 
-import java.util.ArrayList;
-
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupManager;
@@ -49,7 +47,7 @@ public class TestContentAuthorization extends BaseTestCase {
     	UserDetails adminUser = this.getUser("admin");
     	assertEquals("admin", adminUser.getUsername());
     	assertEquals("admin", adminUser.getPassword());
-    	assertEquals(2, adminUser.getAuthorities().length);
+    	assertEquals(1, adminUser.getAuthorizations().size());
     	
     	IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
     	Content content = contentManager.loadContent("ART111", true);
@@ -67,7 +65,7 @@ public class TestContentAuthorization extends BaseTestCase {
     	UserDetails extractedUser = this.getUser("pageManagerCustomers");
     	assertEquals("pageManagerCustomers", extractedUser.getUsername());
     	assertEquals("pageManagerCustomers", extractedUser.getPassword());
-    	assertEquals(2, extractedUser.getAuthorities().length);
+    	assertEquals(1, extractedUser.getAuthorizations().size());
     	
 		IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
     	Content content = contentManager.loadContent("ART111", true);
@@ -93,7 +91,7 @@ public class TestContentAuthorization extends BaseTestCase {
 			extractedUser = this.getUser(username, password);
 			assertEquals(username, extractedUser.getUsername());
 			assertNotNull(extractedUser);
-			assertEquals(2, extractedUser.getAuthorities().length);
+			assertEquals(1, extractedUser.getAuthorizations().size());
 			
 			Group group = this._groupManager.getGroup("coach");
     		boolean checkGroup = this._authorizationManager.isAuth(extractedUser, group);
@@ -137,14 +135,18 @@ public class TestContentAuthorization extends BaseTestCase {
 		user.setUsername(username);
         user.setPassword(password);
         user.setDisabled(false);
-        user.addRole(this._roleManager.getRole("editor"));
-        user.addGroup(this._groupManager.getGroup(Group.FREE_GROUP_NAME));
+		Authorization auth = new Authorization(this._groupManager.getGroup(Group.FREE_GROUP_NAME), 
+				this._roleManager.getRole("editor"));
+        //user.addRole(this._roleManager.getRole("editor"));
+        //user.addGroup(this._groupManager.getGroup(Group.FREE_GROUP_NAME));
+		user.addAuthorization(auth);
         this._userManager.removeUser(user);
 		UserDetails extractedUser = _userManager.getUser(username);
 		assertNull(extractedUser);
 		this._userManager.addUser(user);
-		this._roleManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getRoles()));
-		this._groupManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getGroups()));
+		this._authorizationManager.addUserAuthorization(username, auth);
+		//this._roleManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getRoles()));
+		//this._groupManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getGroups()));
 	}
     
     private void init() throws Exception {

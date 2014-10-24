@@ -26,16 +26,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
-import com.agiletec.aps.system.services.authorization.authorizator.AbstractApsAutorityManager;
-import com.agiletec.aps.system.services.authorization.authorizator.IApsAuthorityDAO;
 
 /**
  * Servizio di gestione dei ruoli.
  * @author M.Diana - E.Santoboni
  */
-public class RoleManager extends AbstractApsAutorityManager implements IRoleManager {
+public class RoleManager extends AbstractService implements IRoleManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RoleManager.class);
 	
@@ -86,7 +84,6 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 			_roles.remove(role.getName());
 		} catch (Throwable t) {
 			_logger.error("Error while removing a role", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeRole");
 			throw new ApsSystemException("Error while removing a role", t);
 		}
 	}
@@ -103,7 +100,6 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 			_roles.put(role.getName(), role);
 		} catch (Throwable t) {
 			_logger.error("Error while updating a role", t);
-			//ApsSystemUtils.logThrowable(t, this, "updateRole");
 			throw new ApsSystemException("Error while updating a role", t);
 		}
 	}
@@ -121,7 +117,6 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 			this._roles.put(role.getName(), role);
 		} catch (Throwable t) {
 			_logger.error("Error while adding a role", t);
-			//ApsSystemUtils.logThrowable(t, this, "addRole");
 			throw new ApsSystemException("Error while adding a role", t);
 		}
 	}
@@ -159,7 +154,6 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while deleting permission {}", permissionName, t);
-			//ApsSystemUtils.logThrowable(t, this, "removePermission");
 			throw new ApsSystemException("Error while deleting a permission", t);
 		}
 	}
@@ -176,7 +170,6 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 			this._permissions.put(permission.getName(), permission);
 		} catch (Throwable t) {
 			_logger.error("Error updating permission", t);
-			//ApsSystemUtils.logThrowable(t, this, "updatePermission");
 			throw new ApsSystemException("Error while updating perrmission", t);
 		}
 	}
@@ -193,17 +186,11 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 			this._permissions.put(permission.getName(), permission);
 		} catch (Throwable t) {
 			_logger.error("Error while adding a permission", t);
-			//ApsSystemUtils.logThrowable(t, this, "addPermission");
 			throw new ApsSystemException("Error while adding a permission", t);
 		}
 	}
 
-	/**
-	 * Restituisce il numero di utenti che utilizzano il ruolo immesso.
-	 * @param role Il ruolo di cui trovate il numero di utenti che lo utilizzano.
-	 * @return Il numero di utenti che utilizzano quel ruolo.
-	 * @throws ApsSystemException in caso di errore nell'accesso al db.
-	 */
+	/*
 	@Override
 	public int getRoleUses(Role role) throws ApsSystemException {
 		int number = 0;
@@ -214,7 +201,8 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 		}
 		return number;
 	}
-
+	*/
+	
 	@Override
 	public List<Role> getRolesWithPermission(String permissionName) {
 		List<Role> rolesWithPerm = new ArrayList<Role>();
@@ -227,21 +215,21 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 		}
 		return rolesWithPerm;
 	}
-
+	
 	protected IPermissionDAO getPermissionDAO() {
-		return permissionDao;
+		return _permissionDao;
 	}
 	public void setPermissionDAO(IPermissionDAO permissionDao) {
-		this.permissionDao = permissionDao;
+		this._permissionDao = permissionDao;
 	}
 
 	protected IRoleDAO getRoleDAO() {
-		return roleDao;
+		return _roleDao;
 	}
 	public void setRoleDAO(IRoleDAO roleDao) {
-		this.roleDao = roleDao;
+		this._roleDao = roleDao;
 	}
-
+	/*
 	@Override
 	public IApsAuthority getAuthority(String authName) {
 		return this.getRole(authName);
@@ -251,11 +239,11 @@ public class RoleManager extends AbstractApsAutorityManager implements IRoleMana
 	protected IApsAuthorityDAO getAuthorizatorDAO() {
 		return this.getRoleDAO();
 	}
-
+	*/
 	private Map<String, Role> _roles;
 	private Map<String, Permission> _permissions;
 
-	private IRoleDAO roleDao;
-	private IPermissionDAO permissionDao;
+	private IRoleDAO _roleDao;
+	private IPermissionDAO _permissionDao;
 
 }

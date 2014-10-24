@@ -26,7 +26,9 @@ import javax.sql.DataSource;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupManager;
@@ -36,11 +38,11 @@ import com.agiletec.aps.util.DateConverter;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 
 /**
- * @version 1.0
  * @author E.Santoboni
  */
 public class TestAuthenticationProviderManager extends BaseTestCase {
 	
+	@Override
     protected void setUp() throws Exception {
         super.setUp();
         this.init();
@@ -50,7 +52,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     	UserDetails adminUser = this._authenticationProvider.getUser("admin", "admin");//nel database di test, username e password sono uguali
     	assertEquals("admin", adminUser.getUsername());
     	assertEquals("admin", adminUser.getPassword());
-    	assertEquals(2, adminUser.getAuthorities().length);
+    	assertEquals(1, adminUser.getAuthorizations().size());
     	
     	adminUser = this._authenticationProvider.getUser("admin", "wrongPassword");
     	assertNull(adminUser);
@@ -68,14 +70,15 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
 			extractedUser = this._authenticationProvider.getUser(username, password);
 			assertEquals(username, extractedUser.getUsername());
 			assertNotNull(extractedUser);
-			assertEquals(2, extractedUser.getAuthorities().length);
+			assertEquals(1, extractedUser.getAuthorizations().size());
 			
 			Role adminRole = this._roleManager.getRole("admin");
-			this._roleManager.setUserAuthorization(username, adminRole);
+			Group freeGroup = this._groupManager.getGroup(Group.FREE_GROUP_NAME);
+			this._authorizationManager.addUserAuthorization(username, new Authorization(freeGroup, adminRole));
 			
 			extractedUser = this._authenticationProvider.getUser(username, password);
 			assertNotNull(extractedUser);
-			assertEquals(3, extractedUser.getAuthorities().length);
+			assertEquals(2, extractedUser.getAuthorizations().size());
 		} catch (Throwable t) {
 			throw t;
 		} finally {
@@ -99,7 +102,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		assertTrue(privacyModuleStatus);
     		UserDetails user = this._authenticationProvider.getUser(username, password);
     		assertNotNull(user);
-    		assertEquals(2, user.getAuthorities().length);
+    		assertEquals(1, user.getAuthorizations().size());
     		
     		// change the last access date  
     		mockUserDao.setLastAccessDate(username, DateConverter.parseDate("02/06/1977", "dd/MM/yyyy"));
@@ -107,16 +110,16 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		user = this._authenticationProvider.getUser(username, password);
     		assertNotNull(user);
     		assertTrue(!user.isAccountNotExpired());
-    		assertEquals(0, user.getAuthorities().length);
+    		assertEquals(0, user.getAuthorizations().size());
     		
     		mockUserDao.setLastAccessDate(username, new Date());
     		assertTrue(!user.isAccountNotExpired());
-    		assertEquals(0, user.getAuthorities().length);
+    		assertEquals(0, user.getAuthorizations().size());
     		
     		user = this._authenticationProvider.getUser(username, password);
     		assertNotNull(user);
     		assertTrue(user.isAccountNotExpired());
-    		assertEquals(2, user.getAuthorities().length);
+    		assertEquals(1, user.getAuthorizations().size());
     		
     	} catch (Throwable t) {
     		throw t;
@@ -144,7 +147,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		assertTrue(privacyModuleStatus);
     		UserDetails user = this._authenticationProvider.getUser(username, password);
     		assertNotNull(user);
-    		assertEquals(2, user.getAuthorities().length);
+    		assertEquals(1, user.getAuthorizations().size());
     		assertTrue(user.isAccountNotExpired());
     		assertTrue(user.isCredentialsNotExpired());
     		
@@ -153,7 +156,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		// check credentials
     		user = this._authenticationProvider.getUser(username, password);
     		assertNotNull(user);
-    		assertEquals(0, user.getAuthorities().length);
+    		assertEquals(0, user.getAuthorizations().size());
     		assertTrue(user.isAccountNotExpired());    		
     		assertTrue(!user.isCredentialsNotExpired());
     		
@@ -161,7 +164,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		this._userManager.changePassword(username, newPassword);
     		user = this._authenticationProvider.getUser(username, newPassword);
     		assertNotNull(user);
-    		assertEquals(2, user.getAuthorities().length);
+    		assertEquals(1, user.getAuthorizations().size());
     		assertTrue(user.isAccountNotExpired());
     		assertTrue(user.isCredentialsNotExpired());
     	} catch (Throwable t) {
@@ -186,16 +189,17 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		assertTrue(privacyModuleStatus);
     		UserDetails user = this._authenticationProvider.getUser(username, password);
     		assertNotNull(user);
-    		assertEquals(2, user.getAuthorities().length);
+    		assertEquals(1, user.getAuthorizations().size());
     		
     		// update role
     		Role adminRole = this._roleManager.getRole("admin");
-			this._roleManager.setUserAuthorization(username, adminRole);
+			Group freeGroup = this._groupManager.getGroup(Group.FREE_GROUP_NAME);
+			this._authorizationManager.addUserAuthorization(username, new Authorization(freeGroup, adminRole));
+			
 			// verify role
 			user = this._authenticationProvider.getUser(username, password);
     		assertNotNull(user);
-    		assertEquals(3, user.getAuthorities().length);
-    		
+    		assertEquals(2, user.getAuthorizations().size());
     	} catch (Throwable t) {
     		throw t;
     	} finally {
@@ -250,6 +254,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		this._roleManager = (RoleManager) this.getService(SystemConstants.ROLE_MANAGER);
     		this._groupManager = (GroupManager) this.getService(SystemConstants.GROUP_MANAGER);
     		this._configurationManager = (ConfigInterface) this.getService(SystemConstants.BASE_CONFIG_MANAGER);
+			this._authorizationManager = (IAuthorizationManager) this.getService(SystemConstants.AUTHORIZATION_SERVICE);
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
@@ -259,16 +264,14 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     	MockUser user = new MockUser();
 		user.setUsername(username);
         user.setPassword(password);
-        user.addRole(this._roleManager.getRole("editor"));
-        user.addGroup(this._groupManager.getGroup(Group.FREE_GROUP_NAME));
-        
+        Authorization auth = new Authorization(this._groupManager.getGroup(Group.FREE_GROUP_NAME), 
+				this._roleManager.getRole("editor"));
+		user.addAuthorization(auth);
         this._userManager.removeUser(user);
 		UserDetails extractedUser = _userManager.getUser(username);
 		assertNull(extractedUser);
 		this._userManager.addUser(user);
-        
-		this._roleManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getRoles()));
-		this._groupManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getGroups()));		
+		this._authorizationManager.addUserAuthorization(username, auth);
 	}
     
     private IAuthenticationProviderManager _authenticationProvider = null;
@@ -278,5 +281,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
 	
 	private RoleManager _roleManager = null;
 	private GroupManager _groupManager = null;
+	
+	private IAuthorizationManager _authorizationManager;
 	
 }

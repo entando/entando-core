@@ -19,13 +19,11 @@ package com.agiletec.aps.system.services.group;
 
 import java.util.Map;
 
-import com.agiletec.aps.system.services.authorization.authorizator.IApsAuthorityDAO;
-
 /**
  * Interfaccia base per i Data Access Object degli oggetti Group. 
  * @author E.Santoboni
  */
-public interface IGroupDAO extends IApsAuthorityDAO {
+public interface IGroupDAO /*extends IApsAuthorityDAO*/ {
 	
 	/**
 	 * Carica la mappa dei gruppi presenti nel sistema 

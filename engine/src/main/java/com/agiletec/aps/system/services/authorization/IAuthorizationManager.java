@@ -167,6 +167,8 @@ public interface IAuthorizationManager {
 	 */
 	public List<Role> getUserRoles(UserDetails user);
 	
+	public void addUserAuthorization(String username, String groupName, String roleName) throws ApsSystemException;
+	
 	public void addUserAuthorization(String username, Authorization authorization) throws ApsSystemException;
 	
 	public void addUserAuthorizations(String username, List<Authorization> authorizations) throws ApsSystemException;

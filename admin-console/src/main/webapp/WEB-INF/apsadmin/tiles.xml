@@ -4,7 +4,7 @@
     "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
 
 <tiles-definitions>
-
+	
     <definition name="layout.default" template="/WEB-INF/apsadmin/jsp/common/layouts/default.jsp">
         <put-attribute name="title" value="document.title.main" />
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-common.jsp" />
@@ -13,7 +13,7 @@
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/mainBody.jsp" />
         <put-attribute name="footer" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/footer.jsp" />
     </definition>
-
+	
     <definition extends="layout.default" name="layout.settings">
         <put-attribute name="title" value="document.title.main" />
         <put-attribute name="cssSpecial" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/settings.jsp" />
@@ -47,7 +47,7 @@
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userProfile-entry.jsp" />
     </definition>
 
-    <!-- ********* INIZIO Area Gestione Utenti ********* -->
+    <!-- ********* User management - START ********* -->
 
     <definition extends="layout.settings" name="admin.User.intro">
         <put-attribute name="title" value="title.userManagement" />
@@ -66,10 +66,6 @@
         <put-attribute name="title" value="title.userManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/trashUser.jsp" />
     </definition>
-    <definition extends="layout.settings" name="admin.UserAuth.entry">
-        <put-attribute name="title" value="title.userManagement" />
-        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/configUserAuthorities.jsp" />
-    </definition>
 
 	<definition extends="layout.settings" name="admin.UserProfile.view">
         <put-attribute name="title" value="title.userManagement" />
@@ -85,38 +81,34 @@
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/profile-entry.jsp" />
     </definition>
 
-    <!-- ********* FINE Area Gestione Utenti ********* -->
+    <!-- ********* User management - END ********* -->
 
-    <!-- ********* INIZIO Area Gestione Ruoli ********* -->
-
-    <definition extends="layout.settings" name="admin.Role.intro">
-        <put-attribute name="title" value="title.roleManagement" />
-        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/role-intro.jsp" />
-    </definition>
-    <definition extends="layout.settings" name="admin.Role.list">
+    <!-- ********* User Role management - START ********* -->
+	
+    <definition extends="layout.default" name="admin.Role.list">
         <put-attribute name="title" value="title.roleManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/roleFinding.jsp" />
     </definition>
-    <definition extends="layout.settings" name="admin.Role.entry">
+    <definition extends="layout.default" name="admin.Role.entry">
         <put-attribute name="title" value="title.roleManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/entryRole.jsp" />
     </definition>
-    <definition extends="layout.settings" name="admin.Role.view">
-        <put-attribute name="title" value="title.roleManagement" />
-        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/viewRole.jsp" />
-    </definition>
-    <definition extends="layout.settings" name="admin.Role.trash">
+    <definition extends="layout.default" name="admin.Role.trash">
         <put-attribute name="title" value="title.roleManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/trashRole.jsp" />
     </definition>
-    <definition extends="layout.settings" name="admin.AuthRole.configure">
-        <put-attribute name="title" value="title.userManagement" />
-        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/configAuthority.jsp" />
+    <definition extends="layout.default" name="admin.Role.references">
+        <put-attribute name="title" value="title.roleManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/roleReferences.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Role.view">
+        <put-attribute name="title" value="title.roleManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/role/viewRole.jsp" />
     </definition>
 
-    <!-- ********* FINE Area Gestione Ruoli ********* -->
+    <!-- ********* User Role management - END ********* -->
 
-    <!-- ********* INIZIO Area Gestione Gruppi ********* -->
+    <!-- ********* Group management - START ********* -->
 
     <definition extends="layout.default" name="admin.Group.list">
         <put-attribute name="title" value="title.groupManagement" />
@@ -138,12 +130,8 @@
         <put-attribute name="title" value="title.groupManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/groupDetails.jsp" />
     </definition>
-    <definition extends="layout.default" name="admin.AuthGroup.configure">
-        <put-attribute name="title" value="title.groupManagement" />
-        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/group/configAuthority.jsp" />
-    </definition>
 
-    <!-- ********* FINE Area Gestione Gruppi ********* -->
+    <!-- ********* Group management - END ********* -->
 
     <!-- ********* INIZIO Area Gestione Servizi Portale ********* -->
 

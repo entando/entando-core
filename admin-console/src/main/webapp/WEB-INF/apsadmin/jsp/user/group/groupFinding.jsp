@@ -59,6 +59,7 @@
 										<s:text name="label.edit" />
 									</a>
 								</li>
+								<%--
 								<li>
 									<a 
 										href="<s:url namespace="/do/Group/Auth" action="config"><s:param name="authName" value="#group.name"/></s:url>" 
@@ -67,6 +68,7 @@
 											<s:text name="note.manageUsersFor" />
 										</a>
 								</li>
+								--%>
 							</ul>
 					</div>
 					<div class="btn-group btn-group-xs">

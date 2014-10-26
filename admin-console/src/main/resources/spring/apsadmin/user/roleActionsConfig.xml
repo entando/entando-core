@@ -13,10 +13,7 @@
 	<bean id="roleAction" scope="prototype" 
 			class="com.agiletec.apsadmin.user.role.RoleAction" parent="abstractBaseAction" >
 		<property name="roleManager" ref="RoleManager" />
-	</bean>
-	
-	<bean id="roleToUsersAction" scope="prototype" parent="abstractAuthorityToUsersAction" >
-		<property name="authorizatorManager" ref="RoleManager" />
+		<property name="userManager" ref="UserManager" />
 	</bean>
 	
 </beans>

@@ -45,6 +45,7 @@
 								<span class="icon fa fa-pencil-square-o"></span>
 								<span class="sr-only"><s:text name="label.edit" />:&#32;<s:property value="#role.name" /></span>
 						</a>
+						<%--
 						<a 
 							class="btn btn-default" 
 							title="<s:text name="note.assignToUsers" />:&#32;<s:property value="#role.name" />" 
@@ -52,6 +53,7 @@
 								<span class="icon fa fa-users"></span>
 								<span class="sr-only"><s:text name="note.assignToUsers" />:&#32;<s:property value="#role.name" /></span>
 						</a>
+						--%>
 					</div>
 					<div class="btn-group btn-group-xs">
 						<a 

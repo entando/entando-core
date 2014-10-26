@@ -174,7 +174,7 @@ public class TestGroupAction extends ApsAdminBaseTestCase {
 		assertEquals(4, references.size());
 		List<Object> pages = references.get("PageManagerUtilizers");
 		assertEquals(3, pages.size());
-		List<Object> users = references.get("UserManagerUtilizers");
+		List<Object> users = references.get("AuthorizationManagerUtilizers");
 		assertEquals(6, users.size());
 	}
 	

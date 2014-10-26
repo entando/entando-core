@@ -16,20 +16,6 @@
 */
 package com.agiletec.apsadmin.system;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.interceptor.ParameterAware;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
@@ -38,7 +24,22 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.opensymphony.xwork2.ActionSupport;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.interceptor.ParameterAware;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.entando.entando.aps.system.init.IComponentManager;
+import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class beneath all actions.
@@ -94,6 +95,13 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 			return (String)param;
 		}
 		return null;
+	}
+	
+	protected Set<String> getRequiredPermissions() {
+		return _requiredPermissions;
+	}
+	protected void setRequiredPermissions(Set<String> requiredPermissions) {
+		this._requiredPermissions = requiredPermissions;
 	}
 	
 	/**
@@ -199,6 +207,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	
 	private HttpServletRequest _request;
 	private Map<String, String[]> _params;
+	private Set<String> _requiredPermissions;
 	
 	public static final String USER_NOT_ALLOWED = "userNotAllowed";
 	

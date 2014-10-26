@@ -27,14 +27,14 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-import com.agiletec.apsadmin.system.BaseAction;
+import com.agiletec.apsadmin.user.AbstractAuthorityAction;
 import com.agiletec.apsadmin.user.group.helper.IGroupActionHelper;
 
 /**
  * Classi action della gestione Gruppi.
  * @author E.Santoboni - E.Mezzano
  */
-public class GroupAction extends BaseAction implements IGroupAction {
+public class GroupAction extends AbstractAuthorityAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(GroupAction.class);
 	
@@ -59,19 +59,16 @@ public class GroupAction extends BaseAction implements IGroupAction {
 		}
 	}
 	
-	@Override
 	public String newGroup() {
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);
 		return SUCCESS;
 	}
 	
-	@Override
 	public String edit() {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		return this.extractGroupFormValues();
 	}
 	
-	@Override
 	public String showDetail() {
 		String result = this.extractGroupFormValues();
 		if (!result.equals(SUCCESS)) return result;
@@ -90,13 +87,11 @@ public class GroupAction extends BaseAction implements IGroupAction {
 			this.setDescription(group.getDescr());
 		} catch (Throwable t) {
 			_logger.error("error in extractGroupFormValues", t);
-			//ApsSystemUtils.logThrowable(t, this, "extractGroupFormValues");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String save() {
 		try {
 			Group group = new Group();
@@ -109,26 +104,22 @@ public class GroupAction extends BaseAction implements IGroupAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String trash() {
 		try {
 			String check = this.checkGroupForDelete();
 			if (null != check) return check;
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
-			//ApsSystemUtils.logThrowable(t, this, "trash");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String delete() {
 		try {
 			String check = this.checkGroupForDelete();
@@ -138,7 +129,6 @@ public class GroupAction extends BaseAction implements IGroupAction {
 			this.getGroupManager().removeGroup(group);
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "delete");
 			return FAILURE;
 		}
 		return SUCCESS;

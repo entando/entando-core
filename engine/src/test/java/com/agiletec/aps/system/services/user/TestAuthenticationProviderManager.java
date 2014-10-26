@@ -72,9 +72,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
 			assertNotNull(extractedUser);
 			assertEquals(1, extractedUser.getAuthorizations().size());
 			
-			Role adminRole = this._roleManager.getRole("admin");
-			Group freeGroup = this._groupManager.getGroup(Group.FREE_GROUP_NAME);
-			this._authorizationManager.addUserAuthorization(username, new Authorization(freeGroup, adminRole));
+			this._authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
 			
 			extractedUser = this._authenticationProvider.getUser(username, password);
 			assertNotNull(extractedUser);
@@ -194,7 +192,7 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     		// update role
     		Role adminRole = this._roleManager.getRole("admin");
 			Group freeGroup = this._groupManager.getGroup(Group.FREE_GROUP_NAME);
-			this._authorizationManager.addUserAuthorization(username, new Authorization(freeGroup, adminRole));
+			this._authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
 			
 			// verify role
 			user = this._authenticationProvider.getUser(username, password);

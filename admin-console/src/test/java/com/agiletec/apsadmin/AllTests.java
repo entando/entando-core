@@ -41,10 +41,8 @@ import com.agiletec.apsadmin.portal.specialwidget.navigator.TestNavigatorWidgetC
 import com.agiletec.apsadmin.system.entity.TestEntityManagersAction;
 import com.agiletec.apsadmin.system.services.TestShortcutManager;
 
-import org.entando.entando.apsadmin.user.TestAuthorityToUsersAction;
 import org.entando.entando.apsadmin.user.TestUserAction;
 import org.entando.entando.apsadmin.user.TestUserFinderAction;
-import org.entando.entando.apsadmin.user.TestUserToAuthoritiesAction;
 
 import com.agiletec.apsadmin.user.group.TestGroupAction;
 import com.agiletec.apsadmin.user.group.TestGroupFinderAction;
@@ -116,8 +114,6 @@ public class AllTests {
 		suite.addTestSuite(TestUserFinderAction.class);
 		suite.addTestSuite(TestUserProfileAction.class);
 		suite.addTestSuite(TestUserProfileFinderAction.class);
-		suite.addTestSuite(TestUserToAuthoritiesAction.class);
-		suite.addTestSuite(TestAuthorityToUsersAction.class);
 		
 		//Group
 		suite.addTestSuite(TestGroupAction.class);

@@ -448,6 +448,23 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	}
 	
 	@Override
+	public void addUserAuthorization(String username, String groupName, String roleName) throws ApsSystemException {
+		try {
+			Group group = this.getGroupManager().getGroup(groupName);
+			Role role = (null != roleName) ? this.getRoleManager().getRole(roleName) : null;
+			if (null != roleName && null == role) {
+				_logger.warn("invalid authorization -  invalid referenced role name");
+				return;
+			}
+			Authorization authorization = new Authorization(group, role);
+			this.addUserAuthorization(username, authorization);
+		} catch (Throwable t) {
+			_logger.error("Error adding user authorization for user '{}'", username,  t);
+			throw new ApsSystemException("Error adding user authorization for user " + username, t);
+		}
+	}
+	
+	@Override
 	public void addUserAuthorization(String username, Authorization authorization) throws ApsSystemException {
 		if (null == authorization) return;
 		try {

@@ -28,12 +28,10 @@ import com.agiletec.apsadmin.system.BaseAction;
 
 /**
  * Classi action della lista Ruoli.
- * @version 1.0
  * @author E.Santoboni
  */
-public class RoleFinderAction extends BaseAction implements IRoleFinderAction {
+public class RoleFinderAction extends BaseAction {
 	
-	@Override
 	public List<Role> getRoles() {
 		List<Role> roles = this.getRoleManager().getRoles();
 		BeanComparator comparator = new BeanComparator("description");

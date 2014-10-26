@@ -102,8 +102,7 @@ public class TestAuthorityManager extends BaseTestCase {
 		int initSize = usersByGroup.size();
 		assertTrue(initSize >= 3);
 		try {
-			Role roleForTest = this.getRole(roleName);
-			this._authorizationManager.addUserAuthorization(username, new Authorization(groupForTest, roleForTest));
+			this._authorizationManager.addUserAuthorization(username, groupName, roleName);
 			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
 			assertNotNull(usersByGroup);
 			assertEquals(initSize + 1, usersByGroup.size());
@@ -122,9 +121,8 @@ public class TestAuthorityManager extends BaseTestCase {
 		String groupName = "testgroupname";
 		String roleName = "pageManager";
 		Group invalidGroupForTest = this.createGroupForTest(groupName);
-		Role roleForTest = this.getRole(roleName);
 		try {
-			this._authorizationManager.addUserAuthorization(username, new Authorization(invalidGroupForTest, roleForTest));
+			this._authorizationManager.addUserAuthorization(username, groupName, roleName);
 			List<String> usersByGroup = this._authorizationManager.getUsersByGroup(invalidGroupForTest);
 			assertNull(usersByGroup);
 		} catch (Throwable t) {
@@ -145,7 +143,7 @@ public class TestAuthorityManager extends BaseTestCase {
 		assertNotNull(usersByGroup);
 		assertEquals(0, usersByGroup.size());
 		try {
-			this._authorizationManager.addUserAuthorization(username, new Authorization(groupForTest, roleForTest));
+			this._authorizationManager.addUserAuthorization(username, groupName, roleName);
 			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
 			assertNotNull(usersByGroup);
 			assertEquals(1, usersByGroup.size());

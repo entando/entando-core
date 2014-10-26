@@ -37,7 +37,7 @@ public class TestGroupFinderAction extends ApsAdminBaseTestCase {
 	public void testList() throws Throwable {
 		String result = this.executeList("admin");
 		assertEquals(Action.SUCCESS, result);
-		IGroupFinderAction groupFinderAction = (IGroupFinderAction) this.getAction();
+		GroupFinderAction groupFinderAction = (GroupFinderAction) this.getAction();
 		List<Group> groups = groupFinderAction.getGroups();
 		assertFalse(groups.isEmpty());
 	}

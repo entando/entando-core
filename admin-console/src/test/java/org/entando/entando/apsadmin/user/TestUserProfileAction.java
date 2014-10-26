@@ -25,9 +25,6 @@ import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
-import com.agiletec.aps.system.services.authorization.authorizator.IApsAuthorityManager;
-import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
@@ -177,9 +174,6 @@ public class TestUserProfileAction extends ApsAdminBaseTestCase {
             this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
             User user = this.createUserForTest(USERNAME_FOR_TEST);
             this._userManager.addUser(user);
-            this._roleManager = (IApsAuthorityManager) this.getService(SystemConstants.ROLE_MANAGER);
-            this._role = (Role) this._roleManager.getAuthority("editor");
-            this._roleManager.setUserAuthorization(USERNAME_FOR_TEST, this._role);
         } catch (Throwable e) {
             throw new Exception(e);
         }
@@ -187,7 +181,6 @@ public class TestUserProfileAction extends ApsAdminBaseTestCase {
     
 	@Override
     protected void tearDown() throws Exception {
-        this._roleManager.removeUserAuthorization(USERNAME_FOR_TEST, this._role);
         this._userManager.removeUser(USERNAME_FOR_TEST);
         super.tearDown();
     }
@@ -202,7 +195,5 @@ public class TestUserProfileAction extends ApsAdminBaseTestCase {
     private IUserProfileManager _profileManager;
     private IUserManager _userManager = null;
     private static final String USERNAME_FOR_TEST = "userprofile_testUser";
-    private IApsAuthorityManager _roleManager;
-    private IApsAuthority _role = null;
     
 }

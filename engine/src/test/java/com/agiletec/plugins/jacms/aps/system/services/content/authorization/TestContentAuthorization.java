@@ -137,16 +137,12 @@ public class TestContentAuthorization extends BaseTestCase {
         user.setDisabled(false);
 		Authorization auth = new Authorization(this._groupManager.getGroup(Group.FREE_GROUP_NAME), 
 				this._roleManager.getRole("editor"));
-        //user.addRole(this._roleManager.getRole("editor"));
-        //user.addGroup(this._groupManager.getGroup(Group.FREE_GROUP_NAME));
 		user.addAuthorization(auth);
         this._userManager.removeUser(user);
 		UserDetails extractedUser = _userManager.getUser(username);
 		assertNull(extractedUser);
 		this._userManager.addUser(user);
 		this._authorizationManager.addUserAuthorization(username, auth);
-		//this._roleManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getRoles()));
-		//this._groupManager.setUserAuthorizations(username, new ArrayList<IApsAuthority>(user.getGroups()));
 	}
     
     private void init() throws Exception {

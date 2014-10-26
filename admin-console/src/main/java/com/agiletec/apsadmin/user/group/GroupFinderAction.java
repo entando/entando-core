@@ -30,9 +30,8 @@ import com.agiletec.apsadmin.system.BaseAction;
  * Classe action della lista Gruppi.
  * @author E.Mezzano - E.Santoboni
  */
-public class GroupFinderAction extends BaseAction implements IGroupFinderAction {
+public class GroupFinderAction extends BaseAction {
 	
-	@Override
 	public List<Group> getGroups() {
 		List<Group> groups = this.getGroupManager().getGroups();
 		BeanComparator comparator = new BeanComparator("descr");

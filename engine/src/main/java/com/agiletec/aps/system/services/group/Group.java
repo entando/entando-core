@@ -34,12 +34,17 @@ public class Group implements IApsAuthority, Serializable {
 	
 	/**
 	 * Indica se il gruppo è definito localmente 
-	 * all'interno del db "serv" di jAPS.
-	 * @return true se è un gruppo locale di jAPS, 
+	 * all'interno del db "serv" di Entando.
+	 * @return true se è un gruppo locale di Entando, 
 	 * false se è un gruppo definito in un'altra base dati.
 	 */
-	public boolean isJapsGroup() {
+	public boolean isEntandoGroup() {
     	return true;
+    }
+    
+	@Deprecated
+    public boolean isJapsGroup() {
+    	return this.isEntandoGroup();
     }
     
     /**
@@ -62,20 +67,38 @@ public class Group implements IApsAuthority, Serializable {
 	 * Restituisce la descrizione del gruppo.
 	 * @return La descrizione del gruppo.
 	 */
-	public String getDescr() {
-		return _descr;
+	public String getDescription() {
+		return _description;
 	}
 	
 	/**
 	 * Setta la descrizione del gruppo.
-	 * @param descr La descrizione del gruppo.
+	 * @param description La descrizione del gruppo.
 	 */
-	public void setDescr(String descr) {
-		this._descr = descr;
+	public void setDescription(String description) {
+		this._description = description;
+	}
+	
+	@Deprecated
+	public String getDescr() {
+		return this.getDescription();
+	}
+	@Deprecated
+	public void setDescr(String description) {
+		this.setDescription(description);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (null != obj && (obj instanceof Group)) {
+			return this.getName().equals(((Group) obj).getName());
+		} else {
+			return super.equals(obj);
+		}
 	}
 	
 	private String _name;
-	private String _descr;
+	private String _description;
 	
 	/**
 	 * Nome del gruppo degli amministratori.

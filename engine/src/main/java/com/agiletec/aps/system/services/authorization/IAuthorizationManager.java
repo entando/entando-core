@@ -173,6 +173,8 @@ public interface IAuthorizationManager {
 	
 	public void addUserAuthorizations(String username, List<Authorization> authorizations) throws ApsSystemException;
 	
+	public void updateUserAuthorizations(String username, List<Authorization> authorizations) throws ApsSystemException;
+	
 	public void deleteUserAuthorization(String username, String groupname, String rolename) throws ApsSystemException;
 	
 	public List<Authorization> getUserAuthorizations(String username) throws ApsSystemException;

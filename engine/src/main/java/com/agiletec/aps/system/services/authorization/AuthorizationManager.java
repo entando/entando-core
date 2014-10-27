@@ -171,7 +171,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	
 	@Override
     public boolean isAuth(UserDetails user, IApsEntity entity) {
-        if (null == entity) {
+        if (null == entity || null == user) {
             return false;
         }
         String mainGroupName = entity.getMainGroup();
@@ -186,6 +186,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     
 	@Override
     public boolean isAuth(UserDetails user, Set<String> groups) {
+		if (null == user) return false;
         if (this.checkAuth(user, Group.ADMINS_GROUP_NAME, AuthorityType.GROUP)) {
             return true;
         }
@@ -220,18 +221,25 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	
 	@Override
 	public List<Group> getGroupsByPermission(UserDetails user, String permissionName) {
+		if (null == user) return null;
 		List<Group> groups = new ArrayList<Group>();
 		List<IApsAuthority> auths = this.getAuthoritiesByPermissionName(user, permissionName);
 		for (int i = 0; i < auths.size(); i++) {
 			IApsAuthority auth = auths.get(i);
 			if (null != auth && auth instanceof Group) {
-				groups.add((Group) auth);
+				String groupName = auth.getAuthority();
+				if (Group.ADMINS_GROUP_NAME.equals(groupName)) {
+					return this.getGroupManager().getGroups();
+				} else {
+					groups.add((Group) auth);
+				}
 			}
 		}
 		return groups;
 	}
 	
 	private List getAuthoritiesByPermissionName(UserDetails user, String permissionName) {
+		if (null == user) return null;
 		if (null == permissionName) return null;
 		List auths = new ArrayList();
 		List<Role> roles = this.getRolesWithPermission(user, permissionName);
@@ -247,6 +255,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	
 	@Override
     public boolean isAuth(UserDetails user, IPage page) {
+		if (null == user) return false;
         if (this.isAuthOnGroup(user, Group.ADMINS_GROUP_NAME)) {
             return true;
         }
@@ -324,6 +333,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	
 	@Deprecated
     private boolean isAuthOnSinglePermission(UserDetails user, String permissionName) {
+		if (null == user) return false;
         List<Role> rolesWithPermission = this.getRolesWithPermission(user, permissionName);
         for (int i = 0; i < rolesWithPermission.size(); i++) {
             Role role = rolesWithPermission.get(i);
@@ -336,8 +346,8 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     }
     
     private List<Role> getRolesWithPermission(UserDetails user, String permissionName) {
+		if (null == user) return null;
         List<Role> roles = new ArrayList<Role>();
-        if (null == user) return roles;
 		List<Authorization> auths = user.getAuthorizations();
 		for (int i = 0; i < auths.size(); i++) {
 			Authorization auth = auths.get(i);
@@ -359,21 +369,26 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     }
     
 	@Override
-    public List<Group> getUserGroups(UserDetails user) {
-        if (null == user) {
-            return null;
-        }
-        List<Group> groups = new ArrayList<Group>();
+	public List<Group> getUserGroups(UserDetails user) {
+		if (null == user) {
+			return null;
+		}
+		List<Group> groups = new ArrayList<Group>();
 		List<Authorization> auths = user.getAuthorizations();
 		for (int i = 0; i < auths.size(); i++) {
 			Authorization auth = auths.get(i);
 			if (null != auth && null != auth.getGroup()) {
-				groups.add(auth.getGroup());
+				String groupName = auth.getGroup().getName();
+				if (Group.ADMINS_GROUP_NAME.equals(groupName)) {
+					return this.getGroupManager().getGroups();
+				} else {
+					groups.add(auth.getGroup());
+				}
 			}
 		}
-        return groups;
-    }
-    
+		return groups;
+	}
+	
 	@Override
 	@Deprecated
     public List<Role> getUserRoles(UserDetails user) {
@@ -466,7 +481,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	
 	@Override
 	public void addUserAuthorization(String username, Authorization authorization) throws ApsSystemException {
-		if (null == authorization) return;
+		if (null == username || null == authorization) return;
 		try {
 			if (checkAuthorization(authorization)) {
 				this.getAuthorizationDAO().addUserAuthorization(username, authorization);
@@ -479,20 +494,40 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	
 	@Override
 	public void addUserAuthorizations(String username, List<Authorization> authorizations) throws ApsSystemException {
-		if (null == authorizations) return;
+		if (null == username) return;
 		try {
-			List<Authorization> toAdd = new ArrayList<Authorization>();
-			for (int i = 0; i < authorizations.size(); i++) {
-				Authorization authorization = authorizations.get(i);
-				if (checkAuthorization(authorization)) {
-					toAdd.add(authorization);
-				}
-			}
+			List<Authorization> toAdd = this.checkAuthorizations(authorizations);
+			if (null == toAdd) return;
 			this.getAuthorizationDAO().addUserAuthorizations(username, toAdd);
 		} catch (Throwable t) {
 			_logger.error("Error adding user authorizations for user '{}'", username,  t);
 			throw new ApsSystemException("Error adding user authorizations for user " + username, t);
 		}
+	}
+	
+	@Override
+	public void updateUserAuthorizations(String username, List<Authorization> authorizations) throws ApsSystemException {
+		if (null == username) return;
+		try {
+			List<Authorization> toSet = this.checkAuthorizations(authorizations);
+			if (null == toSet) return;
+			this.getAuthorizationDAO().updateUserAuthorizations(username, toSet);
+		} catch (Throwable t) {
+			_logger.error("Error updating user authorizations for user '{}'", username,  t);
+			throw new ApsSystemException("Error updating user authorizations for user " + username, t);
+		}
+	}
+	
+	private List<Authorization> checkAuthorizations(List<Authorization> authorizations) throws Throwable {
+		if (null == authorizations) return null;
+		List<Authorization> checked = new ArrayList<Authorization>();
+		for (int i = 0; i < authorizations.size(); i++) {
+			Authorization authorization = authorizations.get(i);
+			if (this.checkAuthorization(authorization)) {
+				checked.add(authorization);
+			}
+		}
+		return checked;
 	}
 	
 	private boolean checkAuthorization(Authorization authorization) throws Throwable {

@@ -32,6 +32,8 @@ public interface IAuthorizationDAO {
 	
 	public void addUserAuthorizations(String username, List<Authorization> authorizations);
 	
+	public void updateUserAuthorizations(String username, List<Authorization> authorizations);
+	
 	public void deleteUserAuthorization(String username, String groupname, String rolename);
 	
 	public List<Authorization> getUserAuthorizations(String username, Map<String, Group> groups, Map<String, Role> roles);

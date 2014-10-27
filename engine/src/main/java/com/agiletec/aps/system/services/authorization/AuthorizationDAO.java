@@ -45,20 +45,45 @@ public class AuthorizationDAO extends AbstractDAO implements IAuthorizationDAO {
 		if (null == authorization || null == username || null == authorization.getGroup()) return;
 		if (null == authorization.getRole()) {
 			super.executeQueryWithoutResultset(ADD_AUTHORIZATION_WITHOUT_ROLE, 
-					username, authorization.getGroup().getName());
+				username, authorization.getGroup().getName());
 		} else {
 			super.executeQueryWithoutResultset(ADD_AUTHORIZATION, 
-					username, authorization.getGroup().getName(), authorization.getRole().getName());
+				username, authorization.getGroup().getName(), authorization.getRole().getName());
 		}
 	}
 	
 	@Override
 	public void addUserAuthorizations(String username, List<Authorization> authorizations) {
+		this.addUpdateUserAuthorizations(username, authorizations, false);
+	}
+	
+	@Override
+	public void updateUserAuthorizations(String username, List<Authorization> authorizations) {
+		this.addUpdateUserAuthorizations(username, authorizations, true);
+	}
+	
+	protected void addUpdateUserAuthorizations(String username, List<Authorization> authorizations, boolean update) {
 		Connection conn = null;
-		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
+			if (update) {
+				super.executeQueryWithoutResultset(conn, DELETE_USER_AUTHORIZATIONS, username);
+			}
+			this.addUserAuthorizations(username, authorizations, conn);
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error detected while addind user authorizations",  t);
+			throw new RuntimeException("Error detected while addind user authorizations", t);
+		} finally {
+			this.closeConnection(conn);
+		}
+	}
+	
+	protected void addUserAuthorizations(String username, List<Authorization> authorizations, Connection conn) {
+		PreparedStatement stat = null;
+		try {
 			stat = conn.prepareStatement(ADD_AUTHORIZATION);
 			for (int i=0; i<authorizations.size(); i++) {
 				Authorization auth = authorizations.get(i);
@@ -74,13 +99,11 @@ public class AuthorizationDAO extends AbstractDAO implements IAuthorizationDAO {
 				stat.clearParameters();
 			}
 			stat.executeBatch();
-			conn.commit();
 		} catch (Throwable t) {
-			this.executeRollback(conn);
 			_logger.error("Error detected while addind user authorizations",  t);
 			throw new RuntimeException("Error detected while addind user authorizations", t);
 		} finally {
-			this.closeDaoResources(null, stat, conn);
+			this.closeDaoResources(null, stat);
 		}
 	}
 	

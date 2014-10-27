@@ -58,6 +58,7 @@ import org.entando.entando.apsadmin.portal.guifragment.TestGuiFragmentAction;
 import org.entando.entando.apsadmin.portal.model.TestPageModelAction;
 import org.entando.entando.apsadmin.portal.model.TestPageModelFinderAction;
 import org.entando.entando.apsadmin.system.services.activitystream.TestSocialActivityStreamDAO;
+import org.entando.entando.apsadmin.user.TestUserAuthorizationAction;
 import org.entando.entando.apsadmin.user.TestUserProfileAction;
 import org.entando.entando.apsadmin.user.TestUserProfileFinderAction;
 
@@ -111,6 +112,7 @@ public class AllTests {
 		
 		//User
 		suite.addTestSuite(TestUserAction.class);
+		suite.addTestSuite(TestUserAuthorizationAction.class);
 		suite.addTestSuite(TestUserFinderAction.class);
 		suite.addTestSuite(TestUserProfileAction.class);
 		suite.addTestSuite(TestUserProfileFinderAction.class);

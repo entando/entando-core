@@ -7,14 +7,6 @@
 	
     <package name="core_do/User" namespace="/do/User" extends="entando-default">
 		
-    	<action name="intro" class="userAction">
-            <result type="tiles">admin.User.intro</result>
-        	<interceptor-ref name="entandoDefaultStack">
-				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
-				<param name="requestAuth.ORClause">true</param>
-			</interceptor-ref>
-        </action>
-    	
     	<!-- ######### INIZIO OPERAZIONI IN INTERFACCIA LISTA UTENTI ######### -->
     	
 		<action name="list" class="userFinderAction" method="list">

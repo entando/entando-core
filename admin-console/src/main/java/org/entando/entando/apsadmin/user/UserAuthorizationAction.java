@@ -27,8 +27,10 @@ import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.system.BaseAction;
+import java.util.Collections;
 
 import java.util.List;
+import org.apache.commons.beanutils.BeanComparator;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -168,11 +170,15 @@ public class UserAuthorizationAction extends BaseAction {
 	}
 	
 	public List<Group> getGroups() {
-		return this.getGroupManager().getGroups();
+		List<Group> groups = this.getGroupManager().getGroups();
+		Collections.sort(groups, new BeanComparator("description"));
+		return groups;
 	}
 	
 	public List<Role> getRoles() {
-		return this.getRoleManager().getRoles();
+		List<Role> roles = this.getRoleManager().getRoles();
+		Collections.sort(roles, new BeanComparator("description"));
+		return roles;
 	}
 	
 	public String getUsername() {

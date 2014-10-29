@@ -18,7 +18,6 @@
 package com.agiletec.apsadmin.portal.helper;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +26,7 @@ import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInf
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
 
 /**
@@ -39,17 +36,6 @@ import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
 public interface IPageActionHelper extends ITreeNodeBaseActionHelper {
 	
 	public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException;
-	
-	public List<Group> getAllowedGroups(UserDetails currentUser);
-	
-	/**
-	 * Return the root node of the page tree respecting the given user.
-	 * @param user The user.
-	 * @param alsoFreeViewPages Specify if include the pages with the 'free' groups on the extra groups.
-	 * @return The root of the page tree.
-	 * @throws ApsSystemException In case of error
-	 */
-	public ITreeNode getAllowedTreeRoot(UserDetails user, boolean alsoFreeViewPages) throws ApsSystemException;
 	
 	/**
 	 * Return the root node of the page tree respecting the given permissions. 

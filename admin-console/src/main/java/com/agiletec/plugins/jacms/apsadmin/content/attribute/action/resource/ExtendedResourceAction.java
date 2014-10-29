@@ -58,7 +58,6 @@ public class ExtendedResourceAction extends ResourceAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -68,6 +67,16 @@ public class ExtendedResourceAction extends ResourceAction {
 		HttpSession session = this.getRequest().getSession();
 		String anchorDest = ResourceAttributeActionHelper.buildEntryContentAnchorDest(session);
 		this.setEntryContentAnchorDest(anchorDest);
+	}
+	
+	protected List<String> getGroupCodesForSearch() {
+		List<Group> groups = this.getAllowedGroups();
+		List<String> codesForSearch = new ArrayList<String>();
+		for (int i = 0; i < groups.size(); i++) {
+			Group group = groups.get(i);
+			codesForSearch.add(group.getName());
+		}
+		return codesForSearch;
 	}
 	
 	@Override

@@ -197,6 +197,7 @@ public class TestUserAuthorizationAction extends ApsAdminBaseTestCase {
 		List<Authorization> authorizations = this._authorizationManager.getUserAuthorizations(TEST_USER_NAME);
 		assertEquals(2, authorizations.size());
 		try {
+			this.executeEdit("admin", TEST_USER_NAME);
 			String result = this.executeAddAuthorization("admin", TEST_USER_NAME, "administrators", TEST_ROLE_NAME);
 			assertEquals(Action.SUCCESS, result);
 			result = this.executeAddAuthorization("admin", TEST_USER_NAME, "helpdesk", null);

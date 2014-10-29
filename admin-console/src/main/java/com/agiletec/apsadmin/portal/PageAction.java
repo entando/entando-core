@@ -108,7 +108,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.valueFormForNew(parentPage);
 		} catch (Throwable t) {
 			_logger.error("error in newPage", t);
-			//ApsSystemUtils.logThrowable(t, this, "newPage");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -136,7 +135,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.valueFormForEdit(page);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
-			//ApsSystemUtils.logThrowable(t, this, "edit");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -149,7 +147,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.getExtraGroups().add(super.getParameter("extraGroupName"));
 		} catch (Throwable t) {
 			_logger.error("error in joinExtraGroup", t);
-			//ApsSystemUtils.logThrowable(t, this, "joinExtraGroup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -162,7 +159,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.getExtraGroups().remove(super.getParameter("extraGroupName"));
 		} catch (Throwable t) {
 			_logger.error("error in removeExtraGroup", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeExtraGroup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -180,7 +176,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.setPageToShow(page);
 		} catch (Throwable t) {
 			_logger.error("error in showDetail", t);
-			//ApsSystemUtils.logThrowable(t, this, "detail");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -228,7 +223,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.setMimeType(copiedPage.getMimeType());
 		} catch (Throwable t) {
 			_logger.error("error in paste", t);
-			//ApsSystemUtils.logThrowable(t, this, "paste");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -250,7 +244,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -270,7 +263,7 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 				page.setWidgets(copyPage.getWidgets());
 			} else {
 				if (this.isDefaultShowlet()) {
-					this.setDefaultShowlets(page);
+					this.setDefaultWidgets(page);
 				} else {
 					page.setWidgets(new Widget[pageModel.getFrames().length]);
 				}
@@ -304,7 +297,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error building new page", t);
-			//ApsSystemUtils.logThrowable(t, this, "buildNewPage");
 			throw new ApsSystemException("Error building new page", t);
 		}
 		return page;
@@ -324,7 +316,7 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 				page.setWidgets(new Widget[model.getFrames().length]);
 			}
 			if (this.isDefaultShowlet()) {
-				this.setDefaultShowlets(page);
+				this.setDefaultWidgets(page);
 			}
 			page.setTitles(this.getTitles());
 			page.setExtraGroups(this.getExtraGroups());
@@ -342,19 +334,18 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error updating page", t);
-			//ApsSystemUtils.logThrowable(t, this, "getUpdatedPage");
 			throw new ApsSystemException("Error updating page", t);
 		}
 		return page;
 	}
 	
-	protected void setDefaultShowlets(Page page) throws ApsSystemException {
+	protected void setDefaultWidgets(Page page) throws ApsSystemException {
 		try {
 			Widget[] defaultWidgets = page.getModel().getDefaultWidget();
 			if (null == defaultWidgets) {
 				return;
 			}
-			Widget[] showlets = new Widget[defaultWidgets.length];
+			Widget[] widgets = new Widget[defaultWidgets.length];
 			for (int i=0; i<defaultWidgets.length; i++) {
 				Widget defaultWidget = defaultWidgets[i];
 				if (null != defaultWidget) {
@@ -362,13 +353,12 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 						_logger.error("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", page.getModel().getCode(), i, page.getCode());
 						continue;
 					}
-					showlets[i] = defaultWidget;
+					widgets[i] = defaultWidget;
 				}
 			}
-			page.setWidgets(showlets);
+			page.setWidgets(widgets);
 		} catch (Throwable t) {
 			_logger.error("Error setting default widget to page {}", page.getCode(), t);
-			//ApsSystemUtils.logThrowable(t, this, "setDefaultShowlets");
 			throw new ApsSystemException("Error setting default widget to page '" + page.getCode() + "'", t);
 		}
 	}
@@ -391,7 +381,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.setSelectedNode(currentPage.getParent().getCode());
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
-			//ApsSystemUtils.logThrowable(t, this, "trash");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -409,7 +398,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 			this.addActivityStreamInfo(pageToDelete, ApsAdminSystemConstants.DELETE, false);
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "delete");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -445,7 +433,7 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 	 * @return The list of allowed groups.
 	 */
 	public List<Group> getAllowedGroups() {
-		return this.getPageActionHelper().getAllowedGroups(this.getCurrentUser());
+		return super.getActualAllowedGroups();
 	}
 	
 	/**
@@ -611,12 +599,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 	public void setHelper(IPageActionHelper helper) {
 		this.setPageActionHelper(helper);
 	}
-	protected IPageActionHelper getPageActionHelper() {
-		return _pageActionHelper;
-	}
-	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
-		this._pageActionHelper = pageActionHelper;
-	}
 	
 	protected IPageModelManager getPageModelManager() {
 		return _pageModelManager;
@@ -651,6 +633,5 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 	private String _allowedCharsetsCSV;
 	
 	private IPageModelManager _pageModelManager;
-	private IPageActionHelper _pageActionHelper;
 	
 }

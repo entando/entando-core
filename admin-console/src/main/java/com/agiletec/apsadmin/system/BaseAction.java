@@ -26,6 +26,8 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +36,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.entando.entando.aps.system.init.IComponentManager;
@@ -102,6 +105,44 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	}
 	protected void setRequiredPermissions(Set<String> requiredPermissions) {
 		this._requiredPermissions = requiredPermissions;
+	}
+	
+	protected List<Group> getActualAllowedGroups() {
+		if (null != this._actualAllowedGroups) {
+			return _actualAllowedGroups;
+		}
+		this._actualAllowedGroups = new ArrayList<Group>();
+		UserDetails currentUser = this.getCurrentUser();
+		if (null == currentUser || null == this.getRequiredPermissions()) {
+			return this._actualAllowedGroups;
+		}
+		Iterator<String> iter = this.getRequiredPermissions().iterator();
+		while (iter.hasNext()) {
+			String permissionName = iter.next();
+			List<Group> groupsByPermission = this.getAuthorizationManager().getGroupsByPermission(currentUser, permissionName);
+			if (null != groupsByPermission) {
+				for (int i = 0; i < groupsByPermission.size(); i++) {
+					Group group = groupsByPermission.get(i);
+					if (null != group && !this._actualAllowedGroups.contains(group)) {
+						this._actualAllowedGroups.add(group);
+					}
+				}
+			}
+		}
+		Collections.sort(this._actualAllowedGroups, new BeanComparator("description"));
+		return this._actualAllowedGroups;
+	}
+	
+	protected List<String> getActualAllowedGroupCodes() {
+		List<String> codes = new ArrayList<String>();
+		List<Group> groups = this.getActualAllowedGroups();
+		for (int i = 0; i < groups.size(); i++) {
+			Group group = groups.get(i);
+			if (null != group && !codes.contains(group.getName())) {
+				codes.add(group.getName());
+			}
+		}
+		return codes;
 	}
 	
 	/**
@@ -208,6 +249,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	private HttpServletRequest _request;
 	private Map<String, String[]> _params;
 	private Set<String> _requiredPermissions;
+	private List<Group> _actualAllowedGroups;
 	
 	public static final String USER_NOT_ALLOWED = "userNotAllowed";
 	

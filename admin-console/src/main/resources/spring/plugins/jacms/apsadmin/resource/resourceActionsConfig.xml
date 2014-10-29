@@ -7,8 +7,6 @@
 
 	<bean id="jacmsResourceActionHelper" parent="abstractBaseActionHelper"
 			class="com.agiletec.plugins.jacms.apsadmin.resource.helper.ResourceActionHelper">
-		<property name="resourceManager" ref="jacmsResourceManager"/>
-		<property name="categoryManager" ref="CategoryManager"/>
 	</bean>
 
 	<bean id="jacmsAbstractResourceAction" abstract="true"

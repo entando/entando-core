@@ -32,7 +32,6 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.system.TreeNodeBaseActionHelper;
@@ -56,7 +55,6 @@ public class CategoryActionHelper extends TreeNodeBaseActionHelper implements IC
 					service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
 				} catch (Throwable t) {
 					_logger.error("error checking Referencing Objects", t);
-					//ApsSystemUtils.logThrowable(t, this, "hasReferencingObjects");
 					service = null;
 				}
 				if (service != null) {
@@ -90,16 +88,9 @@ public class CategoryActionHelper extends TreeNodeBaseActionHelper implements IC
 			}
 		} catch (Throwable t) {
 			_logger.error("Error creating new category", t);
-			//ApsSystemUtils.logThrowable(t, this, "buildNewCategory");
 			throw new ApsSystemException("Error creating new category", t);
 		}
 		return category;
-	}
-	
-	@Override
-	@Deprecated (/** from jAPS 2.0 version jAPS 2.1 */)
-	public ITreeNode getAllowedTreeRoot(UserDetails user) throws ApsSystemException {
-		return this.getRoot();
 	}
 	
 	@Override

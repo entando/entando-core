@@ -17,7 +17,7 @@
 */
 package com.agiletec.aps.system.services.group;
 
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import com.agiletec.aps.system.services.authorization.AbstractAuthority;
 
 import java.io.Serializable;
 
@@ -25,7 +25,7 @@ import java.io.Serializable;
  * Rappresentazione di un'oggetto "Gruppo".
  * @author E.Santoboni
  */
-public class Group implements IApsAuthority, Serializable {
+public class Group extends AbstractAuthority implements Serializable {
 	
 	@Override
 	public String getAuthority() {
@@ -47,38 +47,6 @@ public class Group implements IApsAuthority, Serializable {
     	return this.isEntandoGroup();
     }
     
-    /**
-	 * Restituisce il nome del gruppo.
-	 * @return Il nome del gruppo.
-	 */
-	public String getName() {
-		return _name;
-	}
-	
-	/**
-	 * Setta il nome del gruppo.
-	 * @param name Il nome del gruppo.
-	 */
-	public void setName(String name) {
-		this._name = name;
-	}
-	
-	/**
-	 * Restituisce la descrizione del gruppo.
-	 * @return La descrizione del gruppo.
-	 */
-	public String getDescription() {
-		return _description;
-	}
-	
-	/**
-	 * Setta la descrizione del gruppo.
-	 * @param description La descrizione del gruppo.
-	 */
-	public void setDescription(String description) {
-		this._description = description;
-	}
-	
 	@Deprecated
 	public String getDescr() {
 		return this.getDescription();
@@ -96,9 +64,6 @@ public class Group implements IApsAuthority, Serializable {
 			return super.equals(obj);
 		}
 	}
-	
-	private String _name;
-	private String _description;
 	
 	/**
 	 * Nome del gruppo degli amministratori.

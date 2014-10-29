@@ -17,7 +17,7 @@
 */
 package com.agiletec.aps.system.services.role;
 
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import com.agiletec.aps.system.services.authorization.AbstractAuthority;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -29,7 +29,7 @@ import java.util.Set;
  * Il ruolo contiene i permessi che di cui disporrà l'utente.
  * @author M.Diana - E.Santoboni
  */
-public class Role implements IApsAuthority, Serializable {
+public class Role extends AbstractAuthority implements Serializable {
 	
 	@Override
 	public String getAuthority() {
@@ -42,37 +42,14 @@ public class Role implements IApsAuthority, Serializable {
 	public Role() {
 		this._permissions = new HashSet<String>();
 	}
-
-	/**
-	 * Restituisce il nome del ruolo.
-	 * @return Il nome del ruolo.
-	 */
-	public String getName() {
-		return _name;
-	}
-
-	/**
-	 * Setta il nome del ruolo.
-	 * @param roleName Il nome del ruolo.
-	 */
-	public void setName(String roleName) {
-		this._name = roleName;
-	}
 	
-	/**
-	 * Restituisce la descrizione del ruolo.
-	 * @return La descrizione del ruolo.
-	 */
-	public String getDescription() {
-		return _description;
-	}
-	
-	/**
-	 * Setta la descrizione del ruolo.
-	 * @param description La descrizione del ruolo.
-	 */
-	public void setDescription(String description) {
-		this._description = description;
+	@Override
+	public boolean equals(Object obj) {
+		if (null != obj && (obj instanceof Role)) {
+			return this.getName().equals(((Role) obj).getName());
+		} else {
+			return super.equals(obj);
+		}
 	}
 	
 	/**
@@ -122,9 +99,7 @@ public class Role implements IApsAuthority, Serializable {
 		}
 		return clone;
 	}
-
-	private String _name;
-	private String _description;
+	
 	private HashSet<String> _permissions;
 
 }

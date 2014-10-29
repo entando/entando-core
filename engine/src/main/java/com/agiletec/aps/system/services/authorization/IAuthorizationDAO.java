@@ -42,4 +42,6 @@ public interface IAuthorizationDAO {
 	
 	public List<String> getUsersByAuthority(IApsAuthority authority);
 	
+	public List<String> getUsersByAuthority(String authorityName, boolean isRole);
+	
 }

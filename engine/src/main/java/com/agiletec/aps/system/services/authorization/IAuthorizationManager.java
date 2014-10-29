@@ -124,8 +124,6 @@ public interface IAuthorizationManager {
 	 */
 	public boolean isAuthOnPermission(UserDetails user, String permissionName);
 	
-	public List<IApsAuthority> getAuthoritiesByPermission(UserDetails user, String permissionName);
-	
 	public List<Group> getGroupsByPermission(UserDetails user, String permissionName);
 	
 	/**
@@ -185,6 +183,10 @@ public interface IAuthorizationManager {
 	
 	public List<String> getUsersByRole(IApsAuthority authority) throws ApsSystemException;
 	
+	public List<String> getUsersByRole(String roleName) throws ApsSystemException;
+	
 	public List<String> getUsersByGroup(IApsAuthority authority) throws ApsSystemException;
+	
+	public List<String> getUsersByGroup(String groupName) throws ApsSystemException;
 	
 }

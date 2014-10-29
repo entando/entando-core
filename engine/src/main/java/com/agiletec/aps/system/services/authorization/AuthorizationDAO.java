@@ -146,8 +146,17 @@ public class AuthorizationDAO extends AbstractDAO implements IAuthorizationDAO {
 	
 	@Override
 	public List<String> getUsersByAuthority(IApsAuthority authority) {
-		List<String> usernames = new ArrayList<String>();
 		if (null == authority) {
+			return new ArrayList<String>();
+		}
+		boolean isRole = (authority instanceof Role);
+		return this.getUsersByAuthority(authority.getAuthority(), isRole);
+	}
+	
+	@Override
+	public List<String> getUsersByAuthority(String authorityName, boolean isRole) {
+		List<String> usernames = new ArrayList<String>();
+		if (null == authorityName) {
 			return usernames;
 		}
 		Connection conn = null;
@@ -155,9 +164,9 @@ public class AuthorizationDAO extends AbstractDAO implements IAuthorizationDAO {
 		ResultSet res = null;
 		try {
 			conn = this.getConnection();
-			String query = (authority instanceof Role) ? GET_USERS_BY_ROLE : GET_USERS_BY_GROUP;
+			String query = (isRole) ? GET_USERS_BY_ROLE : GET_USERS_BY_GROUP;
 			stat = conn.prepareStatement(query);
-			stat.setString(1, authority.getAuthority());
+			stat.setString(1, authorityName);
 			res = stat.executeQuery();
 			while (res.next()) {
 				String username = res.getString(1);

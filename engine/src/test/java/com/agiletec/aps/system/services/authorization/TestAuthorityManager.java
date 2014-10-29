@@ -61,7 +61,7 @@ public class TestAuthorityManager extends BaseTestCase {
 		
 		Group noExistingGroup = new Group();
 		noExistingGroup.setName("test");
-		noExistingGroup.setDescr("test");
+		noExistingGroup.setDescription("test");
 		List<String> usersByInvaliGroup = this._authorizationManager.getUsersByGroup(noExistingGroup);
 		assertNull(usersByInvaliGroup);
 	}
@@ -215,7 +215,7 @@ public class TestAuthorityManager extends BaseTestCase {
 	private Group createGroupForTest(String code) {
 		Group groupForTest = new Group();
 		groupForTest.setName(code);
-		groupForTest.setDescr("Description");
+		groupForTest.setDescription("Description");
 		return groupForTest;
 	}
     

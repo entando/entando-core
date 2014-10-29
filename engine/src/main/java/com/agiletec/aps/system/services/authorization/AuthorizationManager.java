@@ -131,8 +131,23 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	}
 	
 	private List getRelatedAuthorities(UserDetails user, String requiredAuthName, boolean isRole) {
-		if (null == user || null == requiredAuthName) {
+		if (null == user || null == requiredAuthName 
+				|| (isRole && null == this.getRoleManager().getRole(requiredAuthName)) 
+				|| (!isRole && null == this.getGroupManager().getGroup(requiredAuthName))) {
 			return null;
+		}
+		
+		List<String> adminRoleNames = new ArrayList<String>();
+		if (isRole) {
+			List<Role> adminRoles = this.getRolesWithPermission(user, Permission.SUPERUSER);
+			if (null != adminRoles && !adminRoles.isEmpty()) {
+				for (int i = 0; i < adminRoles.size(); i++) {
+					Role role = adminRoles.get(i);
+					if (null != role) {
+						adminRoleNames.add(role.getName());
+					}
+				}
+			}
 		}
 		List authorities = new ArrayList<IApsAuthority>();
 		List<Authorization> userAuths = user.getAuthorizations();
@@ -141,13 +156,17 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 			if (null == userAuth) {
 				continue;
 			}
-			if (!isRole && null != userAuth.getRole()
-					&& requiredAuthName.equals(userAuth.getRole().getAuthority())) {
+			if (!isRole && null != userAuth.getGroup()
+					&& (userAuth.getGroup().getName().equals(Group.ADMINS_GROUP_NAME) || requiredAuthName.equals(userAuth.getGroup().getAuthority()))) {
 				authorities.add(userAuth.getRole());
 			}
-			if (isRole && null != userAuth.getGroup()
-					&& requiredAuthName.equals(userAuth.getGroup().getAuthority())) {
-				authorities.add(userAuth.getGroup());
+			if (isRole && null != userAuth.getRole()
+					&& (adminRoleNames.contains(userAuth.getRole().getName()) || requiredAuthName.equals(userAuth.getRole().getAuthority()))) {
+				if (userAuth.getGroup().getName().equals(Group.ADMINS_GROUP_NAME)) {
+					return this.getGroupManager().getGroups();
+				} else {
+					authorities.add(userAuth.getGroup());
+				}
 			}
 		}
 		return authorities;
@@ -231,7 +250,9 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 				if (Group.ADMINS_GROUP_NAME.equals(groupName)) {
 					return this.getGroupManager().getGroups();
 				} else {
-					groups.add((Group) auth);
+					if (!groups.contains((Group) auth)) {
+						groups.add((Group) auth);
+					}
 				}
 			}
 		}
@@ -242,15 +263,20 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 		if (null == user) return null;
 		if (null == permissionName) return null;
 		List auths = new ArrayList();
+		this.addAuthoritiesByPermissionName(user, permissionName, auths);
+		this.addAuthoritiesByPermissionName(user, Permission.SUPERUSER, auths);
+		return auths;
+	}
+	
+	private void addAuthoritiesByPermissionName(UserDetails user, String permissionName, List auths) {
 		List<Role> roles = this.getRolesWithPermission(user, permissionName);
 		for (int i = 0; i < roles.size(); i++) {
 			Role role = roles.get(i);
-			List roleAuths = this.getRelatedAuthorities(user, role);
-			if (null != roleAuths) {
-				auths.addAll(roleAuths);
+			List groupAuths = this.getRelatedAuthorities(user, role);
+			if (null != groupAuths) {
+				auths.addAll(groupAuths);
 			}
 		}
-		return auths;
 	}
 	
 	@Override
@@ -325,11 +351,6 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
         }
         return this.isAuthOnSinglePermission(user, Permission.SUPERUSER);
     }
-	
-	@Override
-	public List<IApsAuthority> getAuthoritiesByPermission(UserDetails user, String permissionName) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
 	
 	@Deprecated
     private boolean isAuthOnSinglePermission(UserDetails user, String permissionName) {
@@ -599,6 +620,18 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 		return usernames;
 	}
 	
+	public List<String> getUsersByAuthority(String authorityName, boolean isRole) throws ApsSystemException {
+		if (null == authorityName) return null;
+		List<String> usernames = null;
+		try {
+			usernames = this.getAuthorizationDAO().getUsersByAuthority(authorityName, isRole);
+		} catch (Throwable t) {
+			_logger.error("Error extracting usernames by authority",  t);
+			throw new ApsSystemException("Error extracting usernames by authority", t);
+		}
+		return usernames;
+	}
+	
 	@Override
 	public List<String> getUsersByRole(IApsAuthority authority) throws ApsSystemException {
 		if (null == authority || 
@@ -606,7 +639,16 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 				null == this.getRoleManager().getRole(authority.getAuthority())) {
 			return null;
 		}
-		return this.getUsersByAuthority(authority);
+		return this.getUsersByAuthority(authority.getAuthority(), true);
+	}
+	
+	@Override
+	public List<String> getUsersByRole(String roleName) throws ApsSystemException {
+		Role role = this.getRoleManager().getRole(roleName);
+		if (null == role) {
+			return null;
+		}
+		return this.getUsersByAuthority(roleName, true);
 	}
 	
 	@Override
@@ -616,16 +658,21 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 				null == this.getGroupManager().getGroup(authority.getAuthority())) {
 			return null;
 		}
-		return this.getUsersByAuthority(authority);
+		return this.getUsersByAuthority(authority.getAuthority(), false);
 	}
 	
 	@Override
-	public List getGroupUtilizers(String groupName) throws ApsSystemException {
+	public List<String> getUsersByGroup(String groupName) throws ApsSystemException {
 		Group group = this.getGroupManager().getGroup(groupName);
 		if (null == group) {
 			return null;
 		}
-		return this.getUsersByAuthority(group);
+		return this.getUsersByAuthority(groupName, false);
+	}
+	
+	@Override
+	public List getGroupUtilizers(String groupName) throws ApsSystemException {
+		return this.getUsersByGroup(groupName);
 	}
 	
 	protected IAuthorizationDAO getAuthorizationDAO() {

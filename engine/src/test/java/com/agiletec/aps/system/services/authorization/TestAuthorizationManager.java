@@ -17,7 +17,6 @@
 */
 package com.agiletec.aps.system.services.authorization;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.agiletec.aps.BaseTestCase;
@@ -42,6 +41,93 @@ public class TestAuthorizationManager extends BaseTestCase {
         this.init();
     }
     
+	public void testAuthoritiesByGroup_1() throws Throwable {
+		String username = "pageManagerCoach";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByGroup(user, "coach");
+		assertNotNull(autorities);
+		assertEquals(1, autorities.size());
+		
+		autorities = this._authorizationManager.getAuthoritiesByGroup(user, "wrong_group");
+		assertNull(autorities);
+	}
+	
+	public void testAuthoritiesByGroup_2() throws Throwable {
+		String username = "admin";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByGroup(user, Group.ADMINS_GROUP_NAME);
+		assertNotNull(autorities);
+		assertEquals(1, autorities.size());
+		
+		autorities = this._authorizationManager.getAuthoritiesByGroup(user, "coach");
+		assertNotNull(autorities);
+		assertEquals(1, autorities.size());
+		
+		autorities = this._authorizationManager.getAuthoritiesByGroup(user, "wrong_group");
+		assertNull(autorities);
+	}
+	
+	public void testAuthoritiesByRole_1() throws Throwable {
+		String username = "pageManagerCoach";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByRole(user, "pageManager");
+		assertNotNull(autorities);
+		assertEquals(2, autorities.size());
+		
+		autorities = this._authorizationManager.getAuthoritiesByRole(user, "wrong_role");
+		assertNull(autorities);
+	}
+	
+	public void testAuthoritiesByRole_2() throws Throwable {
+		int allGroupSize = this._groupManager.getGroups().size();
+		String username = "admin";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByRole(user, "admin");
+		assertNotNull(autorities);
+		assertEquals(allGroupSize, autorities.size());
+		
+		autorities = this._authorizationManager.getAuthoritiesByRole(user, "pageManager");
+		assertNotNull(autorities);
+		assertEquals(allGroupSize, autorities.size());
+		
+		autorities = this._authorizationManager.getAuthoritiesByRole(user, "wrong_role");
+		assertNull(autorities);
+	}
+	
+	public void testGroupsByPermission_1() throws Throwable {
+		String username = "pageManagerCoach";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		List<Group> autorities = this._authorizationManager.getGroupsByPermission(user, Permission.MANAGE_PAGES);
+		assertNotNull(autorities);
+		assertEquals(2, autorities.size());
+		
+		autorities = this._authorizationManager.getGroupsByPermission(user, Permission.SUPERUSER);
+		assertNotNull(autorities);
+		assertTrue(autorities.isEmpty());
+		
+		autorities = this._authorizationManager.getGroupsByPermission(user, "wrong_permission");
+		assertNotNull(autorities);
+		assertTrue(autorities.isEmpty());
+	}
+	
+	public void testGroupsByPermission_2() throws Throwable {
+		int allGroupSize = this._groupManager.getGroups().size();
+		String username = "admin";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		List<Group> autorities = this._authorizationManager.getGroupsByPermission(user, Permission.MANAGE_PAGES);
+		assertNotNull(autorities);
+		assertEquals(allGroupSize, autorities.size());
+		
+		autorities = this._authorizationManager.getGroupsByPermission(user, Permission.SUPERUSER);
+		assertNotNull(autorities);
+		assertEquals(allGroupSize, autorities.size());
+		
+		autorities = this._authorizationManager.getGroupsByPermission(user, "wrong_permission");
+		assertNotNull(autorities);
+		assertEquals(allGroupSize, autorities.size());
+	}
+	
+	/*
     public void testCheckAdminUser() throws Throwable {
     	UserDetails adminUser = this._authenticationProvider.getUser("admin", "admin");//nel database di test, username e password sono uguali
     	assertEquals("admin", adminUser.getUsername());
@@ -131,7 +217,7 @@ public class TestAuthorizationManager extends BaseTestCase {
 			assertNull(extractedUser);
 		}
 	}
-    
+    */
     private void init() throws Exception {
     	try {
     		this._authenticationProvider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
@@ -164,7 +250,7 @@ public class TestAuthorizationManager extends BaseTestCase {
 	}
 	
     private IAuthorizationManager _authorizationManager;
-    private IAuthenticationProviderManager _authenticationProvider = null;
+    private IAuthenticationProviderManager _authenticationProvider;
     private IUserManager _userManager = null;
 	private RoleManager _roleManager = null;
 	private GroupManager _groupManager = null;

@@ -119,12 +119,12 @@
 												</a>
 												<%-- edit authorization button --%>
 												<a class="btn btn-default" 
-													href="<s:url action="edit" namespace="/do/User/Auth"><s:param name="username" value="#usernameVar"/></s:url>"
+													href="<s:url action="edit" namespace="/do/User/Authorization"><s:param name="username" value="#usernameVar"/></s:url>"
 													title="<s:text name="note.configureAuthorizationsFor" />: <s:property value="#usernameVar" />">
 													<span class="sr-only">
 														<s:text name="note.configureAuthorizationsFor" />: <s:property value="#usernameVar" />
 													</span>
-													<span class="icon fa fa-unlock fa-fw"></span>
+													<span class="fa-fw icon fa fa-unlock"></span>
 												</a>
 											</c:if>
 										</div>

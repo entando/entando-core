@@ -160,7 +160,7 @@ public class RoleAction extends AbstractAuthorityAction {
 	protected boolean isRoleInUse() throws ApsSystemException {
 		IRoleManager roleManager = this.getRoleManager();
 		Role role = roleManager.getRole(this.getName());
-		List<String> usernames = super.getAuthorizationManager().getUsersByRole(role);
+		List<String> usernames = super.getAuthorizationManager().getUsersByRole(role, false);
 		this.setReferences(usernames);
 		return (null != usernames && !usernames.isEmpty());
 	}

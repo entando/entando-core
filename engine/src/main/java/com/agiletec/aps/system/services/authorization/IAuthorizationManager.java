@@ -179,14 +179,16 @@ public interface IAuthorizationManager {
 	
 	public void deleteUserAuthorizations(String username) throws ApsSystemException;
 	
-	public List<String> getUsersByAuthority(IApsAuthority authority) throws ApsSystemException;
+	public List<String> getUsersByAuthority(IApsAuthority authority, boolean includeAdmin) throws ApsSystemException;
 	
-	public List<String> getUsersByRole(IApsAuthority authority) throws ApsSystemException;
+	public List<String> getUsersByAuthorities(String groupName, String roleName, boolean includeAdmin) throws ApsSystemException;
 	
-	public List<String> getUsersByRole(String roleName) throws ApsSystemException;
+	public List<String> getUsersByRole(IApsAuthority authority, boolean includeAdmin) throws ApsSystemException;
 	
-	public List<String> getUsersByGroup(IApsAuthority authority) throws ApsSystemException;
+	public List<String> getUsersByRole(String roleName, boolean includeAdmin) throws ApsSystemException;
 	
-	public List<String> getUsersByGroup(String groupName) throws ApsSystemException;
+	public List<String> getUsersByGroup(IApsAuthority authority, boolean includeAdmin) throws ApsSystemException;
+	
+	public List<String> getUsersByGroup(String groupName, boolean includeAdmin) throws ApsSystemException;
 	
 }

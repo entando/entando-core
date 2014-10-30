@@ -40,29 +40,29 @@ public class TestAuthorityManager extends BaseTestCase {
 	
 	public void testGetUsersByAuthority_1() throws Throwable {
 		Role role = this.getRole("pageManager");
-		List<String> usersByRole = this._authorizationManager.getUsersByAuthority(role);
+		List<String> usersByRole = this._authorizationManager.getUsersByAuthority(role, false);
 		assertNotNull(usersByRole);
 		assertTrue(usersByRole.size() >= 2);
 		
-		usersByRole = this._authorizationManager.getUsersByRole(role);
+		usersByRole = this._authorizationManager.getUsersByRole(role, false);
 		assertNotNull(usersByRole);
 		assertTrue(usersByRole.size() >= 2);
 		
-		List<String> usersByInvalidGroup = this._authorizationManager.getUsersByGroup(role);
+		List<String> usersByInvalidGroup = this._authorizationManager.getUsersByGroup(role, false);
 		assertNull(usersByInvalidGroup);
 		
 		Group group = this.getGroup("coach");
-		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(group);
+		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(group, false);
 		assertNotNull(usersByGroup);
 		assertTrue(usersByGroup.size() >= 3);
 		
-		List<String> usersByNullGroup = this._authorizationManager.getUsersByAuthority(null);
+		List<String> usersByNullGroup = this._authorizationManager.getUsersByAuthority(null, false);
 		assertNull(usersByNullGroup);
 		
 		Group noExistingGroup = new Group();
 		noExistingGroup.setName("test");
 		noExistingGroup.setDescription("test");
-		List<String> usersByInvaliGroup = this._authorizationManager.getUsersByGroup(noExistingGroup);
+		List<String> usersByInvaliGroup = this._authorizationManager.getUsersByGroup(noExistingGroup, false);
 		assertNull(usersByInvaliGroup);
 	}
 	
@@ -73,14 +73,14 @@ public class TestAuthorityManager extends BaseTestCase {
 			Group group = this.getGroup(groupForTest.getName());
 			assertNotNull(group);
 			
-			List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(group);
+			List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(group, false);
 			assertNotNull(usersByGroup);
 			assertTrue(usersByGroup.isEmpty());
-			usersByGroup = this._authorizationManager.getUsersByGroup(group);
+			usersByGroup = this._authorizationManager.getUsersByGroup(group, false);
 			assertNotNull(usersByGroup);
 			assertTrue(usersByGroup.isEmpty());
 			
-			List<String> usersByRole = this._authorizationManager.getUsersByRole(group);
+			List<String> usersByRole = this._authorizationManager.getUsersByRole(group, false);
 			assertNull(usersByRole);
 		} catch (Throwable t) {
 			throw t;
@@ -97,20 +97,20 @@ public class TestAuthorityManager extends BaseTestCase {
 		String roleName = "pageManager";
 		Group groupForTest = this.getGroup(groupName);
 		assertNotNull(groupForTest);
-		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
+		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest, false);
 		assertNotNull(usersByGroup);
 		int initSize = usersByGroup.size();
 		assertTrue(initSize >= 3);
 		try {
 			this._authorizationManager.addUserAuthorization(username, groupName, roleName);
-			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
+			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest, false);
 			assertNotNull(usersByGroup);
 			assertEquals(initSize + 1, usersByGroup.size());
 		} catch (Throwable t) {
 			throw t;
 		} finally {
 			this._authorizationManager.deleteUserAuthorization(username, groupName, roleName);
-			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
+			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest, false);
 			assertNotNull(usersByGroup);
 			assertEquals(initSize, usersByGroup.size());
 		}
@@ -123,7 +123,7 @@ public class TestAuthorityManager extends BaseTestCase {
 		Group invalidGroupForTest = this.createGroupForTest(groupName);
 		try {
 			this._authorizationManager.addUserAuthorization(username, groupName, roleName);
-			List<String> usersByGroup = this._authorizationManager.getUsersByGroup(invalidGroupForTest);
+			List<String> usersByGroup = this._authorizationManager.getUsersByGroup(invalidGroupForTest, false);
 			assertNull(usersByGroup);
 		} catch (Throwable t) {
 			this._authorizationManager.deleteUserAuthorization(username, groupName, roleName);
@@ -139,19 +139,19 @@ public class TestAuthorityManager extends BaseTestCase {
 		assertNotNull(groupForTest);
 		Role roleForTest = this.getRole(roleName);
 		assertNotNull(roleForTest);
-		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
+		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest, false);
 		assertNotNull(usersByGroup);
 		assertEquals(0, usersByGroup.size());
 		try {
 			this._authorizationManager.addUserAuthorization(username, groupName, roleName);
-			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
+			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest, false);
 			assertNotNull(usersByGroup);
 			assertEquals(1, usersByGroup.size());
 		} catch (Throwable t) {
 			throw t;
 		} finally {
 			this._authorizationManager.deleteUserAuthorization(username, groupName, roleName);
-			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest);
+			usersByGroup = this._authorizationManager.getUsersByAuthority(groupForTest, false);
 			assertNotNull(usersByGroup);
 			assertEquals(0, usersByGroup.size());
 		}
@@ -168,10 +168,10 @@ public class TestAuthorityManager extends BaseTestCase {
 		Group existentGroup = this.getGroup(existentGroupName);//existent group
 		assertNotNull(existentGroup);
 		Group nonExistentGroup = this.createGroupForTest(notExistentGroupName);//nonexistent group
-		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(existentGroup);
+		List<String> usersByGroup = this._authorizationManager.getUsersByAuthority(existentGroup, false);
 		assertNotNull(usersByGroup);
 		assertEquals(0, usersByGroup.size());
-		usersByGroup = this._authorizationManager.getUsersByGroup(nonExistentGroup);
+		usersByGroup = this._authorizationManager.getUsersByGroup(nonExistentGroup, false);
 		assertNull(usersByGroup);
 		try {
 			Authorization auth1 = new Authorization(existentGroup, roleForTest);
@@ -181,17 +181,17 @@ public class TestAuthorityManager extends BaseTestCase {
 			authorizations.add(auth2);
 			this._authorizationManager.addUserAuthorizations(username, authorizations);
 			
-			usersByGroup = this._authorizationManager.getUsersByAuthority(existentGroup);
+			usersByGroup = this._authorizationManager.getUsersByAuthority(existentGroup, false);
 			assertNotNull(usersByGroup);
 			assertEquals(1, usersByGroup.size());
-			usersByGroup = this._authorizationManager.getUsersByGroup(nonExistentGroup);
+			usersByGroup = this._authorizationManager.getUsersByGroup(nonExistentGroup, false);
 			assertNull(usersByGroup);
 		} catch (Throwable t) {
 			this._authorizationManager.deleteUserAuthorization(username, notExistentGroupName, roleName);
 			throw t;
 		} finally {
 			this._authorizationManager.deleteUserAuthorization(username, existentGroupName, roleName);
-			usersByGroup = this._authorizationManager.getUsersByAuthority(existentGroup);
+			usersByGroup = this._authorizationManager.getUsersByAuthority(existentGroup, false);
 			assertNotNull(usersByGroup);
 			assertEquals(0, usersByGroup.size());
 		}

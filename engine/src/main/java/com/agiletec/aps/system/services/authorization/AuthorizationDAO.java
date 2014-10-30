@@ -17,7 +17,8 @@
 */
 package com.agiletec.aps.system.services.authorization;
 
-import com.agiletec.aps.system.common.AbstractDAO;
+import com.agiletec.aps.system.common.AbstractSearcherDAO;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.role.Role;
 
@@ -25,18 +26,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author E.Santoboni
  */
-public class AuthorizationDAO extends AbstractDAO implements IAuthorizationDAO {
+public class AuthorizationDAO extends AbstractSearcherDAO implements IAuthorizationDAO {
 	
 	private static final Logger _logger =  LoggerFactory.getLogger(AuthorizationDAO.class);
 	
@@ -145,42 +146,32 @@ public class AuthorizationDAO extends AbstractDAO implements IAuthorizationDAO {
 	}
 	
 	@Override
-	public List<String> getUsersByAuthority(IApsAuthority authority) {
-		if (null == authority) {
-			return new ArrayList<String>();
+	public List<String> getUsersByAuthorities(List<String> groupNames, List<String> roleNames) {
+		FieldSearchFilter[] filters = {};
+		if (CollectionUtils.isNotEmpty(groupNames)) {
+			FieldSearchFilter filter = new FieldSearchFilter("groupname", groupNames, false);
+			filters = super.addFilter(filters, filter);
 		}
-		boolean isRole = (authority instanceof Role);
-		return this.getUsersByAuthority(authority.getAuthority(), isRole);
+		if (CollectionUtils.isNotEmpty(roleNames)) {
+			FieldSearchFilter filter = new FieldSearchFilter("rolename", roleNames, false);
+			filters = super.addFilter(filters, filter);
+		}
+		return super.searchId(filters);
 	}
 	
 	@Override
-	public List<String> getUsersByAuthority(String authorityName, boolean isRole) {
-		List<String> usernames = new ArrayList<String>();
-		if (null == authorityName) {
-			return usernames;
-		}
-		Connection conn = null;
-		PreparedStatement stat = null;
-		ResultSet res = null;
-		try {
-			conn = this.getConnection();
-			String query = (isRole) ? GET_USERS_BY_ROLE : GET_USERS_BY_GROUP;
-			stat = conn.prepareStatement(query);
-			stat.setString(1, authorityName);
-			res = stat.executeQuery();
-			while (res.next()) {
-				String username = res.getString(1);
-				if (!usernames.contains(username)) {
-					usernames.add(username);
-				}
-			}
-		} catch (Throwable t) {
-			_logger.error("Error loading users by authority",  t);
-			throw new RuntimeException("Error loading users by authority", t);
-		} finally {
-			closeDaoResources(res, stat, conn);
-		}
-		return usernames;
+	protected String getTableFieldName(String metadataFieldKey) {
+		return metadataFieldKey;
+	}
+	
+	@Override
+	protected String getMasterTableName() {
+		return "authusergrouprole";
+	}
+	
+	@Override
+	protected String getMasterTableIdFieldName() {
+		return "username";
 	}
 	
 	private final String ADD_AUTHORIZATION =
@@ -197,11 +188,5 @@ public class AuthorizationDAO extends AbstractDAO implements IAuthorizationDAO {
 	
 	private final String GET_USER_AUTHORIZATIONS = 
 		"SELECT groupname, rolename FROM authusergrouprole WHERE username = ? ";
-	
-	private final String GET_USERS_BY_ROLE = 
-		"SELECT username FROM authusergrouprole WHERE rolename = ? ";
-	
-	private final String GET_USERS_BY_GROUP = 
-		"SELECT username FROM authusergrouprole WHERE groupname = ? ";
 	
 }

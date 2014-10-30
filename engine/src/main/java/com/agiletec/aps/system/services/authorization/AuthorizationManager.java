@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -608,71 +609,91 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     }
 	
 	@Override
-	public List<String> getUsersByAuthority(IApsAuthority authority) throws ApsSystemException {
-		if (null == authority) return null;
-		List<String> usernames = null;
-		try {
-			usernames = this.getAuthorizationDAO().getUsersByAuthority(authority);
-		} catch (Throwable t) {
-			_logger.error("Error extracting usernames by authority",  t);
-			throw new ApsSystemException("Error extracting usernames by authority", t);
-		}
-		return usernames;
-	}
-	
-	public List<String> getUsersByAuthority(String authorityName, boolean isRole) throws ApsSystemException {
-		if (null == authorityName) return null;
-		List<String> usernames = null;
-		try {
-			usernames = this.getAuthorizationDAO().getUsersByAuthority(authorityName, isRole);
-		} catch (Throwable t) {
-			_logger.error("Error extracting usernames by authority",  t);
-			throw new ApsSystemException("Error extracting usernames by authority", t);
-		}
-		return usernames;
-	}
-	
-	@Override
-	public List<String> getUsersByRole(IApsAuthority authority) throws ApsSystemException {
+	public List<String> getUsersByRole(IApsAuthority authority, boolean includeAdmin) throws ApsSystemException {
 		if (null == authority || 
 				!(authority instanceof Role) || 
 				null == this.getRoleManager().getRole(authority.getAuthority())) {
 			return null;
 		}
-		return this.getUsersByAuthority(authority.getAuthority(), true);
+		return this.getUsersByAuthorities(null, authority.getAuthority(), includeAdmin);
 	}
 	
 	@Override
-	public List<String> getUsersByRole(String roleName) throws ApsSystemException {
+	public List<String> getUsersByRole(String roleName, boolean includeAdmin) throws ApsSystemException {
 		Role role = this.getRoleManager().getRole(roleName);
 		if (null == role) {
 			return null;
 		}
-		return this.getUsersByAuthority(roleName, true);
+		return this.getUsersByAuthorities(null, roleName, includeAdmin);
 	}
 	
 	@Override
-	public List<String> getUsersByGroup(IApsAuthority authority) throws ApsSystemException {
+	public List<String> getUsersByGroup(IApsAuthority authority, boolean includeAdmin) throws ApsSystemException {
 		if (null == authority || 
 				!(authority instanceof Group) || 
 				null == this.getGroupManager().getGroup(authority.getAuthority())) {
 			return null;
 		}
-		return this.getUsersByAuthority(authority.getAuthority(), false);
+		return this.getUsersByAuthorities(authority.getAuthority(), null, includeAdmin);
 	}
 	
 	@Override
-	public List<String> getUsersByGroup(String groupName) throws ApsSystemException {
+	public List<String> getUsersByGroup(String groupName, boolean includeAdmin) throws ApsSystemException {
 		Group group = this.getGroupManager().getGroup(groupName);
 		if (null == group) {
 			return null;
 		}
-		return this.getUsersByAuthority(groupName, false);
+		return this.getUsersByAuthorities(groupName, null, includeAdmin);
+	}
+	
+	@Override
+	public List<String> getUsersByAuthorities(String groupName, String roleName, boolean includeAdmin) throws ApsSystemException {
+		List<String> usernames = null;
+		try {
+			List<String> groupNames = null;
+			if (!StringUtils.isEmpty(groupName)) {
+				groupNames = new ArrayList<String>();
+				groupNames.add(groupName);
+				if (includeAdmin && !groupName.equals(Group.ADMINS_GROUP_NAME)) {
+					groupNames.add(Group.ADMINS_GROUP_NAME);
+				}
+			}
+			List<String> roleNames = null;
+			if (!StringUtils.isEmpty(roleName)) {
+				roleNames = new ArrayList<String>();
+				roleNames.add(roleName);
+				if (includeAdmin) {
+					List<Role> adminRoles = this.getRoleManager().getRolesWithPermission(Permission.SUPERUSER);
+					if (null != adminRoles) {
+						for (int i = 0; i < adminRoles.size(); i++) {
+							Role role = adminRoles.get(i);
+							if (null != role && !roleNames.contains(role.getName())) {
+								roleNames.add(role.getName());
+							}
+						}
+					}
+				}
+			}
+			usernames = this.getAuthorizationDAO().getUsersByAuthorities(groupNames, roleNames);
+		} catch (Throwable t) {
+			_logger.error("Error extracting usernames by authorities - group '{}' : role {}", groupName, roleName, t);
+			throw new ApsSystemException("Error extracting usernames by authorities", t);
+		}
+		return usernames;
+	}
+	
+	@Override
+	public List<String> getUsersByAuthority(IApsAuthority authority, boolean includeAdmin) throws ApsSystemException {
+		if (authority instanceof Group) {
+			return this.getUsersByGroup(authority, includeAdmin);
+		} else {
+			return this.getUsersByRole(authority, includeAdmin);
+		}
 	}
 	
 	@Override
 	public List getGroupUtilizers(String groupName) throws ApsSystemException {
-		return this.getUsersByGroup(groupName);
+		return this.getUsersByGroup(groupName, false);
 	}
 	
 	protected IAuthorizationDAO getAuthorizationDAO() {

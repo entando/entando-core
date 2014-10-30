@@ -40,8 +40,5 @@ public interface IAuthorizationDAO {
 	
 	public void deleteUserAuthorizations(String username);
 	
-	public List<String> getUsersByAuthority(IApsAuthority authority);
-	
-	public List<String> getUsersByAuthority(String authorityName, boolean isRole);
-	
+	public List<String> getUsersByAuthorities(List<String> groupNames, List<String> roleNames);
 }

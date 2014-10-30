@@ -60,10 +60,7 @@ public class UserGroupRoleReference implements ExtendedColumnDefinition {
 			groupTableName = "`" + groupTableName + "`";
 			roleTableName = "`" + roleTableName + "`";
 		}
-		return new String[]{/*"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_pkey PRIMARY KEY "
-				+ "(username , groupname, rolename)",*/ 
-			"ALTER TABLE " + tableName + " " 
+		return new String[]{"ALTER TABLE " + tableName + " " 
 				+ "ADD CONSTRAINT " + TABLE_NAME + "_grn_fkey FOREIGN KEY (groupname) "
 				+ "REFERENCES " + groupTableName + " (groupname)", 
 			"ALTER TABLE " + tableName + " " 
@@ -80,7 +77,6 @@ CREATE TABLE authusergrouprole
   username character varying(40) NOT NULL,
   groupname character varying(20) NOT NULL,
   rolename character varying(20),
-  CONSTRAINT authusergrouprole_pkey PRIMARY KEY (username , groupname, rolename ),
   CONSTRAINT authusergrouprole_grn_fkey FOREIGN KEY (groupname)
       REFERENCES authgroups (groupname),
   CONSTRAINT authusergrouprole_rln_fkey FOREIGN KEY (rolename)

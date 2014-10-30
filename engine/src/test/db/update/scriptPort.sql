@@ -1,1 +1,0 @@
-ALTER TABLE widgetconfig DROP COLUMN publishedcontent;

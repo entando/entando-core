@@ -31,8 +31,10 @@ import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
+import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
@@ -70,7 +72,6 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, content);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
-			//ApsSystemUtils.logThrowable(t, this, "edit");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -96,7 +97,6 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, content);
 		} catch (Throwable t) {
 			_logger.error("error in copyPaste", t);
-			//ApsSystemUtils.logThrowable(t, this, "copyPaste");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -117,49 +117,11 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			}
 		} catch (Throwable t) {
 			_logger.error("error in setMainGroup", t);
-			//ApsSystemUtils.logThrowable(t, this, "setMainGroup");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
-
-	@Override
-	@Deprecated (/** From jAPS 2.0 version 2.1, use joinCategory of {@link IContentCategoryAction} action */)
-	public String joinCategory() {
-		this.updateContentOnSession();
-		try {
-			String categoryCode = this.getCategoryCode();
-			Category category = this.getCategoryManager().getCategory(categoryCode);
-			if (null != category && !category.getCode().equals(category.getParentCode())
-					&& !this.getContent().getCategories().contains(category)) {
-				this.getContent().addCategory(category);
-			}
-		} catch (Throwable t) {
-			_logger.error("error in joinCategory", t);
-			//ApsSystemUtils.logThrowable(t, this, "joinCategory");
-			return FAILURE;
-		}
-		return SUCCESS;
-	}
-
-	@Override
-	@Deprecated (/** From jAPS 2.0 version 2.1, use removeCategory of {@link IContentCategoryAction} action */)
-	public String removeCategory() {
-		this.updateContentOnSession();
-		try {
-			String categoryCode = this.getCategoryCode();
-			Category category = this.getCategoryManager().getCategory(categoryCode);
-			if (null != category) {
-				this.getContent().removeCategory(category);
-			}
-		} catch (Throwable t) {
-			_logger.error("error in removeCategory", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeCategory");
-			return FAILURE;
-		}
-		return SUCCESS;
-	}
-
+	
 	@Override
 	public String joinGroup() {
 		this.updateContentOnSession();
@@ -171,7 +133,6 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			}
 		} catch (Throwable t) {
 			_logger.error("error in joinGroup", t);
-			//ApsSystemUtils.logThrowable(t, this, "joinGroup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -188,7 +149,6 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			}
 		} catch (Throwable t) {
 			_logger.error("error in removeGroup", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeGroup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -208,7 +168,6 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			}
 		} catch (Throwable t) {
 			_logger.error("error in saveAndContinue", t);
-			//ApsSystemUtils.logThrowable(t, this, "saveAndContinue");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -250,7 +209,6 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			}
 		} catch (Throwable t) {
 			_logger.error("error in saveContent", t);
-			//ApsSystemUtils.logThrowable(t, this, "saveContent");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -277,7 +235,6 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			}
 		} catch (Throwable t) {
 			_logger.error("error in suspend", t);
-			//ApsSystemUtils.logThrowable(t, this, "suspend");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -299,28 +256,7 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 	public String getHtmlEditorCode() {
 		return this.getConfigManager().getParam("hypertextEditor");
 	}
-
-	/**
-	 * Restituice la lista di pagine dove è pubblicato il contenuto in fase di redazione.
-	 * @return La lista di pagine che referenziano dal contenuto.
-	 * @deprecated From jAPS 2.0 version 2.0.9, use getShowingPageSelectItems()
-	 */
-	public List<IPage> getShowingPages() {
-		List<IPage> pages = new ArrayList<IPage>();
-		try {
-			Content content = this.getContent();
-			if (null != content && null != content.getId()) {
-				IPageManager pageManager = this.getPageManager();
-				pages = ((ContentUtilizer) pageManager).getContentUtilizers(content.getId());
-			}
-		} catch (Throwable t) {
-			_logger.error("error loading referenced pages", t);
-			//ApsSystemUtils.logThrowable(t, this, "getShowingPages");
-			throw new RuntimeException("Errore in estrazione pagine referenziate", t);
-		}
-		return pages;
-	}
-
+	
 	/**
 	 * Return the list of the showing pages of the current content on edit
 	 * @return The list of the showing pages.
@@ -335,8 +271,8 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 					pageItems.add(new SelectItem("", this.getText("label.default")));
 				}
 				if (null == content.getId()) return pageItems;
-				IPageManager pageManager = this.getPageManager();
-				List<IPage> pages = ((ContentUtilizer) pageManager).getContentUtilizers(content.getId());
+				ContentUtilizer pageManagerWrapper = (ContentUtilizer) ApsWebApplicationUtils.getBean(JacmsSystemConstants.PAGE_MANAGER_WRAPPER, this.getRequest());
+				List<IPage> pages = pageManagerWrapper.getContentUtilizers(content.getId());
 				for (int i = 0; i < pages.size(); i++) {
 					IPage page = pages.get(i);
 					String pageCode = page.getCode();
@@ -345,12 +281,11 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			}
 		} catch (Throwable t) {
 			_logger.error("Error on extracting showing pages", t);
-			//ApsSystemUtils.logThrowable(t, this, "getShowingPageSelectItems");
 			throw new RuntimeException("Error on extracting showing pages", t);
 		}
 		return pageItems;
 	}
-
+	
 	public String getIconFile(String fileName) {
 		return this.getResourceIconUtil().getIconFile(fileName);
 	}

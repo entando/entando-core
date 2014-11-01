@@ -39,7 +39,7 @@ public interface ISocialActivityStreamDAO {
 	
 	public void addActionCommentRecord(int id, int recordId, String username, String comment);
 	
-	public void deleteActionCommentRecord(int id, int streamId);
+	public void deleteActionCommentRecord(int id);
 	
 	public void deleteSocialRecordsRecord(int streamId);
 	

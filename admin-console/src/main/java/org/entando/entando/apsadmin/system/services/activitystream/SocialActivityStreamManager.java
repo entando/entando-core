@@ -122,7 +122,7 @@ public class SocialActivityStreamManager extends AbstractService implements ISoc
 	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamCommentRecords_id_'.concat(#streamId)")
 	public void deleteActionCommentRecord(int id, int streamId) throws ApsSystemException {
 		try {
-			this.getSocialActivityStreamDAO().deleteActionCommentRecord(id, streamId);
+			this.getSocialActivityStreamDAO().deleteActionCommentRecord(id);
 			this.getActionLogManager().updateRecordDate(streamId);
 		} catch (Throwable t) {
 			_logger.error("Error deleting comment with id {} from stream with id {}", id, streamId, t);

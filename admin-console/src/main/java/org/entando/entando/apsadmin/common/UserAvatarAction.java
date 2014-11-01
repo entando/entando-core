@@ -17,23 +17,23 @@
 */
 package org.entando.entando.apsadmin.common;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.apsadmin.system.BaseAction;
+
 import java.io.InputStream;
 import java.security.MessageDigest;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.apsadmin.system.BaseAction;
 
 /**
  * @author E.Santoboni
@@ -52,7 +52,7 @@ public class UserAvatarAction extends BaseAction {
 			if (null == email) {
 				return this.extractDefaultAvatarStream();
 			}
-			HttpClient httpclient = new DefaultHttpClient();
+			HttpClient httpclient = HttpClientBuilder.create().build();
 			HttpGet httpGet = new HttpGet(this.createGravatarUri(email));
 			HttpResponse response = httpclient.execute(httpGet);
 			Integer i = response.getStatusLine().getStatusCode();
@@ -62,7 +62,6 @@ public class UserAvatarAction extends BaseAction {
 			this.setInputStream(response.getEntity().getContent());
 		} catch (Throwable t) {
 			_logger.error("error in returnAvatarStream", t);
-            //ApsSystemUtils.logThrowable(t, this, "returnAvatarStream");
 			return this.extractDefaultAvatarStream();
         }
 		return SUCCESS;
@@ -85,7 +84,6 @@ public class UserAvatarAction extends BaseAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error creating Md5 Hex", t);
-            //ApsSystemUtils.logThrowable(t, this, "createMd5Hex");
 			throw new RuntimeException("Error creating Md5 Hex", t);
 		}
 		return sb.toString();
@@ -97,7 +95,6 @@ public class UserAvatarAction extends BaseAction {
 			this.setInputStream(resource.getInputStream());
 		} catch (Throwable t) {
 			_logger.error("error in extractDefaultAvatarStream", t);
-            //ApsSystemUtils.logThrowable(t, this, "extractDefaultAvatarStream");
             return FAILURE;
         }
 		return SUCCESS;

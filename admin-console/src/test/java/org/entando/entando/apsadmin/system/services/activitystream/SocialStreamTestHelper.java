@@ -18,21 +18,11 @@
 package org.entando.entando.apsadmin.system.services.activitystream;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.Date;
 
-import javax.sql.DataSource;
-
-import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
-import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
-import com.agiletec.aps.system.common.AbstractDAO;
-import org.entando.entando.aps.system.services.actionlog.ActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.ActionLoggerTestHelper;
-import org.entando.entando.aps.system.services.actionlog.IActionLogDAO;
 
 /**
  * @author E.Santoboni
@@ -43,20 +33,8 @@ public class SocialStreamTestHelper extends ActionLoggerTestHelper {
 	
 	public SocialStreamTestHelper(ApplicationContext applicationContext) {
 		super(applicationContext);
-		/*
-		DataSource dataSource = (DataSource) applicationContext.getBean("servDataSource");
-		this.setDataSource(dataSource);
-		
-		SocialActivityStreamDAO actionLoggerDAO = new SocialActivityStreamDAO();
-		actionLoggerDAO.setDataSource(dataSource);
-		this._actionLoggerDAO = actionLoggerDAO;
-		*/
 	}
-	/*
-	public void addActionRecord(ActionLogRecord actionRecord) {
-		this._actionLoggerDAO.addActionRecord(actionRecord);
-	}
-	*/
+	
 	@Override
 	public void cleanRecords() {
 		Connection conn = null;
@@ -65,69 +43,21 @@ public class SocialStreamTestHelper extends ActionLoggerTestHelper {
 			conn.setAutoCommit(false);
 			this.deleteRecords(conn, DELETE_LOG_COMMENT_RECORDS);
 			this.deleteRecords(conn, DELETE_LOG_LIKE_RECORDS);
-			//this.deleteRecords(conn, DELETE_LOG_RECORD_RELATIONS);
-			//this.deleteRecords(conn, DELETE_LOG_RECORDS);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on delete records",  t);
 			throw new RuntimeException("Error on delete records", t);
-			//processDaoException(t, "Error on delete records" , "cleanRecords");
 		} finally {
 			closeConnection(conn);
 		}
 		super.cleanRecords();
 	}
-	/*
-	public void deleteRecords(Connection conn, String query) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(query);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error on delete records: {}", query,  t);
-			throw new RuntimeException("Error on delete records", t);
-			//processDaoException(t, "Error on delete records", "deleteRecords");
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-	
-	public ActionLogRecord createActionRecord(int id, String username, 
-			String actionName, String namespace, Date date, String parameter) {
-		ActionLogRecord record = new ActionLogRecord();
-		record.setId(id);
-		record.setUsername(username);
-		record.setActionName(actionName);
-		record.setNamespace(namespace);
-		record.setActionDate(date);
-		record.setParameters(parameter);
-		return record;
-	}
-	
-	public ActionLogRecordSearchBean createSearchBean(String username, String actionName, 
-			String namespace, String params, Date start, Date end) {
-		ActionLogRecordSearchBean searchBean = new ActionLogRecordSearchBean();
-		searchBean.setUsername(username);
-		searchBean.setActionName(actionName);
-		searchBean.setNamespace(namespace);
-		searchBean.setParams(params);
-		searchBean.setStartCreation(start);
-		searchBean.setEndCreation(end);
-		return searchBean;
-	}
-	*/
-	//private static final String DELETE_LOG_RECORDS = 
-	//	"DELETE from actionlogrecords";
-	//private static final String DELETE_LOG_RECORD_RELATIONS = 
-	//	"DELETE from actionlogrelations";
 	
 	private static final String DELETE_LOG_LIKE_RECORDS = 
 		"DELETE from actionloglikerecords";
 	
 	private static final String DELETE_LOG_COMMENT_RECORDS = 
 		"DELETE from actionlogcommentrecords";
-	
-	//private ISocialActivityStreamDAO _actionLoggerDAO;
 	
 }

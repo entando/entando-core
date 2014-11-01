@@ -54,39 +54,65 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 	@Override
 	public void addActionLikeRecord(int id, String username) {
 		Connection conn = null;
+		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			super.executeQueryWithoutResultset(conn, DELETE_LOG_LIKE_RECORD, id, username);
+			stat = conn.prepareStatement(DELETE_LOG_LIKE_RECORD);
+			stat.setInt(1, id);
+			stat.setString(2, username);
+			stat.executeUpdate();
+			stat = conn.prepareStatement(ADD_ACTION_LIKE_RECORD);
+			stat.setInt(1, id);
+			stat.setString(2, username);
 			Timestamp timestamp = new Timestamp(new Date().getTime());
-			super.executeQueryWithoutResultset(conn, ADD_ACTION_LIKE_RECORD, id, username, timestamp);
+			stat.setTimestamp(3, timestamp);
+			stat.executeUpdate();
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on insert actionlogger like record",  t);
 			throw new RuntimeException("Error on insert actionlogger like record", t);
 		} finally {
-			this.closeConnection(conn);
+			closeDaoResources(null, stat, conn);
 		}
 	}
 	
 	@Override
 	public void deleteActionLikeRecord(int id, String username) {
 		Connection conn = null;
+		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			super.executeQueryWithoutResultset(conn, DELETE_LOG_LIKE_RECORD, id, username);
+			stat = conn.prepareStatement(DELETE_LOG_LIKE_RECORD);
+			stat.setInt(1, id);
+			stat.setString(2, username);
+			stat.executeUpdate();
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on delete like record: {}", id, t);
 			throw new RuntimeException("Error on delete like record: " + id, t);
 		} finally {
-			this.closeConnection(conn);
+			closeDaoResources(null, stat, conn);
 		}
 	}
 	
+	protected void deleteRecord(int id, Connection conn, String query) {
+		PreparedStatement stat = null;
+		try {
+			stat = conn.prepareStatement(query);
+			stat.setInt(1, id);
+			stat.executeUpdate();
+		} catch (Throwable t) {
+			_logger.error("Error on delete record: {}", id, t);
+			throw new RuntimeException("Error on delete record: " + id, t);
+		} finally {
+			closeDaoResources(null, stat);
+		}
+	}
+
 	@Override
 	public List<ActivityStreamLikeInfo> getActionLikeRecords(int id) {
 		List<ActivityStreamLikeInfo> infos = new ActivityStreamLikeInfos();
@@ -169,35 +195,39 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 	@Override
 	public void deleteSocialRecordsRecord(int streamId) {
 		Connection conn = null;
+		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			super.executeQueryWithoutResultset(conn, DELETE_LOG_LIKE_RECORDS, streamId);
-			super.executeQueryWithoutResultset(conn, DELETE_ACTION_COMMENT_RECORDS_BY_ID, streamId);
+			this.deleteRecord(streamId, conn, DELETE_LOG_LIKE_RECORDS);
+			this.deleteRecord(streamId, conn, DELETE_ACTION_COMMENT_RECORDS_BY_ID);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on delete social records {}", streamId, t);
 			throw new RuntimeException("Error on delete social records: " + streamId, t);
 		} finally {
-			this.closeConnection(conn);
+			closeDaoResources(null, stat, conn);
 		}
 	}
 	
 	@Override
 	public void deleteActionCommentRecord(int id) {
 		Connection conn = null;
+		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			super.executeQueryWithoutResultset(conn, DELETE_ACTION_COMMENT_RECORD, id);
+			stat = conn.prepareStatement(DELETE_ACTION_COMMENT_RECORD);
+			stat.setInt(1, id);
+			stat.executeUpdate();
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on delete comment record {}", id, t);
 			throw new RuntimeException("Error on delete comment record: " + id, t);
 		} finally {
-			this.closeConnection(conn);
+			closeDaoResources(null, stat, conn);
 		}
 	}
 	

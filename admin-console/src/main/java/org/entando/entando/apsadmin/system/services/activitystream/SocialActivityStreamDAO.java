@@ -54,82 +54,39 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 	@Override
 	public void addActionLikeRecord(int id, String username) {
 		Connection conn = null;
-		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(DELETE_LOG_LIKE_RECORD);
-			stat.setInt(1, id);
-			stat.setString(2, username);
-			stat.executeUpdate();
-			stat = conn.prepareStatement(ADD_ACTION_LIKE_RECORD);
-			stat.setInt(1, id);
-			stat.setString(2, username);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_LIKE_RECORD, id, username);
 			Timestamp timestamp = new Timestamp(new Date().getTime());
-			stat.setTimestamp(3, timestamp);
-			stat.executeUpdate();
-			//updateRecordUpdateDate(conn, id);
+			super.executeQueryWithoutResultset(conn, ADD_ACTION_LIKE_RECORD, id, username, timestamp);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on insert actionlogger like record",  t);
 			throw new RuntimeException("Error on insert actionlogger like record", t);
 		} finally {
-			closeDaoResources(null, stat, conn);
+			this.closeConnection(conn);
 		}
 	}
 	
 	@Override
 	public void deleteActionLikeRecord(int id, String username) {
 		Connection conn = null;
-		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(DELETE_LOG_LIKE_RECORD);
-			stat.setInt(1, id);
-			stat.setString(2, username);
-			stat.executeUpdate();
-			//updateRecordUpdateDate(conn, id);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_LIKE_RECORD, id, username);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on delete like record: {}", id, t);
 			throw new RuntimeException("Error on delete like record: " + id, t);
 		} finally {
-			closeDaoResources(null, stat, conn);
+			this.closeConnection(conn);
 		}
 	}
-	/*
-	protected void updateRecordUpdateDate(Connection conn, int recordid){
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(UPDATE_UPDATEDATE_ACTION_RECORD);
-			Timestamp timestamp = new Timestamp(new Date().getTime());
-			stat.setTimestamp(1, timestamp);
-			stat.setInt(2, recordid);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error on insert actionlogger like record",  t);
-			throw new RuntimeException("Error on insert actionlogger like record", t);
-		} 
-	}
-	*/
-	protected void deleteRecord(int id, Connection conn, String query) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(query);
-			stat.setInt(1, id);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error on delete record: {}", id, t);
-			throw new RuntimeException("Error on delete record: " + id, t);
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-
+	
 	@Override
 	public List<ActivityStreamLikeInfo> getActionLikeRecords(int id) {
 		List<ActivityStreamLikeInfo> infos = new ActivityStreamLikeInfos();
@@ -199,7 +156,6 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 			Timestamp timestamp = new Timestamp(new Date().getTime());
 			stat.setTimestamp(5, timestamp);
 			stat.executeUpdate();
-			//updateRecordUpdateDate(conn, recordId);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -213,39 +169,35 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 	@Override
 	public void deleteSocialRecordsRecord(int streamId) {
 		Connection conn = null;
-		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.deleteRecord(streamId, conn, DELETE_LOG_LIKE_RECORDS);
-			this.deleteRecord(streamId, conn, DELETE_ACTION_COMMENT_RECORDS_BY_ID);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_LIKE_RECORDS, streamId);
+			super.executeQueryWithoutResultset(conn, DELETE_ACTION_COMMENT_RECORDS_BY_ID, streamId);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on delete social records {}", streamId, t);
 			throw new RuntimeException("Error on delete social records: " + streamId, t);
 		} finally {
-			closeDaoResources(null, stat, conn);
+			this.closeConnection(conn);
 		}
 	}
 	
 	@Override
-	public void deleteActionCommentRecord(int id, int streamId) {
+	public void deleteActionCommentRecord(int id) {
 		Connection conn = null;
-		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(DELETE_ACTION_COMMENT_RECORD);
-			stat.setInt(1, id);
-			stat.executeUpdate();
+			super.executeQueryWithoutResultset(conn, DELETE_ACTION_COMMENT_RECORD, id);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error on delete comment record {}", id, t);
 			throw new RuntimeException("Error on delete comment record: " + id, t);
 		} finally {
-			closeDaoResources(null, stat, conn);
+			this.closeConnection(conn);
 		}
 	}
 	

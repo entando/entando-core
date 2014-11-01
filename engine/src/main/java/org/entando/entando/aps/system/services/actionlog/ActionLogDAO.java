@@ -84,7 +84,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			this.executeRollback(conn);
 			_logger.error("Error on insert actionlogger record",  t);
 			throw new RuntimeException("Error on insert actionlogger record", t);
-			//processDaoException(t, "Error on insert actionlogger record", "addActionRecord");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -114,11 +113,9 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		} catch (BatchUpdateException e) {
 			_logger.error("Error adding relation for record {}", recordId,  e);
 			throw new RuntimeException("Error adding relation for record - " + recordId, e.getNextException());
-			//processDaoException(e.getNextException(), "Error adding relations for record - " + recordId, "addLogRecordRelations");
 		} catch (Throwable t) {
 			_logger.error("Error adding relations for record {}", recordId,  t);
 			throw new RuntimeException("Error adding relations for record - " + recordId, t);
-			//processDaoException(t, "Error adding relations for record - " + recordId, "addLogRecordRelations");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -217,7 +214,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		} catch (Throwable t) {
 			_logger.error("Error creating the statement",  t);
 			throw new RuntimeException("Error creating the statement", t);
-			//processDaoException(t, "Error while creating the statement", "buildStatement");
 		}
 		return stat;
 	}
@@ -353,7 +349,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			this.executeRollback(conn);
 			_logger.error("Error loading actionlogger record with id: {}", id, t);
 			throw new RuntimeException("Error loading actionlogger record with id: " + id, t);
-			//processDaoException(t, "Error loading actionlogger record with id: " + id, "getActionRecord");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -366,7 +361,8 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.deleteActionRecord(id, conn);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_RELATIONS, id);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD, id);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -377,227 +373,24 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		}
 	}
 	
-	private void deleteActionRecord(int id, Connection conn) {
-		try {
-			//this.deleteRecord(id, conn, DELETE_LOG_LIKE_RECORDS);
-			this.deleteRecord(id, conn, DELETE_LOG_RECORD_RELATIONS);
-			this.deleteRecord(id, conn, DELETE_LOG_RECORD);
-		} catch (Throwable t) {
-			_logger.error("Error on delete record: {}", id, t);
-			throw new RuntimeException("Error on delete record: " + id, t);
-		}
-	}
-	/*
-	@Override
-	public void editActionLikeRecord(int id, String username, boolean add) {
-		if (add) {
-			this.addActionLikeRecord(id, username);
-		} else {
-			this.deleteActionLikeRecord(id, username);
-		}
-	}
-	
-	@Override
-	public void addActionLikeRecord(int id, String username) {
-		Connection conn = null;
-		PreparedStatement stat = null;
-		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(DELETE_LOG_LIKE_RECORD);
-			stat.setInt(1, id);
-			stat.setString(2, username);
-			stat.executeUpdate();
-			stat = conn.prepareStatement(ADD_ACTION_LIKE_RECORD);
-			stat.setInt(1, id);
-			stat.setString(2, username);
-			Timestamp timestamp = new Timestamp(new Date().getTime());
-			stat.setTimestamp(3, timestamp);
-			stat.executeUpdate();
-			updateRecordDate(conn, id);
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error on insert actionlogger like record",  t);
-			throw new RuntimeException("Error on insert actionlogger like record", t);
-			//processDaoException(t, "Error on insert actionlogger like record", "addActionLikeRecord");
-		} finally {
-			closeDaoResources(null, stat, conn);
-		}
-	}
-	
-	@Override
-	public void deleteActionLikeRecord(int id, String username) {
-		Connection conn = null;
-		PreparedStatement stat = null;
-		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(DELETE_LOG_LIKE_RECORD);
-			stat.setInt(1, id);
-			stat.setString(2, username);
-			stat.executeUpdate();
-			updateRecordDate(conn, id);
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error on delete like record: {}", id, t);
-			throw new RuntimeException("Error on delete like record: " + id, t);
-			//processDaoException(t, "Error on delete like record: " + id , "deleteActionLikeRecord");
-		} finally {
-			closeDaoResources(null, stat, conn);
-		}
-	}
-	*/
-	
 	@Override
 	public void updateRecordDate(int id) {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.updateRecordDate(conn, id);
+			Timestamp timestamp = new Timestamp(new Date().getTime());
+			super.executeQueryWithoutResultset(conn, UPDATE_UPDATEDATE_ACTION_RECORD, timestamp, id);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error updating record date: {}", id, t);
 			throw new RuntimeException("Error updating record date: id " + id , t);
 		} finally {
-			closeConnection(conn);
+			this.closeConnection(conn);
 		}
 	}
 	
-	protected void updateRecordDate(Connection conn, int recordid) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(UPDATE_UPDATEDATE_ACTION_RECORD);
-			Timestamp timestamp = new Timestamp(new Date().getTime());
-			stat.setTimestamp(1, timestamp);
-			stat.setInt(2, recordid);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error updating record date: {}", recordid, t);
-			throw new RuntimeException("Error updating record date: id " + recordid , t);
-		} 
-	}
-			
-	public void deleteRecord(int id, Connection conn, String query) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(query);
-			stat.setInt(1, id);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error on delete record: {}", id, t);
-			throw new RuntimeException("Error on delete record: " + id, t);
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-	/*
-	@Override
-	public List<ActivityStreamLikeInfo> getActionLikeRecords(int id) {
-		List<ActivityStreamLikeInfo> infos = new ActivityStreamLikeInfos();
-		Connection conn = null;
-		PreparedStatement stat = null;
-		ResultSet result = null;
-		try {
-			conn = this.getConnection();
-			stat = conn.prepareStatement(GET_ACTION_LIKE_RECORDS);
-			stat.setInt(1, id);
-			result = stat.executeQuery();
-			while (result.next()) {
-				ActivityStreamLikeInfo asli = new ActivityStreamLikeInfo();
-				asli.setUsername(result.getString(1));
-				infos.add(asli);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error while loading activity stream like records",  t);
-			throw new RuntimeException("Error while loading activity stream like records", t);
-		} finally {
-			closeDaoResources(result, stat, conn);
-		}
-		return infos;
-	}
-	
-	@Override
-	public List<ActivityStreamComment> getActionCommentRecords(int id) {
-		List<ActivityStreamComment> comments = new ArrayList<ActivityStreamComment>();
-		Connection conn = null;
-		PreparedStatement stat = null;
-		ResultSet result = null;
-		try {
-			conn = this.getConnection();
-			stat = conn.prepareStatement(GET_ACTION_COMMENT_RECORDS);
-			stat.setInt(1, id);
-			result = stat.executeQuery();
-			while (result.next()) {
-				ActivityStreamComment comment = new ActivityStreamComment();
-				
-				comment.setId(result.getInt(1));
-				comment.setUsername(result.getString(2));
-				comment.setCommentText(result.getString(3));
-				Timestamp timestamp = result.getTimestamp(4);
-				comment.setCommentDate(new Date(timestamp.getTime()));
-				comments.add(comment);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error while loading activity stream comment records",  t);
-			throw new RuntimeException("Error while loading activity stream comment records", t);
-		} finally {
-			closeDaoResources(result, stat, conn);
-		}
-		return comments;
-	}
-	
-	@Override
-	public void addActionCommentRecord(int id, int recordId, String username, String comment) {
-		Connection conn = null;
-		PreparedStatement stat = null;
-		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(ADD_ACTION_COMMENT_RECORD);
-			stat.setInt(1, id);
-			stat.setInt(2, recordId);
-			stat.setString(3, username);
-			stat.setString(4, comment);
-			Timestamp timestamp = new Timestamp(new Date().getTime());
-			stat.setTimestamp(5, timestamp);
-			stat.executeUpdate();
-			updateRecordDate(conn, recordId);
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error on insert actionlogger comment record",  t);
-			throw new RuntimeException("Error on insert actionlogger comment record", t);
-		} finally {
-			closeDaoResources(null, stat, conn);
-		}
-	}
-	
-	@Override
-	public void deleteActionCommentRecord(int id, int streamId) {
-		Connection conn = null;
-		PreparedStatement stat = null;
-		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(DELETE_ACTION_COMMENT_RECORD);
-			stat.setInt(1, id);
-			stat.executeUpdate();
-			updateRecordDate(conn, streamId);
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error on delete comment record {}", id, t);
-			throw new RuntimeException("Error on delete comment record: " + id, t);
-		} finally {
-			closeDaoResources(null, stat, conn);
-		}
-	}
-	*/
 	@Override
 	protected String getMasterTableName() {
 		return "actionlogrecords";
@@ -638,35 +431,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		}
 		return recordsToDelete;
 	}
-	/*
-	@Override
-	public synchronized void cleanOldActivityStreamLogs(int maxActivitySizeByGroup) {
-		Connection conn = null;
-		try {
-			Set<Integer> recordsToDelete = new HashSet<Integer>();
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			Map<String, Integer> occurrences = this.getOccurrences(maxActivitySizeByGroup, conn);
-			Iterator<String> groupIter = occurrences.keySet().iterator();
-			while (groupIter.hasNext()) {
-				String groupName = groupIter.next();
-				this.extractRecordToDelete(groupName, maxActivitySizeByGroup, recordsToDelete, conn);
-			}
-			Iterator<Integer> idIter = recordsToDelete.iterator();
-			while (idIter.hasNext()) {
-				Integer id = idIter.next();
-				this.deleteActionRecord(id, conn);
-			}
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error cleaning old Stream logs",  t);
-			throw new RuntimeException("Error cleaning old Stream logs", t);
-		} finally {
-			closeConnection(conn);
-		}
-	}
-	*/
+	
 	private Map<String, Integer> getOccurrences(Integer maxActivitySizeByGroup, Connection conn) {
 		Map<String, Integer> occurrences = new HashMap<String, Integer>();
 		Statement stat = null;
@@ -728,10 +493,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 	private static final String ADD_ACTION_RECORD
 			= "INSERT INTO actionlogrecords ( id, username, actiondate, namespace, actionname, parameters, activitystreaminfo, updatedate) "
 			+ "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
-
-	//private static final String ADD_ACTION_LIKE_RECORD
-	//		= "INSERT INTO actionloglikerecords ( recordid, username, likedate) VALUES ( ? , ? , ? )";
-
+	
 	private static final String GET_ACTION_RECORD
 			= "SELECT username, actiondate, updatedate, namespace, actionname, parameters, activitystreaminfo FROM actionlogrecords WHERE id = ?";
 
@@ -743,29 +505,11 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 
 	private final String ADD_LOG_RECORD_RELATION
 			= "INSERT INTO actionlogrelations (recordid, refgroup) VALUES ( ? , ? )";
-
-	//private static final String DELETE_LOG_LIKE_RECORDS
-	//		= "DELETE from actionloglikerecords where recordid = ? ";
-
-	//private static final String DELETE_LOG_LIKE_RECORD
-	//		= DELETE_LOG_LIKE_RECORDS + "AND username = ? ";
-
-	//private static final String GET_ACTION_LIKE_RECORDS
-	//		= "SELECT username from actionloglikerecords where recordid = ? ";
-
+	
 	private static final String GET_GROUP_OCCURRENCES
 			= "SELECT refgroup, count(refgroup) FROM actionlogrelations GROUP BY refgroup";
 	
 	private static final String UPDATE_UPDATEDATE_ACTION_RECORD
 			= "UPDATE actionlogrecords SET updatedate = ? WHERE id = ?";
-	
-	//private static final String ADD_ACTION_COMMENT_RECORD
-	//		= "INSERT INTO actionlogcommentrecords (id, recordid, username, comment, commentdate) VALUES ( ? , ? , ? , ? , ? )";
-	
-	//private static final String DELETE_ACTION_COMMENT_RECORD
-	//		= "DELETE from actionlogcommentrecords where id = ?";
-	
-	//private static final String GET_ACTION_COMMENT_RECORDS
-	//		= "SELECT id, username, comment, commentdate FROM actionlogcommentrecords WHERE recordid = ? ORDER BY commentdate ASC";
 	
 }

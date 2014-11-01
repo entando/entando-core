@@ -112,38 +112,7 @@ public class TestActionLogDAO extends BaseTestCase {
 		this._actionLoggerDAO.deleteActionRecord(record2.getId());
 		assertNull(this._actionLoggerDAO.getActionRecord(record2.getId()));
 	}
-	/*
-	public void testAddDeleteCommentRecord() {
-		ActionLogRecord record1 = this._helper.createActionRecord(1, "username1", "actionName1",
-				"namespace1", DateConverter.parseDate("01/01/2009 00:00", "dd/MM/yyyy HH:mm"), "params1");
-		ActionLogRecord record2 = this._helper.createActionRecord(2, "username2", "actionName2",
-				"namespace2", DateConverter.parseDate("01/02/2009 00:00", "dd/MM/yyyy HH:mm"), "params2");
-
-		this._actionLoggerDAO.addActionRecord(record1);
-		this._actionLoggerDAO.addActionRecord(record2);
-		ActionLogRecord addedRecord1 = this._actionLoggerDAO.getActionRecord(record1.getId());
-		this.compareActionRecords(record1, addedRecord1);
-		ActionLogRecord addedRecord2 = this._actionLoggerDAO.getActionRecord(record2.getId());
-		this.compareActionRecords(record2, addedRecord2);
-
-		this._actionLoggerDAO.addActionCommentRecord(100, addedRecord1.getId(), "admin", "test comment 1");
-
-		this._actionLoggerDAO.addActionCommentRecord(101, addedRecord1.getId(), "admin", "test comment 2");
-		List<ActivityStreamComment> actionCommentRecords = this._actionLoggerDAO.getActionCommentRecords(addedRecord1.getId());
-
-		assertEquals(2, actionCommentRecords.size());
-		assertEquals(100, actionCommentRecords.get(0).getId());
-		assertEquals(101, actionCommentRecords.get(1).getId());
-		
-		this._actionLoggerDAO.deleteActionCommentRecord(100,addedRecord1.getId());
-		
-		actionCommentRecords = this._actionLoggerDAO.getActionCommentRecords(addedRecord1.getId());
-
-		assertEquals(1, actionCommentRecords.size());
-		
-		assertEquals("test comment 2", actionCommentRecords.get(0).getCommentText());
-	}
-	*/
+	
 	private void compareIds(Integer[] expected, List<Integer> received) {
 		assertEquals(expected.length, received.size());
 		for (Integer id : expected) {

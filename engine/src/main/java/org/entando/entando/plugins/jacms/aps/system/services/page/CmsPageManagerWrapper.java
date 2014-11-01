@@ -23,7 +23,6 @@ import java.util.List;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.PageManager;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
@@ -34,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Sovrascrittura del servizio di gestione delle pagine {@link PageManager}.
  * @author E.Santoboni
  */
 public class CmsPageManagerWrapper implements ContentUtilizer {

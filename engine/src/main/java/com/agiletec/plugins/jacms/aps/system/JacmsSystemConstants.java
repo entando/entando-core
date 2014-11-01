@@ -64,6 +64,8 @@ public class JacmsSystemConstants {
 	 */
 	public static final String CONTENT_PAGE_MAPPER_MANAGER = "jacmsContentPageMapperManager";
 	
+	public static final String PAGE_MANAGER_WRAPPER = "jacmPageManagerWrapper";
+	
 	public static final String CONTENT_VIEWER_HELPER = "jacmsContentViewerHelper";
 	
 	public static final String BASE_CONTENT_LIST_HELPER = "jacmsBaseContentListHelper";

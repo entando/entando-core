@@ -34,23 +34,7 @@ public interface IContentAction {
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String copyPaste();
-
-	/**
-	 * Esegue l'azione di associazione di una
-	 * categoria al contenuto in fase di redazione.
-	 * @return Il codice del risultato dell'azione.
-	 * @deprecated From jAPS 2.0 version 2.1, use joinCategory of {@link IContentCategoryAction} action
-	 */
-	public String joinCategory();
-
-	/**
-	 * Esegue l'azione di rimozione di una
-	 * categoria dal contenuto in fase di redazione.
-	 * @return Il codice del risultato dell'azione.
-	 * @deprecated From jAPS 2.0 version 2.1, use removeCategory of {@link IContentCategoryAction} action
-	 */
-	public String removeCategory();
-
+	
 	/**
 	 * Esegue l'azione di associazione di un
 	 * gruppo al contenuto in fase di redazione.

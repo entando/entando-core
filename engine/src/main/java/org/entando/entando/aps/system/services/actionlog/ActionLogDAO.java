@@ -498,7 +498,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		ResultSet result = null;
 		try {
 			List<Integer> idList = new ArrayList<Integer>();
-			conn = this.getConnection();
 			FieldSearchFilter filter1 = new FieldSearchFilter("actiondate");
 			filter1.setOrder(FieldSearchFilter.Order.DESC);
 			FieldSearchFilter filter2 = new FieldSearchFilter("activitystreaminfo");

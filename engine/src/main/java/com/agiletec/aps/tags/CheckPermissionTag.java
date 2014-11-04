@@ -17,13 +17,6 @@
 */
 package com.agiletec.aps.tags;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
@@ -31,14 +24,22 @@ import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Toggle the visibility of the elements contained in body tag, depending on user permissions.
- * The user authorisations are checked against either the given permission or the specified group membership.
- * Is possible to insert the result of the authorisation check in a variable placed in the page context.
+ * The user authorizations are checked against either the given permission or the specified group membership.
+ * Is possible to insert the result of the authorization check in a variable placed in the page context.
  * @author E.Santoboni
- */
+ */ 
 public class CheckPermissionTag extends TagSupport {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(CheckPermissionTag.class);
 	
 	@Override
@@ -48,15 +49,20 @@ public class CheckPermissionTag extends TagSupport {
 			boolean isAuthorized = false;
 			UserDetails currentUser = (UserDetails) session.getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
 			IAuthorizationManager authManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHORIZATION_SERVICE, this.pageContext);
-			boolean isGroupSetted = (this.getGroupName() != null && this.getGroupName().length()>0);
-			boolean isPermissionSetted = (this.getPermission() != null && this.getPermission().length()>0);
-			
-			boolean isAuthGr = !isGroupSetted || authManager.isAuthOnGroup(currentUser, this.getGroupName()) || authManager.isAuthOnGroup(currentUser, Group.ADMINS_GROUP_NAME);
-			boolean isAuthPerm = !isPermissionSetted || authManager.isAuthOnPermission(currentUser, this._permission) || authManager.isAuthOnPermission(currentUser, Permission.SUPERUSER);
-			
+			boolean isGroupSetted = StringUtils.isNotEmpty(this.getGroupName());
+			boolean isPermissionSetted = StringUtils.isNotEmpty(this.getPermission());
+			boolean isAuthGr = isGroupSetted && (authManager.isAuthOnGroup(currentUser, this.getGroupName()) || authManager.isAuthOnGroup(currentUser, Group.ADMINS_GROUP_NAME));
+			boolean isAuthPerm = isPermissionSetted && (authManager.isAuthOnPermission(currentUser, this.getPermission()) || authManager.isAuthOnPermission(currentUser, Permission.SUPERUSER));
+			if (isGroupSetted && !isPermissionSetted) {
+				isAuthorized = isAuthGr;
+			} else if (!isGroupSetted && isPermissionSetted) {
+				isAuthorized = isAuthPerm;
+			} else if (isGroupSetted && isPermissionSetted && isAuthGr && isAuthPerm) {
+				isAuthorized = authManager.isAuthOnGroupAndPermission(currentUser, this.getGroupName(), this.getPermission(), true);
+			}
 			isAuthorized = isAuthGr && isAuthPerm;
 			if (null != this.getVar()) {
-				this.pageContext.setAttribute(this.getVar(), new Boolean(isAuthorized));
+				this.pageContext.setAttribute(this.getVar(), isAuthorized);
 			}
 			if (isAuthorized) {
 				return EVAL_BODY_INCLUDE;
@@ -65,7 +71,6 @@ public class CheckPermissionTag extends TagSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error during tag initialization", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error during tag initialization ", t);
 		}
 	}
@@ -103,17 +108,17 @@ public class CheckPermissionTag extends TagSupport {
 	}
 	
 	/**
-	 * Set the name of the variable where the result of the authorisation checks is placed in
-	 * form of an boolean value.
-	 * @param resultParamName The name of the parameter.
+	 * Set the name of the variable where the result 
+	 * of the authorization checks is placed in form of an boolean value.
+	 * @param var The name of the parameter.
 	 */
 	public void setVar(String var) {
 		this._var = var;
 	}
-
+	
 	/**
-	 * Return the name of the variable where the result of the authorisation checks is placed in
-	 * form of an boolean value.
+	 * Return the name of the variable where the result 
+	 * of the authorization checks is placed in form of an boolean value.
 	 * @return The name of the parameter.
 	 */
 	public String getVar() {

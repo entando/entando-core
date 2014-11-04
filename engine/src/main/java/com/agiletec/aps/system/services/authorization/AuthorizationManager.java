@@ -64,9 +64,38 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     public boolean isAuth(UserDetails user, IApsAuthority auth) {
         return this.checkAuth(user, auth);
     }
-    
+	
 	@Override
-	public boolean isAuth(UserDetails user, String groupName, String roleName) {
+	public boolean isAuthOnGroupAndPermission(UserDetails user, String groupName, String permissionName, boolean chechAdmin) {
+		if (null == user || null == groupName || null == permissionName) {
+			return false;
+		}
+		List<Role> roles = new ArrayList<Role>();
+		List<Role> rolesWithPermission = this.getRoleManager().getRolesWithPermission(permissionName);
+		if (null != rolesWithPermission) {
+			roles.addAll(rolesWithPermission);
+		}
+		if (chechAdmin) {
+			List<Role> rolesWithSupPermission = this.getRoleManager().getRolesWithPermission(Permission.SUPERUSER);
+			if (null != rolesWithSupPermission) {
+				roles.addAll(rolesWithSupPermission);
+			}
+		}
+		for (int i = 0; i < roles.size(); i++) {
+			Role role = roles.get(i);
+			if (null != role) {
+				boolean check = this.isAuthOnGroupAndRole(user, groupName, role.getName(), chechAdmin);
+				if (check) {
+					return true;
+				}
+			}
+			
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isAuthOnGroupAndRole(UserDetails user, String groupName, String roleName, boolean chechAdmin) {
 		if (null == user || null == groupName) {
 			return false;
 		}
@@ -77,45 +106,21 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 				continue;
 			}
 			Group group = userAuth.getGroup();
-			if (null == group || !groupName.equals(group.getName())) {
+			if (null == group) {
+				continue;
+			} else if (!chechAdmin && !groupName.equals(group.getName())) {
+				continue;
+			} else if (chechAdmin && !Group.ADMINS_GROUP_NAME.equals(group.getName())) {
 				continue;
 			}
 			Role role = userAuth.getRole();
-			if (null == roleName || (null != role && role.getName().equals(roleName))) {
+			if (null == roleName) {
 				return true;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean isAuth(UserDetails user, IApsAuthority group, IApsAuthority role) {
-		String groupName = (null != group) ? group.getAuthority() : null;
-		String roleName = (null != role) ? role.getAuthority() : null;
-		return this.isAuth(user, groupName, roleName);
-	}
-	
-	@Override
-	public boolean isAuth(UserDetails user, IApsAuthority group, Permission permission) {
-		String permissionName = (null != permission) ? permission.getName() : null;
-		return this.isAuth(user, group, permissionName);
-	}
-	
-	@Override
-	public boolean isAuth(UserDetails user, IApsAuthority group, String permissionName) {
-		if (null == user || null == group) {
-			return false;
-		}
-		if (null == permissionName) {
-			String roleName = null;
-			return this.isAuth(user, group.getAuthority(), roleName);
-		}
-		List<Role> roles = this.getRolesWithPermission(user, permissionName);
-		for (int i = 0; i < roles.size(); i++) {
-			Role role = roles.get(i);
-			boolean isAuth = this.isAuth(user, group, role);
-			if (isAuth) {
-				return true;
+			} else {
+				boolean isSuper = role.hasPermission(Permission.SUPERUSER);
+				if (role.getName().equals(roleName) || (chechAdmin && isSuper)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -174,7 +179,6 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	}
 	
 	@Override
-	@Deprecated
     public boolean isAuth(UserDetails user, Group group) {
         return this.isAuthOnGroup(user, group.getName());
     }
@@ -196,8 +200,8 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
         }
         String mainGroupName = entity.getMainGroup();
         if (mainGroupName.equals(Group.FREE_GROUP_NAME) 
-        		|| this.checkAuth(user, mainGroupName, AuthorityType.GROUP) 
-        		|| this.checkAuth(user, Group.ADMINS_GROUP_NAME, AuthorityType.GROUP)) {
+        		|| this.checkAuth(user, mainGroupName, false) 
+        		|| this.checkAuth(user, Group.ADMINS_GROUP_NAME, false)) {
             return true;
         }
         Set<String> groups = entity.getGroups();
@@ -207,14 +211,14 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	@Override
     public boolean isAuth(UserDetails user, Set<String> groups) {
 		if (null == user) return false;
-        if (this.checkAuth(user, Group.ADMINS_GROUP_NAME, AuthorityType.GROUP)) {
+        if (this.checkAuth(user, Group.ADMINS_GROUP_NAME, false)) {
             return true;
         }
         if (null == groups || groups.isEmpty()) return false;
         Iterator<String> iter = groups.iterator();
         while (iter.hasNext()) {
             String groupName = iter.next();
-            if (groupName.equals(Group.FREE_GROUP_NAME) || this.checkAuth(user, groupName, AuthorityType.GROUP)) {
+            if (groupName.equals(Group.FREE_GROUP_NAME) || this.checkAuth(user, groupName, false)) {
                 return true;
             }
         }
@@ -222,7 +226,6 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     }
     
 	@Override
-	@Deprecated
     public boolean isAuth(UserDetails user, Permission permission) {
         return this.isAuthOnPermission(user, permission.getName());
     }
@@ -312,8 +315,8 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     
 	@Override
     public boolean isAuthOnGroup(UserDetails user, String groupName) {
-        return ((this.checkAuth(user, groupName, AuthorityType.GROUP) 
-                || this.checkAuth(user, Group.ADMINS_GROUP_NAME, AuthorityType.GROUP)));
+        return ((this.checkAuth(user, groupName, false) 
+                || this.checkAuth(user, Group.ADMINS_GROUP_NAME, false)));
     }
     
 	@Override
@@ -327,10 +330,9 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	}
 	
 	@Override
-	@Deprecated
     public boolean isAuthOnRole(UserDetails user, String roleName) {
         return ((this.isAuthOnPermission(user, Permission.SUPERUSER) 
-                || this.checkAuth(user, roleName, AuthorityType.ROLE)));
+                || this.checkAuth(user, roleName, true)));
     }
     
 	@Override
@@ -344,7 +346,6 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	}
 	
 	@Override
-	@Deprecated
     public boolean isAuthOnPermission(UserDetails user, String permissionName) {
         boolean check = this.isAuthOnSinglePermission(user, permissionName);
         if (check) {
@@ -353,13 +354,12 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
         return this.isAuthOnSinglePermission(user, Permission.SUPERUSER);
     }
 	
-	@Deprecated
     private boolean isAuthOnSinglePermission(UserDetails user, String permissionName) {
 		if (null == user) return false;
         List<Role> rolesWithPermission = this.getRolesWithPermission(user, permissionName);
         for (int i = 0; i < rolesWithPermission.size(); i++) {
             Role role = rolesWithPermission.get(i);
-            boolean check = this.checkAuth(user, role.getAuthority(), AuthorityType.ROLE);
+            boolean check = this.checkAuth(user, role.getAuthority(), true);
             if (check) {
                 return true;
             }
@@ -412,7 +412,6 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	}
 	
 	@Override
-	@Deprecated
     public List<Role> getUserRoles(UserDetails user) {
         if (null == user) {
             return null;
@@ -433,14 +432,13 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
         if (null == requiredAuth) {
             return false;
         }
-		AuthorityType type = (requiredAuth instanceof Role) ? AuthorityType.ROLE : AuthorityType.GROUP;
+		boolean isRole = (requiredAuth instanceof Role);
 		String requiredAuthName = requiredAuth.getAuthority();
-		return this.checkAuth(user, requiredAuthName, type);
+		return this.checkAuth(user, requiredAuthName, isRole);
     }
     
-	@Deprecated
-    private boolean checkAuth(UserDetails user, String requiredAuthName, AuthorityType type) {
-        if (null == requiredAuthName || null == type) {
+    private boolean checkAuth(UserDetails user, String requiredAuthName, boolean isRole) {
+        if (null == requiredAuthName) {
             return false;
         }
         List<Authorization> auths = user.getAuthorizations();
@@ -449,11 +447,11 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 			if (null == auth) {
 				continue;
 			}
-			if (type.equals(AuthorityType.ROLE) && null != auth.getRole() && 
+			if (isRole && null != auth.getRole() && 
 					requiredAuthName.equals(auth.getRole().getAuthority())) {
 				return true;
 			}
-			if (type.equals(AuthorityType.GROUP) && null != auth.getGroup() && 
+			if (!isRole && null != auth.getGroup() && 
 					requiredAuthName.equals(auth.getGroup().getAuthority())) {
 				return true;
 			}
@@ -722,6 +720,4 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 	private IRoleManager _roleManager;
 	private IGroupManager _groupManager;
 	
-    private enum AuthorityType{ROLE,GROUP}
-    
 }

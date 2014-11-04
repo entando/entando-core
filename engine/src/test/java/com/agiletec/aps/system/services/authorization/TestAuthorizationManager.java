@@ -42,6 +42,30 @@ public class TestAuthorizationManager extends BaseTestCase {
         this.init();
     }
     
+	public void testIsAuthOnGroupAndPermission_1() throws Throwable {
+		String username = "pageManagerCoach";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		boolean isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, Group.FREE_GROUP_NAME, Permission.MANAGE_PAGES, true);
+		assertFalse(isAuth);
+		isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, Group.FREE_GROUP_NAME, Permission.MANAGE_PAGES, false);
+		assertFalse(isAuth);
+		isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, "coach", Permission.MANAGE_PAGES, false);
+		assertTrue(isAuth);
+	}
+	
+	public void testIsAuthOnGroupAndPermission_2() throws Throwable {
+		String username = "mainEditor";
+		UserDetails user = this._authenticationProvider.getUser(username);
+		boolean isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, Group.FREE_GROUP_NAME, Permission.CONTENT_EDITOR, false);
+		assertFalse(isAuth);
+		isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, Group.FREE_GROUP_NAME, Permission.CONTENT_EDITOR, true);
+		assertTrue(isAuth);
+		isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, "coach", Permission.CONTENT_EDITOR, false);
+		assertFalse(isAuth);
+		isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, "coach", Permission.CONTENT_EDITOR, true);
+		assertTrue(isAuth);
+	}
+	
 	public void testAuthoritiesByGroup_1() throws Throwable {
 		String username = "pageManagerCoach";
 		UserDetails user = this._authenticationProvider.getUser(username);

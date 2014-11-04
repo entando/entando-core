@@ -30,9 +30,8 @@ import com.agiletec.aps.system.services.user.UserDetails;
 
 /**
  * Interfaccia base per il servizio di autorizzazione.
- * Il servizio verifica le autorizzazioni di 
- * utenti ad azioni (attraverso il permesso associato) o ad oggetti del sistema 
- * (attraverso il gruppo associato).
+ * Il servizio verifica le autorizzazioni di utenti ad azioni 
+ * (attraverso il permesso associato) o ad oggetti del sistema (attraverso il gruppo associato).
  * @author E.Santoboni
  */
 public interface IAuthorizationManager {
@@ -46,13 +45,9 @@ public interface IAuthorizationManager {
 	 */
 	public boolean isAuth(UserDetails user, IApsAuthority auth);
 	
-	public boolean isAuth(UserDetails user, IApsAuthority group, IApsAuthority role);
+	public boolean isAuthOnGroupAndPermission(UserDetails user, String groupName, String permissionName, boolean chechAdmin);
 	
-	public boolean isAuth(UserDetails user, String groupName, String roleName);
-	
-	public boolean isAuth(UserDetails user, IApsAuthority group, Permission permission);
-	
-	public boolean isAuth(UserDetails user, IApsAuthority group, String permissionName);
+	public boolean isAuthOnGroupAndRole(UserDetails user, String groupName, String roleName, boolean chechAdmin);
 	
 	public List<IApsAuthority> getRelatedAuthorities(UserDetails user, IApsAuthority auth);
 	
@@ -61,7 +56,6 @@ public interface IAuthorizationManager {
 	 * @param user L'utente di cui verificare l'autorizzazione.
 	 * @param permission Il permesso da verificare.
 	 * @return True se l'utente possiede il permesso, false in caso contrario.
-	 * @deprecated Since Entando 4.1.1, use getAuthoritiesByPermission(UserDetails, Permission)
 	 */
 	public boolean isAuth(UserDetails user, Permission permission);
 	
@@ -74,7 +68,6 @@ public interface IAuthorizationManager {
 	 * @param user L'utente di cui verificare l'autorizzazione.
 	 * @param group Il gruppo da verificare.
 	 * @return True se l'utente fa parte del gruppo, false in caso contrario.
-	 * @deprecated Since Entando 4.1.1, use getAuthoritiesByGroup(UserDetails, Group)
 	 */
 	public boolean isAuth(UserDetails user, Group group);
 	
@@ -107,7 +100,6 @@ public interface IAuthorizationManager {
 	 * @param user L'utente di cui verificare l'autorizzazione.
 	 * @param roleName Il nome del ruolo da verificare.
 	 * @return True se l'utente possiede il ruolo specificato, false in caso contrario.
-	 * @deprecated Since Entando 4.1.1, use getAuthoritiesByRole(UserDetails, String)
 	 */
 	public boolean isAuthOnRole(UserDetails user, String roleName);
 	
@@ -120,7 +112,6 @@ public interface IAuthorizationManager {
 	 * @param user L'utente di cui verificare l'autorizzazione.
 	 * @param permissionName Il nome del permesso da verificare.
 	 * @return True se l'utente possiede il permesso, false in caso contrario.
-	 * @deprecated Since Entando 4.1.1, use getAuthoritiesByPermission(UserDetails, String)
 	 */
 	public boolean isAuthOnPermission(UserDetails user, String permissionName);
 	
@@ -161,7 +152,6 @@ public interface IAuthorizationManager {
 	 * Returns the roles of the given user
 	 * @param user The user.
 	 * @return The list of roles of the given user.
-	 * @deprecated Since Entando 4.1.1
 	 */
 	public List<Role> getUserRoles(UserDetails user);
 	

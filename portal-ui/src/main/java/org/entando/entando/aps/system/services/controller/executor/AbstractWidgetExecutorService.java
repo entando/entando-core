@@ -105,14 +105,14 @@ public abstract class AbstractWidgetExecutorService {
 		return buffer.toString();
 	}
 	
-	protected String extractWidgetOutput(RequestContext reqCtx, WidgetType type) throws ApsSystemException {
+	public static String extractWidgetOutput(RequestContext reqCtx, WidgetType type) throws ApsSystemException {
 		try {
 			String widgetTypeCode = (type.isLogic()) ? type.getParentType().getCode() : type.getCode();
 			IGuiFragmentManager guiFragmentManager = 
 					(IGuiFragmentManager) ApsWebApplicationUtils.getBean(SystemConstants.GUI_FRAGMENT_MANAGER, reqCtx.getRequest());
 			GuiFragment guiFragment = guiFragmentManager.getUniqueGuiFragmentByWidgetType(widgetTypeCode);
 			if (null != guiFragment) {
-				String fragmentOutput = this.extractFragmentOutput(guiFragment, reqCtx);
+				String fragmentOutput = extractFragmentOutput(guiFragment, reqCtx);
 				if (StringUtils.isBlank(fragmentOutput)) {
 					_logger.info("The fragment '{}' of widget '{}' is not available", guiFragment.getCode(), widgetTypeCode);
 					return "The fragment '" + guiFragment.getCode() + "' of widget '" + widgetTypeCode + "' is not available";
@@ -120,7 +120,7 @@ public abstract class AbstractWidgetExecutorService {
 				return fragmentOutput;
 			} else {
 				String widgetJspPath = type.getJspPath();
-				return this.extractJspWidgetOutput(widgetTypeCode, reqCtx, widgetJspPath);
+				return extractJspWidgetOutput(widgetTypeCode, reqCtx, widgetJspPath);
 			}
 		} catch (Throwable t) {
 			String msg = "Error creating widget output";
@@ -163,13 +163,13 @@ public abstract class AbstractWidgetExecutorService {
 				continue;
 			}
 			String fragmentCode = (includeHeader) ? decoratorContainer.getHeaderFragmentCode() : decoratorContainer.getFooterFragmentCode();
-			String fragmentOutput = this.extractFragmentOutput(fragmentCode, reqCtx);
+			String fragmentOutput = extractFragmentOutput(fragmentCode, reqCtx);
 			if (StringUtils.isNotBlank(fragmentCode)) {
 				builder.append(fragmentOutput);
 			} else {
 				String jspPath = (includeHeader) ? decoratorContainer.getHeaderJspPath() : decoratorContainer.getFooterJspPath();
 				if (StringUtils.isNotBlank(jspPath)) {
-					String output = this.extractJspOutput(reqCtx, jspPath);
+					String output = extractJspOutput(reqCtx, jspPath);
 					builder.append(output);
 				}
 			}
@@ -184,10 +184,10 @@ public abstract class AbstractWidgetExecutorService {
 		IGuiFragmentManager guiFragmentManager = 
 					(IGuiFragmentManager) ApsWebApplicationUtils.getBean(SystemConstants.GUI_FRAGMENT_MANAGER, reqCtx.getRequest());
 		GuiFragment fragment = guiFragmentManager.getGuiFragment(fragmentCode);
-		return this.extractFragmentOutput(fragment, reqCtx);
+		return extractFragmentOutput(fragment, reqCtx);
 	}
 	
-	protected String extractFragmentOutput(GuiFragment fragment, RequestContext reqCtx) throws Throwable {
+	protected static String extractFragmentOutput(GuiFragment fragment, RequestContext reqCtx) throws Throwable {
 		if (null == fragment) {
 			return null;
 		}
@@ -235,9 +235,9 @@ public abstract class AbstractWidgetExecutorService {
 		return false;
 	}
 	
-	protected String extractJspWidgetOutput(String widgetTypeCode, RequestContext reqCtx, String jspPath) throws Throwable {
+	protected static String extractJspWidgetOutput(String widgetTypeCode, RequestContext reqCtx, String jspPath) throws Throwable {
 		try {
-			return this.extractJspOutput(reqCtx, jspPath);
+			return extractJspOutput(reqCtx, jspPath);
 		} catch (IOException e) {
 			_logger.error("The widget '{}' is unavailable. Expected jsp path '{}'", widgetTypeCode, jspPath, e);
 			return "The widget '" + widgetTypeCode + "' is unavailable";
@@ -247,7 +247,7 @@ public abstract class AbstractWidgetExecutorService {
 		}
 	}
 	
-	protected String extractJspOutput(RequestContext reqCtx, String jspPath) throws ServletException, IOException {
+	protected static String extractJspOutput(RequestContext reqCtx, String jspPath) throws ServletException, IOException {
 		HttpServletRequest request = reqCtx.getRequest();
 		HttpServletResponse response = reqCtx.getResponse();
 		BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper(response);

@@ -60,7 +60,6 @@ public class CheckPermissionTag extends TagSupport {
 			} else if (isGroupSetted && isPermissionSetted && isAuthGr && isAuthPerm) {
 				isAuthorized = authManager.isAuthOnGroupAndPermission(currentUser, this.getGroupName(), this.getPermission(), true);
 			}
-			isAuthorized = isAuthGr && isAuthPerm;
 			if (null != this.getVar()) {
 				this.pageContext.setAttribute(this.getVar(), isAuthorized);
 			}

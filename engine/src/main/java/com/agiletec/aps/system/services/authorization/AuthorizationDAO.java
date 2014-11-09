@@ -43,14 +43,10 @@ public class AuthorizationDAO extends AbstractSearcherDAO implements IAuthorizat
 	
 	@Override
 	public void addUserAuthorization(String username, Authorization authorization) {
-		if (null == authorization || null == username || null == authorization.getGroup()) return;
-		if (null == authorization.getRole()) {
-			super.executeQueryWithoutResultset(ADD_AUTHORIZATION_WITHOUT_ROLE, 
-				username, authorization.getGroup().getName());
-		} else {
-			super.executeQueryWithoutResultset(ADD_AUTHORIZATION, 
-				username, authorization.getGroup().getName(), authorization.getRole().getName());
-		}
+		if (null == authorization || null == username) return;
+		String groupName = (null != authorization.getGroup()) ? authorization.getGroup().getName() : null;
+		String roleName = (null != authorization.getRole()) ? authorization.getRole().getName() : null;
+		super.executeQueryWithoutResultset(ADD_AUTHORIZATION, username, groupName, roleName);
 	}
 	
 	@Override
@@ -90,7 +86,11 @@ public class AuthorizationDAO extends AbstractSearcherDAO implements IAuthorizat
 				Authorization auth = authorizations.get(i);
 				if (null == auth) continue;
 				stat.setString(1, username);
-				stat.setString(2, auth.getGroup().getName());
+				if (null != auth.getGroup()) {
+					stat.setString(2, auth.getGroup().getName());
+				} else {
+					stat.setNull(2, Types.VARCHAR);
+				}
 				if (null != auth.getRole()) {
 					stat.setString(3, auth.getRole().getName());
 				} else {
@@ -126,10 +126,13 @@ public class AuthorizationDAO extends AbstractSearcherDAO implements IAuthorizat
 			res = stat.executeQuery();
 			while (res.next()) {
 				String groupname = res.getString(1);
-				Group group = groups.get(groupname);
+				Group group = (null != groupname) ? groups.get(groupname) : null;
 				String rolename = res.getString(2);
 				Role role = (null != rolename) ? roles.get(rolename) : null;
-				authorizations.add(new Authorization(group, role));
+				Authorization authorization = new Authorization(group, role);
+				if (!authorizations.contains(authorization)) {
+					authorizations.add(authorization);
+				}
 			}
 		} catch (Throwable t) {
 			_logger.error("Error loading user authorization",  t);
@@ -176,9 +179,6 @@ public class AuthorizationDAO extends AbstractSearcherDAO implements IAuthorizat
 	
 	private final String ADD_AUTHORIZATION =
 		"INSERT INTO authusergrouprole(username, groupname, rolename) VALUES ( ? , ? , ? )";
-	
-	private final String ADD_AUTHORIZATION_WITHOUT_ROLE =
-		"INSERT INTO authusergrouprole(username, groupname) VALUES ( ? , ? )";
 	
 	private final String DELETE_USER_AUTHORIZATIONS =
 		"DELETE FROM authusergrouprole WHERE username = ?";

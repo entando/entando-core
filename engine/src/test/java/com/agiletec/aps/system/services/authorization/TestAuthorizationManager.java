@@ -286,6 +286,58 @@ public class TestAuthorizationManager extends BaseTestCase {
 		assertEquals(1, usernames.size());
 	}
 	
+    public void testUpdateAuthorization_1() throws Throwable {
+    	String username = "UserForTest";
+    	String password = "PasswordForTest";
+		String wrongGroupName = "wrong_group_name";
+		assertNull(this._groupManager.getGroup(wrongGroupName));
+		String wrongRoleName = "wrong_role_name";
+		assertNull(this._roleManager.getRole(wrongRoleName));
+    	this.addUserForTest(username, password);
+    	UserDetails extractedUser = null;
+		try {
+			extractedUser = this._authenticationProvider.getUser(username, password);
+			List<Authorization> authorizations = this._authorizationManager.getUserAuthorizations(username);
+			assertEquals(1, authorizations.size());
+			
+			this._authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
+			authorizations = this._authorizationManager.getUserAuthorizations(username);
+			assertEquals(2, authorizations.size());
+			
+			//invalid authorization
+			this._authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, wrongRoleName);
+			authorizations = this._authorizationManager.getUserAuthorizations(username);
+			assertEquals(2, authorizations.size());
+			
+			//invalid authorization
+			this._authorizationManager.addUserAuthorization(username, wrongGroupName, null);
+			authorizations = this._authorizationManager.getUserAuthorizations(username);
+			assertEquals(2, authorizations.size());
+			
+			this._authorizationManager.addUserAuthorization(username, null, "admin");
+			authorizations = this._authorizationManager.getUserAuthorizations(username);
+			assertEquals(3, authorizations.size());
+			
+			this._authorizationManager.addUserAuthorization(username, "coach", null);
+			authorizations = this._authorizationManager.getUserAuthorizations(username);
+			assertEquals(4, authorizations.size());
+			
+			//existing authorization
+			this._authorizationManager.addUserAuthorization(username, "coach", null);
+			authorizations = this._authorizationManager.getUserAuthorizations(username);
+			assertEquals(4, authorizations.size());
+			
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			if (null != extractedUser) {
+				this._userManager.removeUser(extractedUser);
+			}
+			extractedUser = this._userManager.getUser(username);
+			assertNull(extractedUser);
+		}
+	}
+    
     private void init() throws Exception {
     	try {
     		this._authenticationProvider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);

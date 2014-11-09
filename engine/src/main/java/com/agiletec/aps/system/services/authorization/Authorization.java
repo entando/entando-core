@@ -21,6 +21,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.role.Role;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -56,14 +57,11 @@ public class Authorization implements Serializable {
 	@Override
 	public boolean equals(Object obj) {
 		Authorization other = (Authorization) obj;
-		boolean checkGroups = this.getGroup().getName().equals(other.getGroup().getName());
-		boolean isNotNullBothRoles = (null != this.getRole() && null != other.getRole());
-		boolean isNullBothRoles = (null == this.getRole() && null == other.getRole());
-		boolean isNullAnyRoles = (null == this.getRole() || null == other.getRole());
-		boolean checkRoles = (isNotNullBothRoles) ? 
-				this.getRole().getName().equals(other.getRole().getName()) : 
-				(isNullBothRoles || !isNullAnyRoles);
-		return (checkGroups && (isNullBothRoles || checkRoles));
+		boolean isGroupsEquals = (null == this.getGroup() && null == other.getGroup()) || 
+				(null != this.getGroup() && null != other.getGroup() && other.getGroup().equals(this.getGroup()));
+		boolean isRolesEquals = (null == this.getRole() && null == other.getRole()) || 
+				(null != this.getRole() && null != other.getRole() && other.getRole().equals(this.getRole()));
+		return (isRolesEquals && isGroupsEquals);
 	}
 	
 	private Group _group;

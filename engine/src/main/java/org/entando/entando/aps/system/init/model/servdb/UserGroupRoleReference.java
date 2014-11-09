@@ -41,7 +41,7 @@ public class UserGroupRoleReference implements ExtendedColumnDefinition {
 	@DatabaseField(columnName = "groupname", 
 			foreign = true,
 			width = 20, 
-			canBeNull = false)
+			canBeNull = true)
 	private Group _group;
 	
 	@DatabaseField(columnName = "rolename", 
@@ -75,7 +75,7 @@ public class UserGroupRoleReference implements ExtendedColumnDefinition {
 CREATE TABLE authusergrouprole
 (
   username character varying(40) NOT NULL,
-  groupname character varying(20) NOT NULL,
+  groupname character varying(20),
   rolename character varying(20),
   CONSTRAINT authusergrouprole_grn_fkey FOREIGN KEY (groupname)
       REFERENCES authgroups (groupname),

@@ -93,6 +93,7 @@
 			<div class="col-xs-12">
 				<label for="userGroup"><s:text name="label.userGroup" /></label>
 				<wpsf:select id="userGroup" name="groupName" list="groups" 
+					headerKey="" headerValue="" 
 					listKey="name" listValue="description" cssClass="form-control" />
 			</div>
 		</div>
@@ -106,7 +107,6 @@
 		</div>
 		<div class="form-group">
 			<div class="col-xs-12">
-				<%-- <div class="input-group"> --%>
 				<span class="input-group-btn">
 					<wpsa:actionParam action="addAuthorization" var="actionName" />
 					<wpsf:submit type="button" action="%{#actionName}" cssClass="btn btn-info">

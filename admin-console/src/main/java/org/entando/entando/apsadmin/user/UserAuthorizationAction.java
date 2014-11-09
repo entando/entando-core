@@ -84,11 +84,15 @@ public class UserAuthorizationAction extends BaseAction {
 			String roleName = this.getRoleName();
 			Group group = this.getGroupManager().getGroup(groupName);
 			Role role = this.getRoleManager().getRole(roleName);
-			if (null == group) {
+			if (!StringUtils.isEmpty(groupName) && null == group) {
 				this.addFieldError("groupName", this.getText("error.userAuthorization.invalidGroup", new String[]{groupName}));
 			}
 			if (!StringUtils.isEmpty(roleName) && null == role) {
 				this.addFieldError("roleName", this.getText("error.userAuthorization.invalidRole", new String[]{groupName}));
+			}
+			if (null == group && null == role) {
+				this.addFieldError("groupName", this.getText("error.userAuthorization.invalidGroupAndRole"));
+				this.addFieldError("roleName", this.getText("error.userAuthorization.invalidGroupAndRole"));
 			}
 			if (this.hasFieldErrors()) {
 				return INPUT;
@@ -133,6 +137,7 @@ public class UserAuthorizationAction extends BaseAction {
 			this.getAuthorizationManager().updateUserAuthorizations(username, authsBean.getAuthorizations());
 			this.getRequest().getSession().removeAttribute(CURRENT_FORM_USER_AUTHS_PARAM_NAME);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			_logger.error("error in save", t);
 			return FAILURE;
 		}

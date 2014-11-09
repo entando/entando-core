@@ -99,6 +99,14 @@ public class TestUserAuthorizationAction extends ApsAdminBaseTestCase {
 			action = (UserAuthorizationAction) this.getAction();
 			authbean = action.getUserAuthsFormBean();
 			assertEquals(4, authbean.getAuthorizations().size());
+			
+			// New Authorization with NULL Group
+			result = this.executeAddAuthorization("admin", TEST_USER_NAME, null, "pageManager");
+			assertEquals(Action.SUCCESS, result);
+			action = (UserAuthorizationAction) this.getAction();
+			authbean = action.getUserAuthsFormBean();
+			assertEquals(5, authbean.getAuthorizations().size());
+			
 		} catch (Throwable t) {
 			throw t;
 		}
@@ -114,12 +122,13 @@ public class TestUserAuthorizationAction extends ApsAdminBaseTestCase {
 			
 			this.executeEdit("admin", TEST_USER_NAME);
 			
-			// New Authorization with NULL Group
-			result = this.executeAddAuthorization("admin", TEST_USER_NAME, null, "pageManager");
+			// New Authorization with NULL Group and Role
+			result = this.executeAddAuthorization("admin", TEST_USER_NAME, null, null);
 			assertEquals(Action.INPUT, result);
 			action = (UserAuthorizationAction) this.getAction();
-			assertEquals(1, action.getFieldErrors().size());
+			assertEquals(2, action.getFieldErrors().size());
 			assertNotNull(action.getFieldErrors().get("groupName"));
+			assertNotNull(action.getFieldErrors().get("roleName"));
 			authbean = action.getUserAuthsFormBean();
 			assertEquals(2, authbean.getAuthorizations().size());
 			
@@ -193,7 +202,7 @@ public class TestUserAuthorizationAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
-	public void testSave() throws Throwable {
+	public void testSave_1() throws Throwable {
 		List<Authorization> authorizations = this._authorizationManager.getUserAuthorizations(TEST_USER_NAME);
 		assertEquals(2, authorizations.size());
 		try {
@@ -206,6 +215,32 @@ public class TestUserAuthorizationAction extends ApsAdminBaseTestCase {
 			assertEquals(Action.SUCCESS, result);
 			authorizations = this._authorizationManager.getUserAuthorizations(TEST_USER_NAME);
 			assertEquals(4, authorizations.size());
+		} catch(Throwable t) {
+			throw t;
+		}
+	}
+	
+	public void testSave_2() throws Throwable {
+		List<Authorization> authorizations = this._authorizationManager.getUserAuthorizations(TEST_USER_NAME);
+		assertEquals(2, authorizations.size());
+		try {
+			this.executeEdit("admin", TEST_USER_NAME);
+			String result = this.executeAddAuthorization("admin", TEST_USER_NAME, null, TEST_ROLE_NAME);
+			assertEquals(Action.SUCCESS, result);
+			result = this.executeAddAuthorization("admin", TEST_USER_NAME, null, TEST_ROLE_NAME);
+			assertEquals(Action.INPUT, result);
+			result = this.executeAddAuthorization("admin", TEST_USER_NAME, TEST_GROUP_NAME, null);
+			assertEquals(Action.SUCCESS, result);
+			result = this.executeAddAuthorization("admin", TEST_USER_NAME, TEST_GROUP_NAME, null);
+			assertEquals(Action.INPUT, result);
+			result = this.executeAddAuthorization("admin", TEST_USER_NAME, TEST_GROUP_NAME, TEST_ROLE_NAME);
+			assertEquals(Action.SUCCESS, result);
+			result = this.executeAddAuthorization("admin", TEST_USER_NAME, TEST_GROUP_NAME, TEST_ROLE_NAME);
+			assertEquals(Action.INPUT, result);
+			result = this.executeSave("admin", TEST_USER_NAME);
+			assertEquals(Action.SUCCESS, result);
+			authorizations = this._authorizationManager.getUserAuthorizations(TEST_USER_NAME);
+			assertEquals(5, authorizations.size());
 		} catch(Throwable t) {
 			throw t;
 		}

@@ -131,7 +131,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</a>
-					<a class="navbar-brand" href="<s:url action="main" namespace="/do" />"><img src="<wp:resourceURL />administration/img/entando-logo-symbol-70x42.png" alt="Entando - Simplifying Enterprise Portals" width="70" height="42" /></a>
+					<a class="navbar-brand" href="<s:url action="main" namespace="/do" />"><img src="<wp:resourceURL />administration/img/entando-logo-symbol-70x42.png" alt="Entando - Simplifying Enterprise Portals" widthh="120" height="42" /></a>
 				</div>
 			</div>
 			<tiles:insertAttribute name="body"/>

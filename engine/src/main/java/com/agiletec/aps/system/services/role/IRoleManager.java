@@ -95,14 +95,8 @@ public interface IRoleManager {
 	 * @throws ApsSystemException in caso di errore.
 	 */
 	public void addPermission(Permission permission) throws ApsSystemException;
-
-	/**
-	 * Restituisce il numero di utenti che utilizzano il ruolo immesso.
-	 * @param role Il ruolo di cui trovate il numero di utenti che lo utilizzano.
-	 * @return Il numero di utenti che utilizzano quel ruolo.
-	 * @throws ApsSystemException in caso di errore.
-	 */
-	public int getRoleUses(Role role) throws ApsSystemException;
+	
+	//public int getRoleUses(Role role) throws ApsSystemException;
 
 	/**
 	 * Restituisce la lista di ruoli comprendente il permesso specificato.

@@ -57,7 +57,6 @@ public class UserAction extends BaseAction {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error validating user", t);
-				//ApsSystemUtils.logThrowable(t, this, "validate", "Error validating user ");
 			}
 		}
 	}
@@ -75,7 +74,6 @@ public class UserAction extends BaseAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error checking duplicate user '{}'", username, t);
-			//ApsSystemUtils.logThrowable(t, this, "checkDuplicatedUser", "Error checking duplicate user '" + username + "'");
 		}
 	}
 	
@@ -99,7 +97,6 @@ public class UserAction extends BaseAction {
 			this.setUser(user);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
-			//ApsSystemUtils.logThrowable(t, this, "edit");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -135,7 +132,6 @@ public class UserAction extends BaseAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -154,7 +150,6 @@ public class UserAction extends BaseAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error adding default profile for user {}", username, t);
-			//ApsSystemUtils.logThrowable(t, this, "checkUserProfile");
 			throw new ApsSystemException("Error adding default profile for user " + username, t);
 		}
 	}
@@ -165,7 +160,6 @@ public class UserAction extends BaseAction {
 			if (null != result) return result;
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
-			//ApsSystemUtils.logThrowable(t, this, "trash");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -178,7 +172,6 @@ public class UserAction extends BaseAction {
 			this.getUserManager().removeUser(this.getUsername());
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "delete");
 			return FAILURE;
 		}
 		return SUCCESS;

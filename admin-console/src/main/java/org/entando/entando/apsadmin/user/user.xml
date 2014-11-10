@@ -7,14 +7,6 @@
 	
     <package name="core_do/User" namespace="/do/User" extends="entando-default">
 		
-    	<action name="intro" class="userAction">
-            <result type="tiles">admin.User.intro</result>
-        	<interceptor-ref name="entandoDefaultStack">
-				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
-				<param name="requestAuth.ORClause">true</param>
-			</interceptor-ref>
-        </action>
-    	
     	<!-- ######### INIZIO OPERAZIONI IN INTERFACCIA LISTA UTENTI ######### -->
     	
 		<action name="list" class="userFinderAction" method="list">
@@ -42,22 +34,7 @@
 			</interceptor-ref>
 		</action>
         
-		<!--
-    	<action name="list" class="userFinderAction">
-            <result type="tiles">admin.User.list</result>
-        	<interceptor-ref name="entandoDefaultStack">
-        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
-        		<param name="requestAuth.requiredPermission">superuser</param>
-        	</interceptor-ref>
-        </action>
-        
-        <action name="search" class="userFinderAction">
-            <result type="tiles">admin.User.list</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
-        </action>
-        -->
         <!-- ######### FINE OPERAZIONI IN INTERFACCIA LISTA UTENTI ######### -->
-    	
     	
     	<!-- ######### INIZIO OPERAZIONI DI AGGIUNTA/MODIFICA UTENTE ######### -->
     	
@@ -94,66 +71,40 @@
     	
     </package>
     
-    <package name="core_do/User/Auth" namespace="/do/User/Auth" extends="entando-default">
+	<package name="core_do/User/Authorization" namespace="/do/User/Authorization" extends="entando-default">
     	
-    	<action name="edit" class="userToAuthoritiesAction" method="edit">
-            <result name="userList" type="chain">
-            	<param name="namespace">/do/User</param>
-    			<param name="actionName">list</param>
-            </result>
-        	<result type="tiles">admin.UserAuth.entry</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
-        </action>
+		<global-results>
+			<result name="userList" type="chain">
+				<param name="namespace">/do/User</param>
+				<param name="actionName">list</param>
+			</result>
+		</global-results>
     	
-    	<action name="backToEditAuth" class="userToAuthoritiesAction">
-            <result type="tiles">admin.UserAuth.entry</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
-        </action>
+		<action name="edit" class="userAuthorizationAction" method="edit">
+			<result type="tiles">admin.UserAuthorization.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
+		</action>
     	
-    	<action name="addGroup" class="userToAuthoritiesAction" method="addGroup">
-    		<result type="redirectActionWithAnchor">
-        		<param name="actionName">backToEditAuth</param>
-        		<param name="anchorDest">${section}</param>
-        	</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
-        </action>
+		<action name="addAuthorization" class="userAuthorizationAction" method="addAuthorization">
+			<result name="input" type="tiles">admin.UserAuthorization.entry</result>
+			<result type="tiles">admin.UserAuthorization.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
+		</action>
         
-    	<action name="removeGroup*" class="userToAuthoritiesAction" method="removeGroup">
-            <result type="redirectActionWithAnchor">
-        		<param name="actionName">backToEditAuth</param>
-        		<param name="anchorDest">${section}</param>
-        	</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
-        </action>
+		<action name="removeAuthorization*" class="userAuthorizationAction" method="removeAuthorization">
+			<result name="input" type="tiles">admin.UserAuthorization.entry</result>
+			<result type="tiles">admin.UserAuthorization.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
+		</action>
         
-    	<action name="addRole" class="userToAuthoritiesAction" method="addRole">
-            <result type="redirectActionWithAnchor">
-        		<param name="actionName">backToEditAuth</param>
-        		<param name="anchorDest">${section}</param>
-        	</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
-        </action>
-        
-    	<action name="removeRole*" class="userToAuthoritiesAction" method="removeRole">
-            <result type="redirectActionWithAnchor">
-        		<param name="actionName">backToEditAuth</param>
-        		<param name="anchorDest">${section}</param>
-        	</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
-        </action>
-        
-    	<action name="save" class="userToAuthoritiesAction" method="save">
-        	<result name="userList" type="chain">
-            	<param name="namespace">/do/User</param>
-    			<param name="actionName">list</param>
-            </result>
-        	<result type="redirectAction">
-            	<param name="namespace">/do/User</param>
-    			<param name="actionName">list</param>
-            </result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
-        </action>
+		<action name="save" class="userAuthorizationAction" method="save">
+			<result type="redirectAction">
+				<param name="namespace">/do/User</param>
+				<param name="actionName">list</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
+		</action>
     	
-    </package>
+	</package>
     
 </struts>

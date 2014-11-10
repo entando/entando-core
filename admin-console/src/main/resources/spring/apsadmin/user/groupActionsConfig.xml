@@ -18,10 +18,7 @@
 			class="com.agiletec.apsadmin.user.group.GroupAction" parent="abstractBaseAction" >
 		<property name="helper" ref="groupActionHelper" />
 		<property name="groupManager" ref="GroupManager" />
-	</bean>
-	
-	<bean id="groupToUsersAction" scope="prototype" parent="abstractAuthorityToUsersAction" >
-		<property name="authorizatorManager" ref="GroupManager" />
+		<property name="userManager" ref="UserManager" />
 	</bean>
 	
 </beans>

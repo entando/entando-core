@@ -6,30 +6,7 @@
 <struts>
     
     <package name="core_do/userprofile" namespace="/do/userprofile" extends="entando-default">
-        <!--
-		<action name="list" class="UserFinderAction">
-			<result type="tiles">admin.User.list</result>
-			<interceptor-ref name="entandoDefaultStack">
-				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
-				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
-				<param name="requestAuth.ORClause">true</param>
-			</interceptor-ref>
-		</action>
-		<action name="search" class="UserFinderAction">
-			<result type="tiles">admin.User.list</result>
-			<interceptor-ref name="entandoDefaultStack">
-				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
-				<param name="requestAuth.ORClause">true</param>
-			</interceptor-ref>
-		</action>
-		<action name="changeProfileType" class="UserFinderAction" >
-			<result type="tiles">admin.User.list</result>
-			<interceptor-ref name="entandoDefaultStack">
-				<param name="requestAuth.requiredPermissions">viewUsers,editUsers,editUserProfile</param>
-				<param name="requestAuth.ORClause">true</param>
-			</interceptor-ref>
-		</action>
-        -->
+        
         <action name="view" class="userProfileAction" method="view">
             <result type="tiles">admin.UserProfile.view</result>
             <result name="input" type="chain">

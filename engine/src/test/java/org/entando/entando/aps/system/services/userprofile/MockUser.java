@@ -17,16 +17,20 @@
 */
 package org.entando.entando.aps.system.services.userprofile;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.User;
 
 public class MockUser extends User {
 	
+	public void addAuthorization(Group group, Role role) {
+		if (null == group) return;
+		Authorization auth = new Authorization(group, role);
+		super.addAuthorization(auth);
+	}
+	
+	/*
 	public Set<Group> getGroups() {
 		return _groups;
 	}
@@ -65,5 +69,5 @@ public class MockUser extends User {
 	
 	private Set<Group> _groups = new HashSet<Group>();
     private Set<Role> _roles = new HashSet<Role>();
-	
+	*/
 }

@@ -61,7 +61,6 @@ public abstract class AbstractContentAction extends BaseAction {
 			contentVo = this.getContentManager().loadContentVO(contentId);
 		} catch (Throwable t) {
 			_logger.error("error loading contentVo {}",contentId, t);
-			//ApsSystemUtils.logThrowable(t, this, "getContentVo");
 			throw new RuntimeException("error loading contentVo", t);
 		}
 		return contentVo;
@@ -200,7 +199,7 @@ public abstract class AbstractContentAction extends BaseAction {
 	 * Restituisce la mappa dei gruppi presenti nel sistema. 
 	 * La mappa è indicizzata in base al nome del gruppo.
 	 * @return La mappa dei gruppi presenti nel sistema.
-	 * @deprecated
+	 * @deprecated 
 	 */
 	public Map<String, Group> getGroupsMap() {
 		return this.getGroupManager().getGroupsMap();
@@ -226,7 +225,7 @@ public abstract class AbstractContentAction extends BaseAction {
 	}
 	
 	public List<Group> getAllowedGroups() {
-		return this.getContentActionHelper().getAllowedGroups(this.getCurrentUser());
+		return super.getActualAllowedGroups();
 	}
 	
 	/**

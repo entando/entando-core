@@ -25,16 +25,15 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
-import com.agiletec.aps.system.services.authorization.authorizator.IApsAuthorityManager;
+import com.agiletec.aps.system.services.authorization.Authorization;
+import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del sistema.
  * L'Authentication Provider è l'oggetto delegato alla restituzione di un'utenza 
  * (comprensiva delle sue autorizzazioni) in occasione di una richiesta di autenticazione utente; 
  * questo oggetto non ha visibilità ai singoli sistemi (concreti) delegati alla gestione 
- * delle autorizzazioni, ma possiede una referenza alla lista (astratta) di "Authorizators" 
- * e al Gestore Utenti (per il recupero dell'utenza base).
+ * delle autorizzazioni.
  * @author E.Santoboni
  */
 public class AuthenticationProviderManager extends AbstractService 
@@ -42,14 +41,17 @@ public class AuthenticationProviderManager extends AbstractService
 
 	private static final Logger _logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
 	
+	@Override
     public void init() throws Exception {
         _logger.debug("{} ready", this.getClass().getName() );
     }
     
+	@Override
     public UserDetails getUser(String username) throws ApsSystemException {
         return this.extractUser(username, null);
     }
     
+	@Override
     public UserDetails getUser(String username, String password) throws ApsSystemException {
         return this.extractUser(username, password);
     }
@@ -62,7 +64,7 @@ public class AuthenticationProviderManager extends AbstractService
             } else {
                 user = this.getUserManager().getUser(username, password);
             }
-            if (null == user || (null != user && user.isDisabled())) {
+            if (null == user || user.isDisabled()) {
                 return null;
             }
             if (!user.getUsername().equals(SystemConstants.ADMIN_USER_NAME)) {
@@ -87,35 +89,31 @@ public class AuthenticationProviderManager extends AbstractService
         if (null == user) {
             return;
         }
-        //setta autorizzazioni "interne"
-        for (int i = 0; i < this.getAuthorizators().size(); i++) {
-            IApsAuthorityManager authorizator = this.getAuthorizators().get(i);
-            List<IApsAuthority> auths = authorizator.getAuthorizationsByUser(user);
-            user.addAutorities(auths);
-            /*
-            Nel caso che le autorizzazioni vengano settate all'esterno dell'applicazione, 
-            bisogna prevedere un elemento di aggancio alle autorizzazioni remote.
-            L'oggetto non può essere in questo caso generalizzabile, in quanto presuppone l'interazione diretta con il sistema esterno e 
-            con la logica di assegnazione delle autorizzazioni che man mano vengono stabilite caso per caso nel sistema centrale.
-             */
-        }
+		List<Authorization> auths = this.getAuthorizationManager().getUserAuthorizations(user.getUsername());
+		if (null == auths) {
+			return;
+		}
+		for (int i = 0; i < auths.size(); i++) {
+			Authorization authorization = auths.get(i);
+			user.addAuthorization(authorization);
+		}
     }
-
+	
     protected IUserManager getUserManager() {
         return _userManager;
     }
     public void setUserManager(IUserManager userManager) {
         this._userManager = userManager;
     }
-
-    protected List<IApsAuthorityManager> getAuthorizators() {
-        return _authorizators;
-    }
-    public void setAuthorizators(List<IApsAuthorityManager> authorizators) {
-        this._authorizators = authorizators;
-    }
-    
-    private List<IApsAuthorityManager> _authorizators;
+	
+	protected IAuthorizationManager getAuthorizationManager() {
+		return _authorizationManager;
+	}
+	public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
+		this._authorizationManager = authorizationManager;
+	}
+	
     private IUserManager _userManager;
+	private IAuthorizationManager _authorizationManager;
     
 }

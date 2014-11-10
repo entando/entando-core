@@ -19,13 +19,11 @@ package com.agiletec.aps.system.services.role;
 
 import java.util.Map;
 
-import com.agiletec.aps.system.services.authorization.authorizator.IApsAuthorityDAO;
-
 /**
  * Interfaccia base per i Data Access Object degli oggetti ruolo (Role).
  * @author E.Santoboni
  */
-public interface IRoleDAO extends IApsAuthorityDAO {
+public interface IRoleDAO /*extends IApsAuthorityDAO*/ {
 
 	/**
 	 * Carica da db una mappa completa di tutti i ruoli. Nella mappa, la chiave 
@@ -52,12 +50,7 @@ public interface IRoleDAO extends IApsAuthorityDAO {
 	 * @param role Il ruolo (oggetto Role) da aggiornare nel db.
 	 */
 	public void updateRole(Role role);
-
-	/**
-	 * Restituisce il numero di utenti che utilizzano il ruolo immesso.
-	 * @param role Il ruolo di cui trovate il numero di utenti che lo utilizzano.
-	 * @return Il numero di utenti che utilizzano quel ruolo.
-	 */
-	public int getRoleUses(Role role);
-
+	
+	//public int getRoleUses(Role role);
+	
 }

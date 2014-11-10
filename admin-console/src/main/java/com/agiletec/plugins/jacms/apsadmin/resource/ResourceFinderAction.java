@@ -17,6 +17,10 @@
 */
 package com.agiletec.plugins.jacms.apsadmin.resource;
 
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImageDimensionReader;
+import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
+
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,12 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImageDimensionReader;
-import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
 
 /**
  * Classe Action delegata alla gestione delle operazioni di ricerca risorse.
@@ -41,16 +42,31 @@ public class ResourceFinderAction extends AbstractResourceAction implements IRes
 	
 	@Override
     public List<String> getResources() throws Throwable {
-        List<String> resources = null;
+        List<String> resourceIds = null;
         try {
-            resources = this.getResourceActionHelper().searchResources(this.getResourceTypeCode(),
-                    this.getText(), this.getOwnerGroupName(), this.getFileName(), this.getCategoryCode(), this.getCurrentUser());
-        } catch (Throwable t) {
+			List<String> codesForSearch = this.getGroupCodesForSearch();
+			resourceIds = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(), 
+					this.getText(), this.getFileName(), this.getCategoryCode(), codesForSearch);
+		} catch (Throwable t) {
         	_logger.error("error in getResources", t);
             throw t;
         }
-        return resources;
+        return resourceIds;
     }
+	
+	protected List<String> getGroupCodesForSearch() {
+		List<String> groupCodes = super.getActualAllowedGroupCodes();
+		String ownerGroup = this.getOwnerGroupName();
+		List<String> codesForSearch = new ArrayList<String>();
+		if (StringUtils.isEmpty(ownerGroup)) {
+			codesForSearch.addAll(groupCodes);
+		} else {
+			if (groupCodes.contains(ownerGroup)) {
+				codesForSearch.add(ownerGroup);
+			}
+		}
+		return codesForSearch;
+	}
     
     public String getIconFile(String filename) {
 		String extension = this.getFileExtension(filename);

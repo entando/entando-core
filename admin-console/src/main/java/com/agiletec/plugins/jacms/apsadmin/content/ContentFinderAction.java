@@ -56,7 +56,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			this.createFilters();
 		} catch (Throwable t) {
 			_logger.error("error in execute", t);
-			//ApsSystemUtils.logThrowable(t, this, "execute");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -75,7 +74,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			result = this.getContentManager().loadWorkContentsId(categories, this.getFilters(), allowedGroups);
 		} catch (Throwable t) {
 			_logger.error("error in getContents", t);
-			//ApsSystemUtils.logThrowable(t, this, "getContents");
 			throw new RuntimeException("error in getContents", t);
 		}
 		return result;
@@ -87,14 +85,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 	 * @return La lista di gruppi cercata.
 	 */
 	protected List<String> getContentGroupCodes() {
-		List<String> allowedGroups = new ArrayList<String>();
-		List<Group> userGroups = this.getContentActionHelper().getAllowedGroups(this.getCurrentUser());
-		Iterator<Group> iter = userGroups.iterator();
-    	while (iter.hasNext()) {
-    		Group group = iter.next();
-    		allowedGroups.add(group.getName());
-    	}
-    	return allowedGroups;
+		return super.getActualAllowedGroupCodes();
 	}
 	
 	/**
@@ -142,7 +133,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			this.setLastGroupBy(this.getGroupBy());
 		} catch (Throwable t) {
 			_logger.error("error in changeOrder", t);
-			//ApsSystemUtils.logThrowable(t, this, "changeOrder");
 			throw new RuntimeException("error in changeOrder", t);
 		}
 		return this.execute();
@@ -185,7 +175,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			this.addConfirmMessage("message.content.publishedContents", publishedContents);
 		} catch (Throwable t) {
 			_logger.error("error in insertOnLine", t);
-			//ApsSystemUtils.logThrowable(t, this, "insertOnLine");
 			throw new RuntimeException("Error publishing contents", t);
 		}
 		return SUCCESS;
@@ -228,7 +217,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			this.addConfirmMessage("message.content.suspendedContents", removedContents);
 		} catch (Throwable t) {
 			_logger.error("Error on suspending contents", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeOnLine");
 			throw new RuntimeException("Error on suspending contents", t);
 		}
 		return SUCCESS;
@@ -268,7 +256,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			}
 		} catch (Throwable t) {
 			_logger.error("Error on deleting contents - trash", t);
-			//ApsSystemUtils.logThrowable(t, this, "trash");
 			throw new RuntimeException("Error on deleting contents", t);
 		}
 		if (this.getActionErrors().isEmpty()) return SUCCESS;
@@ -311,7 +298,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			this.addConfirmMessage("message.content.deletedContents", deletedContents);
 		} catch (Throwable t) {
 			_logger.error("Error deleting contentd - delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "delete");
 			throw new RuntimeException("Errore in cancellazione contenuti", t);
 		}
 		return SUCCESS;
@@ -345,7 +331,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			contentVo = this.getContentManager().loadContentVO(contentId);
 		} catch (Throwable t) {
 			_logger.error("error in getContentVo for content {}", contentId, t);
-			//ApsSystemUtils.logThrowable(t, this, "getContentVo");
 			throw new RuntimeException("Errore in caricamento contenuto vo", t);
 		}
 		return contentVo;
@@ -390,7 +375,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 	}
 	
 	public List<Group> getAllowedGroups() {
-		return this.getContentActionHelper().getAllowedGroups(this.getCurrentUser());
+		return super.getActualAllowedGroups();
 	}
 	
 	/**

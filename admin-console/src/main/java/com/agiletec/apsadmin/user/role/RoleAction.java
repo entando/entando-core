@@ -30,14 +30,13 @@ import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-import com.agiletec.apsadmin.system.BaseAction;
+import com.agiletec.apsadmin.user.AbstractAuthorityAction;
 
 /**
  * Classe action della gestione Ruoli.
- * @version 1.0
  * @author E.Mezzano - E.Santoboni
  */
-public class RoleAction extends BaseAction implements IRoleAction {
+public class RoleAction extends AbstractAuthorityAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RoleAction.class);
 	
@@ -62,13 +61,11 @@ public class RoleAction extends BaseAction implements IRoleAction {
 		}
 	}
 	
-	@Override
 	public String newRole() {
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);
 		return SUCCESS;
 	}
 	
-	@Override
 	public String edit() {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		try {
@@ -81,13 +78,11 @@ public class RoleAction extends BaseAction implements IRoleAction {
 			this.setPermissionNames(role.getPermissions());
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
-			//ApsSystemUtils.logThrowable(t, this, "edit");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String save() {
 		try {
 			Role role = this.createRole();
@@ -98,13 +93,11 @@ public class RoleAction extends BaseAction implements IRoleAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String view() {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		try {
@@ -117,38 +110,31 @@ public class RoleAction extends BaseAction implements IRoleAction {
 			this.setPermissionNames(role.getPermissions());
 		} catch (Throwable t) {
 			_logger.error("error in view", t);
-			//ApsSystemUtils.logThrowable(t, this, "view");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String trash() {
 		try {
-			if (!this.checkRoleForDelete()) {
-				return "roleList";
-			}
+			String result = this.checkRoleForDelete();
+			if (null != result) return result;
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
-			//ApsSystemUtils.logThrowable(t, this, "trash");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String delete() {
 		try {
-			if (!this.checkRoleForDelete()) {
-				return "roleList";
-			}
+			String result = this.checkRoleForDelete();
+			if (null != result) return result;
 			IRoleManager roleManager = this.getRoleManager();
 			Role role = roleManager.getRole(this.getName());
 			roleManager.removeRole(role);
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "delete");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -174,25 +160,27 @@ public class RoleAction extends BaseAction implements IRoleAction {
 	protected boolean isRoleInUse() throws ApsSystemException {
 		IRoleManager roleManager = this.getRoleManager();
 		Role role = roleManager.getRole(this.getName());
-		boolean roleInUse = roleManager.getRoleUses(role)>0;
-		return roleInUse;
+		List<String> usernames = super.getAuthorizationManager().getUsersByRole(role, false);
+		this.setReferences(usernames);
+		return (null != usernames && !usernames.isEmpty());
 	}
 	
 	/**
-	 * Esegue i controlli necessari per la cancellazione di un ruolo. Imposta gli opportuni messaggi di errore come actionMessages.
+	 * Esegue i controlli necessari per la cancellazione di un ruolo. 
+	 * Imposta gli opportuni messaggi di errore come actionMessages.
 	 * Restituisce l'esito del controllo.
-	 * @return true in caso di cancellazione consentita, false in caso contrario.
+	 * @return il codice del risultato.
 	 * @throws ApsSystemException In caso di errore.
 	 */
-	protected boolean checkRoleForDelete() throws ApsSystemException {
+	protected String checkRoleForDelete() throws ApsSystemException {
 		if (!this.existsRole()) {
 			this.addActionError(this.getText("error.role.notExist"));
-			return false;
+			return "roleList";
 		} else if (this.isRoleInUse()) {
 			this.addActionError(this.getText("error.role.used"));
-			return false;
+			return "references";
 		}
-		return true;
+		return null;
 	}
 	
 	/**
@@ -254,6 +242,13 @@ public class RoleAction extends BaseAction implements IRoleAction {
 		return this.getRoleManager().getPermissions();
 	}
 	
+	public List<String> getReferences() {
+		return _references;
+	}
+	protected void setReferences(List<String> references) {
+		this._references = references;
+	}
+	
 	protected IRoleManager getRoleManager() {
 		return _roleManager;
 	}
@@ -265,6 +260,8 @@ public class RoleAction extends BaseAction implements IRoleAction {
 	private String _name;
 	private String _description;
 	private Set<String> _permissionNames;
+	
+	private List<String> _references;
 	
 	private IRoleManager _roleManager;
 	

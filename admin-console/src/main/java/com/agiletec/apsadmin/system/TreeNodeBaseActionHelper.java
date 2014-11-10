@@ -99,7 +99,6 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 			}
 		} catch (Throwable t) {
 			_logger.error("Error check target nodes", t);
-			//ApsSystemUtils.logThrowable(t, this, "checkTargetNodes");
 			throw new ApsSystemException("Error check target nodes", t);
 		}
 		return checkedTargetNodes;
@@ -126,14 +125,12 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 					}
 				}
 			}
-			if (null != nodeToClose 
-					&& null != nodeToClose.getParent() 
+			if (null != nodeToClose.getParent() 
 					&& this.checkNode(nodeToClose.getParent().getCode(), groupCodes)) {
 				checkedTargetNodes.add(nodeToClose.getParent().getCode());
 			}
 		} catch (Throwable t) {
 			_logger.error("Error check target nodes on closing tree", t);
-			//ApsSystemUtils.logThrowable(t, this, "checkTargetNodesOnClosing");
 			throw new ApsSystemException("Error check target nodes on closing tree", t);
 		}
 		return checkedTargetNodes;
@@ -166,9 +163,8 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 			root.setParent(root);
 			this.builShowableTree(root, null, fullTree, checkNodes);
 		} catch (Throwable t) {
-			_logger.error("Error creating showalble tree", t);
-			//ApsSystemUtils.logThrowable(t, this, "getShowableTree");
-			throw new ApsSystemException("Error creating showalble tree", t);
+			_logger.error("Error creating showable tree", t);
+			throw new ApsSystemException("Error creating showable tree", t);
 		}
 		return root;
 	}
@@ -213,6 +209,9 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	/**
 	 * Default implementation of the method.
 	 * Build a root node cloning the returned tree from the helper.
+	 * @param groupCodes the groups codes
+	 * @return the root node
+	 * @throws ApsSystemException in caso of error
 	 */
 	@Override
 	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes) throws ApsSystemException {

@@ -41,9 +41,10 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @author E.Santoboni
  */
 public abstract class BaseInterceptorMadMax extends AbstractInterceptor {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(BaseInterceptorMadMax.class);
 	
+	@Override
     public String intercept(ActionInvocation invocation) throws Exception {
         boolean isAuthorized = false;
         try {
@@ -67,24 +68,23 @@ public abstract class BaseInterceptorMadMax extends AbstractInterceptor {
             }
         } catch (Throwable t) {
         	_logger.error("Error occurred verifying authority of current user", t);
-            //ApsSystemUtils.logThrowable(t, this, "intercept", "Error occurred verifying authority of current user");
             return BaseAction.FAILURE;
         }
         return this.getErrorResultName();
     }
     
-    private Set<String> extractAllRequiredPermissions() {
-        Set<String> authorizations = new HashSet<String>();
+    protected Set<String> extractAllRequiredPermissions() {
+        Set<String> requiredPermissions = new HashSet<String>();
         if (null != this.getRequiredPermission()) {
-            authorizations.add(this.getRequiredPermission().trim());
+            requiredPermissions.add(this.getRequiredPermission().trim());
         }
         if (null != this.getRequiredPermissions()) {
             String[] permissions = this.getRequiredPermissions().split(",");
             for (int i = 0; i < permissions.length; i++) {
-                authorizations.add(permissions[i].trim());
+                requiredPermissions.add(permissions[i].trim());
             }
         }
-        return authorizations;
+        return requiredPermissions;
     }
     
     private boolean checkAuthorizations(UserDetails currentUser, Set<String> authorizations, IAuthorizationManager authManager) {
@@ -115,11 +115,12 @@ public abstract class BaseInterceptorMadMax extends AbstractInterceptor {
     
     /**
      * Invokes the next step in processing this ActionInvocation. 
-     * @see com.opensymphony.xwork2.ActionInvocation#invoke()
+	 * @param invocation the execution state of the Action
      * @return The code of the execution result.
+	 * @throws Exception in case of error
      */
     protected String invoke(ActionInvocation invocation) throws Exception {
         return invocation.invoke();
     }
-    
+	
 }

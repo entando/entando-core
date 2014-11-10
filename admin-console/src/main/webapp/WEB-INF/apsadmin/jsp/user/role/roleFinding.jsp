@@ -13,9 +13,9 @@
 		<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
 		<h2 class="h4 margin-none"><s:text name="messages.title.ActionErrors" /></h2>
 		<ul class="margin-base-top">
-				<s:iterator value="actionErrors">
-					<li><s:property escape="false" /></li>
-				</s:iterator>
+			<s:iterator value="actionErrors">
+				<li><s:property escape="false" /></li>
+			</s:iterator>
 		</ul>
 	</div>
 </s:if>
@@ -44,13 +44,6 @@
 							href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
 								<span class="icon fa fa-pencil-square-o"></span>
 								<span class="sr-only"><s:text name="label.edit" />:&#32;<s:property value="#role.name" /></span>
-						</a>
-						<a 
-							class="btn btn-default" 
-							title="<s:text name="note.assignToUsers" />:&#32;<s:property value="#role.name" />" 
-							href="<s:url namespace="/do/Role/Auth" action="config"><s:param name="authName" value="#role.name"/></s:url>">
-								<span class="icon fa fa-users"></span>
-								<span class="sr-only"><s:text name="note.assignToUsers" />:&#32;<s:property value="#role.name" /></span>
 						</a>
 					</div>
 					<div class="btn-group btn-group-xs">

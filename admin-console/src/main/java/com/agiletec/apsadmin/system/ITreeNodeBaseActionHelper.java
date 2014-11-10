@@ -22,7 +22,6 @@ import java.util.Set;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.user.UserDetails;
 
 /**
  * Interfaccia base delle classi helper che gestiscono le operazioni su oggetti alberi.
@@ -43,15 +42,6 @@ public interface ITreeNodeBaseActionHelper {
 	 * @throws ApsSystemException In caso di errore.
 	 */
 	public String buildCode(String title, String baseDefaultCode, int maxLength) throws ApsSystemException;
-	
-	/**
-	 * Restituisce il nodo root dell'albero abilitato all'utente specificato.
-	 * @param user L'utente da cui ricavare il l'albero autorizzato.
-	 * @return Il nodo root dell'albero autorizzato.
-	 * @throws ApsSystemException In caso di errore.
-	 * @deprecated from jAPS 2.0 version jAPS 2.1
-	 */
-	public ITreeNode getAllowedTreeRoot(UserDetails user) throws ApsSystemException;
 	
 	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes) throws ApsSystemException;
 	
@@ -76,7 +66,7 @@ public interface ITreeNodeBaseActionHelper {
 	
 	/**
 	 * Return the root node of the showable tree.
-	 * @param targetNodes The tree nodes to open
+	 * @param treeNodesToOpen The tree nodes to open
 	 * @param fullTree The root node of full tree.
 	 * @param groupCodes The groups with whom check permissions.
 	 * @return The root node to use to build the showble tree.

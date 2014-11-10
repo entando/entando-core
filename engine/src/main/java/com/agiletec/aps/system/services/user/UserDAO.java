@@ -70,7 +70,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading the usernames list",  t);
 			throw new RuntimeException("Error loading the usernames list", t);
-			//processDaoException(t, "Error loading the usernames list", "loadUsernames");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -104,7 +103,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		} catch (Throwable t) {
 			_logger.error("Error while searching users  by '{}' ", text, t);
 			throw new RuntimeException("Error while searching users", t);
-			//processDaoException(t, "Error while searching users", "searchUsers");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -152,7 +150,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		} catch (Throwable t) {
 			_logger.error("Error while loading the user {} ", username, t);
 			throw new RuntimeException("Error while loading the user " + username, t);
-			//processDaoException(t, "Error while loading the user " + username, "loadUser");
 		}
 		return user;
 	}
@@ -172,7 +169,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		} catch (Throwable t) {
 			_logger.error("Error while loading the user '{}'", username, t);
 			throw new RuntimeException("Error while loading the user " + username, t);
-			//processDaoException(t, "Error while loading the user " + username, "executeLoadingUser");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -201,7 +197,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		} catch (Throwable t) {
 			_logger.error("Error while loading the user {}", username, t);
 			throw new RuntimeException("Error while loading the user " + username, t);
-			//processDaoException(t, "Error while loading the user " + username, "loadUser");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -228,8 +223,8 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.removeUserGroups(username, conn);
-			this.removeUserRoles(username, conn);
+			//this.removeUserGroups(username, conn);
+			//this.removeUserRoles(username, conn);
 			stat = conn.prepareStatement(DELETE_USER);
 			stat.setString(1, username);
 			stat.executeUpdate();
@@ -238,7 +233,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			this.executeRollback(conn);
 			_logger.error("Error while deleting the user {}", username, t);
 			throw new RuntimeException("Error while deleting the user " + username, t);
-			//processDaoException(t, "Error deleting a user", "deleteUser");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -271,7 +265,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			this.executeRollback(conn);
 			_logger.error("Error while adding a new user {}", user, t);
 			throw new RuntimeException("Error while adding a new user", t);
-			//processDaoException(t, "Error adding a new user", "addUser");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -318,7 +311,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			this.executeRollback(conn);
 			_logger.error("Error while updating the user {}", user.getUsername(), t);
 			throw new RuntimeException("Error while adding a new user", t);
-			//processDaoException(t, "Error while updating the user " + user.getUsername(), "updateUser");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -362,7 +354,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			//processDaoException(t, "Error updating the last access for the user " + username, "updateLastAccess");
 			_logger.error("Error updating the last access for the user {}", username, t);
 			throw new RuntimeException("Error updating the last access for the user " + username, t);
 			
@@ -370,7 +361,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-
+	/*
 	private void removeUserRoles(String username, Connection conn) {
 		PreparedStatement stat = null;
 		try {
@@ -385,7 +376,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			closeDaoResources(null, stat);
 		}
 	}
-
+	*/
 	/**
 	 * Crea un utente leggendo i valori dal record corrente del ResultSet passato.
 	 * Attenzione: la query di origine del ResultSet deve avere nella select list i
@@ -409,7 +400,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		}
 		return user;
 	}
-
+	/*
 	private void removeUserGroups(String username, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
@@ -417,7 +408,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			stat.setString(1, username);
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			//processDaoException(t, "Error deleting the association between the user and his groups", "removeUserGroups");
 			_logger.error("Error deleting the association between the user and his groups for the user {}", username, t);
 			throw new RuntimeException("Error deleting the association between the user and his groups for the user " + username, t);
 			
@@ -425,7 +415,8 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			closeDaoResources(null, stat);
 		}
 	}
-
+	*/
+	/*
 	@Override
 	public List<String> loadUsernamesForGroup(String groupName) {
 		Connection conn = null;
@@ -441,7 +432,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 				usernames.add(res.getString(1));
 			}
 		} catch (Throwable t) {
-			//processDaoException(t, "Error getting the usernames sharing the same group", "loadUsernamesForGroup");
 			_logger.error("Error loading usernames by group {}", groupName, t);
 			throw new RuntimeException("Error loading usernames by group " + groupName, t);
 			
@@ -450,12 +440,13 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		}
 		return usernames;
 	}
-
-	/**
+	*/
+	/*
 	 * Carica gli utenti membri di un gruppo.
 	 * @param groupName Il nome del grupo tramite il quale cercare gli utenti.
 	 * @return La lista degli utenti (oggetti User) membri del gruppo specificato.
 	 */
+	/*
 	@Override
 	public List<UserDetails> loadUsersForGroup(String groupName) {
 		Connection conn = null;
@@ -469,7 +460,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 			res = stat.executeQuery();
 			users = this.loadUsers(res);
 		} catch (Throwable t) {
-			//processDaoException(t, "Error loading the list of users members of the group", "loadUsersForGroup");
 			_logger.error("Error loading UserDetails list by group {}", groupName, t);
 			throw new RuntimeException("Error loading UserDetails list by group " + groupName, t);
 		} finally {
@@ -477,7 +467,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 		}
 		return users;
 	}
-
+	*/
 	protected String getEncryptedPassword(String password) throws ApsSystemException {
 		String encrypted = password;
 		if (null != this.getEncrypter()) {
@@ -528,14 +518,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 
 	private final String LOAD_USER_FROM_USERNAME =
 		PREFIX_LOAD_USERS + "WHERE authusers.username = ? ";
-
-	private final String LOAD_USERS_FROM_GROUP =
-		PREFIX_LOAD_USERS + " LEFT JOIN authusergroups ON authusers.username = authusergroups.username " +
-		"WHERE authusergroups.groupname = ? ORDER BY authusers.username";
-
-	private final String LOAD_USERNAMES_FROM_GROUP =
-		"SELECT authusergroups.username FROM authusergroups WHERE authusergroups.groupname = ? ORDER BY authusergroups.username";
-
+	
 	private final String DELETE_USER =
 		"DELETE FROM authusers WHERE username = ? ";
 
@@ -550,11 +533,5 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 
 	private final String UPDATE_LAST_ACCESS =
 		"UPDATE authusers SET lastaccess = ? WHERE username = ? ";
-
-	private final String DELETE_USER_GROUP =
-		"DELETE FROM authusergroups WHERE username = ? ";
-
-	private final String DELETE_USER_ROLE =
-		"DELETE FROM authuserroles WHERE username = ? ";
-
+	
 }

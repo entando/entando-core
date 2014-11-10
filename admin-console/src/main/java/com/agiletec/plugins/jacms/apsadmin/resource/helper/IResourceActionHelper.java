@@ -23,8 +23,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 
 /**
@@ -51,22 +49,4 @@ public interface IResourceActionHelper {
 	 */
 	public Map<String, List> getReferencingObjects(ResourceInterface resource, HttpServletRequest request) throws ApsSystemException;
 	
-	public List<Group> getAllowedGroups(UserDetails currentUser);
-	
-	/**
-	 * Restituisce la lista di identificativi risorse caricati in base 
-	 * ai parametri immessi (tipo risorsa e categoria).
-	 * @param resourceType Il tipo della risorsa.
-	 * @param insertedText Testo immesso per la ricerca.
-	 * @param categoryCode Il codice della categoria specificata della risorsa.
-	 * @param currentUser L'utente corrente.
-	 * @return La lista di identificativi delle risorse cercate.
-	 * @throws Throwable In caso di errore.
-	 */
-	public List<String> searchResources(String resourceType, 
-			String insertedText, String categoryCode, UserDetails currentUser) throws Throwable;
-	
-	public List<String> searchResources(String resourceType, String insertedText, String groupName, 
-			String insertedFileName, String categoryCode, UserDetails currentUser) throws Throwable;
-    
 }

@@ -31,7 +31,7 @@ import com.agiletec.aps.system.common.tree.ITreeNode;
  * @author E.Santoboni
  */
 public abstract class AbstractTreeAction extends BaseAction implements ITreeAction {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(AbstractTreeAction.class);
 	
 	@Override
@@ -49,7 +49,6 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 			this.setTreeNodesToOpen(targets);
 		} catch (Throwable t) {
 			_logger.error("error in buildTree", t);
-			//ApsSystemUtils.logThrowable(t, this, "buildTree");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -63,7 +62,6 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 			node = this.getTreeHelper().getShowableTree(this.getTreeNodesToOpen(), allowedTree, this.getNodeGroupCodes());
 		} catch (Throwable t) {
 			_logger.error("error in getShowableTree", t);
-			//ApsSystemUtils.logThrowable(t, this, "getShowableTree");
 		}
 		return node;
 	}
@@ -75,7 +73,6 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 			node = this.getTreeHelper().getAllowedTreeRoot(this.getNodeGroupCodes());
 		} catch (Throwable t) {
 			_logger.error("error in getAllowedTreeRootNode", t);
-			//ApsSystemUtils.logThrowable(t, this, "getAllowedTreeRootNode");
 		}
 		return node;
 	}
@@ -86,7 +83,7 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 	 * @return The allowed group codes.
 	 */
 	protected Collection<String> getNodeGroupCodes() {
-		return null;
+		return super.getActualAllowedGroupCodes();
 	}
 	
 	public String getTargetNode() {

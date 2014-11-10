@@ -17,18 +17,19 @@
 */
 package com.agiletec.aps.system.services.role;
 
+import com.agiletec.aps.system.services.authorization.AbstractAuthority;
+
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
 
 /**
  * Rappresentazione di un ruolo per gli utenti del portale. 
  * Il ruolo contiene i permessi che di cui disporrà l'utente.
  * @author M.Diana - E.Santoboni
  */
-public class Role implements IApsAuthority {
+public class Role extends AbstractAuthority implements Serializable {
 	
 	@Override
 	public String getAuthority() {
@@ -41,49 +42,26 @@ public class Role implements IApsAuthority {
 	public Role() {
 		this._permissions = new HashSet<String>();
 	}
-
-	/**
-	 * Restituisce il nome del ruolo.
-	 * @return Il nome del ruolo.
-	 */
-	public String getName() {
-		return _name;
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (null != obj && (obj instanceof Role)) {
+			return this.getName().equals(((Role) obj).getName());
+		} else {
+			return super.equals(obj);
+		}
 	}
-
-	/**
-	 * Setta il nome del ruolo.
-	 * @param roleName Il nome del ruolo.
-	 */
-	public void setName(String roleName) {
-		this._name = roleName;
-	}
-
-	/**
-	 * Restituisce la descrizione del ruolo.
-	 * @return La descrizione del ruolo.
-	 */
-	public String getDescription() {
-		return _descr;
-	}
-
-	/**
-	 * Setta la descrizione del ruolo.
-	 * @param descr La descrizione del ruolo.
-	 */
-	public void setDescription(String descr) {
-		this._descr = descr;
-	}
-
+	
 	/**
 	 * Aggiunge un permesso al ruolo
 	 * @param permissionName Stringa identificatrice del permesso da aggiungere al ruolo.
 	 */
 	public void addPermission(String permissionName) {
 		if (null != permissionName && permissionName.trim().length()>0) {
-			_permissions.add(permissionName);
+			this.getPermissions().add(permissionName);
 		}
 	}
-
+	
 	/**
 	 * Rimuove un permesso dal ruolo
 	 * @param permissionName Stringa identificatrice del permission da rimuovere dal ruolo.
@@ -91,7 +69,7 @@ public class Role implements IApsAuthority {
 	public void removePermission(String permissionName) {
 		_permissions.remove(permissionName);
 	}
-
+	
 	/**
 	 * Restituisce l'insieme dei permessi del ruolo.
 	 * @return Set di stringhe identificatrici dei permessi del ruolo.
@@ -99,30 +77,29 @@ public class Role implements IApsAuthority {
 	public Set<String> getPermissions() {
 		return _permissions;
 	}
-
+	
 	/**
 	 * Verifica se il ruolo ha un certo permesso.
 	 * @param permissionName Il nome del permesso da verificare.
 	 * @return True se il ruolo ha il permesso.
 	 */
 	public boolean hasPermission(String permissionName){
-		return _permissions.contains(permissionName);
+		return this.getPermissions().contains(permissionName);
 	}
-
+	
+	@Override
 	public Object clone() {
 		Role clone = new Role();
-		clone.setDescription(this._descr);
-		clone.setName(this._name);
-		Iterator<String> iter = this._permissions.iterator();
+		clone.setDescription(this.getDescription());
+		clone.setName(this.getName());
+		Iterator<String> iter = this.getPermissions().iterator();
 		while (iter.hasNext()) {
 			String perm = (String) iter.next();
 			clone.addPermission(perm);
 		}
 		return clone;
 	}
-
-	private String _name;
-	private String _descr;
+	
 	private HashSet<String> _permissions;
 
 }

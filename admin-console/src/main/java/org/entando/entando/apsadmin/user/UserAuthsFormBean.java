@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,60 +12,25 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.apsadmin.user;
 
+import com.agiletec.aps.system.services.authorization.Authorization;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
 
 /**
  * @author E.Santoboni
  */
 public class UserAuthsFormBean implements Serializable {
 	
-	public UserAuthsFormBean(String username, List<IApsAuthority> roles, List<IApsAuthority> groups) {
+	protected UserAuthsFormBean(String username, List<Authorization> authorizations) {
 		this.setUsername(username);
-		if (null != roles) {
-			this.getRoles().addAll(roles);
-		}
-		if (null != groups) {
-			this.getGroups().addAll(groups);
-		}
-	}
-	
-	public List<IApsAuthority> getGroups() {
-		return _groups;
-	}
-	public void setGroups(List<IApsAuthority> groups) {
-		this._groups = groups;
-	}
-	public void addGroup(IApsAuthority group) {
-		if (!this._groups.contains(group)) {
-			this._groups.add(group);
-		}
-	}
-	public void removeGroup(IApsAuthority group) {
-		this._groups.remove(group);
-	}
-	
-	public List<IApsAuthority> getRoles() {
-		return _roles;
-	}
-	public void setRoles(List<IApsAuthority> roles) {
-		this._roles = roles;
-	}
-	public void addRole(IApsAuthority role) {
-		if (!this._roles.contains(role)) {
-			this._roles.add(role);
-		}
-	}
-	public void removeRole(IApsAuthority role) {
-		this._roles.remove(role);
+		this.setAuthorizations(authorizations);
 	}
 	
 	public String getUsername() {
@@ -75,9 +40,37 @@ public class UserAuthsFormBean implements Serializable {
 		this._username = username;
 	}
 	
-	private String _username;
+	public boolean addAuthorization(Authorization authorization) {
+		if (null == this.getAuthorizations()) {
+			this.setAuthorizations(new ArrayList<Authorization>());
+		}
+		if (!this.getAuthorizations().contains(authorization)) {
+			this.getAuthorizations().add(authorization);
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
-	private List<IApsAuthority> _roles = new ArrayList<IApsAuthority>();
-	private List<IApsAuthority> _groups = new ArrayList<IApsAuthority>();
+	public void removeAuthorization(Authorization authorization) {
+		if (null == this.getAuthorizations()) return;
+		this.getAuthorizations().remove(authorization);
+	}
+	
+	public boolean removeAuthorization(int index) {
+		if (null == this.getAuthorizations() || this.getAuthorizations().size() <= index) return false;
+		Authorization authorization = this.getAuthorizations().remove(index);
+		return (null != authorization);
+	}
+	
+	public List<Authorization> getAuthorizations() {
+		return _authorizations;
+	}
+	public void setAuthorizations(List<Authorization> authorizations) {
+		this._authorizations = authorizations;
+	}
+	
+	private String _username;
+	private List<Authorization> _authorizations;
 	
 }

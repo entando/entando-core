@@ -27,14 +27,14 @@
 	<bean id="BaseConfigManager" class="com.agiletec.aps.system.services.baseconfig.BaseConfigManager" 
 			parent="abstractService" >
 		<property name="systemParams">
-		<map>
-			<entry key="version"><value>${version}</value></entry>
-			<entry key="fileUploadMaxSize"><value>${file.upload.maxSize}</value></entry>
-			<entry key="configVersion"><jee:jndi-lookup jndi-name="java:comp/env/configVersion" /></entry>
-			<entry key="applicationBaseURL"><jee:jndi-lookup jndi-name="java:comp/env/applicationBaseURL" /></entry>
-			<entry key="resourceRootURL"><jee:jndi-lookup jndi-name="java:comp/env/resourceRootURL" /></entry>
-			<entry key="resourceDiskRootFolder"><jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" /></entry>
-		</map>
+			<map>
+				<entry key="version"><value>${version}</value></entry>
+				<entry key="fileUploadMaxSize"><value>${file.upload.maxSize}</value></entry>
+				<entry key="configVersion"><jee:jndi-lookup jndi-name="java:comp/env/configVersion" /></entry>
+				<entry key="applicationBaseURL"><jee:jndi-lookup jndi-name="java:comp/env/applicationBaseURL" /></entry>
+				<entry key="resourceRootURL"><jee:jndi-lookup jndi-name="java:comp/env/resourceRootURL" /></entry>
+				<entry key="resourceDiskRootFolder"><jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" /></entry>
+			</map>
 		</property>
 		<property name="configDAO" >
 			<bean class="com.agiletec.aps.system.services.baseconfig.ConfigItemDAO">
@@ -43,13 +43,8 @@
 		</property>
 	</bean>
 	
-	<bean id="abstractApsAutorityManager" abstract="true" class="com.agiletec.aps.system.services.authorization.authorizator.AbstractApsAutorityManager" 
-			parent="abstractService" >
-		<property name="userManager" ref="UserManager" />
-	</bean>
-	
 	<bean id="GroupManager" class="com.agiletec.aps.system.services.group.GroupManager" 
-			parent="abstractApsAutorityManager" >
+			parent="abstractService" >
 		<property name="groupDAO" >
 			<bean class="com.agiletec.aps.system.services.group.GroupDAO">
 				<property name="dataSource" ref="servDataSource" />
@@ -58,7 +53,7 @@
 	</bean>
 	
 	<bean id="RoleManager" class="com.agiletec.aps.system.services.role.RoleManager" 
-			parent="abstractApsAutorityManager" >
+			parent="abstractService" >
 		<property name="roleDAO" >
 			<bean class="com.agiletec.aps.system.services.role.RoleDAO">
 				<property name="dataSource" ref="servDataSource" />
@@ -85,19 +80,21 @@
 		<property name="configManager" ref="BaseConfigManager"/>
 	</bean>
 	
-	<bean id="AuthenticationProviderManager" class="com.agiletec.aps.system.services.user.AuthenticationProviderManager" 
+	<bean id="AuthorizationManager" class="com.agiletec.aps.system.services.authorization.AuthorizationManager" 
 			parent="abstractService" >
-		<property name="userManager" ref="UserManager" />
-		<property name="authorizators">
-		<list>
-			<ref bean="RoleManager" />
-			<ref bean="GroupManager" />
-		</list>
+		<property name="groupManager" ref="GroupManager"/>
+		<property name="roleManager" ref="RoleManager"/>
+		<property name="authorizationDAO" >
+			<bean class="com.agiletec.aps.system.services.authorization.AuthorizationDAO">
+				<property name="dataSource" ref="servDataSource" />
+			</bean>
 		</property>
 	</bean>
 	
-	<bean id="AuthorizationManager" class="com.agiletec.aps.system.services.authorization.AuthorizationManager" 
+	<bean id="AuthenticationProviderManager" class="com.agiletec.aps.system.services.user.AuthenticationProviderManager" 
 			parent="abstractService" >
+		<property name="userManager" ref="UserManager" />
+		<property name="authorizationManager" ref="AuthorizationManager" />
 	</bean>
 	
 	<!-- SPRING OBJECT -->

@@ -17,7 +17,6 @@
 */
 package com.agiletec.plugins.jacms.apsadmin.content.helper;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +25,6 @@ import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInf
 
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.system.entity.IEntityActionHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
@@ -37,9 +35,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author E.Santoboni
  */
 public interface IContentActionHelper extends IEntityActionHelper {
-
-	public List<Group> getAllowedGroups(UserDetails currentUser);
-
+	
 	/**
 	 * Controlla le referenziazioni di un contenuto. Verifica la referenziazione di un contenuto con altri contenuti o pagine nel caso
 	 * di operazioni di ripubblicazione di contenuti non del gruppo ad accesso libero.

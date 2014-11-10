@@ -361,7 +361,8 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.deleteActionRecord(id, conn);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_RELATIONS, id);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD, id);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -372,59 +373,21 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 		}
 	}
 	
-	private void deleteActionRecord(int id, Connection conn) {
-		try {
-			this.deleteRecord(id, conn, DELETE_LOG_RECORD_RELATIONS);
-			this.deleteRecord(id, conn, DELETE_LOG_RECORD);
-		} catch (Throwable t) {
-			_logger.error("Error on delete record: {}", id, t);
-			throw new RuntimeException("Error on delete record: " + id, t);
-		}
-	}
-	
 	@Override
 	public void updateRecordDate(int id) {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.updateRecordDate(conn, id);
+			Timestamp timestamp = new Timestamp(new Date().getTime());
+			super.executeQueryWithoutResultset(conn, UPDATE_UPDATEDATE_ACTION_RECORD, timestamp, id);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error updating record date: {}", id, t);
-			throw new RuntimeException("Error updating record date: id " + id, t);
+			throw new RuntimeException("Error updating record date: id " + id , t);
 		} finally {
-			closeConnection(conn);
-		}
-	}
-	
-	protected void updateRecordDate(Connection conn, int recordid) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(UPDATE_UPDATEDATE_ACTION_RECORD);
-			Timestamp timestamp = new Timestamp(new Date().getTime());
-			stat.setTimestamp(1, timestamp);
-			stat.setInt(2, recordid);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error updating record date: {}", recordid, t);
-			throw new RuntimeException("Error updating record date: id " + recordid, t);
-		}
-	}
-
-	public void deleteRecord(int id, Connection conn, String query) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(query);
-			stat.setInt(1, id);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error on delete record: {}", id, t);
-			throw new RuntimeException("Error on delete record: " + id, t);
-		} finally {
-			closeDaoResources(null, stat);
+			this.closeConnection(conn);
 		}
 	}
 	

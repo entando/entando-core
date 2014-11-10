@@ -37,7 +37,7 @@ public class TestRoleFinderAction extends ApsAdminBaseTestCase {
 	public void testList() throws Throwable {
 		String result = this.executeList("admin");
 		assertEquals(Action.SUCCESS, result);
-		IRoleFinderAction roleFinderAction = (IRoleFinderAction) this.getAction();
+		RoleFinderAction roleFinderAction = (RoleFinderAction) this.getAction();
 		List<Role> roles = roleFinderAction.getRoles();
 		assertFalse(roles.isEmpty());
 	}

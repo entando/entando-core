@@ -40,29 +40,17 @@ INSERT INTO authrolepermissions (rolename, permissionname) VALUES ('editor', 'ma
 
 
 
-INSERT INTO authusergroups (username, groupname) VALUES ('pageManagerCoach', 'coach');
-INSERT INTO authusergroups (username, groupname) VALUES ('pageManagerCustomers', 'customers');
-INSERT INTO authusergroups (username, groupname) VALUES ('supervisorCoach', 'coach');
-INSERT INTO authusergroups (username, groupname) VALUES ('supervisorCustomers', 'customers');
-INSERT INTO authusergroups (username, groupname) VALUES ('editorCoach', 'coach');
-INSERT INTO authusergroups (username, groupname) VALUES ('editorCustomers', 'customers');
-INSERT INTO authusergroups (username, groupname) VALUES ('supervisorCoach', 'customers');
-INSERT INTO authusergroups (username, groupname) VALUES ('editorCoach', 'customers');
-INSERT INTO authusergroups (username, groupname) VALUES ('mainEditor', 'administrators');
-INSERT INTO authusergroups (username, groupname) VALUES ('pageManagerCoach', 'customers');
-INSERT INTO authusergroups (username, groupname) VALUES ('admin', 'administrators');
-
-
-
-
-INSERT INTO authuserroles (username, rolename) VALUES ('admin', 'admin');
-INSERT INTO authuserroles (username, rolename) VALUES ('editorCoach', 'editor');
-INSERT INTO authuserroles (username, rolename) VALUES ('editorCustomers', 'editor');
-INSERT INTO authuserroles (username, rolename) VALUES ('mainEditor', 'editor');
-INSERT INTO authuserroles (username, rolename) VALUES ('supervisorCoach', 'supervisor');
-INSERT INTO authuserroles (username, rolename) VALUES ('supervisorCustomers', 'supervisor');
-INSERT INTO authuserroles (username, rolename) VALUES ('pageManagerCoach', 'pageManager');
-INSERT INTO authuserroles (username, rolename) VALUES ('pageManagerCustomers', 'pageManager');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('pageManagerCoach', 'coach', 'pageManager');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('pageManagerCustomers', 'customers', 'pageManager');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('supervisorCoach', 'coach', 'supervisor');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('supervisorCustomers', 'customers', 'supervisor');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('editorCoach', 'coach', 'editor');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('editorCustomers', 'customers', 'editor');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('supervisorCoach', 'customers', 'supervisor');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('editorCoach', 'customers', 'editor');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('mainEditor', 'administrators', 'editor');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('pageManagerCoach', 'customers', 'pageManager');
+INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('admin', 'administrators', 'admin');
 
 
 

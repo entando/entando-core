@@ -18,7 +18,7 @@
 			<ul class="margin-base-top">
 				<s:iterator value="actionErrors">
 					<li><s:property escape="false" /></li>
-					</s:iterator>
+				</s:iterator>
 			</ul>
 		</div>
 	</s:if>
@@ -28,10 +28,10 @@
 			<h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h2>
 			<ul class="margin-base-top">
 				<s:iterator value="fieldErrors">
-						<s:iterator value="value">
-							<li><s:property escape="false" /></li>
-						</s:iterator>
+					<s:iterator value="value">
+						<li><s:property escape="false" /></li>
 					</s:iterator>
+				</s:iterator>
 			</ul>
 		</div>
 	</s:if>
@@ -324,7 +324,7 @@
 					<s:set var="userVar" value="%{getUser(#usernameVar)}" />
 					<s:set var="userProfileVar" value="%{getUserProfile(#usernameVar)}" />
 					<s:url action="edit" var="editUserActionVar"><s:param name="username" value="#usernameVar"/></s:url>
-					<s:url action="edit" namespace="/do/User/Auth" var="editUserAuthActionVar"><s:param name="username" value="#usernameVar"/></s:url>
+					<s:url action="edit" namespace="/do/User/Authorization" var="editUserAuthActionVar"><s:param name="username" value="#usernameVar"/></s:url>
 					<s:url action="edit" namespace="/do/userprofile" var="editUserProfileActionVar"><s:param name="username" value="#usernameVar"/></s:url>
 					<s:url action="view" namespace="/do/userprofile" var="viewUserProfileActionVar"><s:param name="username" value="#usernameVar"/></s:url>
 					<s:url action="trash" var="userTrashActionVar"><s:param name="username" value="#usernameVar"/></s:url>
@@ -360,13 +360,12 @@
 								<button type="submit" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 									<span class="caret"></span>
 								</button>
-								<ul class="dropdown-menu text-left"  role="menu">
+								<ul class="dropdown-menu text-left" role="menu">
 									<li>
 										<%-- edit auth --%>
-										<a
-											href="<s:property value="#editUserAuthActionVar" escapeHtml="false" />"
-											title="<s:text name="note.configureAuthorizationsFor" />: <s:property value="#usernameVar" />"
-											>
+										<a 
+											href="<s:property value="#editUserAuthActionVar" escapeHtml="false" />" 
+											title="<s:text name="note.configureAuthorizationsFor" />: <s:property value="#usernameVar" />" >
 											<span class="fa-fw icon fa fa-unlock"></span>&#32;
 											<s:text name="note.configureAuthorizationsFor" />: <s:property value="#usernameVar" />
 										</a>

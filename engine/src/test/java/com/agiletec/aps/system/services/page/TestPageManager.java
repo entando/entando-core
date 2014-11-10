@@ -70,12 +70,12 @@ public class TestPageManager extends BaseTestCase {
 		page.setTitles(titles);
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
-		config.setProperty("temp", "temp");
+		config.setProperty("temp", "tempValue");
 		config.setProperty("contentId", "ART11");
 		widget.setConfig(config);
-		WidgetType showletType = new WidgetType();
-		showletType.setCode("content_viewer");
-		widget.setType(showletType);
+		WidgetType widgetType = new WidgetType();
+		widgetType.setCode("content_viewer");
+		widget.setType(widgetType);
 		Widget[] widgets = {widget};
 		page.setWidgets(widgets);
 		_pageManager.addPage(page);
@@ -96,8 +96,8 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals(extractedPage.getModel().getCode(), "service");
 		assertEquals(extractedPage.isShowable(), true);
 		widgets = extractedPage.getWidgets();
-		assertTrue(widgets[0].getConfig().contains("temp1"));
-		assertTrue(widgets[0].getConfig().contains("contentId"));
+		assertTrue(widgets[0].getConfig().containsKey("temp"));
+		assertTrue(widgets[0].getConfig().containsKey("contentId"));
 		assertEquals(widgets[0].getType().getCode(), "content_viewer");
 		this.updatePage();
 		this.movePage();
@@ -125,9 +125,9 @@ public class TestPageManager extends BaseTestCase {
 		config.setProperty("temp1", "temp1");
 		config.setProperty("contentId", "ART11");
 		widget.setConfig(config);
-		WidgetType showletType = new WidgetType();
-		showletType.setCode("content_viewer");
-		widget.setType(showletType);
+		WidgetType widgetType = new WidgetType();
+		widgetType.setCode("content_viewer");
+		widget.setType(widgetType);
 		Widget[] widgets = {widget};
 		page.setWidgets(widgets);
 		_pageManager.updatePage(page);
@@ -140,8 +140,8 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals(extractedPage.getModel().getCode(), "service");
 		assertEquals(extractedPage.isShowable(), false);
 		widgets = extractedPage.getWidgets();
-		assertTrue(widgets[0].getConfig().contains("temp1"));
-		assertTrue(widgets[0].getConfig().contains("contentId"));
+		assertTrue(widgets[0].getConfig().containsKey("temp1"));
+		assertTrue(widgets[0].getConfig().containsKey("contentId"));
 		assertEquals(widgets[0].getType().getCode(), "content_viewer");
 	}	
 	
@@ -181,7 +181,7 @@ public class TestPageManager extends BaseTestCase {
         }
 	}
 	
-	public void testFailureJoinShowlet_1() throws Throwable {
+	public void testFailureJoinWidget_1() throws Throwable {
 		String pageCode = "wrongPageCode";
 		int frame = 2;
 		try {
@@ -195,7 +195,7 @@ public class TestPageManager extends BaseTestCase {
 		}
 	}
 	
-	public void testFailureJoinShowlet_2() throws Throwable {
+	public void testFailureJoinWidget_2() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 6;
 		IPage pagina_1 = this._pageManager.getPage(pageCode);
@@ -284,6 +284,9 @@ public class TestPageManager extends BaseTestCase {
 			}
 			pagesFound = this._pageManager.searchPages("", allowedGroupCodes);
 			assertNotNull(pagesFound);
+			System.out.println("-----------------------");
+			System.out.println(pagesFound);
+			System.out.println("-----------------------");
 			assertEquals(16, pagesFound.size());
 			pagesFound = this._pageManager.searchPages(null, allowedGroupCodes);
 			assertNotNull(pagesFound);
@@ -319,8 +322,8 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals("customer_subpage_2", pageUtilizers4.get(6).getCode());
 	}
 	
-	private Widget getWidgetForTest(String showletTypeCode, ApsProperties config) throws Throwable {
-		WidgetType type = this._showletTypeManager.getWidgetType(showletTypeCode);
+	private Widget getWidgetForTest(String widgetTypeCode, ApsProperties config) throws Throwable {
+		WidgetType type = this._widgetTypeManager.getWidgetType(widgetTypeCode);
 		Widget widget = new Widget();
 		widget.setType(type);
 		if (null != config) {
@@ -332,13 +335,13 @@ public class TestPageManager extends BaseTestCase {
 	private void init() throws Exception {
     	try {
     		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-    		this._showletTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
+    		this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
     	} catch (Throwable t) {
             throw new Exception(t);
         }
     }
     
 	private IPageManager _pageManager = null;
-    private IWidgetTypeManager _showletTypeManager;
+    private IWidgetTypeManager _widgetTypeManager;
 	
 }

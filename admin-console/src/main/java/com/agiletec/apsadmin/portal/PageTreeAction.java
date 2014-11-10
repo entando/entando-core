@@ -17,15 +17,12 @@
 */
 package com.agiletec.apsadmin.portal;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
@@ -81,7 +78,6 @@ public class PageTreeAction extends AbstractTreeAction implements IPageTreeActio
 			}
 		} catch (Throwable t) {
 			_logger.error("error in movePage", t);
-			//ApsSystemUtils.logThrowable(t, this, "movePage");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -145,19 +141,8 @@ public class PageTreeAction extends AbstractTreeAction implements IPageTreeActio
 	protected boolean isUserAllowed(IPage page) {
 		if (page == null) return false;
 		String pageGroup = page.getGroup();
-		return this.isCurrentUserMemberOf(pageGroup);
-	}
-	
-	@Override
-	protected Collection<String> getNodeGroupCodes() {
-		List<String> allowedGroupCodes = new ArrayList<String>();
-		List<Group> allowedGroups = this.getTreeHelper().getAllowedGroups(this.getCurrentUser());
-		if (null != allowedGroups) {
-			for (int i = 0; i < allowedGroups.size(); i++) {
-				allowedGroupCodes.add(allowedGroups.get(i).getName());
-			}
-		}
-		return allowedGroupCodes;
+		Collection<String> codes = this.getNodeGroupCodes();
+		return codes.contains(pageGroup);
 	}
 	
 	@Override
@@ -212,6 +197,5 @@ public class PageTreeAction extends AbstractTreeAction implements IPageTreeActio
 	private Integer _frame;
 	
 	private IPageManager _pageManager;
-
-
+	
 }

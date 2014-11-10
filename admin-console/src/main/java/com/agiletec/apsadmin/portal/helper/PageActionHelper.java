@@ -40,7 +40,6 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.role.Permission;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
 import com.agiletec.apsadmin.system.TreeNodeBaseActionHelper;
@@ -54,11 +53,6 @@ public class PageActionHelper extends TreeNodeBaseActionHelper implements IPageA
 	private static final Logger _logger = LoggerFactory.getLogger(PageActionHelper.class);
 	
 	@Override
-	public List<Group> getAllowedGroups(UserDetails currentUser) {
-		return super.getAllowedGroups(currentUser);
-	}
-	
-	@Override
 	public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException {
     	Map<String, List> references = new HashMap<String, List>();
     	try {
@@ -69,7 +63,6 @@ public class PageActionHelper extends TreeNodeBaseActionHelper implements IPageA
 					service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
 				} catch (Throwable t) {
 					_logger.error("error in hasReferencingObjects", t);
-					//ApsSystemUtils.logThrowable(t, this, "hasReferencingObjects");
 					service = null;
 				}
 				if (service != null) {
@@ -85,22 +78,6 @@ public class PageActionHelper extends TreeNodeBaseActionHelper implements IPageA
     	}
     	return references;
     }
-	
-	@Override
-	@Deprecated (/** from jAPS 2.0 version jAPS 2.1 */)
-	public ITreeNode getAllowedTreeRoot(UserDetails user) throws ApsSystemException {
-		return this.getAllowedTreeRoot(user, false);
-	}
-	
-	@Override
-	public ITreeNode getAllowedTreeRoot(UserDetails user, boolean alsoFreeViewPages) throws ApsSystemException {
-		List<String> groupCodes = new ArrayList<String>();
-		List<Group> groups = this.getAllowedGroups(user);
-		for (int i=0; i<groups.size(); i++) {
-			groupCodes.add(groups.get(i).getName());
-		}
-		return this.getAllowedTreeRoot(groupCodes, alsoFreeViewPages);
-	}
 	
 	@Override
 	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes) throws ApsSystemException {

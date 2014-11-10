@@ -39,39 +39,21 @@
 			<tr>
 				<td class="text-center text-nowrap">
 					<div class="btn-group btn-group-xs">
-						<a 
-							class="btn btn-default"
+						<a class="btn btn-default" 
 							href="<s:url action="detail"><s:param name="name" value="#group.name"/></s:url>" 
 							title="<s:text name="note.detailsFor" />: <s:property value="#group.name" />">
 								<span class="icon fa fa-info"></span>
 								<span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#group.name" /></span>
 						</a>
-						<button type="submit" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu text-left" role="menu">
-								<li>
-									<a 
-										href="<s:url action="edit"><s:param name="name" value="#group.name"/></s:url>" 
-										title="<s:text name="label.edit" />:&#32;<s:property value="#group.name" />"
-										>
-										<span class="icon fa fa-pencil-square-o fa-fw"></span>
-										<s:text name="label.edit" />
-									</a>
-								</li>
-								<li>
-									<a 
-										href="<s:url namespace="/do/Group/Auth" action="config"><s:param name="authName" value="#group.name"/></s:url>" 
-										title="<s:text name="note.manageUsersFor" />: <s:property value="#group.name" />">
-											<span class="icon fa fa-users fa-fw"></span>
-											<s:text name="note.manageUsersFor" />
-										</a>
-								</li>
-							</ul>
+						<a class="btn btn-default" 
+							href="<s:url action="edit"><s:param name="name" value="#group.name"/></s:url>" 
+							title="<s:text name="label.edit" />:&#32;<s:property value="#group.name" />" >
+								<span class="icon fa fa-pencil-square-o"></span>
+								<span class="sr-only"><s:text name="label.edit" />:&#32;<s:property value="#group.name" /></span>
+						</a>
 					</div>
 					<div class="btn-group btn-group-xs">
-						<a 
-							class="btn btn-warning"
+						<a class="btn btn-warning" 
 							href="<s:url action="trash"><s:param name="name" value="#group.name"/></s:url>"  
 							title="<s:text name="label.remove" />: <s:property value="#group.name" />">
 								<span class="sr-only"><s:text name="label.remove" />: <s:property value="#group.name" /></span>

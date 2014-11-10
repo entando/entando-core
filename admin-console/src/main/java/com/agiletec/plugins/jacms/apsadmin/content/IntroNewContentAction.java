@@ -46,7 +46,6 @@ public class IntroNewContentAction extends AbstractContentAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in openNew", t);
-			//ApsSystemUtils.logThrowable(t, this, "openNew");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -68,7 +67,6 @@ public class IntroNewContentAction extends AbstractContentAction {
 			_logger.debug("Created ed inserted on session content prototype of type {}", prototype.getTypeCode());
 		} catch (Throwable t) {
 			_logger.error("error in createNewVoid", t);
-			//ApsSystemUtils.logThrowable(t, this, "createNewVoid");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -87,7 +85,6 @@ public class IntroNewContentAction extends AbstractContentAction {
 			_logger.debug("Created ed inserted on session content prototype of type {}", prototype.getTypeCode());
 		} catch (Throwable t) {
 			_logger.error("error in createNewVoid", t);
-			//ApsSystemUtils.logThrowable(t, this, "createNewVoid");
 			return FAILURE;
 		}
 		return SUCCESS;

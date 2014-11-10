@@ -17,53 +17,15 @@
 */
 package com.agiletec.apsadmin.system;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.beanutils.BeanComparator;
-
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
-import com.agiletec.aps.system.services.user.UserDetails;
 
 /**
  * Base Action Helper for all helper class of the system.
  * @author E.Santoboni
  */
 public abstract class BaseActionHelper {
-	
-	/**
-	 * Returns the list of authorized groups to a user.
-	 * @param user The user.
-	 * @return The list of authorized groups to a user.
-	 */
-	protected List<Group> getAllowedGroups(UserDetails user) {
-		List<Group> groups = new ArrayList<Group>();
-		List<Group> groupsOfUser = this.getAuthorizationManager().getUserGroups(user);
-		if (this.getAuthorizationManager().isAuthOnGroup(user, Group.ADMINS_GROUP_NAME)) {
-			groups.addAll(this.getGroupManager().getGroups());
-		} else {
-			groups.addAll(groupsOfUser);
-		}
-		BeanComparator comparator = new BeanComparator("descr");
-		Collections.sort(groups, comparator);
-    	return groups;
-    }
-	
-	protected List<String> getAllowedGroupCodes(UserDetails user) {
-		List<String> groupCodes = new ArrayList<String>();
-		List<Group> groups = this.getAllowedGroups(user);
-		if (null == groups) {
-			return groupCodes;
-		}
-		for (int i = 0; i < groups.size(); i++) {
-			groupCodes.add(groups.get(i).getName());
-		}
-    	return groupCodes;
-    }
 	
 	/**
 	 * Metodo di servizio utilizzato per uniformare i codici.

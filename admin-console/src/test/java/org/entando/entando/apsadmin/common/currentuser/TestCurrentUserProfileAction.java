@@ -22,12 +22,12 @@ import java.util.List;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 
 import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
-import com.agiletec.aps.system.services.authorization.authorizator.IApsAuthorityManager;
-import com.agiletec.aps.system.services.role.Role;
+import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
+
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -97,19 +97,17 @@ public class TestCurrentUserProfileAction extends ApsAdminBaseTestCase {
     private void init() throws Exception {
         try {
             this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
+            this._authorizationManager = (IAuthorizationManager) this.getService(SystemConstants.AUTHORIZATION_SERVICE);
             User user = this.createUserForTest(USERNAME_FOR_TEST);
             this._userManager.addUser(user);
-            this._roleManager = (IApsAuthorityManager) this.getService(SystemConstants.ROLE_MANAGER);
-            this._role = (Role) this._roleManager.getAuthority("editor");
-            this._roleManager.setUserAuthorization(USERNAME_FOR_TEST, this._role);
-        } catch (Throwable e) {
-            throw new Exception(e);
+			this._authorizationManager.addUserAuthorization(USERNAME_FOR_TEST, Group.FREE_GROUP_NAME, "editor");
+        } catch (Throwable t) {
+            throw new Exception(t);
         }
     }
     
 	@Override
     protected void tearDown() throws Exception {
-        this._roleManager.removeUserAuthorization(USERNAME_FOR_TEST, this._role);
         this._userManager.removeUser(USERNAME_FOR_TEST);
         super.tearDown();
     }
@@ -121,9 +119,9 @@ public class TestCurrentUserProfileAction extends ApsAdminBaseTestCase {
         return user;
     }
     
-    private IUserManager _userManager = null;
+    private IUserManager _userManager;
+	private IAuthorizationManager _authorizationManager;
+	
     private static final String USERNAME_FOR_TEST = "userprofile_testUser";
-    private IApsAuthorityManager _roleManager;
-    private IApsAuthority _role = null;
     
 }

@@ -248,7 +248,6 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
 			FileBrowserAction action = (FileBrowserAction) this.getAction();
 			Collection<String> actionErrors = action.getActionErrors();
 			assertEquals(1, actionErrors.size());
-			System.out.println(actionErrors);
 			
 			fullFilename = "../conf/" + fullFilename;
 			result = this.executeTrashFile("admin", path, fullFilename, false);
@@ -256,7 +255,6 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
 			action = (FileBrowserAction) this.getAction();
 			actionErrors = action.getActionErrors();
 			assertEquals(1, actionErrors.size());
-			System.out.println(actionErrors);
 			
 		} catch (Throwable t) {
 			this._localStorageManager.deleteFile(fullPath, false);

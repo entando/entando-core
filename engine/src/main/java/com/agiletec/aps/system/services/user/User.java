@@ -46,7 +46,7 @@ public class User extends AbstractUser {
 		User cl = new User();
 		cl.setUsername(this.getUsername());
 		cl.setPassword("");
-		cl.setAuthorities(this.getAuthorities());
+		cl.setAuthorizations(this.getAuthorizations());
 		return cl;
 	}
 

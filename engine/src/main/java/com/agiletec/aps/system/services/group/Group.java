@@ -17,13 +17,15 @@
 */
 package com.agiletec.aps.system.services.group;
 
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import com.agiletec.aps.system.services.authorization.AbstractAuthority;
+
+import java.io.Serializable;
 
 /**
  * Rappresentazione di un'oggetto "Gruppo".
  * @author E.Santoboni
  */
-public class Group implements IApsAuthority {
+public class Group extends AbstractAuthority implements Serializable {
 	
 	@Override
 	public String getAuthority() {
@@ -32,48 +34,36 @@ public class Group implements IApsAuthority {
 	
 	/**
 	 * Indica se il gruppo è definito localmente 
-	 * all'interno del db "serv" di jAPS.
-	 * @return true se è un gruppo locale di jAPS, 
+	 * all'interno del db "serv" di Entando.
+	 * @return true se è un gruppo locale di Entando, 
 	 * false se è un gruppo definito in un'altra base dati.
 	 */
-	public boolean isJapsGroup() {
+	public boolean isEntandoGroup() {
     	return true;
     }
     
-    /**
-	 * Restituisce il nome del gruppo.
-	 * @return Il nome del gruppo.
-	 */
-	public String getName() {
-		return _name;
-	}
-	
-	/**
-	 * Setta il nome del gruppo.
-	 * @param name Il nome del gruppo.
-	 */
-	public void setName(String name) {
-		this._name = name;
-	}
-	
-	/**
-	 * Restituisce la descrizione del gruppo.
-	 * @return La descrizione del gruppo.
-	 */
+	@Deprecated
+    public boolean isJapsGroup() {
+    	return this.isEntandoGroup();
+    }
+    
+	@Deprecated
 	public String getDescr() {
-		return _descr;
+		return this.getDescription();
+	}
+	@Deprecated
+	public void setDescr(String description) {
+		this.setDescription(description);
 	}
 	
-	/**
-	 * Setta la descrizione del gruppo.
-	 * @param descr La descrizione del gruppo.
-	 */
-	public void setDescr(String descr) {
-		this._descr = descr;
+	@Override
+	public boolean equals(Object obj) {
+		if (null != obj && (obj instanceof Group)) {
+			return this.getName().equals(((Group) obj).getName());
+		} else {
+			return super.equals(obj);
+		}
 	}
-	
-	private String _name;
-	private String _descr;
 	
 	/**
 	 * Nome del gruppo degli amministratori.

@@ -20,7 +20,7 @@ package org.entando.entando.aps.system.services.actionlog;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -293,15 +293,15 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 	*/
 	private List<String> extractUserGroupCodes(UserDetails loggedUser) {
 		List<String> codes = new ArrayList<String>();
-		IApsAuthority[] autorities = loggedUser.getAuthorities();
-		if (null != autorities) {
-			for (int i = 0; i < autorities.length; i++) {
-				IApsAuthority autority = autorities[i];
-				if (autority instanceof Group) {
-					codes.add(autority.getAuthority());
+		List<Authorization> auths = (null != loggedUser) ? loggedUser.getAuthorizations() : null;
+        if (null != auths) {
+			for (int i = 0; i < auths.size(); i++) {
+				Authorization auth = auths.get(i);
+				if (null != auth && null != auth.getGroup()) {
+					codes.add(auth.getGroup().getName());
 				}
 			}
-		}
+        }
 		if (!codes.contains(Group.FREE_GROUP_NAME)) {
 			codes.add(Group.FREE_GROUP_NAME);
 		}

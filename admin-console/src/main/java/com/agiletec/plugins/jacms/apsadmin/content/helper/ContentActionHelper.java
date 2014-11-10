@@ -61,11 +61,6 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	private static final Logger _logger = LoggerFactory.getLogger(ContentActionHelper.class);
 	
 	@Override
-	public List<Group> getAllowedGroups(UserDetails currentUser) {
-		return super.getAllowedGroups(currentUser);
-    }
-	
-	@Override
 	public void updateEntity(IApsEntity entity, HttpServletRequest request) {
 		Content content = (Content) entity;
 		try {
@@ -159,7 +154,6 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			return this.getContentAuthorizationHelper().isAuthToEdit(currentUser, content);
 		} catch (Throwable t) {
 			_logger.error("Error checking user authority", t);
-			//ApsSystemUtils.logThrowable(t, this, "isUserAllowed");
 			throw new RuntimeException("Error checking user authority", t);
 		}
 	}
@@ -186,6 +180,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 				}
 			}
     	} catch (Throwable t) {
+			_logger.error("Error extracting referencing object", t);
     		throw new ApsSystemException("Error in hasReferencingObject method", t);
     	}
     	return references;
@@ -250,36 +245,6 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			} catch (Throwable t) {
 				throw new ApsSystemException("Error in hasReferencingObject method", t);
 			}
-			/*
-			List referencingContents = ((ContentUtilizer) this.getContentManager()).getContentUtilizers(content.getId());
-			if (referencingContents!= null && !referencingContents.isEmpty()) {
-				for (int i=0; i<referencingContents.size(); i++) {
-					String contentId = (String) referencingContents.get(i);
-					Content refContent = this.getContentManager().loadContent(contentId, true);
-					if (!content.getMainGroup().equals(refContent.getMainGroup()) && 
-							!content.getGroups().contains(refContent.getMainGroup())) {
-						String[] args = {this.getGroupManager().getGroup(refContent.getMainGroup()).getDescr(), contentId+" '"+refContent.getDescr()+"'"};
-						action.addFieldError("mainGroup", action.getText("error.content.referencedContent.wrongGroups", args));
-					}
-				}
-			}
-			List referencingPages = ((ContentUtilizer) this.getPageManager()).getContentUtilizers(content.getId());
-			if (referencingPages!= null && !referencingPages.isEmpty()) {
-				Lang lang = this.getLangManager().getDefaultLang();
-				for (int i=0; i<referencingPages.size(); i++) {
-					IPage page = (IPage) referencingPages.get(i);
-					if (!CmsPageActionUtil.isContentPublishableOnPage(content, page)) {
-						List<String> pageGroups = new ArrayList<String>();
-						pageGroups.add(page.getGroup());
-						if (null != page.getExtraGroups()) {
-							pageGroups.addAll(page.getExtraGroups());
-						}
-						String[] args = {pageGroups.toString(), page.getTitle(lang.getCode())};
-						action.addFieldError("mainGroup", action.getText("error.content.referencedPage.wrongGroups", args));
-					}
-				}
-			}
-			*/
 		}
 	}
 	
@@ -311,14 +276,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	/*
-	protected IPageManager getPageManager() {
-		return _pageManager;
-	}
-	public void setPageManager(IPageManager pageManager) {
-		this._pageManager = pageManager;
-	}
-	*/
+	
 	protected IContentAuthorizationHelper getContentAuthorizationHelper() {
 		return _contentAuthorizationHelper;
 	}
@@ -327,7 +285,6 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	}
 	
 	private IContentManager _contentManager;
-	//private IPageManager _pageManager;
 	
 	private IContentAuthorizationHelper _contentAuthorizationHelper;
 	

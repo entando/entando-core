@@ -38,7 +38,7 @@ public abstract class AbstractResourceAction extends AbstractTreeAction {
 	}
 	
 	public List<Group> getAllowedGroups() {
-		return this.getResourceActionHelper().getAllowedGroups(this.getCurrentUser());
+		return super.getActualAllowedGroups();
 	}
 	
 	/**

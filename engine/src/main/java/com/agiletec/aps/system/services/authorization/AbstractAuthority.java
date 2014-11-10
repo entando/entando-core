@@ -15,24 +15,28 @@
 * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
-package com.agiletec.apsadmin.user.role;
-
-import java.util.List;
-
-import com.agiletec.aps.system.services.role.Role;
+package com.agiletec.aps.system.services.authorization;
 
 /**
- * Interfaccia base per le classi action della lista Ruoli.
- * @version 1.0
  * @author E.Santoboni
  */
-public interface IRoleFinderAction {
+public abstract class AbstractAuthority implements IApsAuthority {
 	
-	/**
-	 * Restituisce la lista dei ruoli che deve essere erogata 
-	 * dall'interfaccia di visualizzazione dei ruoli.
-	 * @return La lista di ruoli.
-	 */
-	public List<Role> getRoles();
+	public String getName() {
+		return _name;
+	}
+	public void setName(String name) {
+		this._name = name;
+	}
+	
+	public String getDescription() {
+		return _description;
+	}
+	public void setDescription(String description) {
+		this._description = description;
+	}
+	
+	private String _name;
+	private String _description;
 	
 }

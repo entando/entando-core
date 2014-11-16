@@ -1,13 +1,6 @@
 <%@ taglib prefix="jacms" uri="/jacms-aps-core" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%
-/*
-	Author: William Ghelfi <william.ghelfi@elicriso.biz> - 2005/05/23
-	Author: Eugenio Santoboni <eugeniosant@tiscali.it>
-	Content list viewer
-*/
-%>
 
 <wp:headInfo type="JS_EXT" info="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" />
 

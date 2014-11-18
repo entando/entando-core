@@ -83,16 +83,21 @@ public class ComponentManager implements IComponentManager {
 	
 	@Override
 	public boolean isComponentInstalled(String componentCode) {
+		return (null != this.getInstalledComponent(componentCode));
+	}
+	
+	@Override
+	public Component getInstalledComponent(String componentCode) {
 		List<Component> components = this.getComponents();
 		if (null != components) {
 			for (int i = 0; i < components.size(); i++) {
 				Component component = components.get(i);
 				if (null != component && component.getCode().equals(componentCode)) {
-					return true;
+					return component;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 	
     protected String getLocationPatterns() {

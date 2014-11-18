@@ -30,4 +30,6 @@ public interface IComponentManager {
 	
 	public boolean isComponentInstalled(String componentCode);
 	
+	public Component getInstalledComponent(String componentCode);
+	
 }

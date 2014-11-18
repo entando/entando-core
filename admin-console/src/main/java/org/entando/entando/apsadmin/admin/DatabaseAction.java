@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.init.model.ComponentInstallationReport;
@@ -33,24 +32,18 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.apsadmin.system.BaseAction;
 import com.j256.ormlite.table.DatabaseTable;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.apsadmin.system.BaseAction;
-import com.j256.ormlite.table.DatabaseTable;
-
 /**
  * @author E.Santoboni
  */
 public class DatabaseAction extends BaseAction {
-
-	private static final Logger _logger =  LoggerFactory.getLogger(DatabaseAction.class);
+	
+	private static final Logger _logger = LoggerFactory.getLogger(DatabaseAction.class);
 	
 	public String executeBackup() {
 		try {
 			this.getDatabaseManager().createBackup();
-			//TODO MESSAGE
 		} catch (Throwable t) {
 			_logger.error("error in executeBackup", t);
-			//ApsSystemUtils.logThrowable(t, this, "executeBackup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -61,7 +54,6 @@ public class DatabaseAction extends BaseAction {
 			return this.getDatabaseManager().getBackupReports();
 		} catch (Throwable t) {
 			_logger.error("Error extracting dump reports", t);
-			//ApsSystemUtils.logThrowable(t, this, "getDumpReports");
 			throw new RuntimeException("Error extracting dump reports", t);
 		}
 	}
@@ -71,7 +63,6 @@ public class DatabaseAction extends BaseAction {
 			return this.getDatabaseManager().getBackupReport(subFolderName);
 		} catch (Throwable t) {
 			_logger.error("Error extracting report of subfolder {}", subFolderName, t);
-			//ApsSystemUtils.logThrowable(t, this, "getDumpReport");
 			throw new RuntimeException("Error extracting report of subfolder " + subFolderName, t);
 		}
 	}
@@ -92,7 +83,6 @@ public class DatabaseAction extends BaseAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in redirectRestoreIntro", t);
-			//ApsSystemUtils.logThrowable(t, this, "redirectRestoreIntro");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -108,7 +98,6 @@ public class DatabaseAction extends BaseAction {
 			this.addActionMessage(this.getText("message.restore.done"));
 		} catch (Throwable t) {
 			_logger.error("error in restoreBackup", t);
-			//ApsSystemUtils.logThrowable(t, this, "restoreBackup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -124,7 +113,6 @@ public class DatabaseAction extends BaseAction {
 			this.setInputStream(stream);
 		} catch (Throwable t) {
 			_logger.error("error in extractLastTableDump", t);
-			//ApsSystemUtils.logThrowable(t, this, "extractLastTableDump");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -138,7 +126,6 @@ public class DatabaseAction extends BaseAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in trashBackup", t);
-			//ApsSystemUtils.logThrowable(t, this, "trashBackup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -155,7 +142,6 @@ public class DatabaseAction extends BaseAction {
 			this.addActionMessage(this.getText("message.backup.deleteDone", args));
 		} catch (Throwable t) {
 			_logger.error("error in deleteBackup", t);
-			//ApsSystemUtils.logThrowable(t, this, "deleteBackup");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -187,7 +173,6 @@ public class DatabaseAction extends BaseAction {
 			components = this.getComponentManager().getCurrentComponents();
 		} catch (Throwable t) {
 			_logger.error("Error extracting current components", t);
-			//ApsSystemUtils.logThrowable(t, this, "getCurrentComponents");
 			throw new RuntimeException("Error extracting current components", t);
 		}
 		return components;
@@ -207,7 +192,6 @@ public class DatabaseAction extends BaseAction {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error extracting table names", t);
-			//ApsSystemUtils.logThrowable(t, this, "getTableNames");
 			throw new RuntimeException("Error extracting table names", t);
 		}
 		return tableNames;
@@ -254,26 +238,19 @@ public class DatabaseAction extends BaseAction {
 	public void setTableName(String tableName) {
 		this._tableName = tableName;
 	}
-	
+
 	public InputStream getInputStream() {
 		return _inputStream;
 	}
 	protected void setInputStream(InputStream inputStream) {
 		this._inputStream = inputStream;
 	}
-	
+
 	protected IDatabaseManager getDatabaseManager() {
 		return _databaseManager;
 	}
 	public void setDatabaseManager(IDatabaseManager databaseManager) {
 		this._databaseManager = databaseManager;
-	}
-	
-	protected IComponentManager getComponentManager() {
-		return _componentManager;
-	}
-	public void setComponentManager(IComponentManager componentManager) {
-		this._componentManager = componentManager;
 	}
 	
 	private String _subFolderName;
@@ -282,6 +259,5 @@ public class DatabaseAction extends BaseAction {
 	private String _dataSourceName;
 	private InputStream _inputStream;
 	private IDatabaseManager _databaseManager;
-	private IComponentManager _componentManager;
 	
 }

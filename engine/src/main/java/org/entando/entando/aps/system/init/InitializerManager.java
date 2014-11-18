@@ -38,7 +38,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 /**
  * @author E.Santoboni
  */
-public class InitializerManager extends AbstractInitializerManager {
+public class InitializerManager extends AbstractInitializerManager implements IInitializerManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(InitializerManager.class);
 	
@@ -47,9 +47,9 @@ public class InitializerManager extends AbstractInitializerManager {
 		try {
 			report = this.extractReport();
 			report = ((IDatabaseInstallerManager) this.getDatabaseManager()).installDatabase(report, this.isCheckOnStartup());
+			this.setCurrentReport(report);
 		} catch (Throwable t) {
 			_logger.error("Error while initializating Db Installer", t);
-			//ApsSystemUtils.logThrowable(t, this, "init", "Error while initializating Db Installer");
 			throw new Exception("Error while initializating Db Installer", t);
 		} finally {
 			if (null != report && report.isUpdated()) {
@@ -92,7 +92,6 @@ public class InitializerManager extends AbstractInitializerManager {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while executing post processes", t);
-			//ApsSystemUtils.logThrowable(t, this, "executePostInitProcesses", "Error while executing post processes");
 			throw new FatalBeanException("Error while executing post processes", t);
 		} finally {
 			if (null != report && report.isUpdated()) {
@@ -113,15 +112,12 @@ public class InitializerManager extends AbstractInitializerManager {
 					postProcessor.executePostProcess(postProcess);
 				} else {
 					_logger.error("Missing Post Processor for process '{}'", postProcess.getCode());
-					//ApsSystemUtils.getLogger().error("Missing Post Processor for process '" + postProcess.getCode() + "'");
 				}
 			} catch (InvalidPostProcessResultException t) {
 				_logger.error("Error while executing post process of index {}",i, t);
-				//ApsSystemUtils.logThrowable(t, this, "executePostProcess", "Error while executing post process of index " + i + " - " + t.getMessage());
 				return SystemInstallationReport.Status.INCOMPLETE;
 			} catch (Throwable t) {
 				_logger.error("Error while executing post process - index {}", i, t);
-				//ApsSystemUtils.logThrowable(t, this, "executePostProcesses", "Error while executing post process - index " + i);
 				return SystemInstallationReport.Status.INCOMPLETE;
 			}
 		}
@@ -139,9 +135,9 @@ public class InitializerManager extends AbstractInitializerManager {
 			DataSource dataSource = (DataSource) this.getBeanFactory().getBean("portDataSource");
 			dao.setDataSource(dataSource);
 			dao.saveConfigItem(report.toXml(), this.getConfigVersion());
+			this.setCurrentReport(report);
 		} catch (Throwable t) {
 			_logger.error("Error saving report", t);
-			//ApsSystemUtils.logThrowable(t, this, "saveReport");
 			throw new FatalBeanException("Error saving report", t);
 		}
 	}
@@ -151,6 +147,14 @@ public class InitializerManager extends AbstractInitializerManager {
 	}
 	public void setCheckOnStartup(boolean checkOnStartup) {
 		this._checkOnStartup = checkOnStartup;
+	}
+	
+	@Override
+	public SystemInstallationReport getCurrentReport() {
+		return _currentReport;
+	}
+	protected void setCurrentReport(SystemInstallationReport currentReport) {
+		this._currentReport = currentReport;
 	}
 	
 	public Map<String, IPostProcessor> getPostProcessors() {
@@ -175,6 +179,7 @@ public class InitializerManager extends AbstractInitializerManager {
 	}
 	
 	private boolean _checkOnStartup;
+	private SystemInstallationReport _currentReport;
 	
 	private Map<String, IPostProcessor> _postProcessors;
 	

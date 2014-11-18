@@ -44,7 +44,6 @@ public abstract class AbstractInitializerManager implements BeanFactoryAware {
 			report = dao.loadReport(this.getConfigVersion());
 		} catch (Throwable t) {
 			_logger.error("error Error extracting report", t);
-			//ApsSystemUtils.logThrowable(t, this, "Error extracting report");
 			throw new ApsSystemException("Error extracting report", t);
 		}
 		return report;

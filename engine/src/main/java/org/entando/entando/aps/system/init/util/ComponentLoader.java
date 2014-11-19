@@ -49,7 +49,6 @@ public class ComponentLoader {
             }
         } catch (Throwable t) {
         	_logger.error("Error loading component definitions", t);
-            //ApsSystemUtils.logThrowable(t, this, "ComponentLoader", "Error loading component definitions");
             throw new ApsSystemException("Error loading component definitions", t);
         }
     }
@@ -78,8 +77,7 @@ public class ComponentLoader {
 					}
 				}
             } catch (Throwable t) {
-            	_logger.error("Error loading Component definition by location Pattern '{}'",path, t);
-                //ApsSystemUtils.logThrowable(t, this, "ComponentLoader", "Error loading Component definition by location Pattern '" + path + "'");
+            	_logger.error("Error loading Component definition by location Pattern '{}'", path, t);
             } finally {
                 if (null != is) {
                     is.close();

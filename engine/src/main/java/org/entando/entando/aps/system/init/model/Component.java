@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author E.Santoboni
  */
 public class Component {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(Component.class);
 	
 	public Component(Element rootElement, Map<String, String> postProcessClasses) throws Throwable {
@@ -39,6 +39,12 @@ public class Component {
 			this.setCode(code);
 			String description = rootElement.getChildText("description");
 			this.setDescription(description);
+			Element artifactElement = rootElement.getChild("artifact");
+			if (null != artifactElement) {
+				this.setArtifactId(artifactElement.getChildText("artifactId"));
+				this.setArtifactGroupId(artifactElement.getChildText("groupId"));
+				this.setArtifactVersion(artifactElement.getChildText("version"));
+			}
 			Element dependenciesElement = rootElement.getChild("dependencies");
 			if (null != dependenciesElement) {
 				List<Element> dependenciesElementd = dependenciesElement.getChildren("code");
@@ -100,6 +106,27 @@ public class Component {
 		this._description = description;
 	}
 	
+	public String getArtifactId() {
+		return _artifactId;
+	}
+	public void setArtifactId(String artifactId) {
+		this._artifactId = artifactId;
+	}
+	
+	public String getArtifactGroupId() {
+		return _artifactGroupId;
+	}
+	public void setArtifactGroupId(String artifactGroupId) {
+		this._artifactGroupId = artifactGroupId;
+	}
+	
+	public String getArtifactVersion() {
+		return _artifactVersion;
+	}
+	public void setArtifactVersion(String artifactVersion) {
+		this._artifactVersion = artifactVersion;
+	}
+	
 	public List<String> getDependencies() {
 		return _dependencies;
 	}
@@ -134,6 +161,9 @@ public class Component {
 	
 	private String _code;
 	private String _description;
+	private String _artifactId;
+	private String _artifactGroupId;
+	private String _artifactVersion;
 	private List<String> _dependencies;
 	private Map<String, List<String>> _tableMapping;
 	

@@ -43,7 +43,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @author E.Santoboni
  */
 public class ComponentDefDOM {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ComponentDefDOM.class);
 	
     protected ComponentDefDOM(String xmlText, String configPath) throws ApsSystemException {
@@ -58,7 +58,7 @@ public class ComponentDefDOM {
         InputStream schemaIs = null;
         InputStream xmlIs = null;
         try {
-            schemaIs = this.getClass().getResourceAsStream("componentDef-3.0.xsd");
+            schemaIs = this.getClass().getResourceAsStream("componentDef-4.2.xsd");
             Source schemaSource = new StreamSource(schemaIs);
             Schema schema = factory.newSchema(schemaSource);
             Validator validator = schema.newValidator();
@@ -69,7 +69,6 @@ public class ComponentDefDOM {
         } catch (Throwable t) {
             _logger.error("Error validating Component definition : {}", configPath, t);
         	String message = "Error validating Component definition : " + configPath;
-            //ApsSystemUtils.logThrowable(t, this, "this", message);
             throw new ApsSystemException(message, t);
         } finally {
             try {
@@ -81,7 +80,6 @@ public class ComponentDefDOM {
                 }
             } catch (IOException e) {
             	_logger.error("error in validate", e);
-                //ApsSystemUtils.logThrowable(e, this, "this");
             }
         }
     }
@@ -93,7 +91,6 @@ public class ComponentDefDOM {
 			component = new Component(rootElement, postProcessClasses);
         } catch (Throwable t) {
         	_logger.error("Error loading component", t);
-            //ApsSystemUtils.logThrowable(t, this, "getComponent", "Error loading component");
         }
         return component;
     }
@@ -106,7 +103,6 @@ public class ComponentDefDOM {
             this._doc = builder.build(reader);
         } catch (Throwable t) {
         	_logger.error("Error detected while parsing the XML {}", xmlText, t);
-            //ApsSystemUtils.logThrowable(t, this, "decodeDOM", "Error while parsing: " + t.getMessage());
             throw new ApsSystemException("Error detected while parsing the XML", t);
         }
     }

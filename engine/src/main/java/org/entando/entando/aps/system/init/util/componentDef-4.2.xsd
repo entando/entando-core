@@ -5,12 +5,22 @@
 			<xs:sequence>
 				<xs:element ref="code" />
 				<xs:element ref="description" />
+				<xs:element ref="artifact" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="dependencies" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="installation" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="description" type="xs:string"/>
+	<xs:element name="artifact">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="artifactId" minOccurs="0" maxOccurs="1"  />
+				<xs:element ref="groupId" minOccurs="0" maxOccurs="1"  />
+				<xs:element ref="version" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="dependencies">
 		<xs:complexType>
 			<xs:sequence>
@@ -91,6 +101,9 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="code" type="xs:NCName"/>
+	<xs:element name="artifactId" type="xs:string"/>
+	<xs:element name="groupId" type="xs:string"/>
+	<xs:element name="version" type="xs:string"/>
 	<xs:element name="datasource">
 		<xs:complexType mixed="true">
 			<xs:sequence>

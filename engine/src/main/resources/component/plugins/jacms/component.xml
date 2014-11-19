@@ -2,6 +2,13 @@
 <component>
 	<code>jacms</code>
 	<description>Entando CMS</description>
+	<!--
+	<artifact>
+		<artifactId>${project.artifactId}</artifactId>
+		<groupId>${project.groupId}</groupId>
+		<version>${project.version}</version>
+	</artifact>
+	-->
 	<installation>
 		<tableMapping>
 			<datasource name="portDataSource">

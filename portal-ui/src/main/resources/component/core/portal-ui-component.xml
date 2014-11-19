@@ -2,17 +2,15 @@
 <component>
 	<code>entando-portal-ui</code>
 	<description>Entando Portal UI</description>
+	<artifact>
+		<artifactId>${project.artifactId}</artifactId>
+		<groupId>${project.groupId}</groupId>
+		<version>${project.version}</version>
+	</artifact>
 	<dependencies>
 		<code>entando-admin-console</code>
 	</dependencies>
 	<installation>
-		<!--
-		<tableMapping>
-			<datasource name="servDataSource">
-				<class>org.entando.entando.aps.system.init.model.servdb.UserShortcut</class>
-			</datasource>
-		</tableMapping>
-		-->
 		<environment code="production">
 			<defaultSqlResources>
 				<datasource name="portDataSource">

@@ -2,6 +2,8 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
 		<a href="<s:url action="list" />"><s:text name="title.guiFragmentManagement" /></a>
@@ -106,16 +108,26 @@
 			<div class="tab-pane" id="gui-default">
 						<%-- defaultGui --%>
 							<s:if test="null != defaultGui">
-								<pre><code>
-									<s:set var="defguiVar"><s:property value="defaultGui" /></s:set>
-									<s:property
-										value="#defguiVar.replaceAll('\t', '&emsp;').replaceAll('\r', '').replaceAll('\n', '<br />')"
-										escapeCsv="false"
-										escapeHtml="false"
-										escapeJavaScript="false"
-										escapeXml="false"
-									 />
-								</code></pre>
+								<%-- setup replace --%>
+									<% pageContext.setAttribute("tabChar", "\t"); %>
+									<% pageContext.setAttribute("carriageReturnChar", "\r"); %>
+									<% pageContext.setAttribute("newLineChar", "\n"); %>
+									<c:set var="brChar"><br /></c:set>
+								<%-- set the string --%>
+									<c:set var="defguiVar"><s:property value="defaultGui" /></c:set>
+									<c:set var="ESCAPED_STRING" value="${
+										fn:replace(
+											fn:replace(
+												fn:replace(
+													defguiVar, tabChar, '&emsp;'),
+												carriageReturnChar, ''
+											),
+											newLineChar, brChar
+										)
+									}" />
+									<%-- output --%>
+										<pre><code><c:out value="${ESCAPED_STRING}" escapeXml="false" /></pre></code>
+
 							</s:if>
 							<s:else>
 								<div class="margin-none alert alert-info">

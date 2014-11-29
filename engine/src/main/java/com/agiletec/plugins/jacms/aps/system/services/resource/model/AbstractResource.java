@@ -301,7 +301,7 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
     	StringBuilder diskFolder = new StringBuilder(this.getFolder());
     	if (this.isProtectedResource()) {
     		//PROTECTED Resource
-    		diskFolder.append(this.getMainGroup()).append(File.separator);
+    		diskFolder.append(this.getMainGroup()).append("/");
     	}
     	return diskFolder.toString();
     }

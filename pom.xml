@@ -55,7 +55,7 @@
 		<test.database.port.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testPort;create=true</test.database.port.url>
 		<test.database.serv.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testServ;create=true</test.database.serv.url>
 		
-		<spring.version>4.0.0.RELEASE</spring.version>
+		<spring.version>4.0.6.RELEASE</spring.version>
 		<struts2.version>2.3.16.3</struts2.version>
 		<cxf.version>3.0.0-milestone2</cxf.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -104,6 +104,11 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.3</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -627,6 +632,15 @@
 			<version>1.7.6</version>
 		</dependency>
 	</dependencies>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.3</version>
+			</plugin>
+		</plugins>
+	</reporting>
 	<modules>
 		<module>engine</module>
 		<module>admin-console</module>

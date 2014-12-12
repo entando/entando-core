@@ -31,7 +31,7 @@
 	<xs:element name="installation">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="tableMapping" minOccurs="0" maxOccurs="1"  />
+				<xs:element ref="tableMapping" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="environment" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
@@ -46,13 +46,29 @@
 	<xs:element name="environment">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="defaultSqlResources"/>
-				<xs:element minOccurs="0" ref="postProcesses"/>
+				<xs:element ref="defaultSqlResources" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="postProcesses" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="code" use="required" type="xs:NCName"/>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="uninstallation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sqlResources" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="resources" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="postProcesses" minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="defaultSqlResources">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" ref="datasource"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="sqlResources">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" ref="datasource"/>
@@ -113,4 +129,12 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="class" type="xs:string"/>
+	<xs:element name="resources">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="0" maxOccurs="unbounded" ref="resource" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="resource" type="xs:string"/>
 </xs:schema>

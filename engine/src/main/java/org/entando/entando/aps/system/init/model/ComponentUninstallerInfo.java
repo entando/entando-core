@@ -20,6 +20,7 @@ package org.entando.entando.aps.system.init.model;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom.Element;
@@ -29,38 +30,29 @@ import org.slf4j.LoggerFactory;
 /**
  * @author E.Santoboni
  */
-public class ComponentEnvironment extends AbstractComponentModule implements Serializable {
+public class ComponentUninstallerInfo extends AbstractComponentModule implements Serializable {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ComponentEnvironment.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ComponentUninstallerInfo.class);
 	
-	public ComponentEnvironment(Element environmentElement, Map<String, String> postProcessClasses) throws Throwable {
+	public ComponentUninstallerInfo(Element environmentElement, Map<String, String> postProcessClasses) throws Throwable {
 		try {
-			String environmentCode = environmentElement.getAttributeValue("code");
-			this.setCode(environmentCode);
-			Element defaultSqlResourcesElement = environmentElement.getChild("defaultSqlResources");
+			Element defaultSqlResourcesElement = environmentElement.getChild("sqlResources");
 			super.extractSqlResources(defaultSqlResourcesElement);
 			Element postProcessesElement = environmentElement.getChild("postProcesses");
 			super.createPostProcesses(postProcessesElement, postProcessClasses);
 		} catch (Throwable t) {
-			_logger.error("Error creating ComponentEnvironment", t);
-			throw new ApsSystemException("Error creating ComponentEnvironment", t);
+			_logger.error("Error creating ComponentUninstallerInfo", t);
+			throw new ApsSystemException("Error creating ComponentUninstallerInfo", t);
 		}
 	}
 	
-	public String getCode() {
-		return _code;
+	public List<String> getResourcesPaths() {
+		return _resourcesPaths;
 	}
-	protected void setCode(String code) {
-		this._code = code;
-	}
-	
-	public Map<String, String> getDefaultSqlResourcesPaths() {
-		return super.getSqlResourcesPaths();
-	}
-	protected void setDefaultSqlResourcesPaths(Map<String, String> defaultSqlResourcesPaths) {
-		super.setSqlResourcesPaths(defaultSqlResourcesPaths);
+	protected void setResourcesPaths(List<String> resourcesPaths) {
+		this._resourcesPaths = resourcesPaths;
 	}
 	
-	private String _code;
+	private List<String> _resourcesPaths;
 	
 }

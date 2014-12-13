@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,7 +12,7 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.aps.system.init.util;
@@ -31,14 +31,31 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @author E.Santoboni
  */
 public class QueryExtractor {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(QueryExtractor.class);
 	
+	@Deprecated
 	public static String[] extractQueries(String script) throws Throwable {
+		return extractInsertQueries(script);
+	}
+	
+	public static String[] extractInsertQueries(String script) throws Throwable {
+		String startsWith = "insert into";
+		String endsWith = ");";
+		return extractQueries(script,startsWith, endsWith);
+	}
+	
+	public static String[] extractDeleteQueries(String script) throws Throwable {
+		String startsWith = "delete from";
+		String endsWith = ";";
+		return extractQueries(script,startsWith, endsWith);
+	}
+	
+	private static String[] extractQueries(String script, String startsWith, String endsWith) throws Throwable {
 		if (null == script || script.trim().length() == 0) return null;
 		String[] lines = readLines(script.trim());
         if (lines.length == 0) return null;
-		return extractQueries(lines);
+		return extractQueries(lines, startsWith, endsWith);
 	}
 	
 	private static String[] readLines(String text) throws Throwable {
@@ -53,7 +70,6 @@ public class QueryExtractor {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error reading lines", t);
-			//ApsSystemUtils.logThrowable(t, QueryExtractor.class, "readLines", "Error reading lines");
 			throw new ApsSystemException("Error reading lines", t);
 		} finally {
 			if (null != is) is.close();
@@ -61,7 +77,7 @@ public class QueryExtractor {
 		return lines;
 	}
 	
-	private static String[] extractQueries(String[] lines) {
+	private static String[] extractQueries(String[] lines, String startsWith, String endsWith) {
 		String[] queries = new String[0];
 		StringBuilder builder = new StringBuilder();
 		int length = lines.length;
@@ -73,8 +89,8 @@ public class QueryExtractor {
 				lastValuedLine = line;
 			}
 			if ((i+1) < length 
-					&& lines[i+1].toLowerCase().trim().startsWith("insert into") 
-					&& (null != lastValuedLine && lastValuedLine.toLowerCase().trim().endsWith(");"))) {
+					&& lines[i+1].toLowerCase().trim().startsWith(startsWith) 
+					&& (null != lastValuedLine && lastValuedLine.toLowerCase().trim().endsWith(endsWith))) {
 				String query = purgeQuery(builder);
 				queries = addChild(queries, query);
 				lastValuedLine = null;
@@ -89,7 +105,7 @@ public class QueryExtractor {
 	
 	private static String purgeQuery(StringBuilder builder) {
 		String query = builder.toString().trim();
-		query = query.substring(0, query.length()-1);//cut ";"
+		query = query.substring(0, query.length()-1);
 		builder.delete(0, builder.length());
 		return query;
 	}

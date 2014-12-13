@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,7 +12,7 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.aps.system.init.util;
@@ -42,13 +42,13 @@ import com.agiletec.aps.util.DateConverter;
  * @author E.Santoboni
  */
 public class TableDataUtils {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(TableDataUtils.class);
 	
 	public static void valueDatabase(String script, String databaseName, 
 			DataSource dataSource, DataInstallationReport schemaReport) throws ApsSystemException {
 		try {
-            String[] queries = (null != script) ? QueryExtractor.extractQueries(script) : null;
+            String[] queries = (null != script) ? QueryExtractor.extractInsertQueries(script) : null;
 			if (null == queries || queries.length == 0) {
 				_logger.info("Script file for db {} void", databaseName);
 				if (null != schemaReport) {
@@ -65,7 +65,6 @@ public class TableDataUtils {
 				schemaReport.getDatabaseStatus().put(databaseName, SystemInstallationReport.Status.INCOMPLETE);
 			}
 			_logger.error("Error executing script into db {} ", databaseName, t);
-			//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "valueDatabase", "Error executing script into db " + databaseName);
 			throw new ApsSystemException("Error executing script into db " + databaseName, t);
 		}
 	}
@@ -90,13 +89,11 @@ public class TableDataUtils {
 					conn.rollback();
 				}
 			} catch (Throwable tr) {
-				_logger.error("Error executing rollback", t);
-				//ApsSystemUtils.logThrowable(tr, TableDataUtils.class,"executeQueries", "Error executing rollback");
+				_logger.error("Error executing rollback", tr);
 			}
 			String errorMessage = "Error executing script - QUERY:\n" + currentQuery;
 			if (traceException) {
 				_logger.error("Error executing script - QUERY:\n{}", currentQuery, t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "executeQueries", errorMessage);
 			}
 			throw new ApsSystemException(errorMessage, t);
 		} finally {
@@ -106,7 +103,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error while closing the statement", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "closeDaoResources", "Error while closing the statement");
 			}
 			try {
 				if (conn != null) {
@@ -114,7 +110,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error closing the connection", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class,  "closeDaoStatement", "Error closing the connection");
 			}
 		}
 	}
@@ -170,7 +165,6 @@ public class TableDataUtils {
 			report.setRows(rows);
 		} catch (Throwable t) {
 			_logger.error("Error creating backup", t);
-			//ApsSystemUtils.logThrowable(t, TableDataUtils.class, 	"dumpTable", "Error creating backup");
 			throw new ApsSystemException("Error creating backup", t);
 		} finally {
 			try {
@@ -179,7 +173,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error while closing the resultset", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class,"dumpTable", "Error while closing the resultset");
 			}
 			try {
 				if (stat != null) {
@@ -187,7 +180,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error while closing the statement", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "dumpTable", "Error while closing the statement");
 			}
 			try {
 				if (conn != null) {
@@ -195,7 +187,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error closing the connection", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "dumpTable", "Error closing the connection");
 			}
 		}
 		long time = System.currentTimeMillis() - start;

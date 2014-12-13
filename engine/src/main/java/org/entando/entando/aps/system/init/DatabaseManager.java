@@ -379,7 +379,7 @@ public class DatabaseManager extends AbstractInitializerManager
 			throw new ApsSystemException("Error restoring default resources of component " + componentConfiguration.getCode(), t);
 		}
 	}
-
+	
 	private void restoreDefaultDump() throws ApsSystemException {
 		try {
 			String[] dataSourceNames = this.extractBeanNames(DataSource.class);
@@ -390,7 +390,7 @@ public class DatabaseManager extends AbstractInitializerManager
 			for (int j = 0; j < dataSourceNames.length; j++) {
 				String dataSourceName = dataSourceNames[j];
 				DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
-				Resource resource = (null != defaultDump) ? defaultDump.get(dataSourceName) : null;
+				Resource resource = defaultDump.get(dataSourceName);
 				String script = this.readFile(resource);
 				if (null != script && script.trim().length() > 0) {
 					this.getDatabaseRestorer().initOracleSchema(dataSource);
@@ -402,7 +402,7 @@ public class DatabaseManager extends AbstractInitializerManager
 			throw new ApsSystemException("Error restoring default Dump", t);
 		}
 	}
-
+	
 	private String readFile(Resource resource) throws Throwable {
 		if (resource == null) {
 			return null;

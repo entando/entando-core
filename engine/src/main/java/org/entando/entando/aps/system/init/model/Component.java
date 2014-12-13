@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,7 +12,7 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.aps.system.init.model;
@@ -67,6 +67,12 @@ public class Component {
 							new ComponentEnvironment(environmentElement, postProcessClasses);
 					this.getEnvironments().put(environment.getCode(), environment);
 				}
+			}
+			Element uninstallationElement = rootElement.getChild("uninstallation");
+			if (null != uninstallationElement) {
+				ComponentUninstallerInfo uninstallerInfo = 
+						new ComponentUninstallerInfo(uninstallationElement, postProcessClasses);
+				this.setUninstallerInfo(uninstallerInfo);
 			}
         } catch (Throwable t) {
         	_logger.error("Error loading component", t);
@@ -159,6 +165,13 @@ public class Component {
 		this._environments = environments;
 	}
 	
+	public ComponentUninstallerInfo getUninstallerInfo() {
+		return _uninstallerInfo;
+	}
+	protected void setUninstallerInfo(ComponentUninstallerInfo uninstallerInfo) {
+		this._uninstallerInfo = uninstallerInfo;
+	}
+	
 	private String _code;
 	private String _description;
 	private String _artifactId;
@@ -168,5 +181,7 @@ public class Component {
 	private Map<String, List<String>> _tableMapping;
 	
 	private Map<String, ComponentEnvironment> _environments;
+	
+	private ComponentUninstallerInfo _uninstallerInfo;
 	
 }

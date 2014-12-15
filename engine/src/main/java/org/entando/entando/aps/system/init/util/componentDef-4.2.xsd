@@ -8,6 +8,7 @@
 				<xs:element ref="artifact" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="dependencies" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="installation" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="uninstallation" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

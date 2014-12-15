@@ -71,10 +71,18 @@ public abstract class AbstractInitializerManager implements BeanFactoryAware {
 		this._beanFactory = beanFactory;
 	}
 	
+	protected IComponentManager getComponentManager() {
+		return _componentManager;
+	}
+	public void setComponentManager(IComponentManager componentManager) {
+		this._componentManager = componentManager;
+	}
+	
 	private String _configVersion;
 	private Environment _environment = Environment.production;
 	
 	private BeanFactory _beanFactory;
+	private IComponentManager _componentManager;
 	
 	public enum Environment {test, develop, production}
 	

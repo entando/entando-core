@@ -599,8 +599,8 @@ public class DatabaseManager extends AbstractInitializerManager
 			if (null == subFolderName) {
 				return null;
 			}
-			StringBuilder fileName = new StringBuilder(this.getLocalBackupsFolder())
-					.append(subFolderName).append(File.separator)
+			StringBuilder fileName = new StringBuilder(this.getLocalBackupsFolder());
+			fileName.append(subFolderName).append(File.separator)
 					.append(dataSourceName).append(File.separator).append(tableName).append(".sql");
 			return this.getStorageManager().getStream(fileName.toString(), true);
 		} catch (Throwable t) {
@@ -653,14 +653,7 @@ public class DatabaseManager extends AbstractInitializerManager
 	protected void setStatus(int status) {
 		this._status = status;
 	}
-
-	protected IComponentManager getComponentManager() {
-		return _componentManager;
-	}
-	public void setComponentManager(IComponentManager componentManager) {
-		this._componentManager = componentManager;
-	}
-
+	
 	protected DatabaseDumper getDatabaseDumper() {
 		return _databaseDumper;
 	}
@@ -688,7 +681,6 @@ public class DatabaseManager extends AbstractInitializerManager
 	private Map<String, Resource> _testSqlResources;
 	private Map<String, Resource> _defaultSqlDump;
 	private int _status;
-	private IComponentManager _componentManager;
 	public static final int STATUS_READY = 0;
 	public static final int STATUS_DUMPIMG_IN_PROGRESS = 1;
 

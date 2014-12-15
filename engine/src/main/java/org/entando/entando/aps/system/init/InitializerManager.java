@@ -164,13 +164,6 @@ public class InitializerManager extends AbstractInitializerManager implements II
 		this._postProcessors = postProcessors;
 	}
 	
-	protected IComponentManager getComponentManager() {
-		return _componentManager;
-	}
-	public void setComponentManager(IComponentManager componentManager) {
-		this._componentManager = componentManager;
-	}
-	
 	protected IDatabaseManager getDatabaseManager() {
 		return _databaseManager;
 	}
@@ -183,7 +176,6 @@ public class InitializerManager extends AbstractInitializerManager implements II
 	
 	private Map<String, IPostProcessor> _postProcessors;
 	
-	private IComponentManager _componentManager;
 	private IDatabaseManager _databaseManager;
 	
 	public static final String REPORT_CONFIG_ITEM = "entandoComponentsReport";

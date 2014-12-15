@@ -84,6 +84,10 @@ public class ApsTableUtils {
 	
 	/**
 	 * Create a table if it does not already exist. This is not supported by all databases.
+	 * @param connectionSource Associated connection source.
+	 * @param dataClass The class for which a table will be created.
+	 * @return The number of statements executed to do so.
+	 * @throws SQLException in case of error
 	 */
 	public static <T> int createTableIfNotExists(ConnectionSource connectionSource, Class<T> dataClass)
 			throws SQLException {

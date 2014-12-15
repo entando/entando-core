@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,7 +12,7 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.aps.system.init;
@@ -27,7 +27,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.entando.entando.aps.system.init.model.Component;
-import org.entando.entando.aps.system.init.util.TableDataUtils;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.ListableBeanFactory;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**

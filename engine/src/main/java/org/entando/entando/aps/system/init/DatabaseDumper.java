@@ -44,30 +44,30 @@ import org.slf4j.LoggerFactory;
 public class DatabaseDumper extends AbstractDatabaseUtils {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DatabaseDumper.class);
-	
+
 	protected void createBackup(AbstractInitializerManager.Environment environment, SystemInstallationReport installationReport) throws ApsSystemException {
 		try {
 			DataSourceDumpReport report = new DataSourceDumpReport(installationReport);
 			long start = System.currentTimeMillis();
-			String backupSubFolder = (AbstractInitializerManager.Environment.develop.equals(environment)) ?
-					environment.toString() : DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
-					//this.setBackupSubFolder(subFolder);
-					report.setSubFolderName(backupSubFolder);
-					List<Component> components = this.getComponents();
-					for (int i = 0; i < components.size(); i++) {
-						Component componentConfiguration = components.get(i);
-						this.createBackup(componentConfiguration.getTableMapping(), report, backupSubFolder);
-					}
-					this.createBackup(this.getEntandoTableMapping(), report, backupSubFolder);
-					long time = System.currentTimeMillis() - start;
-					report.setRequiredTime(time);
-					report.setDate(new Date());
-					StringBuilder reportFolder = new StringBuilder(this.getLocalBackupsFolder());
-					if (null != backupSubFolder) {
-						reportFolder.append(backupSubFolder).append(File.separator);
-					}
-					this.save(DatabaseManager.DUMP_REPORT_FILE_NAME,
-							reportFolder.toString(), report.toXml());
+			String backupSubFolder = (AbstractInitializerManager.Environment.develop.equals(environment))
+					? environment.toString() : DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
+			//this.setBackupSubFolder(subFolder);
+			report.setSubFolderName(backupSubFolder);
+			List<Component> components = this.getComponents();
+			for (int i = 0; i < components.size(); i++) {
+				Component componentConfiguration = components.get(i);
+				this.createBackup(componentConfiguration.getTableMapping(), report, backupSubFolder);
+			}
+			this.createBackup(this.getEntandoTableMapping(), report, backupSubFolder);
+			long time = System.currentTimeMillis() - start;
+			report.setRequiredTime(time);
+			report.setDate(new Date());
+			StringBuilder reportFolder = new StringBuilder(this.getLocalBackupsFolder());
+			if (null != backupSubFolder) {
+				reportFolder.append(backupSubFolder).append(File.separator);
+			}
+			this.save(DatabaseManager.DUMP_REPORT_FILE_NAME,
+					reportFolder.toString(), report.toXml());
 		} catch (Throwable t) {
 			_logger.error("error in ", t);
 			throw new ApsSystemException("Error while creating backup", t);
@@ -83,7 +83,9 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 			for (int j = 0; j < dataSourceNames.length; j++) {
 				String dataSourceName = dataSourceNames[j];
 				List<String> tableClassNames = tableMapping.get(dataSourceName);
-				if (null == tableClassNames || tableClassNames.isEmpty()) continue;
+				if (null == tableClassNames || tableClassNames.isEmpty()) {
+					continue;
+				}
 				DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
 				for (int k = 0; k < tableClassNames.size(); k++) {
 					String tableClassName = tableClassNames.get(k);
@@ -122,8 +124,8 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 			ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes("UTF-8"));
 			storageManager.saveFile(path, true, bais);
 		} catch (Throwable t) {
-			_logger.error("Error  save backup '{}'", filename, t);
-			throw new ApsSystemException("Error  save backup '" + filename , t);
+			_logger.error("Error saving backup '{}'", filename, t);
+			throw new ApsSystemException("Error saving backup '" + filename + "'", t);
 		}
 	}
 

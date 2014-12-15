@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,7 +12,7 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.aps.system.init.model;
@@ -161,6 +161,17 @@ public class SystemInstallationReport {
 			return this.addReport(componentCode);
 		}
 		return null;
+	}
+	
+	public boolean removeComponentReport(String componentCode) {
+		for (int i = 0; i < this.getReports().size(); i++) {
+			ComponentInstallationReport singleReport = this.getReports().get(i);
+			if (singleReport.getComponentCode().equals(componentCode)) {
+				this.getReports().remove(singleReport);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public Date getCreation() {

@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,7 +12,7 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.aps.system.init;
@@ -24,6 +24,7 @@ import java.util.Map;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import javax.sql.DataSource;
 
 /**
  * @author E.Santoboni
@@ -45,6 +46,8 @@ public interface IDatabaseManager {
 	public List<DataSourceDumpReport> getBackupReports() throws ApsSystemException;
 	
 	public Map<String, List<String>> getEntandoTableMapping();
+	
+	public DatabaseType getDatabaseType(DataSource dataSource) throws ApsSystemException;
 	
 	public enum DatabaseType {DERBY, POSTGRESQL, MYSQL, ORACLE, SQLSERVER, UNKNOWN}
 	

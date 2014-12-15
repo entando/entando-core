@@ -1,6 +1,6 @@
 /*
 *
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 * This file is part of Entando software.
 * Entando is a free software;
@@ -12,7 +12,7 @@
 * 
 * 
 * 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
+* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
 *
 */
 package org.entando.entando.aps.system.init;
@@ -607,6 +607,11 @@ public class DatabaseManager extends AbstractInitializerManager
 			_logger.error("Error while extracting table dump - " + "table '{}' - datasource '{}' - SubFolder '{}'", tableName, dataSourceName, subFolderName, t);
 			throw new RuntimeException("Error while extracting table dump - " + "table '" + tableName + "' - datasource '" + dataSourceName + "' - SubFolder '" + subFolderName + "'", t);
 		}
+	}
+	
+	@Override
+	public DatabaseType getDatabaseType(DataSource dataSource) throws ApsSystemException {
+		return this.getDatabaseRestorer().getType(dataSource);
 	}
 	
 	private IStorageManager getStorageManager() {

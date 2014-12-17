@@ -1,7 +1,7 @@
 entando-core
 ============
 
-**entando-core** is a project that includes three main core components of the Entando Platform: 
+**entando-core** is a project that includes three main core components of the **Entando Platform**: 
 
 1. **engine**, includes core features and internal services of the platform
 2. **admin-console**, includes tools to manage administrative core features and WCMS functionality

@@ -24,7 +24,7 @@ See the [WIKI] (https://github.com/entando/entando-core/wiki) pages for more inf
 
 * [Getting Started] (https://github.com/entando/entando-core/wiki/Getting-Started) page describes step-by-step instructions for preparing your system for installation, and for installing a single Entando instance.
 * [How it works] (https://github.com/entando/entando-core/wiki/How-iT-Works) page provides contents and architectural design to understand the Entando platform and its components.
-* [How to use page] (https://github.com/entando/entando-core/wiki/How-To-Use) provides contents to start basic implementation.
+* [How to use] (https://github.com/entando/entando-core/wiki/How-To-Use) page provides contents to start basic implementation.
 * [FAQ] (https://github.com/entando/entando-core/wiki/Faq) page provides all the answers to general questions.
 
 For latest updated news, please visit the company websites: http://www.entando.com

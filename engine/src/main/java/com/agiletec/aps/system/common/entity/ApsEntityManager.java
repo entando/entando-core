@@ -1,20 +1,16 @@
 /*
-*
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
-*
-* This file is part of Entando software.
-* Entando is a free software;
-* You can redistribute it and/or modify it
-* under the terms of the GNU General Public License (GPL) as published by the Free Software Foundation; version 2.
-* 
-* See the file License for the specific language governing permissions   
-* and limitations under the License
-* 
-* 
-* 
-* Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
-*
-*/
+ * Copyright 2013-Present Entando Corporation (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package com.agiletec.aps.system.common.entity;
 
 import java.io.StringReader;
@@ -365,7 +361,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 */
 	public void setEntityClassName(String className) {
 		try {
-			this._entityClass = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+			this._entityClass = Class.forName(className);
 			Class check = this._entityClass;
 			do {
 				Class[] interfaces = check.getInterfaces();

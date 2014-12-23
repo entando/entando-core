@@ -1,20 +1,16 @@
 /*
-*
-* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
-*
-* This file is part of Entando software.
-* Entando is a free software;
-* You can redistribute it and/or modify it
-* under the terms of the GNU General Public License (GPL) as published by the Free Software Foundation; version 2.
-* 
-* See the file License for the specific language governing permissions   
-* and limitations under the License
-* 
-* 
-* 
-* Copyright 2014 Entando S.r.l. (http://www.entando.com) All rights reserved.
-*
-*/
+ * Copyright 2013-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.init.util;
 
 import java.lang.reflect.Method;
@@ -62,24 +58,8 @@ public class TableFactory {
 			this.createTables(tableClassNames, connectionSource, schemaReport);
 		} catch (Throwable t) {
 			_logger.error("Error creating tables to db {}", this.getDatabaseName(), t);
+			//ApsSystemUtils.logThrowable(t, this, "createTables", "Error creating tables into db " + this.getDatabaseName());
 			throw new ApsSystemException("Error creating tables to db " + this.getDatabaseName(), t);
-		} finally {
-			if (connectionSource != null) {
-				try {
-					connectionSource.close();
-				} catch (SQLException ex) {}
-			}
-		}
-	}
-	
-	public void dropTables(List<String> tableClassNames) throws ApsSystemException {
-		ConnectionSource connectionSource = null;
-		try {
-			connectionSource = this.createConnectionSource();
-			this.dropTables(tableClassNames, connectionSource);
-		} catch (Throwable t) {
-			_logger.error("Error dropping tables to db {}", this.getDatabaseName(), t);
-			throw new ApsSystemException("Error dropping tables to db " + this.getDatabaseName(), t);
 		} finally {
 			if (connectionSource != null) {
 				try {
@@ -116,6 +96,7 @@ public class TableFactory {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error creating connectionSource to db {}", this.getDatabaseName(), t);
+			//ApsSystemUtils.logThrowable(t, this, "createConnectionSource", "Error creating connectionSource to db " + this.getDatabaseName());
 			throw new ApsSystemException("Error creating connectionSource to db " + this.getDatabaseName(), t);
 		}
 		return connectionSource;
@@ -125,7 +106,7 @@ public class TableFactory {
 		Method method = dataSource.getClass().getDeclaredMethod(methodName);
 		return (String) method.invoke(dataSource);
 	}
-	
+
 	private void createTables(List<String> tableClassNames,
 			ConnectionSource connectionSource, DataSourceInstallationReport schemaReport) throws ApsSystemException {
 		try {
@@ -136,7 +117,7 @@ public class TableFactory {
 			}
 			for (int i = 0; i < tableClassNames.size(); i++) {
 				String tableClassName = tableClassNames.get(i);
-				Class tableClass = Class.forName(tableClassName, true, Thread.currentThread().getContextClassLoader());
+				Class tableClass = Class.forName(tableClassName);
 				String tableName = getTableName(tableClass);
 				if (tables.contains(tableName)) {
 					continue;
@@ -144,17 +125,22 @@ public class TableFactory {
 				try {
 					System.out.println("|   ( ok )  " + this.getDatabaseName() + "." + tableName);
 					this.createTable(tableClass, connectionSource);
+					//if (!tables.contains(tableName)) {
 					tables.add(tableName);
+					//System.out.println("DONE!!!");
+					//}
 				} catch (Throwable t) {
 					schemaReport.getDatabaseStatus().put(this.getDatabaseName(), SystemInstallationReport.Status.INCOMPLETE);
 					String message = "Error creating table " + this.getDatabaseName() + "/" + tableClassName + " - " + t.getMessage();
 					_logger.error("Error creating table {}/{}",this.getDatabaseName(), tableClassName, t);
+					//ApsSystemUtils.logThrowable(t, this, "createTables", message);
 					throw new ApsSystemException(message, t);
 				}
 			}
 		} catch (Throwable t) {
 			schemaReport.getDatabaseStatus().put(this.getDatabaseName(), SystemInstallationReport.Status.INCOMPLETE);
 			_logger.error("Error on setup Database - {}", this.getDatabaseName(), t);
+			//ApsSystemUtils.logThrowable(t, this, "setupDatabase", "Error on setup Database - " + this.getDatabaseName());
 			throw new ApsSystemException("Error on setup Database", t);
 		}
 	}
@@ -182,30 +168,11 @@ public class TableFactory {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error creating table {}", logTableName, t);
+			//ApsSystemUtils.logThrowable(t, this, "setupDatabase", "Error creating table " + logTableName + " - " + t.getMessage());
 			if (result > 0) {
 				TableUtils.dropTable(connectionSource, tableClass, true);
 			}
 			throw new ApsSystemException("Error creating table " + logTableName, t);
-		}
-	}
-	
-	private void dropTables(List<String> tableClassNames,
-			ConnectionSource connectionSource) throws ApsSystemException {
-		try {
-			for (int i = 0; i < tableClassNames.size(); i++) {
-				String tableClassName = tableClassNames.get(i);
-				Class tableClass = Class.forName(tableClassName);
-				try {
-					TableUtils.dropTable(connectionSource, tableClass, true);
-				} catch (Throwable t) {
-					String message = "Error dropping table " + this.getDatabaseName() + "/" + tableClassName + " - " + t.getMessage();
-					_logger.error("Error dropping table {}/{}",this.getDatabaseName(), tableClassName, t);
-					throw new ApsSystemException(message, t);
-				}
-			}
-		} catch (Throwable t) {
-			_logger.error("Error on setup Database - {}", this.getDatabaseName(), t);
-			throw new ApsSystemException("Error on setup Database", t);
 		}
 	}
 

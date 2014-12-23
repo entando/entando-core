@@ -33,6 +33,10 @@
 			<email>william@williamghelfi.com</email>
 		</developer>
 	</developers>
+	<organization>
+		<name>Entando Corporation</name>
+		<url>http://www.entando.com/</url>
+	</organization>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

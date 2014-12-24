@@ -361,7 +361,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 */
 	public void setEntityClassName(String className) {
 		try {
-			this._entityClass = Class.forName(className);
+			this._entityClass = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 			Class check = this._entityClass;
 			do {
 				Class[] interfaces = check.getInterfaces();

@@ -32,7 +32,10 @@
 			<email>william@williamghelfi.com</email>
 		</developer>
 	</developers>
-	
+	<organization>
+		<name>Entando Corporation</name>
+		<url>http://www.entando.com/</url>
+	</organization>
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 		<extensions>

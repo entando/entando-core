@@ -7,11 +7,9 @@
 	<span class="panel-body display-block">
 		<a href="<s:url action="viewTree" namespace="/do/Page" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />">
 			<s:text name="title.pageManagement" /></a>&#32;/&#32;
-		<a href="
-						<s:url action="configure" namespace="/do/Page">
-							<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
-						</s:url>
-			 " title="<s:text name="note.goToSomewhere" />: <s:text name="title.configPage" />"><s:text name="title.configPage" /></a>&#32;/&#32;
+		<a href="<s:url action="configure" namespace="/do/Page">
+				<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
+			</s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.configPage" />"><s:text name="title.configPage" /></a>&#32;/&#32;
 		<s:text name="name.widget" />
 	</span>
 </h1>

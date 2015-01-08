@@ -4,11 +4,9 @@
 	<span class="panel-body display-block">
 		<a href="<s:url action="viewTree" namespace="/do/Page" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />">
 			<s:text name="title.pageManagement" /></a>&#32;/&#32;
-		<a href="
-						<s:url action="configure" namespace="/do/Page">
-							<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
-						</s:url>
-			 " title="<s:text name="note.goToSomewhere" />: <s:text name="title.configPage" />"><s:text name="title.configPage" /></a>&#32;/&#32;
+		<a href="<s:url action="configure" namespace="/do/Page">
+					<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
+				</s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.configPage" />"><s:text name="title.configPage" /></a>&#32;/&#32;
 		<s:text name="name.widget" />
 	</span>
 </h1>
@@ -273,7 +271,7 @@
 						</div>
 						<div class="form-group margin-small-left">
 							<label for="dateValue_cal"><s:text name="label.filterValue.exact" /></label>
-							<wpsf:textfield name="dateValue" id="dateValue_cal" cssClass="form-control" style="width: 60%;" />
+							<wpsf:textfield name="dateValue" id="dateValue_cal" cssClass="form-control datepicker" style="width: 60%;" placeholder="dd/MM/yyyy" />
 						</div>
 					</li>
 				</ul>
@@ -309,7 +307,7 @@
 					</div>
 					<div class="form-group margin-small-left">
 						<label for="dateStart_cal"><s:text name="label.filterValue.exact" /></label>
-						<wpsf:textfield name="dateStart" id="dateStart_cal" cssClass="form-control" style="width: 60%;" placeholder="dd/MM/yyyy" />
+						<wpsf:textfield name="dateStart" id="dateStart_cal" cssClass="form-control datepicker" style="width: 60%;" placeholder="dd/MM/yyyy" />
 					</div>
 				</li>
 			</ul>
@@ -341,7 +339,8 @@
 						</label>
 					</div>
 					<div class="form-group margin-small-left">
-						<label for="dateEnd_cal"><s:text name="label.filterValue.exact" />:</label> <wpsf:textfield name="dateEnd" id="dateEnd_cal" cssClass="form-control" style="width: 60%;" placeholder="dd/MM/yyyy" />
+						<label for="dateEnd_cal"><s:text name="label.filterValue.exact" />:</label> 
+						<wpsf:textfield name="dateEnd" id="dateEnd_cal" cssClass="form-control datepicker" style="width: 60%;" placeholder="dd/MM/yyyy" />
 					</div>
 				</li>
 			</ul>

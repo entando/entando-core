@@ -4,7 +4,7 @@ entando-core
 **entando-core** is the heart of the **Entando Platform**. 
 It provides the basic structure, tools, and functionality to build an instance of the Entando portal.
 
-**Entando** is an innovative Open Source, component-based, UX platform used to develop and manage dynamic websites, and community portals, capable of building and running application services, to address issues in several sectors.
+**Entando** is an innovative Open Source, component-based, UX platform used to develop and manage dynamic websites, and community portals, capable of building and running modern application services, to address issues in several sectors.
 
 **entando-core**, based on Apache Maven, is composed of the three following main core components:
 
@@ -14,7 +14,7 @@ It provides the basic structure, tools, and functionality to build an instance o
 
 The Entando project includes also the following Github projects:
 
-* **entando-archetypes**: https://github.com/entando/entando-archetype. Entando archetypes providing sample project to kickstart your standard/basic Entando portal development.
+* **entando-archetypes**: https://github.com/entando/entando-archetype. Entando archetypes providing sample project to kickstart your standard/basic Entando portal development and all components.
 
 * **entando-components**: https://github.com/entando/entando-components. Entando platform relies on a number of components or extensions that add functionality not included with the standard Entando. There are various types of components. These could extend the functionality of Entando engine, admin-console and portal-ui (apps components), or extend the functionality of the Entando engine, and admin-console (plugins components), or extend the functionality of portal-ui (bundles components).
 

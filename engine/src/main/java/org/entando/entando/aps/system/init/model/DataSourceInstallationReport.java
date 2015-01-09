@@ -46,7 +46,7 @@ public class DataSourceInstallationReport extends AbstractReport {
 			this.getDataSourceTables().put(dbName, tables);
 		}
 	}
-
+	
 	protected Element toJdomElement() {
 		Element element = new Element(SystemInstallationReport.SCHEMA_ELEMENT);
 		element.setAttribute(SystemInstallationReport.STATUS_ATTRIBUTE, this.getStatus().toString());
@@ -74,5 +74,7 @@ public class DataSourceInstallationReport extends AbstractReport {
 	public Map<String, List<String>> getDataSourceTables() {
 		return _dataSourceTables;
 	}
+	
 	private Map<String, List<String>> _dataSourceTables = new HashMap<String, List<String>>();
+	
 }

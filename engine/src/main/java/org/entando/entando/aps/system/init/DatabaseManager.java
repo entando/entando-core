@@ -188,6 +188,10 @@ public class DatabaseManager extends AbstractInitializerManager
 			_logger.debug(logPrefix + "( ok )  Already installed\n" + logPrefix);
 			System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
 			return;
+		} else if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
+			_logger.debug(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+			System.out.println(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+			return;
 		}
 		try {
 			String[] dataSourceNames = this.extractBeanNames(DataSource.class);
@@ -323,6 +327,10 @@ public class DatabaseManager extends AbstractInitializerManager
 		if (componentReport.getStatus().equals(SystemInstallationReport.Status.OK)) {
 			_logger.debug(logPrefix + "( ok )  Already installed\n" + logPrefix);
 			System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
+			return;
+		} else if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
+			_logger.debug(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+			System.out.println(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
 			return;
 		}
 		DataInstallationReport dataReport = componentReport.getDataReport();

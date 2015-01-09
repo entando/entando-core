@@ -88,7 +88,8 @@ public class SystemInstallationReport {
 				status.equals(SystemInstallationReport.Status.PORTING) || 
 				status.equals(SystemInstallationReport.Status.RESTORE) || 
 				status.equals(SystemInstallationReport.Status.NOT_AVAILABLE) || 
-				status.equals(SystemInstallationReport.Status.SKIPPED));
+				status.equals(SystemInstallationReport.Status.SKIPPED) || 
+				status.equals(SystemInstallationReport.Status.UNINSTALLED));
 	}
 	
 	public static SystemInstallationReport getInstance() {
@@ -209,7 +210,7 @@ public class SystemInstallationReport {
 	private boolean _updated;
 	private List<ComponentInstallationReport> _reports = new ArrayList<ComponentInstallationReport>();
 	
-	public enum Status {OK, PORTING, SKIPPED, RESTORE, INCOMPLETE, NOT_AVAILABLE, INIT}
+	public enum Status {OK, PORTING, SKIPPED, RESTORE, INCOMPLETE, NOT_AVAILABLE, INIT, UNINSTALLED}
 	
 	protected static final String ROOT_ELEMENT = "reports";
 	protected static final String CREATION_ELEMENT = "creation";

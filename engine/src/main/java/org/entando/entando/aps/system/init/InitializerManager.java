@@ -120,6 +120,17 @@ public class InitializerManager extends AbstractInitializerManager implements II
 		return SystemInstallationReport.Status.OK;
 	}
 	
+	@Override
+	public void reloadCurrentReport() {
+		try {
+			SystemInstallationReport report = this.extractReport();
+			this.setCurrentReport(report);
+		} catch (Throwable t) {
+			_logger.error("Error reloading report", t);
+			throw new RuntimeException("Error reloading report", t);
+		}
+	}
+	
 	//-------------------- REPORT -------- START
 	
 	private void saveReport(SystemInstallationReport report) throws BeansException {

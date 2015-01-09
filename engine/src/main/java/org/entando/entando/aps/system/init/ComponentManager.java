@@ -37,6 +37,16 @@ public class ComponentManager implements IComponentManager {
 		_logger.debug("{} ready.", this.getClass().getName());
 	}
 	
+	@Override
+	public void refresh() {
+		try {
+			this.loadComponents();
+        } catch (Throwable t) {
+        	_logger.error("Error reloading components definitions", t);
+            throw new RuntimeException("Error reloading components definitions", t);
+        }
+	}
+	
     protected void loadComponents() throws ApsSystemException {
         try {
 			ComponentLoader loader = 

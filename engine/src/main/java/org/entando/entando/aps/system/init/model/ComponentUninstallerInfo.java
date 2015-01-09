@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.init.model;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,8 @@ public class ComponentUninstallerInfo extends AbstractComponentModule implements
 		try {
 			Element defaultSqlResourcesElement = environmentElement.getChild("sqlResources");
 			super.extractSqlResources(defaultSqlResourcesElement);
+			Element resourcesElement = environmentElement.getChild("resources");
+			this.extractResources(resourcesElement);
 			Element postProcessesElement = environmentElement.getChild("postProcesses");
 			super.createPostProcesses(postProcessesElement, postProcessClasses);
 		} catch (Throwable t) {
@@ -42,13 +45,21 @@ public class ComponentUninstallerInfo extends AbstractComponentModule implements
 		}
 	}
 	
+	private void extractResources(Element resourcesElement) throws ApsSystemException {
+		if (null != resourcesElement) {
+			List<Element> resourceElements = resourcesElement.getChildren("resource");
+			for (int j = 0; j < resourceElements.size(); j++) {
+				Element resourceElement = resourceElements.get(j);
+				String resourcePath = resourceElement.getText().trim();
+				this.getResourcesPaths().add(resourcePath);
+			}
+		}
+	}
+	
 	public List<String> getResourcesPaths() {
 		return _resourcesPaths;
 	}
-	protected void setResourcesPaths(List<String> resourcesPaths) {
-		this._resourcesPaths = resourcesPaths;
-	}
 	
-	private List<String> _resourcesPaths;
+	private List<String> _resourcesPaths = new ArrayList<String>();
 	
 }

@@ -30,6 +30,7 @@ See the [WIKI] (https://github.com/entando/entando-core/wiki) pages for more inf
 You can request bug fixes and new features on the [issues] (https://github.com/entando/entando-core/issues) page.
 
 For latest updated news, please visit the company websites: http://www.entando.com.
+
 For any support request, please use [Twitter] (https://twitter.com/Entando).
 
 

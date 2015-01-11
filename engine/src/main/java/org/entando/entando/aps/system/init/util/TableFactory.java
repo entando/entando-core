@@ -132,7 +132,7 @@ public class TableFactory {
 			}
 			for (int i = 0; i < tableClassNames.size(); i++) {
 				String tableClassName = tableClassNames.get(i);
-				Class tableClass = Class.forName(tableClassName);
+				Class tableClass = Class.forName(tableClassName, true, Thread.currentThread().getContextClassLoader());
 				String tableName = getTableName(tableClass);
 				if (tables.contains(tableName)) {
 					continue;

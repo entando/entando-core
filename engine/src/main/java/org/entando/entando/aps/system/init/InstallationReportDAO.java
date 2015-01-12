@@ -56,7 +56,6 @@ public class InstallationReportDAO extends AbstractDAO {
 		} catch (Throwable t) {
 			_logger.error("Error while loading component installation report - version: {}", version,  t);
 			throw new RuntimeException("Error while loading component installation report - version: " + version, t);
-			//this.processDaoException(t, "Error while loading component installation report - version: " + version, "loadReport");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -81,7 +80,6 @@ public class InstallationReportDAO extends AbstractDAO {
 			this.executeRollback(conn);
 			_logger.error("Error saving item" ,  t);
 			throw new RuntimeException("Error saving item", t);
-			//processDaoException(t, "Error while updating saving item",	"saveConfigItem");
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -90,18 +88,13 @@ public class InstallationReportDAO extends AbstractDAO {
 	private void deleteItem(String version, Connection conn) {
 		PreparedStatement stat = null;
 		try {
-			//conn = this.getConnection();
-			//conn.setAutoCommit(false);
 			stat = conn.prepareStatement(DELETE_ITEM);
 			stat.setString(1, InitializerManager.REPORT_CONFIG_ITEM);
 			stat.setString(2, version);
 			stat.executeUpdate();
-			conn.commit();
 		} catch (Throwable t) {
-			this.executeRollback(conn);
 			_logger.error("Error deleting item" ,  t);
 			throw new RuntimeException("Error deleting item", t);
-			//processDaoException(t, "Error while deleting item", "deleteItem");
 		} finally {
 			closeDaoResources(null, stat);
 		}

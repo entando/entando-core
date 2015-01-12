@@ -379,61 +379,53 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 
 <#assign currentLangVar ><@wp.info key="currentLang" /></#assign>
 
-
 <@s.if test="#attribute.failedDateString == null">
-	<@s.set name="dateAttributeValue" value="#attribute.getFormattedDate(''dd/MM/yyyy'')" />
+<@s.set name="dateAttributeValue" value="#attribute.getFormattedDate(''dd/MM/yyyy'')" />
 </@s.if>
 <@s.else>
-	<@s.set name="dateAttributeValue" value="#attribute.failedDateString" />
+<@s.set name="dateAttributeValue" value="#attribute.failedDateString" />
 </@s.else>
-
-
 <@wpsf.textfield 
-		useTabindexAutoIncrement=true 
-		id="%{attribute_id}" 
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
-		value="%{#dateAttributeValue}"
-		maxlength="10"
-		cssClass="text userprofile-date" />
-		&#32;
+useTabindexAutoIncrement=true id="%{attribute_id}" 
+name="%{#attributeTracer.getFormFieldName(#attribute)}" 
+value="%{#dateAttributeValue}" maxlength="10" cssClass="text userprofile-date" />
+  &#32;
+<#assign js_for_datepicker="jQuery(function($){
+  $.datepicker.regional[''''it''''] = {
+   closeText: ''''Chiudi'''',
+   prevText: ''''&#x3c;Prec'''',
+   nextText: ''''Succ&#x3e;'''',
+   currentText: ''''Oggi'''',
+   monthNames: [''''Gennaio'''',''''Febbraio'''',''''Marzo'''',''''Aprile'''',''''Maggio'''',''''Giugno'''',
+  ''''Luglio'''',''''Agosto'''',''''Settembre'''',''''Ottobre'''',''''Novembre'''',''''Dicembre''''],
+   monthNamesShort:  [''''Gen'''',''''Feb'''',''''Mar'''',''''Apr'''',''''Mag'''',''''Giu'''',
+  ''''Lug'''',''''Ago'''',''''Set'''',''''Ott'''',''''Nov'''',''''Dic''''],
+   dayNames: [''''Domenica'''',''''Luned&#236'''',''''Marted&#236'''',''''Mercoled&#236'''',''''Gioved&#236'''',''''Venerd&#236'''',''''Sabato''''],
+   dayNamesShort: [''''Dom'''',''''Lun'''',''''Mar'''',''''Mer'''',''''Gio'''',''''Ven'''',''''Sab''''],
+   dayNamesMin: [''''Do'''',''''Lu'''',''''Ma'''',''''Me'''',''''Gi'''',''''Ve'''',''''Sa''''],
+   weekHeader: ''''Sm'''',
+   dateFormat: ''''dd/mm/yy'''',
+   firstDay: 1,
+   isRTL: false,
+   showMonthAfterYear: false,
+   yearSuffix: ''''''''};
+ });
 
-
-	<#assign js_for_datepicker="jQuery(function($){
-			$.datepicker.regional[''''it''''] = {
-				closeText: ''''Chiudi'''',
-				prevText: ''''&#x3c;Prec'''',
-				nextText: ''''Succ&#x3e;'''',
-				currentText: ''''Oggi'''',
-				monthNames: [''''Gennaio'''',''''Febbraio'''',''''Marzo'''',''''Aprile'''',''''Maggio'''',''''Giugno'''',
-			''''Luglio'''',''''Agosto'''',''''Settembre'''',''''Ottobre'''',''''Novembre'''',''''Dicembre''''],
-				monthNamesShort:  [''''Gen'''',''''Feb'''',''''Mar'''',''''Apr'''',''''Mag'''',''''Giu'''',
-			''''Lug'''',''''Ago'''',''''Set'''',''''Ott'''',''''Nov'''',''''Dic''''],
-				dayNames: [''''Domenica'''',''''Luned&#236'''',''''Marted&#236'''',''''Mercoled&#236'''',''''Gioved&#236'''',''''Venerd&#236'''',''''Sabato''''],
-				dayNamesShort: [''''Dom'''',''''Lun'''',''''Mar'''',''''Mer'''',''''Gio'''',''''Ven'''',''''Sab''''],
-				dayNamesMin: [''''Do'''',''''Lu'''',''''Ma'''',''''Me'''',''''Gi'''',''''Ve'''',''''Sa''''],
-				weekHeader: ''''Sm'''',
-				dateFormat: ''''dd/mm/yy'''',
-				firstDay: 1,
-				isRTL: false,
-				showMonthAfterYear: false,
-				yearSuffix: ''''''''};
-		});
-
-		jQuery(function($) {
-			if (Modernizr.touch && Modernizr.inputtypes.date) {
-				$.each(	$(\"input.userprofile-date\"), function(index, item) {
-					item.type = ''''date'''';
-				});
-			} else {
-				$.datepicker.setDefaults( $.datepicker.regional[ \"${currentLangVar}\" ] );
-				$(\"input.userprofile-date\").datepicker({
-						changeMonth: true,
-						changeYear: true,
-						dateFormat: \"dd/mm/yy\"
-		    		});
-			}
-		});
-		">
+ jQuery(function($) {
+  if (Modernizr.touch && Modernizr.inputtypes.date) {
+   $.each( $(\"input.userprofile-date\"), function(index, item) {
+    item.type = ''''date'''';
+   });
+  } else {
+   $.datepicker.setDefaults( $.datepicker.regional[ \"${currentLangVar}\" ] );
+   $(\"input.userprofile-date\").datepicker({
+     changeMonth: true,
+     changeYear: true,
+     dateFormat: \"dd/mm/yy\"
+    });
+  }
+ });
+ ">
 
 <@wp.headInfo type="JS" info="entando-misc-html5-essentials/modernizr-2.5.3-full.js" />
 <@wp.headInfo type="JS_EXT" info="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" />
@@ -505,7 +497,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		id="%{#attribute_id}" 
 		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
 		value="%{#numberAttributeValue}"
-		maxlength="254" />', 1);
+		maxlength=254 />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-BooleanAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
@@ -643,19 +635,11 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 	
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_booleanAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />	
--->
 			<@wp.fragment code="userprofile_is_front-BooleanAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
-
 		</div>
 	</div>
 </@s.if>
@@ -663,16 +647,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_checkBoxAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-CheckboxAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
@@ -683,15 +660,8 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		<fieldset class=" <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 			<legend class="margin-medium-top">
 				<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 			</legend>
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_compositeAttribute.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front-CompositeAttribute" escapeXml=false />
 		</fieldset>
@@ -701,19 +671,11 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_dateAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-DateAttribute" escapeXml=false /> 
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
-			
 		</div>
 	</div>
 </@s.elseif>
@@ -721,20 +683,11 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
-
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_enumeratorAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-EnumeratorAttribute" escapeXml=false /> 
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
-		
 		</div>
 	</div>
 </@s.elseif>
@@ -742,18 +695,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
-
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
-
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_hypertextAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false /> 
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
@@ -764,39 +708,22 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		<fieldset class=" <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 			<legend class="margin-medium-top">
 				<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-					<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
-					<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
-									
+					<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 			
 			</legend>
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monolistAttribute.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front-MonolistAttribute" escapeXml=false /> 
 		</fieldset>
 	</div>
-	LISTA</br>
 </@s.elseif>
 <@s.elseif test="#attribute.type == ''Longtext''">
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_hypertextAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
-			<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false /> 			
+			<@wp.fragment code="userprofile_is_front-LongtextAttribute" escapeXml=false /> 			
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
-			
 		</div>
 	</div>
 </@s.elseif>
@@ -804,15 +731,8 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="well well-small">
 		<fieldset class=" <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 			<legend class="margin-medium-top"><@wp.i18n key="${i18n_attribute_name}" />
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 			</legend>
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monolistAttribute.jsp" />			
--->
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front-MonolistAttribute" escapeXml=false /> 		
 		</fieldset>
@@ -822,57 +742,33 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-
-			<#-- <s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" /> -->
-
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
 		</label>
-
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />	
--->
 			<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
-
 	</div>
 </@s.elseif>
 <@s.elseif test="#attribute.type == ''Number''">
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 			
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_numberAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-NumberAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
 </@s.elseif>
 <@s.elseif test="#attribute.type == ''Text''">
-<#--
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
@@ -882,41 +778,25 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_threeStateAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-ThreeStateAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
-			
 		</div>
 	</div>
 </@s.elseif>
-<@s.else><%-- for all other types, insert a simple label and a input[type="text"] --%>
+<@s.else> <#-- for all other types, insert a simple label and a input[type="text"] -->
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
 		</label>
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
-	DEFAULT</br>
 </@s.else>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_editCurrentUser_password', 'userprofile_editCurrentUser_password', NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
@@ -1016,152 +896,55 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 				<@s.property value="#elementStatus.count" /><span class="noscreen">&#32;<@s.text name="label.compositeAttribute.element" /></span>
 				&#32;
 				<@s.if test="#lang.default">
-<#--
-					<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/listAttributes/allList_operationModule.jsp" />
--->
 					<@wp.fragment code="userprofile_is_front_AllList_operationModule" escapeXml=false /> 
-
 				</@s.if>
 			</@s.if>
 			<@s.else>
 				<@s.property value="#elementStatus.count" />
 				&#32;
-<#--
-				<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/listAttributes/allList_operationModule.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front_AllList_operationModule" escapeXml=false /> 
 			</@s.else>
 		</label>
 		<div class="controls">
 			<@s.if test="#attribute.type == ''Boolean''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_booleanAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-BooleanAttribute" escapeXml=false />
 			</@s.if>
 			<@s.elseif test="#attribute.type == ''CheckBox''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_checkBoxAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-CheckboxAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Composite''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_compositeAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-CompositeAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Date''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_dateAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-DateAttribute" escapeXml=false /> 
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Enumerator''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_enumeratorAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-EnumeratorAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Hypertext''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_hypertextAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Longtext''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_hypertextAttribute.jsp" />
--->
-				<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false />
+				<@wp.fragment code="userprofile_is_front-LongtextAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Monotext''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Number''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_numberAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-NumberAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''ThreeState''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_threeStateAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-ThreeStateAttribute" escapeXml=false />
-				
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Text''">
-<#--
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />				
 			</@s.elseif>
 			<@s.else>
-<#--
-				else?<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
--->
 				<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />	
 			</@s.else>
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</li>
-<#--
-		<li class="contentAttributeBox">
-		<p>
-			<span class="important">
-				<@s.property value="#elementStatus.count" />&#32;<@s.text name="label.compositeAttribute.element" />
-			</span>
-			<@s.if test="#lang.default">
-				<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/listAttributes/allList_operationModule.jsp" />
-			</@s.if>
-		</p>
-	</@s.if>
-	<@s.else>
-		<li>
-			<label for="<@s.property value="#attribute_id" />"><@s.property value="#elementStatus.index + 1" /></label>
-	</@s.else>
-		
-		<@s.if test="#attribute.type == ''Boolean''">
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_booleanAttribute.jsp" />
-		</@s.if>
-
-		<@s.elseif test="#attribute.type == ''Monotext''">
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
-		</@s.elseif>
-		<@s.elseif test="#attribute.type == ''Text''">
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
-		</@s.elseif>
-		<@s.elseif test="#attribute.type == ''Longtext''"> 
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_monotextAttribute.jsp" />
-		</@s.elseif>
-		<@s.elseif test="#attribute.type == ''Date''">
-		 	<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_dateAttribute.jsp" />
-		</@s.elseif>
-		<@s.elseif test="#attribute.type == ''Hypertext''">
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_hypertextAttribute.jsp" />
-		</@s.elseif>
-		<@s.elseif test="#attribute.type == ''Composite''">
-			<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/compositeAttribute.jsp" />
-		</@s.elseif>
-		
-
-		&#32;
-		
-		<@s.if test="#attribute.type != ''Composite''">	
-			<@s.if test="#lang.default">
-				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/listAttributes/front_allList_operationModule.jsp" />
-			</@s.if>
-		</@s.if> 
-	</li>
-
--->
 </@s.iterator>
 
 <@s.set name="attributeTracer" value="#masterListAttributeTracer" />
@@ -1170,17 +953,12 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <@s.if test="#attribute.attributes.size() != 0">
 </ul>
 </@s.if>
-
 <@s.if test="#lang.default">
 	<div class="control-group">
 		<div class="controls">
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/listAttributes/front_allList_addElementButton.jsp" />
--->
 			<@wp.fragment code="userprofile_is_front-AllList-addElementButton" escapeXml=false />				
 		</div>
 	</div>
-
 </@s.if>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_profileChangeConfirmation', NULL, NULL, NULL, '<#assign wp=JspTaglibs["/aps-core"]>
 <h1><@wp.i18n key="userprofile_EDITPROFILE_TITLE" /></h1>
@@ -1192,9 +970,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 
 <#if (Session.currentUser != "guest") >
-
 <form action="<@wp.action path="/ExtStr2/do/Front/CurrentUser/Profile/save.action" />" method="post" class="form-horizontal">
-
 	<@s.if test="hasFieldErrors()">
 		<div class="alert alert-block">
 			<p><strong><@wp.i18n key="userprofile_MESSAGE_TITLE_FIELDERRORS" /></strong></p>
@@ -1207,33 +983,22 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			</ul>
 		</div>
 	</@s.if>
-
-
 	<@s.set name="lang" value="defaultLang" />
-	
 	<@s.iterator value="userProfile.attributeList" id="attribute">
 		<@s.if test="%{#attribute.active}">
 			<@wpsa.tracerFactory var="attributeTracer" lang="%{#lang.code}" />
 			<@s.set var="i18n_attribute_name">userprofile_<@s.property value="userProfile.typeCode" />_<@s.property value="#attribute.name" /></@s.set>
 			<@s.set var="attribute_id">userprofile_<@s.property value="#attribute.name" /></@s.set>
-<#--
-			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/iteratorAttribute.jsp" />
--->
 			<@wp.fragment code="userprofile_is_IteratorAttribute" escapeXml=false /> 
 		</@s.if>
 	</@s.iterator>
-
 	<p class="form-actions">
 		<@wp.i18n key="userprofile_SAVE_PROFILE" var="userprofile_SAVE_PROFILE" />
 		<@wpsf.submit useTabindexAutoIncrement=true value="%{#attr.userprofile_SAVE_PROFILE}" cssClass="btn btn-primary" />
 	</p>
-
 </form>
-
 <#else>
-	<p>
-		<@wp.i18n key="userprofile_PLEASE_LOGIN" />
-	</p>
+	<p><@wp.i18n key="userprofile_PLEASE_LOGIN" /></p>
 </#if>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_currentWithoutProfile', NULL, NULL, NULL, '<#assign wp=JspTaglibs["/aps-core"]>
 <h1><@wp.i18n key="userprofile_EDITPROFILE_TITLE" /></h1>
@@ -1243,14 +1008,13 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_editCurrentUser', 'userprofile_editCurrentUser', NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign wp=JspTaglibs["/aps-core"]>
-
 <#if (Session.currentUser != "guest") >
-		<@s.action name="editPassword" namespace="/do/Front/CurrentUser" executeResult=true />
-		<@s.action name="edit" namespace="/do/Front/CurrentUser/Profile" executeResult=true />
+	<@s.action name="editPassword" namespace="/do/Front/CurrentUser" executeResult=true />
+	<@s.action name="edit" namespace="/do/Front/CurrentUser/Profile" executeResult=true />
 <#else>
-		<p>
-			<@wp.i18n key="userprofile_PLEASE_LOGIN" />
-		</p>
+	<p>
+		<@wp.i18n key="userprofile_PLEASE_LOGIN" />
+	</p>
 </#if>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-CheckboxAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
@@ -1259,20 +1023,17 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	name="%{#attributeTracer.getFormFieldName(#attribute)}" 
 	id="%{attribute_id}" value="%{#attribute.value == true}"/>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-MonotextAttribute', NULL, NULL, NULL, '<#assign wpsf=JspTaglibs["/apsadmin-form"]>
-
 <@wpsf.textfield useTabindexAutoIncrement=true id="%{attribute_id}" 
 	name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}"
 	maxlength="254" />', 1);
+INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-LongtextAttribute', NULL, NULL, NULL, '<#assign wpsf=JspTaglibs["/apsadmin-form"]>
+<@wpsf.textarea useTabindexAutoIncrement=true cols=30 rows=5 id="%{attribute_id}" 
+	name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-CompositeAttribute', NULL, NULL, NULL, '<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
 <#assign wpsa=JspTaglibs["/apsadmin-core"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
-
-<@s.set var="i18n_parent_attribute_name" value="#attribute.name" />
-<@s.set name="masterCompositeAttributeTracer" value="#attributeTracer" />
-<@s.set name="masterCompositeAttribute" value="#attribute" />
-
 <@s.set var="i18n_parent_attribute_name" value="#attribute.name" />
 <@s.set name="masterCompositeAttributeTracer" value="#attributeTracer" />
 <@s.set name="masterCompositeAttribute" value="#attribute" />
@@ -1281,12 +1042,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<@s.set name="parentAttribute" value="#masterCompositeAttribute"></@s.set>
 	<@s.set var="i18n_attribute_name">userprofile_ATTR<@s.property value="%{i18n_parent_attribute_name}" /><@s.property value="#attribute.name" /></@s.set>
 	<@s.set var="attribute_id">userprofile_<@s.property value="%{i18n_parent_attribute_name}" /><@s.property value="#attribute.name" />_<@s.property value="#elementIndex" /></@s.set>
-
-<#--
-	<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/iteratorAttribute.jsp" />
--->
 	<@wp.fragment code="userprofile_is_IteratorAttribute" escapeXml=false />
-
 </@s.iterator>
 <@s.set name="attributeTracer" value="#masterCompositeAttributeTracer" />
 <@s.set name="attribute" value="#masterCompositeAttribute" />

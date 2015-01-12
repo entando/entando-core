@@ -90,8 +90,8 @@ public class InstallationReportDAO extends AbstractDAO {
 	private void deleteItem(String version, Connection conn) {
 		PreparedStatement stat = null;
 		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
+			//conn = this.getConnection();
+			//conn.setAutoCommit(false);
 			stat = conn.prepareStatement(DELETE_ITEM);
 			stat.setString(1, InitializerManager.REPORT_CONFIG_ITEM);
 			stat.setString(2, version);

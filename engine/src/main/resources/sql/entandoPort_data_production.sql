@@ -1005,17 +1005,6 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <p class="label label-info">
 	<@wp.i18n key="userprofile_CURRENT_USER_WITHOUT_PROFILE" />
 </p>', 1);
-INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_editCurrentUser', 'userprofile_editCurrentUser', NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
-<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
-<#assign wp=JspTaglibs["/aps-core"]>
-<#if (Session.currentUser != "guest") >
-	<@s.action name="editPassword" namespace="/do/Front/CurrentUser" executeResult=true />
-	<@s.action name="edit" namespace="/do/Front/CurrentUser/Profile" executeResult=true />
-<#else>
-	<p>
-		<@wp.i18n key="userprofile_PLEASE_LOGIN" />
-	</p>
-</#if>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-CheckboxAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 

@@ -497,7 +497,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		id="%{#attribute_id}" 
 		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
 		value="%{#numberAttributeValue}"
-		maxlength=254 />', 1);
+		maxlength="254" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-BooleanAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
@@ -1016,8 +1016,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}"
 	maxlength="254" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-LongtextAttribute', NULL, NULL, NULL, '<#assign wpsf=JspTaglibs["/apsadmin-form"]>
-<@wpsf.textarea useTabindexAutoIncrement=true cols=30 rows=5 id="%{attribute_id}" 
-	name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}" />', 1);
+<@wpsf.textarea useTabindexAutoIncrement=true cols="30" rows="5" id="%{attribute_id}" name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-CompositeAttribute', NULL, NULL, NULL, '<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>

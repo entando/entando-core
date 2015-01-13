@@ -85,7 +85,7 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 				DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
 				for (int k = 0; k < tableClassNames.size(); k++) {
 					String tableClassName = tableClassNames.get(k);
-					Class tableClass = Class.forName(tableClassName);
+					Class tableClass = Class.forName(tableClassName, true, Thread.currentThread().getContextClassLoader());
 					String tableName = TableFactory.getTableName(tableClass);
 					this.dumpTableData(tableName, dataSourceName, dataSource, report, backupSubFolder);
 				}

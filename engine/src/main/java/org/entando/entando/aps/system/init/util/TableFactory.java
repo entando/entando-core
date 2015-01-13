@@ -190,7 +190,7 @@ public class TableFactory {
 		try {
 			for (int i = 0; i < tableClassNames.size(); i++) {
 				String tableClassName = tableClassNames.get(i);
-				Class tableClass = Class.forName(tableClassName);
+				Class tableClass = Class.forName(tableClassName, true, Thread.currentThread().getContextClassLoader());
 				try {
 					TableUtils.dropTable(connectionSource, tableClass, true);
 				} catch (Throwable t) {

@@ -497,7 +497,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		id="%{#attribute_id}" 
 		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
 		value="%{#numberAttributeValue}"
-		maxlength=254 />', 1);
+		maxlength="254" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-BooleanAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
@@ -1005,17 +1005,6 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <p class="label label-info">
 	<@wp.i18n key="userprofile_CURRENT_USER_WITHOUT_PROFILE" />
 </p>', 1);
-INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_editCurrentUser', 'userprofile_editCurrentUser', NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
-<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
-<#assign wp=JspTaglibs["/aps-core"]>
-<#if (Session.currentUser != "guest") >
-	<@s.action name="editPassword" namespace="/do/Front/CurrentUser" executeResult=true />
-	<@s.action name="edit" namespace="/do/Front/CurrentUser/Profile" executeResult=true />
-<#else>
-	<p>
-		<@wp.i18n key="userprofile_PLEASE_LOGIN" />
-	</p>
-</#if>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-CheckboxAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 
@@ -1027,8 +1016,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}"
 	maxlength="254" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-LongtextAttribute', NULL, NULL, NULL, '<#assign wpsf=JspTaglibs["/apsadmin-form"]>
-<@wpsf.textarea useTabindexAutoIncrement=true cols=30 rows=5 id="%{attribute_id}" 
-	name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}" />', 1);
+<@wpsf.textarea useTabindexAutoIncrement=true cols="30" rows="5" id="%{attribute_id}" name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-CompositeAttribute', NULL, NULL, NULL, '<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>

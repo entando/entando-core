@@ -34,6 +34,7 @@ For latest updated news, please visit the company websites: http://www.entando.c
 For any support request, please use [Twitter] (https://twitter.com/Entando).
 
 Enjoy!
+
 The Entando Team
 
 

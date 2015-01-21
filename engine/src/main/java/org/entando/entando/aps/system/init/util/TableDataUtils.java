@@ -76,7 +76,7 @@ public class TableDataUtils {
 			for (int i = 0; i < queries.length; i++) {
 				currentQuery = queries[i];
 				stat = conn.prepareStatement(currentQuery);
-				stat.execute();
+				stat.executeUpdate();
 			}
 			conn.commit();
 		} catch (Throwable t) {

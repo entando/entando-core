@@ -92,7 +92,12 @@ public class ComponentInstallationReport {
 				(!isPostProcessStatusSafe && !postProcessStatus.equals(SystemInstallationReport.Status.INIT))) {
 			return SystemInstallationReport.Status.INCOMPLETE;
 		} else if (isSchemaStatusSafe && isDataStatusSafe && isPostProcessStatusSafe) {
-			return SystemInstallationReport.Status.OK;
+			if ((null != schemaStatus && SystemInstallationReport.Status.UNINSTALLED.equals(schemaStatus)) 
+					|| (null != dataStatus && SystemInstallationReport.Status.UNINSTALLED.equals(dataStatus))) {
+				return SystemInstallationReport.Status.UNINSTALLED;
+			} else {
+				return SystemInstallationReport.Status.OK;
+			}
 		} else {
 			return SystemInstallationReport.Status.INIT;
 		}

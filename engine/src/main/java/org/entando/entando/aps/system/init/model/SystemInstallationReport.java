@@ -117,7 +117,8 @@ public class SystemInstallationReport {
 		Status status = Status.OK;
 		for (int i = 0; i < this.getReports().size(); i++) {
 			ComponentInstallationReport componentReport = this.getReports().get(i);
-			if (!componentReport.getStatus().equals(Status.OK)) {
+			if (!componentReport.getStatus().equals(Status.OK) 
+					&& !componentReport.getStatus().equals(Status.UNINSTALLED)) {
 				status = componentReport.getStatus();
 				break;
 			} 

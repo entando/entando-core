@@ -75,8 +75,8 @@
 		<s:if test="%{pluginCode != null}">
 			<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
 				<div class="col-xs-12">
-					<label for="guiFragment_pluginCode"><s:text name="label.pluginCode" /></label>
-					<s:text name="%{pluginCode+'.name'}"
+					<label for="guiFragment_pluginCode"><s:text name="label.plugin" /></label>
+					<s:text name="%{pluginCode+'.name'}" />
 				</div>
 			</div>
 		</s:if>

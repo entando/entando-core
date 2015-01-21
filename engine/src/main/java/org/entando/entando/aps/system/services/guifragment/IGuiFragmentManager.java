@@ -40,4 +40,6 @@ public interface IGuiFragmentManager {
 	
 	public List<String> getGuiFragmentCodesByWidgetType(String widgetTypeCode) throws ApsSystemException;
 	
+	public List<String> loadGuiFragmentPluginCodes() throws ApsSystemException;
+	
 }

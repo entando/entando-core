@@ -18,7 +18,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
+import java.util.ArrayList;
+import java.util.Collections;
+import org.apache.commons.beanutils.BeanComparator;
 
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
@@ -46,15 +50,9 @@ public class GuiFragmentFinderAction extends AbstractPortalAction {
 				filters = this.addFilter(filters, filterToAdd);
 			}
 			if (StringUtils.isNotBlank(this.getPluginCode())) {
-				FieldSearchFilter filterToAdd = new FieldSearchFilter("plugincode", this.getPluginCode(), true);
+				FieldSearchFilter filterToAdd = new FieldSearchFilter("plugincode", this.getPluginCode(), false);
 				filters = this.addFilter(filters, filterToAdd);
 			}
-			/*
-			if (StringUtils.isNotBlank(this.getGui())) {
-				FieldSearchFilter filterToAdd = new FieldSearchFilter("gui", this.getGui(), true);
-				filters = this.addFilter(filters, filterToAdd);
-			}
-			*/
 			List<String> guiFragments = this.getGuiFragmentManager().searchGuiFragments(filters);
 			return guiFragments;
 		} catch (Throwable t) {
@@ -86,6 +84,25 @@ public class GuiFragmentFinderAction extends AbstractPortalAction {
 	
 	public WidgetType getWidgetType(String widgetTypeCode) {
 		return this.getWidgetTypeManager().getWidgetType(widgetTypeCode);
+	}
+	
+	public List<SelectItem> getGuiFragmentPlugins() {
+		List<SelectItem> items = new ArrayList<SelectItem>();
+		try {
+			List<String> codes = this.getGuiFragmentManager().loadGuiFragmentPluginCodes();
+			if (null != codes) {
+				for (int i = 0; i < codes.size(); i++) {
+					String code = codes.get(i);
+					items.add(new SelectItem(code, this.getText(code+".name")));
+				}
+				BeanComparator c = new BeanComparator("value");
+				Collections.sort(items, c);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading guiFragment plugins", t);
+			throw new RuntimeException("Error loading guiFragment plugins", t);
+		}
+		return items;
 	}
 	
 	public String getCode() {

@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,7 +214,6 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 		try {
 			stat = conn.prepareStatement(LOAD_GUIFRAGMENT);
 			int index = 1;
-			//stat.setInt(index++, id);
 			stat.setString(index++, code);
 			res = stat.executeQuery();
 			if (res.next()) {
@@ -245,6 +245,31 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 		return guiFragment;
 	}
 	
+	@Override
+	public List<String> loadGuiFragmentPluginCodes() {
+		List<String> codes = new ArrayList<String>();
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			stat = conn.prepareStatement(LOAD_GUIFRAGMENT_PLUGIN_CODES);
+			res = stat.executeQuery();
+			while (res.next()) {
+				String code = res.getString("plugincode");
+				if (StringUtils.isNotEmpty(code) && !codes.contains(code)) {
+					codes.add(code);
+				}
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading guiFragment plugin codes", t);
+			throw new RuntimeException("Error loading guiFragment plugin codes", t);
+		} finally {
+			this.closeDaoResources(res, stat, conn);
+		}
+		return codes;
+	}
+	
 	private static final String ADD_GUIFRAGMENT = "INSERT INTO guifragment (code, widgettypecode, plugincode, gui, locked ) VALUES (? , ? , ? , ? , ?)";
 
 	private static final String UPDATE_GUIFRAGMENT = "UPDATE guifragment SET widgettypecode = ?, plugincode = ? , gui = ? WHERE code = ? ";
@@ -252,5 +277,7 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 	private static final String DELETE_GUIFRAGMENT = "DELETE FROM guifragment WHERE code = ?";
 	
 	private static final String LOAD_GUIFRAGMENT = "SELECT code, widgettypecode, plugincode, gui, defaultgui, locked FROM guifragment WHERE code = ?";
+	
+	private static final String LOAD_GUIFRAGMENT_PLUGIN_CODES = "SELECT plugincode FROM guifragment";
 	
 }

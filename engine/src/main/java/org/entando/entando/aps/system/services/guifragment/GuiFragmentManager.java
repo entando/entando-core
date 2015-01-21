@@ -221,6 +221,19 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
 		return result;
 	}
 	
+	@Override
+	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
+	public List<String> loadGuiFragmentPluginCodes() throws ApsSystemException {
+		List<String> codes = null;
+		try {
+			codes = this.getGuiFragmentDAO().loadGuiFragmentPluginCodes();
+		} catch (Throwable t) {
+			_logger.error("Error loading guiFragment plugin codes", t);
+			throw new ApsSystemException("Error loading guiFragment plugin codes", t);
+		}
+		return codes;
+	}
+	
 	public void setGuiFragmentDAO(IGuiFragmentDAO guiFragmentDAO) {
 		 this._guiFragmentDAO = guiFragmentDAO;
 	}

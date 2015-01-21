@@ -34,4 +34,6 @@ public interface IGuiFragmentDAO {
 	
 	public void insertGuiFragment(GuiFragment guiFragment);
 	
+	public List<String> loadGuiFragmentPluginCodes();
+	
 }

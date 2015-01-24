@@ -110,6 +110,10 @@ public class ComponentInstallationReport {
 		return (dataSourceStatus.equals(ok) && dataStatus.equals(ok) && !this.getDataReport().isDataAlreadyPresent());
 	}
 	
+	public boolean isUninstalled() {
+		return this.getStatus().equals(Status.UNINSTALLED);
+	}
+	
 	public String getComponentCode() {
 		return _componentCode;
 	}

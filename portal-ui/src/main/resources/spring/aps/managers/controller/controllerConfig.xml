@@ -13,7 +13,6 @@
 			<ref bean="RequestValidatorControlService" />
 			<ref bean="AuthenticatorControlService" />
 			<ref bean="RequestAuthorizatorControlService" />
-			<ref bean="ExecutorControlService" />
 			<ref bean="ErrorManagerControlService" />
 		</list>
 		</property>

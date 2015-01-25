@@ -16,7 +16,6 @@ package org.entando.entando.aps;
 import org.entando.entando.aps.system.services.controller.TestControllerManager;
 import org.entando.entando.aps.system.services.controller.control.TestAuthenticator;
 import org.entando.entando.aps.system.services.controller.control.TestErrorManager;
-import org.entando.entando.aps.system.services.controller.control.TestExecutor;
 import org.entando.entando.aps.system.services.controller.control.TestRequestAuthorizator;
 import org.entando.entando.aps.system.services.controller.control.TestRequestValidator;
 
@@ -34,7 +33,6 @@ public class AllTests {
 		suite.addTestSuite(TestAuthenticator.class);
 		suite.addTestSuite(TestRequestAuthorizator.class);
 		suite.addTestSuite(TestErrorManager.class);
-		suite.addTestSuite(TestExecutor.class);
 		suite.addTestSuite(TestRequestValidator.class);
 		suite.addTestSuite(TestControllerManager.class);
 		//

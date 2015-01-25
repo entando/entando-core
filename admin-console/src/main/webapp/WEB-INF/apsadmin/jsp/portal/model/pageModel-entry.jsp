@@ -1,5 +1,4 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <h1 class="panel panel-default title-page">
@@ -39,8 +38,6 @@
 				<wpsf:hidden name="code" />
 			</s:if>
 		</p>
-
-
 		<div class="form-group">
 			<div class="col-xs-12">
 				<label for="key">Key</label>
@@ -53,12 +50,14 @@
 				<wpsf:textfield name="description" id="description" cssClass="form-control" />
 			</div>
 		</div>
+		<s:if test="getStrutsAction() == 2 && null != pluginCode">
 		<div class="form-group">
 			<div class="col-xs-12">
-				<label for="pluginCode">Plugin Code</label>
-				<wpsf:textfield name="pluginCode" id="pluginCode" cssClass="form-control" />
+				<label for="plugin">Plugin</label>
+				<s:text name="%{pluginCode+'.name'}" />
 			</div>
 		</div>
+		</s:if>
 		<div class="form-group">
 			<div class="col-xs-12">
 				<label for="xmlConfiguration">Xml Configuration</label>
@@ -71,7 +70,6 @@
 				<wpsf:textarea name="template" id="template" cssClass="autotextarea  form-control" rows="8" />
 			</div>
 		</div>
-
 		<div class="form-group">
 			<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
 				<wpsf:submit type="button" cssClass="btn btn-primary btn-block">
@@ -80,7 +78,6 @@
 				</wpsf:submit>
 			</div>
 		</div>
-
 	</s:form>
 </div>
 

@@ -29,8 +29,6 @@
 		<property name="configManager" ref="BaseConfigManager"/>
 	</bean>
 	
-	<bean id="ExecutorControlService" class="com.agiletec.aps.system.services.controller.control.Executor" />
-	
 	<bean id="ErrorManagerControlService" class="com.agiletec.aps.system.services.controller.control.ErrorManager" 
 			parent="abstractControlService" >
 		<property name="configManager" ref="BaseConfigManager"/>

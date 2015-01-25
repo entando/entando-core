@@ -39,6 +39,9 @@ public class ErrorManager extends AbstractControlService {
 	
 	@Override
 	public int service(RequestContext reqCtx, int status) {
+		if (status == ControllerManager.CONTINUE || status == ControllerManager.OUTPUT) {
+			return ControllerManager.OUTPUT;
+		} 
 		int retStatus = ControllerManager.INVALID_STATUS;
 		_logger.debug("Intervention of the error service");
 		try {
@@ -52,7 +55,6 @@ public class ErrorManager extends AbstractControlService {
 			retStatus = ControllerManager.REDIRECT;
 		} catch (Throwable t) {
 			_logger.debug("Error detected while processing the request", t);
-			//ApsSystemUtils.logThrowable(t, this, "service", "Error detected while processing the request");
 			retStatus = ControllerManager.SYS_ERROR;
 			reqCtx.setHTTPError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		}

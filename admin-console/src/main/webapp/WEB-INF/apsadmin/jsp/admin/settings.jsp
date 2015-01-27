@@ -22,6 +22,24 @@
 
 	<wp:ifauthorized permission="superuser">
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
+			<a href="<s:url action="list" namespace="/do/LocaleString" />" class="btn btn-default btn-lg btn-block">
+					<span class="icon fa fa-th-list"></span>&#32;
+					<s:text name="menu.languageAdmin.labels" />
+			</a>
+			<small class="text-muted display-block margin-base-bottom">
+				<s:text name="menu.languageAdmin.labels.keywords" />
+			</small>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
+			<a href="<s:url action="list" namespace="/do/Lang" />" class="btn btn-default btn-lg btn-block">
+					<span class="icon fa fa-globe"></span>&#32;
+					<s:text name="menu.languageAdmin.languages" />
+			</a>
+			<small class="text-muted display-block margin-base-bottom">
+				<s:text name="menu.languageAdmin.languages.keywords" />
+			</small>
+		</div>
+		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
 			<a href="<s:url action="list" namespace="/do/User" />" class="btn btn-default btn-lg btn-block">
 					<span class="icon fa fa-user"></span>&#32;
 					<s:text name="menu.accountAdmin.users" />
@@ -39,22 +57,14 @@
 				<s:text name="menu.accountAdmin.roles.keywords" />
 			</small>
 		</div>
+
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
-			<a href="<s:url action="list" namespace="/do/Lang" />" class="btn btn-default btn-lg btn-block">
-					<span class="icon fa fa-globe"></span>&#32;
-					<s:text name="menu.languageAdmin.languages" />
+			<a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName">UserProfileManager</s:param></s:url>" class="btn btn-default btn-lg btn-block">
+					<span class="icon fa fa-chevron-circle-right"></span>&#32;
+					<s:text name="jpuserprofile.menu.profileTypeAdmin" />
 			</a>
 			<small class="text-muted display-block margin-base-bottom">
-				<s:text name="menu.languageAdmin.languages.keywords" />
-			</small>
-		</div>
-		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
-			<a href="<s:url action="list" namespace="/do/LocaleString" />" class="btn btn-default btn-lg btn-block">
-					<span class="icon fa fa-th-list"></span>&#32;
-					<s:text name="menu.languageAdmin.labels" />
-			</a>
-			<small class="text-muted display-block margin-base-bottom">
-				<s:text name="menu.languageAdmin.labels.keywords" />
+				&nbsp;
 			</small>
 		</div>
 	</wp:ifauthorized>

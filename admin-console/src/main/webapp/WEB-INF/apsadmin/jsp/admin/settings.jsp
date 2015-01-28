@@ -61,7 +61,7 @@
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
 			<a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName">UserProfileManager</s:param></s:url>" class="btn btn-default btn-lg btn-block">
 					<span class="icon fa fa-chevron-circle-right"></span>&#32;
-					<s:text name="jpuserprofile.menu.profileTypeAdmin" />
+					<s:text name="userprofile.menu.profileTypeAdmin" />
 			</a>
 			<small class="text-muted display-block margin-base-bottom">
 				&nbsp;

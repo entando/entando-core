@@ -6,6 +6,18 @@
 		<formFieldType>TEXT</formFieldType>
 	</role>
 	<role>
+		<name>userprofile:firstname</name>
+		<description>The Attribute that contains the first name</description>
+		<allowedTypes>Monotext</allowedTypes>
+		<formFieldType>TEXT</formFieldType>
+	</role>
+	<role>
+		<name>userprofile:surname</name>
+		<description>The Attribute that contains the surname</description>
+		<allowedTypes>Monotext</allowedTypes>
+		<formFieldType>TEXT</formFieldType>
+	</role>
+	<role>
 		<name>userprofile:email</name>
 		<description>The Attribute containing the mail address</description>
 		<allowedTypes>Monotext</allowedTypes>

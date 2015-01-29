@@ -46,5 +46,12 @@
 			<message key="error.user.cannotDisableAdminUser"/>
         </field-validator>
     </field>
+	
+	<field name="profileTypeCode" >
+    	<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(strutsAction == 1 && profileTypes.size() > 0 && (null == profileTypeCode || profileTypeCode.trim().length() == 0))]]></param>
+			<message key="requiredstring" />
+        </field-validator>
+    </field>
     
 </validators>

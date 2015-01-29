@@ -55,6 +55,17 @@
         	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
         </action>
         
+    	<action name="saveAndContinue" class="userAction" method="saveAndContinue">
+        	<result name="input" type="tiles">admin.User.entry</result>
+			<result name="editProfile" type="redirectAction">
+				<param name="namespace">/do/userprofile</param>
+				<param name="actionName">edit</param>
+				<param name="username">${username}</param>
+			</result>
+        	<result type="redirectAction">list</result>
+        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
+        </action>
+        
     	<action name="trash" class="userAction" method="trash">
             <result type="tiles">admin.User.trash</result>
             <result name="userList" type="chain">list</result>

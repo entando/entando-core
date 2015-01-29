@@ -11,23 +11,35 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.plugins.jacms.aps.system.services.content.model;
-
-import com.agiletec.aps.system.common.entity.model.SmallEntityType;
+package com.agiletec.aps.system.common.entity.model;
 
 import java.io.Serializable;
 
 /**
  * @author E.Santoboni
- * @deprecated  From Entando 4.1.2, use {@link SmallEntityType} class 
  */
-public class SmallContentType extends SmallEntityType implements Serializable {
+public class SmallEntityType implements Comparable, Serializable {
 	
-	public String getDescr() {
-		return super.getDescription();
+	public String getCode() {
+		return _code;
 	}
-	public void setDescr(String descr) {
-		super.setDescription(descr);
+	public void setCode(String code) {
+		this._code = code;
 	}
+	
+	public String getDescription() {
+		return _description;
+	}
+	public void setDescription(String description) {
+		this._description = description;
+	}
+	
+	@Override
+	public int compareTo(Object smallEntityType) {
+		return _description.compareTo(((SmallEntityType) smallEntityType).getDescription());
+	}
+	
+	private String _code;
+	private String _description;
 	
 }

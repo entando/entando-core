@@ -102,6 +102,7 @@ public class ContentManager extends ApsEntityManager
 	 * Return a list of the of the content types in a 'small form'. 'Small form' mans that
 	 * the contents returned are purged from all unnecessary information (eg. attributes).
 	 * @return The list of the types in a (small form).
+	 * @deprecated From Entando 4.1.2, use getSmallEntityTypes() method 
 	 */
 	@Override
 	public List<SmallContentType> getSmallContentTypes() {
@@ -229,7 +230,6 @@ public class ContentManager extends ApsEntityManager
 			contentVo = (ContentRecordVO) this.getContentDAO().loadEntityRecord(id);
 		} catch (Throwable t) {
 			_logger.error("Error while loading content vo : id {}", id, t);
-			//ApsSystemUtils.logThrowable(t, this, "loadContentVO");
 			throw new ApsSystemException("Error while loading content vo : id " + id, t);
 		}
 		return contentVo;
@@ -327,7 +327,6 @@ public class ContentManager extends ApsEntityManager
 			_logger.info("Reloaded content references for content {}", entityId);
 		} catch (Throwable t) {
 			_logger.error("Error while reloading content references for content {}", entityId, t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadEntityReferences", "Error while reloading content references for content " + entityId);
 		}
 	}
 	
@@ -353,7 +352,6 @@ public class ContentManager extends ApsEntityManager
 			this.notifyPublicContentChanging(content, PublicContentChangedEvent.REMOVE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error while removing onLine content", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeOnLineContent");
 			throw new ApsSystemException("Error while removing onLine content", t);
 		}
 	}

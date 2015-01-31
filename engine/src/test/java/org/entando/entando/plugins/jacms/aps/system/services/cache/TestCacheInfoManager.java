@@ -58,7 +58,7 @@ public class TestCacheInfoManager extends BaseTestCase {
 			assertNotNull(cachedContent);
 			assertEquals(cachedContent.hashCode(), extractedContent.hashCode());
 			assertEquals(cachedContent.getStatus(), extractedContent.getStatus());
-			assertEquals(cachedContent.getDescr(), extractedContent.getDescr());
+			assertEquals(cachedContent.getDescription(), extractedContent.getDescription());
 			assertEquals(cachedContent.getLastModified(), extractedContent.getLastModified());
 			assertEquals(cachedContent.getLastEditor(), extractedContent.getLastEditor());
 			assertEquals(cachedContent.getAttributeList().size(), extractedContent.getAttributeList().size());
@@ -141,7 +141,7 @@ public class TestCacheInfoManager extends BaseTestCase {
 			assertNotNull(this._cacheInfoManager.getFromCache(renderInfoCacheKey));
 			//-----------
 			Content content = this._contentManager.loadContent(contentId, true);
-			content.setDescr("Modified content description");
+			content.setDescription("Modified content description");
 			this._contentManager.insertOnLineContent(content);
 			super.waitNotifyingThread();
 			assertNull(this._cacheInfoManager.getFromCache(renderInfoCacheKey));

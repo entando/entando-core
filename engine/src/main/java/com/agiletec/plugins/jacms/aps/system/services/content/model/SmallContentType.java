@@ -13,51 +13,21 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.content.model;
 
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
+
+import java.io.Serializable;
+
 /**
- * Rappresenta un tipo di contenuto il forma Small. 
- * Contiene gli elementi minimi per poter visualizzare il codice 
- * e la descrizione del tipo di contenuto.
  * @author E.Santoboni
+ * @deprecated  From Entando 4.1.2, use {@link SmallEntityType} class 
  */
-public class SmallContentType implements Comparable {
+public class SmallContentType extends SmallEntityType implements Serializable {
 	
-	/**
-	 * Restituisce il codice del tipo di contenuto.
-	 * @return Il codice del tipo di contenuto.
-	 */
-	public String getCode() {
-		return _code;
-	}
-
-	/**
-	 * Setta il codice del tipo di contenuto.
-	 * @param code Il codice del tipo di contenuto.
-	 */
-	public void setCode(String code) {
-		this._code = code;
-	}
-
-	/**
-	 * Restituisce la descrizione del tipo di contenuto.
-	 * @return La descrizione del tipo di contenuto.
-	 */
 	public String getDescr() {
-		return _descr;
+		return super.getDescription();
 	}
-
-	/**
-	 * Setta la descrizione del tipo di contenuto.
-	 * @param descr La descrizione del tipo di contenuto.
-	 */
 	public void setDescr(String descr) {
-		this._descr = descr;
+		super.setDescription(descr);
 	}
-	
-	public int compareTo(Object smallContentType) {
-		return _descr.compareTo(((SmallContentType) smallContentType).getDescr());
-	}
-	
-	private String _code;
-	private String _descr;
 	
 }

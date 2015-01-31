@@ -75,7 +75,7 @@ public class ContentManager extends ApsEntityManager
 			Content contentPrototype = (Content) types.get(i);
 			SmallContentType smallContentType = new SmallContentType();
 			smallContentType.setCode(contentPrototype.getTypeCode());
-			smallContentType.setDescr(contentPrototype.getTypeDescr());
+			smallContentType.setDescription(contentPrototype.getTypeDescription());
 			this._smallContentTypes.put(smallContentType.getCode(), smallContentType);
 		}
 	}
@@ -102,6 +102,7 @@ public class ContentManager extends ApsEntityManager
 	 * Return a list of the of the content types in a 'small form'. 'Small form' mans that
 	 * the contents returned are purged from all unnecessary information (eg. attributes).
 	 * @return The list of the types in a (small form).
+	 * @deprecated From Entando 4.1.2, use getSmallEntityTypes() method 
 	 */
 	@Override
 	public List<SmallContentType> getSmallContentTypes() {
@@ -187,7 +188,7 @@ public class ContentManager extends ApsEntityManager
 					content = (Content) this.createEntityFromXml(contentVo.getTypeCode(), xmlData);
 					content.setId(contentVo.getId());
 					content.setTypeCode(contentVo.getTypeCode());
-					content.setDescr(contentVo.getDescr());
+					content.setDescription(contentVo.getDescription());
 					content.setOnLine(contentVo.isOnLine());
 					content.setMainGroup(contentVo.getMainGroupCode());
 					if (null == content.getVersion()) {
@@ -209,7 +210,6 @@ public class ContentManager extends ApsEntityManager
 			}
 		} catch (ApsSystemException e) {
 			_logger.error("Error while loading content : id {}", id, e);
-			//ApsSystemUtils.logThrowable(e, this, "loadContent");
 			throw new ApsSystemException("Error while loading content : id " + id, e);
 		}
 		return content;
@@ -229,7 +229,6 @@ public class ContentManager extends ApsEntityManager
 			contentVo = (ContentRecordVO) this.getContentDAO().loadEntityRecord(id);
 		} catch (Throwable t) {
 			_logger.error("Error while loading content vo : id {}", id, t);
-			//ApsSystemUtils.logThrowable(t, this, "loadContentVO");
 			throw new ApsSystemException("Error while loading content vo : id " + id, t);
 		}
 		return contentVo;
@@ -264,7 +263,6 @@ public class ContentManager extends ApsEntityManager
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while saving content", t);
-			//ApsSystemUtils.logThrowable(t, this, "saveContent");
 			throw new ApsSystemException("Error while saving content", t);
 		}
 	}
@@ -327,7 +325,6 @@ public class ContentManager extends ApsEntityManager
 			_logger.info("Reloaded content references for content {}", entityId);
 		} catch (Throwable t) {
 			_logger.error("Error while reloading content references for content {}", entityId, t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadEntityReferences", "Error while reloading content references for content " + entityId);
 		}
 	}
 	
@@ -353,7 +350,6 @@ public class ContentManager extends ApsEntityManager
 			this.notifyPublicContentChanging(content, PublicContentChangedEvent.REMOVE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error while removing onLine content", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeOnLineContent");
 			throw new ApsSystemException("Error while removing onLine content", t);
 		}
 	}
@@ -436,7 +432,6 @@ public class ContentManager extends ApsEntityManager
 			contentsId = this.getPublicContentSearcherDAO().loadPublicContentsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error while loading contents", t);
-			//ApsSystemUtils.logThrowable(t, this, "loadContentsId");
 			throw new ApsSystemException("Error while loading contents", t);
 		}
 		return contentsId;
@@ -469,7 +464,6 @@ public class ContentManager extends ApsEntityManager
 			contentsId = this.getWorkContentSearcherDAO().loadContentsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error while loading work contents", t);
-			//ApsSystemUtils.logThrowable(t, this, "loadWorkContentsId");
 			throw new ApsSystemException("Error while loading work contents", t);
 		}
 		return contentsId;

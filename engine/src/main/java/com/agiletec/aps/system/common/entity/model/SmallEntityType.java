@@ -11,27 +11,35 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.common.entity.helper;
+package com.agiletec.aps.system.common.entity.model;
+
+import java.io.Serializable;
 
 /**
  * @author E.Santoboni
  */
-public interface IEntityFilterBean {
-    
-    public String getKey();
-    
-    public boolean isAttributeFilter();
-    
-    public boolean getLikeOption();
-    
-    public String getLikeOptionType();
-    
-    public String getValue();
-    
-    public String getStart();
-    
-    public String getEnd();
-    
-    public String getOrder();
-    
+public class SmallEntityType implements Comparable, Serializable {
+	
+	public String getCode() {
+		return _code;
+	}
+	public void setCode(String code) {
+		this._code = code;
+	}
+	
+	public String getDescription() {
+		return _description;
+	}
+	public void setDescription(String description) {
+		this._description = description;
+	}
+	
+	@Override
+	public int compareTo(Object smallEntityType) {
+		return _description.compareTo(((SmallEntityType) smallEntityType).getDescription());
+	}
+	
+	private String _code;
+	private String _description;
+	
 }

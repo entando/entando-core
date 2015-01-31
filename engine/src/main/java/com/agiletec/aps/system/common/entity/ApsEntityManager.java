@@ -41,6 +41,7 @@ import com.agiletec.aps.system.common.entity.loader.AttributeRolesLoader;
 import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import com.agiletec.aps.system.common.entity.parse.EntityHandler;
@@ -158,7 +159,6 @@ public abstract class ApsEntityManager extends AbstractService
 			return entityPrototype;
 		} catch (Throwable t) {
 			_logger.error("Error detected while creating the entity. typecode: {} - xml: {}", entityTypeCode, xml, t);
-			//ApsSystemUtils.logThrowable(t, this, "createEntityFromXml");
 			throw new ApsSystemException("Error detected while creating the entity", t);
 		}
 	}
@@ -303,7 +303,6 @@ public abstract class ApsEntityManager extends AbstractService
 			this._entityTypeFactory.updateEntityTypes(newEntityTypes, this.getConfigItemName(), this.getEntityTypeDom());
 			this.refresh();
 		} catch (Throwable t) {
-			//ApsSystemUtils.logThrowable(t, this, "updateEntityPrototypes");
 			_logger.error("Error detected while updating entity prototypes", t);
 			throw new ApsSystemException("Error detected while updating entity prototypes", t);
 		}
@@ -373,12 +372,13 @@ public abstract class ApsEntityManager extends AbstractService
 			throw new RuntimeException("Invalid entity class");
 		} catch (ClassNotFoundException e) {
 			_logger.error("Errore creating the entity class", e);
-			//ApsSystemUtils.logThrowable(e, this, "setEntityClassName","Error detected while creating the entity class");
 			throw new RuntimeException("Error creating the entity class", e);
 		}
 	}
 	
 	/**
+	 * Set the entity class name
+	 * @param className the entity class name
 	 * @deprecated From jAPS 2.0 version 2.0.9, use setEntityClassName
 	 */
 	public void setEntityClass(String className) {
@@ -392,7 +392,7 @@ public abstract class ApsEntityManager extends AbstractService
 	
 	/**
 	 * Return The name of the configuration item where to extract the definition of the Entity types.
-	 * @param confItemName The name of the configuration item.
+	 * @return The name of the configuration item.
 	 */
 	protected String getConfigItemName() {
 		return this._configItemName;
@@ -474,6 +474,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 * if a different DOM class, implementing the IApsEntityDOM interface, is used to generate 
 	 * the XML of particular entities. Such entities are mapped to a class that must extend,
 	 * as usual, the ApsEntity class.
+	 * @param entityDom the entity type dom
 	 */
 	public void setEntityDom(IApsEntityDOM entityDom) {
 		this._entityDom = entityDom;
@@ -493,7 +494,6 @@ public abstract class ApsEntityManager extends AbstractService
 			idList = this.getEntitySearcherDao().searchId(filters);
 		} catch (Throwable t) {
 			_logger.error("Error detected while searching entities", t);
-			//ApsSystemUtils.logThrowable(t, this, "searchId");
 			throw new ApsSystemException("Error detected while searching entities", t);
 		}
 		return idList;
@@ -513,7 +513,6 @@ public abstract class ApsEntityManager extends AbstractService
 			idList = this.getEntitySearcherDao().searchId(typeCode, filters);
 		} catch (Throwable t) {
 			_logger.error("Error detected while searching entities with typeCode {}", typeCode, t);
-			//ApsSystemUtils.logThrowable(t, this, "searchId");
 			throw new ApsSystemException("Error detected while searching entities", t);
 		}
 		return idList;
@@ -526,7 +525,6 @@ public abstract class ApsEntityManager extends AbstractService
 			records = this.getEntitySearcherDao().searchRecords(filters);
 		} catch (Throwable t) {
 			_logger.error("Error searching entity records", t);
-			//ApsSystemUtils.logThrowable(t, this, "searchRecords");
 			throw new ApsSystemException("Error searching entity records", t);
 		}
 		return records;
@@ -539,7 +537,6 @@ public abstract class ApsEntityManager extends AbstractService
 			this.reloadEntitiesReferences(typeCode);
 		} catch (Throwable t) {
 			_logger.error("Error while refreshing entity refrences", t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadEntitiesReferences", "Error while refreshing entity refrences");
 		}
 	}
 
@@ -554,6 +551,7 @@ public abstract class ApsEntityManager extends AbstractService
 				reloadThread.start();
 				_logger.info("Reloading references started");
 			} catch (Throwable t) {
+				_logger.error("Error while starting up the reference reload procedure", t);
 				throw new RuntimeException("Error while starting up the reference reload procedure", t);
 			}
 		} else {
@@ -561,7 +559,7 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return reloadThread;
 	}
-
+	
 	/**
 	 * Reload the entity references.
 	 * @param typeCode The type Code of entities to reload references. If null, will reload all entities.
@@ -582,7 +580,6 @@ public abstract class ApsEntityManager extends AbstractService
 			}
 		} catch (Throwable t) {
 			_logger.error("Error reloading entity references of type: {}", typeCode, t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadEntitySearchReferencesByType");
 			throw new ApsSystemException("Error reloading entity references of type: " + typeCode, t);
 		} finally {
 			this.setStatus(ApsEntityManager.STATUS_READY, typeCode);
@@ -598,7 +595,6 @@ public abstract class ApsEntityManager extends AbstractService
 			_logger.info("Entities search references reloaded {}", entityId);
 		} catch (Throwable t) {
 			_logger.error("Error reloading the entities search references: {}", entityId, t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadEntityReferences", "Error reloading the entities search references: " + entityId);
 		}
 	}
 	
@@ -614,12 +610,27 @@ public abstract class ApsEntityManager extends AbstractService
 			entitiesId = this.getEntityDao().getAllEntityId();
 		} catch (Throwable t) {
 			_logger.error("Error while loading the complete list of entity IDs", t);
-			//ApsSystemUtils.logThrowable(t, this, "getAllEntityId");
 			throw new ApsSystemException("Error while loading the complete list of entity IDs", t);
 		}
 		return entitiesId;
 	}
-
+	
+	@Override
+	public List<SmallEntityType> getSmallEntityTypes() {
+		List<SmallEntityType> types = new ArrayList<SmallEntityType>();
+		Iterator<IApsEntity> iter = this._entityTypes.values().iterator();
+		while (iter.hasNext()) {
+			IApsEntity apsEntity = iter.next();
+			SmallEntityType set = new SmallEntityType();
+			set.setCode(apsEntity.getTypeCode());
+			set.setDescription(apsEntity.getTypeDescription());
+			types.add(set);
+		}
+		BeanComparator comparator = new BeanComparator("description");
+		Collections.sort(types, comparator);
+		return types;
+	}
+	
 	/**
 	 * Return the stutus of the desired entity. If nell it returns the general status.
 	 * @param typeCode The Entity type to get the status from. It may be null.
@@ -636,7 +647,7 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return STATUS_READY;
 	}
-
+	
 	@Override
 	public int getStatus() {
 		if (this._typesStatus.containsValue(new Integer(STATUS_RELOADING_REFERENCES_IN_PROGRESS))) {
@@ -675,7 +686,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 * general status. 
 	 */
 	protected void setStatus(int status, String typeCode) {
-		this._typesStatus.put(typeCode, new Integer(status));
+		this._typesStatus.put(typeCode, status);
 	}
 
 	protected List<String> getEntityTypeCodes() {

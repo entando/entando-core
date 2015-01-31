@@ -160,7 +160,7 @@ public class TestValidateContent extends BaseTestCase {
     
     private Content createNewVoid(String contentType, String insertedDescr, String status, String mainGroup, String lastEditor) {
         Content content = this._contentManager.createContentType(contentType);
-        content.setDescr(insertedDescr);
+        content.setDescription(insertedDescr);
         content.setStatus(status);
         content.setMainGroup(mainGroup);
         content.setLastEditor(lastEditor);

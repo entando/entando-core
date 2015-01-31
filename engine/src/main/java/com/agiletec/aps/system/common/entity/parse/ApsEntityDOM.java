@@ -57,7 +57,7 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 	public void setId(String id) {
 		this._root.setAttribute("id", id);
 	}
-
+	
 	/**
 	 * Set up the Entity Type code
 	 * @param typeCode The entity Type code.
@@ -66,25 +66,35 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 	public void setTypeCode(String typeCode) {
 		this._root.setAttribute("typecode", typeCode);
 	}
-
+	
 	/**
 	 * Assign the given description to the Entity Type.
-	 * @param typeDescr The Entity Type description to associate.
+	 * @param typeDescription The Entity Type description to associate.
 	 */
 	@Override
-	public void setTypeDescr(String typeDescr){
-		this._root.setAttribute("typedescr", typeDescr);
+	public void setTypeDescription(String typeDescription) {
+		this._root.setAttribute("typedescr", typeDescription);
 	}
-
+	@Override
+	@Deprecated
+	public void setTypeDescr(String typeDescr) {
+		this.setTypeDescription(typeDescr);
+	}
+	
 	/**
 	 * Assign the given description to the entity.
-	 * @param descr The entity description.
+	 * @param description The entity description.
 	 */
 	@Override
-	public void setDescr(String descr) {
-		this._root.getChild(TAG_DESCR).setText(descr);
+	public void setDescription(String description) {
+		this._root.getChild(TAG_DESCR).setText(description);
 	}
-
+	@Override
+	@Deprecated
+	public void setDescr(String description) {
+		this.setDescription(description);
+	}
+	
 	/**
 	 * Assign the main group this entity belongs to.
 	 * @param group The main group.
@@ -95,7 +105,7 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 			this._root.getChild(TAG_GROUPS).setAttribute("mainGroup", group);
 		}
 	}
-
+	
 	/**
 	 * Add the code of a group authorized to visualize the entity.
 	 * @param groupName The group to add.
@@ -106,7 +116,7 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 		groupTag.setAttribute("name", groupName);
 		this._root.getChild(TAG_GROUPS).addContent(groupTag);
 	}
-
+	
 	/**
 	 * Add, setting its value, a new element to the categories tag.
 	 * @param categoryCode The value of the category tag.
@@ -117,11 +127,11 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 		tag.setAttribute("id", categoryCode);
 		_root.getChild(TAG_CATEGORIES).addContent(tag);
 	}
-
+	
 	/**
 	 * Add a new attribute to a tag.
-	 * @param attributeElem The element, which corresponds to an attribute, to add
-	 * to the entity XML structure.
+	 * @param attributeElem The element, which corresponds to an attribute, 
+	 * to add to the entity XML structure.
 	 */
 	@Override
 	public void addAttribute(Element attributeElem) {

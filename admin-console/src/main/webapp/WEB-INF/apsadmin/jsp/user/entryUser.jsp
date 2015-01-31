@@ -42,69 +42,69 @@
 	</p>
 
 	<%-- username --%>
-		<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['username']}" />
-		<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-		<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-		<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-			<div class="col-xs-12">
-				<label for="username"><s:text name="username" /></label>
-				<wpsf:textfield name="username" id="username" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
-				<s:if test="#fieldHasFieldErrorVar">
-					<span class="help-block text-danger">
-						<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
-					</span>
-				</s:if>
-			</div>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['username']}" />
+	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<div class="col-xs-12">
+			<label for="username"><s:text name="username" /></label>
+			<wpsf:textfield name="username" id="username" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
+			<s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+			</s:if>
 		</div>
+	</div>
 	<%-- password --%>
-		<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['password']}" />
-		<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-		<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-		<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-			<div class="col-xs-12">
-				<label for="password"><s:text name="password" /></label>
-				<wpsf:password name="password" id="password" cssClass="form-control" />
-				<s:if test="#fieldHasFieldErrorVar">
-					<span class="help-block text-danger">
-						<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
-					</span>
-				</s:if>
-			</div>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['password']}" />
+	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<div class="col-xs-12">
+			<label for="password"><s:text name="password" /></label>
+			<wpsf:password name="password" id="password" cssClass="form-control" />
+			<s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+			</s:if>
 		</div>
+	</div>
 	<%-- confirm password --%>
-		<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['passwordConfirm']}" />
-		<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-		<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-		<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-			<div class="col-xs-12">
-				<label for="passwordConfirm"><s:text name="passwordConfirm" /></label>
-				<wpsf:password name="passwordConfirm" id="passwordConfirm" cssClass="form-control" />
-				<s:if test="#fieldHasFieldErrorVar">
-					<span class="help-block text-danger">
-						<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
-					</span>
-				</s:if>
-			</div>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['passwordConfirm']}" />
+	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<div class="col-xs-12">
+			<label for="passwordConfirm"><s:text name="passwordConfirm" /></label>
+			<wpsf:password name="passwordConfirm" id="passwordConfirm" cssClass="form-control" />
+			<s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+			</s:if>
 		</div>
+	</div>
 	<%-- active --%>
-		<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['active']}" />
-		<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-		<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-		<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-			<div class="col-xs-12">
-				<label class="checkbox">
-					<wpsf:checkbox name="active" id="active" />
-					<s:text name="note.userStatus.active" />
-				</label>
-				<s:if test="#fieldHasFieldErrorVar">
-					<span class="help-block text-danger">
-						<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
-					</span>
-				</s:if>
-			</div>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['active']}" />
+	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<div class="col-xs-12">
+			<label class="checkbox">
+				<wpsf:checkbox name="active" id="active" />
+				<s:text name="note.userStatus.active" />
+			</label>
+			<s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+			</s:if>
 		</div>
+	</div>
 	<%-- additional info when edit mode --%>
-		<s:if test="getStrutsAction() == 2">
+	<s:if test="getStrutsAction() == 2">
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<%-- registration date --%>
@@ -166,7 +166,23 @@
 			</div>
 		</div>
 	</s:if>
-	<%-- save button --%>
+	<s:else>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['profileTypeCode']}" />
+	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<div class="col-xs-12">
+			<label for="profileType"><s:text name="profileType" /></label>
+			<wpsf:select name="profileTypeCode" id="profileType" list="profileTypes" listKey="code" listValue="description" cssClass="form-control" />
+			<s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+			</s:if>
+		</div>
+	</div>
+	</s:else>
+	<%-- save buttons --%>
 	<div class="form-group">
 		<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
 			<wpsf:submit type="button" action="save" cssClass="btn btn-primary btn-block">
@@ -174,5 +190,13 @@
 				<s:text name="label.save" />
 			</wpsf:submit>
 		</div>
-	</div>
+		<s:if test="strutsAction == 1">
+			<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
+				<wpsf:submit type="button" action="saveAndContinue" cssClass="btn btn-default btn-block">
+					<span class="icon fa fa-arrow-right"></span>&#32;
+					<s:text name="label.saveAndEditProfile" />
+				</wpsf:submit>
+			</div>
+		</s:if>
+	</div>	
 </s:form>

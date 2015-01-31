@@ -50,7 +50,7 @@ public class JAXBEntityType {
     
     public JAXBEntityType(IApsEntity entityType) {
         this.setTypeCode(entityType.getTypeCode());
-        this.setTypeDescription(entityType.getTypeDescr());
+        this.setTypeDescription(entityType.getTypeDescription());
         List<AttributeInterface> attributes = entityType.getAttributeList();
         if (null != attributes) {
             for (int i = 0; i < attributes.size(); i++) {

@@ -19,6 +19,7 @@ import java.util.Map;
 import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -63,6 +64,7 @@ public interface IEntityManager {
 	
 	/**
 	 * Create an object from the prototype.
+	 * @param typeCode The type of the prototype to return.
 	 * @return The object created from the prototype.
 	 */
 	public IApsEntity getEntityPrototype(String typeCode);
@@ -71,7 +73,7 @@ public interface IEntityManager {
 	 * Get the entity identified by its ID.
 	 * @param entityId The ID of the entity.
 	 * @return The requested entity.
-	 * @throws ApsSystemExceptionIn case of error.
+	 * @throws ApsSystemException In case of error.
 	 */
 	public IApsEntity getEntity(String entityId) throws ApsSystemException;
 	
@@ -86,6 +88,8 @@ public interface IEntityManager {
 	 * @return The map of the attribute prototypes, indxed 
 	 */
 	public Map<String, AttributeInterface> getEntityAttributePrototypes();
+	
+	public List<SmallEntityType> getSmallEntityTypes();
 	
 	/**
 	 * Check if the service uses the search engine or not.

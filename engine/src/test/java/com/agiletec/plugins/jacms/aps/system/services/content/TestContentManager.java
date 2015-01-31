@@ -448,8 +448,8 @@ public class TestContentManager extends BaseTestCase {
     	Content content = this._contentManager.createContentType("ART");
     	content.setId("ART1");
     	content.setTypeCode("Articolo");
-    	content.setTypeDescr("Articolo");
-    	content.setDescr("descrizione");
+    	content.setTypeDescription("Articolo");
+    	content.setDescription("descrizione");
     	content.setStatus(Content.STATUS_DRAFT);
     	content.setMainGroup("free");
     	Category cat13 = new Category();

@@ -213,7 +213,7 @@ public class EntityHandler extends DefaultHandler {
     
     private void endDescr() {
         if (null != this._textBuffer) {
-            this._currentEntity.setDescr(this._textBuffer.toString());
+            this._currentEntity.setDescription(this._textBuffer.toString());
         }
     }
     

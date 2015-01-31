@@ -23,6 +23,7 @@ import com.agiletec.aps.system.common.notify.ApsEvent;
  */
 public class EntityTypesChangingEvent extends ApsEvent {
 	
+	@Override
 	public Class getObserverInterface() {
 		return EntityTypesChangingObserver.class;
 	}

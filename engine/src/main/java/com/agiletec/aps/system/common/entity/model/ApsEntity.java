@@ -26,7 +26,6 @@ import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.parse.IApsEntityDOM;
 import com.agiletec.aps.system.services.category.Category;
@@ -91,25 +90,36 @@ public class ApsEntity implements IApsEntity {
     public void setTypeCode(String typeCode) {
         this._typeCode = typeCode;
     }
-
+	
     /**
      * Return the description of the entity.
      * @return The entity description.
      */
 	@Override
-    public String getDescr() {
-        return this._descr;
+    public String getDescription() {
+        return this._description;
     }
-
+	
     /**
      * Set up the description of the entity.
-     * @param descr The description to associate to the entity.
+     * @param description The description to associate to the entity.
      */
 	@Override
-    public void setDescr(String descr) {
-        this._descr = descr;
+    public void setDescription(String description) {
+        this._description = description;
     }
-
+	
+	@Override
+	@Deprecated
+    public String getDescr() {
+        return this.getDescription();
+    }
+	@Override
+	@Deprecated
+    public void setDescr(String description) {
+        this.setDescription(description);
+    }
+	
     /**
      * Return the string that identifies the main group this entity belongs to.
      * @return The main group this entity belongs to.
@@ -229,19 +239,30 @@ public class ApsEntity implements IApsEntity {
      * @return The description of the Entity Type.
      */
 	@Override
-    public String getTypeDescr() {
-        return this._typeDescr;
+    public String getTypeDescription() {
+        return this._typeDescription;
     }
-
+	
     /**
      * Set up the description of the Entity Type.
-     * @param typeDescr The description of the Entity Type.
+     * @param typeDescription The description of the Entity Type.
      */
 	@Override
-    public void setTypeDescr(String typeDescr) {
-        this._typeDescr = typeDescr;
+    public void setTypeDescription(String typeDescription) {
+        this._typeDescription = typeDescription;
     }
-
+	
+	@Override
+	@Deprecated
+    public String getTypeDescr() {
+        return this.getTypeDescription();
+    }
+	@Override
+	@Deprecated
+    public void setTypeDescr(String typeDescription) {
+        this.setTypeDescription(typeDescription);
+    }
+	
     /**
      * Set up the language to use in the rendering process of the entity and its attributes.
      * @param langCode The code of the language to use in the rendering process.
@@ -280,8 +301,8 @@ public class ApsEntity implements IApsEntity {
             entity = (IApsEntity) entityClass.newInstance();
             entity.setId(null);
             entity.setTypeCode(this.getTypeCode());
-            entity.setTypeDescr(this.getTypeDescr());
-            entity.setDescr(this.getDescr());
+            entity.setTypeDescription(this.getTypeDescription());
+            entity.setDescription(this.getDescription());
             AttributeInterface attr;
             for (int i = 0; i < this._attributeList.size(); i++) {
                 attr = (AttributeInterface) this._attributeList.get((i));
@@ -292,7 +313,6 @@ public class ApsEntity implements IApsEntity {
             entity.setEntityDOM(this.getEntityDOM());
         } catch (Exception e) {
         	_logger.error("Error creating entity prototype", e);
-            //ApsSystemUtils.logThrowable(e, this, "getEntityPrototype", "Error creating entity prototype");
             throw new RuntimeException("Error creating entity prototype", e);
         }
         return entity;
@@ -319,8 +339,8 @@ public class ApsEntity implements IApsEntity {
         entityDom.init();
         entityDom.setId(String.valueOf(this.getId()));
         entityDom.setTypeCode(this._typeCode);
-        entityDom.setTypeDescr(this._typeDescr);
-        entityDom.setDescr(this._descr);
+        entityDom.setTypeDescription(this._typeDescription);
+        entityDom.setDescription(this._description);
         entityDom.setMainGroup(this._mainGroup);
         Iterator<String> iterGroups = this.getGroups().iterator();
         while (iterGroups.hasNext()) {
@@ -411,7 +431,6 @@ public class ApsEntity implements IApsEntity {
             }
         } catch (Throwable t) {
         	_logger.error("Error validating entity", t);
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             throw new RuntimeException("Error validating entity");
         }
         return errors;
@@ -419,8 +438,8 @@ public class ApsEntity implements IApsEntity {
     
     private String _id;
     private String _typeCode;
-    private String _typeDescr;
-    private String _descr;
+    private String _typeDescription;
+    private String _description;
     private String _mainGroup;
     private Set<String> _groups;
     private List<AttributeInterface> _attributeList;

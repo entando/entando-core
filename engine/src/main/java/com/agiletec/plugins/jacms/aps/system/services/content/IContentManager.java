@@ -39,8 +39,10 @@ public interface IContentManager extends IEntityManager {
 	public Content createContentType(String typeCode);
 	
 	/**
-	 * Restituisce una Lista dei tipi di Contenuti in forma Small.
-	 * @return La lista dei tipi di contenuto (in ContentTypeSmall).
+	 * Return a list of the of the content types in a 'small form'. 'Small form' mans that
+	 * the contents returned are purged from all unnecessary information (eg. attributes).
+	 * @return The list of the types in a (small form).
+	 * @deprecated From Entando 4.1.2, use getSmallEntityTypes() method 
 	 */
 	public List<SmallContentType> getSmallContentTypes();
 	

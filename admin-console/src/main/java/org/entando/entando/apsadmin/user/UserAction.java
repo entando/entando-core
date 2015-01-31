@@ -21,29 +21,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
+import java.util.List;
 
 /**
- * Action base delegata alla gestione utenze.
- * L'azione gestisce le operazioni di aggiunta, modifica e salvataggio degli oggetti 
- * utente, senza interagire con le autorizzazioni, la cui gestione è delegata alle 
- * funzionalità apposite.
  * @author E.Santoboni
  */
 public class UserAction extends BaseAction {
-
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(UserAction.class);
 	
 	@Override
 	public void validate() {
 		super.validate();
 		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
-			this.checkDuplicatedUser();
+			this.checkAddUserUser();
 		} else {
 			try {
 				if (this.hasActionErrors() || this.hasErrors() || this.hasFieldErrors()) {
@@ -57,19 +55,20 @@ public class UserAction extends BaseAction {
 		}
 	}
 	
-	/**
-	 * Esegue in fase di aggiunta la verifica sulla duplicazione dell'utente.<br />
-	 * Nel caso la verifica risulti negativa aggiunge un fieldError.
-	 */
-	protected void checkDuplicatedUser() {
+	protected void checkAddUserUser() {
 		String username = this.getUsername();
+		String profileTypeCode = this.getProfileTypeCode();
 		try {
 			if (this.existsUser(username)) {
 				String[] args = {username};
 				this.addFieldError("username", this.getText("error.user.duplicateUser", args));
 			}
+			if (!this.getProfileTypes().isEmpty() && null == this.getUserProfileManager().getProfileType(profileTypeCode)) {
+				String[] args = {profileTypeCode};
+				this.addFieldError("profileTypeCode", this.getText("error.user.profileTypeCode.invalid", args));
+			}
 		} catch (Throwable t) {
-			_logger.error("Error checking duplicate user '{}'", username, t);
+			_logger.error("Error checking user '{}'", username, t);
 		}
 	}
 	
@@ -99,7 +98,16 @@ public class UserAction extends BaseAction {
 	}
 	
 	public String save() {
+		return this.executeSave(false);
+	}
+	
+	public String saveAndContinue() {
+		return this.executeSave(true);
+	}
+	
+	protected String executeSave(boolean editProfile) {
 		User user = null;
+		boolean hasProfile = false;
 		try {
 			if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
 				user = new User();
@@ -110,7 +118,7 @@ public class UserAction extends BaseAction {
 				if (null != this.getPassword() && this.getPassword().trim().length()>0) {
 					user.setPassword(this.getPassword());
 				}
-				this.checkUserProfile(user, false);
+				hasProfile = this.checkUserProfile(this.getUsername(), null);
 			}
 			user.setDisabled(!this.isActive());
 			if (this.isReset()) {
@@ -119,35 +127,44 @@ public class UserAction extends BaseAction {
 			}
 			if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
 				this.getUserManager().addUser(user);
-				this.checkUserProfile(user, true);
+				hasProfile = this.checkUserProfile(this.getUsername(), this.getProfileTypeCode());
 			} else if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				this.getUserManager().updateUser(user);
 				if (null != this.getPassword() && this.getPassword().trim().length()>0) {
 					this.getUserManager().changePassword(this.getUsername(), this.getPassword());
 				}
 			}
+			if (editProfile && hasProfile) {
+				return "editProfile";
+			}
 		} catch (Throwable t) {
-			_logger.error("error in save", t);
+			_logger.error("error in executeSave", t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	private void checkUserProfile(User user, boolean add) throws ApsSystemException {
-		String username = user.getUsername();
+	private boolean checkUserProfile(String username, String profileTypeCode) throws ApsSystemException {
 		try {
 			IUserProfile userProfile = this.getUserProfileManager().getProfile(username);
 			if (null == userProfile) {
-				userProfile = this.getUserProfileManager().getDefaultProfileType();
+				userProfile = (null != profileTypeCode) ? this.getUserProfileManager().getProfileType(profileTypeCode) : null;
+				if (null == userProfile) {
+					userProfile = this.getUserProfileManager().getDefaultProfileType();
+				}
 				if (null != userProfile) {
 					userProfile.setId(username);
 					this.getUserProfileManager().addProfile(username, userProfile);
+					return true;
 				}
+			} else {
+				return true;
 			}
 		} catch (Throwable t) {
 			_logger.error("Error adding default profile for user {}", username, t);
 			throw new ApsSystemException("Error adding default profile for user " + username, t);
 		}
+		return false;
 	}
 	
 	public String trash() {
@@ -178,23 +195,11 @@ public class UserAction extends BaseAction {
 		return currentUser.getUsername().equals(this.getUsername());
 	}
 	
-	/**
-	 * Verifica l'esistenza dell'utente.
-	 * @param username Lo username dell'utente da verificare.
-	 * @return true in caso positivo, false nel caso l'utente non esista.
-	 * @throws Throwable In caso di errore.
-	 */
 	protected boolean existsUser(String username) throws Throwable {
 		return (username != null && username.trim().length() >= 0 && null != this.getUserManager().getUser(username));
 	}
 	
-	/**
-	 * Verifica se l'utente è un utente locale di jAPS
-	 * @param username Lo username dell'utente da verificare.
-	 * @return true in caso positivo, false nel caso contrario.
-	 * @throws Throwable In caso di errore.
-	 * @deprecated use isEntandoUser
-	 */
+	@Deprecated
 	protected boolean isJapsUser(String username) throws Throwable {
 		return this.isEntandoUser(username);
 	}
@@ -204,11 +209,6 @@ public class UserAction extends BaseAction {
 		return (null != user && user.isEntandoUser());
 	}
 	
-	/**
-	 * Esegue i controlli necessari per la modifica di un utente ed imposta gli eventuali messaggi di errore.
-	 * @return Il codice del risultato in funzione dell'eventuale errore riscontrato, null se non viene riscontrato nessun errore.
-	 * @throws Throwable In caso di errore.
-	 */
 	protected String checkUserForEdit() throws Throwable {
 		if (!this.existsUser(this.getUsername())) {
 			this.addActionError(this.getText("error.user.notExist"));
@@ -221,11 +221,6 @@ public class UserAction extends BaseAction {
 		return null;
 	}
 	
-	/**
-	 * Esegue i controlli necessari per la cancellazione di un utente ed imposta gli opportuni messaggi di errore.
-	 * @return Il codice del risultato in funzione dell'eventuale errore riscontrato, null se non viene riscontrato nessun errore.
-	 * @throws Throwable In caso di errore.
-	 */
 	protected String checkUserForDelete() throws Throwable {
 		if (!this.existsUser(this.getUsername())) {
 			this.addActionError(this.getText("error.user.notExist"));
@@ -241,6 +236,10 @@ public class UserAction extends BaseAction {
 			return "userList";
 		}
 		return null;
+	}
+	
+	public List<SmallEntityType> getProfileTypes() {
+		return this.getUserProfileManager().getSmallEntityTypes();
 	}
 	
 	public int getStrutsAction() {
@@ -269,6 +268,13 @@ public class UserAction extends BaseAction {
 	}
 	public void setPasswordConfirm(String passwordConfirm) {
 		this._passwordConfirm = passwordConfirm;
+	}
+	
+	public String getProfileTypeCode() {
+		return _profileTypeCode;
+	}
+	public void setProfileTypeCode(String profileTypeCode) {
+		this._profileTypeCode = profileTypeCode;
 	}
 	
 	public boolean isActive() {
@@ -313,6 +319,8 @@ public class UserAction extends BaseAction {
 	private String _username;
 	private String _password;
 	private String _passwordConfirm;
+	
+	private String _profileTypeCode;
 	
 	private boolean _active = false;
 	private boolean _reset;

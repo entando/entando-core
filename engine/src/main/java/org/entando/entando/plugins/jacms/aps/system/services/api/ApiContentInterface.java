@@ -243,7 +243,7 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
 						"The content model with id '" + modelId + "' does not exist", Response.Status.ACCEPTED);
             } else if (!content.getTypeCode().equals(model.getContentType())) {
                 throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR,
-						"The content model with id '" + modelId + "' does not match with content of type '" + content.getTypeDescr() + "' ", Response.Status.ACCEPTED);
+						"The content model with id '" + modelId + "' does not match with content of type '" + content.getTypeDescription() + "' ", Response.Status.ACCEPTED);
             }
         } catch (ApiException ae) {
             throw ae;

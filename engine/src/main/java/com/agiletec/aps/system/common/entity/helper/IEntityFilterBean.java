@@ -14,7 +14,6 @@
 package com.agiletec.aps.system.common.entity.helper;
 
 /**
- * 
  * @author E.Santoboni
  */
 public interface IEntityFilterBean {

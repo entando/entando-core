@@ -51,7 +51,6 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		} catch (Throwable t) {
 			_logger.error("Error while loading records list",  t);
 			throw new RuntimeException("Error while loading records list", t);
-			//processDaoException(t, "Error while loading records list", "searchRecord");
 		} finally {
 			closeDaoResources(result, stat, conn);
 		}
@@ -100,7 +99,6 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		} catch (Throwable t) {
 			_logger.error("Error while loading the list of IDs",  t);
 			throw new RuntimeException("Error while loading the list of IDs", t);
-			//processDaoException(t, "Error while loading the list of IDs", "searchId");
 		} finally {
 			closeDaoResources(result, stat, conn);
 		}
@@ -180,7 +178,6 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		} catch (Throwable t) {
 			_logger.error("Error while creating the statement",  t);
 			throw new RuntimeException("Error while creating the statement", t);
-			//processDaoException(t, "Error while creating the statement", "buildStatement");
 		}
 		return stat;
 	}
@@ -252,7 +249,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		StringBuffer query = this.createBaseQueryBlock(filters, selectAll);
 		boolean hasAppendWhereClause = this.appendFullAttributeFilterQueryBlocks(filters, query, false);
 		this.appendMetadataFieldFilterQueryBlocks(filters, query, hasAppendWhereClause);
-		boolean ordered = appendOrderQueryBlocks(filters, query, false);
+		boolean ordered = this.appendOrderQueryBlocks(filters, query, false);
 		return query.toString();
 	}
 	
@@ -331,13 +328,11 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		if (filters != null) {
 			for (int i=0; i<filters.length; i++) {
 				EntitySearchFilter filter = filters[i];
-				if (/*filter.getKey() == null || */!filter.isAttributeFilter()) {
+				if (!filter.isAttributeFilter()) {
 					continue;
 				}
-				//if (filter.isNullOption()) {
 				if (filter.isNullOption() && filter.getKey() != null) {
 					hasAppendWhereClause = this.appendNullAttributeFilterQueryBlocks(filter, query, hasAppendWhereClause);
-				//} else {
 				} else if (!filter.isNullOption() && (filter.getKey() != null || filter.getRoleName() != null)) {
 					hasAppendWhereClause = this.appendValuedAttributeFilterQueryBlocks(filter, i, query, hasAppendWhereClause);
 				}

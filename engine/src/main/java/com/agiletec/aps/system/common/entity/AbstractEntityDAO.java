@@ -52,7 +52,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 			this.executeRollback(conn);
 			_logger.error("Error adding new entity",  t);
 			throw new RuntimeException("Error adding new entity", t);
-			//processDaoException(t, "Error adding new entity", "addEntity");
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -88,7 +87,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 		} catch (Throwable t) {
 			_logger.error("Error deleting the entity by id '{}'", entityId,  t);
 			throw new RuntimeException("Error deleting the entity by id", t);
-			//processDaoException(t, "Error deleting the entity by id", "deleteEntity");
 		} finally {
 			closeConnection(conn);
 		}
@@ -114,7 +112,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 			this.executeRollback(conn);
 			_logger.error("Error updating entity",  t);
 			throw new RuntimeException("Error updating entity", t);
-			//processDaoException(t, "Errore updating entity", "updateEntity");
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -158,7 +155,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 		} catch (Throwable t) {
 			_logger.error("Error loading entity record '{}'", id,  t);
 			throw new RuntimeException("Error loading entity record", t);
-			//processDaoException(t, "Error loading entity record", "loadEntityRecord");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -181,7 +177,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 			this.executeRollback(conn);
 			_logger.error("Error detected while reloading references",  t);
 			throw new RuntimeException("Error detected while reloading references", t);
-			//processDaoException(t, "Error detected while reloading references", "reloadEntitySearchRecords");
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -202,7 +197,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 		} catch (Throwable t) {
 			_logger.error("Error while adding a new record",  t);
 			throw new RuntimeException("Error while adding a new record", t);
-			//processDaoException(t, "Error while adding a new record", "addEntitySearchRecord");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -242,7 +236,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 		} catch (Throwable t) {
 			_logger.error("Error while adding a new attribute role record",  t);
 			throw new RuntimeException("Error while adding a new attribute role record", t);
-			//processDaoException(t, "Error while adding a new attribute role record", "addEntityAttributeRoleRecord");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -286,7 +279,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 		} catch (Throwable t) {
 			_logger.error("Error deleting entity records by id '{}'", entityId,  t);
 			throw new RuntimeException("Error deleting entity records by id " + entityId, t);
-			//processDaoException(t, "Error deleting entity records by id " + entityId, "deleteRecordsByEntityId");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -311,7 +303,6 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 		} catch (Throwable t) {
 			_logger.error("Error retrieving the list of entity IDs",  t);
 			throw new RuntimeException("Error retrieving the list of entity IDs", t);
-			//processDaoException(t, "Error retrieving the list of entity IDs", "getAllEntityId");
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}

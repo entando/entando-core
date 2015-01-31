@@ -26,6 +26,7 @@ public class ReloadingEntitiesReferencesEvent extends ApsEvent {
 	 * Return the interface of the observer needed to reload entitie reverences
 	 * @return Class The observer interface
 	 */
+	@Override
 	public Class getObserverInterface() {
 		return ReloadingEntitiesReferencesObserver.class;
 	}

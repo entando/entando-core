@@ -93,7 +93,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		Content content = (Content) entity;
 		stat.setString(1, content.getId());
 		stat.setString(2, content.getTypeCode());
-		stat.setString(3, content.getDescr());
+		stat.setString(3, content.getDescription());
 		stat.setString(4, content.getStatus());
 		stat.setString(5, content.getXML());
 		String currentDate = DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
@@ -120,7 +120,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	protected void buildUpdateEntityStatement(IApsEntity entity, PreparedStatement stat) throws Throwable {
 		Content content = (Content) entity;
 		stat.setString(1, content.getTypeCode());
-		stat.setString(2, content.getDescr());
+		stat.setString(2, content.getDescription());
 		stat.setString(3, content.getStatus());
 		stat.setString(4, content.getXML());
 		stat.setString(5, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
@@ -146,7 +146,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			this.executeRollback(conn);
 			_logger.error("Error publish content {} ", content.getId(),  t);
 			throw new RuntimeException("Error publish content - " + content.getId(), t);
-			//processDaoException(t, "Error publish content - " + content.getId(), "insertOnLineContent");
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -181,7 +180,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error on adding public content search records",  t);
 			throw new RuntimeException("Error on adding public content search records", t);
-			//processDaoException(t, "Error on adding public content search records", "addEntitySearchRecord");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -192,7 +190,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		try {
 			stat = conn.prepareStatement(INSERT_ONLINE_CONTENT);
 			stat.setString(1, content.getTypeCode());
-			stat.setString(2, content.getDescr());
+			stat.setString(2, content.getDescription());
 			stat.setString(3, content.getStatus());
 			String xml = content.getXML();
 			stat.setString(4, xml);
@@ -206,7 +204,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error updating for insert onLine content {}", content.getId(),  t);
 			throw new RuntimeException("Error updating for insert onLine content " + content.getId(), t);
-			//processDaoException(t, "Errore in aggiornamento contenuto per inserimento onLine - " + content.getId(),	"updateContentRecordForInsertOnLine");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -229,7 +226,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 				this.executeRollback(conn);
 				_logger.error("Error reloading references - Content {}", content.getId(),  t);
 				throw new RuntimeException("Error reloading references - Content " + content.getId(), t);
-				//processDaoException(t, "Error reloading references - Content " + content.getId(), "reloadPublicContentReferences");
 			} finally {
 				this.closeConnection(conn);
 			}
@@ -261,7 +257,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			this.executeRollback(conn);
 			_logger.error("Errore in reloading references - Work Content {}", content.getId(),  t);
 			throw new RuntimeException("Errore in reloading references - Work Content " + content.getId(), t);
-			//processDaoException(t, "Errore in reloading references - Work Content " + content.getId(),	"reloadWorkContentReferences");
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -292,7 +287,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			this.executeRollback(conn);
 			_logger.error("Error removing online content {}", content.getId(),  t);
 			throw new RuntimeException("Error removing online content - " + content.getId(), t);
-			//processDaoException(t, "Error rimoving online content - " + content.getId(), "removeOnLineContent");
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -323,7 +317,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error removing online content {}", content.getId(),  t);
 			throw new RuntimeException("Error removing online content - " + content.getId(), t);
-			//processDaoException(t, "Errore in rimozione contenuto online - " + content.getId(),	"removeOnLineContent");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -372,7 +365,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			} catch (SQLException e) {
 				_logger.error("Error saving content relation record for content {}", content.getId(),  e.getNextException());
 				throw new RuntimeException("Error saving content relation record for content " + content.getId(), e.getNextException());
-				//processDaoException(e.getNextException(), "Errore in aggiunta record tabella contentrelations - " + content.getId(), "addCategoryRelationsRecord");
 			}
 		}
 	}
@@ -403,7 +395,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error saving group relation record for content {}", content.getId(),  t);
 			throw new RuntimeException("Error saving group relation record for content " + content.getId(), t);
-			//processDaoException(t, "Errore in aggiunta record tabella contentrelations - " + content.getId(), "addGroupRelationsRecord");
 		}
 	}
 	
@@ -443,11 +434,9 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (BatchUpdateException e) {
 			_logger.error("Error saving record into contentrelations {}", content.getId(), e.getNextException());
 			throw new RuntimeException("Error saving record into contentrelations " + content.getId(), e.getNextException());
-			//processDaoException(e.getNextException(), "Errore in aggiunta record tabella contentrelations - " + content.getId(), "addContentRelationsRecord");
 		} catch (Throwable t) {
 			_logger.error("Error saving record into contentrelations {}", content.getId(),  t);
 			throw new RuntimeException("Error saving record into contentrelations " + content.getId(), t);
-			//processDaoException(t, "Errore in aggiunta record tabella contentrelations - " + content.getId(), "addContentRelationsRecord");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -462,11 +451,9 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (BatchUpdateException e) {
 			_logger.error("Error saving record into workcontentrelations {}", content.getId(), e.getNextException());
 			throw new RuntimeException("Error saving record into workcontentrelations " + content.getId(), e);
-			//processDaoException(e.getNextException(), "Errore in aggiunta record tabella workcontentrelations - " + content.getId(), "addContentRelationsRecord");
 		} catch (Throwable t) {
 			_logger.error("Error saving record into workcontentrelations {}", content.getId(), t);
 			throw new RuntimeException("Error saving record into workcontentrelations " + content.getId(), t);
-			//processDaoException(t, "Errore in aggiunta record tabella workcontentrelations - " + content.getId(), "addContentRelationsRecord");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -480,7 +467,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error on adding content attribute role records",  t);
 			throw new RuntimeException("Error on adding content attribute role records", t);
-			//processDaoException(t, "Error on adding content attribute role records", "addContentAttributeRoleRecord");
 		} finally {
 			closeDaoResources(null, stat);
 		}
@@ -494,7 +480,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced contents for content {}", contentId,  t);
 			throw new RuntimeException("Error loading referenced contents for content" + contentId, t);
-			//processDaoException(t, "Errore in caricamento lista contenuti referenziati con contenuto " + contentId, "getContentUtilizers");
 		}
 		return contentIds;
 	}
@@ -507,7 +492,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced contents for page {}", pageCode,  t);
 			throw new RuntimeException("Error loading referenced contents for page" + pageCode, t);
-			//processDaoException(t, "Errore in caricamento lista contenuti referenziati pagina " + pageCode, "getPageUtilizers");
 		}
 		return contentIds;
 	}
@@ -520,7 +504,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced contents for group {}", groupName,  t);
 			throw new RuntimeException("Error loading referenced contents for group " + groupName, t);
-			//processDaoException(t, "Errore in caricamento lista contenuti referenziati gruppo " + groupName, "getGroupUtilizers");
 		}
 		return contentIds;
 	}
@@ -533,7 +516,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced contents for resource {}", resourceId,  t);
 			throw new RuntimeException("Error loading referenced contents for resource " + resourceId, t);
-			//processDaoException(t, "Errore in caricamento lista contenuti referenziati gruppo " + resourceId, "getResourceUtilizers");
 		}
 		return contentIds;
 	}
@@ -546,7 +528,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced contents for category {}", categoryCode,  t);
 			throw new RuntimeException("Error loading referenced contents for category " + categoryCode, t);
-			//processDaoException(t, "Errore in caricamento lista contenuti referenziati categoria " + categoryCode, "getCategoryUtilizers");
 		}
 		return contentIds;
 	}

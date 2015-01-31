@@ -66,7 +66,7 @@ public class TestContentDAO extends BaseTestCase {
 	private void addContent(Content mockContent) throws ApsSystemException {
 		_contentDao.addEntity(mockContent);
 		ContentRecordVO contentRecord = (ContentRecordVO) this._contentDao.loadEntityRecord(mockContent.getId());
-		assertEquals(mockContent.getDescr(), contentRecord.getDescr());
+		assertEquals(mockContent.getDescription(), contentRecord.getDescr());
 		assertEquals(mockContent.getStatus(), contentRecord.getStatus());
 		assertFalse(contentRecord.isOnLine());
 	}
@@ -112,7 +112,7 @@ public class TestContentDAO extends BaseTestCase {
 	public void testUpdateContent() throws Throwable {
     	try {
 			Content mockContent = this.getMockContent();
-			mockContent.setDescr("New Description");
+			mockContent.setDescription("New Description");
 			mockContent.setStatus(Content.STATUS_READY);
 			this.updateContent(mockContent);
 		} catch (Throwable t) {
@@ -162,7 +162,7 @@ public class TestContentDAO extends BaseTestCase {
 	private void updateContent(Content mockContent) throws ApsSystemException {
 		this._contentDao.updateEntity(mockContent);
 		ContentRecordVO contentRecord = (ContentRecordVO) this._contentDao.loadEntityRecord(mockContent.getId());
-		assertEquals(mockContent.getDescr(), contentRecord.getDescr());
+		assertEquals(mockContent.getDescription(), contentRecord.getDescription());
 		assertEquals(mockContent.getStatus(), contentRecord.getStatus());
 		assertFalse(contentRecord.isOnLine());
 	}
@@ -186,12 +186,12 @@ public class TestContentDAO extends BaseTestCase {
     	content.addAttribute(attribute);	
     	content.setDefaultLang("it");
     	content.setDefaultModel("content_viewer");
-    	content.setDescr("temp");
+    	content.setDescription("temp");
     	content.setListModel("Monolist");
     	content.setRenderingLang("it");
     	content.setStatus("Bozza");
     	content.setTypeCode("ART");
-    	content.setTypeDescr("Articolo rassegna stampa");
+    	content.setTypeDescription("Articolo rassegna stampa");
     	return content;
     }
     

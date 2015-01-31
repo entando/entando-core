@@ -18,160 +18,78 @@ import java.util.Date;
 import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 
 /**
- * Oggetto di utilita' per i contenuti. Ha la duplice funzione di rendere disponibili
- * i contenuti da essere visualizzati (sotto forma di lista) nell'interfaccia di
- * redazione, e di fare da tramite (tra dati estratti da db e parser) nel caricamento
- * di un contenuto completo.
  * @author E.Santoboni
  */
 public class ContentRecordVO extends ApsEntityRecord {
 	
-	/**
-	 * Restituisce la descrizione del contenuto.
-	 * @return La descrizione del contenuto.
-	 */
+	public String getDescription() {
+		return _description;
+	}
+	@Deprecated
 	public String getDescr() {
-		return _descr;
+		return this.getDescription();
 	}
 	
-	/**
-	 * Setta la descrizione del contenuto.
-	 * @param descr La descrizione del contenuto.
-	 */
-	public void setDescr(String descr) {
-		this._descr = descr;
+	public void setDescription(String description) {
+		this._description = description;
 	}
-
-	/**
-	 * Restituisce lo stato del contenuto (in stato work).
-	 * @return Lo stato del contenuto.
-	 */
+	@Deprecated
+	public void setDescr(String description) {
+		this.setDescription(description);
+	}
+	
 	public String getStatus() {
 		return _status;
 	}
-
-	/**
-	 * Setta lo stato del contenuto (in stato work).
-	 * @param status Lo stato del contenuto.
-	 */
 	public void setStatus(String status) {
 		this._status = status;
 	}
 	
-	/**
-	 * Restituisce la data di creazione del contenuto.
-	 * @return La data di creazione del contenuto.
-	 */
 	public Date getCreate() {
 		return _create;
 	}
-
-	/**
-	 * Setta la data di creazione del contenuto.
-	 * @param create La data di creazione del contenuto.
-	 */
 	public void setCreate(Date create) {
 		this._create = create;
 	}
-
-	/**
-	 * Restituisce la data di ultima modifica del contenuto.
-	 * @return La data di ultima modifica del contenuto.
-	 */
+	
 	public Date getModify() {
 		return _modify;
 	}
-
-	/**
-	 * Setta la data di ultima modifica del contenuto.
-	 * @param modify La data di ultima modifica del contenuto.
-	 */
 	public void setModify(Date modify) {
 		this._modify = modify;
 	}
-
-	/**
-	 * Restituisce la stringa relativa all'xml del contenuto in stato Work.
-	 * @return L'xml del contenuto in stato Work.
-	 */
+	
 	public String getXmlWork() {
 		return super.getXml();
 	}
-	
-	/**
-	 * Setta la stringa relativa all'xml del contenuto in stato Work.
-	 * @param xmlWork L'xml del contenuto in stato Work.
-	 */
 	public void setXmlWork(String xmlWork) {
 		super.setXml(xmlWork);
 	}
 	
-	/**
-	 * Restituisce il buleano indicante l'esistenza del contenuto in stato OnLine.
-	 * @return True se esiste il contenuto in stato OnLine, false in caso contrario.
-	 */
 	public boolean isOnLine() {
 		return _onLine;
 	}
-	
-	/**
-	 * Setta il buleano indicante l'esistenza del contenuto in stato OnLine.
-	 * @param onLine True se esiste il contenuto in stato OnLine, false in caso contrario.
-	 */
 	public void setOnLine(boolean onLine) {
 		this._onLine = onLine;
 	}
 	
-	/**
-	 * Restituisce il buleano caratterizzante il sincronismo tra il contenuto in
-	 * stato work ed il contenuto in stato OnLine.
-	 * Restituisce true se la stringa relativa all'xml del contenuto in stato OnLine
-	 * è identica al quella del contenuto in stato work, false in caso contrario.
-	 * @return Returns the sync.
-	 */
 	public boolean isSync() {
 		return _sync;
 	}
-	
-	/**
-	 * Setta il buleano caratterizzante il sincronismo tra il contenuto in
-	 * stato work ed il contenuto in stato OnLine.
-	 * Setta true se la stringa relativa all'xml del contenuto in stato OnLine
-	 * è identica al quella del contenuto in stato work, false in caso contrario.
-	 * @param sync The sync to set.
-	 */
 	public void setSync(boolean sync) {
 		this._sync = sync;
 	}
 	
-	/**
-	 * Restituisce la stringa relativa all'xml del contenuto in stato OnLine.
-	 * @return L'xml del contenuto in stato OnLine.
-	 */
 	public String getXmlOnLine() {
 		return _xmlOnLine;
 	}
-
-	/**
-	 * Setta la stringa relativa all'xml del contenuto in stato OnLine.
-	 * @param xmlOnLine L'xml del contenuto in stato OnLine.
-	 */
 	public void setXmlOnLine(String xmlOnLine) {
 		this._xmlOnLine = xmlOnLine;
 	}
 	
-	/**
-	 * Return the code of owner group.
-	 * @return The code of owner group.
-	 */
 	public String getMainGroupCode() {
 		return _mainGroupCode;
 	}
-	
-	/**
-	 * Set the code of owner group.
-	 * @param mainGroupCode The code of owner group.
-	 */
 	public void setMainGroupCode(String mainGroupCode) {
 		this._mainGroupCode = mainGroupCode;
 	}
@@ -190,7 +108,7 @@ public class ContentRecordVO extends ApsEntityRecord {
 		this._lastEditor = lastEditor;
 	}
 	
-	private String _descr;
+	private String _description;
 	private String _status;
 	private Date _create;
 	private Date _modify;

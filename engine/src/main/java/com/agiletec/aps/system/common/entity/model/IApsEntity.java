@@ -36,6 +36,36 @@ import com.agiletec.aps.system.services.group.IGroupManager;
 public interface IApsEntity extends Serializable{
     
     /**
+     * Return the ID of the entity.
+     * @return The identification string of the entity.
+     */
+    public String getId();
+    
+    /**
+     * Associate the entity to the given ID code.
+     * @param id The identification string of the entity.
+     */
+    public void setId(String id);
+    
+    /**
+     * Return the description of the entity.
+     * @return The description of entity.
+     */
+    public String getDescription();
+	
+	@Deprecated
+    public String getDescr();
+    
+    /**
+     * Set up the description of the entity.
+     * @param description he description of entity.
+     */
+    public void setDescription(String description);
+	
+	@Deprecated
+    public void setDescr(String descr);
+    
+    /**
      * Add an attribute to the list of the attributes of the entity.
      * @param attribute The attribute to add.
      */
@@ -92,16 +122,22 @@ public interface IApsEntity extends Serializable{
     public void setTypeCode(String typeCode);
     
     /**
-     * Return the description of the entity.
-     * @return The description of entity.
+     * Return the description of the Entity Type.
+     * @return The description of the Entity Type.
      */
-    public String getDescr();
+    public String getTypeDescription();
+	
+	@Deprecated
+    public String getTypeDescr();
     
     /**
-     * Set up the description of the entity.
-     * @param descr he description of entity.
+     * Set up the description of the Entity Type.
+     * @param typeDescription The description of the Entity Type.
      */
-    public void setDescr(String descr);
+    public void setTypeDescription(String typeDescription);
+	
+	@Deprecated
+    public void setTypeDescr(String typeDescr);
     
     /**
      * Return the string that identifies the main group the entity belongs to.
@@ -128,34 +164,10 @@ public interface IApsEntity extends Serializable{
     public void addGroup(String groupName);
     
     /**
-     * Return the ID of the entity.
-     * @return The identification string of the entity.
-     */
-    public String getId();
-    
-    /**
-     * Associate the entity to the given ID code.
-     * @param id The identification string of the entity.
-     */
-    public void setId(String id);
-    
-    /**
      * Return a list of the Entity Attributes.
      * @return The list of attributes.
      */
     public List<AttributeInterface> getAttributeList();
-    
-    /**
-     * Return the description of the Entity Type.
-     * @return The description of the Entity Type.
-     */
-    public String getTypeDescr();
-    
-    /**
-     * Set up the description of the Entity Type.
-     * @param typeDescr The description of the Entity Type.
-     */
-    public void setTypeDescr(String typeDescr);
     
     /**
      * Set up the language to use in the rendering process of the entity and its attributes.

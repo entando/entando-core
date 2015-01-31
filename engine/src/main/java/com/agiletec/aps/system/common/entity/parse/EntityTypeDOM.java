@@ -172,7 +172,7 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 	protected Element createRootTypeElement(IApsEntity currentEntityType) {
 		Element typeElement = new Element(this.getEntityTypeRootElementName());
 		typeElement.setAttribute("typecode", currentEntityType.getTypeCode());
-		typeElement.setAttribute("typedescr", currentEntityType.getTypeDescr());
+		typeElement.setAttribute("typedescr", currentEntityType.getTypeDescription());
 		return typeElement;
 	}
 	

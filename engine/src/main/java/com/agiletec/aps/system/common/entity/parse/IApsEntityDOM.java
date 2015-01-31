@@ -43,16 +43,20 @@ public interface IApsEntityDOM {
 
 	/**
 	 * Assign a description to the current Entity Type. 
-	 * @param typeDescr The description.
+	 * @param typeDescription The description.
 	 */
+	public void setTypeDescription(String typeDescription);
+	@Deprecated
 	public void setTypeDescr(String typeDescr);
-
+	
 	/**
 	 *Set the entity description.
-	 * @param descr The description
+	 * @param description The description
 	 */
+	public void setDescription(String description);
+	@Deprecated
 	public void setDescr(String descr);
-
+	
 	/**
 	 * Set the main group this entity belongs to.
 	 * @param group The main group.

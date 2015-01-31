@@ -51,7 +51,6 @@ import com.agiletec.aps.system.common.entity.parse.IEntityTypeFactory;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.util.DateConverter;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 
 /**
  * This abstract service must be extended in all those services that make use of ApsEntities.
@@ -378,6 +377,8 @@ public abstract class ApsEntityManager extends AbstractService
 	}
 	
 	/**
+	 * Set the entity class name
+	 * @param className the entity class name
 	 * @deprecated From jAPS 2.0 version 2.0.9, use setEntityClassName
 	 */
 	public void setEntityClass(String className) {
@@ -391,7 +392,7 @@ public abstract class ApsEntityManager extends AbstractService
 	
 	/**
 	 * Return The name of the configuration item where to extract the definition of the Entity types.
-	 * @param confItemName The name of the configuration item.
+	 * @return The name of the configuration item.
 	 */
 	protected String getConfigItemName() {
 		return this._configItemName;
@@ -473,6 +474,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 * if a different DOM class, implementing the IApsEntityDOM interface, is used to generate 
 	 * the XML of particular entities. Such entities are mapped to a class that must extend,
 	 * as usual, the ApsEntity class.
+	 * @param entityDom the entity type dom
 	 */
 	public void setEntityDom(IApsEntityDOM entityDom) {
 		this._entityDom = entityDom;
@@ -619,9 +621,9 @@ public abstract class ApsEntityManager extends AbstractService
 		Iterator<IApsEntity> iter = this._entityTypes.values().iterator();
 		while (iter.hasNext()) {
 			IApsEntity apsEntity = iter.next();
-			SmallEntityType set = new SmallContentType();
+			SmallEntityType set = new SmallEntityType();
 			set.setCode(apsEntity.getTypeCode());
-			set.setDescription(apsEntity.getTypeDescr());
+			set.setDescription(apsEntity.getTypeDescription());
 			types.add(set);
 		}
 		BeanComparator comparator = new BeanComparator("description");
@@ -684,7 +686,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 * general status. 
 	 */
 	protected void setStatus(int status, String typeCode) {
-		this._typesStatus.put(typeCode, new Integer(status));
+		this._typesStatus.put(typeCode, status);
 	}
 
 	protected List<String> getEntityTypeCodes() {

@@ -27,7 +27,8 @@ public class AttributeFieldError extends FieldError implements Serializable {
         this.setTracer(tracer);
         this.setAttribute(attribute);
     }
-
+	
+	@Override
     public String getFieldCode() {
         String fieldCode = super.getFieldCode();
         if (null == fieldCode) {
@@ -37,7 +38,7 @@ public class AttributeFieldError extends FieldError implements Serializable {
     }
 
     public String getFullMessage() {
-        StringBuffer buffer = new StringBuffer(this.getAttributePositionMessage());
+        StringBuilder buffer = new StringBuilder(this.getAttributePositionMessage());
         buffer.append(" : ");
         if (null != this.getMessageKey()) {
             buffer.append(this.getMessageKey());

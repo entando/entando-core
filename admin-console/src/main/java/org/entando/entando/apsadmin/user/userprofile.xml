@@ -29,9 +29,29 @@
 			</interceptor-ref>
         </action>
         
-        <action name="new" class="userProfileAction" method="createNew" >
+        <action name="changeProfileType" class="userProfileAction" method="changeProfileType">
+            <result type="tiles">admin.UserProfile.chooseType</result>
+            <result name="input" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+		
+        <action name="saveEmpty" class="userProfileAction" method="saveEmpty" >
+            <result type="redirectAction">
+                <param name="namespace">/do/User</param>
+                <param name="actionName">list</param>
+            </result>
+            <result name="input" type="tiles">admin.UserProfile.chooseType</result>
+            <interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>
+				<param name="requestAuth.ORClause">true</param>
+			</interceptor-ref>
+        </action>
+        
+        <action name="saveAndContinue" class="userProfileAction" method="saveAndContinue" >
             <result type="tiles">admin.UserProfile.entry</result>
-            <result name="edit" type="tiles">admin.UserProfile.entry</result>
             <result name="input" type="tiles">admin.UserProfile.chooseType</result>
             <interceptor-ref name="entandoDefaultStack">
 				<param name="requestAuth.requiredPermissions">editUsers,editUserProfile</param>

@@ -18,27 +18,38 @@
 			<div class="alert alert-danger alert-dismissable fade in">
 				<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
 				<h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" />&ensp;<span
-						class="icon fa fa-question-circle cursor-pointer"
-						title="<s:text name="label.all" />"
-						data-toggle="collapse"
+						class="icon fa fa-question-circle cursor-pointer" 
+						title="<s:text name="label.all" />" data-toggle="collapse" 
 						data-target="#content-error-messages"></span>
 					<span class="sr-only"><s:text name="label.all" /></span>
 				</h2>
 				<ul class="unstyled collapse margin-small-top" id="content-error-messages">
 					<s:iterator value="fieldErrors">
 						<s:iterator value="value">
-							<li><%-- <s:property value="key" />&emsp;|--%><s:property escape="false" /></li>
+							<li><s:property escape="false" /></li>
 						</s:iterator>
 					</s:iterator>
 				</ul>
 			</div>
 		</s:if>
+		<p class="sr-only">
+			<wpsf:hidden name="username" />
+		</p>
 		<div class="col-xs-12">
 			<div class="form-group">
+				<label for="profileType"><s:text name="label.type"/></label>
+				<div class="input-group">
+					<s:property value="userProfile.typeDescription" />
+					<span class="input-group-btn">
+						<wpsf:submit action="changeProfileType" value="%{getText('label.change')}" cssClass="btn btn-info" />
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
 				<label class="display-block"><s:text name="label.username" /></label>
-					<p class="form-control-static">
-						<s:property value="userProfile.username" />
-					</p>
+				<p class="form-control-static">
+					<s:property value="userProfile.username" />
+				</p>
 			</div>
 			<s:set name="lang" value="defaultLang" />
 			<%-- attribute iterator --%>
@@ -74,12 +85,9 @@
 					<s:else>
 						<label class="display-block" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />"><s:property value="#attributeLabelVar" /><s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
 					</s:else>
-					<s:if test="#attribute.type == 'Attach'">
-						<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/attachAttribute.jsp" />
-					</s:if>
-					<s:elseif test="#attribute.type == 'Boolean'">
+					<s:if test="#attribute.type == 'Boolean'">
 						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/booleanAttribute.jsp" />
-					</s:elseif>
+					</s:if>
 					<s:elseif test="#attribute.type == 'CheckBox'">
 						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/checkBoxAttribute.jsp" />
 					</s:elseif>
@@ -92,14 +100,8 @@
 					<s:elseif test="#attribute.type == 'Enumerator'">
 						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/enumeratorAttribute.jsp" />
 					</s:elseif>
-					<s:elseif test="#attribute.type == 'Image'">
-						<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/imageAttribute.jsp" />
-					</s:elseif>
 					<s:elseif test="#attribute.type == 'Hypertext'">
 						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/hypertextAttribute.jsp" />
-					</s:elseif>
-					<s:elseif test="#attribute.type == 'Link'">
-						<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/linkAttribute.jsp" />
 					</s:elseif>
 					<s:elseif test="#attribute.type == 'List'">
 						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/listAttribute.jsp" />
@@ -111,7 +113,7 @@
 						<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/monolistAttribute.jsp" />
 					</s:elseif>
 					<s:elseif test="#attribute.type == 'Monotext'">
-							<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/monotextAttribute.jsp" />
+						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/monotextAttribute.jsp" />
 					</s:elseif>
 					<s:elseif test="#attribute.type == 'Number'">
 						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/numberAttribute.jsp" />

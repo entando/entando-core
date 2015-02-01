@@ -7,8 +7,6 @@
 	
     <package name="core_do/User" namespace="/do/User" extends="entando-default">
 		
-    	<!-- ######### INIZIO OPERAZIONI IN INTERFACCIA LISTA UTENTI ######### -->
-    	
 		<action name="list" class="userFinderAction" method="list">
 			<result type="tiles">admin.User.list</result>
 			<interceptor-ref name="entandoDefaultStack">
@@ -33,10 +31,8 @@
 				<param name="requestAuth.ORClause">true</param>
 			</interceptor-ref>
 		</action>
-        
-        <!-- ######### FINE OPERAZIONI IN INTERFACCIA LISTA UTENTI ######### -->
-    	
-    	<!-- ######### INIZIO OPERAZIONI DI AGGIUNTA/MODIFICA UTENTE ######### -->
+		
+		<!-- ######## add/edit user - start ######## -->
     	
         <action name="new" class="userAction" method="newUser">
             <result type="tiles">admin.User.entry</result>
@@ -78,7 +74,7 @@
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
         </action>
     	
-    	<!-- ######### FINE OPERAZIONI DI AGGIUNTA/MODIFICA UTENTE ######### -->
+    	<!-- ######## add/edit user - end ######## -->
     	
     </package>
     

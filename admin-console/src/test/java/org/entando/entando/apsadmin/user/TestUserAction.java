@@ -51,11 +51,9 @@ public class TestUserAction extends ApsAdminBaseTestCase {
 	}
 	
 	public void testFailureEdit() throws Throwable {
-		// Utente non abilitato
 		String result = this.executeNew("developersConf");
 		assertEquals("apslogin", result);
 		
-		// Modifica utente admin
 		result = this.executeEdit("admin", "admin");
 		assertEquals(Action.SUCCESS, result);
 	}
@@ -78,6 +76,7 @@ public class TestUserAction extends ApsAdminBaseTestCase {
 			this.addParameter("password", password);
 			this.addParameter("passwordConfirm", password);
 			this.addParameter("active", "true");
+			this.addParameter("profileTypeCode", SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
 			String result = this.executeAction();
 			assertEquals(Action.SUCCESS, result);
 			
@@ -102,6 +101,7 @@ public class TestUserAction extends ApsAdminBaseTestCase {
 			this.addParameter("password", password);
 			this.addParameter("passwordConfirm", password);
 			this.addParameter("active", "true");
+			this.addParameter("profileTypeCode", SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
 			String result = this.executeAction();
 			assertEquals(Action.SUCCESS, result);
 			
@@ -220,6 +220,7 @@ public class TestUserAction extends ApsAdminBaseTestCase {
 		this.addParameter("username", username);
 		this.addParameter("password", password);
 		this.addParameter("passwordConfirm", passwordConfirm);
+		this.addParameter("profileTypeCode", SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
 		return this.executeAction();
 	}
 	

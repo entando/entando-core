@@ -79,21 +79,46 @@ public class TestUserProfileAction extends ApsAdminBaseTestCase {
 		}
     }
     
+    public void testSaveNewEmptyProfile() throws Throwable {
+    	this.setUserOnSession("admin");
+		try {
+			this.initAction("/do/userprofile", "saveEmpty");
+			this.addParameter("username", USERNAME_FOR_TEST);
+			this.addParameter("profileTypeCode", SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
+			String result = this.executeAction();
+			assertEquals(Action.SUCCESS, result);
+			IUserProfile currentUserProfile = (IUserProfile) this.getRequest().getSession().getAttribute(UserProfileAction.USERPROFILE_ON_SESSION);
+			assertNull(currentUserProfile);
+			assertNotNull(this._profileManager.getProfile(USERNAME_FOR_TEST));
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._profileManager.deleteProfile(USERNAME_FOR_TEST);
+		}
+    }
+    
     public void testNewProfile() throws Throwable {
     	this.setUserOnSession("admin");
-        this.initAction("/do/userprofile", "new");
-		this.addParameter("username", USERNAME_FOR_TEST);
-        this.addParameter("profileTypeCode", "PFL");
-        String result = this.executeAction();
-        assertEquals(Action.SUCCESS, result);
-        IUserProfile currentUserProfile = (IUserProfile) this.getRequest().getSession().getAttribute(UserProfileAction.USERPROFILE_ON_SESSION);
-        assertNotNull(currentUserProfile);
-        assertEquals(USERNAME_FOR_TEST, currentUserProfile.getUsername());
+		try {
+			this.initAction("/do/userprofile", "saveAndContinue");
+			this.addParameter("username", USERNAME_FOR_TEST);
+			this.addParameter("profileTypeCode", SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
+			String result = this.executeAction();
+			assertEquals(Action.SUCCESS, result);
+			IUserProfile currentUserProfile = (IUserProfile) this.getRequest().getSession().getAttribute(UserProfileAction.USERPROFILE_ON_SESSION);
+			assertNotNull(currentUserProfile);
+			assertEquals(USERNAME_FOR_TEST, currentUserProfile.getUsername());
+			assertNotNull(this._profileManager.getProfile(USERNAME_FOR_TEST));
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._profileManager.deleteProfile(USERNAME_FOR_TEST);
+		}
     }
     
     public void testValidateNewProfile() throws Throwable {
     	this.setUserOnSession("admin");
-        this.initAction("/do/userprofile", "new");
+        this.initAction("/do/userprofile", "saveAndContinue");
 		this.addParameter("username", USERNAME_FOR_TEST);
         this.addParameter("profileTypeCode", "XXX");
         String result = this.executeAction();
@@ -138,9 +163,9 @@ public class TestUserProfileAction extends ApsAdminBaseTestCase {
 	
     public void testSaveProfile() throws Throwable {
     	this.setUserOnSession("admin");
-    	this.initAction("/do/userprofile", "new");
+    	this.initAction("/do/userprofile", "saveAndContinue");
 		this.addParameter("username", USERNAME_FOR_TEST);
-        this.addParameter("profileTypeCode", "PFL");
+        this.addParameter("profileTypeCode", SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
         String result = this.executeAction();
         assertEquals(Action.SUCCESS, result);
         try {

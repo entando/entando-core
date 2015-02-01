@@ -53,11 +53,10 @@ public abstract class AbstractAttributeSupportObjectDOM {
 	        xmlIs = new ByteArrayInputStream(xmlText.getBytes("UTF-8"));
 	        Source source = new StreamSource(xmlIs);
 	        validator.validate(source);
-	        _logger.info("Valid definition : {}", definitionPath);
+	        _logger.debug("Valid definition : {}", definitionPath);
         } catch (Throwable t) {
         	String message = "Error validating definition : " + definitionPath;
         	_logger.error("Error validating definition : {}", definitionPath, t);
-        	//ApsSystemUtils.logThrowable(t, this, "this", message);
         	throw new ApsSystemException(message, t);
         } finally {
         	try {
@@ -65,7 +64,6 @@ public abstract class AbstractAttributeSupportObjectDOM {
 				if (null != xmlIs) xmlIs.close();
 			} catch (IOException e) {
 				_logger.error("Error validating definition path: {} - xml: {}", definitionPath, xmlText, e);
-				//ApsSystemUtils.logThrowable(e, this, "this");
 			}
         }
 	}

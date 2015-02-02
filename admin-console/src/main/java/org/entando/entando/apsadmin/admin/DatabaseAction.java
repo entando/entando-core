@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.apsadmin.system.BaseAction;
 import com.j256.ormlite.table.DatabaseTable;
+import org.entando.entando.aps.system.init.ComponentManager;
 
 /**
  * @author E.Santoboni
@@ -175,7 +176,7 @@ public class DatabaseAction extends BaseAction {
     }
 
     public List<String> getTableNames(List<String> tableClassNames) {
-        ClassLoader cl = (ClassLoader) this.getRequest().getSession().getServletContext().getAttribute("componentInstallerClassLoader");
+        ClassLoader cl = ComponentManager.getComponentInstallerClassLoader();
         if (null == tableClassNames || tableClassNames.isEmpty()) {
             return null;
         }

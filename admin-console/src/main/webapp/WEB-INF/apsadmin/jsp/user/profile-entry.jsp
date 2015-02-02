@@ -38,12 +38,8 @@
 		<div class="col-xs-12">
 			<div class="form-group">
 				<label for="profileType"><s:text name="label.type"/></label>
-				<div class="input-group">
-					<s:property value="userProfile.typeDescription" />
-					<span class="input-group-btn">
-						<wpsf:submit action="changeProfileType" value="%{getText('label.change')}" cssClass="btn btn-info" />
-					</span>
-				</div>
+				<s:property value="userProfile.typeDescription" />
+				&#32;<wpsf:submit action="changeProfileType" value="%{'('+getText('label.change')+')'}" cssClass="btn btn-link" />
 			</div>
 			<div class="form-group">
 				<label class="display-block"><s:text name="label.username" /></label>
@@ -128,8 +124,7 @@
 						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/timestampAttribute.jsp" />
 					</s:elseif>
 					<s:else><%-- all other attributes uses monotext --%>
-							<!-- attribute: <s:property value="#attribute.type" /> -->
-							<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/monotextAttribute.jsp" />
+						<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/monotextAttribute.jsp" />
 					</s:else>
 					<s:if test="#attributeHasErrorVar">
 						<p class="text-danger padding-small-vertical">
@@ -145,7 +140,7 @@
 						</p>
 					</s:if>
 				</div><%-- form-group --%>
-			</s:iterator><%-- attribute iterator end --%>
+			</s:iterator>
 	</div>
 	<div class="form-group">
 		<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">

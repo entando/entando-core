@@ -71,7 +71,8 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 	}
 
 	private void createBackup(Map<String, List<String>> tableMapping, DataSourceDumpReport report, String backupSubFolder) throws ApsSystemException {
-		if (null == tableMapping || tableMapping.isEmpty()) {
+		ClassLoader cl = ComponentManager.getComponentInstallerClassLoader();
+                if (null == tableMapping || tableMapping.isEmpty()) {
 			return;
 		}
 		try {
@@ -85,7 +86,12 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 				DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
 				for (int k = 0; k < tableClassNames.size(); k++) {
 					String tableClassName = tableClassNames.get(k);
-					Class tableClass = Class.forName(tableClassName, true, Thread.currentThread().getContextClassLoader());
+					Class tableClass = null;
+                                        if (cl != null) {
+                                            tableClass = Class.forName(tableClassName, true, cl);
+                                        } else {
+                                            tableClass = Class.forName(tableClassName);
+                                        }
 					String tableName = TableFactory.getTableName(tableClass);
 					this.dumpTableData(tableName, dataSourceName, dataSource, report, backupSubFolder);
 				}

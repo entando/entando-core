@@ -61,7 +61,6 @@ public class TableDataUtils {
 				schemaReport.getDatabaseStatus().put(databaseName, SystemInstallationReport.Status.INCOMPLETE);
 			}
 			_logger.error("Error executing script into db {} ", databaseName, t);
-			//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "valueDatabase", "Error executing script into db " + databaseName);
 			throw new ApsSystemException("Error executing script into db " + databaseName, t);
 		}
 	}
@@ -87,12 +86,10 @@ public class TableDataUtils {
 				}
 			} catch (Throwable tr) {
 				_logger.error("Error executing rollback", t);
-				//ApsSystemUtils.logThrowable(tr, TableDataUtils.class,"executeQueries", "Error executing rollback");
 			}
 			String errorMessage = "Error executing script - QUERY:\n" + currentQuery;
 			if (traceException) {
 				_logger.error("Error executing script - QUERY:\n{}", currentQuery, t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "executeQueries", errorMessage);
 			}
 			throw new ApsSystemException(errorMessage, t);
 		} finally {
@@ -102,7 +99,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error while closing the statement", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "closeDaoResources", "Error while closing the statement");
 			}
 			try {
 				if (conn != null) {
@@ -110,7 +106,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error closing the connection", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class,  "closeDaoStatement", "Error closing the connection");
 			}
 		}
 	}
@@ -166,7 +161,6 @@ public class TableDataUtils {
 			report.setRows(rows);
 		} catch (Throwable t) {
 			_logger.error("Error creating backup", t);
-			//ApsSystemUtils.logThrowable(t, TableDataUtils.class, 	"dumpTable", "Error creating backup");
 			throw new ApsSystemException("Error creating backup", t);
 		} finally {
 			try {
@@ -175,7 +169,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error while closing the resultset", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class,"dumpTable", "Error while closing the resultset");
 			}
 			try {
 				if (stat != null) {
@@ -183,7 +176,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error while closing the statement", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "dumpTable", "Error while closing the statement");
 			}
 			try {
 				if (conn != null) {
@@ -191,7 +183,6 @@ public class TableDataUtils {
 				}
 			} catch (Throwable t) {
 				_logger.error("Error closing the connection", t);
-				//ApsSystemUtils.logThrowable(t, TableDataUtils.class, "dumpTable", "Error closing the connection");
 			}
 		}
 		long time = System.currentTimeMillis() - start;
@@ -214,8 +205,8 @@ public class TableDataUtils {
 				}
             //case Types.BINARY: 
 			//	return ....;
-            //case Types.BIT:
-			//	return ....;
+            case Types.BIT:
+				return (int) res.getByte(resIndex);
             case Types.BLOB:
 				return res.getBlob(resIndex);
             case Types.BOOLEAN: 
@@ -344,6 +335,7 @@ public class TableDataUtils {
 	private static boolean isDataNeedsQuotes(int type) {
 		switch (type) {
             case Types.BIGINT: return false;
+            case Types.BIT: return false;
             case Types.BOOLEAN: return false;
             case Types.DECIMAL: return false;
             case Types.DOUBLE: return false;

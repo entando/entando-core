@@ -205,8 +205,8 @@ public class TableDataUtils {
 				}
             //case Types.BINARY: 
 			//	return ....;
-            //case Types.BIT:
-			//	return ....;
+            case Types.BIT:
+				return (int) res.getByte(resIndex);
             case Types.BLOB:
 				return res.getBlob(resIndex);
             case Types.BOOLEAN: 
@@ -335,6 +335,7 @@ public class TableDataUtils {
 	private static boolean isDataNeedsQuotes(int type) {
 		switch (type) {
             case Types.BIGINT: return false;
+            case Types.BIT: return false;
             case Types.BOOLEAN: return false;
             case Types.DECIMAL: return false;
             case Types.DOUBLE: return false;

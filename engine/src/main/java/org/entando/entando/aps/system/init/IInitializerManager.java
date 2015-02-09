@@ -22,4 +22,6 @@ public interface IInitializerManager {
 	
 	public SystemInstallationReport getCurrentReport();
 	
+	public void reloadCurrentReport();
+	
 }

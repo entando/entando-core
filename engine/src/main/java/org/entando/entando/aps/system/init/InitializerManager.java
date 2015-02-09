@@ -120,6 +120,17 @@ public class InitializerManager extends AbstractInitializerManager implements II
 		return SystemInstallationReport.Status.OK;
 	}
 	
+	@Override
+	public void reloadCurrentReport() {
+		try {
+			SystemInstallationReport report = this.extractReport();
+			this.setCurrentReport(report);
+		} catch (Throwable t) {
+			_logger.error("Error reloading report", t);
+			throw new RuntimeException("Error reloading report", t);
+		}
+	}
+	
 	//-------------------- REPORT -------- START
 	
 	private void saveReport(SystemInstallationReport report) throws BeansException {
@@ -160,13 +171,6 @@ public class InitializerManager extends AbstractInitializerManager implements II
 		this._postProcessors = postProcessors;
 	}
 	
-	protected IComponentManager getComponentManager() {
-		return _componentManager;
-	}
-	public void setComponentManager(IComponentManager componentManager) {
-		this._componentManager = componentManager;
-	}
-	
 	protected IDatabaseManager getDatabaseManager() {
 		return _databaseManager;
 	}
@@ -179,7 +183,6 @@ public class InitializerManager extends AbstractInitializerManager implements II
 	
 	private Map<String, IPostProcessor> _postProcessors;
 	
-	private IComponentManager _componentManager;
 	private IDatabaseManager _databaseManager;
 	
 	public static final String REPORT_CONFIG_ITEM = "entandoComponentsReport";

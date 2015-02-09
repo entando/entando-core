@@ -20,6 +20,7 @@ import java.util.Map;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import javax.sql.DataSource;
 
 /**
  * @author E.Santoboni
@@ -41,6 +42,8 @@ public interface IDatabaseManager {
 	public List<DataSourceDumpReport> getBackupReports() throws ApsSystemException;
 	
 	public Map<String, List<String>> getEntandoTableMapping();
+	
+	public DatabaseType getDatabaseType(DataSource dataSource) throws ApsSystemException;
 	
 	public enum DatabaseType {DERBY, POSTGRESQL, MYSQL, ORACLE, SQLSERVER, UNKNOWN}
 	

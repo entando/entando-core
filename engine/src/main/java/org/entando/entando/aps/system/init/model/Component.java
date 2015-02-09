@@ -64,6 +64,12 @@ public class Component {
 					this.getEnvironments().put(environment.getCode(), environment);
 				}
 			}
+			Element uninstallationElement = rootElement.getChild("uninstallation");
+			if (null != uninstallationElement) {
+				ComponentUninstallerInfo uninstallerInfo = 
+						new ComponentUninstallerInfo(uninstallationElement, postProcessClasses);
+				this.setUninstallerInfo(uninstallerInfo);
+			}
         } catch (Throwable t) {
         	_logger.error("Error loading component", t);
         }
@@ -155,6 +161,13 @@ public class Component {
 		this._environments = environments;
 	}
 	
+	public ComponentUninstallerInfo getUninstallerInfo() {
+		return _uninstallerInfo;
+	}
+	protected void setUninstallerInfo(ComponentUninstallerInfo uninstallerInfo) {
+		this._uninstallerInfo = uninstallerInfo;
+	}
+	
 	private String _code;
 	private String _description;
 	private String _artifactId;
@@ -164,5 +177,7 @@ public class Component {
 	private Map<String, List<String>> _tableMapping;
 	
 	private Map<String, ComponentEnvironment> _environments;
+	
+	private ComponentUninstallerInfo _uninstallerInfo;
 	
 }

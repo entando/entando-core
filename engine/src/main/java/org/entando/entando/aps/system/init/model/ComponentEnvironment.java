@@ -13,24 +13,19 @@
  */
 package org.entando.entando.aps.system.init.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.agiletec.aps.system.exception.ApsSystemException;
+
+import java.io.Serializable;
 import java.util.Map;
 
 import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
  * @author E.Santoboni
  */
-public class ComponentEnvironment {
+public class ComponentEnvironment extends AbstractComponentModule implements Serializable {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ComponentEnvironment.class);
 	
@@ -39,51 +34,12 @@ public class ComponentEnvironment {
 			String environmentCode = environmentElement.getAttributeValue("code");
 			this.setCode(environmentCode);
 			Element defaultSqlResourcesElement = environmentElement.getChild("defaultSqlResources");
-			if (null != defaultSqlResourcesElement) {
-				List<Element> datasourceElements = defaultSqlResourcesElement.getChildren("datasource");
-				for (int j = 0; j < datasourceElements.size(); j++) {
-					Element datasourceElement = datasourceElements.get(j);
-					String datasourceName = datasourceElement.getAttributeValue("name");
-					String sqlResourcePath = datasourceElement.getText().trim();
-					this.getDefaultSqlResourcesPaths().put(datasourceName, sqlResourcePath);
-				}
-			}
+			super.extractSqlResources(defaultSqlResourcesElement);
 			Element postProcessesElement = environmentElement.getChild("postProcesses");
-			if (null != postProcessesElement) {
-				List<Element> postProcessElements = postProcessesElement.getChildren();
-				if (null != postProcessElements && !postProcessElements.isEmpty()) {
-					for (int i = 0; i < postProcessElements.size(); i++) {
-						Element postProcessElement = postProcessElements.get(i);
-						this.createPostProcess(postProcessElement, postProcessClasses);
-					}
-				}
-			}
+			super.createPostProcesses(postProcessesElement, postProcessClasses);
 		} catch (Throwable t) {
 			_logger.error("Error creating ComponentEnvironment", t);
-			//ApsSystemUtils.logThrowable(t, this, "ComponentEnvironment");
 			throw new ApsSystemException("Error creating ComponentEnvironment", t);
-		}
-	}
-	
-	private void createPostProcess(Element postProcessElement, Map<String, String> postProcessClasses) throws ApsSystemException {
-		try {
-			String name = postProcessElement.getName();
-			String className = postProcessClasses.get(name);
-			if (null != className) {
-				Class postProcessClass = Class.forName(className);
-				IPostProcess postProcess = (IPostProcess) postProcessClass.newInstance();
-				postProcess.createConfig(postProcessElement);
-				if (null == this.getPostProcesses()) {
-					this.setPostProcesses(new ArrayList<IPostProcess>());
-				}
-				this.getPostProcesses().add(postProcess);
-			} else {
-				_logger.error("Null post process class for process name '{}'", name);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error creating Post Process", t);
-			//ApsSystemUtils.logThrowable(t, this, "createPostProcess");
-			throw new ApsSystemException("Error creating Post Process", t);
 		}
 	}
 	
@@ -94,32 +50,13 @@ public class ComponentEnvironment {
 		this._code = code;
 	}
 	
-	public Resource getSqlResources(String datasourceName) {
-		String path = this.getDefaultSqlResourcesPaths().get(datasourceName);
-		if (null == path) {
-			return null;
-		}
-		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		return resolver.getResource(path);
-	}
-	
 	public Map<String, String> getDefaultSqlResourcesPaths() {
-		return _defaultSqlResourcesPaths;
+		return super.getSqlResourcesPaths();
 	}
 	protected void setDefaultSqlResourcesPaths(Map<String, String> defaultSqlResourcesPaths) {
-		this._defaultSqlResourcesPaths = defaultSqlResourcesPaths;
-	}
-	
-	public List<IPostProcess> getPostProcesses() {
-		return _postProcesses;
-	}
-	protected void setPostProcesses(List<IPostProcess> postProcesses) {
-		this._postProcesses = postProcesses;
+		super.setSqlResourcesPaths(defaultSqlResourcesPaths);
 	}
 	
 	private String _code;
-	private Map<String, String> _defaultSqlResourcesPaths = new HashMap<String, String>();
-	
-	private List<IPostProcess> _postProcesses;
 	
 }

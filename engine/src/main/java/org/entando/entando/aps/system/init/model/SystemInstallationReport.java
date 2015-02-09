@@ -88,7 +88,8 @@ public class SystemInstallationReport {
 				status.equals(SystemInstallationReport.Status.PORTING) || 
 				status.equals(SystemInstallationReport.Status.RESTORE) || 
 				status.equals(SystemInstallationReport.Status.NOT_AVAILABLE) || 
-				status.equals(SystemInstallationReport.Status.SKIPPED));
+				status.equals(SystemInstallationReport.Status.SKIPPED) || 
+				status.equals(SystemInstallationReport.Status.UNINSTALLED));
 	}
 	
 	public static SystemInstallationReport getInstance() {
@@ -116,7 +117,8 @@ public class SystemInstallationReport {
 		Status status = Status.OK;
 		for (int i = 0; i < this.getReports().size(); i++) {
 			ComponentInstallationReport componentReport = this.getReports().get(i);
-			if (!componentReport.getStatus().equals(Status.OK)) {
+			if (!componentReport.getStatus().equals(Status.OK) 
+					&& !componentReport.getStatus().equals(Status.UNINSTALLED)) {
 				status = componentReport.getStatus();
 				break;
 			} 
@@ -159,6 +161,17 @@ public class SystemInstallationReport {
 		return null;
 	}
 	
+	public boolean removeComponentReport(String componentCode) {
+		for (int i = 0; i < this.getReports().size(); i++) {
+			ComponentInstallationReport singleReport = this.getReports().get(i);
+			if (singleReport.getComponentCode().equals(componentCode)) {
+				this.getReports().remove(singleReport);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public Date getCreation() {
 		return _creation;
 	}
@@ -198,7 +211,7 @@ public class SystemInstallationReport {
 	private boolean _updated;
 	private List<ComponentInstallationReport> _reports = new ArrayList<ComponentInstallationReport>();
 	
-	public enum Status {OK, PORTING, SKIPPED, RESTORE, INCOMPLETE, NOT_AVAILABLE, INIT}
+	public enum Status {OK, PORTING, SKIPPED, RESTORE, INCOMPLETE, NOT_AVAILABLE, INIT, UNINSTALLED}
 	
 	protected static final String ROOT_ELEMENT = "reports";
 	protected static final String CREATION_ELEMENT = "creation";

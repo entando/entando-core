@@ -28,4 +28,6 @@ public interface IComponentManager {
 	
 	public Component getInstalledComponent(String componentCode);
 	
+	public void refresh();
+	
 }

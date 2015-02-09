@@ -188,6 +188,10 @@ public class DatabaseManager extends AbstractInitializerManager
 			_logger.debug(logPrefix + "( ok )  Already installed\n" + logPrefix);
 			System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
 			return;
+		} else if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
+			_logger.debug(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+			System.out.println(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+			return;
 		}
 		try {
 			String[] dataSourceNames = this.extractBeanNames(DataSource.class);
@@ -324,6 +328,10 @@ public class DatabaseManager extends AbstractInitializerManager
 			_logger.debug(logPrefix + "( ok )  Already installed\n" + logPrefix);
 			System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
 			return;
+		} else if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
+			_logger.debug(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+			System.out.println(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+			return;
 		}
 		DataInstallationReport dataReport = componentReport.getDataReport();
 		try {
@@ -375,7 +383,7 @@ public class DatabaseManager extends AbstractInitializerManager
 			throw new ApsSystemException("Error restoring default resources of component " + componentConfiguration.getCode(), t);
 		}
 	}
-
+	
 	private void restoreDefaultDump() throws ApsSystemException {
 		try {
 			String[] dataSourceNames = this.extractBeanNames(DataSource.class);
@@ -386,7 +394,7 @@ public class DatabaseManager extends AbstractInitializerManager
 			for (int j = 0; j < dataSourceNames.length; j++) {
 				String dataSourceName = dataSourceNames[j];
 				DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
-				Resource resource = (null != defaultDump) ? defaultDump.get(dataSourceName) : null;
+				Resource resource = defaultDump.get(dataSourceName);
 				String script = this.readFile(resource);
 				if (null != script && script.trim().length() > 0) {
 					this.getDatabaseRestorer().initOracleSchema(dataSource);
@@ -398,7 +406,7 @@ public class DatabaseManager extends AbstractInitializerManager
 			throw new ApsSystemException("Error restoring default Dump", t);
 		}
 	}
-
+	
 	private String readFile(Resource resource) throws Throwable {
 		if (resource == null) {
 			return null;
@@ -595,14 +603,19 @@ public class DatabaseManager extends AbstractInitializerManager
 			if (null == subFolderName) {
 				return null;
 			}
-			StringBuilder fileName = new StringBuilder(this.getLocalBackupsFolder())
-					.append(subFolderName).append(File.separator)
+			StringBuilder fileName = new StringBuilder(this.getLocalBackupsFolder());
+			fileName.append(subFolderName).append(File.separator)
 					.append(dataSourceName).append(File.separator).append(tableName).append(".sql");
 			return this.getStorageManager().getStream(fileName.toString(), true);
 		} catch (Throwable t) {
 			_logger.error("Error while extracting table dump - " + "table '{}' - datasource '{}' - SubFolder '{}'", tableName, dataSourceName, subFolderName, t);
 			throw new RuntimeException("Error while extracting table dump - " + "table '" + tableName + "' - datasource '" + dataSourceName + "' - SubFolder '" + subFolderName + "'", t);
 		}
+	}
+	
+	@Override
+	public DatabaseType getDatabaseType(DataSource dataSource) throws ApsSystemException {
+		return this.getDatabaseRestorer().getType(dataSource);
 	}
 	
 	private IStorageManager getStorageManager() {
@@ -649,14 +662,7 @@ public class DatabaseManager extends AbstractInitializerManager
 	protected void setStatus(int status) {
 		this._status = status;
 	}
-
-	protected IComponentManager getComponentManager() {
-		return _componentManager;
-	}
-	public void setComponentManager(IComponentManager componentManager) {
-		this._componentManager = componentManager;
-	}
-
+	
 	protected DatabaseDumper getDatabaseDumper() {
 		return _databaseDumper;
 	}
@@ -684,7 +690,6 @@ public class DatabaseManager extends AbstractInitializerManager
 	private Map<String, Resource> _testSqlResources;
 	private Map<String, Resource> _defaultSqlDump;
 	private int _status;
-	private IComponentManager _componentManager;
 	public static final int STATUS_READY = 0;
 	public static final int STATUS_DUMPIMG_IN_PROGRESS = 1;
 

@@ -92,7 +92,12 @@ public class ComponentInstallationReport {
 				(!isPostProcessStatusSafe && !postProcessStatus.equals(SystemInstallationReport.Status.INIT))) {
 			return SystemInstallationReport.Status.INCOMPLETE;
 		} else if (isSchemaStatusSafe && isDataStatusSafe && isPostProcessStatusSafe) {
-			return SystemInstallationReport.Status.OK;
+			if ((null != schemaStatus && SystemInstallationReport.Status.UNINSTALLED.equals(schemaStatus)) 
+					|| (null != dataStatus && SystemInstallationReport.Status.UNINSTALLED.equals(dataStatus))) {
+				return SystemInstallationReport.Status.UNINSTALLED;
+			} else {
+				return SystemInstallationReport.Status.OK;
+			}
 		} else {
 			return SystemInstallationReport.Status.INIT;
 		}
@@ -103,6 +108,10 @@ public class ComponentInstallationReport {
 		SystemInstallationReport.Status dataStatus = this.getDataReport().getStatus();
 		SystemInstallationReport.Status ok = SystemInstallationReport.Status.OK;
 		return (dataSourceStatus.equals(ok) && dataStatus.equals(ok) && !this.getDataReport().isDataAlreadyPresent());
+	}
+	
+	public boolean isUninstalled() {
+		return this.getStatus().equals(Status.UNINSTALLED);
 	}
 	
 	public String getComponentCode() {

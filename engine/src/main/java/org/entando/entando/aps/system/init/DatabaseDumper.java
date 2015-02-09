@@ -13,6 +13,9 @@
  */
 package org.entando.entando.aps.system.init;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.DateConverter;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Date;
@@ -31,52 +34,45 @@ import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.DateConverter;
-
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.DateConverter;
-
 /**
  * @author E.Santoboni
  */
 public class DatabaseDumper extends AbstractDatabaseUtils {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DatabaseDumper.class);
-	
+
 	protected void createBackup(AbstractInitializerManager.Environment environment, SystemInstallationReport installationReport) throws ApsSystemException {
 		try {
 			DataSourceDumpReport report = new DataSourceDumpReport(installationReport);
 			long start = System.currentTimeMillis();
-			String backupSubFolder = (AbstractInitializerManager.Environment.develop.equals(environment)) ?
-					environment.toString() : DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
-					//this.setBackupSubFolder(subFolder);
-					report.setSubFolderName(backupSubFolder);
-					List<Component> components = this.getComponents();
-					for (int i = 0; i < components.size(); i++) {
-						Component componentConfiguration = components.get(i);
-						this.createBackup(componentConfiguration.getTableMapping(), report, backupSubFolder);
-					}
-					this.createBackup(this.getEntandoTableMapping(), report, backupSubFolder);
-					long time = System.currentTimeMillis() - start;
-					report.setRequiredTime(time);
-					report.setDate(new Date());
-					StringBuilder reportFolder = new StringBuilder(this.getLocalBackupsFolder());
-					if (null != backupSubFolder) {
-						reportFolder.append(backupSubFolder).append(File.separator);
-					}
-					this.save(DatabaseManager.DUMP_REPORT_FILE_NAME,
-							reportFolder.toString(), report.toXml());
+			String backupSubFolder = (AbstractInitializerManager.Environment.develop.equals(environment))
+					? environment.toString() : DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
+			//this.setBackupSubFolder(subFolder);
+			report.setSubFolderName(backupSubFolder);
+			List<Component> components = this.getComponents();
+			for (int i = 0; i < components.size(); i++) {
+				Component componentConfiguration = components.get(i);
+				this.createBackup(componentConfiguration.getTableMapping(), report, backupSubFolder);
+			}
+			this.createBackup(this.getEntandoTableMapping(), report, backupSubFolder);
+			long time = System.currentTimeMillis() - start;
+			report.setRequiredTime(time);
+			report.setDate(new Date());
+			StringBuilder reportFolder = new StringBuilder(this.getLocalBackupsFolder());
+			if (null != backupSubFolder) {
+				reportFolder.append(backupSubFolder).append(File.separator);
+			}
+			this.save(DatabaseManager.DUMP_REPORT_FILE_NAME,
+					reportFolder.toString(), report.toXml());
 		} catch (Throwable t) {
 			_logger.error("error in ", t);
-			//ApsSystemUtils.logThrowable(t, this, "Error while creating backup");
 			throw new ApsSystemException("Error while creating backup", t);
 		}
 	}
 
 	private void createBackup(Map<String, List<String>> tableMapping, DataSourceDumpReport report, String backupSubFolder) throws ApsSystemException {
-		if (null == tableMapping || tableMapping.isEmpty()) {
+		ClassLoader cl = ComponentManager.getComponentInstallerClassLoader();
+                if (null == tableMapping || tableMapping.isEmpty()) {
 			return;
 		}
 		try {
@@ -84,18 +80,24 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 			for (int j = 0; j < dataSourceNames.length; j++) {
 				String dataSourceName = dataSourceNames[j];
 				List<String> tableClassNames = tableMapping.get(dataSourceName);
-				if (null == tableClassNames || tableClassNames.isEmpty()) continue;
+				if (null == tableClassNames || tableClassNames.isEmpty()) {
+					continue;
+				}
 				DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
 				for (int k = 0; k < tableClassNames.size(); k++) {
 					String tableClassName = tableClassNames.get(k);
-					Class tableClass = Class.forName(tableClassName);
+					Class tableClass = null;
+                                        if (cl != null) {
+                                            tableClass = Class.forName(tableClassName, true, cl);
+                                        } else {
+                                            tableClass = Class.forName(tableClassName);
+                                        }
 					String tableName = TableFactory.getTableName(tableClass);
 					this.dumpTableData(tableName, dataSourceName, dataSource, report, backupSubFolder);
 				}
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while creating backup", t);
-			//ApsSystemUtils.logThrowable(t, this, "createBackup");
 			throw new ApsSystemException("Error while creating backup", t);
 		}
 	}
@@ -113,7 +115,6 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 			this.save(tableName + ".sql", dirName.toString(), tableDumpResult.getSqlDump());
 		} catch (Throwable t) {
 			_logger.error("Error dumping table '{}' - datasource '{}'", tableName, dataSourceName, t);
-			//ApsSystemUtils.logThrowable(t, this, "dumpTableData");
 			throw new ApsSystemException("Error dumping table '" + tableName + "' - datasource '" + dataSourceName + "'", t);
 		}
 	}
@@ -125,9 +126,8 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 			ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes("UTF-8"));
 			storageManager.saveFile(path, true, bais);
 		} catch (Throwable t) {
-			_logger.error("Error  save backup '{}'", filename, t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
-			throw new ApsSystemException("Error  save backup '" + filename , t);
+			_logger.error("Error saving backup '{}'", filename, t);
+			throw new ApsSystemException("Error saving backup '" + filename + "'", t);
 		}
 	}
 

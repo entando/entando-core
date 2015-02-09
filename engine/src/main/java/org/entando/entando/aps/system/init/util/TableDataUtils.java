@@ -38,13 +38,13 @@ import com.agiletec.aps.util.DateConverter;
  * @author E.Santoboni
  */
 public class TableDataUtils {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(TableDataUtils.class);
 	
 	public static void valueDatabase(String script, String databaseName, 
 			DataSource dataSource, DataInstallationReport schemaReport) throws ApsSystemException {
 		try {
-            String[] queries = (null != script) ? QueryExtractor.extractQueries(script) : null;
+            String[] queries = (null != script) ? QueryExtractor.extractInsertQueries(script) : null;
 			if (null == queries || queries.length == 0) {
 				_logger.info("Script file for db {} void", databaseName);
 				if (null != schemaReport) {
@@ -76,7 +76,7 @@ public class TableDataUtils {
 			for (int i = 0; i < queries.length; i++) {
 				currentQuery = queries[i];
 				stat = conn.prepareStatement(currentQuery);
-				stat.execute();
+				stat.executeUpdate();
 			}
 			conn.commit();
 		} catch (Throwable t) {
@@ -85,7 +85,7 @@ public class TableDataUtils {
 					conn.rollback();
 				}
 			} catch (Throwable tr) {
-				_logger.error("Error executing rollback", t);
+				_logger.error("Error executing rollback", tr);
 			}
 			String errorMessage = "Error executing script - QUERY:\n" + currentQuery;
 			if (traceException) {

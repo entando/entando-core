@@ -103,8 +103,8 @@
 										</tr>
 										<s:iterator value="#methodParametersVar" var="apiParameter" >
 											<tr>
-												<td class="text-right">
-													<span class="icon fa fa-<s:property value="%{#apiParameter.required ? 'ok' : ''}" />" title="<s:property value="%{#apiParameter.required ? getText('label.yes') : getText('label.no')}" />"></span>
+												<td class="text-center">
+													<span class="icon fa fa-<s:property value="%{#apiParameter.required ? 'check' : ''}" />" title="<s:property value="%{#apiParameter.required ? getText('label.yes') : getText('label.no')}" />"></span>
 													<span class="sr-only"><s:property value="%{#apiParameter.required ? getText('label.yes') : getText('label.no')}" /></span>
 												</td>
 												<td><code><s:property value="#apiParameter.key" /></code></td>

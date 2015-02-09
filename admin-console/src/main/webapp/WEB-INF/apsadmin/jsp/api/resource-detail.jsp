@@ -112,39 +112,39 @@
 				</div>
 				<div class="form-group">
 					<div class="col-xs-12">
-							<label for="all_auth"><s:text name="label.api.authorization" />:</label>
-							<wpsf:select name="methodAuthority" list="methodAuthorityOptions" listKey="key" listValue="value" id="all_auth" cssClass="form-control" />
+						<label for="all_auth"><s:text name="label.api.authorization" />:</label>
+						<wpsf:select name="methodAuthority" list="methodAuthorityOptions" listKey="key" listValue="value" id="all_auth" cssClass="form-control" />
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-xs-12">
-							<wpsf:submit type="button" action="updateAllMethodStatus" id="%{''}" cssClass="btn btn-primary">
-								<s:text name="label.update" />
-							</wpsf:submit>
-							&#32;
-							<wpsf:submit type="button" action="resetAllMethodStatus" id="%{''}" cssClass="btn btn-default">
-								<s:text name="label.reset.default" />
-							</wpsf:submit>
+						<wpsf:submit type="button" action="updateAllMethodStatus" id="%{''}" cssClass="btn btn-primary">
+							<s:text name="label.update" />
+						</wpsf:submit>
+						&#32;
+						<wpsf:submit type="button" action="resetAllMethodStatus" id="%{''}" cssClass="btn btn-default">
+							<s:text name="label.reset.default" />
+						</wpsf:submit>
 					</div>
 				</div>
 			</s:form>
 		</div>
 	</div>
-
-<%-- GET --%>
-		<s:set var="methodVar" value="#GETMethodVar" />
-		<s:set var="titleMethod" value="%{'GET'}" />
-		<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
-<%-- POST --%>
-		<s:set var="methodVar" value="#POSTMethodVar" />
-		<s:set var="titleMethod" value="%{'POST'}" />
-		<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
-<%-- PUT --%>
-		<s:set var="methodVar" value="#PUTMethodVar" />
-		<s:set var="titleMethod" value="%{'PUT'}" />
-		<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
-<%-- DELETE --%>
-		<s:set var="methodVar" value="#DELETEMethodVar" />
-		<s:set var="titleMethod" value="%{'DELETE'}" />
-		<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
+	
+	<%-- GET --%>
+	<s:set var="methodVar" value="#GETMethodVar" />
+	<s:set var="titleMethod" value="%{'GET'}" />
+	<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
+	<%-- POST --%>
+	<s:set var="methodVar" value="#POSTMethodVar" />
+	<s:set var="titleMethod" value="%{'POST'}" />
+	<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
+	<%-- PUT --%>
+	<s:set var="methodVar" value="#PUTMethodVar" />
+	<s:set var="titleMethod" value="%{'PUT'}" />
+	<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
+	<%-- DELETE --%>
+	<s:set var="methodVar" value="#DELETEMethodVar" />
+	<s:set var="titleMethod" value="%{'DELETE'}" />
+	<s:include value="/WEB-INF/apsadmin/jsp/api/include/resource-method-detail.jsp" />
 </div>

@@ -36,7 +36,7 @@
 			<div class="panel-body">
 
 				<h1 class="margin-small-bottom text-center">
-					<img src="<wp:resourceURL />administration/img/entando-logo-134x100.png" alt="Entando - Simplifying Enterprise Portals" width="134" height="100" />
+					<img src="<wp:resourceURL />administration/img/entando-logo-134x100.png" alt="Entando - Access. Build. Connect." width="134" height="100" />
 				</h1>
 
 				<s:form action="doLogin" cssClass="padding-base-vertical">

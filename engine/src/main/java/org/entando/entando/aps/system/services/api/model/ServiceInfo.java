@@ -26,16 +26,16 @@ import javax.xml.bind.annotation.XmlType;
  * @author E.Santoboni
  */
 @XmlRootElement(name = "serviceInfo")
-@XmlType(propOrder = {"key", "description", "tag", "myEntando", "parameters"})
+@XmlType(propOrder = {"key", "description", "tag", /*"myEntando",*/ "parameters"})
 public class ServiceInfo implements Serializable {
 	
 	public ServiceInfo() {}
 	
-	public ServiceInfo(String key, String description, String tag, boolean myEntando) {
+	public ServiceInfo(String key, String description, String tag/*, boolean myEntando*/) {
 		this.setKey(key);
 		this.setDescription(description);
 		this.setTag(tag);
-		this.setMyEntando(myEntando);
+		//this.setMyEntando(myEntando);
 	}
 	
 	@XmlElement(name = "key")
@@ -73,7 +73,7 @@ public class ServiceInfo implements Serializable {
 		}
 		_parameters.add(parameter);
 	}
-	
+	/*
 	@XmlElement(name = "myentando")
 	public boolean isMyEntando() {
 		return _myEntando;
@@ -81,11 +81,11 @@ public class ServiceInfo implements Serializable {
 	protected void setMyEntando(boolean myEntando) {
 		this._myEntando = myEntando;
 	}
-	
+	*/
 	private String _key;
 	private String _description;
 	private String _tag;
 	private List<ServiceParameterInfo> _parameters = null;
-	private boolean _myEntando;
+	//private boolean _myEntando;
 	
 }

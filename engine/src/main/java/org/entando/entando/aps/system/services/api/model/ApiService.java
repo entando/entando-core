@@ -18,7 +18,7 @@ import java.io.Serializable;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
- * The representation of a service
+ * The representation of an api service
  * @author E.Santoboni
  */
 public class ApiService implements Serializable {
@@ -26,7 +26,7 @@ public class ApiService implements Serializable {
 	protected ApiService() {}
 
 	public ApiService(String key, ApsProperties description, ApiMethod master, ApsProperties parameters,
-			String[] freeParameters, String tag, boolean isPublic, boolean isActive, boolean isMyEntando) {
+			String[] freeParameters, String tag, boolean isPublic, boolean isActive/*, boolean isMyEntando*/) {
 		this.setKey(key);
 		this.setDescription(description);
 		this.setMaster(master);
@@ -35,7 +35,7 @@ public class ApiService implements Serializable {
 		this.setTag(tag);
 		this.setHidden(!isPublic);
 		this.setActive(isActive);
-		this.setMyEntando(isMyEntando);
+		//this.setMyEntando(isMyEntando);
 	}
 	
 	@Override
@@ -55,9 +55,9 @@ public class ApiService implements Serializable {
 			clone.setParameters(this.getParameters().clone());
 		}
 		clone.setTag(this.getTag());
-		clone.setPublicService(this.isPublicService());
+		clone.setHidden(this.isHidden());
 		clone.setActive(this.isActive());
-		clone.setMyEntando(this.isMyEntando());
+		//clone.setMyEntando(this.isMyEntando());
 		clone.setRequiredAuth(this.getRequiredAuth());
 		clone.setRequiredGroup(this.getRequiredGroup());
 		clone.setRequiredPermission(this.getRequiredPermission());
@@ -141,14 +141,14 @@ public class ApiService implements Serializable {
 	public void setActive(boolean active) {
 		this._active = active;
 	}
-	
+	/*
 	public boolean isMyEntando() {
 		return _myEntando;
 	}
 	protected void setMyEntando(boolean myEntando) {
 		this._myEntando = myEntando;
 	}
-	
+	*/
     public Boolean getRequiredAuth() {
 		if (null != this.getRequiredGroup() || null != this.getRequiredPermission()) {
 			return true;
@@ -182,7 +182,7 @@ public class ApiService implements Serializable {
 	private String _tag;
 	private boolean _hidden;
 	private boolean _active;
-	private boolean _myEntando;
+	//private boolean _myEntando;
 	
 	private Boolean _requiredAuth;
 	private String _requiredPermission;

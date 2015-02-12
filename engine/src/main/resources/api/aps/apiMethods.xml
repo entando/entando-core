@@ -315,7 +315,7 @@
 	<resource name="pageModels" namespace="core">
 		<description>Return the page model list</description>
 		<source>core</source>
-		<method httpMethod="GET" active="true" requiredAuth="true" canSpawnOthers="true">
+		<method httpMethod="GET" active="true" requiredAuth="true">
 			<description>Return the page model list</description>
 			<springBean name="ApiPageModelInterface" method="getPageModels" />
 			<responseClass>org.entando.entando.aps.system.services.api.model.LinkedListApiResponse</responseClass>
@@ -361,16 +361,15 @@
 	<resource name="widgetTypes" namespace="core">
 		<description>Return the widget type list</description>
 		<source>core</source>
-		<method httpMethod="GET" active="true" requiredAuth="true" canSpawnOthers="true">
+		<method httpMethod="GET" active="true" requiredAuth="true">
 			<description>Return the widget type list</description>
 			<springBean name="ApiWidgetTypeInterface" method="getWidgetTypes" />
 			<responseClass>org.entando.entando.aps.system.services.api.model.LinkedListApiResponse</responseClass>
 		</method>
 	</resource>
-
-
+	
 	<!-- *********** FileBrowser *********** -->
-
+	
 	<resource name="storage" namespace="core">
 		<description>Browse the storage</description>
 		<source>core</source>

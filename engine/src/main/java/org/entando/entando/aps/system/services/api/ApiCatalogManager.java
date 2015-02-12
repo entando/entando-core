@@ -337,9 +337,9 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
     }
 	
     @Override
-    public Map<String, ApiService> getServices(String tag, Boolean myentando) throws ApsSystemException {
+    public Map<String, ApiService> getServices(String tag/*, Boolean myentando*/) throws ApsSystemException {
         Map<String, ApiService> services = this.getServices();
-        if ((null == tag || tag.trim().length() == 0) && null == myentando) {
+        if ((null == tag || tag.trim().length() == 0)/* && null == myentando*/) {
             return services;
         }
         Map<String, ApiService> servicesToReturn = new HashMap<String, ApiService>();
@@ -349,8 +349,8 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
                 ApiService apiService = iter.next();
                 String serviceTag = apiService.getTag();
                 boolean tagCheck = (null == tag || (null != serviceTag && serviceTag.toLowerCase().indexOf(tag.trim().toLowerCase()) > -1));
-                boolean myentandoCheck = (null == myentando || (myentando.booleanValue() == apiService.isMyEntando()));
-                if (tagCheck && myentandoCheck) {
+                //boolean myentandoCheck = (null == myentando || (myentando.booleanValue() == apiService.isMyEntando()));
+                if (tagCheck /*&& myentandoCheck*/) {
                     servicesToReturn.put(apiService.getKey(), apiService);
                 }
             }

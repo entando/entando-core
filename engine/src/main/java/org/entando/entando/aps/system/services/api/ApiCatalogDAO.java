@@ -83,7 +83,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
             this.executeRollback(conn);
             _logger.error("Error while loading api status",  t);
 			throw new RuntimeException("Error while loading api status", t);
-			//processDaoException(t, "Error while loading api status ", "loadApiStatus");
         } finally {
             closeDaoResources(res, stat, conn);
         }
@@ -101,7 +100,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
             this.executeRollback(conn);
             _logger.error("Error resetting status : resource '{}' method '{}'",resourceCode, httpMethod.toString(), t);
 			throw new RuntimeException("Error resetting status : resource '" + resourceCode + "' method " + httpMethod.toString(), t);
-			//processDaoException(t, "Error resetting status : resource '" + resourceCode + "' method " + httpMethod.toString(), "resetApiStatus");
         } finally {
             closeConnection(conn);
         }
@@ -117,7 +115,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
         } catch (Throwable t) {
             _logger.error("Error resetting status : resource '{}' method '{}'",resourceCode, httpMethod.toString(), t);
 			throw new RuntimeException("Error resetting status : resource '" + resourceCode + "' method " + httpMethod.toString(), t);
-            //processDaoException(t, "Error resetting status : resource '" + resourceCode + "' method " + httpMethod.toString(), "resetApiStatus");
         } finally {
             closeDaoResources(null, stat);
         }
@@ -152,7 +149,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
             this.executeRollback(conn);
             _logger.error("Error while saving api status",  t);
 			throw new RuntimeException("Error while saving api status", t);
-			//processDaoException(t, "Error while saving api status", "saveApiStatus");
         } finally {
             closeDaoResources(null, stat, conn);
         }
@@ -187,7 +183,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
         } catch (Throwable t) {
             _logger.error("Error while loading services", t);
 			throw new RuntimeException("Error while loading services", t);
-			//processDaoException(t, "Error while loading services", "loadServices");
         } finally {
             closeDaoResources(res, stat, conn);
         }
@@ -215,9 +210,9 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
                 }
                 boolean isActive = (1 == res.getInt(7)) ? true : false;
                 boolean isHidden = (1 == res.getInt(8)) ? true : false;
-                boolean isMyEntando = (1 == res.getInt(9)) ? true : false;
+                //boolean isMyEntando = (1 == res.getInt(9)) ? true : false;
                 ApiService apiService = new ApiService(key, description, masterMethod,
-                        parameters, freeParameters, tag, !isHidden, isActive, isMyEntando);
+                        parameters, freeParameters, tag, !isHidden, isActive/*, isMyEntando*/);
 				boolean authRequired = (1 == res.getInt(10)) ? true : false;
 				apiService.setRequiredAuth(authRequired);
 				String requiredPermission = res.getString(11);
@@ -234,7 +229,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
             }
         } catch (Throwable t) {
         	_logger.error("Error building service - key '{}'",key, t);
-            //ApsSystemUtils.logThrowable(t, this, "buildService", "Error building service - key '" + key + "'");
         }
     }
 
@@ -254,7 +248,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
             this.executeRollback(conn);
             _logger.error("Error while adding a service",  t);
 			throw new RuntimeException("Error while adding a service", t);
-			//processDaoException(t, "Error while adding a service", "addService");
         } finally {
             closeDaoResources(null, stat, conn);
         }
@@ -276,7 +269,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
             this.executeRollback(conn);
             _logger.error("Error while updating a service",  t);
 			throw new RuntimeException("Error while updating a service", t);
-			//processDaoException(t, "Error while updating a service", "updateService");
         } finally {
             closeDaoResources(null, stat, conn);
         }
@@ -298,8 +290,9 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
 		stat.setInt(++index, isActive);
 		int isHidden = (service.isHidden()) ? 1 : 0;
 		stat.setInt(++index, isHidden);
-		int isMyEntando = (service.isMyEntando()) ? 1 : 0;
-		stat.setInt(++index, isMyEntando);
+		//int isMyEntando = (service.isMyEntando()) ? 1 : 0;
+		//stat.setInt(++index, isMyEntando);
+		stat.setInt(++index, 0);//leeve 'myentando' db field
 		int authRequired = (service.getRequiredAuth()) ? 1 : 0;
 		stat.setInt(++index, authRequired);
 		if (null != service.getRequiredPermission() && service.getRequiredPermission().trim().length() > 0) {
@@ -330,7 +323,6 @@ public class ApiCatalogDAO extends AbstractDAO implements IApiCatalogDAO {
             this.executeRollback(conn);
             _logger.error("Error while deleting service {}", key,  t);
 			throw new RuntimeException("Error while deleting a service", t);
-			//processDaoException(t, "Error while deleting a service", "deleteService");
         } finally {
             closeDaoResources(null, stat, conn);
         }

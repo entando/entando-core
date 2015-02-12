@@ -52,10 +52,10 @@ public class ApiServiceInterface {
             String defaultLangCode = this.getLangManager().getDefaultLang().getCode();
             String langCode = properties.getProperty(SystemConstants.API_LANG_CODE_PARAMETER);
             String tagParamValue = properties.getProperty("tag");
-            String myentandoParamValue = properties.getProperty("myentando");
-            Boolean myentando = (null != myentandoParamValue && myentandoParamValue.trim().length() > 0) ? Boolean.valueOf(myentandoParamValue) : null;
+            //String myentandoParamValue = properties.getProperty("myentando");
+            //Boolean myentando = (null != myentandoParamValue && myentandoParamValue.trim().length() > 0) ? Boolean.valueOf(myentandoParamValue) : null;
             langCode = (null != langCode && null != this.getLangManager().getLang(langCode)) ? langCode : defaultLangCode;
-			Map<String, ApiService> masterServices = this.getApiCatalogManager().getServices(tagParamValue, myentando);
+			Map<String, ApiService> masterServices = this.getApiCatalogManager().getServices(tagParamValue/*, myentando*/);
             Iterator<ApiService> iter = masterServices.values().iterator();
             while (iter.hasNext()) {
                 ApiService service = (ApiService) iter.next();
@@ -68,7 +68,6 @@ public class ApiServiceInterface {
             Collections.sort(services, comparator);
         } catch (Throwable t) {
         	_logger.error("Error extracting services", t);
-            //ApsSystemUtils.logThrowable(t, this, "getServices", "Error extracting services");
             throw new ApiException(IApiErrorCodes.SERVER_ERROR, "Internal error");
         }
         return services;
@@ -79,7 +78,7 @@ public class ApiServiceInterface {
         if (null == description || description.trim().length() == 0) {
             description = service.getDescription().getProperty(defaultLangCode);
         }
-        ServiceInfo smallService = new ServiceInfo(service.getKey(), description, service.getTag(), service.isMyEntando());
+        ServiceInfo smallService = new ServiceInfo(service.getKey(), description, service.getTag()/*, service.isMyEntando()*/);
         String[] freeParameters = service.getFreeParameters();
         if (null != freeParameters && freeParameters.length > 0) {
             for (int i = 0; i < freeParameters.length; i++) {
@@ -128,7 +127,6 @@ public class ApiServiceInterface {
             throw e;
         } catch (Throwable t) {
         	_logger.error("Error invocating service - key '{}'", key, t);
-            //ApsSystemUtils.logThrowable(t, this, "getService", "Error invocating service - key '" + key + "'");
             throw new ApiException(IApiErrorCodes.SERVER_ERROR, "Internal error");
         }
         return response;
@@ -156,7 +154,6 @@ public class ApiServiceInterface {
 			return false;
 		} catch (Throwable t) {
 			_logger.error("Error checking auth for service - key '{}'", service.getKey(), t);
-			//ApsSystemUtils.logThrowable(t, this, "checkServiceAuthorization", "Error checking auth for service - key '" + service.getKey() + "'");
             throw t;
 		}
 		return true;

@@ -95,6 +95,9 @@ public class ApiServiceAction extends AbstractApiAction {
 			this.setApiParameterValues(new ApsProperties());
 			ApiMethod masterMethod = this.getMethod(this.getNamespace(), this.getResourceName());
 			List<ApiMethodParameter> apiParameters = masterMethod.getParameters();
+			if (null == apiParameters) {
+				return;
+			}
 			this.extractFreeParameters(apiParameters);
 			this.setApiParameters(apiParameters);
 			for (int i = 0; i < apiParameters.size(); i++) {
@@ -279,7 +282,7 @@ public class ApiServiceAction extends AbstractApiAction {
 			this.setDescriptions(apiService.getDescription());
 			this.setHiddenService(apiService.isHidden());
 			this.setActiveService(apiService.isActive());
-			this.setMyEntandoService(apiService.isMyEntando());
+			//this.setMyEntandoService(apiService.isMyEntando());
 			this.setServiceKey(apiService.getKey());
 			if (null != apiService.getFreeParameters()) {
 				List<String> freeParams = Arrays.asList(apiService.getFreeParameters());
@@ -313,7 +316,7 @@ public class ApiServiceAction extends AbstractApiAction {
 				}
 			}
 			ApiService service = new ApiService(key, this.getDescriptions(), masterMethod, this.getApiParameterValues(),
-					freeParams, this.getTag(), !this.isHiddenService(), this.isActiveService(), this.isMyEntandoService());
+					freeParams, this.getTag(), !this.isHiddenService(), this.isActiveService()/*, this.isMyEntandoService()*/);
 			service.setRequiredAuth(this.getRequiredAuth());
 			if (null != this.getRequiredGroup() && this.getRequiredGroup().trim().length() > 0) {
 				service.setRequiredGroup(this.getRequiredGroup());
@@ -482,14 +485,14 @@ public class ApiServiceAction extends AbstractApiAction {
 	public void setHiddenService(boolean hiddenService) {
 		this._hiddenService = hiddenService;
 	}
-	
+	/*
 	public boolean isMyEntandoService() {
 		return _myEntandoService;
 	}
 	public void setMyEntandoService(boolean myEntandoService) {
 		this._myEntandoService = myEntandoService;
 	}
-	
+	*/
     public Boolean getRequiredAuth() {
 		return _requiredAuth;
     }
@@ -603,7 +606,7 @@ public class ApiServiceAction extends AbstractApiAction {
 	private ApsProperties _descriptions;
 	private boolean _activeService;
 	private boolean _hiddenService;
-	private boolean _myEntandoService;
+	//private boolean _myEntandoService;
 	
 	private Boolean _requiredAuth;
 	private String _requiredPermission;

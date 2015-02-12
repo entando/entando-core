@@ -57,7 +57,7 @@ public class ApiResourcesDefDOM {
         InputStream schemaIs = null;
         InputStream xmlIs = null;
         try {
-            schemaIs = this.getClass().getResourceAsStream("apiMethodsDef-3.0.xsd");
+            schemaIs = this.getClass().getResourceAsStream("apiMethodsDef-4.0.xsd");
             Source schemaSource = new StreamSource(schemaIs);
             Schema schema = factory.newSchema(schemaSource);
             Validator validator = schema.newValidator();
@@ -68,7 +68,6 @@ public class ApiResourcesDefDOM {
         } catch (Throwable t) {
             String message = "Error validating api methods definition : " + definitionPath;
             _logger.error("Error validating api methods definition : {}", definitionPath, t);
-            //ApsSystemUtils.logThrowable(t, this, "this", message);
             throw new ApsSystemException(message, t);
         } finally {
             try {
@@ -80,7 +79,6 @@ public class ApiResourcesDefDOM {
                 }
             } catch (IOException e) {
             	_logger.error("error in validate", e);
-                //ApsSystemUtils.logThrowable(e, this, "this");
             }
         }
     }
@@ -135,7 +133,6 @@ public class ApiResourcesDefDOM {
             }
         } catch (Throwable t) {
         	_logger.error("Error building api resources", t);
-            //ApsSystemUtils.logThrowable(t, this, "getResources", "Error building api resources");
         }
         return apiResources;
     }
@@ -150,7 +147,6 @@ public class ApiResourcesDefDOM {
             }
         } catch (Exception e) {
         	_logger.error("Error checking api resource", e);
-            //ApsSystemUtils.logThrowable(e, this, "checkResource", "Error checking api resource");
         }
     }
     
@@ -164,7 +160,6 @@ public class ApiResourcesDefDOM {
             }
         } catch (Exception e) {
         	_logger.error("Error checking api method", e);
-            //ApsSystemUtils.logThrowable(e, this, "checkMethod", "Error checking api method");
         }
     }
     

@@ -77,9 +77,11 @@
 			<li class="checkbox">
 				<label for="hiddenService"><s:text name="label.hidden" /><wpsf:checkbox name="hiddenService" id="hiddenService" /></label>
 			</li>
+			<%--
 			<li class="checkbox">
 				<label for="myEntandoService"><s:text name="label.myEntando.compatible" /><wpsf:checkbox name="myEntandoService" id="myEntandoService" /></label>
 			</li>
+			--%>
 		</fieldset>
 		<fieldset class="col-xs-12">
 			<legend><s:text name="label.api.authorities" /></legend>

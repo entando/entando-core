@@ -75,9 +75,9 @@ public interface IApiCatalogManager {
 	public ApiMethod getMethod(ApiMethod.HttpMethod httpMethod, String namespace, String resourceName) throws ApsSystemException;
     
     public Map<String, ApiService> getServices() throws ApsSystemException;
-
-    public Map<String, ApiService> getServices(String tag, Boolean myentando) throws ApsSystemException;
-
+	
+	public Map<String, ApiService> getServices(String tag/*, Boolean myentando*/) throws ApsSystemException;
+	
     public ApiService getApiService(String key) throws ApsSystemException;
     
     public void updateMethodConfig(ApiMethod apiMethod) throws ApsSystemException;

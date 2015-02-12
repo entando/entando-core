@@ -1,52 +1,5 @@
 <apiMethodDefinitions>
 	
-	<!-- ************** CONTENTS (** DEPRECATED METHODS **) ************** START -->
-    
-	<resource name="getContents">
-		<description>Returns a list of public contents, composed using the specified filters.</description>
-        <source pluginCode="jacms">plugins</source>
-		<method httpMethod="GET" active="true" canSpawnOthers="true" hidden="true">
-			<description>Returns a list of public contents, composed using the specified filters. DEPRECATED API! Use jacms/contents.</description>
-			<springBean name="jacmsApiContentInterface" method="getContents" />
-			<responseClass>org.entando.entando.aps.system.services.api.model.StringListApiResponse</responseClass>
-			<parameters>
-				<parameter key="contentType" required="true">
-					<description>The key of a content type (Example: CNG, NEW, EVN...).</description>
-				</parameter>
-				<parameter key="categories" required="false">
-					<description>A CSV list of category codes (Example: "music,sports,frontpage").</description>
-				</parameter>
-				<parameter key="filters" required="false">
-					<description>The filters (Example: "(order=DESC;attributeFilter=true;key=Date)+(order=ASC;attributeFilter=true;key=Title)" )</description>
-				</parameter>
-				<parameter key="modelId" required="false">
-					<description>The Id of the content model used to render each content in the HTML section of the response. Must be an integer, "default" or "list".</description>
-				</parameter>
-			</parameters>
-		</method>
-	</resource>
-    
-	<resource name="getContent">
-		<description>Returns a public content.</description>
-        <source pluginCode="jacms">plugins</source>
-		<method httpMethod="GET" active="true" canSpawnOthers="true" hidden="true">
-			<source pluginCode="jacms">plugins</source>
-			<description>Returns a public content. DEPRECATED API! Use jacms/content.</description>
-			<springBean name="jacmsApiContentInterface" method="getContent" />
-			<responseClass>org.entando.entando.plugins.jacms.aps.system.services.api.response.ContentResponse</responseClass>
-			<parameters>
-				<parameter key="id" required="true">
-					<description>The Id of the content to return (Example: "CNG34", or "NEW45")</description>
-				</parameter>
-				<parameter key="modelId" required="false">
-					<description>The Id of the content model used to render each content in the HTML section of the response. Must be an integer, "default" or "list".</description>
-				</parameter>
-			</parameters>
-		</method>
-	</resource>
-	
-	<!-- ************** CONTENTS (** DEPRECATED METHODS **) ************** END -->
-	
 	<!-- ************** CONTENT TYPES ************** -->
 	
     <resource name="contentType" namespace="jacms">
@@ -58,7 +11,7 @@
             <responseClass>org.entando.entando.plugins.jacms.aps.system.services.api.response.ContentTypeResponse</responseClass>
             <parameters>
                 <parameter key="code" required="true">
-                    <description>The code of the type to return (Example: CNG, NEW, EVN...).</description>
+                    <description>The code of the type to return (Example: CNG, NEW, EVN...)</description>
                 </parameter>
             </parameters>
         </method>
@@ -97,7 +50,7 @@
                     <description>The Id of the content to return (Example: "CNG34", or "NEW45")</description>
                 </parameter>
                 <parameter key="modelId" required="false">
-                    <description>The Id of the content model used to render each content in the HTML section of the response. Must be an integer, "default" or "list".</description>
+                    <description>The Id of the content model used to render each content in the HTML section of the response. Must be an integer, 'default' or 'list'</description>
                 </parameter>
             </parameters>
             <relatedWidget code="content_viewer">
@@ -111,7 +64,7 @@
             <expectedType>org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBContent</expectedType>
             <parameters>
                 <parameter key="insertOnLine" required="false">
-                    <description>If true, insert the new content online. Default value false.</description>
+                    <description>If 'true', insert the new content online. Entries 'true' or 'false', default value 'false'</description>
                 </parameter>
             </parameters>
         </method>
@@ -121,7 +74,7 @@
             <expectedType>org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBContent</expectedType>
             <parameters>
                 <parameter key="insertOnLine" required="false">
-                    <description>If true, update the new content online. Default value false.</description>
+                    <description>If 'true', update the new content online. Entries 'true' or 'false', default value 'false'</description>
                 </parameter>
             </parameters>
         </method>
@@ -133,30 +86,30 @@
                     <description>The Id of the content to delete (Example: "CNG34", or "NEW45")</description>
                 </parameter>
                 <parameter key="removeWorkVersion" required="false">
-                    <description>If true, remove also the work version. Default value false.</description>
+                    <description>If 'true', remove also the work version. Entries 'true' or 'false', default value 'false'</description>
                 </parameter>
             </parameters>
         </method>
     </resource>
     
     <resource name="contents" namespace="jacms">
-        <description>Returns a list of public contents, composed using the specified filters.</description>
+        <description>Returns a list of public contents, composed using the specified filters</description>
         <source pluginCode="jacms">plugins</source>
 		<method httpMethod="GET" active="true" canSpawnOthers="true">
 			<springBean name="jacmsApiContentInterface" method="getContents" />
 			<responseClass>org.entando.entando.aps.system.services.api.model.StringListApiResponse</responseClass>
 			<parameters>
 				<parameter key="contentType" required="true">
-					<description>The key of a content type (Example: CNG, NEW, EVN...).</description>
+					<description>The key of a content type (Example: CNG, NEW, EVN...)</description>
 				</parameter>
 				<parameter key="categories" required="false">
-					<description>A CSV list of category codes (Example: "music,sports,frontpage").</description>
+					<description>A CSV list of category codes (Example: "music,sports,frontpage")</description>
 				</parameter>
 				<parameter key="filters" required="false">
 					<description>The filters (Example: "(order=DESC;attributeFilter=true;key=Date)+(order=ASC;attributeFilter=true;key=Title)" )</description>
 				</parameter>
 				<parameter key="modelId" required="false">
-					<description>The Id of the content model used to render each content in the HTML section of the response. Must be an integer, "default" or "list".</description>
+					<description>The Id of the content model used to render each content in the HTML section of the response. Must be an integer, 'default' or 'list'</description>
 				</parameter>
 			</parameters>
 			<relatedWidget code="content_viewer_list">
@@ -174,11 +127,11 @@
         <description>Returns a list of content models</description>
         <source pluginCode="jacms">plugins</source>
         <method httpMethod="GET" active="true">
-            <description>Returns a list of content models, composed using the specified filters.</description>
+            <description>Returns a list of content models, composed using the specified filters</description>
             <springBean name="jacmsApiContentModelInterface" method="getModels" />
             <parameters>
                 <parameter key="contentType" required="false">
-					<description>The key of a content type of the models to return (Example: CNG, NEW, EVN...).</description>
+					<description>The key of a content type of the models to return (Example: CNG, NEW, EVN...)</description>
 				</parameter>
             </parameters>
         </method>
@@ -255,7 +208,7 @@
     </resource>
     
     <resource name="images" namespace="jacms">
-        <description>Returns a list of id of image resource, composed using the specified filters.</description>
+        <description>Returns a list of id of image resource, composed using the specified filters</description>
         <source pluginCode="jacms">plugins</source>
 		<method httpMethod="GET" active="true" canSpawnOthers="true">
 			<springBean name="jacmsApiResouceInterface" method="getImages" />
@@ -311,7 +264,7 @@
     </resource>
     
     <resource name="attachments" namespace="jacms">
-        <description>Returns a list of id of attachment resource, composed using the specified filters.</description>
+        <description>Returns a list of id of attachment resource, composed using the specified filters</description>
         <source pluginCode="jacms">plugins</source>
 		<method httpMethod="GET" active="true" canSpawnOthers="true">
 			<springBean name="jacmsApiResouceInterface" method="getAttachments" />

@@ -1,32 +1,34 @@
 <apiMethodDefinitions>
     
 	<resource name="getServices">
-		<description>The services configured in this instance of Entando.</description>
+		<description>The services configured in this instance of Entando</description>
 		<source>core</source>
 		<method httpMethod="GET" active="true" canSpawnOthers="false">
-			<description>Returns the services configured in this instance of Entando.</description>
+			<description>Returns the services configured in this instance of Entando</description>
 			<springBean name="ApiServiceInterface" method="getServices" />
 			<responseClass>org.entando.entando.aps.system.services.api.response.ServicesResponse</responseClass>
 			<parameters>
 				<parameter key="tag" required="false">
-					<description>The tag (or part thereof) of the services to return.</description>
+					<description>The tag (or part thereof) of the services to return</description>
 				</parameter>
+				<!--
 				<parameter key="myentando" required="false">
-					<description>Filters the services based on compatibility with MyEntando. Entries true or false</description>
+					<description>Filters the services based on compatibility with MyEntando. Entries 'true' or 'false'</description>
 				</parameter>
+				-->
 			</parameters>
 		</method>
 	</resource>
     
 	<resource name="getService">
-		<description>A service configured in this instance of Entando.</description>
+		<description>A service configured in this instance of Entando</description>
 		<source>core</source>
 		<method httpMethod="GET" active="true" canSpawnOthers="false">
-			<description>Returns one of the services configured in this instance of Entando.</description>
+			<description>Returns one of the services configured in this instance of Entando</description>
 			<springBean name="ApiServiceInterface" method="getService" />
 			<parameters>
 				<parameter key="key" required="true">
-					<description>The unique key of the wanted service.</description>
+					<description>The unique key of the wanted service</description>
 				</parameter>
 			</parameters>
 		</method>
@@ -166,15 +168,15 @@
 	</resource>
     
 	<resource name="userProfiles" namespace="core">
-		<description>The list of usernames, composed using the specified filters to user profiles.</description>
+		<description>The list of usernames, composed using the specified filters to user profiles</description>
 		<source>core</source>
 		<method httpMethod="GET" active="true">
-			<description>Returns a list of usernames, composed using the specified filters to user profiles.</description>
+			<description>Returns a list of usernames, composed using the specified filters to user profiles</description>
 			<springBean name="ApiUserProfileInterface" method="getUserProfiles" />
 			<responseClass>org.entando.entando.aps.system.services.api.model.StringListApiResponse</responseClass>
 			<parameters>
 				<parameter key="typeCode" required="true">
-					<description>The code of a user profile type.</description>
+					<description>The code of a user profile type</description>
 				</parameter>
 				<parameter key="filters" required="false">
 					<description>The filters (Example: "(order=DESC;attributeFilter=true;key=Date)+(order=ASC;attributeFilter=true;key=Title)" )</description>
@@ -381,7 +383,7 @@
 					<description>root folder to browse. Can be null</description>
 				</parameter>
 				<parameter key="protected" required="true">
-					<description>defines the workspace. When 'true' points to the 'protected' area.</description>
+					<description>defines the workspace. When 'true' points to the 'protected' area</description>
 				</parameter>
 			</parameters>
 		</method>
@@ -399,7 +401,7 @@
 					<description>Path to the object</description>
 				</parameter>
 				<parameter key="protected" required="true">
-					<description>defines the workspace. When 'true' points to the 'protected' area.</description>
+					<description>defines the workspace. When 'true' points to the 'protected' area</description>
 				</parameter>
 			</parameters>
 		</method>
@@ -416,10 +418,10 @@
 					<description>Path to the object</description>
 				</parameter>
 				<parameter key="protected" required="true">
-					<description>by default is false</description>
+					<description>by default is 'false'</description>
 				</parameter>
 				<parameter key="recursive" required="false">
-					<description>When 'true', if the resource to delete is a folder, all the nested resources (if present) will be deleted. By default is 'false'.</description>
+					<description>When 'true', if the resource to delete is a folder, all the nested resources (if present) will be deleted. Entries 'true' or 'false', default value 'false'</description>
 				</parameter>
 			</parameters>
 		</method>

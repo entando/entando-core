@@ -100,7 +100,7 @@ public class AuthorizationOAuthServlet extends HttpServlet {
         request.setAttribute("oauthParam_CONSUMER_DESCRIPTION", consumer_description);
         request.setAttribute("oauthParam_CALLBACK_URL", callback);
         request.setAttribute("oauthParam_REQUEST_TOKEN", accessor.requestToken);
-        request.getRequestDispatcher("/WEB-INF/aps/jsp/oauth/authorize.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/oauth/authorize.jsp").forward(request, response);
     }
     
     private void returnToConsumer(HttpServletRequest request, 

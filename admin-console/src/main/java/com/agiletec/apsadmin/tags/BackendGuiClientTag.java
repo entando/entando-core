@@ -40,7 +40,6 @@ public class BackendGuiClientTag extends TagSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error on ClientTag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doEndTag");
 			throw new JspException("Error on ClientTag", t);
 		}
 		return super.doEndTag();
@@ -48,7 +47,7 @@ public class BackendGuiClientTag extends TagSupport {
 	
 	/**
 	 * Set the name used to reference the value of the gui client code pushed into the Value Stack.
-	 * @return The name of the variable
+	 * @param var The name of the variable
 	 */
 	public void setVar(String var) {
 		this._var = var;

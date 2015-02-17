@@ -25,10 +25,9 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.AbstractDAO;
 
 /**
- * Data Access Object delegate 
- * alla gestione delle le voci di configurazione. 
+ * Data Access Object delegate alla gestione delle le voci di configurazione. 
  * Opera sulla tabella "system".
- * @author 
+ * @author W.Ambu - E.Santoboni
  */
 public class ConfigItemDAO extends AbstractDAO implements IConfigItemDAO {
 	

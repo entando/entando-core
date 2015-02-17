@@ -15,8 +15,7 @@ package com.agiletec.aps.system.exception;
 
 /**
  * Eccezione generica
- * @version 1.0
- * @author 
+ * @author W.Ambu
  */
 public class ApsException extends Exception {
 	/**

@@ -35,7 +35,7 @@ public class EntityWrapper implements Map {
 	
 	/**
 	 * Wrapper initialization.
-	 * @param content The entity to pass to the rendering service.
+	 * @param entity The entity to pass to the rendering service.
 	 */
 	public EntityWrapper(IApsEntity entity) {
 		this._entity = entity;

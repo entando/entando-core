@@ -58,7 +58,6 @@ public abstract class AbstractObjectInfoTag extends StrutsBodyTagSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error on doStartTag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error on doStartTag", t);
 		}
         return super.doStartTag();
@@ -88,14 +87,13 @@ public abstract class AbstractObjectInfoTag extends StrutsBodyTagSupport {
 				_logger.debug("Invalid required object property : Master Object '{}' - property '{}'", masterObject.getClass().getName(), propertyValue);
 		} catch (Throwable t) {
 			_logger.error("Error extracting property value : Master Object {} - property: '{}'", masterObject.getClass().getName(), propertyValue, t);
-			//ApsSystemUtils.logThrowable(t, this, "getPropertyValue", "Error extracting property value : Master Object '" + masterObject.getClass().getName() + "' - property '" + propertyValue + "'");
 		}
 		return null;
 	}
     
 	/**
 	 * Return the required master object.
-	 * @param objectKey The unique key of the master object
+	 * @param keyValue The unique key of the master object
 	 * @return The required master object.
 	 * @throws Throwable In case of error.
 	 */

@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Servlet di controllo, punto di ingresso per le richieste di pagine del portale.
  * Predispone il contesto di richiesta, invoca il controller e ne gestisce lo stato di uscita.
- * @author  
+ * @author M.Diana - W.Ambu
  */
 public class ControllerServlet extends freemarker.ext.servlet.FreemarkerServlet {
 	

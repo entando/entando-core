@@ -31,14 +31,14 @@ public interface IIndexerDAO {
 	 * @param dir La cartella locale contenitore dei dati persistenti.
 	 * @param newIndex true se è una nuova indicizzazione (ed in tal caso 
 	 * cancella tutte le precedenti indicizzazioni), false in caso contrario.
-	 * @throws IOException
+	 * @throws ApsSystemException In caso di errori.
 	 */
 	public void init(File dir, boolean newIndex) throws ApsSystemException;
 	
 	/**
 	 * Aggiunge un contenuto nel db del motore di ricerca.
-     * @param content Il contenuto da aggiungere.
-	 * @throws ApsSystemException In caso di errori in accesso al db.
+     * @param entity Il contenuto da aggiungere.
+	 * @throws ApsSystemException In caso di errori.
 	 */
 	public void add(IApsEntity entity) throws ApsSystemException;
 	

@@ -95,7 +95,6 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 			this.doParsing(document, entityClass, entityDom);
 		} catch (Throwable t) {
 			_logger.error("Error extracting entity types. entityManagerName {} - xml: {}", entityManagerName, xml, t);
-			//ApsSystemUtils.logThrowable(t, this, "initEntityTypeDOM", "Error extracting entity types");
 			throw new ApsSystemException("Error extracting entity types", t);
 		}
 	}
@@ -119,7 +118,6 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 			out.setFormat(format);
 		} catch (Throwable t) {
 			_logger.error("Error building xml", t);
-			//ApsSystemUtils.logThrowable(t, this, "getXml", "Error building xml");
 			throw new ApsSystemException("Error building xml", t);
 		}
 		return out.outputString(document);
@@ -137,7 +135,6 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 			out.setFormat(format);
 		} catch (Throwable t) {
 			_logger.error("Error building xml", t);
-			//ApsSystemUtils.logThrowable(t, this, "getXml", "Error building xml");
 			throw new ApsSystemException("Error building xml", t);
 		}
 		return out.outputString(document);
@@ -151,7 +148,6 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 			return this.doParsing(document.getRootElement(), entityClass, entityDom);
 		} catch (Throwable t) {
 			_logger.error("Error extracting entity type from xml {}", xml, t);
-			//ApsSystemUtils.logThrowable(t, this, "extractEntityType", "Error extracting entity type");
 			throw new ApsSystemException("Error extracting entity type", t);
 		}
 	}
@@ -218,7 +214,6 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 			_logger.debug("Entity Type '{}' defined", entity.getTypeCode());
 		} catch (Throwable t) {
 			_logger.error("Error extracting entity type", t);
-			//ApsSystemUtils.logThrowable(t, this, "doParsing", "Error extracting entity type");
 			throw new ApsSystemException("Configuration error of the Entity Type detected", t);
 		}
 		return entity;
@@ -229,7 +224,6 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 	 * item. This method must be extended to implement particular operations that apply to 
 	 * the specific structure of (an eventually customized) entity class that must be handled
 	 * by the native Entity manager. That class must implement the IApsEntity interface. 
-	 * @param document The DOM document. 
 	 * @param entityType The entity type to map.
 	 * @param currentContentElem The XML that configures the Entity Type. 
 	 * @throws ApsSystemException If errors are detected during the parsing process.

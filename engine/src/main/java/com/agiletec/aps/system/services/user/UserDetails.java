@@ -16,8 +16,6 @@ package com.agiletec.aps.system.services.user;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import java.util.List;
 
-import com.agiletec.aps.system.services.authorization.IApsAuthority;
-
 /**
  * Abstract description of a generic user
  * @author E.Santoboni
@@ -25,9 +23,9 @@ import com.agiletec.aps.system.services.authorization.IApsAuthority;
 public interface UserDetails {
 	
 	/**
-	 * Return 'true' if the current user is a jAPS user, that is, exists within jAPS local table
-	 * @return
-	 * @deprecated use isEntandoUser
+	 * Return 'true' if the current user is an Entando user, that is, exists within jAPS local table
+	 * @return 'true' if the current user is an Entando user
+	 * @deprecated use isEntandoUser()
 	 */
 	public boolean isJapsUser();
 	
@@ -55,13 +53,13 @@ public interface UserDetails {
      * Return the plain password (that is, NOT decrypted) of the current user
      * @return the user password
      */
-    public java.lang.String getPassword();
+    public String getPassword();
 	
     /**
      * Return the username or, in other words, the ID of the current user
-     * @return
+     * @return the username
      */
-	public java.lang.String getUsername();
+	public String getUsername();
 	
 	/**
 	 * Return the expiration status of the current user
@@ -83,7 +81,7 @@ public interface UserDetails {
 	
 	/**
 	 * Return the profile associated to the current user, if any
-	 * @return
+	 * @return The profile
 	 */
 	public Object getProfile();
 	

@@ -57,7 +57,7 @@ public class TreeNode implements ITreeNode, Serializable {
 	
 	/**
 	 * Set the group code of this node
-	 * @param The group to assign this node to
+	 * @param group The group to assign this node to
 	 */
 	public void setGroup(String group) {
 		this._group = group;

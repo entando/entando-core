@@ -228,7 +228,7 @@ public interface AttributeInterface extends Serializable {
     /**
      * Set up the handler class which parses the XML element related to the attribute,
      * as obtained from the XML describing the entity
-     * @param The handler class which parses the attribute.
+     * @param handler The handler class which parses the attribute.
      */
     public void setHandler(AttributeHandlerInterface handler);
 

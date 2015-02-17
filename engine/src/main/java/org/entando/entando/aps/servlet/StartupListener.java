@@ -18,8 +18,7 @@ import javax.servlet.ServletContextEvent;
 
 /**
  * Init the system when the web application is started
- * @version 1.0
- * @author
+ * @author E.Santoboni
  */
 public class StartupListener extends org.springframework.web.context.ContextLoaderListener {
 	

@@ -110,9 +110,6 @@ public class ServletActionRedirectResultWithAnchor extends ServletRedirectResult
         this.method = method;
     }
     
-    /**
-     * @see com.opensymphony.xwork2.Result#execute(com.opensymphony.xwork2.ActionInvocation)
-     */
     @Override
     public void execute(ActionInvocation invocation) throws Exception {
     	this.actionName = this.conditionalParse(this.actionName, invocation);
@@ -164,7 +161,7 @@ public class ServletActionRedirectResultWithAnchor extends ServletRedirectResult
     
 	/**
      * Sets the anchor destination
-     * @param method The anchor destination
+     * @param anchorDest The anchor destination
      */
     public void setAnchorDest(String anchorDest) {
 		this._anchorDest = anchorDest;

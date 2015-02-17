@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Interfaccia base per i Data Access Object delegate 
  * alla gestione delle le voci di configurazione. 
- * @author 
+ * @author W.Ambu - E.Santoboni
  */
 public interface IConfigItemDAO {
 	

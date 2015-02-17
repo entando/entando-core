@@ -23,7 +23,7 @@ import org.xml.sax.Attributes;
  * Il tag deve avere un attributo che specifica la chiave, ed il
  * valore nel corpo del tag. Il nome dell'attributo è impostato
  * nel costruttore della regola. 
- * @author 
+ * @author W.Ambu
  */
 public class MapSupportRule extends Rule {
 

@@ -27,7 +27,6 @@ public interface IPageFinderAction {
 
 	/**
 	 * Return a list containing the given token in its code.
-	 * @param pageCodeToken the piece of code to look for among the pages
 	 * @return a List of the page code and containing the full page informations.
 	 */
 	public List<IPage> getPagesFound();

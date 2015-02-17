@@ -57,7 +57,6 @@ public class ContentTag extends TagSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in doStartTag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error detected while initialising the tag", t);
 		}
 		return EVAL_PAGE;
@@ -71,10 +70,10 @@ public class ContentTag extends TagSupport {
 		this.setVar(null);
 		this.setAttributeValuesByRoleVar(null);
 	}
-
+	
 	/**
 	 * Return the content ID The "expression language" is accepted.
-	 * @return
+	 * @return The content ID
 	 */
 	public String getContentId() {
 		return _contentId;
@@ -147,7 +146,7 @@ public class ContentTag extends TagSupport {
 	/**
 	 * Inserts the map of the attribute values indexed by the attribute role, 
 	 * in a variable of the page context with the name provided.
-	 * @param attributeValuesVar The name of the variable.
+	 * @param attributeValuesByRoleVar The name of the variable.
 	 */
 	public void setAttributeValuesByRoleVar(String attributeValuesByRoleVar) {
 		this._attributeValuesByRoleVar = attributeValuesByRoleVar;

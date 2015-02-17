@@ -37,7 +37,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentVie
  * Return an information of a specified content.
  * The content can will be extracted by id from showlet parameters or from request parameter.
  * The tag extract any specific parameter (by "param" attribute) 
- * or entire {@link ContentAuthorizationInfo} object (setting "var" attribute and anything on "param" attribute).
+ * or entire {@link PublicContentAuthorizationInfo} object (setting "var" attribute and anything on "param" attribute).
  * Admitted values for "param" attribute are:<br/>
  * "contentId" returns the code of content id,
  * "mainGroup" returns the code main (owner) group,

@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * Contenitore di informazioni da inserire nella testata della pagina html.
- * @author 
+ * @author W.Ambu
  */
 public class HeadInfoContainer {
 	

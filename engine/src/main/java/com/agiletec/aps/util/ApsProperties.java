@@ -18,7 +18,7 @@ import java.util.Properties;
 
 /**
  * Estensione di Properties con l'aggiunta di metodi di lettura/scrittura da stringa xml.
- * @author 
+ * @author E.Santoboni
  */
 public class ApsProperties extends Properties {
 	

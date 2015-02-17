@@ -40,7 +40,8 @@ public class ApsActionParamTag extends ComponentTagSupport {
 	public Component getBean(ValueStack stack, HttpServletRequest req, HttpServletResponse resp) {
 		return new ApsActionParamComponent(stack, req);
 	}
-
+	
+	@Override
 	protected void populateParams() {
 		super.populateParams();
 		ApsActionParamComponent actionParam = (ApsActionParamComponent) component;
@@ -66,7 +67,7 @@ public class ApsActionParamTag extends ComponentTagSupport {
 	
 	/**
 	 * Get the action name.
-	 * @return
+	 * @return The action name
 	 */
 	public String getAction() {
 		return _action;

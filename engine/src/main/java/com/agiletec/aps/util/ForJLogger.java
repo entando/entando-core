@@ -26,150 +26,111 @@ import org.apache.commons.logging.Log;
  * FINE
  * FINER					DEBUG
  * FINEST (lowest value)  	TRACE
- * @author 
+ * @author W.Ambu
  */
 public class ForJLogger implements Log {
 
-	/**
-	 * 
-	 */
 	public ForJLogger(Logger log) {
 		_log = log;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#isDebugEnabled()
-	 */
+	
+	@Override
 	public boolean isDebugEnabled() {
 		return _log.isLoggable(Level.FINER);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#isErrorEnabled()
-	 */
+	
+	@Override
 	public boolean isErrorEnabled() {
 		return _log.isLoggable(Level.SEVERE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#isFatalEnabled()
-	 */
+	@Override
 	public boolean isFatalEnabled() {
 		return _log.isLoggable(Level.SEVERE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#isInfoEnabled()
-	 */
+	@Override
 	public boolean isInfoEnabled() {
 		return _log.isLoggable(Level.INFO);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#isTraceEnabled()
-	 */
+	@Override
 	public boolean isTraceEnabled() {
 		return _log.isLoggable(Level.FINEST);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#isWarnEnabled()
-	 */
+	@Override
 	public boolean isWarnEnabled() {
 		return _log.isLoggable(Level.WARNING);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#trace(java.lang.Object)
-	 */
+	@Override
 	public void trace(Object arg0) {
 		_log.finest(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#trace(java.lang.Object, java.lang.Throwable)
-	 */
+	@Override
 	public void trace(Object arg0, Throwable arg1) {
 		_log.throwing(null, null, arg1);
 		_log.finest(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#debug(java.lang.Object)
-	 */
+	@Override
 	public void debug(Object arg0) {
 		_log.finer(arg0.toString());
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#debug(java.lang.Object, java.lang.Throwable)
-	 */
+	@Override
 	public void debug(Object arg0, Throwable arg1) {
 		_log.throwing(null, null, arg1);
 		_log.finer(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#info(java.lang.Object)
-	 */
+	@Override
 	public void info(Object arg0) {
 		_log.info(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#info(java.lang.Object, java.lang.Throwable)
-	 */
+	@Override
 	public void info(Object arg0, Throwable arg1) {
 		_log.throwing(null, null, arg1);
 		_log.info(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#warn(java.lang.Object)
-	 */
+	@Override
 	public void warn(Object arg0) {
 		_log.warning(arg0.toString());
-
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#warn(java.lang.Object, java.lang.Throwable)
-	 */
+	@Override
 	public void warn(Object arg0, Throwable arg1) {
 		_log.throwing(null, null, arg1);
 		_log.warning(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#error(java.lang.Object)
-	 */
+	@Override
 	public void error(Object arg0) {
 		_log.severe(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#error(java.lang.Object, java.lang.Throwable)
-	 */
+	@Override
 	public void error(Object arg0, Throwable arg1) {
 		_log.throwing(null, null, arg1);
 		_log.severe(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#fatal(java.lang.Object)
-	 */
+	@Override
 	public void fatal(Object arg0) {
 		_log.severe(arg0.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.commons.logging.Log#fatal(java.lang.Object, java.lang.Throwable)
-	 */
+	@Override
 	public void fatal(Object arg0, Throwable arg1) {
 		_log.throwing(null, null, arg1);
 		_log.severe(arg0.toString());
 	}
-
+	
 	private Logger _log;
+	
 }

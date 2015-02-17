@@ -100,7 +100,6 @@ public abstract class AbstractAttributeManager implements AttributeManagerInterf
             String message = "Error creating manager of attribute '"
                     + attribute.getName() + "' type '" + attribute.getType() + "' -  Manager class '" + managerClassName + "'";
             _logger.error("Error creating manager of attribute '{}', type: '{}' - Manager class: {}", attribute.getName(), attribute.getType(), managerClassName, e);
-            //ApsSystemUtils.logThrowable(e, this, "getManager", message);
             throw new RuntimeException(message, e);
         }
         return null;
@@ -144,7 +143,6 @@ public abstract class AbstractAttributeManager implements AttributeManagerInterf
             }
         } catch (Throwable t) {
         	_logger.error("Error creating Error Message", t);
-            //ApsSystemUtils.logThrowable(t, this, "getErrorMessage");
             throw new RuntimeException("Error creating Error Message", t);
         }
     }
@@ -152,7 +150,8 @@ public abstract class AbstractAttributeManager implements AttributeManagerInterf
     /**
      * Return a custom error message.
      * This method shouwld to be extended for custom attribute manager
-     * @param errorCode The error code 
+     * @param attributeFieldError The field error 
+     * @param action The current action
      * @return The message for the specific error code.
      */
     protected String getCustomAttributeErrorMessage(AttributeFieldError attributeFieldError, ActionSupport action) {

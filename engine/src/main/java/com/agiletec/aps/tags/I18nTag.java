@@ -58,7 +58,6 @@ public class I18nTag extends OutSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error during tag initialization", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error during tag initialization", t);
 		}
 		return super.doStartTag();
@@ -86,7 +85,6 @@ public class I18nTag extends OutSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error getting label", t);
-			//ApsSystemUtils.logThrowable(t, this, "extractLabel");
 			throw new ApsSystemException("Error getting label", t);
 		}
 		return label;
@@ -99,15 +97,15 @@ public class I18nTag extends OutSupport {
 		this._varName = null;
 		super.escapeXml = true;
 	}
-
+	
 	/**
 	 * Return the lang code.
-	 * @return The code.
+	 * @return The lang code.
 	 */
 	public String getLang() {
 		return _lang;
 	}
-
+	
 	/**
 	 * Set the lang code.
 	 * @param lang The code
@@ -139,13 +137,13 @@ public class I18nTag extends OutSupport {
 	public String getKey() {
 		return _key;
 	}
-
+	
 	/**
 	 * Set the key of the label to return.
 	 * @param key The key of the requested label
 	 */
-	public void setKey(String _key) {
-		this._key = _key;
+	public void setKey(String key) {
+		this._key = key;
 	}
 	
 	/**

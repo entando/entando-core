@@ -16,7 +16,7 @@ The Entando platform project includes also the following Github projects:
 
 * **entando-archetypes**: https://github.com/entando/entando-archetypes. Entando archetypes project provides sample project to kickstart your standard/basic Entando portal development and components.
 
-* **entando-components**: https://github.com/entando/entando-components. Entando platform relies on a number of components or extensions that add functionality not included with the standard Entando. There are various types of components. These could extend the functionality of Entando engine, admin-console and portal-ui (apps components), or extend the functionality of the Entando engine, and admin-console (plugins components), or extend the functionality of portal-ui (bundles components).
+* **entando-components**: https://github.com/entando/entando-components. Entando platform relies on a number of components or extensions that add functionality not included with the standard Entando platform. There are various types of components. These could extend the functionality of Entando engine, admin-console and portal-ui (apps components), or extend the functionality of the Entando engine, and admin-console (plugins components), or extend the functionality of portal-ui (bundles components).
 
 * **entando-ux-packages**: https://github.com/entando/entando-ux-packages. Entando ux-packages are modules capable to implement a range of specific customizations.
 

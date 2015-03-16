@@ -46,7 +46,6 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			TableDataUtils.executeQueries(dataSource, queryTimestampFormat, false);
 		} catch (Throwable t) {
 			_logger.error("Error initializing oracle schema ", t);
-			//ApsSystemUtils.getLogger().info("Error initializing oracle schema - " + t.getMessage());
 			throw new ApsSystemException("Error initializing oracle schema", t);
 		}
 	}
@@ -65,7 +64,6 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			TableDataUtils.executeQueries(dataSource, initSchemaQuery, true);
 		} catch (Throwable t) {
 			_logger.error("Error initializating Derby Schema", t);
-			//ApsSystemUtils.logThrowable(t, this, "initDerbySchema", "Error initializating Derby Schema");
 			throw new ApsSystemException("Error initializating Derby Schema", t);
 		}
 	}
@@ -82,7 +80,6 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			this.restoreBackup(backupSubFolder);
 		} catch (Throwable t) {
 			_logger.error("Error while restoring backup: {}", backupSubFolder, t);
-			//ApsSystemUtils.logThrowable(t, this, "dropAndRestoreBackup");
 			throw new ApsSystemException("Error while restoring backup", t);
 		}
 	}
@@ -109,7 +106,6 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while dropping tables", t);
-			//ApsSystemUtils.logThrowable(t, this, "dropTables");
 			throw new RuntimeException("Error while dropping tables", t);
 		}
 	}
@@ -124,7 +120,6 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while restoring local backup", t);
-			//ApsSystemUtils.logThrowable(t, this, "restoreBackup");
 			throw new ApsSystemException("Error while restoring local backup", t);
 		}
 	}
@@ -152,14 +147,13 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 					String fileName = folder.toString() + dataSourceName + File.separator + tableName + ".sql";
 					InputStream is = this.getStorageManager().getStream(fileName, true);
 					if (null != is) {
-						String sqlDump = FileTextReader.getText(is);
+						String sqlDump = FileTextReader.getText(is, "UTF-8");
 						TableDataUtils.valueDatabase(sqlDump, tableName, dataSource, null);
 					}
 				}
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while restoring local dump", t);
-			//ApsSystemUtils.logThrowable(t, this, "restoreLocalDump");
 			throw new RuntimeException("Error while restoring local dump", t);
 		}
 	}

@@ -418,7 +418,7 @@ public class DatabaseManager extends AbstractInitializerManager
 			if (null == is) {
 				return null;
 			}
-			text = FileTextReader.getText(is);
+			text = FileTextReader.getText(is, "UTF-8");
 		} catch (Throwable t) {
 			_logger.error("Error reading resource", t);
 			throw new ApsSystemException("Error reading resource", t);
@@ -542,7 +542,7 @@ public class DatabaseManager extends AbstractInitializerManager
 		DataSourceDumpReport report = null;
 		try {
 			String key = this.getLocalBackupsFolder() + subFolderName + File.separator + DUMP_REPORT_FILE_NAME;
-			is = this.getStorageManager().getStream(key, true);//new FileInputStream(reportFile);
+			is = this.getStorageManager().getStream(key, true);
 			String xml = FileTextReader.getText(is);
 			report = new DataSourceDumpReport(xml);
 		} catch (Throwable t) {

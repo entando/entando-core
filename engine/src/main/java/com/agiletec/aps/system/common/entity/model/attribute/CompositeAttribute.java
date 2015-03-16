@@ -40,7 +40,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @author E.Santoboni
  */
 public class CompositeAttribute extends AbstractComplexAttribute {
-
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(CompositeAttribute.class);
 	
 	/**
@@ -185,6 +185,7 @@ public class CompositeAttribute extends AbstractComplexAttribute {
      * the one of the abstract class, always returns the constant "INDEXING_TYPE_NONE" 
      * (defined in AttributeInterface) which explicitly declares it not indexable.
      * Declaring indexable a complex attribute will make the contained element indexable.
+	 * @return the indexing type
      * @see com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface#getIndexingType()
      */
 	@Override
@@ -210,10 +211,31 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 	public Object getValue() {
 		return this.getAttributeMap();
 	}
-
+	
+	@Override
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBCompositeAttribute();
+	}
+	
+	@Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBCompositeAttribute jaxbAttribute = (JAXBCompositeAttribute) super.createJAXBAttribute(langCode);
+		List<AttributeInterface> attributes = this.getAttributes();
+		if (null != attributes && !attributes.isEmpty()) {
+			Map<String, AbstractJAXBAttribute> jaxbAttributes = new HashMap<String, AbstractJAXBAttribute>();
+			for (int i = 0; i < attributes.size(); i++) {
+				AttributeInterface attribute = attributes.get(i);
+				jaxbAttributes.put(attribute.getName(), attribute.getJAXBAttribute(langCode));
+			}
+			jaxbAttribute.setAttributes(jaxbAttributes);
+		}
+		return jaxbAttribute;
+	}
+	
+	/*
 	@Override
 	protected Object getJAXBValue(String langCode) {
-		List<DefaultJAXBAttribute> jaxrAttributes = new ArrayList<DefaultJAXBAttribute>();
+		List<AbstractJAXBAttribute> jaxrAttributes = new ArrayList<AbstractJAXBAttribute>();
 		List<AttributeInterface> attributes = this.getAttributes();
 		for (int i = 0; i < attributes.size(); i++) {
 			AttributeInterface attribute = attributes.get(i);
@@ -221,14 +243,16 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 		}
 		return jaxrAttributes;
 	}
-
+	*/
 	@Override
-	public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+	public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
 		super.valueFrom(jaxbAttribute);
-		List<DefaultJAXBAttribute> value = (List<DefaultJAXBAttribute>) jaxbAttribute.getValue();
-		if (null != value) {
-			for (int i = 0; i < value.size(); i++) {
-				DefaultJAXBAttribute jaxbAttributeElement = value.get(i);
+		Map<String, AbstractJAXBAttribute> jaxbAttributes = ((JAXBCompositeAttribute) jaxbAttribute).getAttributes();
+		if (null != jaxbAttributes) {
+			Iterator<String> iter = jaxbAttributes.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				AbstractJAXBAttribute jaxbAttributeElement = jaxbAttributes.get(key);
 				AttributeInterface attributeElement = this.getAttributeMap().get(jaxbAttributeElement.getName());
 				if (null != attributeElement 
 						&& attributeElement.getType().equals(jaxbAttributeElement.getType())) {
@@ -236,6 +260,19 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 				}
 			}
 		}
+		/*
+		List<AbstractJAXBAttribute> value = (List<AbstractJAXBAttribute>) jaxbAttribute.getValue();
+		if (null != value) {
+			for (int i = 0; i < value.size(); i++) {
+				AbstractJAXBAttribute jaxbAttributeElement = value.get(i);
+				AttributeInterface attributeElement = this.getAttributeMap().get(jaxbAttributeElement.getName());
+				if (null != attributeElement 
+						&& attributeElement.getType().equals(jaxbAttributeElement.getType())) {
+					attributeElement.valueFrom(jaxbAttributeElement);
+				}
+			}
+		}
+		*/
 	}
 
 	@Override

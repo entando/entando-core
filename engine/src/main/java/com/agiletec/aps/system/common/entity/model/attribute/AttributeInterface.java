@@ -272,9 +272,9 @@ public interface AttributeInterface extends Serializable {
     
     public Object getValue();
     
-    public DefaultJAXBAttribute getJAXBAttribute(String langCode);
+    public AbstractJAXBAttribute getJAXBAttribute(String langCode);
     
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute);
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute);
     
     public DefaultJAXBAttributeType getJAXBAttributeType();
     

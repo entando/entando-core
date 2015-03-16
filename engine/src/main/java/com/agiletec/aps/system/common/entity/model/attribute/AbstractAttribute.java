@@ -439,31 +439,29 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
         this._validationRules = validationRules;
     }
     
-    @Override
-    public DefaultJAXBAttribute getJAXBAttribute(String langCode) {
+    //@Override
+    protected AbstractJAXBAttribute createJAXBAttribute(String langCode) {
         if (null == this.getValue()) {
             return null;
         }
-        DefaultJAXBAttribute jaxbAttribute = this.getJAXBAttributeInstance();
+        AbstractJAXBAttribute jaxbAttribute = this.getJAXBAttributeInstance();
         jaxbAttribute.setDescription(this.getDescription());
         jaxbAttribute.setName(this.getName());
         jaxbAttribute.setType(this.getType());
-        jaxbAttribute.setValue(this.getJAXBValue(langCode));
+        //jaxbAttribute.setValue(this.getJAXBValue(langCode));
         if (null != this.getRoles() && this.getRoles().length > 0) {
             List<String> roles = Arrays.asList(this.getRoles());
             jaxbAttribute.setRoles(roles);
         }
         return jaxbAttribute;
     }
-    
-    protected DefaultJAXBAttribute getJAXBAttributeInstance() {
-        return new DefaultJAXBAttribute();
-    }
-    
-    protected abstract Object getJAXBValue(String langCode);
+	
+	protected abstract AbstractJAXBAttribute getJAXBAttributeInstance();
+	
+    //protected abstract Object getJAXBValue(String langCode);
     
     @Override
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         this.setName(jaxbAttribute.getName());
     }
     

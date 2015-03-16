@@ -20,6 +20,7 @@ import org.jdom.Element;
 
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.util.ArrayList;
 
 /**
  * Base abstract class for the complex attributes of type List and Monolist. 
@@ -145,7 +146,22 @@ public abstract class AbstractListAttribute extends AbstractComplexAttribute
     public boolean isSearchable() {
         return false;
     }
-    
+	
+	@Override
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBListAttribute();
+	}
+	
+	protected List<AbstractJAXBAttribute> extractJAXBListAttributes(List<AttributeInterface> attributes, String langCode) {
+        List<AbstractJAXBAttribute> jaxbAttributes = new ArrayList<AbstractJAXBAttribute>();
+        for (int i = 0; i < attributes.size(); i++) {
+            AttributeInterface attribute = attributes.get(i);
+            jaxbAttributes.add(attribute.getJAXBAttribute(langCode));
+        }
+        return jaxbAttributes;
+    }
+	
+    /*
     @Override
     public JAXBListAttribute getJAXBAttribute(String langCode) {
         if (null == this.getAttributes() || this.getAttributes().isEmpty()) {
@@ -154,10 +170,10 @@ public abstract class AbstractListAttribute extends AbstractComplexAttribute
         JAXBListAttribute jaxrAttribute = new JAXBListAttribute();
         jaxrAttribute.setName(this.getName());
         jaxrAttribute.setType(this.getType());
-        jaxrAttribute.setAttributes((List<DefaultJAXBAttribute>) this.getJAXBValue(langCode));
+        jaxrAttribute.setAttributes((List<AbstractJAXBAttribute>) this.getJAXBValue(langCode));
         return jaxrAttribute;
     }
-    
+    */
     @Override
     public JAXBListAttributeType getJAXBAttributeType() {
         JAXBListAttributeType jaxbAttribute = (JAXBListAttributeType) super.getJAXBAttributeType();

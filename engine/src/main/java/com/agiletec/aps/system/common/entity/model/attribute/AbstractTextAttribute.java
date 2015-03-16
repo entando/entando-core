@@ -19,6 +19,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeVali
 import com.agiletec.aps.system.common.entity.model.attribute.util.TextAttributeValidationRules;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This abstract class is the base for the 'Text' Attributes.
@@ -26,9 +27,6 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public abstract class AbstractTextAttribute extends AbstractAttribute implements IndexableAttributeInterface, ITextAttribute {
 	
-	/**
-	 * @see com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface#isTextAttribute()
-	 */
 	@Override
 	public boolean isTextAttribute() {
 		return true;
@@ -103,8 +101,18 @@ public abstract class AbstractTextAttribute extends AbstractAttribute implements
 	}
 	
 	@Override
-	protected Object getJAXBValue(String langCode) {
-		return this.getTextForLang(langCode);
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBTextAttribute();
 	}
 	
+	@Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBTextAttribute jaxbTextAttribute = (JAXBTextAttribute) super.createJAXBAttribute(langCode);
+		String text = this.getTextForLang(langCode);
+		if (StringUtils.isNotEmpty(text)) {
+			jaxbTextAttribute.setText(text);
+		}
+		return jaxbTextAttribute;
+	}
+    
 }

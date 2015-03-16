@@ -95,18 +95,25 @@ public class BooleanAttribute extends AbstractAttribute {
 	public String getIndexingType() {
 		return IndexableAttributeInterface.INDEXING_TYPE_NONE;
 	}
-
+	
 	@Override
-	protected Object getJAXBValue(String langCode) {
-		return (null != this.getBooleanValue()) ? this.getBooleanValue().toString() : "false";
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBBooleanAttribute();
 	}
-
+	
 	@Override
-	public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBBooleanAttribute jaxbAttribute = (JAXBBooleanAttribute) super.createJAXBAttribute(langCode);
+		jaxbAttribute.setBoolean(this.getValue());
+		return jaxbAttribute;
+	}
+	
+	@Override
+	public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
 		super.valueFrom(jaxbAttribute);
-		String value = (String) jaxbAttribute.getValue();
+		Boolean value = ((JAXBBooleanAttribute) jaxbAttribute).getBoolean();
 		if (null != value) {
-			this.setBooleanValue(Boolean.valueOf(value));
+			this.setBooleanValue(value);
 		}
 	}
 	

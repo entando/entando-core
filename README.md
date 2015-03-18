@@ -20,7 +20,7 @@ The Entando platform project includes also the following Github projects:
 
 * **entando-ux-packages**: https://github.com/entando/entando-ux-packages. Entando ux-packages are modules capable to implement a range of specific customizations.
 
-* **edo** (Entando Service Builder): https://github.com/entando/edo. Edo is a code generator tool for Entando. It's useful to generate different parts of several software Entando elements.
+* **edo (Entando Service Builder)**: https://github.com/entando/edo. Edo is a code generator tool for Entando. It's useful to generate different parts of several software Entando elements.
 
 See the [WIKI] (https://github.com/entando/entando-core/wiki) pages for more information and operational details of the project. At the moment, the wiki pages are:
 

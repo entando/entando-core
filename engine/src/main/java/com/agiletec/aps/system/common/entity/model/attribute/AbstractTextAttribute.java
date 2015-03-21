@@ -108,6 +108,7 @@ public abstract class AbstractTextAttribute extends AbstractAttribute implements
 	@Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBTextAttribute jaxbTextAttribute = (JAXBTextAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbTextAttribute) return null;
 		String text = this.getTextForLang(langCode);
 		if (StringUtils.isNotEmpty(text)) {
 			jaxbTextAttribute.setText(text);

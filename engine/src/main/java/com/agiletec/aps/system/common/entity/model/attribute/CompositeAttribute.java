@@ -220,6 +220,7 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 	@Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBCompositeAttribute jaxbAttribute = (JAXBCompositeAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
 		List<AttributeInterface> attributes = this.getAttributes();
 		if (null != attributes && !attributes.isEmpty()) {
 			Map<String, AbstractJAXBAttribute> jaxbAttributes = new HashMap<String, AbstractJAXBAttribute>();
@@ -253,6 +254,9 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 			while (iter.hasNext()) {
 				String key = iter.next();
 				AbstractJAXBAttribute jaxbAttributeElement = jaxbAttributes.get(key);
+				if (null == jaxbAttributeElement) {
+					continue;
+				}
 				AttributeInterface attributeElement = this.getAttributeMap().get(jaxbAttributeElement.getName());
 				if (null != attributeElement 
 						&& attributeElement.getType().equals(jaxbAttributeElement.getType())) {

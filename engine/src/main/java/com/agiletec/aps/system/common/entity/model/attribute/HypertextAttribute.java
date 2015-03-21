@@ -125,6 +125,7 @@ public class HypertextAttribute extends TextAttribute {
     @Override
     public JAXBHypertextAttribute getJAXBAttribute(String langCode) {
         JAXBHypertextAttribute jaxbHypertexAttribute = (JAXBHypertextAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbHypertexAttribute) return null;
 		String text = this.getTextForLang(langCode);
 		if (StringUtils.isNotEmpty(text)) {
 			jaxbHypertexAttribute.setHtmlValue(text);

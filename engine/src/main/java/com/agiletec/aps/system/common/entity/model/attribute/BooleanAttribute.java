@@ -104,6 +104,7 @@ public class BooleanAttribute extends AbstractAttribute {
 	@Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBBooleanAttribute jaxbAttribute = (JAXBBooleanAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
 		jaxbAttribute.setBoolean(this.getValue());
 		return jaxbAttribute;
 	}

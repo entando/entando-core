@@ -27,8 +27,6 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.attribute.AbstractJAXBAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.DefaultJAXBAttributeType;
-import com.agiletec.aps.system.common.entity.model.attribute.JAXBTextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
@@ -40,7 +38,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.util.ICmsAttributeErrorCodes;
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Classe astratta di appoggio agli attributi di tipo Risorsa.
@@ -171,7 +168,7 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         if (null == this.getResources() || this.getResources().isEmpty()) {
             return null;
         }
-        return this;
+        return this.getResources();
     }
 	
 	@Override
@@ -182,6 +179,7 @@ public abstract class AbstractResourceAttribute extends TextAttribute
     @Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBResourceAttribute jaxbResourceAttribute = (JAXBResourceAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbResourceAttribute) return null;
 		if (null == langCode) {
 			langCode = this.getDefaultLangCode();
 		}

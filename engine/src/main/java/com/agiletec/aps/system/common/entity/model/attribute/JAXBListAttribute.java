@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.common.entity.model.attribute;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author E.Santoboni
  */
 @XmlType(propOrder = {"attributes"})
-public class JAXBListAttribute extends AbstractJAXBAttribute {
+public class JAXBListAttribute extends AbstractJAXBAttribute implements Serializable {
     
     @XmlElement(name = "attribute", required = true)
     @XmlElementWrapper(name = "attributes")

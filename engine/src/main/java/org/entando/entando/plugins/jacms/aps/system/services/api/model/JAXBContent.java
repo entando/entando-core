@@ -23,11 +23,18 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import com.agiletec.aps.system.common.entity.model.JAXBEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBBooleanAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBCompositeAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBDateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.JAXBHypertextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.JAXBListAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBNumberAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBTextAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBLinkAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBLinkValue;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBResourceAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBResourceValue;
 
 /**
@@ -35,7 +42,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
  */
 @XmlRootElement(name = "content")
 @XmlType(propOrder = {"created", "lastModified", "version", "lastEditor"})
-@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBResourceValue.class, JAXBLinkValue.class, SymbolicLink.class})
+@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class, JAXBResourceAttribute.class, JAXBLinkAttribute.class, JAXBResourceValue.class, JAXBLinkValue.class, SymbolicLink.class})
 public class JAXBContent extends JAXBEntity {
     
     public JAXBContent() {

@@ -133,6 +133,7 @@ public class MonoListAttribute extends AbstractListAttribute {
 	@Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBListAttribute jaxbAttribute = (JAXBListAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
 		List<AttributeInterface> attributes = this.getAttributes();
         if (null == attributes) {
             return null;

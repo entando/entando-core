@@ -188,6 +188,7 @@ public class DateAttribute extends AbstractAttribute {
 	@Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBDateAttribute jaxbAttribute = (JAXBDateAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
 		jaxbAttribute.setDate(this.getDate());
 		return jaxbAttribute;
 	}

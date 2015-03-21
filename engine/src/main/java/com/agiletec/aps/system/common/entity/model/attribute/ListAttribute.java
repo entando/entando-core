@@ -160,6 +160,7 @@ public class ListAttribute extends AbstractListAttribute {
 	@Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBListAttribute jaxbAttribute = (JAXBListAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
 		List<AttributeInterface> attributes = this.getAttributeList(langCode);
         if (null == attributes) {
             return null;

@@ -142,6 +142,7 @@ public class NumberAttribute extends AbstractAttribute {
 	@Override
 	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
 		JAXBNumberAttribute jaxbAttribute = (JAXBNumberAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
 		jaxbAttribute.setNumber(this.getValue());
 		return jaxbAttribute;
 	}

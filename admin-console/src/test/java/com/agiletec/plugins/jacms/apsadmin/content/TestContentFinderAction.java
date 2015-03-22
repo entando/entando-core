@@ -32,7 +32,7 @@ public class TestContentFinderAction extends AbstractBaseTestContentAction {
 		String result = this.executeGetList("admin");
 		assertEquals(Action.SUCCESS, result);
 		List<String> contents = (List<String>) ((IContentFinderAction)this.getAction()).getContents();
-		assertEquals(24, contents.size());
+		assertEquals(25, contents.size());
 		
 		result = this.executeGetList("editorCoach");
 		assertEquals(Action.SUCCESS, result);
@@ -58,7 +58,7 @@ public class TestContentFinderAction extends AbstractBaseTestContentAction {
 		Map<String, String> params = new HashMap<String, String>();
 		this.executeSearch("admin", params);
 		IContentFinderAction action = (IContentFinderAction) this.getAction();
-		String[] order1 = {"ART112","ART122","ART121","ART120","ART111","ART179","EVN21",
+		String[] order1 = {"ALL4", "ART112","ART122","ART121","ART120","ART111","ART179","EVN21",
 				"EVN20","EVN41","EVN25","EVN24","EVN23","ART102","ART104","EVN103",
 				"RAH101","EVN192","EVN191","RAH1","ART180","EVN194","EVN193","ART1","ART187"};
 		List<String> contents = action.getContents();

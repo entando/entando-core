@@ -41,6 +41,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceDAO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.TestResourceDOM;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
+import org.entando.entando.plugins.jacms.aps.system.services.api.TestApiContentInterface;
 
 public class AllTests {
 	
@@ -84,6 +85,8 @@ public class AllTests {
 		suite.addTestSuite(TestGroupUtilizer.class);
 		
 		suite.addTestSuite(TestCacheInfoManager.class);
+		//
+		suite.addTestSuite(TestApiContentInterface.class);
 		
 		return suite;
 	}

@@ -173,12 +173,6 @@ public class DateAttribute extends AbstractAttribute {
     public String getFailedDateString() {
         return _failedDateString;
     }
-	/*
-    @Override
-    protected Object getJAXBValue(String langCode) {
-        return this.getDate();
-    }
-	*/
 	
 	@Override
 	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
@@ -198,29 +192,6 @@ public class DateAttribute extends AbstractAttribute {
         super.valueFrom(jaxbAttribute);
 		Date date = ((JAXBDateAttribute) jaxbAttribute).getDate();
 		this.setDate(date);
-		/*
-        Date date = null;
-        Object value = jaxbAttribute.getValue();
-        if (null == value) {
-            return;
-        }
-        if (value instanceof XMLGregorianCalendar) {
-            XMLGregorianCalendar grCal = (XMLGregorianCalendar) value;
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.DAY_OF_MONTH, grCal.getDay());
-            calendar.set(Calendar.MONTH, grCal.getMonth() - 1);
-            calendar.set(Calendar.YEAR, grCal.getYear());
-            calendar.set(Calendar.HOUR_OF_DAY, grCal.getHour());
-            calendar.set(Calendar.MINUTE, grCal.getMinute());
-            calendar.set(Calendar.SECOND, grCal.getSecond());
-            date = calendar.getTime();
-        } else if (value instanceof Date) {
-            date = (Date) value;
-        }
-        if (null != date) {
-            this.setDate(date);
-        }
-		*/
     }
 	
     @Override

@@ -38,15 +38,6 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidation
 import com.agiletec.aps.system.common.entity.model.attribute.util.TextAttributeValidationRules;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.common.entity.model.attribute.util.BaseAttributeValidationRules;
-import com.agiletec.aps.system.common.entity.model.attribute.util.DateAttributeValidationRules;
-import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
-import com.agiletec.aps.system.common.entity.model.attribute.util.NumberAttributeValidationRules;
-import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
-import com.agiletec.aps.system.common.entity.model.attribute.util.TextAttributeValidationRules;
-import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
-
 /**
  * @author E.Santoboni
  */

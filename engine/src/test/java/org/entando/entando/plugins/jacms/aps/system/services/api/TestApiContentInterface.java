@@ -14,20 +14,28 @@
 package org.entando.entando.plugins.jacms.aps.system.services.api;
 
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractComplexAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.AbstractResourceAttribute;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.LinkAttribute;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import org.entando.entando.aps.system.services.api.ApiBaseTestCase;
 import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
+import org.entando.entando.aps.system.services.api.model.StringApiResponse;
+import org.entando.entando.aps.system.services.api.server.IResponseBuilder;
 import org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBContent;
 
 /**
@@ -43,12 +51,12 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 	
 	public void testGetXmlContent() throws Throwable {
 		MediaType mediaType = MediaType.APPLICATION_XML_TYPE;
-		this.testGetContent(mediaType, "ALL4");
+		this.testGetContent(mediaType, "admin", "ALL4", "it");
 	}
 	
 	public void testGetJsonContent() throws Throwable {
 		MediaType mediaType = MediaType.APPLICATION_JSON_TYPE;
-		this.testGetContent(mediaType, "ALL4");
+		this.testGetContent(mediaType, "admin", "ALL4", "en");
 	}
 	
 	public void testCreateNewContentFromXml() throws Throwable {
@@ -62,41 +70,31 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 	}
 	
 	protected void testCreateNewContent(MediaType mediaType, String contentId) throws Throwable {
-		
 		String dateNow = DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
 		EntitySearchFilter filter = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false, dateNow, null);
 		EntitySearchFilter[] filters = {filter};
 		List<String> ids = this._contentManager.searchId(filters);
 		assertTrue(ids.isEmpty());
-		
-		JAXBContent jaxbContent = this.testGetContent(mediaType, contentId);
+		JAXBContent jaxbContent = this.testGetContent(mediaType, "admin", contentId, "it");
 		ApiResource contentResource = this.getApiCatalogManager().getResource("jacms", "content");
 		ApiMethod postMethod = contentResource.getPostMethod();
-		Properties properties = super.createApiProperties("admin", "en", mediaType);
+		Properties properties = super.createApiProperties("admin", "it", mediaType);
 		try {
 			jaxbContent.setId(null);
 			Object response = this.getResponseBuilder().createResponse(postMethod, jaxbContent, properties);
 			assertNotNull(response);
-			//System.out.println("------------------------");
-			//String toString = this.marshall(response, mediaType);
-			//System.out.println(toString);
-			//System.out.println("------------------------");
-			
+			assertTrue(response instanceof StringApiResponse);
+			assertEquals(IResponseBuilder.SUCCESS, ((StringApiResponse) response).getResult());
 			ids = this._contentManager.searchId(filters);
 			assertEquals(1, ids.size());
 			String newContentId = ids.get(0);
-			//System.out.println("newContentId ------------------------ " + newContentId);
 			Content newContent = this._contentManager.loadContent(newContentId, false);
 			Content masterContent = this._contentManager.loadContent(contentId, true);
 			List<AttributeInterface> attributes = masterContent.getAttributeList();
 			for (int i = 0; i < attributes.size(); i++) {
 				AttributeInterface attribute = attributes.get(i);
-				if (!attribute.isSimple() || attribute instanceof AbstractResourceAttribute) continue;
 				AttributeInterface newAttribute = (AttributeInterface) newContent.getAttribute(attribute.getName());
-				//System.out.println("attribute ------------------------ " + attribute.getName());
-				//System.out.println("old --- " + attribute.getValue());
-				//System.out.println("new --- " + newAttribute.getValue());
-				assertEquals(attribute.getValue(), newAttribute.getValue());
+				this.checkAttributes(attribute, newAttribute);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -110,31 +108,56 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 				}
 			}
 		}
-		
 	}
 	
-	protected JAXBContent testGetContent(MediaType mediaType, String contentId) throws Throwable {
+	private void checkAttributes(AttributeInterface oldAttribute, AttributeInterface newAttribute) {
+		if (null == newAttribute) {
+			fail();
+		}
+		assertEquals(oldAttribute.getName(), newAttribute.getName());
+		assertEquals(oldAttribute.getType(), newAttribute.getType());
+		if (!oldAttribute.isSimple()) {
+			if (oldAttribute instanceof AbstractListAttribute) {
+				List<AttributeInterface> oldListAttributes = ((AbstractComplexAttribute) oldAttribute).getAttributes();
+				List<AttributeInterface> newListAttributes = ((AbstractComplexAttribute) newAttribute).getAttributes();
+				assertEquals(oldListAttributes.size(), newListAttributes.size());
+				for (int i = 0; i < oldListAttributes.size(); i++) {
+					AttributeInterface oldElement = oldListAttributes.get(i);
+					AttributeInterface newElement = newListAttributes.get(i);
+					this.checkAttributes(oldElement, newElement);
+				}
+			} else if (oldAttribute instanceof CompositeAttribute) {
+				Map<String, AttributeInterface> oldAttributeMap = ((CompositeAttribute) oldAttribute).getAttributeMap();
+				Map<String, AttributeInterface> newAttributeMap = ((CompositeAttribute) newAttribute).getAttributeMap();
+				assertEquals(oldAttributeMap.size(), newAttributeMap.size());
+				Iterator<String> iterator = oldAttributeMap.keySet().iterator();
+				while (iterator.hasNext()) {
+					String key = iterator.next();
+					AttributeInterface oldElement = oldAttributeMap.get(key);
+					AttributeInterface newElement = newAttributeMap.get(key);
+					this.checkAttributes(oldElement, newElement);
+				}
+			}
+		} else {
+			if (oldAttribute instanceof AbstractResourceAttribute || oldAttribute instanceof LinkAttribute) {
+				return;
+			}
+			assertEquals(oldAttribute.getValue(), newAttribute.getValue());
+		}
+	}
+	
+	protected JAXBContent testGetContent(MediaType mediaType, String username, String contentId, String langCode) throws Throwable {
 		ApiResource contentResource = 
 				this.getApiCatalogManager().getResource("jacms", "content");
 		ApiMethod getMethod = contentResource.getGetMethod();
-		
-		Properties properties = super.createApiProperties("admin", "en", mediaType);
+		Properties properties = super.createApiProperties(username, langCode, mediaType);
 		properties.put("id", contentId);
-		
 		Object result = this.getResponseBuilder().createResponse(getMethod, properties);
 		assertNotNull(result);
-		//System.out.println("------------------------");
-		//System.out.println(this.marshall(result, mediaType));
-		//System.out.println("------------------------");
-		
 		ApiContentInterface apiContentInterface = (ApiContentInterface) this.getApplicationContext().getBean("jacmsApiContentInterface");
 		Object singleResult = apiContentInterface.getContent(properties);
 		assertNotNull(singleResult);
-		//System.out.println("------------------------");
 		String toString = this.marshall(singleResult, mediaType);
-		//System.out.println(toString);
-		//System.out.println("------------------------");
-		
 		JAXBContent jaxbContent = (JAXBContent) UnmarshalUtils.unmarshal(JAXBContent.class, toString, mediaType);
 		assertNotNull(jaxbContent);
 		return jaxbContent;

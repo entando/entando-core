@@ -161,19 +161,6 @@ public abstract class AbstractListAttribute extends AbstractComplexAttribute
         return jaxbAttributes;
     }
 	
-    /*
-    @Override
-    public JAXBListAttribute getJAXBAttribute(String langCode) {
-        if (null == this.getAttributes() || this.getAttributes().isEmpty()) {
-            return null;
-        }
-        JAXBListAttribute jaxrAttribute = new JAXBListAttribute();
-        jaxrAttribute.setName(this.getName());
-        jaxrAttribute.setType(this.getType());
-        jaxrAttribute.setAttributes((List<AbstractJAXBAttribute>) this.getJAXBValue(langCode));
-        return jaxrAttribute;
-    }
-    */
     @Override
     public JAXBListAttributeType getJAXBAttributeType() {
         JAXBListAttributeType jaxbAttribute = (JAXBListAttributeType) super.getJAXBAttributeType();

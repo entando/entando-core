@@ -243,7 +243,6 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
             String message = "Error detected while creating the attribute config '"
                     + this.getName() + "' type '" + this.getType() + "'";
             _logger.error("Error detected while creating the attribute config '{}' type '{}'", this.getName(), this.getType(), t);
-            //ApsSystemUtils.logThrowable(t, this, "getAttributePrototype", message);
             throw new RuntimeException(message, t);
         }
     }
@@ -439,7 +438,6 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
         this._validationRules = validationRules;
     }
     
-    //@Override
     protected AbstractJAXBAttribute createJAXBAttribute(String langCode) {
         if (null == this.getValue()) {
             return null;
@@ -448,7 +446,6 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
         jaxbAttribute.setDescription(this.getDescription());
         jaxbAttribute.setName(this.getName());
         jaxbAttribute.setType(this.getType());
-        //jaxbAttribute.setValue(this.getJAXBValue(langCode));
         if (null != this.getRoles() && this.getRoles().length > 0) {
             List<String> roles = Arrays.asList(this.getRoles());
             jaxbAttribute.setRoles(roles);
@@ -458,8 +455,6 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
 	
 	protected abstract AbstractJAXBAttribute getJAXBAttributeInstance();
 	
-    //protected abstract Object getJAXBValue(String langCode);
-    
     @Override
     public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         this.setName(jaxbAttribute.getName());
@@ -510,7 +505,6 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
             }
         } catch (Throwable t) {
         	_logger.error("Error validating Attribute '{}'", this.getName(), t);
-            //ApsSystemUtils.logThrowable(t, this, "validate", "Error validating Attribute '" + this.getName() + "'");
             throw new RuntimeException("Error validating Attribute '" + this.getName() + "'", t);
         }
         return errors;

@@ -233,18 +233,6 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 		return jaxbAttribute;
 	}
 	
-	/*
-	@Override
-	protected Object getJAXBValue(String langCode) {
-		List<AbstractJAXBAttribute> jaxrAttributes = new ArrayList<AbstractJAXBAttribute>();
-		List<AttributeInterface> attributes = this.getAttributes();
-		for (int i = 0; i < attributes.size(); i++) {
-			AttributeInterface attribute = attributes.get(i);
-			jaxrAttributes.add(attribute.getJAXBAttribute(langCode));
-		}
-		return jaxrAttributes;
-	}
-	*/
 	@Override
 	public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
 		super.valueFrom(jaxbAttribute);
@@ -264,19 +252,6 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 				}
 			}
 		}
-		/*
-		List<AbstractJAXBAttribute> value = (List<AbstractJAXBAttribute>) jaxbAttribute.getValue();
-		if (null != value) {
-			for (int i = 0; i < value.size(); i++) {
-				AbstractJAXBAttribute jaxbAttributeElement = value.get(i);
-				AttributeInterface attributeElement = this.getAttributeMap().get(jaxbAttributeElement.getName());
-				if (null != attributeElement 
-						&& attributeElement.getType().equals(jaxbAttributeElement.getType())) {
-					attributeElement.valueFrom(jaxbAttributeElement);
-				}
-			}
-		}
-		*/
 	}
 
 	@Override
@@ -326,7 +301,6 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 				}
 			}
 		} catch (Throwable t) {
-			//ApsSystemUtils.logThrowable(t, this, "validate");
 			_logger.error("Error validating composite attribute", t);
 			throw new RuntimeException("Error validating composite attribute", t);
 		}

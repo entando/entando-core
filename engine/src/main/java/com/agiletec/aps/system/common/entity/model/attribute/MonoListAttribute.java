@@ -191,7 +191,6 @@ public class MonoListAttribute extends AbstractListAttribute {
             }
         } catch (Throwable t) {
         	_logger.error("Error validating monolist attribute", t);
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             throw new RuntimeException("Error validating monolist attribute", t);
         }
         return errors;

@@ -25,7 +25,6 @@ import com.agiletec.aps.system.services.lang.Lang;
 /**
  * Abstract class used for the implementation of "Complex Attributes". Complex attributes are those 
  * constituted by the aggregation, in different ways, of "Simple Attributes".
- * 
  * @author E.Santoboni
  */
 public abstract class AbstractComplexAttribute extends AbstractAttribute {

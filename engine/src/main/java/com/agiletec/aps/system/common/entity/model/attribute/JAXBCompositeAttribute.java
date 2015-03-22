@@ -14,7 +14,6 @@
 package com.agiletec.aps.system.common.entity.model.attribute;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;

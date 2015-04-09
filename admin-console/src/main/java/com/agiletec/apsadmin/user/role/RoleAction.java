@@ -94,7 +94,12 @@ public class RoleAction extends AbstractAuthorityAction {
 		return SUCCESS;
 	}
 	
+	@Deprecated
 	public String view() {
+		return this.showDetail();
+	}
+	
+	public String showDetail() {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		try {
 			if (!this.existsRole()) {
@@ -104,6 +109,7 @@ public class RoleAction extends AbstractAuthorityAction {
 			Role role = this.getRoleManager().getRole(this.getName());
 			this.setDescription(role.getDescription());
 			this.setPermissionNames(role.getPermissions());
+			this.isRoleInUse();
 		} catch (Throwable t) {
 			_logger.error("error in view", t);
 			return FAILURE;

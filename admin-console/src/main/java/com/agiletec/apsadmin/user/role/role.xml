@@ -4,55 +4,55 @@
     "http://struts.apache.org/dtds/struts-2.3.dtd">
 
 <struts>
-	
+    
     <package name="core_do/Role" namespace="/do/Role" extends="entando-default">
     	
-    	<action name="list" class="roleFinderAction">
+        <action name="list" class="roleFinderAction">
             <result type="tiles">admin.Role.list</result>
-        	<interceptor-ref name="entandoDefaultStack">
-        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
-        		<param name="requestAuth.requiredPermission">superuser</param>
-        	</interceptor-ref>
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+                <param name="requestAuth.requiredPermission">superuser</param>
+            </interceptor-ref>
         </action>
         
         <action name="new" class="roleAction" method="newRole">
             <result type="tiles">admin.Role.entry</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
     	
-    	<action name="edit" class="roleAction" method="edit">
+        <action name="edit" class="roleAction" method="edit">
             <result type="tiles">admin.Role.entry</result>
-    		<result name="roleList" type="chain">list</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+            <result name="roleList" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
         
-    	<action name="save" class="roleAction" method="save">
-        	<result name="input" type="tiles">admin.Role.entry</result>
-        	<result type="redirectAction">list</result>
-        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        <action name="save" class="roleAction" method="save">
+            <result name="input" type="tiles">admin.Role.entry</result>
+            <result type="redirectAction">list</result>
+            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
     	
-    	<action name="view" class="roleAction" method="view">
+        <action name="detail" class="roleAction" method="showDetail">
             <result type="tiles">admin.Role.view</result>
-    		<result name="roleList" type="chain">list</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+            <result name="roleList" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
         
-    	<action name="trash" class="roleAction" method="trash">
+        <action name="trash" class="roleAction" method="trash">
             <result type="tiles">admin.Role.trash</result>
-			<result name="references" type="tiles">admin.Role.references</result>
-    		<result name="roleList" type="chain">list</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+            <result name="references" type="tiles">admin.Role.references</result>
+            <result name="roleList" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
         
-    	<action name="delete" class="roleAction" method="delete">
-        	<result type="redirectAction">list</result>
-			<result name="references" type="tiles">admin.Role.references</result>
-    		<result name="roleList" type="chain">list</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        <action name="delete" class="roleAction" method="delete">
+            <result type="redirectAction">list</result>
+            <result name="references" type="tiles">admin.Role.references</result>
+            <result name="roleList" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
     	
-    	<!-- ######### FINE OPERAZIONI DI AGGIUNTA/MODIFICA RUOLO ######### -->
+        <!-- ######### FINE OPERAZIONI DI AGGIUNTA/MODIFICA RUOLO ######### -->
     	
     </package>
     

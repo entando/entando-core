@@ -39,7 +39,7 @@ public class TestContentEntityManager extends BaseTestCase {
 	public void testSearchRecords() throws Throwable {
 		List<ApsEntityRecord> contents = this._contentManager.searchRecords(null);
 		assertNotNull(contents);
-		assertEquals(24, contents.size());
+		assertEquals(25, contents.size());
 
 		EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
 		EntitySearchFilter[] filters1 = {typeFilter};

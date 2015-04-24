@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
-import com.agiletec.aps.system.common.entity.model.attribute.DefaultJAXBAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractJAXBAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
@@ -168,46 +168,55 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         if (null == this.getResources() || this.getResources().isEmpty()) {
             return null;
         }
-        return this;
+        return this.getResources();
     }
-    
+	
 	@Override
-    protected JAXBResourceValue getJAXBValue(String langCode) {
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBResourceAttribute();
+	}
+	
+    @Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBResourceAttribute jaxbResourceAttribute = (JAXBResourceAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbResourceAttribute) return null;
+		if (null == langCode) {
+			langCode = this.getDefaultLangCode();
+		}
+		ResourceInterface resource = this.getResource(langCode);
+		if (null == resource) {
+			return jaxbResourceAttribute;
+		}
 		JAXBResourceValue value = new JAXBResourceValue();
 		try {
-			Object text = super.getJAXBValue(langCode);
+			String text = this.getTextForLang(langCode);
 			value.setText(text);
-			if (null == langCode) {
-				langCode = this.getDefaultLangCode();
-			}
 			this.setRenderingLang(langCode);
 			String path = this.getDefaultPath();
 			value.setPath(path);
-			ResourceInterface resource = this.getResource();
-			if (null != resource) {
-				value.setResourceId(resource.getId());
-				StringBuilder restResourcePath = new StringBuilder();
-				restResourcePath.append(this.getConfigManager().getParam("applicationBaseURL"));
-				restResourcePath.append("api/rs/").append(langCode).append("/jacms/");
-				if (this.getType().equals(JacmsSystemConstants.RESOURE_ATTACH_CODE)) {
-					restResourcePath.append("attachment");
-				} else {
-					restResourcePath.append("image");
-				}
-				restResourcePath.append("?id=").append(resource.getId());
-				value.setRestResourcePath(restResourcePath.toString());
+			value.setResourceId(resource.getId());
+			StringBuilder restResourcePath = new StringBuilder();
+			restResourcePath.append(this.getConfigManager().getParam("applicationBaseURL"));
+			restResourcePath.append("api/rs/").append(langCode).append("/jacms/");
+			if (this.getType().equals(JacmsSystemConstants.RESOURE_ATTACH_CODE)) {
+				restResourcePath.append("attachment");
+			} else {
+				restResourcePath.append("image");
 			}
+			restResourcePath.append("?id=").append(resource.getId());
+			value.setRestResourcePath(restResourcePath.toString());
 		} catch (Throwable t) {
 			_logger.error("Error creating jaxb response. lang: {}", langCode, t);
-			//ApsSystemUtils.logThrowable(t, this, "getJAXBValue");
 			throw new RuntimeException("Error creating jaxb response", t);
 		}
-        return value;
+		jaxbResourceAttribute.setResource(value);
+        return jaxbResourceAttribute;
     }
     
 	@Override
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
-        JAXBResourceValue value = (JAXBResourceValue) jaxbAttribute.getValue();
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
+		super.valueFrom(jaxbAttribute);
+        JAXBResourceValue value = ((JAXBResourceAttribute) jaxbAttribute).getResource();
         if (null == value) {
 			return;
 		}
@@ -228,7 +237,6 @@ public abstract class AbstractResourceAttribute extends TextAttribute
             this.getTextMap().put(this.getDefaultLangCode(), text.toString());
         } catch (Exception e) {
         	_logger.error("Error extracting resource from jaxbAttribute", e);
-            //ApsSystemUtils.logThrowable(e, this, "valueFrom", "Error extracting resource from jaxbAttribute");
         }
     }
     
@@ -288,7 +296,6 @@ public abstract class AbstractResourceAttribute extends TextAttribute
             }
         } catch (Throwable t) {
         	_logger.error("Error validating text attribute", t);
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             throw new RuntimeException("Error validating text attribute", t);
         }
         return errors;

@@ -62,6 +62,7 @@ public class NumberAttribute extends AbstractAttribute {
         return number;
     }
     
+	@Override
     public Element getJDOMElement() {
 		Element attributeElement = this.createRootElement("attribute");
         String number = this.getNumber();
@@ -72,11 +73,12 @@ public class NumberAttribute extends AbstractAttribute {
         }
         return attributeElement;
     }
-
+	
     /**
      * Return the number held by the attribute.
      * @return The number held by the attribute.
      */
+	@Override
     public BigDecimal getValue() {
         return _number;
     }
@@ -89,10 +91,12 @@ public class NumberAttribute extends AbstractAttribute {
         this._number = number;
     }
     
+	@Override
     public boolean isSearchableOptionSupported() {
         return true;
     }
     
+	@Override
     public List<AttributeSearchInfo> getSearchInfos(List<Lang> systemLangs) {
         if (this.getValue() != null) {
             List<AttributeSearchInfo> infos = new ArrayList<AttributeSearchInfo>();
@@ -103,6 +107,7 @@ public class NumberAttribute extends AbstractAttribute {
         return null;
     }
     
+	@Override
     protected IAttributeValidationRules getValidationRuleNewIntance() {
         return new NumberAttributeValidationRules();
     }
@@ -129,11 +134,26 @@ public class NumberAttribute extends AbstractAttribute {
         return this.getValue();
     }
     
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+	@Override
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBNumberAttribute();
+	}
+	
+	@Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBNumberAttribute jaxbAttribute = (JAXBNumberAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
+		jaxbAttribute.setNumber(this.getValue());
+		return jaxbAttribute;
+	}
+	
+	@Override
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         super.valueFrom(jaxbAttribute);
-        this.setValue((BigDecimal) jaxbAttribute.getValue());
+        this.setValue(((JAXBNumberAttribute) jaxbAttribute).getNumber());
     }
     
+	@Override
     public Status getStatus() {
         if (null != this.getValue() || null != this.getFailedNumberString()) {
             return Status.VALUED;
@@ -141,6 +161,7 @@ public class NumberAttribute extends AbstractAttribute {
         return Status.EMPTY;
     }
     
+	@Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
         if (null == this.getValue() && null != this.getFailedNumberString()) {

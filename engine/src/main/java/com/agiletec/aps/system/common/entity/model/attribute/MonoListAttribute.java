@@ -24,11 +24,6 @@ import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.FieldError;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
-import com.agiletec.aps.system.common.entity.model.AttributeTracer;
-import com.agiletec.aps.system.common.entity.model.FieldError;
-
 /**
  * This class implements a list of homogeneous attributes. 
  * @author M.Diana
@@ -134,30 +129,32 @@ public class MonoListAttribute extends AbstractListAttribute {
     public Object getValue() {
         return this.getAttributes();
     }
-    
-    @Override
-    protected Object getJAXBValue(String langCode) {
-        List<DefaultJAXBAttribute> jaxbAttributes = new ArrayList<DefaultJAXBAttribute>();
-        List<AttributeInterface> attributes = this.getAttributes();
-        for (int i = 0; i < attributes.size(); i++) {
-            AttributeInterface attribute = attributes.get(i);
-            jaxbAttributes.add(attribute.getJAXBAttribute(langCode));
+	
+	@Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBListAttribute jaxbAttribute = (JAXBListAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
+		List<AttributeInterface> attributes = this.getAttributes();
+        if (null == attributes) {
+            return null;
         }
-        return jaxbAttributes;
-    }
+        List<AbstractJAXBAttribute> jaxbList = this.extractJAXBListAttributes(attributes, langCode);
+		jaxbAttribute.setAttributes(jaxbList);
+		return jaxbAttribute;
+	}
     
     @Override
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         JAXBListAttribute jaxbListAttribute = (JAXBListAttribute) jaxbAttribute;
         if (null == jaxbListAttribute) {
 			return;
 		}
-        List<DefaultJAXBAttribute> attributes = jaxbListAttribute.getAttributes();
+        List<AbstractJAXBAttribute> attributes = jaxbListAttribute.getAttributes();
         if (null == attributes) {
 			return;
 		}
         for (int i = 0; i < attributes.size(); i++) {
-            DefaultJAXBAttribute jaxbAttributeElement = attributes.get(i);
+            AbstractJAXBAttribute jaxbAttributeElement = attributes.get(i);
             AttributeInterface attribute = this.addAttribute();
             attribute.valueFrom(jaxbAttributeElement);
         }
@@ -194,7 +191,6 @@ public class MonoListAttribute extends AbstractListAttribute {
             }
         } catch (Throwable t) {
         	_logger.error("Error validating monolist attribute", t);
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             throw new RuntimeException("Error validating monolist attribute", t);
         }
         return errors;

@@ -30,29 +30,25 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 
 	public void testFindContent_1() throws Throwable {
 		this.initIntroContentLink("admin", "ART1");//Contenuto del gruppo Free
-
-
 		ContentLinkAttributeAction action = (ContentLinkAttributeAction) this.getAction();
 		List<String> contentIds = action.getContents();
-		assertEquals(14, contentIds.size());//Contenuti pubblici liberi o non liberi con free gruppo extra
+		assertEquals(15, contentIds.size());//Contenuti pubblici liberi o non liberi con free gruppo extra
 		assertTrue(contentIds.contains("EVN25"));//Contenuto coach abilitato al gruppo free
 		assertTrue(contentIds.contains("ART121"));//Contenuto del gruppo "administrators" abilitato al gruppo free
 	}
 
 	public void testFindContent_2() throws Throwable {
 		this.initIntroContentLink("admin", "ART120");//Contenuto del gruppo degli amministratori
-
 		ContentLinkAttributeAction action = (ContentLinkAttributeAction) this.getAction();
 		List<String> contentIds = action.getContents();
-		assertEquals(23, contentIds.size());//Tutti i contenuti pubblici
+		assertEquals(24, contentIds.size());//Tutti i contenuti pubblici
 	}
 
 	public void testFindContent_3() throws Throwable {
 		this.initIntroContentLink("editorCustomers", "ART102");//Contenuto del gruppo customers
-
 		ContentLinkAttributeAction action = (ContentLinkAttributeAction) this.getAction();
 		List<String> contentIds = action.getContents();
-		assertEquals(19, contentIds.size());// Contenuti pubblici liberi, o del gruppo customers o altri con customers gruppo extra
+		assertEquals(20, contentIds.size());// Contenuti pubblici liberi, o del gruppo customers o altri con customers gruppo extra
 		assertTrue(contentIds.contains("ART122"));//Contenuto del gruppo "administrators" abilitato al gruppo customers
 		assertTrue(contentIds.contains("ART121"));//Contenuto del gruppo "administrators" abilitato al gruppo free
 		assertTrue(contentIds.contains("EVN25"));//Contenuto del gruppo "coach" abilitato al gruppo free
@@ -61,10 +57,9 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 
 	public void testFindContent_4() throws Throwable {
 		this.initIntroContentLink("admin", "EVN25");//Contenuto del gruppo coach
-
 		ContentLinkAttributeAction action = (ContentLinkAttributeAction) this.getAction();
 		List<String> contentIds = action.getContents();
-		assertEquals(19, contentIds.size());// Contenuti pubblici liberi, o del gruppo coach o altri con coach gruppo extra
+		assertEquals(20, contentIds.size());// Contenuti pubblici liberi, o del gruppo coach o altri con coach gruppo extra
 		assertTrue(contentIds.contains("ART121"));//Contenuto del gruppo "administrators" abilitato al gruppo coach
 		assertTrue(contentIds.contains("ART121"));//Contenuto del gruppo "administrators" abilitato al gruppo free
 		assertTrue(contentIds.contains("EVN25"));//Contenuto del gruppo "coach" abilitato al gruppo free
@@ -130,9 +125,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		assertEquals("homepage", showableRoot.getCode());
 		assertEquals(4, showableRoot.getChildren().length);
 	}
-
-	//http://localhost:8080/PortalExample/do/jacms/Content/Hypertext/configInternalLink.action?internalActionName=openTreeOnPageLink&activeTab=1&targetNode=homepage&
-
+	
 	private void initIntroPageLink(String username, String contentId) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);

@@ -28,24 +28,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({HashMap.class})
 public class JAXBResourceValue implements Serializable {
     
-    public Object getText() {
+    public String getText() {
         return _text;
     }
-    public void setText(Object text) {
+    public void setText(String text) {
         this._text = text;
     }
     
-    public Object getPath() {
+    public String getPath() {
         return _path;
     }
-    public void setPath(Object path) {
+    public void setPath(String path) {
         this._path = path;
     }
     
-    public Object getResourceId() {
+    public String getResourceId() {
         return _resourceId;
     }
-    public void setResourceId(Object resourceId) {
+    public void setResourceId(String resourceId) {
         this._resourceId = resourceId;
     }
 	
@@ -56,9 +56,9 @@ public class JAXBResourceValue implements Serializable {
 		this._restResourcePath = restResourcePath;
 	}
     
-    private Object _text;
-    private Object _path;
-    private Object _resourceId;
+    private String _text;
+    private String _path;
+    private String _resourceId;
 	private String _restResourcePath;
     
 }

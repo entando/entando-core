@@ -152,11 +152,10 @@ public class TestContentDAO extends BaseTestCase {
 	public void testGetResourceUtilizers() throws Throwable {
 		List<String> contentIds = _contentDao.getResourceUtilizers("44");
 		assertNotNull(contentIds);
-		assertEquals(2, contentIds.size());
-		String contentId = contentIds.get(0);
-		assertEquals("ART1", contentId);
-		contentId = contentIds.get(1);
-		assertEquals("ART180", contentId);
+		assertEquals(3, contentIds.size());
+		assertTrue(contentIds.contains("ART1"));
+		assertTrue(contentIds.contains("ART180"));
+		assertTrue(contentIds.contains("ALL4"));
     }
 	
 	private void updateContent(Content mockContent) throws ApsSystemException {

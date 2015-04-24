@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
-import com.agiletec.aps.system.common.entity.model.attribute.DefaultJAXBAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractJAXBAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPageManager;
@@ -121,6 +121,7 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         return false;
     }
     
+	@Override
     public List<CmsAttributeReference> getReferences(List<Lang> systemLangs) {
         List<CmsAttributeReference> refs = new ArrayList<CmsAttributeReference>();
         SymbolicLink symbLink = this.getSymbolicLink();
@@ -136,25 +137,36 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
     public Object getValue() {
         return this.getSymbolicLink();
     }
-    
+	
 	@Override
-    protected JAXBLinkValue getJAXBValue(String langCode) {
-        Object text = super.getJAXBValue(langCode);
-        JAXBLinkValue value = new JAXBLinkValue();
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBLinkAttribute();
+	}
+	
+	@Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBLinkAttribute jaxbAttribute = (JAXBLinkAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute || null == this.getSymbolicLink()) {
+			return jaxbAttribute;
+		}
+		JAXBLinkValue value = new JAXBLinkValue();
+		String text = this.getTextForLang(langCode);
         value.setText(text);
         value.setUrl(this.getLinkResolverManager().resolveLink(this.getSymbolicLink(), this.getParentEntity().getId(), null));
         value.setSymbolikLink(this.getSymbolicLink());
-        return value;
-    }
-    
+		jaxbAttribute.setLink(value);
+		return jaxbAttribute;
+	}
+	
 	@Override
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
-        JAXBLinkValue value = (JAXBLinkValue) jaxbAttribute.getValue();
-        if (null == value) return;
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
+		super.valueFrom(jaxbAttribute);
+        JAXBLinkValue value = ((JAXBLinkAttribute) jaxbAttribute).getLink();
+		if (null == value) return;
         this.setSymbolicLink(value.getSymbolikLink());
-        Object textValue = value.getText();
-        if (null == textValue) return;
-        this.getTextMap().put(this.getDefaultLangCode(), textValue.toString());
+		String textValue = value.getText();
+		if (null == textValue) return;
+        this.getTextMap().put(this.getDefaultLangCode(), textValue);
     }
     
     protected ILinkResolverManager getLinkResolverManager() {
@@ -165,7 +177,7 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
     public Status getStatus() {
         Status textStatus = super.getStatus();
         Status linkStatus = (null != this.getSymbolicLink()) ? Status.VALUED : Status.EMPTY;
-        if (!textStatus.equals(linkStatus)) return Status.INCOMPLETE;
+		if (!textStatus.equals(linkStatus)) return Status.INCOMPLETE;
         if (textStatus.equals(linkStatus) && textStatus.equals(Status.VALUED)) return Status.VALUED;
         return Status.EMPTY;
     }
@@ -188,7 +200,6 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
             }
         } catch (Throwable t) {
         	_logger.error("Error validating link attribute", t);
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             throw new RuntimeException("Error validating link attribute", t);
         }
         return errors;

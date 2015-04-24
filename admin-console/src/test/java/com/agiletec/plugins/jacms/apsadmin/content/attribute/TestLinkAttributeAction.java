@@ -51,7 +51,7 @@ public class TestLinkAttributeAction extends AbstractBaseTestContentAction {
 		Content currentContent = this.getContentOnEdit(contentOnSessionMarker);
 		assertNotNull(currentContent);
 		assertEquals("ART1", currentContent.getId());
-		assertEquals("Articolo", currentContent.getDescr());
+		assertEquals("Articolo", currentContent.getDescription());
 	}
 
 	public void testChooseLink_2() throws Throwable {
@@ -96,7 +96,7 @@ public class TestLinkAttributeAction extends AbstractBaseTestContentAction {
 		currentContent = this.getContentOnEdit(contentOnSessionMarker);
 		assertNotNull(currentContent);
 		assertEquals("EVN191", currentContent.getId());
-		assertEquals("Evento 1", currentContent.getDescr());
+		assertEquals("Evento 1", currentContent.getDescription());
 	}
 
 	public void testRemoveLink() throws Throwable {
@@ -147,7 +147,7 @@ public class TestLinkAttributeAction extends AbstractBaseTestContentAction {
 		Content currentContent = this.getContentOnEdit(contentOnSessionMarker);
 		assertNotNull(currentContent);
 		assertEquals("ART1", currentContent.getId());
-		assertEquals("Articolo", currentContent.getDescr());
+		assertEquals("Articolo", currentContent.getDescription());
 	}
 
 	public void testFailureChooseLinkType_2() throws Throwable {
@@ -181,7 +181,7 @@ public class TestLinkAttributeAction extends AbstractBaseTestContentAction {
 		Content currentContent = this.getContentOnEdit(contentOnSessionMarker);
 		assertNotNull(currentContent);
 		assertEquals("ART1", currentContent.getId());
-		assertEquals("Articolo", currentContent.getDescr());
+		assertEquals("Articolo", currentContent.getDescription());
 	}
 
 	public void testChooseLinkType() throws Throwable {
@@ -212,7 +212,7 @@ public class TestLinkAttributeAction extends AbstractBaseTestContentAction {
 		Content currentContent = this.getContentOnEdit(contentOnSessionMarker);
 		assertNotNull(currentContent);
 		assertEquals("ART1", currentContent.getId());
-		assertEquals("Articolo", currentContent.getDescr());
+		assertEquals("Articolo", currentContent.getDescription());
 	}
 
 }

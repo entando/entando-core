@@ -11,31 +11,31 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.common.entity.model.attribute;
+package com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute;
 
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBTextAttribute;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
 import java.io.Serializable;
-import java.util.List;
-
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author E.Santoboni
  */
-@XmlType(propOrder = {"attributes"})
-public class JAXBListAttribute extends AbstractJAXBAttribute implements Serializable {
+@XmlType(propOrder = {"link"})
+@XmlSeeAlso({JAXBLinkValue.class, SymbolicLink.class, HashMap.class})
+public class JAXBLinkAttribute extends JAXBTextAttribute implements Serializable {
     
-    @XmlElement(name = "attribute", required = true)
-    @XmlElementWrapper(name = "attributes")
-    public List<AbstractJAXBAttribute> getAttributes() {
-        return _attributes;
+    @XmlElement(name = "link", required = false)
+    public JAXBLinkValue getLink() {
+        return _link;
+    }
+    public void setLink(JAXBLinkValue link) {
+        this._link = link;
     }
     
-    public void setAttributes(List<AbstractJAXBAttribute> attributes) {
-        this._attributes = attributes;
-    }
-    
-    private List<AbstractJAXBAttribute> _attributes = null;
+    private JAXBLinkValue _link;
     
 }

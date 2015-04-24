@@ -16,12 +16,9 @@ package com.agiletec.aps.system.common.entity.model.attribute;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.jdom.Element;
 
@@ -176,38 +173,27 @@ public class DateAttribute extends AbstractAttribute {
     public String getFailedDateString() {
         return _failedDateString;
     }
-
-    @Override
-    protected Object getJAXBValue(String langCode) {
-        return this.getDate();
-    }
 	
 	@Override
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBDateAttribute();
+	}
+	
+	@Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBDateAttribute jaxbAttribute = (JAXBDateAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
+		jaxbAttribute.setDate(this.getDate());
+		return jaxbAttribute;
+	}
+	
+	@Override
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         super.valueFrom(jaxbAttribute);
-        Date date = null;
-        Object value = jaxbAttribute.getValue();
-        if (null == value) {
-            return;
-        }
-        if (value instanceof XMLGregorianCalendar) {
-            XMLGregorianCalendar grCal = (XMLGregorianCalendar) value;
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.DAY_OF_MONTH, grCal.getDay());
-            calendar.set(Calendar.MONTH, grCal.getMonth() - 1);
-            calendar.set(Calendar.YEAR, grCal.getYear());
-            calendar.set(Calendar.HOUR_OF_DAY, grCal.getHour());
-            calendar.set(Calendar.MINUTE, grCal.getMinute());
-            calendar.set(Calendar.SECOND, grCal.getSecond());
-            date = calendar.getTime();
-        } else if (value instanceof Date) {
-            date = (Date) value;
-        }
-        if (null != date) {
-            this.setDate(date);
-        }
+		Date date = ((JAXBDateAttribute) jaxbAttribute).getDate();
+		this.setDate(date);
     }
-
+	
     @Override
     public Status getStatus() {
         if (null != this.getDate() || null != this.getFailedDateString()) {

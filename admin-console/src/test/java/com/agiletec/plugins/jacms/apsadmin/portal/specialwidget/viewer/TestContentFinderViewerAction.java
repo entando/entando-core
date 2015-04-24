@@ -32,7 +32,7 @@ public class TestContentFinderViewerAction extends ApsAdminBaseTestCase {
 		
 		ContentFinderViewerAction action = (ContentFinderViewerAction) this.getAction();
 		List<String> contentIds = action.getContents();
-		assertEquals(14, contentIds.size());//Contenuti pubblici liberi o non liberi con free gruppo extra
+		assertEquals(15, contentIds.size());//Contenuti pubblici liberi o non liberi con free gruppo extra
 		assertTrue(contentIds.contains("EVN25"));//Contenuto coach abilitato al gruppo free
 		assertTrue(contentIds.contains("ART121"));//Contenuto del gruppo "administrators" abilitato al gruppo free
 	}
@@ -43,7 +43,7 @@ public class TestContentFinderViewerAction extends ApsAdminBaseTestCase {
 		
 		ContentFinderViewerAction action = (ContentFinderViewerAction) this.getAction();
 		List<String> contentIds = action.getContents();
-		assertEquals(23, contentIds.size());//Tutti i contenuti pubblici
+		assertEquals(24, contentIds.size());//Tutti i contenuti pubblici
 	}
 	
 	public void testFindContent_3() throws Throwable {
@@ -52,7 +52,7 @@ public class TestContentFinderViewerAction extends ApsAdminBaseTestCase {
 		
 		ContentFinderViewerAction action = (ContentFinderViewerAction) this.getAction();
 		List<String> contentIds = action.getContents();
-		assertEquals(19, contentIds.size());// Contenuti pubblici liberi o non liberi con customers gruppo extra
+		assertEquals(20, contentIds.size());// Contenuti pubblici liberi o non liberi con customers gruppo extra
 		assertTrue(contentIds.contains("ART122"));//Contenuto del gruppo "administrators" abilitato al gruppo customers
 		assertTrue(contentIds.contains("ART121"));//Contenuto del gruppo "administrators" abilitato al gruppo free
 		assertTrue(contentIds.contains("EVN25"));//Contenuto del gruppo "coach" abilitato al gruppo free
@@ -63,7 +63,7 @@ public class TestContentFinderViewerAction extends ApsAdminBaseTestCase {
 		Map<String, String> params = new HashMap<String, String>();
 		this.executeParametrizedSearchContents("admin", "pagina_11", "1", null);//Pagina Free
 		ContentFinderViewerAction action = (ContentFinderViewerAction) this.getAction();
-		String[] order1 = {"ART121", "EVN21", "EVN20", "EVN25", 
+		String[] order1 = {"ALL4", "ART121", "EVN21", "EVN20", "EVN25", 
 				"EVN24", "EVN23", "EVN192", "EVN191", "RAH1", 
 				"ART180", "EVN194", "EVN193", "ART1", "ART187"};
 		List<String> contents = action.getContents();
@@ -71,7 +71,6 @@ public class TestContentFinderViewerAction extends ApsAdminBaseTestCase {
 		for (int i=0; i<contents.size(); i++) {
     		assertEquals(order1[i], contents.get(i));
     	}
-		
 		params.put("lastOrder", "DESC");
 		params.put("lastGroupBy", "lastModified");
 		params.put("groupBy", "lastModified");

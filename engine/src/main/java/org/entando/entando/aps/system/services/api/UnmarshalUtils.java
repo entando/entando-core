@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author E.Santoboni
@@ -41,7 +43,8 @@ public class UnmarshalUtils {
 	}
 	
 	public static Object unmarshal(Class expectedType, HttpServletRequest request, MediaType contentType) throws Throwable {
-		return unmarshal(expectedType, request.getInputStream(), contentType);
+		ApplicationContext applicationContext = ApsWebApplicationUtils.getWebApplicationContext(request);
+		return unmarshal(applicationContext, expectedType, request.getInputStream(), contentType);
 	}
 	
 	@Deprecated
@@ -49,21 +52,25 @@ public class UnmarshalUtils {
 		return unmarshal(apiMethod.getExpectedType(), requestBody, contentType);
 	}
 	
+	@Deprecated
 	public static Object unmarshal(Class expectedType, String requestBody, MediaType contentType) throws Throwable {
 		InputStream stream = new ByteArrayInputStream(requestBody.getBytes());
-		return unmarshal(expectedType, stream, contentType);
+		return unmarshal(null, expectedType, stream, contentType);
 	}
 	
 	@Deprecated
 	public static Object unmarshal(ApiMethod apiMethod, InputStream bodyStream, MediaType contentType) throws Throwable {
-		return unmarshal(apiMethod.getExpectedType(), bodyStream, contentType);
+		return unmarshal(null, apiMethod.getExpectedType(), bodyStream, contentType);
 	}
-
-	public static Object unmarshal(Class expectedType, InputStream bodyStream, MediaType contentType) throws Throwable {
+	
+	public static Object unmarshal(ApplicationContext applicationContext, 
+			Class expectedType, InputStream bodyStream, MediaType contentType) throws Throwable {
 		Object bodyObject = null;
 		try {
             if (MediaType.APPLICATION_JSON_TYPE.equals(contentType)) {
-                JSONProvider jsonProvider = new JSONProvider();
+                JSONProvider jsonProvider = (null != applicationContext) ? 
+						(JSONProvider) applicationContext.getBean("jsonProvider"): 
+						new JSONProvider();
                 bodyObject = jsonProvider.readFrom(expectedType, expectedType.getGenericSuperclass(),
                         expectedType.getAnnotations(), contentType, null, bodyStream);
             } else {
@@ -77,5 +84,5 @@ public class UnmarshalUtils {
 		}
 		return bodyObject;
 	}
-
+	
 }

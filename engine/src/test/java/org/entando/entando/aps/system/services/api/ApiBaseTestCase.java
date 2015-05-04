@@ -62,7 +62,7 @@ public class ApiBaseTestCase extends BaseTestCase {
 	
 	protected String marshall(Object result, MediaType mediaType) throws Throwable {
 		if (null != mediaType && mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
-			JSONProvider jsonProvider = new JSONProvider();
+			JSONProvider jsonProvider = (JSONProvider) super.getApplicationContext().getBean("jsonProvider");
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			jsonProvider.writeTo(result, result.getClass().getGenericSuperclass(), 
 					result.getClass().getAnnotations(), mediaType, null, baos);

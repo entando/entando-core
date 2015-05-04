@@ -24,6 +24,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.AbstractResourceAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.LinkAttribute;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -158,7 +160,8 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 		Object singleResult = apiContentInterface.getContent(properties);
 		assertNotNull(singleResult);
 		String toString = this.marshall(singleResult, mediaType);
-		JAXBContent jaxbContent = (JAXBContent) UnmarshalUtils.unmarshal(JAXBContent.class, toString, mediaType);
+		InputStream stream = new ByteArrayInputStream(toString.getBytes());
+		JAXBContent jaxbContent = (JAXBContent) UnmarshalUtils.unmarshal(super.getApplicationContext(), JAXBContent.class, stream, mediaType);
 		assertNotNull(jaxbContent);
 		return jaxbContent;
 	}

@@ -41,8 +41,8 @@ public class ApsJSONUtils {
         return ignoreMixedContent ? new IgnoreMixedContentWriter(writer) : writer; 
     }
 	
-	public static XMLStreamWriter createIgnoreNsWriterIfNeeded(XMLStreamWriter writer, boolean ignoreNamespaces) {
-        return ignoreNamespaces ? new CDataIgnoreNamespacesWriter(writer) : writer; 
+	public static XMLStreamWriter createIgnoreNsWriterIfNeeded(XMLStreamWriter writer, boolean ignoreNamespaces, boolean ignoreXsiAttributes) {
+        return ignoreNamespaces ? new CDataIgnoreNamespacesWriter(writer, ignoreXsiAttributes) : writer;
     }
 	
 	public static XMLStreamWriter createStreamWriter(OutputStream os, 

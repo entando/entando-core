@@ -56,6 +56,7 @@ import com.agiletec.aps.util.TestHtmlHandler;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
+import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 
@@ -132,6 +133,7 @@ public class AllTests {
 		suite.addTestSuite(TestGuiFragmentManager.class);
 		//
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
+		suite.addTestSuite(TestApiI18nLabelInterface.class);
 		
 		return suite;
 	}

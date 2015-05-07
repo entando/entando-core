@@ -26,7 +26,7 @@
 				<label class="display-block"><s:text name="title.chooseLinkType" /></label>
 				<div class="btn-group" data-toggle="buttons">
 					<s:iterator value="#linkDestinations" var="typeId">
-						<s:if test="#typeId != 4">
+						<s:if test="#typeId < 4">
 							<s:if test="#typeId == 1">
 								<s:set var="statusIconVar">icon fa fa-globe</s:set>
 								<s:set name="linkDestination" value="%{getText('note.URLLinkTo')}" />
@@ -35,7 +35,7 @@
 								<s:set var="statusIconVar">icon fa fa-folder</s:set>
 								<s:set name="linkDestination" value="%{getText('note.pageLinkTo')}" />
 							</s:elseif>
-							<s:elseif test="#typeId == 3 || #typeId == 4">
+							<s:elseif test="#typeId == 3">
 								<s:set var="statusIconVar">icon fa fa-file-text-o</s:set>
 								<s:set name="linkDestination" value="%{getText('note.contentLinkTo')}" />
 							</s:elseif>

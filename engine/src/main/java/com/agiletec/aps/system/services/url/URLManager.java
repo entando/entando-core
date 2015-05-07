@@ -122,9 +122,9 @@ public class URLManager extends AbstractURLManager {
 	@Override
 	public String createUrl(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp) {
 		try {
-			return this.createUrl(requiredPage, requiredLang, params, true, null);
+			return this.createUrl(requiredPage, requiredLang, params, escapeAmp, null);
 		} catch (ApsSystemException ex) {
-			throw new RuntimeException(ex);
+			throw new RuntimeException("Error creating url", ex);
 		}
 	}
 	

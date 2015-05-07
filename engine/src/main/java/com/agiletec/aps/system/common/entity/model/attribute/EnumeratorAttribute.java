@@ -73,7 +73,6 @@ public class EnumeratorAttribute extends MonoTextAttribute {
                 }
             } catch (Throwable t) {
             	_logger.error("Error while extract items from bean extractor '{}'", this.getExtractorBeanName(), t);
-                //ApsSystemUtils.logThrowable(t, this, "initItems", "Error while extract items from bean extractor '" + this.getExtractorBeanName() + "'");
             }
         }
         if (null != this.getItems()) {

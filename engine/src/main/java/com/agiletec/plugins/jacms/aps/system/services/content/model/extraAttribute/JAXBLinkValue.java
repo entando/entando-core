@@ -32,10 +32,10 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink
 public class JAXBLinkValue implements Serializable {
     
     @XmlElement(name = "text", required = true)
-    public Object getText() {
+    public String getText() {
         return _text;
     }
-    public void setText(Object text) {
+    public void setText(String text) {
         this._text = text;
     }
     
@@ -55,7 +55,7 @@ public class JAXBLinkValue implements Serializable {
         this._symbolikLink = symbolikLink;
     }
     
-    private Object _text;
+    private String _text;
     private String _url;
     private SymbolicLink _symbolikLink;
     

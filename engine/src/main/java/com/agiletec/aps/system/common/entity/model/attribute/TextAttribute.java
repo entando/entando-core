@@ -165,28 +165,20 @@ public class TextAttribute extends AbstractTextAttribute {
         }
     }
     
+	@Override
     public Object getValue() {
         return this.getTextMap();
     }
     
-    protected Object getJAXBValue(String langCode) {
-        if (null == langCode) {
-            langCode = this.getDefaultLangCode();
-        }
-        String text = this.getTextForLang(langCode);
-        if (null == text || text.trim().length() == 0) {
-            text = this.getTextForLang(this.getDefaultLangCode());
-        }
-        return text;
-    }
-    
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+	@Override
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         super.valueFrom(jaxbAttribute);
-        Object value = jaxbAttribute.getValue();
+        Object value = ((JAXBTextAttribute) jaxbAttribute).getText();
         if (null == value) return;
         this.getTextMap().put(this.getDefaultLangCode(), value.toString());
     }
     
+	@Override
     public Status getStatus() {
         String text = this.getTextMap().get(this.getDefaultLangCode());
         if (null != text && text.trim().length() > 0) {

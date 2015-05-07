@@ -14,28 +14,24 @@
 package com.agiletec.aps.system.common.entity.model.attribute;
 
 import java.io.Serializable;
-import java.util.List;
-
+import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author E.Santoboni
  */
-@XmlType(propOrder = {"attributes"})
-public class JAXBListAttribute extends AbstractJAXBAttribute implements Serializable {
+@XmlType(propOrder = {"number"})
+public class JAXBNumberAttribute extends AbstractJAXBAttribute implements Serializable {
     
-    @XmlElement(name = "attribute", required = true)
-    @XmlElementWrapper(name = "attributes")
-    public List<AbstractJAXBAttribute> getAttributes() {
-        return _attributes;
+    @XmlElement(name = "value", required = false)
+    public BigDecimal getNumber() {
+        return _number;
+    }
+    public void setNumber(BigDecimal number) {
+        this._number = number;
     }
     
-    public void setAttributes(List<AbstractJAXBAttribute> attributes) {
-        this._attributes = attributes;
-    }
-    
-    private List<AbstractJAXBAttribute> _attributes = null;
+    private BigDecimal _number;
     
 }

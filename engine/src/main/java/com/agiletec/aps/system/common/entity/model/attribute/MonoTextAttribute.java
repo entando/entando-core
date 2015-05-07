@@ -106,11 +106,11 @@ public class MonoTextAttribute extends AbstractTextAttribute {
     public Object getValue() {
         return this.getText();
     }
-    
+	
     @Override
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         super.valueFrom(jaxbAttribute);
-        this.setText((String) jaxbAttribute.getValue());
+        this.setText(((JAXBTextAttribute) jaxbAttribute).getText());
     }
     
     @Override

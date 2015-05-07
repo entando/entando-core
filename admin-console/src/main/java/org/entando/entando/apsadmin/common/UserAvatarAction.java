@@ -17,13 +17,12 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.apsadmin.system.BaseAction;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.slf4j.Logger;
@@ -48,15 +47,14 @@ public class UserAvatarAction extends BaseAction {
 			if (null == email) {
 				return this.extractDefaultAvatarStream();
 			}
-			HttpClient httpclient = HttpClientBuilder.create().build();
-			HttpGet httpGet = new HttpGet(this.createGravatarUri(email));
-			HttpResponse response = httpclient.execute(httpGet);
-			Integer i = response.getStatusLine().getStatusCode();
-			if (i == 404) {
-				return this.extractDefaultAvatarStream();
-			}
-			this.setInputStream(response.getEntity().getContent());
-		} catch (Throwable t) {
+			URL url = new URL(this.createGravatarUri(email));
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			this.setInputStream(conn.getInputStream());
+		} catch (FileNotFoundException t) {
+			_logger.info("avatar not available");
+			return this.extractDefaultAvatarStream();
+        } catch (Throwable t) {
 			_logger.error("error in returnAvatarStream", t);
 			return this.extractDefaultAvatarStream();
         }

@@ -30,13 +30,6 @@ import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.ApsProperties;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.i18n.II18nManager;
-import com.agiletec.aps.system.services.lang.ILangManager;
-import com.agiletec.aps.system.services.lang.Lang;
-import com.agiletec.aps.util.ApsProperties;
-
 /**
  * @author E.Santoboni
  */
@@ -58,7 +51,6 @@ public class ApiI18nLabelInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error loading labels", t);
-           //ApsSystemUtils.logThrowable(t, this, "getLabel");
             throw new ApsSystemException("Error loading labels", t);
         }
 		return jaxbI18nLabel;
@@ -79,7 +71,6 @@ public class ApiI18nLabelInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error adding label", t);
-            //ApsSystemUtils.logThrowable(t, this, "addLabel");
             throw new ApsSystemException("Error adding labels", t);
         }
 	}
@@ -99,7 +90,6 @@ public class ApiI18nLabelInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error updating label", t);
-            //ApsSystemUtils.logThrowable(t, this, "updateLabel");
             throw new ApsSystemException("Error updating labels", t);
         }
 	}
@@ -117,7 +107,6 @@ public class ApiI18nLabelInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error deleting label", t);
-            //ApsSystemUtils.logThrowable(t, this, "deleteLabel");
             throw new ApsSystemException("Error deleting labels", t);
         }
 	}

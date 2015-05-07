@@ -13,15 +13,14 @@
  */
 package com.agiletec.aps.system.common.entity.model.attribute;
 
-import java.util.Arrays;
+import com.agiletec.aps.util.HtmlHandler;
+
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom.CDATA;
 import org.jdom.Element;
-
-import com.agiletec.aps.util.HtmlHandler;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This class represents a 'Hypertext' Attribute.
@@ -125,26 +124,17 @@ public class HypertextAttribute extends TextAttribute {
     
     @Override
     public JAXBHypertextAttribute getJAXBAttribute(String langCode) {
-        if (null == this.getValue()) {
-            return null;
-        }
-        JAXBHypertextAttribute jaxbAttribute = this.getJAXBAttributeInstance();
-        jaxbAttribute.setName(this.getName());
-        jaxbAttribute.setType(this.getType());
-        Object value = this.getJAXBValue(langCode);
-        if (null != value) {
-            jaxbAttribute.setHtmlValue(value.toString());
-        }
-        if (null != this.getRoles() && this.getRoles().length > 0) {
-            List<String> roles = Arrays.asList(this.getRoles());
-            jaxbAttribute.setRoles(roles);
-        }
-        return jaxbAttribute;
+        JAXBHypertextAttribute jaxbHypertexAttribute = (JAXBHypertextAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbHypertexAttribute) return null;
+		String text = this.getTextForLang(langCode);
+		if (StringUtils.isNotEmpty(text)) {
+			jaxbHypertexAttribute.setHtmlValue(text);
+		}
+		return jaxbHypertexAttribute;
     }
     
     @Override
-    public void valueFrom(DefaultJAXBAttribute jaxbAttribute) {
-        super.valueFrom(jaxbAttribute);
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
         JAXBHypertextAttribute jaxbHypertextAttribute = (JAXBHypertextAttribute) jaxbAttribute;
         String value = jaxbHypertextAttribute.getHtmlValue();
         if (null != value) {

@@ -54,7 +54,7 @@ public class TestContentManager extends BaseTestCase {
 	public void testSearchContents_1_1() throws Throwable {
 		List<String> contentIds = this._contentManager.searchId(null);
 		assertNotNull(contentIds);
-    	assertEquals(24, contentIds.size());
+    	assertEquals(25, contentIds.size());
     	
     	EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
     	creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -111,7 +111,7 @@ public class TestContentManager extends BaseTestCase {
     	EntitySearchFilter[] filters4 = {versionFilter};
     	contentIds = this._contentManager.searchId(filters4);
 		assertNotNull(contentIds);
-    	assertEquals(21, contentIds.size());
+    	assertEquals(22, contentIds.size());
 	}
 	
 	/*
@@ -141,7 +141,7 @@ public class TestContentManager extends BaseTestCase {
     	
 		List<String> contentIds = this._contentManager.searchId(null);
 		assertNotNull(contentIds);
-    	assertEquals(24, contentIds.size());
+    	assertEquals(25, contentIds.size());
     	
     	EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
     	creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -240,7 +240,7 @@ public class TestContentManager extends BaseTestCase {
 		assertNotNull(contentIds);
 		String[] expected = {"ART187", "ART1","EVN193","EVN194","ART180","RAH1",
 				"EVN191","EVN192","RAH101","EVN103","ART104","ART102","EVN23",
-				"EVN24","EVN25","EVN41","EVN20","EVN21","ART111","ART120","ART121","ART122","ART112"};
+				"EVN24","EVN25","EVN41","EVN20","EVN21","ART111","ART120","ART121","ART122","ART112", "ALL4"};
     	assertEquals(expected.length, contentIds.size());
     	this.verifyOrder(contentIds, expected);
 	}
@@ -297,7 +297,7 @@ public class TestContentManager extends BaseTestCase {
     	groupCodes.add(Group.ADMINS_GROUP_NAME);
     	contents = this._contentManager.loadWorkContentsId(null, groupCodes);
     	assertNotNull(contents);
-    	assertEquals(24, contents.size());
+    	assertEquals(25, contents.size());
     }
 	
 	/*
@@ -318,7 +318,7 @@ public class TestContentManager extends BaseTestCase {
     	EntitySearchFilter descrFilter_2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "escr", true);
     	EntitySearchFilter[] filters_2 = {creationOrder, descrFilter_2};
     	contents = this._contentManager.loadWorkContentsId(filters_2, groupCodes);
-    	String[] order = {"ART187", "ART180", "ART179"};
+    	String[] order = {"ALL4", "ART187", "ART180", "ART179"};
     	assertEquals(order.length, contents.size());
     	this.verifyOrder(contents, order);
     }
@@ -337,7 +337,7 @@ public class TestContentManager extends BaseTestCase {
     	EntitySearchFilter descrFilter_1 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "eScR", true);
     	EntitySearchFilter[] filters_1 = {creationOrder, descrFilter_1};
     	List<String> contents = this._contentManager.loadWorkContentsId(filters_1, groupCodes);
-    	String[] order = {"ART187", "ART180", "ART179"};
+    	String[] order = {"ALL4", "ART187", "ART180", "ART179"};
     	assertEquals(order.length, contents.size());
     	this.verifyOrder(contents, order);
     }
@@ -469,7 +469,7 @@ public class TestContentManager extends BaseTestCase {
     
     public void testLoadPublicContents() throws ApsSystemException {
 		List<String> contents = _contentManager.loadPublicContentsId(null, null, null);
-		assertEquals(14, contents.size());
+		assertEquals(15, contents.size());
     }
     
     public void testLoadPublicEvents_1() throws ApsSystemException {

@@ -27,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author E.Santoboni
@@ -38,21 +37,40 @@ public class UnmarshalUtils {
 
 	private static final Logger _logger =  LoggerFactory.getLogger(UnmarshalUtils.class);
 	
+	@Deprecated
 	public static Object unmarshal(ApiMethod apiMethod, HttpServletRequest request, MediaType contentType) throws Throwable {
-		return unmarshal(apiMethod, request.getInputStream(), contentType);
+		return unmarshal(apiMethod.getExpectedType(), request, contentType);
 	}
-
+	
+	public static Object unmarshal(Class expectedType, HttpServletRequest request, MediaType contentType) throws Throwable {
+		ApplicationContext applicationContext = ApsWebApplicationUtils.getWebApplicationContext(request);
+		return unmarshal(applicationContext, expectedType, request.getInputStream(), contentType);
+	}
+	
+	@Deprecated
 	public static Object unmarshal(ApiMethod apiMethod, String requestBody, MediaType contentType) throws Throwable {
-		InputStream stream = new ByteArrayInputStream(requestBody.getBytes());
-		return unmarshal(apiMethod, stream, contentType);
+		return unmarshal(apiMethod.getExpectedType(), requestBody, contentType);
 	}
-
+	
+	@Deprecated
+	public static Object unmarshal(Class expectedType, String requestBody, MediaType contentType) throws Throwable {
+		InputStream stream = new ByteArrayInputStream(requestBody.getBytes());
+		return unmarshal(null, expectedType, stream, contentType);
+	}
+	
+	@Deprecated
 	public static Object unmarshal(ApiMethod apiMethod, InputStream bodyStream, MediaType contentType) throws Throwable {
+		return unmarshal(null, apiMethod.getExpectedType(), bodyStream, contentType);
+	}
+	
+	public static Object unmarshal(ApplicationContext applicationContext, 
+			Class expectedType, InputStream bodyStream, MediaType contentType) throws Throwable {
 		Object bodyObject = null;
 		try {
-			Class expectedType = apiMethod.getExpectedType();
             if (MediaType.APPLICATION_JSON_TYPE.equals(contentType)) {
-                JSONProvider jsonProvider = new JSONProvider();
+                JSONProvider jsonProvider = (null != applicationContext) ? 
+						(JSONProvider) applicationContext.getBean("jsonProvider"): 
+						new JSONProvider();
                 bodyObject = jsonProvider.readFrom(expectedType, expectedType.getGenericSuperclass(),
                         expectedType.getAnnotations(), contentType, null, bodyStream);
             } else {
@@ -62,10 +80,9 @@ public class UnmarshalUtils {
             }
 		} catch (Throwable t) {
 			_logger.error("Error unmarshalling request body", t);
-			//ApsSystemUtils.logThrowable(t, UnmarshalUtils.class, "unmarshal");
 			throw new ApsSystemException("Error unmarshalling request body", t);
 		}
 		return bodyObject;
 	}
-
+	
 }

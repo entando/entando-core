@@ -14,28 +14,23 @@
 package com.agiletec.aps.system.common.entity.model.attribute;
 
 import java.io.Serializable;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author E.Santoboni
  */
-@XmlType(propOrder = {"attributes"})
-public class JAXBListAttribute extends AbstractJAXBAttribute implements Serializable {
+@XmlType(propOrder = {"boolean"})
+public class JAXBBooleanAttribute extends AbstractJAXBAttribute implements Serializable {
     
-    @XmlElement(name = "attribute", required = true)
-    @XmlElementWrapper(name = "attributes")
-    public List<AbstractJAXBAttribute> getAttributes() {
-        return _attributes;
+    @XmlElement(name = "value", required = false)
+    public Boolean getBoolean() {
+        return _boolean;
+    }
+    public void setBoolean(Boolean booleanValue) {
+        this._boolean = booleanValue;
     }
     
-    public void setAttributes(List<AbstractJAXBAttribute> attributes) {
-        this._attributes = attributes;
-    }
-    
-    private List<AbstractJAXBAttribute> _attributes = null;
+    private Boolean _boolean;
     
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+	         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+    
+	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
+        <property name="marshallerProperties">
+            <map>
+                <entry>
+                    <key>
+                        <value>com.sun.xml.bind.marshaller.CharacterEscapeHandler</value>
+                    </key>
+                    <ref bean="ApiCDataCharacterEscapeHandler" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="ApiCDataCharacterEscapeHandler" class="org.entando.entando.aps.system.services.api.model.CDataCharacterEscapeHandler"/>
+    
+    <util:list id="ApiJsonTypes">
+        <value>application/json</value>
+        <value>application/jettison</value>
+    </util:list>
+    
+    <bean id="jsonProvider" class="org.entando.entando.aps.system.services.api.provider.json.JSONProvider">
+        <property name="produceMediaTypes" ref="ApiJsonTypes"/>
+        <property name="consumeMediaTypes" ref="ApiJsonTypes"/>
+		<!-- <property name="dropCollectionWrapperElement" value="true" /> -->
+		<!-- <property name="serializeAsArray" value="true" /> -->
+    </bean>
+    
+    <util:list id="ApiJsonpTypes">
+        <value>application/javascript</value>
+    </util:list>
+    
+    <bean id="jsonpProvider" class="org.entando.entando.aps.system.services.api.provider.jsonp.JSONPProvider">
+        <property name="produceMediaTypes" ref="ApiJsonpTypes" />
+        <!-- <property name="consumeMediaTypes" ref="ApiJsonpTypes"/> -->
+		<!-- <property name="dropCollectionWrapperElement" value="true" /> -->
+		<!-- <property name="serializeAsArray" value="true" /> -->
+    </bean>
+    
+</beans>

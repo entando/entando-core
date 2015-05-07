@@ -31,9 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
-import com.agiletec.aps.system.common.entity.model.attribute.DefaultJAXBAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractJAXBAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBBooleanAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBCompositeAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBDateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.JAXBHypertextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.JAXBListAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBNumberAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.JAXBTextAttribute;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 
@@ -42,7 +47,7 @@ import com.agiletec.aps.system.services.category.ICategoryManager;
  */
 @XmlRootElement(name = "entity")
 @XmlType(propOrder = {"id", "description", "typeCode", "typeDescription", "mainGroup", "categories", "groups", "attributes"})
-@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBHypertextAttribute.class, JAXBListAttribute.class})
+@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class})
 public class JAXBEntity implements Serializable {
 
 	private static final Logger _logger = LoggerFactory.getLogger(JAXBEntity.class);
@@ -64,9 +69,9 @@ public class JAXBEntity implements Serializable {
             }
             for (int i = 0; i < attributes.size(); i++) {
                 AttributeInterface attribute = attributes.get(i);
-                DefaultJAXBAttribute jaxrAttribute = attribute.getJAXBAttribute(langCode);
-                if (null != jaxrAttribute) {
-                    this.getAttributes().add(jaxrAttribute);
+                AbstractJAXBAttribute jaxbAttribute = attribute.getJAXBAttribute(langCode);
+                if (null != jaxbAttribute) {
+                    this.getAttributes().add(jaxbAttribute);
                 }
             }
         } catch (Throwable t) {
@@ -102,7 +107,7 @@ public class JAXBEntity implements Serializable {
                 return prototype;
             }
             for (int i = 0; i < this.getAttributes().size(); i++) {
-                DefaultJAXBAttribute jaxrAttribute = this.getAttributes().get(i);
+                AbstractJAXBAttribute jaxrAttribute = this.getAttributes().get(i);
                 AttributeInterface attribute = (AttributeInterface) prototype.getAttribute(jaxrAttribute.getName());
                 if (null != attribute && attribute.getType().equals(jaxrAttribute.getType())) {
                     attribute.valueFrom(jaxrAttribute);
@@ -128,7 +133,7 @@ public class JAXBEntity implements Serializable {
      * Associate the Entity to the given ID code.
      * @param id The identification string of the Entity.
      */
-    protected void setId(String id) {
+    public void setId(String id) {
         this._id = id;
     }
     
@@ -242,10 +247,10 @@ public class JAXBEntity implements Serializable {
     
     @XmlElement(name = "attribute", required = true)
     @XmlElementWrapper(name = "attributes")
-    public List<DefaultJAXBAttribute> getAttributes() {
+    public List<AbstractJAXBAttribute> getAttributes() {
         return _attributes;
     }
-    protected void setAttributes(List<DefaultJAXBAttribute> attributes) {
+    protected void setAttributes(List<AbstractJAXBAttribute> attributes) {
         this._attributes = attributes;
     }
     
@@ -256,6 +261,6 @@ public class JAXBEntity implements Serializable {
     private String _mainGroup;
     private Set<String> _groups;
     private Set<String> _categories;
-    private List<DefaultJAXBAttribute> _attributes = new ArrayList<DefaultJAXBAttribute>();
+    private List<AbstractJAXBAttribute> _attributes = new ArrayList<AbstractJAXBAttribute>();
     
 }

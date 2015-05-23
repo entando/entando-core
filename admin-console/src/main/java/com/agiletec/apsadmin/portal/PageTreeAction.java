@@ -28,7 +28,7 @@ import com.agiletec.apsadmin.system.AbstractTreeAction;
  * Action principale per la gestione dell'albero delle pagine.
  * @author E.Santoboni
  */
-public class PageTreeAction extends AbstractTreeAction implements IPageTreeAction {
+public class PageTreeAction extends AbstractTreeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageTreeAction.class);
 	
@@ -40,12 +40,10 @@ public class PageTreeAction extends AbstractTreeAction implements IPageTreeActio
 		return super.execute();
 	}
 	
-	@Override
 	public String moveUp() {
 		return this.movePage(true);
 	}
 	
-	@Override
 	public String moveDown() {
 		return this.movePage(false);
 	}
@@ -98,7 +96,6 @@ public class PageTreeAction extends AbstractTreeAction implements IPageTreeActio
 		return SUCCESS;
 	}
 
-	@Override
 	public String copy() {
 		String selectedNode = this.getSelectedNode();
 		String check = this.checkSelectedNode(selectedNode);
@@ -141,13 +138,11 @@ public class PageTreeAction extends AbstractTreeAction implements IPageTreeActio
 		return codes.contains(pageGroup);
 	}
 	
-	@Override
 	@Deprecated
 	public IPage getRoot() {
 		return this.getPageManager().getRoot();
 	}
 	
-	@Override
 	@Deprecated
 	public ITreeNode getTreeRootNode() {
 		return this.getAllowedTreeRootNode();

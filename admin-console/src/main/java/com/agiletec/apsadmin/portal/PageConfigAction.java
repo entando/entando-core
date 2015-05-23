@@ -26,11 +26,10 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
  * Main action class for the pages configuration.
  * @author E.Santoboni
  */
-public class PageConfigAction extends AbstractPortalAction implements IPageConfigAction {
+public class PageConfigAction extends AbstractPortalAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageConfigAction.class);
 	
-	@Override
 	public String configure() {
 		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
 		this.setPageCode(pageCode);
@@ -39,7 +38,6 @@ public class PageConfigAction extends AbstractPortalAction implements IPageConfi
 		return SUCCESS;
 	}
 	
-	@Override
 	public String editFrame() {
 		try {
 			String result = this.checkBaseParams();
@@ -60,21 +58,16 @@ public class PageConfigAction extends AbstractPortalAction implements IPageConfi
 			}
 		} catch (Exception e) {
 			_logger.error("error in edit frame", e);
-			//ApsSystemUtils.logThrowable(e, this, "editFrame");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	/**
-	 * @deprecated Use {@link #joinWidget()} instead
-	 */
-	@Override
+	@Deprecated
 	public String joinShowlet() {
 		return this.joinWidget();
 	}
 
-	@Override
 	public String joinWidget() {
 		try {
 			String result = this.checkBaseParams();
@@ -100,48 +93,37 @@ public class PageConfigAction extends AbstractPortalAction implements IPageConfi
 			this.addActivityStreamInfo(ApsAdminSystemConstants.ADD, true);
 		} catch (Exception e) {
 			_logger.error("error in joinWidget", e);
-			//ApsSystemUtils.logThrowable(e, this, "joinWidget");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	@Deprecated
 	public String removeShowlet() {
 		return this.trashWidget();
 	}
 	
-	/**
-	 * @deprecated Use {@link #trashWidget()} instead
-	 */
-	@Override
+	@Deprecated
 	public String trashShowlet() {
 		return trashWidget();
 	}
 
-	@Override
 	public String trashWidget() {
 		try {
 			String result = this.checkBaseParams();
 			if (null != result) return result;
 		} catch (Exception e) {
 			_logger.error("error in trashWidget", e);
-			//ApsSystemUtils.logThrowable(e, this, "trashShowlet");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	/**
-	 * @deprecated Use {@link #deleteWidget()} instead
-	 */
-	@Override
+	@Deprecated
 	public String deleteShowlet() {
 		return deleteWidget();
 	}
 
-	@Override
 	public String deleteWidget() {
 		try {
 			String result = this.checkBaseParams();
@@ -152,7 +134,6 @@ public class PageConfigAction extends AbstractPortalAction implements IPageConfi
 			this.addActivityStreamInfo(ApsAdminSystemConstants.DELETE, true);
 		} catch (Exception e) {
 			_logger.error("error in deleteWidget", e);
-			//ApsSystemUtils.logThrowable(e, this, "deleteWidget");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -240,11 +221,20 @@ public class PageConfigAction extends AbstractPortalAction implements IPageConfi
 		this._widgetTypeCode = widgetTypeCode;
 	}
 	
+	@Deprecated
 	public Widget getShowlet() {
-		return _showlet;
+		return this.getWidget();
 	}
+	@Deprecated
 	public void setShowlet(Widget widget) {
-		this._showlet = widget;
+		this.setWidget(widget);
+	}
+	
+	public Widget getWidget() {
+		return _widget;
+	}
+	public void setWidget(Widget widget) {
+		this._widget = widget;
 	}
 	
 	private String _pageCode;
@@ -253,6 +243,6 @@ public class PageConfigAction extends AbstractPortalAction implements IPageConfi
 	
 	private String _widgetTypeCode;
 	
-	private Widget _showlet;
+	private Widget _widget;
 	
 }

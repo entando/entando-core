@@ -32,7 +32,7 @@ import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
  * Action per la gestione della configurazione della showlet erogatore contenuto singolo.
  * @author E.Santoboni
  */
-public class ContentViewerWidgetAction extends SimpleWidgetConfigAction implements IContentViewerWidgetAction {
+public class ContentViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentViewerWidgetAction.class);
 	
@@ -57,7 +57,6 @@ public class ContentViewerWidgetAction extends SimpleWidgetConfigAction implemen
 				}
 			} catch (Throwable t) {
 				_logger.error("Error validating content {}", this.getContentId(), t);
-				//ApsSystemUtils.logThrowable(t, this, "validate", "Errore in validazione contenuto con id " + this.getContentId());
 				throw new RuntimeException("Errore in validazione contenuto con id " + this.getContentId(), t);
 			}
 		}
@@ -66,19 +65,16 @@ public class ContentViewerWidgetAction extends SimpleWidgetConfigAction implemen
 				this.createValuedShowlet();
 			} catch (Throwable t) {
 				_logger.error("error creating new widget", t);
-				//ApsSystemUtils.logThrowable(t, this, "validate", "Errore in creazione showlet valorizzata");
-				throw new RuntimeException("Errore in creazione showlet valorizzata", t);
+				throw new RuntimeException("Errore in creazione widget valorizzato", t);
 			}
 		}
 	}
 	
-	@Override
 	public String joinContent() {
 		try {
 			this.createValuedShowlet();
 		} catch (Throwable t) {
 			_logger.error("error in joinContent", t);
-			//ApsSystemUtils.logThrowable(t, this, "joinContent");
 			throw new RuntimeException("Errore in associazione contenuto", t);
 		}
 		return SUCCESS;
@@ -95,7 +91,6 @@ public class ContentViewerWidgetAction extends SimpleWidgetConfigAction implemen
 			contentVo = this.getContentManager().loadContentVO(contentId);
 		} catch (Throwable t) {
 			_logger.error("error in getContentVo for content {}", contentId, t);
-			//ApsSystemUtils.logThrowable(t, this, "getContentVo");
 			throw new RuntimeException("Errore in caricamento contenuto vo", t);
 		}
 		return contentVo;

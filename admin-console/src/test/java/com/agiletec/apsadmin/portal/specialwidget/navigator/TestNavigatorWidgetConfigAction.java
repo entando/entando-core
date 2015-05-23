@@ -24,6 +24,7 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.page.widget.NavigatorExpression;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
+import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -41,7 +42,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testInitConfigNavigator_1() throws Throwable {
 		String result = this.executeConfigNavigator("admin", "homepage", "1", "leftmenu");
 		assertEquals(Action.SUCCESS, result);
-		INavigatorWidgetConfigAction action = (INavigatorWidgetConfigAction) this.getAction();
+		NavigatorWidgetConfigAction action = (NavigatorWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		assertEquals(0, widget.getConfig().size());
@@ -50,7 +51,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testInitConfigNavigator_2() throws Throwable {
 		String result = this.executeConfigNavigator("admin", "pagina_1", "2", null);
 		assertEquals(Action.SUCCESS, result);
-		INavigatorWidgetConfigAction action = (INavigatorWidgetConfigAction) this.getAction();
+		NavigatorWidgetConfigAction action = (NavigatorWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		ApsProperties props = widget.getConfig();
@@ -71,11 +72,11 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		params.put("frame", "0");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
-		params.put("movement", INavigatorWidgetConfigAction.MOVEMENT_DOWN_CODE);
+		params.put("movement", ApsAdminSystemConstants.MOVEMENT_DOWN_CODE);
 		params.put("expressionIndex", "1");
 		String result = this.executeMoveExpression("admin", params);
 		assertEquals(Action.SUCCESS, result);
-		INavigatorWidgetConfigAction action = (INavigatorWidgetConfigAction) this.getAction();
+		NavigatorWidgetConfigAction action = (NavigatorWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		ApsProperties props = widget.getConfig();
@@ -94,11 +95,11 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		params.put("frame", "0");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
-		params.put("movement", INavigatorWidgetConfigAction.MOVEMENT_UP_CODE);
+		params.put("movement", ApsAdminSystemConstants.MOVEMENT_UP_CODE);
 		params.put("expressionIndex", "2");
 		String result = this.executeMoveExpression("admin", params);
 		assertEquals(Action.SUCCESS, result);
-		INavigatorWidgetConfigAction action = (INavigatorWidgetConfigAction) this.getAction();
+		NavigatorWidgetConfigAction action = (NavigatorWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		ApsProperties props = widget.getConfig();
@@ -117,11 +118,11 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		params.put("frame", "0");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
-		params.put("movement", INavigatorWidgetConfigAction.MOVEMENT_UP_CODE);
+		params.put("movement", ApsAdminSystemConstants.MOVEMENT_UP_CODE);
 		params.put("expressionIndex", "3");//INDICE SUPERIORE AL SIZE
 		String result = this.executeMoveExpression("admin", params);
 		assertEquals(Action.SUCCESS, result);
-		INavigatorWidgetConfigAction action = (INavigatorWidgetConfigAction) this.getAction();
+		NavigatorWidgetConfigAction action = (NavigatorWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		ApsProperties props = widget.getConfig();
@@ -143,7 +144,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		params.put("expressionIndex", "1");
 		String result = this.executeRemoveExpression("admin", params);
 		assertEquals(Action.SUCCESS, result);
-		INavigatorWidgetConfigAction action = (INavigatorWidgetConfigAction) this.getAction();
+		NavigatorWidgetConfigAction action = (NavigatorWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		ApsProperties props = widget.getConfig();
@@ -165,7 +166,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		params.put("expressionIndex", "3");//INDICE SUPERIORE AL SIZE
 		String result = this.executeRemoveExpression("admin", params);
 		assertEquals(Action.SUCCESS, result);
-		INavigatorWidgetConfigAction action = (INavigatorWidgetConfigAction) this.getAction();
+		NavigatorWidgetConfigAction action = (NavigatorWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		ApsProperties props = widget.getConfig();

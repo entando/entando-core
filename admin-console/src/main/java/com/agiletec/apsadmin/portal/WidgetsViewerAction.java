@@ -25,28 +25,22 @@ import com.agiletec.aps.system.services.page.IPage;
 /**
  * @author E.Santoboni
  */
-public class WidgetsViewerAction extends AbstractPortalAction implements IWidgetsViewerAction {
+public class WidgetsViewerAction extends AbstractPortalAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(WidgetsViewerAction.class);
 	
-	/**
-	 * @deprecated Use {@link #viewWidgets()} instead
-	 */
-	@Override
+	@Deprecated
 	public String viewShowlets() {
 		return viewWidgets();
 	}
 
-	@Override
 	public String viewWidgets() {
 		return SUCCESS;
 	}
 	
-	/**
-	 * @deprecated Use {@link #getWidgetUtilizers(String)} instead
-	 */
+	@Deprecated
 	public List<IPage> getShowletUtilizers(String showletTypeCode) {
-		return getWidgetUtilizers(showletTypeCode);
+		return this.getWidgetUtilizers(showletTypeCode);
 	}
 
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) {
@@ -55,7 +49,6 @@ public class WidgetsViewerAction extends AbstractPortalAction implements IWidget
 			utilizers = this.getPageManager().getWidgetUtilizers(widgetTypeCode);
 		} catch (Throwable t) {
 			_logger.error("Error on extracting widgetUtilizers : widget type code {}", t);
-			//ApsSystemUtils.logThrowable(t, this, "getWidgetUtilizers");
 			throw new RuntimeException("Error on extracting widgetUtilizers : widget type code " + widgetTypeCode, t);
 		}
 		return utilizers;
@@ -69,35 +62,37 @@ public class WidgetsViewerAction extends AbstractPortalAction implements IWidget
 		return group;
 	}
 	
-	/**
-	 * @deprecated Use {@link #viewWidgetUtilizers()} instead
-	 */
-	@Override
+	@Deprecated
 	public String viewShowletUtilizers() {
 		return viewWidgetUtilizers();
 	}
-
-	@Override
+	
 	public String viewWidgetUtilizers() {
 		return SUCCESS;
 	}
 	
-	public List<IPage> getShowletUtilizers() {
+	public List<IPage> getWidgetUtilizers() {
 		return this.getWidgetUtilizers(this.getWidgetTypeCode());
 	}
+	@Deprecated
+	public List<IPage> getShowletUtilizers() {
+		return this.getWidgetUtilizers();
+	}
 	
-	public WidgetType getShowletType(String typeCode) {
+	public WidgetType getWidgetType(String typeCode) {
 		return this.getWidgetTypeManager().getWidgetType(typeCode);
+	}
+	@Deprecated
+	public WidgetType getShowletType(String typeCode) {
+		return this.getWidgetType(typeCode);
 	}
 	
 	@Deprecated
 	public String getShowletTypeCode() {
-//		return _showletTypeCode;
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
 	public void setShowletTypeCode(String showletTypeCode) {
-//		this._showletTypeCode = showletTypeCode;
 		this._widgetTypeCode = showletTypeCode;
 	}
 	
@@ -108,9 +103,7 @@ public class WidgetsViewerAction extends AbstractPortalAction implements IWidget
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}
-
-	@Deprecated
-	private String _showletTypeCode;
+	
 	private String _widgetTypeCode;
 	
 }

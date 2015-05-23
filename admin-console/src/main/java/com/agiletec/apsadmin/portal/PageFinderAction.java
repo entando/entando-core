@@ -30,11 +30,10 @@ import com.agiletec.aps.system.services.user.UserDetails;
  * This action class contains all the elements currently use to perform searches across the portal pages.
  * @author M.E. Minnai
  */
-public class PageFinderAction extends AbstractPortalAction implements IPageFinderAction {
+public class PageFinderAction extends AbstractPortalAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageFinderAction.class);
 	
-	@Override
 	public List<IPage> getPagesFound() {	
 		List<IPage> result = null;
 		try {
@@ -44,7 +43,6 @@ public class PageFinderAction extends AbstractPortalAction implements IPageFinde
 			Collections.sort(result, comparator);
 		} catch (Throwable t) {
 			_logger.error("Error on searching pages", t);
-			//ApsSystemUtils.logThrowable(t, this, "Error on searching pages");
 			throw new RuntimeException("Error on searching pages", t);
 		}
 		return result;

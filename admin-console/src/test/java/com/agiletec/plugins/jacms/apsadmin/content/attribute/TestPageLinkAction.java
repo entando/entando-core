@@ -19,7 +19,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.apsadmin.portal.IPageTreeAction;
+import com.agiletec.apsadmin.portal.PageTreeAction;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.ITreeAction;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
@@ -40,11 +40,11 @@ public class TestPageLinkAction extends AbstractBaseTestContentAction {
 		this.initContentAction("/do/jacms/Content/Link", "configPageLink", contentOnSessionMarker);
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		ITreeNode root = ((IPageTreeAction) this.getAction()).getAllowedTreeRootNode();
+		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
 		assertEquals(3, root.getChildren().length);
-		ITreeNode showableRoot = ((IPageTreeAction) this.getAction()).getShowableTree();
+		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		assertEquals(0, showableRoot.getChildren().length);
 	}
@@ -54,11 +54,11 @@ public class TestPageLinkAction extends AbstractBaseTestContentAction {
 		this.initContentAction("/do/jacms/Content/Link", "configPageLink", contentOnSessionMarker);
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		ITreeNode root = ((IPageTreeAction) this.getAction()).getAllowedTreeRootNode();
+		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
 		assertEquals(4, root.getChildren().length);
-		ITreeNode showableRoot = ((IPageTreeAction) this.getAction()).getShowableTree();
+		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		assertEquals(0, showableRoot.getChildren().length);
 	}
@@ -84,11 +84,11 @@ public class TestPageLinkAction extends AbstractBaseTestContentAction {
 	}
 
 	private void checkTestOpenPageTree_ART102() throws Throwable {
-		ITreeNode root = ((IPageTreeAction) this.getAction()).getAllowedTreeRootNode();
+		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
 		assertEquals(4, root.getChildren().length);
-		ITreeNode showableRoot = ((IPageTreeAction) this.getAction()).getShowableTree();
+		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		assertEquals(4, showableRoot.getChildren().length);
 	}

@@ -32,11 +32,10 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
  * This action class handles the configuration of the widgets with parameters.
  * @author E.Santoboni
  */
-public class SimpleWidgetConfigAction extends AbstractPortalAction implements ISimpleWidgetConfigAction {
+public class SimpleWidgetConfigAction extends AbstractPortalAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(SimpleWidgetConfigAction.class);
 	
-	@Override
 	public String init() {
 		this.checkBaseParams();
 		return this.extractInitConfig();
@@ -59,16 +58,16 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 			_logger.info("Edit Widget config {} - Page {} - Frame {}", this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
 			widget = this.createCloneFrom(widget);
 		}
-		this.setShowlet(widget);
+		this.setWidget(widget);
 		return SUCCESS;
 	}
 	
 	protected Widget createNewShowlet() throws Exception {
-		if (this.getWidgetTypeCode() == null || this.getShowletType(this.getWidgetTypeCode()) == null) {
+		if (this.getWidgetTypeCode() == null || this.getWidgetType(this.getWidgetTypeCode()) == null) {
 			throw new Exception("Widget Code missin or invalid : " + this.getWidgetTypeCode());
 		}
 		Widget widget = new Widget();
-		WidgetType type = this.getShowletType(this.getWidgetTypeCode());
+		WidgetType type = this.getWidgetType(this.getWidgetTypeCode());
 		widget.setType(type);
 		widget.setConfig(new ApsProperties());
 		return widget;
@@ -83,7 +82,6 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 		return clone;
 	}
 	
-	@Override
 	public String save() {
 		try {
 			this.checkBaseParams();
@@ -95,7 +93,6 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 			this.addActivityStreamInfo(strutsAction, true);
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return "configure";
@@ -119,7 +116,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 				widget.getConfig().setProperty(paramName, value);
 			}
 		}
-		this.setShowlet(widget);
+		this.setWidget(widget);
 	}
 	
 	protected String checkBaseParams() {
@@ -155,25 +152,30 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 		this._frame = frame;
 	}
 	
+	@Deprecated
 	public WidgetType getShowletType(String typeCode) {
+		return this.getWidgetType(typeCode);
+	}
+	public WidgetType getWidgetType(String typeCode) {
 		return this.getWidgetTypeManager().getWidgetType(typeCode);
 	}
 	
-	/**
-	 * @deprecated Use {@link #getWidget()} instead
-	 */
-	@Override
+	@Deprecated
 	public Widget getShowlet() {
-		return getWidget();
+		return this.getWidget();
+	}
+	public Widget getWidget() {
+		return _widget;
 	}
 	
-	@Override
-	public Widget getWidget() {
-		return _showlet;
-	}
+	@Deprecated
 	public void setShowlet(Widget widget) {
-		this._showlet = widget;
+		this.setWidget(widget);
 	}
+	public void setWidget(Widget widget) {
+		this._widget = widget;
+	}
+	
 	@Deprecated
 	public String getShowletTypeCode() {
 		return this.getWidgetTypeCode();
@@ -195,6 +197,6 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction implements IS
 	
 	private String _widgetTypeCode;
 	
-	private Widget _showlet;
+	private Widget _widget;
 	
 }

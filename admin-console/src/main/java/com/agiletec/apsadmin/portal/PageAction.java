@@ -41,7 +41,7 @@ import com.agiletec.apsadmin.system.BaseActionHelper;
  * Main action for pages handling
  * @author E.Santoboni
  */
-public class PageAction extends AbstractPortalAction implements IPageAction {
+public class PageAction extends AbstractPortalAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageAction.class);
 	
@@ -92,7 +92,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		}
 	}
 	
-	@Override
 	public String newPage() {
 		String selectedNode = this.getSelectedNode();
 		try {
@@ -119,7 +118,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		this.setShowable(true);
 	}
 	
-	@Override
 	public String edit() {
 		String pageCode = this.getSelectedNode();
 		try {
@@ -136,7 +134,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		return SUCCESS;
 	}
 	
-	@Override
 	public String joinExtraGroup() {
 		try {
 			this.updateTitles();
@@ -148,7 +145,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		return SUCCESS;
 	}
 	
-	@Override
 	public String removeExtraGroup() {
 		try {
 			this.updateTitles();
@@ -160,7 +156,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		return SUCCESS;
 	}
 	
-	@Override
 	public String showDetail() {
 		String pageCode = this.getSelectedNode();
 		try {
@@ -192,7 +187,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		this.setMimeType(pageToEdit.getMimeType());
 	}
 	
-	@Override
 	public String paste() {
 		String selectedNode = this.getSelectedNode();
 		String copyingPageCode = this.getRequest().getParameter("copyingPageCode");
@@ -224,7 +218,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		return SUCCESS;
 	}
 	
-	@Override
 	public String save() {
 		IPage page = null;
 		try {
@@ -359,7 +352,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		}
 	}
 	
-	@Override
 	public String trash() {
 		String selectedNode = this.getSelectedNode();
 		try {
@@ -382,7 +374,6 @@ public class PageAction extends AbstractPortalAction implements IPageAction {
 		return SUCCESS;
 	}
 	
-	@Override
 	public String delete() {
 		try {
 			String check = this.checkDelete(this.getNodeToBeDelete());

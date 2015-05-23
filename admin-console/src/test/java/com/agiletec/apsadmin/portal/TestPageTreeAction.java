@@ -41,11 +41,11 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		this.setUserOnSession("admin");
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		ITreeNode root = ((IPageTreeAction) this.getAction()).getAllowedTreeRootNode();
+		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
 		assertEquals(6, root.getChildren().length);
-		ITreeNode showableRoot = ((IPageTreeAction) this.getAction()).getShowableTree();
+		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		assertEquals(0, showableRoot.getChildren().length);
 	}
@@ -55,12 +55,12 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		this.setUserOnSession("pageManagerCustomers");
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		ITreeNode root = ((IPageTreeAction) this.getAction()).getAllowedTreeRootNode();
+		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals(AbstractPortalAction.VIRTUAL_ROOT_CODE, root.getCode());
 		assertEquals(1, root.getChildren().length);
 		assertEquals("customers_page", root.getChildren()[0].getCode());
-		ITreeNode showableRoot = ((IPageTreeAction) this.getAction()).getShowableTree();
+		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals(AbstractPortalAction.VIRTUAL_ROOT_CODE, showableRoot.getCode());
 		assertEquals(0, showableRoot.getChildren().length);
 	}
@@ -85,7 +85,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 	}
 
 	private void checkTestViewTree_3_4() throws Throwable {
-		ITreeNode showableRoot = ((IPageTreeAction) this.getAction()).getShowableTree();
+		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		ITreeNode[] children = showableRoot.getChildren();
 		assertEquals(6, children.length);
@@ -124,7 +124,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 	}
 
 	private void checkTestViewTree_5_6() throws Throwable {
-		ITreeNode showableRoot = ((IPageTreeAction) this.getAction()).getShowableTree();
+		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals(AbstractPortalAction.VIRTUAL_ROOT_CODE, showableRoot.getCode());
 		ITreeNode[] children = showableRoot.getChildren();
 		assertEquals(1, children.length);

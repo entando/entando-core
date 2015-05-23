@@ -35,7 +35,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testInitConfigSimpleParameter_1() throws Throwable {
 		String result = this.executeConfigSimpleParameter("admin", "homepage", "1", "formAction");
 		assertEquals(Action.SUCCESS, result);
-		ISimpleWidgetConfigAction action = (ISimpleWidgetConfigAction) this.getAction();
+		SimpleWidgetConfigAction action = (SimpleWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		assertEquals(0, widget.getConfig().size());
@@ -46,11 +46,11 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 		assertEquals("pageTree", result);
 		assertEquals(1, this.getAction().getActionErrors().size());
 	}
-
+	
 	public void testInitConfigSimpleParameter_2() throws Throwable {
 		String result = this.executeConfigSimpleParameter("admin", "pagina_2", "2", null);
 		assertEquals(Action.SUCCESS, result);
-		ISimpleWidgetConfigAction action = (ISimpleWidgetConfigAction) this.getAction();
+		SimpleWidgetConfigAction action = (SimpleWidgetConfigAction) this.getAction();
 		Widget widget = action.getWidget();
 		assertNotNull(widget);
 		ApsProperties props = widget.getConfig();

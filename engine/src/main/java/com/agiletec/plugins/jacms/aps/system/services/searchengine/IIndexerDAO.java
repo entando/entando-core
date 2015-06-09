@@ -14,7 +14,6 @@
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;

@@ -162,8 +162,7 @@ public class SearchEngineManager extends AbstractService
             this._indexerDao.add(entity);
         } catch (ApsSystemException e) {
         	_logger.error("Error saving content to index", e);
-        	//ApsSystemUtils.logThrowable(e, this, "addEntityToIndex", "Error saving content to index");
-            throw e;
+        	throw e;
         }
 	}
 	
@@ -173,8 +172,7 @@ public class SearchEngineManager extends AbstractService
             this._indexerDao.delete(IIndexerDAO.CONTENT_ID_FIELD_NAME, entityId);
         } catch (ApsSystemException e) {
         	_logger.error("Error deleting content {} from index", entityId, e);
-        	//ApsSystemUtils.logThrowable(e, this, "deleteIndexedEntity", "Errore nella cancellazione di un contenuto");
-            throw e;
+        	throw e;
         }
 	}
 	
@@ -191,7 +189,6 @@ public class SearchEngineManager extends AbstractService
 			}
 		} catch (Throwable t) {
 			_logger.error("error updating LastReloadInfo", t);
-			//ApsSystemUtils.logThrowable(t, this, "notifyEndingIndexLoading", "errore in aggiornamento LastReloadInfo");
 		} finally {
 			if (this.getStatus() != STATUS_NEED_TO_RELOAD_INDEXES) {
 				this.setStatus(STATUS_READY);
@@ -219,18 +216,9 @@ public class SearchEngineManager extends AbstractService
     		contentsId = _searcherDao.searchContentsId(langCode, word, allowedGroups);
     	} catch (ApsSystemException e) {
     		_logger.error("Error searching content id list. lang:{}, word:{}", langCode, word, e);
-    		//ApsSystemUtils.logThrowable(e, this, "searchContentsId", "Errore in ricerca lista identificativi contenuto");
     		throw e;
     	}
     	return contentsId;
-	}
-	
-	/**
-	 * @deprecated From jAPS 2.0 version 2.0.9. Use getStatus() method
-	 */
-	@Override
-	public int getState() {
-		return this.getStatus();
 	}
 	
 	@Override
@@ -248,8 +236,7 @@ public class SearchEngineManager extends AbstractService
             this.addEntityToIndex(entity);
         } catch (ApsSystemException e) {
         	_logger.error("Error updating content", e);
-        	//ApsSystemUtils.logThrowable(e, this, "update", "Errore nell'aggiornamento di un contenuto");
-            throw e;
+        	throw e;
         }
 	}
 	

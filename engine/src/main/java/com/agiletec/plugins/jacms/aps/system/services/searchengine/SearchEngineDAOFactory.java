@@ -59,7 +59,6 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 			indexerDao.init(this.getDirectory(subDir), newIndex);
 		} catch (Throwable t) {
 			_logger.error("Error getting indexer", t);
-			//ApsSystemUtils.logThrowable(t, this, "getIndexer", "Error creating new indexer");
 			throw new ApsSystemException("Error creating new indexer", t);
 		}
 		return indexerDao;
@@ -74,7 +73,6 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 			searcherDao.init(this.getDirectory(subDir));
 		} catch (Throwable t) {
 			_logger.error("Error creating new searcher", t);
-			//ApsSystemUtils.logThrowable(t, this, "getSearcher", "Error creating new searcher");
 			throw new ApsSystemException("Error creating new searcher", t);
 		}
 		return searcherDao;

@@ -19,12 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -39,6 +37,8 @@ import com.agiletec.aps.system.common.util.EntityAttributeIterator;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.IndexWriterConfig;
 
 /**
  * Data Access Object dedita alla indicizzazione di documenti.
@@ -59,8 +59,9 @@ public class IndexerDAO implements IIndexerDAO {
 	public void init(File dir, boolean newIndex) throws ApsSystemException {
 		try {
 			this._dir = FSDirectory.open(dir);
-			boolean indexExists = IndexReader.indexExists(this._dir);
-			IndexWriter writer = new IndexWriter(_dir, getAnalyzer(), !indexExists, new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH));
+			//boolean indexExists = IndexReader.indexExists(this._dir);
+			IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
+			//IndexWriter writer = new IndexWriter(_dir, getAnalyzer(), !indexExists, new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH));
 			writer.close();
 		} catch (Throwable t) {
 			throw new ApsSystemException("Errore in creazione directory", t);
@@ -87,9 +88,10 @@ public class IndexerDAO implements IIndexerDAO {
 	 */
     private synchronized void add(Document document) throws ApsSystemException {
         try {
-            IndexWriter writer = new IndexWriter(_dir, this.getAnalyzer(), false, new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH));
-            writer.addDocument(document);
-            writer.optimize();
+            //IndexWriter writer = new IndexWriter(_dir, this.getAnalyzer(), false, new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH));
+            IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
+			writer.addDocument(document);
+            //writer.optimize();
             writer.close();
         } catch (IOException e) {
             throw new ApsSystemException(
@@ -165,13 +167,15 @@ public class IndexerDAO implements IIndexerDAO {
      */
     @Override
 	public synchronized void delete(String name, String value) throws ApsSystemException {
-        IndexReader reader = null;
+        //IndexReader reader = null;
         try {
-            reader = IndexReader.open(this._dir, false);
-            reader.deleteDocuments(new Term(name, value));
-            reader.close();
-            IndexWriter writer = new IndexWriter(this._dir, this.getAnalyzer(), false, new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH));
-            writer.optimize();
+            //reader = IndexReader.open(this._dir, false);
+            //reader.deleteDocuments(new Term(name, value));
+            //reader.close();
+			IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
+            //IndexWriter writer = new IndexWriter(this._dir, this.getAnalyzer(), false, new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH));
+            //writer.optimize();
+			writer.deleteDocuments(new Term(name, value));
             writer.close();
         } catch (IOException e) {
             throw new ApsSystemException(
@@ -185,8 +189,12 @@ public class IndexerDAO implements IIndexerDAO {
     }
     
     private Analyzer getAnalyzer() {
-        return new StandardAnalyzer(Version.LUCENE_30);
+        return new StandardAnalyzer(Version.LUCENE_42);
     }
+	
+	private IndexWriterConfig getIndexWriterConfig() {
+		return new IndexWriterConfig(Version.LUCENE_42, this.getAnalyzer());
+	}
     
 	protected ILangManager getLangManager() {
 		return _langManager;

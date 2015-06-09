@@ -22,11 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -36,11 +33,16 @@ import org.apache.lucene.util.Version;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.store.SimpleFSDirectory;
 
 /**
  * Data Access Object dedita alle operazioni di ricerca 
  * ad uso del motore di ricerca interno.
- * @author W.Ambu
+ * @author E.Santoboni
  */
 public class SearcherDAO implements ISearcherDAO {
 	
@@ -54,7 +56,8 @@ public class SearcherDAO implements ISearcherDAO {
 	}
 	
 	private IndexSearcher getSearcher() throws IOException {
-		IndexReader reader = IndexReader.open(FSDirectory.open(this._indexDir), true);
+		FSDirectory directory = new SimpleFSDirectory(_indexDir);
+		IndexReader reader = DirectoryReader.open(directory);
 		IndexSearcher searcher = new IndexSearcher(reader);
 		return searcher;
 	}
@@ -63,7 +66,7 @@ public class SearcherDAO implements ISearcherDAO {
 		try {
 			if (searcher != null) {
 				searcher.getIndexReader().close();
-				searcher.close();
+				//searcher.close();
 			}
 		} catch (IOException e) {
 			throw new ApsSystemException("Errore in chiusura searcher", e);
@@ -85,13 +88,14 @@ public class SearcherDAO implements ISearcherDAO {
      * @return La lista di identificativi contenuto.
      * @throws ApsSystemException
      */
+	@Override
     public List<String> searchContentsId(String langCode, 
     		String word, Collection<String> allowedGroups) throws ApsSystemException {
     	List<String> contentsId = new ArrayList<String>();
     	IndexSearcher searcher = null;
     	try {
     		searcher = this.getSearcher();
-    		QueryParser parser = new QueryParser(Version.LUCENE_30, langCode, this.getAnalyzer());
+    		QueryParser parser = new QueryParser(Version.LUCENE_42, langCode, this.getAnalyzer());
     		String queryString = this.createQueryString(langCode, word, allowedGroups);
         	Query query = parser.parse(queryString);
            	int maxSearchLength = 1000;
@@ -139,9 +143,10 @@ public class SearcherDAO implements ISearcherDAO {
 	}
     
     private Analyzer getAnalyzer() {
-        return new StandardAnalyzer(Version.LUCENE_30);
+        return new StandardAnalyzer(Version.LUCENE_42);
     }
-
+	
+	@Override
     public void close() {
     	// nothing to do
     }

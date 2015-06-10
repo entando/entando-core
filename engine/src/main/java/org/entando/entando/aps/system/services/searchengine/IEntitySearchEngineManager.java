@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
 
 /**
  * Interfaccia base per i servizi detentori delle operazioni di indicizzazione 
@@ -29,14 +30,14 @@ public interface IEntitySearchEngineManager extends ISearchEngineManager {
 	/**
      * Aggiorna le indicizzazioni relative ad una entità.
      * @param entity L'entità di cui aggiornare le indicizzazioni.
-     * @throws ApsSystemException
+     * @throws ApsSystemException In caso di errore
      */
     public void updateIndexedEntity(IApsEntity entity) throws ApsSystemException;
     
     /**
      * Cancella una entità in base all'identificativo.
      * @param entityId L'identificativo dell'entità.
-     * @throws ApsSystemException
+     * @throws ApsSystemException In caso di errore
      */
     public void deleteIndexedEntity(String entityId) throws ApsSystemException;
     
@@ -44,7 +45,7 @@ public interface IEntitySearchEngineManager extends ISearchEngineManager {
      * Aggiunge un documento relativo ad una entità 
      * nel db del motore di ricerca.
      * @param entity Il contenuto da cui estrarre il documento.
-     * @throws ApsSystemException
+     * @throws ApsSystemException In caso di errore
      */
     public void addEntityToIndex(IApsEntity entity) throws ApsSystemException;
     
@@ -56,9 +57,13 @@ public interface IEntitySearchEngineManager extends ISearchEngineManager {
      * inserite stringhe di ricerca del tipo "Venice Amsterdam" viene considerato come 
      * se fosse "Venice OR Amsterdam".
      * @param allowedGroups I gruppi autorizzati alla visualizzazione.
-     * @throws ApsSystemException
+	 * @return La lista di identificativi di entità.
+     * @throws ApsSystemException In caso di errore
      */
 	public List<String> searchEntityId(String langCode, 
 			String word, Collection<String> allowedGroups) throws ApsSystemException;
+	
+	public List<String> searchEntityId(String langCode, String word, 
+			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
 }

@@ -29,11 +29,10 @@ public interface ISearchEngineDAOFactory {
 	
 	/**
 	 * Restituisce la classe dao delegata alle operazioni di indicizzazione.
-	 * @param newIndex Discrimina la costruzione.
 	 * @return La classe dao delegata alle operazioni di indicizzazione.
 	 * @throws ApsSystemException In caso nella errore.
 	 */
-	public IIndexerDAO getIndexer(boolean newIndex) throws ApsSystemException;
+	public IIndexerDAO getIndexer() throws ApsSystemException;
 	
 	/**
 	 * Restituisce la classe dao delegata alle operazioni di ricerca.
@@ -44,13 +43,12 @@ public interface ISearchEngineDAOFactory {
 	
 	/**
 	 * Restituisce la classe dao delegata alle operazioni di indicizzazione.
-	 * @param newIndex Discrimina la costruzione.
 	 * @param subDir La sottocartella (figlia della root a servizio del sistema) 
 	 * utilizzata per le operazioni di indicizzazione dei documenti.
 	 * @return La classe dao delegata alle operazioni di indicizzazione.
 	 * @throws ApsSystemException In caso nella errore.
 	 */
-	public IIndexerDAO getIndexer(boolean newIndex, String subDir) throws ApsSystemException;
+	public IIndexerDAO getIndexer(String subDir) throws ApsSystemException;
 	
 	/**
 	 * Restituisce la classe dao delegata alle operazioni di ricerca.
@@ -75,5 +73,7 @@ public interface ISearchEngineDAOFactory {
 	 * @param subDirectory La sottocartella 
 	 */
 	public void deleteSubDirectory(String subDirectory);
+	
+	public static final String TAXO_DIR_SUFFIX = "_taxo";
 	
 }

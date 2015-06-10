@@ -28,11 +28,10 @@ public interface IIndexerDAO {
 	/**
 	 * Inizializzazione dell'indicizzatore.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @param newIndex true se è una nuova indicizzazione (ed in tal caso 
-	 * cancella tutte le precedenti indicizzazioni), false in caso contrario.
+	 * @param taxoDir La cartella locale delle tassonomie
 	 * @throws ApsSystemException In caso di errori.
 	 */
-	public void init(File dir, boolean newIndex) throws ApsSystemException;
+	public void init(File dir, File taxoDir) throws ApsSystemException;
 	
 	/**
 	 * Aggiunge un contenuto nel db del motore di ricerca.
@@ -46,7 +45,7 @@ public interface IIndexerDAO {
      * @param name Il nome del campo Field da utilizzare per recupero del documento.
      * @param value La chiave mediante il quale 
      * è stato indicizzato il documento.
-     * @throws ApsSystemException
+     * @throws ApsSystemException In caso di errori.
      */
     public void delete(String name, String value) throws ApsSystemException;
     

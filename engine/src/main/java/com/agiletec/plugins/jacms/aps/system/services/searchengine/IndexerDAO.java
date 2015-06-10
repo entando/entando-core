@@ -18,11 +18,13 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.common.util.EntityAttributeIterator;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +34,10 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.facet.index.FacetFields;
+import org.apache.lucene.facet.taxonomy.CategoryPath;
+import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
+import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -52,16 +58,15 @@ public class IndexerDAO implements IIndexerDAO {
 	/**
 	 * Inizializzazione dell'indicizzatore.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @param newIndex true se è una nuova indicizzazione (ed in tal caso 
-	 * cancella tutte le precedenti indicizzazioni), false in caso contrario.
 	 * @throws ApsSystemException
 	 */
 	@Override
-	public void init(File dir, boolean newIndex) throws ApsSystemException {
+	public void init(File dir, File taxoDir) throws ApsSystemException {
 		try {
 			this._dir = FSDirectory.open(dir);
-			IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
-			writer.close();
+			this._taxoDir = FSDirectory.open(taxoDir);
+			//IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
+			//writer.close();
 		} catch (Throwable t) {
 			_logger.error("Error creating directory", t);
 			throw new ApsSystemException("Error creating directory", t);
@@ -100,7 +105,7 @@ public class IndexerDAO implements IIndexerDAO {
      * Crea un oggetto Document pronto per l'indicizzazione da un oggetto Content.
      * @param entity Il contenuto dal quale ricavare il Document.
      * @return L'oggetto Document ricavato dal contenuto.
-     * @throws ApsSystemException
+     * @throws ApsSystemException In caso di errore
      */
     private Document createDocument(IApsEntity entity) throws ApsSystemException {
         Document document = new Document();
@@ -124,6 +129,18 @@ public class IndexerDAO implements IIndexerDAO {
             		this.indexAttribute(document, currentAttribute, currentLang);
             	}
             }
+			List<Category> categories = entity.getCategories();
+			if (null != categories && !categories.isEmpty()) {
+				TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
+				FacetFields facetFields = new FacetFields(taxoWriter);
+				List<CategoryPath> cats = new ArrayList<CategoryPath>();
+				for (int i = 0; i < categories.size(); i++) {
+					Category category = categories.get(i);
+					cats.add(new CategoryPath(category.getPath()));
+				}
+				facetFields.addFields(document, cats);
+				taxoWriter.close();
+			}
         } catch (Exception e) {
 			_logger.error("Error creating document", e);
             throw new ApsSystemException("Error creating document", e);
@@ -192,7 +209,8 @@ public class IndexerDAO implements IIndexerDAO {
 	}
 	
     private Directory _dir;
-    
+    private Directory _taxoDir;
+	
     private ILangManager _langManager;
     
 }

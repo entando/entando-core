@@ -32,6 +32,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.Group;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
@@ -49,10 +50,13 @@ public class SearcherDAO implements ISearcherDAO {
 	/**
 	 * Inizializzazione del searcher.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
+	 * @param taxoDir La cartella locale delle tassonomie
+	 * @throws ApsSystemException In caso di errore
 	 */
 	@Override
-	public void init(File dir) {
+	public void init(File dir, File taxoDir) throws ApsSystemException {
 		this._indexDir = dir;
+		this._taxoDir = taxoDir;
 	}
 	
 	private IndexSearcher getSearcher() throws IOException {
@@ -73,6 +77,12 @@ public class SearcherDAO implements ISearcherDAO {
 		}
 	}
 	
+	@Override
+	public List<String> searchContentsId(String langCode, String word, 
+			Collection<String> allowedGroups) throws ApsSystemException {
+		return this.searchContentsId(langCode, word, null, allowedGroups);
+	}
+	
     /**
      * Ricerca una lista di identificativi di contenuto in base 
      * al codice della lingua corrente ed alla parola immessa.
@@ -80,6 +90,7 @@ public class SearcherDAO implements ISearcherDAO {
      * @param word La parola in base al quale fare la ricerca. Nel caso 
      * venissero inserite stringhe di ricerca del tipo "Venice Amsterdam" 
      * viene considerato come se fosse "Venice OR Amsterdam".
+	 * @param categories le categorie con cui filtrare i contenuti
      * @param allowedGroups I gruppi autorizzati alla visualizzazione. Nel caso 
      * che la collezione sia nulla o vuota, la ricerca sarà effettuata su contenuti 
      * referenziati con il gruppo "Ad accesso libero". Nel caso che nella collezione 
@@ -89,8 +100,8 @@ public class SearcherDAO implements ISearcherDAO {
      * @throws ApsSystemException
      */
 	@Override
-    public List<String> searchContentsId(String langCode, 
-    		String word, Collection<String> allowedGroups) throws ApsSystemException {
+    public List<String> searchContentsId(String langCode, String word, 
+			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
     	List<String> contentsId = new ArrayList<String>();
     	IndexSearcher searcher = null;
     	try {
@@ -152,5 +163,6 @@ public class SearcherDAO implements ISearcherDAO {
     }
     
     private File _indexDir;
+    private File _taxoDir;
     
 }

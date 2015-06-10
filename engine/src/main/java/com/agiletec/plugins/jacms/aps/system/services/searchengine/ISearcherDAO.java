@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
 
 /**
  * Interfaccia base per i Data Access Object dediti 
@@ -29,9 +30,10 @@ public interface ISearcherDAO {
 	/**
 	 * Inizializzazione del searcher.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
+	 * @param taxoDir La cartella locale delle tassonomie
 	 * @throws ApsSystemException In caso di errore
 	 */
-	public void init(File dir) throws ApsSystemException;
+	public void init(File dir, File taxoDir) throws ApsSystemException;
 	
 	/**
      * Ricerca una lista di identificativi di contenuto in base 
@@ -50,6 +52,9 @@ public interface ISearcherDAO {
      */
     public List<String> searchContentsId(String langCode, 
     		String word, Collection<String> allowedGroups) throws ApsSystemException;
+	
+    public List<String> searchContentsId(String langCode, String word, 
+			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
     public void close();
 	

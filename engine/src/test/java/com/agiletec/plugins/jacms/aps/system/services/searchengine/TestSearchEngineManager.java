@@ -19,8 +19,11 @@ import java.util.List;
 import java.util.Set;
 
 import com.agiletec.aps.BaseTestCase;
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
+import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
@@ -124,17 +127,23 @@ public class TestSearchEngineManager extends BaseTestCase {
         text.setText("San Pietroburgo è una città meravigliosa W3C-WAI", "it");
         text.setText("St. Petersburg is a wonderful city", "en");
         content.addAttribute(text);
+		Category category1 = this._categoryManager.getCategory("resCat2");
+		Category category2 = this._categoryManager.getCategory("general_cat3");
+		content.addCategory(category1);
+		content.addCategory(category2);
         return content;
     }
     
     private void init() throws Exception {
         try {
         	this._searchEngineManager = (ICmsSearchEngineManager) this.getService(JacmsSystemConstants.SEARCH_ENGINE_MANAGER);
+			this._categoryManager = (ICategoryManager) this.getService(SystemConstants.CATEGORY_MANAGER);
         } catch (Exception e) {
 			throw e;
         }
     }
     
     private ICmsSearchEngineManager _searchEngineManager = null;
-
+	private ICategoryManager _categoryManager;
+	
 }

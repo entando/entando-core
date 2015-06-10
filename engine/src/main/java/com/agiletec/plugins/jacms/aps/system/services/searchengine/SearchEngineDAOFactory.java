@@ -40,8 +40,8 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 	}
 	
 	@Override
-	public IIndexerDAO getIndexer(boolean newIndex) throws ApsSystemException {
-		return this.getIndexer(newIndex, this._subDirectory);
+	public IIndexerDAO getIndexer() throws ApsSystemException {
+		return this.getIndexer(this._subDirectory);
 	}
 	
 	@Override
@@ -50,13 +50,13 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 	}
 	
 	@Override
-	public IIndexerDAO getIndexer(boolean newIndex, String subDir) throws ApsSystemException {
+	public IIndexerDAO getIndexer(String subDir) throws ApsSystemException {
 		IIndexerDAO indexerDao = null;
 		try {
 			Class indexerClass = Class.forName(this.getIndexerClassName());
             indexerDao = (IIndexerDAO) indexerClass.newInstance();
 			indexerDao.setLangManager(this.getLangManager());
-			indexerDao.init(this.getDirectory(subDir), newIndex);
+			indexerDao.init(this.getDirectory(subDir), this.getDirectory(subDir+TAXO_DIR_SUFFIX));
 		} catch (Throwable t) {
 			_logger.error("Error getting indexer", t);
 			throw new ApsSystemException("Error creating new indexer", t);
@@ -70,7 +70,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 		try {
 			Class searcherClass = Class.forName(this.getSearcherClassName());
             searcherDao = (ISearcherDAO) searcherClass.newInstance();
-			searcherDao.init(this.getDirectory(subDir));
+			searcherDao.init(this.getDirectory(subDir), this.getDirectory(subDir+TAXO_DIR_SUFFIX));
 		} catch (Throwable t) {
 			_logger.error("Error creating new searcher", t);
 			throw new ApsSystemException("Error creating new searcher", t);
@@ -84,6 +84,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 		String oldDir = _subDirectory;
 		this._subDirectory = newSubDirectory;
 		this.deleteSubDirectory(oldDir);
+		this.deleteSubDirectory(oldDir+TAXO_DIR_SUFFIX);
 	}
 	
 	private File getDirectory(String subDirectory) throws ApsSystemException {

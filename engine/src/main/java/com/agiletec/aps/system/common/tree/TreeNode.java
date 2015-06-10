@@ -157,6 +157,24 @@ public class TreeNode implements ITreeNode, Serializable {
 	}
 	
 	@Override
+	public String getPath() {
+		return this.getPath("/");
+	}
+	
+	@Override
+	public String getPath(String separator) {
+		String path = this.getCode();
+		if (this.isRoot()) return path;
+		ITreeNode parent = this.getParent();
+		while (parent != null && parent.getParent() != null) {
+			path = parent.getCode() + separator + path;
+			if (parent.isRoot()) return path;
+			parent = parent.getParent();
+		}
+		return path;
+	}
+	
+	@Override
 	public boolean isChildOf(String nodeCode) {
 		return this.isChildOf(this, nodeCode);
 	}

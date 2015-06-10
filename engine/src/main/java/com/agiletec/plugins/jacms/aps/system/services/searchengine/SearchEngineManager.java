@@ -30,6 +30,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.notify.ApsEvent;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.event.PublicContentChangedEvent;
@@ -48,7 +49,7 @@ public class SearchEngineManager extends AbstractService
 	
 	@Override
 	public void init() throws Exception {
-		this._indexerDao = this.getFactory().getIndexer(false);
+		this._indexerDao = this.getFactory().getIndexer();
 		this._searcherDao = this.getFactory().getSearcher();
 	}
 	
@@ -84,7 +85,7 @@ public class SearchEngineManager extends AbstractService
 				break;
 			}
 		} catch (Throwable t) {
-			_logger.error("Errore in notificazione evento");
+			_logger.error("Errore in notificazione evento", t);
 		}
 	}
 	
@@ -105,7 +106,7 @@ public class SearchEngineManager extends AbstractService
     	if (this.getStatus() == STATUS_READY || this.getStatus() == STATUS_NEED_TO_RELOAD_INDEXES) {
     		try {
     			this._newTempSubDirectory = "indexdir" + DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
-    			IIndexerDAO newIndexer = this.getFactory().getIndexer(true, _newTempSubDirectory);
+    			IIndexerDAO newIndexer = this.getFactory().getIndexer(_newTempSubDirectory);
     			loaderThread = new IndexLoaderThread(this, this.getContentManager(), newIndexer);
     			String threadName = RELOAD_THREAD_NAME_PREFIX + DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
     			loaderThread.setName(threadName);
@@ -211,9 +212,15 @@ public class SearchEngineManager extends AbstractService
 	@Override
 	public List<String> searchEntityId(String langCode, String word,
 			Collection<String> allowedGroups) throws ApsSystemException {
+		return this.searchEntityId(langCode, word, null, allowedGroups);
+	}
+	
+	@Override
+	public List<String> searchEntityId(String langCode, String word,
+			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		List<String> contentsId = new ArrayList<String>();
     	try {
-    		contentsId = _searcherDao.searchContentsId(langCode, word, allowedGroups);
+    		contentsId = _searcherDao.searchContentsId(langCode, word, categories, allowedGroups);
     	} catch (ApsSystemException e) {
     		_logger.error("Error searching content id list. lang:{}, word:{}", langCode, word, e);
     		throw e;

@@ -35,9 +35,19 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.Group;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.facet.params.FacetSearchParams;
+import org.apache.lucene.facet.search.CountFacetRequest;
+import org.apache.lucene.facet.search.FacetRequest;
+import org.apache.lucene.facet.search.FacetsCollector;
+import org.apache.lucene.facet.taxonomy.CategoryPath;
+import org.apache.lucene.facet.taxonomy.TaxonomyReader;
+import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyReader;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.MultiCollector;
+import org.apache.lucene.search.TopDocsCollector;
+import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 /**
@@ -66,14 +76,27 @@ public class SearcherDAO implements ISearcherDAO {
 		return searcher;
 	}
 	
-	private void releaseSearcher(IndexSearcher searcher) throws ApsSystemException {
+	private TaxonomyReader getTaxoReader() throws IOException {
+		FSDirectory directory = new SimpleFSDirectory(this._taxoDir);
+		TaxonomyReader taxoReader = new DirectoryTaxonomyReader(directory);
+		return taxoReader;
+	}
+	
+	private void releaseSearcher(IndexSearcher searcher, TaxonomyReader taxoReader) throws ApsSystemException {
 		try {
 			if (searcher != null) {
 				searcher.getIndexReader().close();
 				//searcher.close();
 			}
 		} catch (IOException e) {
-			throw new ApsSystemException("Errore in chiusura searcher", e);
+			throw new ApsSystemException("Error closing searcher", e);
+		}
+		try {
+			if (taxoReader != null) {
+				taxoReader.close();
+			}
+		} catch (IOException e) {
+			throw new ApsSystemException("Error closing TaxonomyReader", e);
 		}
 	}
 	
@@ -104,28 +127,48 @@ public class SearcherDAO implements ISearcherDAO {
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
     	List<String> contentsId = new ArrayList<String>();
     	IndexSearcher searcher = null;
+		TaxonomyReader taxoReader = null;
     	try {
+			taxoReader = this.getTaxoReader();
     		searcher = this.getSearcher();
     		QueryParser parser = new QueryParser(Version.LUCENE_42, langCode, this.getAnalyzer());
     		String queryString = this.createQueryString(langCode, word, allowedGroups);
         	Query query = parser.parse(queryString);
            	int maxSearchLength = 1000;
-    		TopDocs topDocs = searcher.search(query, null, maxSearchLength);
-    		ScoreDoc[] scoreDoc = topDocs.scoreDocs;
-    		if (scoreDoc.length > 0) {
-    			for (int index=0; index<scoreDoc.length; index++) {
-    				ScoreDoc sDoc = scoreDoc[index];
-    				Document doc = searcher.doc(sDoc.doc);
-    				contentsId.add(doc.get(IIndexerDAO.CONTENT_ID_FIELD_NAME));
-    			}
-    		}
+			FacetSearchParams fsp = null;
+			List<FacetRequest> facetRequests = new ArrayList<FacetRequest>();
+			if (null != categories && !categories.isEmpty()) {
+				Iterator<Category> iter = categories.iterator();
+				while (iter.hasNext()) {
+					Category category = iter.next();
+					facetRequests.add(new CountFacetRequest(new CategoryPath(category.getPath()), maxSearchLength));
+				}
+			} else {
+				facetRequests.add(new CountFacetRequest(new CategoryPath("/"), maxSearchLength));
+			}
+			fsp = new FacetSearchParams(facetRequests);
+			TopDocsCollector tdc = TopScoreDocCollector.create(maxSearchLength, true);
+			FacetsCollector fc = FacetsCollector.create(fsp, searcher.getIndexReader(), taxoReader);
+    		//TopDocs topDocs = searcher.search(query, null, maxSearchLength);
+			searcher.search(query, MultiCollector.wrap(tdc, fc));
+			for (ScoreDoc scoreDoc: tdc.topDocs().scoreDocs) {
+				Document doc = searcher.getIndexReader().document(scoreDoc.doc);
+				contentsId.add(doc.get(IIndexerDAO.CONTENT_ID_FIELD_NAME));
+				/*
+				System.out.printf("- book: id=%s, title=%s, book_category=%s, authors=%s, score=%f\n",
+						doc.get("id"), doc.get("title"),
+						doc.get("book_category"),
+						doc.get("authors"),
+						scoreDoc.score);
+				*/
+			}
     	} catch (IOException e) {
     		throw new ApsSystemException("Errore in estrazione " +
     				"documento in base ad indice", e);
     	} catch (ParseException e) {
     		throw new ApsSystemException("Errore parsing nella ricerca", e);
     	} finally {
-    		this.releaseSearcher(searcher);
+    		this.releaseSearcher(searcher, taxoReader);
     	}
     	return contentsId;
     }

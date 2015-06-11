@@ -82,7 +82,7 @@ public class SearcherDAO implements ISearcherDAO {
 		return taxoReader;
 	}
 	
-	private void releaseSearcher(IndexSearcher searcher, TaxonomyReader taxoReader) throws ApsSystemException {
+	private void releaseResources(IndexSearcher searcher, TaxonomyReader taxoReader) throws ApsSystemException {
 		try {
 			if (searcher != null) {
 				searcher.getIndexReader().close();
@@ -141,7 +141,8 @@ public class SearcherDAO implements ISearcherDAO {
 				Iterator<Category> iter = categories.iterator();
 				while (iter.hasNext()) {
 					Category category = iter.next();
-					facetRequests.add(new CountFacetRequest(new CategoryPath(category.getPath()), maxSearchLength));
+					CategoryPath categoryPath = new CategoryPath(category.getPath("/"), '/');
+					facetRequests.add(new CountFacetRequest(categoryPath, maxSearchLength));
 				}
 			} else {
 				facetRequests.add(new CountFacetRequest(new CategoryPath("/"), maxSearchLength));
@@ -168,7 +169,7 @@ public class SearcherDAO implements ISearcherDAO {
     	} catch (ParseException e) {
     		throw new ApsSystemException("Errore parsing nella ricerca", e);
     	} finally {
-    		this.releaseSearcher(searcher, taxoReader);
+    		this.releaseResources(searcher, taxoReader);
     	}
     	return contentsId;
     }

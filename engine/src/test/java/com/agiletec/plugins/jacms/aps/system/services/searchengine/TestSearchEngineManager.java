@@ -35,6 +35,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
  */
 public class TestSearchEngineManager extends BaseTestCase {
 	
+	@Override
 	protected void setUp() throws Exception {
     	super.setUp();
         this.init();
@@ -42,7 +43,7 @@ public class TestSearchEngineManager extends BaseTestCase {
     
     public void testSearchContentsId_1() throws Throwable {
     	try {
-    		Content content = this.createContent();
+    		Content content = this.createContent_1();
     		this._searchEngineManager.deleteIndexedEntity(content.getId());
     		this._searchEngineManager.addEntityToIndex(content);
             
@@ -92,43 +93,81 @@ public class TestSearchEngineManager extends BaseTestCase {
     
     public void testSearchContentsId_3() throws Throwable {
     	try {
-    		Content content = this.createContent();
+    		Content content = this.createContent_1();
     		content.setMainGroup(Group.ADMINS_GROUP_NAME);
     		this._searchEngineManager.deleteIndexedEntity(content.getId());
     		this._searchEngineManager.addEntityToIndex(content);
-    		
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);
-            
         	List<String> contentsId = this._searchEngineManager.searchEntityId("it", "San meravigliosa", allowedGroup);
 			assertNotNull(contentsId);
 			assertFalse(contentsId.contains(content.getId()));
-			
 			allowedGroup.add("secondaryGroup");
-			
 			contentsId = this._searchEngineManager.searchEntityId("it", "San meravigliosa", allowedGroup);
 			assertNotNull(contentsId);
 			assertTrue(contentsId.contains(content.getId()));
-			
         } catch (Throwable t) {
 			throw t;
 		}
     }
 	
-    private Content createContent() {
+    public void testFacetSearchContentsId_1() throws Throwable {
+    	try {
+    		Content content1 = this.createContent_1();
+    		this._searchEngineManager.deleteIndexedEntity(content1.getId());
+    		this._searchEngineManager.addEntityToIndex(content1);
+			Content content2 = this.createContent_2();
+    		this._searchEngineManager.deleteIndexedEntity(content2.getId());
+    		this._searchEngineManager.addEntityToIndex(content2);
+			Category generalCat = this._categoryManager.getCategory("general");
+            List<Category> categories = new ArrayList<Category>();
+            categories.add(generalCat);
+            List<String> allowedGroup = new ArrayList<String>();
+            allowedGroup.add(Group.FREE_GROUP_NAME);
+        	List<String> contentsId = this._searchEngineManager.searchEntityId("it", "San meravigliosa", categories, allowedGroup);
+			assertNotNull(contentsId);
+			assertTrue(contentsId.contains(content1.getId()));
+			contentsId = this._searchEngineManager.searchEntityId("en", "Tourism", categories, allowedGroup);
+			assertNotNull(contentsId);
+			assertTrue(contentsId.contains(content2.getId()));
+        } catch (Throwable t) {
+			throw t;
+		}
+    }
+	
+    private Content createContent_1() {
         Content content = new Content();
         content.setId("100");
         content.setMainGroup(Group.FREE_GROUP_NAME);
         content.addGroup("secondaryGroup");
         TextAttribute text = new TextAttribute();
         text.setName("Articolo");
-        text.setType("");
+        text.setType("Text");
         text.setIndexingType(IndexableAttributeInterface.INDEXING_TYPE_TEXT);
         text.setText("San Pietroburgo è una città meravigliosa W3C-WAI", "it");
         text.setText("St. Petersburg is a wonderful city", "en");
         content.addAttribute(text);
 		Category category1 = this._categoryManager.getCategory("resCat2");
 		Category category2 = this._categoryManager.getCategory("general_cat3");
+		content.addCategory(category1);
+		content.addCategory(category2);
+        return content;
+    }
+    
+    private Content createContent_2() {
+        Content content = new Content();
+        content.setId("101");
+        content.setMainGroup(Group.FREE_GROUP_NAME);
+        content.addGroup("thirdGroup");
+        TextAttribute text = new TextAttribute();
+        text.setName("Articolo");
+        text.setType("Text");
+        text.setIndexingType(IndexableAttributeInterface.INDEXING_TYPE_TEXT);
+        text.setText("Il turismo ha incrementato più del 20 per cento nel 2011-2013, quando la Croazia ha aderito all'Unione europea. Consegienda di questo aumento è una serie di modernizzazione di alloggi di recente costruzione, tra cui circa tre dozzine di ostelli.", "it");
+        text.setText("Tourism had shot up more than 20 percent from 2011 to 2013, when Croatia joined the European Union. Accompanying that rise is a raft of modernized and recently built lodgings, including some three dozen hostels.", "en");
+        content.addAttribute(text);
+		Category category1 = this._categoryManager.getCategory("resCat1");
+		Category category2 = this._categoryManager.getCategory("general_cat2");
 		content.addCategory(category1);
 		content.addCategory(category2);
         return content;

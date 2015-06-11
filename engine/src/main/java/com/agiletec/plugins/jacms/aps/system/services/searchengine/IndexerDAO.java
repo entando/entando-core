@@ -58,15 +58,14 @@ public class IndexerDAO implements IIndexerDAO {
 	/**
 	 * Inizializzazione dell'indicizzatore.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @throws ApsSystemException
+	 * @param taxoDir La cartella locale delle tassonomie
+	 * @throws ApsSystemException In caso di errore
 	 */
 	@Override
 	public void init(File dir, File taxoDir) throws ApsSystemException {
 		try {
 			this._dir = FSDirectory.open(dir);
 			this._taxoDir = FSDirectory.open(taxoDir);
-			//IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
-			//writer.close();
 		} catch (Throwable t) {
 			_logger.error("Error creating directory", t);
 			throw new ApsSystemException("Error creating directory", t);
@@ -75,32 +74,26 @@ public class IndexerDAO implements IIndexerDAO {
 	}
 	
 	@Override
-	public void add(IApsEntity entity) throws ApsSystemException {
+	public synchronized void add(IApsEntity entity) throws ApsSystemException {
+		IndexWriter writer = null;
 		try {
+			writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
             Document document = this.createDocument(entity);
-            this.add(document);
-        } catch (ApsSystemException e) {
-        	_logger.error("Errore saving entity {}", entity.getId(), e);
-        	throw e;
-        }
+            writer.addDocument(document);
+        } catch (Throwable t) {
+        	_logger.error("Errore saving entity {}", entity.getId(), t);
+        	throw new ApsSystemException("Error saving entity", t);
+        } finally {
+			if (null != writer) {
+				try {
+					writer.close();
+				} catch (IOException ex) {
+					_logger.error("Error closing IndexWriter", ex);
+				}
+			}
+		}
 	}
 	
-	/**
-	 * Aggiunge un documento nel db del motore di ricerca.
-     * @param document Il documento da aggiungere.
-	 * @throws ApsSystemException In caso di errori in accesso al db.
-	 */
-    private synchronized void add(Document document) throws ApsSystemException {
-        try {
-            IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
-			writer.addDocument(document);
-            writer.close();
-        } catch (IOException e) {
-			_logger.error("Error adding document", e);
-            throw new ApsSystemException("Error adding document", e);
-        }
-    }
-    
     /**
      * Crea un oggetto Document pronto per l'indicizzazione da un oggetto Content.
      * @param entity Il contenuto dal quale ricavare il Document.
@@ -119,6 +112,7 @@ public class IndexerDAO implements IIndexerDAO {
         	document.add(new TextField(CONTENT_GROUP_FIELD_NAME, 
 					groupName, Field.Store.YES));
         }
+		TaxonomyWriter taxoWriter = null;
         try {
         	EntityAttributeIterator attributesIter = new EntityAttributeIterator(entity);
         	while (attributesIter.hasNext()) {
@@ -131,20 +125,28 @@ public class IndexerDAO implements IIndexerDAO {
             }
 			List<Category> categories = entity.getCategories();
 			if (null != categories && !categories.isEmpty()) {
-				TaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
+				taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
 				FacetFields facetFields = new FacetFields(taxoWriter);
 				List<CategoryPath> cats = new ArrayList<CategoryPath>();
 				for (int i = 0; i < categories.size(); i++) {
 					Category category = categories.get(i);
-					cats.add(new CategoryPath(category.getPath()));
+					CategoryPath cp = new CategoryPath(category.getPath("/"), '/');
+					cats.add(cp);
 				}
 				facetFields.addFields(document, cats);
-				taxoWriter.close();
 			}
-        } catch (Exception e) {
-			_logger.error("Error creating document", e);
-            throw new ApsSystemException("Error creating document", e);
-        }
+        } catch (Throwable t) {
+			_logger.error("Error creating document", t);
+            throw new ApsSystemException("Error creating document", t);
+        } finally {
+			if (null != taxoWriter) {
+				try {
+					taxoWriter.close();
+				} catch (IOException ex) {
+					_logger.error("Error closing TaxonomyWriter", ex);
+				}
+			}
+		}
         return document;
     }
     

@@ -166,16 +166,15 @@ public class IndexerDAO implements IIndexerDAO {
             }
         }
     }
-
+	
     /**
      * Cancella un documento in base alla chiave (di nome "id") 
      * mediante il quale è stato indicizzato.
      * Nel caso della cancellazione di un contenuto il nome del campo 
      * da utilizzare sarà "id" mentre il valore sarà l'identificativo del contenuto.
      * @param name Il nome del campo Field da utilizzare per recupero del documento.
-     * @param value La chiave mediante il quale 
-     * è stato indicizzato il documento.
-     * @throws ApsSystemException
+     * @param value La chiave mediante il quale è stato indicizzato il documento.
+     * @throws ApsSystemException In caso di errore
      */
     @Override
 	public synchronized void delete(String name, String value) throws ApsSystemException {
@@ -195,11 +194,11 @@ public class IndexerDAO implements IIndexerDAO {
     }
     
     private Analyzer getAnalyzer() {
-        return new StandardAnalyzer(Version.LUCENE_42);
+        return new StandardAnalyzer(Version.LUCENE_45);
     }
 	
 	private IndexWriterConfig getIndexWriterConfig() {
-		return new IndexWriterConfig(Version.LUCENE_42, this.getAnalyzer());
+		return new IndexWriterConfig(Version.LUCENE_45, this.getAnalyzer());
 	}
     
 	protected ILangManager getLangManager() {

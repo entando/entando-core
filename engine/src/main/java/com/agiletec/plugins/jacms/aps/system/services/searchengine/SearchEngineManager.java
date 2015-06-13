@@ -13,14 +13,6 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.entity.event.EntityTypesChangingEvent;
@@ -37,10 +29,20 @@ import com.agiletec.plugins.jacms.aps.system.services.content.event.PublicConten
 import com.agiletec.plugins.jacms.aps.system.services.content.event.PublicContentChangedObserver;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Servizio detentore delle operazioni di indicizzazione 
  * di oggetti ricercabili tramite motore di ricerca.
- * @author W.Ambu - M.Diana - E.Santoboni
+ * @author M.Diana - E.Santoboni
  */
 public class SearchEngineManager extends AbstractService 
 		implements ICmsSearchEngineManager, PublicContentChangedObserver, EntityTypesChangingObserver {
@@ -156,7 +158,6 @@ public class SearchEngineManager extends AbstractService
 		return false;
 	}
 	
-	
 	@Override
 	public void addEntityToIndex(IApsEntity entity) throws ApsSystemException {
 		try {
@@ -220,7 +221,11 @@ public class SearchEngineManager extends AbstractService
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		List<String> contentsId = new ArrayList<String>();
     	try {
-    		contentsId = _searcherDao.searchContentsId(langCode, word, categories, allowedGroups);
+			Properties terms = new Properties();
+			if (StringUtils.isNotEmpty(langCode) && StringUtils.isNotEmpty(word)) {
+				terms.put(langCode, word);
+			}
+    		contentsId = _searcherDao.searchContentsId(terms, categories, allowedGroups);
     	} catch (ApsSystemException e) {
     		_logger.error("Error searching content id list. lang:{}, word:{}", langCode, word, e);
     		throw e;

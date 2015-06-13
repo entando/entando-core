@@ -19,11 +19,12 @@ import java.util.List;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
+import java.util.Properties;
 
 /**
  * Interfaccia base per i Data Access Object dediti 
  * alle operazioni di ricerca ad uso del motore di ricerca interno.
- * @author W.Ambu
+ * @author E.Santoboni
  */
 public interface ISearcherDAO {
 	
@@ -53,7 +54,7 @@ public interface ISearcherDAO {
     public List<String> searchContentsId(String langCode, 
     		String word, Collection<String> allowedGroups) throws ApsSystemException;
 	
-    public List<String> searchContentsId(String langCode, String word, 
+	public List<String> searchContentsId(Properties termsProperty, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
     public void close();

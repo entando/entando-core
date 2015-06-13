@@ -13,6 +13,10 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.aps.system.services.group.Group;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,21 +24,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.Category;
-import com.agiletec.aps.system.services.group.Group;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.facet.params.FacetSearchParams;
 import org.apache.lucene.facet.search.CountFacetRequest;
 import org.apache.lucene.facet.search.FacetRequest;
@@ -43,11 +35,18 @@ import org.apache.lucene.facet.taxonomy.CategoryPath;
 import org.apache.lucene.facet.taxonomy.TaxonomyReader;
 import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyReader;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiCollector;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocsCollector;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 /**
@@ -100,20 +99,13 @@ public class SearcherDAO implements ISearcherDAO {
 		}
 	}
 	
-	@Override
-	public List<String> searchContentsId(String langCode, String word, 
-			Collection<String> allowedGroups) throws ApsSystemException {
-		return this.searchContentsId(langCode, word, null, allowedGroups);
-	}
-	
-    /**
+	/**
      * Ricerca una lista di identificativi di contenuto in base 
      * al codice della lingua corrente ed alla parola immessa.
      * @param langCode Il codice della lingua corrente.
      * @param word La parola in base al quale fare la ricerca. Nel caso 
      * venissero inserite stringhe di ricerca del tipo "Venice Amsterdam" 
      * viene considerato come se fosse "Venice OR Amsterdam".
-	 * @param categories le categorie con cui filtrare i contenuti
      * @param allowedGroups I gruppi autorizzati alla visualizzazione. Nel caso 
      * che la collezione sia nulla o vuota, la ricerca sarà effettuata su contenuti 
      * referenziati con il gruppo "Ad accesso libero". Nel caso che nella collezione 
@@ -123,7 +115,15 @@ public class SearcherDAO implements ISearcherDAO {
      * @throws ApsSystemException
      */
 	@Override
-    public List<String> searchContentsId(String langCode, String word, 
+	public List<String> searchContentsId(String langCode, String word, 
+			Collection<String> allowedGroups) throws ApsSystemException {
+		Properties termsProperty = new Properties();
+		termsProperty.setProperty(langCode, word);
+		return this.searchContentsId(termsProperty, null, allowedGroups);
+	}
+	
+	@Override
+    public List<String> searchContentsId(Properties termsProperty, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
     	List<String> contentsId = new ArrayList<String>();
     	IndexSearcher searcher = null;
@@ -131,11 +131,8 @@ public class SearcherDAO implements ISearcherDAO {
     	try {
 			taxoReader = this.getTaxoReader();
     		searcher = this.getSearcher();
-    		QueryParser parser = new QueryParser(Version.LUCENE_42, langCode, this.getAnalyzer());
-    		String queryString = this.createQueryString(langCode, word, allowedGroups);
-        	Query query = parser.parse(queryString);
+    		Query query = this.createQuery(termsProperty, allowedGroups);
            	int maxSearchLength = 1000;
-			FacetSearchParams fsp = null;
 			List<FacetRequest> facetRequests = new ArrayList<FacetRequest>();
 			if (null != categories && !categories.isEmpty()) {
 				Iterator<Category> iter = categories.iterator();
@@ -147,7 +144,7 @@ public class SearcherDAO implements ISearcherDAO {
 			} else {
 				facetRequests.add(new CountFacetRequest(new CategoryPath("/"), maxSearchLength));
 			}
-			fsp = new FacetSearchParams(facetRequests);
+			FacetSearchParams fsp = new FacetSearchParams(facetRequests);
 			TopDocsCollector tdc = TopScoreDocCollector.create(maxSearchLength, true);
 			FacetsCollector fc = FacetsCollector.create(fsp, searcher.getIndexReader(), taxoReader);
     		//TopDocs topDocs = searcher.search(query, null, maxSearchLength);
@@ -166,16 +163,29 @@ public class SearcherDAO implements ISearcherDAO {
     	} catch (IOException e) {
     		throw new ApsSystemException("Errore in estrazione " +
     				"documento in base ad indice", e);
-    	} catch (ParseException e) {
-    		throw new ApsSystemException("Errore parsing nella ricerca", e);
     	} finally {
     		this.releaseResources(searcher, taxoReader);
     	}
     	return contentsId;
     }
     
-	private String createQueryString(String langCode, String word, Collection<String> allowedGroups) {
-		String queryString = langCode + ":'" + word + "'";
+	private Query createQuery(Properties terms, Collection<String> allowedGroups) {
+		BooleanQuery mainQuery = new BooleanQuery();
+		if (terms != null && !terms.isEmpty()) {
+			Iterator<Object> iter = terms.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next().toString();
+				String value = terms.getProperty(key);
+				BooleanQuery fieldQuery = new BooleanQuery();
+				String[] values = value.split("\\s+");
+				for (int i = 0; i < values.length; i++) {
+					TermQuery term = new TermQuery(new Term(key, values[i].toLowerCase()));
+					//NOTE: search lower case....
+					fieldQuery.add(term, BooleanClause.Occur.MUST);
+				}
+				mainQuery.add(fieldQuery, BooleanClause.Occur.MUST);
+			}
+		}
 		if (allowedGroups == null) {
 			allowedGroups = new HashSet<String>();
 		}
@@ -183,24 +193,19 @@ public class SearcherDAO implements ISearcherDAO {
 			if (!allowedGroups.contains(Group.FREE_GROUP_NAME)) {
 				allowedGroups.add(Group.FREE_GROUP_NAME);
 			}
-			queryString += " AND (";
-			boolean isFirstGroup = true;
+			BooleanQuery groupsQuery = new BooleanQuery();
 			Iterator<String> iterGroups = allowedGroups.iterator();
 			while (iterGroups.hasNext()) {
 				String group = iterGroups.next();
-				if (!isFirstGroup) queryString += " OR ";
-				queryString += IIndexerDAO.CONTENT_GROUP_FIELD_NAME + ":" + group;
-				isFirstGroup = false;
+				TermQuery groupQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_GROUP_FIELD_NAME, group.toLowerCase()));
+				//NOTE: search lower case....
+				groupsQuery.add(groupQuery, BooleanClause.Occur.SHOULD);
 			}
-			queryString += ")";
+			mainQuery.add(groupsQuery, BooleanClause.Occur.MUST);
 		}
-		return queryString;
+		return mainQuery;
 	}
     
-    private Analyzer getAnalyzer() {
-        return new StandardAnalyzer(Version.LUCENE_42);
-    }
-	
 	@Override
     public void close() {
     	// nothing to do

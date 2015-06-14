@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,22 +213,37 @@ public class SearchEngineManager extends AbstractService
 	@Override
 	public List<String> searchEntityId(String langCode, String word,
 			Collection<String> allowedGroups) throws ApsSystemException {
-		return this.searchEntityId(langCode, word, null, allowedGroups);
+		SearchEngineFilter[] filters = new SearchEngineFilter[0];
+		if (StringUtils.isNotEmpty(langCode) && StringUtils.isNotEmpty(word)) {
+			SearchEngineFilter filter = new SearchEngineFilter(langCode, word);
+			filters = this.addFilter(filters, filter);
+		}
+		return this.searchEntityId(filters, null, allowedGroups);
+	}
+	
+	private SearchEngineFilter[] addFilter(SearchEngineFilter[] filters, SearchEngineFilter filterToAdd) {
+		int len = filters.length;
+		SearchEngineFilter[] newFilters = new SearchEngineFilter[len + 1];
+		for(int i=0; i < len; i++){
+			newFilters[i] = filters[i];
+		}
+		newFilters[len] = filterToAdd;
+		return newFilters;
 	}
 	
 	@Override
-	public List<String> searchEntityId(String langCode, String word,
-			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
-		List<String> contentsId = new ArrayList<String>();
+	public List<String> searchId(String sectionCode, SearchEngineFilter[] filters, Collection<String> allowedGroups) throws ApsSystemException {
+		return this.searchEntityId(filters, null, allowedGroups);
+	}
+	
+	@Override
+	public List<String> searchEntityId(SearchEngineFilter[] filters, Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+		List<String> contentsId = null;
     	try {
-			Properties terms = new Properties();
-			if (StringUtils.isNotEmpty(langCode) && StringUtils.isNotEmpty(word)) {
-				terms.put(langCode, word);
-			}
-    		contentsId = _searcherDao.searchContentsId(terms, categories, allowedGroups);
-    	} catch (ApsSystemException e) {
-    		_logger.error("Error searching content id list. lang:{}, word:{}", langCode, word, e);
-    		throw e;
+			contentsId = _searcherDao.searchContentsId(filters, categories, allowedGroups);
+    	} catch (Throwable t) {
+    		_logger.error("Error searching content id list. ", t);
+    		throw new ApsSystemException("Error searching content id list", t);
     	}
     	return contentsId;
 	}

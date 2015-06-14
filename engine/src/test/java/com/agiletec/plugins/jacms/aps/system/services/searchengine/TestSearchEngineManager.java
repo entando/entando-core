@@ -29,9 +29,8 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 /**
- * Test del servizio detentore 
- * delle operazioni sul motore di ricerca.
- * @author W.Ambu
+ * Test del servizio detentore delle operazioni sul motore di ricerca.
+ * @author E.Santoboni
  */
 public class TestSearchEngineManager extends BaseTestCase {
 	
@@ -40,7 +39,7 @@ public class TestSearchEngineManager extends BaseTestCase {
     	super.setUp();
         this.init();
     }
-    
+    /*
     public void testSearchContentsId_1() throws Throwable {
     	try {
     		Content content = this.createContent_1();
@@ -110,30 +109,43 @@ public class TestSearchEngineManager extends BaseTestCase {
 			throw t;
 		}
     }
-	
+	*/
     public void testFacetSearchContentsId_1() throws Throwable {
     	try {
-    		Content content1 = this.createContent_1();
-    		this._searchEngineManager.deleteIndexedEntity(content1.getId());
-    		this._searchEngineManager.addEntityToIndex(content1);
-			Content content2 = this.createContent_2();
-    		this._searchEngineManager.deleteIndexedEntity(content2.getId());
-    		this._searchEngineManager.addEntityToIndex(content2);
-			Category generalCat = this._categoryManager.getCategory("general");
+    		Thread thread = this._searchEngineManager.startReloadContentsReferences();
+        	thread.join();
+			Category general_cat2 = this._categoryManager.getCategory("general_cat2");
             List<Category> categories = new ArrayList<Category>();
-            categories.add(generalCat);
+            categories.add(general_cat2);
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);
-        	List<String> contentsId = this._searchEngineManager.searchEntityId("it", "San meravigliosa", categories, allowedGroup);
+        	List<String> contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
 			assertNotNull(contentsId);
-			assertTrue(contentsId.contains(content1.getId()));
-			contentsId = this._searchEngineManager.searchEntityId("en", "Tourism", categories, allowedGroup);
+			System.out.println("-----------------------");
+			System.out.println(contentsId);
+			System.out.println("-----------------------");
+			String[] expected1 = {"ART120", "ART112", "ART111", "EVN193", "ART179"};
+			this.verify(contentsId, expected1);
+			Category general_cat1 = this._categoryManager.getCategory("general_cat1");
+			categories.add(general_cat1);
+			contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
+			System.out.println("----------vv-------------");
+			System.out.println(contentsId);
+			System.out.println("-----------------------");
 			assertNotNull(contentsId);
-			assertTrue(contentsId.contains(content2.getId()));
+			String[] expected2 = {"ART111", "ART179"};
+			this.verify(contentsId, expected2);
         } catch (Throwable t) {
 			throw t;
 		}
     }
+	
+	private void verify(List<String> contentsId, String[] array) {
+		assertEquals(array.length, contentsId.size());
+    	for (int i=0; i<array.length; i++) {
+    		assertTrue(contentsId.contains(array[i]));
+    	}
+	}
 	
     private Content createContent_1() {
         Content content = new Content();

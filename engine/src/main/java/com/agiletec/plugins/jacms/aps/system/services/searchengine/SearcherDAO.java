@@ -21,15 +21,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Set;
 
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.facet.params.CategoryListParams;
+import org.apache.lucene.facet.params.FacetIndexingParams;
 import org.apache.lucene.facet.params.FacetSearchParams;
 import org.apache.lucene.facet.search.CountFacetRequest;
+import org.apache.lucene.facet.search.DrillDownQuery;
 import org.apache.lucene.facet.search.FacetRequest;
+import org.apache.lucene.facet.search.FacetResult;
+import org.apache.lucene.facet.search.FacetResultNode;
+import org.apache.lucene.facet.search.FacetsAggregator;
 import org.apache.lucene.facet.search.FacetsCollector;
 import org.apache.lucene.facet.taxonomy.CategoryPath;
 import org.apache.lucene.facet.taxonomy.TaxonomyReader;
@@ -39,15 +47,20 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiCollector;
+import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.TopDocsCollector;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.BytesRef;
+import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 
 /**
  * Data Access Object dedita alle operazioni di ricerca 
@@ -99,7 +112,7 @@ public class SearcherDAO implements ISearcherDAO {
 		}
 	}
 	
-	/**
+	/*
      * Ricerca una lista di identificativi di contenuto in base 
      * al codice della lingua corrente ed alla parola immessa.
      * @param langCode Il codice della lingua corrente.
@@ -114,52 +127,85 @@ public class SearcherDAO implements ISearcherDAO {
      * @return La lista di identificativi contenuto.
      * @throws ApsSystemException
      */
-	@Override
+	//@Override
+	/*
 	public List<String> searchContentsId(String langCode, String word, 
 			Collection<String> allowedGroups) throws ApsSystemException {
 		Properties termsProperty = new Properties();
 		termsProperty.setProperty(langCode, word);
 		return this.searchContentsId(termsProperty, null, allowedGroups);
 	}
-	
+	*/
 	@Override
-    public List<String> searchContentsId(Properties termsProperty, 
+	public List<String> searchContentsId(SearchEngineFilter[] filters, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
-    	List<String> contentsId = new ArrayList<String>();
-    	IndexSearcher searcher = null;
+		List<String> contentsId = new ArrayList<String>();
+		IndexSearcher searcher = null;
 		TaxonomyReader taxoReader = null;
     	try {
 			taxoReader = this.getTaxoReader();
     		searcher = this.getSearcher();
-    		Query query = this.createQuery(termsProperty, allowedGroups);
+    		Query query = this.createQuery(filters, allowedGroups);
+			Set<Term> terms = new HashSet<Term>();
+			query.extractTerms(terms);
+			Iterator<Term> iterx = terms.iterator();
+			while (iterx.hasNext()) {
+				Term next = iterx.next();
+				System.out.println(next);
+			}
+			
            	int maxSearchLength = 1000;
 			List<FacetRequest> facetRequests = new ArrayList<FacetRequest>();
+			
+			/*
 			if (null != categories && !categories.isEmpty()) {
 				Iterator<Category> iter = categories.iterator();
 				while (iter.hasNext()) {
 					Category category = iter.next();
-					CategoryPath categoryPath = new CategoryPath(category.getPath("/"), '/');
+					//CategoryPath categoryPath = new CategoryPath(category.getPath("."), '.');
+					CategoryPath categoryPath = new CategoryPath(category.getPathArray());
+					//System.out.println("RICERCA PER " + category.getPath());
 					facetRequests.add(new CountFacetRequest(categoryPath, maxSearchLength));
 				}
 			} else {
 				facetRequests.add(new CountFacetRequest(new CategoryPath("/"), maxSearchLength));
 			}
+			*/
+			
+			//String[] path = {"general", "general_cat2"};
+			CategoryPath cp = new CategoryPath("general", "general_cat2");
+			facetRequests.add(new CountFacetRequest(cp, maxSearchLength));
+			
 			FacetSearchParams fsp = new FacetSearchParams(facetRequests);
 			TopDocsCollector tdc = TopScoreDocCollector.create(maxSearchLength, true);
 			FacetsCollector fc = FacetsCollector.create(fsp, searcher.getIndexReader(), taxoReader);
-    		//TopDocs topDocs = searcher.search(query, null, maxSearchLength);
+    		
+
+
+			//TopDocs topDocs = searcher.search(query, null, maxSearchLength);
 			searcher.search(query, MultiCollector.wrap(tdc, fc));
+			for (FacetsCollector.MatchingDocs doc : fc.getMatchingDocs()) {
+				System.out.println(" - " + doc.toString() + " - ");
+			}
+			
+			for (FacetResult fres : fc.getFacetResults()) {
+				FacetResultNode root = fres.getFacetResultNode();
+				System.out.println(root.label + " - " + root.value);
+				for (FacetResultNode cat : root.subResults) {
+					System.out.println("" + cat.label.components[0] + " (" + cat.value + ")");
+				}
+			}
+			
+			//CategoryListParams clp = new CategoryListParams();
+			//FacetIndexingParams fip = new FacetIndexingParams(null);
+			//DrillDownQuery ddq = new DrillDownQuery(fip, query);
+			
 			for (ScoreDoc scoreDoc: tdc.topDocs().scoreDocs) {
 				Document doc = searcher.getIndexReader().document(scoreDoc.doc);
 				contentsId.add(doc.get(IIndexerDAO.CONTENT_ID_FIELD_NAME));
-				/*
-				System.out.printf("- book: id=%s, title=%s, book_category=%s, authors=%s, score=%f\n",
-						doc.get("id"), doc.get("title"),
-						doc.get("book_category"),
-						doc.get("authors"),
-						scoreDoc.score);
-				*/
+				System.out.println("ID " + doc.get("id") + " - score " + scoreDoc.score);
 			}
+			
     	} catch (IOException e) {
     		throw new ApsSystemException("Errore in estrazione " +
     				"documento in base ad indice", e);
@@ -169,20 +215,12 @@ public class SearcherDAO implements ISearcherDAO {
     	return contentsId;
     }
     
-	private Query createQuery(Properties terms, Collection<String> allowedGroups) {
+	private Query createQuery(SearchEngineFilter[] filters, Collection<String> allowedGroups) {
 		BooleanQuery mainQuery = new BooleanQuery();
-		if (terms != null && !terms.isEmpty()) {
-			Iterator<Object> iter = terms.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next().toString();
-				String value = terms.getProperty(key);
-				BooleanQuery fieldQuery = new BooleanQuery();
-				String[] values = value.split("\\s+");
-				for (int i = 0; i < values.length; i++) {
-					TermQuery term = new TermQuery(new Term(key, values[i].toLowerCase()));
-					//NOTE: search lower case....
-					fieldQuery.add(term, BooleanClause.Occur.MUST);
-				}
+		if (filters != null && filters.length > 0) {
+			for (int i = 0; i < filters.length; i++) {
+				SearchEngineFilter filter = filters[i];
+				BooleanQuery fieldQuery = this.createQuery(filter);
 				mainQuery.add(fieldQuery, BooleanClause.Occur.MUST);
 			}
 		}
@@ -206,6 +244,67 @@ public class SearcherDAO implements ISearcherDAO {
 		return mainQuery;
 	}
     
+	private BooleanQuery createQuery(SearchEngineFilter filter) {
+		BooleanQuery fieldQuery = new BooleanQuery();
+		Object value = filter.getValue();
+		if (null != value) {
+			if (value instanceof String) {
+				SearchEngineFilter.TextSearchOption option = filter.getTextSearchOption();
+				String stringValue = value.toString();
+				if (null == option || !option.equals(SearchEngineFilter.TextSearchOption.EXACT)) {
+					BooleanClause.Occur bc = BooleanClause.Occur.SHOULD;
+					if (null != option) {
+						if (option.equals(SearchEngineFilter.TextSearchOption.ALL_WORDS)) {
+							bc = BooleanClause.Occur.MUST;
+						} else if (option.equals(SearchEngineFilter.TextSearchOption.ANY_WORD)) {
+							bc = BooleanClause.Occur.MUST_NOT;
+						}
+					}
+					String[] values = stringValue.split("\\s+");
+					for (int i = 0; i < values.length; i++) {
+						TermQuery term = new TermQuery(new Term(filter.getKey(), values[i].toLowerCase()));
+						//NOTE: search lower case....
+						fieldQuery.add(term, bc);
+					}
+				} else {
+					TermQuery term = new TermQuery(new Term(filter.getKey(), stringValue.toLowerCase()));
+					//NOTE: search lower case....
+					fieldQuery.add(term, BooleanClause.Occur.MUST);
+				}
+			} else if (value instanceof Date) {
+				String toString = DateTools.timeToString(((Date) value).getTime(), DateTools.Resolution.MINUTE);
+				TermQuery term = new TermQuery(new Term(filter.getKey(), toString));
+				fieldQuery.add(term, BooleanClause.Occur.MUST);
+			} else if (value instanceof Number) {
+				TermQuery term = new TermQuery(new Term(filter.getKey(), value.toString()));
+				fieldQuery.add(term, BooleanClause.Occur.MUST);
+			}
+		} else {
+			if (filter.getStart() instanceof Number || filter.getEnd() instanceof Number) {
+				//.............................. TODO
+			} else {
+				String start = null;
+				String end = null;
+				if (filter.getStart() instanceof Date || filter.getEnd() instanceof Date) {
+					if (null != filter.getStart()) {
+						start = DateTools.timeToString(((Date) filter.getStart()).getTime(), DateTools.Resolution.MINUTE);
+					}
+					if (null != filter.getEnd()) {
+						end = DateTools.timeToString(((Date) filter.getEnd()).getTime(), DateTools.Resolution.MINUTE);
+					}
+				} else {
+					start = (null != filter.getStart()) ? filter.getStart().toString().toLowerCase() : null;
+					end = (null != filter.getEnd()) ? filter.getEnd().toString().toLowerCase() : null;
+				}
+				BytesRef byteStart = (null != start) ? new BytesRef(start.getBytes()) : null;
+				BytesRef byteEnd = (null != end) ? new BytesRef(end.getBytes()) : null;
+				TermRangeQuery range = new TermRangeQuery(filter.getKey(), byteStart, byteEnd, true, true);
+				fieldQuery.add(range, BooleanClause.Occur.MUST);
+			}
+		}
+		return fieldQuery;
+	}
+	
 	@Override
     public void close() {
     	// nothing to do
@@ -213,5 +312,5 @@ public class SearcherDAO implements ISearcherDAO {
     
     private File _indexDir;
     private File _taxoDir;
-    
+	
 }

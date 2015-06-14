@@ -20,6 +20,7 @@ import java.util.List;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import java.util.Properties;
+import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 
 /**
  * Interfaccia base per i Data Access Object dediti 
@@ -36,7 +37,7 @@ public interface ISearcherDAO {
 	 */
 	public void init(File dir, File taxoDir) throws ApsSystemException;
 	
-	/**
+	/*
      * Ricerca una lista di identificativi di contenuto in base 
      * al codice della lingua corrente ed alla parola immessa.
      * @param langCode Il codice della lingua corrente.
@@ -51,10 +52,10 @@ public interface ISearcherDAO {
      * @return La lista di identificativi contenuto.
      * @throws ApsSystemException
      */
-    public List<String> searchContentsId(String langCode, 
-    		String word, Collection<String> allowedGroups) throws ApsSystemException;
+    //public List<String> searchContentsId(String langCode, 
+    //		String word, Collection<String> allowedGroups) throws ApsSystemException;
 	
-	public List<String> searchContentsId(Properties termsProperty, 
+	public List<String> searchContentsId(SearchEngineFilter[] filters, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
     public void close();

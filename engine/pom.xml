@@ -280,12 +280,14 @@
 			<version>4.5.1</version>
 			<type>jar</type>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
 			<version>4.5.1</version>
 			<type>jar</type>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>

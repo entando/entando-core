@@ -63,7 +63,10 @@ public interface IEntitySearchEngineManager extends ISearchEngineManager {
 	public List<String> searchEntityId(String langCode, 
 			String word, Collection<String> allowedGroups) throws ApsSystemException;
 	
-	public List<String> searchEntityId(String langCode, String word, 
+	//public List<String> searchEntityId(String langCode, String word, 
+	//		Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
+	
+	public List<String> searchEntityId(SearchEngineFilter[] filters, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
 }

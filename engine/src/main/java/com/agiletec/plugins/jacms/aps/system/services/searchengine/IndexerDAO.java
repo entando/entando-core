@@ -76,14 +76,23 @@ public class IndexerDAO implements IIndexerDAO {
 	@Override
 	public synchronized void add(IApsEntity entity) throws ApsSystemException {
 		IndexWriter writer = null;
+		TaxonomyWriter taxoWriter = null;
 		try {
 			writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
-            Document document = this.createDocument(entity);
+			taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
+            Document document = this.createDocument(entity, taxoWriter);
             writer.addDocument(document);
         } catch (Throwable t) {
         	_logger.error("Errore saving entity {}", entity.getId(), t);
         	throw new ApsSystemException("Error saving entity", t);
         } finally {
+			if (null != taxoWriter) {
+				try {
+					taxoWriter.close();
+				} catch (IOException ex) {
+					_logger.error("Error closing TaxonomyWriter", ex);
+				}
+			}
 			if (null != writer) {
 				try {
 					writer.close();
@@ -100,7 +109,7 @@ public class IndexerDAO implements IIndexerDAO {
      * @return L'oggetto Document ricavato dal contenuto.
      * @throws ApsSystemException In caso di errore
      */
-    private Document createDocument(IApsEntity entity) throws ApsSystemException {
+    private Document createDocument(IApsEntity entity, TaxonomyWriter taxoWriter) throws ApsSystemException {
         Document document = new Document();
         document.add(new StringField(CONTENT_ID_FIELD_NAME, 
 				entity.getId(), Field.Store.YES));
@@ -112,7 +121,7 @@ public class IndexerDAO implements IIndexerDAO {
         	document.add(new TextField(CONTENT_GROUP_FIELD_NAME, 
 					groupName, Field.Store.YES));
         }
-		TaxonomyWriter taxoWriter = null;
+		//TaxonomyWriter taxoWriter = null;
         try {
         	EntityAttributeIterator attributesIter = new EntityAttributeIterator(entity);
         	while (attributesIter.hasNext()) {
@@ -123,22 +132,49 @@ public class IndexerDAO implements IIndexerDAO {
             		this.indexAttribute(document, currentAttribute, currentLang);
             	}
             }
+			
+			//DocumentBuilder categoryDocBuilder = new CategoryDocumentBuilder(taxo);
 			List<Category> categories = entity.getCategories();
+			
+			if (entity.getId().equals("ART180")) {
+				FacetFields facetFields = new FacetFields(taxoWriter);
+				List<CategoryPath> cats = new ArrayList<CategoryPath>();
+				//String[] path = {"general", "general_cat2"};
+				CategoryPath cp = new CategoryPath("general", "general_cat2");
+				//System.out.println(category.getPath());
+				cats.add(cp);
+				//taxoWriter.addCategory(cp);
+				
+				//System.out.println("-----------------------");
+				facetFields.addFields(document, cats);
+				//taxoWriter.commit();
+			}
+			
+			/*
 			if (null != categories && !categories.isEmpty()) {
-				taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
+				System.out.println("-----------------------");
+				System.out.println("ID " + entity.getId());
+				//taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
 				FacetFields facetFields = new FacetFields(taxoWriter);
 				List<CategoryPath> cats = new ArrayList<CategoryPath>();
 				for (int i = 0; i < categories.size(); i++) {
 					Category category = categories.get(i);
-					CategoryPath cp = new CategoryPath(category.getPath("/"), '/');
+					final String[] path = category.getPathArray();
+					//CategoryPath cp = new CategoryPath(category.getPath("/"), '/');
+					CategoryPath cp = new CategoryPath(path);
+					//System.out.println(category.getPath());
 					cats.add(cp);
+					taxoWriter.addCategory(cp);
 				}
+				System.out.println("-----------------------");
 				facetFields.addFields(document, cats);
 			}
+			*/
         } catch (Throwable t) {
 			_logger.error("Error creating document", t);
             throw new ApsSystemException("Error creating document", t);
         } finally {
+			/*
 			if (null != taxoWriter) {
 				try {
 					taxoWriter.close();
@@ -146,6 +182,7 @@ public class IndexerDAO implements IIndexerDAO {
 					_logger.error("Error closing TaxonomyWriter", ex);
 				}
 			}
+			*/
 		}
         return document;
     }

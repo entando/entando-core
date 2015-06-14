@@ -113,12 +113,12 @@ public class IndexerDAO implements IIndexerDAO {
         Document document = new Document();
         document.add(new StringField(CONTENT_ID_FIELD_NAME, 
 				entity.getId(), Field.Store.YES));
-        document.add(new TextField(CONTENT_GROUP_FIELD_NAME, 
+        document.add(new StringField(CONTENT_GROUP_FIELD_NAME, 
 				entity.getMainGroup(), Field.Store.YES));
         Iterator<String> iterGroups = entity.getGroups().iterator();
         while (iterGroups.hasNext()) {
         	String groupName = (String) iterGroups.next();
-        	document.add(new TextField(CONTENT_GROUP_FIELD_NAME, 
+        	document.add(new StringField(CONTENT_GROUP_FIELD_NAME, 
 					groupName, Field.Store.YES));
         }
         try {
@@ -139,7 +139,7 @@ public class IndexerDAO implements IIndexerDAO {
 					Category category = categories.get(i);
 					CategoryPath cp = new CategoryPath(category.getPathArray());
 					cats.add(cp);
-					document.add(new TextField(CONTENT_CATEGORY_FIELD_NAME, 
+					document.add(new StringField(CONTENT_CATEGORY_FIELD_NAME, 
 							category.getPath(CONTENT_CATEGORY_SEPARATOR), Field.Store.YES));
 				}
 				facetFields.addFields(document, cats);
@@ -159,7 +159,7 @@ public class IndexerDAO implements IIndexerDAO {
             String indexingType = attribute.getIndexingType();
             if (null != indexingType && 
             		IndexableAttributeInterface.INDEXING_TYPE_UNSTORED.equalsIgnoreCase(indexingType)) {
-            	document.add(new StringField(lang.getCode(), valueToIndex, Field.Store.NO));
+            	document.add(new TextField(lang.getCode(), valueToIndex, Field.Store.NO));
             }
             if (null != indexingType && 
             		IndexableAttributeInterface.INDEXING_TYPE_TEXT.equalsIgnoreCase(indexingType)) {

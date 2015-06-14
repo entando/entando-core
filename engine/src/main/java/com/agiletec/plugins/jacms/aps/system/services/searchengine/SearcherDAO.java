@@ -195,8 +195,7 @@ public class SearcherDAO implements ISearcherDAO {
 			Iterator<String> iterGroups = allowedGroups.iterator();
 			while (iterGroups.hasNext()) {
 				String group = iterGroups.next();
-				TermQuery groupQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_GROUP_FIELD_NAME, group.toLowerCase()));
-				//NOTE: search lower case....
+				TermQuery groupQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_GROUP_FIELD_NAME, group));
 				groupsQuery.add(groupQuery, BooleanClause.Occur.SHOULD);
 			}
 			mainQuery.add(groupsQuery, BooleanClause.Occur.MUST);
@@ -206,8 +205,7 @@ public class SearcherDAO implements ISearcherDAO {
 			Iterator<Category> cateIter = categories.iterator();
 			while (cateIter.hasNext()) {
 				Category category = cateIter.next();
-				//NOTE: search lower case....
-				String path = category.getPath(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR).toLowerCase();
+				String path = category.getPath(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR);
 				TermQuery categoryQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_CATEGORY_FIELD_NAME, path));
 				categoriesQuery.add(categoryQuery, BooleanClause.Occur.MUST);
 			}

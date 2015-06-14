@@ -133,57 +133,23 @@ public class IndexerDAO implements IIndexerDAO {
             	}
             }
 			
-			//DocumentBuilder categoryDocBuilder = new CategoryDocumentBuilder(taxo);
 			List<Category> categories = entity.getCategories();
 			
-			if (entity.getId().equals("ART180")) {
-				FacetFields facetFields = new FacetFields(taxoWriter);
-				List<CategoryPath> cats = new ArrayList<CategoryPath>();
-				//String[] path = {"general", "general_cat2"};
-				CategoryPath cp = new CategoryPath("general", "general_cat2");
-				//System.out.println(category.getPath());
-				cats.add(cp);
-				//taxoWriter.addCategory(cp);
-				
-				//System.out.println("-----------------------");
-				facetFields.addFields(document, cats);
-				//taxoWriter.commit();
-			}
-			
-			/*
 			if (null != categories && !categories.isEmpty()) {
-				System.out.println("-----------------------");
-				System.out.println("ID " + entity.getId());
-				//taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
 				FacetFields facetFields = new FacetFields(taxoWriter);
 				List<CategoryPath> cats = new ArrayList<CategoryPath>();
 				for (int i = 0; i < categories.size(); i++) {
 					Category category = categories.get(i);
-					final String[] path = category.getPathArray();
-					//CategoryPath cp = new CategoryPath(category.getPath("/"), '/');
-					CategoryPath cp = new CategoryPath(path);
-					//System.out.println(category.getPath());
+					CategoryPath cp = new CategoryPath(category.getPathArray());
 					cats.add(cp);
-					taxoWriter.addCategory(cp);
 				}
-				System.out.println("-----------------------");
 				facetFields.addFields(document, cats);
 			}
-			*/
+			
         } catch (Throwable t) {
 			_logger.error("Error creating document", t);
             throw new ApsSystemException("Error creating document", t);
-        } finally {
-			/*
-			if (null != taxoWriter) {
-				try {
-					taxoWriter.close();
-				} catch (IOException ex) {
-					_logger.error("Error closing TaxonomyWriter", ex);
-				}
-			}
-			*/
-		}
+        }
         return document;
     }
     

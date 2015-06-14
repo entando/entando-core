@@ -49,6 +49,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MultiCollector;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
@@ -145,43 +146,32 @@ public class SearcherDAO implements ISearcherDAO {
     	try {
 			taxoReader = this.getTaxoReader();
     		searcher = this.getSearcher();
-    		Query query = this.createQuery(filters, allowedGroups);
-			Set<Term> terms = new HashSet<Term>();
-			query.extractTerms(terms);
-			Iterator<Term> iterx = terms.iterator();
-			while (iterx.hasNext()) {
-				Term next = iterx.next();
-				System.out.println(next);
+    		Query query = null;
+			if ((null == filters || filters.length == 0) 
+					//&& (null == categories || categories.isEmpty())
+					&& (allowedGroups != null && allowedGroups.contains(Group.ADMINS_GROUP_NAME))) {
+				query = new MatchAllDocsQuery();
+			} else {
+				query = this.createQuery(filters, allowedGroups);
 			}
-			
            	int maxSearchLength = 1000;
 			List<FacetRequest> facetRequests = new ArrayList<FacetRequest>();
 			
-			/*
 			if (null != categories && !categories.isEmpty()) {
 				Iterator<Category> iter = categories.iterator();
 				while (iter.hasNext()) {
 					Category category = iter.next();
-					//CategoryPath categoryPath = new CategoryPath(category.getPath("."), '.');
 					CategoryPath categoryPath = new CategoryPath(category.getPathArray());
-					//System.out.println("RICERCA PER " + category.getPath());
 					facetRequests.add(new CountFacetRequest(categoryPath, maxSearchLength));
 				}
 			} else {
 				facetRequests.add(new CountFacetRequest(new CategoryPath("/"), maxSearchLength));
 			}
-			*/
-			
-			//String[] path = {"general", "general_cat2"};
-			CategoryPath cp = new CategoryPath("general", "general_cat2");
-			facetRequests.add(new CountFacetRequest(cp, maxSearchLength));
 			
 			FacetSearchParams fsp = new FacetSearchParams(facetRequests);
 			TopDocsCollector tdc = TopScoreDocCollector.create(maxSearchLength, true);
 			FacetsCollector fc = FacetsCollector.create(fsp, searcher.getIndexReader(), taxoReader);
     		
-
-
 			//TopDocs topDocs = searcher.search(query, null, maxSearchLength);
 			searcher.search(query, MultiCollector.wrap(tdc, fc));
 			for (FacetsCollector.MatchingDocs doc : fc.getMatchingDocs()) {

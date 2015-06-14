@@ -119,13 +119,22 @@ public class TestSearchEngineManager extends BaseTestCase {
             categories.add(general_cat2);
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);
+			/*
         	List<String> contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
 			assertNotNull(contentsId);
-			System.out.println("-----------------------");
+			assertTrue(contentsId.isEmpty());
+			*/
+			allowedGroup.add(Group.ADMINS_GROUP_NAME);
+			
+			List<String> contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
+			
+			System.out.println("------xxxxxxxxxxx--------");
 			System.out.println(contentsId);
-			System.out.println("-----------------------");
-			String[] expected1 = {"ART120", "ART112", "ART111", "EVN193", "ART179"};
+			System.out.println("--------------");
+			
+			String[] expected1 = {"ART111", "ART120"};
 			this.verify(contentsId, expected1);
+			
 			Category general_cat1 = this._categoryManager.getCategory("general_cat1");
 			categories.add(general_cat1);
 			contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);

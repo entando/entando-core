@@ -155,7 +155,7 @@ public class TreeNode implements ITreeNode, Serializable {
 		}
 		return title;
 	}
-	/*
+	
 	@Override
 	public String getPath() {
 		return this.getPath("/");
@@ -163,17 +163,16 @@ public class TreeNode implements ITreeNode, Serializable {
 	
 	@Override
 	public String getPath(String separator) {
-		if (this.isRoot()) return separator;
-		String path = this.getCode();
-		ITreeNode parent = this.getParent();
-		while (parent != null && parent.getParent() != null) {
-			if (parent.isRoot()) return path;
-			path = parent.getCode() + separator + path;
-			parent = parent.getParent();
+		String[] pathArray = this.getPathArray();
+		StringBuilder path = new StringBuilder();
+		for (int i = 0; i < pathArray.length; i++) {
+			String code = pathArray[i];
+			if (i>0) path.append(separator);
+			path.append(code);
 		}
-		return path;
+		return path.toString();
 	}
-	*/
+	
 	public String[] getPathArray() {
 		String[] pathArray = new String[0];
 		if (this.isRoot()) return pathArray;

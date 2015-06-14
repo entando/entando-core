@@ -41,10 +41,9 @@ public interface IIndexerDAO {
 	public void add(IApsEntity entity) throws ApsSystemException;
 	
 	/**
-     * Cancella un documento in base alla chiave mediante il quale è stato indicizzato.
+     * Cancella un documento indicizzato.
      * @param name Il nome del campo Field da utilizzare per recupero del documento.
-     * @param value La chiave mediante il quale 
-     * è stato indicizzato il documento.
+     * @param value La chiave mediante il quale è stato indicizzato il documento.
      * @throws ApsSystemException In caso di errori.
      */
     public void delete(String name, String value) throws ApsSystemException;
@@ -53,7 +52,10 @@ public interface IIndexerDAO {
 	
 	public void setLangManager(ILangManager langManager);
     
-    public static final String CONTENT_ID_FIELD_NAME = "id";
-    public static final String CONTENT_GROUP_FIELD_NAME = "group";
-    
+	public static final String FIELD_PREFIX = "entity:"; 
+    public static final String CONTENT_ID_FIELD_NAME = FIELD_PREFIX + "id";
+    public static final String CONTENT_GROUP_FIELD_NAME = FIELD_PREFIX + "group";
+    public static final String CONTENT_CATEGORY_FIELD_NAME = FIELD_PREFIX + "category";
+	public static final String CONTENT_CATEGORY_SEPARATOR = "_s_";
+	
 }

@@ -100,6 +100,20 @@ public interface ITreeNode extends Serializable {
 	 */
 	public String getFullTitle(String langCode, String separator);
 	
+	/**
+	 * Returns the path of the single node.
+	 * The sepatator between the node will be '/'.
+	 * @return the path of the single node.
+	 */
+	public String getPath();
+	
+	/**
+	 * Returns the path of the single node.
+	 * @param separator The separator between the nodes.
+	 * @return the path of the single node.
+	 */
+	public String getPath(String separator);
+	
 	public String[] getPathArray();
 	
 	/**

@@ -25,19 +25,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.facet.params.CategoryListParams;
-import org.apache.lucene.facet.params.FacetIndexingParams;
 import org.apache.lucene.facet.params.FacetSearchParams;
 import org.apache.lucene.facet.search.CountFacetRequest;
-import org.apache.lucene.facet.search.DrillDownQuery;
 import org.apache.lucene.facet.search.FacetRequest;
-import org.apache.lucene.facet.search.FacetResult;
-import org.apache.lucene.facet.search.FacetResultNode;
-import org.apache.lucene.facet.search.FacetsAggregator;
 import org.apache.lucene.facet.search.FacetsCollector;
 import org.apache.lucene.facet.taxonomy.CategoryPath;
 import org.apache.lucene.facet.taxonomy.TaxonomyReader;
@@ -47,11 +40,9 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MultiCollector;
-import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -99,7 +90,6 @@ public class SearcherDAO implements ISearcherDAO {
 		try {
 			if (searcher != null) {
 				searcher.getIndexReader().close();
-				//searcher.close();
 			}
 		} catch (IOException e) {
 			throw new ApsSystemException("Error closing searcher", e);
@@ -113,13 +103,11 @@ public class SearcherDAO implements ISearcherDAO {
 		}
 	}
 	
-	/*
+	/**
      * Ricerca una lista di identificativi di contenuto in base 
-     * al codice della lingua corrente ed alla parola immessa.
-     * @param langCode Il codice della lingua corrente.
-     * @param word La parola in base al quale fare la ricerca. Nel caso 
-     * venissero inserite stringhe di ricerca del tipo "Venice Amsterdam" 
-     * viene considerato come se fosse "Venice OR Amsterdam".
+     * ai filtri immessi.
+     * @param filters i filtri da applicare alla ricerca.
+	 * @param categories Le categorie da applicare alla ricerca.
      * @param allowedGroups I gruppi autorizzati alla visualizzazione. Nel caso 
      * che la collezione sia nulla o vuota, la ricerca sarà effettuata su contenuti 
      * referenziati con il gruppo "Ad accesso libero". Nel caso che nella collezione 
@@ -128,15 +116,6 @@ public class SearcherDAO implements ISearcherDAO {
      * @return La lista di identificativi contenuto.
      * @throws ApsSystemException
      */
-	//@Override
-	/*
-	public List<String> searchContentsId(String langCode, String word, 
-			Collection<String> allowedGroups) throws ApsSystemException {
-		Properties termsProperty = new Properties();
-		termsProperty.setProperty(langCode, word);
-		return this.searchContentsId(termsProperty, null, allowedGroups);
-	}
-	*/
 	@Override
 	public List<String> searchContentsId(SearchEngineFilter[] filters, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
@@ -148,15 +127,14 @@ public class SearcherDAO implements ISearcherDAO {
     		searcher = this.getSearcher();
     		Query query = null;
 			if ((null == filters || filters.length == 0) 
-					//&& (null == categories || categories.isEmpty())
+					&& (null == categories || categories.isEmpty())
 					&& (allowedGroups != null && allowedGroups.contains(Group.ADMINS_GROUP_NAME))) {
 				query = new MatchAllDocsQuery();
 			} else {
-				query = this.createQuery(filters, allowedGroups);
+				query = this.createQuery(filters, categories, allowedGroups);
 			}
            	int maxSearchLength = 1000;
 			List<FacetRequest> facetRequests = new ArrayList<FacetRequest>();
-			
 			if (null != categories && !categories.isEmpty()) {
 				Iterator<Category> iter = categories.iterator();
 				while (iter.hasNext()) {
@@ -167,35 +145,26 @@ public class SearcherDAO implements ISearcherDAO {
 			} else {
 				facetRequests.add(new CountFacetRequest(new CategoryPath("/"), maxSearchLength));
 			}
-			
 			FacetSearchParams fsp = new FacetSearchParams(facetRequests);
 			TopDocsCollector tdc = TopScoreDocCollector.create(maxSearchLength, true);
 			FacetsCollector fc = FacetsCollector.create(fsp, searcher.getIndexReader(), taxoReader);
-    		
-			//TopDocs topDocs = searcher.search(query, null, maxSearchLength);
 			searcher.search(query, MultiCollector.wrap(tdc, fc));
-			for (FacetsCollector.MatchingDocs doc : fc.getMatchingDocs()) {
-				System.out.println(" - " + doc.toString() + " - ");
-			}
-			
+			//for (FacetsCollector.MatchingDocs doc : fc.getMatchingDocs()) {
+			//	System.out.println(" - " + doc.toString() + " - ");
+			//}
+			/*
 			for (FacetResult fres : fc.getFacetResults()) {
 				FacetResultNode root = fres.getFacetResultNode();
-				System.out.println(root.label + " - " + root.value);
+				//System.out.println(root.toString() + " - " + root.value);
 				for (FacetResultNode cat : root.subResults) {
 					System.out.println("" + cat.label.components[0] + " (" + cat.value + ")");
 				}
 			}
-			
-			//CategoryListParams clp = new CategoryListParams();
-			//FacetIndexingParams fip = new FacetIndexingParams(null);
-			//DrillDownQuery ddq = new DrillDownQuery(fip, query);
-			
+			*/
 			for (ScoreDoc scoreDoc: tdc.topDocs().scoreDocs) {
 				Document doc = searcher.getIndexReader().document(scoreDoc.doc);
 				contentsId.add(doc.get(IIndexerDAO.CONTENT_ID_FIELD_NAME));
-				System.out.println("ID " + doc.get("id") + " - score " + scoreDoc.score);
 			}
-			
     	} catch (IOException e) {
     		throw new ApsSystemException("Errore in estrazione " +
     				"documento in base ad indice", e);
@@ -205,7 +174,8 @@ public class SearcherDAO implements ISearcherDAO {
     	return contentsId;
     }
     
-	private Query createQuery(SearchEngineFilter[] filters, Collection<String> allowedGroups) {
+	private Query createQuery(SearchEngineFilter[] filters, 
+			Collection<Category> categories, Collection<String> allowedGroups) {
 		BooleanQuery mainQuery = new BooleanQuery();
 		if (filters != null && filters.length > 0) {
 			for (int i = 0; i < filters.length; i++) {
@@ -230,6 +200,18 @@ public class SearcherDAO implements ISearcherDAO {
 				groupsQuery.add(groupQuery, BooleanClause.Occur.SHOULD);
 			}
 			mainQuery.add(groupsQuery, BooleanClause.Occur.MUST);
+		}
+		if (null != categories && !categories.isEmpty()) {
+			BooleanQuery categoriesQuery = new BooleanQuery();
+			Iterator<Category> cateIter = categories.iterator();
+			while (cateIter.hasNext()) {
+				Category category = cateIter.next();
+				//NOTE: search lower case....
+				String path = category.getPath(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR).toLowerCase();
+				TermQuery categoryQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_CATEGORY_FIELD_NAME, path));
+				categoriesQuery.add(categoryQuery, BooleanClause.Occur.MUST);
+			}
+			mainQuery.add(categoriesQuery, BooleanClause.Occur.MUST);
 		}
 		return mainQuery;
 	}

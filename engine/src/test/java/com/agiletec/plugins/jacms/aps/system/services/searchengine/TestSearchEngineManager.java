@@ -39,22 +39,26 @@ public class TestSearchEngineManager extends BaseTestCase {
     	super.setUp();
         this.init();
     }
-    /*
+    
     public void testSearchContentsId_1() throws Throwable {
     	try {
-    		Content content = this.createContent_1();
-    		this._searchEngineManager.deleteIndexedEntity(content.getId());
-    		this._searchEngineManager.addEntityToIndex(content);
+    		Content content_1 = this.createContent_1();
+    		this._searchEngineManager.deleteIndexedEntity(content_1.getId());
+    		this._searchEngineManager.addEntityToIndex(content_1);
+            
+        	Content content_2 = this.createContent_2();
+    		this._searchEngineManager.deleteIndexedEntity(content_2.getId());
+    		this._searchEngineManager.addEntityToIndex(content_2);
             
         	List<String> contentsId = this._searchEngineManager.searchEntityId("it", "San meravigliosa", null);
 			assertNotNull(contentsId);
-			assertTrue(contentsId.contains(content.getId()));
+			assertTrue(contentsId.contains(content_1.getId()));
 			contentsId = this._searchEngineManager.searchEntityId("en", "Petersburg wonderful", null);
 			assertNotNull(contentsId);
-			assertTrue(contentsId.contains(content.getId()));
+			assertTrue(contentsId.contains(content_1.getId()));
 			contentsId = this._searchEngineManager.searchEntityId("en", "meravigliosa", null);
 			assertNotNull(contentsId);
-			assertFalse(contentsId.contains(content.getId()));
+			assertFalse(contentsId.contains(content_1.getId()));
         } catch (Throwable t) {
 			throw t;
 		}
@@ -92,24 +96,29 @@ public class TestSearchEngineManager extends BaseTestCase {
     
     public void testSearchContentsId_3() throws Throwable {
     	try {
-    		Content content = this.createContent_1();
-    		content.setMainGroup(Group.ADMINS_GROUP_NAME);
-    		this._searchEngineManager.deleteIndexedEntity(content.getId());
-    		this._searchEngineManager.addEntityToIndex(content);
+    		Content content_1 = this.createContent_1();
+    		content_1.setMainGroup(Group.ADMINS_GROUP_NAME);
+    		this._searchEngineManager.deleteIndexedEntity(content_1.getId());
+    		this._searchEngineManager.addEntityToIndex(content_1);
+			
+			Content content_2 = this.createContent_2();
+    		this._searchEngineManager.deleteIndexedEntity(content_2.getId());
+    		this._searchEngineManager.addEntityToIndex(content_2);
+			
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);
         	List<String> contentsId = this._searchEngineManager.searchEntityId("it", "San meravigliosa", allowedGroup);
 			assertNotNull(contentsId);
-			assertFalse(contentsId.contains(content.getId()));
+			assertFalse(contentsId.contains(content_1.getId()));
 			allowedGroup.add("secondaryGroup");
 			contentsId = this._searchEngineManager.searchEntityId("it", "San meravigliosa", allowedGroup);
 			assertNotNull(contentsId);
-			assertTrue(contentsId.contains(content.getId()));
+			assertTrue(contentsId.contains(content_1.getId()));
         } catch (Throwable t) {
 			throw t;
 		}
     }
-	*/
+	
     public void testFacetSearchContentsId_1() throws Throwable {
     	try {
     		Thread thread = this._searchEngineManager.startReloadContentsReferences();
@@ -119,30 +128,18 @@ public class TestSearchEngineManager extends BaseTestCase {
             categories.add(general_cat2);
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);
-			/*
         	List<String> contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
 			assertNotNull(contentsId);
 			assertTrue(contentsId.isEmpty());
-			*/
 			allowedGroup.add(Group.ADMINS_GROUP_NAME);
-			
-			List<String> contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
-			
-			System.out.println("------xxxxxxxxxxx--------");
-			System.out.println(contentsId);
-			System.out.println("--------------");
-			
+			contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
 			String[] expected1 = {"ART111", "ART120"};
 			this.verify(contentsId, expected1);
-			
 			Category general_cat1 = this._categoryManager.getCategory("general_cat1");
 			categories.add(general_cat1);
 			contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
-			System.out.println("----------vv-------------");
-			System.out.println(contentsId);
-			System.out.println("-----------------------");
 			assertNotNull(contentsId);
-			String[] expected2 = {"ART111", "ART179"};
+			String[] expected2 = {"ART111"};
 			this.verify(contentsId, expected2);
         } catch (Throwable t) {
 			throw t;

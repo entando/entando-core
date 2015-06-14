@@ -121,7 +121,6 @@ public class IndexerDAO implements IIndexerDAO {
         	document.add(new TextField(CONTENT_GROUP_FIELD_NAME, 
 					groupName, Field.Store.YES));
         }
-		//TaxonomyWriter taxoWriter = null;
         try {
         	EntityAttributeIterator attributesIter = new EntityAttributeIterator(entity);
         	while (attributesIter.hasNext()) {
@@ -132,9 +131,7 @@ public class IndexerDAO implements IIndexerDAO {
             		this.indexAttribute(document, currentAttribute, currentLang);
             	}
             }
-			
 			List<Category> categories = entity.getCategories();
-			
 			if (null != categories && !categories.isEmpty()) {
 				FacetFields facetFields = new FacetFields(taxoWriter);
 				List<CategoryPath> cats = new ArrayList<CategoryPath>();
@@ -142,10 +139,11 @@ public class IndexerDAO implements IIndexerDAO {
 					Category category = categories.get(i);
 					CategoryPath cp = new CategoryPath(category.getPathArray());
 					cats.add(cp);
+					document.add(new TextField(CONTENT_CATEGORY_FIELD_NAME, 
+							category.getPath(CONTENT_CATEGORY_SEPARATOR), Field.Store.YES));
 				}
 				facetFields.addFields(document, cats);
 			}
-			
         } catch (Throwable t) {
 			_logger.error("Error creating document", t);
             throw new ApsSystemException("Error creating document", t);
@@ -171,10 +169,7 @@ public class IndexerDAO implements IIndexerDAO {
     }
 	
     /**
-     * Cancella un documento in base alla chiave (di nome "id") 
-     * mediante il quale è stato indicizzato.
-     * Nel caso della cancellazione di un contenuto il nome del campo 
-     * da utilizzare sarà "id" mentre il valore sarà l'identificativo del contenuto.
+     * Cancella un documento.
      * @param name Il nome del campo Field da utilizzare per recupero del documento.
      * @param value La chiave mediante il quale è stato indicizzato il documento.
      * @throws ApsSystemException In caso di errore

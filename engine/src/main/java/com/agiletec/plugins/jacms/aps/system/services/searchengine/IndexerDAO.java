@@ -192,11 +192,11 @@ public class IndexerDAO implements IIndexerDAO {
     }
     
     private Analyzer getAnalyzer() {
-        return new StandardAnalyzer(Version.LUCENE_45);
+        return new StandardAnalyzer(Version.LUCENE_46);
     }
 	
 	private IndexWriterConfig getIndexWriterConfig() {
-		return new IndexWriterConfig(Version.LUCENE_45, this.getAnalyzer());
+		return new IndexWriterConfig(Version.LUCENE_46, this.getAnalyzer());
 	}
     
 	protected ILangManager getLangManager() {

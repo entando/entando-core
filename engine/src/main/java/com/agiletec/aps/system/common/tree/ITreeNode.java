@@ -102,7 +102,7 @@ public interface ITreeNode extends Serializable {
 	
 	/**
 	 * Returns the path of the single node.
-	 * The sepatator between the node will be '/'.
+	 * The sepatator between the node will be '/' and the path contains the root node.
 	 * @return the path of the single node.
 	 */
 	public String getPath();
@@ -110,11 +110,14 @@ public interface ITreeNode extends Serializable {
 	/**
 	 * Returns the path of the single node.
 	 * @param separator The separator between the nodes.
+	 * @param addRoot Add the root node
 	 * @return the path of the single node.
 	 */
-	public String getPath(String separator);
+	public String getPath(String separator, boolean addRoot);
 	
 	public String[] getPathArray();
+	
+	public String[] getPathArray(boolean addRoot);
 	
 	/**
 	 * Indicates whether the node is child of the other specificated node.

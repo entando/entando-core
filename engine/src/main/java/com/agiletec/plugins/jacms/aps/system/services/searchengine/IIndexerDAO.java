@@ -28,10 +28,9 @@ public interface IIndexerDAO {
 	/**
 	 * Inizializzazione dell'indicizzatore.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @param taxoDir La cartella locale delle tassonomie
 	 * @throws ApsSystemException In caso di errori.
 	 */
-	public void init(File dir, File taxoDir) throws ApsSystemException;
+	public void init(File dir) throws ApsSystemException;
 	
 	/**
 	 * Aggiunge un contenuto nel db del motore di ricerca.
@@ -54,8 +53,9 @@ public interface IIndexerDAO {
     
 	public static final String FIELD_PREFIX = "entity:"; 
     public static final String CONTENT_ID_FIELD_NAME = FIELD_PREFIX + "id";
+    public static final String CONTENT_TYPE_FIELD_NAME = FIELD_PREFIX + "type";
     public static final String CONTENT_GROUP_FIELD_NAME = FIELD_PREFIX + "group";
     public static final String CONTENT_CATEGORY_FIELD_NAME = FIELD_PREFIX + "category";
-	public static final String CONTENT_CATEGORY_SEPARATOR = "_s_";
+	public static final String CONTENT_CATEGORY_SEPARATOR = "/";
 	
 }

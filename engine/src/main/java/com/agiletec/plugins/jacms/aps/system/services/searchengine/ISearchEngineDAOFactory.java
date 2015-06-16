@@ -74,6 +74,4 @@ public interface ISearchEngineDAOFactory {
 	 */
 	public void deleteSubDirectory(String subDirectory);
 	
-	public static final String TAXO_DIR_SUFFIX = "_taxo";
-	
 }

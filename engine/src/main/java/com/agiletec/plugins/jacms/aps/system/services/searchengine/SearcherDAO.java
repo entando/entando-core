@@ -13,6 +13,7 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
+import org.entando.entando.aps.system.services.searchengine.FacetedContentsResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.Group;
@@ -20,39 +21,37 @@ import com.agiletec.aps.system.services.group.Group;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.facet.params.FacetSearchParams;
-import org.apache.lucene.facet.search.CountFacetRequest;
-import org.apache.lucene.facet.search.FacetRequest;
-import org.apache.lucene.facet.search.FacetsCollector;
-import org.apache.lucene.facet.taxonomy.CategoryPath;
-import org.apache.lucene.facet.taxonomy.TaxonomyReader;
-import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyReader;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexNotFoundException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.MultiCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
-import org.apache.lucene.search.TopDocsCollector;
-import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Data Access Object dedita alle operazioni di ricerca 
@@ -61,16 +60,16 @@ import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
  */
 public class SearcherDAO implements ISearcherDAO {
 	
+	private static final Logger _logger = LoggerFactory.getLogger(SearcherDAO.class);
+	
 	/**
 	 * Inizializzazione del searcher.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @param taxoDir La cartella locale delle tassonomie
 	 * @throws ApsSystemException In caso di errore
 	 */
 	@Override
-	public void init(File dir, File taxoDir) throws ApsSystemException {
+	public void init(File dir) throws ApsSystemException {
 		this._indexDir = dir;
-		this._taxoDir = taxoDir;
 	}
 	
 	private IndexSearcher getSearcher() throws IOException {
@@ -80,13 +79,7 @@ public class SearcherDAO implements ISearcherDAO {
 		return searcher;
 	}
 	
-	private TaxonomyReader getTaxoReader() throws IOException {
-		FSDirectory directory = new SimpleFSDirectory(this._taxoDir);
-		TaxonomyReader taxoReader = new DirectoryTaxonomyReader(directory);
-		return taxoReader;
-	}
-	
-	private void releaseResources(IndexSearcher searcher, TaxonomyReader taxoReader) throws ApsSystemException {
+	private void releaseResources(IndexSearcher searcher) throws ApsSystemException {
 		try {
 			if (searcher != null) {
 				searcher.getIndexReader().close();
@@ -94,13 +87,12 @@ public class SearcherDAO implements ISearcherDAO {
 		} catch (IOException e) {
 			throw new ApsSystemException("Error closing searcher", e);
 		}
-		try {
-			if (taxoReader != null) {
-				taxoReader.close();
-			}
-		} catch (IOException e) {
-			throw new ApsSystemException("Error closing TaxonomyReader", e);
-		}
+	}
+	
+	@Override
+	public FacetedContentsResult searchFacetedContents(SearchEngineFilter[] filters, 
+			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+		return searchContents(filters, categories, allowedGroups, true);
 	}
 	
 	/**
@@ -119,11 +111,15 @@ public class SearcherDAO implements ISearcherDAO {
 	@Override
 	public List<String> searchContentsId(SearchEngineFilter[] filters, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+		return this.searchContents(filters, categories, allowedGroups, false).getContentsId();
+    }
+	
+	public FacetedContentsResult searchContents(SearchEngineFilter[] filters, 
+			Collection<Category> categories, Collection<String> allowedGroups, boolean faceted) throws ApsSystemException {
+		FacetedContentsResult result = new FacetedContentsResult();
 		List<String> contentsId = new ArrayList<String>();
 		IndexSearcher searcher = null;
-		TaxonomyReader taxoReader = null;
     	try {
-			taxoReader = this.getTaxoReader();
     		searcher = this.getSearcher();
     		Query query = null;
 			if ((null == filters || filters.length == 0) 
@@ -133,47 +129,46 @@ public class SearcherDAO implements ISearcherDAO {
 			} else {
 				query = this.createQuery(filters, categories, allowedGroups);
 			}
-           	int maxSearchLength = 1000;
-			List<FacetRequest> facetRequests = new ArrayList<FacetRequest>();
-			if (null != categories && !categories.isEmpty()) {
-				Iterator<Category> iter = categories.iterator();
-				while (iter.hasNext()) {
-					Category category = iter.next();
-					CategoryPath categoryPath = new CategoryPath(category.getPathArray());
-					facetRequests.add(new CountFacetRequest(categoryPath, maxSearchLength));
-				}
-			} else {
-				facetRequests.add(new CountFacetRequest(new CategoryPath("/"), maxSearchLength));
-			}
-			FacetSearchParams fsp = new FacetSearchParams(facetRequests);
-			TopDocsCollector tdc = TopScoreDocCollector.create(maxSearchLength, true);
-			FacetsCollector fc = FacetsCollector.create(fsp, searcher.getIndexReader(), taxoReader);
-			searcher.search(query, MultiCollector.wrap(tdc, fc));
-			//for (FacetsCollector.MatchingDocs doc : fc.getMatchingDocs()) {
-			//	System.out.println(" - " + doc.toString() + " - ");
-			//}
-			/*
-			for (FacetResult fres : fc.getFacetResults()) {
-				FacetResultNode root = fres.getFacetResultNode();
-				//System.out.println(root.toString() + " - " + root.value);
-				for (FacetResultNode cat : root.subResults) {
-					System.out.println("" + cat.label.components[0] + " (" + cat.value + ")");
-				}
-			}
-			*/
-			for (ScoreDoc scoreDoc: tdc.topDocs().scoreDocs) {
-				Document doc = searcher.getIndexReader().document(scoreDoc.doc);
-				contentsId.add(doc.get(IIndexerDAO.CONTENT_ID_FIELD_NAME));
-			}
-    	} catch (IOException e) {
-    		throw new ApsSystemException("Errore in estrazione " +
-    				"documento in base ad indice", e);
+			TopDocs topDocs = searcher.search(query, null, 1000);
+			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+			Map<String, Integer> occurrences = new HashMap<String, Integer>();
+			if (scoreDocs.length > 0) {
+    			for (int index=0; index<scoreDocs.length; index++) {
+					Document doc = searcher.doc(scoreDocs[index].doc);
+    				contentsId.add(doc.get(IIndexerDAO.CONTENT_ID_FIELD_NAME));
+					if (faceted) {
+						Set<String> codes = new HashSet<String>();
+						String[] categoryPaths = doc.getValues(IIndexerDAO.CONTENT_CATEGORY_FIELD_NAME);
+						for (int i = 0; i < categoryPaths.length; i++) {
+							String categoryPath = categoryPaths[i];
+							String[] paths = categoryPath.split(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR);
+							codes.addAll(Arrays.asList(paths));
+						}
+						Iterator<String> iter = codes.iterator();
+						while (iter.hasNext()) {
+							String code = iter.next();
+							Integer value = occurrences.get(code);
+							if (null == value) {
+								value = 0;
+							}
+							occurrences.put(code, (value+1));
+						}
+					}
+    			}
+    		}
+			result.setOccurrences(occurrences);
+			result.setContentsId(contentsId);
+    	} catch (IndexNotFoundException inf) {
+			_logger.error("no index was found in the Directory", inf);
+    	} catch (Throwable t) {
+			_logger.error("Error extracting documents", t);
+    		throw new ApsSystemException("Error extracting documents", t);
     	} finally {
-    		this.releaseResources(searcher, taxoReader);
+    		this.releaseResources(searcher);
     	}
-    	return contentsId;
+    	return result;
     }
-    
+	
 	private Query createQuery(SearchEngineFilter[] filters, 
 			Collection<Category> categories, Collection<String> allowedGroups) {
 		BooleanQuery mainQuery = new BooleanQuery();
@@ -205,7 +200,7 @@ public class SearcherDAO implements ISearcherDAO {
 			Iterator<Category> cateIter = categories.iterator();
 			while (cateIter.hasNext()) {
 				Category category = cateIter.next();
-				String path = category.getPath(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR);
+				String path = category.getPath(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR, false);
 				TermQuery categoryQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_CATEGORY_FIELD_NAME, path));
 				categoriesQuery.add(categoryQuery, BooleanClause.Occur.MUST);
 			}
@@ -281,6 +276,5 @@ public class SearcherDAO implements ISearcherDAO {
     }
     
     private File _indexDir;
-    private File _taxoDir;
-	
+    
 }

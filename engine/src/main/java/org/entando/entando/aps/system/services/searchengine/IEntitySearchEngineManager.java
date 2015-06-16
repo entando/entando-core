@@ -69,4 +69,7 @@ public interface IEntitySearchEngineManager extends ISearchEngineManager {
 	public List<String> searchEntityId(SearchEngineFilter[] filters, 
 			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
+	public FacetedContentsResult searchFacetedEntities(SearchEngineFilter[] filters, 
+			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
+	
 }

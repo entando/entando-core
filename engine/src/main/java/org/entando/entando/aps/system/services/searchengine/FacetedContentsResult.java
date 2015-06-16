@@ -21,44 +21,29 @@
  */
 package org.entando.entando.aps.system.services.searchengine;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
  */
-public class SearchEngineFilter<T> extends FieldSearchFilter {
+public class FacetedContentsResult {
 	
-	public SearchEngineFilter(String key, Object value) {
-		this(key, value, TextSearchOption.AT_LEAST_ONE_WORD);
+	public List<String> getContentsId() {
+		return _contentsId;
+	}
+	public void setContentsId(List<String> contentsId) {
+		this._contentsId = contentsId;
 	}
 	
-	public SearchEngineFilter(String key, Object value, TextSearchOption textSearchOption) {
-		super(key, value, false);
-		this.setTextSearchOption(textSearchOption);
+	public Map<String, Integer> getOccurrences() {
+		return _occurrences;
+	}
+	public void setOccurrences(Map<String, Integer> occurrences) {
+		this._occurrences = occurrences;
 	}
 	
-	public SearchEngineFilter(String key, List allowedValues, TextSearchOption textSearchOption) {
-		super(key, allowedValues, false);
-		this.setTextSearchOption(textSearchOption);
-	}
-	
-	public SearchEngineFilter(String key, Object start, Object end) {
-		super(key, start, end);
-	}
-	
-	public TextSearchOption getTextSearchOption() {
-		if (null == this._textSearchOption && super.isNullOption()) {
-			return TextSearchOption.ANY_WORD;
-		}
-		return _textSearchOption;
-	}
-	protected void setTextSearchOption(TextSearchOption textSearchOption) {
-		this._textSearchOption = textSearchOption;
-	}
-	
-	private TextSearchOption _textSearchOption;
-	
-	public enum TextSearchOption {EXACT, ALL_WORDS, AT_LEAST_ONE_WORD, ANY_WORD}
+	private List<String> _contentsId;
+	private Map<String, Integer> _occurrences;
 	
 }

@@ -27,6 +27,8 @@ import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.services.searchengine.FacetedContentsResult;
+import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 
 /**
  * Test del servizio detentore delle operazioni sul motore di ricerca.
@@ -39,7 +41,24 @@ public class TestSearchEngineManager extends BaseTestCase {
     	super.setUp();
         this.init();
     }
-    
+	
+	public void testSearchAllContents() throws Throwable {
+		try {
+        	Thread thread = this._searchEngineManager.startReloadContentsReferences();
+        	thread.join();
+        	Set<String> allowedGroup = new HashSet<String>();
+			SearchEngineFilter[] filters = {};
+        	List<String> freeContentsId = this._searchEngineManager.searchEntityId(filters, null, allowedGroup);
+			assertNotNull(freeContentsId);
+        	allowedGroup.add(Group.ADMINS_GROUP_NAME);
+			List<String> allContentsId = this._searchEngineManager.searchEntityId(filters, null, allowedGroup);
+			assertNotNull(allContentsId);
+			assertTrue(allContentsId.size() > freeContentsId.size());
+        } catch (Throwable t) {
+			throw t;
+		}
+	}
+	
     public void testSearchContentsId_1() throws Throwable {
     	try {
     		Content content_1 = this.createContent_1();
@@ -119,7 +138,32 @@ public class TestSearchEngineManager extends BaseTestCase {
 		}
     }
 	
-    public void testFacetSearchContentsId_1() throws Throwable {
+    public void testSearchContentsId_4() throws Throwable {
+    	try {
+    		Thread thread = this._searchEngineManager.startReloadContentsReferences();
+        	thread.join();
+			
+			SearchEngineFilter<String> filterByType = new SearchEngineFilter<String>(IIndexerDAO.CONTENT_TYPE_FIELD_NAME, "ART");
+			SearchEngineFilter[] filters = {filterByType};
+            List<String> allowedGroup = new ArrayList<String>();
+            allowedGroup.add(Group.FREE_GROUP_NAME);
+        	List<String> contentsId = this._searchEngineManager.searchEntityId(filters, null, allowedGroup);
+			assertNotNull(contentsId);
+			String[] expected1 = {"ART180", "ART1", "ART187", "ART121"};
+			this.verify(contentsId, expected1);
+			Category cat1 = this._categoryManager.getCategory("cat1");
+			List<Category> categories = new ArrayList<Category>();
+			categories.add(cat1);
+			contentsId = this._searchEngineManager.searchEntityId(filters, categories, allowedGroup);
+			assertNotNull(contentsId);
+			String[] expected2 = {"ART180"};
+			this.verify(contentsId, expected2);
+        } catch (Throwable t) {
+			throw t;
+		}
+    }
+	
+    public void testSearchContentsId_5() throws Throwable {
     	try {
     		Thread thread = this._searchEngineManager.startReloadContentsReferences();
         	thread.join();
@@ -146,6 +190,65 @@ public class TestSearchEngineManager extends BaseTestCase {
 		}
     }
 	
+    public void testSearchContentsId_6() throws Throwable {
+    	try {
+    		Thread thread = this._searchEngineManager.startReloadContentsReferences();
+        	thread.join();
+			Category general = this._categoryManager.getCategory("general");
+            List<Category> categories = new ArrayList<Category>();
+            categories.add(general);
+            List<String> allowedGroup = new ArrayList<String>();
+        	allowedGroup.add(Group.ADMINS_GROUP_NAME);
+			List<String> contentsId = this._searchEngineManager.searchEntityId(null, categories, allowedGroup);
+			assertNotNull(contentsId);
+			String[] expected1 = {"ART122", "ART102", "ART111", "ART120"};
+			this.verify(contentsId, expected1);
+        } catch (Throwable t) {
+			throw t;
+		}
+    }
+	
+	public void testFacetedAllContents() throws Throwable {
+		try {
+        	Thread thread = this._searchEngineManager.startReloadContentsReferences();
+        	thread.join();
+        	Set<String> allowedGroup = new HashSet<String>();
+			allowedGroup.add(Group.ADMINS_GROUP_NAME);
+			SearchEngineFilter[] filters = {};
+        	FacetedContentsResult result = this._searchEngineManager.searchFacetedEntities(filters, null, allowedGroup);
+			assertNotNull(result);
+			assertNotNull(result.getContentsId());
+			assertNotNull(result.getOccurrences());
+			assertTrue(result.getContentsId().size() > 0);
+			assertTrue(result.getOccurrences().size() > 0);
+        } catch (Throwable t) {
+			throw t;
+		}
+	}
+	
+    public void testSearchFacetedContents_1() throws Throwable {
+    	try {
+    		Thread thread = this._searchEngineManager.startReloadContentsReferences();
+        	thread.join();
+			Category general = this._categoryManager.getCategory("general");
+            List<Category> categories = new ArrayList<Category>();
+            categories.add(general);
+            List<String> allowedGroup = new ArrayList<String>();
+            allowedGroup.add(Group.FREE_GROUP_NAME);
+        	allowedGroup.add(Group.ADMINS_GROUP_NAME);
+			FacetedContentsResult result = this._searchEngineManager.searchFacetedEntities(null, categories, allowedGroup);
+			assertNotNull(result);
+			String[] expected1 = {"ART122", "ART102", "ART111", "ART120"};
+			this.verify(result.getContentsId(), expected1);
+			System.out.println("------------------");
+			System.out.println(result.getOccurrences());
+			System.out.println("------------------");
+			assertEquals(4, result.getOccurrences().size());
+        } catch (Throwable t) {
+			throw t;
+		}
+    }
+	
 	private void verify(List<String> contentsId, String[] array) {
 		assertEquals(array.length, contentsId.size());
     	for (int i=0; i<array.length; i++) {
@@ -158,6 +261,7 @@ public class TestSearchEngineManager extends BaseTestCase {
         content.setId("100");
         content.setMainGroup(Group.FREE_GROUP_NAME);
         content.addGroup("secondaryGroup");
+		content.setTypeCode("ART");
         TextAttribute text = new TextAttribute();
         text.setName("Articolo");
         text.setType("Text");
@@ -177,6 +281,7 @@ public class TestSearchEngineManager extends BaseTestCase {
         content.setId("101");
         content.setMainGroup(Group.FREE_GROUP_NAME);
         content.addGroup("thirdGroup");
+		content.setTypeCode("ART");
         TextAttribute text = new TextAttribute();
         text.setName("Articolo");
         text.setType("Text");

@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.searchengine.FacetedContentsResult;
 import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,6 +245,18 @@ public class SearchEngineManager extends AbstractService
     	} catch (Throwable t) {
     		_logger.error("Error searching content id list. ", t);
     		throw new ApsSystemException("Error searching content id list", t);
+    	}
+    	return contentsId;
+	}
+	
+	@Override
+	public FacetedContentsResult searchFacetedEntities(SearchEngineFilter[] filters, Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+		FacetedContentsResult contentsId = null;
+    	try {
+			contentsId = _searcherDao.searchFacetedContents(filters, categories, allowedGroups);
+    	} catch (Throwable t) {
+    		_logger.error("Error searching faceted contents", t);
+    		throw new ApsSystemException("Error searching faceted contents", t);
     	}
     	return contentsId;
 	}

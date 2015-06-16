@@ -24,7 +24,6 @@ import com.agiletec.aps.system.services.lang.Lang;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,10 +33,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.facet.index.FacetFields;
-import org.apache.lucene.facet.taxonomy.CategoryPath;
-import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
-import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -58,14 +53,12 @@ public class IndexerDAO implements IIndexerDAO {
 	/**
 	 * Inizializzazione dell'indicizzatore.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @param taxoDir La cartella locale delle tassonomie
 	 * @throws ApsSystemException In caso di errore
 	 */
 	@Override
-	public void init(File dir, File taxoDir) throws ApsSystemException {
+	public void init(File dir) throws ApsSystemException {
 		try {
 			this._dir = FSDirectory.open(dir);
-			this._taxoDir = FSDirectory.open(taxoDir);
 		} catch (Throwable t) {
 			_logger.error("Error creating directory", t);
 			throw new ApsSystemException("Error creating directory", t);
@@ -76,23 +69,14 @@ public class IndexerDAO implements IIndexerDAO {
 	@Override
 	public synchronized void add(IApsEntity entity) throws ApsSystemException {
 		IndexWriter writer = null;
-		TaxonomyWriter taxoWriter = null;
 		try {
 			writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
-			taxoWriter = new DirectoryTaxonomyWriter(this._taxoDir);
-            Document document = this.createDocument(entity, taxoWriter);
+			Document document = this.createDocument(entity/*, taxoWriter*/);
             writer.addDocument(document);
         } catch (Throwable t) {
         	_logger.error("Errore saving entity {}", entity.getId(), t);
         	throw new ApsSystemException("Error saving entity", t);
         } finally {
-			if (null != taxoWriter) {
-				try {
-					taxoWriter.close();
-				} catch (IOException ex) {
-					_logger.error("Error closing TaxonomyWriter", ex);
-				}
-			}
 			if (null != writer) {
 				try {
 					writer.close();
@@ -109,10 +93,12 @@ public class IndexerDAO implements IIndexerDAO {
      * @return L'oggetto Document ricavato dal contenuto.
      * @throws ApsSystemException In caso di errore
      */
-    private Document createDocument(IApsEntity entity, TaxonomyWriter taxoWriter) throws ApsSystemException {
+    private Document createDocument(IApsEntity entity) throws ApsSystemException {
         Document document = new Document();
         document.add(new StringField(CONTENT_ID_FIELD_NAME, 
 				entity.getId(), Field.Store.YES));
+        document.add(new TextField(CONTENT_TYPE_FIELD_NAME, 
+				entity.getTypeCode(), Field.Store.YES));
         document.add(new StringField(CONTENT_GROUP_FIELD_NAME, 
 				entity.getMainGroup(), Field.Store.YES));
         Iterator<String> iterGroups = entity.getGroups().iterator();
@@ -133,16 +119,10 @@ public class IndexerDAO implements IIndexerDAO {
             }
 			List<Category> categories = entity.getCategories();
 			if (null != categories && !categories.isEmpty()) {
-				FacetFields facetFields = new FacetFields(taxoWriter);
-				List<CategoryPath> cats = new ArrayList<CategoryPath>();
 				for (int i = 0; i < categories.size(); i++) {
 					Category category = categories.get(i);
-					CategoryPath cp = new CategoryPath(category.getPathArray());
-					cats.add(cp);
-					document.add(new StringField(CONTENT_CATEGORY_FIELD_NAME, 
-							category.getPath(CONTENT_CATEGORY_SEPARATOR), Field.Store.YES));
+					this.indexCategory(document, category);
 				}
-				facetFields.addFields(document, cats);
 			}
         } catch (Throwable t) {
 			_logger.error("Error creating document", t);
@@ -150,7 +130,16 @@ public class IndexerDAO implements IIndexerDAO {
         }
         return document;
     }
-    
+	
+	private void indexCategory(Document document, Category categoryToIndex) {
+		if (null == categoryToIndex || categoryToIndex.isRoot()) {
+			return;
+		}
+		document.add(new StringField(CONTENT_CATEGORY_FIELD_NAME, 
+				categoryToIndex.getPath(CONTENT_CATEGORY_SEPARATOR, false), Field.Store.YES));
+		this.indexCategory(document, categoryToIndex.getParent());
+	}
+	
     private void indexAttribute(Document document,
             AttributeInterface attribute, Lang lang) throws ApsSystemException {
     	attribute.setRenderingLang(lang.getCode());
@@ -192,11 +181,11 @@ public class IndexerDAO implements IIndexerDAO {
     }
     
     private Analyzer getAnalyzer() {
-        return new StandardAnalyzer(Version.LUCENE_46);
+        return new StandardAnalyzer();
     }
 	
 	private IndexWriterConfig getIndexWriterConfig() {
-		return new IndexWriterConfig(Version.LUCENE_46, this.getAnalyzer());
+		return new IndexWriterConfig(Version.LUCENE_4_10_4, this.getAnalyzer());
 	}
     
 	protected ILangManager getLangManager() {
@@ -208,7 +197,6 @@ public class IndexerDAO implements IIndexerDAO {
 	}
 	
     private Directory _dir;
-    private Directory _taxoDir;
 	
     private ILangManager _langManager;
     

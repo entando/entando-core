@@ -27,7 +27,7 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
  * Classe factory degli elementi ad uso del SearchEngine.
  * @author E.Santoboni
  */
-public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFactoryAware*/ {
+public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 
 	private static final Logger _logger = LoggerFactory.getLogger(SearchEngineDAOFactory.class);
 	
@@ -56,7 +56,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 			Class indexerClass = Class.forName(this.getIndexerClassName());
             indexerDao = (IIndexerDAO) indexerClass.newInstance();
 			indexerDao.setLangManager(this.getLangManager());
-			indexerDao.init(this.getDirectory(subDir), this.getDirectory(subDir+TAXO_DIR_SUFFIX));
+			indexerDao.init(this.getDirectory(subDir));
 		} catch (Throwable t) {
 			_logger.error("Error getting indexer", t);
 			throw new ApsSystemException("Error creating new indexer", t);
@@ -70,7 +70,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 		try {
 			Class searcherClass = Class.forName(this.getSearcherClassName());
             searcherDao = (ISearcherDAO) searcherClass.newInstance();
-			searcherDao.init(this.getDirectory(subDir), this.getDirectory(subDir+TAXO_DIR_SUFFIX));
+			searcherDao.init(this.getDirectory(subDir));
 		} catch (Throwable t) {
 			_logger.error("Error creating new searcher", t);
 			throw new ApsSystemException("Error creating new searcher", t);
@@ -84,7 +84,6 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 		String oldDir = _subDirectory;
 		this._subDirectory = newSubDirectory;
 		this.deleteSubDirectory(oldDir);
-		this.deleteSubDirectory(oldDir+TAXO_DIR_SUFFIX);
 	}
 	
 	private File getDirectory(String subDirectory) throws ApsSystemException {

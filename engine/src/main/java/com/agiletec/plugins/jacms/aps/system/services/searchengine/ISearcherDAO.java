@@ -13,6 +13,7 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
+import org.entando.entando.aps.system.services.searchengine.FacetedContentsResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 
@@ -32,10 +33,12 @@ public interface ISearcherDAO {
 	/**
 	 * Inizializzazione del searcher.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @param taxoDir La cartella locale delle tassonomie
 	 * @throws ApsSystemException In caso di errore
 	 */
-	public void init(File dir, File taxoDir) throws ApsSystemException;
+	public void init(File dir) throws ApsSystemException;
+	
+	public FacetedContentsResult searchFacetedContents(SearchEngineFilter[] filters, 
+			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
 	/**
      * Ricerca una lista di identificativi di contenuto in base 

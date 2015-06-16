@@ -551,28 +551,6 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.6</version>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>4.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore-nio</artifactId>
-			<version>4.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpasyncclient</artifactId>
-			<version>4.0-beta3</version>
-		</dependency>
-		-->
 	</dependencies>
 	<reporting>
 		<plugins>

@@ -143,7 +143,7 @@ public class TestSearchEngineManager extends BaseTestCase {
     		Thread thread = this._searchEngineManager.startReloadContentsReferences();
         	thread.join();
 			
-			SearchEngineFilter<String> filterByType = new SearchEngineFilter<String>(IIndexerDAO.CONTENT_TYPE_FIELD_NAME, "ART");
+			SearchEngineFilter filterByType = new SearchEngineFilter(IIndexerDAO.CONTENT_TYPE_FIELD_NAME, "ART");
 			SearchEngineFilter[] filters = {filterByType};
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);
@@ -208,6 +208,61 @@ public class TestSearchEngineManager extends BaseTestCase {
 		}
     }
 	
+    public void testSearchContentsId_7() throws Throwable {
+    	try {
+    		Content content_1 = this.createContent_1();
+    		this._searchEngineManager.deleteIndexedEntity(content_1.getId());
+    		this._searchEngineManager.addEntityToIndex(content_1);
+			
+			Content content_2 = this.createContent_2();
+    		this._searchEngineManager.deleteIndexedEntity(content_2.getId());
+    		this._searchEngineManager.addEntityToIndex(content_2);
+			
+			Content content_3 = this.createContent_3();
+    		this._searchEngineManager.deleteIndexedEntity(content_3.getId());
+    		this._searchEngineManager.addEntityToIndex(content_3);
+			
+			//San Pietroburgo è una città meravigliosa W3C-WAI
+			//100
+			//Il turismo ha incrementato più del 20 per cento nel 2011-2013, quando la Croazia ha aderito all'Unione europea. Consegienda di questo aumento è una serie di modernizzazione di alloggi di recente costruzione, tra cui circa tre dozzine di ostelli.
+			//101
+			//La vita è una cosa meravigliosa
+			//103
+			
+            List<String> allowedGroup = new ArrayList<String>();
+            allowedGroup.add(Group.FREE_GROUP_NAME);
+			SearchEngineFilter filter1 = new SearchEngineFilter("it", "San meravigliosa", SearchEngineFilter.TextSearchOption.ALL_WORDS);
+			SearchEngineFilter[] filters1 = {filter1};
+        	List<String> contentsId = this._searchEngineManager.searchEntityId(filters1, null, allowedGroup);
+			assertNotNull(contentsId);
+			assertEquals(1, contentsId.size());
+			assertTrue(contentsId.contains(content_1.getId()));
+			
+			SearchEngineFilter filter2 = new SearchEngineFilter("it", "San meravigliosa", SearchEngineFilter.TextSearchOption.AT_LEAST_ONE_WORD);
+			SearchEngineFilter[] filters2 = {filter2};
+        	contentsId = this._searchEngineManager.searchEntityId(filters2, null, allowedGroup);
+			assertNotNull(contentsId);
+			assertEquals(2, contentsId.size());
+			assertTrue(contentsId.contains(content_1.getId()));
+			assertTrue(contentsId.contains(content_3.getId()));
+			
+			SearchEngineFilter filter3 = new SearchEngineFilter("it", "San meravigliosa", SearchEngineFilter.TextSearchOption.EXACT);
+			SearchEngineFilter[] filters3 = {filter3};
+        	contentsId = this._searchEngineManager.searchEntityId(filters3, null, allowedGroup);
+			assertNotNull(contentsId);
+			assertEquals(0, contentsId.size());
+			
+			SearchEngineFilter filter4 = new SearchEngineFilter("it", "una cosa meravigliosa", SearchEngineFilter.TextSearchOption.EXACT);
+			SearchEngineFilter[] filters4 = {filter4};
+        	contentsId = this._searchEngineManager.searchEntityId(filters4, null, allowedGroup);
+			assertNotNull(contentsId);
+			assertEquals(1, contentsId.size());
+			assertTrue(contentsId.contains(content_3.getId()));
+        } catch (Throwable t) {
+			throw t;
+		}
+    }
+	
 	public void testFacetedAllContents() throws Throwable {
 		try {
         	Thread thread = this._searchEngineManager.startReloadContentsReferences();
@@ -240,9 +295,6 @@ public class TestSearchEngineManager extends BaseTestCase {
 			assertNotNull(result);
 			String[] expected1 = {"ART122", "ART102", "ART111", "ART120"};
 			this.verify(result.getContentsId(), expected1);
-			System.out.println("------------------");
-			System.out.println(result.getOccurrences());
-			System.out.println("------------------");
 			assertEquals(4, result.getOccurrences().size());
         } catch (Throwable t) {
 			throw t;
@@ -293,6 +345,23 @@ public class TestSearchEngineManager extends BaseTestCase {
 		Category category2 = this._categoryManager.getCategory("general_cat2");
 		content.addCategory(category1);
 		content.addCategory(category2);
+        return content;
+    }
+	
+	private Content createContent_3() {
+        Content content = new Content();
+        content.setId("103");
+        content.setMainGroup(Group.FREE_GROUP_NAME);
+		content.setTypeCode("ART");
+        TextAttribute text = new TextAttribute();
+        text.setName("Articolo");
+        text.setType("Text");
+        text.setIndexingType(IndexableAttributeInterface.INDEXING_TYPE_TEXT);
+        text.setText("La vita è una cosa meravigliosa", "it");
+        text.setText("Life is a wonderful thing", "en");
+        content.addAttribute(text);
+		Category category = this._categoryManager.getCategory("general_cat1");
+		content.addCategory(category);
         return content;
     }
     

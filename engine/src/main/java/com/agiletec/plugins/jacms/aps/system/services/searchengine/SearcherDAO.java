@@ -41,6 +41,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -175,7 +176,7 @@ public class SearcherDAO implements ISearcherDAO {
 		if (filters != null && filters.length > 0) {
 			for (int i = 0; i < filters.length; i++) {
 				SearchEngineFilter filter = filters[i];
-				BooleanQuery fieldQuery = this.createQuery(filter);
+				Query fieldQuery = this.createQuery(filter);
 				mainQuery.add(fieldQuery, BooleanClause.Occur.MUST);
 			}
 		}
@@ -209,32 +210,36 @@ public class SearcherDAO implements ISearcherDAO {
 		return mainQuery;
 	}
     
-	private BooleanQuery createQuery(SearchEngineFilter filter) {
+	private Query createQuery(SearchEngineFilter filter) {
 		BooleanQuery fieldQuery = new BooleanQuery();
 		Object value = filter.getValue();
 		if (null != value) {
 			if (value instanceof String) {
 				SearchEngineFilter.TextSearchOption option = filter.getTextSearchOption();
+				if (null == option) {
+					option = SearchEngineFilter.TextSearchOption.AT_LEAST_ONE_WORD;
+				}
 				String stringValue = value.toString();
-				if (null == option || !option.equals(SearchEngineFilter.TextSearchOption.EXACT)) {
+				String[] values = stringValue.split("\\s+");
+				if (!option.equals(SearchEngineFilter.TextSearchOption.EXACT)) {
 					BooleanClause.Occur bc = BooleanClause.Occur.SHOULD;
-					if (null != option) {
-						if (option.equals(SearchEngineFilter.TextSearchOption.ALL_WORDS)) {
-							bc = BooleanClause.Occur.MUST;
-						} else if (option.equals(SearchEngineFilter.TextSearchOption.ANY_WORD)) {
-							bc = BooleanClause.Occur.MUST_NOT;
-						}
+					if (option.equals(SearchEngineFilter.TextSearchOption.ALL_WORDS)) {
+						bc = BooleanClause.Occur.MUST;
+					} else if (option.equals(SearchEngineFilter.TextSearchOption.ANY_WORD)) {
+						bc = BooleanClause.Occur.MUST_NOT;
 					}
-					String[] values = stringValue.split("\\s+");
 					for (int i = 0; i < values.length; i++) {
 						TermQuery term = new TermQuery(new Term(filter.getKey(), values[i].toLowerCase()));
 						//NOTE: search lower case....
 						fieldQuery.add(term, bc);
 					}
 				} else {
-					TermQuery term = new TermQuery(new Term(filter.getKey(), stringValue.toLowerCase()));
-					//NOTE: search lower case....
-					fieldQuery.add(term, BooleanClause.Occur.MUST);
+					PhraseQuery phraseQuery = new PhraseQuery();
+					for (int i = 0; i < values.length; i++) {
+						//NOTE: search lower case....
+						phraseQuery.add(new Term(filter.getKey(), values[i].toLowerCase()));
+					}
+					return phraseQuery;
 				}
 			} else if (value instanceof Date) {
 				String toString = DateTools.timeToString(((Date) value).getTime(), DateTools.Resolution.MINUTE);

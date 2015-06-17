@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author E.Santoboni
  */
-public class SearchEngineFilter<T> extends FieldSearchFilter {
+public class SearchEngineFilter extends FieldSearchFilter {
 	
 	public SearchEngineFilter(String key, Object value) {
 		this(key, value, TextSearchOption.AT_LEAST_ONE_WORD);

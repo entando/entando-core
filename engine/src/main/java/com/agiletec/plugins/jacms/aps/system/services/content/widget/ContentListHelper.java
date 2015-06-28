@@ -13,23 +13,6 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.content.widget;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.collections.ListUtils;
-import org.entando.entando.aps.system.services.cache.CacheableInfo;
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-import org.entando.entando.aps.system.services.searchengine.IEntitySearchEngineManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
@@ -45,6 +28,24 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentListFilterBean;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.util.FilterUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.ListUtils;
+import org.entando.entando.aps.system.services.cache.CacheableInfo;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+import org.entando.entando.aps.system.services.searchengine.IEntitySearchEngineManager;
+import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Classe helper per la widget di erogazione contenuti in lista.
@@ -74,9 +75,6 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
 		return super.getFilter(contentType, bean, currentLang.getCode());
 	}
 	
-	/**
-     * @deprecated From Entando 3.0 version 3.0.1. Use getUserFilterOption(String, IEntityFilterBean, RequestContext) method
-     */
 	@Override
 	public UserFilterOptionBean getUserFilterOption(String contentType, IContentListFilterBean bean, RequestContext reqCtx) {
 		return this.getUserFilterOption(contentType, (IEntityFilterBean) bean, reqCtx);
@@ -193,8 +191,19 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
 		}
 		if (fullTextUserFilter != null && null != fullTextUserFilter.getFormFieldValues()) {
 			String word = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[0]);
+			String optionString = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[1]);
+			SearchEngineFilter.TextSearchOption option = SearchEngineFilter.TextSearchOption.AT_LEAST_ONE_WORD;
+			if (null != optionString) {
+				if (optionString.equals(UserFilterOptionBean.FULLTEXT_OPTION_ALL_WORDS)) {
+					option = SearchEngineFilter.TextSearchOption.ALL_WORDS;
+				} else if (optionString.equals(UserFilterOptionBean.FULLTEXT_OPTION_EXACT)) {
+					option = SearchEngineFilter.TextSearchOption.EXACT;
+				}
+			}
 			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-			List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(currentLang.getCode(), word, this.getAllowedGroups(reqCtx));
+			SearchEngineFilter filter = new SearchEngineFilter(currentLang.getCode(), word, option);
+			SearchEngineFilter[] filters = {filter};
+			List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(filters, null, this.getAllowedGroups(reqCtx));
 			return ListUtils.intersection(fullTextResult, masterContentsId);
 		} else {
 			return masterContentsId;

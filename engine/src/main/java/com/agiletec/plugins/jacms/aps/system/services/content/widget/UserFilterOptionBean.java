@@ -13,6 +13,18 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.content.widget;
 
+import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.util.CheckFormatUtil;
+import com.agiletec.aps.util.DateConverter;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,18 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
-import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
-import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.lang.Lang;
-import com.agiletec.aps.util.DateConverter;
-import com.agiletec.aps.util.CheckFormatUtil;
 
 /**
  * A user filter option of the list viewer showlet
@@ -122,16 +122,16 @@ public class UserFilterOptionBean {
 		try {
 			String frameIdSuffix = (null != this.getCurrentFrame()) ? "_frame" + this.getCurrentFrame().toString() : "";
 			if (!this.isAttributeFilter()) {
-				formFieldNames = new String[1];
-				String fieldName = null;
 				if (this.getKey().equals(KEY_FULLTEXT)) {
-					fieldName = TYPE_METADATA + "_fulltext" + frameIdSuffix;
+					String fieldName = TYPE_METADATA + "_fulltext" + frameIdSuffix;
+					String[] fieldsSuffix = {"", "_option"};
+					formFieldNames = this.extractParams(fieldName, fieldsSuffix, frameIdSuffix, request);
 				} else if (this.getKey().equals(KEY_CATEGORY)) {
-					fieldName = TYPE_METADATA + "_category" + frameIdSuffix;
+					formFieldNames = new String[1];
+					formFieldNames[0] = TYPE_METADATA + "_category" + frameIdSuffix;
+					String value = request.getParameter(formFieldNames[0]);
+					this.addFormValue(formFieldNames[0], value, formFieldNames.length);
 				}
-				formFieldNames[0] = fieldName;
-				String value = request.getParameter(fieldName);
-				this.addFormValue(fieldName, value, formFieldNames.length);
 			} else {
 				AttributeInterface attribute = this.getAttribute();
 				if (attribute instanceof ITextAttribute) {
@@ -152,7 +152,6 @@ public class UserFilterOptionBean {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error extracting form parameters", t);
-			//ApsSystemUtils.logThrowable(t, this, "extractFormParameters");
 			throw new ApsSystemException("Error extracting form parameters", t);
 		}
 		this.setFormFieldNames(formFieldNames);
@@ -179,19 +178,28 @@ public class UserFilterOptionBean {
 	}
 	
 	protected String[] extractAttributeParams(String[] fieldsSuffix, String frameIdSuffix, HttpServletRequest request) {
+		String[] formFieldNames = this.extractParams(this.getAttribute().getName(), fieldsSuffix, frameIdSuffix, request);
+		String attributeType = this.getAttribute().getType();
+		if (attributeType.equals("Date") || attributeType.equals("Number")) {
+			for (int i = 0; i < formFieldNames.length; i++) {
+				String formFieldName = formFieldNames[i];
+				boolean isDateAttribute = attributeType.equals("Date");
+				String rangeField = (i==0) ? AttributeFormFieldError.FIELD_TYPE_RANGE_START : AttributeFormFieldError.FIELD_TYPE_RANGE_END;
+				String value = request.getParameter(formFieldName);
+				this.checkNoTextAttributeFormValue(isDateAttribute, value, formFieldName, rangeField);
+			}
+		}
+		return formFieldNames;
+	}
+	
+	protected String[] extractParams(String paramName, String[] fieldsSuffix, String frameIdSuffix, HttpServletRequest request) {
 		String[] formFieldNames = new String[fieldsSuffix.length];
 		for (int i = 0; i < fieldsSuffix.length; i++) {
 			String fieldSuffix = fieldsSuffix[i];
-			String fieldName = this.getAttribute().getName() + fieldSuffix + frameIdSuffix;
+			String fieldName = paramName + fieldSuffix + frameIdSuffix;
 			formFieldNames[i] = fieldName;
 			String value = request.getParameter(fieldName);
 			this.addFormValue(fieldName, value, fieldsSuffix.length);
-			String attributeType = this.getAttribute().getType();
-			if (attributeType.equals("Date") || attributeType.equals("Number")) {
-				boolean isDateAttribute = attributeType.equals("Date");
-				String rangeField = (i==0) ? AttributeFormFieldError.FIELD_TYPE_RANGE_START : AttributeFormFieldError.FIELD_TYPE_RANGE_END;
-				this.checkNoTextAttributeFormValue(isDateAttribute, value, fieldName, rangeField);
-			}
 		}
 		return formFieldNames;
 	}
@@ -269,7 +277,6 @@ public class UserFilterOptionBean {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error extracting entity search filters", t);
-			//ApsSystemUtils.logThrowable(t, this, "getFilter");
 			throw new ApsSystemException("Error extracting entity search filters", t);
 		}
 		return filter;
@@ -336,7 +343,11 @@ public class UserFilterOptionBean {
 	public static final String KEY_FULLTEXT = "fulltext";
 	public static final String KEY_CATEGORY = "category";
 	public static final String PARAM_CATEGORY_CODE = "categoryCode";
-
+	
+	public static final String FULLTEXT_OPTION_ALL_WORDS = "allwords";
+	public static final String FULLTEXT_OPTION_ONE_WORDS = "oneword";
+	public static final String FULLTEXT_OPTION_EXACT = "exact";
+	
 	private String _userFilterCategoryCode;
 
 	public class AttributeFormFieldError {

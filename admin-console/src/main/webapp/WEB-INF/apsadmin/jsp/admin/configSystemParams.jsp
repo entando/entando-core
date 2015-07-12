@@ -210,7 +210,7 @@
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
 			</div>
 		</div>
-
+			
 		<div class="form-group">
 			<label class="display-block"><s:text name="sysconfig.chooseYourCategoriesTreeStyle" /></label>
 			<div class="btn-group" data-toggle="buttons">
@@ -218,7 +218,19 @@
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
 			</div>
 		</div>
-
+		
+		<div class="form-group">
+			<s:set name="paramName" value="'gravatarIntegrationEnabled'" />
+			<div class="checkbox-inline">
+				<label>
+					<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
+					&#32;<s:text name="sysconfig.gravatarIntegrationEnabled" />
+				</label>
+				<%-- hidden parameter to delete --%>
+				<wpsf:hidden name="%{#paramName + externalParamMarker}" value="true"/>
+			</div>
+		</div>
+		
 	</fieldset>
 
 	<wpsa:hookPoint key="core.configSystemParams" objectName="hookPointElements_core_configSystemParams">

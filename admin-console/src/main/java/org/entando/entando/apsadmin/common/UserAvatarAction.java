@@ -15,6 +15,7 @@ package org.entando.entando.apsadmin.common;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.apsadmin.system.BaseAction;
 
 import java.io.FileNotFoundException;
@@ -39,6 +40,9 @@ public class UserAvatarAction extends BaseAction {
 	
 	public String returnAvatarStream() {
 		try {
+			if (!this.isGravatarIntegrationEnabled()) {
+				return this.extractDefaultAvatarStream();
+			}
 			IUserProfile profile = this.getUserProfile();
 			if (null == profile) {
 				return this.extractDefaultAvatarStream();
@@ -105,6 +109,15 @@ public class UserAvatarAction extends BaseAction {
 		return "image/png";
 	}
 	
+	protected boolean isGravatarIntegrationEnabled() {
+		String param = this.getConfigManager().getParam(SystemConstants.CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED);
+		boolean enabled = false;
+		try {
+			enabled = Boolean.parseBoolean(param);
+		} catch (Exception e) {}
+		return enabled;
+	}
+	
 	protected String getGravatarUrl() {
 		return _gravatarUrl;
 	}
@@ -147,6 +160,13 @@ public class UserAvatarAction extends BaseAction {
 		this._userProfileManager = userProfileManager;
 	}
 	
+	protected ConfigInterface getConfigManager() {
+		return _configManager;
+	}
+	public void setConfigManager(ConfigInterface configManager) {
+		this._configManager = configManager;
+	}
+	
 	private String _gravatarUrl;
 	
 	private String _gravatarExtension = "png";
@@ -156,5 +176,6 @@ public class UserAvatarAction extends BaseAction {
 	private InputStream _inputStream;
 	
 	private IUserProfileManager _userProfileManager;
+	private ConfigInterface _configManager;
 	
 }

@@ -302,6 +302,8 @@ public interface SystemConstants {
     
     public static final String CONFIG_PARAM_LOGIN_PAGE_CODE = "loginPageCode";
 	
+	public static final String CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED = "gravatarIntegrationEnabled";
+	
 	public static final String CONFIG_PARAM_GROUPS_ON_DEMAND = "groupsOnDemand";
 	
 	public static final String CONFIG_PARAM_CATEGORIES_ON_DEMAND = "categoriesOnDemand";

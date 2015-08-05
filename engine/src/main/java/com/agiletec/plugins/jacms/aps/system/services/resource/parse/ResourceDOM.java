@@ -49,9 +49,14 @@ public class ResourceDOM {
 	/**
 	 * Setta la descrizione della risorsa.
 	 * @param descr La descrizione della risorsa.
+	 * @deprecated use setDescription
 	 */
 	public void setDescr(String descr) {
-		this._root.getChild(TAG_DESCR).setText(descr);
+		this.setDescription(descr);
+	}
+	
+	public void setDescription(String description) {
+		this._root.getChild(TAG_DESCR).setText(description);
 	}
 	
 	/**

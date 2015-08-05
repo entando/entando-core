@@ -61,14 +61,28 @@ public interface ResourceInterface {
     /**
      * Restituisce la descrizione della risorsa.
      * @return La descrizione della risorsa.
+	 * @deprecated use getDescription method
      */
     public String getDescr();
     
     /**
      * Setta la descrizione della risorsa.
      * @param descr La descrizione della risorsa.
+	 * @deprecated use setDescription method
      */
     public void setDescr(String descr);
+    
+    /**
+     * Return the description of the resource.
+     * @return The description of the resource
+     */
+    public String getDescription();
+    
+    /**
+     * Set the description of the resource.
+     * @param description The description of the resource
+     */
+    public void setDescription(String description);
     
     /**
      * Restituisce la stringa identificante 
@@ -104,9 +118,6 @@ public interface ResourceInterface {
 	
 	public void setLastModified(Date lastModified);
 	
-	@Deprecated
-	public File getFile();
-    
     public InputStream getResourceStream();
 	
 	public InputStream getResourceStream(ResourceInstance instance);
@@ -189,7 +200,7 @@ public interface ResourceInterface {
 	
 	public void reloadResourceInstances() throws ApsSystemException;
 	
-	public boolean exists(String masterFormFileName) throws ApsSystemException;
+	//public boolean exists(String masterFormFileName) throws ApsSystemException;
 	
 	public ResourceInstance getDefaultInstance();
     

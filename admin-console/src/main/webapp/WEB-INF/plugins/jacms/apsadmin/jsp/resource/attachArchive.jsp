@@ -172,16 +172,16 @@
 				<s:else>
 					<s:property value="#resource.descr" />
 				</s:else>
-				<s:set var="fileName" value="#resourceInstance.fileName" />
-				<s:if test='%{#fileName.length()>25}'>
-					<s:set var="fileName" value='%{#fileName.substring(0,10)+"..."+#fileName.substring(#fileName.length()-10)}' />
-					<code class="margin-small-bottom"><abbr title="<s:property value="#resourceInstance.fileName" />"><s:property value="#fileName" /></abbr></code>
+				<s:set var="fileNameVar" value="#resource.masterFileName" />
+				<s:if test='%{#fileNameVar.length()>25}'>
+					<s:set var="fileNameVar" value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}' />
+					<code class="margin-small-bottom"><abbr title="<s:property value="#fileNameVar" />"><s:property value="#fileNameVar" /></abbr></code>
 				</s:if>
 				<s:else>
-					<code><s:property value="#fileName" /></code>
+					<code><s:property value="#fileNameVar" /></code>
 				</s:else>
 				<span class="badge">
-				<s:property value="%{#resourceInstance.fileLength.replaceAll(' ', '&nbsp;')}"  escapeXml="false" escapeHtml="false" escapeJavaScript="false" />
+				<s:property value="%{#fileNameVar.replaceAll(' ', '&nbsp;')}"  escapeXml="false" escapeHtml="false" escapeJavaScript="false" />
 				</span>
 			</div>
 		</div>
@@ -216,15 +216,15 @@
 			<a href="<s:url action="edit" namespace="/do/jacms/Resource"><s:param name="resourceId" value="%{#resourceid}" /></s:url>" title="<s:text name="label.edit" />: <s:property value="#resource.descr" /> ">
 			<span class="icon fa fa-pencil-square-o"></span>&#32;<s:property value="#resource.descr" /></a>
 			<p class="margin-none">
-			<a href="<s:property value="%{#resource.documentPath}" />" title="<s:text name="label.download" />: <s:property value="#resourceInstance.fileName" />" class="pull-left margin-small-top">
+			<a href="<s:property value="%{#resource.documentPath}" />" title="<s:text name="label.download" />: <s:property value="#resource.masterFileName" />" class="pull-left margin-small-top">
 			<span class="icon fa fa-download"></span>&#32;
-				<s:set var="fileName" value="#resourceInstance.fileName" />
-				<s:if test='%{#fileName.length()>25}'>
-					<s:set var="fileName" value='%{#fileName.substring(0,10)+"..."+#fileName.substring(#fileName.length()-10)}' />
-					<code><abbr title="<s:property value="#resourceInstance.fileName" />"><s:property value="#fileName" /></abbr></code>
+                                <s:set var="fileNameVar" value="#resource.masterFileName" />
+				<s:if test='%{#fileNameVar.length()>25}'>
+					<s:set var="fileNameVar" value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}' />
+					<code><abbr title="<s:property value="#resource.masterFileName" />"><s:property value="#fileNameVar" /></abbr></code>
 				</s:if>
 				<s:else>
-				<code><s:property value="#resourceInstance.fileName" /></code>
+				<code><s:property value="#fileNameVar" /></code>
 				</s:else>
 			</a>
 			<span class="badge pull-right margin-small-top">

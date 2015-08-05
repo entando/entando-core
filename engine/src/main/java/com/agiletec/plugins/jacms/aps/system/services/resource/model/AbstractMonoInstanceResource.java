@@ -13,14 +13,14 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.resource.model;
 
-import java.io.File;
-import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM;
+
+import java.io.InputStream;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Classe astratta di base per l'implementazione 
@@ -60,22 +60,6 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
 	}
     
 	@Override
-	@Deprecated
-	public File getFile() {
-		ResourceInstance instance = this.getInstance();
-		try {
-			InputStream stream = this.getResourceStream();
-			if (null != stream) {
-				return this.saveTempFile("temp_" + instance.getFileName(), stream);
-			}
-			return null;
-		} catch (Throwable t) {
-			_logger.error("Error on extracting file", t);
-			throw new RuntimeException("Error on extracting file", t);
-		}
-	}
-    
-	@Override
 	public void deleteResourceInstances() throws ApsSystemException {
 		try {
 			if (null == this.getInstance()) {
@@ -91,13 +75,6 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
 		}
 	}
     
-	@Override
-	public boolean exists(String masterFormFileName) throws ApsSystemException {
-		String fileName = this.getInstanceFileName(masterFormFileName);
-		String subPath = this.getDiskSubFolder() + fileName;
-		return this.getStorageManager().exists(subPath, this.isProtectedResource());
-	}
-	
 	/**
      * Setta l'istanza alla risorsa.
      * @param instance L'istanza da settare alla risorsa.
@@ -127,10 +104,19 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
         return resourceDom.getXMLDocument();
     }
     
-    public String getInstanceFileName(String masterFileName) {
-    	return masterFileName;
+    protected String getNewInstanceFileName(String masterFileName) throws Throwable {
+		StringBuilder fileName = null;
+		do {
+			String baseName = super.getNewUniqueFileName(masterFileName);
+			fileName = new StringBuilder(baseName);
+			String extension = super.getFileExtension(masterFileName);
+			if (StringUtils.isNotEmpty(extension)) {
+				fileName.append(".").append(extension);
+			}
+		} while (this.exists(fileName.toString()));
+    	return fileName.toString();
 	}
     
 	private ResourceInstance _instance;
-
+	
 }

@@ -67,28 +67,6 @@ public class ImageResource extends AbstractMultiInstanceResource {
 		}
 	}
 	
-	@Override
-	@Deprecated
-	public File getFile() {
-		return this.getFile(0, null);
-	}
-    
-	@Override
-	@Deprecated
-	public File getFile(int size, String langCode) {
-		ResourceInstance instance = (ResourceInstance) this.getInstances().get(String.valueOf(size));
-		try {
-			InputStream stream = this.getResourceStream(size, langCode);
-			if (null != stream) {
-				return this.saveTempFile("temp_" + instance.getFileName(), stream);
-			}
-			return null;
-		} catch (Throwable t) {
-			_logger.error("Error on extracting file", t);
-			throw new RuntimeException("Error on extracting file", t);
-		}
-	}
-	
     @Override
 	public ResourceInterface getResourcePrototype() {
 		ImageResource resource = (ImageResource) super.getResourcePrototype();
@@ -110,20 +88,11 @@ public class ImageResource extends AbstractMultiInstanceResource {
     	String key = String.valueOf(instance.getSize());
     	this.getInstances().put(key, instance);
     }
-
-    @Override
+	
+	@Override
+	@Deprecated
 	public String getInstanceFileName(String masterFileName, int size, String langCode) {
-    	String baseName = masterFileName.substring(0, masterFileName.lastIndexOf("."));
-    	String extension = masterFileName.substring(masterFileName.lastIndexOf('.')+1).trim();
-    	StringBuilder fileName = new StringBuilder(baseName);
-    	if (size >= 0) {
-    		fileName.append("_d").append(size);
-    	}
-    	if (langCode != null) {
-    		fileName.append("_").append(langCode);
-    	}
-    	fileName.append(".").append(extension);
-    	return fileName.toString();
+		return this.getNewInstanceFileName(masterFileName, size, langCode);
 	}
 	
     @Override
@@ -139,7 +108,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
 	@Override
 	public void saveResourceInstances(ResourceDataBean bean) throws ApsSystemException {
 		try {
-			String masterImageFileName = this.getInstanceFileName(bean.getFileName(), 0, null);
+			String masterImageFileName = this.getNewInstanceFileName(bean.getFileName(), 0, null);
 			String subPath = this.getDiskSubFolder() + masterImageFileName;
 			this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
 			File tempMasterFile = this.saveTempFile("temp_" + masterImageFileName, bean.getInputStream());
@@ -214,7 +183,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
 			//salta l'elemento con id zero che non va ridimensionato
 			return;
 		}
-		String imageName = this.getInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
+		String imageName = this.getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
 		String subPath = super.getDiskSubFolder() + imageName;
 		try {
 			this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
@@ -254,7 +223,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
 			//salta l'elemento con id zero che non va ridimensionato
 			return;
 		}
-		String imageName = this.getInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
+		String imageName = this.getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
 		String subPath = super.getDiskSubFolder() + imageName;
 		try {
 			this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
@@ -269,7 +238,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
 	}
 	
 	private IImageResizer getImageResizer(String filePath) {
-		String extension = filePath.substring(filePath.lastIndexOf('.') + 1).trim();
+		String extension = super.getFileExtension(filePath); //filePath.substring(filePath.lastIndexOf('.') + 1).trim();
 		String resizerClassName = this.getImageResizerClasses().get(extension);
 		if (null == resizerClassName) {
 			resizerClassName = this.getImageResizerClasses().get("DEFAULT_RESIZER");
@@ -283,13 +252,6 @@ public class ImageResource extends AbstractMultiInstanceResource {
 			throw new RuntimeException("Errore in creazione resizer da classe '"
 					+ resizerClassName + "' per immagine tipo '" + extension + "'", t);
 		}
-	}
-	
-	@Override
-	public boolean exists(String masterFormFileName) throws ApsSystemException {
-		String fileName = this.getInstanceFileName(masterFormFileName, 0, null);
-		String subPath = this.getDiskSubFolder() + fileName;
-		return this.getStorageManager().exists(subPath, this.isProtectedResource());
 	}
 	
     protected IImageDimensionReader getImageDimensionReader() {

@@ -13,7 +13,9 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.resource.model;
 
-import java.io.File;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,11 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM;
 
 /**
  * Classe astratta di base per l'implementazione 
@@ -52,14 +52,11 @@ public abstract class AbstractMultiInstanceResource extends AbstractResource {
 			while (instancesIter.hasNext()) {
 				ResourceInstance currentInstance = instancesIter.next();
 				String fileName = currentInstance.getFileName();
-				//String filePath = this.getDiskFolder() + fileName;
-				//this.getInstanceHelper().delete(filePath);
 				String subPath = this.getDiskSubFolder() + fileName;
 				this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
 			}
 		} catch (Throwable t) {
 			_logger.error("Error on deleting resource instances", t);
-			//ApsSystemUtils.logThrowable(t, this, "deleteResourceInstances");
 			throw new ApsSystemException("Error on deleting resource instances", t);
 		}
 	}
@@ -91,17 +88,40 @@ public abstract class AbstractMultiInstanceResource extends AbstractResource {
     }
     
     /**
-	 * Restituisce il nome corretto del file con cui 
-	 * un'istanza di una risorsa viene salvata nel fileSystem. 
+	 * Restituisce il nome corretto del file con cui un'istanza di una risorsa viene salvata nel fileSystem. 
+	 * @param masterFileName Il nome del file principale da cui ricavare l'istanza.
+	 * @param size Il size dell'istanza della risorsa multiInstanza.
+	 * @param langCode Il codice lingua dell'istanza della risorsa multiInstanza.
+	 * @return Il nome corretto del file.
+	 * @deprecated Use getNewInstanceFileName
+	 */
+	public abstract String getInstanceFileName(String masterFileName, int size, String langCode);
+	
+    /**
+	 * Restituisce il nome corretto del file con cui un'istanza di una risorsa viene salvata nel sistema. 
 	 * @param masterFileName Il nome del file principale da cui ricavare l'istanza.
 	 * @param size Il size dell'istanza della risorsa multiInstanza.
 	 * @param langCode Il codice lingua dell'istanza della risorsa multiInstanza.
 	 * @return Il nome corretto del file.
 	 */
-	public abstract String getInstanceFileName(String masterFileName, int size, String langCode);
-	
-	@Deprecated
-	public abstract File getFile(int size, String langCode);
+	protected String getNewInstanceFileName(String masterFileName, int size, String langCode) {
+		StringBuilder fileName = null;
+		do {
+			String baseName = super.getNewUniqueFileName(masterFileName);
+			fileName = new StringBuilder(baseName);
+			String extension = super.getFileExtension(masterFileName);
+			if (size >= 0) {
+				fileName.append("_d").append(size);
+			}
+			if (langCode != null) {
+				fileName.append("_").append(langCode);
+			}
+			if (StringUtils.isNotEmpty(extension)) {
+				fileName.append(".").append(extension);
+			}
+		} while (this.exists(fileName.toString()));
+		return fileName.toString();
+	}
 	
 	/**
 	 * Restituisce un'istanza della risorsa.

@@ -123,7 +123,7 @@ public class TestResourceAction extends ApsAdminBaseTestCase {
 			String result = this.executeAction();
 			assertEquals(Action.SUCCESS, result);
 			ResourceInterface modifiedResource = this._resourceManager.loadResource(resourceId);
-			assertEquals("Descrizione di test", modifiedResource.getDescr());
+			assertEquals("Descrizione di test", modifiedResource.getDescription());
 		} catch (Throwable t) {
 			throw t;
 		} finally {

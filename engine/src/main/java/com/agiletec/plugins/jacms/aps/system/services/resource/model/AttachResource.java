@@ -52,7 +52,7 @@ public class AttachResource extends AbstractMonoInstanceResource  {
     @Override
 	public void saveResourceInstances(ResourceDataBean bean) throws ApsSystemException {
 		try {
-			String fileName = this.getInstanceFileName(bean.getFileName());
+			String fileName = this.getNewInstanceFileName(bean.getFileName());
 			String subPath = this.getDiskSubFolder() + fileName;
 			this.getStorageManager().saveFile(subPath, this.isProtectedResource(), bean.getInputStream());
 			ResourceInstance instance = new ResourceInstance();
@@ -64,7 +64,6 @@ public class AttachResource extends AbstractMonoInstanceResource  {
 			this.addInstance(instance);
 		} catch (Throwable t) {
 			_logger.error("Error on saving attach resource instances", t);
-			//ApsSystemUtils.logThrowable(t, this, "saveResourceInstances");
 			throw new ApsSystemException("Error on saving attach resource instances", t);
 		}
 	}

@@ -33,7 +33,7 @@ You can contribute to our Open Source project, please read [GitHub guidelines] (
 
 You can request bug fixes and new features on the [issues] (https://github.com/entando/entando-core/issues) page.
 
-For latest updated news, please visit the company websites: http://www.entando.com.
+For latest updated news, please visit the company website: http://www.entando.com.
 
 For any support request, please use [Twitter] (https://twitter.com/Entando).
 

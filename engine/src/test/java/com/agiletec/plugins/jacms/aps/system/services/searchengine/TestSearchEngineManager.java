@@ -22,6 +22,7 @@ import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.Group;
@@ -152,7 +153,7 @@ public class TestSearchEngineManager extends BaseTestCase {
 			String[] expected1 = {"ART180", "ART1", "ART187", "ART121"};
 			this.verify(contentsId, expected1);
 			Category cat1 = this._categoryManager.getCategory("cat1");
-			List<Category> categories = new ArrayList<Category>();
+			List<ITreeNode> categories = new ArrayList<ITreeNode>();
 			categories.add(cat1);
 			contentsId = this._searchEngineManager.searchEntityId(filters, categories, allowedGroup);
 			assertNotNull(contentsId);
@@ -168,7 +169,7 @@ public class TestSearchEngineManager extends BaseTestCase {
     		Thread thread = this._searchEngineManager.startReloadContentsReferences();
         	thread.join();
 			Category general_cat2 = this._categoryManager.getCategory("general_cat2");
-            List<Category> categories = new ArrayList<Category>();
+            List<ITreeNode> categories = new ArrayList<ITreeNode>();
             categories.add(general_cat2);
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);
@@ -195,7 +196,7 @@ public class TestSearchEngineManager extends BaseTestCase {
     		Thread thread = this._searchEngineManager.startReloadContentsReferences();
         	thread.join();
 			Category general = this._categoryManager.getCategory("general");
-            List<Category> categories = new ArrayList<Category>();
+            List<ITreeNode> categories = new ArrayList<ITreeNode>();
             categories.add(general);
             List<String> allowedGroup = new ArrayList<String>();
         	allowedGroup.add(Group.ADMINS_GROUP_NAME);
@@ -286,7 +287,7 @@ public class TestSearchEngineManager extends BaseTestCase {
     		Thread thread = this._searchEngineManager.startReloadContentsReferences();
         	thread.join();
 			Category general = this._categoryManager.getCategory("general");
-            List<Category> categories = new ArrayList<Category>();
+            List<ITreeNode> categories = new ArrayList<ITreeNode>();
             categories.add(general);
             List<String> allowedGroup = new ArrayList<String>();
             allowedGroup.add(Group.FREE_GROUP_NAME);

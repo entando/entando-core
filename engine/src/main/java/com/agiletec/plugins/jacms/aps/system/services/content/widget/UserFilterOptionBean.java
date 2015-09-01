@@ -13,6 +13,7 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.content.widget;
 
+import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
@@ -24,7 +25,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.CheckFormatUtil;
 import com.agiletec.aps.util.DateConverter;
+import com.agiletec.plugins.jacms.aps.system.services.searchengine.IIndexerDAO;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,15 +36,17 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A user filter option of the list viewer showlet
+ * A user filter option of the list viewer widget
  * @author E.Santoboni
  */
-public class UserFilterOptionBean {
-
+public class UserFilterOptionBean implements Serializable {
+	
 	private static final Logger _logger = LoggerFactory.getLogger(UserFilterOptionBean.class);
 	
 	public UserFilterOptionBean(Properties properties, IApsEntity prototype) throws Throwable {
@@ -65,7 +70,7 @@ public class UserFilterOptionBean {
 			throw new ApsSystemException("Invalid metadata key '" + this.getKey() + "'");
 		}
 	}
-
+	
 	public UserFilterOptionBean(Properties properties, IApsEntity prototype,
 			Integer currentFrame, Lang currentLang, String dateFormat, HttpServletRequest request) throws Throwable {
 		this(properties, prototype);
@@ -74,35 +79,35 @@ public class UserFilterOptionBean {
 		this.setDateFormat(dateFormat);
 		this.extractFormParameters(request);
 	}
-
+	
 	public String getKey() {
 		return _key;
 	}
 	public void setKey(String key) {
 		this._key = key;
 	}
-
+	
 	public boolean isAttributeFilter() {
 		return _attributeFilter;
 	}
 	public void setAttributeFilter(boolean attributeFilter) {
 		this._attributeFilter = attributeFilter;
 	}
-
+	
 	public void setAttribute(AttributeInterface attribute) {
 		this._attribute = attribute;
 	}
 	public AttributeInterface getAttribute() {
 		return _attribute;
 	}
-
+	
 	public Integer getCurrentFrame() {
 		return _currentFrame;
 	}
 	protected void setCurrentFrame(Integer currentFrame) {
 		this._currentFrame = currentFrame;
 	}
-
+	
 	protected Lang getCurrentLang() {
 		return _currentLang;
 	}
@@ -110,7 +115,7 @@ public class UserFilterOptionBean {
 		this._currentLang = currentLang;
 	}
 	
-	protected String getDateFormat() {
+	public String getDateFormat() {
 		return _dateFormat;
 	}
 	protected void setDateFormat(String dateFormat) {
@@ -124,7 +129,7 @@ public class UserFilterOptionBean {
 			if (!this.isAttributeFilter()) {
 				if (this.getKey().equals(KEY_FULLTEXT)) {
 					String fieldName = TYPE_METADATA + "_fulltext" + frameIdSuffix;
-					String[] fieldsSuffix = {"", "_option"};
+					String[] fieldsSuffix = {"", "_option", "_attachSearch"};
 					formFieldNames = this.extractParams(fieldName, fieldsSuffix, frameIdSuffix, request);
 				} else if (this.getKey().equals(KEY_CATEGORY)) {
 					formFieldNames = new String[1];
@@ -291,6 +296,92 @@ public class UserFilterOptionBean {
 			return value;
 		}
 		return "";
+	}
+	
+	public SearchEngineFilter extractFilter() {
+		if (null == this.getFormFieldValues()) {
+			return null;
+		}
+		SearchEngineFilter filter = null;
+		String value0 = this.getFormValue(0);
+		String value1 = this.getFormValue(1);
+		if (!this.isAttributeFilter()) {
+			if (this.getKey().equals(KEY_FULLTEXT) && !StringUtils.isEmpty(value0)) {
+				//String[] fieldsSuffix = {"", "_option"};
+				filter = new SearchEngineFilter(this.getCurrentLang().getCode(), value0, this.getOption(value1));
+				String attachOption = this.getFormValue(2);
+				try {
+					filter.setIncludeAttachments(Boolean.parseBoolean(attachOption));
+				} catch (Exception e) {}
+			} else if (this.getKey().equals(KEY_CATEGORY) && !StringUtils.isEmpty(value0)) {
+				filter = new SearchEngineFilter(IIndexerDAO.CONTENT_CATEGORY_FIELD_NAME, value0, SearchEngineFilter.TextSearchOption.EXACT);
+			}
+		} else {
+			AttributeInterface attribute = this.getAttribute();
+			if (attribute instanceof ITextAttribute && !StringUtils.isEmpty(value0)) {
+				filter = new SearchEngineFilter(this.getIndexFieldName(), value0, SearchEngineFilter.TextSearchOption.EXACT);
+				//String[] fieldsSuffix = {"_textFieldName"};
+			} else if (attribute instanceof DateAttribute && 
+					(!StringUtils.isEmpty(value0) || !StringUtils.isEmpty(value1))) {
+				Date big0 = null;
+				try {
+					big0 = DateConverter.parseDate(value0, this.getDateFormat());
+				} catch (Exception e) {}
+				Date big1 = null;
+				try {
+					big1 = DateConverter.parseDate(value1, this.getDateFormat());
+				} catch (Exception e) {}
+				//String[] fieldsSuffix = {"_dateStartFieldName", "_dateEndFieldName"};
+				filter = new SearchEngineFilter(this.getIndexFieldName(), big0, big1);
+			} else if (attribute instanceof BooleanAttribute && 
+					(!StringUtils.isEmpty(value0) && !StringUtils.isEmpty(value1))) {
+				filter = new SearchEngineFilter(this.getIndexFieldName(), value0, SearchEngineFilter.TextSearchOption.EXACT);
+				//String[] fieldsSuffix = {"_booleanFieldName", "_booleanFieldName_ignore", "_booleanFieldName_control"};
+			} else if (attribute instanceof NumberAttribute && 
+					(!StringUtils.isEmpty(value0) || !StringUtils.isEmpty(value1))) {
+				//String[] fieldsSuffix = {"_numberStartFieldName", "_numberEndFieldName"};
+				BigDecimal big0 = null;
+				try {
+					big0 = new BigDecimal(value0);
+				} catch (Exception e) {
+				}
+				BigDecimal big1 = null;
+				try {
+					big1 = new BigDecimal(value1);
+				} catch (Exception e) {
+				}
+				filter = new SearchEngineFilter(this.getIndexFieldName(), big0, big1);
+			}
+		}
+		return filter;
+	}
+	
+	private String getFormValue(int index) {
+		if (this.getFormFieldNames().length < index+1) {
+			return null;
+		}
+		if (null == this.getFormFieldValues()) {
+			return null;
+		}
+		String name = this.getFormFieldNames()[index];
+		return this.getFormFieldValues().get(name);
+	}
+	
+	private String getIndexFieldName() {
+		AttributeTracer tracer = new AttributeTracer();
+		tracer.setLang(this.getCurrentLang());
+		return tracer.getFormFieldName(this.getAttribute());
+	}
+	
+	private SearchEngineFilter.TextSearchOption getOption(String option) {
+		if (StringUtils.isEmpty(option)) {
+			return SearchEngineFilter.TextSearchOption.AT_LEAST_ONE_WORD;
+		} else if (option.equals(FULLTEXT_OPTION_ALL_WORDS)) {
+			return SearchEngineFilter.TextSearchOption.ALL_WORDS;
+		} else if (option.equals(FULLTEXT_OPTION_EXACT)) {
+			return SearchEngineFilter.TextSearchOption.EXACT;
+		}
+		return SearchEngineFilter.TextSearchOption.AT_LEAST_ONE_WORD;
 	}
 
 	public String[] getFormFieldNames() {

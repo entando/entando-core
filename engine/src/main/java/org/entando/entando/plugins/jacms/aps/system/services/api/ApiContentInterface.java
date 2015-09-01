@@ -70,7 +70,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error in extractContents", t);
-            //ApsSystemUtils.logThrowable(t, this, "getContents");
             throw new ApsSystemException("Error into API method", t);
         }
         return contentsId;
@@ -96,7 +95,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error in buildSearchBean", t);
-            //ApsSystemUtils.logThrowable(t, this, "buildSearchBean");
             throw new ApsSystemException("Error into API method", t);
         }
         return bean;
@@ -131,7 +129,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error in getContentsToHtml", t);
-            //ApsSystemUtils.logThrowable(t, this, "getContentsToHtml");
             throw new ApsSystemException("Error into API method", t);
         }
         return render.toString();
@@ -155,7 +152,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error in getContent", t);
-            //ApsSystemUtils.logThrowable(t, this, "getContent");
             throw new ApsSystemException("Error into API method", t);
         }
         return jaxbContent;
@@ -179,7 +175,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
                 return null;
             }
             String langCode = properties.getProperty(SystemConstants.API_LANG_CODE_PARAMETER);
-            //render = this.getContentDispenser().getRenderedContent(id, modelIdInteger, langCode, null);
 			ContentRenderizationInfo renderizationInfo = this.getContentDispenser().getRenderizationInfo(id, modelIdInteger, langCode, null);
 			if (null != renderizationInfo) {
 				return renderizationInfo.getCachedRenderedContent();
@@ -188,7 +183,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error in getContentToHtml", t);
-            //ApsSystemUtils.logThrowable(t, this, "getContentToHtml");
             throw new ApsSystemException("Error into API method", t);
         }
         return render;
@@ -205,7 +199,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error extracting content by id '{}'",id, t);
-            //ApsSystemUtils.logThrowable(t, this, "getPublicContent");
             throw new ApsSystemException("Error extracting content by id '" + id + "'", t);
         }
         return content;
@@ -249,7 +242,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error checking model id '{}'", modelId, t);
-            //ApsSystemUtils.logThrowable(t, this, "checkModel");
             throw new ApsSystemException("Error checking model id '" + modelId + "'", t);
         }
         return modelIdInteger;
@@ -275,12 +267,11 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             response.setResult(IResponseBuilder.FAILURE, null);
         } catch (Throwable t) {
         	_logger.error("Error adding content", t);
-            //ApsSystemUtils.logThrowable(t, this, "addContent");
             throw new ApsSystemException("Error adding content", t);
         }
         return response;
     }
-
+	
     public StringApiResponse updateContent(JAXBContent jaxbContent, Properties properties) throws Throwable {
         StringApiResponse response = new StringApiResponse();
         try {
@@ -305,13 +296,12 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             response.setResult(IResponseBuilder.FAILURE, null);
         } catch (Throwable t) {
         	_logger.error("Error updating content", t);
-            //ApsSystemUtils.logThrowable(t, this, "updateContent");
             throw new ApsSystemException("Error updating content", t);
         }
         return response;
     }
-
-    private StringApiResponse validateAndSaveContent(Content content, Properties properties) throws ApiException, Throwable {
+	
+    protected StringApiResponse validateAndSaveContent(Content content, Properties properties) throws ApiException, Throwable {
         StringApiResponse response = new StringApiResponse();
         try {
             UserDetails user = (UserDetails) properties.get(SystemConstants.API_USER_PARAMETER);
@@ -341,7 +331,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             response.setResult(IResponseBuilder.FAILURE, null);
         } catch (Throwable t) {
         	_logger.error("error in validateAndSaveContent", t);
-            //ApsSystemUtils.logThrowable(t, this, "addContent");
             throw new ApsSystemException("Error adding content", t);
         }
         return response;
@@ -367,7 +356,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             }
         } catch (Throwable t) {
         	_logger.error("Error validating content", t);
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             throw new ApsSystemException("Error validating content", t);
         }
         return errors;
@@ -421,7 +409,6 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             response.setResult(IResponseBuilder.FAILURE, null);
         } catch (Throwable t) {
         	_logger.error("Error deleting content", t);
-            //ApsSystemUtils.logThrowable(t, this, "deleteContent");
             throw new ApsSystemException("Error deleting content", t);
         }
         return response;
@@ -475,14 +462,7 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
     public void setContentAuthorizationHelper(IContentAuthorizationHelper contentAuthorizationHelper) {
         this._contentAuthorizationHelper = contentAuthorizationHelper;
     }
-	/*
-    protected ICmsCacheWrapperManager getCmsCacheWrapperManager() {
-        return _cmsCacheWrapperManager;
-    }
-    public void setCmsCacheWrapperManager(ICmsCacheWrapperManager cmsCacheWrapperManager) {
-        this._cmsCacheWrapperManager = cmsCacheWrapperManager;
-    }
-	*/
+	
     protected IContentDispenser getContentDispenser() {
         return _contentDispenser;
     }
@@ -517,7 +497,7 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
     public void setItemsEndElement(String itemsEndElement) {
         this._itemsEndElement = itemsEndElement;
     }
-
+	
     private IContentListHelper _contentListHelper;
     private IUserManager _userManager;
     private ICategoryManager _categoryManager;
@@ -525,11 +505,10 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
     private IPageManager _pageManager;
     private IResourceManager _resourceManager;
     private IContentAuthorizationHelper _contentAuthorizationHelper;
-    //private ICmsCacheWrapperManager _cmsCacheWrapperManager;
     private IContentDispenser _contentDispenser;
     private String _itemsStartElement = "<ul>";
     private String _itemStartElement = "<li>";
     private String _itemEndElement = "</li>";
     private String _itemsEndElement = "</ul>";
-
+	
 }

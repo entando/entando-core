@@ -21,8 +21,8 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.notify.ApsEvent;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.event.PublicContentChangedEvent;
@@ -217,6 +217,7 @@ public class SearchEngineManager extends AbstractService
 		SearchEngineFilter[] filters = new SearchEngineFilter[0];
 		if (StringUtils.isNotEmpty(langCode) && StringUtils.isNotEmpty(word)) {
 			SearchEngineFilter filter = new SearchEngineFilter(langCode, word);
+			filter.setIncludeAttachments(true);
 			filters = this.addFilter(filters, filter);
 		}
 		return this.searchEntityId(filters, null, allowedGroups);
@@ -238,7 +239,7 @@ public class SearchEngineManager extends AbstractService
 	}
 	
 	@Override
-	public List<String> searchEntityId(SearchEngineFilter[] filters, Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+	public List<String> searchEntityId(SearchEngineFilter[] filters, Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		List<String> contentsId = null;
     	try {
 			contentsId = _searcherDao.searchContentsId(filters, categories, allowedGroups);
@@ -250,7 +251,7 @@ public class SearchEngineManager extends AbstractService
 	}
 	
 	@Override
-	public FacetedContentsResult searchFacetedEntities(SearchEngineFilter[] filters, Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+	public FacetedContentsResult searchFacetedEntities(SearchEngineFilter[] filters, Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		FacetedContentsResult contentsId = null;
     	try {
 			contentsId = _searcherDao.searchFacetedContents(filters, categories, allowedGroups);

@@ -13,9 +13,9 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import org.entando.entando.aps.system.services.searchengine.FacetedContentsResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.Group;
 
 import java.io.File;
@@ -92,7 +92,7 @@ public class SearcherDAO implements ISearcherDAO {
 	
 	@Override
 	public FacetedContentsResult searchFacetedContents(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+			Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		return searchContents(filters, categories, allowedGroups, true);
 	}
 	
@@ -111,12 +111,12 @@ public class SearcherDAO implements ISearcherDAO {
      */
 	@Override
 	public List<String> searchContentsId(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException {
+			Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		return this.searchContents(filters, categories, allowedGroups, false).getContentsId();
     }
 	
-	public FacetedContentsResult searchContents(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups, boolean faceted) throws ApsSystemException {
+	protected FacetedContentsResult searchContents(SearchEngineFilter[] filters, 
+			Collection<ITreeNode> categories, Collection<String> allowedGroups, boolean faceted) throws ApsSystemException {
 		FacetedContentsResult result = new FacetedContentsResult();
 		List<String> contentsId = new ArrayList<String>();
 		IndexSearcher searcher = null;
@@ -170,8 +170,8 @@ public class SearcherDAO implements ISearcherDAO {
     	return result;
     }
 	
-	private Query createQuery(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups) {
+	protected Query createQuery(SearchEngineFilter[] filters, 
+			Collection<ITreeNode> categories, Collection<String> allowedGroups) {
 		BooleanQuery mainQuery = new BooleanQuery();
 		if (filters != null && filters.length > 0) {
 			for (int i = 0; i < filters.length; i++) {
@@ -196,22 +196,28 @@ public class SearcherDAO implements ISearcherDAO {
 			}
 			mainQuery.add(groupsQuery, BooleanClause.Occur.MUST);
 		}
+		System.out.println("-------------INIZIO FILTRO---------------");
 		if (null != categories && !categories.isEmpty()) {
 			BooleanQuery categoriesQuery = new BooleanQuery();
-			Iterator<Category> cateIter = categories.iterator();
+			Iterator<ITreeNode> cateIter = categories.iterator();
+			System.out.println("INIZIO FILTRO per categorie");
 			while (cateIter.hasNext()) {
-				Category category = cateIter.next();
+				ITreeNode category = cateIter.next();
 				String path = category.getPath(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR, false);
+				System.out.println("path " + path);
 				TermQuery categoryQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_CATEGORY_FIELD_NAME, path));
 				categoriesQuery.add(categoryQuery, BooleanClause.Occur.MUST);
 			}
 			mainQuery.add(categoriesQuery, BooleanClause.Occur.MUST);
 		}
+		System.out.println("--------------------------");
 		return mainQuery;
 	}
     
 	private Query createQuery(SearchEngineFilter filter) {
 		BooleanQuery fieldQuery = new BooleanQuery();
+		String key = filter.getKey();
+		String attachmentKey = key + IIndexerDAO.ATTACHMENT_FIELD_SUFFIX;
 		Object value = filter.getValue();
 		if (null != value) {
 			if (value instanceof String) {
@@ -229,17 +235,35 @@ public class SearcherDAO implements ISearcherDAO {
 						bc = BooleanClause.Occur.MUST_NOT;
 					}
 					for (int i = 0; i < values.length; i++) {
-						TermQuery term = new TermQuery(new Term(filter.getKey(), values[i].toLowerCase()));
+						TermQuery term = new TermQuery(new Term(key, values[i].toLowerCase()));
 						//NOTE: search lower case....
-						fieldQuery.add(term, bc);
+						if (filter.isIncludeAttachments()) {
+							BooleanQuery compositeQuery = new BooleanQuery();
+							compositeQuery.add(term, BooleanClause.Occur.SHOULD);
+							TermQuery termAttachment = new TermQuery(new Term(attachmentKey, values[i].toLowerCase()));
+							compositeQuery.add(termAttachment, BooleanClause.Occur.SHOULD);
+							fieldQuery.add(compositeQuery, bc);
+						} else {
+							fieldQuery.add(term, bc);
+						}
 					}
 				} else {
 					PhraseQuery phraseQuery = new PhraseQuery();
 					for (int i = 0; i < values.length; i++) {
 						//NOTE: search lower case....
-						phraseQuery.add(new Term(filter.getKey(), values[i].toLowerCase()));
+						phraseQuery.add(new Term(key, values[i].toLowerCase()));
 					}
-					return phraseQuery;
+					if (filter.isIncludeAttachments()) {
+						fieldQuery.add(phraseQuery, BooleanClause.Occur.SHOULD);
+						PhraseQuery phraseQuery2 = new PhraseQuery();
+						for (int i = 0; i < values.length; i++) {
+							//NOTE: search lower case....
+							phraseQuery2.add(new Term(attachmentKey, values[i].toLowerCase()));
+						}
+						fieldQuery.add(phraseQuery2, BooleanClause.Occur.SHOULD);
+					} else {
+						return phraseQuery;
+					}
 				}
 			} else if (value instanceof Date) {
 				String toString = DateTools.timeToString(((Date) value).getTime(), DateTools.Resolution.MINUTE);

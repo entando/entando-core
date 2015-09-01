@@ -57,5 +57,6 @@ public interface IIndexerDAO {
     public static final String CONTENT_GROUP_FIELD_NAME = FIELD_PREFIX + "group";
     public static final String CONTENT_CATEGORY_FIELD_NAME = FIELD_PREFIX + "category";
 	public static final String CONTENT_CATEGORY_SEPARATOR = "/";
+	public static final String ATTACHMENT_FIELD_SUFFIX = "_attachment";
 	
 }

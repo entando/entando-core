@@ -114,13 +114,13 @@ public class ProtectedResourceProvider implements IProtectedResourceProvider {
 		return false;
 	}
 	
-	private boolean isAuthOnProtectedRes(UserDetails currentUser, String resourceId, String contentId) {
+	protected boolean isAuthOnProtectedRes(UserDetails currentUser, String resourceId, String contentId) {
 		PublicContentAuthorizationInfo authInfo = this.getContentAuthorizationHelper().getAuthorizationInfo(contentId);
 		IAuthorizationManager authManager = this.getAuthorizationManager();
 		return (authInfo.isProtectedResourceReference(resourceId) && authInfo.isUserAllowed(authManager.getUserGroups(currentUser)));
 	}
 	
-	private void createResponse(HttpServletResponse resp, ResourceInterface resource, 
+	protected void createResponse(HttpServletResponse resp, ResourceInterface resource, 
 			ResourceInstance instance) throws IOException, ServletException {
 		resp.setContentType(instance.getMimeType());
 		resp.setHeader("Content-Disposition","inline; filename=" + instance.getFileName());
@@ -145,7 +145,7 @@ public class ProtectedResourceProvider implements IProtectedResourceProvider {
 		}
 	}
 	
-	private void executeLoginRedirect(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	protected void executeLoginRedirect(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
 			StringBuilder targetUrl = new StringBuilder(request.getRequestURL());
 			Map<String, String> params = new HashMap<String, String>();
@@ -161,7 +161,7 @@ public class ProtectedResourceProvider implements IProtectedResourceProvider {
 		}
 	}
 	
-	private boolean isValidNumericString(String integerNumber) {
+	protected boolean isValidNumericString(String integerNumber) {
 		return (integerNumber.trim().length() > 0 && integerNumber.matches("\\d+"));
 	}
 	

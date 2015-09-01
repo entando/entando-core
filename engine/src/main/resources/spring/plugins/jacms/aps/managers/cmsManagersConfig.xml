@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		xmlns:context="http://www.springframework.org/schema/context"
-		xmlns:jee="http://www.springframework.org/schema/jee"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
 			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd">
-	
-	<bean id="jacmsResourceManager" class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManager" 
-			parent="abstractService" >
+    
+    <bean id="jacmsResourceManager" class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManager" 
+              parent="abstractService" >
         <property name="categoryManager" ref="CategoryManager" />
         <property name="resourceDAO" >
             <bean class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceDAO">
@@ -17,18 +17,14 @@
         </property>
         <property name="resourceTypes">
             <map>
-                <entry key="Attach">
-                    <ref bean="jacmsAttachResource" />
-                </entry>
-                <entry key="Image">
-                    <ref bean="jacmsImageResource" />
-                </entry>
+                <entry key="Attach"><ref bean="jacmsAttachResource" /></entry>
+                <entry key="Image"><ref bean="jacmsImageResource" /></entry>
             </map>
         </property>
     </bean>
     
     <bean id="jacmsContentModelManager" class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManager" 
-			parent="abstractService" >
+          parent="abstractService" >
         <property name="contentModelDAO" >
             <bean class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -39,7 +35,7 @@
     </bean>
     
     <bean id="jacmsContentManager" class="com.agiletec.plugins.jacms.aps.system.services.content.ContentManager" 
-			parent="abstractEntityManager" >
+          parent="abstractEntityManager" >
         <property name="entityClassName" value="com.agiletec.plugins.jacms.aps.system.services.content.model.Content"/>
         <property name="entityTypeDom" ref="jacmsEntityTypeDom" />
         <property name="xmlAttributeRootElementName" value="content" />
@@ -79,19 +75,19 @@
     </bean>
     
     <bean id="jacmsBaseContentRenderer" class="com.agiletec.plugins.jacms.aps.system.services.renderer.BaseContentRenderer" 
-			parent="BaseEntityRenderer" >
+          parent="BaseEntityRenderer" >
         <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
     
     <bean id="jacmsContentPageMapperManager" class="com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManager" 
-			parent="abstractService" >
+          parent="abstractService" >
         <property name="pageManager" ref="PageManager" />
     </bean>
     
     <bean id="jacmsLinkResolverManager" class="com.agiletec.plugins.jacms.aps.system.services.linkresolver.LinkResolverManager" 
-			parent="abstractService" >
+          parent="abstractService" >
         <property name="contentManager" ref="jacmsContentManager" />
-		<property name="resourceManager" ref="jacmsResourceManager" />
+        <property name="resourceManager" ref="jacmsResourceManager" />
         <property name="contentPageMapperManager" ref="jacmsContentPageMapperManager" />
         <property name="pageManager" ref="PageManager" />
         <property name="urlManager" ref="URLManager" />
@@ -100,27 +96,33 @@
     </bean>
     
     <bean id="jacmsBaseContentDispenser" class="com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser" 
-			parent="abstractService" >
+          parent="abstractService" >
         <property name="contentRenderer" ref="jacmsBaseContentRenderer" />
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="contentAuthorizationHelper" ref="jacmsContentAuthorizationHelper" />
         <property name="linkResolver" ref="jacmsLinkResolverManager" />
-		<property name="authorizationManager" ref="AuthorizationManager" />
+        <property name="authorizationManager" ref="AuthorizationManager" />
     </bean>
     
-	<bean id="jacmsSearchEngineManager" class="com.agiletec.plugins.jacms.aps.system.services.searchengine.SearchEngineManager" 
-			parent="abstractService" >
+    <bean id="jacmsSearchEngineManager" class="com.agiletec.plugins.jacms.aps.system.services.searchengine.SearchEngineManager" 
+              parent="abstractService" >
         <property name="factory">
-			<bean class="com.agiletec.plugins.jacms.aps.system.services.searchengine.SearchEngineDAOFactory" 
-					init-method="init">
-				<property name="indexDiskRootFolder"><jee:jndi-lookup jndi-name="java:comp/env/indexDiskRootFolder" /></property>
-				<property name="configManager" ref="BaseConfigManager"/>
-				<property name="langManager" ref="LangManager" />
-				<property name="indexerClassName"><value>com.agiletec.plugins.jacms.aps.system.services.searchengine.IndexerDAO</value></property>
-				<property name="searcherClassName"><value>com.agiletec.plugins.jacms.aps.system.services.searchengine.SearcherDAO</value></property>
-			</bean>
-		</property>
-		<property name="contentManager" ref="jacmsContentManager" />
+            <bean class="com.agiletec.plugins.jacms.aps.system.services.searchengine.SearchEngineDAOFactory" 
+                              init-method="init">
+                <property name="indexDiskRootFolder">
+                    <jee:jndi-lookup jndi-name="java:comp/env/indexDiskRootFolder" />
+                </property>
+                <property name="configManager" ref="BaseConfigManager"/>
+                <property name="langManager" ref="LangManager" />
+                <property name="indexerClassName">
+                    <value>com.agiletec.plugins.jacms.aps.system.services.searchengine.IndexerDAO</value>
+                </property>
+                <property name="searcherClassName">
+                    <value>com.agiletec.plugins.jacms.aps.system.services.searchengine.SearcherDAO</value>
+                </property>
+            </bean>
+        </property>
+        <property name="contentManager" ref="jacmsContentManager" />
     </bean>
 	
     <bean id="jacmsBaseContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper" >
@@ -130,7 +132,9 @@
     <bean id="jacmsContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper" >
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="searchEngineManager" ref="jacmsSearchEngineManager" />
-        <property name="userFilterDateFormat"><value>${jacms.frontend.userfilter.dateFormat}</value></property>
+        <property name="userFilterDateFormat">
+            <value>${jacms.frontend.userfilter.dateFormat}</value>
+        </property>
     </bean>
     
     <bean id="jacmsContentViewerHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentViewerHelper" >
@@ -141,7 +145,7 @@
     </bean>
     
     <bean id="jacmsCacheWrapperManager" class="com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager" 
-			parent="abstractService" >
+          parent="abstractService" >
         <property name="cacheInfoManager" ref="CacheInfoManager" />
         <property name="contentManager" ref="jacmsContentManager" />
     </bean>
@@ -173,11 +177,11 @@
     
     <bean id="jacmsApiResouceInterface" class="org.entando.entando.plugins.jacms.aps.system.services.api.ApiResourceInterface" >
         <property name="userManager" ref="UserManager" />
-		<property name="groupManager" ref="GroupManager" />
-		<property name="categoryManager" ref="CategoryManager" />
-		<property name="contentManager" ref="jacmsContentManager" />
+        <property name="groupManager" ref="GroupManager" />
+        <property name="categoryManager" ref="CategoryManager" />
+        <property name="contentManager" ref="jacmsContentManager" />
         <property name="resourceManager" ref="jacmsResourceManager" />
-		<property name="authorizationManager" ref="AuthorizationManager"/>
+        <property name="authorizationManager" ref="AuthorizationManager"/>
     </bean>
     
 </beans>

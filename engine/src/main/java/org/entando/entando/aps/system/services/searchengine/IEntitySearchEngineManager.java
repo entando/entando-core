@@ -17,8 +17,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.Category;
 
 /**
  * Interfaccia base per i servizi detentori delle operazioni di indicizzazione 
@@ -63,13 +63,10 @@ public interface IEntitySearchEngineManager extends ISearchEngineManager {
 	public List<String> searchEntityId(String langCode, 
 			String word, Collection<String> allowedGroups) throws ApsSystemException;
 	
-	//public List<String> searchEntityId(String langCode, String word, 
-	//		Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
-	
 	public List<String> searchEntityId(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
+			Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
 	public FacetedContentsResult searchFacetedEntities(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
+			Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
 }

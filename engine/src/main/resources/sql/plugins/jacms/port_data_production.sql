@@ -165,15 +165,19 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign formFieldValue = userFilterOptionVar.getFormFieldValue(formFieldNameVar) >
 <#assign formFieldOptionValue = userFilterOptionVar.getFormFieldValue(formFieldStartOptionVar) >
 <div class="control-group">
-	<label for="${formFieldNameVar}" class="control-label"><@wp.i18n key="TEXT" /></label>
-	<div class="controls">
-		<input name="${formFieldNameVar}" id="${formFieldNameVar}" value="${formFieldValue}" type="text" class="input-xlarge"/>
-		<select name="${formFieldStartOptionVar}" id="<c:out value="${formFieldStartOptionVar}" />" class="input-xlarge">
-			<option value="allwords" <#if (formFieldOptionValue??) && (''allwords'' == formFieldOptionValue)>selected="selected"</#if>><@wp.i18n key="jacms_SEARCH_TEXT_ALL_WORDS" /></option>
-			<option value="oneword" <#if (formFieldOptionValue??) && (''oneword'' == formFieldOptionValue)>selected="selected"</#if>><@wp.i18n key="jacms_SEARCH_TEXT_AT_LEAST_ONE_WORD" /></option>
-			<option value="exact" <#if (formFieldOptionValue??) && (''exact'' == formFieldOptionValue)>selected="selected"</#if>><@wp.i18n key="jacms_SEARCH_TEXT_EXACT" /></option>
-		</select>
-	</div>
+    <label for="${formFieldNameVar}" class="control-label"><@wp.i18n key="TEXT" /></label>
+    <div class="controls">
+        <input name="${formFieldNameVar}" id="${formFieldNameVar}" value="${formFieldValue}" type="text" class="input-xlarge"/>
+        <select name="${formFieldStartOptionVar}" id="<c:out value="${formFieldStartOptionVar}" />" class="input-xlarge">
+            <option value="allwords" <#if (formFieldOptionValue??) && (''allwords'' == formFieldOptionValue)>selected="selected"</#if>><@wp.i18n key="jacms_SEARCH_TEXT_ALL_WORDS" /></option>
+            <option value="oneword" <#if (formFieldOptionValue??) && (''oneword'' == formFieldOptionValue)>selected="selected"</#if>><@wp.i18n key="jacms_SEARCH_TEXT_AT_LEAST_ONE_WORD" /></option>
+            <option value="exact" <#if (formFieldOptionValue??) && (''exact'' == formFieldOptionValue)>selected="selected"</#if>><@wp.i18n key="jacms_SEARCH_TEXT_EXACT" /></option>
+        </select>
+        <label for="true_${formFieldAttachOptionVar}" class="checkbox">
+        <input name="${formFieldAttachOptionVar}" id="true_${formFieldAttachOptionVar}" 
+            <#if (formFieldAttachOptionValue?? && formFieldAttachOptionValue == "true"}">checked="checked"</#if> value="true" type="checkbox" />
+        <@wp.i18n key="jacms_SEARCH_INCLUDE_ATTACHMENTS" /></label>
+    </div>
 </div>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('jacms_content_viewer_list_userfilter_met_category', NULL, 'jacms', NULL, '<#assign wp=JspTaglibs["/aps-core"]>
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
@@ -505,3 +509,5 @@ INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_AT_LEAST_ONE_WORD', 'en', 'At least one word');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_EXACT', 'it', 'Frase esatta');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_EXACT', 'en', 'Exact');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_INCLUDE_ATTACHMENTS', 'it', 'Includi allegati');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_INCLUDE_ATTACHMENTS', 'en', 'Include attachments');

@@ -22,12 +22,14 @@
 package org.entando.entando.aps.system.services.searchengine;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author E.Santoboni
  */
-public class SearchEngineFilter extends FieldSearchFilter {
+public class SearchEngineFilter extends FieldSearchFilter implements Serializable {
 	
 	public SearchEngineFilter(String key, Object value) {
 		this(key, value, TextSearchOption.AT_LEAST_ONE_WORD);
@@ -57,7 +59,15 @@ public class SearchEngineFilter extends FieldSearchFilter {
 		this._textSearchOption = textSearchOption;
 	}
 	
+	public boolean isIncludeAttachments() {
+		return _includeAttachments;
+	}
+	public void setIncludeAttachments(boolean includeAttachments) {
+		this._includeAttachments = includeAttachments;
+	}
+	
 	private TextSearchOption _textSearchOption;
+	private boolean _includeAttachments;
 	
 	public enum TextSearchOption {EXACT, ALL_WORDS, AT_LEAST_ONE_WORD, ANY_WORD}
 	

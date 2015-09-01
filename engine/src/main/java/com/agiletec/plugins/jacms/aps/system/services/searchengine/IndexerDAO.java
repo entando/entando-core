@@ -13,6 +13,8 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
+import com.agiletec.aps.system.common.entity.model.AttributeSearchInfo;
+import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
@@ -21,16 +23,20 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.ResourceAttributeInterface;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
@@ -38,6 +44,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSLockFactory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +66,7 @@ public class IndexerDAO implements IIndexerDAO {
 	public void init(File dir) throws ApsSystemException {
 		try {
 			this._dir = FSDirectory.open(dir);
+			this._dir.setLockFactory(new SimpleFSLockFactory(dir));
 		} catch (Throwable t) {
 			_logger.error("Error creating directory", t);
 			throw new ApsSystemException("Error creating directory", t);
@@ -71,7 +79,7 @@ public class IndexerDAO implements IIndexerDAO {
 		IndexWriter writer = null;
 		try {
 			writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
-			Document document = this.createDocument(entity/*, taxoWriter*/);
+			Document document = this.createDocument(entity);
             writer.addDocument(document);
         } catch (Throwable t) {
         	_logger.error("Errore saving entity {}", entity.getId(), t);
@@ -93,7 +101,7 @@ public class IndexerDAO implements IIndexerDAO {
      * @return L'oggetto Document ricavato dal contenuto.
      * @throws ApsSystemException In caso di errore
      */
-    private Document createDocument(IApsEntity entity) throws ApsSystemException {
+    protected Document createDocument(IApsEntity entity) throws ApsSystemException {
         Document document = new Document();
         document.add(new StringField(CONTENT_ID_FIELD_NAME, 
 				entity.getId(), Field.Store.YES));
@@ -146,15 +154,42 @@ public class IndexerDAO implements IIndexerDAO {
         if (attribute instanceof IndexableAttributeInterface) {
             String valueToIndex = ((IndexableAttributeInterface) attribute).getIndexeableFieldValue();
             String indexingType = attribute.getIndexingType();
+			String fieldName = lang.getCode();
+			if (attribute instanceof ResourceAttributeInterface) {
+				fieldName += IIndexerDAO.ATTACHMENT_FIELD_SUFFIX;
+			}
             if (null != indexingType && 
             		IndexableAttributeInterface.INDEXING_TYPE_UNSTORED.equalsIgnoreCase(indexingType)) {
-            	document.add(new TextField(lang.getCode(), valueToIndex, Field.Store.NO));
+            	document.add(new TextField(fieldName, valueToIndex, Field.Store.NO));
             }
             if (null != indexingType && 
             		IndexableAttributeInterface.INDEXING_TYPE_TEXT.equalsIgnoreCase(indexingType)) {
-            	document.add(new TextField(lang.getCode(), valueToIndex, Field.Store.YES));
+            	document.add(new TextField(fieldName, valueToIndex, Field.Store.YES));
             }
         }
+		if (attribute.isSearchable()) {
+			List<Lang> langs = new ArrayList<Lang>();
+			langs.add(lang);
+			AttributeTracer tracer = new AttributeTracer();
+			tracer.setLang(lang);
+			String name = tracer.getFormFieldName(attribute);
+			List<AttributeSearchInfo> searchInfos = attribute.getSearchInfos(langs);
+			if (null != searchInfos) {
+				for (int i = 0; i < searchInfos.size(); i++) {
+					AttributeSearchInfo info = searchInfos.get(i);
+					Field field = null;
+					if (null != info.getDate()) {
+						field = new TextField(name, 
+								DateTools.timeToString(info.getDate().getTime(), DateTools.Resolution.MINUTE), Field.Store.YES);
+					} else if (null != info.getBigDecimal()) {
+						field = new IntField(name, info.getBigDecimal().intValue(), Field.Store.YES);
+					} else {
+						field = new TextField(name, info.getString(), Field.Store.YES);
+					}
+					document.add(field);
+				}
+			}
+		}
     }
 	
     /**

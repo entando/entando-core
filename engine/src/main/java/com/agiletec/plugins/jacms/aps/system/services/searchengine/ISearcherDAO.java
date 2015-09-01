@@ -13,14 +13,14 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
-import org.entando.entando.aps.system.services.searchengine.FacetedContentsResult;
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.Category;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.entando.entando.aps.system.services.searchengine.FacetedContentsResult;
 import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 
 /**
@@ -38,7 +38,7 @@ public interface ISearcherDAO {
 	public void init(File dir) throws ApsSystemException;
 	
 	public FacetedContentsResult searchFacetedContents(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
+			Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
 	/**
      * Ricerca una lista di identificativi di contenuto in base 
@@ -54,7 +54,7 @@ public interface ISearcherDAO {
      * @throws ApsSystemException
      */
 	public List<String> searchContentsId(SearchEngineFilter[] filters, 
-			Collection<Category> categories, Collection<String> allowedGroups) throws ApsSystemException;
+			Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException;
 	
     public void close();
 	

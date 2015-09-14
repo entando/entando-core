@@ -29,6 +29,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Classe astratta di base per gli oggetti Resource.
@@ -44,7 +45,7 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
     public AbstractResource() {
 		this.setId("");
 		this.setType("");
-		this.setDescr("");
+		this.setDescription("");
 		this.setMainGroup("");
 		this.setMasterFileName("");
 		this._categories = new ArrayList<Category>();
@@ -92,19 +93,31 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 	/**
 	 * Restituisce la descrizione della risorsa.
 	 * @return La descrizione della risorsa.
+	 * @deprecated use getDescription method
 	 */
     @Override
 	public String getDescr() {
-		return _descr;
+		return this.getDescription();
 	}
 	
 	/**
 	 * Setta la descrizione della risorsa.
 	 * @param descr La descrizione della risorsa.
+	 * @deprecated use setDescription method
 	 */
     @Override
 	public void setDescr(String descr) {
-		this._descr = descr;
+		this.setDescription(descr);
+	}
+	
+    @Override
+	public String getDescription() {
+		return _description;
+	}
+	
+    @Override
+	public void setDescription(String description) {
+		this._description = description;
 	}
 	
 	/**
@@ -255,7 +268,7 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		}
 		prototype.setId("");
 		prototype.setType(this.getType());
-		prototype.setDescr("");
+		prototype.setDescription("");
 		prototype.setMainGroup("");
 		prototype.setMasterFileName("");
 		prototype.setCategories(new ArrayList<Category>());
@@ -277,7 +290,7 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		ResourceDOM resourceDom = this.getNewResourceDOM();
     	resourceDom.setTypeCode(this.getType());
     	resourceDom.setId(this.getId());
-    	resourceDom.setDescr(this.getDescr());
+    	resourceDom.setDescription(this.getDescription());
     	resourceDom.setMainGroup(this.getMainGroup());
     	resourceDom.setMasterFileName(this.getMasterFileName());
     	if (null != this.getCategories()) {
@@ -388,7 +401,35 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		}
 		return new File(filePath);
 	}
+	
+	protected String getNewUniqueFileName(String masterFileName) {
+		int index = (null != masterFileName) ? masterFileName.lastIndexOf('.') : -1;
+		String baseName = (index > 0) ? masterFileName.substring(0, index) : masterFileName;
+		baseName += System.currentTimeMillis();
+		System.out.println("-----------UNIQUE-------------");
+        System.out.println(baseName);
+        System.out.println("----------------------------");
+        return DigestUtils.md5Hex(baseName);
+	}
+	
+	protected String getFileExtension(String fileName) {
+		int index = (null != fileName) ? fileName.lastIndexOf('.') : -1;
+		if (index < 0) {
+			return "";
+		}
+		return fileName.substring(index + 1).trim();
+	}
     
+	protected boolean exists(String instanceFileName) {
+		try {
+			String subPath = this.getDiskSubFolder() + instanceFileName;
+			return this.getStorageManager().exists(subPath, this.isProtectedResource());
+		} catch (Throwable t) {
+			_logger.error("Error testing existing file '{}'", instanceFileName, t);
+			throw new RuntimeException("Error testing existing file", t);
+		}
+	}
+	
 	protected IStorageManager getStorageManager() {
 		return _storageManager;
 	}
@@ -398,7 +439,7 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 	
 	private String _id;
 	private String _typeCode;
-	private String _descr;
+	private String _description;
 	private String _mainGroup;
 	private String _masterFileName;
 	private List<Category> _categories;

@@ -64,57 +64,56 @@
 		<div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 			<div id="search-advanced" class="collapse well collapse-input-group">
 				<%-- groups --%>
-					<s:set var="allowedGroupsVar" value="allowedGroups"></s:set>
-					<s:if test="null != #allowedGroupsVar && #allowedGroupsVar.size()>1">
-						<div class="form-group">
-							<label for="ownerGroupName" class="control-label col-sm-2 text-right"><s:text name="label.group" /></label>
-							<div class="col-sm-5">
-								<wpsf:select name="ownerGroupName" id="ownerGroupName" list="#allowedGroupsVar" headerKey="" headerValue="%{getText('label.all')}" listKey="name" listValue="descr" cssClass="form-control" />
-							</div>
-						</div>
-					</s:if>
+                                <s:set var="allowedGroupsVar" value="allowedGroups"></s:set>
+                                <s:if test="null != #allowedGroupsVar && #allowedGroupsVar.size()>1">
+                                        <div class="form-group">
+                                                <label for="ownerGroupName" class="control-label col-sm-2 text-right"><s:text name="label.group" /></label>
+                                                <div class="col-sm-5">
+                                                        <wpsf:select name="ownerGroupName" id="ownerGroupName" list="#allowedGroupsVar" headerKey="" headerValue="%{getText('label.all')}" listKey="name" listValue="descr" cssClass="form-control" />
+                                                </div>
+                                        </div>
+                                </s:if>
 				<%-- filename --%>
-					<div class="form-group">
-						<label for="fileName" class="control-label col-sm-2 text-right"><s:text name="label.filename" /></label>
-						<div class="col-sm-5">
-							<wpsf:textfield name="fileName" id="fileName" cssClass="form-control"/>
-						</div>
-					</div>
+                                <div class="form-group">
+                                        <label for="fileName" class="control-label col-sm-2 text-right"><s:text name="label.filename" /></label>
+                                        <div class="col-sm-5">
+                                                <wpsf:textfield name="fileName" id="fileName" cssClass="form-control"/>
+                                        </div>
+                                </div>
 				<%-- category tree --%>
-					<div class="form-group">
-						<label class="control-label col-sm-2 text-right">
-							<s:text name="label.category" />
-						</label>
-						<div class="col-sm-5">
-							<div class="well">
-								<ul id="categoryTree" class="fa-ul list-unstyled">
-									<s:set name="inputFieldName" value="'categoryCode'" />
-									<s:set name="selectedTreeNode" value="categoryCode" />
-									<s:set name="liClassName" value="'category'" />
-									<s:set name="treeItemIconName" value="'fa-folder'" />
-
-									<s:if test="#categoryTreeStyleVar == 'classic'">
-										<s:set name="currentRoot" value="categoryRoot" />
-										<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
-									</s:if>
-									<s:elseif test="#categoryTreeStyleVar == 'request'">
-										<s:set name="currentRoot" value="showableTree" />
-										<s:set name="openTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
-										<s:set name="closeTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
-										<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
-									</s:elseif>
-								</ul>
-							</div>
-						</div>
-					</div>
+                                <div class="form-group">
+                                        <label class="control-label col-sm-2 text-right">
+                                                <s:text name="label.category" />
+                                        </label>
+                                        <div class="col-sm-5">
+                                                <div class="well">
+                                                        <ul id="categoryTree" class="fa-ul list-unstyled">
+                                                                <s:set name="inputFieldName" value="'categoryCode'" />
+                                                                <s:set name="selectedTreeNode" value="categoryCode" />
+                                                                <s:set name="liClassName" value="'category'" />
+                                                                <s:set name="treeItemIconName" value="'fa-folder'" />
+                                                                <s:if test="#categoryTreeStyleVar == 'classic'">
+                                                                        <s:set name="currentRoot" value="categoryRoot" />
+                                                                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
+                                                                </s:if>
+                                                                <s:elseif test="#categoryTreeStyleVar == 'request'">
+                                                                        <s:set name="currentRoot" value="showableTree" />
+                                                                        <s:set name="openTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
+                                                                        <s:set name="closeTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
+                                                                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
+                                                                </s:elseif>
+                                                        </ul>
+                                                </div>
+                                        </div>
+                                </div>
 				<%-- search --%>
-					<div class="form-group">
-						<div class="col-sm-5 col-sm-offset-2">
-							<wpsf:submit type="button" cssClass="btn btn-primary">
-								<span class="icon fa fa-search"></span>&#32;<s:text name="label.search" />
-							</wpsf:submit>
-						</div>
-					</div>
+                                <div class="form-group">
+                                        <div class="col-sm-5 col-sm-offset-2">
+                                                <wpsf:submit type="button" cssClass="btn btn-primary">
+                                                        <span class="icon fa fa-search"></span>&#32;<s:text name="label.search" />
+                                                </wpsf:submit>
+                                        </div>
+                                </div>
 			</div>
 		</div>
 	</div>
@@ -159,11 +158,9 @@
 
 	<s:set var="imageDimensionsVar" value="imageDimensions" />
 	<s:iterator var="resourceid" status="status">
-
 		<s:set name="resource" value="%{loadResource(#resourceid)}" />
 		<s:set var="resourceInstance" value='%{#resource.getInstance(0,null)}' />
 		<s:set var="URLoriginal" value="%{#resource.getImagePath(0)}" />
-
 		<s:url var="URLedit" action="edit" namespace="/do/jacms/Resource">
 			<s:param name="resourceId" value="%{#resourceid}" />
 		</s:url>
@@ -171,7 +168,6 @@
 			<s:param name="resourceId" value="%{#resourceid}" />
 			<s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
 		</s:url>
-
 		<s:url var="URLtrash" action="trash" namespace="/do/jacms/Resource">
 			<s:param name="resourceId" value="%{#resourceid}" />
 			<s:param name="resourceTypeCode" value="%{#resource.type}" />
@@ -181,10 +177,8 @@
 			<s:param name="ownerGroupName" value="%{ownerGroupName}" />
 			<s:param name="treeNodesToOpen" value="%{treeNodesToOpen}" />
 		</s:url>
-
 		<div class="col-sm-4 col-md-3">
-			<div class="panel panel-default text-center">
-
+                    <div class="panel panel-default text-center">
 			<s:if test="!onEditContent">
 				<div class="panel-heading text-right padding-small-vertical padding-small-right">
 					<a href="<s:property value="URLtrash" escape="false" />" class="icon fa fa-times-circle text-warning">
@@ -192,46 +186,46 @@
 					</a>
 				</div>
 			</s:if>
-				<div>
-					<%-- Dimension forced for img thumbnail --%>
-					<img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" " style="height:90px;max-width:130px" class="margin-small-top" />
-				</div>
-				<div class="btn-group margin-small-vertical">
-				<s:if test="!onEditContent">
-					<a href="<s:property value="URLedit" escape="false" />"
-						 class="btn btn-default"
-						 title="<s:text name="label.edit" />: <s:property value="#resource.descr" />">
-						<span class="icon fa fa-pencil-square-o"></span>&#32;
-						<s:text name="label.edit" />
-					</a>
-				</s:if>
-				<s:else>
-					<a href="<s:property value="URLuse" escape="false" />"
-						 class="btn btn-default"
-						 title="<s:text name="note.joinThisToThat" />:	<s:property value="content.descr" />" >
-						<span class="icon fa fa-picture-o"></span>&#32;
-						<s:text name="label.use"/>
-					</a>
-				</s:else>
-					<button type="button" class="btn btn-info" data-toggle="popover" data-title="<s:property value="#resource.descr" />">
-						<span class="icon fa fa-info"></span>
-						<span class="sr-only"><s:text name="label.info" /></span>
-					</button>
-				</div>
+                        <div>
+                                <%-- Dimension forced for img thumbnail --%>
+                                <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" " style="height:90px;max-width:130px" class="margin-small-top" />
+                        </div>
+                        <div class="btn-group margin-small-vertical">
+                        <s:if test="!onEditContent">
+                                <a href="<s:property value="URLedit" escape="false" />"
+                                         class="btn btn-default"
+                                         title="<s:text name="label.edit" />: <s:property value="#resource.descr" />">
+                                        <span class="icon fa fa-pencil-square-o"></span>&#32;
+                                        <s:text name="label.edit" />
+                                </a>
+                        </s:if>
+                        <s:else>
+                                <a href="<s:property value="URLuse" escape="false" />"
+                                         class="btn btn-default"
+                                         title="<s:text name="note.joinThisToThat" />:	<s:property value="content.descr" />" >
+                                        <span class="icon fa fa-picture-o"></span>&#32;
+                                        <s:text name="label.use"/>
+                                </a>
+                        </s:else>
+                                <button type="button" class="btn btn-info" data-toggle="popover" data-title="<s:property value="#resource.descr" />">
+                                        <span class="icon fa fa-info"></span>
+                                        <span class="sr-only"><s:text name="label.info" /></span>
+                                </button>
+                        </div>
+                        
+                        <s:set var="fileInfo">
+                                <s:include value="imageArchive-file-info.jsp" />
+                        </s:set>
 
-				<s:set var="fileInfo">
-					<s:include value="imageArchive-file-info.jsp" />
-				</s:set>
+                        <script>
+                                $("[data-toggle=popover]").popover({
+                                        html: true,
+                                        placement: "top",
+                                        content: '<s:property value="fileInfo" escape="false" />'
+                                });
+                        </script>
 
-				<script>
-					$("[data-toggle=popover]").popover({
-						html: true,
-						placement: "top",
-						content: '<s:property value="fileInfo" escape="false" />'
-					});
-				</script>
-
-			</div>
+                    </div>
 		</div>
 
 	</s:iterator>

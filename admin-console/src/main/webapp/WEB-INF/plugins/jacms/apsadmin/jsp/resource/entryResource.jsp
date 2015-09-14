@@ -88,34 +88,27 @@
 </p>
 
 <div class="panel panel-default">
-	<div class="panel-body">
-	 	<div class="form-group">
-			<label class="control-label" for="descr"><s:text name="label.description" /></label>
-			<wpsf:textfield name="descr" id="descr" cssClass="form-control" />
-		</div>
-
-		<s:set name="lockGroupSelect" value="%{resourceId != null && resourceId != 0}"></s:set>
-		<div class="form-group">
-			<label class="control-label" for="mainGroup"><s:text name="label.group" /></label>
-			<wpsf:select name="mainGroup" id="mainGroup" list="allowedGroups" value="mainGroup"
-			listKey="name" listValue="descr" disabled="%{lockGroupSelect}" cssClass="form-control" />
-		</div>
-
-		<s:if test="%{lockGroupSelect}">
-			<p class="sr-only">
-				<wpsf:hidden name="mainGroup" />
-			</p>
-		</s:if>
-		<div class="form-group">
-			<label for="upload"><s:text name="label.file" /></label>
-			<s:file name="upload" id="upload" label="label.file"/>
-		</div>
-  		<div class="checkbox">
-    	<label>
-			<input type="checkbox" name="normalizeFileName" id="normalizeFileName" value="true">&#32;<s:text name="label.normalize" />
-		</label>
-		</div>
-	</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="control-label" for="descr"><s:text name="label.description" /></label>
+        <wpsf:textfield name="descr" id="descr" cssClass="form-control" />
+    </div>
+    <s:set name="lockGroupSelect" value="%{resourceId != null && resourceId != 0}"></s:set>
+        <div class="form-group">
+            <label class="control-label" for="mainGroup"><s:text name="label.group" /></label>
+        <wpsf:select name="mainGroup" id="mainGroup" list="allowedGroups" value="mainGroup"
+                     listKey="name" listValue="descr" disabled="%{lockGroupSelect}" cssClass="form-control" />
+    </div>
+    <s:if test="%{lockGroupSelect}">
+        <p class="sr-only">
+        <wpsf:hidden name="mainGroup" />
+        </p>
+    </s:if>
+    <div class="form-group">
+        <label for="upload"><s:text name="label.file" /></label>
+        <s:file name="upload" id="upload" label="label.file"/>
+    </div>
+</div>
 </div>
 <fieldset class="margin-base-vertical" id="category-content-block">
 	<legend><span class="icon fa fa-tags"></span>&#32;<s:text name="title.categoriesManagement"/></legend>

@@ -45,8 +45,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		if (null != this.getFile()) {
 			ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
 			this.checkRightFileType(resourcePrototype);
-			if (this.hasFieldErrors()) return;
-			this.checkDuplicateFile(resourcePrototype);
 		}
 	}
 	
@@ -62,30 +60,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		}
 		if (!isRight) {
 			this.addFieldError("upload", this.getText("error.resource.file.wrongFormat"));
-		}
-	}
-	
-	protected void checkDuplicateFile(ResourceInterface resourcePrototype) {
-		String formFileName = this.getFileName();
-                try {
-			resourcePrototype.setMainGroup(this.getMainGroup());
-			if (resourcePrototype.exists(formFileName)) {
-                                boolean addError = true;
-                                if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
-                                    ResourceInterface masterResource = this.getResourceManager().loadResource(this.getResourceId());
-                                    String masterFileName = (null != masterResource) ? masterResource.getMasterFileName() : null;
-                                    if (null != masterFileName && masterFileName.equalsIgnoreCase(formFileName)) {
-                                        addError = false;
-                                    }
-                                }
-                                if (addError) {
-                                    String[] args = {formFileName};
-                                    this.addFieldError("upload", this.getText("error.resource.file.alreadyPresent", args));
-                                }
-			}
-		} catch (Throwable t) {
-			_logger.error("Error while check duplicate file - master file name '{}'", formFileName, t);
-			//ApsSystemUtils.logThrowable(t, this, "checkDuplicateFile", 	"Error while check duplicate file - master file name '" + formFileName + "'");
 		}
 	}
 	
@@ -113,7 +87,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 			}
 		} catch (Throwable t) {
 			_logger.error("error in newResource", t);
-			//ApsSystemUtils.logThrowable(t, this, "newResource");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -124,7 +97,7 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		try {
 			ResourceInterface resource = this.loadResource(this.getResourceId());
 			this.setResourceTypeCode(resource.getType());
-			this.setDescr(resource.getDescr());
+			this.setDescr(resource.getDescription());
 			List<Category> resCategories = resource.getCategories();
 			for (int i=0; i<resCategories.size(); i++) {
 				Category resCat = resCategories.get(i);
@@ -134,7 +107,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 			this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
-			//ApsSystemUtils.logThrowable(t, this, "edit");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -150,7 +122,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 			}
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -163,7 +134,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 			if (null != result) return result;
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
-			//ApsSystemUtils.logThrowable(t, this, "trash");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -178,7 +148,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 			this.getResourceManager().deleteResource(resource);
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "delete");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -231,7 +200,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 			}
 		} catch (Throwable t) {
 			_logger.error("error in joinRemoveCategory", t);
-			//ApsSystemUtils.logThrowable(t, this, "joinRemoveCategory");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -262,7 +230,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 			}
 		} catch (Throwable t) {
 			_logger.error("Error extracting references", t);
-			//ApsSystemUtils.logThrowable(t, this, "getReferences", "Error extracting references");
 		}
 		return _references;
 	}
@@ -308,17 +275,7 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 	
 	@Override
 	public String getFileName() {
-		if (null != this._filename && this.isNormalizeFileName()) {
-			return this._filename.trim().replace(' ', '_');
-		}
 		return this._filename;
-	}
-	
-	public boolean isNormalizeFileName() {
-		return _normalizeFileName;
-	}
-	public void setNormalizeFileName(boolean normalizeFileName) {
-		this._normalizeFileName = normalizeFileName;
 	}
 	
 	@Override
@@ -383,8 +340,6 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 	private File _file;
     private String _contentType;
     private String _filename;
-    
-    private boolean _normalizeFileName = false;
 	
 	private IGroupManager _groupManager;
     

@@ -48,12 +48,12 @@ public class TestResourceManager extends BaseTestCase {
 			ResourceInterface resource = this._resourceManager.loadResource("44");
 			assertTrue(resource instanceof ImageResource);
 			assertTrue(resource.isMultiInstance());
-			assertEquals(resource.getDescr(), "logo");
+			assertEquals(resource.getDescription(), "logo");
 			assertEquals(resource.getCategories().size(), 1);
     		resource = this._resourceManager.loadResource("7");
 			assertTrue(resource instanceof AttachResource);
 			assertFalse(resource.isMultiInstance());
-			assertEquals(resource.getDescr(), "configurazione");
+			assertEquals(resource.getDescription(), "configurazione");
 			assertEquals(resource.getCategories().size(), 0);
 		} catch (Throwable t) {
 			throw t;
@@ -66,17 +66,17 @@ public class TestResourceManager extends BaseTestCase {
     	try {
 			ResourceInterface resource = this._resourceManager.loadResource("44");
 			assertTrue(resource instanceof ImageResource);
-			assertEquals(resource.getDescr(), "logo");
+			assertEquals(resource.getDescription(), "logo");
 			assertEquals(resource.getCategories().size(), 1);
 			assertTrue(resource.isMultiInstance());
 			oldCategories = resource.getCategories();
-			oldDescr = resource.getDescr();
+			oldDescr = resource.getDescription();
 			String newDescr = "New Description";
-			resource.setDescr(newDescr);
+			resource.setDescription(newDescr);
 			resource.setCategories(new ArrayList<Category>());
 			this._resourceManager.updateResource(resource);
 			resource = this._resourceManager.loadResource("44");
-			assertEquals(resource.getDescr(), newDescr);
+			assertEquals(resource.getDescription(), newDescr);
 			assertEquals(resource.getCategories().size(), 0);
 		} catch (Throwable t) {
 			throw t;
@@ -84,7 +84,7 @@ public class TestResourceManager extends BaseTestCase {
 			if (oldCategories != null && oldDescr != null) {
 				ResourceInterface resource = this._resourceManager.loadResource("44");
 				resource.setCategories(oldCategories);
-				resource.setDescr(oldDescr);
+				resource.setDescription(oldDescr);
 				this._resourceManager.updateResource(resource);
 			}
 		}
@@ -151,10 +151,10 @@ public class TestResourceManager extends BaseTestCase {
 			res = this._resourceManager.loadResource(resourcesId.get(0));
 			assertTrue(res instanceof ImageResource);
 			assertEquals(res.getCategories().size(), 1);
-			assertEquals(res.getDescr(), resDescrToAdd);
+			assertEquals(res.getDescription(), resDescrToAdd);
 			
 			ResourceInstance instance0 = ((ImageResource) res).getInstance(0, null);
-			assertEquals("entando_logo_d0.jpg", instance0.getFileName());
+			assertEquals("entando_logo.jpg", res.getMasterFileName());
 			assertEquals("image/jpeg", instance0.getMimeType());
 			
 			resourcesId = _resourceManager.searchResourcesId(resourceType, null, categoryCodeToAdd, allowedGroups);
@@ -237,7 +237,7 @@ public class TestResourceManager extends BaseTestCase {
     
 	public void testGetResourceType() {
 		ResourceInterface imageResource = this._resourceManager.createResourceType("Image");
-		assertEquals("", imageResource.getDescr());
+		assertEquals("", imageResource.getDescription());
 		assertEquals("", imageResource.getId());
 		assertEquals("Image", imageResource.getType());
 	}
@@ -245,7 +245,7 @@ public class TestResourceManager extends BaseTestCase {
 	public void testCreateResourceType() {
 		ResourceInterface imageResource = this._resourceManager.createResourceType("Image");
 		assertNotNull(imageResource);
-		assertEquals("", imageResource.getDescr());
+		assertEquals("", imageResource.getDescription());
 		assertEquals("", imageResource.getId());
 		assertEquals("Image", imageResource.getType());
 		assertNotSame("", imageResource.getXML());

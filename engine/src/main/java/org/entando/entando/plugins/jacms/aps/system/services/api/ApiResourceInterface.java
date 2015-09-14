@@ -50,7 +50,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
  * @author E.Santoboni
  */
 public class ApiResourceInterface {
-
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(ApiResourceInterface.class);
 	
 	public List<String> getImages(Properties properties) throws Throwable {
@@ -79,12 +79,11 @@ public class ApiResourceInterface {
 					description, filename, category, groupsCodes);
         } catch (Throwable t) {
         	_logger.error("error in getResources", t);
-            //ApsSystemUtils.logThrowable(t, this, "getResources");
             throw t;
         }
         return resources;
     }
-
+	
 	private List<String> getAllowedGroupCodes(UserDetails user) {
 		List<Group> groups = new ArrayList<Group>();
 		List<Group> groupsOfUser = this.getAuthorizationManager().getUserGroups(user);
@@ -110,12 +109,12 @@ public class ApiResourceInterface {
         properties.setProperty(RESOURCE_TYPE_CODE_PARAM, JacmsSystemConstants.RESOURE_IMAGE_CODE);
         return this.getResource(properties);
     }
-
+	
 	public JAXBResource getAttachment(Properties properties) throws Throwable {
         properties.setProperty(RESOURCE_TYPE_CODE_PARAM, JacmsSystemConstants.RESOURE_ATTACH_CODE);
         return this.getResource(properties);
     }
-
+	
 	public JAXBResource getResource(Properties properties) throws Throwable {
 		JAXBResource jaxbResource = null;
         String id = properties.getProperty("id");
@@ -140,7 +139,6 @@ public class ApiResourceInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error in getResource", t);
-            //ApsSystemUtils.logThrowable(t, this, "getResource");
             throw new ApsSystemException("Error into API method", t);
         }
         return jaxbResource;
@@ -183,7 +181,6 @@ public class ApiResourceInterface {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("error in addResource", t);
-            //ApsSystemUtils.logThrowable(t, this, "addResource");
             throw new ApsSystemException("Error into API method", t);
         } finally {
 			if (null != bean && null != bean.getFile()) {
@@ -226,7 +223,6 @@ public class ApiResourceInterface {
 			response.setResult(IResponseBuilder.SUCCESS);
         } catch (Throwable t) {
         	_logger.error("error in updateResource", t);
-            //ApsSystemUtils.logThrowable(t, this, "updateResource");
             throw new ApsSystemException("Error into API method", t);
         } finally {
 			if (null != bean && null != bean.getFile()) {
@@ -270,9 +266,11 @@ public class ApiResourceInterface {
 				this.addValidationError("Resource group has to be '" + oldResource.getMainGroup() + "'", response);
 			}
 		}
+		/*
 		if (this.isDuplicateFile(jaxbResource, resourcePrototype, add)) {
 			this.addValidationError("File '" + jaxbResource.getFileName() + "' is already present on Archive", response);
 		}
+		*/
 		if (null == jaxbResource.getDescription() || jaxbResource.getDescription().trim().length() == 0) {
 			this.addValidationError("Description required", response);
 		}
@@ -281,7 +279,7 @@ public class ApiResourceInterface {
 			this.addValidationError("TypeCode required", response);
 		}
 	}
-
+	/*
 	private boolean isDuplicateFile(JAXBResource jaxbResource, ResourceInterface resourcePrototype, boolean add) {
 		if (null == jaxbResource.getBase64()) return false;
 		boolean addError = true;
@@ -301,11 +299,10 @@ public class ApiResourceInterface {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while check duplicate file - master file name '{}'", formFileName, t);
-			//ApsSystemUtils.logThrowable(t, this, "isDuplicateFile", "Error while check duplicate file - master file name '" + formFileName + "'");
 		}
 		return addError;
 	}
-
+	*/
 	private void addValidationError(String message, StringApiResponse response) {
 		ApiError error = new ApiError(IApiErrorCodes.API_VALIDATION_ERROR, message, Response.Status.FORBIDDEN);
 		response.addError(error);
@@ -314,6 +311,7 @@ public class ApiResourceInterface {
 	/**
 	 * Delete an Image Resource. The method can be called by Entando API Engine.
 	 * @param properties The properties of the DELETE method call.
+	 * @return The response of the deleting
 	 * @throws Throwable Il case of error.
 	 */
 	public StringApiResponse deleteImage(Properties properties) throws Throwable {
@@ -323,6 +321,7 @@ public class ApiResourceInterface {
 	/**
 	 * Delete an Attach Resource. The method can be called by Entando API Engine.
 	 * @param properties The properties of the DELETE method call.
+	 * @return The response of the deleting
 	 * @throws Throwable Il case of error.
 	 */
 	public StringApiResponse deleteAttachment(Properties properties) throws Throwable {

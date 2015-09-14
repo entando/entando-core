@@ -91,6 +91,7 @@
 						</div>
 					</div>
 				</div>
+                                
 				<c:if test="${empty searchableAttributesPageScope}">
 					<div class="form-group">
 						<div class="col-sm-offset-2 col-lg-offset-2 col-sm-10 col-lg-10 input-group">
@@ -278,6 +279,13 @@
 					</s:iterator>
 				</s:if>
 				<%-- //search by role --%>
+                                
+                                <%-- hookpoint core.user-list.core-field --%>
+                                <wpsa:hookPoint key="core.user-list.form-field" objectName="hookPointElements_core_user_list_core_field">
+                                        <s:iterator value="#hookPointElements_core_user_list_core_field" var="hookPointElement">
+                                                <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                                        </s:iterator>
+                                </wpsa:hookPoint>
 
 				<%-- second search button --%>
 				<div class="form-group">

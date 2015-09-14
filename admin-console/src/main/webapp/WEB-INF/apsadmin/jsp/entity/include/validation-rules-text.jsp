@@ -3,7 +3,7 @@
 
 <fieldset class="col-xs-12 margin-base-top">
 	<legend><s:text name="label.settings" /></legend>
-<s:if test="#attribute.type == 'Enumerator'">
+<s:if test="#attribute.type == 'Enumerator' || #attribute.type == 'EnumeratorMap'">
 	<div class="form-group">
 		<label for="enumeratorStaticItems"><s:text name="Entity.attribute.setting.enumerator.items" /></label>
 		<wpsf:textfield name="enumeratorStaticItems" id="enumeratorStaticItems" cssClass="form-control" />
@@ -13,12 +13,16 @@
 		<label for="enumeratorStaticItemsSeparator"><s:text name="Entity.attribute.setting.enumerator.separator" /></label>
 		<wpsf:textfield name="enumeratorStaticItemsSeparator" id="enumeratorStaticItemsSeparator" cssClass="form-control" />
 	</div>
-	
-	<s:set var="enumeratorExtractorBeans" value="enumeratorExtractorBeans"></s:set>
-	<s:if test="null != #enumeratorExtractorBeans && #enumeratorExtractorBeans.size() > 0">
+	<s:if test="#attribute.type == 'Enumerator'">
+		<s:set var="enumeratorExtractorBeansVar" value="enumeratorExtractorBeans" />
+	</s:if>
+	<s:else>
+		<s:set var="enumeratorExtractorBeansVar" value="enumeratorMapExtractorBeans" />
+	</s:else>
+	<s:if test="null != #enumeratorExtractorBeansVar && #enumeratorExtractorBeansVar.size() > 0">
 	<div class="form-group">
 		<label for="enumeratorExtractorBean"><s:text name="Entity.attribute.setting.enumerator.extractorBean" /></label>
-		<wpsf:select list="#enumeratorExtractorBeans" name="enumeratorExtractorBean" id="enumeratorExtractorBean" headerKey="" headerValue="" cssClass="form-control"/>
+		<wpsf:select list="#enumeratorExtractorBeansVar" name="enumeratorExtractorBean" id="enumeratorExtractorBean" headerKey="" headerValue="" cssClass="form-control"/>
 	</div>
 	</s:if>
 </s:if>

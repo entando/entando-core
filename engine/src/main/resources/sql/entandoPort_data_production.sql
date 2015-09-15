@@ -691,6 +691,18 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		</div>
 	</div>
 </@s.elseif>
+<@s.elseif test="#attribute.type == ''EnumeratorMap''">
+	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
+		<label class="control-label" for="<@s.property value="#attribute_id" />">
+			<@wp.i18n key="${i18n_attribute_name}" />
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+		</label>
+		<div class="controls">
+			<@wp.fragment code="userprofile_is_front-EnumeratorMapAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
+		</div>
+	</div>
+</@s.elseif>
 <@s.elseif test="#attribute.type == ''Hypertext''">
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
@@ -921,6 +933,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			<@s.elseif test="#attribute.type == ''Enumerator''">
 				<@wp.fragment code="userprofile_is_front-EnumeratorAttribute" escapeXml=false />
 			</@s.elseif>
+			<@s.elseif test="#attribute.type == ''EnumeratorMap''">
+				<@wp.fragment code="userprofile_is_front-EnumeratorMapAttribute" escapeXml=false />
+			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Hypertext''">
 				<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false />
 			</@s.elseif>
@@ -1037,12 +1052,18 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <@s.set name="parentAttribute" value=""></@s.set>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-EnumeratorAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
-
 <@wpsf.select useTabindexAutoIncrement=true
 	name="%{#attributeTracer.getFormFieldName(#attribute)}"
 	id="%{attribute_id}"  
 	headerKey="" headerValue="" 
 	list="#attribute.items" value="%{#attribute.getText()}" />', 1);
+INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-EnumeratorMapAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
+<#assign wpsf=JspTaglibs["/apsadmin-form"]>
+<@wpsf.select useTabindexAutoIncrement=true
+	name="%{#attributeTracer.getFormFieldName(#attribute)}"
+	id="%{attribute_id}"  
+	headerKey="" headerValue="" 
+	list="#attribute.mapItems" value="%{#attribute.getText()}" listKey="key" listValue="value" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('entandoapi_is_resource_list', 'entando_apis', NULL, NULL, '<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>

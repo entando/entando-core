@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.entando.entando.aps.system.common.entity.model.attribute.util.EnumeratorMapAttributeItemsExtractor;
+import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +127,22 @@ public class EnumeratorMapAttribute extends EnumeratorAttribute {
 		}
 		return array;
 	}
+    
+    @Override
+    public Element getJDOMElement() {
+		Element rootElement = this.createRootElement("attribute");
+        if (StringUtils.isNotEmpty(this.getMapKey())) {
+            Element keyElement = new Element("key");
+            keyElement.setText(this.getMapKey().trim());
+            rootElement.addContent(keyElement);
+            Element valueElement = new Element("value");
+			if (StringUtils.isNotEmpty(this.getMapValue())) {
+				valueElement.setText(this.getMapValue().trim());
+			}
+            rootElement.addContent(valueElement);
+        }
+        return rootElement;
+    }
     
 	public String getMapKey() {
 		return super.getText();

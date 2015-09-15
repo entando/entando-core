@@ -81,12 +81,17 @@
 	<!-- ############# ATTRIBUTE Date ############# -->
 	<s:include value="%{'/WEB-INF/apsadmin/jsp/entity/' + #attributeActiveMarker + '/dateAttribute.jsp'}" />
 	</s:elseif>
-
+        
 	<s:elseif test="#attribute.type == 'Enumerator'">
 	<!-- ############# ATTRIBUTE TESTO Enumerator ############# -->
 	<s:include value="%{'/WEB-INF/apsadmin/jsp/entity/' + #attributeActiveMarker + '/enumeratorAttribute.jsp'}" />
 	</s:elseif>
-
+        
+	<s:elseif test="#attribute.type == 'EnumeratorMap'">
+	<!-- ############# ATTRIBUTE TESTO EnumeratorMap ############# -->
+	<s:include value="%{'/WEB-INF/apsadmin/jsp/entity/' + #attributeActiveMarker + '/enumeratorMapAttribute.jsp'}" />
+	</s:elseif>
+        
 	<s:elseif test="#attribute.type == 'Monolist'">
 	<!-- ############# ATTRIBUTE Monolist ############# -->
 	<s:include value="%{'/WEB-INF/apsadmin/jsp/entity/' + #attributeActiveMarker + '/monolistAttribute.jsp'}" />

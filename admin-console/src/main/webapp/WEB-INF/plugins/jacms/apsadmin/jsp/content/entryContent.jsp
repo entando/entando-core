@@ -103,7 +103,7 @@
 										<s:elseif test="#attribute.type == 'Composite'">
 												<label class="display-block"><span class="icon fa fa-list-alt"></span>&#32;<s:property value="#attributeLabelVar" />&#32;<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
 										</s:elseif>
-										<s:elseif test="#attribute.type == 'Monotext' || #attribute.type == 'Text' || #attribute.type == 'Longtext' || #attribute.type == 'Hypertext' || #attribute.type == 'Number' || #attribute.type == 'Date' || #attribute.type == 'Timestamp' || #attribute.type == 'Link' || #attribute.type == 'Enumerator'">
+										<s:elseif test="#attribute.type == 'Monotext' || #attribute.type == 'Text' || #attribute.type == 'Longtext' || #attribute.type == 'Hypertext' || #attribute.type == 'Number' || #attribute.type == 'Date' || #attribute.type == 'Timestamp' || #attribute.type == 'Link' || #attribute.type == 'Enumerator' || #attribute.type == 'EnumeratorMap'">
 												<label class="display-block" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />"><s:property value="#attributeLabelVar" />&#32;<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
 										</s:elseif>
 										<s:if test="#attribute.type == 'Attach'">
@@ -120,6 +120,9 @@
 										</s:elseif>
 										<s:elseif test="#attribute.type == 'Enumerator'">
 											<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/enumeratorAttribute.jsp" />
+										</s:elseif>
+										<s:elseif test="#attribute.type == 'EnumeratorMap'">
+											<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/enumeratorMapAttribute.jsp" />
 										</s:elseif>
 										<s:elseif test="#attribute.type == 'Hypertext'">
 											<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/hypertextAttribute.jsp" />
@@ -148,7 +151,6 @@
 										<s:elseif test="#attribute.type == 'Timestamp'">
 											<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/timestampAttribute.jsp" />
 										</s:elseif>
-
 										<s:elseif test="#attribute.type == 'Composite'">
 											<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/compositeAttribute.jsp" />
 										</s:elseif>

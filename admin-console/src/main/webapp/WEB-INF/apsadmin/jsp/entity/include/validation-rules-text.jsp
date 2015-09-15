@@ -6,7 +6,19 @@
 <s:if test="#attribute.type == 'Enumerator' || #attribute.type == 'EnumeratorMap'">
 	<div class="form-group">
 		<label for="enumeratorStaticItems"><s:text name="Entity.attribute.setting.enumerator.items" /></label>
-		<wpsf:textfield name="enumeratorStaticItems" id="enumeratorStaticItems" cssClass="form-control" />
+                <s:if test="#attribute.type == 'Enumerator'">
+                    <s:set var="enumeratorItemsFieldTitle" value="'label.entity.enumerator.itemsField.title'" />
+                    <s:set var="enumeratorItemsFieldPlaceholder" value="'label.entity.enumerator.itemsField.placeholder'" />
+                </s:if>
+                <s:else>
+                    <s:set var="enumeratorItemsFieldTitle" value="'label.entity.enumeratorMap.itemsField.title'" />
+                    <s:set var="enumeratorItemsFieldPlaceholder" value="'label.entity.enumeratorMap.itemsField.placeholder'" />
+                </s:else>
+		<wpsf:textfield 
+                    name="enumeratorStaticItems" id="enumeratorStaticItems" cssClass="form-control" 
+                    title="%{getText(#enumeratorItemsFieldTitle)}" 
+                    placeholder="%{getText(#enumeratorItemsFieldPlaceholder)}" 
+                    />
 	</div>
 	
 	<div class="form-group">
@@ -42,45 +54,4 @@
 		<wpsf:textfield name="regexp" id="regexp" cssClass="form-control" />
 	</div>
 </s:elseif>
-	
-	<%--
-	<s:set var="sameAttributesList" value="sameAttributes" />
-	
-	<p>
-		<label for="rangeStartString">** rangeStartString ** :</label><br />
-		<wpsf:textfield name="rangeStartString" id="rangeStartString" cssClass="text"/>
-	</p>
-	<s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
-	<p>
-		<label for="rangeStartStringAttribute">** OR rangeStartStringAttribute ** :</label><br />
-		<wpsf:select name="rangeStartStringAttribute" id="rangeStartStringAttribute" 
-			list="#sameAttributesList" headerKey="" headerValue="" listKey="name" listValue="name"></wpsf:select>
-	</p>
-	</s:if>
-	
-	<p>
-		<label for="rangeEndString"> ** rangeEndString ** :</label><br />	
-		<wpsf:textfield name="rangeEndString" id="rangeEndString" cssClass="text" />
-	</p>
-	<s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
-	<p>
-		<label for="rangeEndStringAttribute"> ** OR rangeEndStringAttribute ** :</label><br />	
-		<wpsf:select name="rangeEndStringAttribute" id="rangeEndStringAttribute" 
-			list="#sameAttributesList" headerKey="" headerValue="" listKey="name" listValue="name"></wpsf:select>
-	</p>
-	</s:if>
-	
-	<p>
-		<label for="equalString"> ** equalString ** :</label><br />	
-		<wpsf:textfield name="equalString" id="equalString" cssClass="text" />
-	</p>
-	<s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
-	<p>
-		<label for="equalStringAttribute"> ** OR equalStringAttribute ** :</label><br />	
-		<wpsf:select name="equalStringAttribute" id="equalStringAttribute" 
-			list="#sameAttributesList" headerKey="" headerValue="" listKey="name" listValue="name"></wpsf:select>
-	</p>
-	</s:if>
-	--%>
-	
 </fieldset>

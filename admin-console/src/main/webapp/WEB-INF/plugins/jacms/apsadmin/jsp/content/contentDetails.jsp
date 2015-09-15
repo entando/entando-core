@@ -248,7 +248,7 @@
 											<s:else><s:set var="attributeLabelVar" value="#attribute.name" /></s:else>
 											<label><s:property value="#attributeLabelVar" /></label>
 										 	<div class="input-group"><%--input-group --%>
-												<s:if test="#attribute.type == 'Monotext' || #attribute.type == 'Text' || #attribute.type == 'Longtext' || #attribute.type == 'Enumerator'">
+												<s:if test="#attribute.type == 'Monotext' || #attribute.type == 'Text' || #attribute.type == 'Longtext' || #attribute.type == 'Enumerator' || #attribute.type == 'EnumeratorMap'">
 													<s:if test="#lang.default">
 														<div>
 															<s:include value="/WEB-INF/apsadmin/jsp/entity/view/textAttribute.jsp" />
@@ -276,6 +276,12 @@
 												<s:elseif test="#attribute.type == 'Date'">
 													<p><s:include value="/WEB-INF/apsadmin/jsp/entity/view/dateAttribute.jsp" /></p>
 												</s:elseif>
+                                                                                                <s:elseif test="#attribute.type == 'Enumerator'">
+                                                                                                        <p><s:include value="/WEB-INF/apsadmin/jsp/entity/view/enumeratorAttribute.jsp" /></p>
+                                                                                                </s:elseif>
+                                                                                                <s:elseif test="#attribute.type == 'EnumeratorMap'">
+                                                                                                        <p><s:include value="/WEB-INF/apsadmin/jsp/entity/view/enumeratorMapAttribute.jsp" /></p>
+                                                                                                </s:elseif>
 												<s:elseif test="#attribute.type == 'Hypertext'">
 													<div><s:include value="/WEB-INF/apsadmin/jsp/entity/view/hypertextAttribute.jsp" /></div>
 												</s:elseif>
@@ -291,10 +297,12 @@
 												<s:elseif test="#attribute.type == 'ThreeState'">
 													<s:include value="/WEB-INF/apsadmin/jsp/entity/view/threeStateAttribute.jsp" />
 												</s:elseif>
+                                                                                                <s:elseif test="#attribute.type == 'Timestamp'">
+                                                                                                        <s:include value="/WEB-INF/apsadmin/jsp/entity/view/timestampAttribute.jsp" />
+                                                                                                </s:elseif>
 												<s:elseif test="#attribute.type == 'Timestamp'">
 													<s:include value="/WEB-INF/apsadmin/jsp/entity/view/timestampAttribute.jsp" />
 												</s:elseif>
-
 												<s:elseif test="#attribute.type == 'Composite'">
 													<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/view/compositeAttribute.jsp" />
 												</s:elseif>

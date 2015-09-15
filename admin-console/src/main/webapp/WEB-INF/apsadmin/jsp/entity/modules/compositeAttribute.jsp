@@ -27,6 +27,9 @@
 		<s:elseif test="#attribute.type == 'Enumerator'">
 			<br /><s:include value="/WEB-INF/apsadmin/jsp/entity/modules/enumeratorAttribute.jsp" />
 		</s:elseif>
+		<s:elseif test="#attribute.type == 'EnumeratorMap'">
+			<br /><s:include value="/WEB-INF/apsadmin/jsp/entity/modules/enumeratorMapAttribute.jsp" />
+		</s:elseif>
 		<s:elseif test="#attribute.type == 'Number'">
 			<br /><s:include value="/WEB-INF/apsadmin/jsp/entity/modules/numberAttribute.jsp" />
 		</s:elseif>

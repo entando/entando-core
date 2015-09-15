@@ -73,12 +73,17 @@
 						<s:elseif test="#attribute.type == 'Date'">
 							<s:include value="/WEB-INF/apsadmin/jsp/entity/view/dateAttribute.jsp" />
 						</s:elseif>
-					
+                                                
 						<%-- ############# ATTRIBUTO TESTO Enumerator ############# --%>
 						<s:elseif test="#attribute.type == 'Enumerator'">
 							<s:include value="/WEB-INF/apsadmin/jsp/entity/view/enumeratorAttribute.jsp" />
 						</s:elseif>
-				
+                                                
+						<%-- ############# ATTRIBUTO TESTO EnumeratorMap ############# --%>
+						<s:elseif test="#attribute.type == 'EnumeratorMap'">
+							<s:include value="/WEB-INF/apsadmin/jsp/entity/view/enumeratorMapAttribute.jsp" />
+						</s:elseif>
+                                                
 						<%-- ############# ATTRIBUTO Monolist ############# --%>
 						<s:elseif test="#attribute.type == 'Monolist'">
 							<s:include value="/WEB-INF/apsadmin/jsp/entity/view/monolistAttribute.jsp" />

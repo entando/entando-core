@@ -63,6 +63,22 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		</select>
 	</div>
 </div>', 1);
+INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('jacms_content_viewer_list_userfilter_ent_EnumerMap', NULL, 'jacms', NULL, '<#assign wp=JspTaglibs["/aps-core"]>
+<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
+<#assign formFieldNameVar = userFilterOptionVar.formFieldNames[0] >
+<#assign formFieldValue = userFilterOptionVar.getFormFieldValue(formFieldNameVar) >
+<div class="control-group">
+	<@c.set var="i18n_Attribute_Key" value="${userFilterOptionVar.attribute.name}" />
+	<label for="${formFieldNameVar}" class="control-label"><@wp.i18n key="${i18n_Attribute_Key}" /></label>
+	<div class="controls">
+		<select name="${formFieldNameVar}" id="${formFieldNameVar}" class="input-xlarge">
+			<option value=""><@wp.i18n key="ALL" /></option>
+			<#list userFilterOptionVar.attribute.mapItems as enumeratorMapItemVar>
+			<option value="${enumeratorMapItemVar.key}" <#if (formFieldValue??) && (enumeratorMapItemVar.key == formFieldValue)>selected="selected"</#if> ><@c.out value="${enumeratorMapItemVar.value}" /></option>
+			</#list>
+		</select>
+	</div>
+</div>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('jacms_content_viewer_list_userfilter_ent_Number', NULL, 'jacms', NULL, '<#assign wp=JspTaglibs["/aps-core"]>
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <fieldset>
@@ -133,6 +149,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			</#if>
 			<#if userFilterOptionVar.attribute.type == "Enumerator" >
 				<@wp.fragment code="jacms_content_viewer_list_userfilter_ent_Enumer" escapeXml=false />
+			</#if>
+			<#if userFilterOptionVar.attribute.type == "EnumeratorMap" >
+				<@wp.fragment code="jacms_content_viewer_list_userfilter_ent_EnumerMap" escapeXml=false />
 			</#if>
 			<#if userFilterOptionVar.attribute.type == "Number">
 				<@wp.fragment code="jacms_content_viewer_list_userfilter_ent_Number" escapeXml=false />

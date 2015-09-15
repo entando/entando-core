@@ -14,7 +14,6 @@
 package org.entando.entando.aps.system.common.entity.model.attribute;
 
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.util.EnumeratorAttributeItemsExtractor;
 import com.agiletec.aps.util.SelectItem;
 
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class EnumeratorMapAttribute extends EnumeratorAttribute {
         prototype.setMapItems(this.getMapItems());
         return prototype;
     }
-    
+	
 	@Override
     protected void initItems() {
         if (null != this.getStaticItems() && this.getStaticItems().trim().length() > 0) {
@@ -52,7 +51,7 @@ public class EnumeratorMapAttribute extends EnumeratorAttribute {
         }
         if (null != this.getExtractorBeanName()) {
             try {
-                EnumeratorMapAttributeItemsExtractor extractor = (EnumeratorMapAttributeItemsExtractor) this.getBeanFactory().getBean(this.getExtractorBeanName(), EnumeratorAttributeItemsExtractor.class);
+                EnumeratorMapAttributeItemsExtractor extractor = (EnumeratorMapAttributeItemsExtractor) this.getBeanFactory().getBean(this.getExtractorBeanName(), EnumeratorMapAttributeItemsExtractor.class);
                 if (null != extractor) {
                     List<SelectItem> items = extractor.getMapItems();
                     if (items != null && items.size() > 0) {
@@ -63,18 +62,20 @@ public class EnumeratorMapAttribute extends EnumeratorAttribute {
             	_logger.error("Error while extract items from bean extractor '{}'", this.getExtractorBeanName(), t);
             }
         }
-        if (null != this.getItems()) {
-            SelectItem[] items = new SelectItem[this.getItems().length];
-            for (int i = 0; i < this.getItems().length; i++) {
-                if (null != this.getItems()[i]) {
+		/*
+        if (null != this.getMapItems()) {
+            SelectItem[] items = new SelectItem[this.getMapItems().length];
+            for (int i = 0; i < this.getMapItems().length; i++) {
+                if (null != this.getMapItems()[i]) {
                     items[i] = this.getMapItems()[i];
                 }
             }
             this.setMapItems(items);
         }
-		if (null != this.getItems()) {
-			for (int i = 0; i < this.getItems().length; i++) {
-				if (null != this.getItems()[i]) {
+		*/
+		if (null != this.getMapItems()) {
+			for (int i = 0; i < this.getMapItems().length; i++) {
+				if (null != this.getMapItems()[i]) {
                     SelectItem item = this.getMapItems()[i];
 					this.getMap().put(item.getKey(), item.getValue());
                 }
@@ -84,21 +85,21 @@ public class EnumeratorMapAttribute extends EnumeratorAttribute {
     
     private void addExtractedItems(List<SelectItem> items) {
         SelectItem[] values = null;
-        if (null == this.getItems() || this.getItems().length == 0) {
+        if (null == this.getMapItems() || this.getMapItems().length == 0) {
             values = new SelectItem[items.size()];
             for (int i = 0; i < items.size(); i++) {
                 SelectItem item = items.get(i);
                 values[i] = item;
             }
         } else {
-            values = new SelectItem[this.getItems().length + items.size()];
-            for (int i = 0; i < this.getItems().length; i++) {
+            values = new SelectItem[this.getMapItems().length + items.size()];
+            for (int i = 0; i < this.getMapItems().length; i++) {
                 SelectItem item = this.getMapItems()[i];
                 values[i] = item;
             }
             for (int i = 0; i < items.size(); i++) {
                 SelectItem item = items.get(i);
-                values[i + this.getItems().length] = item;
+                values[i + this.getMapItems().length] = item;
             }
         }
         this.setMapItems(values);

@@ -60,6 +60,18 @@
 		</div>
 	</div>
 </s:elseif>
+<s:elseif test="#attribute.type == 'EnumeratorMap'">
+	<div class="control-group <s:property value="%{' attribute-type-'+#attribute.type+' '}" />">
+		<label class="control-label" for="<s:property value="#attribute_id" />">
+			<wp:i18n key="${i18n_attribute_name}" />
+			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo.jsp" />
+		</label>
+		<div class="controls">
+			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_enumeratorMapAttribute.jsp" />
+			<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_attributeInfo-help-block.jsp" />
+		</div>
+	</div>
+</s:elseif>
 <s:elseif test="#attribute.type == 'Hypertext'">
 	<div class="control-group <s:property value="%{' attribute-type-'+#attribute.type+' '}" />">
 		<label class="control-label" for="<s:property value="#attribute_id" />">

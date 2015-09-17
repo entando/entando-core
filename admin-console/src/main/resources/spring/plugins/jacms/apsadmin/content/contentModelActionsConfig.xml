@@ -56,6 +56,10 @@
 			<value><![CDATA[text]]></value>
 		</entry>
 		<entry>
+			<key><value>EnumeratorMap</value></key>
+			<value><![CDATA[mapKey;mapValue]]></value>
+		</entry>
+		<entry>
 			<key><value>Text</value></key>
 			<value><![CDATA[text;getTextForLang(\"<LANG_CODE>\");textMap[\"<LANG_CODE>\"]]]></value>
 		</entry>

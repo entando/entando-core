@@ -42,12 +42,14 @@ import com.agiletec.aps.system.common.entity.model.attribute.JAXBTextAttribute;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 
+import org.entando.entando.aps.system.common.entity.model.attribute.JAXBEnumeratorMapAttribute;
+
 /**
  * @author E.Santoboni
  */
 @XmlRootElement(name = "entity")
 @XmlType(propOrder = {"id", "description", "typeCode", "typeDescription", "mainGroup", "categories", "groups", "attributes"})
-@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class})
+@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBEnumeratorMapAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class})
 public class JAXBEntity implements Serializable {
 
 	private static final Logger _logger = LoggerFactory.getLogger(JAXBEntity.class);

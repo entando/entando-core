@@ -46,6 +46,14 @@
 		<property name="type" value="Enumerator" />
 	</bean>
 	
+	<bean id="EnumeratorMapAttribute" class="org.entando.entando.aps.system.common.entity.model.attribute.EnumeratorMapAttribute" 
+			parent="EnumeratorAttribute">
+		<property name="type" value="EnumeratorMap" />
+		<property name="handler" >
+			<bean class="org.entando.entando.aps.system.common.entity.parse.attribute.EnumeratorMapAttributeHandler" />
+		</property>
+	</bean>
+	
 	<bean id="TextAttribute" class="com.agiletec.aps.system.common.entity.model.attribute.TextAttribute" >
 		<property name="type" value="Text" />
 		<property name="handler" >

@@ -47,6 +47,9 @@
 			<s:elseif test="#attribute.type == 'Enumerator'">
 				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_enumeratorAttribute.jsp" />
 			</s:elseif>
+			<s:elseif test="#attribute.type == 'EnumeratorMap'">
+				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_enumeratorMapAttribute.jsp" />
+			</s:elseif>
 			<s:elseif test="#attribute.type == 'Hypertext'">
 				<s:include value="/WEB-INF/aps/jsp/internalservlet/user/inc/attributes/front_hypertextAttribute.jsp" />
 			</s:elseif>

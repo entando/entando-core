@@ -75,6 +75,7 @@ public class EnumeratorAttribute extends MonoTextAttribute {
             	_logger.error("Error while extract items from bean extractor '{}'", this.getExtractorBeanName(), t);
             }
         }
+		/*
         if (null != this.getItems()) {
             String[] items = new String[this.getItems().length];
             for (int i = 0; i < this.getItems().length; i++) {
@@ -84,6 +85,7 @@ public class EnumeratorAttribute extends MonoTextAttribute {
             }
             this.setItems(items);
         }
+		*/
     }
     
     @Override

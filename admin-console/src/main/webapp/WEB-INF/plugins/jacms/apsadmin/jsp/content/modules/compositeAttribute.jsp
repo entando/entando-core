@@ -62,6 +62,9 @@
 			<s:elseif test="#attribute.type == 'Enumerator'">
 				<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/enumeratorAttribute.jsp" />
 			</s:elseif>
+			<s:elseif test="#attribute.type == 'EnumeratorMap'">
+				<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/enumeratorMapAttribute.jsp" />
+			</s:elseif>
 			<s:elseif test="#attribute.type == 'Hypertext'">
 				<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/hypertextAttribute.jsp" />
 			</s:elseif>

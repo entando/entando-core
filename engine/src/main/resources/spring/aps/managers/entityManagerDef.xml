@@ -13,6 +13,7 @@
 			<entry key="Number"><ref bean="NumberAttribute" /></entry>
 			<entry key="Monotext"><ref bean="MonoTextAttribute" /></entry>
 			<entry key="Enumerator"><ref bean="EnumeratorAttribute" /></entry>
+			<entry key="EnumeratorMap"><ref bean="EnumeratorMapAttribute" /></entry>
 			<entry key="Text"><ref bean="TextAttribute" /></entry>
 			<entry key="Longtext"><ref bean="LongtextAttribute" /></entry>
 			<entry key="Hypertext"><ref bean="HypertextAttribute" /></entry>

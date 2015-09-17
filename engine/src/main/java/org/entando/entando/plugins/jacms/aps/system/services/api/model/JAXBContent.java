@@ -37,12 +37,14 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBResourceAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBResourceValue;
 
+import org.entando.entando.aps.system.common.entity.model.attribute.JAXBEnumeratorMapAttribute;
+
 /**
  * @author E.Santoboni
  */
 @XmlRootElement(name = "content")
 @XmlType(propOrder = {"created", "lastModified", "version", "lastEditor"})
-@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class, JAXBResourceAttribute.class, JAXBLinkAttribute.class, JAXBResourceValue.class, JAXBLinkValue.class, SymbolicLink.class})
+@XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBEnumeratorMapAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class, JAXBResourceAttribute.class, JAXBLinkAttribute.class, JAXBResourceValue.class, JAXBLinkValue.class, SymbolicLink.class})
 public class JAXBContent extends JAXBEntity {
     
     public JAXBContent() {

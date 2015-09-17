@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.common.entity.model.attribute;
 
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractJAXBAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
 import com.agiletec.aps.util.SelectItem;
 
@@ -159,6 +160,33 @@ public class EnumeratorMapAttribute extends EnumeratorAttribute {
 		return value;
 	}
     
+	@Override
+	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+		return new JAXBEnumeratorMapAttribute();
+	}
+	
+	@Override
+	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+		JAXBEnumeratorMapAttribute jaxbAttribute = (JAXBEnumeratorMapAttribute) super.createJAXBAttribute(langCode);
+		if (null == jaxbAttribute) return null;
+		JAXBEnumeratorMapValue value = new JAXBEnumeratorMapValue();
+		value.setKey(this.getMapKey());
+		value.setValue(this.getMapValue());
+		jaxbAttribute.setMapValue(value);
+		return jaxbAttribute;
+	}
+	
+	@Override
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
+		if (null == jaxbAttribute) {
+			return;
+		}
+		JAXBEnumeratorMapValue value = ((JAXBEnumeratorMapAttribute) jaxbAttribute).getMapValue();
+		if (null != value) {
+			this.setText(value.getValue());
+		}
+    }
+	
 	public SelectItem[] getMapItems() {
 		return _mapItems;
 	}

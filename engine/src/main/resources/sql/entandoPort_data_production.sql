@@ -389,43 +389,43 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 useTabindexAutoIncrement=true id="%{attribute_id}" 
 name="%{#attributeTracer.getFormFieldName(#attribute)}" 
 value="%{#dateAttributeValue}" maxlength="10" cssClass="text userprofile-date" />
-  &#32;
+&#32;
 <#assign js_for_datepicker="jQuery(function($){
-  $.datepicker.regional[''''it''''] = {
-   closeText: ''''Chiudi'''',
-   prevText: ''''&#x3c;Prec'''',
-   nextText: ''''Succ&#x3e;'''',
-   currentText: ''''Oggi'''',
-   monthNames: [''''Gennaio'''',''''Febbraio'''',''''Marzo'''',''''Aprile'''',''''Maggio'''',''''Giugno'''',
-  ''''Luglio'''',''''Agosto'''',''''Settembre'''',''''Ottobre'''',''''Novembre'''',''''Dicembre''''],
-   monthNamesShort:  [''''Gen'''',''''Feb'''',''''Mar'''',''''Apr'''',''''Mag'''',''''Giu'''',
-  ''''Lug'''',''''Ago'''',''''Set'''',''''Ott'''',''''Nov'''',''''Dic''''],
-   dayNames: [''''Domenica'''',''''Luned&#236'''',''''Marted&#236'''',''''Mercoled&#236'''',''''Gioved&#236'''',''''Venerd&#236'''',''''Sabato''''],
-   dayNamesShort: [''''Dom'''',''''Lun'''',''''Mar'''',''''Mer'''',''''Gio'''',''''Ven'''',''''Sab''''],
-   dayNamesMin: [''''Do'''',''''Lu'''',''''Ma'''',''''Me'''',''''Gi'''',''''Ve'''',''''Sa''''],
-   weekHeader: ''''Sm'''',
-   dateFormat: ''''dd/mm/yy'''',
-   firstDay: 1,
-   isRTL: false,
-   showMonthAfterYear: false,
-   yearSuffix: ''''''''};
- });
+$.datepicker.regional[''''it''''] = {
+closeText: ''''Chiudi'''',
+prevText: ''''&#x3c;Prec'''',
+nextText: ''''Succ&#x3e;'''',
+currentText: ''''Oggi'''',
+monthNames: [''''Gennaio'''',''''Febbraio'''',''''Marzo'''',''''Aprile'''',''''Maggio'''',''''Giugno'''',
+''''Luglio'''',''''Agosto'''',''''Settembre'''',''''Ottobre'''',''''Novembre'''',''''Dicembre''''],
+monthNamesShort:  [''''Gen'''',''''Feb'''',''''Mar'''',''''Apr'''',''''Mag'''',''''Giu'''',
+''''Lug'''',''''Ago'''',''''Set'''',''''Ott'''',''''Nov'''',''''Dic''''],
+dayNames: [''''Domenica'''',''''Luned&#236'''',''''Marted&#236'''',''''Mercoled&#236'''',''''Gioved&#236'''',''''Venerd&#236'''',''''Sabato''''],
+dayNamesShort: [''''Dom'''',''''Lun'''',''''Mar'''',''''Mer'''',''''Gio'''',''''Ven'''',''''Sab''''],
+dayNamesMin: [''''Do'''',''''Lu'''',''''Ma'''',''''Me'''',''''Gi'''',''''Ve'''',''''Sa''''],
+weekHeader: ''''Sm'''',
+dateFormat: ''''dd/mm/yy'''',
+firstDay: 1,
+isRTL: false,
+showMonthAfterYear: false,
+yearSuffix: ''''''''};
+});
 
- jQuery(function($) {
-  if (Modernizr.touch && Modernizr.inputtypes.date) {
-   $.each( $(\"input.userprofile-date\"), function(index, item) {
-    item.type = ''''date'''';
-   });
-  } else {
-   $.datepicker.setDefaults( $.datepicker.regional[ \"${currentLangVar}\" ] );
-   $(\"input.userprofile-date\").datepicker({
-     changeMonth: true,
-     changeYear: true,
-     dateFormat: \"dd/mm/yy\"
-    });
-  }
- });
- ">
+jQuery(function($) {
+if (Modernizr.touch && Modernizr.inputtypes.date) {
+$.each( $(\"input.userprofile-date\"), function(index, item) {
+item.type = ''''date'''';
+});
+} else {
+$.datepicker.setDefaults( $.datepicker.regional[ \"${currentLangVar}\" ] );
+$(\"input.userprofile-date\").datepicker({
+changeMonth: true,
+changeYear: true,
+dateFormat: \"dd/mm/yy\"
+});
+}
+});
+">
 
 <@wp.headInfo type="JS" info="entando-misc-html5-essentials/modernizr-2.5.3-full.js" />
 <@wp.headInfo type="JS_EXT" info="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" />
@@ -691,6 +691,18 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		</div>
 	</div>
 </@s.elseif>
+<@s.elseif test="#attribute.type == ''EnumeratorMap''">
+	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
+		<label class="control-label" for="<@s.property value="#attribute_id" />">
+			<@wp.i18n key="${i18n_attribute_name}" />
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+		</label>
+		<div class="controls">
+			<@wp.fragment code="userprofile_is_front-EnumeratorMapAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
+		</div>
+	</div>
+</@s.elseif>
 <@s.elseif test="#attribute.type == ''Hypertext''">
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
@@ -921,6 +933,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			<@s.elseif test="#attribute.type == ''Enumerator''">
 				<@wp.fragment code="userprofile_is_front-EnumeratorAttribute" escapeXml=false />
 			</@s.elseif>
+			<@s.elseif test="#attribute.type == ''EnumeratorMap''">
+				<@wp.fragment code="userprofile_is_front-EnumeratorMapAttribute" escapeXml=false />
+			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Hypertext''">
 				<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false />
 			</@s.elseif>
@@ -1037,12 +1052,18 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <@s.set name="parentAttribute" value=""></@s.set>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-EnumeratorAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
-
 <@wpsf.select useTabindexAutoIncrement=true
 	name="%{#attributeTracer.getFormFieldName(#attribute)}"
 	id="%{attribute_id}"  
 	headerKey="" headerValue="" 
 	list="#attribute.items" value="%{#attribute.getText()}" />', 1);
+INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-EnumeratorMapAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
+<#assign wpsf=JspTaglibs["/apsadmin-form"]>
+<@wpsf.select useTabindexAutoIncrement=true
+	name="%{#attributeTracer.getFormFieldName(#attribute)}"
+	id="%{attribute_id}"  
+	headerKey="" headerValue="" 
+	list="#attribute.mapItems" value="%{#attribute.getText()}" listKey="key" listValue="value" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('entandoapi_is_resource_list', 'entando_apis', NULL, NULL, '<#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>

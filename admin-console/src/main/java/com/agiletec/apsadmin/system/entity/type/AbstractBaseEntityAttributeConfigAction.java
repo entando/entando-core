@@ -13,19 +13,6 @@
  */
 package com.agiletec.apsadmin.system.entity.type;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.ListableBeanFactory;
-
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
@@ -41,6 +28,20 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidation
 import com.agiletec.aps.system.common.entity.model.attribute.util.TextAttributeValidationRules;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.apsadmin.system.BaseAction;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.entando.entando.aps.system.common.entity.model.attribute.util.EnumeratorMapAttributeItemsExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.ListableBeanFactory;
 
 /**
  * Base action for Configure Entity Attributes.
@@ -67,9 +68,9 @@ public class AbstractBaseEntityAttributeConfigAction extends BaseAction implemen
 			this.setDisablingCodes(Arrays.asList(attribute.getDisablingCodes()));
 		}
 		IAttributeValidationRules valRule = attribute.getValidationRules();
-		this.setRequired(new Boolean(valRule.isRequired()));
+		this.setRequired(valRule.isRequired());
 		this.setOgnlValidationRule(valRule.getOgnlValidationRule());
-		this.setSearchable(new Boolean(attribute.isSearchable()));
+		this.setSearchable(attribute.isSearchable());
 		String indexingType = attribute.getIndexingType();
 		if (null != indexingType) {
 			this.setIndexable(indexingType.equalsIgnoreCase(IndexableAttributeInterface.INDEXING_TYPE_TEXT));
@@ -140,11 +141,7 @@ public class AbstractBaseEntityAttributeConfigAction extends BaseAction implemen
 		valCond.setOgnlValidationRule(this.getOgnlValidationRule());
 		if (attribute.isTextAttribute()) {
 			TextAttributeValidationRules valRule = (TextAttributeValidationRules) valCond;
-			//int maxLength = ((null != this.getMaxLength()) ? this.getMaxLength().intValue() : -1);
-			//valRule.setMaxLength(maxLength);
 			valRule.setMaxLength(this.getMaxLength());
-			//int minLength = ((null != this.getMinLength()) ? this.getMinLength().intValue() : -1);
-			//valRule.setMinLength(minLength);
 			valRule.setMinLength(this.getMinLength());
 			valRule.setRegexp(this.getRegexp());
 			valRule.setRangeEnd(this.getRangeEndString());
@@ -252,7 +249,6 @@ public class AbstractBaseEntityAttributeConfigAction extends BaseAction implemen
 			return (null == attribute.getIndexingType());
 		} catch (Throwable t) {
 			_logger.error("error in isIndexableOptionSupported", t);
-			//ApsSystemUtils.logThrowable(t, this, "isIndexableOptionSupported");
 		}
 		return false;
 	}
@@ -263,7 +259,6 @@ public class AbstractBaseEntityAttributeConfigAction extends BaseAction implemen
 			return attribute.isSearchableOptionSupported();
 		} catch (Throwable t) {
 			_logger.error("error in isSearchableOptionSupported", t);
-			//ApsSystemUtils.logThrowable(t, this, "isSearchableOptionSupported");
 		}
 		return false;
 	}
@@ -341,14 +336,21 @@ public class AbstractBaseEntityAttributeConfigAction extends BaseAction implemen
 	}
 	
 	public List<String> getEnumeratorExtractorBeans() {
+		return this.getEnumeratorExtractorBeans(EnumeratorAttributeItemsExtractor.class);
+	}
+	
+	public List<String> getEnumeratorMapExtractorBeans() {
+		return this.getEnumeratorExtractorBeans(EnumeratorMapAttributeItemsExtractor.class);
+	}
+	
+	protected List<String> getEnumeratorExtractorBeans(Class type) {
 		List<String> extractors = null;
 		try {
 			ListableBeanFactory factory = (ListableBeanFactory) this.getBeanFactory();
-			String[] defNames = factory.getBeanNamesForType(EnumeratorAttributeItemsExtractor.class);
+			String[] defNames = factory.getBeanNamesForType(type);
 			extractors = Arrays.asList(defNames);
 		} catch (Throwable t) {
 			_logger.error("Error while extracting enumerator extractor beans", t);
-			//ApsSystemUtils.logThrowable(t, this, "getEnumeratorExtractorBeans");
 			throw new RuntimeException("Error while extracting enumerator extractor beans", t);
 		}
 		return extractors;

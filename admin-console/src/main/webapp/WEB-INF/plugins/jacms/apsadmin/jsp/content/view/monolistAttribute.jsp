@@ -44,6 +44,9 @@
 			<s:elseif test="#attribute.type == 'Enumerator'">
 				<s:include value="/WEB-INF/apsadmin/jsp/entity/view/enumeratorAttribute.jsp" />
 			</s:elseif>
+			<s:elseif test="#attribute.type == 'EnumeratorMap'">
+				<s:include value="/WEB-INF/apsadmin/jsp/entity/view/enumeratorMapAttribute.jsp" />
+			</s:elseif>
 			<s:elseif test="#attribute.type == 'Image'">
 				<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/view/imageAttribute.jsp" />
 			</s:elseif>

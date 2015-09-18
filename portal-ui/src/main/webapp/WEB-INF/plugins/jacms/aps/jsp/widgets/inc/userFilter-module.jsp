@@ -47,6 +47,9 @@
 					<c:when test="${userFilterOptionVar.attribute.type == 'Enumerator' }">
 						<c:import url="/WEB-INF/plugins/jacms/aps/jsp/widgets/inc/userFilter-module-entity-Enumerator.jsp" />
 					</c:when>
+					<c:when test="${userFilterOptionVar.attribute.type == 'EnumeratorMap' }">
+						<c:import url="/WEB-INF/plugins/jacms/aps/jsp/widgets/inc/userFilter-module-entity-EnumeratorMap.jsp" />
+					</c:when>
 					<c:when test="${userFilterOptionVar.attribute.type == 'Number'}">
 						<c:import url="/WEB-INF/plugins/jacms/aps/jsp/widgets/inc/userFilter-module-entity-Number.jsp" />
 					</c:when>

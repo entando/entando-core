@@ -79,7 +79,7 @@ public class TreeNode implements ITreeNode, Serializable {
 	public void addChild(ITreeNode treeNode) {
 		int len = this._children.length;
 		ITreeNode[] newChildren = new ITreeNode[len + 1];
-		for(int i=0; i < len; i++){
+		for (int i=0; i < len; i++) {
 			newChildren[i] = this._children[i];
 		}
 		newChildren[len] = treeNode;
@@ -154,6 +154,54 @@ public class TreeNode implements ITreeNode, Serializable {
 			parent = parent.getParent();
 		}
 		return title;
+	}
+	
+	@Override
+	public String getPath() {
+		return this.getPath("/", true);
+	}
+	
+	@Override
+	public String getPath(String separator, boolean addRoot) {
+		String[] pathArray = this.getPathArray(addRoot);
+		StringBuilder path = new StringBuilder();
+		for (int i = 0; i < pathArray.length; i++) {
+			String code = pathArray[i];
+			if (i>0) path.append(separator);
+			path.append(code);
+		}
+		return path.toString();
+	}
+	
+	@Override
+	public String[] getPathArray() {
+		return this.getPathArray(true);
+	}
+	
+	@Override
+	public String[] getPathArray(boolean addRoot) {
+		String[] pathArray = new String[0];
+		if (this.isRoot() && !addRoot) return pathArray;
+		pathArray = this.addSubPath(pathArray, this.getCode());
+		if (this.isRoot()) return pathArray;
+		ITreeNode parent = this.getParent();
+		while (parent != null) {
+			if (parent.isRoot() && !addRoot) return pathArray;
+			pathArray = this.addSubPath(pathArray, parent.getCode());
+			if (parent.isRoot()) return pathArray;
+			parent = parent.getParent();
+		}
+		return pathArray;
+	}
+	
+	private String[] addSubPath(String[] pathArray, String subPath) {
+		int len = pathArray.length;
+		String[] newPath = new String[len + 1];
+		newPath[0] = subPath;
+		for (int i=0; i < len; i++) {
+			newPath[i+1] = pathArray[i];
+		}
+		return newPath;
 	}
 	
 	@Override

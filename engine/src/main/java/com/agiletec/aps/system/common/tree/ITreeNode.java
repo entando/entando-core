@@ -101,7 +101,27 @@ public interface ITreeNode extends Serializable {
 	public String getFullTitle(String langCode, String separator);
 	
 	/**
+	 * Returns the path of the single node.
+	 * The sepatator between the node will be '/' and the path contains the root node.
+	 * @return the path of the single node.
+	 */
+	public String getPath();
+	
+	/**
+	 * Returns the path of the single node.
+	 * @param separator The separator between the nodes.
+	 * @param addRoot Add the root node
+	 * @return the path of the single node.
+	 */
+	public String getPath(String separator, boolean addRoot);
+	
+	public String[] getPathArray();
+	
+	public String[] getPathArray(boolean addRoot);
+	
+	/**
 	 * Indicates whether the node is child of the other specificated node.
+	 * @param nodeCode The code of the node
 	 * @return true if the node is child of the other node, false otherwise.
 	 */
 	public boolean isChildOf(String nodeCode);

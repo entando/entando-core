@@ -46,7 +46,6 @@ public class IndexLoaderThread extends Thread {
 		} catch (Throwable t) {
 			reloadInfo.setResult(LastReloadInfo.ID_FAILURE_RESULT);
 			_logger.error("error in run", t);
-			//ApsSystemUtils.logThrowable(t, this, "run");
 		} finally {
 			reloadInfo.setDate(new Date());
 			this._searchEngineManager.notifyEndingIndexLoading(reloadInfo, this._indexerDao);
@@ -64,7 +63,6 @@ public class IndexLoaderThread extends Thread {
 			_logger.info("Indicizzazione effettuata");
 		} catch (Throwable t) {
 			_logger.error("error in reloadIndex", t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadIndex");
 			throw t;
 		}
 	}
@@ -78,7 +76,6 @@ public class IndexLoaderThread extends Thread {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error reloading index: content id {}", id, t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadContentIndex", "Error reloading index: content id" + id);
 		}
 	}
 	

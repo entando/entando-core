@@ -182,10 +182,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign formFieldNameVar = userFilterOptionVar.formFieldNames[0] >
 <#assign formFieldValue = userFilterOptionVar.getFormFieldValue(formFieldNameVar) >
 <div class="control-group">
-	<label for="${formFieldNameVar}" class="control-label"><@wp.i18n key="TEXT" /></label>
-	<div class="controls">
-		<input name="${formFieldNameVar}" id="${formFieldNameVar}" value="${formFieldValue}" type="text" class="input-xlarge"/>
-	</div>
+    <label for="${formFieldNameVar}" class="control-label"><@wp.i18n key="TEXT" /></label>
+    <div class="controls">
+        <input name="${formFieldNameVar}" id="${formFieldNameVar}" value="${formFieldValue}" type="text" class="input-xlarge"/>
+    </div>
 </div>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('jacms_content_viewer_list_userfilter_met_category', NULL, 'jacms', NULL, '<#assign wp=JspTaglibs["/aps-core"]>
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
@@ -486,16 +486,19 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'imag
 ');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'subIndexDir', 'Name of the sub-directory containing content indexing files', 'index');
 
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('SEARCH', 'en', 'Search');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('SEARCH', 'it', 'Cerca');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('SEARCH_FILTERS_BUTTON', 'en', 'Narrow your search');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('SEARCH_FILTERS_BUTTON', 'it', 'Filtra ulteriormente');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('LIST_VIEWER_EMPTY', 'en', 'No result found. Broaden your search and try again!');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('LIST_VIEWER_EMPTY', 'it', 'Nessun risultato trovato. Imposta dei parametri meno stringenti e prova ancora!');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_FIELD', 'en', 'The value for field');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_FIELD', 'it', 'Il valore del campo');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_INVALID_FORMAT', 'en', 'is invalid');
-INSERT INTO localstrings(keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_INVALID_FORMAT', 'it', 'non è corretto');
+
+
+
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH', 'en', 'Search');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH', 'it', 'Cerca');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH_FILTERS_BUTTON', 'en', 'Narrow your search');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH_FILTERS_BUTTON', 'it', 'Filtra ulteriormente');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('LIST_VIEWER_EMPTY', 'en', 'No result found. Broaden your search and try again!');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('LIST_VIEWER_EMPTY', 'it', 'Nessun risultato trovato. Imposta dei parametri meno stringenti e prova ancora!');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_FIELD', 'en', 'The value for field');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_FIELD', 'it', 'Il valore del campo');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_INVALID_FORMAT', 'en', 'is invalid');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_LIST_VIEWER_INVALID_FORMAT', 'it', 'non è corretto');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('EDIT_THIS_CONTENT', 'en', 'Edit');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('EDIT_THIS_CONTENT', 'it', 'Modifica');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH_RESULTS', 'en', 'Search Result');
@@ -508,3 +511,9 @@ INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH_RESULT
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH_RESULTS_INTRO', 'it', 'Sono stati trovati');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH_RESULTS_OUTRO', 'en', 'results. Showing:');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('SEARCH_RESULTS_OUTRO', 'it', 'risultati. Mostrati:');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_ALL_WORDS', 'it', 'Tutte le parole');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_ALL_WORDS', 'en', 'All words');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_AT_LEAST_ONE_WORD', 'it', 'Almeno una parola');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_AT_LEAST_ONE_WORD', 'en', 'At least one word');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_EXACT', 'it', 'Frase esatta');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_EXACT', 'en', 'Exact');

@@ -27,7 +27,7 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
  * Classe factory degli elementi ad uso del SearchEngine.
  * @author E.Santoboni
  */
-public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFactoryAware*/ {
+public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 
 	private static final Logger _logger = LoggerFactory.getLogger(SearchEngineDAOFactory.class);
 	
@@ -40,8 +40,8 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 	}
 	
 	@Override
-	public IIndexerDAO getIndexer(boolean newIndex) throws ApsSystemException {
-		return this.getIndexer(newIndex, this._subDirectory);
+	public IIndexerDAO getIndexer() throws ApsSystemException {
+		return this.getIndexer(this._subDirectory);
 	}
 	
 	@Override
@@ -50,16 +50,15 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 	}
 	
 	@Override
-	public IIndexerDAO getIndexer(boolean newIndex, String subDir) throws ApsSystemException {
+	public IIndexerDAO getIndexer(String subDir) throws ApsSystemException {
 		IIndexerDAO indexerDao = null;
 		try {
 			Class indexerClass = Class.forName(this.getIndexerClassName());
             indexerDao = (IIndexerDAO) indexerClass.newInstance();
 			indexerDao.setLangManager(this.getLangManager());
-			indexerDao.init(this.getDirectory(subDir), newIndex);
+			indexerDao.init(this.getDirectory(subDir));
 		} catch (Throwable t) {
 			_logger.error("Error getting indexer", t);
-			//ApsSystemUtils.logThrowable(t, this, "getIndexer", "Error creating new indexer");
 			throw new ApsSystemException("Error creating new indexer", t);
 		}
 		return indexerDao;
@@ -74,7 +73,6 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory/*, BeanFa
 			searcherDao.init(this.getDirectory(subDir));
 		} catch (Throwable t) {
 			_logger.error("Error creating new searcher", t);
-			//ApsSystemUtils.logThrowable(t, this, "getSearcher", "Error creating new searcher");
 			throw new ApsSystemException("Error creating new searcher", t);
 		}
 		return searcherDao;

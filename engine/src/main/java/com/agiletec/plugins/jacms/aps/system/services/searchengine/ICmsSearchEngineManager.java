@@ -35,13 +35,6 @@ public interface ICmsSearchEngineManager extends IEntitySearchEngineManager {
     /**
      * Return the service status id.
      * @return The service status id.
-     * @deprecated From jAPS 2.0 version 2.0.9. Use getStatus() method
-     */
-    public int getState();
-    
-    /**
-     * Return the service status id.
-     * @return The service status id.
      */
     public int getStatus();
     
@@ -55,14 +48,4 @@ public interface ICmsSearchEngineManager extends IEntitySearchEngineManager {
 	public static final int STATUS_RELOADING_INDEXES_IN_PROGRESS = 1;
 	public static final int STATUS_NEED_TO_RELOAD_INDEXES = 2;
 	
-    /**
-	 * @deprecated From jAPS 2.0 version 2.0.9. Use STATUS_READY
-	 */
-    public static final int ID_STATE_READY = STATUS_READY;
-    
-    /**
-	 * @deprecated From jAPS 2.0 version 2.0.9. Use STATUS_RELOADING_INDEXES_IN_PROGRESS
-	 */
-    public static final int ID_RELOAD_INDEX_IN_PROGRESS = STATUS_RELOADING_INDEXES_IN_PROGRESS;
-    
 }

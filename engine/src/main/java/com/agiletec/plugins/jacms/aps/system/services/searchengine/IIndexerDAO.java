@@ -14,7 +14,6 @@
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -29,11 +28,9 @@ public interface IIndexerDAO {
 	/**
 	 * Inizializzazione dell'indicizzatore.
 	 * @param dir La cartella locale contenitore dei dati persistenti.
-	 * @param newIndex true se è una nuova indicizzazione (ed in tal caso 
-	 * cancella tutte le precedenti indicizzazioni), false in caso contrario.
 	 * @throws ApsSystemException In caso di errori.
 	 */
-	public void init(File dir, boolean newIndex) throws ApsSystemException;
+	public void init(File dir) throws ApsSystemException;
 	
 	/**
 	 * Aggiunge un contenuto nel db del motore di ricerca.
@@ -43,11 +40,10 @@ public interface IIndexerDAO {
 	public void add(IApsEntity entity) throws ApsSystemException;
 	
 	/**
-     * Cancella un documento in base alla chiave mediante il quale è stato indicizzato.
+     * Cancella un documento indicizzato.
      * @param name Il nome del campo Field da utilizzare per recupero del documento.
-     * @param value La chiave mediante il quale 
-     * è stato indicizzato il documento.
-     * @throws ApsSystemException
+     * @param value La chiave mediante il quale è stato indicizzato il documento.
+     * @throws ApsSystemException In caso di errori.
      */
     public void delete(String name, String value) throws ApsSystemException;
     
@@ -55,7 +51,12 @@ public interface IIndexerDAO {
 	
 	public void setLangManager(ILangManager langManager);
     
-    public static final String CONTENT_ID_FIELD_NAME = "id";
-    public static final String CONTENT_GROUP_FIELD_NAME = "group";
-    
+	public static final String FIELD_PREFIX = "entity:"; 
+    public static final String CONTENT_ID_FIELD_NAME = FIELD_PREFIX + "id";
+    public static final String CONTENT_TYPE_FIELD_NAME = FIELD_PREFIX + "type";
+    public static final String CONTENT_GROUP_FIELD_NAME = FIELD_PREFIX + "group";
+    public static final String CONTENT_CATEGORY_FIELD_NAME = FIELD_PREFIX + "category";
+	public static final String CONTENT_CATEGORY_SEPARATOR = "/";
+	public static final String ATTACHMENT_FIELD_SUFFIX = "_attachment";
+	
 }

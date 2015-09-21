@@ -13,11 +13,13 @@
  */
 package com.agiletec.aps.system.services.lang;
 
+import java.io.Serializable;
+
 /**
  * Rappresentazione di una lingua
  * @author M.Diana
  */
-public class Lang implements Comparable {
+public class Lang implements Comparable, Serializable {
 	
 	/**
 	 * Restituisce il codice della lingua

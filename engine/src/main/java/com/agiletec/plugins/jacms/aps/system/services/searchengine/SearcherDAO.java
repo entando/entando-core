@@ -196,21 +196,17 @@ public class SearcherDAO implements ISearcherDAO {
 			}
 			mainQuery.add(groupsQuery, BooleanClause.Occur.MUST);
 		}
-		System.out.println("-------------INIZIO FILTRO---------------");
 		if (null != categories && !categories.isEmpty()) {
 			BooleanQuery categoriesQuery = new BooleanQuery();
 			Iterator<ITreeNode> cateIter = categories.iterator();
-			System.out.println("INIZIO FILTRO per categorie");
 			while (cateIter.hasNext()) {
 				ITreeNode category = cateIter.next();
 				String path = category.getPath(IIndexerDAO.CONTENT_CATEGORY_SEPARATOR, false);
-				System.out.println("path " + path);
 				TermQuery categoryQuery = new TermQuery(new Term(IIndexerDAO.CONTENT_CATEGORY_FIELD_NAME, path));
 				categoriesQuery.add(categoryQuery, BooleanClause.Occur.MUST);
 			}
 			mainQuery.add(categoriesQuery, BooleanClause.Occur.MUST);
 		}
-		System.out.println("--------------------------");
 		return mainQuery;
 	}
     

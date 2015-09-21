@@ -233,12 +233,12 @@ public class SearchEngineManager extends AbstractService
 		return newFilters;
 	}
 	
-	@Override
+	//@Override
 	public List<String> searchId(String sectionCode, SearchEngineFilter[] filters, Collection<String> allowedGroups) throws ApsSystemException {
 		return this.searchEntityId(filters, null, allowedGroups);
 	}
 	
-	@Override
+	//@Override
 	public List<String> searchEntityId(SearchEngineFilter[] filters, Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		List<String> contentsId = null;
     	try {
@@ -250,7 +250,7 @@ public class SearchEngineManager extends AbstractService
     	return contentsId;
 	}
 	
-	@Override
+	//@Override
 	public FacetedContentsResult searchFacetedEntities(SearchEngineFilter[] filters, Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException {
 		FacetedContentsResult contentsId = null;
     	try {

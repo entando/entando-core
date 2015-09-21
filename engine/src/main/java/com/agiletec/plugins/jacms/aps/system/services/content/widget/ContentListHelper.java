@@ -191,6 +191,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
 		}
 		if (fullTextUserFilter != null && null != fullTextUserFilter.getFormFieldValues()) {
 			String word = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[0]);
+			/*
 			String optionString = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[1]);
 			SearchEngineFilter.TextSearchOption option = SearchEngineFilter.TextSearchOption.AT_LEAST_ONE_WORD;
 			if (null != optionString) {
@@ -200,11 +201,19 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
 					option = SearchEngineFilter.TextSearchOption.EXACT;
 				}
 			}
+			*/
 			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
+			/*
 			SearchEngineFilter filter = new SearchEngineFilter(currentLang.getCode(), word, option);
 			SearchEngineFilter[] filters = {filter};
 			List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(filters, null, this.getAllowedGroups(reqCtx));
-			return ListUtils.intersection(fullTextResult, masterContentsId);
+			*/
+			List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(currentLang.getCode(), word, this.getAllowedGroups(reqCtx));
+			if (null != fullTextResult) {
+				return ListUtils.intersection(fullTextResult, masterContentsId);
+			} else {
+				return new ArrayList<String>();
+			}
 		} else {
 			return masterContentsId;
 		}

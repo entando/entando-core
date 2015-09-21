@@ -25,8 +25,8 @@ public interface ISearchEngineManager {
 	
 	public List<String> searchId(String sectionCode, 
 			String langCode, String word, Collection<String> allowedGroups) throws ApsSystemException;
-	
+	/*
 	public List<String> searchId(String sectionCode, 
 			SearchEngineFilter[] filters, Collection<String> allowedGroups) throws ApsSystemException;
-	
+	*/
 }

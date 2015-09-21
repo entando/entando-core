@@ -155,7 +155,7 @@
 
 		<!-- System short-cut -->
 		<shortcut id="core.tools.setting" requiredPermission="superuser" menusection="tools" source="core">
-			<description key="core.shortcut.tools.setting.shortDesc" >Settings</description><!-- key e corpo alternativo -->
+			<description key="core.shortcut.tools.setting.shortDesc" >General Settings</description><!-- key e corpo alternativo -->
 			<longdesc key="core.shortcut.tools.setting.longDesc"><![CDATA[Set various system-wide useful bits]]></longdesc>
 			<url>
 				<param name="namespace">/do/BaseAdmin</param>

@@ -406,9 +406,6 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		int index = (null != masterFileName) ? masterFileName.lastIndexOf('.') : -1;
 		String baseName = (index > 0) ? masterFileName.substring(0, index) : masterFileName;
 		baseName += System.currentTimeMillis();
-		System.out.println("-----------UNIQUE-------------");
-        System.out.println(baseName);
-        System.out.println("----------------------------");
         return DigestUtils.md5Hex(baseName);
 	}
 	

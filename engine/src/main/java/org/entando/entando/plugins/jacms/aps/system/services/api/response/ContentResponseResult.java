@@ -29,4 +29,8 @@ public class ContentResponseResult extends AbstractApiResponseResult {
         return (JAXBContent) this.getMainResult();
     }
     
+    public void setResult(JAXBContent content) {
+        this.setMainResult(content);
+    }
+    
 }

@@ -406,7 +406,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign wp=JspTaglibs["/aps-core"]>
 <h1><@wp.i18n key="SEARCH_RESULTS" /></h1>
-<#if (RequestParameters.search?? && RequestParameters.search!='')>
+<#if (RequestParameters.search?? && RequestParameters.search!='''')>
 <@jacms.searcher listName="contentListResult" />
 </#if>
 <p><@wp.i18n key="SEARCHED_FOR" />: <em><strong><#if (RequestParameters.search??)>${RequestParameters.search}</#if></strong></em></p>

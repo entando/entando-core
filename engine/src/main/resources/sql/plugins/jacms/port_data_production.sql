@@ -406,8 +406,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign wp=JspTaglibs["/aps-core"]>
 <h1><@wp.i18n key="SEARCH_RESULTS" /></h1>
+<#if (RequestParameters.search?? && RequestParameters.search!='''')>
 <@jacms.searcher listName="contentListResult" />
-<p><@wp.i18n key="SEARCHED_FOR" />: <em><strong>${RequestParameters.search}</strong></em></p>
+</#if>
+<p><@wp.i18n key="SEARCHED_FOR" />: <em><strong><#if (RequestParameters.search??)>${RequestParameters.search}</#if></strong></em></p>
 <#if (contentListResult??) && (contentListResult?has_content) && (contentListResult?size > 0)>
 <@wp.pager listName="contentListResult" objectName="groupContent" max=10 pagerIdFromFrame=true advanced=true offset=5>
 	<@wp.freemarkerTemplateParameter var="group" valueName="groupContent" removeOnEndTag=true >

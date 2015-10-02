@@ -36,7 +36,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
  * @author E.Santoboni
  */
 public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentAuthorizationHelper.class);
 	
 	@Override
@@ -44,6 +44,8 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 		if (null == content) {
 			_logger.error("Null content");
 			return false;
+		} else if (Content.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
+			return true;
 		}
 		return this.getAuthorizationManager().isAuth(user, content); 
 	}
@@ -77,6 +79,8 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 		if (null == content) {
 			_logger.error("Null content");
 			return false;
+		} else if (Content.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
+			return true;
 		}
 		String mainGroupName = content.getMainGroup();
 		return this.isAuthToEdit(user, mainGroupName);

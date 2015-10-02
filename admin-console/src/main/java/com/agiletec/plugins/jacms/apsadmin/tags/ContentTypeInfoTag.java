@@ -35,7 +35,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
  * @author E.Santoboni
  */
 public class ContentTypeInfoTag extends EntityTypeInfoTag {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentTypeInfoTag.class);
 	
 	@Override
@@ -57,10 +57,8 @@ public class ContentTypeInfoTag extends EntityTypeInfoTag {
 			return helper.isAuthToEdit(currentUser, prototype);
 		} catch (Throwable t) {
 			_logger.error("Error extracting property value : Master Object '{}' - property '{}'",masterObject.getClass().getName(), propertyValue,  t);
-			//ApsSystemUtils.logThrowable(t, this, "getPropertyValue", "Error extracting property value : Master Object '" + masterObject.getClass().getName() + "' - property '" + propertyValue + "'");
 		}
 		return null;
 	}
     
-	
 }

@@ -73,6 +73,11 @@ public class ApsSystemUtils {
 		fileAppender.activateOptions();
 		
 		AsyncAppender async = (AsyncAppender) LogManager.getRootLogger().getAppender("async");
+		if (null == async) {
+			async = new AsyncAppender();
+			async.setName("async");
+			LogManager.getRootLogger().addAppender(async);
+		}
 		async.addAppender(fileAppender);
 	}
 

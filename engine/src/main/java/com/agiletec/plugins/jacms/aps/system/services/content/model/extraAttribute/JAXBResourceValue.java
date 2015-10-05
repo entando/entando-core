@@ -16,14 +16,12 @@ package com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttrib
 import java.io.Serializable;
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author E.Santoboni
  */
-@XmlRootElement(name = "value")
 @XmlType(propOrder = {"text", "path", "resourceId", "restResourcePath"})
 @XmlSeeAlso({HashMap.class})
 public class JAXBResourceValue implements Serializable {

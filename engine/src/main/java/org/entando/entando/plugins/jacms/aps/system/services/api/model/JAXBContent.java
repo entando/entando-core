@@ -13,15 +13,6 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.services.api.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
-
 import com.agiletec.aps.system.common.entity.model.JAXBEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.JAXBBooleanAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.JAXBCompositeAttribute;
@@ -37,6 +28,16 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBResourceAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.JAXBResourceValue;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
+
 import org.entando.entando.aps.system.common.entity.model.attribute.JAXBEnumeratorMapAttribute;
 
 /**
@@ -45,7 +46,7 @@ import org.entando.entando.aps.system.common.entity.model.attribute.JAXBEnumerat
 @XmlRootElement(name = "content")
 @XmlType(propOrder = {"created", "lastModified", "version", "lastEditor"})
 @XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBEnumeratorMapAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class, JAXBResourceAttribute.class, JAXBLinkAttribute.class, JAXBResourceValue.class, JAXBLinkValue.class, SymbolicLink.class})
-public class JAXBContent extends JAXBEntity {
+public class JAXBContent extends JAXBEntity implements Serializable {
     
     public JAXBContent() {
         super();

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author E.Santoboni
  */
 @XmlType(propOrder = {"name", "description", "type", "roles"})
-public abstract class AbstractJAXBAttribute {
+public class AbstractJAXBAttribute {
     
     @XmlElement(name = "name", required = true)
     public String getName() {

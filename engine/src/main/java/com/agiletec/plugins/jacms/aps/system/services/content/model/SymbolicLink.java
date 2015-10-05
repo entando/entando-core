@@ -177,7 +177,7 @@ public class SymbolicLink implements Serializable {
 	 * @return La strnga simbolica di destinazione.
 	 */
 	public String getSymbolicDestination(){
-		StringBuffer dest = new StringBuffer();
+		StringBuilder dest = new StringBuilder();
 		dest.append(SymbolicLink.SYMBOLIC_DEST_PREFIX);
 		switch(_destType){
 		case URL_TYPE:
@@ -199,7 +199,7 @@ public class SymbolicLink implements Serializable {
 		dest.append(SymbolicLink.SYMBOLIC_DEST_POSTFIX);
 		return dest.toString();
 	}
-
+	
 	private String[] extractParams(String symbolicDestination) {
 		String params[] = null;
 		if (symbolicDestination.startsWith(SymbolicLink.SYMBOLIC_DEST_PREFIX)

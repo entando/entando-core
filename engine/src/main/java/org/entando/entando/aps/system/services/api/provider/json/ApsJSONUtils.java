@@ -41,15 +41,16 @@ public class ApsJSONUtils {
         return ignoreMixedContent ? new IgnoreMixedContentWriter(writer) : writer; 
     }
 	
-	public static XMLStreamWriter createIgnoreNsWriterIfNeeded(XMLStreamWriter writer, boolean ignoreNamespaces, boolean ignoreXsiAttributes) {
-        return ignoreNamespaces ? new CDataIgnoreNamespacesWriter(writer, ignoreXsiAttributes) : writer;
+	public static XMLStreamWriter createIgnoreNsWriterIfNeeded(XMLStreamWriter writer, boolean ignoreNamespaces) {
+        return ignoreNamespaces ? new CDataIgnoreNamespacesWriter(writer) : writer; 
     }
 	
 	public static XMLStreamWriter createStreamWriter(OutputStream os, 
 			QName qname, boolean writeXsiType, Configuration config, 
-			boolean serializeAsArray, List<String> arrayKeys, boolean dropRootElement, String enc) throws Exception {
+			boolean serializeAsArray, List<String> arrayKeys, boolean dropRootElement) throws Exception {
         MappedNamespaceConvention convention = new MappedNamespaceConvention(config);
-        AbstractXMLStreamWriter xsw = new CDataMappedXMLStreamWriter(convention, new OutputStreamWriter(os, enc));
+        AbstractXMLStreamWriter xsw = new CDataMappedXMLStreamWriter(convention, 
+                                            new OutputStreamWriter(os, UTF8));
         if (serializeAsArray) {
             if (arrayKeys != null) {
                 for (String key : arrayKeys) {

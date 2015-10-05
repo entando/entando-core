@@ -23,9 +23,9 @@ import org.entando.entando.aps.system.services.api.model.CDataAdapter;
  * @author E.Santoboni
  */
 public class CDataIgnoreNamespacesWriter extends IgnoreNamespacesWriter {
-	
-    public CDataIgnoreNamespacesWriter(XMLStreamWriter writer, boolean ignoreNamespaces) {
-        super(writer, ignoreNamespaces);
+
+    public CDataIgnoreNamespacesWriter(XMLStreamWriter writer) {
+        super(writer);
     }
     
 	@Override

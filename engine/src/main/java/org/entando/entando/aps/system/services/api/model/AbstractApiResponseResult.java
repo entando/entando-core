@@ -39,14 +39,14 @@ public abstract class AbstractApiResponseResult implements Serializable {
         this._html = html;
     }
     
+	@XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
+    @XmlElement(name = "html", required = true)
     public String getHtml() {
          return this._html;
     }
     
     private Object _mainResult;
     
-    @XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
-    @XmlElement(name = "html", required = true)
     private String _html;
     
 }

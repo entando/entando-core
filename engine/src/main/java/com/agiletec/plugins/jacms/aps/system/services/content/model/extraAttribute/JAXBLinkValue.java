@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
@@ -26,8 +25,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink
 /**
  * @author E.Santoboni
  */
-@XmlRootElement(name = "value")
-@XmlType(propOrder = {"text", "url", "symbolikLink"})
+@XmlType(propOrder = {"text", "url", "symbolicLink"})
 @XmlSeeAlso({SymbolicLink.class, HashMap.class})
 public class JAXBLinkValue implements Serializable {
     
@@ -47,16 +45,16 @@ public class JAXBLinkValue implements Serializable {
         this._url = url;
     }
     
-    @XmlElement(name = "symbolikLink", required = false)
-    public SymbolicLink getSymbolikLink() {
-        return _symbolikLink;
+    @XmlElement(name = "symbolicLink", required = false)
+    public SymbolicLink getSymbolicLink() {
+        return _symbolicLink;
     }
-    public void setSymbolikLink(SymbolicLink symbolikLink) {
-        this._symbolikLink = symbolikLink;
+    public void setSymbolicLink(SymbolicLink symbolicLink) {
+        this._symbolicLink = symbolicLink;
     }
     
     private String _text;
     private String _url;
-    private SymbolicLink _symbolikLink;
+    private SymbolicLink _symbolicLink;
     
 }

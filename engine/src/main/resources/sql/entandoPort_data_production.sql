@@ -1778,7 +1778,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'para
 	<Param name="firstTimeMessages">false</Param>
 	<Param name="baseUrl">request</Param>
 	<Param name="baseUrlContext">true</Param>
-        <Param name="useJsessionId">true</Param>
+        <Param name="useJsessionId">false</Param>
 	<Param name="gravatarIntegrationEnabled">false</Param>
 	<SpecialPages>
 		<Param name="notFoundPageCode">notfound</Param>

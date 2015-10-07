@@ -1775,10 +1775,10 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'para
 	<Param name="treeStyle_page">classic</Param>
 	<Param name="treeStyle_category">classic</Param>
 	<Param name="startLangFromBrowser">false</Param>
-	<Param name="firstTimeMessages">true</Param>
-	<Param name="baseUrl">static</Param>
+	<Param name="firstTimeMessages">false</Param>
+	<Param name="baseUrl">request</Param>
 	<Param name="baseUrlContext">true</Param>
-	<Param name="useJsessionId">true</Param>
+        <Param name="useJsessionId">true</Param>
 	<Param name="gravatarIntegrationEnabled">false</Param>
 	<SpecialPages>
 		<Param name="notFoundPageCode">notfound</Param>
@@ -1787,12 +1787,12 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'para
 		<Param name="loginPageCode">login</Param>
 	</SpecialPages>
 	<FeaturesOnDemand>
-		<Param name="groupsOnDemand">false</Param>
-		<Param name="categoriesOnDemand">false</Param>
-		<Param name="contentTypesOnDemand">false</Param>
-		<Param name="contentModelsOnDemand">false</Param>
-		<Param name="apisOnDemand">false</Param>
-		<Param name="resourceArchivesOnDemand">false</Param>
+		<Param name="groupsOnDemand">true</Param>
+		<Param name="categoriesOnDemand">true</Param>
+		<Param name="contentTypesOnDemand">true</Param>
+		<Param name="contentModelsOnDemand">true</Param>
+		<Param name="apisOnDemand">true</Param>
+		<Param name="resourceArchivesOnDemand">true</Param>
 	</FeaturesOnDemand>
 	<ExtendendPrivacyModule>
 		<Param name="extendedPrivacyModuleEnabled">false</Param>

@@ -36,26 +36,31 @@ import com.agiletec.apsadmin.system.BaseAction;
  * This base action implements the default actions available for the system administration.
  * @author E.Santoboni
  */
-public class BaseAdminAction extends BaseAction implements IBaseAdminAction {
+public class BaseAdminAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(BaseAdminAction.class);
 	
-    @Override
-    public String reloadConfig() {
+    /**
+	 * Reload the system configuration.
+	 * @return the result code.
+	 */
+	public String reloadConfig() {
         try {
             ApsWebApplicationUtils.executeSystemRefresh(this.getRequest());
             _logger.info("Reload config started");
             this.setReloadingResult(SUCCESS_RELOADING_RESULT_CODE);
         } catch (Throwable t) {
         	_logger.error("error in reloadConfig", t);
-            //ApsSystemUtils.logThrowable(t, this, "reloadConfig");
             this.setReloadingResult(FAILURE_RELOADING_RESULT_CODE);
         }
         return SUCCESS;
     }
 
-    @Override
-    public String reloadEntitiesReferences() {
+    /**
+	 * Reload the references of all the existing entities.
+	 * @return the result code.
+	 */
+	public String reloadEntitiesReferences() {
         try {
             ReloadingEntitiesReferencesEvent event = new ReloadingEntitiesReferencesEvent();
             WebApplicationContext wac = ApsWebApplicationUtils.getWebApplicationContext(this.getRequest());
@@ -63,7 +68,6 @@ public class BaseAdminAction extends BaseAction implements IBaseAdminAction {
             _logger.info("Reloading entity references started");
         } catch (Throwable t) {
         	_logger.error("error in reloadEntitiesReferences", t);
-            //ApsSystemUtils.logThrowable(t, this, "reloadEntitiesReferences");
             return FAILURE;
         }
         return SUCCESS;
@@ -76,21 +80,26 @@ public class BaseAdminAction extends BaseAction implements IBaseAdminAction {
     public void setReloadingResult(int reloadingResult) {
         this._reloadingResult = reloadingResult;
     }
-
-	@Override
-    public String configSystemParams() {
+	
+	/**
+	 * Get the system parameters in order to edit them.
+	 * @return the result code.
+	 */
+	public String configSystemParams() {
         try {
             this.initLocalMap();
         } catch (Throwable t) {
         	_logger.error("error in configSystemParams", t);
-            //ApsSystemUtils.logThrowable(t, this, "configSystemParams");
             return FAILURE;
         }
         return SUCCESS;
     }
 
-    @Override
-    public String updateSystemParams() {
+    /**
+	 * Update the system params.
+	 * @return the result code.
+	 */
+	public String updateSystemParams() {
         try {
             this.initLocalMap();
             this.updateLocalParams(false);
@@ -101,7 +110,6 @@ public class BaseAdminAction extends BaseAction implements IBaseAdminAction {
             this.addActionMessage(this.getText("message.configSystemParams.ok"));
         } catch (Throwable t) {
         	_logger.error("error in updateSystemParams", t);
-            //ApsSystemUtils.logThrowable(t, this, "updateSystemParams");
             return FAILURE;
         }
         return SUCCESS;
@@ -119,7 +127,6 @@ public class BaseAdminAction extends BaseAction implements IBaseAdminAction {
             this.addActionMessage(this.getText("message.configSystemParams.ok"));
         } catch (Throwable t) {
         	_logger.error("error in updateSystemParams ajax", t);
-            //ApsSystemUtils.logThrowable(t, this, "updateSystemParams");
             return FAILURE;
         }
         return SUCCESS;
@@ -167,7 +174,6 @@ public class BaseAdminAction extends BaseAction implements IBaseAdminAction {
             }
         } catch (Exception e) {
         	_logger.error("Error extracting extra parameters", e);
-            //ApsSystemUtils.logThrowable(e, this, "extractExtraParameters", "Error extracting extra parameters");
         }
     }
 
@@ -205,9 +211,8 @@ public class BaseAdminAction extends BaseAction implements IBaseAdminAction {
     public void setPageManager(IPageManager pageManager) {
         this._pageManager = pageManager;
     }
-
-	@Override
-    public Map<String, String> getSystemParams() {
+	
+	public Map<String, String> getSystemParams() {
         return _systemParams;
     }
     public void setSystemParams(Map<String, String> systemParams) {

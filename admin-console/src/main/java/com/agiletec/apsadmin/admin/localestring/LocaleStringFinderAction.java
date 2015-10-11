@@ -30,7 +30,7 @@ import com.agiletec.apsadmin.system.BaseAction;
  * This action class implements all the needed methods to handle the Localization Strings
  * @author E.Santoboni
  */
-public class LocaleStringFinderAction extends BaseAction implements ILocaleStringFinderAction {
+public class LocaleStringFinderAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(LocaleStringFinderAction.class);
 	
@@ -54,7 +54,6 @@ public class LocaleStringFinderAction extends BaseAction implements ILocaleStrin
 			}
 		} catch (Exception e) {
 			_logger.error("error in getLocaleStrings", e);
-			//ApsSystemUtils.logThrowable(e, this, "getLocaleStrings");
 		}
 		return labelKeys;
 	}

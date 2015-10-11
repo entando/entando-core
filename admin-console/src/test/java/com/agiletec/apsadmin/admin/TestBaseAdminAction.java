@@ -62,7 +62,7 @@ public class TestBaseAdminAction extends ApsAdminBaseTestCase {
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 		
-		IBaseAdminAction action = (IBaseAdminAction) this.getAction();
+		BaseAdminAction action = (BaseAdminAction) this.getAction();
 		Map<String, String> params = action.getSystemParams();
 		assertTrue(params.size()>=6);
 		assertEquals("homepage", params.get(SystemConstants.CONFIG_PARAM_HOMEPAGE_PAGE_CODE));

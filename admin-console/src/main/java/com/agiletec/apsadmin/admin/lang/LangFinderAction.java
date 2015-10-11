@@ -22,10 +22,10 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.apsadmin.system.BaseAction;
 
 /**
- * This action class implements the default actions to display and search among the system languages.
+ * This action class declares the default actions to display and search among the system languages.
  * @author E.Santoboni
  */
-public class LangFinderAction extends BaseAction implements ILangFinderAction {
+public class LangFinderAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(LangFinderAction.class);
 	
@@ -35,7 +35,6 @@ public class LangFinderAction extends BaseAction implements ILangFinderAction {
 			langs = this.getLangManager().getLangs();
 		} catch(Throwable t) {
 			_logger.error("Error extracting system lang ", t);
-			//ApsSystemUtils.logThrowable(t, this, "getLangs");
 			throw new RuntimeException("Error extracting system lang", t);
 		}
 		return langs;
@@ -51,7 +50,6 @@ public class LangFinderAction extends BaseAction implements ILangFinderAction {
 			assignableLangs = this.getLangManager().getAssignableLangs();
 		} catch(Throwable t) {
 			_logger.error("Error extracting assignable langs", t);
-			//ApsSystemUtils.logThrowable(t, this, "getAssignableLangs");
 			throw new RuntimeException("Error extracting assignable langs", t);
 		}
 		return assignableLangs;

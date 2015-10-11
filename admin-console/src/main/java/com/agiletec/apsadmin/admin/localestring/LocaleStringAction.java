@@ -26,10 +26,10 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
 
 /**
- * This base action class implements the default operations for the Localization Strings.
+ * This base action class declares the default operations for the Localization Strings.
  * @author E.Santoboni
  */
-public class LocaleStringAction extends BaseAction implements ILocaleStringAction {
+public class LocaleStringAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(LocaleStringAction.class);
 	
@@ -40,13 +40,11 @@ public class LocaleStringAction extends BaseAction implements ILocaleStringActio
 		this.checkLabels();
 	}
 	
-	@Override
 	public String newLabel() {
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);
 		return SUCCESS;
 	}
 	
-	@Override
 	public String edit() {
 		try {
 			String key = this.getKey();
@@ -55,13 +53,11 @@ public class LocaleStringAction extends BaseAction implements ILocaleStringActio
 			this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
-			//ApsSystemUtils.logThrowable(t, this, "edit");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String save() {
 		try {
 			int strutsAction = this.getStrutsAction();
@@ -72,19 +68,16 @@ public class LocaleStringAction extends BaseAction implements ILocaleStringActio
 			}
 		} catch (Throwable t) {
 			_logger.error("error in save", t);
-			//ApsSystemUtils.logThrowable(t, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String delete() {
 		try {
 			this.getI18nManager().deleteLabelGroup(this.getKey());
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "edit");
 			return FAILURE;
 		}
 		return SUCCESS;

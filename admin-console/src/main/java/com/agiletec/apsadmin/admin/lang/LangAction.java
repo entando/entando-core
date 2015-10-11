@@ -20,14 +20,13 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.apsadmin.system.BaseAction;
 
 /**
- * This action class implements the default operations on System Languages.
+ * This action class declares the default operations on System Languages.
  * @author E.Santoboni
  */
-public class LangAction extends BaseAction implements ILangAction {
+public class LangAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(LangAction.class);
 	
-	@Override
 	public String add() {
 		try {
 			Lang langToAdd = this.getLangManager().getLang(this.getLangCode());
@@ -39,13 +38,11 @@ public class LangAction extends BaseAction implements ILangAction {
 			this.getLangManager().addLang(this.getLangCode());
 		} catch (Throwable t) {
 			_logger.error("error in add", t);
-			//ApsSystemUtils.logThrowable(t, this, "add");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
 	public String remove() {
 		try {
 			Lang langToRemove = this.getLangManager().getLang(this.getLangCode());
@@ -56,7 +53,6 @@ public class LangAction extends BaseAction implements ILangAction {
 			this.getLangManager().removeLang(this.getLangCode());
 		} catch (Throwable t) {
 			_logger.error("error in remove", t);
-			//ApsSystemUtils.logThrowable(t, this, "remove");
 			return FAILURE;
 		}
 		return SUCCESS;

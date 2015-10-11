@@ -41,39 +41,45 @@ public class ApsJSONUtils {
         return ignoreMixedContent ? new IgnoreMixedContentWriter(writer) : writer; 
     }
 	
-	public static XMLStreamWriter createIgnoreNsWriterIfNeeded(XMLStreamWriter writer, boolean ignoreNamespaces) {
-        return ignoreNamespaces ? new CDataIgnoreNamespacesWriter(writer) : writer; 
+	public static XMLStreamWriter createIgnoreNsWriterIfNeeded(XMLStreamWriter writer, 
+                                                               boolean ignoreNamespaces,
+                                                               boolean ignoreXsiAttributes) {
+        return ignoreNamespaces ? new CDataIgnoreNamespacesWriter(writer, ignoreXsiAttributes) : writer; 
     }
 	
-	public static XMLStreamWriter createStreamWriter(OutputStream os, 
+	public static XMLStreamWriter createStreamWriter(OutputStream os,
 			QName qname, boolean writeXsiType, Configuration config, 
-			boolean serializeAsArray, List<String> arrayKeys, boolean dropRootElement) throws Exception {
-        MappedNamespaceConvention convention = new MappedNamespaceConvention(config);
-        AbstractXMLStreamWriter xsw = new CDataMappedXMLStreamWriter(convention, 
-                                            new OutputStreamWriter(os, UTF8));
-        if (serializeAsArray) {
-            if (arrayKeys != null) {
-                for (String key : arrayKeys) {
-                    xsw.serializeAsArray(key);
-                }
-            } else if (qname != null) {
-                String key = convention.createKey(qname.getPrefix(), 
-						qname.getNamespaceURI(), qname.getLocalPart());
-                xsw.serializeAsArray(key);
-            }
-        }
-        XMLStreamWriter writer = !writeXsiType || dropRootElement 
-            ? new IgnoreContentJettisonWriter(xsw, writeXsiType, dropRootElement) : xsw;
-        return writer;
-    }    
+			boolean serializeAsArray, List<String> arrayKeys,
+			boolean dropRootElement, String enc) throws Exception {
+		MappedNamespaceConvention convention = new MappedNamespaceConvention(config);
+		AbstractXMLStreamWriter xsw = new CDataMappedXMLStreamWriter(convention, new OutputStreamWriter(os, enc));
+		if (serializeAsArray) {
+			if (arrayKeys != null) {
+				for (String key : arrayKeys) {
+					xsw.serializeAsArray(key);
+				}
+			} else if (qname != null) {
+				String key = getKey(convention, qname);
+				xsw.serializeAsArray(key);
+			}
+		}
+		XMLStreamWriter writer = !writeXsiType || dropRootElement
+				? new IgnoreContentJettisonWriter(xsw, writeXsiType, dropRootElement) : xsw;
+		return writer;
+	}
 	
-	private static class IgnoreMixedContentWriter extends DelegatingXMLStreamWriter {
+	private static String getKey(MappedNamespaceConvention convention, QName qname) throws Exception {
+		return convention.createKey(qname.getPrefix(),
+				qname.getNamespaceURI(), qname.getLocalPart());
+	}
+	
+    private static class IgnoreMixedContentWriter extends DelegatingXMLStreamWriter {
         
 		String lastText;
         boolean isMixed;
         List<Boolean> mixed = new LinkedList<Boolean>();
         
-		public IgnoreMixedContentWriter(XMLStreamWriter writer) {
+        public IgnoreMixedContentWriter(XMLStreamWriter writer) {
             super(writer);
         }
 		
@@ -93,7 +99,7 @@ public class ApsJSONUtils {
             }
         }
         
-		@Override
+        @Override
         public void writeStartElement(String prefix, String local, String uri) throws XMLStreamException {
             if (lastText != null) {
                 isMixed = true;
@@ -103,7 +109,7 @@ public class ApsJSONUtils {
             isMixed = false;
             super.writeStartElement(prefix, local, uri);
         }
-		
+        
 		@Override
         public void writeStartElement(String uri, String local) throws XMLStreamException {
             if (lastText != null) {
@@ -114,7 +120,7 @@ public class ApsJSONUtils {
             isMixed = false;
             super.writeStartElement(uri, local);
         }
-		
+        
 		@Override
         public void writeStartElement(String local) throws XMLStreamException {
             if (lastText != null) {
@@ -125,7 +131,7 @@ public class ApsJSONUtils {
             isMixed = false;
             super.writeStartElement(local);
         }
-		
+        
 		@Override
         public void writeEndElement() throws XMLStreamException {
             if (lastText != null && (!isMixed || !StringUtils.isEmpty(lastText.trim()))) {

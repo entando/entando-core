@@ -85,7 +85,7 @@ public abstract class AbstractWidgetExecutorService {
 			}
 			buffer.append(this.extractDecoratorsOutput(reqCtx, widget, decorators, false, true));
 			if (null != widget && this.isUserAllowed(reqCtx, widget)) {
-				String widgetOutput = this.extractWidgetOutput(reqCtx, widget.getType());
+				String widgetOutput = extractWidgetOutput(reqCtx, widget.getType());
 				//String widgetJspPath = widget.getType().getJspPath();
 				buffer.append(this.extractDecoratorsOutput(reqCtx, widget, decorators, true, true));
 				//buffer.append(this.extractJspOutput(reqCtx, widgetJspPath));
@@ -102,8 +102,11 @@ public abstract class AbstractWidgetExecutorService {
 	}
 	
 	public static String extractWidgetOutput(RequestContext reqCtx, WidgetType type) throws ApsSystemException {
+		if (null == type) {
+			return "";
+		}
+		String widgetTypeCode = (type.isLogic()) ? type.getParentType().getCode() : type.getCode();
 		try {
-			String widgetTypeCode = (type.isLogic()) ? type.getParentType().getCode() : type.getCode();
 			IGuiFragmentManager guiFragmentManager = 
 					(IGuiFragmentManager) ApsWebApplicationUtils.getBean(SystemConstants.GUI_FRAGMENT_MANAGER, reqCtx.getRequest());
 			GuiFragment guiFragment = guiFragmentManager.getUniqueGuiFragmentByWidgetType(widgetTypeCode);
@@ -119,7 +122,7 @@ public abstract class AbstractWidgetExecutorService {
 				return extractJspWidgetOutput(widgetTypeCode, reqCtx, widgetJspPath);
 			}
 		} catch (Throwable t) {
-			String msg = "Error creating widget output";
+			String msg = "Error creating widget output - Type '" + widgetTypeCode + "'";
 			_logger.error(msg, t);
 			throw new ApsSystemException(msg, t);
 		}
@@ -207,13 +210,13 @@ public abstract class AbstractWidgetExecutorService {
 			out.flush();
 			return baos.toString().trim();
 		} catch (Throwable t) {
-			String msg = "Error creating fragment output";
+			String msg = "Error creating fragment output - code '" + fragment.getCode() + "'";
 			_logger.error(msg, t);
 			throw new ApsSystemException(msg, t);
 		}
 	}
 	
-	protected boolean isUserAllowed(RequestContext reqCtx, Widget widget) /*throws Throwable */{
+	protected boolean isUserAllowed(RequestContext reqCtx, Widget widget) {
 		if (null == widget) {
 			return false;
 		}

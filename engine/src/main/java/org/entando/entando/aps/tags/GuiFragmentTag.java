@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Print a gui fragment by the given code.
+ * Print a gui fragment output by the given code.
  * @author E.Santoboni
  */
 public class GuiFragmentTag extends OutSupport {
@@ -85,7 +85,7 @@ public class GuiFragmentTag extends OutSupport {
 			template.process(ebc.getTemplateModel(), out);
 			out.flush();
 		} catch (Throwable t) {
-			String msg = "Error creating fragment output";
+			String msg = "Error creating fragment output - code '" + this.getCode() + "'";
 			_logger.error(msg, t);
 			throw new ApsSystemException(msg, t);
 		}

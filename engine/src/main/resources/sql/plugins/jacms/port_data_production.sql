@@ -135,7 +135,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	</ul>
 </div>
 </#if>
-<@c.set var="hasUserFilterError" value=false />
+<#assign hasUserFilterError = false >
 <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#content-viewer-list-filters"><@wp.i18n key="SEARCH_FILTERS_BUTTON" /> <i class="icon-zoom-in icon-white"></i></button></p>
 <form action="<@wp.url />" method="post" class="form-horizontal collapse" id="content-viewer-list-filters">
 	<#list userFilterOptionsVar as userFilterOptionVar>
@@ -191,7 +191,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign formFieldNameVar = userFilterOptionVar.formFieldNames[0] >
 <#assign formFieldValue = userFilterOptionVar.getFormFieldValue(formFieldNameVar) >
-<@c.set var="userFilterCategoryCodeVar">${userFilterOptionVar.userFilterCategoryCode?default("")}</@c.set>
+<#assign userFilterCategoryCodeVar = userFilterOptionVar.userFilterCategoryCode?default("") >
 <@wp.categories var="systemCategories" titleStyle="prettyFull" root="${userFilterCategoryCodeVar}" />
 <div class="control-group">
 	<label for="category" class="control-label"><@wp.i18n key="CATEGORY" /></label>

@@ -51,8 +51,8 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign formFieldNameVar = userFilterOptionVar.formFieldNames[0] >
 <#assign formFieldValue = userFilterOptionVar.getFormFieldValue(formFieldNameVar) >
+<#assign i18n_Attribute_Key = userFilterOptionVar.attribute.name >
 <div class="control-group">
-	<@c.set var="i18n_Attribute_Key" value="${userFilterOptionVar.attribute.name}" />
 	<label for="${formFieldNameVar}" class="control-label"><@wp.i18n key="${i18n_Attribute_Key}" /></label>
 	<div class="controls">
 		<select name="${formFieldNameVar}" id="${formFieldNameVar}" class="input-xlarge">
@@ -67,8 +67,8 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <#assign formFieldNameVar = userFilterOptionVar.formFieldNames[0] >
 <#assign formFieldValue = userFilterOptionVar.getFormFieldValue(formFieldNameVar) >
+<#assign i18n_Attribute_Key = userFilterOptionVar.attribute.name >
 <div class="control-group">
-	<@c.set var="i18n_Attribute_Key" value="${userFilterOptionVar.attribute.name}" />
 	<label for="${formFieldNameVar}" class="control-label"><@wp.i18n key="${i18n_Attribute_Key}" /></label>
 	<div class="controls">
 		<select name="${formFieldNameVar}" id="${formFieldNameVar}" class="input-xlarge">
@@ -83,7 +83,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]>
 <fieldset>
 <legend>
-<@c.set var="i18n_Attribute_Key" value="${userFilterOptionVar.attribute.name}" />
+<#assign i18n_Attribute_Key = userFilterOptionVar.attribute.name >
 <@wp.i18n key="${i18n_Attribute_Key}" />
 </legend>
 <div class="control-group">
@@ -307,7 +307,7 @@ jQuery(function($){
 <@wp.headInfo type="JS_RAW" info="${js_for_datepicker}" />
 <fieldset>
 <legend>
-<@c.set var="i18n_Attribute_Key" value="${userFilterOptionVar.attribute.name}" />
+<#assign i18n_Attribute_Key = userFilterOptionVar.attribute.name >
 <@wp.i18n key="${i18n_Attribute_Key}" />
 </legend>
 <div class="control-group">

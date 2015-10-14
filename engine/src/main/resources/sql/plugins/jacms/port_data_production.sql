@@ -288,15 +288,15 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 
 jQuery(function($){
 	if (Modernizr.touch && Modernizr.inputtypes.date) {
-		$.each(	$(\"input[data-isdate=true]\"), function(index, item) {
+		$.each(	$(''input[data-isdate=true]''), function(index, item) {
 			item.type = ''date'';
 		});
 	} else {
-		$.datepicker.setDefaults( $.datepicker.regional[ \"${currentLangVar}\" ] );
-		$(\"input[data-isdate=true]\").datepicker({
+		$.datepicker.setDefaults( $.datepicker.regional[''${currentLangVar}''] );
+		$(''input[data-isdate=true]'').datepicker({
       			changeMonth: true,
       			changeYear: true,
-      			dateFormat: \"yy-mm-dd\"
+      			dateFormat: ''yy-mm-dd''
     		});
 	}
 });" >

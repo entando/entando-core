@@ -164,6 +164,10 @@ public class PageAction extends AbstractPortalAction {
 				return check;
 			}
 			IPage page = this.getPageManager().getPage(pageCode);
+			Map references = this.getPageActionHelper().getReferencingObjects(page, this.getRequest());
+			if (null != references) {
+				this.setReferences(references);
+			}
 			this.setPageToShow(page);
 		} catch (Throwable t) {
 			_logger.error("error in showDetail", t);

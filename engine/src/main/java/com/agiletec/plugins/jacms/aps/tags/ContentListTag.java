@@ -33,7 +33,6 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentListTagBean;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentListWidgetHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.UserFilterOptionBean;
@@ -103,7 +102,7 @@ public class ContentListTag extends TagSupport implements IContentListTagBean {
 		return contents;
 	}
 	
-	private void extractExtraWidgetParameters(RequestContext reqCtx) {
+	protected void extractExtraWidgetParameters(RequestContext reqCtx) {
 		try {
 			Widget currentWidget = (Widget) reqCtx.getExtraParam((SystemConstants.EXTRAPAR_CURRENT_WIDGET));
 			ApsProperties config = (null != currentWidget) ? currentWidget.getConfig() : null;
@@ -112,7 +111,7 @@ public class ContentListTag extends TagSupport implements IContentListTagBean {
 				this.addMultilanguageWidgetParameter(config, IContentListWidgetHelper.WIDGET_PARAM_TITLE, currentLang, this.getTitleVar());
 				this.addMultilanguageWidgetParameter(config, IContentListWidgetHelper.WIDGET_PARAM_PAGE_LINK_DESCR, currentLang, this.getPageLinkDescriptionVar());
 				if (null != this.getPageLinkVar()) {
-					String pageLink = config.getProperty(ContentListHelper.WIDGET_PARAM_PAGE_LINK);
+					String pageLink = config.getProperty(IContentListWidgetHelper.WIDGET_PARAM_PAGE_LINK);
 					if (null != pageLink) {
 						this.pageContext.setAttribute(this.getPageLinkVar(), pageLink);
 					}
@@ -167,7 +166,7 @@ public class ContentListTag extends TagSupport implements IContentListTagBean {
 		this._filters = newFilters;
 	}
 	
-	private void addUserFilterOptions(List<UserFilterOptionBean> userFilterOptions) {
+	protected void addUserFilterOptions(List<UserFilterOptionBean> userFilterOptions) {
 		if (null == userFilterOptions) return;
 		for (int i = 0; i < userFilterOptions.size(); i++) {
 			this.addUserFilterOption(userFilterOptions.get(i));

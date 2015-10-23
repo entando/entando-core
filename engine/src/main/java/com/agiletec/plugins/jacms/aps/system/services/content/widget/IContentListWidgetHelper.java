@@ -29,15 +29,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentLis
  */
 public interface IContentListWidgetHelper extends com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentListHelper {
 	
-	/*
-	 * Ricerca la lista dei contenuti in base alla posizione della showlet nella pagina.
-	 * @param listName Il nome identificativo della lista.
-	 * @param reqCtx Il contesto della richiesta.
-	 * @return La lista di identificativi di contenuto.
-	 * @throws Throwable In caso di errore.
-	 */
-	//public List<String> searchInCache(String listName, RequestContext reqCtx) throws Throwable;
-	
 	/**
 	 * Restituisce la lista di identificativi di contenuto in base ai parametri di ricerca.
 	 * I parametri utilizzati per la ricerca, per ciascuno di essi vengono estratti con questo 

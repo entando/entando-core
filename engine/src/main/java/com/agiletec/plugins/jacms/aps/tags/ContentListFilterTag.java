@@ -51,7 +51,9 @@ public class ContentListFilterTag extends TagSupport implements IEntityFilterBea
 			if (!this.isRightKey()) {
 				String message = "";
 				for (int i=0; i < IContentListWidgetHelper.allowedMetadataFilterKeys.length; i++) {
-					if (i!=0) message.concat(",");
+					if (i!=0) {
+						message.concat(",");
+					}
 					message.concat(IContentListWidgetHelper.allowedMetadataFilterKeys[i]);
 				}
 				throw new RuntimeException("The key '" + this.getKey() + "' is unknown; " +
@@ -66,7 +68,6 @@ public class ContentListFilterTag extends TagSupport implements IEntityFilterBea
 			}
 		} catch (Throwable t) {
 			_logger.error("error in end tag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doEndTag");
 			throw new JspException("Tag error detected ", t);
 		}
 		return super.doEndTag();
@@ -96,6 +97,7 @@ public class ContentListFilterTag extends TagSupport implements IEntityFilterBea
 	
 	/**
 	 * Get the string used to filter and sort the contents.
+	 * @return the string used to filter and sort the contents.
 	 */
 	@Override
 	public String getKey() {
@@ -110,7 +112,7 @@ public class ContentListFilterTag extends TagSupport implements IEntityFilterBea
 	 *	The allowed filter key that can be applied to content metadata are:<br/>
 	 *	 - "created" allows sorting by date of creation of content
 	 *	 - "modified" allows sorting by date of modification of content.
-	 * @param key
+	 * @param key The key to set
 	 */
 	public void setKey(String key) {
 		this._key = key;

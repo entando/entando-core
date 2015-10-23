@@ -16,10 +16,7 @@ package org.entando.entando.plugins.jacms.aps.tags;
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.Widget;
-import com.agiletec.aps.util.ApsProperties;
-import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentListWidgetHelper;
 import com.agiletec.plugins.jacms.aps.tags.ContentListTag;
 
 import java.util.ArrayList;
@@ -85,26 +82,6 @@ public class RowContentListTag extends ContentListTag {
 			throw new ApsSystemException("Error extracting contents", t);
 		}
 		return contents;
-	}
-	
-	private void extractExtraWidgetParameters(RequestContext reqCtx) {
-		try {
-			Widget currentWidget = (Widget) reqCtx.getExtraParam((SystemConstants.EXTRAPAR_CURRENT_WIDGET));
-			ApsProperties config = (null != currentWidget) ? currentWidget.getConfig() : null;
-			if (null != config) {
-				Lang currentLang = (Lang) reqCtx.getExtraParam((SystemConstants.EXTRAPAR_CURRENT_LANG));
-				this.addMultilanguageWidgetParameter(config, IContentListWidgetHelper.WIDGET_PARAM_TITLE, currentLang, this.getTitleVar());
-				this.addMultilanguageWidgetParameter(config, IContentListWidgetHelper.WIDGET_PARAM_PAGE_LINK_DESCR, currentLang, this.getPageLinkDescriptionVar());
-				if (null != this.getPageLinkVar()) {
-					String pageLink = config.getProperty(IContentListWidgetHelper.WIDGET_PARAM_PAGE_LINK);
-					if (null != pageLink) {
-						this.pageContext.setAttribute(this.getPageLinkVar(), pageLink);
-					}
-				}
-			}
-		} catch (Throwable t) {
-			_logger.error("Error extracting extra parameters", t);
-		}
 	}
 	
 }

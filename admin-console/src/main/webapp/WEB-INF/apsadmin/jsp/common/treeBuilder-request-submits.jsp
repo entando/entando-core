@@ -45,6 +45,7 @@
 		<s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked" </s:if> />
 	<label for="fagianonode_<s:property value="#currentRoot.code" />">
 		<s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
 	</label>
 	<s:if test="#currentRoot.children.length > 0">
 		<ul class="treeToggler fa-ul" id="tree_<s:property value="#currentRoot.code" />">

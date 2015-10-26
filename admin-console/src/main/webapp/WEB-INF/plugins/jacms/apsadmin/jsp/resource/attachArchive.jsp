@@ -172,6 +172,7 @@
 				<s:else>
 					<s:property value="#resource.descr" />
 				</s:else>
+                                <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
 				<s:set var="fileNameVar" value="#resource.masterFileName" />
 				<s:if test='%{#fileNameVar.length()>25}'>
 					<s:set var="fileNameVar" value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}' />
@@ -215,6 +216,7 @@
 		<div class="col-lg-12">
 			<a href="<s:url action="edit" namespace="/do/jacms/Resource"><s:param name="resourceId" value="%{#resourceid}" /></s:url>" title="<s:text name="label.edit" />: <s:property value="#resource.descr" /> ">
 			<span class="icon fa fa-pencil-square-o"></span>&#32;<s:property value="#resource.descr" /></a>
+                        <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
 			<p class="margin-none">
 			<a href="<s:property value="%{#resource.documentPath}" />" title="<s:text name="label.download" />: <s:property value="#resource.masterFileName" />" class="pull-left margin-small-top">
 			<span class="icon fa fa-download"></span>&#32;

@@ -73,7 +73,7 @@
 			<div class="col-xs-10 col-md-11">
 				<a href="<s:url namespace="/do/Portal/WidgetType" action="edit"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="label.configWidget" />: <s:property value="#showletType.value" />" ><span class="icon fa fa-cog"></span>
 				<s:property value="#showletType.value" /></a>
-
+                                 <s:if test="%{#concreteShowletTypeVar.mainGroup != null && !#concreteShowletTypeVar.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
 				<%--<span class="label label-default label-sm padding-small-top padding-small-bottom margin-small-right margin-small-bottom"><s:property value="%{getGroup(getShowletType(#showletType.key).mainGroup).descr}" /></span>--%>
 			</div>
 		</div>
@@ -84,8 +84,7 @@
 		<s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
 			<a href="<s:url namespace="/do/Portal/WidgetType" action="viewWidgetUtilizers"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="title.widgetManagement.howmanypages.goToSee" />: <s:property value="#showletType.value" />" class="btn btn-default"><span class="icon fa fa-info"></span></a>
 		</s:if>
-
-		<wp:ifauthorized permission="superuser">
+                <wp:ifauthorized permission="superuser">
 		<s:set var="concreteShowletTypeVar" value="%{getShowletType(#showletType.key)}"></s:set>
 
 			<s:if test="#concreteShowletTypeVar.isLogic()">
@@ -127,7 +126,6 @@
 			</wpsa:hookPoint>
 			</div>
 		</div>
-
 		</div>
 	</li>
 </s:iterator>

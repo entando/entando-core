@@ -62,10 +62,9 @@
 <ul class="list-group">
 <s:iterator var="showletType" value="#showletFlavour" >
 <s:set var="showletUtilizers" value="getShowletUtilizers(#showletType.key)" ></s:set>
-
 	<li class="list-group-item">
 	<div class="row">
-
+                <s:set var="concreteShowletTypeVar" value="%{getShowletType(#showletType.key)}"></s:set>
 		<div class="col-sm-8 col-lg-8">
 			<div class="col-xs-2 col-md-1">
 				<span class="badge" title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />"><s:property value="#showletUtilizers.size()" /></span>&#32;
@@ -77,16 +76,12 @@
 				<%--<span class="label label-default label-sm padding-small-top padding-small-bottom margin-small-right margin-small-bottom"><s:property value="%{getGroup(getShowletType(#showletType.key).mainGroup).descr}" /></span>--%>
 			</div>
 		</div>
-
 		<div class="col-sm-4 col-lg-4">
 		<div class="btn-group btn-group-xs pull-right">
-
 		<s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
 			<a href="<s:url namespace="/do/Portal/WidgetType" action="viewWidgetUtilizers"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="title.widgetManagement.howmanypages.goToSee" />: <s:property value="#showletType.value" />" class="btn btn-default"><span class="icon fa fa-info"></span></a>
 		</s:if>
                 <wp:ifauthorized permission="superuser">
-		<s:set var="concreteShowletTypeVar" value="%{getShowletType(#showletType.key)}"></s:set>
-
 			<s:if test="#concreteShowletTypeVar.isLogic()">
 				<s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.parentType.code]" />
 			</s:if>

@@ -59,7 +59,7 @@
 		<test.database.port.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testPort;create=true</test.database.port.url>
 		<test.database.serv.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testServ;create=true</test.database.serv.url>
 		
-		<spring.version>4.1.4.RELEASE</spring.version>
+		<spring.version>4.1.5.RELEASE</spring.version>
 		<struts2.version>2.3.16.3</struts2.version>
 		<cxf.version>2.7.14</cxf.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

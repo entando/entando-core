@@ -35,7 +35,7 @@ import com.agiletec.apsadmin.system.BaseActionHelper;
  * Action class which handles categories. 
  * @author E.Santoboni - G.Cocco
  */
-public class CategoryAction extends AbstractTreeAction implements ICategoryAction, ICategoryTreeAction {
+public class CategoryAction extends AbstractTreeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CategoryAction.class);
 	
@@ -76,7 +76,10 @@ public class CategoryAction extends AbstractTreeAction implements ICategoryActio
 		}
 	}
 	
-	@Override
+	/**
+	 * Create a new category.
+	 * @return The result code.
+	 */
 	public String add() {
 		String selectedNode = this.getSelectedNode();
 		try {
@@ -89,19 +92,24 @@ public class CategoryAction extends AbstractTreeAction implements ICategoryActio
 			this.setParentCategoryCode(selectedNode);
 		} catch (Throwable t) {
 			_logger.error("error in add", t);
-			//ApsSystemUtils.logThrowable(t, this, "add");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Edit an existing category.
+	 * @return The result code.
+	 */
 	public String edit() {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		return this.extractCategoryFormValues();
 	}
 	
-	@Override
+	/**
+	 * Show the detail of a category.
+	 * @return The result code.
+	 */
 	public String showDetail() {
 		String result = this.extractCategoryFormValues();
 		if (!result.equals(SUCCESS)) return result;
@@ -122,26 +130,30 @@ public class CategoryAction extends AbstractTreeAction implements ICategoryActio
 			this.setTitles(category.getTitles());
 		} catch (Throwable t) {
 			_logger.error("error in extractCategoryFormValues", t);
-			//ApsSystemUtils.logThrowable(t, this, "extractCategoryFormValues");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Start the deletion process of a category.
+	 * @return The result code.
+	 */
 	public String trash() {
 		try {
 			String check = this.chechDelete();
 			if (null != check) return check;
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
-			//ApsSystemUtils.logThrowable(t, this, "trash");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Delete a category permanently.
+	 * @return The result code.
+	 */
 	public String delete() {
 		String selectedNode = this.getSelectedNode();
 		try {
@@ -152,7 +164,6 @@ public class CategoryAction extends AbstractTreeAction implements ICategoryActio
 			this.setSelectedNode(currentCategory.getParent().getCode());
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
-			//ApsSystemUtils.logThrowable(t, this, "delete");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -198,11 +209,13 @@ public class CategoryAction extends AbstractTreeAction implements ICategoryActio
 			}
 		} catch (Throwable t) {
 			_logger.error("Error extracting referenced objects by category {}", categoryCode, t);
-			//ApsSystemUtils.logThrowable(t, this, "extractReferencingObjects", "Error extracting referenced objects by category '" + categoryCode + "'");
 		}
 	}
 	
-	@Override
+	/**
+	 * Save a category.
+	 * @return The result code.
+	 */
 	public String save() {
 		try {
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
@@ -217,7 +230,6 @@ public class CategoryAction extends AbstractTreeAction implements ICategoryActio
 			}
 		} catch (Exception e) {
 			_logger.error("error in save", e);
-			//ApsSystemUtils.logThrowable(e, this, "save");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -227,20 +239,23 @@ public class CategoryAction extends AbstractTreeAction implements ICategoryActio
 		return this.getCategoryManager().getCategory(categoryCode);
 	}
 	
-	@Override
 	@Deprecated
 	public Category getRoot() {
 		return this.getCategoryManager().getRoot();
 	}
 	
-	@Override
+	/** 
+	 * Return the root node of the categories tree which the current user is granted to access. 
+	 * The node may be the effective root of the category tree or a virtual node which contains only
+	 * some qualified category.
+	 * @return The root node of the categories tree which the current user is granted to access.
+	 */
 	public ITreeNode getTreeRootNode() {
 		ITreeNode node = null;
 		try {
 			node = this.getHelper().getAllowedTreeRoot(new ArrayList<String>());
 		} catch (Throwable t) {
 			_logger.error("error in getTreeRootNode", t);
-			//ApsSystemUtils.logThrowable(t, this, "getTreeRootNode");
 		}
 		return node;
 	}

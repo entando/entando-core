@@ -27,11 +27,14 @@ import org.entando.entando.apsadmin.system.services.shortcut.model.UserConfigBea
  * Action that manage the shortcut configuration of the current user.
  * @author E.Santoboni
  */
-public class MyShortcutConfigAction extends BaseAction implements IMyShortcutConfigAction {
+public class MyShortcutConfigAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(MyShortcutConfigAction.class);
 
-	@Override
+	/**
+	 * Join a shortcut in the user configuration.
+	 * @return The result code.
+	 */
 	public String joinMyShortcut() {
 		if (this.getStrutsAction() != ApsAdminSystemConstants.ADD) {
 			this.addFieldError("strutsAction", this.getText("error.myShortcut.invalidAction"));
@@ -40,7 +43,10 @@ public class MyShortcutConfigAction extends BaseAction implements IMyShortcutCon
 		return this.executeUpdateConfig(this.getPosition(), this.getShortcutCode());
 	}
 	
-	@Override
+	/**
+	 * Remove a shortcut from the user configuration.
+	 * @return The result code.
+	 */
 	public String removeMyShortcut() {
 		return this.executeUpdateConfig(this.getPosition(), null);
 	}
@@ -61,7 +67,10 @@ public class MyShortcutConfigAction extends BaseAction implements IMyShortcutCon
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Swap a shortcut whith other one in the user configuration.
+	 * @return The result code.
+	 */
 	public String swapMyShortcut() {
 		try {
 			String[] config = this.getUserConfig();
@@ -77,7 +86,6 @@ public class MyShortcutConfigAction extends BaseAction implements IMyShortcutCon
 			this.setPositionTarget(null);
 		} catch (Throwable t) {
 			_logger.error("error in swapMyShortcut", t);
-			//ApsSystemUtils.logThrowable(t, this, "swapMyShortcut");
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -178,4 +186,7 @@ public class MyShortcutConfigAction extends BaseAction implements IMyShortcutCon
 	private Integer _positionDest;
 	
 	private IShortcutManager _shortcutManager;
+	
+	public static final String SESSION_PARAM_MY_SHORTCUTS = "myShortcuts_sessionParam";
+	
 }

@@ -25,7 +25,7 @@ import com.agiletec.apsadmin.system.BaseAction;
  * Action specifica per la gestione della password utente corrente.
  * @author E.Santoboni
  */
-public class BaseCommonAction extends BaseAction implements IBaseCommonAction {
+public class BaseCommonAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(BaseCommonAction.class);
 	
@@ -37,7 +37,7 @@ public class BaseCommonAction extends BaseAction implements IBaseCommonAction {
 		}
 		try {
 			UserDetails currentUser = this.getCurrentUser();
-			if (!currentUser.isJapsUser()) {
+			if (!currentUser.isEntandoUser()) {
 				this.addFieldError("username", this.getText("error.user.changePassword.currentUserNotLocal"));
 			} else if (null == this.getUserManager().getUser(currentUser.getUsername(), this.getOldPassword())) {
 				this.addFieldError("oldPassword", this.getText("error.user.changePassword.wrongOldPassword"));
@@ -47,19 +47,16 @@ public class BaseCommonAction extends BaseAction implements IBaseCommonAction {
 		}
 	}
 	
-	@Override
 	public String editPassword() {
 		return SUCCESS;
 	}
 	
-	@Override
 	public String changePassword() {
 		try {
 			this.getUserManager().changePassword(this.getUsername(), this.getPassword());
 			this.addActionMessage(this.getText("message.passwordChanged"));
 		} catch (Throwable t) {
 			_logger.error("error in changePassword", t);
-			//ApsSystemUtils.logThrowable(t, this, "changePassword");
 			return FAILURE;
 		}
 		return SUCCESS;

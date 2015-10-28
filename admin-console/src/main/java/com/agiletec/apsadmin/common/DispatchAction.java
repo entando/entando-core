@@ -28,7 +28,7 @@ import com.agiletec.apsadmin.system.BaseAction;
  * Action specifica per la gestione delle operazioni di login.
  * @author E.Santoboni
  */
-public class DispatchAction extends BaseAction implements IDispatchAction {
+public class DispatchAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DispatchAction.class);
 	
@@ -68,12 +68,18 @@ public class DispatchAction extends BaseAction implements IDispatchAction {
         }
 	}
     
-	@Override
+	/**
+	 * Esegue l'operazione di richiesta login utente.
+	 * @return Il codice del risultato dell'azione.
+	 */
     public String doLogin() {
     	return SUCCESS;
     }
     
-	@Override
+	/**
+	 * Esegue l'operazione di richiesta logout utente.
+	 * @return Il codice del risultato dell'azione.
+	 */
     public String doLogout() {
     	this.getSession().invalidate();
     	return "homepage";

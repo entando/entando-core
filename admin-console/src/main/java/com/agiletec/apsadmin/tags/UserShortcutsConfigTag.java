@@ -13,23 +13,21 @@
  */
 package com.agiletec.apsadmin.tags;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
+import com.opensymphony.xwork2.util.ValueStack;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import org.apache.struts2.views.jsp.StrutsBodyTagSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-
-import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-import com.opensymphony.xwork2.util.ValueStack;
-
-import org.entando.entando.apsadmin.common.IMyShortcutConfigAction;
+import org.entando.entando.apsadmin.common.MyShortcutConfigAction;
 import org.entando.entando.apsadmin.system.services.shortcut.IShortcutManager;
 import org.entando.entando.apsadmin.system.services.shortcut.model.UserConfigBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Returns the configured shortcuts (object {@link UserConfigBean}) of the current user.
@@ -43,10 +41,10 @@ public class UserShortcutsConfigTag extends StrutsBodyTagSupport {
 	public int doEndTag() throws JspException {
 		HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
 		try {
-			UserConfigBean config = (UserConfigBean) request.getSession().getAttribute(IMyShortcutConfigAction.SESSION_PARAM_MY_SHORTCUTS);
+			UserConfigBean config = (UserConfigBean) request.getSession().getAttribute(MyShortcutConfigAction.SESSION_PARAM_MY_SHORTCUTS);
 			UserDetails currentUser = (UserDetails) request.getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
 			if (null == config || !currentUser.getUsername().equals(config.getUsername())) {
-				request.getSession().removeAttribute(IMyShortcutConfigAction.SESSION_PARAM_MY_SHORTCUTS);
+				request.getSession().removeAttribute(MyShortcutConfigAction.SESSION_PARAM_MY_SHORTCUTS);
 				IShortcutManager shortcutManager = (IShortcutManager) ApsWebApplicationUtils.getBean(ApsAdminSystemConstants.SHORTCUT_MANAGER, this.pageContext);
 				config = shortcutManager.getUserConfigBean(currentUser);
 			}
@@ -57,7 +55,6 @@ public class UserShortcutsConfigTag extends StrutsBodyTagSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error on doStartTag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error on doStartTag", t);
 		}
 		return super.doEndTag();

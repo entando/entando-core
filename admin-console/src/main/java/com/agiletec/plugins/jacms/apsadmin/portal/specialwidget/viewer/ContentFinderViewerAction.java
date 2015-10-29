@@ -31,7 +31,7 @@ import com.agiletec.plugins.jacms.apsadmin.content.ContentFinderAction;
  * la configurazione dei widget di tipo "Pubblica contenuto singolo".
  * @author E.Santoboni
  */
-public class ContentFinderViewerAction extends ContentFinderAction implements IContentFinderViewerAction {
+public class ContentFinderViewerAction extends ContentFinderAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentFinderViewerAction.class);
 	
@@ -47,13 +47,17 @@ public class ContentFinderViewerAction extends ContentFinderAction implements IC
 			 */
 		} catch (Throwable t) {
 			_logger.error("Error searching contents ", t);
-			//ApsSystemUtils.logThrowable(t, this, "getContents");
 			throw new RuntimeException("Errore in ricerca contenuti", t);
 		}
 		return result;
 	}
 	
-	@Override
+	/**
+	 * Esegue l'operazione di richiesta associazione di un contenuto alla showlet.
+	 * La richiesta viene effettuata nell'interfaccia di ricerca risorse e viene redirezionata 
+	 * alla action che gestisce la configurazione della showlet di pubblicazione contenuto.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String joinContent() {
 		return SUCCESS;
 	}

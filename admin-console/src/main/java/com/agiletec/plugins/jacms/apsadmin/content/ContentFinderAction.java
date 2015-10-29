@@ -42,7 +42,7 @@ import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
  * Action per la ricerca contenuti.
  * @author E.Santoboni
  */
-public class ContentFinderAction extends AbstractApsEntityFinderAction implements IContentFinderAction {
+public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentFinderAction.class);
 	
@@ -57,7 +57,12 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Restituisce la lista identificativi di contenuti che deve essere erogata dall'interfaccia di 
+	 * visualizzazione dei contenuti. La lista deve essere filtrata secondo i parametri di ricerca impostati.
+	 * @return La lista di contenuti che deve essere erogata dall'interfaccia di 
+	 * visualizzazione dei contenuti.
+	 */
 	public List<String> getContents() {
 		List<String> result = null;
 		try {
@@ -134,7 +139,11 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 		return this.execute();
 	}
 	
-	@Override
+	/**
+	 * Esegue la publicazione di un singolo contenuto direttamente 
+	 * dall'interfaccia di visualizzazione dei contenuti in lista.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String insertOnLine() {
 		try {
 			if (null == this.getContentIds()) {
@@ -152,7 +161,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 					this.addActionError(this.getText("error.content.contentToPublishNull", msgArg));
 					continue;
 				}
-				msgArg[0] = contentToPublish.getDescr();
+				msgArg[0] = contentToPublish.getDescription();
 				if (!this.isUserAllowed(contentToPublish)) {
 					this.addActionError(this.getText("error.content.userNotAllowedToPublishContent", msgArg));
 					continue;
@@ -176,7 +185,11 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Esegue la rimozione dall'area pubblica di un singolo contenuto direttamente 
+	 * dall'interfaccia di visualizzazione dei contenuti in lista.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String removeOnLine() {
 		try {
 			if (null == this.getContentIds()) {
@@ -194,7 +207,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 					this.addActionError(this.getText("error.content.contentToSuspendNull", msgArg));
 					continue;
 				}
-				msgArg[0] = contentToSuspend.getDescr();
+				msgArg[0] = contentToSuspend.getDescription();
 				if (!this.isUserAllowed(contentToSuspend)) {
 					this.addActionError(this.getText("error.content.userNotAllowedToSuspendContent", msgArg));
 					continue;
@@ -223,7 +236,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 	 * share all the messages with the 'delete' action.
 	 * @return the result code of the action: "success" if all the contents can be deleted, "cannotProceed" if blocking errors are detected
 	 */
-	@Override
 	public String trash() {
 		if (null == this.getContentIds()) {
 			this.addActionError(this.getText("error.contents.nothingSelected"));
@@ -239,8 +251,8 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 					msgArg[0] = currentContentId;
 					this.addActionError(this.getText("error.content.contentToDeleteNull", msgArg));
 					continue;
-				} 
-				msgArg[0] = contentToTrash.getDescr();			
+				}
+				msgArg[0] = contentToTrash.getDescription();			
 				if (!this.isUserAllowed(contentToTrash)) {
 					this.addActionError(this.getText("error.content.userNotAllowedToContentToDelete", msgArg));
 					continue;
@@ -258,7 +270,10 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 		return "cannotProceed";
 	}
 	
-	@Override
+	/**
+	 * Esegue l'operazione di cancellazione contenuto o gruppo contenuti.
+	 * @return Il codice del risultato.
+	 */
 	public String delete() {
 		try {
 			if (null == this.getContentIds()) {
@@ -275,8 +290,8 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 					msgArg[0] = contentId;
 					this.addActionError(this.getText("error.content.contentToDeleteNull", msgArg));
 					continue;
-				} 
-				msgArg[0] = contentToDelete.getDescr();
+				}
+				msgArg[0] = contentToDelete.getDescription();
 				if (!this.isUserAllowed(contentToDelete)) {
 					this.addActionError(this.getText("error.content.userNotAllowedToContentToDelete", msgArg));
 					continue;
@@ -310,7 +325,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction implement
 			for (int i=0; i<deletedContents.size(); i++) {
 				Content content = deletedContents.get(i);
 				if (i>0) confirm += " - ";
-				confirm += " '" + content.getDescr() + "'";
+				confirm += " '" + content.getDescription()+ "'";
 			}
 			this.addActionMessage(confirm);
 		}

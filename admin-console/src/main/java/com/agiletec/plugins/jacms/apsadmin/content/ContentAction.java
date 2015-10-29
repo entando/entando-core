@@ -41,8 +41,8 @@ import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
  * Action principale per la redazione contenuti.
  * @author E.Santoboni
  */
-public class ContentAction extends AbstractContentAction implements IContentAction {
-
+public class ContentAction extends AbstractContentAction {
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentAction.class);
 	
 	@Override
@@ -51,8 +51,11 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		super.validate();
 		this.getContentActionHelper().scanEntity(content, this);
 	}
-
-	@Override
+	
+	/**
+	 * Esegue l'azione di edit di un contenuto.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String edit() {
 		try {
 			Content content = this.getContentManager().loadContent(this.getContentId(), false);
@@ -73,7 +76,10 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		return SUCCESS;
 	}
 
-	@Override
+	/**
+	 * Esegue l'azione di copia/incolla di un contenuto.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String copyPaste() {
 		try {
 			Content content = this.getContentManager().loadContent(this.getContentId(), this.isCopyPublicVersion());
@@ -88,7 +94,7 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 			String marker = buildContentOnSessionMarker(content, ApsAdminSystemConstants.PASTE);
 			content.setId(null);
 			content.setVersion(Content.INIT_VERSION);
-			content.setDescr(this.getText("label.copyOf") + " " + content.getDescr());
+			content.setDescription(this.getText("label.copyOf") + " " + content.getDescription());
 			super.setContentOnSessionMarker(marker);
 			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, content);
 		} catch (Throwable t) {
@@ -97,7 +103,7 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		}
 		return SUCCESS;
 	}
-
+	
 	public String forwardToEntryContent() {
 		return SUCCESS;
 	}
@@ -118,7 +124,11 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Esegue l'azione di associazione di un
+	 * gruppo al contenuto in fase di redazione.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String joinGroup() {
 		this.updateContentOnSession();
 		try {
@@ -133,8 +143,12 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		}
 		return SUCCESS;
 	}
-
-	@Override
+	
+	/**
+	 * Esegue l'azione di rimozione di un
+	 * gruppo dal contenuto in fase di redazione.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String removeGroup() {
 		this.updateContentOnSession();
 		try {
@@ -149,13 +163,12 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		}
 		return SUCCESS;
 	}
-
-	@Override
+	
 	public String saveAndContinue() {
 		try {
 			Content currentContent = this.updateContentOnSession();
 			if (null != currentContent) {
-				if (null == currentContent.getDescr() || currentContent.getDescr().trim().length() == 0) {
+				if (null == currentContent.getDescription()|| currentContent.getDescription().trim().length() == 0) {
 					this.addFieldError("descr", this.getText("error.content.descr.required"));
 				} else {
 					currentContent.setLastEditor(this.getCurrentUser().getUsername());
@@ -168,13 +181,19 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		}
 		return SUCCESS;
 	}
-
-	@Override
+	
+	/**
+	 * Esegue l'azione di salvataggio del contenuto in fase di redazione.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String saveContent() {
 		return this.saveContent(false);
 	}
-
-	@Override
+	
+	/**
+	 * Esegue l'azione di salvataggio e pubblicazione del contenuto in fase di redazione.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String saveAndApprove() {
 		return this.saveContent(true);
 	}
@@ -209,8 +228,12 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		}
 		return SUCCESS;
 	}
-
-	@Override
+	
+	/**
+	 * Esegue l'azione di rimozione del contenuto pubblico
+	 * e salvataggio del contenuto in fase di redazione.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String suspend() {
 		try {
 			Content currentContent = this.updateContentOnSession();
@@ -235,11 +258,11 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 		}
 		return SUCCESS;
 	}
-
+	
 	public int[] getLinkDestinations() {
 		return SymbolicLink.getDestinationTypes();
 	}
-
+	
 	@Deprecated (/** From jAPS 2.0 version 2.1, use {@link IContentCategoryAction} action */)
 	public Category getCategoryRoot() {
 		return (Category) this.getCategoryManager().getRoot();
@@ -283,7 +306,7 @@ public class ContentAction extends AbstractContentAction implements IContentActi
 	}
 	
 	public String getIconFile(String fileName) {
-		return this.getResourceIconUtil().getIconFile(fileName);
+		return this.getResourceIconUtil().getIconByFilename(fileName);
 	}
 
 	@Deprecated (/** From jAPS 2.0 version 2.1, use {@link IContentCategoryAction} action */)

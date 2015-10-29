@@ -22,28 +22,37 @@ import com.agiletec.plugins.jacms.aps.system.services.searchengine.ICmsSearchEng
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.LastReloadInfo;
 
 /**
- * Classi Action delegata alla esecuzione delle operazioni 
- * di amministrazione dei contenuti.
+ * Classi Action delegata alla esecuzione delle operazioni di amministrazione dei contenuti.
  * @author E.Santoboni
  */
-public class ContentAdminAction extends BaseAction implements IContentAdminAction {
+public class ContentAdminAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentAdminAction.class);
 	
-	@Override
+	/**
+	 * Effettua la richiesta di ricaricamento degli indici a servizio 
+	 * del motore di ricerca interno.
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String reloadContentsIndex() {
 		try {
 			this.getSearchEngineManager().startReloadContentsReferences();
 			_logger.info("Reload contents index started");
 		} catch (Throwable t) {
 			_logger.error("error in reloadContentsIndex", t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadContentsIndex");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Effettua la richeista di ricaricamento delle referenze dei contenuti.
+	 * Le referenze sono rappresentate sia dalle repliche dei valori degli Attributi 
+	 * di Contenuto dichiarati ricercabili in apposita tabella (elementi a servizio degli erogatori di contenuti in lista) e 
+	 * che delle referenze tra Contenuti e Pagine, Risorse, Gruppi e Contenuti stessi in apposita tabella (elementi a 
+	 * servizio di controlli di autorizzazione e validazione).
+	 * @return Il codice del risultato dell'azione.
+	 */
 	public String reloadContentsReference() {
 		try {
 			String typeCode = null;
@@ -51,7 +60,6 @@ public class ContentAdminAction extends BaseAction implements IContentAdminActio
 			_logger.info("Reload contents reference started");
 		} catch (Throwable t) {
 			_logger.error("error in reloadContentsReference", t);
-			//ApsSystemUtils.logThrowable(t, this, "reloadContentsReference");
 			return FAILURE;
 		}
 		return SUCCESS;

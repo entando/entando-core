@@ -21,7 +21,7 @@ import com.agiletec.plugins.jacms.apsadmin.content.ContentAction;
 import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.resource.ExtendedResourceFinderAction;
 import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.resource.ResourceAttributeActionHelper;
 import com.agiletec.plugins.jacms.apsadmin.content.util.AbstractBaseTestContentAction;
-import com.agiletec.plugins.jacms.apsadmin.resource.IResourceFinderAction;
+import com.agiletec.plugins.jacms.apsadmin.resource.ResourceFinderAction;
 import com.opensymphony.xwork2.Action;
 
 /**
@@ -38,13 +38,13 @@ public class TestExtendedResourceFinderAction extends AbstractBaseTestContentAct
 		session.setAttribute(ResourceAttributeActionHelper.ATTRIBUTE_NAME_SESSION_PARAM, "Foto");
 		session.setAttribute(ResourceAttributeActionHelper.RESOURCE_TYPE_CODE_SESSION_PARAM, "Image");
 		session.setAttribute(ResourceAttributeActionHelper.RESOURCE_LANG_CODE_SESSION_PARAM, "it");
-
+		
 		this.initContentAction("/do/jacms/Content/Resource", "search", contentOnSessionMarker);
 		this.addParameter("resourceTypeCode", "Image");//per replicare il chain in occasione dei chooseResource da edit Contenuto.
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-
-		IResourceFinderAction action = (IResourceFinderAction) this.getAction();
+		
+		ResourceFinderAction action = (ResourceFinderAction) this.getAction();
 		assertEquals(2, action.getResources().size());
 		assertEquals("22", action.getResources().get(0));
 		assertEquals("44", action.getResources().get(1));
@@ -65,12 +65,11 @@ public class TestExtendedResourceFinderAction extends AbstractBaseTestContentAct
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 
-		IResourceFinderAction action = (IResourceFinderAction) this.getAction();
+		ResourceFinderAction action = (ResourceFinderAction) this.getAction();
 		assertEquals(3, action.getResources().size());
 		assertTrue(action.getResources().contains("82"));
 	}
-
-
+	
 	public void testJoinImageResource() throws Throwable {
 		this.executeEdit("ART102", "admin");
 		String contentOnSessionMarker = super.extractSessionMarker("ART102", ApsAdminSystemConstants.EDIT);

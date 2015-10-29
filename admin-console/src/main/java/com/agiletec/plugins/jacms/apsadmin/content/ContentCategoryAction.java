@@ -29,7 +29,7 @@ import com.opensymphony.xwork2.Action;
  * Action class that manages the category tree operation on content finding GUI interface and the relationships between content and categories.
  * @author E.Santoboni
  */
-public class ContentCategoryAction extends AbstractTreeAction implements IContentCategoryAction {
+public class ContentCategoryAction extends AbstractTreeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentCategoryAction.class);
 	
@@ -45,13 +45,15 @@ public class ContentCategoryAction extends AbstractTreeAction implements IConten
 			}
 		} catch (Throwable t) {
 			_logger.error("error in buildTree", t);
-			//ApsSystemUtils.logThrowable(t, this, "buildTree");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Performs the action of adding of a category to the content.
+	 * @return The result code.
+	 */
 	public String joinCategory() {
 		this.updateContentOnSession();
 		try {
@@ -63,13 +65,15 @@ public class ContentCategoryAction extends AbstractTreeAction implements IConten
 			}
 		} catch (Throwable t) {
 			_logger.error("error in joinCategory", t);
-			//ApsSystemUtils.logThrowable(t, this, "joinCategory");
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Performs the action of removing a category from the content.
+	 * @return The result code.
+	 */
 	public String removeCategory() {
 		this.updateContentOnSession();
 		try {
@@ -80,7 +84,6 @@ public class ContentCategoryAction extends AbstractTreeAction implements IConten
 			}
 		} catch (Throwable t) {
 			_logger.error("error in removeCategory", t);
-			//ApsSystemUtils.logThrowable(t, this, "removeCategory");
 			return FAILURE;
 		}
 		return SUCCESS;

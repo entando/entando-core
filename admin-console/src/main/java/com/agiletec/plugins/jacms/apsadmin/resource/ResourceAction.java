@@ -35,7 +35,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
  * Class used to handle resource objects.
  * @author E.Santoboni
  */
-public class ResourceAction extends AbstractResourceAction implements IResourceAction, ResourceDataBean {
+public class ResourceAction extends AbstractResourceAction implements ResourceDataBean {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ResourceAction.class);
 	
@@ -78,7 +78,10 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		return isValid;
 	}
 	
-	@Override
+	/**
+	 * Executes the specific action to create a new content 
+	 * @return The result code.
+	 */
 	public String newResource() {
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);
 		try {
@@ -92,7 +95,10 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Executes the specific action to modify an existing resource.
+	 * @return The result code.
+	 */
 	public String edit() {
 		try {
 			ResourceInterface resource = this.loadResource(this.getResourceId());
@@ -112,7 +118,10 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Executes the specific action to modify an existing resource. 
+	 * @return The result code.
+	 */
 	public String save() {
 		try {
 			if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
@@ -127,7 +136,12 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * Executes the specific action to delete a resource. 
+	 * This does NOT perform any deletion, it just ensures that there are
+	 * no hindrances to a deletion process.
+	 * @return The result code.
+	 */
 	public String trash() {
 		try {
 			String result = this.checkDeleteResource();
@@ -139,7 +153,12 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		return SUCCESS;
 	}
 	
-	@Override
+	/**
+	 * This forces the deletion of a resource. 
+	 * NOTE! This method is invoked, in the administration interface,
+	 * when deleting a referenced resource.
+	 * @return The result code.
+	 */
 	public String delete() {
 		try {
 			String result = this.checkDeleteResource();
@@ -168,12 +187,18 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		return null;
 	}
 	
-	@Override
+	/**
+	 * Executes the specific action in order to associate a category to the resource on edit.
+	 * @return The result code.
+	 */
 	public String joinCategory() {
 		return this.joinRemoveCategory(true, this.getCategoryCode());
 	}
 	
-	@Override
+	/**
+	 * Executes the specific action in order to remove the association between a category and the resource on edit. 
+	 * @return The result code.
+	 */
 	public String removeCategory() {
 		return this.joinRemoveCategory(false, this.getCategoryCode());
 	}
@@ -209,6 +234,7 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 		return this.getCategoryManager().getCategory(categoryCode);
 	}
 	
+	@Override
 	public String getResourceId() {
 		return _resourceId;
 	}
@@ -340,13 +366,13 @@ public class ResourceAction extends AbstractResourceAction implements IResourceA
 	private File _file;
     private String _contentType;
     private String _filename;
-	
-	private IGroupManager _groupManager;
     
     private int _strutsAction;
 	
 	private Map<String, List> _references;
 	
 	private String _categoryCode;
+	
+	private IGroupManager _groupManager;
 	
 }

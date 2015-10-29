@@ -32,11 +32,16 @@ import org.slf4j.LoggerFactory;
  * Classe Action delegata alla gestione delle operazioni di ricerca risorse.
  * @author E.Santoboni
  */
-public class ResourceFinderAction extends AbstractResourceAction implements IResourceFinderAction {
+public class ResourceFinderAction extends AbstractResourceAction {
  
 	private static final Logger _logger = LoggerFactory.getLogger(ResourceFinderAction.class);
 	
-	@Override
+	/**
+	 * Restituisce la lista di identificativi delle risorse che 
+	 * soddisfano i parametri di ricerca immessi.
+	 * @return La lista di identificativi di risorse.
+	 * @throws Throwable In caso di errore.
+	 */
     public List<String> getResources() throws Throwable {
         List<String> resourceIds = null;
         try {

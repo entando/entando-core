@@ -39,10 +39,14 @@ public class UserAvatarAction extends BaseAction {
 	private static final Logger _logger =  LoggerFactory.getLogger(UserAvatarAction.class);
 	
 	public String returnAvatarStream() {
+		if (!this.isGravatarIntegrationEnabled()) {
+			return this.extractDefaultAvatarStream();
+		}
+		return this.extractGravatar();
+	}
+	
+	protected String extractGravatar() {
 		try {
-			if (!this.isGravatarIntegrationEnabled()) {
-				return this.extractDefaultAvatarStream();
-			}
 			IUserProfile profile = this.getUserProfile();
 			if (null == profile) {
 				return this.extractDefaultAvatarStream();
@@ -55,8 +59,8 @@ public class UserAvatarAction extends BaseAction {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			this.setInputStream(conn.getInputStream());
-		} catch (FileNotFoundException t) {
-			_logger.info("avatar not available");
+		} catch (FileNotFoundException fnfe) {
+			_logger.info("avatar not available", fnfe);
 			return this.extractDefaultAvatarStream();
         } catch (Throwable t) {
 			_logger.error("error in returnAvatarStream", t);

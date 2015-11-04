@@ -188,23 +188,23 @@
 
 				<div class="form-group col-sm-12">
 					<div class="btn-group" data-toggle="buttons">
-						<label class="btn btn-default" for="viewCode">
+						<label class="btn btn-default<s:if test="%{viewCode}" > active</s:if>" for="viewCode">
 							<wpsf:checkbox name="viewCode" id="viewCode" />&#32;
 							<s:text name="label.code" />
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewTypeDescr}" > active</s:if>">
 							<wpsf:checkbox name="viewTypeDescr" id="viewTypeDescr" />&#32;
 							<s:text name="name.contentType" />
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewStatus}" > active</s:if>">
 							<wpsf:checkbox name="viewStatus" id="viewStatus" />&#32;
 							<s:text name="name.contentStatus" />
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewGroup}" > active</s:if>">
 							<wpsf:checkbox name="viewGroup" id="viewGroup" />&#32;
 							<s:text name="label.group"/>
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewCreationDate}" > active</s:if>">
 							<wpsf:checkbox name="viewCreationDate" id="viewCreationDate" />&#32;
 							<s:text name="label.creationDate"/>
 						</label>

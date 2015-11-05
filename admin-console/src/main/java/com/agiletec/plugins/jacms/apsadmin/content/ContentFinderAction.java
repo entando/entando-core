@@ -318,14 +318,16 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		return this.getContentActionHelper().isUserAllowed(content, this.getCurrentUser());
 	}
 	
-	private void addConfirmMessage(String key, List<Content> deletedContents) {
-		if (deletedContents.size()>0) {
+	protected void addConfirmMessage(String key, List<Content> contents) {
+		if (contents.size()>0) {
 			//RIVISITARE LOGICA DI COSTRUZIONE MESSAGGIO
 			String confirm = this.getText(key);
-			for (int i=0; i<deletedContents.size(); i++) {
-				Content content = deletedContents.get(i);
-				if (i>0) confirm += " - ";
-				confirm += " '" + content.getDescription()+ "'";
+			for (int i=0; i<contents.size(); i++) {
+				Content content = contents.get(i);
+				if (i>0) {
+					confirm += " - ";
+				}
+				confirm += " '" + content.getDescription() + "'";
 			}
 			this.addActionMessage(confirm);
 		}

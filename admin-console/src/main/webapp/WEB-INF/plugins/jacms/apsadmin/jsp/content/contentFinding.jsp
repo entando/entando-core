@@ -1,7 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
-<%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%-- radios + checkboxes only --%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
@@ -488,6 +487,11 @@
 					</wpsf:submit>
 				</div>
 			</wp:ifauthorized>
+			<wpsa:hookPoint key="jacms.contentFinding.allContents.actions" objectName="hookpoint_contentFinding_allContents">
+			<s:iterator value="#hookpoint_contentFinding_allContents" var="hookPointElement">
+				<wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+			</s:iterator>
+			</wpsa:hookPoint>
 				<div class="btn-group margin-small-vertical">
 					<wpsf:submit action="trashContentGroup" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-link">
 						<span class="icon fa fa-times-circle"></span>

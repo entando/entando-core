@@ -187,23 +187,23 @@
 
 				<div class="form-group col-sm-12">
 					<div class="btn-group" data-toggle="buttons">
-						<label class="btn btn-default" for="viewCode">
+						<label class="btn btn-default<s:if test="%{viewCode}" > active</s:if>" for="viewCode">
 							<wpsf:checkbox name="viewCode" id="viewCode" />&#32;
 							<s:text name="label.code" />
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewTypeDescr}" > active</s:if>">
 							<wpsf:checkbox name="viewTypeDescr" id="viewTypeDescr" />&#32;
 							<s:text name="name.contentType" />
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewStatus}" > active</s:if>">
 							<wpsf:checkbox name="viewStatus" id="viewStatus" />&#32;
 							<s:text name="name.contentStatus" />
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewGroup}" > active</s:if>">
 							<wpsf:checkbox name="viewGroup" id="viewGroup" />&#32;
 							<s:text name="label.group"/>
 						</label>
-						<label class="btn btn-default">
+						<label class="btn btn-default<s:if test="%{viewCreationDate}" > active</s:if>">
 							<wpsf:checkbox name="viewCreationDate" id="viewCreationDate" />&#32;
 							<s:text name="label.creationDate"/>
 						</label>
@@ -372,16 +372,16 @@
 			<tr>
 			<td class="text-center text-nowrap">
 				<div class="btn-group btn-group-xs">
-					<a class="btn btn-default" title="<s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.descr" />" href="<s:url action="edit" namespace="/do/jacms/Content"><s:param name="contentId" value="#content.id" /></s:url>">
+					<a class="btn btn-default" title="<s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.description" />" href="<s:url action="edit" namespace="/do/jacms/Content"><s:param name="contentId" value="#content.id" /></s:url>">
 						<span class="icon fa fa-pencil-square-o"></span>
-						<span class="sr-only"><s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.descr" /></span>
+						<span class="sr-only"><s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.description" /></span>
 					</a>
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu text-left" role="menu">
 						<li>
-							<a title="<s:text name="label.copyPaste" />: <s:property value="#content.id" /> - <s:property value="#content.descr" />" href="<s:url action="copyPaste" namespace="/do/jacms/Content"><s:param name="contentId" value="#content.id" /><s:param name="copyPublicVersion" value="'false'" /></s:url>">
+							<a title="<s:text name="label.copyPaste" />: <s:property value="#content.id" /> - <s:property value="#content.description" />" href="<s:url action="copyPaste" namespace="/do/jacms/Content"><s:param name="contentId" value="#content.id" /><s:param name="copyPublicVersion" value="'false'" /></s:url>">
 								<span class="icon fa fa-fw fa-clipboard"></span>
 								<s:text name="label.copyPaste" /><span class="sr-only">: <s:property value="#content.id" /> - <s:property value="#content.descr" /></span>
 							</a>

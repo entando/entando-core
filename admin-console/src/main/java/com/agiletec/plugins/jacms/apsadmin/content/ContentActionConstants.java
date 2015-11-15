@@ -19,12 +19,8 @@ package com.agiletec.plugins.jacms.apsadmin.content;
  */
 public interface ContentActionConstants {
 	
-	/**
-	 * Nome del parametro con il quale viene inserito 
-	 * ed estratto dalla sessione il contenuto corrente.
-	 */
-	//public static final String SESSION_PARAM_NAME_CURRENT_CONTENT = "currentContentOnSession";
-	
 	public static final String SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX = "contentOnSession_";
+	
+	public static final String SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP = "contentGroupOnSession";
 	
 }

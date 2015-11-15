@@ -36,6 +36,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
 import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Action principale per la redazione contenuti.
@@ -47,7 +48,7 @@ public class ContentAction extends AbstractContentAction {
 	
 	@Override
 	public void validate() {
-		Content content = this.updateContentOnSession();
+		Content content = this.updateContentOnSession(true);
 		super.validate();
 		this.getContentActionHelper().scanEntity(content, this);
 	}
@@ -168,8 +169,11 @@ public class ContentAction extends AbstractContentAction {
 		try {
 			Content currentContent = this.updateContentOnSession();
 			if (null != currentContent) {
-				if (null == currentContent.getDescription()|| currentContent.getDescription().trim().length() == 0) {
+				String descr = currentContent.getDescription();
+				if (StringUtils.isEmpty(descr)) {
 					this.addFieldError("descr", this.getText("error.content.descr.required"));
+				} else if (StringUtils.isEmpty(currentContent.getMainGroup())) {
+					this.addFieldError("mainGroup", this.getText("error.content.mainGroup.required"));
 				} else {
 					currentContent.setLastEditor(this.getCurrentUser().getUsername());
 					this.getContentManager().saveContent(currentContent);
@@ -218,7 +222,8 @@ public class ContentAction extends AbstractContentAction {
 				}
 				this.addActivityStreamInfo(currentContent, strutsAction, true);
 				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + super.getContentOnSessionMarker());
-				_logger.info("Saving content {} - Description: '{}' - User: {}",   currentContent.getId(), currentContent.getDescr(), this.getCurrentUser().getUsername());
+				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP);
+				_logger.info("Saving content {} - Description: '{}' - User: {}",   currentContent.getId(), currentContent.getDescription(), this.getCurrentUser().getUsername());
 			} else {
 				_logger.error("Save/approve NULL content - User: {}", this.getCurrentUser().getUsername());
 			}

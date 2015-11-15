@@ -82,8 +82,12 @@ public abstract class AbstractContentAction extends BaseAction {
 	}
 	
 	protected Content updateContentOnSession() {
+		return this.updateContentOnSession(false);
+	}
+	
+	protected Content updateContentOnSession(boolean updateMainGroup) {
 		Content content = this.getContent();
-		this.getContentActionHelper().updateEntity(content, this.getRequest());
+		this.getContentActionHelper().updateContent(content, updateMainGroup, this.getRequest());
 		return content;
 	}
 	

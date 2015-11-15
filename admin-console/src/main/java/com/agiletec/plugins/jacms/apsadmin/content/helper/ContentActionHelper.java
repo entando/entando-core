@@ -29,8 +29,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentAuthorizationHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
 import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
-
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.util.ArrayList;
@@ -41,10 +41,9 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
-
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,24 +56,40 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	private static final Logger _logger = LoggerFactory.getLogger(ContentActionHelper.class);
 	
 	@Override
+	public void updateContent(IApsEntity entity, boolean updateMainGroup, HttpServletRequest request) {
+		this.updateEntity(entity, request);
+		if (null != entity && updateMainGroup) {
+			Content content = (Content) entity;
+			if (null == content.getId() && StringUtils.isEmpty(content.getMainGroup())) {
+				String mainGroup = request.getParameter("mainGroup");
+				if (mainGroup != null) {
+					content.setMainGroup(mainGroup);
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void updateEntity(IApsEntity entity, HttpServletRequest request) {
 		Content content = (Content) entity;
 		try {
             if (null != content) {
             	String descr = request.getParameter("descr");
-            	if (descr != null) content.setDescr(descr.trim());
+            	if (descr != null) content.setDescription(descr.trim());
             	String status = request.getParameter("status");
             	if (status != null) content.setStatus(status);
-	            if (null == content.getId()) {
+				if (null == content.getId()) {
 	            	String mainGroup = request.getParameter("mainGroup");
-	            	if (mainGroup != null) content.setMainGroup(mainGroup);
+	            	if (mainGroup != null) {
+						request.getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP, mainGroup);
+					}
 	            }
 	            super.updateEntity(content, request);
-				String description = content.getDescr();
+				String description = content.getDescription();
 				if (null == description || description.trim().length() == 0) {
 					ITextAttribute titleAttribute = (ITextAttribute) content.getAttributeByRole(JacmsSystemConstants.ATTRIBUTE_ROLE_TITLE);
-					if (null != titleAttribute && null != titleAttribute.getText() && titleAttribute.getText().trim().length() > 0) {
-						content.setDescr(titleAttribute.getText());
+					if (null != titleAttribute && StringUtils.isNotEmpty(titleAttribute.getText())) {
+						content.setDescription(titleAttribute.getText());
 					}
 				}
             }
@@ -91,7 +106,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
     		_logger.error("Null Content");
     		return;
     	}
-		String descr = content.getDescr();
+		String descr = content.getDescription();
     	if (descr == null || descr.length() == 0) {
 			action.addFieldError("descr", action.getText("error.content.descr.required"));
 		} else {
@@ -111,6 +126,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			this.scanReferences(content, action);
 			super.scanEntity(content, action);
 		} catch (Throwable t) {
+			_logger.error("ContentActionHelper - scanEntity", t);
 			throw new RuntimeException("Error checking entity", t);
 		}
 	}
@@ -220,7 +236,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 								Content refContent = this.getContentManager().loadContent(object.toString(), true);
 								if (!content.getMainGroup().equals(refContent.getMainGroup()) && 
 										!content.getGroups().contains(refContent.getMainGroup())) {
-									String[] args = {this.getGroupManager().getGroup(refContent.getMainGroup()).getDescr(), object.toString()+" '"+refContent.getDescr()+"'"};
+									String[] args = {this.getGroupManager().getGroup(refContent.getMainGroup()).getDescription(), object.toString()+" '"+refContent.getDescription()+"'"};
 									action.addFieldError("mainGroup", action.getText("error.content.referencedContent.wrongGroups", args));
 								}
 							} else if (object instanceof IPage) { //Content ID
@@ -250,7 +266,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 		asi.setActionType(strutsAction);
 		Lang defaultLang = this.getLangManager().getDefaultLang();
 		Properties titles = new Properties();
-		titles.setProperty(defaultLang.getCode(), content.getDescr());
+		titles.setProperty(defaultLang.getCode(), content.getDescription());
 		asi.setObjectTitles(titles);
 		if (addLink) {
 			asi.setLinkNamespace("/do/jacms/Content");

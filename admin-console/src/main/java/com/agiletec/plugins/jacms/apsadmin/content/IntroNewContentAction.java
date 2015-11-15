@@ -54,13 +54,10 @@ public class IntroNewContentAction extends AbstractContentAction {
 	public String createNewVoid() {
 		try {
 			Content prototype = this.getContentManager().createContentType(this.getContentTypeCode());
-			prototype.setDescr(this.getContentDescription());
+			prototype.setDescription(this.getContentDescription());
 			prototype.setStatus(this.getContentStatus());
 			prototype.setMainGroup(this.getContentMainGroup());
-			String marker = buildContentOnSessionMarker(prototype, ApsAdminSystemConstants.ADD);
-			super.setContentOnSessionMarker(marker);
-			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, prototype);
-			_logger.debug("Created ed inserted on session content prototype of type {}", prototype.getTypeCode());
+			this.fillSessionAttribute(prototype);
 		} catch (Throwable t) {
 			_logger.error("error in createNewVoid", t);
 			return FAILURE;
@@ -75,15 +72,22 @@ public class IntroNewContentAction extends AbstractContentAction {
 				this.addFieldError("contentTypeCode", this.getText("error.content.type.invalid"));
 				return INPUT;
 			}
-			String marker = buildContentOnSessionMarker(prototype, ApsAdminSystemConstants.ADD);
-			super.setContentOnSessionMarker(marker);
-			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, prototype);
-			_logger.debug("Created ed inserted on session content prototype of type {}", prototype.getTypeCode());
+			this.fillSessionAttribute(prototype);
 		} catch (Throwable t) {
-			_logger.error("error in createNewVoid", t);
+			_logger.error("error in createNew", t);
 			return FAILURE;
 		}
 		return SUCCESS;
+	}
+	
+	protected void fillSessionAttribute(Content prototype) {
+		if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.FREE_GROUP_NAME)) {
+			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP, Group.FREE_GROUP_NAME);
+		}
+		String marker = buildContentOnSessionMarker(prototype, ApsAdminSystemConstants.ADD);
+		super.setContentOnSessionMarker(marker);
+		this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, prototype);
+		_logger.debug("Created ed inserted on session content prototype of type {}", prototype.getTypeCode());
 	}
 	
 	/**

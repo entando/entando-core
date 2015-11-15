@@ -34,12 +34,8 @@
 			<span id="contentDescription-input" style="display: none;" class="input-group has-warning margin-small-bottom">
 				<input class="form-control" type="text" name="descr" value="<s:property value="#contentDescriptionVar" />" placeholder="<s:text name="note.description.placeholder" />" id="contentDescription" />
 				<span class="input-group-btn">
-					<button
-						class="btn btn-warning"
-						id="contentDescription-confirm"
-						data-swapon="contentDescription-text"
-						data-swapon-fade="true"
-						data-container="contentDescription-input">
+					<button class="btn btn-warning" id="contentDescription-confirm"
+						data-swapon="contentDescription-text" data-swapon-fade="true" data-container="contentDescription-input">
 							<s:text name="label.setDescription" />
 					</button>
 				</span>
@@ -68,14 +64,12 @@
 			<div class="form-group has-warning">
 				<label class="control-label" for="contentMainGroup"><s:text name="label.ownerGroup" /></label>
 				<div class="input-group">
-					<wpsf:select name="mainGroup" id="contentMainGroup" list="allowedGroups" value="%{'free'}"
-						listKey="name" listValue="descr" cssClass="form-control" />
+					<wpsf:select name="mainGroup" id="contentMainGroup" list="allowedGroups" 
+								 value="#session.contentGroupOnSession" 
+								 listKey="name" listValue="descr" cssClass="form-control" />
 					<span class="input-group-btn">
-						<wpsf:submit
-							action="configureMainGroup"
-							type="button"
-							title="Set Group"
-							cssClass="btn btn-warning">
+						<wpsf:submit action="configureMainGroup"
+							type="button" title="Set Group" cssClass="btn btn-warning">
 								<s:text name="label.setGroup" />
 						</wpsf:submit>
 					</span>

@@ -67,11 +67,10 @@ public class ShortcutDefDOM {
 	        xmlIs = new ByteArrayInputStream(xmlText.getBytes("UTF-8"));
 	        Source source = new StreamSource(xmlIs);
 	        validator.validate(source);
-	        _logger.info("Valid Shortcut definition : " + definitionPath);
+	        _logger.trace("Valid Shortcut definition : " + definitionPath);
         } catch (Throwable t) {
         	String message = "Error validating Shortcut definition : " + definitionPath;
         	_logger.error("Error validating Shortcut definition : {}", definitionPath, t);
-        	//ApsSystemUtils.logThrowable(t, this, "this", message);
         	throw new ApsSystemException(message, t);
         } finally {
         	try {
@@ -79,7 +78,6 @@ public class ShortcutDefDOM {
 				if (null != xmlIs) xmlIs.close();
 			} catch (IOException e) {
 				_logger.error("error in validate. path:{} - xml: {}",definitionPath, xmlText, e);
-				//ApsSystemUtils.logThrowable(e, this, "this");
 			}
         }
 	}

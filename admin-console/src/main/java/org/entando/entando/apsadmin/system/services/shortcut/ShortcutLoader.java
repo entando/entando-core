@@ -52,7 +52,6 @@ public class ShortcutLoader {
 			this.completeLoading();
 		} catch (Throwable t) {
 			_logger.error("Error loading Shortcut definitions", t);
-			//ApsSystemUtils.logThrowable(t, this, "ShortcutLoader", "Error loading Shortcut definitions");
 			throw new ApsSystemException("Error loading Shortcut definitions", t);
 		}
 	}
@@ -70,10 +69,9 @@ public class ShortcutLoader {
 				dom = new ShortcutDefDOM(xml, path);
 				this.getManuSections().putAll(dom.getSectionMenus());
 				this.getShortcuts().putAll(dom.getShortcuts());
-				_logger.info("Loaded Shortcut definition by file {}", path);
+				_logger.trace("Loaded Shortcut definition by file {}", path);
 			} catch (Throwable t) {
 				_logger.error("Error loading Shortcut definition by file {}", locationPattern, t);
-				//ApsSystemUtils.logThrowable(t, this, "loadShortcuts", "Error loading Shortcut definition by file " + locationPattern);
 			} finally {
 				if (null != is) {
 					is.close();

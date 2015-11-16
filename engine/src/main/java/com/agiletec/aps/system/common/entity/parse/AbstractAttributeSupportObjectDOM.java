@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Abstract Dom class parser of Attribute support Objects.
@@ -50,7 +51,7 @@ public abstract class AbstractAttributeSupportObjectDOM {
 			Source schemaSource = new StreamSource(schemaIs);
 			Schema schema = factory.newSchema(schemaSource);
 	        Validator validator = schema.newValidator();
-	        xmlIs = new ByteArrayInputStream(xmlText.getBytes("UTF-8"));
+	        xmlIs = new ByteArrayInputStream(xmlText.getBytes(StandardCharsets.UTF_8));
 	        Source source = new StreamSource(xmlIs);
 	        validator.validate(source);
 	        _logger.debug("Valid definition : {}", definitionPath);

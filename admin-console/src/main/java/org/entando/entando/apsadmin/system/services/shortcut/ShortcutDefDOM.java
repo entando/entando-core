@@ -13,10 +13,13 @@
  */
 package org.entando.entando.apsadmin.system.services.shortcut;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.entando.entando.apsadmin.system.services.shortcut.model.AbstractBaseBean;
+import org.entando.entando.apsadmin.system.services.shortcut.model.MenuSection;
+import org.entando.entando.apsadmin.system.services.shortcut.model.Shortcut;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -35,12 +41,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-
-import org.entando.entando.apsadmin.system.services.shortcut.model.AbstractBaseBean;
-import org.entando.entando.apsadmin.system.services.shortcut.model.MenuSection;
-import org.entando.entando.apsadmin.system.services.shortcut.model.Shortcut;
 
 /**
  * @author E.Santoboni
@@ -64,20 +64,20 @@ public class ShortcutDefDOM {
 			Source schemaSource = new StreamSource(schemaIs);
 			Schema schema = factory.newSchema(schemaSource);
 	        Validator validator = schema.newValidator();
-	        xmlIs = new ByteArrayInputStream(xmlText.getBytes("UTF-8"));
+	        xmlIs = new ByteArrayInputStream(xmlText.getBytes(StandardCharsets.UTF_8));
 	        Source source = new StreamSource(xmlIs);
 	        validator.validate(source);
 	        _logger.trace("Valid Shortcut definition : " + definitionPath);
         } catch (Throwable t) {
         	String message = "Error validating Shortcut definition : " + definitionPath;
-        	_logger.error("Error validating Shortcut definition : {}", definitionPath, t);
+        	_logger.error(message, t);
         	throw new ApsSystemException(message, t);
         } finally {
         	try {
 				if (null != schemaIs) schemaIs.close();
 				if (null != xmlIs) xmlIs.close();
 			} catch (IOException e) {
-				_logger.error("error in validate. path:{} - xml: {}",definitionPath, xmlText, e);
+				_logger.error("error closing input stream", e);
 			}
         }
 	}

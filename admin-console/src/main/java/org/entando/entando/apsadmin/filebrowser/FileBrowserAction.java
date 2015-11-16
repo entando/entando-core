@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,7 +142,7 @@ public class FileBrowserAction extends BaseAction {
 		try {
 			String validatePath = this.validateFullPath();
 			if (null != validatePath) return validatePath;
-			InputStream stream = new ByteArrayInputStream(this.getFileText().getBytes());
+			InputStream stream = new ByteArrayInputStream(this.getFileText().getBytes(StandardCharsets.UTF_8));
 			String filename = this.getFilename();
 			if (this.getStrutsAction() == ADD_NEW_FILE) {
 				filename += "." + this.getTextFileExtension();

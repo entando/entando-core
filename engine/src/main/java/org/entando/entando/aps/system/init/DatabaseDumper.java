@@ -18,6 +18,7 @@ import com.agiletec.aps.util.DateConverter;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +124,7 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 		try {
 			IStorageManager storageManager = this.getStorageManager();
 			String path = folder + filename;
-			ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes("UTF-8"));
+			ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 			storageManager.saveFile(path, true, bais);
 		} catch (Throwable t) {
 			_logger.error("Error saving backup '{}'", filename, t);

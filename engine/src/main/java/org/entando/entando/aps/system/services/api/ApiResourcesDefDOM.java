@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author E.Santoboni
@@ -61,7 +62,7 @@ public class ApiResourcesDefDOM {
             Source schemaSource = new StreamSource(schemaIs);
             Schema schema = factory.newSchema(schemaSource);
             Validator validator = schema.newValidator();
-            xmlIs = new ByteArrayInputStream(xmlText.getBytes("UTF-8"));
+            xmlIs = new ByteArrayInputStream(xmlText.getBytes(StandardCharsets.UTF_8));
             Source source = new StreamSource(xmlIs);
             validator.validate(source);
             _logger.debug("Valid api methods definition : {}", definitionPath);

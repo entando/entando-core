@@ -13,21 +13,23 @@
  */
 package org.entando.entando.aps.system.services.api;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.IOUtils;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.api.provider.json.JSONProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -54,7 +56,7 @@ public class UnmarshalUtils {
 	
 	@Deprecated
 	public static Object unmarshal(Class expectedType, String requestBody, MediaType contentType) throws Throwable {
-		InputStream stream = new ByteArrayInputStream(requestBody.getBytes());
+		InputStream stream = new ByteArrayInputStream(requestBody.getBytes(StandardCharsets.UTF_8));
 		return unmarshal(null, expectedType, stream, contentType);
 	}
 	
@@ -67,16 +69,18 @@ public class UnmarshalUtils {
 			Class expectedType, InputStream bodyStream, MediaType contentType) throws Throwable {
 		Object bodyObject = null;
 		try {
+			String body = IOUtils.toString(bodyStream, "UTF-8");
+			InputStream stream = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
             if (MediaType.APPLICATION_JSON_TYPE.equals(contentType)) {
                 JSONProvider jsonProvider = (null != applicationContext) ? 
 						(JSONProvider) applicationContext.getBean("jsonProvider"): 
 						new JSONProvider();
                 bodyObject = jsonProvider.readFrom(expectedType, expectedType.getGenericSuperclass(),
-                        expectedType.getAnnotations(), contentType, null, bodyStream);
+                        expectedType.getAnnotations(), contentType, null, stream/*bodyStream*/);
             } else {
                 JAXBContext context = JAXBContext.newInstance(expectedType);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                bodyObject = (Object) unmarshaller.unmarshal(bodyStream);
+                bodyObject = (Object) unmarshaller.unmarshal(stream/*bodyStream*/);
             }
 		} catch (Throwable t) {
 			_logger.error("Error unmarshalling request body", t);

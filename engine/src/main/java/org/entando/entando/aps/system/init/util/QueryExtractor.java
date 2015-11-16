@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author E.Santoboni
@@ -58,7 +59,7 @@ public class QueryExtractor {
 		InputStream is = null;
 		String[] lines = new String[0];
 		try {
-			is = new ByteArrayInputStream(text.getBytes());
+			is = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String strLine;
 			while ((strLine = br.readLine()) != null) {

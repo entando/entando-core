@@ -28,6 +28,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 
 import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author E.Santoboni
@@ -56,7 +57,7 @@ public class ActivityStreamInfoDOM {
 		try {
 			JAXBContext context = JAXBContext.newInstance(ActivityStreamInfo.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes());
+			ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 			bodyObject = (ActivityStreamInfo) unmarshaller.unmarshal(is);
 		} catch (Throwable t) {
 			_logger.error("Error unmarshalling activity stream info config. xml: {}", xml, t);

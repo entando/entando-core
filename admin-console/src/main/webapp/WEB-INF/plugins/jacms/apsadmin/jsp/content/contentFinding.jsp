@@ -412,7 +412,7 @@
 			<td>
 				<label>
 					<input type="checkbox" name="contentIds" id="content_<s:property value="#content.id" />" value="<s:property value="#content.id" />" />&#32;
-                                        <s:property value="#content.descr" />
+                                        <s:property value="#content.descr" />&#32;
                                         <s:if test="%{#content.mainGroupCode != null && !#content.mainGroupCode.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
 				</label>
 			</td>

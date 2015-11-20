@@ -26,8 +26,6 @@ public interface IGuiFragmentDAO {
 	
 	public GuiFragment loadGuiFragment(String code);
 	
-	public List<String> loadGuiFragments();
-	
 	public void removeGuiFragment(String code);
 	
 	public void updateGuiFragment(GuiFragment guiFragment);

@@ -68,11 +68,6 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 	}
 	
 	@Override
-	public List<String> loadGuiFragments() {
-		return this.searchGuiFragments(null);
-	}
-	
-	@Override
 	public void insertGuiFragment(GuiFragment guiFragment) {
 		Connection conn  = null;
 		try {

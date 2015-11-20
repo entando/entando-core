@@ -65,26 +65,34 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
 	
 	@Override
 	public List<String> getGuiFragments() throws ApsSystemException {
-		List<String> guiFragments = null;
-		try {
-			guiFragments = this.getGuiFragmentDAO().loadGuiFragments();
-		} catch (Throwable t) {
-			_logger.error("Error loading GuiFragment list",  t);
-			throw new ApsSystemException("Error loading GuiFragment ", t);
-		}
-		return guiFragments;
+		return this.searchGuiFragments(null);
 	}
 	
 	@Override
-	public List<String> searchGuiFragments(FieldSearchFilter filters[]) throws ApsSystemException {
+	public List<String> searchGuiFragments(FieldSearchFilter[] filters) throws ApsSystemException {
 		List<String> guiFragments = null;
 		try {
+			FieldSearchFilter filter = new FieldSearchFilter("code");
+			filter.setOrder(FieldSearchFilter.Order.ASC);
+			filters = this.addFilter(filters, filter);
 			guiFragments = this.getGuiFragmentDAO().searchGuiFragments(filters);
 		} catch (Throwable t) {
 			_logger.error("Error searching GuiFragments", t);
 			throw new ApsSystemException("Error searching GuiFragments", t);
 		}
 		return guiFragments;
+	}
+	
+	protected FieldSearchFilter[] addFilter(FieldSearchFilter[] filters, FieldSearchFilter filterToAdd) {
+		int len = (null != filters) ? filters.length : 0;
+		FieldSearchFilter[] newFilters = new FieldSearchFilter[len + 1];
+		if (null != filters) {
+			for (int i=0; i < len; i++) {
+				newFilters[i] = filters[i];
+			}
+		}
+		newFilters[len] = filterToAdd;
+		return newFilters;
 	}
 	
 	@Override

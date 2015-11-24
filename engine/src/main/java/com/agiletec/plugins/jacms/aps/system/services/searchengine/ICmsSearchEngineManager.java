@@ -32,6 +32,8 @@ public interface ICmsSearchEngineManager extends IEntitySearchEngineManager {
      */
     public Thread startReloadContentsReferences() throws ApsSystemException;
     
+	public Thread startReloadContentsReferences(String subDirectory) throws ApsSystemException;
+	
     /**
      * Return the service status id.
      * @return The service status id.

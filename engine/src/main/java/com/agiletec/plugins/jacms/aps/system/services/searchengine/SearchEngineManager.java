@@ -88,7 +88,7 @@ public class SearchEngineManager extends AbstractService
 				break;
 			}
 		} catch (Throwable t) {
-			_logger.error("Errore in notificazione evento", t);
+			_logger.error("Error on event notification", t);
 		}
 	}
 	
@@ -105,10 +105,16 @@ public class SearchEngineManager extends AbstractService
 	
 	@Override
 	public Thread startReloadContentsReferences() throws ApsSystemException {
+		String newTempSubDirectory = "indexdir" + DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
+		return this.startReloadContentsReferences(newTempSubDirectory);
+	}
+	
+	@Override
+	public Thread startReloadContentsReferences(String subDirectory) throws ApsSystemException {
 		IndexLoaderThread loaderThread = null;
     	if (this.getStatus() == STATUS_READY || this.getStatus() == STATUS_NEED_TO_RELOAD_INDEXES) {
     		try {
-    			this._newTempSubDirectory = "indexdir" + DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
+    			this._newTempSubDirectory = subDirectory;
     			IIndexerDAO newIndexer = this.getFactory().getIndexer(_newTempSubDirectory);
     			loaderThread = new IndexLoaderThread(this, this.getContentManager(), newIndexer);
     			String threadName = RELOAD_THREAD_NAME_PREFIX + DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss");
@@ -117,7 +123,7 @@ public class SearchEngineManager extends AbstractService
     			loaderThread.start();
                 _logger.info("Reload Contents References job started");
     		} catch (Throwable t) {
-    			throw new ApsSystemException("Errore in aggiornamento referenze", t);
+    			throw new ApsSystemException("Error reloading Contents References", t);
     		}
     	} else {
     		_logger.info("Reload Contents References job suspended: current status: {}", this.getStatus());

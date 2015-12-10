@@ -4,7 +4,7 @@ entando-core
 ```entando-core``` is the heart of the **Entando Platform v.4.2**. 
 It provides the basic structure, tools, and functionality to build an instance of the Entando portal.
 
-**Entando** is a powerful and extensible Open Source, component-based, UX platform written in Java. It’s used to develop and manage dynamic websites, community and enterprise portals, capable of building and running modern application services, to address issues in several sectors. Developers can rapidly deliver personalized multi-channel modern websites, to create web apps, intranets and extranets with personalized dashboards based on widgets, application dashboards with analytics features, vertical web applications.	
+**Entando** is a powerful and extensible Open Source, component-based, web application platform written in Java. It’s used to develop and manage dynamic websites, community and enterprise portals, capable of building and running modern application services, to address issues in several sectors. Developers can rapidly deliver personalized multi-channel modern websites, to create web apps, intranets and extranets with personalized dashboards based on widgets, application dashboards with analytics features, vertical web applications.	
 
 ```entando-core```is composed of the three following main core components:
 

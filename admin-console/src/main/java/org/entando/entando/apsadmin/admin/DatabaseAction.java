@@ -71,10 +71,10 @@ public class DatabaseAction extends BaseAction {
         }
         return SUCCESS;
     }
-
+	
     public String redirectRestoreIntro() {
         try {
-            String check = this.checkBackupCode(this.getSubFolderName());
+            String check = this.checkRestore(this.getSubFolderName());
             if (null != check) {
                 return check;
             }
@@ -84,10 +84,10 @@ public class DatabaseAction extends BaseAction {
         }
         return SUCCESS;
     }
-
+	
     public String restoreBackup() {
         try {
-            String check = this.checkBackupCode(this.getSubFolderName());
+            String check = this.checkRestore(this.getSubFolderName());
             if (null != check) {
                 return check;
             }
@@ -99,7 +99,7 @@ public class DatabaseAction extends BaseAction {
         }
         return SUCCESS;
     }
-
+	
     public String extractTableDump() {
         try {
             String check = this.checkBackupCode(this.getSubFolderName());
@@ -114,7 +114,7 @@ public class DatabaseAction extends BaseAction {
         }
         return SUCCESS;
     }
-
+	
     public String trashBackup() {
         try {
             String check = this.checkBackupCode(this.getSubFolderName());
@@ -127,7 +127,7 @@ public class DatabaseAction extends BaseAction {
         }
         return SUCCESS;
     }
-
+	
     public String deleteBackup() {
         try {
             String check = this.checkBackupCode(this.getSubFolderName());
@@ -143,9 +143,18 @@ public class DatabaseAction extends BaseAction {
         }
         return SUCCESS;
     }
-
+	
+	protected String checkRestore(String backupCode) {
+		if (null == this.getRestoreEnabled() || !this.getRestoreEnabled()) {
+			this.addFieldError("restoreEnabled", this.getText("error.restore.disabled"));
+            return INPUT;
+		} else {
+			return this.checkBackupCode(backupCode);
+		}
+    }
+	
     protected String checkBackupCode(String backupCode) {
-        if (null == backupCode) {
+		if (null == backupCode) {
             this.addFieldError("subFolderName", this.getText("error.backup.nullCode"));
             return INPUT;
         } else if (null == this.getDumpReport(backupCode)) {
@@ -155,15 +164,15 @@ public class DatabaseAction extends BaseAction {
         }
         return null;
     }
-
+	
     public int getManagerStatus() {
         return this.getDatabaseManager().getStatus();
     }
-
+	
     public Map<String, List<String>> getEntandoTableMapping() {
         return this.getDatabaseManager().getEntandoTableMapping();
     }
-
+	
     public List<Component> getCurrentComponents() {
         List<Component> components = null;
         try {
@@ -174,7 +183,7 @@ public class DatabaseAction extends BaseAction {
         }
         return components;
     }
-
+	
     public List<String> getTableNames(List<String> tableClassNames) {
         ClassLoader cl = ComponentManager.getComponentInstallerClassLoader();
         if (null == tableClassNames || tableClassNames.isEmpty()) {
@@ -199,7 +208,7 @@ public class DatabaseAction extends BaseAction {
         }
         return tableNames;
     }
-
+	
     public boolean checkRestore(List<Component> currentComponents, DataSourceDumpReport report) {
         List<String> codes = new ArrayList<String>();
         codes.add("entandoCore");
@@ -214,58 +223,62 @@ public class DatabaseAction extends BaseAction {
         for (int i = 0; i < reports.size(); i++) {
             ComponentInstallationReport componentReport = reports.get(i);
             if (!codes.contains(componentReport.getComponentCode())) {
-                System.out.println(componentReport.getComponentCode() + " missing");
                 return false;
             }
         }
         return true;
     }
-
+	
     public String getSubFolderName() {
         return _subFolderName;
     }
-
     public void setSubFolderName(String subFolderName) {
         this._subFolderName = subFolderName;
     }
-
+	
     public String getDataSourceName() {
         return _dataSourceName;
     }
-
     public void setDataSourceName(String dataSourceName) {
         this._dataSourceName = dataSourceName;
     }
-
+	
     public String getTableName() {
         return _tableName;
     }
-
     public void setTableName(String tableName) {
         this._tableName = tableName;
     }
-
+	
     public InputStream getInputStream() {
         return _inputStream;
     }
-
     protected void setInputStream(InputStream inputStream) {
         this._inputStream = inputStream;
     }
-
+	
+	public Boolean getRestoreEnabled() {
+		return _restoreEnabled;
+	}
+	public void setRestoreEnabled(Boolean restoreEnabled) {
+		this._restoreEnabled = restoreEnabled;
+	}
+	
     protected IDatabaseManager getDatabaseManager() {
         return _databaseManager;
     }
-
     public void setDatabaseManager(IDatabaseManager databaseManager) {
         this._databaseManager = databaseManager;
     }
-
+	
     private String _subFolderName;
-
+	
     private String _tableName;
     private String _dataSourceName;
     private InputStream _inputStream;
+	
+	private Boolean _restoreEnabled;
+	
     private IDatabaseManager _databaseManager;
-
+	
 }

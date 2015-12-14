@@ -13,8 +13,13 @@
  */
 package org.entando.entando.aps.system.init.util;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.DateConverter;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.sql.Clob;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -22,17 +27,15 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Date;
 
 import javax.sql.DataSource;
 
 import org.entando.entando.aps.system.init.model.DataInstallationReport;
 import org.entando.entando.aps.system.init.model.SystemInstallationReport;
-import org.entando.entando.aps.system.init.model.TableDumpResult;
+import org.entando.entando.aps.system.init.model.TableDumpReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.DateConverter;
 
 /**
  * @author E.Santoboni
@@ -110,9 +113,8 @@ public class TableDataUtils {
 		}
 	}
 	
-	public static TableDumpResult dumpTable(DataSource dataSource, String tableName) throws ApsSystemException {
-		TableDumpResult report = new TableDumpResult(tableName);
-		StringBuilder sqlDump = new StringBuilder();
+	public static TableDumpReport dumpTable(BufferedWriter br, DataSource dataSource, String tableName) throws ApsSystemException {
+		TableDumpReport report = new TableDumpReport(tableName);
 		StringBuilder scriptPrefix = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
 		Connection conn = null;
         PreparedStatement stat = null;
@@ -136,28 +138,28 @@ public class TableDataUtils {
 			scriptPrefix.append(") VALUES (");
 			int rows = 0;
 			while (res.next()) {
-                sqlDump.append(scriptPrefix);
+				StringBuilder newRecord = new StringBuilder(scriptPrefix);
                 for (int i=0; i<columnCount; i++) {
                     if (i > 0) {
-                        sqlDump.append(", ");
+                        newRecord.append(", ");
                     }
                     Object value = getColumnValue(res, i, types);
                     if (value == null) {
-                        sqlDump.append("NULL");
+                        newRecord.append("NULL");
                     } else {
                         String outputValue = value.toString();
 						outputValue = outputValue.replaceAll("'","\\''");
 						if (isDataNeedsQuotes(types[i])) {
-							sqlDump.append("'").append(outputValue).append("'");
+							newRecord.append("'").append(outputValue).append("'");
 						} else {
-							sqlDump.append(outputValue);
+							newRecord.append(outputValue);
 						}
                     }
                 }
-                sqlDump.append(");\n");
+                newRecord.append(");\n");
+				br.write(newRecord.toString());
 				rows++;
             }
-			report.setSqlDump(sqlDump.toString());
 			report.setRows(rows);
 		} catch (Throwable t) {
 			_logger.error("Error creating backup", t);
@@ -218,7 +220,8 @@ public class TableDataUtils {
             case Types.CHAR:
 				return res.getString(resIndex);
             case Types.CLOB:
-				return res.getString(resIndex);
+				Clob clob = res.getClob(resIndex);
+				return getClobAsString(clob);
             //case Types.DATALINK: 
 			//	return ....;
             case Types.DATE:
@@ -307,6 +310,23 @@ public class TableDataUtils {
 				return res.getObject(resIndex);
         }
 		//return null;
+	}
+	
+	protected static String getClobAsString(Clob clob) {
+		if (null == clob) {
+			return null;
+		} 
+		StringBuilder strOut = new StringBuilder();
+		try {
+			String aux;
+			BufferedReader br = new BufferedReader(clob.getCharacterStream());
+			while ((aux=br.readLine()) != null){
+				strOut.append(aux);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error extracting clob value", t);
+		}
+		return strOut.toString().trim();
 	}
 	
 	private static String getDateAsString(Date date) {

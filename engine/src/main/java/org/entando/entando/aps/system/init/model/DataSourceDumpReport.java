@@ -32,9 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.util.DateConverter;
 
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.util.DateConverter;
-
 /**
  * @author E.Santoboni
  */
@@ -105,11 +102,9 @@ public class DataSourceDumpReport {
 		try {
 			Document doc = new Document();
 			Element rootElement = new Element(ROOT_ELEMENT);
-			
 			this.addElement(DATE_ELEMENT, DateConverter.getFormattedDate(this.getDate(), DATE_FORMAT), rootElement);
 			this.addElement(REQUIRED_TIME_ELEMENT, String.valueOf(this.getRequiredTime()), rootElement);
 			this.addElement(SUBFOLDER_NAME_ELEMENT, this.getSubFolderName(), rootElement);
-			
 			Element components = new Element(COMPONENTS_HISTORY_ELEMENT);
 			rootElement.addContent(components);
 			List<ComponentInstallationReport> componentsHistory = this.getComponentsHistory();
@@ -118,7 +113,6 @@ public class DataSourceDumpReport {
 				Element element = componentHistory.toJdomElement();
 				components.addContent(element);
 			}
-			
 			List<String> dataSourceNames = new ArrayList<String>();
 			dataSourceNames.addAll(this.getDataSourcesReports().keySet());
 			for (int i = 0; i < dataSourceNames.size(); i++) {
@@ -142,7 +136,6 @@ public class DataSourceDumpReport {
 			return out.outputString(doc);
 		} catch (Throwable t) {
 			_logger.error("Error creating XML", t);
-			//ApsSystemUtils.logThrowable(t, this, "toXml");
 			throw new RuntimeException("Error creating XML", t);
 		}
 	}

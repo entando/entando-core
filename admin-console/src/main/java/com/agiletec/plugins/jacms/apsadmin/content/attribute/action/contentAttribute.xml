@@ -110,8 +110,8 @@
 			<result type="tiles">admin.jacms.content.link.configPageLinkType</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
-
-		<action name="openCloseTreeOnConfigPageLink*" class="jacmsPageLinkAttributeAction" method="buildTree" >
+		
+		<action name="openCloseTreeNode*" class="jacmsPageLinkAttributeAction" method="buildTree" >
 			<result type="tiles">admin.jacms.content.link.configPageLinkType</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>

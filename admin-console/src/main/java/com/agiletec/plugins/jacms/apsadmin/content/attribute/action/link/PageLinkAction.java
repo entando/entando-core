@@ -13,19 +13,26 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link;
 
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.agiletec.apsadmin.portal.PageTreeAction;
+import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
+import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
+import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
+import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link.helper.ILinkAttributeActionHelper;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.apsadmin.portal.PageTreeAction;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
-import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link.helper.ILinkAttributeActionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Classe action delegata alla gestione dei link a pagina nelle 
@@ -34,10 +41,12 @@ import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link.helper.
  */
 public class PageLinkAction extends PageTreeAction {
 	
+	private static final Logger _logger = LoggerFactory.getLogger(PageLinkAction.class);
+	
 	@Override
 	public void validate() {
 		super.validate();
-		if (this.getFieldErrors().size()==0) {
+		if (this.getFieldErrors().isEmpty()) {
 			IPage linkedPage = this.getPageManager().getPage(this.getSelectedNode());
 			if (null == linkedPage) {
 				this.addFieldError("selectedNode", this.getText("error.content.link.pageNotExist"));
@@ -78,6 +87,18 @@ public class PageLinkAction extends PageTreeAction {
 	public Content getContent() {
 		return (Content) this.getRequest().getSession()
 				.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
+	}
+	
+	public ContentRecordVO getContentVo(String contentId) {
+		ContentRecordVO contentVo = null;
+		try {
+			IContentManager contentManager = (IContentManager) ApsWebApplicationUtils.getBean(JacmsSystemConstants.CONTENT_MANAGER, this.getRequest());
+			contentVo = contentManager.loadContentVO(contentId);
+		} catch (Throwable t) {
+			_logger.error("error in getContentVo for content {}", contentId, t);
+			throw new RuntimeException("Errore in caricamento contenuto vo", t);
+		}
+		return contentVo;
 	}
 	
 	public String getContentOnSessionMarker() {

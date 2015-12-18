@@ -152,8 +152,10 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	@Override
 	public void updateFromPageChanged(PageChangedEvent event) {
 		IPage page = event.getPage();
-		String pageCacheGroupName = SystemConstants.PAGES_CACHE_GROUP_PREFIX + page.getCode();
-		this.flushGroup(DEFAULT_CACHE_NAME, pageCacheGroupName);
+		if (null != page) {
+			String pageCacheGroupName = SystemConstants.PAGES_CACHE_GROUP_PREFIX + page.getCode();
+			this.flushGroup(DEFAULT_CACHE_NAME, pageCacheGroupName);
+		}
 	}
 	
 	@Override

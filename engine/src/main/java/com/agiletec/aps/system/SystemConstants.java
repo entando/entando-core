@@ -304,6 +304,8 @@ public interface SystemConstants {
 	
 	public static final String CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED = "gravatarIntegrationEnabled";
 	
+	public static final String CONFIG_PARAM_EDIT_EMPTY_FRAGMENT_ENABLED = "editEmptyFragmentEnabled";
+	
 	public static final String CONFIG_PARAM_GROUPS_ON_DEMAND = "groupsOnDemand";
 	
 	public static final String CONFIG_PARAM_CATEGORIES_ON_DEMAND = "categoriesOnDemand";
@@ -317,8 +319,8 @@ public interface SystemConstants {
 	public static final String CONFIG_PARAM_RESOURCE_ARCHIVES_ON_DEMAND = "resourceArchivesOnDemand";
 	
     /**
-     * Lo username dell'utente amministratore, utente di default 
-     * con diritti massimi nel sistema.
+     * Lo username dell'utente amministratore, 
+	 * utente di default con diritti massimi nel sistema.
      */
     public static final String ADMIN_USER_NAME = "admin";
     

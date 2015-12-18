@@ -3,7 +3,8 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core"  %>
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
-		<a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a> / <s:text name="menu.settings.general" /></span>
+	<a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a> / <s:text name="menu.settings.general" />
+        </span>
 </h1>
 
 <s:form action="updateSystemParams">
@@ -202,34 +203,46 @@
 				--%>
 			</div>
 		</div>
-
-		<div class="form-group">
-			<label class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></label>
-			<div class="btn-group" data-toggle="buttons">
-				<s:set name="paramName" value="'treeStyle_page'" />
-				<s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
-			</div>
-		</div>
-			
-		<div class="form-group">
-			<label class="display-block"><s:text name="sysconfig.chooseYourCategoriesTreeStyle" /></label>
-			<div class="btn-group" data-toggle="buttons">
-				<s:set name="paramName" value="'treeStyle_category'" />
-				<s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
-			</div>
-		</div>
+                
+                <div class="form-group">
+                    <label class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></label>
+                    <div class="btn-group" data-toggle="buttons">
+                        <s:set name="paramName" value="'treeStyle_page'" />
+                        <s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="display-block"><s:text name="sysconfig.chooseYourCategoriesTreeStyle" /></label>
+                    <div class="btn-group" data-toggle="buttons">
+                        <s:set name="paramName" value="'treeStyle_category'" />
+                        <s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
+                    </div>
+                </div>
 		
-		<div class="form-group">
-			<s:set name="paramName" value="'gravatarIntegrationEnabled'" />
-			<div class="checkbox-inline">
-				<label>
-					<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
-					&#32;<s:text name="sysconfig.gravatarIntegrationEnabled" />
-				</label>
-				<%-- hidden parameter to delete --%>
-				<wpsf:hidden name="%{#paramName + externalParamMarker}" value="true"/>
-			</div>
-		</div>
+                <div class="form-group">
+                    <s:set name="paramName" value="'gravatarIntegrationEnabled'" />
+                    <div class="checkbox-inline">
+                        <label>
+                            <s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
+                            &#32;<s:text name="sysconfig.gravatarIntegrationEnabled" />
+                        </label>
+                        <%-- hidden parameter to delete --%>
+                        <wpsf:hidden name="%{#paramName + externalParamMarker}" value="true"/>
+                    </div>
+                </div>
+		
+                <div class="form-group">
+                    <s:set name="paramName" value="'editEmptyFragmentEnabled'" />
+                    <div class="checkbox-inline">
+                        <label>
+                            <s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
+                            &#32;<s:text name="sysconfig.editEmptyFragmentEnabled" />
+                        </label>
+                        <%-- hidden parameter to delete --%>
+                        <wpsf:hidden name="%{#paramName + externalParamMarker}" value="true"/>
+                    </div>
+                </div>
 		
 	</fieldset>
 

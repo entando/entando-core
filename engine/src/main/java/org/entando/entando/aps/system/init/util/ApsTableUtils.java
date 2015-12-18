@@ -181,7 +181,7 @@ public class ApsTableUtils {
 		}
 		StringBuilder sb = new StringBuilder(128);
 		for (Map.Entry<String, List<String>> indexEntry : indexMap.entrySet()) {
-			logger.info("creating index '{}' for table '{}", indexEntry.getKey(), tableInfo.getTableName());
+			logger.debug("creating index '{}' for table '{}", indexEntry.getKey(), tableInfo.getTableName());
 			sb.append("CREATE ");
 			if (unique) {
 				sb.append("UNIQUE ");
@@ -239,7 +239,7 @@ public class ApsTableUtils {
 	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
 			boolean ifNotExists) throws SQLException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
-		logger.info("creating table '{}'", tableInfo.getTableName());
+		logger.debug("creating table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists);
@@ -264,10 +264,10 @@ public class ApsTableUtils {
 			try {
 				compiledStmt = connection.compileStatement(statement, StatementBuilder.StatementType.EXECUTE, noFieldTypes);
 				rowC = compiledStmt.runExecute();
-				logger.info("executed {} table statement changed {} rows: {}", label, rowC, statement);
+				logger.debug("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
 				if (ignoreErrors) {
-					logger.info("ignoring {} error '{}' for statement: {}", label, e, statement);
+					logger.debug("ignoring {} error '{}' for statement: {}", label, e, statement);
 				} else {
 					throw SqlExceptionUtil.create("SQL statement failed: " + statement, e);
 				}
@@ -305,7 +305,7 @@ public class ApsTableUtils {
 				for (boolean isThereMore = results.first(); isThereMore; isThereMore = results.next()) {
 					rowC++;
 				}
-				logger.info("executing create table after-query got {} results: {}", rowC, query);
+				logger.debug("executing create table after-query got {} results: {}", rowC, query);
 			} catch (SQLException e) {
 				// we do this to make sure that the statement is in the exception
 				throw SqlExceptionUtil.create("executing create table after-query failed: " + query, e);

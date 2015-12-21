@@ -51,7 +51,7 @@ public class ExtendedResourceFinderAction extends ResourceFinderAction {
 				groupCodes.add(this.getContent().getMainGroup());
 			}
 			resourcesId = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(), 
-					this.getText(), this.getCategoryCode(), groupCodes);
+					this.getText(), this.getFileName(), this.getCategoryCode(), groupCodes);
 		} catch (Throwable t) {
 			_logger.error("error in getResources", t);
 			throw t;

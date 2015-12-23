@@ -34,7 +34,7 @@ public class ActionLogRecord {
 	
 	@DatabaseField(columnName = "username", 
 			dataType = DataType.STRING, 
-			width = 20, 
+			width = 40, 
 			canBeNull = true)
 	private String _username;
 	

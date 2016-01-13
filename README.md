@@ -22,6 +22,8 @@ The Entando platform (from **v4.2-TP1**) project includes also the following Git
 
 * **edo**: https://github.com/entando/edo. Edo (or Entando Service Builder) is a code generator tool for Entando. It's useful to generate different parts of several software Entando elements.
 
+* **englo**: https://github.com/entando/englo. Englo is a Software Project Management and Delivery Tool based on Entando v.4.2-TP1.
+
 See the [WIKI] (https://github.com/entando/entando-core/wiki) pages for more information and operational details of the project. At the moment, the wiki pages are:
 
 * [Getting Started] (https://github.com/entando/entando-core/wiki/Getting-Started) page describes step-by-step instructions for preparing your system for installation, and for installing a single Entando instance.

@@ -24,7 +24,7 @@ The Entando platform (from **v4.2-TP1**) project includes also the following Git
 
 * **englo**: https://github.com/entando/englo. Englo is a Software Project Management and Delivery Tool based on Entando v.4.2-TP1.
 
-An interesting tool to build Entando page models is available in the following link: [Entando Page Models Builder] (http://stealthefish.com/EntandoPageModelsBuilder/#codeXML), (compatibility with Entando v4.0.0).
+An interesting tool to build Entando page models is available in the following link: [Entando Page Models Builder] (http://stealthefish.com/EntandoPageModelsBuilder/#codeXML), (currently, it's compatible with Entando v4.0.0).
 
 See the [WIKI] (https://github.com/entando/entando-core/wiki) pages for more information and operational details of the project. At the moment, the wiki pages are:
 

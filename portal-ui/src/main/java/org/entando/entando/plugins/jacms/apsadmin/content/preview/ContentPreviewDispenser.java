@@ -16,6 +16,7 @@ package org.entando.entando.plugins.jacms.apsadmin.content.preview;
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.PublicContentAuthorizationInfo;
@@ -38,28 +39,29 @@ import org.slf4j.LoggerFactory;
  * @author E.Santoboni
  */
 public class ContentPreviewDispenser extends BaseContentDispenser {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentPreviewDispenser.class);
 	
 	@Override
 	public ContentRenderizationInfo getRenderizationInfo(String contentId, long modelId, String langCode, RequestContext reqCtx) {
-		return super.getRenderizationInfo(contentId, modelId, langCode, reqCtx);
+		PublicContentAuthorizationInfo authInfo = null;
+		try {
+			Content content = this.extractContentOnSession(reqCtx);
+			authInfo = new PublicContentAuthorizationInfo(content, this.getLangManager().getLangs());
+		} catch (Throwable t) {
+			_logger.error("error in getAuthorizationInfo for content {}", contentId, t);
+		}
+		return this.getRenderizationInfo(authInfo, contentId, modelId, langCode, reqCtx);
 	}
 	
 	@Override
 	public ContentRenderizationInfo getBaseRenderizationInfo(PublicContentAuthorizationInfo authInfo, 
 			String contentId, long modelId, String langCode, UserDetails currentUser, RequestContext reqCtx) {
-		HttpServletRequest request = reqCtx.getRequest();
-		String contentOnSessionMarker = (String) request.getAttribute("contentOnSessionMarker");
-		if (null == contentOnSessionMarker || contentOnSessionMarker.trim().length() == 0) {
-			contentOnSessionMarker = request.getParameter("contentOnSessionMarker");
-		}
 		ContentRenderizationInfo renderInfo = null;
 		try {
 			List<Group> userGroups = (null != currentUser) ? this.getAuthorizationManager().getUserGroups(currentUser) : new ArrayList<Group>();
 			if (authInfo.isUserAllowed(userGroups)) {
-				Content contentOnSession = (Content) request.getSession()
-						.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentOnSessionMarker);
+				Content contentOnSession = this.extractContentOnSession(reqCtx);
 				String renderedContent = this.buildRenderedContent(contentOnSession, modelId, langCode, reqCtx);
 				if (null != renderedContent && renderedContent.trim().length() > 0) {
 					List<AttributeRole> roles = this.getContentManager().getAttributeRoles();
@@ -72,5 +74,24 @@ public class ContentPreviewDispenser extends BaseContentDispenser {
 		}
 		return renderInfo;
 	}
+	
+	private Content extractContentOnSession(RequestContext reqCtx) {
+		HttpServletRequest request = reqCtx.getRequest();
+		String contentOnSessionMarker = (String) request.getAttribute("contentOnSessionMarker");
+		if (null == contentOnSessionMarker || contentOnSessionMarker.trim().length() == 0) {
+			contentOnSessionMarker = request.getParameter("contentOnSessionMarker");
+		}
+		return (Content) request.getSession()
+				.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentOnSessionMarker);
+	}
+	
+	protected ILangManager getLangManager() {
+		return _langManager;
+	}
+	public void setLangManager(ILangManager langManager) {
+		this._langManager = langManager;
+	}
+	
+	private ILangManager _langManager;
 	
 }

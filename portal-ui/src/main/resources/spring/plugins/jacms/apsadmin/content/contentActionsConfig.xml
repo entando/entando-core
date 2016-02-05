@@ -38,6 +38,7 @@
         <property name="contentAuthorizationHelper" ref="jacmsContentAuthorizationHelper" />
         <property name="linkResolver" ref="jacmsLinkResolverManager" />
 		<property name="authorizationManager" ref="AuthorizationManager" />
+		<property name="langManager" ref="LangManager" />
 	</bean>
   	
 </beans>

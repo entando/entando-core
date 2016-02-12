@@ -335,7 +335,7 @@ public class ApsEntity implements IApsEntity {
      * @return The DOM class that generates the XML 
      */
     protected IApsEntityDOM getBuildJDOM() {
-        IApsEntityDOM entityDom = this.getEntityDOM();
+        IApsEntityDOM entityDom = this.getEntityDOM().clone();
         entityDom.init();
         entityDom.setId(String.valueOf(this.getId()));
         entityDom.setTypeCode(this._typeCode);

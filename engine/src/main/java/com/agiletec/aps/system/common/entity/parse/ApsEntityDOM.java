@@ -18,6 +18,8 @@ import java.io.Serializable;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
 
@@ -32,6 +34,25 @@ import com.agiletec.aps.system.common.entity.ApsEntityManager;
  * @author M.Morini - S.Didaci - E.Santoboni
  */
 public class ApsEntityDOM implements IApsEntityDOM, Serializable {
+	
+	private static final Logger _logger =  LoggerFactory.getLogger(ApsEntityDOM.class);
+	
+	@Override
+	public ApsEntityDOM clone() {
+		ApsEntityDOM copy = null;
+		try {
+			copy = this.getClass().newInstance();
+			this.copyInto(copy);
+		} catch (Throwable t) {
+			_logger.error("Error cloning {}" + this.getClass(), t);
+			throw new RuntimeException("Error cloning " + this.getClass(), t);
+		}
+		return copy;
+	}
+	
+	protected void copyInto(IApsEntityDOM copy) {
+		copy.setRootElementName(this._rootElementName);
+	}
 	
 	/**
 	 * 

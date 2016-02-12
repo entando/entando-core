@@ -20,7 +20,9 @@ import org.jdom.Element;
  * @author E.Santoboni
  */
 public interface IApsEntityDOM {
-
+	
+	public IApsEntityDOM clone();
+	
 	/**
 	 * DOM initialization.
 	 * Method to invoke	when fields valorization is starting.

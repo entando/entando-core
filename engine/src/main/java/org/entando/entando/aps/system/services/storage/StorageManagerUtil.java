@@ -68,7 +68,7 @@ public class StorageManagerUtil {
 	}
 	
 	public static boolean isValidPath(String path) {
-		boolean check = true;
+		final boolean check = true;
 		if (StringUtils.isBlank(path)) return check;
 		if (path.contains("../") 
 				|| path.contains("%2e%2e%2f") 
@@ -77,21 +77,20 @@ public class StorageManagerUtil {
 				|| path.contains("%2e%2e/") 
 				|| path.contains("%2e%2e"+File.separator)) {
 			_logger.info("Attack avoided - requested path {}", path);
-			return check = false;
+			return !check;
 		}
 		return check;
 	}
 
 	private static boolean endWithParentDir(String path) {
-		boolean check = true;
-		if (StringUtils.isBlank(path)) return check;
+		if (StringUtils.isBlank(path)) return true;
 		if (path.endsWith("..") 
 				|| path.endsWith("..") 
 				|| path.endsWith("%2e%2e")) {
 			_logger.info("Attack avoided - requested path {}", path);
-			return check = false;
+			return false;
 		}
-		return check;
+		return true;
 	}
 	
 	private static final String REGEXP_FILE_EXTENSION = "([\\w|\\-]+?$)";

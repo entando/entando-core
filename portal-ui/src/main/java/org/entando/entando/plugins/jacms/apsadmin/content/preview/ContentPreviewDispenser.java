@@ -42,6 +42,8 @@ public class ContentPreviewDispenser extends BaseContentDispenser {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentPreviewDispenser.class);
 	
+	private ILangManager _langManager;
+	
 	@Override
 	public ContentRenderizationInfo getRenderizationInfo(String contentId, long modelId, String langCode, RequestContext reqCtx) {
 		PublicContentAuthorizationInfo authInfo = null;
@@ -91,7 +93,5 @@ public class ContentPreviewDispenser extends BaseContentDispenser {
 	public void setLangManager(ILangManager langManager) {
 		this._langManager = langManager;
 	}
-	
-	private ILangManager _langManager;
 	
 }

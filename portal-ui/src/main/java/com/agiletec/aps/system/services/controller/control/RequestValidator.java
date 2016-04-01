@@ -50,6 +50,17 @@ public class RequestValidator extends AbstractControlService {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RequestValidator.class);
 	
+	@Deprecated
+	protected Pattern _oldPattern = Pattern.compile("^/(\\w+)/(\\w+)\\Q.wp\\E");
+	
+	protected Pattern _pattern = Pattern.compile("^/(\\w+)/(\\w+)\\Q.page\\E");
+	
+	protected Pattern _patternFullPath = Pattern.compile("^/pages/(\\w+)((/\\w+)*)");
+	
+	private ILangManager _langManager;
+	private IPageManager _pageManager;
+	private ConfigInterface configManager;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		_logger.debug("{} ready", this.getClass().getName());
@@ -64,7 +75,7 @@ public class RequestValidator extends AbstractControlService {
 	@Override
 	public int service(RequestContext reqCtx, int status) {
 		_logger.debug("{} invoked", this.getClass().getName());
-		int retStatus = ControllerManager.INVALID_STATUS;
+		int retStatus;
 		// Se si è verificato un errore in un altro sottoservizio, termina subito
 		if (status == ControllerManager.ERROR) {
 			return status;
@@ -126,7 +137,9 @@ public class RequestValidator extends AbstractControlService {
 				}
 			}
 		}
-		if (!ok) return false;
+		if (!ok) {
+			return false;
+		}
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG, lang);
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, page);
 		return true;
@@ -155,9 +168,6 @@ public class RequestValidator extends AbstractControlService {
 		String pageCode = matcher.group(3).substring(1);
 		IPage tempPage = this.getPageManager().getPage(pageCode);
 		if (null != tempPage) {
-			//la pagina esiste ed è di livello 1
-			//if(tempPage.getParentCode().equals(rootCode)) return tempPage;
-			//la pagina è di livello superiore al primo e il path è corretto
 			String fullPath = matcher.group(2).substring(1).trim();
 			String createdlFullPath = PageUtils.getFullPath(tempPage, "/").toString();
 			if (null != tempPage && createdlFullPath.equals(fullPath) ){
@@ -208,16 +218,5 @@ public class RequestValidator extends AbstractControlService {
 	public void setConfigManager(ConfigInterface configService) {
 		this.configManager = configService;
 	}
-	
-	private ILangManager _langManager;
-	private IPageManager _pageManager;
-	private ConfigInterface configManager;
-	
-	@Deprecated
-	protected Pattern _oldPattern = Pattern.compile("^/(\\w+)/(\\w+)\\Q.wp\\E");
-	
-	protected Pattern _pattern = Pattern.compile("^/(\\w+)/(\\w+)\\Q.page\\E");
-	
-	protected Pattern _patternFullPath = Pattern.compile("^/pages/(\\w+)((/\\w+)*)");
 	
 }

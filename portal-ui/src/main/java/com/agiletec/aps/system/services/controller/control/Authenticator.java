@@ -37,6 +37,8 @@ public class Authenticator extends AbstractControlService {
 
 	private static final Logger _logger = LoggerFactory.getLogger(Authenticator.class);
 
+    private IUserManager _userManager;
+    private IAuthenticationProviderManager _authenticationProvider;
 	
 	@Override
     public void afterPropertiesSet() throws Exception {
@@ -58,7 +60,7 @@ public class Authenticator extends AbstractControlService {
 	@Override
     public int service(RequestContext reqCtx, int status) {
     	_logger.debug("Invoked {}", this.getClass().getName());
-        int retStatus = ControllerManager.INVALID_STATUS;
+        int retStatus;
         if (status == ControllerManager.ERROR) {
         	return status;
         }
@@ -118,7 +120,5 @@ public class Authenticator extends AbstractControlService {
 		this._authenticationProvider = authenticationProvider;
 	}
 	
-    private IUserManager _userManager;
-    private IAuthenticationProviderManager _authenticationProvider;
-    
+
 }

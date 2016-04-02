@@ -36,6 +36,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentLis
  */
 public class ContentListFilterTag extends TagSupport implements IEntityFilterBean {
 
+	private static final long serialVersionUID = -8283914775997210195L;
 	private static final Logger _logger = LoggerFactory.getLogger(ContentListFilterTag.class);
 	
 	public ContentListFilterTag() {
@@ -49,12 +50,12 @@ public class ContentListFilterTag extends TagSupport implements IEntityFilterBea
 		RequestContext reqCtx = (RequestContext) request.getAttribute(RequestContext.REQCTX);
 		try {
 			if (!this.isRightKey()) {
-				String message = "";
+				StringBuilder message = new StringBuilder();
 				for (int i=0; i < IContentListWidgetHelper.allowedMetadataFilterKeys.length; i++) {
 					if (i!=0) {
-						message.concat(",");
+						message.append(",");
 					}
-					message.concat(IContentListWidgetHelper.allowedMetadataFilterKeys[i]);
+					message.append(IContentListWidgetHelper.allowedMetadataFilterKeys[i]);
 				}
 				throw new RuntimeException("The key '" + this.getKey() + "' is unknown; " +
 						"Please use a valid one - " + message);

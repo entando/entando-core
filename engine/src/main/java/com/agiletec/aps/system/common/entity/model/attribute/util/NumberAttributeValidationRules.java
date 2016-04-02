@@ -31,6 +31,7 @@ import com.agiletec.aps.system.services.lang.ILangManager;
  */
 public class NumberAttributeValidationRules extends AbstractAttributeValidationRules {
 
+	private static final long serialVersionUID = 3174872953012814318L;
 	private static final Logger _logger =  LoggerFactory.getLogger(NumberAttributeValidationRules.class);
 	
 	@Override
@@ -91,7 +92,7 @@ public class NumberAttributeValidationRules extends AbstractAttributeValidationR
             if (null == numberAttribute.getValue()) {
 				return errors;
 			}
-            Integer attributeValue = numberAttribute.getValue().intValue();
+            int attributeValue = numberAttribute.getValue().intValue();
             Integer startValue = (this.getRangeStart() != null) ? (Integer) this.getRangeStart() : this.getOtherAttributeValue(attribute, this.getRangeStartAttribute());
             if (null != startValue && attributeValue < startValue) {
                 AttributeFieldError error = new AttributeFieldError(attribute, FieldError.LESS_THAN_ALLOWED, tracer);
@@ -105,7 +106,7 @@ public class NumberAttributeValidationRules extends AbstractAttributeValidationR
                 errors.add(error);
             }
             Integer value = (this.getValue() != null) ? (Integer) this.getValue() : this.getOtherAttributeValue(attribute, this.getValueAttribute());
-            if (null != value && attributeValue != value) {
+            if (null != value && attributeValue != value.intValue()) {
                 AttributeFieldError error = new AttributeFieldError(attribute, FieldError.INVALID, tracer);
                 error.setMessage("Number not equals than " + value);
                 errors.add(error);

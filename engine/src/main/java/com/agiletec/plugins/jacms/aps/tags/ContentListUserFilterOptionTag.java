@@ -47,10 +47,10 @@ public class ContentListUserFilterOptionTag extends TagSupport implements IEntit
 		RequestContext reqCtx = (RequestContext) request.getAttribute(RequestContext.REQCTX);
 		try {
 			if (!this.isRightKey()) {
-				String message = "";
+				StringBuilder message = new StringBuilder();
 				for (int i=0; i < IContentListWidgetHelper.allowedMetadataUserFilterOptionKeys.length; i++) {
-					if (i!=0) message.concat(",");
-					message.concat(IContentListWidgetHelper.allowedMetadataUserFilterOptionKeys[i]);
+					if (i!=0) message.append(",");
+					message.append(IContentListWidgetHelper.allowedMetadataUserFilterOptionKeys[i]);
 				}
 				throw new RuntimeException("The key '" + this.getKey() + "' is unknown; " +
 						"Please use a valid one - " + message);

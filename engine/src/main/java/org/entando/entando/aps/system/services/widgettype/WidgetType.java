@@ -94,6 +94,39 @@ public class WidgetType implements Serializable {
 		this._parameters = typeParameters;
 	}
 	
+	public boolean hasParameter(String paramName) {
+		if (null == this.getTypeParameters()) {
+			return false;
+		}
+		boolean startWith = false;
+		boolean endWith = false;
+		if (paramName.endsWith("%")) {
+			paramName = paramName.substring(0, paramName.length()-1);
+			startWith = true;
+		}
+		if (paramName.startsWith("%")) {
+			paramName = paramName.substring(1);
+			endWith = true;
+		}
+		for (int i = 0; i < this.getTypeParameters().size(); i++) {
+			WidgetTypeParameter param = this.getTypeParameters().get(i);
+			String name = (null != param) ? param.getName() : null;
+			if (null == name) {
+				continue;
+			}
+			if (startWith && endWith && name.contains(paramName)) {
+				return true;
+			} else if (startWith && name.startsWith(paramName)) {
+				return true;
+			} else if (endWith && name.endsWith(paramName)) {
+				return true;
+			} else if (paramName.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Restituisce il nome della action specifica che gestisce questo tipo di widget.
 	 * @return Il nome della action specifica, null se non vi è nessun action specifica.

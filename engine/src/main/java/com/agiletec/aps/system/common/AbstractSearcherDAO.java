@@ -295,7 +295,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
 		}
 	}
 	
-	private String createQueryString(FieldSearchFilter[] filters, boolean selectAll) {
+	protected String createQueryString(FieldSearchFilter[] filters, boolean selectAll) {
 		StringBuffer query = this.createBaseQueryBlock(filters, selectAll);
 		boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
 		boolean ordered = appendOrderQueryBlocks(filters, query, false);
@@ -458,6 +458,19 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
 	
 	protected boolean isForceTextCaseSearch() {
 		return (this.isForceCaseInsensitiveLikeSearch() || this.isForceCaseSensitiveLikeSearch());
+	}
+	
+	protected boolean hasLikeFilters(FieldSearchFilter[] filters) {
+		if (null == filters || filters.length == 0) {
+			return false;
+		}
+		for (int i = 0; i < filters.length; i++) {
+			FieldSearchFilter filter = filters[i];
+			if (filter.isLikeOption()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected boolean isForceCaseSensitiveLikeSearch() {

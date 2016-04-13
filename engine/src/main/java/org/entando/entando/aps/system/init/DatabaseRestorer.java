@@ -13,8 +13,13 @@
  */
 package org.entando.entando.aps.system.init;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -25,9 +30,6 @@ import org.entando.entando.aps.system.init.util.TableDataUtils;
 import org.entando.entando.aps.system.init.util.TableFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.FileTextReader;
 
 /**
  * @author E.Santoboni
@@ -147,14 +149,41 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 					String fileName = folder.toString() + dataSourceName + File.separator + tableName + ".sql";
 					InputStream is = this.getStorageManager().getStream(fileName, true);
 					if (null != is) {
-						String sqlDump = FileTextReader.getText(is, "UTF-8");
-						TableDataUtils.valueDatabase(sqlDump, tableName, dataSource, null);
+						BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+						this.executeQuery(br, dataSource);
 					}
 				}
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while restoring local dump", t);
 			throw new RuntimeException("Error while restoring local dump", t);
+		}
+	}
+	
+	private void executeQuery(BufferedReader br, DataSource dataSource) throws ApsSystemException {
+		try {
+			String startsWith = "insert into";
+			String endsWith = ");";
+			String lineSep = System.getProperty("line.separator");
+			String nextLine = "";
+			StringBuilder sb = new StringBuilder();
+			while ((nextLine = br.readLine()) != null) {
+				sb.append(nextLine);
+				if ((sb.toString().toLowerCase().trim().startsWith(startsWith) 
+					&& (sb.toString().toLowerCase().trim().endsWith(endsWith)))) {
+					String[] queries = {sb.toString()};
+					try {
+						TableDataUtils.executeQueries(dataSource, queries, true);
+					} catch (Exception e) {
+						_logger.error("Error executing query", e);
+					}
+					sb = new StringBuilder();
+				} else {
+					sb.append(lineSep);
+				}
+			}
+		} catch (Throwable t) {
+			throw new ApsSystemException("Error reading text", t);
 		}
 	}
 	

@@ -97,11 +97,12 @@ public class ContentPageMapperManager extends AbstractService
 		}
 	}
     
-    @Override
+	@Override
 	public void updateFromPageChanged(PageChangedEvent event) {
 		try {
 			this.reloadContentPageMapper();
-			_logger.debug("Notified page change envent for page '{}'", event.getPage().getCode());
+			String pagecode = (null != event.getPage()) ? event.getPage().getCode() : "*undefined*";
+			_logger.debug("Notified page change event for page '{}'", pagecode);
 		} catch (Throwable t) {
 			_logger.error("Error notifying event", t);
 		}

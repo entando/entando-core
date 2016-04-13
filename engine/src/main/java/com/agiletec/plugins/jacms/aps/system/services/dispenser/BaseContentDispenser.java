@@ -70,27 +70,45 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 			key = "T(com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser).getRenderizationInfoCacheKey(#contentId, #modelId, #langCode, #reqCtx)")
 	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser).getRenderizationInfoCacheGroupsCsv(#contentId, #modelId)")
 	public ContentRenderizationInfo getRenderizationInfo(String contentId, long modelId, String langCode, RequestContext reqCtx) {
-		PublicContentAuthorizationInfo authInfo = this.getContentAuthorizationHelper().getAuthorizationInfo(contentId);
+		PublicContentAuthorizationInfo authInfo = this.getContentAuthorizationHelper().getAuthorizationInfo(contentId, true);
 		if (null == authInfo) {
 			return null;
 		}
 		return this.getRenderizationInfo(authInfo, contentId, modelId, langCode, reqCtx);
 	}
 	
+	@Override
+	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, condition = "#cacheable", 
+			key = "T(com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser).getRenderizationInfoCacheKey(#contentId, #modelId, #langCode, #reqCtx)")
+	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser).getRenderizationInfoCacheGroupsCsv(#contentId, #modelId)")
+	public ContentRenderizationInfo getRenderizationInfo(String contentId, 
+			long modelId, String langCode, RequestContext reqCtx, boolean cacheable) {
+		PublicContentAuthorizationInfo authInfo = this.getContentAuthorizationHelper().getAuthorizationInfo(contentId, cacheable);
+		if (null == authInfo) {
+			return null;
+		}
+		return this.getRenderizationInfo(authInfo, contentId, modelId, langCode, reqCtx, cacheable);
+	}
+	
 	protected ContentRenderizationInfo getRenderizationInfo(PublicContentAuthorizationInfo authInfo, 
 			String contentId, long modelId, String langCode, RequestContext reqCtx) {
+		return this.getRenderizationInfo(authInfo, contentId, modelId, langCode, reqCtx, true);
+	}
+	
+	protected ContentRenderizationInfo getRenderizationInfo(PublicContentAuthorizationInfo authInfo, 
+			String contentId, long modelId, String langCode, RequestContext reqCtx, boolean cacheable) {
 		ContentRenderizationInfo renderInfo = null;
 		try {
 			UserDetails currentUser = (null != reqCtx) ? (UserDetails) reqCtx.getRequest().getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER) : null;
 			List<Group> userGroups = (null != currentUser) ? this.getAuthorizationManager().getUserGroups(currentUser) : new ArrayList<Group>();
 			if (authInfo.isUserAllowed(userGroups)) {
-				renderInfo = this.getBaseRenderizationInfo(authInfo, contentId, modelId, langCode, currentUser, reqCtx);
+				renderInfo = this.getBaseRenderizationInfo(authInfo, contentId, modelId, langCode, currentUser, reqCtx, cacheable);
 				if (null == renderInfo) {
 					return null;
 				}
 			} else {
 				String renderedContent = "Current user '" + currentUser.getUsername() + "' can't view this content";
-				Content contentToRender = this.getContentManager().loadContent(contentId, true);
+				Content contentToRender = this.getContentManager().loadContent(contentId, true, cacheable);
 				renderInfo = new ContentRenderizationInfo(contentToRender, renderedContent, modelId, langCode, null);
 				renderInfo.setRenderedContent(renderedContent);
 				return renderInfo;
@@ -117,11 +135,16 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 	
 	public ContentRenderizationInfo getBaseRenderizationInfo(PublicContentAuthorizationInfo authInfo, 
 			String contentId, long modelId, String langCode, UserDetails currentUser, RequestContext reqCtx) {
+		return this.getBaseRenderizationInfo(authInfo, contentId, modelId, langCode, currentUser, reqCtx, true);
+	}
+	
+	public ContentRenderizationInfo getBaseRenderizationInfo(PublicContentAuthorizationInfo authInfo, 
+			String contentId, long modelId, String langCode, UserDetails currentUser, RequestContext reqCtx, boolean cacheable) {
 		ContentRenderizationInfo renderInfo = null;
 		try {
 			List<Group> userGroups = (null != currentUser) ? this.getAuthorizationManager().getUserGroups(currentUser) : new ArrayList<Group>();
 			if (authInfo.isUserAllowed(userGroups)) {
-				Content contentToRender = this.getContentManager().loadContent(contentId, true);
+				Content contentToRender = this.getContentManager().loadContent(contentId, true, cacheable);
 				String renderedContent = this.buildRenderedContent(contentToRender, modelId, langCode, reqCtx);
 				if (null != renderedContent && renderedContent.trim().length() > 0) {
 					List<AttributeRole> roles = this.getContentManager().getAttributeRoles();
@@ -135,7 +158,7 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 		return renderInfo;
 	}
 	
-	protected String buildRenderedContent(Content content, long modelId, String langCode, RequestContext reqCtx) {
+	protected synchronized String buildRenderedContent(Content content, long modelId, String langCode, RequestContext reqCtx) {
 		if (null == content) {
 			_logger.warn("Null The content can't be rendered");
 			return null;

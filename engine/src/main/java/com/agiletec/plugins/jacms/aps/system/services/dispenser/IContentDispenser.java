@@ -41,7 +41,11 @@ public interface IContentDispenser {
 	 * @param reqCtx The request context.
 	 * @return The formatted content.
 	 */
-	public ContentRenderizationInfo getRenderizationInfo(String contentId, long modelId, String langCode, RequestContext reqCtx);
+	public ContentRenderizationInfo getRenderizationInfo(String contentId, 
+			long modelId, String langCode, RequestContext reqCtx);
+	
+	public ContentRenderizationInfo getRenderizationInfo(String contentId, 
+			long modelId, String langCode, RequestContext reqCtx, boolean useCache);
 	
 	public void resolveLinks(ContentRenderizationInfo renderizationInfo, RequestContext reqCtx);
 	

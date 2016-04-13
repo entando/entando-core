@@ -21,12 +21,17 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Classe handler per l'interpretazione della porzione di xml 
  * relativo all'attributo di tipo risorsa (Image o Attach).
  * @author E.Santoboni
  */
 public class ResourceAttributeHandler extends TextAttributeHandler {
+	
+	private static final Logger _logger = LoggerFactory.getLogger(ResourceAttributeHandler.class);
 	
 	@Override
 	public Object getAttributeHandlerPrototype() {
@@ -53,7 +58,7 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
 				((ResourceAttributeInterface) this.getCurrentAttr()).setResource(resource, langCode);
 			}
 		} catch (Exception e) {
-			throw new SAXException(e);
+			_logger.error("Error loading resource {}", id, e);
 		}
 	}
 	

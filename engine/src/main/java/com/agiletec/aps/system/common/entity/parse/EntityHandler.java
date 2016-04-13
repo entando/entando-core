@@ -266,7 +266,10 @@ public class EntityHandler extends DefaultHandler {
                 if (null != this._currentAttr && this._currentAttr.getType().equals(attributeType)) {
                     this._parserModule = this._currentAttr.getHandler();
                     this._parserModule.setCurrentAttr(this._currentAttr);
-                }
+                } else {
+					this._parserModule = null;
+					this._currentAttr = null;
+				}
             }
         }
         if (null != _parserModule) {
@@ -279,7 +282,7 @@ public class EntityHandler extends DefaultHandler {
             this._parserModule.endAttribute(qName, this._textBuffer);
             if (this._parserModule.isEndAttribute(qName)) {
                 this._parserModule = null;
-                this._currentAttr = null;
+				this._currentAttr = null;
             }
         }
     }

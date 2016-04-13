@@ -49,6 +49,7 @@ public interface ICategoryManager extends ITreeNodeManager {
      * Restituisce la radice dell'albero delle categorie
      * @return la categoria radice
      */
+	@Override
     public Category getRoot();
 	
     /**
@@ -65,5 +66,7 @@ public interface ICategoryManager extends ITreeNodeManager {
 	 * @return La lista piatta delle categorie disponibili.
 	 */
 	public List<Category> getCategoriesList();
+	
+	public List<Category> searchCategories(String categoryCodeToken) throws ApsSystemException;
     
 }

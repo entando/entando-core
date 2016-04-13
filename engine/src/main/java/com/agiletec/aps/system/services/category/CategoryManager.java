@@ -225,6 +225,33 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		return this.getCategory(code);
 	}
 	
+	@Override
+	public List<Category> searchCategories(String categoryCodeToken) throws ApsSystemException {
+		List<Category> searchResult = new ArrayList<Category>();
+		try {
+			if (null == this._categories || _categories.isEmpty()) {
+				return searchResult; 
+			}
+			Category root = this.getRoot();
+			this.searchCategories(root, categoryCodeToken, searchResult);
+		} catch (Throwable t) {
+			String message = "Error during searching categories with token " + categoryCodeToken;
+			_logger.error("Error during searching categories with token {}", categoryCodeToken, t);
+			throw new ApsSystemException(message, t);
+		}
+		return searchResult;
+	}
+
+	private void searchCategories(Category currentTarget, String categoryCodeToken, List<Category> searchResult) {
+		if ((null == categoryCodeToken || currentTarget.getCode().toLowerCase().contains(categoryCodeToken.toLowerCase()))) {
+			searchResult.add(currentTarget);
+		}
+		Category[] children = currentTarget.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			this.searchCategories(children[i], categoryCodeToken, searchResult);
+		}
+	}
+	
 	protected ILangManager getLangManager() {
 		return _langManager;
 	}

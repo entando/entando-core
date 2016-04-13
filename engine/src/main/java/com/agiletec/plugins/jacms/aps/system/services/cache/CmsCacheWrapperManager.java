@@ -118,8 +118,13 @@ public class CmsCacheWrapperManager extends AbstractService
 	
 	public static String getContentListCacheGroupsCsv(IContentListTagBean bean, RequestContext reqCtx) {
 		StringBuilder builder = new StringBuilder();
-		IPage page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
-		String pageCacheGroupName = SystemConstants.PAGES_CACHE_GROUP_PREFIX + page.getCode();
+		IPage page = (null != reqCtx) ? (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE) : null;
+		String pageCacheGroupName = SystemConstants.PAGES_CACHE_GROUP_PREFIX;
+		if (null != page) {
+			pageCacheGroupName += page.getCode();
+		} else {
+			pageCacheGroupName += "UNDEFINED";
+		}
 		String contentTypeCacheGroupName = JacmsSystemConstants.CONTENTS_ID_CACHE_GROUP_PREFIX + bean.getContentType();
 		builder.append(pageCacheGroupName).append(",").append(contentTypeCacheGroupName);
 		return builder.toString();

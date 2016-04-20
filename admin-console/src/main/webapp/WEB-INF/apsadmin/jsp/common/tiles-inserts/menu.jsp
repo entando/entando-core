@@ -173,7 +173,7 @@
 		<div class="panel panel-default" role="presentation">
 			<div class="panel-heading" role="presentation">
 				<a data-toggle="collapse" href="#submenu-template" class="display-block" id="aria-menu-template" aria-haspopup="true" role="menuitem">
-					Template
+					<s:text name="menu.template" />&#32;
 					<span class="icon fa fa-chevron-down pull-right"></span>
 				</a>
 			</div>

@@ -115,6 +115,29 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 		PublicContentAuthorizationInfo authInfo = null;
 		try {
 			Content content = this.getContentManager().loadContent(contentId, true);
+			if (null == content) {
+				_logger.debug("public content {} doesn't exist", contentId);
+				return null;
+			}
+			authInfo = new PublicContentAuthorizationInfo(content, this.getLangManager().getLangs());
+		} catch (Throwable t) {
+			_logger.error("error in getAuthorizationInfo for content {}", contentId, t);
+		}
+		return authInfo;
+	}
+	
+	@Override
+	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, condition = "#cacheable", 
+			key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_AUTH_INFO_CACHE_PREFIX.concat(#contentId)")
+	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#contentId)")
+	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId, boolean cacheable) {
+		PublicContentAuthorizationInfo authInfo = null;
+		try {
+			Content content = this.getContentManager().loadContent(contentId, true, cacheable);
+			if (null == content) {
+				_logger.debug("public content {} doesn't exist", contentId);
+				return null;
+			}
 			authInfo = new PublicContentAuthorizationInfo(content, this.getLangManager().getLangs());
 		} catch (Throwable t) {
 			_logger.error("error in getAuthorizationInfo for content {}", contentId, t);

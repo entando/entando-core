@@ -86,4 +86,6 @@ public interface IContentAuthorizationHelper {
 	 */
 	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId);
 	
+	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId, boolean cacheable);
+	
 }

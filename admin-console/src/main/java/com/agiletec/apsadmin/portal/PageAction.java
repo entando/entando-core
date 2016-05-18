@@ -36,6 +36,8 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
+import java.util.Collections;
+import org.apache.commons.beanutils.BeanComparator;
 
 /**
  * Main action for pages handling
@@ -432,12 +434,14 @@ public class PageAction extends AbstractPortalAction {
 	 * @return The list of system groups.
 	 */
 	public List<Group> getGroups() {
-		return this.getGroupManager().getGroups();
+		List<Group> groups = this.getGroupManager().getGroups();
+		BeanComparator c = new BeanComparator("description");
+		Collections.sort(groups, c);
+		return groups;
 	}
 	
 	public List<PageModel> getPageModels() {
-		List<PageModel> models = new ArrayList<PageModel>(this.getPageModelManager().getPageModels());
-		return models;
+		return new ArrayList<PageModel>(this.getPageModelManager().getPageModels());
 	}
 	
 	public PageModel getPageModel(String code) {

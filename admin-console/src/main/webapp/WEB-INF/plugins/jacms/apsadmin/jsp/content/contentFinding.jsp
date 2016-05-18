@@ -12,7 +12,7 @@
 
 		<s:url action="search" var= "formAction" namespace="do/jacms/Content" />
 		<s:form action="%{'/' + #formAction}" cssClass="form-horizontal" role="search">
-
+			<s:set var="categoryTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
 			<p class="sr-only">
 				<wpsf:hidden name="lastGroupBy" />
 				<wpsf:hidden name="lastOrder" />
@@ -40,12 +40,12 @@
 					</span>
 				</div>
 				<div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					<div id="search-advanced" class="collapse well collapse-input-group">
+					<div id="search-advanced" class="collapse well collapse-input-group <s:if test="(#categoryTreeStyleVar == 'request' && null != treeNodeActionMarkerCode)">in</s:if>">
 						<div class="form-group">
 							<label for="contentType" class="control-label col-sm-2 text-right">
 								<s:text name="label.type"/>
 							</label>
-							<div class="col-sm-5 input-group">
+							<div class="col-sm-6 input-group">
 								<wpsf:select cssClass="form-control" name="contentType" id="contentType"
 									list="contentTypes" listKey="code" listValue="descr"
 									headerKey="" headerValue="%{getText('label.all')}" />
@@ -122,7 +122,7 @@
 							<label for="contentType" class="control-label col-sm-2 text-right">
 								<s:text name="label.category" />
 							</label>
-							<div class="col-sm-5">
+							<div class="col-sm-10">
 								<s:action name="showCategoryTreeOnContentFinding" namespace="/do/jacms/Content" ignoreContextParams="true" executeResult="true"></s:action>
 							</div>
 						</div>
@@ -173,10 +173,9 @@
 					</div><%--// search-advanced --%>
 				</div>
 			</div>
-
-
+			
 			<hr />
-
+			
 			<p class="help-block text-right">
 				<button type="button" data-toggle="collapse" data-target="#search-configure-results" class="btn btn-link">
 					<s:text name="title.searchResultOptions" />&#32;<span class="icon-chevron-down"></span>
@@ -460,7 +459,6 @@
 				<s:set var="textVariant">warning</s:set>
 				<s:set var="isOnlineStatus" value="%{getText('label.no')}" />
 			</s:if>
-
 			<td class="text-center">
 				<span class="icon fa fa-<s:property value="iconName" /> text-<s:property value="textVariant" />" title="<s:property value="isOnlineStatus" />"></span>
 				<span class="sr-only"><s:property value="isOnlineStatus" /></span>
@@ -493,7 +491,7 @@
 			</s:iterator>
 			</wpsa:hookPoint>
 				<div class="btn-group margin-small-vertical">
-					<wpsf:submit action="trashContentGroup" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-link">
+					<wpsf:submit action="trashContentGroup" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
 						<span class="icon fa fa-times-circle"></span>
 						<s:text name="label.remove" />
 					</wpsf:submit>

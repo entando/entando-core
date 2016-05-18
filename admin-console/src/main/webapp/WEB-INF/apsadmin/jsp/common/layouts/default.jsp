@@ -12,6 +12,8 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta charset="utf-8" />
+        
+        <link rel="icon" type="image/png" href="<wp:resourceURL />administration/img/favicon_entando.png" />
 
 	<link rel="stylesheet" href="<wp:resourceURL />administration/bootstrap/css/bootstrap.min.css" media="screen" />
 		<link rel="stylesheet" href="<wp:resourceURL />administration/css/bootstrap-theme-entando-ce/css/bootstrap.min.css" media="screen" />

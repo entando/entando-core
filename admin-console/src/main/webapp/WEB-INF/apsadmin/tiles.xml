@@ -294,7 +294,6 @@
 		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-references.jsp" />
 	</definition>
 	
-	
     <definition extends="layout.default" name="admin.PageModel.list">
         <put-attribute name="title" value="title.pageModelManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-list.jsp" />
@@ -328,6 +327,11 @@
         <put-attribute name="title" value="title.categoryManagement" />
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/categoryTree.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryTree.jsp" />
+    </definition>
+	<definition extends="layout.default" name="admin.Category.searchResult">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/categoryTree.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categorySearchResult.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Category.entry">
         <put-attribute name="title" value="title.categoryManagement" />

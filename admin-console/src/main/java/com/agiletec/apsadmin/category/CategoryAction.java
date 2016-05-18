@@ -13,14 +13,6 @@
  */
 package com.agiletec.apsadmin.category;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
@@ -30,6 +22,16 @@ import com.agiletec.apsadmin.category.helper.ICategoryActionHelper;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Action class which handles categories. 
@@ -280,6 +282,30 @@ public class CategoryAction extends AbstractTreeAction {
 		}
 	}
 	
+	public String search() {
+		return SUCCESS;
+	}
+	
+	public List<Category> getCategoriesFound() {	
+		List<Category> result = null;
+		try {
+			result = this.getCategoryManager().searchCategories(this.getCategoryCodeToken());
+			BeanComparator comparator = new BeanComparator("code");
+			Collections.sort(result, comparator);
+		} catch (Throwable t) {
+			_logger.error("Error on searching Categories", t);
+			throw new RuntimeException("Error on searching Categories", t);
+		}
+		return result;
+	}
+	
+	public void setCategoryCodeToken(String categoryCodeToken) {
+		this._categoryCodeToken = categoryCodeToken;
+	}
+	public String getCategoryCodeToken() {
+		return _categoryCodeToken;
+	}
+	
 	public int getStrutsAction() {
 		return _strutsAction;
 	}
@@ -334,6 +360,8 @@ public class CategoryAction extends AbstractTreeAction {
 		super.getTreeNodesToOpen().add(selectedNode);
 		this._selectedNode = selectedNode;
 	}
+	
+	private String _categoryCodeToken;
 	
 	private int _strutsAction;
 	private String _categoryCode;

@@ -1,8 +1,17 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+
 <h1 class="panel panel-default title-page"><span class="panel-body display-block"><s:text name="title.categoryManagement" /></span></h1>
 <div id="main" role="main">
+	
+	<p><s:text name="note.categoryTree.intro" /></p>
+<div role="search">
+	
+	<s:include value="/WEB-INF/apsadmin/jsp/category/include/categorySearchForm.jsp" />
+	
+	<hr />
+	
 <s:form cssClass="action-form">
 	<s:if test="hasActionErrors()">
 		<div class="alert alert-danger alert-dismissable fade in">
@@ -31,6 +40,7 @@
 	<s:set var="categoryTreeStyleVar"><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
 
 <div class="well">
+	
 	<ul id="categoryTree" class="fa-ul list-unstyled">
 		<s:set var="inputFieldName" value="%{'selectedNode'}" />
 		<s:set var="selectedTreeNode" value="%{selectedNode}" />
@@ -78,4 +88,5 @@
 		</div>
 	</fieldset>
 </s:form>
+</div>
 </div>

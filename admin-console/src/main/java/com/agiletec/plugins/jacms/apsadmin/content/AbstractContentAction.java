@@ -32,6 +32,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
+import java.util.Collections;
+import org.apache.commons.beanutils.BeanComparator;
 
 /**
  * Action Astratta Base per la gestione contenuti.
@@ -233,7 +235,10 @@ public abstract class AbstractContentAction extends BaseAction {
 	 * @return La lista dei gruppi presenti nel sistema.
 	 */
 	public List<Group> getGroups() {
-		return this.getGroupManager().getGroups();
+		List<Group> groups = this.getGroupManager().getGroups();
+		BeanComparator c = new BeanComparator("description");
+		Collections.sort(groups, c);
+		return groups;
 	}
 	
 	/**

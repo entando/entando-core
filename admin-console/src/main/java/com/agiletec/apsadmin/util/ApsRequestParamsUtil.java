@@ -93,6 +93,9 @@ public class ApsRequestParamsUtil {
 	
 	public static Properties extractApsActionParameters(String entandoActionName) {
 		Properties properties = new Properties();
+		if (entandoActionName.contains("#")) {
+			entandoActionName = entandoActionName.substring(0, entandoActionName.indexOf("#"));
+		}
 		String[] blocks = entandoActionName.split("[?]");
 		if (blocks.length == 2) {
 			String paramBlock = blocks[1];

@@ -325,146 +325,176 @@
 				--%>
 			</div>
 		</fieldset>
-
-		<%-- TITLES --%>
-		<fieldset class="margin-base-top">
-			<legend data-toggle="collapse" data-target="#options-extra"><s:text name="title.extraOption" />&#32;<span class="icon fa fa-chevron-down"></span></legend>
-			<div class="collapse" id="options-extra">
-				<p><s:text name="note.extraOption.intro" /></p>
-					<s:iterator id="lang" value="langs">
-						<div class="form-group">
-							<div class="col-xs-12">
-								<label for="title_<s:property value="#lang.code" />">
-									<code class="label label-info"><s:property value="#lang.code" /></code>&#32;
-									<s:text name="label.title" />
-								</label>
-								<wpsf:textfield name="title_%{#lang.code}" id="title_%{#lang.code}" value="%{widget.config.get('title_' + #lang.code)}" cssClass="form-control" />
-							</div>
-						</div>
-					</s:iterator>
-
-					<div class="form-group">
-						<div class="col-xs-12">
-							<label for="pageLink"><s:text name="label.page" /></label>
-							<wpsf:select list="pages" name="pageLink" id="pageLink" listKey="code" listValue="getShortFullTitle(currentLang.code)"
-									value="%{widget.config.get('pageLink')}" headerKey="" headerValue="%{getText('label.none')}" cssClass="form-control" />
-						</div>
-					</div>
-
-					<s:iterator var="lang" value="langs">
-						<div class="form-group">
-							<div class="col-xs-12">
-								<label for="linkDescr_<s:property value="#lang.code" />">
-									<code class="label label-info"><s:property value="#lang.code" /></code>&#32;
-									<s:text name="label.link.descr"/>
-								</label>
-								<wpsf:textfield name="linkDescr_%{#lang.code}" id="linkDescr_%{#lang.code}" value="%{widget.config.get('linkDescr_' + #lang.code)}" cssClass="form-control" />
-							</div>
-						</div>
-					</s:iterator>
-
-				</div>
-		</fieldset>
-
-
-		<%-- USER FILTERS - START BLOCK --%>
-		<fieldset class="margin-base-top">
-			<legend data-toggle="collapse" data-target="#filters-frontend"><s:text name="title.filters.search" />&#32;<span class="icon fa fa-chevron-down"></span></legend>
-
-			<div class="collapse" id="filters-frontend">
-
-				<div class="form-group">
-					<div class="col-xs-12">
-						<label for="userFilterKey"><s:text name="label.filter" /></label>
-						<div class="input-group">
-							<wpsf:select name="userFilterKey" id="userFilterKey" list="allowedUserFilterTypes" listKey="key" listValue="value" cssClass="form-control" />
-							<span class="input-group-btn">
-								<wpsf:submit type="button" action="addUserFilter" cssClass="btn btn-info">
-									<span class="icon fa fa-plus-square"></span>&#32;
-									<s:text name="label.add" />
-								</wpsf:submit>
-							</span>
-						</div>
-					</div>
-				</div>
-
-				<p class="sr-only">
-					<wpsf:hidden name="userFilters" value="%{getShowlet().getConfig().get('userFilters')}" />
-				</p>
-
-				<s:if test="null != userFiltersProperties && userFiltersProperties.size() > 0" >
-				<ol class="list-group">
-					<s:iterator value="userFiltersProperties" id="userFilter" status="rowstatus">
-					<li class="list-group-item">
-						<s:text name="label.filterBy" />
-						<strong>
-							<s:if test="#userFilter['attributeFilter'] == 'false'">
-								<s:if test="#userFilter['key'] == 'fulltext'">
-									<s:text name="label.fulltext" />
-								</s:if>
-								<s:elseif test="#userFilter['key'] == 'category'">
-									<s:text name="label.category" />
-									<s:if test="null != #userFilter['categoryCode']">
-										<s:set name="userFilterCategoryRoot" value="%{getCategory(#userFilter['categoryCode'])}"></s:set>
-										(<s:property value="#userFilterCategoryRoot.getFullTitle(currentLang.code)"/>)
-									</s:if>
-								</s:elseif>
-							</s:if>
-							<s:elseif test="#userFilter['attributeFilter'] == 'true'">
-								<s:property value="#userFilter['key']" />
-							</s:elseif>
-						</strong>
-
-						<div class="btn-toolbar pull-right">
-							<div class="btn-group btn-group-sm">
-								<wpsa:actionParam action="moveUserFilter" var="actionName" >
-									<wpsa:actionSubParam name="filterIndex" value="%{#rowstatus.index}" />
-									<wpsa:actionSubParam name="movement" value="UP" />
-								</wpsa:actionParam>
-								<wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.moveUp')}" cssClass="btn btn-default">
-									<span class="icon fa fa-sort-desc"></span>
-								</wpsf:submit>
-								<wpsa:actionParam action="moveUserFilter" var="actionName" >
-									<wpsa:actionSubParam name="filterIndex" value="%{#rowstatus.index}" />
-									<wpsa:actionSubParam name="movement" value="DOWN" />
-								</wpsa:actionParam>
-								<wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.moveDown')}" cssClass="btn btn-default">
-									<span class="icon fa fa-sort-asc"></span>
-								</wpsf:submit>
-							</div>
-							<div class="btn-group btn-group-sm">
-								<wpsa:actionParam action="removeUserFilter" var="actionName" >
-									<wpsa:actionSubParam name="filterIndex" value="%{#rowstatus.index}" />
-								</wpsa:actionParam>
-								<wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.remove')}" cssClass="btn btn-warning">
-									<span class="icon fa fa-times-circle-o"></span>
-								</wpsf:submit>
-							</div>
-						</div>
-						<span class="clearfix"></span>
-					</li>
-					</s:iterator>
-				</ol>
-				</s:if>
-
-			</div>
-
-		</fieldset>
+                    
+                    <%-- TITLES --%>
+                    <s:if test="%{widget.type.hasParameter('title_%') || widget.type.hasParameter('pageLink') || widget.type.hasParameter('linkDescr_%')}" >
+                        <fieldset class="margin-base-top">
+                            <legend data-toggle="collapse" data-target="#options-extra"><s:text name="title.extraOption" />&#32;<span class="icon fa fa-chevron-down"></span></legend>
+                            <div class="collapse" id="options-extra">
+                                <p><s:text name="note.extraOption.intro" /></p>
+                                <s:if test="%{widget.type.hasParameter('title_%')}" >
+                                    <s:iterator id="lang" value="langs">
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <label for="title_<s:property value="#lang.code" />">
+                                                    <code class="label label-info"><s:property value="#lang.code" /></code>&#32;
+                                                    <s:text name="label.title" />
+                                                </label>
+                                                <wpsf:textfield name="title_%{#lang.code}" id="title_%{#lang.code}" value="%{widget.config.get('title_' + #lang.code)}" cssClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </s:iterator>
+                                </s:if>
+                                <s:if test="%{widget.type.hasParameter('pageLink')}" >
+                                    <div class="form-group">
+                                        <div class="col-xs-12">
+                                            <label for="pageLink"><s:text name="label.page" /></label>
+                                            <wpsf:select list="pages" name="pageLink" id="pageLink" listKey="code" listValue="getShortFullTitle(currentLang.code)"
+                                                         value="%{widget.config.get('pageLink')}" headerKey="" headerValue="%{getText('label.none')}" cssClass="form-control" />
+                                        </div>
+                                    </div>
+                                </s:if>
+                                <s:if test="%{widget.type.hasParameter('linkDescr_%')}" >
+                                    <s:iterator var="lang" value="langs">
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <label for="linkDescr_<s:property value="#lang.code" />">
+                                                    <code class="label label-info"><s:property value="#lang.code" /></code>&#32;
+                                                    <s:text name="label.link.descr"/>
+                                                </label>
+                                                <wpsf:textfield name="linkDescr_%{#lang.code}" id="linkDescr_%{#lang.code}" value="%{widget.config.get('linkDescr_' + #lang.code)}" cssClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </s:iterator>
+                                </s:if>
+                            </div>
+                        </fieldset>
+                    </s:if>
+                    
+                    <%-- USER FILTERS - START BLOCK --%>
+                    <s:if test="%{widget.type.hasParameter('userFilters')}" >
+                        <fieldset class="margin-base-top">
+                            <legend data-toggle="collapse" data-target="#filters-frontend"><s:text name="title.filters.search" />&#32;<span class="icon fa fa-chevron-down"></span></legend>
+                            
+                            <div class="collapse" id="filters-frontend">
+                                
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label for="userFilterKey"><s:text name="label.filter" /></label>
+                                        <div class="input-group">
+                                            <wpsf:select name="userFilterKey" id="userFilterKey" list="allowedUserFilterTypes" listKey="key" listValue="value" cssClass="form-control" />
+                                            <span class="input-group-btn">
+                                                <wpsf:submit type="button" action="addUserFilter" cssClass="btn btn-info">
+                                                    <span class="icon fa fa-plus-square"></span>&#32;
+                                                    <s:text name="label.add" />
+                                                </wpsf:submit>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="sr-only">
+                                    <wpsf:hidden name="userFilters" value="%{getShowlet().getConfig().get('userFilters')}" />
+                                </p>
+                                
+                                <s:if test="null != userFiltersProperties && userFiltersProperties.size() > 0" >
+                                    <ol class="list-group">
+                                        <s:iterator value="userFiltersProperties" id="userFilter" status="rowstatus">
+                                            <li class="list-group-item">
+                                                <s:text name="label.filterBy" />
+                                                <strong>
+                                                    <s:if test="#userFilter['attributeFilter'] == 'false'">
+                                                        <s:if test="#userFilter['key'] == 'fulltext'">
+                                                            <s:text name="label.fulltext" />
+                                                        </s:if>
+                                                        <s:elseif test="#userFilter['key'] == 'category'">
+                                                            <s:text name="label.category" />
+                                                            <s:if test="null != #userFilter['categoryCode']">
+                                                                <s:set name="userFilterCategoryRoot" value="%{getCategory(#userFilter['categoryCode'])}"></s:set>
+                                                                (<s:property value="#userFilterCategoryRoot.getFullTitle(currentLang.code)"/>)
+                                                            </s:if>
+                                                        </s:elseif>
+                                                    </s:if>
+                                                    <s:elseif test="#userFilter['attributeFilter'] == 'true'">
+                                                        <s:property value="#userFilter['key']" />
+                                                    </s:elseif>
+                                                </strong>
+                                                
+                                                <div class="btn-toolbar pull-right">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <wpsa:actionParam action="moveUserFilter" var="actionName" >
+                                                            <wpsa:actionSubParam name="filterIndex" value="%{#rowstatus.index}" />
+                                                            <wpsa:actionSubParam name="movement" value="UP" />
+                                                        </wpsa:actionParam>
+                                                        <wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.moveUp')}" cssClass="btn btn-default">
+                                                            <span class="icon fa fa-sort-desc"></span>
+                                                        </wpsf:submit>
+                                                        <wpsa:actionParam action="moveUserFilter" var="actionName" >
+                                                            <wpsa:actionSubParam name="filterIndex" value="%{#rowstatus.index}" />
+                                                            <wpsa:actionSubParam name="movement" value="DOWN" />
+                                                        </wpsa:actionParam>
+                                                        <wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.moveDown')}" cssClass="btn btn-default">
+                                                            <span class="icon fa fa-sort-asc"></span>
+                                                        </wpsf:submit>
+                                                    </div>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <wpsa:actionParam action="removeUserFilter" var="actionName" >
+                                                            <wpsa:actionSubParam name="filterIndex" value="%{#rowstatus.index}" />
+                                                        </wpsa:actionParam>
+                                                        <wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.remove')}" cssClass="btn btn-warning">
+                                                            <span class="icon fa fa-times-circle-o"></span>
+                                                        </wpsf:submit>
+                                                    </div>
+                                                </div>
+                                                <span class="clearfix"></span>
+                                            </li>
+                                        </s:iterator>
+                                    </ol>
+                                </s:if>
+                                
+                            </div>
+                            
+                        </fieldset>
+                    </s:if>
 		<%-- USER FILTERS - END BLOCK --%>
 	</div>
 </div>
 
-<div class="form-group">
-	<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-		<wpsf:submit action="saveListViewerConfig" type="button" cssClass="btn btn-primary btn-block">
-			<span class="icon fa fa-floppy-o"></span>&#32;
-			<s:text name="label.save" />
-		</wpsf:submit>
-	</div>
+            <div class="form-group">
+                <div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
+                    <wpsf:submit action="saveListViewerConfig" type="button" cssClass="btn btn-primary btn-block">
+                        <span class="icon fa fa-floppy-o"></span>&#32;
+                        <s:text name="label.save" />
+                    </wpsf:submit>
+                </div>
+            </div>
+            
+        </s:else>
+
+    </s:form>
+    
 </div>
+<div id="categoryAnchor" lastCategoryCode="<s:property value="%{getCategoryAnchor()}" />" />
 
-		</s:else>
+<script>
+    
+    $('document').ready(function() {
 
-</s:form>
+        var category = document.getElementById("categoryAnchor").getAttribute("lastCategoryCode");
+        if (category) {  
+            setTimeout(function(){
+                window.location.href = "#fagianonode_" + category;
+            }, 250);
+        }
+    });
 
-</div>
+    
+</script>
+
+<script>
+//one domready to rule 'em all
+$(function() {
+<s:include value="/WEB-INF/comuneroma/apsadmin/jsp/common/layouts/js_category_tree.jsp" />
+});
+
+</script>

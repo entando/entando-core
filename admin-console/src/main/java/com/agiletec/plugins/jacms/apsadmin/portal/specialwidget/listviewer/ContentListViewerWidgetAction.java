@@ -40,6 +40,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.widget.UserFilterO
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.util.FilterUtils;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModel;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelManager;
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
 /**
  * Action per la gestione della configurazione della showlet erogatore avanzato lista contenuti.
@@ -69,7 +71,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			_logger.error("Error validating list viewer", t);
 		}
 	}
-
+	
 	protected void validateTitle() {
 		String titleParamPrefix = IContentListWidgetHelper.WIDGET_PARAM_TITLE + "_";
 		if (this.isMultilanguageParamValued(titleParamPrefix)) {
@@ -128,6 +130,24 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		return SUCCESS;
 	}
 	
+	@Override
+	public String save() {
+		this.validateFilters();
+		if (this.hasFieldErrors()) {
+			return INPUT;
+		}
+		return super.save();
+	}
+	
+	protected void validateFilters() {
+		WidgetType type = this.getWidget().getType();
+		ApsProperties config = this.getWidget().getConfig();
+		if (null != config && null != type && type.hasParameter("categories") && type.hasParameter("maxElemForItem") && type.hasParameter("maxElements") &&
+				StringUtils.isNotEmpty(config.getProperty("contentType")) && StringUtils.isEmpty(config.getProperty("categories")) && StringUtils.isEmpty(config.getProperty("maxElemForItem")) && StringUtils.isEmpty(config.getProperty("maxElements"))   ) {
+			this.addFieldError("categories", this.getText("error.widget.listViewer.parameters.invalid"));
+		}
+	}
+
 	public String configContentType() {
 		try {
 			Widget widget = super.createNewShowlet();

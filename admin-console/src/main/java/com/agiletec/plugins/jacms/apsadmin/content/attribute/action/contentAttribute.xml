@@ -179,73 +179,67 @@
 			</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
-
+		
 	</package>
-
+	
 	<package name="jacms_do/jacms/Content/Hypertext" namespace="/do/jacms/Content/Hypertext" extends="entando-default">
-	
-	
-		<action name="configInternalLink" class="jacmsHypertextAttributeAction">
-			<!-- configInternalLink: is deprecated use entandoInternalLink-->
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link.jsp</result>
-			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
-		</action>
+		
 		<action name="entandoInternalLink" class="jacmsHypertextAttributeAction">
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link.jsp</result>
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-1.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
-
-		<action name="introPageLink" class="jacmsPageLinkHypertextAttributeAction" method="buildTree">
-			<!-- introPageLink is deprecated, use entandoPageLink -->
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/pageLink.jsp</result>
+		
+		<action name="entandoInternalUrlLink" class="jacmsHypertextAttributeAction">
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-1.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
+		
+		<action name="entandoInternalContentLink" class="jacmsContentLinkHypertextAttributeAction">
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-3.jsp</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+		
+		<action name="entandoInternalPageLink" class="jacmsPageLinkHypertextAttributeAction" method="buildTree">
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-2.jsp</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+		
+		<action name="entandoInternalResourceLink" class="jacmsExtendedResourceFinderAction">
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-5.jsp</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+		
+		
 		<action name="entandoPageLink" class="jacmsPageLinkHypertextAttributeAction" method="buildTree">
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-pageLink.jsp</result>
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-2.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
 
         <action name="openCloseTreeNode" class="jacmsPageLinkHypertextAttributeAction" method="buildTree">
-    		<result type="tiles">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-pageLink.jsp</result>
+    		<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-2.jsp</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
         </action>
-
-		<action name="introContentLink" class="jacmsContentLinkHypertextAttributeAction">
-			<!-- introContentLink is deprecated, use entandoIntroContentLink -->
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/contentLink.jsp</result>
-			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
-		</action>
-		<action name="entandoIntroContentLink" class="jacmsContentLinkHypertextAttributeAction">
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-contentLink.jsp</result>
-			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
-		</action>
 		
-		<action name="search" class="jacmsContentLinkHypertextAttributeAction">
-			<!-- search is deprecated, use entandoSearch -->
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/contentLink.jsp</result>
+		<action name="entandoIntroContentLink" class="jacmsContentLinkHypertextAttributeAction">
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-3.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
 		<action name="entandoSearch" class="jacmsContentLinkHypertextAttributeAction">
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-contentLink.jsp</result>
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-3.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
 		
-		<action name="changeOrder" class="jacmsContentLinkHypertextAttributeAction" method="changeOrder">
-			<!-- changeOrder is deprecated, use entandoChangeOrder -->
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/contentLink.jsp</result>
-			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
-		</action>
 		<action name="entandoChangeOrder" class="jacmsContentLinkHypertextAttributeAction" method="changeOrder">
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-contentLink.jsp</result>
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-3.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
 		
 		<action name="entandoIntroResourceLink" class="jacmsExtendedResourceFinderAction">
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-resourceLink.jsp</result>
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-5.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
 		<action name="entandoResourceSearch" class="jacmsExtendedResourceFinderAction">
-			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-resourceLink.jsp</result>
+			<result type="dispatcher">/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/entando-link-5.jsp</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
 		

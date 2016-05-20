@@ -2,13 +2,15 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-<div id="resource-link" class="tab-pane">
-	<s:form action="entandoInternalLink" cssClass="form-horizontal" role="search">
+<h4><s:text name="note.resourceLinkTo" /></h4>
+
+	<s:form action="entandoResourceSearch" cssClass="form-horizontal" role="search">
 		<p class="sr-only"><s:text name="note.chooseResourceToLink" />.</p>
 		<p class="sr-only">
 			<wpsf:hidden name="activeTab" value="3" />
 			<wpsf:hidden name="internalResourceActionName" value="entandoResourceSearch" />
 			<wpsf:hidden name="contentOnSessionMarker" />
+			<wpsf:hidden name="linkTypeVar" value="5" />
 		</p>
 		<div class="form-group">
 			<div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -51,7 +53,7 @@
 			</div>
 		</div>
 	</s:form>
-	<s:form action="entandoInternalLink" >
+	<s:form action="entandoResourceSearch" >
 		<div class="col-xs-12">
 			<p class="sr-only">
 				<wpsf:hidden name="text" />
@@ -59,6 +61,7 @@
 				<wpsf:hidden name="activeTab" value="3" />
 				<wpsf:hidden name="internalResourceActionName" value="entandoResourceSearch" />
 				<wpsf:hidden name="contentOnSessionMarker" />
+				<wpsf:hidden name="linkTypeVar" value="5" />
 			</p>
 			<wpsa:subset source="resources" count="10" objectName="groupContent" advanced="true" offset="5">
 				<s:set name="group" value="#groupContent" />
@@ -112,4 +115,3 @@
 			</div>
 		</div>
 	</s:form>
-</div>

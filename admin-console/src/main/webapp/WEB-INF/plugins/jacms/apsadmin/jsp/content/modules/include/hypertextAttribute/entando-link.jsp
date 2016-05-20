@@ -169,60 +169,38 @@
 								<s:text name="title.link" />
 							</span>
 						</h1>
-						<ul class="nav nav-tabs tab-togglers" id="tab-togglers">
-							<li><a data-toggle="tab" href="#url-link"><s:text name="note.URLLinkTo" /></a></li>
-							<li><a data-toggle="tab" href="#page-link"><s:text name="note.pageLinkTo" /></a></li>
-							<li><a data-toggle="tab" href="#content-link"><s:text name="note.contentLinkTo" /></a></li>
-							<li><a data-toggle="tab" href="#resource-link"><s:text name="note.resourceLinkTo" /></a></li>
+						<c:set var="linkTypeVar" value="${param.linkTypeVar}" scope="page"/>					
+						<c:set var="contentOnSessionMarker" value="${param.contentOnSessionMarker}" scope="page"/>
+						<ul class="nav nav-tabs">
+							<li><a href="<s:url action="entandoInternalUrlLink" anchor="url-link"><s:param name="linkType" value="1" /><s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" /></s:url>"><s:text name="note.URLLinkTo" /></a></li>
+							<li><a href="<s:url action="entandoInternalPageLink" anchor="page-link"><s:param name="linkType" value="2" /><s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" /></s:url>"><s:text name="note.pageLinkTo" /></a></li>
+							<li><a href="<s:url action="entandoInternalContentLink" anchor="content-link"><s:param name="linkType" value="3" /><s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" /></s:url>"><s:text name="note.contentLinkTo" /></a></li>
+							<li><a href="<s:url action="entandoInternalResourceLink" anchor="resource-link"><s:param name="linkType" value="4" /><s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" /></s:url>"><s:text name="note.resourceLinkTo" /></a></li>
 						</ul>
 						<div class="panel panel-default" id="tab-container"><%-- panel --%>
 							<div class="panel-body"><%-- panel body --%>
 								<div class="tab-content"><%-- tabs container --%>
 									<%-- link to url --%>
-									<div id="url-link" class="tab-pane">
-										<form id="form_externalUrl">
-											<div class="col-xs-12">
-												<div class="form-group">
-													<label class="display-block" for="txtName">
-														<s:text name="label.url" />
-													</label>
-													<input type="hidden" name="contentOnSessionMarker" value="<s:property value="contentOnSessionMarker" />" />
-													<wpsf:textfield id="txtName" name="txtName" maxlength="255" cssClass="form-control" />
-													<span class="help help-block">
-														<s:text name="note.typeValidURL" />
-													</span>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-													<button type="submit" id="button_externalURL" name="button_externalURL" class="btn btn-primary btn-block">
-														<span class="icon fa fa-floppy-o"></span>&#32;
-														<s:text name="label.confirm" />
-													</button>
-												</div>
-											</div>
-										</form>
+									<div id="url-link">
+										<s:if test="%{#attr.linkTypeVar == 1}">
+										<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/type-1.jsp" />
+										</s:if>
 									</div>
-									<%-- link to page --%>
-									<s:action name="entandoPageLink" executeResult="true" />
-									
-									<%-- link to content --%>
-									<s:if test="#request.activeTab == 2 && null != #request.internalContentActionName">
-										<s:set var="introContentLinkActionName" value="#request.internalContentActionName" />
-									</s:if>
-									<s:else>
-										<s:set var="introContentLinkActionName" value="%{'entandoIntroContentLink'}" />
-									</s:else>
-									<s:action name="%{#introContentLinkActionName}" executeResult="true" />
-									
-									<%-- link to resource --%>
-									<s:if test="#request.activeTab == 3 && null != #request.internalResourceActionName">
-										<s:set var="introResourceLinkActionName" value="#request.internalResourceActionName" />
-									</s:if>
-									<s:else>
-										<s:set var="introResourceLinkActionName" value="%{'entandoIntroResourceLink'}" />
-									</s:else>
-									<s:action name="%{#introResourceLinkActionName}" executeResult="true" />
+									<div id="page-link" >
+										<s:if test="%{#attr.linkTypeVar == 2}">
+										<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/type-2.jsp" />
+										</s:if>
+									</div>
+									<div id="content-link" >
+										<s:if test="%{#attr.linkTypeVar == 3}">
+										<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/type-3.jsp" />
+										</s:if>
+									</div>
+									<div id="resource-link">
+										<s:if test="%{#attr.linkTypeVar == 5}">
+										<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/type-5.jsp" />
+										</s:if>
+									</div>
 								</div><%-- panel body --%>
 							</div><%-- tabs container --%>
 						</div><%-- panel --%>

@@ -21,11 +21,7 @@ import java.util.List;
 import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.FieldError;
@@ -41,8 +37,8 @@ import com.agiletec.aps.system.services.lang.ILangManager;
  * This abstract class must be used when implementing Entity Attributes.
  * @author W.Ambu - E.Santoboni
  */
-public abstract class AbstractAttribute implements AttributeInterface, BeanFactoryAware, Serializable {
-
+public abstract class AbstractAttribute implements AttributeInterface, Serializable {
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(AbstractAttribute.class);
 	
     @Override
@@ -182,12 +178,11 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
                 clone.setRoles(roles);
             }
             clone.setValidationRules(this.getValidationRules().clone());
-            clone.setBeanFactory(this.getBeanFactory());
+			clone.setLangManager(this.getLangManager());
 			clone.setAttributeManagerClassName(this.getAttributeManagerClassName());
         } catch (Throwable t) {
             String message = "Error detected while creating the attribute prototype '"  + this.getName() + "' type '" + this.getType() + "'";
             _logger.error("Error detected while creating the attribute prototype '{}' type '{}'", this.getName(), this.getType(), t);
-           // ApsSystemUtils.logThrowable(e, this, "getAttributePrototype", message);
             throw new RuntimeException(message, t);
         }
         return clone;
@@ -497,8 +492,7 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
                 if (null == validationRules) {
 					return errors;
 				}
-                ILangManager langManager = (ILangManager) this.getBeanFactory().getBean(SystemConstants.LANGUAGE_MANAGER, ILangManager.class);
-                List<AttributeFieldError> validationRulesErrors = validationRules.validate(this, tracer, langManager);
+                List<AttributeFieldError> validationRulesErrors = validationRules.validate(this, tracer, this.getLangManager());
                 if (null != validationRulesErrors) {
                     errors.addAll(validationRulesErrors);
                 }
@@ -510,20 +504,19 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
         return errors;
     }
     
-    protected BeanFactory getBeanFactory() {
-        return this._beanFactory;
-    }
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this._beanFactory = beanFactory;
-    }
-	
 	@Override
     public String getAttributeManagerClassName() {
 		return _attributeManagerClassName;
 	}
 	public void setAttributeManagerClassName(String attributeManagerClassName) {
 		this._attributeManagerClassName = attributeManagerClassName;
+	}
+	
+	protected ILangManager getLangManager() {
+		return _langManager;
+	}
+	public void setLangManager(ILangManager langManager) {
+		this._langManager = langManager;
 	}
     
     private String _name;
@@ -540,7 +533,8 @@ public abstract class AbstractAttribute implements AttributeInterface, BeanFacto
     private boolean _active = true;
     private IAttributeValidationRules _validationRules;
     
-    private BeanFactory _beanFactory;
 	private String _attributeManagerClassName;
     
+	private ILangManager _langManager;
+	
 }

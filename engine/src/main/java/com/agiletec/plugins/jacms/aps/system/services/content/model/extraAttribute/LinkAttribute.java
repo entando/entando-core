@@ -20,14 +20,12 @@ import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.attribute.AbstractJAXBAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.CmsAttributeReference;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
@@ -43,6 +41,15 @@ import com.agiletec.plugins.jacms.aps.system.services.linkresolver.ILinkResolver
 public class LinkAttribute extends TextAttribute implements IReferenceableAttribute {
 
 	private static final Logger _logger = LoggerFactory.getLogger(LinkAttribute.class);
+	
+	@Override
+    public Object getAttributePrototype() {
+        LinkAttribute prototype = (LinkAttribute) super.getAttributePrototype();
+		prototype.setContentManager(this.getContentManager());
+        prototype.setLinkResolverManager(this.getLinkResolverManager());
+        prototype.setPageManager(this.getPageManager());
+        return prototype;
+    }
 	
 	@Override
     public Element getJDOMElement() {
@@ -169,10 +176,6 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         this.getTextMap().put(this.getDefaultLangCode(), textValue);
     }
     
-    protected ILinkResolverManager getLinkResolverManager() {
-        return (ILinkResolverManager) this.getBeanFactory().getBean(JacmsSystemConstants.LINK_RESOLVER_MANAGER, ILinkResolverManager.class);
-    }
-    
 	@Override
     public Status getStatus() {
         Status textStatus = super.getStatus();
@@ -187,10 +190,10 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         List<AttributeFieldError> errors = super.validate(tracer);
         try {
             SymbolicLink symbolicLink = this.getSymbolicLink();
-            if (null == symbolicLink) return errors;
-            IContentManager contentManager = (IContentManager) this.getBeanFactory().getBean(JacmsSystemConstants.CONTENT_MANAGER, IContentManager.class);
-            IPageManager pageManager = (IPageManager) this.getBeanFactory().getBean(SystemConstants.PAGE_MANAGER, IPageManager.class);
-            SymbolicLinkValidator sler = new SymbolicLinkValidator(contentManager, pageManager);
+            if (null == symbolicLink) {
+				return errors;
+			}
+            SymbolicLinkValidator sler = new SymbolicLinkValidator(this.getContentManager(), this.getPageManager());
             String linkErrorCode = sler.scan(symbolicLink, (Content) this.getParentEntity());
             if (null != linkErrorCode) {
                 AttributeFieldError error = new AttributeFieldError(this, linkErrorCode, tracer);
@@ -220,7 +223,31 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
     public SymbolicLink getSymbolicLink() {
         return _symbolicLink;
     }
+	
+	protected IContentManager getContentManager() {
+		return _contentManager;
+	}
+	public void setContentManager(IContentManager contentManager) {
+		this._contentManager = contentManager;
+	}
+	
+	protected IPageManager getPageManager() {
+		return _pageManager;
+	}
+	public void setPageManager(IPageManager pageManager) {
+		this._pageManager = pageManager;
+	}
+	
+	protected ILinkResolverManager getLinkResolverManager() {
+		return _linkResolverManager;
+	}
+	public void setLinkResolverManager(ILinkResolverManager linkResolverManager) {
+		this._linkResolverManager = linkResolverManager;
+	}
     
     private SymbolicLink _symbolicLink;
-    
+	private IContentManager _contentManager;
+	private IPageManager _pageManager;
+	private ILinkResolverManager _linkResolverManager;
+	
 }

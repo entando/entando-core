@@ -19,14 +19,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.attribute.HypertextAttribute;
-import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.CmsAttributeReference;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
@@ -41,6 +38,14 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 public class CmsHypertextAttribute extends HypertextAttribute implements IReferenceableAttribute {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CmsHypertextAttribute.class);
+	
+	@Override
+    public Object getAttributePrototype() {
+        CmsHypertextAttribute prototype = (CmsHypertextAttribute) super.getAttributePrototype();
+		prototype.setContentManager(this.getContentManager());
+        prototype.setPageManager(this.getPageManager());
+        return prototype;
+    }
 	
     /**
      * Restituisce il testo con modificato con eliminate 
@@ -139,8 +144,7 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
         try {
-            ILangManager langManager = (ILangManager) this.getBeanFactory().getBean(SystemConstants.LANGUAGE_MANAGER, ILangManager.class);
-            List<Lang> langs = langManager.getLangs();
+            List<Lang> langs = this.getLangManager().getLangs();
             for (int i = 0; i < langs.size(); i++) {
                 Lang lang = langs.get(i);
                 AttributeTracer textTracer = (AttributeTracer) tracer.clone();
@@ -149,9 +153,7 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
                 if (null == text) continue;
                 List<SymbolicLink> links = HypertextAttributeUtil.getSymbolicLinksOnText(text);
                 if (null != links && !links.isEmpty()) {
-                    IContentManager contentManager = (IContentManager) this.getBeanFactory().getBean(JacmsSystemConstants.CONTENT_MANAGER, IContentManager.class);
-                    IPageManager pageManager = (IPageManager) this.getBeanFactory().getBean(SystemConstants.PAGE_MANAGER, IPageManager.class);
-                    SymbolicLinkValidator sler = new SymbolicLinkValidator(contentManager, pageManager);
+                    SymbolicLinkValidator sler = new SymbolicLinkValidator(this.getContentManager(), this.getPageManager());
                     for (int j = 0; j < links.size(); j++) {
                         SymbolicLink symbLink = links.get(j);
                         String linkErrorCode = sler.scan(symbLink, (Content) this.getParentEntity());
@@ -170,5 +172,22 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
         }
         return errors;
     }
-    
+	
+    protected IContentManager getContentManager() {
+		return _contentManager;
+	}
+	public void setContentManager(IContentManager contentManager) {
+		this._contentManager = contentManager;
+	}
+	
+	protected IPageManager getPageManager() {
+		return _pageManager;
+	}
+	public void setPageManager(IPageManager pageManager) {
+		this._pageManager = pageManager;
+	}
+	
+	private IContentManager _contentManager;
+	private IPageManager _pageManager;
+	
 }

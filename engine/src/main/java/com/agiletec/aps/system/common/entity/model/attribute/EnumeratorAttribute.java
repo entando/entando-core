@@ -22,18 +22,22 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.model.attribute.util.EnumeratorAttributeItemsExtractor;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 
 /**
  * This class describes an "Enumerator" Attribute.
  * @author E.Santoboni
  */
-public class EnumeratorAttribute extends MonoTextAttribute {
+public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactoryAware {
 
 	private static final Logger _logger =  LoggerFactory.getLogger(EnumeratorAttribute.class);
 	
 	@Override
     public Object getAttributePrototype() {
         EnumeratorAttribute prototype = (EnumeratorAttribute) super.getAttributePrototype();
+		prototype.setBeanFactory(this.getBeanFactory());
         prototype.setItems(this.getItems());
         prototype.setStaticItems(this.getStaticItems());
         prototype.setExtractorBeanName(this.getExtractorBeanName());
@@ -174,11 +178,21 @@ public class EnumeratorAttribute extends MonoTextAttribute {
     public void setCustomSeparator(String customSeparator) {
         this._customSeparator = customSeparator;
     }
-    
+	
+    protected BeanFactory getBeanFactory() {
+        return this._beanFactory;
+    }
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this._beanFactory = beanFactory;
+    }
+	
     private String[] _items;
     private String _staticItems;
     private String _extractorBeanName;
     private String _customSeparator;
     private final String DEFAULT_ITEM_SEPARATOR = ",";
+	
+	private BeanFactory _beanFactory;
     
 }

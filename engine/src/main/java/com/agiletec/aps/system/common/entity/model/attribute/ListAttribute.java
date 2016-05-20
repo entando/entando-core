@@ -23,11 +23,9 @@ import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.FieldError;
-import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 
 /**
@@ -170,31 +168,6 @@ public class ListAttribute extends AbstractListAttribute {
 		return jaxbAttribute;
 	}
 	
-	/*
-    @Override
-    protected Object getJAXBValue(String langCode) {
-        if (null == langCode) {
-            if (null == this.getAttributeListMap()) {
-                return null;
-            }
-            Map<String, List<AbstractJAXBAttribute>> map = new HashMap<String, List<AbstractJAXBAttribute>>();
-            Iterator<String> langCodesIter = this.getAttributeListMap().keySet().iterator();
-            while (langCodesIter.hasNext()) {
-                String listLangCode = langCodesIter.next();
-                List<AttributeInterface> attributes = this.getAttributeListMap().get(listLangCode);
-                List<AbstractJAXBAttribute> jaxrAttributes = this.extractJAXBListAttributes(attributes, langCode);
-                map.put(listLangCode, jaxrAttributes);
-            }
-            return map;
-        }
-        List<AttributeInterface> attributes = this.getAttributeList(langCode);
-        if (null == attributes) {
-            return null;
-        }
-        return this.extractJAXBListAttributes(attributes, langCode);
-    }
-    */
-    
     @Override
     public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
 		super.valueFrom(jaxbAttribute);
@@ -211,8 +184,7 @@ public class ListAttribute extends AbstractListAttribute {
     
 	@Override
 	public Status getStatus() {
-		ILangManager langManager = (ILangManager) this.getBeanFactory().getBean(SystemConstants.LANGUAGE_MANAGER, ILangManager.class);
-		Lang defaultLang = langManager.getDefaultLang();
+		Lang defaultLang = super.getLangManager().getDefaultLang();
 		List<AttributeInterface> attributeList = this.getAttributeList(defaultLang.getCode());
 		boolean valued = (null != attributeList && !attributeList.isEmpty());
 		if (valued) {
@@ -226,8 +198,7 @@ public class ListAttribute extends AbstractListAttribute {
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
         try {
-            ILangManager langManager = (ILangManager) this.getBeanFactory().getBean(SystemConstants.LANGUAGE_MANAGER, ILangManager.class);
-            List<Lang> langs = langManager.getLangs();
+            List<Lang> langs = super.getLangManager().getLangs();
             for (int i = 0; i < langs.size(); i++) {
                 Lang lang = langs.get(i);
                 List<AttributeInterface> attributeList = this.getAttributeList(lang.getCode());

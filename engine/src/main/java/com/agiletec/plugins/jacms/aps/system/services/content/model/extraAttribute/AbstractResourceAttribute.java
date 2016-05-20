@@ -23,14 +23,12 @@ import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.attribute.AbstractJAXBAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.CmsAttributeReference;
@@ -45,8 +43,16 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
  */
 public abstract class AbstractResourceAttribute extends TextAttribute
         implements IReferenceableAttribute, ResourceAttributeInterface {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(AbstractResourceAttribute.class);
+	
+	@Override
+    public Object getAttributePrototype() {
+        AbstractResourceAttribute prototype = (AbstractResourceAttribute) super.getAttributePrototype();
+		prototype.setConfigManager(this.getConfigManager());
+        prototype.setResourceManager(this.getResourceManager());
+        return prototype;
+    }
 	
     /**
      * Setta una risorsa sull'attributo.
@@ -259,14 +265,6 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         return this._resources;
     }
     
-    protected ConfigInterface getConfigManager() {
-        return (ConfigInterface) this.getBeanFactory().getBean(SystemConstants.BASE_CONFIG_MANAGER);
-    }
-    
-    protected IResourceManager getResourceManager() {
-        return (IResourceManager) this.getBeanFactory().getBean(JacmsSystemConstants.RESOURCE_MANAGER);
-    }
-    
 	@Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
@@ -274,8 +272,7 @@ public abstract class AbstractResourceAttribute extends TextAttribute
             if (null == this.getResources()) {
 				return errors;
 			}
-            ILangManager langManager = (ILangManager) this.getBeanFactory().getBean(SystemConstants.LANGUAGE_MANAGER, ILangManager.class);
-            List<Lang> langs = langManager.getLangs();
+            List<Lang> langs = super.getLangManager().getLangs();
             for (int i = 0; i < langs.size(); i++) {
                 Lang lang = langs.get(i);
                 ResourceInterface resource = this.getResource(lang.getCode());
@@ -300,9 +297,26 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         }
         return errors;
     }
+	
+	protected ConfigInterface getConfigManager() {
+		return _configManager;
+	}
+	public void setConfigManager(ConfigInterface configManager) {
+		this._configManager = configManager;
+	}
+	
+	protected IResourceManager getResourceManager() {
+		return _resourceManager;
+	}
+	public void setResourceManager(IResourceManager resourceManager) {
+		this._resourceManager = resourceManager;
+	}
     
     private Map<String, ResourceInterface> _resources = new HashMap<String, ResourceInterface>();
     
 	public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
+	
+	private ConfigInterface _configManager;
+	private IResourceManager _resourceManager;
     
 }

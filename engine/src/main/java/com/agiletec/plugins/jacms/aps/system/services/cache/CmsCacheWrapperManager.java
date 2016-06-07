@@ -13,12 +13,6 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.cache;
 
-import java.util.List;
-
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
@@ -37,6 +31,13 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.resource.event.ResourceChangedEvent;
 import com.agiletec.plugins.jacms.aps.system.services.resource.event.ResourceChangedObserver;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
+
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Cache Wrapper Manager for plugin jacms
@@ -107,7 +108,7 @@ public class CmsCacheWrapperManager extends AbstractService
 	
 	public static String getContentCacheGroupsCsv(String contentId) {
 		StringBuilder builder = new StringBuilder();
-		if (null != contentId) {
+		if (StringUtils.isNotEmpty(contentId)) {
 			String typeCode = contentId.substring(0, 3);
 			String contentCacheGroupId = JacmsSystemConstants.CONTENT_CACHE_GROUP_PREFIX + contentId;
 			String typeCacheGroupId = JacmsSystemConstants.CONTENT_TYPE_CACHE_GROUP_PREFIX + typeCode;

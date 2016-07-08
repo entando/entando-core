@@ -29,7 +29,6 @@ import org.entando.entando.aps.system.services.api.model.StringApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 
@@ -80,7 +79,6 @@ public class ApiRestStatusServer {
 		buffer.append("Method '").append(httpMethod).
 				append("' Namespace '").append(namespace).append("' Resource '").append(resourceName).append("'");
 		_logger.error("Error building api response  - {}", buffer.toString(), t);
-		//ApsSystemUtils.logThrowable(t, this, "buildErrorResponse", "Error building api response  - " + buffer.toString());
         StringApiResponse response = new StringApiResponse();
         ApiError error = new ApiError(IApiErrorCodes.SERVER_ERROR, "Error building response - " + buffer.toString(), Response.Status.INTERNAL_SERVER_ERROR);
         response.addError(error);

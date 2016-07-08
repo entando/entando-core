@@ -61,7 +61,6 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
             apiResponse = this.createResponse(method, parameters);
         } catch (ApiException e) {
         	_logger.error("Error creating response for method GET, resource '{}'", resourceName, e);
-            //ApsSystemUtils.logThrowable(e, this, "createResponse", "Error creating response for method GET, resource '" + resourceName + "'");
             if (apiResponse == null) {
                 apiResponse = new StringApiResponse();
             }
@@ -114,7 +113,6 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
         } catch (Throwable t) {
         	_logger.error("Error creating response - {}", this.buildApiSignature(method), t);
 			String message = "Error creating response - " + this.buildApiSignature(method);
-            //ApsSystemUtils.logThrowable(t, this, "createResponse", message);
             if (response == null) {
                 response = new StringApiResponse();
             }
@@ -143,11 +141,9 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
                 apiResponse.addErrors(t.getErrors());
             } else {
             	_logger.error("Error creating html response - {}", this.buildApiSignature(apiMethod), t);
-				//ApsSystemUtils.logThrowable(t, this, "extractHtmlResult", "Error creating html response - " + this.buildApiSignature(apiMethod));
 			}
         } catch (Throwable t) {
         	_logger.error("Error creating html response - {}", this.buildApiSignature(apiMethod), t);
-            //ApsSystemUtils.logThrowable(t, this, "extractHtmlResult", "Error creating html response - " + this.buildApiSignature(apiMethod));
         }
         return htmlResult;
     }
@@ -173,14 +169,12 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
                 is = resource.getInputStream();
             }
             if (null == is) {
-                _logger.info("Null Input Stream - template file path {}", path.toString());
+                _logger.debug("Null Input Stream - template file path {}", path.toString());
                 return null;
             }
             template = FileTextReader.getText(is);
         } catch (Throwable t) {
-            String message = "Error extracting template - " + this.buildApiSignature(apiMethod);
             _logger.error("Error extracting template - {}", this.buildApiSignature(apiMethod), t);
-            //ApsSystemUtils.logThrowable(t, this, "extractTemplate", message);
         } finally {
             if (null != is) {
                 is.close();
@@ -211,7 +205,6 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
             throw t;
         } catch (Throwable t) {
         	_logger.error("Error checking api parameters", t);
-           //ApsSystemUtils.logThrowable(t, this, "checkParameter", "Error checking api parameters");
             throw new ApsSystemException("Internal Error", t);
         }
     }
@@ -223,7 +216,6 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
             apiResponse = (AbstractApiResponse) responseClass.newInstance();
         } catch (Exception e) {
         	_logger.error("Error creating instance of response '{}'", apiMethod.getResponseClassName(), e);
-            //ApsSystemUtils.logThrowable(e, this, "createResponse", "Error creating instance of response '" + apiMethod.getResponseClassName() + "'");
         }
         return apiResponse;
     }
@@ -239,11 +231,9 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
             result = this.invokeGetMethod(api, bean, "", parameters, true);
         } catch (ApiException ae) {
         	_logger.error("Error invoking method GET for resource '{}'", resourceName, ae);
-            //ApsSystemUtils.logThrowable(ae, this, "invoke", "Error invoking method GET for resource '" + resourceName + "'");
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error invoking method GET for resource '{}'", resourceName, t);
-            //ApsSystemUtils.logThrowable(t, this, "invoke", "Error invoking method GET for resource '" + resourceName + "'");
             throw new ApsSystemException("Error invoking method GET for resource '" + resourceName + "'", t);
         }
         return result;
@@ -265,11 +255,9 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
             }
         } catch (ApiException ae) {
         	_logger.error("Error extracting api method {}", this.buildApiSignature(httpMethod, namespace, resourceName), ae);
-            //ApsSystemUtils.logThrowable(ae, this, "extractApi", "Error extracting api method " + this.buildApiSignature(httpMethod, namespace, resourceName));
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error extracting api method {}", this.buildApiSignature(httpMethod, namespace, resourceName), t);
-            //ApsSystemUtils.logThrowable(t, this, "extractApi", "Error extracting api method - " + this.buildApiSignature(httpMethod, namespace, resourceName));
             throw new ApiException(IApiErrorCodes.SERVER_ERROR, signature + " is not supported", Response.Status.INTERNAL_SERVER_ERROR);
         }
         return api;
@@ -316,7 +304,6 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
         } catch (NoSuchMethodException e) {
             if (throwException) {
             	_logger.error("No such method '{}' of class '{}'", methodName, bean.getClass(), e);
-                //ApsSystemUtils.logThrowable(e, this, "invokeGetMethod", "No such method '" + methodName + "' of class '" + bean.getClass() + "'");
                 throw new ApiException(IApiErrorCodes.API_METHOD_ERROR, "Method not supported - " + this.buildApiSignature(apiMethod), Response.Status.INTERNAL_SERVER_ERROR);
             }
         } catch (InvocationTargetException e) {
@@ -324,13 +311,11 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
                 throw (ApiException) e.getTargetException();
             } else if (throwException) {
             	_logger.error("Error invoking method '{}' of class '{}'", methodName, bean.getClass());
-                //ApsSystemUtils.logThrowable(e.getTargetException(), this, "invokeGetMethod", "Error invoking method '"+ methodName + "' of class '" + bean.getClass() + "'");
                 throw new ApiException(IApiErrorCodes.API_METHOD_ERROR, "Error invoking Method - " + this.buildApiSignature(apiMethod), Response.Status.INTERNAL_SERVER_ERROR);
             }
         } catch (Throwable t) {
             if (throwException) {
             	_logger.error("Error invoking method - {} {} of class '{}'", this.buildApiSignature(apiMethod) , methodName, bean.getClass(), t);
-                //ApsSystemUtils.logThrowable(t, this, "invokeGetMethod", "Error invoking method - " + this.buildApiSignature(apiMethod) + methodName + "' of class '" + bean.getClass() + "'");
                 throw t;
             }
         }
@@ -352,19 +337,16 @@ public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, Serv
             result = response;
         } catch (NoSuchMethodException e) {
         	_logger.error("No such method '{}' of class '{}'",apiMethod.getSpringBeanMethod(), bean.getClass(), e);
-           // ApsSystemUtils.logThrowable(e, this, "invokePutPostDeleteMethod", "No such method '" + apiMethod.getSpringBeanMethod() + "' of class '" + bean.getClass() + "'");
             throw new ApiException(IApiErrorCodes.API_METHOD_ERROR, "Method not supported - " + this.buildApiSignature(apiMethod), Response.Status.INTERNAL_SERVER_ERROR);
         } catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof ApiException) {
                 throw (ApiException) e.getTargetException();
             } else {
             	_logger.error("Error invoking method '{}' of class '{}'",apiMethod.getSpringBeanMethod(), bean.getClass());
-                //ApsSystemUtils.logThrowable(e.getTargetException(), this, "invokePutPostDeleteMethod", "Error invoking method '"  + apiMethod.getSpringBeanMethod() + "' of class '" + bean.getClass() + "'");
                 throw new ApiException(IApiErrorCodes.API_METHOD_ERROR, "Error invoking Method - " + this.buildApiSignature(apiMethod), Response.Status.INTERNAL_SERVER_ERROR);
             }
         } catch (Throwable t) {
         	_logger.error("Error invoking method '{}' of class '{}'",apiMethod.getSpringBeanMethod(), bean.getClass(), t);
-            //ApsSystemUtils.logThrowable(t, this, "invokePutPostDeleteMethod", "Error invoking method '" + apiMethod.getSpringBeanMethod() + "' of class '" + bean.getClass() + "'");
             throw t;
         }
         return result;

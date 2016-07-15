@@ -58,6 +58,8 @@ public abstract class AbstractContentSearcherDAO extends AbstractEntitySearcherD
 			return "maingroup";
 		} else if (metadataFieldKey.equals(IContentManager.CONTENT_CURRENT_VERSION_FILTER_KEY)) {
 			return "currentversion";
+		} else if (metadataFieldKey.equals(IContentManager.CONTENT_FIRST_EDITOR_FILTER_KEY)) {
+			return "firsteditor";
 		} else if (metadataFieldKey.equals(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY)) {
 			return "lasteditor";
 		} else throw new RuntimeException("Chiave di ricerca '" + metadataFieldKey + "' non riconosciuta");

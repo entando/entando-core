@@ -57,6 +57,7 @@ public class IntroNewContentAction extends AbstractContentAction {
 			prototype.setDescription(this.getContentDescription());
 			prototype.setStatus(this.getContentStatus());
 			prototype.setMainGroup(this.getContentMainGroup());
+			prototype.setFirstEditor(this.getCurrentUser().getUsername());
 			this.fillSessionAttribute(prototype);
 		} catch (Throwable t) {
 			_logger.error("error in createNewVoid", t);
@@ -72,6 +73,7 @@ public class IntroNewContentAction extends AbstractContentAction {
 				this.addFieldError("contentTypeCode", this.getText("error.content.type.invalid"));
 				return INPUT;
 			}
+			prototype.setFirstEditor(this.getCurrentUser().getUsername());
 			this.fillSessionAttribute(prototype);
 		} catch (Throwable t) {
 			_logger.error("error in createNew", t);

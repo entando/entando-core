@@ -60,7 +60,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		ContentRecordVO contentVo = new ContentRecordVO();
 		contentVo.setId(res.getString(1));
 		contentVo.setTypeCode(res.getString(2));
-		contentVo.setDescr(res.getString(3));
+		contentVo.setDescription(res.getString(3));
 		contentVo.setStatus(res.getString(4));
 		String xmlWork = res.getString(5);
 		contentVo.setCreate(DateConverter.parseDate(res.getString(6), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
@@ -73,7 +73,8 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		contentVo.setXmlWork(xmlWork);
 		contentVo.setXmlOnLine(xmlOnLine);
 		contentVo.setVersion(res.getString(10));
-		contentVo.setLastEditor(res.getString(11));
+		contentVo.setFirstEditor(res.getString(11));
+		contentVo.setLastEditor(res.getString(12));
 		return contentVo;
 	}
 	
@@ -101,7 +102,8 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		stat.setString(7, currentDate);
 		stat.setString(8, content.getMainGroup());
 		stat.setString(9, content.getVersion());
-		stat.setString(10, content.getLastEditor());
+		stat.setString(10, content.getFirstEditor());
+		stat.setString(11, content.getLastEditor());
 	}
 	
 	@Override
@@ -640,16 +642,17 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	
 	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = 
 		"SELECT contents.contentid, contents.contenttype, contents.descr, contents.status, " +
-		"contents.workxml, contents.created, contents.lastmodified, contents.onlinexml, contents.maingroup, contents.currentversion, contents.lasteditor " +
+		"contents.workxml, contents.created, contents.lastmodified, contents.onlinexml, contents.maingroup, " + 
+		"contents.currentversion, contents.lasteditor, contents.firsteditor " +
 		"FROM contents ";
 	
 	private final String LOAD_CONTENT_VO = 
 		LOAD_CONTENTS_VO_MAIN_BLOCK + " WHERE contents.contentid = ? ";
 	
 	private final String ADD_CONTENT =
-		"INSERT INTO contents (contentid, contenttype, descr, status, " +
-		"workxml, created, lastmodified, maingroup, currentversion, lasteditor) " +
-		"VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
+		"INSERT INTO contents (contentid, contenttype, descr, status, workxml, " + 
+		"created, lastmodified, maingroup, currentversion, firsteditor, lasteditor) " +
+		"VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
 	
 	private final String INSERT_ONLINE_CONTENT =
 		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +

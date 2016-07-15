@@ -261,6 +261,8 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
                 throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR,
 						"You cannot specify Content Id", Response.Status.CONFLICT);
             }
+			UserDetails user = (UserDetails) properties.get(SystemConstants.API_USER_PARAMETER);
+			content.setFirstEditor((null != user) ? user.getUsername() : SystemConstants.GUEST_USER_NAME);
 			response = this.validateAndSaveContent(content, properties);
         } catch (ApiException ae) {
             response.addErrors(ae.getErrors());

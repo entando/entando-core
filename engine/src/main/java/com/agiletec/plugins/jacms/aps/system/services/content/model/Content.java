@@ -203,6 +203,13 @@ public class Content extends ApsEntity {
 		return versionId.split("\\.");
 	}
 	
+	public String getFirstEditor() {
+		return _firstEditor;
+	}
+	public void setFirstEditor(String firstEditor) {
+		this._firstEditor = firstEditor;
+	}
+	
 	public String getLastEditor() {
 		return _lastEditor;
 	}
@@ -220,6 +227,7 @@ public class Content extends ApsEntity {
 	private Date _lastModified;
 	
 	private String _version;
+	private String _firstEditor;
 	private String _lastEditor;
 	
 	/**

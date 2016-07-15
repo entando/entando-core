@@ -88,6 +88,12 @@ public class Content {
 			canBeNull = true)
 	private String _lastEditor;
 	
+	@DatabaseField(columnName = "firsteditor", 
+			dataType = DataType.STRING, 
+			width = 40, 
+			canBeNull = true)
+	private String _firstEditor;
+	
 	public static final String TABLE_NAME = "contents";
 	
 }
@@ -104,6 +110,7 @@ CREATE TABLE contents
   onlinexml character varying,
   maingroup character varying(20) NOT NULL,
   currentversion character varying(7) NOT NULL,
+  firsteditor character varying(40),
   lasteditor character varying(40),
   CONSTRAINT contents_pkey PRIMARY KEY (contentid )
 )

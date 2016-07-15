@@ -39,6 +39,10 @@ public class ContentDOM extends ApsEntityDOM {
 		this.setAttribute(TAG_VERSION, version);
 	}
 	
+	public void setFirstEditor(String firstEditor) {
+		this.setAttribute(TAG_FIRST_EDITOR, firstEditor);
+	}
+	
 	public void setLastEditor(String lastEditor) {
 		this.setAttribute(TAG_LAST_EDITOR, lastEditor);
 	}
@@ -66,8 +70,9 @@ public class ContentDOM extends ApsEntityDOM {
 	
 	private final static String TAG_STATUS = "status";
 	private final static String TAG_VERSION = "version";
-	private final static String TAG_LAST_EDITOR = "lastEditor";
 	private final static String TAG_CREATED = "created";
 	private final static String TAG_LAST_MODIFIED = "lastModified";
+	private final static String TAG_FIRST_EDITOR = "firstEditor";
+	private final static String TAG_LAST_EDITOR = "lastEditor";
 	
 }

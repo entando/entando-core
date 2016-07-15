@@ -101,6 +101,13 @@ public class ContentRecordVO extends ApsEntityRecord {
 		this._version = version;
 	}
 	
+	public String getFirstEditor() {
+		return _firstEditor;
+	}
+	public void setFirstEditor(String firstEditor) {
+		this._firstEditor = firstEditor;
+	}
+	
 	public String getLastEditor() {
 		return _lastEditor;
 	}
@@ -119,6 +126,7 @@ public class ContentRecordVO extends ApsEntityRecord {
 	private String _mainGroupCode;
 	
 	private String _version;
+	private String _firstEditor;
 	private String _lastEditor;
 	
 }

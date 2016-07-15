@@ -239,6 +239,8 @@ public interface IContentManager extends IEntityManager {
     
     public static final String CONTENT_CURRENT_VERSION_FILTER_KEY = "currentversion";
     
+    public static final String CONTENT_FIRST_EDITOR_FILTER_KEY = "firsteditor";
+    
     public static final String CONTENT_LAST_EDITOR_FILTER_KEY = "lasteditor";
     
 }

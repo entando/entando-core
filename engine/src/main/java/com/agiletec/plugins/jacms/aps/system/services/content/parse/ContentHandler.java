@@ -41,6 +41,8 @@ public class ContentHandler extends EntityHandler {
 				this.startStatus(attributes, qName);
 			} else if (qName.equals("version")) {
 				this.startVersion(attributes, qName);
+			} else if (qName.equals("firstEditor")) {
+				this.startFirstEditor(attributes, qName);
 			} else if (qName.equals("lastEditor")) {
 				this.startLastEditor(attributes, qName);
 			} else if (qName.equals("created")) {
@@ -53,7 +55,7 @@ public class ContentHandler extends EntityHandler {
 			throw e;
 		} catch (Throwable t) {
 			_logger.error("error in start element", t);
-			throw new SAXException(t.getMessage());
+			throw new SAXException(new Exception(t));
 		}
 	}
 	
@@ -64,6 +66,8 @@ public class ContentHandler extends EntityHandler {
 				this.endStatus();
 			} else if (qName.equals("version")) {
 				this.endVersion();
+			} else if (qName.equals("firstEditor")) {
+				this.endFirstEditor();
 			} else if (qName.equals("lastEditor")) {
 				this.endLastEditor();
 			} else if (qName.equals("created")) {
@@ -73,7 +77,7 @@ public class ContentHandler extends EntityHandler {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in end element", t);
-			throw new SAXException(t.getMessage());
+			throw new SAXException(new Exception(t));
 		}
 	}
 	
@@ -86,6 +90,10 @@ public class ContentHandler extends EntityHandler {
 	}
 	
 	private void startLastEditor(Attributes attributes, String qName) throws SAXException {
+		return; // nothing to do
+	}
+	
+	private void startFirstEditor(Attributes attributes, String qName) throws SAXException {
 		return; // nothing to do
 	}
 	
@@ -108,6 +116,13 @@ public class ContentHandler extends EntityHandler {
 		StringBuffer textBuffer = this.getTextBuffer();
 		if (null != textBuffer) {
 			((Content) this.getCurrentEntity()).setVersion(textBuffer.toString());
+		}
+	}
+	
+	private void endFirstEditor() {
+		StringBuffer textBuffer = this.getTextBuffer();
+		if (null != textBuffer) {
+			((Content) this.getCurrentEntity()).setFirstEditor(textBuffer.toString());
 		}
 	}
 	

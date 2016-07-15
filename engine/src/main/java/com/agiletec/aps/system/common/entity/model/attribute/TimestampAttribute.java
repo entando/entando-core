@@ -41,12 +41,8 @@ public class TimestampAttribute extends DateAttribute {
     @Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
-        if (null == this.getDate() || (
-        		null != this.getFailedDateString() || 
-        		null != this.getFailedHourString() || 
-        		null != this.getFailedMinuteString() || 
-        		null != this.getFailedSecondString())
-        		) {
+        if (null == this.getDate() && 
+				(null != this.getFailedDateString() || null != this.getFailedHourString() || null != this.getFailedMinuteString() || null != this.getFailedSecondString())) {
             errors.add(new AttributeFieldError(this, FieldError.INVALID_FORMAT, tracer));
         }
         return errors;

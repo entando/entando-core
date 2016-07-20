@@ -13,27 +13,13 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.resource;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
+import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.util.DateConverter;
@@ -45,6 +31,22 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceIns
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
 
 /**
  * Servizio gestore tipi di risorse (immagini, audio, video, etc..).
@@ -131,7 +133,7 @@ public class ResourceManager extends AbstractService
 		ResourceInterface oldResource = this.loadResource(bean.getResourceId());
 		try {
 			if (null == bean.getInputStream()) {
-				oldResource.setDescr(bean.getDescr());
+				oldResource.setDescription(bean.getDescr());
 				oldResource.setCategories(bean.getCategories());
 				this.getResourceDAO().updateResource(oldResource);
 				this.notifyResourceChanging(oldResource);
@@ -168,7 +170,7 @@ public class ResourceManager extends AbstractService
 	
 	protected ResourceInterface createResource(ResourceDataBean bean) throws ApsSystemException {
 		ResourceInterface resource = this.createResourceType(bean.getResourceType());
-    	resource.setDescr(bean.getDescr());
+    	resource.setDescription(bean.getDescr());
     	resource.setMainGroup(bean.getMainGroup());
     	resource.setCategories(bean.getCategories());
     	resource.setMasterFileName(bean.getFileName());
@@ -404,6 +406,43 @@ public class ResourceManager extends AbstractService
     	return resourcesId;
 	}
     
+	@Override
+	public void reloadCategoryReferences(String categoryCode) throws ApsSystemException {
+		try {
+			List<String> resources = this.getCategoryUtilizersForReloadReferences(categoryCode);
+			_logger.info("start reload category references for {} resources", resources.size());
+			ReloadingCategoryReferencesThread th = null;
+			Thread currentThread = Thread.currentThread();
+			if (currentThread instanceof ReloadingCategoryReferencesThread) {
+				th = (ReloadingCategoryReferencesThread) Thread.currentThread();
+				th.setListSize(resources.size());
+			}
+			if (null != resources && !resources.isEmpty()) {
+				Iterator<String> it = resources.iterator();
+				while (it.hasNext()) {
+					String code = it.next();
+					ResourceInterface resource = this.loadResource(code);
+					this.getResourceDAO().updateResourceRelations(resource);
+					if (null != th) th.setListIndex(th.getListIndex() + 1);
+				}
+			}
+    	} catch (Throwable t) {
+			_logger.error("Error searching category utilizers : category code '{}'", categoryCode, t);
+			throw new ApsSystemException("Error searching category utilizers : category code '" + categoryCode + "'", t);
+		}
+	}
+	
+	@Override
+	public List getCategoryUtilizersForReloadReferences(String categoryCode) throws ApsSystemException {
+		List<String> resourcesId = null;
+    	try {
+	    	resourcesId = this.getCategoryUtilizers(categoryCode);
+    	} catch (Throwable t) {
+			throw new ApsSystemException("Error searching category utilizers : category code '" + categoryCode + "'", t);
+		}
+    	return resourcesId;
+	}
+	
     @Override
 	public int getStatus() {
 		return this._status;

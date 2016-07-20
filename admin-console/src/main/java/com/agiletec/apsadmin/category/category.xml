@@ -64,6 +64,33 @@
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
         </action>
         
+        <action name="searchParentsForMove" class="categoryAction">
+            <result type="json">
+                <param name="root">availableNodesForMoveTreeAjax</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+        </action>
+        
+        <action name="displayUpdatingReferencesStatus" class="categoryAction" >
+            <result type="json">
+                <param name="root">updateReferencesStatus</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+        </action>
+        
+        <action name="moveTree" class="categoryAction" method="moveTree">
+            <result type="chain">viewTree</result>
+            <result name="categoryTree" type="chain">viewTree</result>
+            <result name="moveReferences" type="tiles">admin.Category.moveReferences</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+        </action>
+
+        <action name="executeMoveTree" class="categoryAction" method="executeMoveTree">
+            <result type="redirectAction">viewTree</result>
+            <result name="categoryTree" type="chain">viewTree</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+        </action>
+        
     </package>
     
 </struts>

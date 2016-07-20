@@ -122,6 +122,7 @@ public class Category extends TreeNode implements Comparable {
 	 */
 	public Category getCloneForWrapper() {
 		Category clone = new Category();
+		System.out.println("CLONE for wrapper -> " + this.getCode());
 		clone.setCode(this.getCode());
 		clone.setDefaultLang(this._defaultLang);
 		ApsProperties cloneProperties = new ApsProperties();
@@ -133,7 +134,7 @@ public class Category extends TreeNode implements Comparable {
 			cloneProperties.put(currentLangCode, title);
 		}
 		clone.setTitles(cloneProperties);
-		if (!this.getParent().getCode().equals(this.getCode())) {
+		if (null != this.getParent() && !this.getParent().getCode().equals(this.getCode())) {
 			Category parent = this.getParent();
 			clone.setParent(parent.getCloneForWrapper());
 		}

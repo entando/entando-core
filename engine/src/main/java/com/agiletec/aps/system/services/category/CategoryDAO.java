@@ -33,7 +33,7 @@ import com.agiletec.aps.util.ApsProperties;
  * @author E.Santoboni
  */
 public class CategoryDAO extends AbstractDAO implements ICategoryDAO {
-
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(CategoryDAO.class);
 	
 	/**
@@ -198,5 +198,26 @@ public class CategoryDAO extends AbstractDAO implements ICategoryDAO {
 	
 	private static final String UPDATE_CATEGORY = 
 		"UPDATE categories SET parentcode = ? , titles = ? WHERE catcode = ? ";
-    
+	
+	@Override
+	public void moveCategory(Category currentCategory, Category newParent) {
+		Connection conn = null;
+		PreparedStatement stat = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			stat = conn.prepareStatement(UPDATE_CATEGORY);
+			stat.setString(1, newParent.getCode());
+			stat.setString(2, currentCategory.getTitles().toXml());
+			stat.setString(3, currentCategory.getCode());
+			stat.executeUpdate();
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			this.processDaoException(t, "Error while moving the category " + currentCategory.getCode() + " under parent node " + newParent.getCode(), "moveCategory");
+		} finally {
+			this.closeDaoResources(null, stat, conn);
+		}
+	}
+	
 }

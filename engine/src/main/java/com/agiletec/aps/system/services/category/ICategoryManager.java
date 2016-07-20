@@ -14,6 +14,7 @@
 package com.agiletec.aps.system.services.category;
 
 import java.util.List;
+import java.util.Map;
 
 import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -49,7 +50,6 @@ public interface ICategoryManager extends ITreeNodeManager {
      * Restituisce la radice dell'albero delle categorie
      * @return la categoria radice
      */
-	@Override
     public Category getRoot();
 	
     /**
@@ -66,7 +66,30 @@ public interface ICategoryManager extends ITreeNodeManager {
 	 * @return La lista piatta delle categorie disponibili.
 	 */
 	public List<Category> getCategoriesList();
-	
-	public List<Category> searchCategories(String categoryCodeToken) throws ApsSystemException;
     
+	/**
+	 * Search categories by a token of its code.
+	 * @param categoryCodeToken The token containing to be looked up across the categories.
+	 * @return A list of candidates containing the given token. If the categoryCodeToken is null then
+	 * this method will return a set containing all the pages.
+	 * @throws ApsSystemException in case of error.
+	 */
+	public List<Category> searchCategories(String categoryCodeToken) throws ApsSystemException;
+
+	/**
+	 * Moves a category under another node
+	 * @param currentCategory the category to move
+	 * @param newParent the new parent
+	 * @return true if the the operation succeeds
+	 */
+	public boolean moveCategory(Category currentCategory, Category newParent) throws ApsSystemException;
+
+	public int getMoveTreeStatus();
+	
+	public Map<String, Integer> getReloadStatus();
+	
+	public static final int STATUS_RELOADING_REFERENCES_IN_PROGRESS = 1;
+	
+	public static final int STATUS_READY = 0;
+	
 }

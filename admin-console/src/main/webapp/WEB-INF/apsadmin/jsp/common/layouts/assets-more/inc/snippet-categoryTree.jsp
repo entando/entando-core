@@ -23,3 +23,19 @@ jQuery("#categoryTree").EntandoWoodMenu({
 	toolcollapseLabelTitle: "<s:text name="label.collapseAllTitle" />"
 });
 </s:if>
+
+$('#modal-move-tree').on('show.bs.modal', function(){
+	$('input[type="text"]', this).val("");
+});
+
+new EntandoTypeaheadTree({
+	url: '<s:url action="searchParentsForMove" />',
+	treetypeahead: $('#treetypeahead'),
+	dataBuilder: function(query) {
+			return jQuery.extend({
+			'selectedNode': $('[name="selectedNode"]:checked', '#categoryTree').first().val()
+		}, {
+			'categoryCodeToken': query
+		})
+	}
+})

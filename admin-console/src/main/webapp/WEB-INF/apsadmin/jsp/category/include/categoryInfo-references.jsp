@@ -4,6 +4,9 @@
 <s:form>
 <p class="sr-only">
 	<wpsf:hidden name="selectedNode" />
+	<s:iterator value="#categoryInfoReferencesExtraPaginatorParamMap" var="extraParam">
+		<wpsf:hidden name="%{#extraParam.key}" value="%{#extraParam.value}" />
+	</s:iterator>
 </p>
 
 <wpsa:hookPoint key="core.categoryReferences" objectName="hookPointElements_core_categoryReferences">

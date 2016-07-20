@@ -401,6 +401,24 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		}
 	}
 	
+	/* ESTENSIONE SPOSTAMENTO NODI */
+	@Override
+	public void updateResourceRelations(ResourceInterface resource) {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			this.deleteRecordsById(resource.getId(), DELETE_RESOURCE_REL_RECORD, conn);
+			this.addCategoryRelationsRecord(resource, conn);
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			this.processDaoException(t, "Error updating resource category relations", "updateResourceRelations");
+		} finally {
+			closeConnection(conn);
+		}
+	}
+	
 	@Override
 	protected String getMasterTableName() {
 		return "resources";

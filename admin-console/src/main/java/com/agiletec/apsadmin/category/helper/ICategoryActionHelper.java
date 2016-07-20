@@ -39,6 +39,19 @@ public interface ICategoryActionHelper extends ITreeNodeBaseActionHelper {
 	 */
 	public Map getReferencingObjects(Category category, HttpServletRequest request) throws ApsSystemException;
 	
+	/** 
+	 * Return the map of the objects referenced by the given category that will be involved when moving a category under a new node.
+	 * The difference between this and "getReferencingObjects" is that the search may be different. For example, for jacmsContentManager this search 
+	 * returns ALL the contents related to the category, while getReferencingObjects will return only ONLINE contents.
+	 * The map is indexed by the name of the service which handles the type of the referenced elements;
+	 * the value is the list of the elements fetched by the appropriate service.
+	 * @param category The category by which you want to find any referenced element.
+	 * @param request The request.
+	 * @return The map of the objects referenced in the given category. 
+	 * @throws ApsSystemException if error is detected
+	 */
+	public Map getReferencingObjectsForMove(Category category, HttpServletRequest request) throws ApsSystemException;
+	
 	/**
 	 * Create a new category based on the parameters passed.
 	 * @param code The code of the new category.

@@ -349,6 +349,11 @@
         <put-attribute name="title" value="title.categoryManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryDetails.jsp" />
     </definition>
+	
+    <definition extends="layout.default" name="admin.Category.moveReferences">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryMoveReferences.jsp" />
+    </definition>
 
     <!-- ********* FINE Area Gestione Categorie ********* -->
 

@@ -66,6 +66,33 @@ public class CategoryActionHelper extends TreeNodeBaseActionHelper implements IC
     	}
     	return references;
     }
+
+	@Override
+	public Map getReferencingObjectsForMove(Category category, HttpServletRequest request) throws ApsSystemException {
+		Map<String, List> references = new HashMap<String, List>();
+		try {
+			String[] defNames = ApsWebApplicationUtils.getWebApplicationContext(request).getBeanNamesForType(CategoryUtilizer.class);
+			for (int i=0; i<defNames.length; i++) {
+				Object service = null;
+				try {
+					service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
+				} catch (Throwable t) {
+					_logger.error("error checking Referencing Objects", t);
+					service = null;
+				}
+				if (service != null) {
+					CategoryUtilizer categoryUtilizer = (CategoryUtilizer) service;
+					List utilizers = categoryUtilizer.getCategoryUtilizersForReloadReferences(category.getCode());
+					if (utilizers != null && !utilizers.isEmpty()) {
+						references.put(categoryUtilizer.getName()+"Utilizers", utilizers);
+					}
+				}
+			}
+		} catch (Throwable t) {
+			throw new ApsSystemException("Error in getReferencingObjectsForMove", t);
+		}
+		return references;
+	}
 	
 	@Override
 	public Category buildNewCategory(String code, String parentCode, ApsProperties titles) throws ApsSystemException {

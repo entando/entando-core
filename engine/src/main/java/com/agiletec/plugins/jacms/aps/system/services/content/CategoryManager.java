@@ -11,8 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.services.category;
+package com.agiletec.plugins.jacms.aps.system.services.content;
 
+import com.agiletec.aps.system.services.category.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

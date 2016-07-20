@@ -89,4 +89,7 @@ public interface IResourceDAO {
 	 */
 	public ResourceRecordVO loadResourceVo(String id);
 	
+	/* ESTENSIONE SPOSTAMENTO NODI */
+	public void updateResourceRelations(ResourceInterface resource);
+	
 }

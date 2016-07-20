@@ -37,11 +37,50 @@ public class TreeNodeWrapper extends TreeNode {
 		this.setParent(node.getParent());
 	}
 	
+	public TreeNodeWrapper(ITreeNode tree, String currentLang) {
+		this.setCode(tree.getCode());
+		ITreeNode parent = tree.getParent();
+		if (null != parent) {
+			super.setParent(parent);
+		}
+		this.setTitle(tree.getTitle(currentLang));
+		this.setFullTitle(tree.getFullTitle(currentLang));
+		this.setShortFullTitle(tree.getShortFullTitle(currentLang));
+	}
+	
 	public boolean isOpen() {
 		return _open;
 	}
 	public void setOpen(boolean open) {
 		this._open = open;
+	}
+	
+	public String getParentCode() {
+		if (null != super.getParent()) {
+			return super.getParent().getCode();
+		}
+		return null;
+	}
+	
+	public String getTitle() {
+		return _title;
+	}
+	public void setTitle(String title) {
+		this._title = title;
+	}
+	
+	public String getFullTitle() {
+		return _fullTitle;
+	}
+	public void setFullTitle(String fullTitle) {
+		this._fullTitle = fullTitle;
+	}
+	
+	public String getShortFullTitle() {
+		return _shortFullTitle;
+	}
+	public void setShortFullTitle(String shortFullTitle) {
+		this._shortFullTitle = shortFullTitle;
 	}
 	
 	public boolean isEmpty() {
@@ -53,5 +92,9 @@ public class TreeNodeWrapper extends TreeNode {
 	
 	private boolean _empty;
 	private boolean _open;
+	
+	private String _title;
+	private String _fullTitle;
+	private String _shortFullTitle;
 	
 }

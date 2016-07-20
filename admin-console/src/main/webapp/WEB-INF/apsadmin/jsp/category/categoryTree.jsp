@@ -37,10 +37,22 @@
 	</s:if>
 	<%-- <fieldset class="margin-more-top"><legend><s:text name="title.categoryTree" /></legend> --%>
 
+	<s:if test="serviceStatus != 0">
+			<div class="alert alert-info">
+				<button class="close hidden" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
+				<span
+					data-entando-progress-url="<s:url action="displayUpdatingReferencesStatus" />"
+					data-entando-progress-template-wip="<strong>Updating references {{percentage}}%&hellip;</strong>&#32;<small class='text-muted'>({{done}} / {{total}})</small>"
+					data-entando-progress-template-done="<strong>References updated successfully!</strong>">
+					<strong>Updating references</strong>
+				</span>
+			</div>
+	</s:if>
+
+
 	<s:set var="categoryTreeStyleVar"><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
 
 <div class="well">
-	
 	<ul id="categoryTree" class="fa-ul list-unstyled">
 		<s:set var="inputFieldName" value="%{'selectedNode'}" />
 		<s:set var="selectedTreeNode" value="%{selectedNode}" />
@@ -79,6 +91,18 @@
 					<span class="icon fa fa-pencil-square-o"></span>
 				</wpsf:submit>
 			</div>
+			<wp:ifauthorized permission="superuser">
+			<div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
+					<button
+						class="btn btn-info"
+						data-toggle="modal" data-target="#modal-move-tree"
+						title="Move this categoty or branch within another one"
+						>
+						<span class="icon fa fa-sort"></span>
+					</span>
+					</button>
+			</div>
+			</wp:ifauthorized>
 			<div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
 				<wpsf:submit type="button" action="trash" title="%{getText('category.options.delete')}" data-toggle="tooltip" cssClass="btn btn-warning">
 					<span class="sr-only"><s:text name="category.options.delete" /></span>
@@ -87,6 +111,31 @@
 			</div>
 		</div>
 	</fieldset>
+
+	<wp:ifauthorized permission="manageCategories">
+	<!-- Modal modal-move-tree -->
+	<div class="modal fade" id="modal-move-tree" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="icon fa fa-times"></span></button>
+					<h4 class="modal-title">Inject branch to</h4>
+				</div>
+				<div class="modal-body">
+					<div class="">
+							<input type="text" class="form-control" id="treetypeahead" name="parentCategoryCode" autocomplete="off" />
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<wpsf:submit action="moveTree" type="button" cssClass="btn btn-primary">
+						<s:text name="Apply" />
+					</wpsf:submit>
+				</div>
+			</div>
+		</div>
+	</div>
+	</wp:ifauthorized>
+
 </s:form>
-</div>
 </div>

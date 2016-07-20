@@ -48,4 +48,11 @@ public interface ICategoryDAO {
      */
     public void updateCategory(Category category);
 	
+	/**
+	 * Move a category under a a new parent node
+	 * @param currentCategory category to move
+	 * @param newParent the new parent
+	 */
+	public void moveCategory(Category currentCategory, Category newParent);
+	
 }

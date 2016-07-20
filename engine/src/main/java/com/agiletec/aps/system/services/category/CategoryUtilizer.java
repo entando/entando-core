@@ -40,4 +40,20 @@ public interface CategoryUtilizer {
 	 */
 	public List getCategoryUtilizers(String categoryCode) throws ApsSystemException;
 	
+	/**
+	 * Reload the category references.
+	 * <p>Target object are the result of getCategoryUtilizersForReloadReferences
+	 * @param categoryCode The category code
+	 * @throws ApsSystemException In case of error
+	 */
+	public void reloadCategoryReferences(String categoryCode) throws ApsSystemException;
+	
+	/**
+	 * Returns a list of identifiers of objects referenced by the categoryCode provided.
+	 * <p>Changes according to the single implementation and may coincide with getCategoryUtilizers
+	 * @param categoryCode The category code
+	 * @throws ApsSystemException In case of error
+	 */
+	public List getCategoryUtilizersForReloadReferences(String categoryCode) throws ApsSystemException;
+	
 }

@@ -13,22 +13,7 @@
 */
 package com.agiletec.plugins.jacms.aps.system.services.content;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
-import org.entando.entando.aps.system.services.cache.CacheableInfo;
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-
+import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
 import com.agiletec.aps.system.common.entity.IEntityDAO;
@@ -46,6 +31,23 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceUtilizer;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
+import org.entando.entando.aps.system.services.cache.CacheableInfo;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Contents manager. This implements all the methods needed to create and manage the contents.
@@ -552,6 +554,30 @@ public class ContentManager extends ApsEntityManager
         return contentIds;
     }
     
+	@Override
+	public void reloadCategoryReferences(String categoryCode) {
+		try {
+			this.getContentUpdaterService().reloadCategoryReferences(categoryCode);
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "reloadCategoryReferences");
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List getCategoryUtilizersForReloadReferences(String categoryCode) {
+		List<String> contentIdToReload = new ArrayList<String>();
+		try {
+			Set<String> contents = this.getContentUpdaterService().getContentsId(categoryCode);
+			if (null != contents) {
+				contentIdToReload.addAll(contents);
+			}
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "getCategoryUtilizersForReloadReferences");
+		}
+		return contentIdToReload;
+	}
+    
     @Override
     public boolean isSearchEngineUser() {
         return true;
@@ -597,6 +623,13 @@ public class ContentManager extends ApsEntityManager
         this._publicContentSearcherDAO = publicContentSearcherDAO;
     }
     
+	protected IContentUpdaterService getContentUpdaterService() {
+		return _contentUpdaterService;
+	}
+	public void setContentUpdaterService(IContentUpdaterService contentUpdaterService) {
+		this._contentUpdaterService = contentUpdaterService;
+	}
+	
     @Override
     public IApsEntity getEntity(String entityId) throws ApsSystemException {
         return this.loadContent(entityId, false);
@@ -621,5 +654,7 @@ public class ContentManager extends ApsEntityManager
     private IWorkContentSearcherDAO _workContentSearcherDAO;
     
     private IPublicContentSearcherDAO _publicContentSearcherDAO;
-    
+	
+	private IContentUpdaterService _contentUpdaterService;
+	
 }

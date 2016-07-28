@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import com.agiletec.aps.system.ApsSystemUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -576,6 +577,21 @@ public class PageManager extends AbstractService
 		} catch (Throwable t) {
 			_logger.error("Error during refres pages", t);
 		}
+	}
+	
+	@Override
+	public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException {
+		boolean resultOperation = false;
+		_logger.debug("start move page " + currentPage + "under " + newParent);
+		try {
+			this.getPageDAO().movePage(currentPage, newParent);
+			resultOperation = true;
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "movePage");
+			throw new ApsSystemException("Error while moving a page under a root node", t);
+		}
+		this.loadPageTree();
+		return resultOperation;
 	}
 	
 	protected IPageDAO getPageDAO() {

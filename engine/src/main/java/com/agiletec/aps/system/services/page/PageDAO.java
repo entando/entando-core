@@ -526,7 +526,41 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			stat.setNull(4, Types.VARCHAR);
 		}
 	}
-
+	
+	@Override
+	public void movePage(IPage currentPage, IPage newParent) {
+		Connection conn = null;
+		PreparedStatement stat = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			//position
+			int pos = 1;
+			IPage[] sisters = newParent.getChildren();
+			if (null != sisters && sisters.length > 0) {
+				IPage last = sisters[sisters.length - 1];
+				if (null != last) {
+					pos = last.getPosition() + 1;
+				} else {
+					pos = sisters.length + 1;
+				}
+			}
+			stat = conn.prepareStatement(UPDATE_PAGE_TREE_POSITION);
+			stat.setString(1, newParent.getCode());
+			stat.setInt(2, pos);
+			stat.setString(3, currentPage.getCode());
+			stat.executeUpdate();
+			this.shiftPages(currentPage.getParentCode(), currentPage.getPosition(), conn);
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error while moving the page {} under {}" + newParent, currentPage, newParent, t);
+			throw new RuntimeException("Error while moving the page " + currentPage + " under " + newParent, t);
+		} finally {
+			this.closeDaoResources(null, stat, conn);
+		}
+	}
+	
 	protected IPageModelManager getPageModelManager() {
 		return _pageModelManager;
 	}
@@ -583,7 +617,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 
 	private static final String MOVE_WIDGET =
 		"UPDATE widgetconfig SET framepos = ? WHERE pagecode = ? and framepos = ? ";
-
-
-
+	
+	private static final String UPDATE_PAGE_TREE_POSITION = 
+			"UPDATE pages SET parentcode = ? , pos =?  WHERE code = ? ";
+	
 }

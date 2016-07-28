@@ -117,10 +117,14 @@ public interface IPageManager extends ITreeNodeManager {
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException;
 	
 	/**
+	 * @param showletTypeCode the showlet type code
+	 * @return The list of pages
 	 * @deprecated Use {@link #getWidgetUtilizers(String)} instead
 	 */
 	public List<IPage> getShowletUtilizers(String showletTypeCode) throws ApsSystemException;
 
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
+	
+	public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException;
 	
 }

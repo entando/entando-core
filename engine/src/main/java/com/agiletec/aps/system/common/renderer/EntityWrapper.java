@@ -25,6 +25,8 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AbstractComplexAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.services.category.Category;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents an entity suitable for the rendering process. This class extends
@@ -32,6 +34,8 @@ import com.agiletec.aps.system.services.category.Category;
  * @author M.Diana - W.Ambu - E.Santoboni
  */
 public class EntityWrapper implements Map {
+	
+	private static final Logger _logger = LoggerFactory.getLogger(EntityWrapper.class);
 	
 	/**
 	 * Wrapper initialization.
@@ -58,6 +62,10 @@ public class EntityWrapper implements Map {
 	@Override
 	public Object get(Object key) {
 		AttributeInterface attribute = this._attributeMap.get(key);
+		if (null == attribute) {
+			_logger.debug("Required null attribute {}", key);
+			return null;
+		}
 		if (attribute.isSimple()) {
 			return attribute;
 		} else {

@@ -18,10 +18,11 @@ import java.io.Serializable;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class generates the XML of the single entity, and it is used by all those managers that manages
@@ -133,9 +134,11 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 	 */
 	@Override
 	public void addGroup(String groupName) {
-		Element groupTag = new Element("group");
-		groupTag.setAttribute("name", groupName);
-		this._root.getChild(TAG_GROUPS).addContent(groupTag);
+		if (null != groupName) {
+			Element groupTag = new Element("group");
+			groupTag.setAttribute("name", groupName);
+			this._root.getChild(TAG_GROUPS).addContent(groupTag);
+		}
 	}
 	
 	/**

@@ -110,6 +110,8 @@ public interface IContentManager extends IEntityManager {
      */
     public void saveContent(Content content) throws ApsSystemException;
     
+    public void saveContentAndContinue(Content content) throws ApsSystemException;
+    
     /**
      * Save a content in the DB.
      * @param content The content to add.

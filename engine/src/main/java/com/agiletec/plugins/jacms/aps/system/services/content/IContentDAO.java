@@ -84,4 +84,6 @@ public interface IContentDAO extends IEntityDAO {
 	 */
 	public List<String> getCategoryUtilizers(String categoryCode);
 	
+	public void updateContent(Content content, boolean updateDate);
+	
 }

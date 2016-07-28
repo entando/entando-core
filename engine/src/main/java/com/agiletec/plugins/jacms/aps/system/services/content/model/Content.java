@@ -123,7 +123,8 @@ public class Content extends ApsEntity {
 		ContentDOM contentDOM = (ContentDOM) super.getBuildJDOM();
 		contentDOM.setStatus(this.getStatus());
 		contentDOM.setVersion(this.getVersion());
-		contentDOM.setLastEditor(this.getLastEditor());
+		contentDOM.setFirstEditor(this.getFirstEditor());
+        contentDOM.setLastEditor(this.getLastEditor());
         contentDOM.setCreationDate(this.getCreated());
         contentDOM.setModifyDate(this.getLastModified());
         return contentDOM;

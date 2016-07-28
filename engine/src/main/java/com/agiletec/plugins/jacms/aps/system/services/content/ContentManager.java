@@ -14,6 +14,22 @@
 package com.agiletec.plugins.jacms.aps.system.services.content;
 
 import com.agiletec.aps.system.ApsSystemUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
+import org.entando.entando.aps.system.services.cache.CacheableInfo;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
 import com.agiletec.aps.system.common.entity.IEntityDAO;
@@ -31,23 +47,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceUtilizer;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
-import org.entando.entando.aps.system.services.cache.CacheableInfo;
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Contents manager. This implements all the methods needed to create and manage the contents.
@@ -215,6 +215,9 @@ public class ContentManager extends ApsEntityManager
                     if (null == content.getVersion()) {
                         content.setVersion(contentVo.getVersion());
                     }
+                    if (null == content.getFirstEditor()) {
+                        content.setFirstEditor(contentVo.getFirstEditor());
+                    }
                     if (null == content.getLastEditor()) {
                         content.setLastEditor(contentVo.getLastEditor());
                     }
@@ -225,7 +228,7 @@ public class ContentManager extends ApsEntityManager
                         content.setLastModified(contentVo.getModify());
                     }
                     if (null == content.getStatus()) {
-                        content.setStatus(contentVo.getStatus());
+						content.setStatus(contentVo.getStatus());
                     }
                 }
             }
@@ -265,6 +268,11 @@ public class ContentManager extends ApsEntityManager
         this.addContent(content);
     }
     
+    @Override
+    public void saveContentAndContinue(Content content) throws ApsSystemException {
+        this.addUpdateContent(content, false);
+    }
+    
     /**
      * Save a content in the DB. Hopefully this method has no annotation attached
      * @param content
@@ -272,9 +280,15 @@ public class ContentManager extends ApsEntityManager
      */
     @Override
     public void addContent(Content content) throws ApsSystemException {
+        this.addUpdateContent(content, true);
+    }
+	
+    private void addUpdateContent(Content content, boolean updateDate) throws ApsSystemException {
         try {
             content.setLastModified(new Date());
-            content.incrementVersion(false);
+			if (updateDate) {
+				content.incrementVersion(false);
+			}
             String status = content.getStatus();
             if (null == status) {
                 content.setStatus(Content.STATUS_DRAFT);
@@ -288,7 +302,7 @@ public class ContentManager extends ApsEntityManager
                 content.setId(id);
                 this.getContentDAO().addEntity(content);
             } else {
-                this.getContentDAO().updateEntity(content);
+                this.getContentDAO().updateContent(content, updateDate);
             }
         } catch (Throwable t) {
             _logger.error("Error while saving content", t);
@@ -622,8 +636,8 @@ public class ContentManager extends ApsEntityManager
     public void setPublicContentSearcherDAO(IPublicContentSearcherDAO publicContentSearcherDAO) {
         this._publicContentSearcherDAO = publicContentSearcherDAO;
     }
-    
-	protected IContentUpdaterService getContentUpdaterService() {
+	
+    protected IContentUpdaterService getContentUpdaterService() {
 		return _contentUpdaterService;
 	}
 	public void setContentUpdaterService(IContentUpdaterService contentUpdaterService) {

@@ -107,6 +107,46 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	}
 	
 	@Override
+	public void updateContent(Content content, boolean updateDate) {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			this.executeUpdateContent(content, updateDate, conn);
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error updating content",  t);
+			throw new RuntimeException("Error updating content", t);
+		} finally {
+			this.closeConnection(conn);
+		}
+	}
+	
+	protected void executeUpdateContent(Content content, boolean updateDate, Connection conn) throws Throwable {
+		PreparedStatement stat = null;
+		try {
+			this.deleteRecordsByEntityId(content.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
+			this.deleteRecordsByEntityId(content.getId(), this.getRemovingSearchRecordQuery(), conn);
+			this.deleteRecordsByEntityId(content.getId(), this.getRemovingAttributeRoleRecordQuery(), conn);
+			if (updateDate) {
+				stat = conn.prepareStatement(this.getUpdateEntityRecordQuery());
+			} else {
+				stat = conn.prepareStatement(this.getUpdateEntityRecordQueryWithoutDate());
+			}
+			this.buildUpdateEntityStatement(content, updateDate, stat);
+			stat.executeUpdate();
+			this.addEntitySearchRecord(content.getId(), content, conn);
+			this.addEntityAttributeRoleRecord(content.getId(), content, conn);
+			this.addWorkContentRelationsRecord(content, conn);
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this.closeDaoResources(null, stat);
+		}
+	}
+	
+	@Override
 	protected void executeUpdateEntity(IApsEntity entity, Connection conn) throws Throwable {
 		this.deleteRecordsByEntityId(entity.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.executeUpdateEntity(entity, conn);
@@ -118,18 +158,29 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		return UPDATE_CONTENT;
 	}
 	
+	protected String getUpdateEntityRecordQueryWithoutDate() {
+		return UPDATE_CONTENT_WITHOUT_DATE;
+	}
+	
 	@Override
 	protected void buildUpdateEntityStatement(IApsEntity entity, PreparedStatement stat) throws Throwable {
+		this.buildUpdateEntityStatement(entity, true, stat);
+	}
+	
+	protected void buildUpdateEntityStatement(IApsEntity entity, boolean updateDate, PreparedStatement stat) throws Throwable {
 		Content content = (Content) entity;
-		stat.setString(1, content.getTypeCode());
-		stat.setString(2, content.getDescription());
-		stat.setString(3, content.getStatus());
-		stat.setString(4, content.getXML());
-		stat.setString(5, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
-		stat.setString(6, content.getMainGroup());
-		stat.setString(7, content.getVersion());
-		stat.setString(8, content.getLastEditor());
-		stat.setString(9, content.getId());
+		int index = 1;
+		stat.setString(index++, content.getTypeCode());
+		stat.setString(index++, content.getDescription());
+		stat.setString(index++, content.getStatus());
+		stat.setString(index++, content.getXML());
+		if (updateDate) {
+			stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+		}
+		stat.setString(index++, content.getMainGroup());
+		stat.setString(index++, content.getVersion());
+		stat.setString(index++, content.getLastEditor());
+		stat.setString(index++, content.getId());
 	}
 	
 	/**
@@ -643,7 +694,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = 
 		"SELECT contents.contentid, contents.contenttype, contents.descr, contents.status, " +
 		"contents.workxml, contents.created, contents.lastmodified, contents.onlinexml, contents.maingroup, " + 
-		"contents.currentversion, contents.lasteditor, contents.firsteditor " +
+		"contents.currentversion, contents.firsteditor, contents.lasteditor " +
 		"FROM contents ";
 	
 	private final String LOAD_CONTENT_VO = 
@@ -666,6 +717,11 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	private final String UPDATE_CONTENT =
 		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +
 		"workxml = ? , lastmodified = ? , maingroup = ? , currentversion = ? , lasteditor = ? " +
+		"WHERE contentid = ? ";
+	
+	private final String UPDATE_CONTENT_WITHOUT_DATE =
+		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +
+		"workxml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " +
 		"WHERE contentid = ? ";
 	
 	private final String LOAD_ALL_CONTENTS_ID = 

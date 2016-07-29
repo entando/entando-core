@@ -490,11 +490,3 @@
 
     
 </script>
-
-<script>
-//one domready to rule 'em all
-$(function() {
-<s:include value="/WEB-INF/comuneroma/apsadmin/jsp/common/layouts/js_category_tree.jsp" />
-});
-
-</script>

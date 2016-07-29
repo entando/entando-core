@@ -266,7 +266,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 		asi.setActionType(strutsAction);
 		Lang defaultLang = this.getLangManager().getDefaultLang();
 		Properties titles = new Properties();
-		titles.setProperty(defaultLang.getCode(), content.getDescription());
+		titles.setProperty(defaultLang.getCode(), (null != content.getDescription()) ? content.getDescription() : "-");
 		asi.setObjectTitles(titles);
 		if (addLink) {
 			asi.setLinkNamespace("/do/jacms/Content");
@@ -276,8 +276,10 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			asi.setLinkAuthPermission(Permission.CONTENT_EDITOR);
 		}
 		List<String> groupCodes = new ArrayList<String>();
+		if (null != content.getMainGroup()) {
+			groupCodes.addAll(content.getGroups());
+		}
 		groupCodes.add(content.getMainGroup());
-		groupCodes.addAll(content.getGroups());
 		asi.setGroups(groupCodes);
 		return asi;
 	}

@@ -113,7 +113,7 @@ public class ContentAction extends AbstractContentAction {
 	public String configureMainGroup() {
 		Content content = this.updateContentOnSession();
 		try {
-			if (null == content.getId() && null == content.getMainGroup()) {
+			if (/*null == content.getId() && */null == content.getMainGroup()) {
 				String mainGroup = this.getRequest().getParameter("mainGroup");
 				if (mainGroup != null && null != this.getGroupManager().getGroup(mainGroup)) {
 					content.setMainGroup(mainGroup);

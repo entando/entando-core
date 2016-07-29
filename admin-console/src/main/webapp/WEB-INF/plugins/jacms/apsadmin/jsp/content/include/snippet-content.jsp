@@ -41,7 +41,22 @@
 				</span>
 			</span>
 				(<s:property value="content.typeDescr" />)&#32;&middot;&#32;
-				<abbr title="<s:text name="name.version" />">v</abbr><span data-autosave="version"><s:property value="content.version" /></span>&#32;
+				<abbr title="<s:text name="name.version" />">v</abbr><span data-autosave="version"><s:property value="content.version" /></span>
+				
+				&#32;
+				<s:text name="note.firstEditor" />&#32;
+				<span data-autosave="firstEditor">
+				<s:set var="firstEditorVar" value="content.firstEditor" scope="page" />
+				<wp:ifauthorized permission="superuser" var="authorizedSuperUserVar" />
+				<c:if test="${!empty firstEditorVar && authorizedSuperUserVar}"><a href="<s:url action="edit" namespace="/do/User"><s:param name="username" value="content.firstEditor"/></s:url>" title="<s:text name="label.edit" />: <s:property value="content.firstEditor" />"></c:if>
+				<c:choose>
+					<c:when test="${empty firstEditorVar || (firstEditorVar eq sessionScope.currentUser)}"><s:property value="content.firstEditor" /> <span class="text-muted">(<s:text name="label.you" />)</span></c:when>
+					<c:otherwise><s:property value="content.firstEditor" /></c:otherwise>
+				</c:choose>
+				<c:if test="${!empty firstEditorVar && authorizedSuperUserVar}"></a></c:if>
+				</span>
+				
+				&#32;
 				<s:text name="note.lastEditor" />&#32;
 				<span data-autosave="lastEditor">
 				<s:set var="lastEditorVar" value="content.lastEditor" scope="page" />
@@ -53,7 +68,7 @@
 				</c:choose>
 				<c:if test="${!empty lastEditorVar && authorizedSuperUserVar}"></a></c:if>
 				</span>
-
+				
 		<s:if test="content.onLine">
 		&#32;&middot;&#32;<s:text name="note.lastApprovedIntro" />&#32;<a href="<s:url action="inspect" namespace="/do/jacms/Content" ><s:param name="contentId" value="content.id" /><s:param name="currentPublicVersion" value="'true'" /></s:url>"><s:text name="note.lastApproved" /></a>
 		</s:if>

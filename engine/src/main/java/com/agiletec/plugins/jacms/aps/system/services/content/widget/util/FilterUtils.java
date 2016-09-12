@@ -82,7 +82,7 @@ public class FilterUtils extends BaseFilterUtils {
 				String toStringFilter = fullFilterString.substring(1, fullFilterString.length()-1);
 				Properties properties = getProperties(toStringFilter, DEFAULT_FILTER_PARAM_SEPARATOR);
 				UserFilterOptionBean filterBean = new UserFilterOptionBean(properties, prototype, currentFrame, currentLang, dateFormat, request);
-                                if (filterBean.getFormFieldValues().isEmpty() && filterBean.isAttributeFilter() && !prototype.getAttributeMap().get(filterBean.getKey()).isRequired()){
+                                if (filterBean.getFormFieldValues()!=null && filterBean.getFormFieldValues().isEmpty() && filterBean.isAttributeFilter() && !prototype.getAttributeMap().get(filterBean.getKey()).isRequired()){
                                     // Skippo l'aggiunta del filtro perchè è un campo non obbligatorio e se non valorizzo il filtro, verrebbero ignorati tutti i risultati con questo campo nullo (rif IS NOT NULL) anche se la ricerca era per altri campi
                                 }else{
                                     list.add(filterBean);

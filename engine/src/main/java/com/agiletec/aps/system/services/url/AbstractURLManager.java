@@ -13,8 +13,12 @@
  */
 package com.agiletec.aps.system.services.url;
 
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.common.AbstractService;
@@ -30,6 +34,8 @@ import com.agiletec.aps.system.common.AbstractService;
  * @author M.Diana
  */
 public abstract class AbstractURLManager extends AbstractService implements IURLManager {
+	
+	private static final Logger _logger = LoggerFactory.getLogger(AbstractURLManager.class);
 	
 	/**
 	 * Crea e restituisce un oggetto PageURL.<br>
@@ -64,7 +70,7 @@ public abstract class AbstractURLManager extends AbstractService implements IURL
 			int index = 1;
 			while (keyIter.hasNext()) {
 				String name = keyIter.next();
-				buf.append(name).append("=").append(params.get(name));
+				buf.append(this.encodeParam(name)).append("=").append(this.encodeParam(params.get(name)));
 				if (index != params.size()) {
 					if (escapeAmp) {
 						buf.append("&amp;");
@@ -77,6 +83,17 @@ public abstract class AbstractURLManager extends AbstractService implements IURL
 			queryString = buf.toString();
 		}
 		return queryString;
+	}
+	
+	protected String encodeParam(String param) {
+		String value = null;
+		try {
+			value = URLEncoder.encode(param, ENCODING_CHARSET);
+		} catch (Throwable t) {
+			_logger.error("Error encoding param value: " + param);
+			value = "";// Parametro vuoto
+		}
+		return value;	
 	}
 	
 }

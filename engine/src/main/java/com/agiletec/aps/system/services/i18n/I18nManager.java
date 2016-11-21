@@ -20,11 +20,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
@@ -39,9 +42,42 @@ public class I18nManager extends AbstractService implements II18nManager {
 	@Override
 	public void init() throws Exception {
 		this.loadLabels();
+		this.setDefaultLang(this.getLangManager().getDefaultLang().getCode());
 		_logger.debug("{} : initialized {} labels", this.getClass().getName(), this._labelGroups.size());
 	}
-
+	
+	@Override
+	public String renderLabel(String key, String renderingLang, 
+			boolean keyIfEmpty) throws ApsSystemException {
+		String label = null;
+		ApsProperties labelsProp = this.getLabelGroup(key);
+		if (labelsProp != null) {
+			label = labelsProp.getProperty(renderingLang);
+			if (StringUtils.isEmpty(label)) {
+				label = labelsProp.getProperty(this.getDefaultLang());
+			}
+		}
+		if (keyIfEmpty && StringUtils.isEmpty(label)) {
+			label = key;
+		}
+		return label;
+	}
+	
+	@Override
+	public String renderLabel(String key, String renderingLang,
+			boolean keyIfEmpty, Map<String, String> params) throws ApsSystemException {
+		String value = this.renderLabel(key, renderingLang, keyIfEmpty);
+		if (params != null && !params.isEmpty() && value != null) {
+			value = this.parseText(value, params);
+		}
+		return value;
+	}
+	
+	protected String parseText(String defaultText, Map<String, String> params) {
+		StrSubstitutor strSub = new StrSubstitutor(params);
+		return strSub.replace(defaultText);
+	}
+	
 	/**
 	 * Carica le label dalla configurazione riguardanti tutte le 
 	 * lingue caricate nel sistema e le inserisce in un'HashMap
@@ -206,6 +242,20 @@ public class I18nManager extends AbstractService implements II18nManager {
 	public Map<String, ApsProperties> getLabelGroups() {
 		return this._labelGroups;
 	}
+	
+	protected String getDefaultLang() {
+		return defaultLang;
+	}
+	protected void setDefaultLang(String defaultLang) {
+		this.defaultLang = defaultLang;
+	}
+	
+	protected ILangManager getLangManager() {
+		return _langManager;
+	}
+	public void setLangManager(ILangManager langManager) {
+		this._langManager = langManager;
+	}
 
 	protected II18nDAO getI18nDAO() {
 		return _i18nDAO;
@@ -218,7 +268,9 @@ public class I18nManager extends AbstractService implements II18nManager {
 	 * Map delle label internazionalizzate.
 	 */
 	private Map<String, ApsProperties> _labelGroups;
-
+	private String defaultLang;
+	
+	private ILangManager _langManager;
 	private II18nDAO _i18nDAO;
-
+	
 }

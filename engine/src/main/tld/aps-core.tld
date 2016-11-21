@@ -317,7 +317,8 @@
 	<tag>
 		<description><![CDATA[Return the string associated to the given key in the specified language.
 			This string is either returned (and rendered) or can be optionally placed
-			in a page context variable.]]></description>
+			in a page context variable.<br />
+			This tag can use the ParameterTag sub-tag to add label parameters.]]></description>
 		<name>i18n</name>
 		<tag-class>com.agiletec.aps.tags.I18nTag</tag-class>
 		<body-content>JSP</body-content>

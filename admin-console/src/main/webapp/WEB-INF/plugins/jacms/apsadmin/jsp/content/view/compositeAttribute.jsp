@@ -1,11 +1,11 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<s:set value="masterCompositeAttributeTracer" value="#attributeTracer" />
-<s:set value="masterCompositeAttribute" value="#attribute" />
+<s:set var="masterCompositeAttributeTracer" value="#attributeTracer" />
+<s:set var="masterCompositeAttribute" value="#attribute" />
 <s:if test="#attribute.attributes.size() != 0">
 	<div class="list-group">
 		<s:iterator value="#attribute.attributes" var="attribute">
-			<s:set value="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)" />
-			<s:set value="parentAttribute" value="#masterCompositeAttribute" />
+			<s:set var="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)" />
+			<s:set var="parentAttribute" value="#masterCompositeAttribute" />
 			<s:if test="null != #attribute.description"><s:set var="compositeElementLabelVar" value="#attribute.description" /></s:if>
 			<s:else><s:set var="compositeElementLabelVar" value="#attribute.name" /></s:else>
 			<div class="list-group-item">
@@ -67,6 +67,6 @@
 		</s:iterator>
 	</div>
 </s:if>
-<s:set value="attributeTracer" value="#masterCompositeAttributeTracer" />
-<s:set value="attribute" value="#masterCompositeAttribute" />
-<s:set value="parentAttribute" value="" />
+<s:set var="attributeTracer" value="#masterCompositeAttributeTracer" />
+<s:set var="attribute" value="#masterCompositeAttribute" />
+<s:set var="parentAttribute" value="" />

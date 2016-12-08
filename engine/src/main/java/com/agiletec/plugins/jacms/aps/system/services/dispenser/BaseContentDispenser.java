@@ -122,7 +122,7 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 	
 	@Override
 	public void resolveLinks(ContentRenderizationInfo renderizationInfo, RequestContext reqCtx) {
-		if (null == renderizationInfo || null == reqCtx) {
+		if (null == renderizationInfo) {
 			return;
 		}
 		try {

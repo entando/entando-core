@@ -56,6 +56,12 @@ public class ContentPreviewDispenser extends BaseContentDispenser {
 	
 	@Override
 	public ContentRenderizationInfo getBaseRenderizationInfo(PublicContentAuthorizationInfo authInfo, 
+			String contentId, long modelId, String langCode, UserDetails currentUser, RequestContext reqCtx, boolean cacheable) {
+		return this.getBaseRenderizationInfo(authInfo, contentId, modelId, langCode, currentUser, reqCtx);
+	}
+	
+	@Override
+	public ContentRenderizationInfo getBaseRenderizationInfo(PublicContentAuthorizationInfo authInfo, 
 			String contentId, long modelId, String langCode, UserDetails currentUser, RequestContext reqCtx) {
 		ContentRenderizationInfo renderInfo = null;
 		try {

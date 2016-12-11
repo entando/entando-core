@@ -118,9 +118,9 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             render.append(this.getItemsStartElement());
             for (int i = 0; i < contentsId.size(); i++) {
                 render.append(this.getItemStartElement());
-				ContentRenderizationInfo renderizationInfo = this.getContentDispenser().getRenderizationInfo(contentsId.get(i), modelIdInteger, langCode, null);
-	            if (null != renderizationInfo) {
-					render.append(renderizationInfo.getCachedRenderedContent());
+                String renderedContent = this.getRenderedContent(contentsId.get(i), modelIdInteger, langCode);
+	            if (null != renderedContent) {
+					render.append(renderedContent);
 	            }
                 render.append(this.getItemEndElement());
             }
@@ -171,14 +171,10 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             }
             Content mainContent = this.getPublicContent(id);
             Integer modelIdInteger = this.checkModel(modelId, mainContent);
-            if (null == modelIdInteger) {
-                return null;
+            if (null != modelIdInteger) {
+                String langCode = properties.getProperty(SystemConstants.API_LANG_CODE_PARAMETER);
+                render = this.getRenderedContent(id, modelIdInteger, langCode);
             }
-            String langCode = properties.getProperty(SystemConstants.API_LANG_CODE_PARAMETER);
-			ContentRenderizationInfo renderizationInfo = this.getContentDispenser().getRenderizationInfo(id, modelIdInteger, langCode, null);
-			if (null != renderizationInfo) {
-				return renderizationInfo.getCachedRenderedContent();
-			}
         } catch (ApiException ae) {
             throw ae;
         } catch (Throwable t) {
@@ -187,6 +183,16 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
         }
         return render;
     }
+	
+	protected String getRenderedContent(String id, int modelId, String langCode) {
+		String renderedContent = null;
+		ContentRenderizationInfo renderizationInfo = this.getContentDispenser().getRenderizationInfo(id, modelId, langCode, null, true);
+		if (null != renderizationInfo) {
+			this.getContentDispenser().resolveLinks(renderizationInfo, null);
+			renderedContent = renderizationInfo.getRenderedContent();
+		}
+		return renderedContent;
+	}
 	
     protected Content getPublicContent(String id) throws ApiException, Throwable {
         Content content = null;

@@ -45,7 +45,9 @@ $content.CorpoTesto.getTextAfterImage(0)
 </p>
 #end', NULL);
 INSERT INTO contentmodels (modelid, contenttype, descr, model, stylesheet) VALUES (11, 'ART', 'List Model', '#if ($content.Titolo.text != "")<h1 class="titolo">$content.Titolo.text</h1>#end
-<a href="$content.contentLink">Details...</a>', NULL);
+<a href="$content.contentLink">Details...</a>
+$i18n.getLabelWithParams("LABEL_WITH_PARAMS").addParam("name", "Name").addParam("surname", "Surname").addParam("username", "admin")
+', NULL);
 
 
 

@@ -1,155 +1,389 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <!DOCTYPE html>
-<html lang="<s:property value="currentLang.code" />">
+<!--[if IE 9]><html lang="en-us" class="ie9 layout-pf layout-pf-fixed"><![endif]-->
+<!--[if gt IE 9]><!-->
+<html lang="en-us" class="layout-pf layout-pf-fixed">
+<!--<![endif]-->
+
 <head>
+  <title>Entando - <s:set var="documentTitle"><tiles:getAsString name="title"/></s:set><s:property value="%{getText(#documentTitle)}" escape="false" /></title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="patternfly/img/favicon.ico">
 
-	<title>Entando - <s:set var="documentTitle"><tiles:getAsString name="title"/></s:set><s:property value="%{getText(#documentTitle)}" escape="false" /></title>
+  <link rel="stylesheet" href="<wp:resourceURL />administration/patternfly/css/patternfly.min.css">
+  <link rel="stylesheet" href="<wp:resourceURL />administration/patternfly/css/patternfly-additions.min.css">
+  <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css">
+  <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-blue-theme.css">
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta charset="utf-8" />
-        
-        <link rel="icon" type="image/png" href="<wp:resourceURL />administration/img/favicon_entando.png" />
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+    crossorigin="anonymous"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.0/jquery.matchHeight-min.js"></script>
+    <script src="<wp:resourceURL />administration/patternfly/js/patternfly.js"></script>
 
-	<link rel="stylesheet" href="<wp:resourceURL />administration/bootstrap/css/bootstrap.min.css" media="screen" />
-		<link rel="stylesheet" href="<wp:resourceURL />administration/css/bootstrap-theme-entando-ce/css/bootstrap.min.css" media="screen" />
-	<link rel="stylesheet" href="<wp:resourceURL />administration/css/bootstrap-override.css" media="screen" />
-	<link rel="stylesheet" href="<wp:resourceURL />administration/css/bootstrap-offcanvas.css" media="screen" />
-	<link rel="stylesheet" href="<wp:resourceURL />administration/css/bootstrap-addendum.css" media="screen" />
-	<c:catch>
-		<tiles:insertAttribute name="cssSpecial" ignore="true" />
-	</c:catch>
+    <script>
+      $(document).ready(function () {
+        // matchHeight the contents of each .card-pf and then the .card-pf itself
+        $(".row-cards-pf > [class*='col'] > .card-pf .card-pf-title").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-body").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-footer").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
 
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-	<script src="<wp:resourceURL />administration/js/html5shiv.js"></script>
-	<script src="<wp:resourceURL />administration/js/respond.min.js"></script>
-<![endif]-->
-
-	<script src="<wp:resourceURL />administration/js/jquery-1.9.1.min.js"></script>
-	<script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.js"></script>
-	<script src="<wp:resourceURL />administration/js/bootstrap-offcanvas.js"></script>
-	<script src="<wp:resourceURL />administration/js/shortcuts.js"></script>
-
-	<wp:info key="systemParam" paramName="firstTimeMessages" var="firstTimeMessagesVar" />
-	<c:if test="${firstTimeMessagesVar eq true}">
-		<script>
-			var Entando = Entando||{};
-			Entando.info = Entando.type || {};
-			Entando.info.applicationBaseURL = "<wp:info key="systemParam" paramName="applicationBaseURL" />";
-		</script>
-		<script src="<wp:resourceURL />administration/js/first-time-messages.js"></script>
-	</c:if>
-
-	<tiles:insertAttribute name="extraResources"/>
+        // Initialize the vertical navigation
+        $().setupVerticalNavigation(true);
+      });
+    </script>
 </head>
+
 <body>
 
-	<div class="container" id="container-main">
+  <!--barra di navigazione-->
+  <nav class="navbar navbar-pf-vertical">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+      <a href="/" class="navbar-brand">
+        <img class="navbar-brand-icon logo-entando" src="<wp:resourceURL />administration/img/entando-logo.svg" alt="Entando 4.3" />
+      </a>
+    </div>
+    <nav class="collapse navbar-collapse">
 
-	<%--
-	<tiles:insertAttribute name="shortcuts-quickbar"/>
-	--%>
+      <ul class="nav navbar-nav navbar-right navbar-iconic">
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span title="Help" class="fa pficon-help"></span>
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a href="#">Help</a></li>
+            <!--<li><a href="#">About</a></li>-->
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span title="Username" class="fa pficon-user"></span>
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            <li><a href="#">My profile</a></li>
+            <li><a href="#">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </nav>
+  <!--/.navbar-->
 
-	<p class="sr-only" id="fagiano_start"><s:text name="title.mainFunctions" /></p>
-	<div class="row row-offcanvas row-offcanvas-right">
-		<div class="col-sm-3 sidebar-offcanvas col-sm-push-9 col-md-push-9 col-lg-push-9" id="sidebar">
-			<div class="panel-group margin-base-bottom" role="navigation">
-				<div class="panel panel-default">
-					<div class="panel-heading" id="user-avatar">
-						<a data-toggle="collapse" href="#submenu-user" class="display-block">
-							<c:set var="current_username" value="${sessionScope.currentUser}" />
-							<c:if test="${null != sessionScope.currentUser.profile}">
-								<c:set var="current_username" value="${sessionScope.currentUser.profile.displayName}" />
-							</c:if>
-							<c:out value="${current_username}" />
-							<img src="<s:url action="avatarStream" namespace="/do/currentuser/avatar">
-							<s:param name="gravatarSize">34</s:param>
-						</s:url>" width="34" height="34" alt=" " class="img-rounded" />
-						</a>
-					</div>
-					<div id="submenu-user" class="panel-collapse collapse">
-						<ul class="panel-body nav nav-pills nav-stacked">
-							<c:if test="${sessionScope.currentUser.japsUser}">
-							<li>
-								<a href="<s:url action="editProfile" namespace="/do/CurrentUser" />">
-									<span class="icon fa fa-user fa-fw"></span>&#32;
-									<s:text name="note.changeYourPassword" />
-								</a>
-							</li>
-							</c:if>
-							<li>
-								<a href="<s:url value="/" />" title="<s:text name="note.goToPortal" /> ( <s:text name="note.sameWindow" /> )">
-									<span class="icon fa fa-globe fa-fw"></span>&#32;
-									<s:text name="note.goToPortal" />
-								</a>
-							</li>
-							<li>
-								<a href="<s:url action="logout" namespace="/do" />">
-									<span class="icon fa fa-power-off fa-fw"></span>&#32;
-									<s:text name="menu.exit" />
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
+  <!--barra di menu laterale-->
+  <div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-vertical-collapsible-menus ">
+    <ul class="list-group">
+      <li class="list-group-item">
+        <a>
+          <span class="fa fa-files-o" data-toggle="tooltip" title="Dashboard"></span>
+          <span class="list-group-item-value">Page Designer</span>
+        </a>
+      </li>
+      <li class="list-group-item">
+        <a>
+          <span class="fa fa-object-ungroup" data-toggle="tooltip" title="Dolor"></span>
+          <span class="list-group-item-value">UX Patterns</span>
+        </a>
+      </li>
 
-			<%-- shortcuts --%>
-			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/menu-shortcuts.jsp" />
+      <li class="list-group-item active secondary-nav-item-pf" data-target="#ipsum-secondary">
+        <a>
+          <span class="fa fa-cubes" data-toggle="tooltip" title="Ipsum"></span>
+          <span class="list-group-item-value">Integrations</span>
+        </a>
+        <!--menu secondo livello di 1 livello-->
 
-			<nav role="navigation">
-				<tiles:insertAttribute name="menu"/>
-				<p class="sr-only">
-					<a href="#fagiano_start" id="fagiano_mainContent"><s:text name="note.backToStart" /></a>
-				</p>
-			</nav>
+        <div id="-secondary" class="nav-pf-secondary-nav">
+          <div class="nav-item-pf-header">
+            <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+            <span>titolo 1 livello</span>
+          </div>
 
-			<c:if test="${firstTimeMessagesVar}">
-				<div class="alert alert-info margin-none margin-base-top fade in" id="first-time-messages">
-					<button class="close" data-dismiss="alert" data-first-time-messages="dismiss"><span class="icon fa fa-times"></span></button>
-					<p class="margin-none">
-						<s:text name="label.firstTimeMessages.moreFeatures" /><br />
-						<a class="alert-link" href="<s:url action="configSystemParams" namespace="/do/BaseAdmin" />#additional-features">
-							<s:text name="label.firstTimeMessages.goActivateFeatures" />&#32;<span class="icon fa fa-arrow-right"></span>
-						</a>
-					</p>
-				</div>
-				<div class="alert alert-warning margin-none margin-base-top fade out hide" id="first-time-messages-undo">
-					<a class="alert-link" href="#" data-first-time-messages="dismiss" data-dismiss="alert"><s:text name="label.firstTimeMessages.undo" /></a>&#32;<s:text name="label.firstTimeMessages.ifYouMissed" />&#32;<a class="alert-link" href="<s:url action="configSystemParams" namespace="/do/BaseAdmin" />#additional-features"><code><s:text name="label.firstTimeMessages.settingsGeneral" /></code></a>
-				</div>
-			</c:if>
-		</div>
-		<div class="col-sm-9 col-sm-pull-3 col-md-pull-3 col-lg-pull-3" id="container-content">
-			<div class="navbar navbar-default navbar-static-top" id="navbar" role="banner">
-				<div class="navbar-header">
-					<a href="#sidebar" class="btn-offcanvas navbar-toggle pull-right visible-xs" data-toggle="offcanvas">
-						<span class="sr-only"><s:text name="label.menu" /></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<a class="navbar-brand" href="<s:url action="main" namespace="/do" />"><img src="<wp:resourceURL />administration/img/entando-logo-symbol-70x42.png" alt="Entando - Access. Build. Connect." widthh="120" height="42" /></a>
-				</div>
-			</div>
-			<tiles:insertAttribute name="body"/>
-		</div>
-		<div class="clearfix"></div>
-		<div class="col-sm-12 margin-large-top">
-			<ul class="sr-only">
-				<li><a href="#fagiano_mainContent"><s:text name="note.backToMainContent" /></a></li>
-				<li><a href="#fagiano_start"><s:text name="note.backToStart" /></a></li>
-			</ul>
-			<div class="text-center" role="contentinfo">
-				<tiles:insertAttribute name="footer"/>
-			</div>
-		</div>
-		</div>
+          <!--menu secondo livello aperto -->
 
-	</div>
+          <ul class="list-group">
+            <li class="list-group-item active tertiary-nav-item-pf" data-target="#ipsum-intellegam-tertiary">
+              <a>
+                <span class="list-group-item-value">2 livello</span>
+              </a>
+
+              <div id="compute-containers-tertiary" class="nav-pf-tertiary-nav">
+                <div class="nav-item-pf-header">
+                  <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                  <span>titolo terzo livello</span>
+                </div>
+                <ul class="list-group">
+                  <li class="list-group-item active">
+                    <a>
+                      <span id="compute-containers-users-nav-item" class="list-group-item-value">3 livello a</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span id="compute-containers-groups-nav-item" class="list-group-item-value">3 livello b</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span id="compute-containers-roles-nav-item" class="list-group-item-value">4 livello c</span>
+
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+
+            </li>
+            <li class="list-group-item tertiary-nav-item-pf" data-target="#ipsum-copiosae-tertiary">
+              <a>
+                <span class="list-group-item-value">Copiosae</span>
+              </a>
+
+              <div id="compute-infrastructure-tertiary" class="nav-pf-tertiary-nav">
+                <div class="nav-item-pf-header">
+                  <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                  <span>Copiosae</span>
+                </div>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Exerci</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Quaeque</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Utroque</span>
+
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+
+            </li>
+            <li class="list-group-item tertiary-nav-item-pf" data-target="#ipsum-patrioque-tertiary">
+              <a>
+                <span class="list-group-item-value">Patrioque</span>
+              </a>
+
+              <div id="compute-clouds-tertiary" class="nav-pf-tertiary-nav">
+                <div class="nav-item-pf-header">
+                  <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                  <span>Patrioque</span>
+                </div>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Novum</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Pericula</span>
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Gubergren</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+
+            </li>
+
+            <li class="list-group-item">
+              <a>
+                <span class="list-group-item-value">Accumsan</span>
+
+              </a>
+            </li>
+
+          </ul>
+          <!--fine menu livello-->
+        </div>
+      </li>
+      <li class="list-group-item secondary-nav-item-pf" data-target="#amet-secondary">
+        <a>
+          <span class="fa fa-users" data-toggle="tooltip" title="Amet"></span>
+          <span class="list-group-item-value">Users Settings</span>
+        </a>
+
+        <div id="amet-secondary" class="nav-pf-secondary-nav">
+          <div class="nav-item-pf-header">
+            <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+            <span>Amet</span>
+          </div>
+          <ul class="list-group">
+            <li class="list-group-item tertiary-nav-item-pf" data-target="#amet-detracto-tertiary">
+              <a>
+                <span class="list-group-item-value">Detracto Suscipiantur</span>
+
+              </a>
+
+              <div id="amet-detracto-tertiary" class="nav-pf-tertiary-nav">
+                <div class="nav-item-pf-header">
+                  <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                  <span>Detracto</span>
+                </div>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Delicatissimi</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Aliquam</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Principes</span>
+
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+
+            </li>
+            <li class="list-group-item tertiary-nav-item-pf" data-target="#amet-mediocrem-tertiary">
+              <a>
+                <span class="list-group-item-value">Mediocrem</span>
+
+              </a>
+
+              <div id="amet-mediocrem-tertiary" class="nav-pf-tertiary-nav">
+                <div class="nav-item-pf-header">
+                  <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                  <span>Mediocrem</span>
+                </div>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Convenire</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Nonumy</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Deserunt</span>
+
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+
+            </li>
+            <li class="list-group-item tertiary-nav-item-pf" data-target="#amet-corrumpit-tertiary">
+              <a>
+                <span class="list-group-item-value">Corrumpit Cupidatat Proident Deserunt</span>
+
+              </a>
+
+              <div id="amet-corrumpit-tertiary" class="nav-pf-tertiary-nav">
+                <div class="nav-item-pf-header">
+                  <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                  <span>Corrumpit</span>
+                </div>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Aeque</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Delenit</span>
+
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a>
+                      <span class="list-group-item-value">Qualisque</span>
+
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+
+            </li>
+
+            <li class="list-group-item">
+              <a>
+                <span class="list-group-item-value">Urbanitas Habitant Morbi Tristique</span>
+
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <a>
+          <span class="fa fa-pencil-square-o" data-toggle="tooltip" title="Adipscing"></span>
+          <span class="list-group-item-value">CMS</span>
+        </a>
+      </li>
+
+
+      <!--fine primo livello-->
+
+    </ul>
+
+    <ul class="list-group fixed-bottom">
+      <li class="list-group-item">
+        <a>
+          <span class="fa fa-cogs" data-toggle="tooltip" title="Adipscing"></span>
+          <span class="list-group-item-value">Settings</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+  <div class="container-fluid container-cards-pf container-pf-nav-pf-vertical">
+
+   caro eu
+ 
+  </div>
 </body>
 </html>

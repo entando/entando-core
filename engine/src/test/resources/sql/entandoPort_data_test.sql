@@ -146,142 +146,22 @@ INSERT INTO pagemodels (code, descr, frames, plugincode) VALUES ('internal', 'In
 	</frame>
 </frames>', NULL);
 
-
-
-
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('service', 'homepage', 1, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="it">Nodo pagine di servizio</property>
-</properties>
-
-', 'free', 0, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('primapagina', 'service', 1, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="it">Nodo pagine di servizio</property>
-</properties>
-
-
-', 'free', 0, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('notfound', 'service', 2, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="it">Pagina non trovata</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('login', 'service', 3, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="it">Pagina di login</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('homepage', 'homepage', -1, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Start Page</property>
-<property key="it">Pagina iniziale</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('errorpage', 'service', 5, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="it">Pagina di errore</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('customers_page', 'homepage', 5, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Customers Page</property>
-<property key="it">Pagina gruppo Customers</property>
-</properties>
-
-', 'customers', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('coach_page', 'homepage', 4, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Coach Page</property>
-<property key="it">Pagina gruppo Coach</property>
-</properties>
-
-', 'coach', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('administrators_page', 'homepage', 6, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Administrators Page</property>
-<property key="it">Pagina gruppo Amministratori</property>
-</properties>', 'administrators', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('customer_subpage_2', 'customers_page', 2, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Customer SubPage 2</property>
-<property key="it">Customer SubPage 2</property>
-</properties>
-
-', 'customers', 0, '<?xml version="1.0" encoding="UTF-8"?>
-<config />
-
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_12', 'pagina_1', 2, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Page 1-2</property>
-<property key="it">Pagina 1-2</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_11', 'pagina_1', 1, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Page 1-1</property>
-<property key="it">Pagina 1-1</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('customer_subpage_1', 'customers_page', 1, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Customer SubPage 1</property>
-<property key="it">Customer SubPage 1</property>
-</properties>
-
-', 'customers', 0, '<?xml version="1.0" encoding="UTF-8"?>
-<config>
-  <useextratitles>false</useextratitles>
-  <extragroups>
-    <group name="coach" />
-  </extragroups>
-</config>
-
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_1', 'homepage', 2, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Page 1</property>
-<property key="it">Pagina 1</property>
-</properties>
-
-', 'free', 1, '<?xml version="1.0" encoding="UTF-8"?>
-<config>
-  <useextratitles>false</useextratitles>
-</config>
-
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('contentview', 'service', 4, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Content Publishing</property>
-<property key="it">Publicazione Contenuto</property>
-</properties>
-
-', 'free', 1, '<?xml version="1.0" encoding="UTF-8"?>
-<config>
-  <useextratitles>false</useextratitles>
-</config>
-
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_2', 'homepage', 3, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Page 2</property>
-<property key="it">Pagina 2</property>
-</properties>
-
-', 'free', 1, '<?xml version="1.0" encoding="UTF-8"?>
-<config>
-  <useextratitles>false</useextratitles>
-</config>
-
-');
-
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('service', 'homepage', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('primapagina', 'service', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('notfound', 'service', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('login', 'service', 3, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('homepage', 'homepage', -1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('errorpage', 'service', 5, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customers_page', 'homepage', 5, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('coach_page', 'homepage', 4, 'coach');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('administrators_page', 'homepage', 6, 'administrators');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_2', 'customers_page', 2, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_12', 'pagina_1', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_11', 'pagina_1', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_1', 'customers_page', 1, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_1', 'homepage', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('contentview', 'service', 4, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_2', 'homepage', 3, 'free');
 
 INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -385,7 +265,6 @@ INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extracon
 </config>
 
 ', '2017-02-17 13:06:24');
-
 
 INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>

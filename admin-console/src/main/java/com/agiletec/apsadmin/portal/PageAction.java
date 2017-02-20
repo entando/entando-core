@@ -14,12 +14,14 @@
 package com.agiletec.apsadmin.portal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -36,8 +39,6 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
-import java.util.Collections;
-import org.apache.commons.beanutils.BeanComparator;
 
 /**
  * Main action for pages handling
@@ -249,10 +250,13 @@ public class PageAction extends AbstractPortalAction {
 		try {
 			page.setParent(this.getPageManager().getPage(this.getParentPageCode()));
 			page.setGroup(this.getGroup());
-			page.setShowable(this.isShowable());
-			page.setUseExtraTitles(this.isUseExtraTitles());
+			PageMetadata metadata = new PageMetadata();
+			page.setOnlineMetadata(metadata);// TODO Andrà commentato per non pubblicare alla creazione
+			page.setDraftMetadata(metadata);
+			metadata.setShowable(this.isShowable());
+			metadata.setUseExtraTitles(this.isUseExtraTitles());
 			PageModel pageModel = this.getPageModelManager().getPageModel(this.getModel());
-			page.setModel(pageModel);
+			metadata.setModel(pageModel);
 			if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
 				IPage copyPage = this.getPageManager().getPage(this.getCopyPageCode());
 				page.setWidgets(copyPage.getWidgets());
@@ -263,8 +267,8 @@ public class PageAction extends AbstractPortalAction {
 					page.setWidgets(new Widget[pageModel.getFrames().length]);
 				}
 			}
-			page.setTitles(this.getTitles());
-			page.setExtraGroups(this.getExtraGroups());
+			metadata.setTitles(this.getTitles());
+			metadata.setExtraGroups(this.getExtraGroups());
 			//ricava il codice
 			String newPageCode = this.getPageCode();
 			if (null != newPageCode && newPageCode.trim().length() > 0) {
@@ -280,15 +284,15 @@ public class PageAction extends AbstractPortalAction {
 			}
 			String charset = this.getCharset();
 			if (null != charset && charset.trim().length() > 0) {
-				page.setCharset(charset);
+				metadata.setCharset(charset);
 			} else {
-				page.setCharset(null);
+				metadata.setCharset(null);
 			}
 			String mimetype = this.getMimeType();
 			if (null != mimetype && mimetype.trim().length() > 0) {
-				page.setMimeType(mimetype);
+				metadata.setMimeType(mimetype);
 			} else {
-				page.setMimeType(null);
+				metadata.setMimeType(null);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error building new page", t);
@@ -302,30 +306,36 @@ public class PageAction extends AbstractPortalAction {
 		try {
 			page = (Page) this.getPageManager().getPage(this.getPageCode());
 			page.setGroup(this.getGroup());
-			page.setShowable(this.isShowable());
-			page.setUseExtraTitles(this.isUseExtraTitles());
+			PageMetadata metadata = page.getDraftMetadata();
+			if (metadata == null) {
+				metadata = new PageMetadata();
+				page.setDraftMetadata(metadata);
+			}
+			page.setOnlineMetadata(metadata);// TODO Andrà commentato per non pubblicare alla creazione
+			metadata.setShowable(this.isShowable());
+			metadata.setUseExtraTitles(this.isUseExtraTitles());
 			if (!page.getModel().getCode().equals(this.getModel())) {
 				//Ho cambiato modello e allora cancello tutte le showlets Precedenti
 				PageModel model = this.getPageModelManager().getPageModel(this.getModel());
-				page.setModel(model);
+				metadata.setModel(model);
 				page.setWidgets(new Widget[model.getFrames().length]);
 			}
 			if (this.isDefaultShowlet()) {
 				this.setDefaultWidgets(page);
 			}
-			page.setTitles(this.getTitles());
-			page.setExtraGroups(this.getExtraGroups());
+			metadata.setTitles(this.getTitles());
+			metadata.setExtraGroups(this.getExtraGroups());
 			String charset = this.getCharset();
 			if (null != charset && charset.trim().length() > 0) {
-				page.setCharset(charset);
+				metadata.setCharset(charset);
 			} else {
-				page.setCharset(null);
+				metadata.setCharset(null);
 			}
 			String mimetype = this.getMimeType();
 			if (null != mimetype && mimetype.trim().length() > 0) {
-				page.setMimeType(mimetype);
+				metadata.setMimeType(mimetype);
 			} else {
-				page.setMimeType(null);
+				metadata.setMimeType(null);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error updating page", t);

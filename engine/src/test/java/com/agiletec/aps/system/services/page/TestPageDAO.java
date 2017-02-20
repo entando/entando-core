@@ -97,8 +97,10 @@ public class TestPageDAO extends BaseTestCase {
 	
 	private void updatePage(IPage ipageToUpdate, PageDAO pageDAO) throws Throwable {
 		Page pageToUpdate = (Page) ipageToUpdate;
-		pageToUpdate.setTitle("it", "pagina temporanea1");
-		pageToUpdate.setShowable(false);
+		PageMetadata metadata = pageToUpdate.getDraftMetadata();
+		metadata.setTitle("it", "pagina temporanea1");
+		metadata.setShowable(false);
+		pageToUpdate.setOnlineMetadata(metadata);
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
 		config.setProperty("temp1", "temp1");
@@ -163,18 +165,21 @@ public class TestPageDAO extends BaseTestCase {
 	private Page createPageForTest(String code) {
 		Page page = new Page();
 		page.setCode(code);
+		PageMetadata metadata = new PageMetadata();
+		page.setOnlineMetadata(metadata);
+		page.setDraftMetadata(metadata);
 		IPage parentPage = this._pageManager.getPage("service");
 		page.setParent(parentPage);
 		page.setParentCode("service");
 		PageModel pageModel = new PageModel();
 		pageModel.setCode("service");
-		page.setModel(pageModel);
+		metadata.setModel(pageModel);
 		page.setGroup("free");
-		page.setShowable(true);
+		metadata.setShowable(true);
 		page.setTitle("it", "temptitle");
 		ApsProperties titles = new ApsProperties();
 		titles.setProperty("it", "pagina temporanea");
-		page.setTitles(titles);
+		metadata.setTitles(titles);
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
 		config.setProperty("temp", "temp");		

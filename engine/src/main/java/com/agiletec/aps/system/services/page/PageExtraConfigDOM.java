@@ -110,44 +110,6 @@ public class PageExtraConfigDOM {
 		}
 	}
 	
-	
-	
-	public void addExtraConfig(Page page, String xml) throws ApsSystemException {
-		Document doc = this.decodeDOM(xml);
-		this.addExtraConfig(page, doc);
-	}
-	
-	protected void addExtraConfig(Page page, Document doc) {
-		Element rootElement = doc.getRootElement();
-		Element useExtraTitlesElement = rootElement.getChild(USE_EXTRA_TITLES_ELEMENT_NAME);
-		if (null != useExtraTitlesElement) {
-			Boolean value = Boolean.valueOf(useExtraTitlesElement.getText());
-			page.setUseExtraTitles(value.booleanValue());
-		}
-		Element extraGroupsElement = rootElement.getChild(EXTRA_GROUPS_ELEMENT_NAME);
-		if (null != extraGroupsElement) {
-			List<Element> groupElements = extraGroupsElement.getChildren(EXTRA_GROUP_ELEMENT_NAME);
-			for (int i=0; i<groupElements.size(); i++) {
-				Element groupElement = groupElements.get(i);
-				page.addExtraGroup(groupElement.getAttributeValue(EXTRA_GROUP_NAME_ATTRIBUTE));
-			}
-		}
-		Element mimetypeElement = rootElement.getChild(MIMETYPE_ELEMENT_NAME);
-		if (null != mimetypeElement) {
-			String mimetype = mimetypeElement.getText();
-			if (null != mimetype && mimetype.trim().length() > 0) {
-				page.setMimeType(mimetype);
-			}
-		}
-		Element charsetElement = rootElement.getChild(CHARSET_ELEMENT_NAME);
-		if (null != charsetElement) {
-			String charset = charsetElement.getText();
-			if (null != charset && charset.trim().length() > 0) {
-				page.setCharset(charset);
-			}
-		}
-	}
-	
 	private Document decodeDOM(String xml) throws ApsSystemException {
 		Document doc = null;
 		SAXBuilder builder = new SAXBuilder();

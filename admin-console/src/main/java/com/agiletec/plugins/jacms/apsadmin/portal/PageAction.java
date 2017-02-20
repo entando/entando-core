@@ -25,6 +25,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
@@ -35,7 +36,9 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
+
 import java.util.Properties;
+
 import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 
 /**
@@ -86,7 +89,10 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		IPage pageOnEdit = (Page) this.getPageManager().getPage(this.getPageCode());
 		Page page = new Page();
 		page.setGroup(this.getGroup());
-		page.setExtraGroups(this.getExtraGroups());
+		PageMetadata metadata = new PageMetadata();
+		page.setOnlineMetadata(metadata);// TODO Andrà commentato per non pubblicare alla creazione
+		page.setDraftMetadata(metadata);
+		metadata.setExtraGroups(this.getExtraGroups());
 		page.setWidgets(pageOnEdit.getWidgets());
 		page.setCode(this.getPageCode());
 		return page;

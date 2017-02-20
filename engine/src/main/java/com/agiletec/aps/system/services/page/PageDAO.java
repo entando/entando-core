@@ -76,8 +76,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	 */
 	protected List<IPage> createPages(ResultSet res) throws Throwable {
 		// TODO Modificare
-		int widgetStartOnline = 19;
-		int widgetStartDraft = 9;
+		int widgetStartOnline = 15;
 		List<IPage> pages = new ArrayList<IPage>();
 		Page page = null;
 		Widget widgets[] = null;
@@ -117,12 +116,11 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		page.setParentCode(res.getString(1));
 		page.setPosition(res.getInt(2));
 		page.setGroup(res.getString(4));
-		
-		if (res.getString(9)!=null) {
-			page.setOnlineMetadata(this.createPageMetadata(code, res, 9));
+		if (res.getString(5)!=null) {
+			page.setOnlineMetadata(this.createPageMetadata(code, res, 5));
 		}
-		if (res.getString(14)!=null) {
-			page.setDraftMetadata(this.createPageMetadata(code, res, 14));
+		if (res.getString(10)!=null) {
+			page.setDraftMetadata(this.createPageMetadata(code, res, 10));
 		}
 		return page;
 	}
@@ -164,8 +162,14 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			conn.setAutoCommit(false);
 			String pageCode = page.getCode();
 			this.addPageRecord(page, conn);
-			this.addPageMetadataOnline(pageCode, page.getOnlineMetadata(), conn);
-			this.addPageMetadataDraft(pageCode, page.getDraftMetadata(), conn);
+			PageMetadata onlineMetadata = page.getOnlineMetadata();
+			if (onlineMetadata != null) {
+				this.addPageMetadataOnline(pageCode, onlineMetadata, conn);
+			}
+			PageMetadata draftMetadata = page.getDraftMetadata();
+			if (draftMetadata != null) {
+				this.addPageMetadataDraft(pageCode, draftMetadata, conn);
+			}
 			// TODO Modificare per widget draft e public
 			this.addWidgetForPage(page, conn);
 			conn.commit();
@@ -195,17 +199,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			stat = conn.prepareStatement(ADD_PAGE);
 			stat.setString(1, page.getCode());
 			stat.setString(2, page.getParent().getCode());
-			if (page.isShowable()) {
-				stat.setInt(3, 1);
-			} else {
-				stat.setInt(3, 0);
-			}
-			stat.setInt(4, position);
-			stat.setString(5, page.getModel().getCode());
-			stat.setString(6, page.getTitles().toXml());
-			stat.setString(7, page.getGroup());
-			String extraConfig = this.getExtraConfig(page);
-			stat.setString(8, extraConfig);
+			stat.setInt(3, position);
+			stat.setString(4, page.getGroup());
 			stat.executeUpdate();
 		} catch (Throwable t) {
 			_logger.error("Error adding a new page record",  t);
@@ -406,18 +401,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			stat = conn.prepareStatement(UPDATE_PAGE);
 			stat.setString(1, page.getParentCode());
 			stat.setString(2, page.getGroup());
-			
-			// TODO Andrà rimosso
-			if (page.isShowable()) {
-				stat.setInt(3, 1);
-			} else {
-				stat.setInt(3, 0);
-			}
-			stat.setString(4, page.getModel().getCode());
-			stat.setString(5, page.getTitles().toXml());
-			String extraConfig = this.getExtraConfig(page);
-			stat.setString(6, extraConfig);
-			stat.setString(7, page.getCode());
+			stat.setString(3, page.getCode());
 			stat.executeUpdate();
 		} catch (Throwable t) {
 			_logger.error("Error while updating the page record",  t);
@@ -736,8 +720,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	// attenzione: l'ordinamento deve rispettare prima l'ordine delle pagine
 	// figlie nelle pagine madri, e poi l'ordine dei widget nella pagina.
 	private static final String ALL_PAGES = 
-		"SELECT p.parentcode, p.pos, p.code, p.groupcode, p.showinmenu, "
-		+ "p.modelcode, p.titles, p.extraconfig, "
+		"SELECT p.parentcode, p.pos, p.code, p.groupcode, "
 		+ "pub.titles, pub.modelcode, pub.showinmenu, pub.extraconfig, pub.updatedat, "
 		+ "drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat, "
 		+ "wp.framepos, wp.widgetcode, wp.config "
@@ -748,7 +731,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		+ "ORDER BY p.parentcode, p.pos, p.code, wp.framepos ";// TODO Modificare
 	
 	private static final String ADD_PAGE = 
-		"INSERT INTO pages(code, parentcode, showinmenu, pos, modelcode, titles, groupcode, extraconfig) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
+		"INSERT INTO pages(code, parentcode, pos, groupcode) VALUES ( ? , ? , ? , ? )";
 
 	private static final String DELETE_PAGE = 
 		"DELETE FROM pages WHERE code = ? ";
@@ -766,7 +749,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		"UPDATE pages SET pos = (pos + 1) WHERE code = ? ";
 
 	private static final String UPDATE_PAGE = 
-		"UPDATE pages SET parentcode = ? , groupcode = ? , showinmenu = ? , modelcode = ? , titles = ? , extraconfig = ? WHERE code = ? ";
+		"UPDATE pages SET parentcode = ?, groupcode = ? WHERE code = ? ";
 
 	private static final String SHIFT_PAGE = 
 		"UPDATE pages SET pos = (pos - 1) WHERE parentcode = ? AND pos > ? ";

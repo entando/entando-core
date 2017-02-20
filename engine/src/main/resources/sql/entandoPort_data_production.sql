@@ -241,37 +241,11 @@ INSERT INTO pagemodels (code, descr, frames, plugincode, templategui) VALUES ('h
 
 
 
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('service', 'homepage', 5, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="it">Pagine di Servizio</property>
-<property key="en">Service</property>
-</properties>', 'free', 0, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('login', 'service', 6, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="it">Pagina di login</property>
-<property key="en">Login</property>
-</properties>', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('notfound', 'service', 4, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Page not found</property>
-<property key="it">Pagina non trovata</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('errorpage', 'service', 5, 'service', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Error page</property>
-<property key="it">Pagina di errore</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('homepage', 'homepage', -1, 'home', '<?xml version="1.0" encoding="UTF-8"?>
-<properties>
-<property key="en">Home</property>
-<property key="it">Home</property>
-</properties>
-
-', 'free', 1, NULL);
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('service', 'homepage', 5, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('login', 'service', 6, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('notfound', 'service', 4, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('errorpage', 'service', 5, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('homepage', 'homepage', -1, 'free');
 
 INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -287,23 +261,17 @@ INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extracon
 <properties>
 <property key="en">Page not found</property>
 <property key="it">Pagina non trovata</property>
-</properties>
-
-', 'service', 1, NULL, '2017-02-17 16:37:10');
+</properties>', 'service', 1, NULL, '2017-02-17 16:37:10');
 INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Error page</property>
 <property key="it">Pagina di errore</property>
-</properties>
-
-', 'service', 1, NULL, '2017-02-17 21:11:54');
+</properties>', 'service', 1, NULL, '2017-02-17 21:11:54');
 INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Home</property>
 <property key="it">Home</property>
-</properties>
-
-', 'home', 1, NULL, '2017-02-18 00:12:24');
+</properties>', 'home', 1, NULL, '2017-02-18 00:12:24');
 
 INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -319,23 +287,17 @@ INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconf
 <properties>
 <property key="en">Page not found</property>
 <property key="it">Pagina non trovata</property>
-</properties>
-
-', 'service', 1, NULL, '2017-02-17 16:37:10');
+</properties>', 'service', 1, NULL, '2017-02-17 16:37:10');
 INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Error page</property>
 <property key="it">Pagina di errore</property>
-</properties>
-
-', 'service', 1, NULL, '2017-02-17 21:11:54');
+</properties>', 'service', 1, NULL, '2017-02-17 21:11:54');
 INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Home</property>
 <property key="it">Home</property>
-</properties>
-
-', 'home', 1, NULL, '2017-02-18 00:12:24');
+</properties>', 'home', 1, NULL, '2017-02-18 00:12:24');
 
 INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) VALUES ('messages_system', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>

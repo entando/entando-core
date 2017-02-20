@@ -11,7 +11,7 @@ CREATE TABLE pages_metadata_online
   titles text NOT NULL,
   showinmenu smallint NOT NULL,
   extraconfig text,
-  lastmodified timestamp without time zone,
+  updatedat timestamp without time zone,
   CONSTRAINT pages_metadata_pkey PRIMARY KEY (code),
   CONSTRAINT pages_metadata_code_fkey FOREIGN KEY (code)
       REFERENCES pages (code) MATCH SIMPLE
@@ -25,7 +25,7 @@ CREATE TABLE pages_metadata_draft
   titles text NOT NULL,
   showinmenu smallint NOT NULL,
   extraconfig text,
-  lastmodified timestamp without time zone,
+  updatedat timestamp without time zone,
   CONSTRAINT pages_metadata_draft_pkey PRIMARY KEY (code),
   CONSTRAINT pages_metadata_draft_code_fkey FOREIGN KEY (code)
       REFERENCES pages (code) MATCH SIMPLE
@@ -43,6 +43,27 @@ ALTER TABLE pages  DROP COLUMN modelcode;
 ALTER TABLE pages  DROP COLUMN titles;
 
 
+
+CREATE TABLE widgetconfig_draft
+(
+  pagecode character varying(30) NOT NULL,
+  framepos integer NOT NULL,
+  widgetcode character varying(40) NOT NULL,
+  config text,
+  CONSTRAINT widgetconfig_draft_pkey PRIMARY KEY (pagecode, framepos),
+  CONSTRAINT widgetconfig_draft_pagecode_fkey FOREIGN KEY (pagecode)
+      REFERENCES pages (code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT widgetconfig_draft_widgetcode_fkey FOREIGN KEY (widgetcode)
+      REFERENCES widgetcatalog (code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+
+
+insert into widgetconfig_draft select * from widgetconfig;
 
 ##	------	------	------	------	------	porting script for pages end
 

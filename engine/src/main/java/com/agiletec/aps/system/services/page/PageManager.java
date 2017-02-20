@@ -361,7 +361,7 @@ public class PageManager extends AbstractService
 		try {
 			this.getPageDAO().joinWidget(pageCode, widget, pos);
 			IPage currentPage = this.getPage(pageCode, false);
-			currentPage.getWidgets()[pos] = widget;
+			currentPage.getDraftWidgets()[pos] = widget;
 			this.notifyPageChangedEvent(currentPage, PageChangedEvent.EDIT_FRAME_OPERATION_CODE, pos);
 		} catch (Throwable t) {
 			String message = "Error during the assignation of a widget to the frame " + pos +" in the page code "+pageCode;
@@ -506,6 +506,7 @@ public class PageManager extends AbstractService
 
 	@Override
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
+		//TODO deve insistere su entrambe le tabelle widget!!!
 		List<IPage> pages = new ArrayList<IPage>();
 		try {
 			if (null == this._pages || this._pages.isEmpty() || null == widgetTypeCode) {
@@ -522,6 +523,7 @@ public class PageManager extends AbstractService
 	}
 	
 	private void getWidgetUtilizers(IPage page, String widgetTypeCode, List<IPage> widgetUtilizers) {
+		//TODO deve insistere su entrambe le tabelle widget!!!
 		Widget[] widgets = page.getWidgets();
 		for (int i = 0; i < widgets.length; i++) {
 			Widget widget = widgets[i];
@@ -530,7 +532,7 @@ public class PageManager extends AbstractService
 				break;
 			}
 		}
-		IPage[] children = page.getChildren();
+		IPage[] children = page.getAllChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPage child = children[i];
 			this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);

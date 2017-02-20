@@ -85,7 +85,7 @@ public class Page extends TreeNode implements IPage {
 	public Widget[] getOnlineWidgets() {
 		return _onlineWidgets;
 	}
-	public void setPublishedWidgets(Widget[] publishedWidgets) {
+	public void setOnlineWidgets(Widget[] publishedWidgets) {
 		this._onlineWidgets = publishedWidgets;
 	}
 	
@@ -242,7 +242,7 @@ public class Page extends TreeNode implements IPage {
 	 */
 	@Override
 	public Widget[] getWidgets() {
-		return _widgets;
+		return this.getOnlineWidgets();
 	}
 	
 	@Deprecated
@@ -255,7 +255,7 @@ public class Page extends TreeNode implements IPage {
 	 * @param widgets the widgets to assign.
 	 */
 	public void setWidgets(Widget[] widgets) {
-		this._widgets = widgets;
+		this.setOnlineWidgets(widgets);
 	}
 	
 	@Override
@@ -318,21 +318,8 @@ public class Page extends TreeNode implements IPage {
 	
 	@Override
 	public boolean isChanged() {
-		boolean changed = false;
-		PageMetadata onlineMeta = this.getOnlineMetadata();
-		PageMetadata draftMeta = this.getDraftMetadata();
-		if (draftMeta != null) {
-			if (onlineMeta != null) {
-				Date onlineUpdate = onlineMeta.getUpdatedAt();
-				Date draftUpdate = draftMeta.getUpdatedAt();
-				if (!(onlineUpdate == null && draftUpdate == null)) {
-					changed = onlineUpdate == null || !onlineUpdate.equals(draftUpdate);
-				}
-			} else {
-				changed = true;
-			}
-		}
-		return changed;
+		return null != this.getOnlineMetadata() && (this.getOnlineMetadata().getUpdatedAt().equals(this.getDraftMetadata().getUpdatedAt()));
+
 	}
 	
 	@Override
@@ -381,9 +368,7 @@ public class Page extends TreeNode implements IPage {
 	
 	private IPage[] _allChildren = new IPage[0];
 	
-	/**
-	 * The widgets of the current page
-	 */
-	private Widget[] _widgets;
 	
+	
+
 }

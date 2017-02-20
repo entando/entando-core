@@ -13,18 +13,21 @@
  */
 package org.entando.entando.apsadmin.portal.model;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.apsadmin.portal.model.helper.IPageModelActionHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.http.HttpStatus;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.Frame;
@@ -32,15 +35,18 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelDOM;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
-import java.io.File;
-
 /**
  * @author E.Santoboni
  */
-public class PageModelAction extends AbstractPageModelAction {
+public class PageModelAction extends AbstractPageModelAction implements ServletResponseAware {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(PageModelAction.class);
-	
+
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this._response = response;
+	}
+
 	@Override
 	public void validate() {
 		super.validate();
@@ -186,6 +192,15 @@ public class PageModelAction extends AbstractPageModelAction {
 		return SUCCESS;
 	}
 	
+	public Frame[] getFramesSketch() {
+		PageModel pageModel = super.getPageModel(this.getCode());
+		if (null == pageModel) {
+			this._response.setStatus(HttpStatus.NOT_FOUND.value());
+			return null;
+		}
+		return pageModel.getFramesConfig();
+	}
+	
 	protected PageModel createPageModel() throws Throwable {
 		PageModel model = null;
 		try {
@@ -320,5 +335,7 @@ public class PageModelAction extends AbstractPageModelAction {
 	
 	private IWidgetTypeManager _widgetTypeManager;
 	private IPageModelActionHelper _pageModelActionHelper;
+	private HttpServletResponse _response;
+	
 	
 }

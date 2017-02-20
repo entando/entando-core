@@ -30,7 +30,7 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
  * @author E.Santoboni
  */
 @XmlRootElement(name = "frame")
-@XmlType(propOrder = {"pos", "description", "mainFrame", "jaxbDefaultWidget"})
+@XmlType(propOrder = {"pos", "description", "mainFrame", "jaxbDefaultWidget", "sketch"})
 public class Frame {
 	
 	@XmlElement(name = "code", required = true)
@@ -85,6 +85,14 @@ public class Frame {
 		this._widgetTypeManager = widgetTypeManager;
 	}
 	
+	@XmlElement(name = "sketch", required = false)
+	public FrameSketch getSketch() {
+		return _sketch;
+	}
+	public void setSketch(FrameSketch sketch) {
+		this._sketch = sketch;
+	}
+	
 	@Override
 	public Frame clone() {
 		Frame clone = new Frame();
@@ -92,6 +100,7 @@ public class Frame {
 		clone.setDescription(this.getDescription());
 		clone.setMainFrame(this.isMainFrame());
 		clone.setPos(this.getPos());
+		clone.setSketch(this.getSketch());
 		return clone;
 	}
 	
@@ -101,6 +110,7 @@ public class Frame {
 	private Widget _defaultWidget;
 	
 	private JAXBDefaultWidget _jaxbDefaultWidget;
+	private FrameSketch _sketch;
 	
 	@XmlTransient
 	private IWidgetTypeManager _widgetTypeManager;
@@ -150,7 +160,7 @@ public class Frame {
 		public void setProperties(Properties properties) {
 			this._properties = properties;
 		}
-		
+
 		private String _code;
 		private Properties _properties;
 		

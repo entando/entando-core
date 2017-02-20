@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
 
 /**
@@ -37,7 +39,7 @@ import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
 @XmlRootElement(name = "pageModel")
 @XmlType(propOrder = {"code", "description", "pluginCode", "template", "configuration"})
 public class PageModel implements Serializable {
-	
+
 	/**
 	 * Return the code of page model.
 	 * @return The code of page model.
@@ -46,7 +48,7 @@ public class PageModel implements Serializable {
 	public String getCode() {
 		return _code;
 	}
-	
+
 	/**
 	 * Set the code of page model.
 	 * @param code The code to set
@@ -54,7 +56,7 @@ public class PageModel implements Serializable {
 	public void setCode(String code) {
 		this._code = code;
 	}
-	
+
 	/**
 	 * Return the description of page model.
 	 * @return The description of page model.
@@ -63,7 +65,7 @@ public class PageModel implements Serializable {
 	public String getDescription() {
 		return _description;
 	}
-	
+
 	/**
 	 * Set the description of page model.
 	 * @param description The description to set
@@ -71,7 +73,7 @@ public class PageModel implements Serializable {
 	public void setDescription(String description) {
 		this._description = description;
 	}
-	
+
 	/**
 	 * Return the description of page model.
 	 * @return The description of page model.
@@ -81,7 +83,7 @@ public class PageModel implements Serializable {
 	public String getDescr() {
 		return this.getDescription();
 	}
-	
+
 	/**
 	 * Set the description of page model.
 	 * @param descr The code to set
@@ -90,7 +92,7 @@ public class PageModel implements Serializable {
 	public void setDescr(String descr) {
 		this.setDescription(descr);
 	}
-	
+
 	/**
 	 * Restituisce l'insieme ordinato delle descrizioni dei "frames" del modello.
 	 * @return L'insieme delle descrizioni dei "frames"
@@ -110,7 +112,7 @@ public class PageModel implements Serializable {
 		}
 		return descriptions;
 	}
-	
+
 	/**
 	 * Restituisce il numero relativo del mainFrame.
 	 * @return Il numero relativo del mainFrame.
@@ -127,7 +129,36 @@ public class PageModel implements Serializable {
 	public void setMainFrame(int mainFrame) {
 		this._mainFrame = mainFrame;
 	}
-	
+
+	/**
+	 * Returns the {@link Frame} object given a specific index
+	 * @param index the index of the frame to return
+	 * @return the {@link Frame} or null
+	 */
+	@XmlTransient
+	public Frame getFrameConfig(int index) {
+		Frame[] configuration = this.getConfiguration();
+		if (null != configuration) {
+			if (0 <= index && index < configuration.length) {
+				return configuration[index];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link Frame} array of che current {@link PageModel}
+	 * @return the {@link Frame} array or null
+	 */
+	@XmlTransient
+	public Frame[] getFramesConfig() {
+		Frame[] configuration = this.getConfiguration();
+		if (null != configuration) {
+			return configuration;
+		}
+		return null;
+	}
+
 	/**
 	 * Restituisce la configurazione dei widget di default.
 	 * @return I widget di default.
@@ -144,7 +175,7 @@ public class PageModel implements Serializable {
 		}
 		return defaultWidgets;
 	}
-	
+
 	@Override
 	public PageModel clone() {
 		PageModel clone = new PageModel();
@@ -166,12 +197,12 @@ public class PageModel implements Serializable {
 		}
 		return clone;
 	}
-	
+
 	@XmlTransient
 	public String getPageModelJspPath() {
 		return PageModel.getPageModelJspPath(this.getCode(), this.getPluginCode());
 	}
-	
+
 	public static String getPageModelJspPath(String code, String pluginCode) {
 		boolean isPluginPageModel = (null != pluginCode && pluginCode.trim().length()>0);
 		StringBuilder jspPath = new StringBuilder("/WEB-INF/");
@@ -181,17 +212,17 @@ public class PageModel implements Serializable {
 		jspPath.append("aps/jsp/models/").append(code.trim()).append(".jsp");
 		return jspPath.toString();
 	}
-	
+
 	@XmlElement(name = "frame", required = false)
-    @XmlElementWrapper(name = "configuration")
-    public Frame[] getConfiguration() {
+	@XmlElementWrapper(name = "configuration")
+	public Frame[] getConfiguration() {
 		return _configuration;
 	}
-	
+
 	public void setConfiguration(Frame[] configuration) {
 		this._configuration = configuration;
 	}
-	
+
 	/**
 	 * Return the code of the plugin owner of page model.
 	 * The field is null if the page model belong to Entando Core.
@@ -201,7 +232,7 @@ public class PageModel implements Serializable {
 	public String getPluginCode() {
 		return _pluginCode;
 	}
-	
+
 	/**
 	 * Set the code of the plugin owner of page model.
 	 * @param pluginCode The plugin code. 
@@ -209,7 +240,7 @@ public class PageModel implements Serializable {
 	public void setPluginCode(String pluginCode) {
 		this._pluginCode = pluginCode;
 	}
-	
+
 	@XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
 	@XmlElement(name = "template", required = false)
 	public String getTemplate() {
@@ -218,30 +249,30 @@ public class PageModel implements Serializable {
 	public void setTemplate(String template) {
 		this._template = template;
 	}
-	
+
 	/**
 	 * Il codice del modello di pagina
 	 */
 	private String _code;
-	
+
 	/**
 	 * La descrizione del modello di pagina
 	 */
 	private String _description;
-	
+
 	private Frame[] _configuration = new Frame[0];
-	
+
 	/**
 	 * La posizione del frame principale, se esiste;
 	 * vale -1 se non esiste;
 	 */
 	private int _mainFrame = -1;
-	
+
 	/**
 	 * The code of the plugin owner of page model.
 	 */
 	private String _pluginCode;
-	
+
 	private String _template;
-	
+
 }

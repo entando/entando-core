@@ -36,6 +36,82 @@ public class PageExtraConfigDOM {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageExtraConfigDOM.class);
 	
+	public void addExtraConfig(PageMetadata page, String xml) throws ApsSystemException {
+		Document doc = this.decodeDOM(xml);
+		this.addExtraConfig(page, doc);
+	}
+	
+	protected void addExtraConfig(PageMetadata page, Document doc) {
+		Element rootElement = doc.getRootElement();
+		Element useExtraTitlesElement = rootElement.getChild(USE_EXTRA_TITLES_ELEMENT_NAME);
+		if (null != useExtraTitlesElement) {
+			Boolean value = Boolean.valueOf(useExtraTitlesElement.getText());
+			page.setUseExtraTitles(value.booleanValue());
+		}
+		Element extraGroupsElement = rootElement.getChild(EXTRA_GROUPS_ELEMENT_NAME);
+		if (null != extraGroupsElement) {
+			List<Element> groupElements = extraGroupsElement.getChildren(EXTRA_GROUP_ELEMENT_NAME);
+			for (int i=0; i<groupElements.size(); i++) {
+				Element groupElement = groupElements.get(i);
+				page.addExtraGroup(groupElement.getAttributeValue(EXTRA_GROUP_NAME_ATTRIBUTE));
+			}
+		}
+		Element mimetypeElement = rootElement.getChild(MIMETYPE_ELEMENT_NAME);
+		if (null != mimetypeElement) {
+			String mimetype = mimetypeElement.getText();
+			if (null != mimetype && mimetype.trim().length() > 0) {
+				page.setMimeType(mimetype);
+			}
+		}
+		Element charsetElement = rootElement.getChild(CHARSET_ELEMENT_NAME);
+		if (null != charsetElement) {
+			String charset = charsetElement.getText();
+			if (null != charset && charset.trim().length() > 0) {
+				page.setCharset(charset);
+			}
+		}
+	}
+	
+	public String extractXml(PageMetadata page) {
+		Document doc = new Document();
+		Element elementRoot = new Element("config");
+		doc.setRootElement(elementRoot);
+		this.fillDocument(doc, page);
+		return this.getXMLDocument(doc);
+	}
+	
+	protected void fillDocument(Document doc, PageMetadata page) {
+		Set<String> extraGroups = page.getExtraGroups();
+		Element useExtraTitlesElement = new Element(USE_EXTRA_TITLES_ELEMENT_NAME);
+		useExtraTitlesElement.setText(String.valueOf(page.isUseExtraTitles()));
+		doc.getRootElement().addContent(useExtraTitlesElement);
+		if (null != extraGroups && extraGroups.size() > 0) {
+			Element extraGroupsElement = new Element(EXTRA_GROUPS_ELEMENT_NAME);
+			doc.getRootElement().addContent(extraGroupsElement);
+			Iterator<String> iterator = extraGroups.iterator();
+			while (iterator.hasNext()) {
+				String group = iterator.next();
+				Element extraGroupElement = new Element(EXTRA_GROUP_ELEMENT_NAME);
+				extraGroupElement.setAttribute(EXTRA_GROUP_NAME_ATTRIBUTE, group);
+				extraGroupsElement.addContent(extraGroupElement);
+			}
+		}
+		String charset = page.getCharset();
+		if (null != charset && charset.trim().length() > 0) {
+			Element charsetElement = new Element(CHARSET_ELEMENT_NAME);
+			charsetElement.setText(charset);
+			doc.getRootElement().addContent(charsetElement);
+		}
+		String mimeType = page.getMimeType();
+		if (null != mimeType && mimeType.trim().length() > 0) {
+			Element mimeTypeElement = new Element(MIMETYPE_ELEMENT_NAME);
+			mimeTypeElement.setText(mimeType);
+			doc.getRootElement().addContent(mimeTypeElement);
+		}
+	}
+	
+	
+	
 	public void addExtraConfig(Page page, String xml) throws ApsSystemException {
 		Document doc = this.decodeDOM(xml);
 		this.addExtraConfig(page, doc);

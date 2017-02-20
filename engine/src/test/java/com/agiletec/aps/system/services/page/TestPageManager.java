@@ -50,6 +50,10 @@ public class TestPageManager extends BaseTestCase {
 			throw t;
 		}
 		Page page = new Page();
+		PageMetadata metadata = new PageMetadata();
+		// TODO Verificare e modificare
+		page.setOnlineMetadata(metadata);
+		page.setDraftMetadata(metadata);
 		page.setCode("temp");
 		IPage parentPage = _pageManager.getPage("service");
 		assertNotNull(parentPage);
@@ -102,6 +106,10 @@ public class TestPageManager extends BaseTestCase {
 
 	private void updatePage() throws Exception {
 		Page page = new Page();
+		PageMetadata metadata = new PageMetadata();
+		// TODO Verificare e modificare
+		page.setOnlineMetadata(metadata);
+		page.setDraftMetadata(metadata);
 		page.setCode("temp");
 		IPage parentPage = _pageManager.getPage("service");
 		assertNotNull(parentPage);

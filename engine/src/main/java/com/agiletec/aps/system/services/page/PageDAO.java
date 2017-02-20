@@ -19,8 +19,12 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.entando.entando.aps.system.init.model.portdb.PageMetadataDraft;
+import org.entando.entando.aps.system.init.model.portdb.PageMetadataOnline;
+import org.entando.entando.aps.system.init.model.portdb.WidgetConfig;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
@@ -36,7 +40,7 @@ import com.agiletec.aps.util.ApsProperties;
  * @author M.Diana - E.Santoboni
  */
 public class PageDAO extends AbstractDAO implements IPageDAO {
-
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(PageDAO.class);
 	
 	/**
@@ -71,10 +75,14 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	 * @throws Throwable In case of error
 	 */
 	protected List<IPage> createPages(ResultSet res) throws Throwable {
+		// TODO Modificare
+		int widgetStartOnline = 19;
+		int widgetStartDraft = 9;
 		List<IPage> pages = new ArrayList<IPage>();
 		Page page = null;
 		Widget widgets[] = null;
-		int numFrames = 0;
+		int numFramesOnline = 0;
+		int numFramesDraft = 0;
 		String prevCode = "...no previous code...";
 		while (res.next()) {
 			String code = res.getString(3);
@@ -83,17 +91,20 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 					pages.add(page);
 				}
 				page = this.createPage(code, res);
-				numFrames = page.getModel().getFrames().length;
-				widgets = new Widget[numFrames];
+				numFramesOnline = page.getModel().getFrames().length;
+				widgets = new Widget[numFramesOnline];
 				page.setWidgets(widgets);
 				prevCode = code;
 			}
-			int pos = res.getInt(9);
-			if (pos >= 0 && pos < numFrames) {
-				Widget widget = this.createWidget(page, pos, res);
-				widgets[pos] = widget;
-			} else {
-				_logger.warn("The position read from the database exceeds the numer of frames defined in the model of the page {}", page.getCode());
+			Object posObj = res.getObject(widgetStartOnline);
+			if (posObj != null) {
+				int pos = res.getInt(widgetStartOnline);
+				if (pos >= 0 && pos < numFramesOnline) {
+					Widget widget = this.createWidget(page, pos, res, widgetStartOnline+1);
+					widgets[pos] = widget;
+				} else {
+					_logger.warn("The position read from the database exceeds the numer of frames defined in the model of the page {}", page.getCode());
+				}
 			}
 		}
 		pages.add(page);
@@ -105,36 +116,19 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		page.setCode(code);
 		page.setParentCode(res.getString(1));
 		page.setPosition(res.getInt(2));
-		Integer showable = new Integer (res.getInt(4));
-		page.setShowable(showable.intValue() == 1);
-		page.setModel(this.getPageModelManager().getPageModel(res.getString(5)));
-		String titleText = res.getString(6);
-		ApsProperties titles = new ApsProperties();
-		try {
-			titles.loadFromXml(titleText);
-		} catch (Throwable t) {
-			_logger.error("IO error detected while parsing the titles of the page {}", page.getCode(), t);
-			String msg = "IO error detected while parsing the titles of the page '" + page.getCode()+"'";
-			throw new ApsSystemException(msg, t);
+		page.setGroup(res.getString(4));
+		
+		if (res.getString(9)!=null) {
+			page.setOnlineMetadata(this.createPageMetadata(code, res, 9));
 		}
-		page.setTitles(titles);
-		page.setGroup(res.getString(7));
-		String extraConfig = res.getString(8);
-		if (null != extraConfig && extraConfig.trim().length() > 0) {
-			try {
-				PageExtraConfigDOM configDom = new PageExtraConfigDOM();
-				configDom.addExtraConfig(page, extraConfig);
-			} catch (Throwable t) {
-				_logger.error("IO error detected while parsing the extra config of the page {}", page.getCode(), t);
-				String msg = "IO error detected while parsing the extra config of the page '" + page.getCode()+"'";
-				throw new ApsSystemException(msg, t);
-			}
+		if (res.getString(14)!=null) {
+			page.setDraftMetadata(this.createPageMetadata(code, res, 14));
 		}
 		return page;
 	}
 	
-	protected Widget createWidget(IPage page, int pos, ResultSet res) throws Throwable {
-		String typeCode = res.getString(10);
+	protected Widget createWidget(IPage page, int pos, ResultSet res, int startIndex) throws Throwable {
+		String typeCode = res.getString(startIndex++);
 		if (null == typeCode) {
 			return null;
 		}
@@ -142,7 +136,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		WidgetType type = this.getWidgetTypeManager().getWidgetType(typeCode);
 		widget.setType(type);
 		ApsProperties config = new ApsProperties();
-		String configText = res.getString(11);
+		String configText = res.getString(startIndex++);
 		if (null != configText && configText.trim().length() > 0) {
 			try {
 				config.loadFromXml(configText);
@@ -157,7 +151,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		widget.setConfig(config);
 		return widget;
 	}
-
+	
 	/**
 	 * Insert a new page.
 	 * @param page The new page to insert.
@@ -168,7 +162,11 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
+			String pageCode = page.getCode();
 			this.addPageRecord(page, conn);
+			this.addPageMetadataOnline(pageCode, page.getOnlineMetadata(), conn);
+			this.addPageMetadataDraft(pageCode, page.getDraftMetadata(), conn);
+			// TODO Modificare per widget draft e public
 			this.addWidgetForPage(page, conn);
 			conn.commit();
 		} catch (Throwable t) {
@@ -181,6 +179,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	}
 	
 	protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
+		// TODO Modificare
 		int position = 1;
 		IPage[] sisters = page.getParent().getChildren();
 		if (null != sisters && sisters.length > 0) {
@@ -226,8 +225,12 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.deleteWidgets(page.getCode(), conn);
-			this.deletePageRecord(page.getCode(), conn);
+			String pageCode = page.getCode();
+			// TODO Modificare per Widget Draft
+			this.deleteWidgets(pageCode, conn);
+			this.deletePageMetadataOnline(pageCode, conn);
+			this.deletePageMetadataDraft(pageCode, conn);
+			this.deletePageRecord(pageCode, conn);
 			this.shiftPages(page.getParentCode(), page.getPosition(), conn);
 			conn.commit();
 		} catch (Throwable t) {
@@ -379,8 +382,13 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.deleteWidgets(page.getCode(), conn);
+			String pageCode = page.getCode();
+			this.deleteWidgets(pageCode, conn);
+			this.deletePageMetadataOnline(pageCode, conn);
+			this.deletePageMetadataDraft(pageCode, conn);
 			this.updatePageRecord(page, conn);
+			this.addPageMetadataDraft(pageCode, page.getDraftMetadata(), conn);
+			this.addPageMetadataOnline(pageCode, page.getOnlineMetadata(), conn);
 			this.addWidgetForPage(page, conn);
 			conn.commit();
 		} catch (Throwable t) {
@@ -397,14 +405,16 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			stat = conn.prepareStatement(UPDATE_PAGE);
 			stat.setString(1, page.getParentCode());
+			stat.setString(2, page.getGroup());
+			
+			// TODO Andrà rimosso
 			if (page.isShowable()) {
-				stat.setInt(2, 1);
+				stat.setInt(3, 1);
 			} else {
-				stat.setInt(2, 0);
+				stat.setInt(3, 0);
 			}
-			stat.setString(3, page.getModel().getCode());
-			stat.setString(4, page.getTitles().toXml());
-			stat.setString(5, page.getGroup());
+			stat.setString(4, page.getModel().getCode());
+			stat.setString(5, page.getTitles().toXml());
 			String extraConfig = this.getExtraConfig(page);
 			stat.setString(6, extraConfig);
 			stat.setString(7, page.getCode());
@@ -417,6 +427,150 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
+	// TODO Verificare quali servono
+	private void savePageMetadataOnline(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+		String tableName = PageMetadataOnline.TABLE_NAME;
+		boolean isAdd = this.existsPageMetadata(pageCode, tableName, conn);
+		this.savePageMetadata(pageCode, pageMetadata, isAdd, tableName, conn);
+	}
+	private void savePageMetadataDraft(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+		String tableName = PageMetadataDraft.TABLE_NAME;
+		boolean isAdd = this.existsPageMetadata(pageCode, tableName, conn);
+		this.savePageMetadata(pageCode, pageMetadata, isAdd, tableName, conn);
+	}
+	
+	private void addPageMetadataOnline(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+		this.savePageMetadata(pageCode, pageMetadata, true, PageMetadataOnline.TABLE_NAME, conn);
+	}
+	private void addPageMetadataDraft(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+		this.savePageMetadata(pageCode, pageMetadata, true, PageMetadataDraft.TABLE_NAME, conn);
+	}
+	
+	private void updatePageMetadataOnline(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+		this.savePageMetadata(pageCode, pageMetadata, false, PageMetadataOnline.TABLE_NAME, conn);
+	}
+	private void updatePageMetadataDraft(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+		this.savePageMetadata(pageCode, pageMetadata, false, PageMetadataDraft.TABLE_NAME, conn);
+	}
+	
+	protected void deletePageMetadataOnline(String pageCode, Connection conn) throws ApsSystemException {
+		this.deletePageMetadata(pageCode, PageMetadataOnline.TABLE_NAME, conn);
+	}
+	protected void deletePageMetadataDraft(String pageCode, Connection conn) throws ApsSystemException {
+		this.deletePageMetadata(pageCode, PageMetadataDraft.TABLE_NAME, conn);
+	}
+	
+	protected void savePageMetadata(String pageCode, PageMetadata pageMetadata, boolean isAdd, String tableName, Connection conn) throws ApsSystemException {
+		if (pageMetadata!=null) {
+			PreparedStatement stat = null;
+			try {
+				StringBuilder query = new StringBuilder(isAdd ? ADD_PAGE_METADATA_START : UPDATE_PAGE_METADATA_START);
+				query.append(tableName).append(isAdd ? ADD_PAGE_METADATA_END : UPDATE_PAGE_METADATA_END);
+				stat = conn.prepareStatement(query.toString());
+				int index = 1;
+				if (isAdd) {
+					stat.setString(index++, pageCode);
+				}
+				stat.setString(index++, pageMetadata.getTitles().toXml());
+				stat.setString(index++, pageMetadata.getModel().getCode());
+				if (pageMetadata.isShowable()) {
+					stat.setInt(index++, 1);
+				} else {
+					stat.setInt(index++, 0);
+				}
+				String extraConfig = this.getExtraConfig(pageMetadata);
+				stat.setString(index++, extraConfig);
+				Date updatedAt = pageMetadata.getUpdatedAt();
+				stat.setTimestamp(index++, updatedAt!=null ? new java.sql.Timestamp(updatedAt.getTime()) : null);
+				if (!isAdd) {
+					stat.setString(index++, pageCode);
+				}
+				stat.executeUpdate();
+			} catch (Throwable t) {
+				_logger.error("Error while saving the page metadata record for table {}", tableName,  t);
+				throw new RuntimeException("Error while saving the page metadata record for table " + tableName, t);
+			} finally {
+				closeDaoResources(null, stat);
+			}
+		}
+	}
+	
+	protected boolean existsPageMetadata(String pageCode, String tableName, Connection conn) throws ApsSystemException {
+		boolean exists = false;
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		try {
+			StringBuilder query = new StringBuilder(EXISTS_PAGE_METADATA_PREFIX).append(tableName).append(PAGE_METADATA_WHERE_CODE);
+			stat = conn.prepareStatement(query.toString());
+			stat.setString(1, pageCode);
+			res = stat.executeQuery();
+			if (res.next()) {
+				exists = true;
+			}
+		} catch (Throwable t) {
+			_logger.error("Error while checking the page metadata existance for table {} and page ", tableName, pageCode,  t);
+			throw new RuntimeException("Error while checking the page metadata existance for table " + tableName + " and page " + pageCode, t);
+		} finally {
+			closeDaoResources(res, stat);
+		}
+		return exists;
+	}
+	
+	protected void deletePageMetadata(String pageCode, String tableName, Connection conn) throws ApsSystemException {
+		PreparedStatement stat = null;
+		try {
+			StringBuilder query = new StringBuilder(DELETE_PAGE_METADATA_START).append(tableName).append(PAGE_METADATA_WHERE_CODE);
+			stat = conn.prepareStatement(query.toString());
+			stat.setString(1, pageCode);
+			stat.executeUpdate();
+		} catch (Throwable t) {
+			_logger.error("Error while deleting the page metadata record for table {} and page ", tableName, pageCode,  t);
+			throw new RuntimeException("Error while deleting the page metadata record for table " + tableName + " and page " + pageCode, t);
+		} finally {
+			closeDaoResources(null, stat);
+		}
+	}
+	
+	protected PageMetadata createPageMetadata(String code, ResultSet res, int startIndex) throws Throwable {
+		PageMetadata pageMetadata = new PageMetadata();
+		int index = startIndex;
+		String titleText = res.getString(index++);
+		ApsProperties titles = new ApsProperties();
+		try {
+			titles.loadFromXml(titleText);
+		} catch (Throwable t) {
+			_logger.error("IO error detected while parsing the titles of the page {}", code, t);
+			String msg = "IO error detected while parsing the titles of the page '" + code + "'";
+			throw new ApsSystemException(msg, t);
+		}
+		pageMetadata.setTitles(titles);
+		
+		pageMetadata.setModel(this.getPageModelManager().getPageModel(res.getString(index++)));
+		
+		Integer showable = new Integer (res.getInt(index++));
+		pageMetadata.setShowable(showable.intValue() == 1);
+		
+		String extraConfig = res.getString(index++);
+		if (null != extraConfig && extraConfig.trim().length() > 0) {
+			try {
+				PageExtraConfigDOM configDom = new PageExtraConfigDOM();
+				configDom.addExtraConfig(pageMetadata, extraConfig);
+			} catch (Throwable t) {
+				_logger.error("IO error detected while parsing the extra config of the page {}", code, t);
+				String msg = "IO error detected while parsing the extra config of the page '" + code + "'";
+				throw new ApsSystemException(msg, t);
+			}
+		}
+		pageMetadata.setUpdatedAt(res.getTimestamp(index++));
+		return pageMetadata;
+	}
+	
+	protected String getExtraConfig(PageMetadata pageMetadata) {
+		PageExtraConfigDOM dom = this.getExtraConfigDOM();
+		return dom.extractXml(pageMetadata);
+	}
+	
+	// TODO andrà rimosso
 	protected String getExtraConfig(IPage page) {
 		PageExtraConfigDOM dom = this.getExtraConfigDOM();
 		return dom.extractXml(page);
@@ -578,15 +732,20 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 
 	private IPageModelManager _pageModelManager;
 	private IWidgetTypeManager _widgetTypeManager;
-
+	
 	// attenzione: l'ordinamento deve rispettare prima l'ordine delle pagine
 	// figlie nelle pagine madri, e poi l'ordine dei widget nella pagina.
 	private static final String ALL_PAGES = 
-		"SELECT p.parentcode, p.pos, p.code, p.showinmenu, "
-		+ "p.modelcode, p.titles, p.groupcode, p.extraconfig, "
-		+ "s.framepos, s.widgetcode, s.config "
-		+ "FROM pages p LEFT JOIN widgetconfig s ON p.code = s.pagecode "
-		+ "ORDER BY p.parentcode, p.pos, p.code, s.framepos";
+		"SELECT p.parentcode, p.pos, p.code, p.groupcode, p.showinmenu, "
+		+ "p.modelcode, p.titles, p.extraconfig, "
+		+ "pub.titles, pub.modelcode, pub.showinmenu, pub.extraconfig, pub.updatedat, "
+		+ "drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat, "
+		+ "wp.framepos, wp.widgetcode, wp.config "
+		+ "FROM pages p "
+		+ "LEFT JOIN " + PageMetadataOnline.TABLE_NAME + " pub ON p.code = pub.code "
+		+ "LEFT JOIN " + PageMetadataDraft.TABLE_NAME + " drf ON p.code = drf.code "
+		+ "LEFT JOIN " + WidgetConfig.TABLE_NAME + " wp ON p.code = wp.pagecode "
+		+ "ORDER BY p.parentcode, p.pos, p.code, wp.framepos ";// TODO Modificare
 	
 	private static final String ADD_PAGE = 
 		"INSERT INTO pages(code, parentcode, showinmenu, pos, modelcode, titles, groupcode, extraconfig) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
@@ -607,7 +766,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		"UPDATE pages SET pos = (pos + 1) WHERE code = ? ";
 
 	private static final String UPDATE_PAGE = 
-		"UPDATE pages SET parentcode = ? , showinmenu = ? , modelcode = ? , titles = ? , groupcode = ? , extraconfig = ? WHERE code = ? ";
+		"UPDATE pages SET parentcode = ? , groupcode = ? , showinmenu = ? , modelcode = ? , titles = ? , extraconfig = ? WHERE code = ? ";
 
 	private static final String SHIFT_PAGE = 
 		"UPDATE pages SET pos = (pos - 1) WHERE parentcode = ? AND pos > ? ";
@@ -620,5 +779,24 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	
 	private static final String UPDATE_PAGE_TREE_POSITION = 
 			"UPDATE pages SET parentcode = ? , pos =?  WHERE code = ? ";
+	
+	private static final String EXISTS_PAGE_METADATA_PREFIX = "SELECT code FROM ";
+	
+	private static final String LOAD_PAGE_METADATA_PREFIX = 
+			"SELECT titles, modelcode, showinmenu, extraconfig, updatedat FROM ";
+	
+	private static final String ADD_PAGE_METADATA_START = "INSERT INTO ";
+	
+	private static final String UPDATE_PAGE_METADATA_START = "UPDATE ";
+	
+	private static final String DELETE_PAGE_METADATA_START = "DELETE FROM ";
+	
+	private static final String PAGE_METADATA_WHERE_CODE = " WHERE code = ?";
+	
+	private static final String ADD_PAGE_METADATA_END = 
+			"(code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES (?, ?, ?, ?, ?, ?) ";
+	
+	private static final String UPDATE_PAGE_METADATA_END = 
+			"SET titles = ?, modelcode = ?, showinmenu = ?, extraconfig = ?, updatedat = ? " + PAGE_METADATA_WHERE_CODE;
 	
 }

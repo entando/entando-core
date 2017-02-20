@@ -283,6 +283,212 @@ INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinme
 ');
 
 
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Nodo pagine di servizio</property>
+</properties>
+', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('primapagina', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Nodo pagine di servizio</property>
+</properties>', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina non trovata</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina di login</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Start Page</property>
+<property key="it">Pagina iniziale</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina di errore</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customers_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customers Page</property>
+<property key="it">Pagina gruppo Customers</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('coach_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Coach Page</property>
+<property key="it">Pagina gruppo Coach</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('administrators_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Administrators Page</property>
+<property key="it">Pagina gruppo Amministratori</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_2', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customer SubPage 2</property>
+<property key="it">Customer SubPage 2</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config />
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_12', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1-2</property>
+<property key="it">Pagina 1-2</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_11', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1-1</property>
+<property key="it">Pagina 1-1</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_1', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customer SubPage 1</property>
+<property key="it">Customer SubPage 1</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+  <extragroups>
+    <group name="coach" />
+  </extragroups>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_1', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1</property>
+<property key="it">Pagina 1</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('contentview', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Content Publishing</property>
+<property key="it">Publicazione Contenuto</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_2', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 2</property>
+<property key="it">Pagina 2</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+
+
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Nodo pagine di servizio</property>
+</properties>
+', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('primapagina', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Nodo pagine di servizio</property>
+</properties>', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina non trovata</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina di login</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Start Page</property>
+<property key="it">Pagina iniziale</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina di errore</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customers_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customers Page</property>
+<property key="it">Pagina gruppo Customers</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('coach_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Coach Page</property>
+<property key="it">Pagina gruppo Coach</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('administrators_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Administrators Page</property>
+<property key="it">Pagina gruppo Amministratori</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_2', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customer SubPage 2</property>
+<property key="it">Customer SubPage 2</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config />
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_12', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1-2</property>
+<property key="it">Pagina 1-2</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_11', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1-1</property>
+<property key="it">Pagina 1-1</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_1', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customer SubPage 1</property>
+<property key="it">Customer SubPage 1</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+  <extragroups>
+    <group name="coach" />
+  </extragroups>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_1', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1</property>
+<property key="it">Pagina 1</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('contentview', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Content Publishing</property>
+<property key="it">Publicazione Contenuto</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_2', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 2</property>
+<property key="it">Pagina 2</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
 
 
 INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) VALUES ('login_form', '<?xml version="1.0" encoding="UTF-8"?>

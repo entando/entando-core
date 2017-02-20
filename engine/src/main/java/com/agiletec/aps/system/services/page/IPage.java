@@ -64,7 +64,11 @@ public interface IPage extends ITreeNode {
 	 */
 	@Override
 	public IPage[] getChildren();
-
+	
+	public IPage[] getOnlineChildren();
+	
+	public IPage[] getAllChildren();
+	
 	/**
 	 * Return the parent of the current page. 
 	 * If the current page is the root, the root page itself is returned
@@ -72,6 +76,22 @@ public interface IPage extends ITreeNode {
 	 */
 	@Override
 	public IPage getParent();
+	
+	// TODO javadoc
+	public PageMetadata getOnlineMetadata();
+	
+	// TODO javadoc
+	public PageMetadata getDraftMetadata();
+	
+	// TODO javadoc
+	public Widget[] getOnlineWidgets();
+	
+	// TODO javadoc
+	public Widget[] getDraftWidgets();
+	
+	public boolean isOnline();
+	
+	public boolean isChanged();
 	
 	/**
 	 * This returns a boolean values indicating whether the page is

@@ -418,7 +418,7 @@ public class PageManager extends AbstractService
 	public IPage getRoot() {
 		return _root;
 	}
-
+	
 	/**
 	 * Return the page given the name
 	 * @param pageCode The code of the page.
@@ -428,6 +428,17 @@ public class PageManager extends AbstractService
 	public IPage getPage(String pageCode) {
 		return this.getPage(pageCode, true);
 	}
+	
+	@Override
+	public IPage getOnlinePage(String pageCode) {
+		return this.getPage(pageCode, true);
+	}
+	
+	@Override
+	public IPage getDraftPage(String pageCode) {
+		return this.getPage(pageCode, false);
+	}
+	
 	public IPage getPage(String pageCode, boolean onlyOnline) {
 		IPage page = this._pages.get(pageCode);
 		if (page != null && (!onlyOnline || page.isOnline())) {
@@ -435,7 +446,7 @@ public class PageManager extends AbstractService
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Search pages by a token of its code.
 	 * @param pageCodeToken The token containing to be looked up across the pages.

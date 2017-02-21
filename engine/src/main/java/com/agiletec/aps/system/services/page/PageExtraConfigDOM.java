@@ -124,44 +124,6 @@ public class PageExtraConfigDOM {
 		return doc;
 	}
 	
-	public String extractXml(IPage page) {
-		Document doc = new Document();
-		Element elementRoot = new Element("config");
-		doc.setRootElement(elementRoot);
-		this.fillDocument(doc, page);
-		return this.getXMLDocument(doc);
-	}
-	
-	protected void fillDocument(Document doc, IPage page) {
-		Set<String> extraGroups = page.getExtraGroups();
-		Element useExtraTitlesElement = new Element(USE_EXTRA_TITLES_ELEMENT_NAME);
-		useExtraTitlesElement.setText(String.valueOf(page.isUseExtraTitles()));
-		doc.getRootElement().addContent(useExtraTitlesElement);
-		if (null != extraGroups && extraGroups.size() > 0) {
-			Element extraGroupsElement = new Element(EXTRA_GROUPS_ELEMENT_NAME);
-			doc.getRootElement().addContent(extraGroupsElement);
-			Iterator<String> iterator = extraGroups.iterator();
-			while (iterator.hasNext()) {
-				String group = iterator.next();
-				Element extraGroupElement = new Element(EXTRA_GROUP_ELEMENT_NAME);
-				extraGroupElement.setAttribute(EXTRA_GROUP_NAME_ATTRIBUTE, group);
-				extraGroupsElement.addContent(extraGroupElement);
-			}
-		}
-		String charset = page.getCharset();
-		if (null != charset && charset.trim().length() > 0) {
-			Element charsetElement = new Element(CHARSET_ELEMENT_NAME);
-			charsetElement.setText(charset);
-			doc.getRootElement().addContent(charsetElement);
-		}
-		String mimeType = page.getMimeType();
-		if (null != mimeType && mimeType.trim().length() > 0) {
-			Element mimeTypeElement = new Element(MIMETYPE_ELEMENT_NAME);
-			mimeTypeElement.setText(mimeType);
-			doc.getRootElement().addContent(mimeTypeElement);
-		}
-	}
-	
 	protected String getXMLDocument(Document doc) {
 		XMLOutputter out = new XMLOutputter();
 		Format format = Format.getPrettyFormat();

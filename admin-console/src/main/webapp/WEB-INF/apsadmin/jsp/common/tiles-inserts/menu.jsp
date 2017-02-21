@@ -106,24 +106,16 @@
                     <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
                         <div class="nav-item-pf-header">
                             <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-                            <span>UX Components TO_DO</span>
+                            <span>UX Components</span>
                         </div>
-                        <!--                        <ul class="list-group">
-                                                    Loop plugins 
-                        <wpsa:pluginsSubMenu objectName="pluginsSubMenus" /><s:property value="#pluginsSubMenus" />
-                        <s:if test="#pluginsSubMenus.size > 0">
-                            <div id="submenu-plugins">
-                                <ul class="plugin-list" role="menubar">
-                            <s:iterator value="#pluginsSubMenus" id="pluginSubMenu">
-                                <wpsa:include value="%{#pluginSubMenu.subMenuFilePath}"></wpsa:include>
-                            </s:iterator>
+                        <ul class="list-group">
+                            <li class="list-group-item ">
+                                <a>
+                                    <span id="compute-containers-users-nav-item" class="list-group-item-value">TO_DO</span>
+
+                                </a>
+                            </li>
                         </ul>
-                    </div>
-                        </s:if>
-                        <s:else>
-                            <li role="presentation"><a href="#" role="menuitem" ><s:text name="menu.plugins" /></a></li>
-                        </s:else>
-                </ul>-->
                     </div>
                 </li>                    
 

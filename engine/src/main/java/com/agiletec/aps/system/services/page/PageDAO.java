@@ -481,9 +481,10 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			this.executeQueryWithoutResultset(conn, SET_ONLINE_WIDGETS, pageCode);
 			
 			Date now = new Date();
-			this.executeQueryWithoutResultset(conn, UPDATE_ONLINE_DATE, pageCode, now);
-			this.executeQueryWithoutResultset(conn, UPDATE_DRAFT_DATE, pageCode, now);
 			
+			this.updatePageMetadataDraftLastUpdate(pageCode, now , conn);
+			this.updatePageMetadataOnlineLastUpdate(pageCode, now , conn);
+
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -663,17 +664,30 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
-	/**
-	 * @deprecated Use {@link #removeWidget(String,int)} instead
-	 */
-	@Override
-	public void removeShowlet(String pageCode, int pos) {
-		removeWidget(pageCode, pos);
-	}
+
 	
-	@Override
-	public void removeWidget(String pageCode, int pos) {
+	public void removeWidget(IPage page, int pos) {
 		Connection conn = null;
+		PreparedStatement stat = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			this.removeWidget(page.getCode(), pos, conn);
+			Date now = new Date();
+			this.updatePageMetadataDraftLastUpdate(page.getCode(), now, conn);
+			page.getDraftMetadata().setUpdatedAt(now);
+
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error removing the widget from page '{}', frame {}", page.getCode(), pos,  t);
+			throw new RuntimeException("Error removing the widget from page '" + page.getCode() + "', frame " + pos, t);
+		} finally {
+			closeDaoResources(null, stat, conn);
+		}
+	}
+
+	public void removeWidget(String pageCode, int pos, Connection conn) {
+		
 		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
@@ -682,35 +696,33 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			stat.setString(1, pageCode);
 			stat.setInt(2, pos);
 			stat.executeUpdate();
-			conn.commit();
+			
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error removing the widget from page '{}', frame {}", pageCode, pos,  t);
 			throw new RuntimeException("Error removing the widget from page '" + pageCode + "', frame " + pos, t);
 		} finally {
-			closeDaoResources(null, stat, conn);
+			closeDaoResources(null, stat, null);
 		}
 	}
 
-	/**
-	 * @deprecated Use {@link #joinWidget(String,Widget,int)} instead
-	 */
-	@Override
-	public void joinShowlet(String pageCode, Widget widget, int pos) {
-		joinWidget(pageCode, widget, pos);
-	}
 
+	
 	@Override
-	public void joinWidget(String pageCode, Widget widget, int pos) {
-		this.removeWidget(pageCode, pos);
+	public void joinWidget(IPage page, Widget widget, int pos) {
+		String pageCode = page.getCode();
 		Connection conn = null;
 		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
+			this.removeWidget(pageCode, pos, conn);
 			stat = conn.prepareStatement(ADD_WIDGET_FOR_PAGE_DRAFT);
 			this.valueAddWidgetStatement(pageCode, pos, widget, stat);
-			this.updatePageMetadataDraftLastUpdate(pageCode, new Date(), conn);
+			
+			Date now = new Date();
+			this.updatePageMetadataDraftLastUpdate(pageCode, now, conn);
+			page.getDraftMetadata().setUpdatedAt(now);
 			stat.executeUpdate();
 			conn.commit();
 		} catch (Throwable t) {
@@ -722,8 +734,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
-	private void valueAddWidgetStatement(String pageCode, 
-			int pos, Widget widget, PreparedStatement stat) throws Throwable {
+	private void valueAddWidgetStatement(String pageCode, int pos, Widget widget, PreparedStatement stat) throws Throwable {
 		stat.setString(1, pageCode);
 		stat.setInt(2, pos);
 		stat.setString(3, widget.getType().getCode());
@@ -775,11 +786,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private void updatePageMetadataDraftLastUpdate(String pageCode, Date date, Connection conn) {
 		PreparedStatement stat = null;
 		try {
-			StringBuilder query = new StringBuilder("update ").append(PageMetadataDraft.TABLE_NAME).append( "set updatedat=? where code=?");
-			stat = conn.prepareStatement(query.toString());
 			
-			stat.setTimestamp(1, new Timestamp(date.getTime()));
-			stat.setString(2, pageCode);
+			stat = updatePageMetatataUpdate(pageCode, date, PageMetadataDraft.TABLE_NAME, conn);
 			stat.executeUpdate();
 		} catch (Throwable t) {
 			_logger.error("Error while updating the page metadata record for table {} and page ", PageMetadataDraft.TABLE_NAME, pageCode,  t);
@@ -788,6 +796,31 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			closeDaoResources(null, stat);
 		}
 	}
+	private void updatePageMetadataOnlineLastUpdate(String pageCode, Date date, Connection conn) {
+		PreparedStatement stat = null;
+		try {
+			stat = updatePageMetatataUpdate(pageCode, date, PageMetadataOnline.TABLE_NAME, conn);
+			stat.executeUpdate();
+		} catch (Throwable t) {
+			_logger.error("Error while updating the page metadata record for table {} and page ", PageMetadataDraft.TABLE_NAME, pageCode,  t);
+			throw new RuntimeException("Error while updating the page metadata record for table " + PageMetadataDraft.TABLE_NAME + " and page " + pageCode, t);
+		} finally {
+			closeDaoResources(null, stat);
+		}
+	}
+	
+
+	private PreparedStatement updatePageMetatataUpdate(String pageCode, Date date, String tablename, Connection conn)
+			throws SQLException {
+		PreparedStatement stat;
+		StringBuilder query = new StringBuilder("UPDATE ").append(tablename).append( " SET updatedat = ? WHERE code = ?");
+		stat = conn.prepareStatement(query.toString());
+		stat.setTimestamp(1, new Timestamp(date.getTime()));
+		stat.setString(2, pageCode);
+		return stat;
+	}
+	
+	
 
 	
 	protected IPageModelManager getPageModelManager() {
@@ -901,7 +934,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private static final String SET_ONLINE_WIDGETS = 
 			"INSERT INTO " + WidgetConfig.TABLE_NAME
 			+ " (pagecode, framepos, widgetcode, config) SELECT pagecode, framepos, widgetcode, config FROM "
-			+ WidgetConfig.TABLE_NAME + " WHERE code = ?";// TODO Modificare
+			+ WidgetConfigDraft.TABLE_NAME + " WHERE pagecode = ?";
 	
 	private static final String UPDATE_ONLINE_DATE = "UPDATE " + PageMetadataOnline.TABLE_NAME + " SET updatedat = ?" + PAGE_METADATA_WHERE_CODE;
 	private static final String UPDATE_DRAFT_DATE  = "UPDATE " + PageMetadataDraft.TABLE_NAME  + " SET updatedat = ?" + PAGE_METADATA_WHERE_CODE;

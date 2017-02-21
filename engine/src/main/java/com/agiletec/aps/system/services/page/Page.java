@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,7 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 /**
  * This is the representation of a portal page
@@ -323,9 +325,9 @@ public class Page extends TreeNode implements IPage {
 		if (onlineMeta != null) {
 			PageMetadata draftMeta = this.getDraftMetadata();
 			if (draftMeta != null) {
-				Date onlineUpdate = onlineMeta.getUpdatedAt();
-				Date draftUpdate = draftMeta.getUpdatedAt();
-				changed = onlineUpdate == null || !onlineUpdate.equals(draftUpdate);
+				boolean widgetEquals = Arrays.deepEquals(this.getDraftWidgets(), this.getOnlineWidgets());
+				boolean metaEquals = this.getOnlineMetadata().hasEqualConfiguration(this.getDraftMetadata());			
+				return !(widgetEquals && metaEquals);
 			} else {
 				changed = true;
 			}

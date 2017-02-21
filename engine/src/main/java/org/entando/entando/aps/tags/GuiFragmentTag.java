@@ -29,7 +29,6 @@ import javax.servlet.jsp.JspException;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
 import org.entando.entando.aps.system.services.controller.executor.ExecutorBeanContainer;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
@@ -41,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Print a gui fragment output by the given code.
  * @author E.Santoboni
  */
-public class GuiFragmentTag extends OutSupport {
+public class GuiFragmentTag extends ExtendedTagSupport {
 	
 	private static final Logger _logger =  LoggerFactory.getLogger(GuiFragmentTag.class);
 	
@@ -100,28 +99,10 @@ public class GuiFragmentTag extends OutSupport {
 	
 	@Override
 	public void release() {
-		super.escapeXml = true;
+		super.release();
 		this.setVar(null);
 		this.setCode(null);
 	}
-	
-	/**
-     * Decides whether to escape the special characters in the information retrieved or not.
-	 * Value admitted (true|false), the default is true.
-     * @return True to escape the special characters
-     */
-    public boolean getEscapeXml() {
-        return super.escapeXml;
-    }
-	
-    /**
-     * Decides whether to escape the special characters in the information retrieved or not.
-	 * Value admitted (true|false), the default is true.
-     * @param escapeXml True to escape the special characters
-     */
-    public void setEscapeXml(boolean escapeXml) {
-        super.escapeXml = escapeXml;
-    }
 	
 	public String getVar() {
 		return _var;

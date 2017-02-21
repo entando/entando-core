@@ -16,7 +16,6 @@ package com.agiletec.aps.tags;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
 
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +28,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import org.entando.entando.aps.tags.ExtendedTagSupport;
 
 /**
  * Returns informations about the showlet where the tag resides.
@@ -40,7 +40,7 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
  * @author E.Santoboni - E.Mezzano
  */
 @SuppressWarnings("serial")
-public class CurrentWidgetTag extends OutSupport {
+public class CurrentWidgetTag extends ExtendedTagSupport {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(CurrentWidgetTag.class);
 	
@@ -119,7 +119,6 @@ public class CurrentWidgetTag extends OutSupport {
 		this._configParam = null;
 		this._var = null;
 		this._frame = -1;
-		super.escapeXml = true;
 	}
 	
 	public String getParam() {
@@ -148,22 +147,6 @@ public class CurrentWidgetTag extends OutSupport {
 	}
 	public void setFrame(int frame) {
 		this._frame = frame;
-	}
-	
-	/**
-	 * Checks if the special characters must be escaped
-	 * @return True if the special characters must be escaped
-	 */
-	public boolean getEscapeXml() {
-		return super.escapeXml;
-	}
-	
-	/**
-	 * Toggles the escape of the special characters of the result.
-	 * @param escapeXml True to perform the escaping, false otherwise.
-	 */
-	public void setEscapeXml(boolean escapeXml) {
-		super.escapeXml = escapeXml;
 	}
 	
 	private String _param;

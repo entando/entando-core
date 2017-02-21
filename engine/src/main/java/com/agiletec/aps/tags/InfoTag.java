@@ -17,7 +17,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +27,7 @@ import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.url.IURLManager;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import org.entando.entando.aps.tags.ExtendedTagSupport;
 
 /**
  * Returns the information of the desired system parameter.
@@ -40,7 +40,7 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
  * 
  * @author Wiz of Id <wiz@apritisoftware.it>
  */
-public class InfoTag extends OutSupport {
+public class InfoTag extends ExtendedTagSupport {
 
 	private static final Logger _logger = LoggerFactory.getLogger(InfoTag.class);
 	
@@ -133,11 +133,11 @@ public class InfoTag extends OutSupport {
 	
 	@Override
 	public void release() {
+		super.release();
 		this._key = null;
 		this._varName = null;
 		this._info = null;
 		this._paramName = null;
-		super.escapeXml = true;
 	}
 
 	/**
@@ -186,22 +186,6 @@ public class InfoTag extends OutSupport {
 	 */
 	public void setParamName(String paramName) {
 		this._paramName = paramName;
-	}
-	
-	/**
-	 * Enable the special characters escaping in the result.
-	 * @return True if the result needs to be escaped, false otherwise.
-	 */
-	public boolean getEscapeXml() {
-		return super.escapeXml;
-	}
-	
-	/**
-	 * Toggles the escaping of the special characters in the result.
-	 * @param escapeXml True to escape the result, false otherwise.
-	 */
-	public void setEscapeXml(boolean escapeXml) {
-		super.escapeXml = escapeXml;
 	}
 	
 	private String _key;

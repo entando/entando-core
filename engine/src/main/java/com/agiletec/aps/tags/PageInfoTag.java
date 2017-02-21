@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
 
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +35,7 @@ import com.agiletec.aps.system.services.url.PageURL;
 import com.agiletec.aps.tags.util.IParameterParentTag;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import org.entando.entando.aps.tags.ExtendedTagSupport;
 
 /**
  * Returns the information of the specified page.
@@ -43,7 +43,7 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
  * if the info attribute is set to 'url'.
  * @author E.Santoboni
  */
-public class PageInfoTag extends OutSupport implements IParameterParentTag {
+public class PageInfoTag extends ExtendedTagSupport implements IParameterParentTag {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageInfoTag.class);
 	
@@ -152,13 +152,13 @@ public class PageInfoTag extends OutSupport implements IParameterParentTag {
 	
 	@Override
 	public void release() {
+		super.release();
 		this._pageCode = null;
 		this._info = null;
 		this._langCode = null;
 		this._var = null;
 		this._value = null;
 		this._parameters = null;
-		super.escapeXml = true;
 	}
 	
 	public String getPageCode() {
@@ -201,22 +201,6 @@ public class PageInfoTag extends OutSupport implements IParameterParentTag {
 	}
 	public void setValue(String value) {
 		this._value = value;
-	}
-	
-	/**
-	 * Returns True if the system escape the special characters. 
-	 * @return True if the system escape the special characters.
-	 */
-	public boolean getEscapeXml() {
-		return super.escapeXml;
-	}
-	
-	/**
-	 * Set if the system has to escape the special characters. 
-	 * @param escapeXml True if the system has to escape the special characters, else false.
-	 */
-	public void setEscapeXml(boolean escapeXml) {
-		super.escapeXml = escapeXml;
 	}
 	
 	public Map<String, String> getParameters() {

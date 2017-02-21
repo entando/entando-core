@@ -44,7 +44,14 @@ public interface IPageManager extends ITreeNodeManager {
 	 * @throws ApsSystemException In case of database access error.
 	 */
 	public void updatePage(IPage page) throws ApsSystemException;
-
+	
+	/**
+	 * Update a page as online.
+	 * @param pageCode The code of the page to be setted online.
+	 * @throws ApsSystemException In case of error.
+	 */
+	public void setPageOnline(String pageCode) throws ApsSystemException;
+	
 	/**
 	 * Move a page.
 	 * @param pageCode The code of the page to move.

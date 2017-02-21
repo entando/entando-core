@@ -85,8 +85,8 @@ public class Page extends TreeNode implements IPage {
 	public Widget[] getOnlineWidgets() {
 		return _onlineWidgets;
 	}
-	public void setPublishedWidgets(Widget[] publishedWidgets) {
-		this._onlineWidgets = publishedWidgets;
+	public void setOnlineWidgets(Widget[] onlineWidgets) {
+		this._onlineWidgets = onlineWidgets;
 	}
 	
 	@Override

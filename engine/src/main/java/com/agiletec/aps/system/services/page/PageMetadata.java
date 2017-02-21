@@ -26,13 +26,6 @@ import com.agiletec.aps.util.ApsProperties;
  */
 public class PageMetadata {
 	
-	public String getCode() {
-		return _code;
-	}
-	public void setCode(String code) {
-		this._code = code;
-	}
-	
 	public ApsProperties getTitles() {
 		return _titles;
 	}
@@ -141,8 +134,6 @@ public class PageMetadata {
 	public String toString() {
 		return "PageMetadata";
 	}
-	
-	private String _code;
 	
 	private ApsProperties _titles = new ApsProperties();
 	

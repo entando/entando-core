@@ -164,6 +164,19 @@ public class PageManager extends AbstractService
 		this.notifyPageChangedEvent(page, PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
 	
+	@Override
+	public void setPageOnline(String pageCode) throws ApsSystemException {
+		try {
+			this.getPageDAO().setPageOnline(pageCode);
+		} catch (Throwable t) {
+			_logger.error("Error updating a page", t);
+			//ApsSystemUtils.logThrowable(t, this, "updatePage");
+			throw new ApsSystemException("Error updating a page", t);
+		}
+		this.loadPageTree();
+		this.notifyPageChangedEvent(this.getPage(pageCode, false), PageChangedEvent.UPDATE_OPERATION_CODE, null);
+	}
+	
 	private void notifyPageChangedEvent(IPage page, int operationCode, Integer framePos) {
 		PageChangedEvent event = new PageChangedEvent();
 		event.setPage(page);

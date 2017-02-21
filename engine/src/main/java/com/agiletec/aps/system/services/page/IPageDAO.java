@@ -15,6 +15,8 @@ package com.agiletec.aps.system.services.page;
 
 import java.util.List;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+
 /**
  * Basic interface for the Data Acces Objects for the 'Page' objects
  * @author M.Diana - E.Santoboni
@@ -96,5 +98,14 @@ public interface IPageDAO {
 	 * @param newParent new parent
 	 */
 	public void movePage(IPage currentPage, IPage newParent);
+	
+	/**
+	 * TODO
+	 * @param pageCode
+	 * @param pageMetadata
+	 * @param conn
+	 * @throws ApsSystemException
+	 */
+	public void setPageOnline(String pageCode);
 	
 }

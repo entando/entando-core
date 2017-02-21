@@ -164,11 +164,11 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			this.addPageRecord(page, conn);
 			PageMetadata onlineMetadata = page.getOnlineMetadata();
 			if (onlineMetadata != null) {
-				this.addPageMetadataOnline(pageCode, onlineMetadata, conn);
+				this.addOnlinePageMetadata(pageCode, onlineMetadata, conn);
 			}
 			PageMetadata draftMetadata = page.getDraftMetadata();
 			if (draftMetadata != null) {
-				this.addPageMetadataDraft(pageCode, draftMetadata, conn);
+				this.addDraftPageMetadata(pageCode, draftMetadata, conn);
 			}
 			// TODO Modificare per widget draft e public
 			this.addWidgetForPage(page, conn);
@@ -223,8 +223,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			String pageCode = page.getCode();
 			// TODO Modificare per Widget Draft
 			this.deleteWidgets(pageCode, conn);
-			this.deletePageMetadataOnline(pageCode, conn);
-			this.deletePageMetadataDraft(pageCode, conn);
+			this.deleteOnlinePageMetadata(pageCode, conn);
+			this.deleteDraftPageMetadata(pageCode, conn);
 			this.deletePageRecord(pageCode, conn);
 			this.shiftPages(page.getParentCode(), page.getPosition(), conn);
 			conn.commit();
@@ -379,11 +379,11 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			conn.setAutoCommit(false);
 			String pageCode = page.getCode();
 			this.deleteWidgets(pageCode, conn);
-			this.deletePageMetadataOnline(pageCode, conn);
-			this.deletePageMetadataDraft(pageCode, conn);
+			this.deleteOnlinePageMetadata(pageCode, conn);
+			this.deleteDraftPageMetadata(pageCode, conn);
 			this.updatePageRecord(page, conn);
-			this.addPageMetadataDraft(pageCode, page.getDraftMetadata(), conn);
-			this.addPageMetadataOnline(pageCode, page.getOnlineMetadata(), conn);
+			this.addDraftPageMetadata(pageCode, page.getDraftMetadata(), conn);
+			this.addOnlinePageMetadata(pageCode, page.getOnlineMetadata(), conn);
 			this.addWidgetForPage(page, conn);
 			conn.commit();
 		} catch (Throwable t) {
@@ -411,37 +411,63 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
+	@Override
+	public void setPageOnline(String pageCode) {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			this.deleteWidgets(pageCode, conn);// TODO Verificare?
+			this.deleteOnlinePageMetadata(pageCode, conn);
+			
+			this.executeQueryWithoutResultset(conn, SET_ONLINE_METADATA, pageCode);
+			this.executeQueryWithoutResultset(conn, SET_ONLINE_WIDGETS, pageCode);
+			
+			Date now = new Date();
+			this.executeQueryWithoutResultset(conn, UPDATE_ONLINE_DATE, pageCode, now);
+			this.executeQueryWithoutResultset(conn, UPDATE_DRAFT_DATE, pageCode, now);
+			
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error while setting page '{}' as online", pageCode,  t);
+			throw new RuntimeException("Error while setting page " + pageCode + " as online", t);
+		} finally {
+			closeConnection(conn);
+		}
+	}
+	
 	// TODO Verificare quali servono
-	private void savePageMetadataOnline(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	private void saveOnlinePageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		String tableName = PageMetadataOnline.TABLE_NAME;
 		boolean isAdd = this.existsPageMetadata(pageCode, tableName, conn);
 		this.savePageMetadata(pageCode, pageMetadata, isAdd, tableName, conn);
 	}
-	private void savePageMetadataDraft(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	private void saveDraftPageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		String tableName = PageMetadataDraft.TABLE_NAME;
 		boolean isAdd = this.existsPageMetadata(pageCode, tableName, conn);
 		this.savePageMetadata(pageCode, pageMetadata, isAdd, tableName, conn);
 	}
 	
-	private void addPageMetadataOnline(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	private void addOnlinePageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		this.savePageMetadata(pageCode, pageMetadata, true, PageMetadataOnline.TABLE_NAME, conn);
 	}
-	private void addPageMetadataDraft(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	private void addDraftPageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		this.savePageMetadata(pageCode, pageMetadata, true, PageMetadataDraft.TABLE_NAME, conn);
 	}
 	
-	private void updatePageMetadataOnline(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	private void updateOnlinePageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		this.savePageMetadata(pageCode, pageMetadata, false, PageMetadataOnline.TABLE_NAME, conn);
 	}
-	private void updatePageMetadataDraft(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	private void updateDraftPageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		this.savePageMetadata(pageCode, pageMetadata, false, PageMetadataDraft.TABLE_NAME, conn);
 	}
 	
-	protected void deletePageMetadataOnline(String pageCode, Connection conn) throws ApsSystemException {
-		this.deletePageMetadata(pageCode, PageMetadataOnline.TABLE_NAME, conn);
+	protected void deleteOnlinePageMetadata(String pageCode, Connection conn) throws ApsSystemException {
+		this.executeQueryWithoutResultset(conn,  DELETE_ONLINE_PAGE_METADATA, pageCode);
 	}
-	protected void deletePageMetadataDraft(String pageCode, Connection conn) throws ApsSystemException {
-		this.deletePageMetadata(pageCode, PageMetadataDraft.TABLE_NAME, conn);
+	protected void deleteDraftPageMetadata(String pageCode, Connection conn) throws ApsSystemException {
+		this.executeQueryWithoutResultset(conn,  DELETE_DRAFT_PAGE_METADATA, pageCode);
 	}
 	
 	protected void savePageMetadata(String pageCode, PageMetadata pageMetadata, boolean isAdd, String tableName, Connection conn) throws ApsSystemException {
@@ -500,21 +526,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		return exists;
 	}
 	
-	protected void deletePageMetadata(String pageCode, String tableName, Connection conn) throws ApsSystemException {
-		PreparedStatement stat = null;
-		try {
-			StringBuilder query = new StringBuilder(DELETE_PAGE_METADATA_START).append(tableName).append(PAGE_METADATA_WHERE_CODE);
-			stat = conn.prepareStatement(query.toString());
-			stat.setString(1, pageCode);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error while deleting the page metadata record for table {} and page ", tableName, pageCode,  t);
-			throw new RuntimeException("Error while deleting the page metadata record for table " + tableName + " and page " + pageCode, t);
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-	
 	protected PageMetadata createPageMetadata(String code, ResultSet res, int startIndex) throws Throwable {
 		PageMetadata pageMetadata = new PageMetadata();
 		int index = startIndex;
@@ -552,12 +563,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	protected String getExtraConfig(PageMetadata pageMetadata) {
 		PageExtraConfigDOM dom = this.getExtraConfigDOM();
 		return dom.extractXml(pageMetadata);
-	}
-	
-	// TODO andrà rimosso
-	protected String getExtraConfig(IPage page) {
-		PageExtraConfigDOM dom = this.getExtraConfigDOM();
-		return dom.extractXml(page);
 	}
 	
 	protected PageExtraConfigDOM getExtraConfigDOM() {
@@ -768,18 +773,38 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private static final String LOAD_PAGE_METADATA_PREFIX = 
 			"SELECT titles, modelcode, showinmenu, extraconfig, updatedat FROM ";
 	
+	private static final String PAGE_METADATA_WHERE_CODE = " WHERE code = ?";
+	
+	private static final String ADD_PAGE_METADATA_END = 
+			" (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES (?, ?, ?, ?, ?, ?) ";
+	
+//	private static final String ADD_ONLINE_PAGE_METADATA = "INSERT INTO " + PageMetadataOnline.TABLE_NAME + ADD_PAGE_METADATA_END;
+//	private static final String ADD_DRAFT_PAGE_METADATA  = "INSERT INTO " + PageMetadataDraft.TABLE_NAME  + ADD_PAGE_METADATA_END;
+	
+	private static final String UPDATE_PAGE_METADATA_END = 
+			"SET titles = ?, modelcode = ?, showinmenu = ?, extraconfig = ?, updatedat = ? " + PAGE_METADATA_WHERE_CODE;
+	
+//	private static final String UPDATE_ONLINE_PAGE_METADATA = "UPDATE " + PageMetadataOnline.TABLE_NAME + UPDATE_PAGE_METADATA_END;
+//	private static final String UPDATE_DRAFT_PAGE_METADATA  = "UPDATE " + PageMetadataDraft.TABLE_NAME  + UPDATE_PAGE_METADATA_END;
+	
 	private static final String ADD_PAGE_METADATA_START = "INSERT INTO ";
 	
 	private static final String UPDATE_PAGE_METADATA_START = "UPDATE ";
 	
-	private static final String DELETE_PAGE_METADATA_START = "DELETE FROM ";
+	private static final String DELETE_ONLINE_PAGE_METADATA = "DELETE FROM " + PageMetadataOnline.TABLE_NAME + PAGE_METADATA_WHERE_CODE;
+	private static final String DELETE_DRAFT_PAGE_METADATA  = "DELETE FROM " + PageMetadataDraft.TABLE_NAME  + PAGE_METADATA_WHERE_CODE;
 	
-	private static final String PAGE_METADATA_WHERE_CODE = " WHERE code = ?";
+	private static final String SET_ONLINE_METADATA = 
+			"INSERT INTO " + PageMetadataOnline.TABLE_NAME
+			+ " (code, titles, modelcode, showinmenu, extraconfig, updatedat) SELECT code, titles, modelcode, showinmenu, extraconfig, updatedat FROM "
+			+ PageMetadataDraft.TABLE_NAME + " WHERE code = ?";
 	
-	private static final String ADD_PAGE_METADATA_END = 
-			"(code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES (?, ?, ?, ?, ?, ?) ";
+	private static final String SET_ONLINE_WIDGETS = 
+			"INSERT INTO " + WidgetConfig.TABLE_NAME
+			+ " (pagecode, framepos, widgetcode, config) SELECT pagecode, framepos, widgetcode, config FROM "
+			+ WidgetConfig.TABLE_NAME + " WHERE code = ?";// TODO Modificare
 	
-	private static final String UPDATE_PAGE_METADATA_END = 
-			"SET titles = ?, modelcode = ?, showinmenu = ?, extraconfig = ?, updatedat = ? " + PAGE_METADATA_WHERE_CODE;
+	private static final String UPDATE_ONLINE_DATE = "UPDATE " + PageMetadataOnline.TABLE_NAME + " SET updatedat = ?" + PAGE_METADATA_WHERE_CODE;
+	private static final String UPDATE_DRAFT_DATE  = "UPDATE " + PageMetadataDraft.TABLE_NAME  + " SET updatedat = ?" + PAGE_METADATA_WHERE_CODE;
 	
 }

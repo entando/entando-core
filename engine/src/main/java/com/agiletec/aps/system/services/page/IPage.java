@@ -40,12 +40,14 @@ public interface IPage extends ITreeNode {
 	 * Add a group (code) authorized to view/access the page in the Front-end.
 	 * @param groupName The group to add.
 	 */
+	@Deprecated
 	public void addExtraGroup(String groupName);
 	
 	/**
 	 * Remove a group (code) authorized to view/access the page in the Front-end.
 	 * @param groupName The group to remove.
 	 */
+	@Deprecated
 	public void removeExtraGroup(String groupName);
 	
 	/**

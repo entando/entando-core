@@ -13,7 +13,9 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -56,29 +58,20 @@ public class TestPageDAO extends BaseTestCase {
 	}
     
 	public void testAddUpdateDeletePage() throws Throwable {
-		Page newPageForTest = this.createPageForTest("temp");
+		String pageCode = "temp";
+		Page newPageForTest = this.createPageForTest(pageCode);
 		IPage extractedPage = null;
 		try {
 			List<IPage> pages = this._pageDao.loadPages();
-		    for (int i=0; i<pages.size(); i++) {
-    			IPage page = pages.get(i);
-				if (page.getCode().equals("temp")) {
-					extractedPage = page;
-					break;
-				}
-			}
+			extractedPage = this.getPageByCode(pages, pageCode);
 			assertNull(extractedPage);
+			
         	this._pageDao.addPage(newPageForTest);
         	pages = this._pageDao.loadPages();
-		    for (int i=0; i<pages.size(); i++) {
-    			IPage page = pages.get(i);
-				if (page.getCode().equals("temp")) {
-					extractedPage = page;
-					break;
-				}
-			}
+			extractedPage = this.getPageByCode(pages, pageCode);
+			
 			assertNotNull(extractedPage);
-			assertEquals(extractedPage.getCode(), "temp");
+			assertEquals(extractedPage.getCode(), pageCode);
 			assertEquals(extractedPage.getGroup(), "free");
 			assertEquals(extractedPage.getTitle("it"), "pagina temporanea");
 			assertEquals(extractedPage.getModel().getCode(), "service");
@@ -93,6 +86,18 @@ public class TestPageDAO extends BaseTestCase {
 			Page pageToDelete = (null != extractedPage) ? (Page) extractedPage : newPageForTest;
 			this.deletePage(pageToDelete, _pageDao);
 		}
+	}
+	
+	private IPage getPageByCode(List<IPage> pages, String code) {
+		IPage extractedPage = null;
+	    for (int i=0; i<pages.size(); i++) {
+			IPage page = pages.get(i);
+			if (page.getCode().equals(code)) {
+				extractedPage = page;
+				break;
+			}
+		}
+		return extractedPage;
 	}
 	
 	private void updatePage(IPage ipageToUpdate, PageDAO pageDAO) throws Throwable {
@@ -165,21 +170,15 @@ public class TestPageDAO extends BaseTestCase {
 	private Page createPageForTest(String code) {
 		Page page = new Page();
 		page.setCode(code);
-		PageMetadata metadata = new PageMetadata();
-		page.setOnlineMetadata(metadata);
-		page.setDraftMetadata(metadata);
 		IPage parentPage = this._pageManager.getPage("service");
 		page.setParent(parentPage);
 		page.setParentCode("service");
-		PageModel pageModel = new PageModel();
-		pageModel.setCode("service");
-		metadata.setModel(pageModel);
 		page.setGroup("free");
-		metadata.setShowable(true);
-		page.setTitle("it", "temptitle");
-		ApsProperties titles = new ApsProperties();
-		titles.setProperty("it", "pagina temporanea");
-		metadata.setTitles(titles);
+		
+		PageMetadata metadata = this.createPageMetadata("service", true, "pagina temporanea");
+		page.setOnlineMetadata(metadata);
+		page.setDraftMetadata(metadata);
+		
 		Widget widget = new Widget();
 		ApsProperties config = new ApsProperties();
 		config.setProperty("temp", "temp");		
@@ -189,8 +188,33 @@ public class TestPageDAO extends BaseTestCase {
 		widgetType.setCode("content_viewer");
 		widget.setType(widgetType);
 		Widget[] widgets = {widget};
+		
 		page.setWidgets(widgets);
 		return page;
+	}
+	
+	private PageMetadata createPageMetadata(String pageModelCode, boolean showable, String defaultTitle) {
+		return this.createPageMetadata(pageModelCode, showable, defaultTitle, null, null, false, null, null);
+	}
+	
+	private PageMetadata createPageMetadata(String pageModelCode, boolean showable, String defaultTitle, 
+			String mimeType, String charset, boolean useExtraTitles, Set<String> extraGroups, Date updatedAt) {
+		PageMetadata metadata = new PageMetadata();
+		PageModel pageModel = new PageModel();
+		pageModel.setCode(pageModelCode);
+		metadata.setModel(pageModel);
+		
+		metadata.setShowable(showable);
+		metadata.setTitle("it", defaultTitle);
+		if (extraGroups != null) {
+			metadata.setExtraGroups(extraGroups);
+		}
+		metadata.setMimeType(mimeType);
+		metadata.setCharset(charset);
+		metadata.setUseExtraTitles(useExtraTitles);
+		metadata.setExtraGroups(extraGroups);
+		metadata.setUpdatedAt(updatedAt);
+		return metadata;
 	}
 	
 	private void init() throws Exception {

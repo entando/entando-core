@@ -27,7 +27,7 @@ import com.agiletec.aps.util.ApsProperties;
 
 /**
  * This is the representation of a portal page metadata
- * @author E.Mezzano, S.Puddu
+ * @author E.Mezzano, spuddu
  */
 public class PageMetadata implements Cloneable {
 	
@@ -169,6 +169,81 @@ public class PageMetadata implements Cloneable {
 		return "PageMetadata";
 	}
 	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_charset == null) ? 0 : _charset.hashCode());
+		result = prime * result + ((_extraGroups == null) ? 0 : _extraGroups.hashCode());
+		result = prime * result + ((_mimeType == null) ? 0 : _mimeType.hashCode());
+		result = prime * result + ((_model == null) ? 0 : _model.hashCode());
+		result = prime * result + (_showable ? 1231 : 1237);
+		result = prime * result + ((_titles == null) ? 0 : _titles.hashCode());
+		result = prime * result + ((_updatedAt == null) ? 0 : _updatedAt.hashCode());
+		result = prime * result + (_useExtraTitles ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		boolean equalConf =  this.hasEqualConfiguration(obj);
+		if (equalConf) {
+			PageMetadata other = (PageMetadata) obj;
+			if (_updatedAt == null) {
+			if (other._updatedAt != null)
+				return false;
+		} else if (!_updatedAt.equals(other._updatedAt))
+			return false;
+		}
+		return equalConf;
+	}
+	
+	/**
+	 * all but lastUpdate
+	 * @param obj
+	 * @return
+	 */
+	public boolean hasEqualConfiguration(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PageMetadata other = (PageMetadata) obj;
+		if (_charset == null) {
+			if (other._charset != null)
+				return false;
+		} else if (!_charset.equals(other._charset))
+			return false;
+		if (_extraGroups == null) {
+			if (other._extraGroups != null)
+				return false;
+		} else if (!_extraGroups.equals(other._extraGroups))
+			return false;
+		if (_mimeType == null) {
+			if (other._mimeType != null)
+				return false;
+		} else if (!_mimeType.equals(other._mimeType))
+			return false;
+		if (_model == null) {
+			if (other._model != null)
+				return false;
+		} else if (!_model.equals(other._model))
+			return false;
+		if (_showable != other._showable)
+			return false;
+		if (_titles == null) {
+			if (other._titles != null)
+				return false;
+		} else if (!_titles.equals(other._titles))
+			return false;
+		if (_useExtraTitles != other._useExtraTitles)
+			return false;
+		return true;
+	}
+	
 	private ApsProperties _titles = new ApsProperties();
 	
 	private Set<String> _extraGroups;
@@ -190,5 +265,4 @@ public class PageMetadata implements Cloneable {
 	private String _charset;
 	
 	private Date _updatedAt;
-	
 }

@@ -59,7 +59,38 @@ public class Widget implements Serializable {
 	public void setType(WidgetType type) {
 		this._type = type;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_config == null) ? 0 : _config.hashCode());
+		result = prime * result + ((_type == null) ? 0 : _type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Widget other = (Widget) obj;
+		if (_config == null) {
+			if (other._config != null)
+				return false;
+		} else if (!_config.equals(other._config))
+			return false;
+		if (_type == null) {
+			if (other._type != null)
+				return false;
+		} else if (!_type.equals(other._type))
+			return false;
+		return true;
+	}
+
 	/**
 	 * The type of the widget
 	 */

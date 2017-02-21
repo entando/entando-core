@@ -15,7 +15,6 @@ package org.entando.entando.aps.tags;
 
 import javax.servlet.jsp.JspException;
 
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
  * Return an attribute value of an user profile.
  * @author E.Santoboni
  */
-public class UserProfileAttributeTag extends OutSupport {
+public class UserProfileAttributeTag extends ExtendedTagSupport {
 
 	private static final Logger _logger =  LoggerFactory.getLogger(UserProfileAttributeTag.class);
 	
@@ -77,7 +76,6 @@ public class UserProfileAttributeTag extends OutSupport {
     public void release() {
         super.release();
         this.setVar(null);
-        super.escapeXml = true;
 		this.setAttributeName(null);
 		this.setAttributeRoleName(null);
     }
@@ -118,23 +116,7 @@ public class UserProfileAttributeTag extends OutSupport {
     public void setUsername(String username) {
         this._username = username;
     }
-
-    /**
-     * Determina se effettuare l'escape dei caratteri speciali nella label ricavata.
-     * @return True nel caso si debba effettuare l'escape, false in caso contrario.
-     */
-    public boolean getEscapeXml() {
-        return super.escapeXml;
-    }
-
-    /**
-     * Setta se effettuare l'escape dei caratteri speciali nella label ricavata.
-     * @param escapeXml True nel caso si debba effettuare l'escape, false in caso contrario.
-     */
-    public void setEscapeXml(boolean escapeXml) {
-        super.escapeXml = escapeXml;
-    }
-    
+	
     private String _var;
 	private String _attributeRoleName;
 	private String _attributeName;

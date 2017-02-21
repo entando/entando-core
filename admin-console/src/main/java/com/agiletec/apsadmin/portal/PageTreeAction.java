@@ -53,7 +53,7 @@ public class PageTreeAction extends AbstractTreeAction {
 		try {
 			String check = this.checkSelectedNode(selectedNode);
 			if (null != check) return check;
-			IPage currentPage = this.getPageManager().getPage(selectedNode);
+			IPage currentPage = this.getPageManager().getDraftPage(selectedNode);
 			if (!isUserAllowed(currentPage.getParent())) {
 				this.addActionError(this.getText("error.page.userNotAllowed"));
 				return SUCCESS;
@@ -114,7 +114,7 @@ public class PageTreeAction extends AbstractTreeAction {
 			this.addActionError(this.getText("error.page.virtualRootSelected"));
 			return "pageTree";
 		}
-		IPage selectedPage = this.getPageManager().getPage(selectedNode);
+		IPage selectedPage = this.getPageManager().getDraftPage(selectedNode);
 		if (null == selectedPage) {
 			this.addActionError(this.getText("error.page.selectedPage.null"));
 			return "pageTree";

@@ -112,6 +112,18 @@ public interface IPageManager extends ITreeNodeManager {
 	 * @return the requested page.
 	 */
 	public IPage getPage(String pageCode);
+	
+	public IPage getOnlinePage(String pageCode);
+	
+	public IPage getDraftPage(String pageCode);
+	
+	/**
+	 * Return a page given the name.
+	 * @param pageCode The code of the page
+	 * @param onlyOnline If true, returns the page only if is online
+	 * @return The desired page
+	 */
+	public IPage getPage(String pageCode, boolean onlyOnline);
 
 	/**
 	 * Search pages by a token of its code.

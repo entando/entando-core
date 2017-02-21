@@ -15,9 +15,11 @@ package com.agiletec.plugins.jacms.apsadmin.portal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +38,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
-
-import java.util.Properties;
-
-import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 
 /**
  * @author E.Santoboni
@@ -65,7 +63,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 						contentGroups.addAll(content.getGroups());
 					}
 					this.addFieldError("extraGroups", this.getText("error.page.extraGoups.invalidGroupsForPublishedContent", 
-							new String[]{contentGroups.toString(), content.getId(), content.getDescr()}));
+							new String[]{contentGroups.toString(), content.getId(), content.getDescription()}));
 				}
 			}
 			List<String> linkingContentsVo = ((PageUtilizer) contentManager).getPageUtilizers(this.getPageCode());
@@ -75,7 +73,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 					Content linkingContent = contentManager.loadContent(contentId, true);
 					if (null != linkingContent && !CmsPageActionUtil.isPageLinkableByContent(page, linkingContent)) {
 						this.addFieldError("extraGroups", this.getText("error.page.extraGoups.pageHasToBeFree", 
-								new String[]{linkingContent.getId(), linkingContent.getDescr()}));
+								new String[]{linkingContent.getId(), linkingContent.getDescription()}));
 					}
 				}
 			}
@@ -86,14 +84,15 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 	}
 	
 	private IPage createTempPage() {
-		IPage pageOnEdit = (Page) this.getPageManager().getPage(this.getPageCode());
+		IPage pageOnEdit = (Page) this.getPage(this.getPageCode());
 		Page page = new Page();
 		page.setGroup(this.getGroup());
 		PageMetadata metadata = new PageMetadata();
-		page.setOnlineMetadata(metadata);// TODO Andrà commentato per non pubblicare alla creazione
-		page.setDraftMetadata(metadata);
 		metadata.setExtraGroups(this.getExtraGroups());
-		page.setWidgets(pageOnEdit.getWidgets());
+		page.setOnlineMetadata(metadata);
+		page.setDraftMetadata(metadata);
+		page.setOnlineWidgets(pageOnEdit.getOnlineWidgets());
+		page.setDraftWidgets(pageOnEdit.getDraftWidgets());
 		page.setCode(this.getPageCode());
 		return page;
 	}
@@ -122,6 +121,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 	}
 	
 	protected void checkViewerPage(IPage page) {
+		// TODO Verificare che comportamento deve avere
 		int mainFrame = page.getModel().getMainFrame();
 		if (this.isViewerPage() && mainFrame>-1) {
 			IWidgetTypeManager showletTypeManager = (IWidgetTypeManager) ApsWebApplicationUtils.getBean(SystemConstants.WIDGET_TYPE_MANAGER, this.getRequest());

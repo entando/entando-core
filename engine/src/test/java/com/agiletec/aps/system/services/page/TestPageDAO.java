@@ -73,9 +73,17 @@ public class TestPageDAO extends BaseTestCase {
 			assertNotNull(extractedPage);
 			assertEquals(extractedPage.getCode(), pageCode);
 			assertEquals(extractedPage.getGroup(), "free");
-			assertEquals(extractedPage.getTitle("it"), "pagina temporanea");
-			assertEquals(extractedPage.getModel().getCode(), "service");
-			assertTrue(extractedPage.isShowable());
+			
+			PageMetadata onlineMetadata = extractedPage.getOnlineMetadata();
+			assertEquals(onlineMetadata.getTitle("it"), "pagina temporanea");
+			assertEquals(onlineMetadata.getModel().getCode(), "service");
+			assertTrue(onlineMetadata.isShowable());
+			
+			PageMetadata draftMetadata = extractedPage.getDraftMetadata();
+			assertEquals(draftMetadata.getTitle("it"), "pagina temporanea");
+			assertEquals(draftMetadata.getModel().getCode(), "service");
+			assertTrue(draftMetadata.isShowable());
+			
 			Widget[] widgets = extractedPage.getWidgets();
 			assertTrue(widgets[0].getConfig().containsKey("temp"));
 			assertEquals(widgets[0].getType().getCode(), "content_viewer");
@@ -129,9 +137,18 @@ public class TestPageDAO extends BaseTestCase {
 			assertNotNull(extractedPage);
 			assertEquals(extractedPage.getCode(), "temp");
 			assertEquals(extractedPage.getGroup(), "free");
-			assertEquals(extractedPage.getTitle("it"), "pagina temporanea1");
-			assertEquals(extractedPage.getModel().getCode(), "service");
-			assertFalse(extractedPage.isShowable());
+			
+			PageMetadata onlineMetadata = extractedPage.getOnlineMetadata();
+			assertEquals(onlineMetadata.getTitle("it"), "pagina temporanea1");
+			assertEquals(onlineMetadata.getModel().getCode(), "service");
+			assertFalse(onlineMetadata.isShowable());
+			
+			PageMetadata draftMetadata = extractedPage.getDraftMetadata();
+			assertEquals(draftMetadata.getTitle("it"), "pagina temporanea1");
+			assertEquals(draftMetadata.getModel().getCode(), "service");
+			assertFalse(draftMetadata.isShowable());
+			
+			// TODO Verificare Widget online/draft
 			Widget[] widgets = extractedPage.getWidgets();
 			ApsProperties extractedConfig = widgets[0].getConfig();
 			assertTrue(extractedConfig.containsKey("temp1"));

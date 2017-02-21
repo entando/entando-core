@@ -13,15 +13,7 @@
  */
 package org.entando.entando.plugins.jacms.apsadmin.content;
 
-import com.agiletec.aps.system.services.lang.Lang;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.url.IURLManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.apsadmin.content.AbstractContentAction;
-
 import java.io.IOException;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +21,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.interceptor.ServletResponseAware;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.url.IURLManager;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import com.agiletec.plugins.jacms.apsadmin.content.AbstractContentAction;
 
 /**
  * Classe action delegate alla gestione della funzione di preview contenuti.
@@ -95,13 +93,13 @@ public class ContentPreviewAction extends AbstractContentAction implements Servl
 		String pageDestCode = this.getPreviewPageCode();
 		if (null == pageDestCode || pageDestCode.trim().length() == 0) {
 			pageDestCode = this.getContent().getViewPage();
-			if (null == pageDestCode || null == pageManager.getPage(pageDestCode)) {
+			if (null == pageDestCode || null == pageManager.getOnlinePage(pageDestCode)) {
 				String[] args = {pageDestCode};
 				this.addFieldError("previewPageCode", this.getText("error.content.preview.pageNotValid", args));
 				return null;
 			}
 		}
-		if (null == pageManager.getPage(pageDestCode)) {
+		if (null == pageManager.getOnlinePage(pageDestCode)) {
 			String[] args = {pageDestCode};
 			this.addFieldError("previewPageCode", this.getText("error.content.preview.pageNotFound", args));
 			return null;
@@ -115,7 +113,7 @@ public class ContentPreviewAction extends AbstractContentAction implements Servl
 			currentLang = this.getLangManager().getDefaultLang();
 		}
 		IPageManager pageManager = this.getPageManager();
-		IPage pageDest = pageManager.getPage(pageDestCode);
+		IPage pageDest = pageManager.getOnlinePage(pageDestCode);
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("contentOnSessionMarker", this.getContentOnSessionMarker());
 		String redirectUrl = this.getUrlManager().createUrl(pageDest, currentLang, parameters, false);

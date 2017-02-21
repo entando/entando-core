@@ -132,7 +132,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
-		IPage page = this.getPageManager().getPage(pageCode);
+		IPage page = this.getPage(pageCode);
 		if (null == page) return null;
 		List<IPage> pages = new ArrayList<IPage>();
 		this.getSubBreadCrumbsTargets(pages, page);
@@ -167,7 +167,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 			this.addActionError(this.getText("error.page.virtualRootSelected"));
 			return "pageTree";
 		}
-		IPage selectedPage = this.getPageManager().getPage(selectedNode);
+		IPage selectedPage = this.getPage(selectedNode);
 		if (null == selectedPage) {
 			this.addActionError(this.getText("error.page.selectedPage.null"));
 			return "pageTree";
@@ -185,7 +185,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 	 * @return The page associated to the given code, null if the code is unknown.
 	 */
 	public IPage getPage(String pageCode) {
-		return this.getPageManager().getPage(pageCode);
+		return this.getPageManager().getDraftPage(pageCode);
 	}
 	
 	/**

@@ -84,6 +84,7 @@ public class CmsPageActionUtil {
 	 */
 	public static boolean isFreeViewerPage(IPage page, String viewerShowletCode) {
 		try {
+			// TODO Verificare
 			int mainFrame = page.getModel().getMainFrame();
 			if (mainFrame < 0) return false;
 			Widget viewer = page.getWidgets()[mainFrame];

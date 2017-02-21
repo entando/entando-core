@@ -92,9 +92,18 @@ public class TestPageManager extends BaseTestCase {
 		assertNotNull(extractedPage);
 		assertEquals(extractedPage.getCode(), "temp");
 		assertEquals(extractedPage.getGroup(), "free");
-		assertEquals(extractedPage.getTitle("it"), "pagina temporanea");
-		assertEquals(extractedPage.getModel().getCode(), "service");
-		assertEquals(extractedPage.isShowable(), true);
+		
+		PageMetadata onlineMetadata = extractedPage.getOnlineMetadata();
+		assertEquals(onlineMetadata.getTitle("it"), "pagina temporanea");
+		assertEquals(onlineMetadata.getModel().getCode(), "service");
+		assertEquals(onlineMetadata.isShowable(), true);
+		
+		PageMetadata draftMetadata = extractedPage.getDraftMetadata();
+		assertEquals(draftMetadata.getTitle("it"), "pagina temporanea");
+		assertEquals(draftMetadata.getModel().getCode(), "service");
+		assertEquals(draftMetadata.isShowable(), true);
+		
+		// TODO Verificare Widget online/draft
 		widgets = extractedPage.getWidgets();
 		assertTrue(widgets[0].getConfig().containsKey("temp"));
 		assertTrue(widgets[0].getConfig().containsKey("contentId"));

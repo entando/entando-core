@@ -16,7 +16,12 @@ package com.agiletec.aps.system.services.page;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.agiletec.aps.system.common.entity.parse.ApsEntityDOM;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 
@@ -24,7 +29,36 @@ import com.agiletec.aps.util.ApsProperties;
  * This is the representation of a portal page metadata
  * @author E.Mezzano, S.Puddu
  */
-public class PageMetadata {
+public class PageMetadata implements Cloneable {
+	
+	private static final Logger _logger =  LoggerFactory.getLogger(PageMetadata.class);
+	
+	@Override
+	public PageMetadata clone() throws CloneNotSupportedException {
+		PageMetadata copy = null;
+		try {
+			copy = this.getClass().newInstance();
+			ApsProperties titles = new ApsProperties();
+			titles.putAll(copy.getTitles());
+			copy.setTitles(titles);
+			
+			Set<String> extraGroups = this.getExtraGroups();
+			if (extraGroups != null) {
+				copy.setExtraGroups(new TreeSet<String>(extraGroups));
+			}
+			
+			copy.setModel(this.getModel());
+			copy.setShowable(this.isShowable());
+			copy.setUseExtraTitles(this.isUseExtraTitles());
+			copy.setMimeType(this.getMimeType());
+			copy.setCharset(copy.getCharset());
+			copy.setUpdatedAt(copy.getUpdatedAt());
+		} catch (Throwable t) {
+			_logger.error("Error cloning {}" + this.getClass(), t);
+			throw new RuntimeException("Error cloning " + this.getClass(), t);
+		}
+		return copy;
+	}
 	
 	public ApsProperties getTitles() {
 		return _titles;

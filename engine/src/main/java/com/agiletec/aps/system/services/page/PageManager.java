@@ -114,7 +114,7 @@ public class PageManager extends AbstractService
 	 */
 	@Override
 	public void deletePage(String pageCode) throws ApsSystemException {
-		IPage page =  this.getPage(pageCode, false);
+		IPage page =  this.getDraftPage(pageCode);
 		if (null != page && page.getAllChildren().length <= 0) {
 			try {
 				this.getPageDAO().deletePage(page);
@@ -143,7 +143,7 @@ public class PageManager extends AbstractService
 			throw new ApsSystemException("Error adding a page", t);
 		}
 		this.loadPageTree();
-		this.notifyPageChangedEvent(this.getPage(page.getCode(), false), PageChangedEvent.INSERT_OPERATION_CODE, null);
+		this.notifyPageChangedEvent(this.getDraftPage(page.getCode()), PageChangedEvent.INSERT_OPERATION_CODE, null);
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class PageManager extends AbstractService
 			throw new ApsSystemException("Error updating a page", t);
 		}
 		this.loadPageTree();
-		this.notifyPageChangedEvent(this.getPage(pageCode, false), PageChangedEvent.UPDATE_OPERATION_CODE, null);
+		this.notifyPageChangedEvent(this.getDraftPage(pageCode), PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
 	
 	private void notifyPageChangedEvent(IPage page, int operationCode, Integer framePos) {
@@ -198,7 +198,7 @@ public class PageManager extends AbstractService
 	public boolean movePage(String pageCode, boolean moveUp) throws ApsSystemException {
 		boolean resultOperation = true; 
 		try {
-			IPage currentPage = this.getPage(pageCode, false);
+			IPage currentPage = this.getDraftPage(pageCode);
 			if (null == currentPage) {
 				throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
 			}
@@ -234,7 +234,7 @@ public class PageManager extends AbstractService
 		// TODO Modificare o sdoppiare per gestire la pagina DRAFT
 		boolean resultOperation = true;
 		try {
-			IPage currentPage = this.getPage(pageCode, false);
+			IPage currentPage = this.getDraftPage(pageCode);
 			if (null == currentPage) {
 				throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
 			}
@@ -337,7 +337,7 @@ public class PageManager extends AbstractService
 		this.checkPagePos(pageCode, pos);
 		try {
 			this.getPageDAO().removeWidget(pageCode, pos);
-			IPage currentPage = this.getPage(pageCode, false);
+			IPage currentPage = this.getDraftPage(pageCode);
 			currentPage.getWidgets()[pos] = null;
 			this.notifyPageChangedEvent(currentPage, PageChangedEvent.EDIT_FRAME_OPERATION_CODE, pos);
 		} catch (Throwable t) {
@@ -373,7 +373,7 @@ public class PageManager extends AbstractService
 		}
 		try {
 			this.getPageDAO().joinWidget(pageCode, widget, pos);
-			IPage currentPage = this.getPage(pageCode, false);
+			IPage currentPage = this.getDraftPage(pageCode);
 			currentPage.getDraftWidgets()[pos] = widget;
 			this.notifyPageChangedEvent(currentPage, PageChangedEvent.EDIT_FRAME_OPERATION_CODE, pos);
 		} catch (Throwable t) {
@@ -390,10 +390,11 @@ public class PageManager extends AbstractService
 	 * @throws ApsSystemException In case of database access error.
 	 */
 	private void checkPagePos(String pageCode, int pos) throws ApsSystemException {
-		IPage currentPage = this.getPage(pageCode, false);
+		IPage currentPage = this.getDraftPage(pageCode);
 		if (null == currentPage) {
 			throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
 		}
+		// TODO Verificare su quali widget deve agire
 		PageModel model = currentPage.getModel();
 		if (pos < 0 || pos >= model.getFrames().length) {
 			throw new ApsSystemException("The Position '" + pos + "' is not defined in the model '" + 
@@ -427,6 +428,18 @@ public class PageManager extends AbstractService
 	public IPage getPage(String pageCode) {
 		return this.getPage(pageCode, true);
 	}
+	
+	@Override
+	public IPage getOnlinePage(String pageCode) {
+		return this.getPage(pageCode, true);
+	}
+	
+	@Override
+	public IPage getDraftPage(String pageCode) {
+		return this.getPage(pageCode, false);
+	}
+	
+	@Override
 	public IPage getPage(String pageCode, boolean onlyOnline) {
 		IPage page = this._pages.get(pageCode);
 		if (page != null && (!onlyOnline || page.isOnline())) {

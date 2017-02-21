@@ -102,7 +102,7 @@ public class Page extends TreeNode implements IPage {
 	 * @return the page model
 	 */
 	@Override
-	public PageModel getModel() {
+	public PageModel getModel() {// TODO Verify usage
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getModel();
 	}
@@ -150,13 +150,13 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public Set<String> getExtraGroups() {
+	public Set<String> getExtraGroups() {// TODO Verify usage
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getExtraGroups();
 	}
 
 	@Override
-	public IPage[] getChildren() {
+	public IPage[] getChildren() {// TODO Verify usage
 		return this.getOnlineChildren();
 	}
 	
@@ -176,7 +176,7 @@ public class Page extends TreeNode implements IPage {
 	 * @return true if the page must be shown in the menu, false otherwise. 
 	 */
 	@Override
-	public boolean isShowable() {
+	public boolean isShowable() {// TODO Verify usage
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata != null && metadata.isShowable();
 	}
@@ -195,7 +195,7 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public ApsProperties getTitles() {
+	public ApsProperties getTitles() {// TODO Verify usage
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getTitles();
 	}
@@ -241,25 +241,25 @@ public class Page extends TreeNode implements IPage {
 	 * @return all the widgets of the current page
 	 */
 	@Override
-	public Widget[] getWidgets() {
+	public Widget[] getWidgets() {// TODO Verify usage
 		return this.getOnlineWidgets();
 	}
 	
 	@Deprecated
 	public void setShowlets(Widget[] widgets) {
-		setWidgets(widgets);
+		this.setOnlineWidgets(widgets);
 	}
 
 	/**
 	 * Assign a set of widgets to the current page.
 	 * @param widgets the widgets to assign.
 	 */
-	public void setWidgets(Widget[] widgets) {
+	public void setWidgets(Widget[] widgets) {// TODO Verify usage
 		this.setOnlineWidgets(widgets);
 	}
 	
 	@Override
-	public boolean isUseExtraTitles() {
+	public boolean isUseExtraTitles() {// TODO Verify usage
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata != null && metadata.isUseExtraTitles();
 	}
@@ -272,7 +272,7 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public String getCharset() {
+	public String getCharset() {// TODO Verify usage
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getCharset();
 	}
@@ -285,7 +285,7 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public String getMimeType() {
+	public String getMimeType() {// TODO Verify usage
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getMimeType();
 	}
@@ -299,7 +299,7 @@ public class Page extends TreeNode implements IPage {
 	
 	public boolean isVoid() {
 		boolean isVoid = true;
-		Widget[] widgets = this.getWidgets();
+		Widget[] widgets = this.getOnlineWidgets();
 		if (null != widgets) {
 			for (int i = 0; i < widgets.length; i++) {
 				if (null != widgets[i]) {

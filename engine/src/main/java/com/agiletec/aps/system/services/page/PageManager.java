@@ -505,7 +505,7 @@ public class PageManager extends AbstractService
 				utilizers.add(page);
 			}
 		}
-		IPage[] children = page.getChildren();
+		IPage[] children = page.getAllChildren();
 		for (int i=0; i<children.length; i++) {
 			this.searchUtilizers(groupName, utilizers, children[i]);
 		}

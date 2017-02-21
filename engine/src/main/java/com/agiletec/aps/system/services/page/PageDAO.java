@@ -16,6 +16,7 @@ package com.agiletec.aps.system.services.page;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -26,6 +27,7 @@ import java.util.List;
 import org.entando.entando.aps.system.init.model.portdb.PageMetadataDraft;
 import org.entando.entando.aps.system.init.model.portdb.PageMetadataOnline;
 import org.entando.entando.aps.system.init.model.portdb.WidgetConfig;
+import org.entando.entando.aps.system.init.model.portdb.WidgetConfigDraft;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
@@ -34,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.AbstractDAO;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
@@ -80,48 +83,61 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	 * @throws Throwable In case of error
 	 */
 	protected List<IPage> createPages(ResultSet res) throws Throwable {
-		// TODO Modificare
 		int widgetStartOnline = 15;
+		int widgetStartDraft = 18;
 		List<IPage> pages = new ArrayList<IPage>();
 		Page page = null;
-		Widget widgets[] = null;
+		Widget onlineWidgets[] = null;
+		Widget draftWidgets[] = null;
 		int numFramesOnline = 0;
 		int numFramesDraft = 0;
-		String prevCode = "...no previous code...";
+		String prevCode = null;
 		while (res.next()) {
 			String code = res.getString(3);
-			if (!code.equals(prevCode)) {
-				if (page != null) {
-					pages.add(page);
-				}
+			if (prevCode == null || !code.equals(prevCode)) {
 				page = this.createPage(code, res);
-
+				pages.add(page);
 				
-				if(page.isOnline()) {
-					numFramesOnline = page.getModel().getFrames().length;
-					widgets = new Widget[numFramesOnline];
-					page.setWidgets(widgets);					
+				numFramesOnline = this.getWidgetArrayLength(page.getOnlineMetadata());
+				if (numFramesOnline >= 0) {
+					onlineWidgets = new Widget[numFramesOnline];
+					page.setOnlineWidgets(onlineWidgets);
 				}
-				
-				numFramesDraft = page.getDraftMetadata().getModel().getFrames().length;
-				Widget[] draftWidgets = new Widget[numFramesDraft];
-				page.setDraftWidgets(draftWidgets);
-				
+				numFramesDraft = this.getWidgetArrayLength(page.getDraftMetadata());
+				if (numFramesDraft >= 0) {
+					draftWidgets = new Widget[numFramesDraft];
+					page.setDraftWidgets(draftWidgets);
+				}
 				prevCode = code;
 			}
-			Object posObj = res.getObject(widgetStartOnline);
-			if (posObj != null) {
-				int pos = res.getInt(widgetStartOnline);
-				if (pos >= 0 && pos < numFramesOnline) {
-					Widget widget = this.createWidget(page, pos, res, widgetStartOnline+1);
-					widgets[pos] = widget;
-				} else {
-					_logger.warn("The position read from the database exceeds the numer of frames defined in the model of the page {}", page.getCode());
-				}
+			this.readWidget(page, numFramesOnline, onlineWidgets, widgetStartOnline, res);
+			this.readWidget(page, numFramesDraft, draftWidgets, widgetStartDraft, res);
+		}
+		return pages;
+	}
+	
+	protected int getWidgetArrayLength(PageMetadata metadata) {
+		int numFrames = -1;
+		if (metadata != null) {
+			PageModel model = metadata.getModel();
+			if (model != null) {
+				numFrames = model.getFrames().length;
 			}
 		}
-		pages.add(page);
-		return pages;
+		return numFrames;
+	}
+	
+	protected void readWidget(IPage page, int numOfFrames, Widget widgets[], int startIndex, ResultSet res) throws ApsSystemException, SQLException {
+		Object posObj = res.getObject(startIndex);
+		if (posObj != null) {
+			int pos = res.getInt(startIndex);
+			if (pos >= 0 && pos < numOfFrames) {
+				Widget widget = this.createWidget(page, pos, res, startIndex+1);
+				widgets[pos] = widget;
+			} else {
+				_logger.warn("The position read from the database exceeds the numer of frames defined in the model of the page {}", page.getCode());
+			}
+		}
 	}
 	
 	protected Page createPage(String code, ResultSet res) throws Throwable {
@@ -139,7 +155,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		return page;
 	}
 	
-	protected Widget createWidget(IPage page, int pos, ResultSet res, int startIndex) throws Throwable {
+	protected Widget createWidget(IPage page, int pos, ResultSet res, int startIndex) throws ApsSystemException, SQLException {
 		String typeCode = res.getString(startIndex++);
 		if (null == typeCode) {
 			return null;
@@ -198,9 +214,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	}
 	
 	protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
-		// TODO Modificare
 		int position = 1;
-		IPage[] sisters = page.getParent().getChildren();
+		IPage[] sisters = page.getParent().getAllChildren();
 		if (null != sisters && sisters.length > 0) {
 			IPage last = sisters[sisters.length - 1];
 			if (null != last) {
@@ -269,18 +284,18 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	
 	/**
 	 * Delete the widget associated to a page.
-	 * @param codePage The code of the page containing the widget to delete.
+	 * @param pageCode The code of the page containing the widget to delete.
 	 * @param conn The database connection
 	 * @throws ApsSystemException In case of database error
 	 */
-	protected void deleteOnlineWidgets(String codePage, Connection conn) throws ApsSystemException {
+	protected void deleteOnlineWidgets(String pageCode, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(DELETE_WIDGETS_FOR_PAGE);
-			stat.setString(1, codePage);
+			stat.setString(1, pageCode);
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error while deleting widgets for page '{}'", codePage,  t);
+			_logger.error("Error while deleting widgets for page '{}'", pageCode,  t);
 			throw new RuntimeException("Error while deleting widgets", t);
 		} finally {
 			closeDaoResources(null, stat);
@@ -289,18 +304,18 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 
 	/**
 	 * Delete the widget associated to the draft version of a page.
-	 * @param codePage The code of the page containing the widget to delete.
+	 * @param pageCode The code of the page containing the widget to delete.
 	 * @param conn The database connection
 	 * @throws ApsSystemException In case of database error
 	 */
-	protected void deleteDraftWidgets(String codePage, Connection conn) throws ApsSystemException {
+	protected void deleteDraftWidgets(String pageCode, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(DELETE_WIDGETS_FOR_PAGE_DRAFT);
-			stat.setString(1, codePage);
+			stat.setString(1, pageCode);
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error while deleting  draft widgets for page '{}'", codePage,  t);
+			_logger.error("Error while deleting  draft widgets for page '{}'", pageCode,  t);
 			throw new RuntimeException("Error while deleting draft widgets", t);
 		} finally {
 			closeDaoResources(null, stat);
@@ -459,7 +474,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.deleteWidgets(pageCode, conn);// TODO Verificare?
+			this.deleteOnlineWidgets(pageCode, conn);
 			this.deleteOnlinePageMetadata(pageCode, conn);
 			
 			this.executeQueryWithoutResultset(conn, SET_ONLINE_METADATA, pageCode);
@@ -612,17 +627,20 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	}
 	
 	protected void addWidgetForPage(IPage page, WidgetConfigDest dest, Connection conn) throws ApsSystemException {
-		if (null == page.getWidgets()) return;
 		PreparedStatement stat = null;
 		try {
-			Widget[] widgets = page.getWidgets();
-			
+			Widget[] widgets = null;
 			String query = "";
 			if (dest == WidgetConfigDest.ON_LINE) {
 				query = ADD_WIDGET_FOR_PAGE;
+				widgets = page.getOnlineWidgets();
 			} else if(dest == WidgetConfigDest.DRAFT) {
 				query = ADD_WIDGET_FOR_PAGE_DRAFT;
+				widgets = page.getDraftWidgets();
 			}
+			if (null == widgets) return;
+			
+			String pageCode = page.getCode();
 			stat = conn.prepareStatement(query);
 			for (int i = 0; i < widgets.length; i++) {
 				Widget widget = widgets[i];
@@ -631,7 +649,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 						_logger.error("Widget Type null when adding widget on frame '{}' of page '{}'", i, page.getCode());
 						continue;
 					}
-					this.valueAddWidgetStatement(page.getCode(), i, widget, stat);
+					this.valueAddWidgetStatement(pageCode, i, widget, stat);
 					stat.addBatch();
 					stat.clearParameters();
 				}
@@ -729,7 +747,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			conn.setAutoCommit(false);
 			//position
 			int pos = 1;
-			IPage[] sisters = newParent.getChildren();
+			IPage[] sisters = newParent.getAllChildren();
 			if (null != sisters && sisters.length > 0) {
 				IPage last = sisters[sisters.length - 1];
 				if (null != last) {
@@ -794,14 +812,15 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	// figlie nelle pagine madri, e poi l'ordine dei widget nella pagina.
 	private static final String ALL_PAGES = 
 		"SELECT p.parentcode, p.pos, p.code, p.groupcode, "
-		+ "pub.titles, pub.modelcode, pub.showinmenu, pub.extraconfig, pub.updatedat, "
+		+ "onl.titles, onl.modelcode, onl.showinmenu, onl.extraconfig, onl.updatedat, "
 		+ "drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat, "
-		+ "wp.framepos, wp.widgetcode, wp.config "
-		+ "FROM pages p "
-		+ "LEFT JOIN " + PageMetadataOnline.TABLE_NAME + " pub ON p.code = pub.code "
+		+ "wonl.framepos, wonl.widgetcode, wonl.config, "
+		+ "wdrf.framepos, wdrf.widgetcode, wdrf.config FROM pages p "
+		+ "LEFT JOIN " + PageMetadataOnline.TABLE_NAME + " onl ON p.code = onl.code "
 		+ "LEFT JOIN " + PageMetadataDraft.TABLE_NAME + " drf ON p.code = drf.code "
-		+ "LEFT JOIN " + WidgetConfig.TABLE_NAME + " wp ON p.code = wp.pagecode "
-		+ "ORDER BY p.parentcode, p.pos, p.code, wp.framepos ";// TODO Modificare
+		+ "LEFT JOIN " + WidgetConfig.TABLE_NAME + " wonl ON p.code = wonl.pagecode "
+		+ "LEFT JOIN " + WidgetConfigDraft.TABLE_NAME + " wdrf ON p.code = wdrf.pagecode "
+		+ "ORDER BY p.parentcode, p.pos, p.code, wonl.framepos, wdrf.framepos ";// TODO Modificare
 	
 	private static final String ADD_PAGE = 
 		"INSERT INTO pages(code, parentcode, pos, groupcode) VALUES ( ? , ? , ? , ? )";

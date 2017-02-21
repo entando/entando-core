@@ -303,6 +303,7 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
@@ -310,6 +311,7 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-core</artifactId>

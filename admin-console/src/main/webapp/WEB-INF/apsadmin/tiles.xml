@@ -30,7 +30,7 @@
 	<definition extends="layout.default" name="main.layout" />
 
     <definition extends="layout.default" name="admin.intro">
-        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/startPage.jsp" />
+        <!-- <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/startPage.jsp" /> -->
     </definition>
 
     <definition extends="layout.default" name="admin.Common.Password.entry">
@@ -304,6 +304,7 @@
     <definition extends="layout.default" name="admin.PageModel.entry">
         <put-attribute name="title" value="title.pageModelManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-entry.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageModel-entry-extra.jsp" />
     </definition>
 	
     <definition extends="layout.default" name="admin.PageModel.details">

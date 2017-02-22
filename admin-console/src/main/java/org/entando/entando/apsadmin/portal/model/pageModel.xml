@@ -12,7 +12,14 @@
             </result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
+        
+        <action name="updateSketch" class="pageModelAction" method="updateSketch">
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+                
 	</package>
+
+
 
     <package name="core_do/PageModel" namespace="/do/PageModel" extends="entando-default">
     	

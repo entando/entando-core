@@ -87,7 +87,7 @@
             </s:elseif>
         </p>
         
-        <fieldset class="col-xs-12"><legend><s:text name="label.info" /></legend>
+        <fieldset class="col-xs-12 no-padding"><legend><s:text name="label.info" /></legend>
             <s:set var="controlGroupErrorClassVar" value="''" />
             <s:if test="#pageCodeHasFieldErrorVar">
                 <s:set var="controlGroupErrorClassVar" value="' has-error'" />
@@ -145,7 +145,7 @@
         </fieldset>
 
         <s:if test="strutsAction != 1 && (strutsAction != 2 || #widgetTypeVar.logic)">
-            <fieldset class="col-xs-12"><legend><s:text name="title.widgetType.settings" /></legend>
+            <fieldset class="col-xs-12 col-md-12 no-padding"><legend><s:text name="title.widgetType.settings" /></legend>
                     <s:if test="strutsAction == 5">
                         <s:set var="parentWidgetTypeVar" value="%{getWidgetType(parentShowletTypeCode)}" />
                         <s:iterator value="#parentWidgetTypeVar.typeParameters" var="widgetParamVar" >
@@ -234,7 +234,8 @@
             <s:elseif test="%{null != #widgetTypeVar && #widgetTypeVar.logic}"> <%-- excluded clause <<&& isInternalServletWidget(#widgetTypeVar.parentType.code)>> --%>
                 <s:set var="guiFragmentCodesVar" value="%{extractGuiFragmentCodes(#widgetTypeVar.code)}" />
                 <s:if test="%{null != #guiFragmentCodesVar && !#guiFragmentCodesVar.isEmpty()}">
-                    <fieldset class="margin-large-bottom">
+                    
+                    <fieldset class="col-md-12 margin-large-bottom no-padding">
                         <legend><abbr title="User Interfaces">UIs</abbr></legend>
                         <div class="panel-group" id="accordion">
                             <s:iterator value="guiFragmentCodesVar" var="guiFragmentCodeVar" status="status">
@@ -275,10 +276,12 @@
                             </s:iterator>
                         </div>
                     </fieldset>
+                    
                 </s:if>
             </s:elseif>
         </s:if>
         
+                
         <wpsa:hookPoint key="core.widgetType.entry" objectName="hookPointElements_core_widget_entry">
             <s:iterator value="#hookPointElements_core_widget_entry" var="hookPointElement">
                 <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
@@ -292,8 +295,10 @@
             </s:iterator>
         </wpsa:hookPoint>
         
+        <br/>
+        
         <div class="row">
-            <div class="form-group">
+            <div class="form-group col-md-12 no-padding">
                 <div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
                     <wpsf:submit type="button" cssClass="btn btn-primary btn-block">
                         <span class="icon fa fa-floppy-o"></span>&#32;
@@ -315,3 +320,4 @@
         </div>
     </s:form>
 </div>
+            

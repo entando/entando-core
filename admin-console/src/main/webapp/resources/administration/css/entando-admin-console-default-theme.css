@@ -1,0 +1,122 @@
+
+/*general*/
+.bold{
+    font-weight: bold;
+}
+
+.right{
+    float: right;
+}
+
+.left{
+    float: left;
+}
+
+.no-padding{
+    padding: 0;
+}
+
+
+/*-----ouline tolto-----*/
+button:focus {outline:0 !important;}
+
+.ux_brand{
+    font-size: 24px;
+}
+.nav-pf-vertical .fixed-bottom {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background: #292e34;
+    border-top: 1px solid #030303;
+    border-bottom: 0;
+}
+.logo-entando {
+    height: 17px;
+    position: absolute;
+    top: 18px;
+}
+.logo-entando-login {
+    height: 35px;
+
+}
+.navbar-pf-vertical {
+    background-color: #212121;
+    border-top: 2px solid #23a8e0;
+
+}
+.nav-pf-vertical .list-group-item.active>a .fa, .nav-pf-vertical .list-group-item.active>a .glyphicon, .nav-pf-vertical .list-group-item.active>a .pficon, .nav-pf-vertical .list-group-item:hover>a .fa, .nav-pf-vertical .list-group-item:hover>a .glyphicon, .nav-pf-vertical .list-group-item:hover>a .pficon {
+    color: #23a8e0;
+}
+a {
+    color: #23a8e0;
+    text-decoration: none;
+}
+
+/*--------------overlay bottoni------*/
+
+.btn-default.active{
+    background-color: #4d5258 !important;
+    border-color: #4d5258 !important;
+    color:#fff !important;
+}
+/*--------------overlay bottoni------*/
+.help-block-entando{
+    color: red!important;
+}
+.control-label-entando{
+    color:#fff!important;
+}
+.alert-danger ul {
+    list-style-type: none;
+    margin-left:-40px;
+}
+
+
+.list-view-pf .list-group-item-heading{
+    min-width: 200px;
+}
+
+.table-header-custom{
+    border-bottom: 2px solid #dddddd !important;
+}
+.list-view-pf-actions{
+    min-width: 70px;
+}
+.entando-installed{
+    margin: 0 0 0 -19px;
+}
+.entando-installed-right-side{
+    margin: 0 0;
+}
+.welcome-back{
+    margin: -13px 0 0;
+}
+.plugin-list{
+    color: #fff;
+    text-decoration: none !important;
+}
+.plugin-list li{
+    list-style-type: none;
+
+}
+.plugin-list .nav>li>a:focus, .nav>li>a:hover {
+    background-color: #4d5258;
+    color: #fff;
+    text-decoration:underline;
+    font-weight:600;
+} 
+.plugin-list .nav>li>a {
+    padding: 6px 11px;
+}
+#submenu-plugins{
+    margin-left: -16px;
+    margin-top: -53px;
+}
+
+/*---------------patternfly override alert-------*/
+.alert-danger {
+    background-color: #ffe6e6 !important;
+    border-color: #c00;
+    color: #363636 !important;
+}

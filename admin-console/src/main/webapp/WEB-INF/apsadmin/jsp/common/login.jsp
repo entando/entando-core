@@ -6,189 +6,160 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
-<head>
+<html lang="en"  class="login-pf">
+    <head>
 
-	<title>Entando - Sign in</title>
+        <title>Entando - Log in</title>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="<wp:resourceURL />administration/img/favicon-entando.png">
 
-	<link rel="stylesheet" href="<wp:resourceURL />administration/bootstrap/css/bootstrap.min.css" media="screen" />
-	<link rel="stylesheet" href="<wp:resourceURL />administration/css/bootstrap-theme-entando-ce/css/bootstrap.min.css" media="screen" />
+        <jsp:include page="/WEB-INF/apsadmin/jsp/common/inc/header-include.jsp" />
+
+    </head>
+    <body>
+        <span id="badge">
+            <img class="logo-entando-login" src="<wp:resourceURL />administration/img/entando-logo.svg" />
+        </span>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div id="brand">
+                        <p class="ux_brand"><strong>THE DXP PLATFORM &nbsp;</strong>FOR UX CONVERGENCE</p>
+                    </div>
+                </div>
+
+                <div class="col-sm-7 col-md-6 col-lg-5 login">
+                    <s:form action="doLogin" cssClass="form-horizontal">
+                        <s:if test="hasActionErrors()">
+                            <button type="button" class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
+                                <s:if test="hasActionErrors()">
+
+                                <div class="alert alert-danger">
+                                    <span class="pficon pficon-error-circle-o"></span>
+                                    <ul class="margin-base-vertical">
+                                        <s:iterator value="actionErrors">
+                                            <li><s:property /></li>
+                                            </s:iterator>
+                                    </ul>
+                                </div>
+                            </s:if>
+                        </s:if>
 
 
-	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	<!--[if lt IE 9]>
-		<script src="<wp:resourceURL />administration/js/html5shiv.js"></script>
-		<script src="<wp:resourceURL />administration/js/respond.min.js"></script>
-	<![endif]-->
+                        <s:if test="#session.currentUser != null && #session.currentUser.username != 'guest'">
+                            <h2 class="welcome-back"><s:text name="note.userbar.welcome"/>&#32;<s:property value="#session.currentUser" />&nbsp;!</h2><br>
 
-</head>
-<body>
+                            <s:if test="!#session.currentUser.credentialsNotExpired">
+                                <div class="col-xs-8 col-sm-8 col-md-8">
+                                    <strong><s:text name="note.login.expiredPassword.intro" /></strong><br />
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4 submit">
+                                    <a href="<s:url action="editPassword" />" class="btn btn-warning">
+                                        <s:text name="note.login.expiredPassword.outro" />
+                                    </a>
+                                </div>
+                            </s:if>
+                            <s:else>
 
-<div class="container margin-large-top">
+                                <wp:ifauthorized permission="enterBackend" var="checkEnterBackend" />
+                                <c:choose>
+                                    <c:when test="${checkEnterBackend}">
 
-	<div class="row margin-large-top padding-small-top">
-		<div class="col-sm-6 col-sm-offset-3 col-md-offset-3 col-lg-offset-3">
+                                        <div class="col-xs-8 col-sm-8 col-md-8">
+                                            <p class="entando-installed"><strong><s:text name="note.login.yetLogged" /></strong></p><br />
+                                        </div>
+                                        <div class="col-xs-4 col-sm-4 col-md-4 submit">
+                                            <a href="<s:url action="main" />" class="btn btn-primary">
+                                                <s:text name="note.goToMain" />
+                                            </a>
+                                            <a href="<s:url action="logout" namespace="/do" />" class="btn btn-danger">
+                                                <s:text name="menu.exit"/>
+                                            </a>
+                                        </div>
+                                    </c:when>
 
-		<div class="panel panel-default">
-			<div class="panel-body">
+                                    <c:otherwise>
+                                        <div class="col-xs-8 col-sm-8 col-md-8">
+                                            <strong><s:text name="note.login.notAllowed" /></strong><br />
+                                        </div>
+                                        <div class="col-xs-4 col-sm-4 col-md-4 submit">
+                                            <a href="<s:url action="logout" namespace="/do" />" class="btn btn-danger">
+                                                <s:text name="menu.exit"/>
+                                            </a>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </s:else>
+                        </s:if>
 
-				<h1 class="margin-small-bottom text-center">
-					<img src="<wp:resourceURL />administration/img/entando-logo-134x100.png" alt="Entando - Access. Build. Connect." width="134" height="100" />
-				</h1>
+                        <s:else>
 
-				<s:form action="doLogin" cssClass="padding-base-vertical">
+                            <!-------------------sezione user e password validation-------------->
+                            <s:set var="usernameFieldErrorsVar" value="%{fieldErrors['username']}" />
+                            <s:set var="usernameHasFieldErrorVar" value="#usernameFieldErrorsVar != null && !#usernameFieldErrorsVar.isEmpty()" />
+                            <s:set var="controlGroupErrorClassVar" value="''" />
+                            <s:if test="#usernameHasFieldErrorVar">
+                                <s:set var="controlGroupErrorClassVar" value="' has-error'" />
+                            </s:if>
 
-				<s:if test="hasActionErrors()">
-				<div class="alert alert-danger alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-					<s:if test="hasActionErrors()">
-					<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
-					<ul class="margin-base-vertical">
-						<s:iterator value="actionErrors">
-						<li><s:property /></li>
-						</s:iterator>
-					</ul>
-					</s:if>
-				</div>
-				</s:if>
 
-		 		<s:if test="#session.currentUser != null && #session.currentUser.username != 'guest'">
+                            <div class="form-group<s:property value="controlGroupErrorClassVar" />">
+                                <label for="username" class="col-sm-2 col-md-2 control-label control-label-entando"><s:text name="label.username" /></label>
+                                <div class="col-sm-10 col-md-10">
+                                    <wpsf:textfield name="username" id="username" cssClass="form-control" placeholder="%{getText('label.username')}" />
+                                    <s:if test="#usernameHasFieldErrorVar">
+                                        <span class="help-block help-block-entando"><s:iterator value="#usernameFieldErrorsVar"><s:property /></s:iterator></s:if>
+                                        </div>
+                                    </div>
 
-					<h2 class="text-center margin-base-bottom"><s:text name="note.userbar.welcome"/>&#32;<s:property value="#session.currentUser" />!</h2>
+                            <s:set var="passwordFieldErrorsVar" value="%{fieldErrors['password']}" />
+                            <s:set var="passwordHasFieldErrorVar" value="#passwordFieldErrorsVar != null && !#passwordFieldErrorsVar.isEmpty()" />
+                            <s:set var="controlGroupErrorClassVar" value="''" />
 
-					<s:if test="!#session.currentUser.credentialsNotExpired">
+                            <s:if test="#passwordHasFieldErrorVar">
+                                <s:set var="controlGroupErrorClassVar" value="' has-error'" />
+                            </s:if>
 
-						<div class="alert alert-warning">
-							<strong><s:text name="note.login.expiredPassword.intro" /></strong><br />
-							<div class="text-center margin-base-top">
-								<a href="<s:url action="editPassword" />" class="btn btn-lg btn-warning">
-									<s:text name="note.login.expiredPassword.outro" />
-								</a>
-							</div>
-						</div>
+                            <div class="form-group<s:property value="controlGroupErrorClassVar" />">
+                                <label for="password"class="col-sm-2 col-md-2 control-label control-label-entando"><s:text name="label.password" /></label>
+                                <div class="col-sm-10 col-md-10">
+                                    <wpsf:password name="password" id="password" cssClass="form-control" placeholder="%{getText('label.password')}" />
+                                    <s:if test="#passwordHasFieldErrorVar">
+                                        <span class="help-block help-block-entando"><s:iterator value="#passwordFieldErrorsVar"><s:property /></s:iterator></span>
+                                    </s:if>
+                                </div>
+                            </div><!-------------------sezione user e password validation-------------->
 
-					</s:if>
+                            <!----------- lingue e log in button------------------>
+                            <div class="form-group">
+                                <div class="col-xs-8 col-sm-offset-2 col-sm-6 col-md-offset-2 col-md-6">
+                                    <div class="btn-group" data-toggle="buttons">
+                                        <label class="btn btn-default active">
+                                            <input type="radio" name="request_locale" value="en" checked="checked" /> English
+                                        </label>
+                                        <label class="btn btn-default">
+                                            <input type="radio" name="request_locale" value="it" /> Italiano
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4 submit">
+                                    <wpsf:submit type="button" cssClass="btn btn-primary">
+                                        <s:text name="label.signin" />
+                                    </wpsf:submit>
+                                </div>
+                            </div> <!----------- lingue e log in button------------------>
+                        </s:else>
+                    </s:form>
+                </div>
 
-				<s:else>
-				<wp:ifauthorized permission="enterBackend" var="checkEnterBackend" />
+                <div class="col-sm-5 col-md-6 col-lg-7 details">
+                    <p><strong>Welcome to Entando,</strong>
+                        the lightest open source, enterprise ready Digital Experience Platform (DXP) for user experience convergence to build next generation applications. Entando unifies user experience across different applications, people, devices while reducing technical complexity, time-to-market and project development costs.
+                </div>
 
-				<c:choose>
-					<c:when test="${checkEnterBackend}">
-
-					<div class="alert alert-info">
-						<strong><s:text name="note.login.yetLogged" /></strong><br />
-						<div class="text-center margin-base-top">
-							<div class="btn-group btn-group-justified">
-								<a href="<s:url action="main" />" class="btn btn-primary">
-									<s:text name="note.goToMain" />
-								</a>
-								<a href="<s:url action="logout" namespace="/do" />" class="btn btn-danger">
-									<s:text name="menu.exit"/>
-								</a>
-							</div>
-						</div>
-					</div>
-					</c:when>
-					<c:otherwise>
-
-					<div class="alert alert-danger">
-						<strong><s:text name="note.login.notAllowed" /></strong><br />
-						<div class="text-center margin-base-top">
-							<a href="<s:url action="logout" namespace="/do" />" class="btn btn-lg btn-danger">
-								<s:text name="menu.exit"/>
-							</a>
-						</div>
-					</div>
-
-					</c:otherwise>
-				</c:choose>
-
-				</s:else>
-
-				</div>
-				</s:if>
-
-				<s:else>
-
-					<s:set var="usernameFieldErrorsVar" value="%{fieldErrors['username']}" />
-					<s:set var="usernameHasFieldErrorVar" value="#usernameFieldErrorsVar != null && !#usernameFieldErrorsVar.isEmpty()" />
-					<s:set var="controlGroupErrorClassVar" value="''" />
-
-					<s:if test="#usernameHasFieldErrorVar">
-						<s:set var="controlGroupErrorClassVar" value="' has-error'" />
-					</s:if>
-
-					<div class="margin-base-vertical form-group<s:property value="controlGroupErrorClassVar" />">
-						<label for="username" class="sr-only"><s:text name="label.username" /></label>
-						<div class="input-group">
-							<div class="input-group-addon"><span class="icon fa fa-user"></span></div>
-							<wpsf:textfield name="username" id="username" cssClass="form-control input-lg" placeholder="%{getText('label.username')}" />
-						</div>
-						<s:if test="#usernameHasFieldErrorVar">
-							<p class="text-danger padding-small-vertical"><s:iterator value="#usernameFieldErrorsVar"><s:property /> </s:iterator></p>
-						</s:if>
-					</div>
-
-					<s:set var="passwordFieldErrorsVar" value="%{fieldErrors['password']}" />
-					<s:set var="passwordHasFieldErrorVar" value="#passwordFieldErrorsVar != null && !#passwordFieldErrorsVar.isEmpty()" />
-					<s:set var="controlGroupErrorClassVar" value="''" />
-
-					<s:if test="#passwordHasFieldErrorVar">
-						<s:set var="controlGroupErrorClassVar" value="' has-error'" />
-					</s:if>
-
-					<div class="margin-base-vertical form-group<s:property value="controlGroupErrorClassVar" />">
-						<label for="password" class="sr-only"><s:text name="label.password" /></label>
-						<div class="input-group">
-							<div class="input-group-addon"><span class="icon fa fa-lock"></span></div>
-							<wpsf:password name="password" id="password" cssClass="form-control input-lg" placeholder="%{getText('label.password')}" />
-						</div>
-						<s:if test="#passwordHasFieldErrorVar">
-							<p class="text-danger padding-small-vertical"><s:iterator value="#passwordFieldErrorsVar"><s:property /> </s:iterator></p>
-						</s:if>
-					</div>
-
-					<div class="text-center margin-base-vertical">
-						<div class="btn-group" data-toggle="buttons">
-							<label class="btn btn-default active">
-								<input type="radio" name="request_locale" value="en" checked="checked" /> English
-							</label>
-							<label class="btn btn-default">
-								<input type="radio" name="request_locale" value="it" /> Italiano
-							</label>
-						</div>
-					</div>
-
-					<div class="row">
-						<p class="padding-base-top col-sm-8 col-sm-offset-2 col-md-offset-2 col-lg-offset-2">
-								<wpsf:submit type="button" cssClass="btn btn-primary btn-lg btn-block">
-									<span class="icon fa fa-sign-in"></span>&#32;
-									<s:text name="label.signin" />
-								</wpsf:submit>
-						</p>
-					</div>
-
-				</s:else>
-				</s:form>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="<wp:resourceURL />administration/js/jquery-1.9.1.min.js"></script>
-<script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.js"></script>
-<script>
-	$(function(){
-		try { document.getElementById('username').focus(); } catch(e) {}
-	});
-</script>
-
-</body>
+            </div>
+        </div>
+    </body>
 </html>

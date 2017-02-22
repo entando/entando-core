@@ -160,28 +160,24 @@
             if (_.isEmpty(int)) {
                 curSection[p2] = i;
 
-                // add section if not empty
-                if (!_.isEmpty(c1)) {
-                    sections.push(curSection);
-                } else {
+                if (_.isEmpty(c1)) {
                     curSection.empty = true;
-                    sections.push(curSection);
                 }
+
+                sections.push(curSection);
 
                 // start new section
                 curSection = _.pick(boundaries, propsToPick);
                 curSection[p1] = i + 1;
             }
         }
-        // add last section if not empty
-        if (!_.isEmpty(c2)){
-            curSection[p2] = endIndex;
-            sections.push(curSection);
-        } else {
-            curSection[p2] = endIndex;
+
+        // add last section
+        if (_.isEmpty(c2)){
             curSection.empty = true;
-            sections.push(curSection);
         }
+        curSection[p2] = endIndex;
+        sections.push(curSection);
 
         var fixedSections = [];
         for (var i=0; i<sections.length; ++i) {

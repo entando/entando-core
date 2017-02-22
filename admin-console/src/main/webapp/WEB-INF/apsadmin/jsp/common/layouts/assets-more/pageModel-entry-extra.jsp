@@ -26,7 +26,7 @@ $(function() {
     var match = window.location.href.match(/(^.+\/do\/)/ ),
     baseUrl = match ? match[0] : window.location.protocol + '//' + window.location.host,
     serviceUrl = baseUrl + 'rs/PageModel/frames?code=service',
-    updateUrl = 'rs/PageModel/updateFrames?code=service';
+    updateUrl = baseUrl + 'rs/PageModel/updateSketch?code=service';
 
 
     /**

@@ -19,6 +19,15 @@
 
     </head>
     <body>
+
+        <s:set var="passwordFieldErrorsVar" value="%{fieldErrors['password']}" />
+        <s:set var="passwordHasFieldErrorVar" value="#passwordFieldErrorsVar != null && !#passwordFieldErrorsVar.isEmpty()" />
+        <s:set var="controlGroupErrorClassVar" value="''" />
+
+        <s:set var="usernameFieldErrorsVar" value="%{fieldErrors['username']}" />
+        <s:set var="usernameHasFieldErrorVar" value="#usernameFieldErrorsVar != null && !#usernameFieldErrorsVar.isEmpty()" />
+        <s:set var="controlGroupErrorClassVar" value="''" />
+
         <span id="badge">
             <img class="logo-entando-login" src="<wp:resourceURL />administration/img/entando-logo.svg" />
         </span>
@@ -33,20 +42,30 @@
                 <div class="col-sm-7 col-md-6 col-lg-5 login">
                     <s:form action="doLogin" cssClass="form-horizontal">
                         <s:if test="hasActionErrors()">
-                            <button type="button" class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-                                <s:if test="hasActionErrors()">
-
-                                <div class="alert alert-danger">
-                                    <span class="pficon pficon-error-circle-o"></span>
-                                    <ul class="margin-base-vertical">
-                                        <s:iterator value="actionErrors">
-                                            <li><s:property /></li>
-                                            </s:iterator>
-                                    </ul>
-                                </div>
-                            </s:if>
+                            <div class="alert alert-danger alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                    <span class="pficon pficon-close"></span>
+                                </button>
+                                <span class="pficon pficon-error-circle-o"></span>
+                                <ul class="margin-base-vertical">
+                                    <s:iterator value="actionErrors">
+                                        <li><s:property /></li>
+                                        </s:iterator>
+                                </ul>
+                            </div>
                         </s:if>
 
+                        <s:if test="#passwordHasFieldErrorVar || #usernameFieldErrorsVar">
+                            <div class="alert alert-danger alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                    <span class="pficon pficon-close"></span>
+                                </button>
+                                <span class="pficon pficon-error-circle-o"></span>
+                                <ul class="margin-base-vertical">
+                                    <s:text name="error.user.login.credentialsEmpty" />
+                                </ul>
+                            </div>
+                        </s:if>
 
                         <s:if test="#session.currentUser != null && #session.currentUser.username != 'guest'">
                             <h2 class="welcome-back"><s:text name="note.userbar.welcome"/>&#32;<s:property value="#session.currentUser" />&nbsp;!</h2><br>
@@ -93,17 +112,13 @@
                                 </c:choose>
                             </s:else>
                         </s:if>
-
                         <s:else>
 
                             <!-------------------sezione user e password validation-------------->
-                            <s:set var="usernameFieldErrorsVar" value="%{fieldErrors['username']}" />
-                            <s:set var="usernameHasFieldErrorVar" value="#usernameFieldErrorsVar != null && !#usernameFieldErrorsVar.isEmpty()" />
-                            <s:set var="controlGroupErrorClassVar" value="''" />
-                            <s:if test="#usernameHasFieldErrorVar">
+
+                            <s:if test="%{#usernameHasFieldErrorVar || hasActionErrors()}">
                                 <s:set var="controlGroupErrorClassVar" value="' has-error'" />
                             </s:if>
-
 
                             <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                                 <label for="username" class="col-sm-2 col-md-2 control-label control-label-entando"><s:text name="label.username" /></label>
@@ -114,11 +129,7 @@
                                         </div>
                                     </div>
 
-                            <s:set var="passwordFieldErrorsVar" value="%{fieldErrors['password']}" />
-                            <s:set var="passwordHasFieldErrorVar" value="#passwordFieldErrorsVar != null && !#passwordFieldErrorsVar.isEmpty()" />
-                            <s:set var="controlGroupErrorClassVar" value="''" />
-
-                            <s:if test="#passwordHasFieldErrorVar">
+                            <s:if test="%{#passwordHasFieldErrorVar || hasActionErrors()}">
                                 <s:set var="controlGroupErrorClassVar" value="' has-error'" />
                             </s:if>
 
@@ -126,7 +137,7 @@
                                 <label for="password"class="col-sm-2 col-md-2 control-label control-label-entando"><s:text name="label.password" /></label>
                                 <div class="col-sm-10 col-md-10">
                                     <wpsf:password name="password" id="password" cssClass="form-control" placeholder="%{getText('label.password')}" />
-                                    <s:if test="#passwordHasFieldErrorVar">
+                                    <s:if test="passwordHasFieldErrorVar">
                                         <span class="help-block help-block-entando"><s:iterator value="#passwordFieldErrorsVar"><s:property /></s:iterator></span>
                                     </s:if>
                                 </div>

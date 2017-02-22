@@ -92,3 +92,31 @@ a {
 .welcome-back{
     margin: -13px 0 0;
 }
+.plugin-list{
+    color: #fff;
+    text-decoration: none !important;
+}
+.plugin-list li{
+    list-style-type: none;
+
+}
+.plugin-list .nav>li>a:focus, .nav>li>a:hover {
+    background-color: #4d5258;
+    color: #fff;
+    text-decoration:underline;
+    font-weight:600;
+} 
+.plugin-list .nav>li>a {
+    padding: 6px 11px;
+}
+#submenu-plugins{
+    margin-left: -16px;
+    margin-top: -53px;
+}
+
+/*---------------patternfly override alert-------*/
+.alert-danger {
+    background-color: #ffe6e6 !important;
+    border-color: #c00;
+    color: #363636 !important;
+}

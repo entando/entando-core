@@ -1,0 +1,75 @@
+.nav-pf-vertical .fixed-bottom {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background: #292e34;
+    border-top: 1px solid #030303;
+    border-bottom: 0;
+}
+.logo-entando {
+    height: 17px;
+    position: absolute;
+    top: 18px;
+}
+.navbar-pf-vertical {
+    background-color: #002235;
+    border-top: 2px solid #39A5DC;
+}
+.nav-pf-vertical .list-group-item.active>a .fa, .nav-pf-vertical .list-group-item.active>a .glyphicon, .nav-pf-vertical .list-group-item.active>a .pficon, .nav-pf-vertical .list-group-item:hover>a .fa, .nav-pf-vertical .list-group-item:hover>a .glyphicon, .nav-pf-vertical .list-group-item:hover>a .pficon {
+    color: #39a5dc;
+}
+a {
+    color:#39A5DC ;
+    text-decoration: none;
+}
+.nav-pf-vertical .list-group-item>a {
+    background-color: #004368;
+    color: #d1d1d1;
+}
+.nav-pf-secondary-nav .list-group-item>a {
+    background-color: #00659C;
+    color: #d1d1d1;
+}
+.nav-pf-vertical .list-group-item.active>a, .nav-pf-vertical .list-group-item:hover>a {
+    background-color:C;
+}
+.secondary-nav-item-pf>a:after {
+    color: #8B8D8F;
+}
+.nav-pf-secondary-nav {
+    background: #00659C;
+}
+.nav-pf-tertiary-nav {
+    background: #0088ce;
+    border: 1px solid #292e34;
+}
+.nav-pf-tertiary-nav a {
+    background: #0088ce !important;
+}
+.nav-pf-vertical {
+    background: #004368;
+}
+.nav-pf-vertical .list-group-item.active>a:before {
+    background: #39A5DC;
+}
+.nav-pf-tertiary-nav .list-group-item.active>a {
+    background-color: #0088ce !important;
+}
+.nav-pf-secondary-nav .list-group-item>a {
+    background-color: #00659c;
+}
+.nav-pf-secondary-nav .list-group-item.active>a, .nav-pf-secondary-nav .list-group-item:hover>a {
+    background-color: #0088ce !important;
+}
+.nav-pf-vertical .list-group-item.active>a, .nav-pf-vertical .list-group-item .is-hover>a {
+    background-color: #00659c;
+}
+.nav-pf-secondary-nav .list-group-item.tertiary-nav-item-pf>a:after  {
+    color: #ffffff;
+}
+.nav-item-pf-header>a:before {
+    color: #fafafa;
+}
+.nav-pf-vertical .list-group-item.active>a, .nav-pf-vertical .list-group-item:hover>a {
+    background-color: #00659c;
+}

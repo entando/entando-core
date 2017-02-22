@@ -17,7 +17,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +31,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentAuthorizationHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.PublicContentAuthorizationInfo;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentViewerHelper;
+import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * Return an information of a specified content.
@@ -44,8 +44,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentVie
  * "authToEdit" returns true if the current user can edit the content (else false).
  * @author E.Santoboni
  */
-public class ContentInfoTag extends OutSupport {
-
+public class ContentInfoTag extends TagSupport {
+	
 	private static final Logger _logger = LoggerFactory.getLogger(ContentInfoTag.class);
 	
 	public ContentInfoTag() {

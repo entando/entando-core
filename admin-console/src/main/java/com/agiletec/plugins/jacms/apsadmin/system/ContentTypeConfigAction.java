@@ -61,7 +61,7 @@ public class ContentTypeConfigAction extends EntityTypeConfigAction {
 	}
 	
 	private void addPages(IPage page, List<IPage> pages) {
-		if (page.getGroup().equals(Group.FREE_GROUP_NAME) && CmsPageActionUtil.isFreeViewerPage(page, null)) {
+		if (page.getGroup().equals(Group.FREE_GROUP_NAME) && CmsPageActionUtil.isOnlineFreeViewerPage(page, null)) {
 			pages.add(page);
 		}
 		IPage[] children = page.getChildren();

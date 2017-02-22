@@ -192,15 +192,20 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			conn.setAutoCommit(false);
 			String pageCode = page.getCode();
 			this.addPageRecord(page, conn);
+			
+			Date now = new Date();
 			PageMetadata onlineMetadata = page.getOnlineMetadata();
 			if (onlineMetadata != null) {
+				onlineMetadata.setUpdatedAt(now);
 				this.addOnlinePageMetadata(pageCode, onlineMetadata, conn);
 			}
+			
 			PageMetadata draftMetadata = page.getDraftMetadata();
 			if (draftMetadata != null) {
+				draftMetadata.setUpdatedAt(now);
 				this.addDraftPageMetadata(pageCode, draftMetadata, conn);
 			}
-
+			
 			this.addWidgetForPage(page, WidgetConfigDest.DRAFT, conn);
 			this.addWidgetForPage(page, WidgetConfigDest.ON_LINE, conn);
 			conn.commit();
@@ -481,10 +486,9 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			this.executeQueryWithoutResultset(conn, SET_ONLINE_WIDGETS, pageCode);
 			
 			Date now = new Date();
-			
 			this.updatePageMetadataDraftLastUpdate(pageCode, now , conn);
 			this.updatePageMetadataOnlineLastUpdate(pageCode, now , conn);
-
+			
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -614,7 +618,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 				throw new ApsSystemException(msg, t);
 			}
 		}
-		pageMetadata.setUpdatedAt(res.getTimestamp(index++));
+		Timestamp date = res.getTimestamp(index++);
+		pageMetadata.setUpdatedAt(date != null ? new Date(date.getTime()) : null);
 		return pageMetadata;
 	}
 	

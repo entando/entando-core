@@ -23,9 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.apsadmin.tags.ResourceInfoTag;
 
 /**
  * @author E.Santoboni
@@ -83,23 +84,48 @@ public class CmsPageActionUtil {
 	 * @return True if the page can publish free content, false else.
 	 */
 	public static boolean isFreeViewerPage(IPage page, String viewerShowletCode) {
+		return isOnlineFreeViewerPage(page, viewerShowletCode);
+	}
+	
+	public static boolean isDraftFreeViewerPage(IPage page, String viewerShowletCode) {
+		boolean found = false;
+		PageMetadata metadata = page.getDraftMetadata();
+		Widget[] widgets = page.getDraftWidgets();
+		if (metadata != null) {
+			found = isFreeViewerPage(metadata.getModel(), widgets, viewerShowletCode);
+		}
+		return found;
+	}
+	
+	public static boolean isOnlineFreeViewerPage(IPage page, String viewerShowletCode) {
+		boolean found = false;
+		PageMetadata metadata = page.getOnlineMetadata();
+		Widget[] widgets = page.getOnlineWidgets();
+		if (metadata != null) {
+			found = isFreeViewerPage(metadata.getModel(), widgets, viewerShowletCode);
+		}
+		return found;
+	}
+	
+	public static boolean isFreeViewerPage(PageModel model, Widget[] widgets, String viewerShowletCode) {
 		try {
-			// TODO Verificare
-			int mainFrame = page.getModel().getMainFrame();
-			if (mainFrame < 0) return false;
-			Widget viewer = page.getWidgets()[mainFrame];
-			if (null == viewer) return false;
-			boolean isRightCode = null == viewerShowletCode || viewer.getType().getCode().equals(viewerShowletCode);
-			String actionName = viewer.getType().getAction();
-			boolean isRightAction = null != actionName && actionName.toLowerCase().indexOf("viewer") >= 0;
-			List<WidgetTypeParameter> typeParameters = viewer.getType().getTypeParameters();
-			if ((isRightCode || isRightAction )  
-					&& (null != typeParameters && !typeParameters.isEmpty())
-					&& (null == viewer.getConfig() || viewer.getConfig().isEmpty())) {
-				return true;
+			if (model != null && widgets != null) {
+				int mainFrame = model.getMainFrame();
+				if (mainFrame < 0) return false;
+				Widget viewer = widgets[mainFrame];
+				if (null == viewer) return false;
+				boolean isRightCode = null == viewerShowletCode || viewer.getType().getCode().equals(viewerShowletCode);
+				String actionName = viewer.getType().getAction();
+				boolean isRightAction = null != actionName && actionName.toLowerCase().indexOf("viewer") >= 0;
+				List<WidgetTypeParameter> typeParameters = viewer.getType().getTypeParameters();
+				if ((isRightCode || isRightAction )  
+						&& (null != typeParameters && !typeParameters.isEmpty())
+						&& (null == viewer.getConfig() || viewer.getConfig().isEmpty())) {
+					return true;
+				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while checking page '{}'", page.getCode(), t);
+			_logger.error("Error while checking page for widget '{}'", viewerShowletCode, t);
 			//ApsSystemUtils.logThrowable(t, CmsPageActionUtil.class, "isViewerPage", "Error while checking page '" + page.getCode() + "'");
 		}
 		return false;

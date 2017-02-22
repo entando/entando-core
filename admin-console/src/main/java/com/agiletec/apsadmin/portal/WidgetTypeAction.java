@@ -300,7 +300,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 				Widget widget = new Widget();
 				widget.setType(type);
 				IPage page = this.getPageManager().getDraftPage(this.getPageCode());
-				page.getWidgets()[this.getFramePos()] = widget;
+				page.getDraftWidgets()[this.getFramePos()] = widget;
 				this.getPageManager().updatePage(page);
 				return "replaceOnPage";
 			}

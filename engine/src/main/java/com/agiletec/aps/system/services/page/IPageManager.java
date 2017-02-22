@@ -141,8 +141,12 @@ public interface IPageManager extends ITreeNodeManager {
 	 * @deprecated Use {@link #getWidgetUtilizers(String)} instead
 	 */
 	public List<IPage> getShowletUtilizers(String showletTypeCode) throws ApsSystemException;
-
+	
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
+	
+	public List<IPage> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
+	
+	public List<IPage> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
 	
 	public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException;
 	

@@ -256,12 +256,12 @@ public class Page extends TreeNode implements IPage {
 	 * Assign a set of widgets to the current page.
 	 * @param widgets the widgets to assign.
 	 */
-	public void setWidgets(Widget[] widgets) {// TODO Verify usage
+	public void setWidgets(Widget[] widgets) {
 		this.setOnlineWidgets(widgets);
 	}
 	
 	@Override
-	public boolean isUseExtraTitles() {// TODO Verify usage
+	public boolean isUseExtraTitles() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata != null && metadata.isUseExtraTitles();
 	}
@@ -274,7 +274,7 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public String getCharset() {// TODO Verify usage
+	public String getCharset() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getCharset();
 	}
@@ -287,7 +287,7 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public String getMimeType() {// TODO Verify usage
+	public String getMimeType() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getMimeType();
 	}

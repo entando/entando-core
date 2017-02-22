@@ -44,7 +44,7 @@ public class PageConfigAction extends AbstractPortalAction {
 			if (null != result) {
 				return result;
 			}
-			Widget widget = this.getCurrentPage().getWidgets()[this.getFrame()];// can be null
+			Widget widget = this.getCurrentPage().getDraftWidgets()[this.getFrame()];// can be null
 			this.setShowlet(widget);
 			if (widget != null) {
 				WidgetType widgetType = widget.getType();
@@ -152,7 +152,7 @@ public class PageConfigAction extends AbstractPortalAction {
 			this.addActionError(this.getText("error.page.invalidPageCode"));
 			return "pageTree";
 		}
-		if (this.getFrame() == -1 || this.getFrame() >= page.getWidgets().length) {
+		if (this.getFrame() == -1 || this.getFrame() >= page.getDraftWidgets().length) {
 			_logger.info("Mandatory frame id or invalid - '{}'", this.getFrame());
 			this.addActionError(this.getText("error.page.invalidPageFrame"));
 			return "pageTree";

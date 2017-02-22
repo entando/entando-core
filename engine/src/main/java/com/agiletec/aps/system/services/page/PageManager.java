@@ -234,15 +234,16 @@ public class PageManager extends AbstractService
 		// TODO Modificare o sdoppiare per gestire la pagina DRAFT
 		boolean resultOperation = true;
 		try {
-			IPage currentPage = this.getPage(pageCode, false);
+			IPage currentPage = this.getDraftPage(pageCode);
 			if (null == currentPage) {
 				throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
 			}
-			Widget currentWidget = currentPage.getWidgets()[frameToMove];
+			Widget[] widgets = currentPage.getDraftWidgets();
+			Widget currentWidget = widgets[frameToMove];
 			if (null == currentWidget) {
 				throw new ApsSystemException("No widget found in frame '" + frameToMove + "' and page '" + pageCode + "'");
 			}
-			boolean movementEnabled = isMovementEnabled(frameToMove, destFrame, currentPage.getWidgets().length);
+			boolean movementEnabled = isMovementEnabled(frameToMove, destFrame, widgets.length);
 			if (!movementEnabled) {
 				return false;
 			} else {
@@ -531,7 +532,6 @@ public class PageManager extends AbstractService
 
 	@Override
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
-		//TODO deve insistere su entrambe le tabelle widget!!!
 		List<IPage> pages = new ArrayList<IPage>();
 		try {
 			if (null == this._pages || this._pages.isEmpty() || null == widgetTypeCode) {
@@ -547,21 +547,81 @@ public class PageManager extends AbstractService
 		return pages;
 	}
 	
+	@Override
+	public List<IPage> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
+		List<IPage> pages = new ArrayList<IPage>();
+		try {
+			if (null == this._pages || this._pages.isEmpty() || null == widgetTypeCode) {
+				return pages; 
+			}
+			IPage root = this.getRoot();
+			this.getOnlineWidgetUtilizers(root, widgetTypeCode, pages);
+		} catch (Throwable t) {
+			String message = "Error during searching online page utilizers of widget with code " + widgetTypeCode;
+			_logger.error("Error during searching online page utilizers of widget with code {}", widgetTypeCode, t);
+			throw new ApsSystemException(message, t);
+		}
+		return pages;
+	}
+	
+	@Override
+	public List<IPage> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
+		List<IPage> pages = new ArrayList<IPage>();
+		try {
+			if (null == this._pages || this._pages.isEmpty() || null == widgetTypeCode) {
+				return pages; 
+			}
+			IPage root = this.getRoot();
+			this.getDraftWidgetUtilizers(root, widgetTypeCode, pages);
+		} catch (Throwable t) {
+			String message = "Error during searching draft page utilizers of widget with code " + widgetTypeCode;
+			_logger.error("Error during searching draft page utilizers of widget with code {}", widgetTypeCode, t);
+			throw new ApsSystemException(message, t);
+		}
+		return pages;
+	}
+	
 	private void getWidgetUtilizers(IPage page, String widgetTypeCode, List<IPage> widgetUtilizers) {
-		//TODO deve insistere su entrambe le tabelle widget!!!
-		Widget[] widgets = page.getWidgets();
-		for (int i = 0; i < widgets.length; i++) {
-			Widget widget = widgets[i];
+		if (this.isWidgetInUse(page.getOnlineWidgets(), widgetTypeCode)
+				|| this.isWidgetInUse(page.getDraftWidgets(), widgetTypeCode)) {
+			widgetUtilizers.add(page);
+		}
+		if (page.getAllChildren() != null) {
+			for (IPage child : page.getAllChildren()) {
+				this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
+			}
+		}
+	}
+	private void getOnlineWidgetUtilizers(IPage page, String widgetTypeCode, List<IPage> widgetUtilizers) {
+		if (this.isWidgetInUse(page.getOnlineWidgets(), widgetTypeCode)) {
+			widgetUtilizers.add(page);
+		}
+		if (page.getOnlineChildren() != null) {
+			for (IPage child : page.getOnlineChildren()) {
+				this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
+			}
+		}
+	}
+	private void getDraftWidgetUtilizers(IPage page, String widgetTypeCode, List<IPage> widgetUtilizers) {
+		if (this.isWidgetInUse(page.getDraftWidgets(), widgetTypeCode)) {
+			widgetUtilizers.add(page);
+		}
+		if (page.getAllChildren() != null) {
+			for (IPage child : page.getAllChildren()) {
+				this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
+			}
+		}
+	}
+	
+	private boolean isWidgetInUse(Widget[] widgets, String widgetTypeCode) {
+		boolean found = false;
+		for (Widget widget : widgets) {
 			if (null != widget && null != widget.getType() && widgetTypeCode.equals(widget.getType().getCode())) {
-				widgetUtilizers.add(page);
+				found = true;
 				break;
 			}
 		}
-		IPage[] children = page.getAllChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPage child = children[i];
-			this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
-		}
+		return found;
 	}
 	
 	@Override

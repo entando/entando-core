@@ -17,6 +17,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
 
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.aps.tags.ExtendedTagSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,6 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
-import org.entando.entando.aps.tags.ExtendedTagSupport;
 
 /**
  * Returns informations about the showlet where the tag resides.
@@ -104,9 +104,11 @@ public class CurrentWidgetTag extends ExtendedTagSupport {
 			widget = (Widget) reqCtx.getExtraParam((SystemConstants.EXTRAPAR_CURRENT_WIDGET));
 		} else {
 			IPage currentPage = (IPage) reqCtx.getExtraParam((SystemConstants.EXTRAPAR_CURRENT_PAGE));
-			Widget[] showlets = currentPage.getWidgets();
-			if (showlets.length > this.getFrame()) {
-				widget = showlets[this.getFrame()];
+			Widget[] widgets = currentPage.getOnlineWidgets();
+			if (widgets != null) {
+				if (widgets.length > this.getFrame()) {
+					widget = widgets[this.getFrame()];
+				}
 			}
 		}
 		return widget;

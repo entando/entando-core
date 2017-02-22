@@ -48,7 +48,7 @@ public class TestWidgetExecutorService extends AbstractTestExecutorService {
 		for (int i = 0; i < widgetOutput.length; i++) {
 			String output = widgetOutput[i];
 			assertNotNull(output);
-			Widget currentWidget = currentPage.getWidgets()[i];
+			Widget currentWidget = currentPage.getOnlineWidgets()[i];
 			if (null == currentWidget) {
 				assertTrue(StringUtils.isBlank(output));
 			} else {

@@ -103,7 +103,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 	 * @return True if the page can publish a free content, else false.
 	 */
 	public boolean isFreeViewerPage(IPage page) {
-		return CmsPageActionUtil.isFreeViewerPage(page, this.getViewerWidgetCode());
+		return CmsPageActionUtil.isDraftFreeViewerPage(page, this.getViewerWidgetCode());
 	}
 	
 	@Override
@@ -121,8 +121,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 	}
 	
 	protected void checkViewerPage(IPage page) {
-		// TODO Verificare che comportamento deve avere
-		int mainFrame = page.getModel().getMainFrame();
+		int mainFrame = page.getDraftMetadata().getModel().getMainFrame();
 		if (this.isViewerPage() && mainFrame>-1) {
 			IWidgetTypeManager showletTypeManager = (IWidgetTypeManager) ApsWebApplicationUtils.getBean(SystemConstants.WIDGET_TYPE_MANAGER, this.getRequest());
 			Widget viewer = new Widget();
@@ -132,7 +131,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 				throw new RuntimeException("Widget 'Contenuto Singolo' assente o non valida : Codice " + this.getViewerWidgetCode());
 			}
 			viewer.setType(type);
-			Widget[] widgets = page.getWidgets();
+			Widget[] widgets = page.getDraftWidgets();
 			widgets[mainFrame] = viewer;
 		}
 	}
@@ -142,25 +141,23 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		try {
 			IPage page = this.getPage(pageCode);
 			if (null == page) return contents;
-			Widget[] widgets = page.getWidgets();
-			for (int i=0; i<widgets.length; i++) {
-				Widget widget = widgets[i];
-				ApsProperties config = (null != widget) ? widget.getConfig() : null;
-				if (null == config || config.isEmpty()) {
-					continue;
-				}
-				String extracted = config.getProperty("contentId");
-				this.addContent(contents, extracted);
-				String contentsParam = config.getProperty("contents");
-				List<Properties> properties = (null != contentsParam) ? RowContentListHelper.fromParameterToContents(contentsParam) : null;
-				if (null == properties || properties.isEmpty()) {
-					continue;
-				}
-				for (int j = 0; j < properties.size(); j++) {
-					Properties widgProp = properties.get(j);
-					String extracted2 = widgProp.getProperty("contentId");
-					this.addContent(contents, extracted2);
-				}
+			this.addPublishedContents(page.getOnlineWidgets(), contents);
+			this.addPublishedContents(page.getDraftWidgets(), contents);
+		} catch (Throwable t) {
+			String msg = "Error extracting published contents on page '" + pageCode + "'";
+			_logger.error("Error extracting published contents on page '{}'", pageCode, t);
+			throw new RuntimeException(msg, t);
+		}
+		return contents;
+	}
+	
+	public List<Content> getOnlinePublishedContents(String pageCode) {
+		List<Content> contents = new ArrayList<Content>();
+		try {
+			IPage page = this.getPage(pageCode);
+			if (page != null) {
+				this.addPublishedContents(page.getOnlineWidgets(), contents);
+				this.addPublishedContents(page.getDraftWidgets(), contents);
 			}
 		} catch (Throwable t) {
 			String msg = "Error extracting published contents on page '" + pageCode + "'";
@@ -168,6 +165,35 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			throw new RuntimeException(msg, t);
 		}
 		return contents;
+	}
+	
+	protected void addPublishedContents(Widget[] widgets, List<Content> contents) {
+		try {
+			if (widgets != null) {
+				for (Widget widget : widgets) {
+					ApsProperties config = (null != widget) ? widget.getConfig() : null;
+					if (null == config || config.isEmpty()) {
+						continue;
+					}
+					String extracted = config.getProperty("contentId");
+					this.addContent(contents, extracted);
+					String contentsParam = config.getProperty("contents");
+					List<Properties> properties = (null != contentsParam) ? RowContentListHelper.fromParameterToContents(contentsParam) : null;
+					if (null == properties || properties.isEmpty()) {
+						continue;
+					}
+					for (int j = 0; j < properties.size(); j++) {
+						Properties widgProp = properties.get(j);
+						String extracted2 = widgProp.getProperty("contentId");
+						this.addContent(contents, extracted2);
+					}
+				}
+			}
+		} catch (Throwable t) {
+			String msg = "Error extracting published contents on page";
+			_logger.error("Error extracting published contents on page", t);
+			throw new RuntimeException(msg, t);
+		}
 	}
 	
 	private void addContent(List<Content> contents, String contentId) {

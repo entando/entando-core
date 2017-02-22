@@ -47,6 +47,7 @@
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetCatalog</value>
         <value>org.entando.entando.aps.system.init.model.portdb.GuiFragment</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfig</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfigDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Uniquekeys</value>
     </util:list>
     

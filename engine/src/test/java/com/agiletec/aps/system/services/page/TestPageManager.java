@@ -77,7 +77,8 @@ public class TestPageManager extends BaseTestCase {
 		widgetType.setCode("content_viewer");
 		widget.setType(widgetType);
 		Widget[] widgets = {widget};
-		page.setWidgets(widgets);
+		page.setOnlineWidgets(widgets);
+		page.setDraftWidgets(widgets);
 		_pageManager.addPage(page);
 		parentPage = _pageManager.getPage("service");
 		page.setParent(parentPage);		
@@ -142,7 +143,8 @@ public class TestPageManager extends BaseTestCase {
 		widgetType.setCode("content_viewer");
 		widget.setType(widgetType);
 		Widget[] widgets = {widget};
-		page.setWidgets(widgets);
+		page.setOnlineWidgets(widgets);
+		page.setDraftWidgets(widgets);
 		_pageManager.updatePage(page);
 		
 		IPage extractedPage = _pageManager.getPage("temp");

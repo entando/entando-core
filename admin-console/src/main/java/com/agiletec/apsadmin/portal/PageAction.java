@@ -313,7 +313,7 @@ public class PageAction extends AbstractPortalAction {
 			this.valueMetadataFromForm(metadata);
 			if (oldModel == null || !oldModel.getCode().equals(this.getModel())) {
 				//Ho cambiato modello e allora cancello tutte le showlets Precedenti
-				page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
+				page.setDraftWidgets(new Widget[metadata.getModel().getFrames().length]);
 			}
 			if (this.isDefaultShowlet()) {
 				this.setDefaultWidgets(page);
@@ -345,7 +345,8 @@ public class PageAction extends AbstractPortalAction {
 	
 	protected void setDefaultWidgets(Page page) throws ApsSystemException {
 		try {
-			Widget[] defaultWidgets = page.getModel().getDefaultWidget();
+			PageModel model = page.getDraftMetadata().getModel();
+			Widget[] defaultWidgets = model.getDefaultWidget();
 			if (null == defaultWidgets) {
 				return;
 			}
@@ -354,7 +355,7 @@ public class PageAction extends AbstractPortalAction {
 				Widget defaultWidget = defaultWidgets[i];
 				if (null != defaultWidget) {
 					if (null == defaultWidget.getType()) {
-						_logger.error("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", page.getModel().getCode(), i, page.getCode());
+						_logger.error("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", model.getCode(), i, page.getCode());
 						continue;
 					}
 					widgets[i] = defaultWidget;

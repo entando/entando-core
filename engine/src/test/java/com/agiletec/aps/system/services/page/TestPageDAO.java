@@ -13,12 +13,14 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
@@ -27,6 +29,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.aps.util.DateConverter;
 
 /**
  * @author M.Diana
@@ -44,8 +47,7 @@ public class TestPageDAO extends BaseTestCase {
 			List<IPage> pages = _pageDao.loadPages();
             String value = null;
             boolean contains = false;
-            for (int i=0; i<pages.size(); i++) {
-    			IPage page = pages.get(i);
+            for (IPage page : pages) {
     			value = page.getCode();
     			if (value.equals("homepage")) {
     				contains = true;
@@ -66,27 +68,18 @@ public class TestPageDAO extends BaseTestCase {
 			extractedPage = this.getPageByCode(pages, pageCode);
 			assertNull(extractedPage);
 			
-        	this._pageDao.addPage(newPageForTest);
-        	pages = this._pageDao.loadPages();
+	    	this._pageDao.addPage(newPageForTest);
+	    	pages = this._pageDao.loadPages();
 			extractedPage = this.getPageByCode(pages, pageCode);
 			
-			assertNotNull(extractedPage);
-			assertEquals(extractedPage.getCode(), pageCode);
-			assertEquals(extractedPage.getGroup(), "free");
+			this.comparePageMetadata(newPageForTest.getDraftMetadata(), extractedPage.getDraftMetadata(), 0);
+			this.comparePageMetadata(newPageForTest.getOnlineMetadata(), extractedPage.getOnlineMetadata(), 0);
 			
-			PageMetadata onlineMetadata = extractedPage.getOnlineMetadata();
-			assertEquals(onlineMetadata.getTitle("it"), "pagina temporanea");
-			assertEquals(onlineMetadata.getModel().getCode(), "service");
-			assertTrue(onlineMetadata.isShowable());
+			this.compareWidgets(extractedPage.getDraftWidgets(), extractedPage.getOnlineWidgets());
 			
-			PageMetadata draftMetadata = extractedPage.getDraftMetadata();
-			assertEquals(draftMetadata.getTitle("it"), "pagina temporanea");
-			assertEquals(draftMetadata.getModel().getCode(), "service");
-			assertTrue(draftMetadata.isShowable());
+			this.checkAddedPage(pageCode, extractedPage, this._pageDao);
 			
-			Widget[] widgets = extractedPage.getWidgets();
-			assertTrue(widgets[0].getConfig().containsKey("temp"));
-			assertEquals(widgets[0].getType().getCode(), "content_viewer");
+			
 			this.updatePage(extractedPage, this._pageDao);
 		} catch (Throwable t) {
 			throw t;
@@ -94,6 +87,57 @@ public class TestPageDAO extends BaseTestCase {
 			Page pageToDelete = (null != extractedPage) ? (Page) extractedPage : newPageForTest;
 			this.deletePage(pageToDelete, _pageDao);
 		}
+	}
+	
+	/**
+	 * @param expected The expected PageMetadata to check
+	 * @param actual The actual PageMetadata to check
+	 * @param dateExpectation The result of the comparison between the 2 updatedAt dates. 1 if expected is greater, 0 if equals, -1 if lower
+	 */
+	private void comparePageMetadata(PageMetadata expected, PageMetadata actual, int dateExpectation) {
+		if (expected == null) {
+			assertNull(actual);
+		} else {
+			assertEquals(expected.getTitles(), actual.getTitles());
+			assertEquals(expected.getExtraGroups(), actual.getExtraGroups());
+			if (expected.getModel() == null) {
+				assertNull(actual.getModel());
+			} else {
+				assertEquals(expected.getModel().getCode(), actual.getModel().getCode());
+			}
+			assertEquals(expected.isShowable(), actual.isShowable());
+			assertEquals(expected.isUseExtraTitles(), actual.isUseExtraTitles());
+			assertEquals(expected.getMimeType(), actual.getMimeType());
+			assertEquals(expected.getCharset(), actual.getCharset());
+			
+			if (expected.getUpdatedAt() == null) {
+				if (dateExpectation < 0) {
+					assertNotNull(actual.getUpdatedAt());
+				} else {
+					assertNull(actual.getUpdatedAt());
+				}
+			} else {
+				assertEquals(dateExpectation, DateUtils.truncate(expected.getUpdatedAt(), Calendar.MILLISECOND)
+						.compareTo(DateUtils.truncate(actual.getUpdatedAt(), Calendar.MILLISECOND)));
+			}
+		}
+	}
+	
+	private void compareWidgets(Widget[] expected, Widget[] actual) {
+		if (expected == null) {
+			assertNull(actual);
+		} else {
+			assertEquals(expected.length, actual.length);
+			for (int i = expected.length; i < expected.length; i++) {
+				assertEquals(expected[i], actual[i]);
+			}
+		}
+	}
+	
+	private void checkAddedPage(String pageCode, IPage extractedPage, PageDAO pageDAO) throws Throwable {
+		assertNotNull(extractedPage);
+		assertEquals(extractedPage.getCode(), pageCode);
+		assertEquals(extractedPage.getGroup(), "free");
 	}
 	
 	private IPage getPageByCode(List<IPage> pages, String code) {
@@ -123,7 +167,8 @@ public class TestPageDAO extends BaseTestCase {
 		widgetType.setCode("content_viewer");
 		widget.setType(widgetType);
 		Widget[] modifiesWidgets = {widget};
-		pageToUpdate.setWidgets(modifiesWidgets);
+		pageToUpdate.setOnlineWidgets(modifiesWidgets);
+		pageToUpdate.setDraftWidgets(modifiesWidgets);
 		try {
 			pageDAO.updatePage(pageToUpdate);
 			List<IPage> pages = pageDAO.loadPages();
@@ -192,7 +237,8 @@ public class TestPageDAO extends BaseTestCase {
 		page.setParentCode("service");
 		page.setGroup("free");
 		
-		PageMetadata metadata = this.createPageMetadata("service", true, "pagina temporanea");
+		PageMetadata metadata = this.createPageMetadata("service", true, "pagina temporanea", 
+				null, null, false, null, DateConverter.parseDate("19700101", "yyyyMMdd"));
 		page.setOnlineMetadata(metadata);
 		page.setDraftMetadata(metadata);
 		
@@ -204,9 +250,11 @@ public class TestPageDAO extends BaseTestCase {
 		WidgetType widgetType = new WidgetType();
 		widgetType.setCode("content_viewer");
 		widget.setType(widgetType);
-		Widget[] widgets = {widget};
+		Widget[] widgets = new Widget[4];
+		widgets[1] = widget;
 		
-		page.setWidgets(widgets);
+		page.setOnlineWidgets(widgets);
+		page.setDraftWidgets(widgets);
 		return page;
 	}
 	

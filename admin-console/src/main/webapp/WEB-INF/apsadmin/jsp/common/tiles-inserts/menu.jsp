@@ -1,290 +1,322 @@
-			<ul class="list-group">
-				<li class="list-group-item">
-					<a>
-						<span class="fa fa-files-o" data-toggle="tooltip" title="Dashboard"></span>
-						<span class="list-group-item-value">Page Designer</span>
-					</a>
-				</li>
-				<li class="list-group-item">
-					<a>
-						<span class="fa fa-object-ungroup" data-toggle="tooltip" title="Dolor"></span>
-						<span class="list-group-item-value">UX Patterns</span>
-					</a>
-				</li>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="wp" uri="/aps-core" %>
+<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 
-				<li class="list-group-item active secondary-nav-item-pf" data-target="#ipsum-secondary">
-					<a>
-						<span class="fa fa-cubes" data-toggle="tooltip" title="Ipsum"></span>
-						<span class="list-group-item-value">Integrations</span>
-					</a>
-					<!--menu secondo livello di 1 livello-->
+<ul class="list-group">
+    <!-- Page Designer -->
 
-					<div id="-secondary" class="nav-pf-secondary-nav">
-						<div class="nav-item-pf-header">
-							<a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
-							<span>titolo 1 livello</span>
-						</div>
+    <li class="list-group-item secondary-nav-item-pf" data-target="#page-designer-secondary">
+        <a>
+            <span class="fa fa-files-o" data-toggle="tooltip" title="Page Designer" ></span>
+            <span class="list-group-item-value">Page Designer</span>
+        </a>
 
-						<!--menu secondo livello aperto -->
+        <div id="page-designer-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span>Page Designer</span>
+            </div>
 
-						<ul class="list-group">
-							<li class="list-group-item active tertiary-nav-item-pf" data-target="#ipsum-intellegam-tertiary">
-								<a>
-									<span class="list-group-item-value">2 livello</span>
-								</a>
+            <!-- Page Designer Secondary -->
 
-								<div id="compute-containers-tertiary" class="nav-pf-tertiary-nav">
-									<div class="nav-item-pf-header">
-										<a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-										<span>titolo terzo livello</span>
-									</div>
-									<ul class="list-group">
-										<li class="list-group-item active">
-											<a>
-												<span id="compute-containers-users-nav-item" class="list-group-item-value">3 livello a</span>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a id="linkHome" href="<s:url action="viewTree" namespace="/do/Page" />">
+                       <span class="list-group-item-value">Page Tree</span>
+                    </a>
+                </li>
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span id="compute-containers-groups-nav-item" class="list-group-item-value">3 livello b</span>
+                <li class="list-group-item">
+                    <a >
+                        <span class="list-group-item-value">General Settings Page TO_DO</span>
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span id="compute-containers-roles-nav-item" class="list-group-item-value">4 livello c</span>
+                    </a>
+                </li>
 
-											</a>
-										</li>
-									</ul>
-								</div>
+            </ul>
+            <!--Fine Page Designer Secondary-->
+        </div>
+    </li>
 
+    <!-- UX Patterns -->    
 
-							</li>
-							<li class="list-group-item tertiary-nav-item-pf" data-target="#ipsum-copiosae-tertiary">
-								<a>
-									<span class="list-group-item-value">Copiosae</span>
-								</a>
+    <li class="list-group-item secondary-nav-item-pf" data-target="#ux-pattern-secondary">
+        <a>
+            <span class="fa fa-object-ungroup" data-toggle="tooltip" title="UX Patterns"></span>
+            <span class="list-group-item-value">UX Patterns</span>
+        </a>
 
-								<div id="compute-infrastructure-tertiary" class="nav-pf-tertiary-nav">
-									<div class="nav-item-pf-header">
-										<a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-										<span>Copiosae</span>
-									</div>
-									<ul class="list-group">
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Exerci</span>
+        <div id="ux-pattern-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span>UX Patterns</span>
+            </div>
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Quaeque</span>
+            <!-- UX Patterns Secondary -->
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Utroque</span>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />">
+                       <span class="list-group-item-value">Widgets</span>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/Portal/GuiFragment" />">
+                       <span class="list-group-item-value">Containers</span>
 
-											</a>
-										</li>
-									</ul>
-								</div>
+                    </a>
+                </li>
 
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/PageModel" />">
+                       <span class="list-group-item-value">Page Models</span>
+                    </a>
+                </li>
 
-							</li>
-							<li class="list-group-item tertiary-nav-item-pf" data-target="#ipsum-patrioque-tertiary">
-								<a>
-									<span class="list-group-item-value">Patrioque</span>
-								</a>
+            </ul>
+            <!--Fine UX Patterns Secondary-->
+        </div>
+    </li>
 
-								<div id="compute-clouds-tertiary" class="nav-pf-tertiary-nav">
-									<div class="nav-item-pf-header">
-										<a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-										<span>Patrioque</span>
-									</div>
-									<ul class="list-group">
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Novum</span>
+    <!-- Integrations -->    
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Pericula</span>
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Gubergren</span>
-											</a>
-										</li>
-									</ul>
-								</div>
+    <li class="list-group-item secondary-nav-item-pf" data-target="#integration-secondary">
+        <a>
+            <span class="fa fa-cubes" data-toggle="tooltip" title="Integrations"></span>
+            <span class="list-group-item-value">Integrations</span>
+        </a>
 
+        <!--Integrations secondary-->
 
-							</li>
+        <div id="integration-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span>Integrations</span>
+            </div>
 
-							<li class="list-group-item">
-								<a>
-									<span class="list-group-item-value">Accumsan</span>
+            <ul class="list-group">
 
-								</a>
-							</li>
+                <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-ux-components-tertiary">
+                    <a>
+                        <span class="list-group-item-value">UX Components</span>
+                    </a>
 
-						</ul>
-						<!--fine menu livello-->
-					</div>
-				</li>
-				<li class="list-group-item secondary-nav-item-pf" data-target="#amet-secondary">
-					<a>
-						<span class="fa fa-users" data-toggle="tooltip" title="Amet"></span>
-						<span class="list-group-item-value">Users Settings</span>
-					</a>
+                    <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
+                        <div class="nav-item-pf-header">
+                            <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                            <span>UX Components</span>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item ">
+                                <a>
+                                    <span id="compute-containers-users-nav-item" class="list-group-item-value">TO_DO</span>
 
-					<div id="amet-secondary" class="nav-pf-secondary-nav">
-						<div class="nav-item-pf-header">
-							<a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
-							<span>Amet</span>
-						</div>
-						<ul class="list-group">
-							<li class="list-group-item tertiary-nav-item-pf" data-target="#amet-detracto-tertiary">
-								<a>
-									<span class="list-group-item-value">Detracto Suscipiantur</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>                    
 
-								</a>
+                <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-api-tertiary">
+                    <a>
+                        <span class="list-group-item-value">API Management</span>
+                    </a>
 
-								<div id="amet-detracto-tertiary" class="nav-pf-tertiary-nav">
-									<div class="nav-item-pf-header">
-										<a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-										<span>Detracto</span>
-									</div>
-									<ul class="list-group">
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Delicatissimi</span>
+                    <div id="integrations-api-tertiary" class="nav-pf-tertiary-nav">
+                        <div class="nav-item-pf-header">
+                            <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                            <span>API Management</span>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <a href="<s:url action="list" namespace="/do/Api/Resource" />">
+                                   <span class="list-group-item-value">Resources</span>
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Aliquam</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="<s:url action="list" namespace="/do/Api/Service" />">
+                                   <span  class="list-group-item-value">Services</span>
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Principes</span>
-
-											</a>
-										</li>
-									</ul>
-								</div>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="<s:url action="list" namespace="/do/Api/Consumer" />">
+                                   <span class="list-group-item-value">Consumers</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </li>
 
 
-							</li>
-							<li class="list-group-item tertiary-nav-item-pf" data-target="#amet-mediocrem-tertiary">
-								<a>
-									<span class="list-group-item-value">Mediocrem</span>
+    <!--  Users Settings -->
 
-								</a>
+    <li class="list-group-item secondary-nav-item-pf" data-target="#user-settings-secondary">
+        <a>
+            <span class="fa fa-files-o" data-toggle="tooltip" title="Users Settings" ></span>
+            <span class="list-group-item-value">Users Settings</span>
+        </a>
 
-								<div id="amet-mediocrem-tertiary" class="nav-pf-tertiary-nav">
-									<div class="nav-item-pf-header">
-										<a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-										<span>Mediocrem</span>
-									</div>
-									<ul class="list-group">
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Convenire</span>
+        <div id="#user-settings-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span>Users Settings</span>
+            </div>
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Nonumy</span>
+            <!-- Users Settings Secondary -->
 
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Deserunt</span>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/User" />">
+                       <span class="list-group-item-value">Users</span>
+                    </a>
+                </li>
 
-											</a>
-										</li>
-									</ul>
-								</div>
+                <li class="list-group-item">
+                    <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>">
+                        <span class="list-group-item-value">Profiles</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a>
+                        <span class="list-group-item-value">User Settings TO_DO</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/Role" />">
+                       <span class="list-group-item-value">Roles</span>
+                    </a>
+                </li>
+            </ul>
+            <!--Fine Users Settings Secondary-->
+        </div>
+
+    </li>
+    <!--  CMS -->
+    <li class="list-group-item secondary-nav-item-pf" data-target="#cms-secondary">
+        <a>
+            <span class="fa fa-pencil-square-o" data-toggle="tooltip" title="CMS"></span>
+            <span class="list-group-item-value">CMS</span>
+        </a>
+
+        <div id="#cms-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span>CMS</span>
+            </div>
+
+            <!-- CMS Secondary -->
+
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/jacms/Content" />">
+                       <span class="list-group-item-value">Contents</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/Api/Resources" />">
+                       <span class="list-group-item-value">Digital Assets TO_DO</span>
+                    </a>
+                </li>              
+
+                <li class="list-group-item">
+                    <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>">
+                        <span class="list-group-item-value">Content Types</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
+                       <span class="list-group-item-value">Content Model</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/Api/Resources" />">
+                       <span class="list-group-item-value">Content Settings TO_DO</span>
+                    </a>
+                </li>
+
+            </ul>
+            <!--Fine Users Settings Secondary-->
+        </div>
+
+    </li>
 
 
-							</li>
-							<li class="list-group-item tertiary-nav-item-pf" data-target="#amet-corrumpit-tertiary">
-								<a>
-									<span class="list-group-item-value">Corrumpit Cupidatat Proident Deserunt</span>
+    <!--fine CMS-->
 
-								</a>
+</ul>
 
-								<div id="amet-corrumpit-tertiary" class="nav-pf-tertiary-nav">
-									<div class="nav-item-pf-header">
-										<a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-										<span>Corrumpit</span>
-									</div>
-									<ul class="list-group">
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Aeque</span>
-
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Delenit</span>
-
-											</a>
-										</li>
-										<li class="list-group-item">
-											<a>
-												<span class="list-group-item-value">Qualisque</span>
-
-											</a>
-										</li>
-									</ul>
-								</div>
+<ul class="list-group fixed-bottom">
 
 
-							</li>
-
-							<li class="list-group-item">
-								<a>
-									<span class="list-group-item-value">Urbanitas Habitant Morbi Tristique</span>
-
-								</a>
-							</li>
-
-						</ul>
-					</div>
-				</li>
-				<li class="list-group-item">
-					<a>
-						<span class="fa fa-pencil-square-o" data-toggle="tooltip" title="Adipscing"></span>
-						<span class="list-group-item-value">CMS</span>
-					</a>
-				</li>
 
 
-				<!--fine primo livello-->
 
-			</ul>
+    <li class="list-group-item secondary-nav-item-pf" data-target="#settings-secondary">
+        <a>
+            <span class="fa fa-cogs" data-toggle="tooltip" title="Settings"></span>
+            <span class="list-group-item-value">Settings</span>
+        </a>
 
-			<ul class="list-group fixed-bottom">
-				<li class="list-group-item">
-					<a>
-						<span class="fa fa-cogs" data-toggle="tooltip" title="Adipscing"></span>
-						<span class="list-group-item-value">Settings</span>
-					</a>
-				</li>
-			</ul>
+        <div id="#settings-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span>Settings</span>
+            </div>
+
+            <!-- Settings Secondary -->
+
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="<s:url action="viewTree" namespace="/do/Category" />">
+                       <span class="list-group-item-value">Categories</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/Lang" />">
+                       <span class="list-group-item-value">Labels &amp; Languages</span>
+                    </a>
+                </li>              
+
+                <li class="list-group-item">
+                    <a href="<s:url action="reloadConfig" namespace="/do/BaseAdmin" />">
+                       <span class="list-group-item-value">Reload Config</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="entry" namespace="/do/Admin/Database" />">
+                       <span class="list-group-item-value">Database</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/FileBrowser" />">
+                       <span class="list-group-item-value">File Browser</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/Group" />">
+                       <span class="list-group-item-value">Groups</span>
+                    </a>
+                </li>
+            </ul>
+            <!--Fine Users Settings Secondary-->
+        </div>
+
+    </li>
+
+</ul>

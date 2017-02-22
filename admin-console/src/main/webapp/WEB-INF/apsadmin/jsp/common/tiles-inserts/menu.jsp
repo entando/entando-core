@@ -24,7 +24,7 @@
             <ul class="list-group">
                 <li class="list-group-item">
                     <a id="linkHome" href="<s:url action="viewTree" namespace="/do/Page" />">
-                        <span class="list-group-item-value">Page Tree</span>
+                       <span class="list-group-item-value">Page Tree</span>
                     </a>
                 </li>
 
@@ -59,19 +59,19 @@
             <ul class="list-group">
                 <li class="list-group-item">
                     <a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />">
-                        <span class="list-group-item-value">Widgets</span>
+                       <span class="list-group-item-value">Widgets</span>
                     </a>
                 </li>
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/Portal/GuiFragment" />">
-                        <span class="list-group-item-value">Containers</span>
+                       <span class="list-group-item-value">Containers</span>
 
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/PageModel" />">
-                        <span class="list-group-item-value">Page Models</span>
+                       <span class="list-group-item-value">Page Models</span>
                     </a>
                 </li>
 
@@ -109,33 +109,12 @@
                             <span>UX Components</span>
                         </div>
                         <ul class="list-group">
+                            <li class="list-group-item ">
+                                <a>
+                                    <span id="compute-containers-users-nav-item" class="list-group-item-value">TO_DO</span>
 
-                            <!--Loop plugins -->
-
-                            <wpsa:pluginsSubMenu objectName="pluginsSubMenus" /><s:property value="#pluginsSubMenus" />
-                            <s:if test="#pluginsSubMenus.size > 0">
-                                <li class="" role="presentation">
-                                    <div class="" role="presentation">
-                                        <div class="" role="presentation">
-                                            <a data-toggle="collapse" href="#submenu-plugins" class="" id=""  aria-haspopup="true" role="menuitem">
-                                                <s:text name="menu.plugins" />&#32;
-
-                                            </a>
-                                        </div>
-                                        <div id="submenu-plugins" class="">
-                                            <ul class="" role="menubar" aria-labelledby="aria-menu-plugin">
-                                                <s:iterator value="#pluginsSubMenus" id="pluginSubMenu">
-                                                    <wpsa:include value="%{#pluginSubMenu.subMenuFilePath}"></wpsa:include>
-                                                </s:iterator>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </li>
-                            </s:if>
-                            <s:else>
-                                <li role="presentation"><a href="#" role="menuitem" ><s:text name="menu.plugins" /></a></li>
-                                </s:else>
-
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>                    
@@ -153,19 +132,19 @@
                         <ul class="list-group">
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/Api/Resource" />">
-                                    <span class="list-group-item-value">Resources</span>
+                                   <span class="list-group-item-value">Resources</span>
 
                                 </a>
                             </li>
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/Api/Service" />">
-                                    <span  class="list-group-item-value">Services</span>
+                                   <span  class="list-group-item-value">Services</span>
 
                                 </a>
                             </li>
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/Api/Consumer" />">
-                                    <span class="list-group-item-value">Consumers</span>
+                                   <span class="list-group-item-value">Consumers</span>
                                 </a>
                             </li>
                         </ul>
@@ -195,25 +174,25 @@
             <ul class="list-group">
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/User" />">
-                        <span class="list-group-item-value">Users</span>
+                       <span class="list-group-item-value">Users</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>">
-                                <span class="list-group-item-value">Profiles</span>
-                            </a>
-                        </li>
+                        <span class="list-group-item-value">Profiles</span>
+                    </a>
+                </li>
 
-                        <li class="list-group-item">
-                            <a>
-                                <span class="list-group-item-value">User Settings TO_DO</span>
-                            </a>
-                        </li>
+                <li class="list-group-item">
+                    <a>
+                        <span class="list-group-item-value">User Settings TO_DO</span>
+                    </a>
+                </li>
 
-                        <li class="list-group-item">
-                            <a href="<s:url action="list" namespace="/do/Role" />">
-                        <span class="list-group-item-value">Roles</span>
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/Role" />">
+                       <span class="list-group-item-value">Roles</span>
                     </a>
                 </li>
             </ul>
@@ -239,31 +218,31 @@
             <ul class="list-group">
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/jacms/Content" />">
-                        <span class="list-group-item-value">Contents</span>
+                       <span class="list-group-item-value">Contents</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                        <span class="list-group-item-value">Digital Assets TO_DO</span>
+                       <span class="list-group-item-value">Digital Assets TO_DO</span>
                     </a>
                 </li>              
 
                 <li class="list-group-item">
                     <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>">
-                                <span class="list-group-item-value">Content Types</span>
-                            </a>
-                        </li>
+                        <span class="list-group-item-value">Content Types</span>
+                    </a>
+                </li>
 
-                        <li class="list-group-item">
-                            <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
-                        <span class="list-group-item-value">Content Model</span>
+                <li class="list-group-item">
+                    <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
+                       <span class="list-group-item-value">Content Model</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                        <span class="list-group-item-value">Content Settings TO_DO</span>
+                       <span class="list-group-item-value">Content Settings TO_DO</span>
                     </a>
                 </li>
 
@@ -301,37 +280,37 @@
             <ul class="list-group">
                 <li class="list-group-item">
                     <a href="<s:url action="viewTree" namespace="/do/Category" />">
-                        <span class="list-group-item-value">Categories</span>
+                       <span class="list-group-item-value">Categories</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/Lang" />">
-                        <span class="list-group-item-value">Labels &amp; Languages</span>
+                       <span class="list-group-item-value">Labels &amp; Languages</span>
                     </a>
                 </li>              
 
                 <li class="list-group-item">
                     <a href="<s:url action="reloadConfig" namespace="/do/BaseAdmin" />">
-                        <span class="list-group-item-value">Reload Config</span>
+                       <span class="list-group-item-value">Reload Config</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="entry" namespace="/do/Admin/Database" />">
-                        <span class="list-group-item-value">Database</span>
+                       <span class="list-group-item-value">Database</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/FileBrowser" />">
-                        <span class="list-group-item-value">File Browser</span>
+                       <span class="list-group-item-value">File Browser</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
                     <a href="<s:url action="list" namespace="/do/Group" />">
-                        <span class="list-group-item-value">Groups</span>
+                       <span class="list-group-item-value">Groups</span>
                     </a>
                 </li>
             </ul>

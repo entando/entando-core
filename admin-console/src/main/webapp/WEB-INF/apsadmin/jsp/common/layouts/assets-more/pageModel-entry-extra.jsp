@@ -1,4 +1,4 @@
-    <%@ taglib prefix="wp" uri="/aps-core" %>
+<%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <style>
@@ -52,6 +52,15 @@ $(function() {
         $('.grid-container').html(alert);
     }
 
+    function getMessageText(messageClass, args) {
+        var msg = $('.message.' + messageClass).html();
+        if (_.isArray(args)) {
+            for (var i=0; i<args.length; ++i) {
+                msg = msg.replace('{' + i + '}', args[i]);
+            }
+        }
+        return msg;
+    }
 
     function updateGridPreview(data, skipPost) {
 
@@ -69,16 +78,13 @@ $(function() {
             var alertText;
             switch (e.type) {
                 case GridGenerator.ERROR.OVERLAPPING_FRAMES:
-                    alertText = 'Some frames are overlapping (' +
-                    e.data[0].a.description + ', ' +
-                    e.data[0].b.description +
-                    ')';
+                    alertText = getMessageText('overlappingFrames', [e.data[0].a.description, e.data[0].b.description]);
                     break;
                 case GridGenerator.ERROR.MALFORMED_FRAMES:
-                    alertText = 'Malformed frames (' + e.data[0].description + ')';
+                    alertText = getMessageText('malformedFrames', [e.data[0].description]);
                     break;
                 default:
-                    alertText = 'An error occurred while rendering the grid';
+                    alertText = getMessageText('gridError');
                     break;
 
             }
@@ -88,20 +94,19 @@ $(function() {
 
     }
 
-        function xmlToJson() {
-            var xmlJson = $.xml2json($('#xmlConfiguration').val()),
-                xmlFrames = _.isArray(xmlJson.frames.frame) ? xmlJson.frames.frame : [xmlJson.frames.frame];
-            var data = _.map(xmlFrames, function(frame) {
-                var res = _.clone(frame.$) || {};
-                res.description = frame.descr;
-                res.sketch = _.get(frame, 'sketch.$', null);
-                _.forEach(res.sketch, function(v, k) {
-                    res.sketch[k] = parseInt(v, 10);
-                });
-                return res;
+    function xmlToJson() {
+        var xmlJson = $.xml2json($('#xmlConfiguration').val()),
+            xmlFrames = _.isArray(xmlJson.frames.frame) ? xmlJson.frames.frame : [xmlJson.frames.frame];
+        return _.map(xmlFrames, function(frame) {
+            var res = _.clone(frame.$) || {};
+            res.description = frame.descr;
+            res.sketch = _.get(frame, 'sketch.$', null);
+            _.forEach(res.sketch, function(v, k) {
+                res.sketch[k] = parseInt(v, 10);
             });
-            return data;
-        }
+            return res;
+        });
+    }
 
 
     $('#xmlConfiguration').on('input propertychange change keyup paste', function() {

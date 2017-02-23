@@ -135,7 +135,6 @@ public class PageModel implements Serializable {
 	 * @param index the index of the frame to return
 	 * @return the {@link Frame} or null
 	 */
-	@XmlTransient
 	public Frame getFrameConfig(int index) {
 		Frame[] configuration = this.getConfiguration();
 		if (null != configuration) {
@@ -147,7 +146,7 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Returns the {@link Frame} array of che current {@link PageModel}
+	 * Returns the {@link Frame} array of the current {@link PageModel}
 	 * @return the {@link Frame} array or null
 	 */
 	@XmlTransient

@@ -88,7 +88,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		ITreeNode[] children = showableRoot.getChildren();
-		assertEquals(6, children.length);
+		assertEquals(7, children.length);
 		boolean check = false;
 		for (int i = 0; i < children.length; i++) {
 			ITreeNode child = children[i];
@@ -266,24 +266,24 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		IPage page = this._pageManager.getRoot();
 		String pageCode = page.getCode();
 		try {
-			Widget configWidget = page.getWidgets()[0];
-			Widget nullWidget = page.getWidgets()[1];
+			Widget configWidget = page.getDraftWidgets()[0];
+			Widget nullWidget = page.getDraftWidgets()[1];
 			assertNotNull(configWidget);
 			assertNull(nullWidget);
 			
 			String result = this.executeMoveDown(pageCode, 0, "admin");
 			assertEquals(Action.SUCCESS, result);
 			IPage updatedPage = this._pageManager.getRoot();
-			Widget w00 = updatedPage.getWidgets()[0];
-			Widget w11 = updatedPage.getWidgets()[1];
+			Widget w00 = updatedPage.getDraftWidgets()[0];
+			Widget w11 = updatedPage.getDraftWidgets()[1];
 			assertNull(w00);
 			assertEquals(w11.getType().getCode(), configWidget.getType().getCode());
 			
 			result = this.executeMoveUp(pageCode, 1, "admin");
 			assertEquals(Action.SUCCESS, result);
 			updatedPage = this._pageManager.getRoot();
-			w00 = updatedPage.getWidgets()[0];
-			w11 = updatedPage.getWidgets()[1];
+			w00 = updatedPage.getDraftWidgets()[0];
+			w11 = updatedPage.getDraftWidgets()[1];
 			assertEquals(w00.getType().getCode(),  configWidget.getType().getCode());
 			assertNull(w11);
 			

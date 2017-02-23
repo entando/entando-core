@@ -598,13 +598,12 @@ public class PageAction extends AbstractPortalAction {
 		this._allowedMimeTypesCSV = allowedMimeTypesCSV;
 	}
 	
-	@Deprecated
-	protected IPageActionHelper getHelper() {
-		return this.getPageActionHelper();
+
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
 	}
-	@Deprecated
-	public void setHelper(IPageActionHelper helper) {
-		this.setPageActionHelper(helper);
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
 	}
 	
 	protected IPageModelManager getPageModelManager() {
@@ -640,5 +639,6 @@ public class PageAction extends AbstractPortalAction {
 	private String _allowedCharsetsCSV;
 	
 	private IPageModelManager _pageModelManager;
+	private IPageActionHelper _pageActionHelper;
 	
 }

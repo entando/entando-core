@@ -276,12 +276,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 		this._groupManager = groupManager;
 	}
 	
-	protected IPageActionHelper getPageActionHelper() {
-		return _pageActionHelper;
-	}
-	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
-		this._pageActionHelper = pageActionHelper;
-	}
+
 	
 	protected IApiCatalogManager getApiCatalogManager() {
 		return _apiCatalogManager;
@@ -305,7 +300,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 	private IPageManager _pageManager;
 	private IGroupManager _groupManager;
 	
-	private IPageActionHelper _pageActionHelper;
+
 	
 	private IWidgetTypeManager _widgetTypeManager;
 	private IApiCatalogManager _apiCatalogManager;

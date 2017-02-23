@@ -296,7 +296,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	protected void deleteOnlineWidgets(String pageCode, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
-			stat = conn.prepareStatement(DELETE_WIDGETS_FOR_PAGE);
+			stat = conn.prepareStatement(DELETE_WIDGETS_FOR_PAGE_ONLINE);
 			stat.setString(1, pageCode);
 			stat.executeUpdate();
 		} catch (Throwable t) {
@@ -359,59 +359,48 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	@Override
 	public void updatePosition(IPage pageDown, IPage pageUp) {
 		Connection conn = null;
-		PreparedStatement stat = null;
-		PreparedStatement stat2 = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-
-			stat = conn.prepareStatement(MOVE_DOWN);
-			stat.setString(1, pageDown.getCode());
-			stat.executeUpdate();
-
-			stat2 = conn.prepareStatement(MOVE_UP);
-			stat2.setString(1, pageUp.getCode());
-			stat2.executeUpdate();
-
+			
+			this.updatePosition(pageDown.getCode(), MOVE_DOWN, conn);
+			this.updatePosition(pageUp.getCode(), MOVE_UP, conn);
+			
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error detected while updating positions",  t);
 			throw new RuntimeException("Error detected while updating positions", t);
 		} finally {
+			closeConnection(conn);
+		}
+	}
+	
+	private void updatePosition(String pageCode, String query, Connection conn) {
+		PreparedStatement stat = null;
+		try {
+			stat = conn.prepareStatement(query);
+			stat.setString(1, pageCode);
+			stat.executeUpdate();
+		} catch (Throwable t) {
+			_logger.error("Error detected while updating position for page {}", pageCode,  t);
+			throw new RuntimeException("Error detected while updating position for page " + pageCode, t);
+		} finally {
 			closeDaoResources(null, stat);
-			closeDaoResources(null, stat2, conn);
 		}
 	}
 	
 	@Override
 	public void updateWidgetPosition(String pageCode, Integer frameToMove, Integer destFrame) {
 		Connection conn = null;
-		PreparedStatement stat = null;
-		PreparedStatement stat2 = null;
-		PreparedStatement stat3 = null;
 		int TEMP_FRAME_POSITION = -9999;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-
-			stat = conn.prepareStatement(MOVE_WIDGET);
-			stat.setInt(1, TEMP_FRAME_POSITION);
-			stat.setString(2, pageCode);
-			stat.setInt(3, frameToMove);
-			stat.executeUpdate();
-
-			stat2 = conn.prepareStatement(MOVE_WIDGET);
-			stat2.setInt(1, frameToMove);
-			stat2.setString(2, pageCode);
-			stat2.setInt(3, destFrame);
-			stat2.executeUpdate();
-
-			stat3 = conn.prepareStatement(MOVE_WIDGET);
-			stat3.setInt(1, destFrame);
-			stat3.setString(2, pageCode);
-			stat3.setInt(3, TEMP_FRAME_POSITION);
-			stat3.executeUpdate();
+			
+			this.updateWidgetPosition(pageCode, frameToMove, TEMP_FRAME_POSITION, conn);
+			this.updateWidgetPosition(pageCode, destFrame, frameToMove, conn);
+			this.updateWidgetPosition(pageCode, TEMP_FRAME_POSITION, destFrame, conn);
 			
 			conn.commit();
 		} catch (Throwable t) {
@@ -419,9 +408,23 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			_logger.error("Error while updating WidgetPosition. page: {} from position: {} to position {}", pageCode, frameToMove, destFrame,  t);
 			throw new RuntimeException("Error while updating widget position", t);
 		} finally {
+			closeConnection(conn);
+		}
+	}
+	
+	private void updateWidgetPosition(String pageCode, int frameToMove, int destFrame, Connection conn) {
+		PreparedStatement stat = null;
+		try {
+			stat = conn.prepareStatement(MOVE_WIDGET);
+			stat.setInt(1, destFrame);
+			stat.setString(2, pageCode);
+			stat.setInt(3, frameToMove);
+			stat.executeUpdate();
+		} catch (Throwable t) {
+			_logger.error("Error while updating WidgetPosition. page: {} from position: {} to position {}", pageCode, frameToMove, destFrame,  t);
+			throw new RuntimeException("Error while updating widget position", t);
+		} finally {
 			closeDaoResources(null, stat);
-			closeDaoResources(null, stat2);
-			closeDaoResources(null, stat3, conn);
 		}
 	}
 	
@@ -669,49 +672,42 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
-
-	
+	@Override
 	public void removeWidget(IPage page, int pos) {
 		Connection conn = null;
-		PreparedStatement stat = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
+			
 			this.removeWidget(page.getCode(), pos, conn);
 			Date now = new Date();
 			this.updatePageMetadataDraftLastUpdate(page.getCode(), now, conn);
 			page.getDraftMetadata().setUpdatedAt(now);
-
+			
+			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
 			_logger.error("Error removing the widget from page '{}', frame {}", page.getCode(), pos,  t);
 			throw new RuntimeException("Error removing the widget from page '" + page.getCode() + "', frame " + pos, t);
 		} finally {
-			closeDaoResources(null, stat, conn);
+			closeConnection(conn);
 		}
 	}
-
-	public void removeWidget(String pageCode, int pos, Connection conn) {
-		
+	
+	protected void removeWidget(String pageCode, int pos, Connection conn) {
 		PreparedStatement stat = null;
 		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
 			stat = conn.prepareStatement(DELETE_WIDGET_FOR_PAGE_DRAFT);
 			stat.setString(1, pageCode);
 			stat.setInt(2, pos);
 			stat.executeUpdate();
-			
 		} catch (Throwable t) {
-			this.executeRollback(conn);
 			_logger.error("Error removing the widget from page '{}', frame {}", pageCode, pos,  t);
 			throw new RuntimeException("Error removing the widget from page '" + pageCode + "', frame " + pos, t);
 		} finally {
-			closeDaoResources(null, stat, null);
+			closeDaoResources(null, stat);
 		}
 	}
-
-
 	
 	@Override
 	public void joinWidget(IPage page, Widget widget, int pos) {
@@ -721,14 +717,16 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
+			
 			this.removeWidget(pageCode, pos, conn);
 			stat = conn.prepareStatement(ADD_WIDGET_FOR_PAGE_DRAFT);
 			this.valueAddWidgetStatement(pageCode, pos, widget, stat);
+			stat.executeUpdate();
 			
 			Date now = new Date();
 			this.updatePageMetadataDraftLastUpdate(pageCode, now, conn);
 			page.getDraftMetadata().setUpdatedAt(now);
-			stat.executeUpdate();
+			
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -788,45 +786,27 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
-	private void updatePageMetadataDraftLastUpdate(String pageCode, Date date, Connection conn) {
+	private void updatePageMetadataDraftLastUpdate(String pageCode, Date date, Connection conn) throws SQLException {
+		this.updatePageMetatataUpdate(pageCode, date, PageMetadataDraft.TABLE_NAME, conn);
+	}
+	private void updatePageMetadataOnlineLastUpdate(String pageCode, Date date, Connection conn) throws SQLException {
+		this.updatePageMetatataUpdate(pageCode, date, PageMetadataOnline.TABLE_NAME, conn);
+	}
+	private void updatePageMetatataUpdate(String pageCode, Date date, String tablename, Connection conn) throws SQLException {
 		PreparedStatement stat = null;
 		try {
-			
-			stat = updatePageMetatataUpdate(pageCode, date, PageMetadataDraft.TABLE_NAME, conn);
+			StringBuilder query = new StringBuilder("UPDATE ").append(tablename).append( " SET updatedat = ? WHERE code = ?");
+			stat = conn.prepareStatement(query.toString());
+			stat.setTimestamp(1, new Timestamp(date.getTime()));
+			stat.setString(2, pageCode);
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error while updating the page metadata record for table {} and page ", PageMetadataDraft.TABLE_NAME, pageCode,  t);
+			_logger.error("Error while updating the page metadata record for table {} and page {}", PageMetadataDraft.TABLE_NAME, pageCode,  t);
 			throw new RuntimeException("Error while updating the page metadata record for table " + PageMetadataDraft.TABLE_NAME + " and page " + pageCode, t);
 		} finally {
 			closeDaoResources(null, stat);
 		}
 	}
-	private void updatePageMetadataOnlineLastUpdate(String pageCode, Date date, Connection conn) {
-		PreparedStatement stat = null;
-		try {
-			stat = updatePageMetatataUpdate(pageCode, date, PageMetadataOnline.TABLE_NAME, conn);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error while updating the page metadata record for table {} and page ", PageMetadataDraft.TABLE_NAME, pageCode,  t);
-			throw new RuntimeException("Error while updating the page metadata record for table " + PageMetadataDraft.TABLE_NAME + " and page " + pageCode, t);
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-	
-
-	private PreparedStatement updatePageMetatataUpdate(String pageCode, Date date, String tablename, Connection conn)
-			throws SQLException {
-		PreparedStatement stat;
-		StringBuilder query = new StringBuilder("UPDATE ").append(tablename).append( " SET updatedat = ? WHERE code = ?");
-		stat = conn.prepareStatement(query.toString());
-		stat.setTimestamp(1, new Timestamp(date.getTime()));
-		stat.setString(2, pageCode);
-		return stat;
-	}
-	
-	
-
 	
 	protected IPageModelManager getPageModelManager() {
 		return _pageModelManager;
@@ -866,16 +846,15 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private static final String DELETE_PAGE = 
 		"DELETE FROM pages WHERE code = ? ";
 
-	private static final String DELETE_WIDGETS_FOR_PAGE = 
-		"DELETE FROM widgetconfig WHERE pagecode = ? ";
+	private static final String DELETE_WIDGETS_FOR_PAGE_ONLINE = 
+		"DELETE FROM " + WidgetConfig.TABLE_NAME + " WHERE pagecode = ? ";
 
-//	private static final String REMOVE_WIDGET_FROM_FRAME = 
+//	private static final String DELETE_WIDGET_FOR_PAGE_ONLINE = 
 //		DELETE_WIDGETS_FOR_PAGE + " AND framepos = ? ";
 
-	
 	private static final String DELETE_WIDGETS_FOR_PAGE_DRAFT = 
-			"DELETE FROM widgetconfig_draft WHERE pagecode = ? ";
-	
+			"DELETE FROM " + WidgetConfigDraft.TABLE_NAME + " WHERE pagecode = ? ";
+
 	private static final String DELETE_WIDGET_FOR_PAGE_DRAFT  = 
 			DELETE_WIDGETS_FOR_PAGE_DRAFT + " AND framepos = ? ";
 
@@ -894,27 +873,27 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		"UPDATE pages SET pos = (pos - 1) WHERE parentcode = ? AND pos > ? ";
 
 	private static final String ADD_WIDGET_FOR_PAGE = 
-		"INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ( ? , ? , ? , ? )";
+		"INSERT INTO " + WidgetConfig.TABLE_NAME + " (pagecode, framepos, widgetcode, config) VALUES ( ? , ? , ? , ? )";
 
 	private static final String ADD_WIDGET_FOR_PAGE_DRAFT = 
-			"INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ( ? , ? , ? , ? )";
+		"INSERT INTO " + WidgetConfigDraft.TABLE_NAME + " (pagecode, framepos, widgetcode, config) VALUES ( ? , ? , ? , ? )";
 
 	private static final String MOVE_WIDGET =
-		"UPDATE widgetconfig SET framepos = ? WHERE pagecode = ? and framepos = ? ";
-	
+		"UPDATE " + WidgetConfigDraft.TABLE_NAME + " SET framepos = ? WHERE pagecode = ? and framepos = ? ";
+
 	private static final String UPDATE_PAGE_TREE_POSITION = 
 			"UPDATE pages SET parentcode = ? , pos =?  WHERE code = ? ";
-	
+
 	private static final String EXISTS_PAGE_METADATA_PREFIX = "SELECT code FROM ";
-	
+
 	private static final String LOAD_PAGE_METADATA_PREFIX = 
 			"SELECT titles, modelcode, showinmenu, extraconfig, updatedat FROM ";
-	
+
 	private static final String PAGE_METADATA_WHERE_CODE = " WHERE code = ?";
-	
+
 	private static final String ADD_PAGE_METADATA_END = 
 			" (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES (?, ?, ?, ?, ?, ?) ";
-	
+
 //	private static final String ADD_ONLINE_PAGE_METADATA = "INSERT INTO " + PageMetadataOnline.TABLE_NAME + ADD_PAGE_METADATA_END;
 //	private static final String ADD_DRAFT_PAGE_METADATA  = "INSERT INTO " + PageMetadataDraft.TABLE_NAME  + ADD_PAGE_METADATA_END;
 	

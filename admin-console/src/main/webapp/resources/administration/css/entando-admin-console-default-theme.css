@@ -16,6 +16,18 @@
     padding: 0;
 }
 
+.overflow-visible{
+    overflow: visible;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.btn-no-button{
+    background: none;
+    border: 0;
+}
 
 /*-----ouline tolto-----*/
 button:focus {outline:0 !important;}

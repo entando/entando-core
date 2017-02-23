@@ -39,7 +39,7 @@ public class PageMetadata implements Cloneable {
 		try {
 			copy = this.getClass().newInstance();
 			ApsProperties titles = new ApsProperties();
-			titles.putAll(copy.getTitles());
+			titles.putAll(this.getTitles());
 			copy.setTitles(titles);
 			
 			Set<String> extraGroups = this.getExtraGroups();
@@ -51,8 +51,8 @@ public class PageMetadata implements Cloneable {
 			copy.setShowable(this.isShowable());
 			copy.setUseExtraTitles(this.isUseExtraTitles());
 			copy.setMimeType(this.getMimeType());
-			copy.setCharset(copy.getCharset());
-			copy.setUpdatedAt(copy.getUpdatedAt());
+			copy.setCharset(this.getCharset());
+			copy.setUpdatedAt(this.getUpdatedAt());
 		} catch (Throwable t) {
 			_logger.error("Error cloning {}" + this.getClass(), t);
 			throw new RuntimeException("Error cloning " + this.getClass(), t);

@@ -207,7 +207,9 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			}
 			
 			this.addWidgetForPage(page, WidgetConfigDest.DRAFT, conn);
-			this.addWidgetForPage(page, WidgetConfigDest.ON_LINE, conn);
+			if (onlineMetadata != null) {
+				this.addWidgetForPage(page, WidgetConfigDest.ON_LINE, conn);
+			}
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -439,16 +441,20 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
 			String pageCode = page.getCode();
+			
 			this.deleteOnlineWidgets(pageCode, conn);
 			this.deleteDraftWidgets(pageCode, conn);
 			this.deleteOnlinePageMetadata(pageCode, conn);
 			this.deleteDraftPageMetadata(pageCode, conn);
+			
 			this.updatePageRecord(page, conn);
+			
 			this.addDraftPageMetadata(pageCode, page.getDraftMetadata(), conn);
 			this.addOnlinePageMetadata(pageCode, page.getOnlineMetadata(), conn);
-			
-			this.addWidgetForPage(page, WidgetConfigDest.ON_LINE, conn);
 			this.addWidgetForPage(page, WidgetConfigDest.DRAFT, conn);
+			if (page.isOnline()) {
+				this.addWidgetForPage(page, WidgetConfigDest.ON_LINE, conn);
+			}
 			
 			conn.commit();
 		} catch (Throwable t) {

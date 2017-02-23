@@ -615,10 +615,12 @@ public class PageManager extends AbstractService
 	
 	private boolean isWidgetInUse(Widget[] widgets, String widgetTypeCode) {
 		boolean found = false;
-		for (Widget widget : widgets) {
-			if (null != widget && null != widget.getType() && widgetTypeCode.equals(widget.getType().getCode())) {
-				found = true;
-				break;
+		if (widgets != null) {
+			for (Widget widget : widgets) {
+				if (null != widget && null != widget.getType() && widgetTypeCode.equals(widget.getType().getCode())) {
+					found = true;
+					break;
+				}
 			}
 		}
 		return found;

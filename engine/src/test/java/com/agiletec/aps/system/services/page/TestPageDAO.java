@@ -39,15 +39,17 @@ public class TestPageDAO extends BaseTestCase {
 	public void testLoadPageList() throws Throwable {
 		try {
 			List<IPage> pages = _pageDao.loadPages();
-			String value = null;
-			boolean contains = false;
-			for (IPage page : pages) {
-				value = page.getCode();
-				if (value.equals("homepage")) {
-					contains = true;
-				}
-			}
-			assertTrue(contains);
+			IPage home = PageTestUtil.getPageByCode(pages, "homepage");
+			assertNotNull(home);
+			assertTrue(home.isOnline());
+			assertNotNull(home.getOnlineMetadata());
+			assertNotNull(home.getDraftMetadata());
+			
+			IPage draft = PageTestUtil.getPageByCode(pages, "pagina_draft");
+			assertNotNull(draft);
+			assertFalse(draft.isOnline());
+			assertNull(draft.getOnlineMetadata());
+			assertNotNull(draft.getDraftMetadata());
 		} catch (Throwable t) {
 			throw t;
 		}
@@ -64,14 +66,14 @@ public class TestPageDAO extends BaseTestCase {
 			this._pageDao.addPage(newPageForTest);
 			extractedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
 
-			PageTestUtil.comparePagesFull(newPageForTest, extractedPage);
+			PageTestUtil.comparePagesFull(newPageForTest, extractedPage, false);
 			PageTestUtil.compareWidgets(newPageForTest.getDraftWidgets(), extractedPage.getOnlineWidgets());
 
 			IPage pageToUpdate = this.updatePageForTest(extractedPage, this._pageDao);
 			this._pageDao.updatePage(pageToUpdate);
 			IPage updatedPage = PageTestUtil.getPageByCode( this._pageDao.loadPages(), "temp");
 
-			PageTestUtil.comparePagesFull(pageToUpdate, updatedPage);
+			PageTestUtil.comparePagesFull(pageToUpdate, updatedPage, true);
 		} catch (Throwable t) {
 			throw t;
 		} finally {
@@ -87,7 +89,7 @@ public class TestPageDAO extends BaseTestCase {
 		try {
 			this._pageDao.addPage(newPageForTest);
 			addedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
-			PageTestUtil.comparePagesFull(newPageForTest, addedPage);
+			PageTestUtil.comparePagesFull(newPageForTest, addedPage, false);
 
 			this._pageDao.updateWidgetPosition(pageCode, 2, 1);
 			IPage updatedPage = PageTestUtil.getPageByCode( this._pageDao.loadPages(), pageCode);
@@ -117,7 +119,7 @@ public class TestPageDAO extends BaseTestCase {
 		try {
 			this._pageDao.addPage(newPageForTest);
 			addedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
-			PageTestUtil.comparePagesFull(newPageForTest, addedPage);
+			PageTestUtil.comparePagesFull(newPageForTest, addedPage, false);
 
 			Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", null, this._widgetTypeManager);
 			this._pageDao.joinWidget(addedPage, widgetToAdd, 3);
@@ -138,9 +140,8 @@ public class TestPageDAO extends BaseTestCase {
 			assertEquals(widgetToAdd, newWidgets[3]);
 
 			this._pageDao.setPageOnline(pageCode);
-			IPage publishedPage = PageTestUtil.getPageByCode(
-					this._pageDao.loadPages(), pageCode);
-			PageTestUtil.comparePages(updatedPage, updatedPage, false);
+			IPage publishedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
+			PageTestUtil.comparePages(updatedPage, updatedPage, true);
 			PageTestUtil.comparePageMetadata(updatedPage.getDraftMetadata(), publishedPage.getDraftMetadata(), null);
 			PageTestUtil.comparePageMetadata(updatedPage.getOnlineMetadata(), publishedPage.getOnlineMetadata(), null);
 			PageTestUtil.compareWidgets(updatedPage.getDraftWidgets(), publishedPage.getDraftWidgets());
@@ -182,7 +183,7 @@ public class TestPageDAO extends BaseTestCase {
 		try {
 			this._pageDao.addPage(newPageForTest);
 			addedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
-			PageTestUtil.comparePagesFull(newPageForTest, addedPage);
+			PageTestUtil.comparePagesFull(newPageForTest, addedPage, false);
 
 			IPage parent = PageTestUtil.getPageByCode(
 					this._pageDao.loadPages(), "homepage");
@@ -244,7 +245,7 @@ public class TestPageDAO extends BaseTestCase {
 		pageToUpdate.setDraftWidgets(modifiesWidgets);
 		return pageToUpdate;
 	}
-
+	
 	private void init() throws Exception {
 		try {
 			DataSource dataSource = (DataSource) this.getApplicationContext().getBean("portDataSource");

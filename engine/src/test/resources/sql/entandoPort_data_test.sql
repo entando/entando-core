@@ -162,6 +162,7 @@ INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_1
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_1', 'homepage', 2, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('contentview', 'service', 4, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_2', 'homepage', 3, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_draft', 'homepage', 7, 'free');
 
 INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -368,6 +369,16 @@ INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconf
 </config>
 
 ', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_draft', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page Draft</property>
+<property key="it">Pagina Draft</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>true</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
 
 
 INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) VALUES ('login_form', '<?xml version="1.0" encoding="UTF-8"?>
@@ -410,8 +421,6 @@ INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode,
 ', 1, 'free');
 
 
-
-
 INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagina_1', 2, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="navSpec">abs(1).subtree(2)</property>
@@ -427,6 +436,37 @@ INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagin
 ');
 
 
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_1', 2, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="navSpec">abs(1).subtree(2)</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('contentview', 1, 'login_form', NULL);
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 0, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="navSpec">abs(1).subtree(2)</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="actionPath">/do/login</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_draft', 1, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="navSpec">abs(1).subtree(2)</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_draft', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="actionPath">/do/login</property>
+</properties>
+
+');
 
 
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'langs', 'Definition of the system languages', '<?xml version="1.0" encoding="UTF-8"?>

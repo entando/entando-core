@@ -2,7 +2,6 @@ package com.agiletec.aps.system.services.page;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 
 import java.util.Arrays;
@@ -20,8 +19,8 @@ import com.agiletec.aps.util.ApsProperties;
 
 public class PageTestUtil {
 	
-	public static void comparePagesFull(IPage expected, IPage actual) {
-		comparePages(expected, actual, false);
+	public static void comparePagesFull(IPage expected, IPage actual, boolean changed) {
+		comparePages(expected, actual, changed);
 		comparePageMetadata(expected.getDraftMetadata(), actual.getDraftMetadata(), 0);
 		comparePageMetadata(expected.getOnlineMetadata(), actual.getOnlineMetadata(), 0);
 		compareWidgets(expected.getDraftWidgets(), actual.getDraftWidgets());
@@ -48,15 +47,10 @@ public class PageTestUtil {
 			}
 			assertEquals(expected.getGroup(), actual.getGroup());
 			assertEquals(expected.getTitles(), actual.getTitles());
-			assertEquals(expected.getTitle("it"), actual.getTitle("it"));
 //			assertEquals(expected.getPath(), actual.getPath());
 //			assertEquals(expected.getPath("|", true), actual.getPath("|", true));
 //			assertEquals(expected.getPathArray(), actual.getPathArray());
-			if (changed) {
-				assertNotSame(expected.isChanged(), actual.isChanged());
-			} else {
-				assertEquals(expected.isChanged(), actual.isChanged());
-			}
+			assertEquals(changed, actual.isChanged());
 			assertEquals(expected.isOnline(), actual.isOnline());
 			assertEquals(expected.isShowable(), actual.isShowable());
 			assertEquals(expected.isUseExtraTitles(), actual.isUseExtraTitles());
@@ -179,6 +173,27 @@ public class PageTestUtil {
 		WidgetType widgetType = widgetTypeManager.getWidgetType(widgetCode);
 		widget.setType(widgetType);
 		return widget;
+	}
+	
+	public static Widget[] getValuedWidgets(Widget[] widgets) {
+		int inUse = 0;
+		Widget[] widgetsInUse = {};
+		if (widgets != null) {
+			for (Widget current : widgets) {
+				if (current != null) {
+					inUse++;
+				}
+			}
+			widgetsInUse = new Widget[inUse];
+			int index = 0;
+			for (int i = 0; i < widgets.length; i++) {
+				Widget current = widgets[i];
+				if (current != null) {
+					widgetsInUse[index++] = current;
+				}
+			}
+		}
+		return widgetsInUse;
 	}
 	
 	public static void deletePage(IPage page, PageDAO pageDAO) throws Throwable {

@@ -61,9 +61,9 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
         for (int i = 0; i < children.length; i++) {
             IPage newCurrentTreeNode = children[i];
             if (this.isPageAllowed(newCurrentTreeNode, groupCodes, alsoFreeViewPages)) {
-                TreeNode newNode = new TreeNode();
-                this.fillTreeNode(newNode, currentNode, newCurrentTreeNode);
-                currentNode.addChild(new OnlinePageNode(newCurrentTreeNode));
+				TreeNode newNode = new OnlinePageNode(newCurrentTreeNode);
+				this.fillTreeNode(newNode, currentNode, newCurrentTreeNode);
+				currentNode.addChild(newNode);;
                 this.addTreeWrapper(newNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
             } else {
                 this.addTreeWrapper(currentNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);

@@ -127,7 +127,7 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 		assertEquals(Action.SUCCESS, result);
 		action = (WidgetsViewerAction) this.getAction();
 		pageUtilizers = action.getWidgetUtilizers();
-		assertEquals(1, pageUtilizers.size());
+		assertEquals(3, pageUtilizers.size());
 		assertEquals("pagina_1", pageUtilizers.get(0).getCode());
 		
 		result = this.executeViewWidgetUtilizers("admin", "content_viewer");

@@ -126,7 +126,7 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 		Map<String, List<Object>> references = pageModelAction.getReferences();
 		assertFalse(references.isEmpty());
 		assertEquals(1, references.size());
-		assertEquals(11, references.get("PageManagerUtilizers").size());
+		assertEquals(12, references.get("PageManagerUtilizers").size());
 	}
 	
 	public void testTrashPageModels_2() throws Throwable {
@@ -159,7 +159,7 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 		Map<String, List<Object>> references = pageModelAction.getReferences();
 		assertFalse(references.isEmpty());
 		assertEquals(1, references.size());
-		assertEquals(11, references.get("PageManagerUtilizers").size());
+		assertEquals(12, references.get("PageManagerUtilizers").size());
 	}
 	
 	public void testDeletePageModels_2() throws Throwable {

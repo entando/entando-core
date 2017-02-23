@@ -35,6 +35,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
 /**
@@ -691,6 +692,13 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		this._configManager = configManager;
 	}
 	
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
+	
 	private int _strutsAction;
 	
 	private String _widgetTypeCode;
@@ -715,5 +723,6 @@ public class WidgetTypeAction extends AbstractPortalAction {
 	private ConfigInterface _configManager;
 	
 	public final static int NEW_USER_WIDGET = 5;
+	private IPageActionHelper _pageActionHelper;
 	
 }

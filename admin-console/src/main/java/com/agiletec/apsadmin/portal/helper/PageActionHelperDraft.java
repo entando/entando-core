@@ -28,6 +28,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
 import com.agiletec.apsadmin.system.DraftPageNode;
@@ -65,9 +66,9 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 		for (int i = 0; i < children.length; i++) {
 			IPage newCurrentTreeNode = children[i];
 			if (this.isPageAllowed(newCurrentTreeNode, groupCodes, alsoFreeViewPages)) {
-				TreeNode newNode = new TreeNode();
+				TreeNode newNode = new DraftPageNode(newCurrentTreeNode);
 				this.fillTreeNode(newNode, currentNode, newCurrentTreeNode);
-				currentNode.addChild(new DraftPageNode(newCurrentTreeNode));
+				currentNode.addChild(newNode);
 				this.addTreeWrapper(newNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
 			} else {
 				this.addTreeWrapper(currentNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
@@ -82,14 +83,20 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 	 * @return Il nodo root virtuale.
 	 */
 	private TreeNode getVirtualRoot() {
-		Page virtualRoot = new Page();
+		Page virtualRootPage = new Page();
+		PageMetadata meta = new PageMetadata();
+		virtualRootPage.setDraftMetadata(meta);
+		TreeNode virtualRoot = new DraftPageNode(virtualRootPage);
 		virtualRoot.setCode(AbstractPortalAction.VIRTUAL_ROOT_CODE);
 		List<Lang> langs = this.getLangManager().getLangs();
 		for (int i = 0; i < langs.size(); i++) {
 			Lang lang = langs.get(i);
 			virtualRoot.setTitle(lang.getCode(), "ROOT");
+//			meta.setTitle(lang.getCode(), "ROOT");
+//			virtualRootPage.setDraftMetadata(meta);
 		}
-		return new DraftPageNode(virtualRoot);
+
+		return virtualRoot;
 	}
 
 	protected void fillTreeNode(TreeNode nodeToValue, TreeNode parent, ITreeNode realNode) {

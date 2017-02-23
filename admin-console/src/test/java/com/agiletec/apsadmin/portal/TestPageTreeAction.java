@@ -44,7 +44,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(6, root.getChildren().length);
+		assertEquals(7, root.getChildren().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		assertEquals(0, showableRoot.getChildren().length);

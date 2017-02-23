@@ -118,18 +118,18 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 			result = this.executeJoinShowlet(pageCode, frame, showletTypeCode, "admin");
 			assertEquals(Action.SUCCESS, result);
 			pagina_1 = this._pageManager.getPage(pageCode);
-			assertNotNull(pagina_1.getWidgets()[frame]);
-			assertEquals(showletTypeCode, pagina_1.getWidgets()[frame].getType().getCode());
+			assertNotNull(pagina_1.getDraftWidgets()[frame]);
+			assertEquals(showletTypeCode, pagina_1.getDraftWidgets()[frame].getType().getCode());
 			
 			result = this.executeTrashShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
 			pagina_1 = this._pageManager.getPage(pageCode);
-			assertNotNull(pagina_1.getWidgets()[frame]);
+			assertNotNull(pagina_1.getDraftWidgets()[frame]);
 			
 			result = this.executeDeleteShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
 			pagina_1 = this._pageManager.getPage(pageCode);
-			assertNull(pagina_1.getWidgets()[frame]);
+			assertNull(pagina_1.getDraftWidgets()[frame]);
 		} catch (Throwable t) {
 			throw t;
 		} finally {
@@ -174,7 +174,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 			result = this.executeDeleteShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
 			IPage modifiedContentview = this._pageManager.getPage(pageCode);
-			Widget[] modifiedShowlets = modifiedContentview.getWidgets();
+			Widget[] modifiedShowlets = modifiedContentview.getDraftWidgets();
 			assertNull(modifiedShowlets[frame]);
 		} catch (Throwable t) {
 			throw t;

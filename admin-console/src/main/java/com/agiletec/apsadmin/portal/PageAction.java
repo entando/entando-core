@@ -212,6 +212,7 @@ public class PageAction extends AbstractPortalAction {
 			this.setGroup(selectedPage.getGroup());
 			PageMetadata draftMetadata = copiedPage.getDraftMetadata();
 			this.copyMetadataToForm(draftMetadata);
+			this.getTitles().clear();
 			this.setParentPageCode(selectedNode);
 		} catch (Throwable t) {
 			_logger.error("error in paste", t);

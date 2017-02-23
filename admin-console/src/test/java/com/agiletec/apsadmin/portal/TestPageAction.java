@@ -348,7 +348,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
-	public void testSavePage_1() throws Throwable {
+	public void testSavePage_Draft_1() throws Throwable {
 		String pageCode = "pagina_test";
 		assertNull(this._pageManager.getPage(pageCode));
 		try {
@@ -363,9 +363,9 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode);
+			IPage addedPage = this._pageManager.getPage(pageCode, false);
 			assertNotNull(addedPage);
-			assertEquals("Pagina Test 1", addedPage.getTitles().getProperty("it"));
+			assertEquals("Pagina Test 1", addedPage.getDraftMetadata().getTitles().getProperty("it"));
 		} catch (Throwable t) {
 			throw t;
 		} finally {
@@ -373,7 +373,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
-	public void testSavePage_2() throws Throwable {
+	public void testSavePage_Draft_2() throws Throwable {
 		String pageCode = "pagina_test";
 		assertNull(this._pageManager.getPage(pageCode));
 		try {
@@ -389,11 +389,11 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode);
+			IPage addedPage = this._pageManager.getPage(pageCode, false);
 			assertNotNull(addedPage);
-			assertEquals("Pagina Test 2", addedPage.getTitles().getProperty("it"));
-			Widget[] showlets = addedPage.getWidgets();
-			assertEquals(addedPage.getModel().getFrames().length, showlets.length);
+			assertEquals("Pagina Test 2", addedPage.getDraftMetadata().getTitles().getProperty("it"));
+			Widget[] showlets = addedPage.getDraftWidgets();
+			assertEquals(addedPage.getDraftMetadata().getModel().getFrames().length, showlets.length);
 			for (int i = 0; i < showlets.length; i++) {
 				Widget widget = showlets[i];
 				if (i==3) {

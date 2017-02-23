@@ -114,7 +114,7 @@
 			parent="abstractBaseAction" >
 		<property name="pageManager" ref="PageManager" />
 		<property name="linkAttributeHelper" ref="jacmsLinkAttributeActionHelper" />
-		<property name="treeHelper" ref="pageActionHelper" />
+		<property name="treeHelper" ref="pageActionHelperOnline" />
 	</bean>
 	
 	<bean id="jacmsContentLinkAttributeAction" scope="prototype" 
@@ -138,7 +138,7 @@
 	<bean id="jacmsPageLinkHypertextAttributeAction" scope="prototype" 
 			class="com.agiletec.plugins.jacms.apsadmin.content.attribute.action.hypertext.PageLinkAttributeAction" 
 			parent="abstractBaseAction">
-		<property name="treeHelper" ref="pageActionHelper" />
+		<property name="treeHelper" ref="pageActionHelperOnline" />
 		<property name="pageManager" ref="PageManager" />
 	</bean>
 	

@@ -31,135 +31,111 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
- * @author M.Diana
+ * @author M.Diana, E.Mezzano
  */
 public class TestPageManager extends BaseTestCase {
-	
+
 	@Override
 	protected void setUp() throws Exception {
-        super.setUp();
-        this.init();
-    }
+		super.setUp();
+		this.init();
+	}
 
-    public void testAddUpdateMoveDeletePage() throws Throwable {
+	public void testAddUpdateMoveDeletePage() throws Throwable {
 		try {
 			_pageManager.deletePage("temp");
 			_pageManager.deletePage("temp1");
 			_pageManager.deletePage("temp2");
+
+			this.checkAddPage();
+
+			this.checkUpdatePage();
+
+			this.movePage();
+
+			this.deletePage();
 		} catch (Throwable t) {
 			throw t;
+		} finally {
+			_pageManager.deletePage("temp");
+			_pageManager.deletePage("temp1");
+			_pageManager.deletePage("temp2");
 		}
-		Page page = new Page();
-		PageMetadata metadata = new PageMetadata();
-		// TODO Verificare e modificare
-		page.setOnlineMetadata(metadata);
-		page.setDraftMetadata(metadata);
-		page.setCode("temp");
-		IPage parentPage = _pageManager.getPage("service");
-		assertNotNull(parentPage);
-		page.setParent(parentPage);
-		page.setParentCode(parentPage.getCode());
-		PageModel pageModel = parentPage.getModel();
-		assertNotNull(pageModel);
-		metadata.setModel(pageModel);		
-		page.setGroup("free");
-		metadata.setShowable(true);	
-		metadata.setTitle("it", "temptitle");
-		ApsProperties titles = new ApsProperties();
-		titles.setProperty("it", "pagina temporanea");
-		metadata.setTitles(titles);
-		Widget widget = new Widget();
-		ApsProperties config = new ApsProperties();
-		config.setProperty("temp", "tempValue");
-		config.setProperty("contentId", "ART11");
-		widget.setConfig(config);
-		WidgetType widgetType = new WidgetType();
-		widgetType.setCode("content_viewer");
-		widget.setType(widgetType);
-		Widget[] widgets = {widget};
-		page.setOnlineWidgets(widgets);
-		page.setDraftWidgets(widgets);
-		_pageManager.addPage(page);
-		parentPage = _pageManager.getPage("service");
-		page.setParent(parentPage);		
-		page.setCode("temp1");	
-		_pageManager.addPage(page);
-		parentPage = _pageManager.getPage("service");
-		page.setParent(parentPage);		
-		page.setCode("temp2");	
-		_pageManager.addPage(page);
-		
-		IPage extractedPage = _pageManager.getPage("temp");
-		assertNotNull(extractedPage);
-		assertEquals(extractedPage.getCode(), "temp");
-		assertEquals(extractedPage.getGroup(), "free");
-		
-		PageMetadata onlineMetadata = extractedPage.getOnlineMetadata();
-		assertEquals(onlineMetadata.getTitle("it"), "pagina temporanea");
-		assertEquals(onlineMetadata.getModel().getCode(), "service");
-		assertEquals(onlineMetadata.isShowable(), true);
-		
-		PageMetadata draftMetadata = extractedPage.getDraftMetadata();
-		assertEquals(draftMetadata.getTitle("it"), "pagina temporanea");
-		assertEquals(draftMetadata.getModel().getCode(), "service");
-		assertEquals(draftMetadata.isShowable(), true);
-		
-		// TODO Verificare Widget online/draft
-		widgets = extractedPage.getWidgets();
-		assertTrue(widgets[0].getConfig().containsKey("temp"));
-		assertTrue(widgets[0].getConfig().containsKey("contentId"));
-		assertEquals(widgets[0].getType().getCode(), "content_viewer");
-		this.updatePage();
-		this.movePage();
-		this.deletePage();
 	}
 
-	private void updatePage() throws Exception {
-		Page page = new Page();
-		PageMetadata metadata = new PageMetadata();
-		// TODO Verificare e modificare
-		page.setOnlineMetadata(metadata);
-		page.setDraftMetadata(metadata);
-		page.setCode("temp");
+	public void checkAddPage() throws Throwable {
 		IPage parentPage = _pageManager.getPage("service");
-		assertNotNull(parentPage);
-		page.setParent(parentPage);
-		page.setParentCode(parentPage.getCode());
-		PageModel pageModel = parentPage.getModel();
-		assertNotNull(pageModel);
-		metadata.setModel(pageModel);		
-		page.setGroup("free");
-		metadata.setShowable(false);	
-		page.setTitle("en", "temptitle1");
-		ApsProperties titles = new ApsProperties();
-		titles.setProperty("it", "pagina temporanea1");
-		metadata.setTitles(titles);
-		Widget widget = new Widget();
-		ApsProperties config = new ApsProperties();
-		config.setProperty("temp1", "temp1");
-		config.setProperty("contentId", "ART11");
-		widget.setConfig(config);
-		WidgetType widgetType = new WidgetType();
-		widgetType.setCode("content_viewer");
-		widget.setType(widgetType);
-		Widget[] widgets = {widget};
-		page.setOnlineWidgets(widgets);
-		page.setDraftWidgets(widgets);
-		_pageManager.updatePage(page);
+		PageModel pageModel = parentPage.getOnlineMetadata().getModel();
+		PageMetadata metadata = PageTestUtil.createPageMetadata(
+				pageModel.getCode(), true, "pagina temporanea", null, null,
+				false, null, null);
+
+		ApsProperties config = PageTestUtil.createProperties("temp", "tempValue", "contentId", "ART11");
+		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
+		Widget[] widgets = { widgetToAdd };
 		
-		IPage extractedPage = _pageManager.getPage("temp");
-		assertNotNull(extractedPage);
-		assertEquals(extractedPage.getCode(), "temp");
-		assertEquals(extractedPage.getGroup(), "free");
-		assertEquals(extractedPage.getTitle("it"), "pagina temporanea1");
-		assertEquals(extractedPage.getModel().getCode(), "service");
-		assertEquals(extractedPage.isShowable(), false);
-		widgets = extractedPage.getWidgets();
-		assertTrue(widgets[0].getConfig().containsKey("temp1"));
-		assertTrue(widgets[0].getConfig().containsKey("contentId"));
-		assertEquals(widgets[0].getType().getCode(), "content_viewer");
-	}	
-	
+		Page page = PageTestUtil.createPage("temp", parentPage, "free", metadata, metadata, widgets, widgets);
+		_pageManager.addPage(page);
+		
+		IPage addedPage = _pageManager.getDraftPage("temp");
+		PageTestUtil.comparePages(page, addedPage, false);
+		PageTestUtil.comparePageMetadata(page.getOnlineMetadata(), addedPage.getOnlineMetadata(), -1);
+		PageTestUtil.comparePageMetadata(page.getDraftMetadata(), addedPage.getDraftMetadata(), -1);
+		assertEquals(widgetToAdd, addedPage.getOnlineWidgets()[0]);
+		assertEquals(widgetToAdd, addedPage.getDraftWidgets()[0]);
+		
+		parentPage = _pageManager.getPage("service");
+		page.setParent(parentPage);
+		page.setCode("temp1");
+		_pageManager.addPage(page);
+		addedPage = _pageManager.getDraftPage("temp1");
+		PageTestUtil.comparePages(page, addedPage, false);
+		PageTestUtil.comparePageMetadata(page.getOnlineMetadata(), addedPage.getOnlineMetadata(), -1);
+		PageTestUtil.comparePageMetadata(page.getDraftMetadata(), addedPage.getDraftMetadata(), -1);
+		assertEquals(widgetToAdd, addedPage.getOnlineWidgets()[0]);
+		assertEquals(widgetToAdd, addedPage.getDraftWidgets()[0]);
+		
+		parentPage = _pageManager.getPage("homepage");
+		page.setParent(parentPage);
+		page.setCode("temp2");
+		_pageManager.addPage(page);
+		addedPage = _pageManager.getDraftPage("temp2");
+		PageTestUtil.comparePages(page, addedPage, false);
+		PageTestUtil.comparePageMetadata(page.getOnlineMetadata(), addedPage.getOnlineMetadata(), -1);
+		PageTestUtil.comparePageMetadata(page.getDraftMetadata(), addedPage.getDraftMetadata(), -1);
+		assertEquals(widgetToAdd, addedPage.getOnlineWidgets()[0]);
+		assertEquals(widgetToAdd, addedPage.getDraftWidgets()[0]);
+	}
+
+	private void checkUpdatePage() throws Exception {
+		Page dbPage = (Page) _pageManager.getPage("temp");
+		Page pageToUpdate = PageTestUtil.createPage("temp", dbPage.getParent(), "free", 
+				dbPage.getOnlineMetadata().clone(), dbPage.getDraftMetadata().clone(), 
+				PageTestUtil.copyArray(dbPage.getOnlineWidgets()), PageTestUtil.copyArray(dbPage.getDraftWidgets()));
+		PageMetadata onlineMetadata = pageToUpdate.getOnlineMetadata();
+		onlineMetadata.setTitle("en", "temptitle1");
+		onlineMetadata.setShowable(true);
+
+		// TODO Verificare e modificare
+		ApsProperties config = PageTestUtil.createProperties("temp1", "temp1", "contentId", "ART11");
+		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
+		pageToUpdate.getDraftWidgets()[2] = widgetToAdd;
+		_pageManager.updatePage(pageToUpdate);
+
+		IPage updatedPage = _pageManager.getPage(dbPage.getCode());
+		assertNotNull(updatedPage);
+		PageTestUtil.comparePages(pageToUpdate, updatedPage, true);
+		PageTestUtil.comparePageMetadata(pageToUpdate.getOnlineMetadata(), updatedPage.getOnlineMetadata(), -1);
+		PageTestUtil.comparePageMetadata(pageToUpdate.getDraftMetadata(), updatedPage.getDraftMetadata(), -1);
+		assertEquals(2, pageToUpdate.getOnlineMetadata().getTitles().size());
+		assertEquals(1, pageToUpdate.getDraftMetadata().getTitles().size());
+		PageTestUtil.compareWidgets(pageToUpdate.getOnlineWidgets(), updatedPage.getOnlineWidgets());
+		PageTestUtil.compareWidgets(pageToUpdate.getDraftWidgets(), updatedPage.getDraftWidgets());
+		assertNull(updatedPage.getOnlineWidgets()[2]);
+		assertNotNull(updatedPage.getDraftWidgets()[2]);
+		assertEquals(widgetToAdd, updatedPage.getDraftWidgets()[2]);
+	}
+
 	private void movePage() throws Exception {
 		_pageManager.deletePage("temp1");
 		boolean moveUp = true;
@@ -176,26 +152,27 @@ public class TestPageManager extends BaseTestCase {
 		page = pages[len - 1];
 		assertEquals(page.getCode(), "temp2");
 	}
-	
+
 	private void deletePage() throws Throwable {
-		DataSource dataSource = (DataSource) this.getApplicationContext().getBean("portDataSource");
+		DataSource dataSource = (DataSource) this.getApplicationContext()
+				.getBean("portDataSource");
 		MockWidgetsDAO mockWidgetsDAO = new MockWidgetsDAO();
 		mockWidgetsDAO.setDataSource(dataSource);
-        _pageManager.deletePage("temp");
+		_pageManager.deletePage("temp");
 		_pageManager.deletePage("temp2");
 		IPage page = _pageManager.getPage("temp");
 		assertNull(page);
-        boolean exists = true;
-        try {
-            exists = mockWidgetsDAO.exists("temp");
-            assertEquals(exists, false);
-            exists = mockWidgetsDAO.exists("temp2");
-            assertEquals(exists, false);
-        } catch (Throwable e) {
-            throw e;
-        }
+		boolean exists = true;
+		try {
+			exists = mockWidgetsDAO.exists("temp");
+			assertEquals(exists, false);
+			exists = mockWidgetsDAO.exists("temp2");
+			assertEquals(exists, false);
+		} catch (Throwable e) {
+			throw e;
+		}
 	}
-	
+
 	public void testFailureJoinWidget_1() throws Throwable {
 		String pageCode = "wrongPageCode";
 		int frame = 2;
@@ -204,30 +181,30 @@ public class TestPageManager extends BaseTestCase {
 			this._pageManager.joinWidget(pageCode, widget, frame);
 			fail();
 		} catch (ApsSystemException e) {
-			//Errore per pagina inesistente
+			// Errore per pagina inesistente
 		} catch (Throwable t) {
 			throw t;
 		}
 	}
-	
+
 	public void testFailureJoinWidget_2() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 6;
 		IPage pagina_1 = this._pageManager.getPage(pageCode);
-		assertTrue(pagina_1.getWidgets().length<=frame);
+		assertTrue(pagina_1.getWidgets().length <= frame);
 		try {
 			Widget widget = this.getWidgetForTest("login", null);
 			this._pageManager.joinWidget(pageCode, widget, frame);
 			fail();
 		} catch (ApsSystemException e) {
-			//Errore per frame errato in modello
+			// Errore per frame errato in modello
 		} catch (Throwable t) {
 			throw t;
 		} finally {
 			this._pageManager.updatePage(pagina_1);
 		}
 	}
-	
+
 	public void testFailureRemoveWidget_1() throws Throwable {
 		String pageCode = "wrongPageCode";
 		int frame = 2;
@@ -235,27 +212,27 @@ public class TestPageManager extends BaseTestCase {
 			this._pageManager.removeWidget(pageCode, frame);
 			fail();
 		} catch (ApsSystemException e) {
-			//Errore per pagina inesistente
+			// Errore per pagina inesistente
 		} catch (Throwable t) {
 			throw t;
 		}
 	}
-	
+
 	public void testFailureRemoveWidget_2() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 6;
 		IPage pagina_1 = this._pageManager.getPage(pageCode);
-		assertTrue(pagina_1.getWidgets().length<=frame);
+		assertTrue(pagina_1.getWidgets().length <= frame);
 		try {
 			this._pageManager.removeWidget(pageCode, frame);
 			fail();
 		} catch (ApsSystemException e) {
-			//Errore per frame errato in modello
+			// Errore per frame errato in modello
 		} catch (Throwable t) {
 			throw t;
 		}
 	}
-	
+
 	public void testJoinRemoveWidget() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 1;
@@ -268,7 +245,7 @@ public class TestPageManager extends BaseTestCase {
 			Widget extracted = pagina_1.getWidgets()[frame];
 			assertNotNull(extracted);
 			assertEquals("login_form", extracted.getType().getCode());
-			
+
 			this._pageManager.removeWidget(pageCode, frame);
 			pagina_1 = this._pageManager.getPage(pageCode);
 			extracted = pagina_1.getWidgets()[frame];
@@ -279,16 +256,18 @@ public class TestPageManager extends BaseTestCase {
 			throw t;
 		}
 	}
-	
+
 	public void testSearchPage() throws Throwable {
 		List<String> allowedGroupCodes = new ArrayList<String>();
 		allowedGroupCodes.add(Group.ADMINS_GROUP_NAME);
 		try {
-			List<IPage> pagesFound = this._pageManager.searchPages("aGIna_", allowedGroupCodes);
+			List<IPage> pagesFound = this._pageManager.searchPages("aGIna_",
+					allowedGroupCodes);
 			assertNotNull(pagesFound);
 			assertEquals(4, pagesFound.size());
 			String pageCodeToken = "agina";
-			pagesFound = this._pageManager.searchPages(pageCodeToken, allowedGroupCodes);
+			pagesFound = this._pageManager.searchPages(pageCodeToken,
+					allowedGroupCodes);
 			// verify the result found
 			assertNotNull(pagesFound);
 			Iterator<IPage> itr = pagesFound.iterator();
@@ -310,22 +289,25 @@ public class TestPageManager extends BaseTestCase {
 			throw t;
 		}
 	}
-	
+
 	public void testGetWidgetUtilizers() throws Throwable {
 		List<IPage> pageUtilizers1 = this._pageManager.getWidgetUtilizers(null);
 		assertNotNull(pageUtilizers1);
 		assertEquals(0, pageUtilizers1.size());
-		
-		List<IPage> pageUtilizers2 = this._pageManager.getWidgetUtilizers("logic_type");
+
+		List<IPage> pageUtilizers2 = this._pageManager
+				.getWidgetUtilizers("logic_type");
 		assertNotNull(pageUtilizers2);
 		assertEquals(0, pageUtilizers2.size());
-		
-		List<IPage> pageUtilizers3 = this._pageManager.getWidgetUtilizers("leftmenu");
+
+		List<IPage> pageUtilizers3 = this._pageManager
+				.getWidgetUtilizers("leftmenu");
 		assertNotNull(pageUtilizers3);
 		assertEquals(1, pageUtilizers3.size());
 		assertEquals("pagina_1", pageUtilizers3.get(0).getCode());
-		
-		List<IPage> pageUtilizers4 = this._pageManager.getWidgetUtilizers("content_viewer");
+
+		List<IPage> pageUtilizers4 = this._pageManager
+				.getWidgetUtilizers("content_viewer");
 		assertNotNull(pageUtilizers4);
 		assertEquals(7, pageUtilizers4.size());
 		assertEquals("homepage", pageUtilizers4.get(0).getCode());
@@ -336,8 +318,9 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals("customers_page", pageUtilizers4.get(5).getCode());
 		assertEquals("customer_subpage_2", pageUtilizers4.get(6).getCode());
 	}
-	
-	private Widget getWidgetForTest(String widgetTypeCode, ApsProperties config) throws Throwable {
+
+	private Widget getWidgetForTest(String widgetTypeCode, ApsProperties config)
+			throws Throwable {
 		WidgetType type = this._widgetTypeManager.getWidgetType(widgetTypeCode);
 		Widget widget = new Widget();
 		widget.setType(type);
@@ -346,17 +329,19 @@ public class TestPageManager extends BaseTestCase {
 		}
 		return widget;
 	}
-	
+
 	private void init() throws Exception {
-    	try {
-    		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-    		this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
-    	} catch (Throwable t) {
-            throw new Exception(t);
-        }
-    }
-    
+		try {
+			this._pageManager = (IPageManager) this
+					.getService(SystemConstants.PAGE_MANAGER);
+			this._widgetTypeManager = (IWidgetTypeManager) this
+					.getService(SystemConstants.WIDGET_TYPE_MANAGER);
+		} catch (Throwable t) {
+			throw new Exception(t);
+		}
+	}
+
 	private IPageManager _pageManager = null;
-    private IWidgetTypeManager _widgetTypeManager;
-	
+	private IWidgetTypeManager _widgetTypeManager;
+
 }

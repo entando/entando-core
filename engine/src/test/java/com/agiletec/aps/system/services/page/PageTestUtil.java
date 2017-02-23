@@ -5,6 +5,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -123,6 +124,20 @@ public class PageTestUtil {
 		return extractedPage;
 	}
 	
+	public static Page createPage(String code, IPage parentPage, String groupName, PageMetadata onlineMetadata, 
+			PageMetadata draftMetadata, Widget[] onlineWidgets, Widget[] draftWidgets) {
+		Page page = new Page();
+    	page.setCode(code);
+    	page.setParent(parentPage);
+    	page.setParentCode(parentPage.getCode());
+    	page.setOnlineMetadata(onlineMetadata);
+    	page.setDraftMetadata(draftMetadata);
+    	page.setGroup(groupName);
+    	page.setOnlineWidgets(onlineWidgets);
+    	page.setDraftWidgets(draftWidgets);
+		return page;
+	}
+	
 	public static PageMetadata createPageMetadata(String pageModelCode, boolean showable, String defaultTitle, 
 			String mimeType, String charset, boolean useExtraTitles, Set<String> extraGroups, Date updatedAt) {
 		PageMetadata metadata = new PageMetadata();
@@ -141,6 +156,21 @@ public class PageTestUtil {
 		metadata.setExtraGroups(extraGroups);
 		metadata.setUpdatedAt(updatedAt);
 		return metadata;
+	}
+	
+	public static <T> T[] copyArray(T[] arrayToCopy) {
+		T[] copiedArray = null;
+		if (arrayToCopy != null) {
+			copiedArray = Arrays.copyOf(arrayToCopy, arrayToCopy.length);
+		}
+		return copiedArray;
+	}
+	
+	public static ApsProperties createProperties(String p1Key, String p1Value, String p2Key, String p2Value) {
+		ApsProperties properties = new ApsProperties();
+		properties.setProperty(p1Key, p1Value);
+		properties.setProperty(p2Key, p2Value);
+		return properties;
 	}
 	
 	public static Widget createWidget(String widgetCode, ApsProperties config, IWidgetTypeManager widgetTypeManager) {

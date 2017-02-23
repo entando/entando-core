@@ -218,10 +218,8 @@ public class TestPageDAO extends BaseTestCase {
 		page.setOnlineMetadata(metadata);
 		page.setDraftMetadata(metadata);
 
-		ApsProperties config = new ApsProperties();
-		config.setProperty("temp", "temp");
-		config.setProperty("contentId", "ART1");
 		Widget[] widgets = new Widget[4];
+		ApsProperties config = PageTestUtil.createProperties("temp", "temp", "contentId", "ART1");
 		widgets[1] = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
 
 		page.setOnlineWidgets(widgets);
@@ -235,13 +233,12 @@ public class TestPageDAO extends BaseTestCase {
 
 		PageMetadata metadata = pageToUpdate.getDraftMetadata();
 		metadata.setTitle("it", "pagina temporanea1");
+		metadata.setTitle("en", "temporary page");
 		metadata.setShowable(false);
 		pageToUpdate.setOnlineMetadata(metadata);
-
-		ApsProperties config = new ApsProperties();
-		config.setProperty("temp1", "temp1");
-		config.setProperty("contentId", "ART11");
+		
 		Widget[] modifiesWidgets = new Widget[4];
+		ApsProperties config = PageTestUtil.createProperties("temp1", "temp1", "contentId", "ART11");
 		modifiesWidgets[2] = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
 		// pageToUpdate.setOnlineWidgets(modifiesWidgets);
 		pageToUpdate.setDraftWidgets(modifiesWidgets);

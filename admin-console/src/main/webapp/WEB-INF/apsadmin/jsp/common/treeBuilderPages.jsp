@@ -9,7 +9,7 @@
     <s:set name="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}">collapsed</s:if>" >
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}">collapsed childrenNodes</s:if>" >
         <td class="treegrid-node pointer">
          
         <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 
@@ -39,7 +39,7 @@
                 <span class="fa fa-ellipsis-v"></span></button>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                 <li>
-                    <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
+                    <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
                         <span class="">Edit </span>
                     </wpsf:submit>
                 </li>

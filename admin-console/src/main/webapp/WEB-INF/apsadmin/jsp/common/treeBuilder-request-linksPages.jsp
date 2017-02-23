@@ -11,7 +11,6 @@
 </s:else>
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
         <td class="treegrid-node pointer">
-            <span class="icon fa fa-li <s:property value="#treeItemIconNameVar" />"></span>&#32;
         <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
@@ -43,14 +42,16 @@
             value="<s:property value="#currentRoot.code" />" <s:if test="#currentRoot.children.length > 0">class="subTreeToggler tree_<s:property value="#currentRoot.code" />" </s:if>
             <s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
         <label for="fagianonode_<s:property value="#currentRoot.code" />">
+            <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
             <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;<span class="text-muted icon fa fa-lock"></span></s:if>
             </label>
+                
         </td>
         <td>
             <div class="moveButtons hidden">
             <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info" data-toggle="tooltip">
-<i class="fa fa-plus" aria-hidden="true"></i>
+                <i class="fa fa-plus" aria-hidden="true"></i>
             </wpsf:submit>
             <wpsf:submit action="moveUp" type="button" title="%{getText('page.options.moveUp')}" cssClass="btn btn-info" data-toggle="tooltip">
                 <i class="fa fa-caret-up" aria-hidden="true"></i>

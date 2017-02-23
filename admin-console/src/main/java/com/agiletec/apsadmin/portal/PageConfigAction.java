@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
 /**
@@ -236,6 +237,13 @@ public class PageConfigAction extends AbstractPortalAction {
 	public void setWidget(Widget widget) {
 		this._widget = widget;
 	}
+
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
 	
 	private String _pageCode;
 	private int _frame = -1;
@@ -245,4 +253,6 @@ public class PageConfigAction extends AbstractPortalAction {
 	
 	private Widget _widget;
 	
+	private IPageActionHelper _pageActionHelper;
+
 }

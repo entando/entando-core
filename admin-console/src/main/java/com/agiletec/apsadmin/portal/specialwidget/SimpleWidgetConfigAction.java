@@ -21,11 +21,11 @@ import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
 /**
@@ -100,7 +100,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 	
 	protected void addActivityStreamInfo(int strutsAction, boolean addLink) {
 		IPage page = this.getPage(this.getPageCode());
-		ActivityStreamInfo asi = super.getPageActionHelper()
+		ActivityStreamInfo asi = this.getPageActionHelper()
 				.createConfigFrameActivityStreamInfo(page, this.getFrame(), strutsAction, true);
 		super.addActivityStreamInfo(asi);
 	}
@@ -199,4 +199,12 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 	
 	private Widget _widget;
 	
+	private IPageActionHelper _pageActionHelper;
+
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
 }

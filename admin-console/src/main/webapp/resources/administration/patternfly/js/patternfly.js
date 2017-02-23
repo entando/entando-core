@@ -1068,7 +1068,7 @@
     tree.find('tbody > tr:not(.hidden):odd').addClass('odd');
   }
 
-  $.fn.treegrid = function (options) {
+  $.fn.treegrid = function (options, treeOnRequestEntando) {
     var i, rows, _this;
     rows = this.find('tbody > tr');
     _this = this;
@@ -1083,20 +1083,22 @@
       node.children('.treegrid-node').on('click', function (e) {
         var icon = node.find('span.expand-icon');
 
-        if (options && typeof options.callback === 'function') {
-          options.callback(e);
-        }
-
-        if (icon.hasClass('fa-angle-right')) {
-          node.removeClass('collapsed');
-        }
-        if (icon.hasClass('fa-angle-down')) {
-          node.addClass('collapsed');
-        }
-        $.each(rows.slice(rows.index(node) + 1), function () {
-          renderItem($(this), getParent(rows, $(this)));
-        });
-        reStripe(_this);
+          if (options && typeof options.callback === 'function') {
+              options.callback(e);
+          }
+          if(!treeOnRequestEntando){
+              
+              if (icon.hasClass('fa-angle-right')) {
+                  node.removeClass('collapsed');
+              }
+              if (icon.hasClass('fa-angle-down')) {
+                  node.addClass('collapsed');
+              }
+          }
+          $.each(rows.slice(rows.index(node) + 1), function () {
+              renderItem($(this), getParent(rows, $(this)));
+          });
+          reStripe(_this);
       });
 
       if (parent) {

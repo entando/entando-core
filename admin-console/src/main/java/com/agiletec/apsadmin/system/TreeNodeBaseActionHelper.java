@@ -166,6 +166,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 		return root;
 	}
 	
+	
 	private void buildCheckNodes(Set<String> treeNodesToOpen, Set<String> checkNodes, Collection<String> groupCodes) {
 		if (null == treeNodesToOpen) return;
 		Iterator<String> iter = treeNodesToOpen.iterator();

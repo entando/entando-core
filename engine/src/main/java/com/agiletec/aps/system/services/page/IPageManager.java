@@ -130,10 +130,21 @@ public interface IPageManager extends ITreeNodeManager {
 	 * @param pageCodeToken The token containing to be looked up across the pages.
 	 * @param allowedGroups The codes of allowed page groups.
 	 * @return A list of candidates containing the given token. If the pageCodeToken is null then
-	 * this method will return the full list of pages.
+	 * this method will return a set containing all the pages.
 	 * @throws ApsSystemException in case of error.
 	 */
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException;
+	
+	/**
+	 * Search pages by a token of its code.
+	 * @param pageCodeToken The token containing to be looked up across the pages.
+	 * @param allowedGroups The codes of allowed page groups.
+	 * @param onlyOnline If true search all the pages, if false only the online.
+	 * @return A list of candidates containing the given token, filtered and online/draft status. If the pageCodeToken is null then
+	 * this method will return a set containing all the online or draft pages.
+	 * @throws ApsSystemException in case of error.
+	 */
+	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups, boolean onlyOnline) throws ApsSystemException;
 	
 	/**
 	 * @param showletTypeCode the showlet type code

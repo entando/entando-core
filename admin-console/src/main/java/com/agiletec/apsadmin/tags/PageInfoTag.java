@@ -31,7 +31,7 @@ public class PageInfoTag extends AbstractObjectInfoTag {
 	@Override
 	protected Object getMasterObject(String keyValue) throws Throwable {
 		IPageManager pageManager = (IPageManager) ApsWebApplicationUtils.getBean(SystemConstants.PAGE_MANAGER, this.pageContext);
-		return pageManager.getPage(keyValue);
+		return pageManager.getDraftPage(keyValue);
 	}
 
 }

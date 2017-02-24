@@ -231,7 +231,6 @@ public class PageManager extends AbstractService
 
 	@Override
 	public boolean moveWidget(String pageCode, Integer frameToMove, Integer destFrame) throws ApsSystemException {
-		// TODO Modificare o sdoppiare per gestire la pagina DRAFT
 		boolean resultOperation = true;
 		try {
 			IPage currentPage = this.getDraftPage(pageCode);
@@ -448,16 +447,13 @@ public class PageManager extends AbstractService
 		return null;
 	}
 	
-	/**
-	 * Search pages by a token of its code.
-	 * @param pageCodeToken The token containing to be looked up across the pages.
-	 * @param allowedGroups The codes of allowed page groups.
-	 * @return A list of candidates containing the given token. If the pageCodeToken is null then
-	 * this method will return a set containing all the pages.
-	 * @throws ApsSystemException in case of error.
-	 */
 	@Override
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
+		return this.searchPages(pageCodeToken, allowedGroups, false);
+	}
+	
+	@Override
+	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups, boolean onlyOnline) throws ApsSystemException {
 		List<IPage> searchResult = new ArrayList<IPage>();
 		try {
 			if (null == this._pages || this._pages.isEmpty() 
@@ -465,7 +461,7 @@ public class PageManager extends AbstractService
 				return searchResult; 
 			}
 			IPage root = this.getRoot();
-			this.searchPages(root, pageCodeToken, allowedGroups, searchResult);
+			this.searchPages(root, pageCodeToken, allowedGroups, onlyOnline, searchResult);
 		} catch (Throwable t) {
 			String message = "Error during searching pages with token " + pageCodeToken;
 			_logger.error("Error during searching pages with token {}", pageCodeToken, t);
@@ -474,20 +470,20 @@ public class PageManager extends AbstractService
 		return searchResult;
 	}
 
-	private void searchPages(IPage currentTarget, String pageCodeToken, List<String> allowedGroups, List<IPage> searchResult) {
+	private void searchPages(IPage currentTarget, String pageCodeToken, List<String> allowedGroups, boolean onlyOnline, List<IPage> searchResult) {
 		if ((null == pageCodeToken || currentTarget.getCode().toLowerCase().contains(pageCodeToken.toLowerCase())) 
 				&& (allowedGroups.contains(currentTarget.getGroup()) || allowedGroups.contains(Group.ADMINS_GROUP_NAME))) {
 			searchResult.add(currentTarget);
 		}
-		IPage[] children = currentTarget.getChildren();
+		IPage[] children = onlyOnline ? currentTarget.getOnlineChildren() : currentTarget.getAllChildren();
 		for (int i = 0; i < children.length; i++) {
-			this.searchPages(children[i], pageCodeToken, allowedGroups, searchResult);
+			this.searchPages(children[i], pageCodeToken, allowedGroups, onlyOnline, searchResult);
 		}
 	}
 
 	@Override
 	public ITreeNode getNode(String code) {
-		return this.getPage(code);
+		return this.getOnlinePage(code);
 	}
 
 	@Override

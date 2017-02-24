@@ -17,12 +17,39 @@ import java.util.Set;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.util.ApsProperties;
 
 /**
  * This class describes a pages of the portal.
  * @author E.Santoboni
  */
 public interface IPage extends ITreeNode {
+	
+	/**
+	 * Returns a properties with the titles of the page, in online version, where the keys are the codes of language.
+	 * @return The page titles, in online version.
+	 */
+	public ApsProperties getOnlineTitles();
+	
+	/**
+	 * Returns the title, in online version, of the page in the specified language.
+	 * @param langCode The code of the language.
+	 * @return The title, in online version, of the page.
+	 */
+	public String getOnlineTitle(String langCode);
+	
+	/**
+	 * Returns a properties with the titles of the page, in draft version, where the keys are the codes of language.
+	 * @return The page titles, in draft version.
+	 */
+	public ApsProperties getDraftTitles();
+	
+	/**
+	 * Returns the title, in draft version, of the page in the specified language.
+	 * @param langCode The code of the language.
+	 * @return The title, in draft version, of the page.
+	 */
+	public String getDraftTitle(String langCode);
 
 	/**
 	 * Return the model of the associated page

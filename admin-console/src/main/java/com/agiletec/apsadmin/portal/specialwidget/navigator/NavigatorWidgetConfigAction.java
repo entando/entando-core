@@ -167,8 +167,8 @@ public class NavigatorWidgetConfigAction extends SimpleWidgetConfigAction {
 		prototype.getConfig().setProperty("navSpec", navSpec);
 		//COSTRUISCE LE NUOVE ESPRESSIONI IN BASE AL NUOVO PARAMETRO
 		this.createExpressions(expressions);
-		this.setShowlet(prototype);
-		//SETTA LA SHOWLET COSTRUITA
+		this.setWidget(prototype);
+		//SETTA IL WIDGET COSTRUITO
 		this.setNavSpec(navSpec);
 	}
 
@@ -204,7 +204,7 @@ public class NavigatorWidgetConfigAction extends SimpleWidgetConfigAction {
 
 	private void addPages(IPage page, List<IPage> pages) {
 		pages.add(page);
-		IPage[] children = page.getChildren();
+		IPage[] children = page.getOnlineChildren();
 		for (int i=0; i<children.length; i++) {
 			this.addPages(children[i], pages);
 		}

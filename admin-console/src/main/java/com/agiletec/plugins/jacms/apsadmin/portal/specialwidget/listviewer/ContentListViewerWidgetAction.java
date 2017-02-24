@@ -479,7 +479,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	protected void addPages(IPage page, List<IPage> pages) {
 		pages.add(page);
-		IPage[] children = page.getChildren();
+		IPage[] children = page.getOnlineChildren();
 		for (int i=0; i<children.length; i++) {
 			this.addPages(children[i], pages);
 		}

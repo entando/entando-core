@@ -86,9 +86,9 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 	public void testJoinWidget() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 1;
-		IPage pagina_1 = this._pageManager.getPage(pageCode);
+		IPage pagina_1 = this._pageManager.getDraftPage(pageCode);
 		try {
-			assertNull(pagina_1.getWidgets()[frame]);
+			assertNull(pagina_1.getDraftWidgets()[frame]);
 			String result = this.executeJoinShowlet(pageCode, frame, "content_viewer", "admin");
 			assertEquals("configureSpecialWidget", result);
 			result = this.executeJoinShowlet(pageCode, frame, "content_viewer", "pageManagerCoach");
@@ -97,7 +97,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			pagina_1.getWidgets()[frame] = null;
+			pagina_1.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(pagina_1);
 		}
 	}
@@ -110,30 +110,30 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 	private void testJoinRemoveWidget(String showletTypeCode) throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 1;
-		IPage pagina_1 = this._pageManager.getPage(pageCode);
+		IPage pagina_1 = this._pageManager.getDraftPage(pageCode);
 		try {
-			assertNull(pagina_1.getWidgets()[frame]);
+			assertNull(pagina_1.getDraftWidgets()[frame]);
 			String result = this.executeJoinShowlet(pageCode, frame, showletTypeCode, "pageManagerCoach");
 			assertEquals("pageTree", result);
 			result = this.executeJoinShowlet(pageCode, frame, showletTypeCode, "admin");
 			assertEquals(Action.SUCCESS, result);
-			pagina_1 = this._pageManager.getPage(pageCode);
+			pagina_1 = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(pagina_1.getDraftWidgets()[frame]);
 			assertEquals(showletTypeCode, pagina_1.getDraftWidgets()[frame].getType().getCode());
 			
 			result = this.executeTrashShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
-			pagina_1 = this._pageManager.getPage(pageCode);
+			pagina_1 = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(pagina_1.getDraftWidgets()[frame]);
 			
 			result = this.executeDeleteShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
-			pagina_1 = this._pageManager.getPage(pageCode);
+			pagina_1 = this._pageManager.getDraftPage(pageCode);
 			assertNull(pagina_1.getDraftWidgets()[frame]);
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			pagina_1.getWidgets()[frame] = null;
+			pagina_1.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(pagina_1);
 		}
 	}
@@ -141,8 +141,8 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 	public void testTrashShowlet() throws Throwable {
 		String pageCode = "contentview";
 		int frame = 1;
-		IPage contentview = this._pageManager.getPage(pageCode);
-		Widget widget = contentview.getWidgets()[frame];
+		IPage contentview = this._pageManager.getDraftPage(pageCode);
+		Widget widget = contentview.getDraftWidgets()[frame];
 		try {
 			assertNotNull(widget);
 			String result = this.executeTrashShowlet(pageCode, frame, "pageManagerCoach");
@@ -150,12 +150,12 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 			assertEquals(1, this.getAction().getActionErrors().size());
 			result = this.executeTrashShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage modifiedContentview = this._pageManager.getPage(pageCode);
-			Widget[] modifiedShowlets = modifiedContentview.getWidgets();
+			IPage modifiedContentview = this._pageManager.getDraftPage(pageCode);
+			Widget[] modifiedShowlets = modifiedContentview.getDraftWidgets();
 			assertNotNull(modifiedShowlets[frame]);
 		} catch (Throwable t) {
-			contentview = this._pageManager.getPage(pageCode);
-			contentview.getWidgets()[frame] = widget;
+			contentview = this._pageManager.getDraftPage(pageCode);
+			contentview.getDraftWidgets()[frame] = widget;
 			this._pageManager.updatePage(contentview);
 			throw t;
 		}
@@ -164,8 +164,8 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 	public void testDeleteShowlet() throws Throwable {
 		String pageCode = "contentview";
 		int frame = 1;
-		IPage contentview = this._pageManager.getPage(pageCode);
-		Widget widget = contentview.getWidgets()[frame];
+		IPage contentview = this._pageManager.getDraftPage(pageCode);
+		Widget widget = contentview.getDraftWidgets()[frame];
 		try {
 			assertNotNull(widget);
 			String result = this.executeDeleteShowlet(pageCode, frame, "pageManagerCoach");
@@ -173,14 +173,14 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 			assertEquals(1, this.getAction().getActionErrors().size());
 			result = this.executeDeleteShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage modifiedContentview = this._pageManager.getPage(pageCode);
+			IPage modifiedContentview = this._pageManager.getDraftPage(pageCode);
 			Widget[] modifiedShowlets = modifiedContentview.getDraftWidgets();
 			assertNull(modifiedShowlets[frame]);
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			contentview = this._pageManager.getPage(pageCode);
-			contentview.getWidgets()[frame] = widget;
+			contentview = this._pageManager.getDraftPage(pageCode);
+			contentview.getDraftWidgets()[frame] = widget;
 			this._pageManager.updatePage(contentview);
 		}
 	}

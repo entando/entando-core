@@ -38,7 +38,7 @@ public class TestWidgetExecutorService extends AbstractTestExecutorService {
 	public void testExecutor() throws Exception {
 		super.setUserOnSession("admin");
 		IPageManager pageManager = (IPageManager) super.getApplicationContext().getBean(SystemConstants.PAGE_MANAGER);
-		IPage currentPage = pageManager.getPage("homepage");
+		IPage currentPage = pageManager.getOnlinePage("homepage");
 		super.getRequestContext().addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, currentPage);
 		ExecutorServiceInterface wes = (ExecutorServiceInterface) super.getApplicationContext().getBean("WidgetExecutorService");
 		wes.service(super.getRequestContext());

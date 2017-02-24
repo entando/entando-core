@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.ApsProperties;
 
 /**
  * Classe base per gli helper che gestiscono le operazioni su oggetti alberi.
@@ -242,11 +243,12 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 		} else {
 			nodeToValue.setParent(parent);
 		}
-		Set<Object> codes = realNode.getTitles().keySet();
+		ApsProperties titles =  realNode.getTitles();
+		Set<Object> codes = titles.keySet();
 		Iterator<Object> iterKey = codes.iterator();
 		while (iterKey.hasNext()) {
 			String key = (String) iterKey.next();
-			String title = realNode.getTitles().getProperty(key);
+			String title = titles.getProperty(key);
 			nodeToValue.getTitles().put(key, title);
 		}
 	}

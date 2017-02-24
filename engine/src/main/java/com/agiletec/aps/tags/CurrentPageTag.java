@@ -54,7 +54,7 @@ public class CurrentPageTag extends PageInfoTag {
 			} else if (this.getInfo().equals(CHILD_OF_INFO)) {
 				this.extractIsChildOfTarget(page);
 			} else if (this.getInfo().equals(HAS_CHILD)) {
-				boolean hasChild = (page.getChildren() != null && page.getChildren().length > 0);
+				boolean hasChild = (page.getOnlineChildren() != null && page.getOnlineChildren().length > 0);
 				this.setValue(new Boolean(hasChild).toString());
 			}
 			this.evalValue();

@@ -16,6 +16,7 @@ package com.agiletec.apsadmin.portal.helper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,11 +36,12 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.role.Permission;
+import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
-import com.agiletec.apsadmin.system.OnlinePageNode;
 import com.agiletec.apsadmin.system.TreeNodeBaseActionHelper;
 
 /**
@@ -48,7 +50,11 @@ import com.agiletec.apsadmin.system.TreeNodeBaseActionHelper;
 public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper implements IPageActionHelper {
 
     private static final Logger _logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
-
+    
+    protected abstract PageMetadata getPageMetadata(IPage page);
+	
+	protected abstract TreeNode createNodeInstance(IPage page);
+    
     @Override
     public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException {
         Map<String, List> references = new HashMap<String, List>();
@@ -80,41 +86,55 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
     public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes) throws ApsSystemException {
         return this.getAllowedTreeRoot(groupCodes, false);
     }
+	
+	@Override
+	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException {
+		TreeNode root = null;
+		IPage pageRoot = (IPage) this.getRoot();
+		PageMetadata metadata = this.getPageMetadata(pageRoot);
+		if (metadata != null && (groupCodes.contains(Group.ADMINS_GROUP_NAME) || groupCodes.contains(Group.FREE_GROUP_NAME)
+				|| (alsoFreeViewPages && null != metadata.getExtraGroups() && metadata.getExtraGroups().contains(Group.FREE_GROUP_NAME)))) {
+			root = this.createNodeInstance(pageRoot);
+			this.fillTreeNode(root, null, pageRoot);
+		} else {
+			root = this.getVirtualRoot();
+		}
+		this.addTreeWrapper(root, null, pageRoot, groupCodes, alsoFreeViewPages);
+		return root;
+	}
 
-    @Override
-    public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException {
-    	OnlinePageNode root = null;
-//        if (groupCodes.contains(Group.ADMINS_GROUP_NAME)) {
-//            //XXX FIXME
-//        	//root = this.getRoot();
-//        } else {
-            IPage pageRoot = (IPage) this.getRoot();
-            if (groupCodes.contains(Group.FREE_GROUP_NAME)
-                    || (alsoFreeViewPages && null != pageRoot.getExtraGroups() && pageRoot.getExtraGroups().contains(Group.FREE_GROUP_NAME))) {
-                root = new OnlinePageNode(this.getRoot());
-                this.fillTreeNode((TreeNode) root, null, this.getRoot());
-            } else {
-                root = (OnlinePageNode) this.getVirtualRoot();
-            }
-            this.addTreeWrapper(root, null, pageRoot, groupCodes, alsoFreeViewPages);
-       // }
-        return root;
-    }
-
-    private void addTreeWrapper(TreeNode currentNode, TreeNode parent, IPage currentTreeNode, Collection<String> groupCodes, boolean alsoFreeViewPages) {
-        IPage[] children = currentTreeNode.getChildren();
-        for (int i = 0; i < children.length; i++) {
-            IPage newCurrentTreeNode = children[i];
-            if (this.isPageAllowed(newCurrentTreeNode, groupCodes, alsoFreeViewPages)) {
-                TreeNode newNode = new TreeNode();
-                this.fillTreeNode(newNode, currentNode, newCurrentTreeNode);
-                currentNode.addChild(new OnlinePageNode(newCurrentTreeNode));
-                this.addTreeWrapper(newNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
-            } else {
-                this.addTreeWrapper(currentNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
-            }
-        }
-    }
+	protected void addTreeWrapper(TreeNode currentNode, TreeNode parent, IPage currentTreeNode, Collection<String> groupCodes, boolean alsoFreeViewPages) {
+		IPage[] children = currentTreeNode.getAllChildren();
+		for (int i = 0; i < children.length; i++) {
+			IPage newCurrentTreeNode = children[i];
+			if (this.isPageAllowed(newCurrentTreeNode, groupCodes, alsoFreeViewPages)) {
+				TreeNode newNode = this.createNodeInstance(newCurrentTreeNode);
+				this.fillTreeNode(newNode, currentNode, newCurrentTreeNode);
+				currentNode.addChild(newNode);
+				this.addTreeWrapper(newNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
+			} else {
+				this.addTreeWrapper(currentNode, currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
+			}
+		}
+	}
+	
+	@Override
+	protected void fillTreeNode(TreeNode nodeToValue, TreeNode parent, ITreeNode realNode) {
+		nodeToValue.setCode(realNode.getCode());
+		if (null == parent) {
+			nodeToValue.setParent(nodeToValue);
+		} else {
+			nodeToValue.setParent(parent);
+		}
+//		ApsProperties titles =  this.getPageMetadata((IPage) realNode).getTitles();
+//		Set<Object> codes = titles.keySet();
+//		Iterator<Object> iterKey = codes.iterator();
+//		while (iterKey.hasNext()) {
+//			String key = (String) iterKey.next();
+//			String title = titles.getProperty(key);
+//			nodeToValue.getTitles().put(key, title);
+//		}
+	}
 
     /**
 	 * Metodo a servizio della costruzione dell'albero delle pagine. 
@@ -122,15 +142,19 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
 	 * root, fornisce un nodo "virtuale" nel quale inserire gli eventuali nodi visibili.
 	 * @return Il nodo root virtuale.
 	 */
-    private TreeNode getVirtualRoot() {
-        Page virtualRoot = new Page();
-        virtualRoot.setCode(AbstractPortalAction.VIRTUAL_ROOT_CODE);
+    protected TreeNode getVirtualRoot() {
+		Page virtualRootPage = new Page();
+		PageMetadata metadata = new PageMetadata();
+		virtualRootPage.setDraftMetadata(metadata);
+		virtualRootPage.setOnlineMetadata(metadata);
         List<Lang> langs = this.getLangManager().getLangs();
         for (int i = 0; i < langs.size(); i++) {
             Lang lang = langs.get(i);
-            virtualRoot.setTitle(lang.getCode(), "ROOT");
+            metadata.setTitle(lang.getCode(), "ROOT");
         }
-        return new OnlinePageNode(virtualRoot);
+		TreeNode virtualRoot = this.createNodeInstance(virtualRootPage);
+        virtualRoot.setCode(AbstractPortalAction.VIRTUAL_ROOT_CODE);
+        return virtualRoot;
     }
 	
     @Override
@@ -152,13 +176,16 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
     }
 	
     protected boolean isPageAllowed(IPage page, Collection<String> groupCodes, boolean alsoFreeViewPages) {
-        if (page == null) {
-            return false;
+    	boolean isAuth = false;
+        if (page != null) {
+        	PageMetadata metadata = this.getPageMetadata(page);
+        	if (metadata != null) {
+    	        String pageGroup = page.getGroup();
+    	        Collection<String> extraGroups = metadata.getExtraGroups();
+    	        isAuth = (groupCodes.contains(pageGroup) || groupCodes.contains(Group.ADMINS_GROUP_NAME))
+    	        		|| (alsoFreeViewPages && null != extraGroups && extraGroups.contains(Group.FREE_GROUP_NAME));
+        	}
         }
-        String pageGroup = page.getGroup();
-        Collection<String> extraGroups = page.getExtraGroups();
-        boolean isAuth = (groupCodes.contains(pageGroup) || groupCodes.contains(Group.ADMINS_GROUP_NAME))
-                || (alsoFreeViewPages && null != extraGroups && extraGroups.contains(Group.FREE_GROUP_NAME));
         return isAuth;
     }
 
@@ -210,13 +237,15 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
     }
 
     private ActivityStreamInfo createBaseActivityStreamInfo(IPage page, int strutsAction, boolean addLink) {
+    	// TODO Verify if DRAFT/ONLINE
+    	PageMetadata metadata = page.getDraftMetadata();
         ActivityStreamInfo asi = new ActivityStreamInfo();
         asi.setActionType(strutsAction);
-        asi.setObjectTitles(page.getTitles());
+        asi.setObjectTitles(metadata.getTitles());
         List<String> groupCodes = new ArrayList<String>();
         groupCodes.add(page.getGroup());
-        if (null != page.getExtraGroups()) {
-            groupCodes.addAll(page.getExtraGroups());
+        if (null != metadata.getExtraGroups()) {
+            groupCodes.addAll(metadata.getExtraGroups());
         }
         asi.setGroups(groupCodes);
         if (addLink) {

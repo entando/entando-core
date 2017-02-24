@@ -156,7 +156,7 @@ public class ContentInspectionAction extends AbstractContentAction {
 					for (int scanRefs = 0; scanRefs < refs.size(); scanRefs++) {
 						CmsAttributeReference ref = refs.get(scanRefs);
 						if (null == ref.getRefPage()) continue;
-						IPage page = this.getPageManager().getPage(ref.getRefPage());
+						IPage page = this.getPageManager().getOnlinePage(ref.getRefPage());
 						if (null == page) continue; 
 						if (!referencedPages.contains(page)) {
 							referencedPages.add(page);

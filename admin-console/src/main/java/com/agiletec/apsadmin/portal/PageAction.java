@@ -205,8 +205,8 @@ public class PageAction extends AbstractPortalAction {
 				this.addActionError(this.getText("error.page.selectPageToCopy"));
 				return "pageTree";
 			}
-			IPage selectedPage = pageManager.getDraftPage(selectedNode);
-			IPage copiedPage = pageManager.getDraftPage(copyingPageCode);
+			IPage selectedPage = this.getPage(selectedNode);
+			IPage copiedPage = this.getPage(copyingPageCode);
 			this.setStrutsAction(ApsAdminSystemConstants.PASTE);
 			this.setCopyPageCode(copyingPageCode);
 			this.setGroup(selectedPage.getGroup());
@@ -421,7 +421,7 @@ public class PageAction extends AbstractPortalAction {
 		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
 			this.addActionError(this.getText("error.page.remove.notAllowed"));
 			return "pageTree";
-		} else if (currentPage.getChildren().length != 0) {
+		} else if (currentPage.getAllChildren().length != 0) {
 			this.addActionError(this.getText("error.page.remove.notAllowed2"));
 			return "pageTree";
         }

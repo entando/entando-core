@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.apsadmin.portal.specialwidget.SimpleWidgetConfigAction;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
@@ -46,11 +47,12 @@ public class ContentViewerWidgetAction extends SimpleWidgetConfigAction {
 					this.addFieldError("contentId", this.getText("error.widget.viewer.nullContent"));
 				} else {
 					IPage currentPage = this.getCurrentPage();
-					if (!CmsPageActionUtil.isContentPublishableOnPage(publishingContent, currentPage)) {
+					if (!CmsPageActionUtil.isContentPublishableOnPageDraft(publishingContent, currentPage)) {
+						PageMetadata metadata = currentPage.getDraftMetadata();
 						List<String> pageGroups = new ArrayList<String>();
 						pageGroups.add(currentPage.getGroup());
-						if (null != currentPage.getExtraGroups()) {
-							pageGroups.addAll(currentPage.getExtraGroups());
+						if (null != metadata.getExtraGroups()) {
+							pageGroups.addAll(metadata.getExtraGroups());
 						}
 						this.addFieldError("contentId", this.getText("error.widget.viewer.invalidContent", new String[]{pageGroups.toString()}));
 					}

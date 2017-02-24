@@ -35,15 +35,28 @@ public class CmsPageActionUtil {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CmsPageActionUtil.class);
 	
+	@Deprecated
 	public static boolean isContentPublishableOnPage(Content publishingContent, IPage page) {
+		return isContentPublishableOnPageOnline(publishingContent, page);
+	}
+	
+	public static boolean isContentPublishableOnPageOnline(Content publishingContent, IPage page) {
+		return isContentPublishableOnPage(publishingContent, page, page.getOnlineMetadata());
+	}
+	
+	public static boolean isContentPublishableOnPageDraft(Content publishingContent, IPage page) {
+		return isContentPublishableOnPage(publishingContent, page, page.getDraftMetadata());
+	}
+	
+	public static boolean isContentPublishableOnPage(Content publishingContent, IPage page, PageMetadata metadata) {
 		if (publishingContent.getMainGroup().equals(Group.FREE_GROUP_NAME) || publishingContent.getGroups().contains(Group.FREE_GROUP_NAME)) {
 			return true;
 		}
 		//tutti i gruppi posseduti dalla pagina devono essere contemplati nel contenuto.
 		List<String> pageGroups = new ArrayList<String>();
 		pageGroups.add(page.getGroup());
-		if (null != page.getExtraGroups()) {
-			pageGroups.addAll(page.getExtraGroups());
+		if (metadata != null && null != metadata.getExtraGroups()) {
+			pageGroups.addAll(metadata.getExtraGroups());
 		}
 		List<String> contentGroups = getContentGroups(publishingContent);
 		for (int i = 0; i < pageGroups.size(); i++) {
@@ -53,8 +66,21 @@ public class CmsPageActionUtil {
 		return true;
 	}
 	
+	@Deprecated
 	public static boolean isPageLinkableByContent(IPage page, Content content) {
-		Collection<String> extraPageGroups = page.getExtraGroups();
+		return isPageLinkableByContent(page, page.getOnlineMetadata(), content);
+	}
+	
+	public static boolean isPageLinkableByContentOnline(IPage page, Content content) {
+		return isPageLinkableByContent(page, page.getOnlineMetadata(), content);
+	}
+	
+	public static boolean isPageLinkableByContentDraft(IPage page, Content content) {
+		return isPageLinkableByContent(page, page.getDraftMetadata(), content);
+	}
+	
+	public static boolean isPageLinkableByContent(IPage page, PageMetadata metadata, Content content) {
+		Collection<String> extraPageGroups = metadata.getExtraGroups();
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME) 
 				|| (null != extraPageGroups && extraPageGroups.contains(Group.FREE_GROUP_NAME))) {
 			return true;

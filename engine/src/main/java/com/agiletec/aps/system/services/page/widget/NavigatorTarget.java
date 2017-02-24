@@ -118,7 +118,7 @@ public class NavigatorTarget {
 	 */
 	public boolean isParent() {
 		IPage page = this.getPage();
-		boolean isParent = (null != page && null != page.getChildren() && page.getChildren().length > 0);
+		boolean isParent = (null != page && null != page.getOnlineChildren() && page.getOnlineChildren().length > 0);
 		return isParent;
 	}
 	

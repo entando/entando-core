@@ -43,7 +43,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 	
 	protected String extractInitConfig() {
 		if (null != this.getWidget()) return SUCCESS;
-		Widget widget = this.getCurrentPage().getWidgets()[this.getFrame()];
+		Widget widget = this.getCurrentPage().getDraftWidgets()[this.getFrame()];
 		if (null == widget) {
 			try {
 				widget = this.createNewShowlet();
@@ -87,7 +87,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 			this.checkBaseParams();
 			this.createValuedShowlet();
 			IPage page = this.getPage(this.getPageCode());
-			int strutsAction = (null != page.getWidgets()[this.getFrame()]) ? ApsAdminSystemConstants.ADD : ApsAdminSystemConstants.EDIT;
+			int strutsAction = (null != page.getDraftWidgets()[this.getFrame()]) ? ApsAdminSystemConstants.ADD : ApsAdminSystemConstants.EDIT;
 			this.getPageManager().joinWidget(this.getPageCode(), this.getWidget(), this.getFrame());
 			_logger.debug("Saving Widget - code: {}, pageCode: {}, frame: {}", this.getWidget().getType().getCode(), this.getPageCode(), this.getFrame());
 			this.addActivityStreamInfo(strutsAction, true);
@@ -126,7 +126,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 			this.addActionError(this.getText("error.page.userNotAllowed"));
 			return "pageTree";
 		}
-		if (this.getFrame() == -1 || this.getFrame()>= page.getWidgets().length) {
+		if (this.getFrame() == -1 || this.getFrame()>= page.getDraftWidgets().length) {
 			_logger.info("invalid frame '{}'", this.getFrame());
 			this.addActionError(this.getText("error.page.invalidPageFrame"));
 			return "pageTree";

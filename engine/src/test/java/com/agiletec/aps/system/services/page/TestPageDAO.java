@@ -209,7 +209,7 @@ public class TestPageDAO extends BaseTestCase {
 	private Page createPageForTest(String code) {
 		Page page = new Page();
 		page.setCode(code);
-		IPage parentPage = this._pageManager.getPage("service");
+		IPage parentPage = this._pageManager.getDraftPage("service");
 		page.setParent(parentPage);
 		page.setParentCode("service");
 		page.setGroup("free");

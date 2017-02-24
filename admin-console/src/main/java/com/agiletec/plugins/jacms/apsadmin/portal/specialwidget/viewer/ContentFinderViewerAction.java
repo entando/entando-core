@@ -15,6 +15,7 @@ package com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.viewer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
@@ -68,8 +69,9 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 		allowedGroups.add(Group.FREE_GROUP_NAME);
 		IPage currentPage = this.getCurrentPage();
 		allowedGroups.add(currentPage.getGroup());
-		if (null != currentPage.getExtraGroups()) {
-			allowedGroups.addAll(currentPage.getExtraGroups());
+		Set<String> extraGroups = currentPage.getDraftMetadata().getExtraGroups();
+		if (null != extraGroups) {
+			allowedGroups.addAll(extraGroups);
 		}
     	return allowedGroups;
 	}
@@ -91,7 +93,7 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
-		IPage page = this.getPageManager().getPage(pageCode);
+		IPage page = this.getPageManager().getDraftPage(pageCode);
 		if (null == page) return null;
 		List<IPage> pages = new ArrayList<IPage>();
 		this.getSubBreadCrumbsTargets(pages, page);
@@ -116,7 +118,7 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 	}
 	
 	public IPage getCurrentPage() {
-		return this.getPageManager().getPage(this.getPageCode());
+		return this.getPageManager().getDraftPage(this.getPageCode());
 	}
 	
 	public String getPageCode() {

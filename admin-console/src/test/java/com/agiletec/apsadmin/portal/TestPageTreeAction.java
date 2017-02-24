@@ -156,8 +156,8 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 	public void testMoveForAdminUser() throws Throwable {
 		String pageToMoveCode = "pagina_12";
 		String sisterPageCode = "pagina_11";
-		IPage pageToMove = _pageManager.getPage(pageToMoveCode);
-		IPage sisterPage = _pageManager.getPage(sisterPageCode);
+		IPage pageToMove = _pageManager.getDraftPage(pageToMoveCode);
+		IPage sisterPage = _pageManager.getDraftPage(sisterPageCode);
 		assertNotNull(pageToMove);
 		assertEquals(pageToMove.getPosition(), 2);
 		assertNotNull(sisterPage);
@@ -172,9 +172,9 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		Collection<String> messages = this.getAction().getActionMessages();
 		assertEquals(0, messages.size());
 
-		pageToMove = this._pageManager.getPage(pageToMoveCode);
+		pageToMove = this._pageManager.getDraftPage(pageToMoveCode);
 		assertEquals(pageToMove.getPosition(), 1);
-		sisterPage = this._pageManager.getPage(sisterPageCode);
+		sisterPage = this._pageManager.getDraftPage(sisterPageCode);
 		assertEquals(sisterPage.getPosition(), 2);
 
 		this.initAction("/do/Page", "moveDown");
@@ -186,9 +186,9 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		messages = this.getAction().getActionMessages();
 		assertEquals(0, messages.size());
 
-		pageToMove = _pageManager.getPage(pageToMoveCode);
+		pageToMove = _pageManager.getDraftPage(pageToMoveCode);
 		assertEquals(pageToMove.getPosition(), 2);
-		sisterPage = _pageManager.getPage(sisterPageCode);
+		sisterPage = _pageManager.getDraftPage(sisterPageCode);
 		assertEquals(sisterPage.getPosition(), 1);
 	}
 
@@ -247,7 +247,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		assertEquals("pageTree", result);
 		assertEquals(1, this.getAction().getActionErrors().size());
 
-		IPage customers_page = _pageManager.getPage("customers_page");
+		IPage customers_page = _pageManager.getDraftPage("customers_page");
 		this.executeCopyPage(customers_page.getCode(), "pageManagerCoach");
 		result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);

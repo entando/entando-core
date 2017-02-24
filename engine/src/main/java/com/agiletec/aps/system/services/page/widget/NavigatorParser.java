@@ -177,7 +177,7 @@ public class NavigatorParser implements INavigatorParser {
 				throw new RuntimeException("Page Code not specified : Page " + page.getCode());
 			}
 			String code = navExpression.getSpecCode();
-			IPage basePageTemp = this.getPageManager().getPage(code);
+			IPage basePageTemp = this.getPageManager().getOnlinePage(code);
 			if (null == basePageTemp) {
 				_logger.error("Invalid Page Specification (null): Code {} - Page: {}", code, page.getCode());
 				return targets;
@@ -200,7 +200,7 @@ public class NavigatorParser implements INavigatorParser {
 			targets.add(new NavigatorTarget(basePage, 0));
 		} else {
 			if (operatorId == NavigatorExpression.OPERATOR_CHILDREN_ID) {
-				IPage children[] = basePage.getChildren();
+				IPage children[] = basePage.getOnlineChildren();
 				for(int i = 0; i < children.length; i++) {
 					if(children[i].isShowable() && isUserAllowed(user, children[i])) {
 						targets.add(new NavigatorTarget(children[i], 0));
@@ -237,7 +237,7 @@ public class NavigatorParser implements INavigatorParser {
 		if (page.isShowable() && this.isUserAllowed(currentUser, page)) {
 			targets.add(new NavigatorTarget(page, level));
 			if (level < depth) {
-				IPage[] children = page.getChildren();
+				IPage[] children = page.getOnlineChildren();
 				for(int i = 0; i < children.length; i++) {
 					targets = this.putSubTree(children[i], level + 1, depth, targets, currentUser);
 				}

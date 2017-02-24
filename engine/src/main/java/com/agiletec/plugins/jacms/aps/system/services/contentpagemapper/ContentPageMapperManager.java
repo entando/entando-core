@@ -82,7 +82,7 @@ public class ContentPageMapperManager extends AbstractService
 		PageModel pageModel = page.getModel();
 		if (pageModel != null) {
 			int mainFrame = pageModel.getMainFrame();
-			Widget[] widgets = page.getWidgets();
+			Widget[] widgets = page.getOnlineWidgets();
 			Widget widget = null;
 			if (null != widgets && mainFrame != -1) {
 				widget = widgets[mainFrame];
@@ -92,7 +92,7 @@ public class ContentPageMapperManager extends AbstractService
 			if (null != contentId) {
 				this.getContentPageMapper().add(contentId, page.getCode());
 			}
-			IPage[] children = page.getChildren();
+			IPage[] children = page.getOnlineChildren();
 			for (int i = 0; i < children.length; i++) {
 				this.searchPublishedContents(children[i]);
 			}

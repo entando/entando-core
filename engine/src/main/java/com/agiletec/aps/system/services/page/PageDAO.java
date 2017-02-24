@@ -258,7 +258,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
 			String pageCode = page.getCode();
-			// TODO Modificare per Widget Draft
 			this.deleteOnlineWidgets(pageCode, conn);
 			this.deleteDraftWidgets(pageCode, conn);
 			this.deleteOnlinePageMetadata(pageCode, conn);
@@ -844,7 +843,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		+ "LEFT JOIN " + PageMetadataDraft.TABLE_NAME + " drf ON p.code = drf.code "
 		+ "LEFT JOIN " + WidgetConfig.TABLE_NAME + " wonl ON p.code = wonl.pagecode "
 		+ "LEFT JOIN " + WidgetConfigDraft.TABLE_NAME + " wdrf ON p.code = wdrf.pagecode "
-		+ "ORDER BY p.parentcode, p.pos, p.code, wonl.framepos, wdrf.framepos ";// TODO Modificare
+		+ "ORDER BY p.parentcode, p.pos, p.code, wonl.framepos, wdrf.framepos ";
 	
 	private static final String ADD_PAGE = 
 		"INSERT INTO pages(code, parentcode, pos, groupcode) VALUES ( ? , ? , ? , ? )";

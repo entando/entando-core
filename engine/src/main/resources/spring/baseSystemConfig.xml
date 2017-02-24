@@ -42,9 +42,12 @@
         <value>org.entando.entando.aps.system.init.model.portdb.LocalString</value>
         <value>org.entando.entando.aps.system.init.model.portdb.PageModel</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Page</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.PageMetadataOnline</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.PageMetadataDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetCatalog</value>
         <value>org.entando.entando.aps.system.init.model.portdb.GuiFragment</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfig</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfigDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Uniquekeys</value>
     </util:list>
     

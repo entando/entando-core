@@ -13,6 +13,20 @@
  */
 package com.agiletec.apsadmin.portal;
 
+import java.io.File;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.guifragment.GuiFragment;
+import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
@@ -21,23 +35,8 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-
-import java.io.File;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
-
-import org.entando.entando.aps.system.services.guifragment.GuiFragment;
-import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
-import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
  * @author E.Santoboni
@@ -301,8 +300,8 @@ public class WidgetTypeAction extends AbstractPortalAction {
 				WidgetType type = this.getWidgetType(this.getWidgetTypeCode());
 				Widget widget = new Widget();
 				widget.setType(type);
-				IPage page = this.getPageManager().getPage(this.getPageCode());
-				page.getWidgets()[this.getFramePos()] = widget;
+				IPage page = this.getPageManager().getDraftPage(this.getPageCode());
+				page.getDraftWidgets()[this.getFramePos()] = widget;
 				this.getPageManager().updatePage(page);
 				return "replaceOnPage";
 			}
@@ -314,7 +313,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 	}
 	
 	private Widget extractWidgetToCopy() throws Throwable {
-		IPage page = this.getPageManager().getPage(this.getPageCode());
+		IPage page = this.getPageManager().getDraftPage(this.getPageCode());
 		if (null == page) return null;
 		Widget[] widgets = page.getWidgets();
 		return widgets[this.getFramePos()];
@@ -334,7 +333,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 	}
 	
 	private String checkWidgetToCopy() throws Throwable {
-		IPage page = this.getPageManager().getPage(this.getPageCode());
+		IPage page = this.getPageManager().getDraftPage(this.getPageCode());
 		if (null == page) {
 			this.addActionError(this.getText("error.page.invalidPageCode.adv", 
 					new String[]{this.getPageCode()}));
@@ -693,6 +692,13 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		this._configManager = configManager;
 	}
 	
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
+	
 	private int _strutsAction;
 	
 	private String _widgetTypeCode;
@@ -717,5 +723,6 @@ public class WidgetTypeAction extends AbstractPortalAction {
 	private ConfigInterface _configManager;
 	
 	public final static int NEW_USER_WIDGET = 5;
+	private IPageActionHelper _pageActionHelper;
 	
 }

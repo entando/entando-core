@@ -207,18 +207,18 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 		String pageCode = "pagina_1";
 		int frame = 1;
 		String widgetTypeCode = "test_widgetType_trash3";
-    	assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
     	try {
+    		assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
 			WidgetType type = this.createNewWidgetType(widgetTypeCode);
 			this._widgetTypeManager.addWidgetType(type);
 			assertNotNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
 			
 			IPage pagina_1 = this._pageManager.getPage(pageCode);
-			assertNull(pagina_1.getWidgets()[frame]);
+			assertNull(pagina_1.getDraftWidgets()[frame]);
 			String result = this.executeJoinWidget(pageCode, frame, widgetTypeCode, "admin");
 			assertEquals(Action.SUCCESS, result);
 			pagina_1 = this._pageManager.getPage(pageCode);
-			assertNotNull(pagina_1.getWidgets()[frame]);
+			assertNotNull(pagina_1.getDraftWidgets()[frame]);
 			
 			result = this.executeTrash(widgetTypeCode, "admin");
 			assertEquals("inputWidgetTypes", result);
@@ -239,7 +239,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			IPage pagina_1 = this._pageManager.getPage(pageCode);
-			pagina_1.getWidgets()[frame] = null;
+			pagina_1.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(pagina_1);
 			if (null != this._widgetTypeManager.getWidgetType(widgetTypeCode)) {
 				this._mockWidgetTypeDAO.deleteWidgetType(widgetTypeCode);
@@ -521,7 +521,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 			String result = this.executeAction();
 			assertEquals("replaceOnPage", result);
 			
-			Widget newWidget = this._pageManager.getPage(pageDest).getWidgets()[frameDest];
+			Widget newWidget = this._pageManager.getPage(pageDest).getDraftWidgets()[frameDest];
 			assertNotNull(newWidget);
 			assertNotNull(newWidget.getConfig());
 			WidgetType addedType = this._widgetTypeManager.getWidgetType(widgetTypeCode);

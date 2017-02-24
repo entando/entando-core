@@ -55,7 +55,7 @@ public class PreviewWidgetExecutorAspect extends WidgetExecutorService {
 		}
 		try {
 			IPage currentPage = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
-			Widget[] widgets = currentPage.getWidgets();
+			Widget[] widgets = currentPage.getOnlineWidgets();
 			for (int frame = 0; frame < widgets.length; frame++) {
 				Widget widget = widgets[frame];
 				if (widget != null && "viewerConfig".equals(widget.getType().getAction())) {

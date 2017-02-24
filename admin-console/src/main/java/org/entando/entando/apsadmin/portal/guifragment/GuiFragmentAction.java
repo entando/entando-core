@@ -27,6 +27,7 @@ import org.entando.entando.apsadmin.portal.guifragment.helper.IGuiFragmentAction
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
 
@@ -316,6 +317,13 @@ public class GuiFragmentAction extends BaseAction {
 		this._actionHelper = actionHelper;
 	}
 
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
+
 	private int _strutsAction;
 	private String _code;
 	private String _widgetTypeCode;
@@ -328,4 +336,5 @@ public class GuiFragmentAction extends BaseAction {
 
 	private Map<String, List<Object>> _references = new HashMap<String, List<Object>>();
 	private IGuiFragmentActionHelper _actionHelper;
+	private IPageActionHelper _pageActionHelper;
 }

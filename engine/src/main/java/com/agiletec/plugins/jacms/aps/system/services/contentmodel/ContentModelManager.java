@@ -186,7 +186,15 @@ public class ContentModelManager extends AbstractService implements IContentMode
      * @param page La pagina nel qual cercare il modello di contenuto
      */
     private void searchReferencingPages(long modelId, Map<String, List<IPage>> utilizers, IPage page) {
-    	Widget[] widgets = page.getWidgets();
+    	this.addReferencingPages(modelId, utilizers, page, page.getOnlineWidgets());
+    	this.addReferencingPages(modelId, utilizers, page, page.getDraftWidgets());
+    	IPage[] children = page.getChildren();
+        for (int i=0; i < children.length; i++) {
+        	this.searchReferencingPages(modelId, utilizers, children[i]);
+        }
+    }
+    
+    private void addReferencingPages(long modelId, Map<String, List<IPage>> utilizers, IPage page, Widget[] widgets) {
     	if (null != widgets) {
     		for (int i=0; i<widgets.length; i++) {
     			Widget widget = widgets[i];
@@ -209,10 +217,6 @@ public class ContentModelManager extends AbstractService implements IContentMode
         		}		
         	}
     	}
-    	IPage[] children = page.getChildren();
-        for (int i=0; i < children.length; i++) {
-        	this.searchReferencingPages(modelId, utilizers, children[i]);
-        }
     }
     
     @Override

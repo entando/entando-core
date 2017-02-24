@@ -103,7 +103,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode);
+			IPage addedPage = this._pageManager.getPage(pageCode, false );
 			assertNotNull(addedPage);
 		} catch (Throwable t) {
 			throw t;

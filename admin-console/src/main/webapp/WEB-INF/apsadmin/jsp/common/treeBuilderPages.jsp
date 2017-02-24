@@ -9,7 +9,7 @@
     <s:set name="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}">collapsed</s:if>" >
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}">collapsed childrenNodes</s:if>" >
         <td class="treegrid-node pointer">
          
         <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 
@@ -18,7 +18,7 @@
         &#32;<label for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
                 <span class="text-muted icon fa fa-lock"></span></s:if></label>
         </td>
-        <td>
+        <td class="text-center">
             <div class="moveButtons hidden">
         <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
            <i class="fa fa-plus" aria-hidden="true"></i>
@@ -31,15 +31,26 @@
         </wpsf:submit>
             </div>
     </td>
-    <td>State</td>
-    <td>Menu List</td>
-    <td class=" table-view-pf-actions">
+    <td class="text-center">
+        <%-- FOR DEV. DEGUB
+        ONLINE: <s:property value="%{#currentRoot.getEntity().isOnline()}"/>
+        CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
+        --%>
+        <span class="statusField">
+            <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
+            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
+            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
+        </span>
+        
+    </td>
+    <td class="text-center">Menu List</td>
+    <td class=" table-view-pf-actions text-center">
         <div class="dropdown dropdown-kebab-pf">
             <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span class="fa fa-ellipsis-v"></span></button>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                 <li>
-                    <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
+                    <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
                         <span class="">Edit </span>
                     </wpsf:submit>
                 </li>

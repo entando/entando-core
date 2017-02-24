@@ -44,7 +44,14 @@ public interface IPageManager extends ITreeNodeManager {
 	 * @throws ApsSystemException In case of database access error.
 	 */
 	public void updatePage(IPage page) throws ApsSystemException;
-
+	
+	/**
+	 * Update a page as online.
+	 * @param pageCode The code of the page to be setted online.
+	 * @throws ApsSystemException In case of error.
+	 */
+	public void setPageOnline(String pageCode) throws ApsSystemException;
+	
 	/**
 	 * Move a page.
 	 * @param pageCode The code of the page to move.
@@ -105,6 +112,18 @@ public interface IPageManager extends ITreeNodeManager {
 	 * @return the requested page.
 	 */
 	public IPage getPage(String pageCode);
+	
+	public IPage getOnlinePage(String pageCode);
+	
+	public IPage getDraftPage(String pageCode);
+	
+	/**
+	 * Return a page given the name.
+	 * @param pageCode The code of the page
+	 * @param onlyOnline If true, returns the page only if is online
+	 * @return The desired page
+	 */
+	public IPage getPage(String pageCode, boolean onlyOnline);
 
 	/**
 	 * Search pages by a token of its code.
@@ -122,8 +141,12 @@ public interface IPageManager extends ITreeNodeManager {
 	 * @deprecated Use {@link #getWidgetUtilizers(String)} instead
 	 */
 	public List<IPage> getShowletUtilizers(String showletTypeCode) throws ApsSystemException;
-
+	
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
+	
+	public List<IPage> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
+	
+	public List<IPage> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
 	
 	public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException;
 	

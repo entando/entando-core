@@ -317,7 +317,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 			String result = this.executeAction();
 			assertEquals("configure", result);
 			page = this._pageManager.getPage(pageCode);
-			widget = page.getWidgets()[frame];
+			widget = page.getDraftWidgets()[frame];
 			assertNotNull(widget);
 			assertEquals("leftmenu", widget.getType().getCode());
 			assertEquals(1, widget.getConfig().size());
@@ -326,7 +326,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			page = this._pageManager.getPage(pageCode);
-			page.getWidgets()[frame] = null;
+			page.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
 	}

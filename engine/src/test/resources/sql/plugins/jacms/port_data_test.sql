@@ -350,6 +350,43 @@ INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagin
 
 
 
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_11', 2, 'content_viewer', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="contentId">ART187</property>
+</properties>');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('homepage', 2, 'content_viewer', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="modelId">2</property>
+<property key="contentId">ART1</property>
+</properties>');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('coach_page', 2, 'content_viewer', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="contentId">ART187</property>
+</properties>');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('customers_page', 2, 'content_viewer', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="contentId">ART111</property>
+</properties>');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('homepage', 0, 'content_viewer_list', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="maxElemForItem">5</property>
+<property key="modelId">11</property>
+<property key="contentType">NEW</property>
+<property key="filters">(order=DESC;attributeFilter=true;likeOption=false;key=Date)+(order=ASC;attributeFilter=true;likeOption=false;key=Title)</property>
+</properties>');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('customer_subpage_2', 2, 'content_viewer', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="contentId">ART112</property>
+</properties>');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('contentview', 2, 'content_viewer', NULL);
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 1, 'content_viewer', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="contentId">ART187</property>
+</properties>');
+
+
+
+
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'contentTypes', 'Definition of the Content Types', '<?xml version="1.0" encoding="UTF-8"?>
 <contenttypes>
 	<contenttype typecode="ALL" typedescr="Content type with all attribute types" viewpage="announcements_read" listmodel="**NULL**" defaultmodel="**NULL**">

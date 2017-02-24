@@ -202,7 +202,7 @@ public class ApiServiceAction extends AbstractApiAction {
 				return check;
 			}
 			ApiMethod masterMethod = this.getMethod(this.getNamespace(), this.getResourceName());
-			IPage page = this.getPageManager().getPage(this.getPageCode());
+			IPage page = this.getPageManager().getOnlinePage(this.getPageCode());
 			if (null == page) {
 				this.addFieldError("pageCode", this.getText("error.service.paste.invalidPageCode", new String[]{this.getPageCode()}));
 				return INPUT;

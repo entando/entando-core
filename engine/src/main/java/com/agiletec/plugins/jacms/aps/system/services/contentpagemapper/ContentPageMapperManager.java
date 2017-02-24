@@ -80,20 +80,22 @@ public class ContentPageMapperManager extends AbstractService
      */
 	private void searchPublishedContents(IPage page) {
 		PageModel pageModel = page.getModel();
-		int mainFrame = pageModel.getMainFrame();
-		Widget[] widgets = page.getWidgets();
-		Widget widget = null;
-		if (null != widgets && mainFrame != -1) {
-			widget = widgets[mainFrame];
-		}
-		ApsProperties config = (null != widget) ? widget.getConfig() : null;
-		String contentId = (null != config) ? config.getProperty("contentId") : null;
-		if (null != contentId) {
-			this.getContentPageMapper().add(contentId, page.getCode());
-		}
-		IPage[] children = page.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			this.searchPublishedContents(children[i]);
+		if (pageModel != null) {
+			int mainFrame = pageModel.getMainFrame();
+			Widget[] widgets = page.getWidgets();
+			Widget widget = null;
+			if (null != widgets && mainFrame != -1) {
+				widget = widgets[mainFrame];
+			}
+			ApsProperties config = (null != widget) ? widget.getConfig() : null;
+			String contentId = (null != config) ? config.getProperty("contentId") : null;
+			if (null != contentId) {
+				this.getContentPageMapper().add(contentId, page.getCode());
+			}
+			IPage[] children = page.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				this.searchPublishedContents(children[i]);
+			}
 		}
 	}
     

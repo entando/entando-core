@@ -13,34 +13,49 @@
  */
 package org.entando.entando.apsadmin.portal.model;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.json.JSONUtil;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.apsadmin.portal.model.helper.IPageModelActionHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.http.HttpStatus;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.Frame;
+import com.agiletec.aps.system.services.pagemodel.FrameSketch;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelDOM;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-
-import java.io.File;
+import com.opensymphony.xwork2.Action;
 
 /**
  * @author E.Santoboni
  */
-public class PageModelAction extends AbstractPageModelAction {
+public class PageModelAction extends AbstractPageModelAction implements ServletResponseAware {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(PageModelAction.class);
-	
+
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this._response = response;
+	}
+
 	@Override
 	public void validate() {
 		super.validate();
@@ -185,6 +200,94 @@ public class PageModelAction extends AbstractPageModelAction {
 		}
 		return SUCCESS;
 	}
+
+	/**
+	 * Updates the sketch info.
+	 * The body format must be the same returned by /do/rs/PageModel/frames?code=code
+	 * @return 200 - the page model xml representation, updated with the sketch info provided;
+	 */
+	@SuppressWarnings("unchecked")
+	public String updateSketch() {
+		try {
+			PageModel pageModel = this.getPageModelManager().getPageModel(this.getCode());
+			if (null != pageModel) {
+				String payload = getBody(this.getRequest());
+				if (StringUtils.isNotBlank(payload)) {
+					List<Object> list = (List<Object>) JSONUtil.deserialize(payload);
+					Iterator<Object> it = list.iterator();
+					while (it.hasNext()) {
+						Map<String, Object> framemap = (Map<String, Object>) it.next();
+						Long posVal = (Long)framemap.get("pos");
+						Map<String, Object> sketchMap = (Map<String, Object>) framemap.get("sketch");
+						if (null != sketchMap) {
+							Number x1 = (Number) sketchMap.get("x1");
+							Number y1 = (Number) sketchMap.get("y1");
+							Number x2 = (Number) sketchMap.get("x2");
+							Number y2 = (Number) sketchMap.get("y2");
+							FrameSketch fs = new FrameSketch();
+							fs.setCoords(x1.intValue(), y1.intValue(), x2.intValue(), y2.intValue());
+							if (null != pageModel.getFrameConfig(posVal.intValue())){
+								pageModel.getFrameConfig(posVal.intValue()).setSketch(fs);
+							}
+						}
+					}
+					this.getPageModelManager().updatePageModel(pageModel);
+					String xml = new PageModelDOM(pageModel).getXMLDocument();
+					this._response.getWriter().write(xml);
+					this._response.setStatus(HttpStatus.OK.value());
+					return Action.NONE;					
+				}
+			}
+		} catch (Throwable t) {
+			_logger.error("error in updateSketch", t);
+			this._response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return Action.NONE;
+		}
+		this._response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+		return Action.NONE;
+	}
+
+	public static String getBody(HttpServletRequest request) throws IOException {
+
+	    String body = null;
+	    StringBuilder stringBuilder = new StringBuilder();
+	    BufferedReader bufferedReader = null;
+
+	    try {
+	        InputStream inputStream = request.getInputStream();
+	        if (inputStream != null) {
+	            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+	            char[] charBuffer = new char[128];
+	            int bytesRead = -1;
+	            while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+	                stringBuilder.append(charBuffer, 0, bytesRead);
+	            }
+	        } else {
+	            stringBuilder.append("");
+	        }
+	    } catch (IOException ex) {
+	        throw ex;
+	    } finally {
+	        if (bufferedReader != null) {
+	            try {
+	                bufferedReader.close();
+	            } catch (IOException ex) {
+	                throw ex;
+	            }
+	        }
+	    }
+	    body = stringBuilder.toString();
+	    return body;
+	}
+
+	public Frame[] getFramesSketch() {
+		PageModel pageModel = super.getPageModel(this.getCode());
+		if (null == pageModel) {
+			this._response.setStatus(HttpStatus.NOT_FOUND.value());
+			return null;
+		}
+		return pageModel.getFramesConfig();
+	}
 	
 	protected PageModel createPageModel() throws Throwable {
 		PageModel model = null;
@@ -320,5 +423,7 @@ public class PageModelAction extends AbstractPageModelAction {
 	
 	private IWidgetTypeManager _widgetTypeManager;
 	private IPageModelActionHelper _pageModelActionHelper;
+	private HttpServletResponse _response;
+	
 	
 }

@@ -29,6 +29,7 @@
                 $().setupVerticalNavigation(true);
             });
         </script>
+        <tiles:insertAttribute name="extraResources"/>
     </head>
 
     <body>

@@ -13,6 +13,21 @@
  */
 package org.entando.entando.plugins.jacms.aps.servlet;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.entando.entando.aps.servlet.IProtectedResourceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
@@ -33,22 +48,6 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMon
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMultiInstanceResource;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.entando.entando.aps.servlet.IProtectedResourceProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provider bean of protected cms resources.
@@ -151,7 +150,7 @@ public class ProtectedResourceProvider implements IProtectedResourceProvider {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("returnUrl", URLEncoder.encode(targetUrl.toString(), "UTF-8"));
 			String loginPageCode = this.getConfigManager().getParam(SystemConstants.CONFIG_PARAM_LOGIN_PAGE_CODE);
-			IPage page = this.getPageManager().getPage(loginPageCode);
+			IPage page = this.getPageManager().getOnlinePage(loginPageCode);
 			Lang defaultLang = this.getLangManager().getDefaultLang();
 			String url = this.getUrlManager().createUrl(page, defaultLang, params);
 			response.sendRedirect(url);

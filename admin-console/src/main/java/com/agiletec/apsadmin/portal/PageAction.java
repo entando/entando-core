@@ -14,12 +14,15 @@
 package com.agiletec.apsadmin.portal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +31,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -36,8 +41,6 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
-import java.util.Collections;
-import org.apache.commons.beanutils.BeanComparator;
 
 /**
  * Main action for pages handling
@@ -86,7 +89,7 @@ public class PageAction extends AbstractPortalAction {
 				this.getStrutsAction() == ApsAdminSystemConstants.PASTE) 
 				&& null != code && code.trim().length() > 0) {
 			String currectCode = BaseActionHelper.purgeString(code.trim());
-			if (currectCode.length() > 0 && null != this.getPageManager().getPage(currectCode)) {
+			if (currectCode.length() > 0 && null != this.getPage(currectCode)) {
 				String[] args = {currectCode};
 				this.addFieldError("pageCode", this.getText("error.page.duplicateCode", args));
 			}
@@ -101,7 +104,7 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			IPage parentPage = this.getPageManager().getPage(selectedNode);
+			IPage parentPage = this.getPage(selectedNode);
 			this.valueFormForNew(parentPage);
 		} catch (Throwable t) {
 			_logger.error("error in newPage", t);
@@ -127,7 +130,7 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			IPage page = this.getPageManager().getPage(pageCode);
+			IPage page = this.getPage(pageCode);
 			this.valueFormForEdit(page);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
@@ -165,7 +168,7 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			IPage page = this.getPageManager().getPage(pageCode);
+			IPage page = this.getPage(pageCode);
 			Map references = this.getPageActionHelper().getReferencingObjects(page, this.getRequest());
 			if (null != references) {
 				this.setReferences(references);
@@ -182,18 +185,15 @@ public class PageAction extends AbstractPortalAction {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		this.setParentPageCode(pageToEdit.getParent().getCode());
 		this.setPageCode(pageToEdit.getCode());
-		this.setTitles(pageToEdit.getTitles());
 		this.setGroup(pageToEdit.getGroup());
+		PageMetadata draftMetadata = pageToEdit.getDraftMetadata();
+		this.copyMetadataToForm(draftMetadata);
 		this.setGroupSelectLock(true);
-		this.setExtraGroups(pageToEdit.getExtraGroups());
-		this.setModel(pageToEdit.getModel().getCode());
-		this.setShowable(pageToEdit.isShowable());
-		this.setUseExtraTitles(pageToEdit.isUseExtraTitles());
-		this.setCharset(pageToEdit.getCharset());
-		this.setMimeType(pageToEdit.getMimeType());
 	}
 	
 	public String paste() {
+		// TODO Nella copia vanno replicate sia le configurazioni draft che quelle online
+		IPageManager pageManager = this.getPageManager();
 		String selectedNode = this.getSelectedNode();
 		String copyingPageCode = this.getRequest().getParameter("copyingPageCode");
 		try {
@@ -201,27 +201,36 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			if ("".equals(copyingPageCode) || null == this.getPageManager().getPage(copyingPageCode)) {
+			if ("".equals(copyingPageCode) || null == this.getPage(copyingPageCode)) {
 				this.addActionError(this.getText("error.page.selectPageToCopy"));
 				return "pageTree";
 			}
-			IPage selectedPage = this.getPageManager().getPage(selectedNode);
-			IPage copiedPage = this.getPageManager().getPage(copyingPageCode);
+			IPage selectedPage = pageManager.getDraftPage(selectedNode);
+			IPage copiedPage = pageManager.getDraftPage(copyingPageCode);
 			this.setStrutsAction(ApsAdminSystemConstants.PASTE);
 			this.setCopyPageCode(copyingPageCode);
 			this.setGroup(selectedPage.getGroup());
-			this.setExtraGroups(copiedPage.getExtraGroups());
-			this.setModel(copiedPage.getModel().getCode());
-			this.setShowable(copiedPage.isShowable());
-			this.setUseExtraTitles(copiedPage.isUseExtraTitles());
+			PageMetadata draftMetadata = copiedPage.getDraftMetadata();
+			this.copyMetadataToForm(draftMetadata);
+			this.getTitles().clear();
 			this.setParentPageCode(selectedNode);
-			this.setCharset(copiedPage.getCharset());
-			this.setMimeType(copiedPage.getMimeType());
 		} catch (Throwable t) {
 			_logger.error("error in paste", t);
 			return FAILURE;
 		}
 		return SUCCESS;
+	}
+	
+	private void copyMetadataToForm(PageMetadata metadata) {
+		if (metadata != null) {
+			this.setTitles(metadata.getTitles());
+			this.setExtraGroups(metadata.getExtraGroups());
+			this.setModel(metadata.getModel().getCode());
+			this.setShowable(metadata.isShowable());
+			this.setUseExtraTitles(metadata.isUseExtraTitles());
+			this.setCharset(metadata.getCharset());
+			this.setMimeType(metadata.getMimeType());
+		}
 	}
 	
 	public String save() {
@@ -247,49 +256,31 @@ public class PageAction extends AbstractPortalAction {
 	protected IPage buildNewPage() throws ApsSystemException {
 		Page page = new Page();
 		try {
-			page.setParent(this.getPageManager().getPage(this.getParentPageCode()));
+			page.setParent(this.getPage(this.getParentPageCode()));
 			page.setGroup(this.getGroup());
-			page.setShowable(this.isShowable());
-			page.setUseExtraTitles(this.isUseExtraTitles());
-			PageModel pageModel = this.getPageModelManager().getPageModel(this.getModel());
-			page.setModel(pageModel);
+			PageMetadata draftMetadata = new PageMetadata();
+			this.valueMetadataFromForm(draftMetadata);
+			page.setDraftMetadata(draftMetadata);
+			
 			if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
-				IPage copyPage = this.getPageManager().getPage(this.getCopyPageCode());
-				page.setWidgets(copyPage.getWidgets());
+				IPage copyPage = this.getPage(this.getCopyPageCode());
+				page.setOnlineWidgets(copyPage.getOnlineWidgets());
+				page.setDraftWidgets(copyPage.getDraftWidgets());
+				PageMetadata onlineMetadata = copyPage.getOnlineMetadata();
+				if (onlineMetadata != null) {
+					PageMetadata cloneMetadata = onlineMetadata.clone();
+					cloneMetadata.setTitles(draftMetadata.getTitles());
+					page.setOnlineMetadata(cloneMetadata);
+				}
 			} else {
 				if (this.isDefaultShowlet()) {
 					this.setDefaultWidgets(page);
 				} else {
-					page.setWidgets(new Widget[pageModel.getFrames().length]);
+					page.setDraftWidgets(new Widget[draftMetadata.getModel().getFrames().length]);
 				}
 			}
-			page.setTitles(this.getTitles());
-			page.setExtraGroups(this.getExtraGroups());
 			//ricava il codice
-			String newPageCode = this.getPageCode();
-			if (null != newPageCode && newPageCode.trim().length() > 0) {
-				if (newPageCode.length() > 0) {
-					page.setCode(newPageCode);
-				}
-			}
-			if (null == page.getCode()) {
-				String defaultLangCode = this.getLangManager().getDefaultLang().getCode();
-				String pageCode = 
-					this.getPageActionHelper().buildCode(page.getTitle(defaultLangCode), "page", 25);
-				page.setCode(pageCode);
-			}
-			String charset = this.getCharset();
-			if (null != charset && charset.trim().length() > 0) {
-				page.setCharset(charset);
-			} else {
-				page.setCharset(null);
-			}
-			String mimetype = this.getMimeType();
-			if (null != mimetype && mimetype.trim().length() > 0) {
-				page.setMimeType(mimetype);
-			} else {
-				page.setMimeType(null);
-			}
+			page.setCode(this.buildNewPageCode(draftMetadata));
 		} catch (Throwable t) {
 			_logger.error("Error building new page", t);
 			throw new ApsSystemException("Error building new page", t);
@@ -297,35 +288,36 @@ public class PageAction extends AbstractPortalAction {
 		return page;
 	}
 	
+	private String buildNewPageCode(PageMetadata metadata) throws ApsSystemException {
+		String newPageCode = this.getPageCode();
+		if (StringUtils.isNotBlank(newPageCode)) {
+			newPageCode = newPageCode.trim();
+		} else {
+			String defaultLangCode = this.getLangManager().getDefaultLang().getCode();
+			newPageCode = this.getPageActionHelper().buildCode(metadata.getTitle(defaultLangCode), "page", 25);
+		}
+		return newPageCode;
+	}
+	
 	protected IPage getUpdatedPage() throws ApsSystemException {
 		Page page = null;
 		try {
-			page = (Page) this.getPageManager().getPage(this.getPageCode());
+			page = (Page) this.getPage(this.getPageCode());
 			page.setGroup(this.getGroup());
-			page.setShowable(this.isShowable());
-			page.setUseExtraTitles(this.isUseExtraTitles());
-			if (!page.getModel().getCode().equals(this.getModel())) {
+			PageMetadata metadata = page.getDraftMetadata();
+			if (metadata == null) {
+				metadata = new PageMetadata();
+				page.setDraftMetadata(metadata);
+			}
+			PageModel oldModel = metadata.getModel();
+			
+			this.valueMetadataFromForm(metadata);
+			if (oldModel == null || !oldModel.getCode().equals(this.getModel())) {
 				//Ho cambiato modello e allora cancello tutte le showlets Precedenti
-				PageModel model = this.getPageModelManager().getPageModel(this.getModel());
-				page.setModel(model);
-				page.setWidgets(new Widget[model.getFrames().length]);
+				page.setDraftWidgets(new Widget[metadata.getModel().getFrames().length]);
 			}
 			if (this.isDefaultShowlet()) {
 				this.setDefaultWidgets(page);
-			}
-			page.setTitles(this.getTitles());
-			page.setExtraGroups(this.getExtraGroups());
-			String charset = this.getCharset();
-			if (null != charset && charset.trim().length() > 0) {
-				page.setCharset(charset);
-			} else {
-				page.setCharset(null);
-			}
-			String mimetype = this.getMimeType();
-			if (null != mimetype && mimetype.trim().length() > 0) {
-				page.setMimeType(mimetype);
-			} else {
-				page.setMimeType(null);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error updating page", t);
@@ -334,9 +326,28 @@ public class PageAction extends AbstractPortalAction {
 		return page;
 	}
 	
+	private void valueMetadataFromForm(PageMetadata metadata) {
+		if (metadata.getModel() == null || !metadata.getModel().getCode().equals(this.getModel())) {
+			//Ho cambiato modello e allora cancello tutte le showlets Precedenti
+			PageModel model = this.getPageModelManager().getPageModel(this.getModel());
+			metadata.setModel(model);
+		}
+		metadata.setShowable(this.isShowable());
+		metadata.setUseExtraTitles(this.isUseExtraTitles());
+		metadata.setTitles(this.getTitles());
+		metadata.setExtraGroups(this.getExtraGroups());
+		
+		String charset = this.getCharset();
+		metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
+		
+		String mimetype = this.getMimeType();
+		metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
+	}
+	
 	protected void setDefaultWidgets(Page page) throws ApsSystemException {
 		try {
-			Widget[] defaultWidgets = page.getModel().getDefaultWidget();
+			PageModel model = page.getDraftMetadata().getModel();
+			Widget[] defaultWidgets = model.getDefaultWidget();
 			if (null == defaultWidgets) {
 				return;
 			}
@@ -345,13 +356,13 @@ public class PageAction extends AbstractPortalAction {
 				Widget defaultWidget = defaultWidgets[i];
 				if (null != defaultWidget) {
 					if (null == defaultWidget.getType()) {
-						_logger.error("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", page.getModel().getCode(), i, page.getCode());
+						_logger.error("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", model.getCode(), i, page.getCode());
 						continue;
 					}
 					widgets[i] = defaultWidget;
 				}
 			}
-			page.setWidgets(widgets);
+			page.setDraftWidgets(widgets);
 		} catch (Throwable t) {
 			_logger.error("Error setting default widget to page {}", page.getCode(), t);
 			throw new ApsSystemException("Error setting default widget to page '" + page.getCode() + "'", t);
@@ -365,7 +376,7 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			IPage currentPage = this.getPageManager().getPage(selectedNode);
+			IPage currentPage = this.getPage(selectedNode);
 			Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
 			if (references.size()>0) {
 				this.setReferences(references);
@@ -382,12 +393,13 @@ public class PageAction extends AbstractPortalAction {
 	
 	public String delete() {
 		try {
+			IPageManager pageManager = this.getPageManager();
 			String check = this.checkDelete(this.getNodeToBeDelete());
 			if (null != check) {
 				return check;
 			}
-			IPage pageToDelete = this.getPageManager().getPage(this.getNodeToBeDelete());
-			this.getPageManager().deletePage(this.getNodeToBeDelete());
+			IPage pageToDelete = this.getPage(this.getNodeToBeDelete());
+			pageManager.deletePage(this.getNodeToBeDelete());
 			this.addActivityStreamInfo(pageToDelete, ApsAdminSystemConstants.DELETE, false);
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
@@ -397,12 +409,13 @@ public class PageAction extends AbstractPortalAction {
 	}
 	
 	protected String checkDelete(String selectedNode) {
+		IPageManager pageManager = this.getPageManager();
 		String check = this.checkSelectedNode(selectedNode);
 		if (null != check) {
 			return check;
 		}
-		IPage currentPage = this.getPageManager().getPage(selectedNode);
-		if (this.getPageManager().getRoot().getCode().equals(currentPage.getCode())) {
+		IPage currentPage = this.getPage(selectedNode);
+		if (pageManager.getRoot().getCode().equals(currentPage.getCode())) {
 			this.addActionError(this.getText("error.page.removeHome.notAllowed"));
 			return "pageTree";
 		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
@@ -586,13 +599,12 @@ public class PageAction extends AbstractPortalAction {
 		this._allowedMimeTypesCSV = allowedMimeTypesCSV;
 	}
 	
-	@Deprecated
-	protected IPageActionHelper getHelper() {
-		return this.getPageActionHelper();
+
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
 	}
-	@Deprecated
-	public void setHelper(IPageActionHelper helper) {
-		this.setPageActionHelper(helper);
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
 	}
 	
 	protected IPageModelManager getPageModelManager() {
@@ -628,5 +640,6 @@ public class PageAction extends AbstractPortalAction {
 	private String _allowedCharsetsCSV;
 	
 	private IPageModelManager _pageModelManager;
+	private IPageActionHelper _pageActionHelper;
 	
 }

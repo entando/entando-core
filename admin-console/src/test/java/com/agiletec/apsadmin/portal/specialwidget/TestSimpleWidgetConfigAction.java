@@ -75,7 +75,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 		String pageCode = "pagina_2";
 		int frame = 0;
 		IPage page = this._pageManager.getPage(pageCode);
-		Widget widget = page.getWidgets()[frame];
+		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
 		try {
 			this.setUserOnSession("admin");
@@ -87,7 +87,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 			String result = this.executeAction();
 			assertEquals("configure", result);
 			page = this._pageManager.getPage(pageCode);
-			widget = page.getWidgets()[frame];
+			widget = page.getDraftWidgets()[frame];
 			assertNotNull(widget);
 			assertEquals("formAction", widget.getType().getCode());
 			assertEquals(1, widget.getConfig().size());
@@ -96,7 +96,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			page = this._pageManager.getPage(pageCode);
-			page.getWidgets()[frame] = null;
+			page.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
 	}

@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.services.page.showlet;
+package com.agiletec.aps.system.services.page.widget;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.services.page.widget.NavigatorExpression;

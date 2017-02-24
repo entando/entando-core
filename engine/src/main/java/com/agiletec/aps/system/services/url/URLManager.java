@@ -81,7 +81,7 @@ public class URLManager extends AbstractURLManager {
 				lang = this.getLangManager().getDefaultLang();
 			}
 			String pageCode = pageUrl.getPageCode();
-			IPage page = this.getPageManager().getPage(pageCode);
+			IPage page = this.getPageManager().getOnlinePage(pageCode);
 			if (page == null && null != reqCtx) {
 				page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
 			}

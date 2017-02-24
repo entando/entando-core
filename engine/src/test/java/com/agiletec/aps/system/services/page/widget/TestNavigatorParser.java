@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.services.page.showlet;
+package com.agiletec.aps.system.services.page.widget;
 
 import java.util.List;
 
@@ -141,7 +141,7 @@ public class TestNavigatorParser extends BaseTestCase {
 	private RequestContext valueRequestContext(String currentPageCode, String currentUserName) throws Throwable {
 		RequestContext reqCtx = this.getRequestContext();
 		this.setUserOnSession(currentUserName);
-		IPage currentPage = this._pageManager.getPage(currentPageCode);
+		IPage currentPage = this._pageManager.getOnlinePage(currentPageCode);
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, currentPage);
 		return reqCtx;
 	}

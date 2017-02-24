@@ -70,6 +70,18 @@
 				<wpsf:textarea name="template" id="template" cssClass="autotextarea  form-control" rows="8" />
 			</div>
 		</div>
+        <div class="form-group">
+            <div class="col-xs-12">
+                <label>Template Preview</label>
+                <!-- the grid (or alert) will be appended here -->
+                <div class="grid-container"></div>
+                <div style="display:none">
+                    <div class="message overlappingFrames"><s:text name="error.pageModel.overlappingFrames"/></div>
+                    <div class="message malformedFrames"><s:text name="error.pageModel.malformedFrames"/></div>
+                    <div class="message gridError"><s:text name="error.pageModel.gridError"/></div>
+                </div>
+            </div>
+        </div>
 		<div class="form-group">
 			<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
 				<wpsf:submit type="button" cssClass="btn btn-primary btn-block">

@@ -19,5 +19,5 @@ TO_DO : Download last FontAwesome
 <!--JS inclusions-->
 <script src="<wp:resourceURL />administration/js/jquery-2.2.4.min.js"></script>
 <script src="<wp:resourceURL />administration/js/jquery.matchHeight-min.js"></script>
-<script src="<wp:resourceURL />administration/patternfly/js/patternfly.min.js"></script>
+<script src="<wp:resourceURL />administration/patternfly/js/patternfly.js"></script>
 <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>

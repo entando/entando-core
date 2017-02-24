@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
 import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Action principale per la redazione contenuti.
@@ -292,7 +292,7 @@ public class ContentAction extends AbstractContentAction {
 			Content content = this.getContent();
 			if (null != content) {
 				IPage defaultViewerPage = this.getPageManager().getPage(content.getViewPage());
-				if (null != defaultViewerPage && CmsPageActionUtil.isFreeViewerPage(defaultViewerPage, null)) {
+				if (null != defaultViewerPage && CmsPageActionUtil.isOnlineFreeViewerPage(defaultViewerPage, null)) {
 					pageItems.add(new SelectItem("", this.getText("label.default")));
 				}
 				if (null == content.getId()) return pageItems;

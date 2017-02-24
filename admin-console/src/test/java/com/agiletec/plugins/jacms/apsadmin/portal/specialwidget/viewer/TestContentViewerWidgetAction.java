@@ -159,10 +159,11 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 	
 	public void testSave_1() throws Throwable {
 		String pageCode = "pagina_2";
-		int frame = 0;
+		int frame = 3;
 		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
+		assertNull(page.getOnlineWidgets()[frame]);
 		try {
 			this.setUserOnSession("admin");
 			this.initAction("/do/jacms/Page/SpecialWidget/Viewer", "saveViewerConfig");
@@ -176,6 +177,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 			page = this._pageManager.getDraftPage(pageCode);
 			widget = page.getDraftWidgets()[frame];
 			assertNotNull(widget);
+			assertNull(page.getOnlineWidgets()[frame]);
 			assertEquals("content_viewer", widget.getType().getCode());
 			assertEquals(2, widget.getConfig().size());
 			assertEquals("ART187", widget.getConfig().getProperty("contentId"));

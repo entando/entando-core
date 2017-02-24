@@ -192,7 +192,8 @@ public class BaseAdminAction extends BaseAction {
         if (page.getGroup().equals(Group.FREE_GROUP_NAME)) {
             pages.add(page);
         }
-        IPage[] children = page.getChildren();
+        // TODO Verificare ONLINE/DRAFT
+        IPage[] children = page.getAllChildren();
         for (int i = 0; i < children.length; i++) {
             this.addPages(children[i], pages);
         }

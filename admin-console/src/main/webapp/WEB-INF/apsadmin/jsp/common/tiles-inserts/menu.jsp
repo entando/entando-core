@@ -159,7 +159,7 @@
 
     <li class="list-group-item secondary-nav-item-pf" data-target="#user-settings-secondary">
         <a>
-            <span class="fa fa-files-o" data-toggle="tooltip" title="Users Settings" ></span>
+            <span class="fa fa-users" data-toggle="tooltip" title="Users Settings" ></span>
             <span class="list-group-item-value">Users Settings</span>
         </a>
 
@@ -186,7 +186,7 @@
 
                 <li class="list-group-item">
                     <a>
-                        <span class="list-group-item-value">User Settings TO_DO</span>
+                        <span class="list-group-item-value">User Restrictions TO_DO</span>
                     </a>
                 </li>
 

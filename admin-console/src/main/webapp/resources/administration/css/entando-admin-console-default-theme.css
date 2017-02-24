@@ -16,6 +16,18 @@
     padding: 0;
 }
 
+.overflow-visible{
+    overflow: visible;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.btn-no-button{
+    background: none;
+    border: 0;
+}
 
 /*-----ouline tolto-----*/
 button:focus {outline:0 !important;}
@@ -119,4 +131,43 @@ a {
     background-color: #ffe6e6 !important;
     border-color: #c00;
     color: #363636 !important;
+}
+.input-group-btn-search{
+    width: 95% !important;
+}
+.position-search{
+    margin:0 auto;
+}
+.moveButtons{
+    font-size: 16px;
+}
+.page-tabs-header{
+    border-bottom: 1px solid #D5D5D5;
+    line-height: 36px;
+    margin-top: 0;
+    padding-bottom: 0;
+}
+.breadcrumb-position {
+    margin: -25px 0 0 0 ; 
+}
+.dropdown-menu>li>button {
+    border-color: transparent;
+    border-style: solid;
+    border-width: 1px 0;
+    padding: 1px 10px;
+}
+.dropdown-menu>li>button {
+    display: block;
+    clear: both;
+    font-weight: 400;
+    color: #4d5258;
+    background: #fff;
+    text-align: initial;
+    padding: 1px 10px;
+}
+.dropdown-menu>li>button:hover {
+    background: #fff;
+    background-color: #def3ff !important;
+    border-color: #bee1f4 !important;
+    color: #4d5258 !important;
 }

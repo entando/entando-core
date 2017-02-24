@@ -130,7 +130,7 @@ public class ContentViewerHelper implements IContentViewerHelper {
             return;
         }
         Integer currentFrame = (Integer) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME);
-        if (currentFrame == page.getModel().getMainFrame() && null != renderInfo) {
+        if (currentFrame == page.getOnlineMetadata().getModel().getMainFrame() && null != renderInfo) {
             Object extraTitle = renderInfo.getAttributeValues().get(JacmsSystemConstants.ATTRIBUTE_ROLE_TITLE);
             if (null != extraTitle) {
                 reqCtx.addExtraParam(SystemConstants.EXTRAPAR_EXTRA_PAGE_TITLES, extraTitle);

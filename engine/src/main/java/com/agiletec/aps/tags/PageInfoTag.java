@@ -55,7 +55,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 		try {
 			IPageManager pageManager = 
 				(IPageManager) ApsWebApplicationUtils.getBean(SystemConstants.PAGE_MANAGER, this.pageContext);
-			IPage page = pageManager.getPage(this.getPageCode());
+			IPage page = pageManager.getOnlinePage(this.getPageCode());
 			if (null == page) {
 				_logger.error("Required info for null page : inserted code '{}'", this.getPageCode());
 			}
@@ -70,7 +70,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 			} else if (this.getInfo().equals(CHILD_OF_INFO)) {
 				this.extractIsChildOfTarget(page);
 			} else if (this.getInfo().equals(HAS_CHILD)) {
-				boolean hasChild = (page.getChildren() != null && page.getChildren().length > 0);
+				boolean hasChild = (page.getOnlineChildren() != null && page.getOnlineChildren().length > 0);
 				this._value = new Boolean(hasChild).toString();
 			}
 			this.evalValue();

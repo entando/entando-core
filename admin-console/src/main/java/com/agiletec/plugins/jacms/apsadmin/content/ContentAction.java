@@ -275,7 +275,7 @@ public class ContentAction extends AbstractContentAction {
 	}
 
 	public IPage getPage(String pageCode) {
-		return this.getPageManager().getPage(pageCode);
+		return this.getPageManager().getOnlinePage(pageCode);
 	}
 
 	public String getHtmlEditorCode() {
@@ -291,7 +291,7 @@ public class ContentAction extends AbstractContentAction {
 		try {
 			Content content = this.getContent();
 			if (null != content) {
-				IPage defaultViewerPage = this.getPageManager().getPage(content.getViewPage());
+				IPage defaultViewerPage = this.getPageManager().getOnlinePage(content.getViewPage());
 				if (null != defaultViewerPage && CmsPageActionUtil.isOnlineFreeViewerPage(defaultViewerPage, null)) {
 					pageItems.add(new SelectItem("", this.getText("label.default")));
 				}

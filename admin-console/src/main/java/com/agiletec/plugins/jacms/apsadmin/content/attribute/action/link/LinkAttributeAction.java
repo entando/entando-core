@@ -137,7 +137,7 @@ public class LinkAttributeAction extends BaseAction implements ILinkAttributeAct
 	}
 	
 	public IPage getPage(String pageCode) {
-		return this.getPageManager().getPage(pageCode);
+		return this.getPageManager().getOnlinePage(pageCode);
 	}
 	
 	public ContentRecordVO getContentVo(String contentId) {

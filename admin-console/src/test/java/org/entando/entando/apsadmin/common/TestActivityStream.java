@@ -87,7 +87,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
 	}
 	
 	private void addPage(String pageCode) throws Throwable {
-		assertNull(this._pageManager.getPage(pageCode));
+		assertNull(this._pageManager.getDraftPage(pageCode));
 		try {
 			IPage root = this._pageManager.getRoot();
 			Map<String, String> params = new HashMap<String, String>();
@@ -103,7 +103,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode);
+			IPage addedPage = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(addedPage);
 		} catch (Throwable t) {
 			throw t;

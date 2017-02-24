@@ -74,7 +74,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testSave() throws Throwable {
 		String pageCode = "pagina_2";
 		int frame = 0;
-		IPage page = this._pageManager.getPage(pageCode);
+		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
 		try {
@@ -86,7 +86,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 			this.addParameter("actionPath", "/WEB-INF/pippo.jsp");
 			String result = this.executeAction();
 			assertEquals("configure", result);
-			page = this._pageManager.getPage(pageCode);
+			page = this._pageManager.getDraftPage(pageCode);
 			widget = page.getDraftWidgets()[frame];
 			assertNotNull(widget);
 			assertEquals("formAction", widget.getType().getCode());
@@ -95,7 +95,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			page = this._pageManager.getPage(pageCode);
+			page = this._pageManager.getDraftPage(pageCode);
 			page.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}

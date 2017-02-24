@@ -55,7 +55,7 @@ public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
 	
 	protected int checkPageDest(SymbolicLink symbLink, Content content) {
 		String pageCode = symbLink.getPageDest();
-		IPage page = this.getPageManager().getPage(pageCode);
+		IPage page = this.getPageManager().getOnlinePage(pageCode);
 		if (null == page) {
 			return MESSAGE_CODE_INVALID_PAGE;
 		} else {

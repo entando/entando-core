@@ -185,7 +185,7 @@ public class LinkResolverManager extends AbstractService implements ILinkResolve
 		}
 		boolean isPageAllowed = false;
 		if (pageCode != null) {
-			IPage page = this.getPageManager().getPage(pageCode);
+			IPage page = this.getPageManager().getOnlinePage(pageCode);
 			if (page != null && this.getAuthorizationManager().isAuth(user, page)) {
 				isPageAllowed = true;
 			}

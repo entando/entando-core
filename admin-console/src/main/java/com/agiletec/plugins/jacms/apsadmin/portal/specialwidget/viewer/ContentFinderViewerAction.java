@@ -91,7 +91,7 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
-		IPage page = this.getPageManager().getPage(pageCode);
+		IPage page = this.getPageManager().getDraftPage(pageCode);
 		if (null == page) return null;
 		List<IPage> pages = new ArrayList<IPage>();
 		this.getSubBreadCrumbsTargets(pages, page);
@@ -116,7 +116,7 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 	}
 	
 	public IPage getCurrentPage() {
-		return this.getPageManager().getPage(this.getPageCode());
+		return this.getPageManager().getDraftPage(this.getPageCode());
 	}
 	
 	public String getPageCode() {

@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +31,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecor
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentListWidgetHelper;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModel;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelManager;
-import org.apache.commons.lang3.StringUtils;
-
-import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 
 /**
  * @author E.Santoboni
@@ -197,7 +196,7 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	protected void addPages(IPage page, List<IPage> pages) {
 		pages.add(page);
-		IPage[] children = page.getChildren();
+		IPage[] children = page.getOnlineChildren();
 		for (int i=0; i<children.length; i++) {
 			this.addPages(children[i], pages);
 		}

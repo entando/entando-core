@@ -171,7 +171,7 @@ public class ContentModelManager extends AbstractService implements IContentMode
 	public Map<String, List<IPage>> getReferencingPages(long modelId) {
 		Map<String, List<IPage>> utilizers = new HashMap<String, List<IPage>>();
     	IPage root = this.getPageManager().getRoot();
-    	this.searchReferencingPages(modelId, utilizers, root);
+    	this.searchReferencingPages(modelId, root, utilizers);
     	return utilizers;  
 	}
 	
@@ -181,20 +181,20 @@ public class ContentModelManager extends AbstractService implements IContentMode
      * aggiunge la pagina alla lista delle pagine che 
      * utilizzano quel modello di contenuto.
      * La ricerca viene estesa anche alle pagine figlie di quella specificata. 
-	 * @param utilizers La lista delle pagine in cui è utilizzato il modello di contenuto
 	 * @param modelId Identificativo del modello di contenuto
-     * @param page La pagina nel qual cercare il modello di contenuto
+	 * @param page La pagina nel qual cercare il modello di contenuto
+	 * @param utilizers La lista delle pagine in cui è utilizzato il modello di contenuto
      */
-    private void searchReferencingPages(long modelId, Map<String, List<IPage>> utilizers, IPage page) {
-    	this.addReferencingPages(modelId, utilizers, page, page.getOnlineWidgets());
-    	this.addReferencingPages(modelId, utilizers, page, page.getDraftWidgets());
-    	IPage[] children = page.getChildren();
+    private void searchReferencingPages(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
+    	this.addReferencingPage(modelId, page, page.getOnlineWidgets(), utilizers);
+    	this.addReferencingPage(modelId, page, page.getDraftWidgets(), utilizers);
+    	IPage[] children = page.getAllChildren();
         for (int i=0; i < children.length; i++) {
-        	this.searchReferencingPages(modelId, utilizers, children[i]);
+        	this.searchReferencingPages(modelId, children[i], utilizers);
         }
     }
     
-    private void addReferencingPages(long modelId, Map<String, List<IPage>> utilizers, IPage page, Widget[] widgets) {
+    private void addReferencingPage(long modelId, IPage page, Widget[] widgets, Map<String, List<IPage>> utilizers) {
     	if (null != widgets) {
     		for (int i=0; i<widgets.length; i++) {
     			Widget widget = widgets[i];

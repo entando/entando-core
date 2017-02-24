@@ -35,10 +35,10 @@ public class PageTestUtil {
 //			assertEquals(expected.isRoot(), actual.isRoot());
 //			assertEquals(expected.getParentCode(), actual.getParentCode());
 //			assertEquals(expected.getPosition(), actual.getPosition());
-			if (expected.getChildren() == null) {
-				assertNull(actual.getChildren());
+			if (expected.getOnlineChildren() == null) {
+				assertNull(actual.getOnlineChildren());
 			} else {
-				assertEquals(expected.getChildren().length, actual.getChildren().length);
+				assertEquals(expected.getOnlineChildren().length, actual.getOnlineChildren().length);
 			}
 			if (expected.getAllChildren() == null) {
 				assertNull(actual.getAllChildren());

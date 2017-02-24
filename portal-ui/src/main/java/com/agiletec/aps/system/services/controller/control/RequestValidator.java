@@ -113,7 +113,7 @@ public class RequestValidator extends AbstractControlService {
 				String sect1 = matcher.group(1);
 				String sect2 = matcher.group(2);
 				lang = getLangManager().getLang(sect1);
-				page = this.getPageManager().getPage(sect2);
+				page = this.getPageManager().getOnlinePage(sect2);
 			} else {
 				//to preserve url with ".wp" suffix
 				matcher = this._oldPattern.matcher(resourcePath);
@@ -122,7 +122,7 @@ public class RequestValidator extends AbstractControlService {
 					String sect1 = matcher.group(1);
 					String sect2 = matcher.group(2);
 					lang = getLangManager().getLang(sect1);
-					page = this.getPageManager().getPage(sect2);
+					page = this.getPageManager().getOnlinePage(sect2);
 				}
 			}
 		}
@@ -153,7 +153,7 @@ public class RequestValidator extends AbstractControlService {
 			return this.getPageManager().getRoot();
 		}
 		String pageCode = matcher.group(3).substring(1);
-		IPage tempPage = this.getPageManager().getPage(pageCode);
+		IPage tempPage = this.getPageManager().getOnlinePage(pageCode);
 		if (null != tempPage) {
 			//la pagina esiste ed è di livello 1
 			//if(tempPage.getParentCode().equals(rootCode)) return tempPage;

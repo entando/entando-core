@@ -160,7 +160,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 	public void testSave_1() throws Throwable {
 		String pageCode = "pagina_2";
 		int frame = 0;
-		IPage page = this._pageManager.getPage(pageCode);
+		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getWidgets()[frame];
 		assertNull(widget);
 		try {
@@ -173,7 +173,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 			this.addParameter("modelId", "1");
 			String result = this.executeAction();
 			assertEquals("configure", result);
-			page = this._pageManager.getPage(pageCode);
+			page = this._pageManager.getDraftPage(pageCode);
 			widget = page.getWidgets()[frame];
 			assertNotNull(widget);
 			assertEquals("content_viewer", widget.getType().getCode());
@@ -183,7 +183,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			page = this._pageManager.getPage(pageCode);
+			page = this._pageManager.getDraftPage(pageCode);
 			page.getWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
@@ -210,14 +210,14 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			IPage page = this._pageManager.getPage(pageCode);
+			IPage page = this._pageManager.getDraftPage(pageCode);
 			page.getWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
 	}
 	
 	private void intSaveViewerConfig(String contentId, String pageCode, int frame) throws Throwable {
-		IPage page = this._pageManager.getPage(pageCode);
+		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getWidgets()[frame];
 		assertNull(widget);
 		this.setUserOnSession("admin");

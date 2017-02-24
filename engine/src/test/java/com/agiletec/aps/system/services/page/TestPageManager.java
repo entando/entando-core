@@ -63,9 +63,9 @@ public class TestPageManager extends BaseTestCase {
 		assertTrue(page1.getChildren().length > 1);
 		assertEquals(page1.getOnlineChildren().length, page1.getChildren().length);
 		assertEquals(page1.getOnlineChildren().length, page1.getAllChildren().length);
-		assertTrue(page1.getWidgets().length > 1);
-		assertEquals(page1.getWidgets().length, page1.getOnlineWidgets().length);
-		assertEquals(page1.getWidgets().length, page1.getDraftWidgets().length);
+		assertTrue(page1.getOnlineWidgets().length > 1);
+		assertEquals(page1.getOnlineWidgets().length, page1.getWidgets().length);
+		assertEquals(page1.getOnlineWidgets().length, page1.getDraftWidgets().length);
 		
 		assertNull(_pageManager.getOnlinePage("pagina_draft"));
 		IPage draft = _pageManager.getDraftPage("pagina_draft");
@@ -98,7 +98,7 @@ public class TestPageManager extends BaseTestCase {
 	}
 
 	public void checkAddPage() throws Throwable {
-		IPage parentPage = _pageManager.getPage("service");
+		IPage parentPage = _pageManager.getDraftPage("service");
 		PageModel pageModel = parentPage.getOnlineMetadata().getModel();
 		PageMetadata metadata = PageTestUtil.createPageMetadata(
 				pageModel.getCode(), true, "pagina temporanea", null, null,
@@ -119,7 +119,7 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals(widgetToAdd, addedPage.getOnlineWidgets()[0]);
 		assertEquals(widgetToAdd, addedPage.getDraftWidgets()[0]);
 		
-		parentPage = _pageManager.getPage("service");
+		parentPage = _pageManager.getDraftPage("service");
 		pageToAdd.setParent(parentPage);
 		pageToAdd.setCode("temp1");
 		_pageManager.addPage(pageToAdd);
@@ -131,7 +131,7 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals(widgetToAdd, addedPage.getOnlineWidgets()[0]);
 		assertEquals(widgetToAdd, addedPage.getDraftWidgets()[0]);
 		
-		parentPage = _pageManager.getPage("service");
+		parentPage = _pageManager.getDraftPage("service");
 		pageToAdd.setParent(parentPage);
 		pageToAdd.setCode("temp2");
 		pageToAdd.setOnlineMetadata(null);
@@ -147,7 +147,7 @@ public class TestPageManager extends BaseTestCase {
 	}
 
 	private void checkUpdatePage() throws Exception {
-		Page dbPage = (Page) _pageManager.getPage("temp");
+		Page dbPage = (Page) _pageManager.getDraftPage("temp");
 		Page pageToUpdate = PageTestUtil.createPage("temp", dbPage.getParent(), "free", 
 				dbPage.getOnlineMetadata().clone(), dbPage.getDraftMetadata().clone(), 
 				PageTestUtil.copyArray(dbPage.getOnlineWidgets()), PageTestUtil.copyArray(dbPage.getDraftWidgets()));
@@ -156,13 +156,12 @@ public class TestPageManager extends BaseTestCase {
 		onlineMetadata.setTitle("en", "temptitle1");
 		onlineMetadata.setShowable(true);
 
-		// TODO Verificare e modificare
 		ApsProperties config = PageTestUtil.createProperties("temp1", "temp1", "contentId", "ART11");
 		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
 		pageToUpdate.getDraftWidgets()[2] = widgetToAdd;
 		_pageManager.updatePage(pageToUpdate);
 		
-		IPage updatedPage = _pageManager.getPage(dbPage.getCode());
+		IPage updatedPage = _pageManager.getDraftPage(dbPage.getCode());
 		assertNotNull(updatedPage);
 		PageTestUtil.comparePages(pageToUpdate, updatedPage, true);
 		PageTestUtil.comparePageMetadata(pageToUpdate.getOnlineMetadata(), updatedPage.getOnlineMetadata(), 0);
@@ -231,7 +230,7 @@ public class TestPageManager extends BaseTestCase {
 		mockWidgetsDAO.setDataSource(dataSource);
 		_pageManager.deletePage("temp");
 		_pageManager.deletePage("temp2");
-		IPage page = _pageManager.getPage("temp");
+		IPage page = _pageManager.getDraftPage("temp");
 		assertNull(page);
 		boolean exists = true;
 		try {
@@ -261,8 +260,8 @@ public class TestPageManager extends BaseTestCase {
 	public void testFailureJoinWidget_2() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 6;
-		IPage pagina_1 = this._pageManager.getPage(pageCode);
-		assertTrue(pagina_1.getWidgets().length <= frame);
+		IPage pagina_1 = this._pageManager.getDraftPage(pageCode);
+		assertTrue(pagina_1.getDraftWidgets().length <= frame);
 		try {
 			Widget widget = this.getWidgetForTest("login", null);
 			this._pageManager.joinWidget(pageCode, widget, frame);
@@ -292,8 +291,8 @@ public class TestPageManager extends BaseTestCase {
 	public void testFailureRemoveWidget_2() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 6;
-		IPage pagina_1 = this._pageManager.getPage(pageCode);
-		assertTrue(pagina_1.getWidgets().length <= frame);
+		IPage pagina_1 = this._pageManager.getDraftPage(pageCode);
+		assertTrue(pagina_1.getDraftWidgets().length <= frame);
 		try {
 			this._pageManager.removeWidget(pageCode, frame);
 			fail();
@@ -307,13 +306,13 @@ public class TestPageManager extends BaseTestCase {
 	public void testJoinMoveRemoveWidget() throws Throwable {
 		String pageCode = "pagina_1";
 		int frame = 1;
-		IPage pagina_1 = this._pageManager.getPage(pageCode);
-		assertNull(pagina_1.getWidgets()[frame]);
+		IPage pagina_1 = this._pageManager.getDraftPage(pageCode);
+		assertNull(pagina_1.getDraftWidgets()[frame]);
 		try {
 			Widget widget = this.getWidgetForTest("login_form", null);
 			this._pageManager.joinWidget(pageCode, widget, frame);
 			
-			pagina_1 = this._pageManager.getPage(pageCode);
+			pagina_1 = this._pageManager.getDraftPage(pageCode);
 			assertTrue(pagina_1.isChanged());
 			Widget[] onlineWidgets = PageTestUtil.getValuedWidgets(pagina_1.getOnlineWidgets());
 			Widget[] draftWidgets = PageTestUtil.getValuedWidgets(pagina_1.getDraftWidgets());
@@ -323,7 +322,7 @@ public class TestPageManager extends BaseTestCase {
 			assertEquals("login_form", extracted.getType().getCode());
 			
 			this._pageManager.moveWidget(pageCode, frame, frame-1);
-			pagina_1 = this._pageManager.getPage(pageCode);
+			pagina_1 = this._pageManager.getDraftPage(pageCode);
 			assertTrue(pagina_1.isChanged());
 			onlineWidgets = PageTestUtil.getValuedWidgets(pagina_1.getOnlineWidgets());
 			draftWidgets = PageTestUtil.getValuedWidgets(pagina_1.getDraftWidgets());
@@ -334,7 +333,7 @@ public class TestPageManager extends BaseTestCase {
 			assertEquals("login_form", extracted.getType().getCode());
 			
 			this._pageManager.moveWidget(pageCode, frame-1, frame);
-			pagina_1 = this._pageManager.getPage(pageCode);
+			pagina_1 = this._pageManager.getDraftPage(pageCode);
 			assertTrue(pagina_1.isChanged());
 			onlineWidgets = PageTestUtil.getValuedWidgets(pagina_1.getOnlineWidgets());
 			draftWidgets = PageTestUtil.getValuedWidgets(pagina_1.getDraftWidgets());
@@ -345,15 +344,15 @@ public class TestPageManager extends BaseTestCase {
 			assertEquals("login_form", extracted.getType().getCode());
 			
 			this._pageManager.removeWidget(pageCode, frame);
-			pagina_1 = this._pageManager.getPage(pageCode);
+			pagina_1 = this._pageManager.getDraftPage(pageCode);
 			assertFalse(pagina_1.isChanged());
 			onlineWidgets = PageTestUtil.getValuedWidgets(pagina_1.getOnlineWidgets());
 			draftWidgets = PageTestUtil.getValuedWidgets(pagina_1.getDraftWidgets());
 			assertEquals(onlineWidgets.length, draftWidgets.length);
-			extracted = pagina_1.getWidgets()[frame];
+			extracted = pagina_1.getDraftWidgets()[frame];
 			assertNull(extracted);
 		} catch (Throwable t) {
-			pagina_1.getWidgets()[frame] = null;
+			pagina_1.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(pagina_1);
 			throw t;
 		}

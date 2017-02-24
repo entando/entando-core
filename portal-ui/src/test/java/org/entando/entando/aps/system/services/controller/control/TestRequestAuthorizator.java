@@ -60,7 +60,7 @@ public class TestRequestAuthorizator extends BaseTestCase {
 		RequestContext reqCtx = this.getRequestContext();
 		((MockHttpServletRequest) reqCtx.getRequest()).setRequestURI("/Entando/it/customers_page.page");
 		this.setUserOnSession(SystemConstants.GUEST_USER_NAME);
-		IPage requiredPage = this._pageManager.getPage("customers_page");
+		IPage requiredPage = this._pageManager.getOnlinePage("customers_page");
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, requiredPage);
 		int status = _authorizator.service(reqCtx, ControllerManager.CONTINUE);
 		assertEquals(status, ControllerManager.REDIRECT);

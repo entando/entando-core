@@ -37,7 +37,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	
 	public void testSavePage() throws Throwable {
 		String pageCode = "customer_subpage_2";
-		IPage page = this._pageManager.getPage(pageCode);
+		IPage page = this._pageManager.getDraftPage(pageCode);
 		assertNotNull(page);
 		try {
 			this.setUserOnSession("admin");

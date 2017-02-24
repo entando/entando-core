@@ -56,7 +56,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			List<Content> contents = this.getPublishedContents(this.getPageCode());
 			for (int i = 0; i < contents.size(); i++) {
 				Content content = contents.get(i);
-				if (null != content && !CmsPageActionUtil.isContentPublishableOnPage(content, page)) {
+				if (null != content && !CmsPageActionUtil.isContentPublishableOnPageDraft(content, page)) {
 					List<String> contentGroups = new ArrayList<String>();
 					contentGroups.add(content.getMainGroup());
 					if (null != content.getGroups()) {
@@ -71,7 +71,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 				for (int i = 0; i < linkingContentsVo.size(); i++) {
 					String contentId = linkingContentsVo.get(i);
 					Content linkingContent = contentManager.loadContent(contentId, true);
-					if (null != linkingContent && !CmsPageActionUtil.isPageLinkableByContent(page, linkingContent)) {
+					if (null != linkingContent && !CmsPageActionUtil.isPageLinkableByContentDraft(page, linkingContent)) {
 						this.addFieldError("extraGroups", this.getText("error.page.extraGoups.pageHasToBeFree", 
 								new String[]{linkingContent.getId(), linkingContent.getDescription()}));
 					}

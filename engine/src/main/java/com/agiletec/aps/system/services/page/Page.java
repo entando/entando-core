@@ -14,7 +14,6 @@
 package com.agiletec.aps.system.services.page;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +21,6 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
-import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 /**
  * This is the representation of a portal page
@@ -104,7 +102,8 @@ public class Page extends TreeNode implements IPage {
 	 * @return the page model
 	 */
 	@Override
-	public PageModel getModel() {// TODO Verify usage
+	// TODO Verify usage PLUGIN
+	public PageModel getModel() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getModel();
 	}
@@ -116,6 +115,7 @@ public class Page extends TreeNode implements IPage {
 	 * @deprecated Use getOnlineMetadata().setModel(pageModel)
 	 */
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setModel(PageModel pageModel) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -125,6 +125,7 @@ public class Page extends TreeNode implements IPage {
 	
 	@Override
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void addExtraGroup(String groupName) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -135,6 +136,7 @@ public class Page extends TreeNode implements IPage {
 	
 	@Override
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void removeExtraGroup(String groupName) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -144,6 +146,7 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setExtraGroups(Set<String> extraGroups) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -152,13 +155,19 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public Set<String> getExtraGroups() {// TODO Verify usage
+	// TODO Verify usage ADMIN
+	// TODO Verify usage UX
+	// TODO Verify usage PLUGIN
+	public Set<String> getExtraGroups() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getExtraGroups();
 	}
 
 	@Override
-	public IPage[] getChildren() {// TODO Verify usage
+	// TODO Verify usage ADMIN
+	// TODO Verify usage UX
+	// TODO Verify usage PLUGIN
+	public IPage[] getChildren() {
 		return this.getOnlineChildren();
 	}
 	
@@ -178,7 +187,10 @@ public class Page extends TreeNode implements IPage {
 	 * @return true if the page must be shown in the menu, false otherwise. 
 	 */
 	@Override
-	public boolean isShowable() {// TODO Verify usage
+	// TODO Verify usage ADMIN
+	// TODO Verify usage UX
+	// TODO Verify usage PLUGIN
+	public boolean isShowable() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata != null && metadata.isShowable();
 	}
@@ -189,6 +201,7 @@ public class Page extends TreeNode implements IPage {
 	 * @param showable a boolean which toggles the visibility on when true, off otherwise.
 	 */
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setShowable(boolean showable) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -197,13 +210,41 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	public ApsProperties getTitles() {// TODO Verify usage
+	public ApsProperties getOnlineTitles() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getTitles();
 	}
 	
 	@Override
+	public String getOnlineTitle(String langCode) {
+		ApsProperties titles = this.getOnlineTitles();
+		return titles != null ? titles.getProperty(langCode) : null;
+	}
+	
+	@Override
+	public ApsProperties getDraftTitles() {
+		PageMetadata metadata = this.getDraftMetadata();
+		return metadata == null ? null : metadata.getTitles();
+	}
+	
+	@Override
+	public String getDraftTitle(String langCode) {
+		ApsProperties titles = this.getDraftTitles();
+		return titles != null ? titles.getProperty(langCode) : null;
+	}
+	
+	@Override
+	// TODO Verify usage ADMIN
+	// TODO Verify usage UX
+	// TODO Verify usage PLUGIN
 	@Deprecated
+	public ApsProperties getTitles() {
+		return this.getOnlineTitles();
+	}
+	
+	@Override
+	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setTitles(ApsProperties titles) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -218,22 +259,31 @@ public class Page extends TreeNode implements IPage {
 	 * @param title Il titolo da impostare
 	 * @deprecated Use setTitle(String, String)
 	 */
+	// TODO Verify usage PLUGIN
 	public void setTitle(Lang lang, String title){
 		this.setTitle(lang.getCode(), title);
 	}
-
+	
+	@Override
+	@Deprecated
+	public String getTitle(String langCode) {
+		return this.getOnlineTitle(langCode);
+	}
+	
 	/**
 	 * Restituisce il titolo della pagina nella lingua specificata
 	 * @param lang La lingua
 	 * @return il titolo della pagina
 	 * @deprecated Use getTitle(String)
 	 */
+	// TODO Verify usage PLUGIN
 	public String getTitle(Lang lang) {
 		return this.getTitle(lang.getCode());
 	}
 	
 	@Override
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public Widget[] getShowlets() {
 		return this.getOnlineWidgets();
 	}
@@ -243,11 +293,15 @@ public class Page extends TreeNode implements IPage {
 	 * @return all the widgets of the current page
 	 */
 	@Override
-	public Widget[] getWidgets() {// TODO Verify usage
+	// TODO Verify usage ADMIN
+	// TODO Verify usage UX
+	// TODO Verify usage PLUGIN
+	public Widget[] getWidgets() {
 		return this.getOnlineWidgets();
 	}
 	
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setShowlets(Widget[] widgets) {
 		this.setOnlineWidgets(widgets);
 	}
@@ -256,16 +310,19 @@ public class Page extends TreeNode implements IPage {
 	 * Assign a set of widgets to the current page.
 	 * @param widgets the widgets to assign.
 	 */
+	// TODO Verify usage PLUGIN
 	public void setWidgets(Widget[] widgets) {
 		this.setOnlineWidgets(widgets);
 	}
 	
 	@Override
+	// TODO Verify usage PLUGIN
 	public boolean isUseExtraTitles() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata != null && metadata.isUseExtraTitles();
 	}
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setUseExtraTitles(boolean useExtraTitles) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -274,11 +331,13 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
+	// TODO Verify usage PLUGIN
 	public String getCharset() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getCharset();
 	}
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setCharset(String charset) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -287,11 +346,13 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
+	// TODO Verify usage PLUGIN
 	public String getMimeType() {
 		PageMetadata metadata = this.getOnlineMetadata();
 		return metadata == null ? null : metadata.getMimeType();
 	}
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setMimeType(String mimeType) {
 		PageMetadata metadata = this.getOnlineMetadata();
 		if (metadata != null) {
@@ -299,6 +360,7 @@ public class Page extends TreeNode implements IPage {
 		}
 	}
 	
+	// TODO Verify usage PLUGIN
 	public boolean isVoid() {
 		boolean isVoid = true;
 		Widget[] widgets = this.getOnlineWidgets();
@@ -348,6 +410,7 @@ public class Page extends TreeNode implements IPage {
 	 * The new node is inserted in the final position.
 	 * @param treeNode The node to add.
 	 */
+	// TODO Verify usage PLUGIN
 	public void addChild(IPage treeNode) {
 		if (treeNode.isOnline()) {
 			super.addChild(treeNode);

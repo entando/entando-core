@@ -193,9 +193,7 @@ public class TestPageManager extends BaseTestCase {
 	}
 
 	private void movePage() throws Exception {
-//		int firstPos = 6;// TODO Verificare
-		assertTrue(_pageManager.getDraftPage("temp").getPosition() > 0);
-		int firstPos = _pageManager.getDraftPage("temp").getPosition();
+		int firstPos = 6;
 		assertEquals(firstPos, _pageManager.getDraftPage("temp").getPosition());
 		assertEquals(firstPos+1, _pageManager.getDraftPage("temp1").getPosition());
 		assertEquals(firstPos+2, _pageManager.getDraftPage("temp2").getPosition());

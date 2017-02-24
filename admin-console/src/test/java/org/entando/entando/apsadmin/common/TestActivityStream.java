@@ -101,7 +101,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
 			params.put("model", "home");
 			params.put("group", Group.FREE_GROUP_NAME);
 			params.put("pageCode", pageCode);
-			String result = this.executeSave(params, "admin");
+			String result = this.executeSave(params, "admin");\
 			assertEquals(Action.SUCCESS, result);
 			IPage addedPage = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(addedPage);

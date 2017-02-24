@@ -31,7 +31,18 @@
         </wpsf:submit>
             </div>
     </td>
-    <td>State</td>
+    <td class="text-center">
+        <%-- FOR DEV. DEGUB
+        ONLINE: <s:property value="%{#currentRoot.getEntity().isOnline()}"/>
+        CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
+        --%>
+        <span class="statusField">
+            <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
+            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
+            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
+        </span>
+        
+    </td>
     <td>Menu List</td>
     <td class=" table-view-pf-actions">
         <div class="dropdown dropdown-kebab-pf">

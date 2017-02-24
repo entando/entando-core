@@ -1,3 +1,4 @@
+<%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
@@ -25,8 +26,8 @@ $(function() {
 
     var match = window.location.href.match(/(^.+\/do\/)/ ),
     baseUrl = match ? match[0] : window.location.protocol + '//' + window.location.host,
-    serviceUrl = baseUrl + 'rs/PageModel/frames?code=service',
-    updateUrl = baseUrl + 'rs/PageModel/updateSketch?code=service';
+    serviceUrl = baseUrl + 'rs/PageModel/frames?code=<s:property value="code" />',
+    updateUrl = baseUrl + 'rs/PageModel/updateSketch?code=<s:property value="code" />';
 
 
     /**

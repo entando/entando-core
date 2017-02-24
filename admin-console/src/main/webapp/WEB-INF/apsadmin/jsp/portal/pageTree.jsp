@@ -13,6 +13,17 @@
         font-size: 16px;
         font-weight: bold;
     }
+    
+    .green{
+        color: green;
+    }
+    
+   #pageTree .statusField i.fa {
+        font-size: 15px;
+        margin-top: 6px;
+    }
+    
+    
     </style>
 
 <h1><s:text name="title.pageTree" /></h1>

@@ -16,7 +16,6 @@ package com.agiletec.apsadmin.portal.helper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +38,6 @@ import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.role.Permission;
-import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
 import com.agiletec.apsadmin.system.TreeNodeBaseActionHelper;
@@ -55,7 +53,8 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
 	
 	protected abstract TreeNode createNodeInstance(IPage page);
     
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException {
         Map<String, List> references = new HashMap<String, List>();
         try {
@@ -87,21 +86,21 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
         return this.getAllowedTreeRoot(groupCodes, false);
     }
 	
-	@Override
-	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException {
-		TreeNode root = null;
-		IPage pageRoot = (IPage) this.getRoot();
-		PageMetadata metadata = this.getPageMetadata(pageRoot);
-		if (metadata != null && (groupCodes.contains(Group.ADMINS_GROUP_NAME) || groupCodes.contains(Group.FREE_GROUP_NAME)
-				|| (alsoFreeViewPages && null != metadata.getExtraGroups() && metadata.getExtraGroups().contains(Group.FREE_GROUP_NAME)))) {
-			root = this.createNodeInstance(pageRoot);
-			this.fillTreeNode(root, null, pageRoot);
-		} else {
-			root = this.getVirtualRoot();
-		}
-		this.addTreeWrapper(root, null, pageRoot, groupCodes, alsoFreeViewPages);
-		return root;
-	}
+//	@Override
+//	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException {
+//		TreeNode root = null;
+//		IPage pageRoot = (IPage) this.getRoot();
+//		PageMetadata metadata = this.getPageMetadata(pageRoot);
+//		if (metadata != null && (groupCodes.contains(Group.ADMINS_GROUP_NAME) || groupCodes.contains(Group.FREE_GROUP_NAME)
+//				|| (alsoFreeViewPages && null != metadata.getExtraGroups() && metadata.getExtraGroups().contains(Group.FREE_GROUP_NAME)))) {
+//			root = this.createNodeInstance(pageRoot);
+//			this.fillTreeNode(root, null, pageRoot);
+//		} else {
+//			root = this.getVirtualRoot();
+//		}
+//		this.addTreeWrapper(root, null, pageRoot, groupCodes, alsoFreeViewPages);
+//		return root;
+//	}
 
 	protected void addTreeWrapper(TreeNode currentNode, TreeNode parent, IPage currentTreeNode, Collection<String> groupCodes, boolean alsoFreeViewPages) {
 		IPage[] children = currentTreeNode.getAllChildren();
@@ -255,6 +254,12 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
         return asi;
     }
 
+   
+    //-----------------------
+
+	
+    
+    
     protected IPageManager getPageManager() {
         return _pageManager;
     }

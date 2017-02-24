@@ -132,9 +132,7 @@ a {
     border-color: #c00;
     color: #363636 !important;
 }
-.input-group-btn-search{
-    width: 95% !important;
-}
+
 .position-search{
     margin:0 auto;
 }
@@ -170,4 +168,7 @@ a {
     background-color: #def3ff !important;
     border-color: #bee1f4 !important;
     color: #4d5258 !important;
+}
+.expand-button{
+    margin-left: 4em;
 }

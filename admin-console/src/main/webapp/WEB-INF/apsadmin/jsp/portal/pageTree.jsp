@@ -13,7 +13,6 @@
         font-size: 16px;
         font-weight: bold;
     }
-    
     .green{
         color: green;
     }
@@ -23,7 +22,9 @@
         margin-top: 6px;
     }
     
-    
+    .table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
+        text-align: center;
+    }
     </style>
 
 <h1><s:text name="title.pageTree" /></h1>
@@ -57,14 +58,14 @@
             <br/>
             
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
-            
+                
                 <div class="table-responsive overflow-visible">
                     <table id="pageTree" class="table table-bordered table-hover table-treegrid">
                         <thead>
                             <tr>
                                 <th style="width: 68%;">Tree Pages
                                 <s:if test="#pageTreeStyleVar == 'classic'">
-                                    <button type="button" class="btn-no-button" id="expandAll">
+                                    <button type="button" class="btn-no-button expand-button" id="expandAll">
                                         <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Expand All
                                     </button>
                                     <button type="button" class="btn-no-button" id="collapseAll">
@@ -72,10 +73,10 @@
                                     </button>
                                 </s:if>
                             </th>
-                            <th style="width: 8%;">Add Move</th>
-                            <th style="width: 8%;">State</th>
-                            <th style="width: 8%;">Menu List</th>
-                            <th style="width: 8%;">Actions</th>
+                            <th class="text-center" style="width: 8%;">Add&#32;&vert;&#32;Move</th>
+                            <th class="text-center" style="width: 8%;">State</th>
+                            <th class="text-center" style="width: 8%;">Menu List</th>
+                            <th class="text-center" style="width: 5%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>  

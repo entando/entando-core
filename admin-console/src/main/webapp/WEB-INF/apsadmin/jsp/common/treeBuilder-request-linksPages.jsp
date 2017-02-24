@@ -48,26 +48,37 @@
             </label>
                 
         </td>
-        <td>
+        <td class="text-center">
             <div class="moveButtons hidden">
-            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info" data-toggle="tooltip">
+            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </wpsf:submit>
-            <wpsf:submit action="moveUp" type="button" title="%{getText('page.options.moveUp')}" cssClass="btn btn-info" data-toggle="tooltip">
+            <wpsf:submit action="moveUp" type="button" title="%{getText('page.options.moveUp')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-caret-up" aria-hidden="true"></i>
             </wpsf:submit>
-            <wpsf:submit action="moveDown" type="button" title="%{getText('page.options.moveDown')}" cssClass="btn btn-info" data-toggle="tooltip">
+            <wpsf:submit action="moveDown" type="button" title="%{getText('page.options.moveDown')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-caret-down" aria-hidden="true"></i>
             </wpsf:submit>
         </div>
-    </td><td>State</td>
-    <td>Menu List</td>
-    <td class=" table-view-pf-actions">
-        <div class="dropdown dropdown-kebab-pf">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span class="fa fa-ellipsis-v"></span></button>
-            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
-                <li>
+    </td>
+    <td>
+        <%-- FOR DEV. DEGUB
+            ONLINE: <s:property value="%{#currentRoot.getEntity().isOnline()}"/>
+            CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
+        --%>
+        <span class="statusField">
+            <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
+            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
+            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
+        </span>
+        </td>
+        <td class="text-center">Menu List</td>
+        <td class=" table-view-pf-actions text-center">
+            <div class="dropdown dropdown-kebab-pf">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="fa fa-ellipsis-v"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                    <li>
                     <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
                         <span class="">Edit </span>
                     </wpsf:submit>

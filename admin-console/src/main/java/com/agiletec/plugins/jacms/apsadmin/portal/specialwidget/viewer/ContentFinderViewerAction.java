@@ -15,6 +15,7 @@ package com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.viewer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
@@ -68,8 +69,9 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 		allowedGroups.add(Group.FREE_GROUP_NAME);
 		IPage currentPage = this.getCurrentPage();
 		allowedGroups.add(currentPage.getGroup());
-		if (null != currentPage.getExtraGroups()) {
-			allowedGroups.addAll(currentPage.getExtraGroups());
+		Set<String> extraGroups = currentPage.getDraftMetadata().getExtraGroups();
+		if (null != extraGroups) {
+			allowedGroups.addAll(extraGroups);
 		}
     	return allowedGroups;
 	}

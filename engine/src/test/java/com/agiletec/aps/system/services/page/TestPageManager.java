@@ -364,7 +364,7 @@ public class TestPageManager extends BaseTestCase {
 		try {
 			List<IPage> pagesFound = this._pageManager.searchPages("aGIna_", allowedGroupCodes);
 			assertNotNull(pagesFound);
-			assertEquals(4, pagesFound.size());
+			assertEquals(5, pagesFound.size());
 			String pageCodeToken = "agina";
 			pagesFound = this._pageManager.searchPages(pageCodeToken, allowedGroupCodes);
 			// verify the result found

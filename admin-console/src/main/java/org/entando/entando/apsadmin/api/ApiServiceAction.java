@@ -202,12 +202,13 @@ public class ApiServiceAction extends AbstractApiAction {
 				return check;
 			}
 			ApiMethod masterMethod = this.getMethod(this.getNamespace(), this.getResourceName());
-			IPage page = this.getPageManager().getOnlinePage(this.getPageCode());
+			// TODO Verify if DRAFT/ONLINE
+			IPage page = this.getPageManager().getDraftPage(this.getPageCode());
 			if (null == page) {
 				this.addFieldError("pageCode", this.getText("error.service.paste.invalidPageCode", new String[]{this.getPageCode()}));
 				return INPUT;
 			}
-			Widget[] widgets = page.getWidgets();
+			Widget[] widgets = page.getDraftWidgets();
 			if (null == this.getFramePos() || this.getFramePos() > widgets.length || null == widgets[this.getFramePos()]) {
 				String framePosString = (null != this.getFramePos()) ? this.getFramePos().toString() : "null";
 				this.addFieldError("framePos", this.getText("error.service.paste.invalidFramePos", new String[]{this.getPageCode(), framePosString}));

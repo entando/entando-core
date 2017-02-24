@@ -25,8 +25,21 @@ public class PageUtils {
 	 * @param page The page whose path must be found.
 	 * @param separator The separator of the page codes
 	 * @return The full path of the page
+	 * @deprecated Use {@link #getOnlineFullPath(IPage, String)} or {@link #getDraftFullPath(IPage, String)} instead
 	 */
+	@Deprecated
 	public static StringBuffer getFullPath(IPage page, String separator) {
+		return getOnlineFullPath(page, separator);
+	}
+	
+	/**
+	 * Return the full path of the given, online, page; the path is composed by the concatenation of the
+	 * code of the page starting from the root to the given page.
+	 * @param page The page whose path must be found.
+	 * @param separator The separator of the page codes
+	 * @return The full path of the page
+	 */
+	public static StringBuffer getOnlineFullPath(IPage page, String separator) {
 		if (page.isRoot()) {
 			return new StringBuffer(page.getCode());
 		}
@@ -35,7 +48,7 @@ public class PageUtils {
 		buffer.insert(0, temp.getCode());
 		while (!temp.getCode().equals(temp.getParentCode())) {
 			temp = temp.getParent();
-			if (temp.isShowable()) {
+			if (temp.getOnlineMetadata().isShowable()) {
 				buffer.insert(0, temp.getCode() + separator);
 			}
 		}
@@ -43,7 +56,7 @@ public class PageUtils {
 	}
 	
 	/**
-	 * Return the full path of the given page; the path is composed by the concatenation of the
+	 * Return the full path of the given, draft, page; the path is composed by the concatenation of the
 	 * code of the page starting from the root to the given page.
 	 * @param page The page whose path must be found.
 	 * @param separator The separator of the page codes

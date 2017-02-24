@@ -301,7 +301,7 @@ public class ContentAction extends AbstractContentAction {
 				for (int i = 0; i < pages.size(); i++) {
 					IPage page = pages.get(i);
 					String pageCode = page.getCode();
-					pageItems.add(new SelectItem(pageCode, super.getTitle(pageCode, page.getTitles())));
+					pageItems.add(new SelectItem(pageCode, super.getTitle(pageCode, page.getDraftTitles())));
 				}
 			}
 		} catch (Throwable t) {

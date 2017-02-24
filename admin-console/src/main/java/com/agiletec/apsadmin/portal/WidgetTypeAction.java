@@ -315,7 +315,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 	private Widget extractWidgetToCopy() throws Throwable {
 		IPage page = this.getPageManager().getDraftPage(this.getPageCode());
 		if (null == page) return null;
-		Widget[] widgets = page.getWidgets();
+		Widget[] widgets = page.getDraftWidgets();
 		return widgets[this.getFramePos()];
 	}
 	
@@ -344,7 +344,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 					new String[]{this.getPageCode()}));
 			return "inputWidgetTypes";
 		}
-		Widget[] widgets = page.getWidgets();
+		Widget[] widgets = page.getDraftWidgets();
 		if (null == this.getFramePos() || widgets.length <= this.getFramePos()) {
 			String framePos = (null != this.getFramePos()) ? this.getFramePos().toString() : null;
 			this.addActionError(this.getText("error.page.invalidPageFrame.adv", 

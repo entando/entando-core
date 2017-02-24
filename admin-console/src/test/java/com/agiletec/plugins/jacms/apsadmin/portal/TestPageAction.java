@@ -19,6 +19,7 @@ import java.util.Iterator;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
@@ -40,15 +41,16 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		IPage page = this._pageManager.getDraftPage(pageCode);
 		assertNotNull(page);
 		try {
+			PageMetadata metadata = page.getDraftMetadata();
 			this.setUserOnSession("admin");
 			this.initAction("/do/Page", "save");
 			this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.EDIT));
 			this.addParameter("langit", "");
-			this.addParameter("langen", page.getTitle("en"));
-			this.addParameter("model", page.getModel().getCode());
+			this.addParameter("langen", metadata.getTitle("en"));
+			this.addParameter("model", metadata.getModel().getCode());
 			this.addParameter("group", page.getGroup());
 			this.addParameter("pageCode", pageCode);
-			Collection<String> extraGroups = page.getExtraGroups();
+			Collection<String> extraGroups = metadata.getExtraGroups();
 			if (null != extraGroups) {
 				Iterator<String> extraGroupIter = extraGroups.iterator();
 				while (extraGroupIter.hasNext()) {

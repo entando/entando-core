@@ -159,7 +159,7 @@ public class RequestValidator extends AbstractControlService {
 			//if(tempPage.getParentCode().equals(rootCode)) return tempPage;
 			//la pagina è di livello superiore al primo e il path è corretto
 			String fullPath = matcher.group(2).substring(1).trim();
-			String createdlFullPath = PageUtils.getFullPath(tempPage, "/").toString();
+			String createdlFullPath = PageUtils.getOnlineFullPath(tempPage, "/").toString();
 			if (null != tempPage && createdlFullPath.equals(fullPath) ){
 				page = tempPage;
 			}

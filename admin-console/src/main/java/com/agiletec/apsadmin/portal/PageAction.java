@@ -421,7 +421,7 @@ public class PageAction extends AbstractPortalAction {
 		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
 			this.addActionError(this.getText("error.page.remove.notAllowed"));
 			return "pageTree";
-		} else if (currentPage.getChildren().length != 0) {
+		} else if (currentPage.getAllChildren().length != 0) {
 			this.addActionError(this.getText("error.page.remove.notAllowed2"));
 			return "pageTree";
         }

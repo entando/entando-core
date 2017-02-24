@@ -161,7 +161,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 		String pageCode = "pagina_2";
 		int frame = 0;
 		IPage page = this._pageManager.getDraftPage(pageCode);
-		Widget widget = page.getWidgets()[frame];
+		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
 		try {
 			this.setUserOnSession("admin");
@@ -174,7 +174,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 			String result = this.executeAction();
 			assertEquals("configure", result);
 			page = this._pageManager.getDraftPage(pageCode);
-			widget = page.getWidgets()[frame];
+			widget = page.getDraftWidgets()[frame];
 			assertNotNull(widget);
 			assertEquals("content_viewer", widget.getType().getCode());
 			assertEquals(2, widget.getConfig().size());
@@ -184,7 +184,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			page = this._pageManager.getDraftPage(pageCode);
-			page.getWidgets()[frame] = null;
+			page.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
 	}
@@ -211,14 +211,14 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			IPage page = this._pageManager.getDraftPage(pageCode);
-			page.getWidgets()[frame] = null;
+			page.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
 	}
 	
 	private void intSaveViewerConfig(String contentId, String pageCode, int frame) throws Throwable {
 		IPage page = this._pageManager.getDraftPage(pageCode);
-		Widget widget = page.getWidgets()[frame];
+		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
 		this.setUserOnSession("admin");
 		this.initAction("/do/jacms/Page/SpecialWidget/Viewer", "saveViewerConfig");

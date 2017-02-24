@@ -305,7 +305,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		String pageCode = "pagina_2";
 		int frame = 0;
 		IPage page = this._pageManager.getDraftPage(pageCode);
-		Widget widget = page.getWidgets()[frame];
+		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
 		try {
 			this.setUserOnSession("admin");
@@ -335,7 +335,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		String pageCode = "pagina_2";
 		int frame = 0;
 		IPage page = this._pageManager.getDraftPage(pageCode);
-		Widget widget = page.getWidgets()[frame];
+		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
 		try {
 			this.setUserOnSession("admin");
@@ -352,7 +352,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			page = this._pageManager.getDraftPage(pageCode);
-			page.getWidgets()[frame] = null;
+			page.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
 	}

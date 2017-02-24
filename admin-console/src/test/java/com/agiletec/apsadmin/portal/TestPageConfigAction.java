@@ -88,7 +88,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 		int frame = 1;
 		IPage pagina_1 = this._pageManager.getDraftPage(pageCode);
 		try {
-			assertNull(pagina_1.getWidgets()[frame]);
+			assertNull(pagina_1.getDraftWidgets()[frame]);
 			String result = this.executeJoinShowlet(pageCode, frame, "content_viewer", "admin");
 			assertEquals("configureSpecialWidget", result);
 			result = this.executeJoinShowlet(pageCode, frame, "content_viewer", "pageManagerCoach");
@@ -97,7 +97,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			pagina_1.getWidgets()[frame] = null;
+			pagina_1.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(pagina_1);
 		}
 	}
@@ -112,7 +112,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 		int frame = 1;
 		IPage pagina_1 = this._pageManager.getDraftPage(pageCode);
 		try {
-			assertNull(pagina_1.getWidgets()[frame]);
+			assertNull(pagina_1.getDraftWidgets()[frame]);
 			String result = this.executeJoinShowlet(pageCode, frame, showletTypeCode, "pageManagerCoach");
 			assertEquals("pageTree", result);
 			result = this.executeJoinShowlet(pageCode, frame, showletTypeCode, "admin");
@@ -133,7 +133,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			pagina_1.getWidgets()[frame] = null;
+			pagina_1.getDraftWidgets()[frame] = null;
 			this._pageManager.updatePage(pagina_1);
 		}
 	}
@@ -142,7 +142,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 		String pageCode = "contentview";
 		int frame = 1;
 		IPage contentview = this._pageManager.getDraftPage(pageCode);
-		Widget widget = contentview.getWidgets()[frame];
+		Widget widget = contentview.getDraftWidgets()[frame];
 		try {
 			assertNotNull(widget);
 			String result = this.executeTrashShowlet(pageCode, frame, "pageManagerCoach");
@@ -151,11 +151,11 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 			result = this.executeTrashShowlet(pageCode, frame, "admin");
 			assertEquals(Action.SUCCESS, result);
 			IPage modifiedContentview = this._pageManager.getDraftPage(pageCode);
-			Widget[] modifiedShowlets = modifiedContentview.getWidgets();
+			Widget[] modifiedShowlets = modifiedContentview.getDraftWidgets();
 			assertNotNull(modifiedShowlets[frame]);
 		} catch (Throwable t) {
 			contentview = this._pageManager.getDraftPage(pageCode);
-			contentview.getWidgets()[frame] = widget;
+			contentview.getDraftWidgets()[frame] = widget;
 			this._pageManager.updatePage(contentview);
 			throw t;
 		}
@@ -165,7 +165,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 		String pageCode = "contentview";
 		int frame = 1;
 		IPage contentview = this._pageManager.getDraftPage(pageCode);
-		Widget widget = contentview.getWidgets()[frame];
+		Widget widget = contentview.getDraftWidgets()[frame];
 		try {
 			assertNotNull(widget);
 			String result = this.executeDeleteShowlet(pageCode, frame, "pageManagerCoach");
@@ -180,7 +180,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			contentview = this._pageManager.getDraftPage(pageCode);
-			contentview.getWidgets()[frame] = widget;
+			contentview.getDraftWidgets()[frame] = widget;
 			this._pageManager.updatePage(contentview);
 		}
 	}

@@ -155,8 +155,6 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	// TODO Verify usage ADMIN
-	// TODO Verify usage UX
 	// TODO Verify usage PLUGIN
 	public Set<String> getExtraGroups() {
 		PageMetadata metadata = this.getOnlineMetadata();
@@ -164,8 +162,6 @@ public class Page extends TreeNode implements IPage {
 	}
 
 	@Override
-	// TODO Verify usage ADMIN
-	// TODO Verify usage UX
 	// TODO Verify usage PLUGIN
 	public IPage[] getChildren() {
 		return this.getOnlineChildren();
@@ -187,8 +183,6 @@ public class Page extends TreeNode implements IPage {
 	 * @return true if the page must be shown in the menu, false otherwise. 
 	 */
 	@Override
-	// TODO Verify usage ADMIN
-	// TODO Verify usage UX
 	// TODO Verify usage PLUGIN
 	public boolean isShowable() {
 		PageMetadata metadata = this.getOnlineMetadata();
@@ -234,8 +228,6 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
-	// TODO Verify usage ADMIN
-	// TODO Verify usage UX
 	// TODO Verify usage PLUGIN
 	@Deprecated
 	public ApsProperties getTitles() {
@@ -293,8 +285,6 @@ public class Page extends TreeNode implements IPage {
 	 * @return all the widgets of the current page
 	 */
 	@Override
-	// TODO Verify usage ADMIN
-	// TODO Verify usage UX
 	// TODO Verify usage PLUGIN
 	public Widget[] getWidgets() {
 		return this.getOnlineWidgets();

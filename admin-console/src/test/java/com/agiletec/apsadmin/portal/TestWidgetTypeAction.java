@@ -478,7 +478,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 			String result = this.executePasteUserWidgetType("admin", widgetTypeCode, "en", "it", "customers_page", "2");
 			assertEquals(Action.SUCCESS, result);
 			
-			Widget copiedWidget = this._pageManager.getDraftPage("customers_page").getWidgets()[2];
+			Widget copiedWidget = this._pageManager.getDraftPage("customers_page").getDraftWidgets()[2];
 			assertNotNull(copiedWidget);
 			assertNotNull(copiedWidget.getConfig());
 			WidgetType addedType = this._widgetTypeManager.getWidgetType(widgetTypeCode);
@@ -500,13 +500,13 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 		String widgetTypeCode = "randomWidgetCode-2";
 		String pageDest = "pagina_1";
 		int frameDest = 1;
-		Widget temp = this._pageManager.getDraftPage("pagina_11").getWidgets()[2];
+		Widget temp = this._pageManager.getDraftPage("pagina_11").getDraftWidgets()[2];
 		assertNotNull(temp);
 		assertEquals("content_viewer", temp.getType().getCode());
 		IPage page = this._pageManager.getDraftPage(pageDest);
 		try {
-			assertNull(page.getWidgets()[frameDest]);
-			page.getWidgets()[frameDest] = temp;
+			assertNull(page.getDraftWidgets()[frameDest]);
+			page.getDraftWidgets()[frameDest] = temp;
 			this._pageManager.updatePage(page);
 			
 			this.setUserOnSession("admin");
@@ -536,7 +536,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			page.getWidgets()[frameDest] = null;
+			page.getDraftWidgets()[frameDest] = null;
 			this._pageManager.updatePage(page);
 			this._widgetTypeManager.deleteWidgetType(widgetTypeCode);
 		}

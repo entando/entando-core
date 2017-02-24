@@ -80,7 +80,7 @@ public class CmsPageActionUtil {
 	}
 	
 	public static boolean isPageLinkableByContent(IPage page, PageMetadata metadata, Content content) {
-		Collection<String> extraPageGroups = page.getExtraGroups();
+		Collection<String> extraPageGroups = metadata.getExtraGroups();
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME) 
 				|| (null != extraPageGroups && extraPageGroups.contains(Group.FREE_GROUP_NAME))) {
 			return true;

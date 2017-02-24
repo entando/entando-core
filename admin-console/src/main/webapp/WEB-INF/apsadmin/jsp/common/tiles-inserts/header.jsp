@@ -20,12 +20,12 @@
 
         <li class="dropdown">
             <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span title="Help" class="fa pficon-help"></span>
+                <span title="Info" class="fa pficon-info"></span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">Help</a></li>
                 <li><a href="#">About</a></li>
+                <li><a href="#">Licence</a></li>
             </ul>
         </li>
         <li id="userDropdown" class="dropdown">

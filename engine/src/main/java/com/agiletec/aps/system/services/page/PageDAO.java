@@ -510,30 +510,29 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
-	// TODO Verificare quali servono
-	private void saveOnlinePageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
-		String tableName = PageMetadataOnline.TABLE_NAME;
-		boolean isAdd = this.existsPageMetadata(pageCode, tableName, conn);
-		this.savePageMetadata(pageCode, pageMetadata, isAdd, tableName, conn);
-	}
-	private void saveDraftPageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
-		String tableName = PageMetadataDraft.TABLE_NAME;
-		boolean isAdd = this.existsPageMetadata(pageCode, tableName, conn);
-		this.savePageMetadata(pageCode, pageMetadata, isAdd, tableName, conn);
+	@Override
+	public void setPageOffline(String pageCode) {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			conn.setAutoCommit(false);
+			this.deleteOnlineWidgets(pageCode, conn);
+			this.deleteOnlinePageMetadata(pageCode, conn);
+			conn.commit();
+		} catch (Throwable t) {
+			this.executeRollback(conn);
+			_logger.error("Error while setting page '{}' as online", pageCode,  t);
+			throw new RuntimeException("Error while setting page " + pageCode + " as online", t);
+		} finally {
+			closeConnection(conn);
+		}
 	}
 	
-	private void addOnlinePageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	protected void addOnlinePageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		this.savePageMetadata(pageCode, pageMetadata, true, PageMetadataOnline.TABLE_NAME, conn);
 	}
-	private void addDraftPageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
+	protected void addDraftPageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
 		this.savePageMetadata(pageCode, pageMetadata, true, PageMetadataDraft.TABLE_NAME, conn);
-	}
-	
-	private void updateOnlinePageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
-		this.savePageMetadata(pageCode, pageMetadata, false, PageMetadataOnline.TABLE_NAME, conn);
-	}
-	private void updateDraftPageMetadata(String pageCode, PageMetadata pageMetadata, Connection conn) throws ApsSystemException {
-		this.savePageMetadata(pageCode, pageMetadata, false, PageMetadataDraft.TABLE_NAME, conn);
 	}
 	
 	protected void deleteOnlinePageMetadata(String pageCode, Connection conn) throws ApsSystemException {
@@ -576,27 +575,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 				closeDaoResources(null, stat);
 			}
 		}
-	}
-	
-	protected boolean existsPageMetadata(String pageCode, String tableName, Connection conn) throws ApsSystemException {
-		boolean exists = false;
-		PreparedStatement stat = null;
-		ResultSet res = null;
-		try {
-			StringBuilder query = new StringBuilder(EXISTS_PAGE_METADATA_PREFIX).append(tableName).append(PAGE_METADATA_WHERE_CODE);
-			stat = conn.prepareStatement(query.toString());
-			stat.setString(1, pageCode);
-			res = stat.executeQuery();
-			if (res.next()) {
-				exists = true;
-			}
-		} catch (Throwable t) {
-			_logger.error("Error while checking the page metadata existance for table {} and page ", tableName, pageCode,  t);
-			throw new RuntimeException("Error while checking the page metadata existance for table " + tableName + " and page " + pageCode, t);
-		} finally {
-			closeDaoResources(res, stat);
-		}
-		return exists;
 	}
 	
 	protected PageMetadata createPageMetadata(String code, ResultSet res, int startIndex) throws Throwable {
@@ -892,24 +870,13 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private static final String UPDATE_PAGE_TREE_POSITION = 
 			"UPDATE pages SET parentcode = ? , pos =?  WHERE code = ? ";
 
-	private static final String EXISTS_PAGE_METADATA_PREFIX = "SELECT code FROM ";
-
-	private static final String LOAD_PAGE_METADATA_PREFIX = 
-			"SELECT titles, modelcode, showinmenu, extraconfig, updatedat FROM ";
-
 	private static final String PAGE_METADATA_WHERE_CODE = " WHERE code = ?";
 
 	private static final String ADD_PAGE_METADATA_END = 
 			" (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES (?, ?, ?, ?, ?, ?) ";
 
-//	private static final String ADD_ONLINE_PAGE_METADATA = "INSERT INTO " + PageMetadataOnline.TABLE_NAME + ADD_PAGE_METADATA_END;
-//	private static final String ADD_DRAFT_PAGE_METADATA  = "INSERT INTO " + PageMetadataDraft.TABLE_NAME  + ADD_PAGE_METADATA_END;
-	
 	private static final String UPDATE_PAGE_METADATA_END = 
 			"SET titles = ?, modelcode = ?, showinmenu = ?, extraconfig = ?, updatedat = ? " + PAGE_METADATA_WHERE_CODE;
-	
-//	private static final String UPDATE_ONLINE_PAGE_METADATA = "UPDATE " + PageMetadataOnline.TABLE_NAME + UPDATE_PAGE_METADATA_END;
-//	private static final String UPDATE_DRAFT_PAGE_METADATA  = "UPDATE " + PageMetadataDraft.TABLE_NAME  + UPDATE_PAGE_METADATA_END;
 	
 	private static final String ADD_PAGE_METADATA_START = "INSERT INTO ";
 	
@@ -927,8 +894,5 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			"INSERT INTO " + WidgetConfig.TABLE_NAME
 			+ " (pagecode, framepos, widgetcode, config) SELECT pagecode, framepos, widgetcode, config FROM "
 			+ WidgetConfigDraft.TABLE_NAME + " WHERE pagecode = ?";
-	
-	private static final String UPDATE_ONLINE_DATE = "UPDATE " + PageMetadataOnline.TABLE_NAME + " SET updatedat = ?" + PAGE_METADATA_WHERE_CODE;
-	private static final String UPDATE_DRAFT_DATE  = "UPDATE " + PageMetadataDraft.TABLE_NAME  + " SET updatedat = ?" + PAGE_METADATA_WHERE_CODE;
 	
 }

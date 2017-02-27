@@ -83,12 +83,15 @@ public interface IPageDAO {
 	public void movePage(IPage currentPage, IPage newParent);
 	
 	/**
-	 * TODO
-	 * @param pageCode
-	 * @param pageMetadata
-	 * @param conn
-	 * @throws ApsSystemException
+	 * Set a page as online, copying the current draft configuration.
+	 * @param pageCode The code of the page to set as online
 	 */
 	public void setPageOnline(String pageCode);
+	
+	/**
+	 * Set a page as offline, removing the current online configuration.
+	 * @param pageCode The code of the page to set as offline
+	 */
+	public void setPageOffline(String pageCode);
 	
 }

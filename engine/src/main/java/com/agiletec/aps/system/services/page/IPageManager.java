@@ -53,6 +53,13 @@ public interface IPageManager extends ITreeNodeManager {
 	public void setPageOnline(String pageCode) throws ApsSystemException;
 	
 	/**
+	 * Update a page as offline.
+	 * @param pageCode The code of the page to be setted offline.
+	 * @throws ApsSystemException In case of error.
+	 */
+	public void setPageOffline(String pageCode) throws ApsSystemException;
+	
+	/**
 	 * Move a page.
 	 * @param pageCode The code of the page to move.
 	 * @param moveUp When true the page is moved to a higher level of the tree, otherwise to a lower level.

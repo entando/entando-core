@@ -85,7 +85,7 @@ public class TestPageManager extends BaseTestCase {
 
 			this.movePage();
 			
-			this.checkPublishPage();
+			this.checkPutOnlineOfflinePage();
 			
 			this.deletePage();
 		} catch (Throwable t) {
@@ -175,7 +175,7 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals(widgetToAdd, updatedPage.getDraftWidgets()[2]);
 	}
 
-	private void checkPublishPage() throws Exception {
+	private void checkPutOnlineOfflinePage() throws Exception {
 		String pageCode = "temp2";
 		assertNull(_pageManager.getOnlinePage(pageCode));
 		Page draftPage = (Page) _pageManager.getDraftPage(pageCode);
@@ -190,6 +190,15 @@ public class TestPageManager extends BaseTestCase {
 		assertFalse(onlinePage.isChanged());
 		PageTestUtil.comparePageMetadata(onlinePage.getOnlineMetadata(), onlinePage.getDraftMetadata(), 0);
 		PageTestUtil.compareWidgets(onlinePage.getOnlineWidgets(), onlinePage.getDraftWidgets());
+		
+		_pageManager.setPageOffline(pageCode);
+		assertNull(_pageManager.getOnlinePage(pageCode));
+		Page offlinePage = (Page) _pageManager.getDraftPage(pageCode);
+		assertNotNull(offlinePage);
+		assertFalse(offlinePage.isOnline());
+		assertFalse(offlinePage.isChanged());
+		assertNull(offlinePage.getOnlineMetadata());
+		assertNull(offlinePage.getOnlineWidgets());
 	}
 
 	private void movePage() throws Exception {

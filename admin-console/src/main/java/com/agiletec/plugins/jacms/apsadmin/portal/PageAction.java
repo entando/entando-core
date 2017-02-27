@@ -153,8 +153,8 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		return contents;
 	}
 	
-	public List<Content> getOnlinePublishedContents(String pageCode) {
-		List<Content> contents = new ArrayList<Content>();
+	public Collection<Content> getOnlinePublishedContents(String pageCode) {
+		Collection<Content> contents = new HashSet<Content>();
 		try {
 			IPage page = this.getPage(pageCode);
 			if (page != null) {

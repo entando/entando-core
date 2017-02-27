@@ -140,14 +140,15 @@ public class TestPageDAO extends BaseTestCase {
 			assertEquals(widgetToAdd, newWidgets[3]);
 
 			this._pageDao.setPageOnline(pageCode);
-			IPage publishedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
-			PageTestUtil.comparePages(updatedPage, updatedPage, true);
-			PageTestUtil.comparePageMetadata(updatedPage.getDraftMetadata(), publishedPage.getDraftMetadata(), null);
-			PageTestUtil.comparePageMetadata(updatedPage.getOnlineMetadata(), publishedPage.getOnlineMetadata(), null);
-			PageTestUtil.compareWidgets(updatedPage.getDraftWidgets(), publishedPage.getDraftWidgets());
-
+			IPage onlinePage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
+			assertFalse(onlinePage.isChanged());
+			assertTrue(onlinePage.isOnline());
+			PageTestUtil.comparePageMetadata(updatedPage.getDraftMetadata(), onlinePage.getDraftMetadata(), null);
+			PageTestUtil.comparePageMetadata(updatedPage.getOnlineMetadata(), onlinePage.getOnlineMetadata(), null);
+			PageTestUtil.compareWidgets(updatedPage.getDraftWidgets(), onlinePage.getDraftWidgets());
+			
 			previousWidgets = updatedPage.getOnlineWidgets();
-			newWidgets = publishedPage.getOnlineWidgets();
+			newWidgets = onlinePage.getOnlineWidgets();
 			assertEquals(previousWidgets.length, newWidgets.length);
 			assertEquals(previousWidgets[0], newWidgets[0]);
 			assertEquals(previousWidgets[1], newWidgets[1]);
@@ -157,18 +158,29 @@ public class TestPageDAO extends BaseTestCase {
 
 			this._pageDao.removeWidget(updatedPage, 3);
 			updatedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
-			PageTestUtil.comparePages(publishedPage, updatedPage, true);
-			PageTestUtil.comparePageMetadata(publishedPage.getDraftMetadata(), updatedPage.getDraftMetadata(), null);
-			PageTestUtil.comparePageMetadata(publishedPage.getOnlineMetadata(), updatedPage.getOnlineMetadata(), null);
-			PageTestUtil.compareWidgets(publishedPage.getOnlineWidgets(), updatedPage.getOnlineWidgets());
+			assertTrue(updatedPage.isChanged());
+			assertTrue(updatedPage.isOnline());
+			PageTestUtil.comparePages(onlinePage, updatedPage, true);
+			PageTestUtil.comparePageMetadata(onlinePage.getDraftMetadata(), updatedPage.getDraftMetadata(), null);
+			PageTestUtil.comparePageMetadata(onlinePage.getOnlineMetadata(), updatedPage.getOnlineMetadata(), null);
+			PageTestUtil.compareWidgets(onlinePage.getOnlineWidgets(), updatedPage.getOnlineWidgets());
 
-			previousWidgets = publishedPage.getDraftWidgets();
+			previousWidgets = onlinePage.getDraftWidgets();
 			newWidgets = updatedPage.getDraftWidgets();
 			assertEquals(previousWidgets.length, newWidgets.length);
 			assertEquals(previousWidgets[0], newWidgets[0]);
 			assertEquals(previousWidgets[1], newWidgets[1]);
 			assertEquals(previousWidgets[2], newWidgets[2]);
 			assertNull(newWidgets[3]);
+
+			this._pageDao.setPageOffline(pageCode);
+			IPage offlinePage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
+			assertFalse(offlinePage.isChanged());
+			assertFalse(offlinePage.isOnline());
+			assertNull(offlinePage.getOnlineMetadata());
+			assertNull(offlinePage.getOnlineWidgets());
+			PageTestUtil.comparePageMetadata(updatedPage.getDraftMetadata(), offlinePage.getDraftMetadata(), null);
+			PageTestUtil.compareWidgets(updatedPage.getDraftWidgets(), offlinePage.getDraftWidgets());
 		} catch (Throwable t) {
 			throw t;
 		} finally {

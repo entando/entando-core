@@ -106,41 +106,41 @@ public class CmsPageActionUtil {
 	/**
 	 * Check whether the page can publish free content.
 	 * @param page The page to check.
-	 * @param viewerShowletCode The code of the viewer widget (optional)
+	 * @param viewerWidgetCode The code of the viewer widget (optional)
 	 * @return True if the page can publish free content, false else.
 	 */
-	public static boolean isFreeViewerPage(IPage page, String viewerShowletCode) {
-		return isOnlineFreeViewerPage(page, viewerShowletCode);
+	public static boolean isFreeViewerPage(IPage page, String viewerWidgetCode) {
+		return isOnlineFreeViewerPage(page, viewerWidgetCode);
 	}
 	
-	public static boolean isDraftFreeViewerPage(IPage page, String viewerShowletCode) {
+	public static boolean isDraftFreeViewerPage(IPage page, String viewerWidgetCode) {
 		boolean found = false;
 		PageMetadata metadata = page.getDraftMetadata();
 		Widget[] widgets = page.getDraftWidgets();
 		if (metadata != null) {
-			found = isFreeViewerPage(metadata.getModel(), widgets, viewerShowletCode);
+			found = isFreeViewerPage(metadata.getModel(), widgets, viewerWidgetCode);
 		}
 		return found;
 	}
 	
-	public static boolean isOnlineFreeViewerPage(IPage page, String viewerShowletCode) {
+	public static boolean isOnlineFreeViewerPage(IPage page, String viewerWidgetCode) {
 		boolean found = false;
 		PageMetadata metadata = page.getOnlineMetadata();
 		Widget[] widgets = page.getOnlineWidgets();
 		if (metadata != null) {
-			found = isFreeViewerPage(metadata.getModel(), widgets, viewerShowletCode);
+			found = isFreeViewerPage(metadata.getModel(), widgets, viewerWidgetCode);
 		}
 		return found;
 	}
 	
-	public static boolean isFreeViewerPage(PageModel model, Widget[] widgets, String viewerShowletCode) {
+	public static boolean isFreeViewerPage(PageModel model, Widget[] widgets, String viewerWidgetCode) {
 		try {
 			if (model != null && widgets != null) {
 				int mainFrame = model.getMainFrame();
 				if (mainFrame < 0) return false;
 				Widget viewer = widgets[mainFrame];
 				if (null == viewer) return false;
-				boolean isRightCode = null == viewerShowletCode || viewer.getType().getCode().equals(viewerShowletCode);
+				boolean isRightCode = null == viewerWidgetCode || viewer.getType().getCode().equals(viewerWidgetCode);
 				String actionName = viewer.getType().getAction();
 				boolean isRightAction = null != actionName && actionName.toLowerCase().indexOf("viewer") >= 0;
 				List<WidgetTypeParameter> typeParameters = viewer.getType().getTypeParameters();
@@ -151,7 +151,7 @@ public class CmsPageActionUtil {
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while checking page for widget '{}'", viewerShowletCode, t);
+			_logger.error("Error while checking page for widget '{}'", viewerWidgetCode, t);
 			//ApsSystemUtils.logThrowable(t, CmsPageActionUtil.class, "isViewerPage", "Error while checking page '" + page.getCode() + "'");
 		}
 		return false;

@@ -369,6 +369,45 @@ public class PageAction extends AbstractPortalAction {
 		}
 	}
 	
+	public String checkPutOffline() {
+		String selectedNode = this.getSelectedNode();
+		try {
+			String check = this.checkPutOffline(selectedNode);
+			if (null != check) {
+				return check;
+			}
+			IPage currentPage = this.getPage(selectedNode);
+			Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
+			if (references.size()>0) {
+				this.setReferences(references);
+				return "references";
+			}
+			this.setNodeToBeDelete(selectedNode);
+			this.setSelectedNode(currentPage.getParent().getCode());
+		} catch (Throwable t) {
+			_logger.error("error in trash", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String putOffline() {
+		try {
+			IPageManager pageManager = this.getPageManager();
+			String check = this.checkPutOffline(this.getNodeToBeDelete());
+			if (null != check) {
+				return check;
+			}
+			IPage pageToDelete = this.getPage(this.getNodeToBeDelete());
+			pageManager.deletePage(this.getNodeToBeDelete());
+			this.addActivityStreamInfo(pageToDelete, ApsAdminSystemConstants.DELETE, false);
+		} catch (Throwable t) {
+			_logger.error("error in delete", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
 	public String trash() {
 		String selectedNode = this.getSelectedNode();
 		try {
@@ -408,14 +447,34 @@ public class PageAction extends AbstractPortalAction {
 		return SUCCESS;
 	}
 	
-	protected String checkDelete(String selectedNode) {
-		IPageManager pageManager = this.getPageManager();
+	protected String checkPutOffline(String selectedNode) {
 		String check = this.checkSelectedNode(selectedNode);
 		if (null != check) {
 			return check;
 		}
 		IPage currentPage = this.getPage(selectedNode);
-		if (pageManager.getRoot().getCode().equals(currentPage.getCode())) {
+		IPage root = this.getPageManager().getRoot();
+		if (root.getCode().equals(currentPage.getCode())) {
+			this.addActionError(this.getText("error.page.offlineHome.notAllowed"));
+			return "pageTree";
+		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
+			this.addActionError(this.getText("error.page.offline.notAllowed"));
+			return "pageTree";
+		} else if (currentPage.getOnlineChildren().length != 0) {
+			this.addActionError(this.getText("error.page.offline.notAllowed2"));
+			return "pageTree";
+        }
+		return null;
+	}
+	
+	protected String checkDelete(String selectedNode) {
+		String check = this.checkSelectedNode(selectedNode);
+		if (null != check) {
+			return check;
+		}
+		IPage currentPage = this.getPage(selectedNode);
+		IPage root = this.getPageManager().getRoot();
+		if (root.getCode().equals(currentPage.getCode())) {
 			this.addActionError(this.getText("error.page.removeHome.notAllowed"));
 			return "pageTree";
 		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {

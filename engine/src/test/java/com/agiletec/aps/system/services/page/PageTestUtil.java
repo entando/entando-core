@@ -124,6 +124,7 @@ public class PageTestUtil {
     	page.setCode(code);
     	page.setParent(parentPage);
     	page.setParentCode(parentPage.getCode());
+    	page.setPosition(parentPage.getAllChildren().length + 1);
     	page.setOnlineMetadata(onlineMetadata);
     	page.setDraftMetadata(draftMetadata);
     	page.setGroup(groupName);

@@ -184,9 +184,8 @@ public class TestPageDAO extends BaseTestCase {
 			this._pageDao.addPage(newPageForTest);
 			addedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
 			PageTestUtil.comparePagesFull(newPageForTest, addedPage, false);
-
-			IPage parent = PageTestUtil.getPageByCode(
-					this._pageDao.loadPages(), "homepage");
+			
+			IPage parent = this._pageManager.getPage("homepage");
 			assertNotNull(parent);
 			assertNotSame(parent.getCode(), addedPage.getParentCode());
 
@@ -211,7 +210,8 @@ public class TestPageDAO extends BaseTestCase {
 		page.setCode(code);
 		IPage parentPage = this._pageManager.getDraftPage("service");
 		page.setParent(parentPage);
-		page.setParentCode("service");
+		page.setParentCode(parentPage.getCode());
+		page.setPosition(parentPage.getAllChildren().length + 1);
 		page.setGroup("free");
 
 		PageMetadata metadata = PageTestUtil.createPageMetadata("service", true, "pagina temporanea", 

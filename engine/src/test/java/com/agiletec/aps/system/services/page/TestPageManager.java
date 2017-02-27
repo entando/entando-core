@@ -380,10 +380,10 @@ public class TestPageManager extends BaseTestCase {
 			System.out.println("-----------------------");
 			System.out.println(pagesFound);
 			System.out.println("-----------------------");
-			assertEquals(16, pagesFound.size());
+			assertEquals(17, pagesFound.size());
 			pagesFound = this._pageManager.searchPages(null, allowedGroupCodes);
 			assertNotNull(pagesFound);
-			assertEquals(16, pagesFound.size());
+			assertEquals(17, pagesFound.size());
 		} catch (Throwable t) {
 			throw t;
 		}

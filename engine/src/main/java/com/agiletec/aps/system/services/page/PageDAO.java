@@ -245,6 +245,9 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		} finally {
 			closeDaoResources(null, stat);
 		}
+		if (page instanceof Page) {
+			((Page) page).setPosition(position);
+		}
 	}
 	
 	/**

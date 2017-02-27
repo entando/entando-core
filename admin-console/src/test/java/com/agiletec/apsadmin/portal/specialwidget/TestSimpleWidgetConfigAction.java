@@ -73,7 +73,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 
 	public void testSave() throws Throwable {
 		String pageCode = "pagina_2";
-		int frame = 0;
+		int frame = 3;
 		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);

@@ -14,8 +14,11 @@
 package com.agiletec.plugins.jacms.apsadmin.portal;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
@@ -53,9 +56,8 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			if (this.getStrutsAction() != ApsAdminSystemConstants.EDIT) return;
 			IContentManager contentManager = (IContentManager) ApsWebApplicationUtils.getBean(JacmsSystemConstants.CONTENT_MANAGER, this.getRequest());
 			IPage page = this.createTempPage();
-			List<Content> contents = this.getPublishedContents(this.getPageCode());
-			for (int i = 0; i < contents.size(); i++) {
-				Content content = contents.get(i);
+			Collection<Content> contents = this.getPublishedContents(this.getPageCode());
+			for (Content content : contents) {
 				if (null != content && !CmsPageActionUtil.isContentPublishableOnPageDraft(content, page)) {
 					List<String> contentGroups = new ArrayList<String>();
 					contentGroups.add(content.getMainGroup());
@@ -136,8 +138,8 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		}
 	}
 	
-	public List<Content> getPublishedContents(String pageCode) {
-		List<Content> contents = new ArrayList<Content>();
+	public Collection<Content> getPublishedContents(String pageCode) {
+		Set<Content> contents = new HashSet<Content>();
 		try {
 			IPage page = this.getPage(pageCode);
 			if (null == page) return contents;
@@ -167,7 +169,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		return contents;
 	}
 	
-	protected void addPublishedContents(Widget[] widgets, List<Content> contents) {
+	protected void addPublishedContents(Widget[] widgets, Collection<Content> contents) {
 		try {
 			if (widgets != null) {
 				for (Widget widget : widgets) {
@@ -196,7 +198,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		}
 	}
 	
-	private void addContent(List<Content> contents, String contentId) {
+	private void addContent(Collection<Content> contents, String contentId) {
 		try {
 			if (null != contentId) {
 				Content content = this.getContentManager().loadContent(contentId, true);

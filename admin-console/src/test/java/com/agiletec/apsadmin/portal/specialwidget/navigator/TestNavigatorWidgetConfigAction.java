@@ -69,7 +69,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testExecuteMoveExpression_1() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
 		params.put("movement", ApsAdminSystemConstants.MOVEMENT_DOWN_CODE);
@@ -182,7 +182,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testFailureAddExpression_1() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
 		String result = this.executeAddExpression("admin", params);
@@ -204,7 +204,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testFailureAddExpression_2() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
 		params.put("specId", "3");
@@ -226,7 +226,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testFailureAddExpression_3() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+current");
 		params.put("specId", "4");
@@ -248,7 +248,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testFailureAddExpression_4() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "");
 		params.put("specId", "5");
@@ -303,7 +303,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 
 	public void testSave() throws Throwable {
 		String pageCode = "pagina_2";
-		int frame = 0;
+		int frame = 3;
 		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);
@@ -333,7 +333,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 
 	public void testFailureSaveEmptyExpression() throws Throwable {
 		String pageCode = "pagina_2";
-		int frame = 0;
+		int frame = 3;
 		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getDraftWidgets()[frame];
 		assertNull(widget);

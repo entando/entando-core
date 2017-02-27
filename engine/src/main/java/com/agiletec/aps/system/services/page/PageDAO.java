@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.entando.entando.aps.system.init.model.portdb.PageMetadataDraft;
@@ -41,7 +42,7 @@ import com.agiletec.aps.util.ApsProperties;
 
 /**
  * Data Access Object for the 'page' objects
- * @author M.Diana - E.Santoboni
+ * @author M.Diana - E.Santoboni - E.Mezzano
  */
 public class PageDAO extends AbstractDAO implements IPageDAO {
 	
@@ -55,65 +56,145 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	 * Load a sorted list of the pages and the configuration of the widgets 
 	 * @return the list of pages
 	 */
-	@Override
+//	@Override
+//	public List<IPage> loadPages() {
+//		Connection conn = null;
+//		Statement stat = null;
+//		ResultSet res = null;
+//		List<IPage> pages = null;
+//		try {
+//			conn = this.getConnection();
+//			stat = conn.createStatement();
+//			res = stat.executeQuery(ALL_PAGES);
+//			pages = this.createPages(res);
+//		} catch (Throwable t) {
+//			_logger.error("Error loading pages",  t);
+//			throw new RuntimeException("Error loading pages", t);
+//		} finally {
+//			closeDaoResources(res, stat, conn);
+//		}
+//		return pages;
+//	}
+//	
+//	/**
+//	 * Read & create in a single passage, for efficiency reasons, the pages and the 
+//	 * association of the associated widgets.
+//	 * @param res the result set where to extract pages information from.
+//	 * @return The list of the pages defined in the system
+//	 * @throws Throwable In case of error
+//	 */
+//	protected List<IPage> createPages(ResultSet res) throws Throwable {
+//		int widgetStartOnline = 15;
+//		int widgetStartDraft = 18;
+//		List<IPage> pages = new ArrayList<IPage>();
+//		Page page = null;
+//		Widget onlineWidgets[] = null;
+//		Widget draftWidgets[] = null;
+//		int numFramesOnline = 0;
+//		int numFramesDraft = 0;
+//		String prevCode = null;
+//		while (res.next()) {
+//			String code = res.getString(3);
+//			if (prevCode == null || !code.equals(prevCode)) {
+//				page = this.createPage(code, res);
+//				pages.add(page);
+//				
+//				numFramesOnline = this.getWidgetArrayLength(page.getOnlineMetadata());
+//				if (numFramesOnline >= 0) {
+//					onlineWidgets = new Widget[numFramesOnline];
+//					page.setOnlineWidgets(onlineWidgets);
+//				}
+//				numFramesDraft = this.getWidgetArrayLength(page.getDraftMetadata());
+//				if (numFramesDraft >= 0) {
+//					draftWidgets = new Widget[numFramesDraft];
+//					page.setDraftWidgets(draftWidgets);
+//				}
+//				prevCode = code;
+//			}
+//			this.readWidget(page, numFramesOnline, onlineWidgets, widgetStartOnline, res);
+//			this.readWidget(page, numFramesDraft, draftWidgets, widgetStartDraft, res);
+//		}
+//		return pages;
+//	}
+
 	public List<IPage> loadPages() {
 		Connection conn = null;
-		Statement stat = null;
-		ResultSet res = null;
 		List<IPage> pages = null;
 		try {
 			conn = this.getConnection();
-			stat = conn.createStatement();
-			res = stat.executeQuery(ALL_PAGES);
-			pages = this.createPages(res);
+			pages = this.createPagesNew(conn);
+			this.readPageWidgets(pages, true, conn);
+			this.readPageWidgets(pages, false, conn);
 		} catch (Throwable t) {
 			_logger.error("Error loading pages",  t);
 			throw new RuntimeException("Error loading pages", t);
 		} finally {
-			closeDaoResources(res, stat, conn);
+			closeConnection(conn);
 		}
 		return pages;
 	}
 
 	/**
-	 * Read & create in a single passage, for efficiency reasons, the pages and the 
-	 * association of the associated widgets.
-	 * @param res the result set where to extract pages information from.
+	 * Read & create in a single passage, pages and online/draft metadata.
+	 * @param conn The DB connection
 	 * @return The list of the pages defined in the system
 	 * @throws Throwable In case of error
 	 */
-	protected List<IPage> createPages(ResultSet res) throws Throwable {
-		int widgetStartOnline = 15;
-		int widgetStartDraft = 18;
+	protected List<IPage> createPagesNew(Connection conn) throws Throwable {
 		List<IPage> pages = new ArrayList<IPage>();
-		Page page = null;
-		Widget onlineWidgets[] = null;
-		Widget draftWidgets[] = null;
-		int numFramesOnline = 0;
-		int numFramesDraft = 0;
-		String prevCode = null;
-		while (res.next()) {
-			String code = res.getString(3);
-			if (prevCode == null || !code.equals(prevCode)) {
-				page = this.createPage(code, res);
+		Statement stat = null;
+		ResultSet res = null;
+		try {
+			stat = conn.createStatement();
+			res = stat.executeQuery(ALL_PAGES_NEW);
+			while (res.next()) {
+				String code = res.getString(3);
+				Page page = this.createPage(code, res);
 				pages.add(page);
 				
-				numFramesOnline = this.getWidgetArrayLength(page.getOnlineMetadata());
+				int numFramesOnline = this.getWidgetArrayLength(page.getOnlineMetadata());
 				if (numFramesOnline >= 0) {
-					onlineWidgets = new Widget[numFramesOnline];
-					page.setOnlineWidgets(onlineWidgets);
+					page.setOnlineWidgets(new Widget[numFramesOnline]);
 				}
-				numFramesDraft = this.getWidgetArrayLength(page.getDraftMetadata());
+				int numFramesDraft = this.getWidgetArrayLength(page.getDraftMetadata());
 				if (numFramesDraft >= 0) {
-					draftWidgets = new Widget[numFramesDraft];
-					page.setDraftWidgets(draftWidgets);
+					page.setDraftWidgets(new Widget[numFramesDraft]);
 				}
-				prevCode = code;
 			}
-			this.readWidget(page, numFramesOnline, onlineWidgets, widgetStartOnline, res);
-			this.readWidget(page, numFramesDraft, draftWidgets, widgetStartDraft, res);
+		} catch (Throwable t) {
+			_logger.error("Error loading pages",  t);
+			throw new RuntimeException("Error loading pages", t);
+		} finally {
+			closeDaoResources(res, stat);
 		}
 		return pages;
+	}
+	
+	private void readPageWidgets(List<IPage> pages, boolean online, Connection conn) {
+		Statement stat = null;
+		ResultSet res = null;
+		try {
+			stat = conn.createStatement();
+			res = stat.executeQuery(online ? ALL_WIDGETS_ONLINE : ALL_WIDGETS_DRAFT);
+			Page currentPage = null;
+			int currentWidgetNum = 0;
+			Widget[] currentWidgets = null;
+			Iterator<IPage> pagesIter = pages.iterator();
+			while (res.next()) {
+				String code = res.getString(1);
+				while (currentPage == null || !currentPage.getCode().equals(code)) {
+					currentPage = (Page) pagesIter.next();
+					currentWidgetNum = this.getWidgetArrayLength(online ? currentPage.getOnlineMetadata() : currentPage.getDraftMetadata());
+					currentWidgets = online ? currentPage.getOnlineWidgets() : currentPage.getDraftWidgets();
+				}
+				this.readWidget(currentPage, currentWidgetNum, currentWidgets, 2, res);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading page widgets - online/draft: {}", online,  t);
+			throw new RuntimeException("Error loading page widgets - online/draft: " + online,  t);
+		} finally {
+			closeDaoResources(res, stat);
+		}
 	}
 	
 	protected int getWidgetArrayLength(PageMetadata metadata) {
@@ -825,6 +906,26 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		+ "LEFT JOIN " + WidgetConfig.TABLE_NAME + " wonl ON p.code = wonl.pagecode "
 		+ "LEFT JOIN " + WidgetConfigDraft.TABLE_NAME + " wdrf ON p.code = wdrf.pagecode "
 		+ "ORDER BY p.parentcode, p.pos, p.code, wonl.framepos, wdrf.framepos ";
+	
+	// attenzione: l'ordinamento deve rispettare prima l'ordine delle pagine
+	// figlie nelle pagine madri, e poi l'ordine dei widget nella pagina.
+	private static final String ALL_PAGES_NEW = 
+		"SELECT p.parentcode, p.pos, p.code, p.groupcode, "
+		+ "onl.titles, onl.modelcode, onl.showinmenu, onl.extraconfig, onl.updatedat, "
+		+ "drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat FROM pages p "
+		+ "LEFT JOIN " + PageMetadataOnline.TABLE_NAME + " onl ON p.code = onl.code "
+		+ "LEFT JOIN " + PageMetadataDraft.TABLE_NAME + " drf ON p.code = drf.code "
+		+ "ORDER BY p.parentcode, p.pos, p.code ";
+	
+	private static final String ALL_WIDGETS_START = 
+		"SELECT w.pagecode, w.framepos, w.widgetcode, w.config "
+		+ "FROM pages p JOIN ";
+	private static final String ALL_WIDGETS_END = 
+		" w ON p.code = w.pagecode "
+		+ "ORDER BY p.parentcode, p.pos, p.code, w.framepos ";
+	
+	private static final String ALL_WIDGETS_ONLINE = ALL_WIDGETS_START + WidgetConfig.TABLE_NAME + ALL_WIDGETS_END;
+	private static final String ALL_WIDGETS_DRAFT = ALL_WIDGETS_START + WidgetConfigDraft.TABLE_NAME + ALL_WIDGETS_END;
 	
 	private static final String ADD_PAGE = 
 		"INSERT INTO pages(code, parentcode, pos, groupcode) VALUES ( ? , ? , ? , ? )";

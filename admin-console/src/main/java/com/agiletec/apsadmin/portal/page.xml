@@ -18,7 +18,12 @@
         		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
         	</interceptor-ref>
         </action>
-        
+
+        <action name="settings" class="pageAction" method="settingsPage">
+            <result type="tiles">admin.Page.settings</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+
         <action name="new" class="pageAction" method="newPage">
             <result type="tiles">admin.Page.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>

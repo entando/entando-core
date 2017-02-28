@@ -192,6 +192,11 @@
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageTree.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageTree.jsp" />
     </definition>
+    <definition extends="layout.default" name="admin.Page.settings">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/settingsPage.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/settingsPage-extra.jsp" />
+    </definition>
     <definition extends="layout.default" name="admin.Page.entry">
         <put-attribute name="title" value="title.pageManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/entryPage.jsp" />

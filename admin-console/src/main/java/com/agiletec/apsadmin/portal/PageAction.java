@@ -112,6 +112,11 @@ public class PageAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
+
+	public String settingsPage() {
+      // stub method
+  		return SUCCESS;
+  }
 	
 	protected void valueFormForNew(IPage parentPage) {
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);

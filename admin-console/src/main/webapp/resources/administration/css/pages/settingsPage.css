@@ -1,0 +1,22 @@
+.settings-form .form-group > .row > * {
+    text-align: right;
+}
+.settings-form .form-group select {
+    height: 30px;
+    line-height: 30px;
+}
+.settings-form .btn-default.active {
+    background-color: #39a5dc !important;
+    border-color: #00659c !important;
+    color: #fff !important;
+}
+
+.bottom-row .btn-primary {
+    background: #39a5dc!important;
+    border-color: #00659c!important;
+    height: 30px;
+    width: 150px;
+}
+.bottom-row .row > div {
+    background: #d1d1d1;
+}

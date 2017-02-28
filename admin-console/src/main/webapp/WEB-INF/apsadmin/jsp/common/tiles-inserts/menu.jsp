@@ -39,8 +39,8 @@
                 </li>
 
                 <li class="list-group-item">
-                    <a >
-                        <span class="list-group-item-value">General Settings Page TO_DO</span>
+                    <a href='<s:url action="settings" namespace="/do/Page" />'>
+                        <span class="list-group-item-value">General Settings Page</span>
 
                     </a>
                 </li>

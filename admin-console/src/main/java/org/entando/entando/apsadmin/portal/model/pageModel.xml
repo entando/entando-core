@@ -10,7 +10,7 @@
             <result type="json">
                 <param name="root">framesSketch</param>
             </result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">enterBackend</param></interceptor-ref>
         </action>
         
         <action name="updateSketch" class="pageModelAction" method="updateSketch">

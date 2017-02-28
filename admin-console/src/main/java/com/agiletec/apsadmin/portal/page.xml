@@ -5,7 +5,7 @@
 
 <struts>
 
-	<package name="core_do/Page" namespace="/do/Page" extends="entando-default">
+	<package name="core_do/rs/Page" namespace="/do/rs/Page" extends="entando-default">
 
 		<interceptors>
 			<interceptor name="json" class="org.apache.struts2.json.JSONInterceptor" />

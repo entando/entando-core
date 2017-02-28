@@ -11,6 +11,36 @@
 
 <div id="main" role="main">
 
+    <div class="grid-container"></div>
+
+
+    <div class="widget-list">
+        <div class="widget-square" data-widget-id="logo">
+            <i class="widget-icon fa fa-picture-o"></i>
+            <div class="widget-name">Logo</div>
+        </div>
+        <div class="widget-square" data-widget-id="login">
+            <i class="widget-icon fa fa-sign-in"></i>
+            <div class="widget-name">Login form</div>
+        </div>
+        <div class="widget-square" data-widget-id="sidemenu">
+            <i class="widget-icon fa fa-bars"></i>
+            <div class="widget-name">Side menu</div>
+        </div>
+        <div class="widget-square" data-widget-id="footer">
+            <i class="widget-icon fa fa-sort-desc"></i>
+            <div class="widget-name">Footer</div>
+        </div>
+        <div class="widget-square" data-widget-id="lang">
+            <i class="widget-icon fa fa-language"></i>
+            <div class="widget-name">Choose language</div>
+        </div>
+        <div class="widget-square" data-widget-id="articles">
+            <i class="widget-icon fa fa-object-ungroup"></i>
+            <div class="widget-name">Articles list</div>
+        </div>
+    </div>
+
 <s:set var="breadcrumbs_pivotPageCode" value="currentPage.code" />
 <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
 
@@ -18,17 +48,18 @@
 	<s:param name="selectedNode" value="currentPage.code"></s:param>
 </s:action>
 
-<s:if test="currentPage.widgets.length > 0">
+<s:if test="currentPage.draftWidgets.length > 0">
 
 	<ol start="0" class="list-group">
 
 	<s:set var="showletTypeApiMappingsVar" value="showletTypeApiMappings" />
-	<s:iterator var="showlet" value="currentPage.widgets" status="rowstatus">
+	<s:iterator var="showlet" value="currentPage.draftWidgets" status="rowstatus">
 		<s:set var="showletType" value="#showlet.getType()" ></s:set>
+		<s:set var="metadata" value="currentPage.draftMetadata" ></s:set>
 
 		<li class="list-group-item padding-base-top padding-base-bottom" id="widget<s:property value="#rowstatus.count" />">
 			<h2 class="h5 list-group-item-heading">
-				<s:if test="currentPage.getModel().getMainFrame() == #rowstatus.index">
+				<s:if test="#metadata.getModel().getMainFrame() == #rowstatus.index">
 					<a href="
 					<s:url action="editFrame" namespace="/do/Page">
 						<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
@@ -46,7 +77,7 @@
 					</s:url>">
 						<span class="icon fa fa-cog fa-fw"></span>&#32;
 				</s:else>
-						<s:property value="currentPage.getModel().getFrames()[#rowstatus.index]"/>
+						<s:property value="#metadata.getModel().getFrames()[#rowstatus.index]"/>
 					</a>
 			</h2>
 			<s:if test="null != #showletType.code">

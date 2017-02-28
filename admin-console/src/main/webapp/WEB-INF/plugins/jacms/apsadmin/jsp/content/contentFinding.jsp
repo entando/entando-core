@@ -1,13 +1,14 @@
-<%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
-<%@ taglib prefix="wp" uri="/aps-core" %>
 <%-- radios + checkboxes only --%>
-<%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="wp" uri="/aps-core" %>
+<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
+<%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:set var="targetNS" value="%{'/do/jacms/Content'}" />
 <h1 class="panel panel-default title-page"><span class="panel-body display-block"><s:text name="jacms.menu.contentAdmin" />&#32;/&#32;<s:text name="title.contentList" /></span></h1>
-
+<wpsa:entityTypes entityManagerName="jacmsContentManager" var="contentTypesVar" />
 <div id="main" role="main">
 
 		<s:url action="search" var= "formAction" namespace="do/jacms/Content" />
@@ -182,7 +183,7 @@
 				</button>
 			</p>
 
-			<div id="search-configure-results" class="collapse">
+                        <div id="search-configure-results" class="collapse">
 
 				<div class="form-group col-sm-12">
 					<div class="btn-group" data-toggle="buttons">
@@ -270,7 +271,7 @@
 				<span class="caret"></span>
 		  </button>
 		  <ul class="dropdown-menu" role="menu">
-			<s:iterator var="contentTypeVar" value="#contentTypesVar">
+                      <s:iterator var="contentTypeVar" value="#contentTypesVar">
 				<jacmswpsa:contentType typeCode="%{#contentTypeVar.typeCode}" property="isAuthToEdit" var="isAuthToEditVar" />
 				<s:if test="%{#isAuthToEditVar}">
 					<li><a href="<s:url action="createNew" namespace="/do/jacms/Content" >

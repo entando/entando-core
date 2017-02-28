@@ -13,23 +13,42 @@
  */
 package com.agiletec.apsadmin.portal;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import com.agiletec.apsadmin.portal.model.SwapWidgetRequest;
+import com.agiletec.apsadmin.portal.model.SwapWidgetRequestValidator;
+import com.agiletec.apsadmin.portal.model.SwapWidgetResponse;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
 /**
  * Main action class for the pages configuration.
  * @author E.Santoboni
  */
-public class PageConfigAction extends AbstractPortalAction {
+public class PageConfigAction extends AbstractPortalAction implements ServletResponseAware {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageConfigAction.class);
+	private HttpServletResponse response;
+	
+	@Autowired
+	private SwapWidgetRequestValidator validator;
+	
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;
+	}
+	
 	
 	public String configure() {
 		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
@@ -139,6 +158,37 @@ public class PageConfigAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
+
+	
+	public String move() {
+		try {
+			SwapWidgetRequest ajaxRequest = this.getSwapWidgetRequest();
+			this.validator.validateRequest(ajaxRequest, this);
+			if (this.hasActionErrors() || this.hasFieldErrors()) {
+				this.response.setStatus(Status.BAD_REQUEST.getStatusCode());
+				return INPUT;
+			}
+			
+			this.getPageManager().moveWidget(ajaxRequest.getPageCode(), ajaxRequest.getSrc(), ajaxRequest.getDest());
+		} catch (Throwable t) {
+			this.response.setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			_logger.error("error in move", t);
+			return FAILURE;
+		}
+		this.response.setStatus(Status.OK.getStatusCode());
+		this.setPageCode(swapWidgetRequest.getPageCode());
+		return SUCCESS;
+	}
+	
+	public SwapWidgetResponse getMoveWidgetResponse() {
+		SwapWidgetResponse response = new SwapWidgetResponse(this);
+		if (StringUtils.isNotBlank(this.getPageCode())) {
+			IPage page = this.getPageManager().getPage(this.getPageCode());
+			response.setPage(page);
+		}
+		return response;
+	}
+	
 	
 	//TODO METODO COMUNE ALLA CONFIG SPECIAL WIDGET
 	protected String checkBaseParams() {
@@ -238,6 +288,13 @@ public class PageConfigAction extends AbstractPortalAction {
 		this._widget = widget;
 	}
 
+	public SwapWidgetRequest getSwapWidgetRequest() {
+		return swapWidgetRequest;
+	}
+	public void setSwapWidgetRequest(SwapWidgetRequest swapWidgetRequest) {
+		this.swapWidgetRequest = swapWidgetRequest;
+	}
+
 	protected IPageActionHelper getPageActionHelper() {
 		return _pageActionHelper;
 	}
@@ -245,13 +302,13 @@ public class PageConfigAction extends AbstractPortalAction {
 		this._pageActionHelper = pageActionHelper;
 	}
 	
+
 	private String _pageCode;
 	private int _frame = -1;
 	private String _widgetAction;
-	
-	private String _widgetTypeCode;
-	
+	private String _widgetTypeCode;	
 	private Widget _widget;
+	private SwapWidgetRequest swapWidgetRequest;
 	
 	private IPageActionHelper _pageActionHelper;
 

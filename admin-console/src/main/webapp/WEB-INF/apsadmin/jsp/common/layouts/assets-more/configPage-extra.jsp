@@ -11,6 +11,9 @@
 <script src="<wp:resourceURL />administration/js/jquery-ui-dragndrop.min.js"></script>
 
 <script>
+    var PROPERTY = {};
+    PROPERTY.code = '<s:property value="pageCode"/>' || '<s:property value="selectedNode"/>';
+
     var TEXT = {};
     TEXT['error.grid.overlappingFrames'] = '<s:text name="error.grid.overlappingFrames"/>';
     TEXT['error.grid.malformedFrames'] = '<s:text name="error.grid.malformedFrames"/>';

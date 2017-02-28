@@ -69,7 +69,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 	private void initIntroContentLink(String username, String contentId) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
-		this.initContentAction("/do/jacms/Content/Hypertext", "introContentLink", contentOnSessionMarker);
+		this.initContentAction("/do/jacms/Content/Hypertext", "entandoIntroContentLink", contentOnSessionMarker);
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 	}
@@ -129,7 +129,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 	private void initIntroPageLink(String username, String contentId) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
-		this.initContentAction("/do/jacms/Content/Hypertext", "introPageLink", contentOnSessionMarker);
+		this.initContentAction("/do/jacms/Content/Hypertext", "entandoPageLink", contentOnSessionMarker);
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 	}
@@ -137,7 +137,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 	private void openTree(String username, String contentId, String nodeToOpen) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
-		this.initContentAction("/do/jacms/Content/Hypertext", "introPageLink", contentOnSessionMarker);
+		this.initContentAction("/do/jacms/Content/Hypertext", "entandoPageLink", contentOnSessionMarker);
 		this.addParameter("treeNodeActionMarkerCode", ITreeAction.ACTION_MARKER_OPEN);
 		this.addParameter("targetNode", nodeToOpen);
 		String result = this.executeAction();

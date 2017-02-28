@@ -20,6 +20,15 @@
     TEXT['error.grid.overlappingFrames'] = '<s:text name="error.grid.overlappingFrames"/>';
     TEXT['error.grid.malformedFrames'] = '<s:text name="error.grid.malformedFrames"/>';
     TEXT['error.grid.gridError'] = '<s:text name="error.grid.gridError"/>';
+
+    var curWidgets = [
+    <s:iterator var="curr_widget" value="currentPage.draftWidgets" status="rowstatus">
+        {
+            index: <s:property value="#rowstatus.index" />,
+            widgetType: '<s:property value="%{#curr_widget.getType().getCode()}" />'
+        },
+    </s:iterator>
+        ];
 </script>
 <script src="<wp:resourceURL />administration/js/pages/configPage.js"></script>
 

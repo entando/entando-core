@@ -3,6 +3,18 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
+<script>
+    $(document).ready(function () {
+        // matchHeight the contents of each .card-pf and then the .card-pf itself
+        $(".row-cards-pf > [class*='col'] > .card-pf .card-pf-title").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-body").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-footer").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
+        // Initialize the vertical navigation
+        $().setupVerticalNavigation(true);
+    });
+</script>
+
 <ul class="list-group">
     <!-- Page Designer -->
     <li class="list-group-item secondary-nav-item-pf" data-target="#page-designer-secondary">
@@ -152,7 +164,6 @@
         </div>
     </li>
 
-
     <!--  Users Settings -->
 
     <li class="list-group-item secondary-nav-item-pf" data-target="#user-settings-secondary">
@@ -247,19 +258,13 @@
             </ul>
             <!--Fine Users Settings Secondary-->
         </div>
-
     </li>
-
 
     <!--fine CMS-->
 
 </ul>
 
 <ul class="list-group fixed-bottom">
-
-
-
-
 
     <li class="list-group-item secondary-nav-item-pf" data-target="#settings-secondary">
         <a>

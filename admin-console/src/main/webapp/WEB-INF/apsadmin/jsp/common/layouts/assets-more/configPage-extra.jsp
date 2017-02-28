@@ -13,6 +13,8 @@
 <script>
     var PROPERTY = {};
     PROPERTY.code = '<s:property value="pageCode"/>' || '<s:property value="selectedNode"/>';
+    PROPERTY.pagemodel = '<s:property value="%{getCurrentPage().getDraftMetadata().getModel().getCode()}"/>' ;
+    
 
     var TEXT = {};
     TEXT['error.grid.overlappingFrames'] = '<s:text name="error.grid.overlappingFrames"/>';

@@ -1,17 +1,26 @@
 
 (function(context){
 
+
     /**
      * @constructor
-     * @param {Array} frames - an array of frames
+     * @param {Object} options - the options
+     * @param {Array} options.frames - an array of frames
+     * @param {number} options.rowHeight - the row height in pixels
      */
-    function GridGenerator(frames) {
+    function GridGenerator(options) {
 
         var me = this;
 
-        this.originalFrames = frames;
+        if (_.isEmpty(options.frames)) {
+            throw this.newError(GridGenerator.MISSING_FRAMES);
+        }
 
-        var lastDefinedFrame = _.maxBy(frames, 'sketch.y2');
+        this.options = options;
+
+        this.originalFrames = options.frames;
+
+        var lastDefinedFrame = _.maxBy(options.frames, 'sketch.y2');
         this.totalBoundaries = {
             x1: 0,
             y1: 0,
@@ -19,23 +28,24 @@
             y2: _.get(lastDefinedFrame, 'sketch.y2', -1)
         };
 
-        this.totalFrames = _.map(frames, function(frame) {
-                var internalFrame;
-                if (frame.sketch) {
-                    internalFrame = _.clone(frame.sketch);
-                } else {
-                    ++me.totalBoundaries.y2;
-                    internalFrame = {
-                        x1: 0,
-                        x2:11,
-                        y1: me.totalBoundaries.y2,
-                        y2: me.totalBoundaries.y2
-                    };
+        this.totalFrames = _.map(options.frames, function(frame) {
+            var internalFrame;
+            if (frame.sketch) {
+                internalFrame = _.clone(frame.sketch);
+            } else {
+                ++me.totalBoundaries.y2;
+                internalFrame = {
+                    x1: 0,
+                    x2:11,
+                    y1: me.totalBoundaries.y2,
+                    y2: me.totalBoundaries.y2
+                };
 
-                }
-                internalFrame.description = frame.description;
-                return internalFrame;
-            });
+            }
+            internalFrame.description = frame.description;
+            internalFrame.pos = frame.pos;
+            return internalFrame;
+        });
 
         var malformed = this.detectMalformed(this.totalFrames);
         if (!_.isEmpty(malformed)) {
@@ -51,12 +61,12 @@
 
     GridGenerator.ERROR = {
         OVERLAPPING_FRAMES: 'OVERLAPPING_FRAMES',
-        MALFORMED_FRAMES: 'MALFORMED_FRAMES'
+        MALFORMED_FRAMES: 'MALFORMED_FRAMES',
+        MISSING_FRAMES: 'MISSING_FRAMES'
     };
 
     var DIRECTION_ROW = 'row',
-        DIRECTION_COL = 'col',
-        GRID_SLOT_HEIGHT = 40;
+        DIRECTION_COL = 'col';
 
 
     /**
@@ -251,7 +261,7 @@
     /**
      * Returns a tree representing the grid, with empty nodes or frames as leaves
      * @param {Array} frames - the frames to be considered in the recursion
-     * @param {boundaries} - the area containing the subtree (the sub-grid)
+     * @param {Object} boundaries - the area containing the subtree (the sub-grid)
      * @returns {Object} the root node of the tree
      */
     GridGenerator.prototype.getTree = function getTree(frames, boundaries) {
@@ -307,11 +317,6 @@
 
         var html = '';
 
-        if (!node.rows) {
-            html += node.description || '';
-            return html;
-        }
-
 
         for (var i=0; i<node.rows.length; ++i) {
 
@@ -327,17 +332,31 @@
                 var col = row.cols[j],
                     colLenght = col.x2 - col.x1 + 1,
                     l = colLenght / rowLength * 12,
-                    h = col.y2 - col.y1 + 1 ;
+                    h = col.y2 - col.y1 + 1,
+                    isLeaf = !col.rows;
 
+                var content;
+                if (isLeaf) {
+                    content = _.escape(col.description) || '';
+                } else {
+                    content = this.readTree(col);
+                }
 
-                var content = this.readTree(col);
                 var classes = [
                     'col-xs-' + l,
                     (content && !col.rows? 'grid-slot' : 'empty-slot')
                 ];
 
-                html += '<div class="' + classes.join(' ') + '" style="height:'+ (h * GRID_SLOT_HEIGHT)  +'px">';
-                html += content;
+                html += '<div class="' + classes.join(' ') + '"';
+                if (this.options.rowHeight) {
+                    html += ' style="height:'+ (h * this.options.rowHeight)  +'px"';
+                }
+                if (isLeaf) {
+                    html += ' data-pos="' + _.escape(col.pos+'') + '"';
+                    html += ' data-description="' + _.escape(col.description) + '"';
+                }
+
+                html += '>' + content;
                 html += '</div>';
             }
             html += '</div>';
@@ -356,6 +375,7 @@
 
         return this.readTree(root, 0);
     };
+
 
 
     if (context) {

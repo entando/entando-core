@@ -217,6 +217,7 @@
     <definition extends="layout.default" name="admin.Page.configure">
         <put-attribute name="title" value="title.pageManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/configPage.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/configPage-extra.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Page.showlet.trash">
         <put-attribute name="title" value="title.pageManagement" />

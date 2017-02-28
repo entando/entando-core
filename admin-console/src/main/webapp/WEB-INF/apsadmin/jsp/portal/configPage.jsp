@@ -11,6 +11,36 @@
 
 <div id="main" role="main">
 
+    <div class="grid-container"></div>
+
+
+    <div class="widget-list">
+        <div class="widget-square" data-widget-id="logo">
+            <i class="widget-icon fa fa-picture-o"></i>
+            <div class="widget-name">Logo</div>
+        </div>
+        <div class="widget-square" data-widget-id="login">
+            <i class="widget-icon fa fa-sign-in"></i>
+            <div class="widget-name">Login form</div>
+        </div>
+        <div class="widget-square" data-widget-id="sidemenu">
+            <i class="widget-icon fa fa-bars"></i>
+            <div class="widget-name">Side menu</div>
+        </div>
+        <div class="widget-square" data-widget-id="footer">
+            <i class="widget-icon fa fa-sort-desc"></i>
+            <div class="widget-name">Footer</div>
+        </div>
+        <div class="widget-square" data-widget-id="lang">
+            <i class="widget-icon fa fa-language"></i>
+            <div class="widget-name">Choose language</div>
+        </div>
+        <div class="widget-square" data-widget-id="articles">
+            <i class="widget-icon fa fa-object-ungroup"></i>
+            <div class="widget-name">Articles list</div>
+        </div>
+    </div>
+
 <s:set var="breadcrumbs_pivotPageCode" value="currentPage.code" />
 <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
 

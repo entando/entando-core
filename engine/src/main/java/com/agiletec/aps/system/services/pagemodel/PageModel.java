@@ -13,8 +13,6 @@
  */
 package com.agiletec.aps.system.services.pagemodel;
 
-import com.agiletec.aps.system.services.page.Widget;
-
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -24,9 +22,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
+
+import com.agiletec.aps.system.services.page.Widget;
 
 /**
  * Representation of a page template. 

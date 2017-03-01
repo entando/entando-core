@@ -62,7 +62,7 @@ $(function() {
                 method: 'POST',
                 contentType : 'application/json',
                 data: JSON.stringify({
-                    pageCode: PROPERTY.pagemodel,
+                    pageCode: PROPERTY.code,
                     frame: +$elem.parent().attr('data-pos')
                 }),
                 success: function(data) {
@@ -167,7 +167,7 @@ $(function() {
                             method: 'POST',
                             contentType : 'application/json',
                             data: JSON.stringify({
-                                pageCode: PROPERTY.pagemodel,
+                                pageCode: PROPERTY.code,
                                 widgetTypeCode: $curWidget.attr('data-widget-id'),
                                 frame: +$curSlot.attr('data-pos')
                             }),
@@ -188,7 +188,7 @@ $(function() {
                             method: 'POST',
                             contentType : 'application/json',
                             data: JSON.stringify({ swapWidgetRequest: {
-                                pageCode: PROPERTY.pagemodel,
+                                pageCode: PROPERTY.code,
                                 src: +$prevSlot.attr('data-pos'),
                                 dest: +$curSlot.attr('data-pos')
                             }}),

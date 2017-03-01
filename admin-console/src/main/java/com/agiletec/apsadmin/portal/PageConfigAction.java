@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import com.agiletec.apsadmin.portal.model.DeleteWidgetResponse;
+import com.agiletec.apsadmin.portal.model.JoinWidgetResponse;
 import com.agiletec.apsadmin.portal.model.SwapWidgetRequest;
 import com.agiletec.apsadmin.portal.model.SwapWidgetRequestValidator;
 import com.agiletec.apsadmin.portal.model.SwapWidgetResponse;
@@ -118,6 +120,46 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		return SUCCESS;
 	}
 	
+	public String joinWidgetJson() {
+		try {
+			String result = this.checkBaseParams();
+			if (null != result) return result;
+			if (null != this.getWidgetTypeCode() && this.getWidgetTypeCode().length() == 0) {
+				this.addActionError(this.getText("error.page.widgetTypeCodeUnknown"));
+				return INPUT;
+			}
+			_logger.debug("code={}, pageCode={}, frame={}" + this.getWidgetTypeCode(),this.getPageCode() ,this.getFrame());
+			WidgetType widgetType = this.getShowletType(this.getWidgetTypeCode());
+			if (null == widgetType) {
+				this.addActionError(this.getText("error.page.widgetTypeCodeUnknown"));
+				return INPUT;
+			}
+			if (null == widgetType.getConfig() && null != widgetType.getAction()) {
+				this.setWidgetAction(widgetType.getAction());
+				//continue to widget configuration
+				return "configureSpecialWidget";
+			}
+			Widget widget = new Widget();
+			widget.setType(widgetType);
+			this.getPageManager().joinWidget(this.getPageCode(), widget, this.getFrame());
+			this.addActivityStreamInfo(ApsAdminSystemConstants.ADD, true);
+		} catch (Exception e) {
+			_logger.error("error in joinWidget", e);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+
+	public JoinWidgetResponse getJoinWidgetResponse() {
+		JoinWidgetResponse response = new JoinWidgetResponse(this);
+		if (StringUtils.isNotBlank(this.getPageCode())) {
+			IPage page = this.getPageManager().getPage(this.getPageCode());
+			response.setPage(page);
+		}
+		return response;
+		
+	}
+	
 	@Deprecated
 	public String removeShowlet() {
 		return this.trashWidget();
@@ -157,6 +199,30 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			return FAILURE;
 		}
 		return SUCCESS;
+	}
+
+	public String deleteWidgetJson() {
+		try {
+			String result = this.checkBaseParams();
+			if (null != result) {
+				return result;
+			}
+			this.getPageManager().removeWidget(this.getPageCode(), this.getFrame());
+			this.addActivityStreamInfo(ApsAdminSystemConstants.DELETE, true);
+		} catch (Exception e) {
+			_logger.error("error in deleteWidget", e);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public DeleteWidgetResponse getDeleteWidgetResponse() {
+		DeleteWidgetResponse response = new DeleteWidgetResponse(this);
+		if (StringUtils.isNotBlank(this.getPageCode())) {
+			IPage page = this.getPageManager().getPage(this.getPageCode());
+			response.setPage(page);
+		}
+		return response;		
 	}
 
 	
@@ -301,7 +367,6 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
 		this._pageActionHelper = pageActionHelper;
 	}
-	
 
 	private String _pageCode;
 	private int _frame = -1;

@@ -1,13 +1,20 @@
 $(function() {
 
-    var match = window.location.href.match(/(^.+\/do\/)/ ),
-        baseUrl = match ? match[0] : window.location.protocol + '//' + window.location.host,
-        serviceUrl = baseUrl + 'rs/PageModel/frames?code=' + PROPERTY.pagemodel;
+    var serviceUrl = PROPERTY.baseUrl + 'do/rs/PageModel/frames?code=' + PROPERTY.pagemodel,
+        addWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/joinWidget?code=' + PROPERTY.pagemodel,
+        moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget?code=' + PROPERTY.pagemodel,
+        deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel;
 
 
-
+    // contains previous slots HTML
     var gridSlots = {};
 
+
+
+    /**
+     * Shows a warning instead of a grid
+     * @param {string} alertText
+     */
     function showGridWarning(alertText) {
         var alert = '<div class="alert alert-warning">' +
             '<span class="pficon pficon-warning-triangle-o"></span>' +
@@ -16,6 +23,10 @@ $(function() {
         $('.grid-container').html(alert);
     }
 
+    /**
+     * Shows a warning instead of a grid
+     * @param {string} alertText
+     */
     function getMessageText(key, args) {
         var msg = TEXT[key] || '';
         if (_.isArray(args)) {
@@ -26,15 +37,10 @@ $(function() {
         return msg;
     }
 
-
-    function setEmptySlot($slot) {
-        var key = $slot.attr('data-pos');
-        $slot.html(gridSlots[key]);
-        $($slot).droppable('enable');
-    }
-
-
-
+    /**
+     * Creates a widget element from a widget square
+     * @param {jQuery} $widgetSquare
+     */
     function getGridWidget($widgetSquare) {
 
         var html = '<div>' +
@@ -50,13 +56,23 @@ $(function() {
 
 
         $elem.find('.remove-btn').click(function() {
-            setEmptySlot($elem.parent());
+
+            // delete the widget
+            $.ajax(deleteWidgetUrl, {
+                method: 'POST',
+                contentType : 'application/json',
+                data: JSON.stringify({
+                    pageCode: PROPERTY.pagemodel,
+                    frame: +$elem.parent().attr('data-pos')
+                }),
+                success: function(data) {
+                    setEmptySlot($elem.parent());
+                }
+            });
         });
 
         return $elem;
     }
-
-
 
 
     /**
@@ -66,6 +82,27 @@ $(function() {
         $widget.find('.slot-name').html(html);
     }
 
+
+    /**
+     * Populates a slot with the provided widget
+     * @param {jQuery} $slot
+     * @param {jQuery} $widget
+     */
+    function populateSlot($slot, $widget) {
+        setDraggable($widget, $slot);
+        setSlotName($widget, _.unescape($slot.attr('data-description')));
+        $slot.html($widget);
+    }
+
+    /**
+     * Empties a slot
+     * @param {jQuery} $slot
+     */
+    function setEmptySlot($slot) {
+        var key = $slot.attr('data-pos');
+        $slot.html(gridSlots[key]);
+        $($slot).droppable('enable');
+    }
 
     /**
      * Creates the grid given the frames data
@@ -87,6 +124,15 @@ $(function() {
                 gridSlots[pos] = $(el).html();
             });
 
+            // populates the slots
+            _.forEach(curWidgets, function (widget) {
+                if (widget.widgetType) {
+                    $curWidget = getGridWidget($('.drag-helper[data-widget-id="'+widget.widgetType+'"]'));
+                    $slot = $('.grid-slot[data-pos="' + widget.index + '"]');
+                    populateSlot($slot, $curWidget);
+                }
+            });
+
             $( '.grid-slot' ).droppable({
                 accept: function(draggable) {
                     var isFree = !$(this).hasClass('grid-slot-full'),
@@ -104,25 +150,54 @@ $(function() {
                     if ($prevSlot.is($curSlot)) {
                         return;
                     } else {
-                        // replaces the empty grid slot html with the old one
+                        // replaces the grid slot html with the old (empty) one
                         var html = gridSlots[+$prevSlot.attr('data-pos')];
                         $prevSlot.append(html);
                     }
+
 
                     $curSlot.droppable('disable');
 
                     // it's a widget square
                     if (!$curWidget.hasClass('instance')) {
                         $curWidget = getGridWidget($curWidget);
+
+                        // add the widget
+                        $.ajax(addWidgetUrl, {
+                            method: 'POST',
+                            contentType : 'application/json',
+                            data: JSON.stringify({
+                                pageCode: PROPERTY.pagemodel,
+                                widgetTypeCode: $curWidget.attr('data-widget-id'),
+                                frame: +$curSlot.attr('data-pos')
+                            }),
+                            success: function(data) {
+                                // widget needs configuration
+                                if (data.redirectLocation) {
+                                    window.location = PROPERTY.baseUrl + data.redirectLocation.replace(/^\//, '');
+                                    return;
+                                }
+                                // no need for configuration
+                                populateSlot($curSlot, $curWidget);
+                            }
+                        });
+                    } else {
+
+                        // move the widget
+                        $.ajax(moveWidgetUrl, {
+                            method: 'POST',
+                            contentType : 'application/json',
+                            data: JSON.stringify({ swapWidgetRequest: {
+                                pageCode: PROPERTY.pagemodel,
+                                src: +$prevSlot.attr('data-pos'),
+                                dest: +$curSlot.attr('data-pos')
+                            }}),
+                            success: function(data) {
+                                setEmptySlot($prevSlot);
+                                populateSlot($curSlot, $curWidget);
+                            }
+                        });
                     }
-
-
-                    setDraggable($curWidget, $curSlot);
-
-
-                    setSlotName($curWidget, _.unescape($curSlot.attr('data-description')));
-
-                    $curSlot.html($curWidget);
 
                 }
             });

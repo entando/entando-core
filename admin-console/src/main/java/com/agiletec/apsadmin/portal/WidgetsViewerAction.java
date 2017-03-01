@@ -63,6 +63,10 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 		return group;
 	}
 	
+	public String listJson() {
+		return SUCCESS;
+	}
+	
 	@Deprecated
 	public String viewShowletUtilizers() {
 		return viewWidgetUtilizers();

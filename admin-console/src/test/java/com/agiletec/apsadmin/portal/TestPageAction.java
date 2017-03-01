@@ -17,13 +17,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.PageTestUtil;
 import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
@@ -488,14 +494,82 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertNull(targets);
 	}
 	
+	public void testPutOffline_Wrong() throws Throwable {
+		this.checkActionOnPage("checkPutOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkActionOnPage("doPutOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkActionOnPage("checkPutOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("doPutOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("checkPutOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkActionOnPage("doPutOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+	}
+	
+	public void testPutOnlineOffline() throws Throwable {
+		String pageCode = "temp";
+		try {
+			this.addPage(pageCode);
+			IPage page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("checkPutOffline", pageCode, "admin", Action.SUCCESS, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("doPutOffline", pageCode, "admin", Action.SUCCESS, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertFalse(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("doPutOnline", pageCode, "admin", Action.SUCCESS, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._pageManager.deletePage(pageCode);
+		}
+	}
+	
+	private void addPage(String pageCode) throws ApsSystemException {
+		IPage parentPage = _pageManager.getDraftPage("service");
+		PageModel pageModel = parentPage.getOnlineMetadata().getModel();
+		PageMetadata metadata = PageTestUtil.createPageMetadata(
+				pageModel.getCode(), true, "pagina temporanea", null, null,
+				false, null, null);
+		
+		ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART11");
+		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
+		Widget[] widgets = { widgetToAdd };
+		
+		Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, metadata, widgets, widgets);
+		_pageManager.addPage(pageToAdd);
+	}
+	
+	private void checkActionOnPage(String actionName, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
+		String actualResult = this.executeActionOnPage(pageCode, username, actionName);
+		assertEquals(expectedResult, actualResult);
+		assertEquals(0, this.getAction().getFieldErrors().size());
+		if (errorLabel != null) {
+			String[] errors = this.getAction().getActionErrors().toArray(new String[0]);
+			assertEquals(1, errors.length);
+			assertEquals(this.getAction().getText(errorLabel), errors[0]);
+		} else {
+			assertEquals(0, this.getAction().getActionErrors().size());
+		}
+	}
+	
 	private void init() throws Exception {
     	try {
     		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+			this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
     	} catch (Throwable t) {
             throw new Exception(t);
         }
     }
     
     private IPageManager _pageManager = null;
+	private IWidgetTypeManager _widgetTypeManager;
 	
 }

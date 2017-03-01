@@ -168,6 +168,29 @@
 			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
+        
+        <action name="checkPutOffline" class="pageAction" method="checkPutOffline">
+        	<result name="references" type="tiles">admin.Page.references</result>
+            <result name="input" type="tiles">admin.Page.entry</result>
+            <result type="chain">viewTree</result>
+			<interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="doPutOffline" class="pageAction" method="doPutOffline">
+        	<result name="references" type="tiles">admin.Page.references</result>
+            <result name="input" type="tiles">admin.Page.entry</result>
+            <result type="chain">viewTree</result>
+			<interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="doPutOnline" class="pageAction" method="doPutOnline">
+            <result name="input" type="tiles">admin.Page.entry</result>
+            <result type="chain">viewTree</result>
+			<interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
 		
         <action name="detail" class="pageAction" method="showDetail">
             <result type="tiles">admin.Page.detail</result>

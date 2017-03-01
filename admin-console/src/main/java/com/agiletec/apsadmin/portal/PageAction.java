@@ -57,7 +57,7 @@ public class PageAction extends AbstractPortalAction {
 		this.checkTitles();
 	}
 	
-	private void checkTitles() {
+	protected void checkTitles() {
 		this.updateTitles();
 		Iterator<Lang> langsIter = this.getLangManager().getLangs().iterator();
 		while (langsIter.hasNext()) {
@@ -83,7 +83,7 @@ public class PageAction extends AbstractPortalAction {
 		}
 	}
 	
-	private void checkCode() {
+	protected void checkCode() {
 		String code = this.getPageCode();
 		if ((this.getStrutsAction() == ApsAdminSystemConstants.ADD || 
 				this.getStrutsAction() == ApsAdminSystemConstants.PASTE) 
@@ -192,8 +192,6 @@ public class PageAction extends AbstractPortalAction {
 	}
 	
 	public String paste() {
-		// TODO Nella copia vanno replicate sia le configurazioni draft che quelle online
-		IPageManager pageManager = this.getPageManager();
 		String selectedNode = this.getSelectedNode();
 		String copyingPageCode = this.getRequest().getParameter("copyingPageCode");
 		try {
@@ -377,32 +375,44 @@ public class PageAction extends AbstractPortalAction {
 				return check;
 			}
 			IPage currentPage = this.getPage(selectedNode);
-			Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
-			if (references.size()>0) {
-				this.setReferences(references);
-				return "references";
-			}
 			this.setNodeToBeDelete(selectedNode);
 			this.setSelectedNode(currentPage.getParent().getCode());
 		} catch (Throwable t) {
-			_logger.error("error in trash", t);
+			_logger.error("error checking before putting page {} offline", selectedNode, t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	public String putOffline() {
+	public String doPutOffline() {
+		String selectedNode = this.getSelectedNode();
 		try {
 			IPageManager pageManager = this.getPageManager();
-			String check = this.checkPutOffline(this.getNodeToBeDelete());
+			String check = this.checkPutOffline(selectedNode);
 			if (null != check) {
 				return check;
 			}
-			IPage pageToDelete = this.getPage(this.getNodeToBeDelete());
-			pageManager.deletePage(this.getNodeToBeDelete());
-			this.addActivityStreamInfo(pageToDelete, ApsAdminSystemConstants.DELETE, false);
+			pageManager.setPageOffline(selectedNode);
+			this.addActivityStreamInfo(this.getPage(selectedNode), ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
-			_logger.error("error in delete", t);
+			_logger.error("error putting page {} offline", selectedNode, t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String doPutOnline() {
+		String selectedNode = this.getSelectedNode();
+		try {
+			IPageManager pageManager = this.getPageManager();
+			String check = this.checkSelectedNode(selectedNode);
+			if (null != check) {
+				return check;
+			}
+			pageManager.setPageOnline(selectedNode);
+			this.addActivityStreamInfo(this.getPage(selectedNode), ApsAdminSystemConstants.EDIT, true);
+		} catch (Throwable t) {
+			_logger.error("error putting page {} online", selectedNode, t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -447,7 +457,7 @@ public class PageAction extends AbstractPortalAction {
 		return SUCCESS;
 	}
 	
-	protected String checkPutOffline(String selectedNode) {
+	protected String checkPutOffline(String selectedNode) throws ApsSystemException {
 		String check = this.checkSelectedNode(selectedNode);
 		if (null != check) {
 			return check;
@@ -457,13 +467,15 @@ public class PageAction extends AbstractPortalAction {
 		if (root.getCode().equals(currentPage.getCode())) {
 			this.addActionError(this.getText("error.page.offlineHome.notAllowed"));
 			return "pageTree";
-		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
+		} else if (currentPage.getOnlineChildren().length != 0) {
 			this.addActionError(this.getText("error.page.offline.notAllowed"));
 			return "pageTree";
-		} else if (currentPage.getOnlineChildren().length != 0) {
-			this.addActionError(this.getText("error.page.offline.notAllowed2"));
-			return "pageTree";
         }
+		Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
+		if (references.size()>0) {
+			this.setReferences(references);
+			return "references";
+		}
 		return null;
 	}
 	

@@ -13,7 +13,8 @@
 <script>
     var PROPERTY = {};
     PROPERTY.code = '<s:property value="pageCode"/>' || '<s:property value="selectedNode"/>';
-    PROPERTY.pagemodel = '<s:property value="%{getCurrentPage().getDraftMetadata().getModel().getCode()}"/>' ;
+    PROPERTY.pagemodel = '<s:property value="%{getCurrentPage().getDraftMetadata().getModel().getCode()}"/>';
+    PROPERTY.baseUrl = '<wp:info key="systemParam" paramName="applicationBaseURL" />';
     
 
     var TEXT = {};

@@ -14,7 +14,7 @@
     </li>
 </ol>
 
-<h1><s:text name="title.settingsPage" /></h1>
+<h1 class="page-title"><s:text name="title.settingsPage" /></h1>
 
 <div id="main" role="main">
 
@@ -39,18 +39,19 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-2">
-                    <label><s:text name="name.pages" /></label>
+                    <div class="form-group-label"><s:text name="name.pages" /></div>
                 </div>
                 <div class="col-xs-10">
-                    <hr>
+                    <div class="form-group-separator">* <s:text name="label.requiredFields" /></div>
                 </div>
             </div>
         </div>
 
         <div class="form-group">
             <div class="row">
-                <div class="col-xs-2">
+                <div class="col-xs-2 col-label">
                     <span for="admin-settings-area-homePageCode"><s:text name="sysconfig.homePageCode" /></span>
+                    <i class="fa fa-asterisk required-icon"></i>
                 </div>
                 <div class="col-xs-10">
                     <s:set name="paramName" value="'homePageCode'" />
@@ -61,8 +62,9 @@
 
         <div class="form-group">
             <div class="row">
-                <div class="col-xs-2">
+                <div class="col-xs-2 col-label">
                     <span for="admin-settings-area-notFoundPageCode"><s:text name="sysconfig.notFoundPageCode" /></span>
+                    <i class="fa fa-asterisk required-icon"></i>
                 </div>
                 <div class="col-xs-10">
                     <s:set name="paramName" value="'notFoundPageCode'" />
@@ -73,8 +75,9 @@
 
         <div class="form-group">
             <div class="row">
-                <div class="col-xs-2">
+                <div class="col-xs-2 col-label">
                     <span for="admin-settings-area-errorPageCode"><s:text name="sysconfig.errorPageCode" /></span>
+                    <i class="fa fa-asterisk required-icon"></i>
                 </div>
                 <div class="col-xs-10">
                     <s:set name="paramName" value="'errorPageCode'" />
@@ -85,8 +88,9 @@
 
         <div class="form-group">
             <div class="row">
-                <div class="col-xs-2">
+                <div class="col-xs-2 col-label">
                     <span for="admin-settings-area-loginPageCode"><s:text name="sysconfig.loginPageCode" /></span>
+                    <i class="fa fa-asterisk required-icon"></i>
                 </div>
                 <div class="col-xs-10">
                     <s:set name="paramName" value="'loginPageCode'" />
@@ -98,7 +102,7 @@
         <div class="form-group">
             <div class="row">
                 <s:set name="paramName" value="'baseUrl'" />
-                <div class="col-xs-2">
+                <div class="col-xs-2 col-label">
                     <span class="display-block"><s:text name="sysconfig.baseURL" /></span>
                 </div>
                 <div class="col-xs-4">
@@ -124,14 +128,14 @@
 
 		<div class="form-group">
             <div class="row">
-                <div class="col-xs-4">
+                <div class="col-xs-4 col-label">
                     <span class="display-block"><s:text name="sysconfig.baseURL.contextName" /></span>
                 </div>
                 <div class="col-xs-2">
                     <input class="bootstrap-switch" id="bootstrap-switch-state" type="checkbox" checked>
                 </div>
 
-                <div class="col-xs-4">
+                <div class="col-xs-4 col-label">
                     <span class="display-block"><s:text name="sysconfig.useJsessionId" /></span>
                 </div>
                 <div class="col-xs-2">
@@ -142,15 +146,16 @@
 
         <div class="form-group">
             <div class="row">
-                <div class="col-xs-4">
+                <div class="col-xs-4 col-label">
                     <span class="display-block"><s:text name="sysconfig.lang.browser" /></span>
                 </div>
                 <div class="col-xs-2">
                     <input class="bootstrap-switch" id="bootstrap-switch-state" type="checkbox" checked>
                 </div>
 
-                <div class="col-xs-4">
+                <div class="col-xs-4 col-label">
                     <span class="display-block"><s:text name="sysconfig.pageTreeOnTable" /></span>
+                    <i class="fa fa-question-circle help-icon"></i>
                 </div>
                 <div class="col-xs-2">
                     <input class="bootstrap-switch" id="bootstrap-switch-state" type="checkbox" checked>
@@ -161,7 +166,7 @@
         <div class="form-group">
             <div class="row">
                 <s:set name="paramName" value="'urlStyle'" />
-                <div class="col-xs-2">
+                <div class="col-xs-2 col-label">
                     <span class="display-block"><s:text name="sysconfig.URLstyle" /></span>
                 </div>
                 <div class="col-xs-4">

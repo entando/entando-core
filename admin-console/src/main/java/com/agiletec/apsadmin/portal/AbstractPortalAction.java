@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
@@ -33,7 +34,7 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.SelectItem;
-import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import com.agiletec.apsadmin.portal.model.PageResponse;
 import com.agiletec.apsadmin.system.BaseAction;
 
 /**
@@ -221,6 +222,19 @@ public abstract class AbstractPortalAction extends BaseAction {
 	
 	public boolean isInternalServletWidget(String widgetTypeCode) {
 		return this.getInternalServletWidgetCode().equals(widgetTypeCode);
+	}
+	
+	public PageResponse getPageResponse() {
+		return getPageResponse(this.getSelectedNode());
+	}
+	
+	public PageResponse getPageResponse(String pageCode) {
+		PageResponse response = new PageResponse(this);
+		if (StringUtils.isNotBlank(pageCode)) {
+			IPage page = this.getPageManager().getPage(pageCode);
+			response.setPage(page);
+		}
+		return response;
 	}
 	
 	/**

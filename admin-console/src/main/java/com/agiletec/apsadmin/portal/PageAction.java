@@ -39,6 +39,7 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import com.agiletec.apsadmin.portal.model.PageResponse;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
 
@@ -368,51 +369,53 @@ public class PageAction extends AbstractPortalAction {
 	}
 	
 	public String checkPutOffline() {
-		String selectedNode = this.getSelectedNode();
+		String pageCode = this.getPageCode();
 		try {
-			String check = this.checkPutOffline(selectedNode);
+			String check = this.checkPutOffline(pageCode);
 			if (null != check) {
 				return check;
 			}
-			IPage currentPage = this.getPage(selectedNode);
-			this.setNodeToBeDelete(selectedNode);
+			IPage currentPage = this.getPage(pageCode);
+			this.setNodeToBeDelete(pageCode);
 			this.setSelectedNode(currentPage.getParent().getCode());
 		} catch (Throwable t) {
-			_logger.error("error checking before putting page {} offline", selectedNode, t);
+			_logger.error("error checking before putting page {} offline", pageCode, t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
 	public String doPutOffline() {
-		String selectedNode = this.getSelectedNode();
+		String pageCode = this.getPageCode();
 		try {
 			IPageManager pageManager = this.getPageManager();
-			String check = this.checkPutOffline(selectedNode);
+			String check = this.checkPutOffline(pageCode);
 			if (null != check) {
 				return check;
 			}
-			pageManager.setPageOffline(selectedNode);
-			this.addActivityStreamInfo(this.getPage(selectedNode), ApsAdminSystemConstants.EDIT, true);
+			pageManager.setPageOffline(pageCode);
+			// TODO Define a new strutsAction to map "offline" operation
+			this.addActivityStreamInfo(this.getPage(pageCode), ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
-			_logger.error("error putting page {} offline", selectedNode, t);
+			_logger.error("error putting page {} offline", pageCode, t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
 	public String doPutOnline() {
-		String selectedNode = this.getSelectedNode();
+		String pageCode = this.getPageCode();
 		try {
 			IPageManager pageManager = this.getPageManager();
-			String check = this.checkSelectedNode(selectedNode);
+			String check = this.checkSelectedNode(pageCode);
 			if (null != check) {
 				return check;
 			}
-			pageManager.setPageOnline(selectedNode);
-			this.addActivityStreamInfo(this.getPage(selectedNode), ApsAdminSystemConstants.EDIT, true);
+			pageManager.setPageOnline(pageCode);
+			// TODO Define a new strutsAction to map "online" operation
+			this.addActivityStreamInfo(this.getPage(pageCode), ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
-			_logger.error("error putting page {} online", selectedNode, t);
+			_logger.error("error putting page {} online", pageCode, t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -503,6 +506,16 @@ public class PageAction extends AbstractPortalAction {
 		ActivityStreamInfo asi = this.getPageActionHelper().createActivityStreamInfo(page, 
 				strutsAction, addLink, "edit");
 		super.addActivityStreamInfo(asi);
+	}
+	
+	public PageResponse getPageResponse() {
+		PageResponse response = new PageResponse(this);
+		if (StringUtils.isNotBlank(this.getPageCode())) {
+			IPage page = this.getPageManager().getPage(this.getPageCode());
+			response.setPage(page);
+		}
+		response.setReferences(this.getReferences());
+		return response;
 	}
 	
 	/**

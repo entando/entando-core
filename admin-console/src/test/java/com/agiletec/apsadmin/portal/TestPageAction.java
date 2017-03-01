@@ -13,10 +13,15 @@
  */
 package com.agiletec.apsadmin.portal;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
@@ -32,6 +37,7 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
+import com.agiletec.apsadmin.portal.model.PageResponse;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
@@ -497,10 +503,18 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	public void testPutOffline_Wrong() throws Throwable {
 		this.checkActionOnPage("checkPutOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
 		this.checkActionOnPage("doPutOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkActionOnPage("putOffline", "/do/rs/Page", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkPageResponse("homepage", "error.page.userNotAllowed");
+		
 		this.checkActionOnPage("checkPutOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
 		this.checkActionOnPage("doPutOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("putOffline", "/do/rs/Page", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkPageResponse("homepage", "error.page.offlineHome.notAllowed");
+		
 		this.checkActionOnPage("checkPutOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
 		this.checkActionOnPage("doPutOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkActionOnPage("putOffline", "/do/rs/Page", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkPageResponse("service", "error.page.offline.notAllowed");
 	}
 	
 	public void testPutOnlineOffline() throws Throwable {
@@ -532,6 +546,32 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
+	public void testPutOnlineOfflineJson() throws Throwable {
+		String pageCode = "temp";
+		try {
+			this.addPage(pageCode);
+			IPage page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("putOffline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
+			this.checkPageResponse(pageCode, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertFalse(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("putOnline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
+			this.checkPageResponse(pageCode, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._pageManager.deletePage(pageCode);
+		}
+	}
+	
 	private void addPage(String pageCode) throws ApsSystemException {
 		IPage parentPage = _pageManager.getDraftPage("service");
 		PageModel pageModel = parentPage.getOnlineMetadata().getModel();
@@ -547,8 +587,12 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		_pageManager.addPage(pageToAdd);
 	}
 	
-	private void checkActionOnPage(String actionName, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
-		String actualResult = this.executeActionOnPage(pageCode, username, actionName);
+	private void checkActionOnPage(String actionName, String namespace, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
+		this.setUserOnSession(username);
+		this.initAction(namespace, actionName);
+		this.addParameter("pageCode", pageCode);
+		String actualResult = this.executeAction();
+		
 		assertEquals(expectedResult, actualResult);
 		assertEquals(0, this.getAction().getFieldErrors().size());
 		if (errorLabel != null) {
@@ -558,6 +602,35 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		} else {
 			assertEquals(0, this.getAction().getActionErrors().size());
 		}
+	}
+	
+	private void checkPageResponse(String pageCode, String errorLabel, String... expectedFieldErrors) {
+		PageResponse response = ((PageAction) this.getAction()).getPageResponse();
+		if (pageCode == null) {
+			assertNull(response.getPage());
+		} else {
+			assertEquals(pageCode, response.getPage().getCode());
+		}
+		if (errorLabel != null) {
+			String[] errors = response.getActionErrors().toArray(new String[0]);
+			assertEquals(1, errors.length);
+			assertEquals(this.getAction().getText(errorLabel), errors[0]);
+		} else {
+			assertEquals(0, response.getActionErrors().size());
+		}
+		if (expectedFieldErrors != null) {
+			assertEquals(expectedFieldErrors.length, response.getFieldErrors().size());
+			Object[] actualFieldErrors = response.getFieldErrors().keySet().toArray();
+			Arrays.sort(expectedFieldErrors);
+			Arrays.sort(actualFieldErrors);
+			assertEquals(expectedFieldErrors, actualFieldErrors);
+		} else {
+			assertEquals(0, response.getFieldErrors().size());
+		}
+	}
+	
+	private void checkActionOnPage(String actionName, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
+		this.checkActionOnPage(actionName, "/do/Page", pageCode, username, expectedResult, errorLabel);
 	}
 	
 	private void init() throws Exception {

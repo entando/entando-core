@@ -15,6 +15,48 @@
 				</interceptor-ref>
 			</interceptor-stack>
 		</interceptors>
+    	
+        <action name="putOffline" class="pageAction" method="doPutOffline">
+			<result type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="pageTree" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="references" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="failure" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<interceptor-ref name="entandoActionLogger" />
+			<interceptor-ref name="jsonStack" />
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="putOnline" class="pageAction" method="doPutOnline">
+			<result type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="pageTree" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="references" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<result name="failure" type="json">
+				<param name="root">pageResponse</param>
+			</result>
+			<interceptor-ref name="entandoActionLogger" />
+			<interceptor-ref name="jsonStack" />
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
 
 
 		<action name="moveWidget" class="pageConfigAction" method="move">

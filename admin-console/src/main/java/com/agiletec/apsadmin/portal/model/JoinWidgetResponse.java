@@ -14,6 +14,7 @@ public class JoinWidgetResponse {
 	private Collection<String> actionErrors;
 	private Collection<String> actionMessages;
 	private IPage page;
+	private String redirectLocation;
 
 	public Map<String, List<String>> getFieldErrors() {
 		return fieldErrors;
@@ -38,6 +39,13 @@ public class JoinWidgetResponse {
 
 	public IPage getPage() {
 		return page;
+	}
+
+	public String getRedirectLocation() {
+		return redirectLocation;
+	}
+	public void setRedirectLocation(String redirectLocation) {
+		this.redirectLocation = redirectLocation;
 	}
 
 	public void setPage(IPage src) {

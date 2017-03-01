@@ -42,16 +42,16 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageConfigAction.class);
 	private HttpServletResponse response;
-	
+
 	@Autowired
 	private SwapWidgetRequestValidator validator;
-	
+
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response = response;
 	}
-	
-	
+
+
 	public String configure() {
 		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
 		this.setPageCode(pageCode);
@@ -59,7 +59,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		if (null != check) return check;
 		return SUCCESS;
 	}
-	
+
 	public String editFrame() {
 		try {
 			String result = this.checkBaseParams();
@@ -84,7 +84,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		return SUCCESS;
 	}
-	
+
 	@Deprecated
 	public String joinShowlet() {
 		return this.joinWidget();
@@ -119,7 +119,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		return SUCCESS;
 	}
-	
+
 	public String joinWidgetJson() {
 		try {
 			String result = this.checkBaseParams();
@@ -155,16 +155,21 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		if (StringUtils.isNotBlank(this.getPageCode())) {
 			IPage page = this.getPageManager().getPage(this.getPageCode());
 			response.setPage(page);
+			if (StringUtils.isNotBlank(this.getWidgetAction())) {
+				String url = "/do/Page/SpecialWidget/" + this.getWidgetAction() + "?";
+				String[] params = new String[]{"pageCode="+ this.getPageCode(), "widgetTypeCode="+ this.getWidgetTypeCode(), "frame="+ this.getFrame() };
+				url = url + StringUtils.join(params, "&");
+				response.setRedirectLocation(url);
+			}
 		}
 		return response;
-		
 	}
-	
+
 	@Deprecated
 	public String removeShowlet() {
 		return this.trashWidget();
 	}
-	
+
 	@Deprecated
 	public String trashShowlet() {
 		return trashWidget();
@@ -180,7 +185,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		return SUCCESS;
 	}
-	
+
 	@Deprecated
 	public String deleteShowlet() {
 		return deleteWidget();
@@ -215,7 +220,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		return SUCCESS;
 	}
-	
+
 	public DeleteWidgetResponse getDeleteWidgetResponse() {
 		DeleteWidgetResponse response = new DeleteWidgetResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
@@ -225,7 +230,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		return response;		
 	}
 
-	
+
 	public String move() {
 		try {
 			SwapWidgetRequest ajaxRequest = this.getSwapWidgetRequest();
@@ -234,7 +239,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 				this.response.setStatus(Status.BAD_REQUEST.getStatusCode());
 				return INPUT;
 			}
-			
+
 			this.getPageManager().moveWidget(ajaxRequest.getPageCode(), ajaxRequest.getSrc(), ajaxRequest.getDest());
 		} catch (Throwable t) {
 			this.response.setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -245,7 +250,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		this.setPageCode(swapWidgetRequest.getPageCode());
 		return SUCCESS;
 	}
-	
+
 	public SwapWidgetResponse getMoveWidgetResponse() {
 		SwapWidgetResponse response = new SwapWidgetResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
@@ -254,8 +259,8 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		return response;
 	}
-	
-	
+
+
 	//TODO METODO COMUNE ALLA CONFIG SPECIAL WIDGET
 	protected String checkBaseParams() {
 		IPage page = this.getPage(this.getPageCode());
@@ -276,36 +281,36 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		return null;
 	}
-	
+
 	protected void addActivityStreamInfo(int strutsAction, boolean addLink) {
 		IPage page = this.getPage(this.getPageCode());
 		ActivityStreamInfo asi = this.getPageActionHelper()
 				.createActivityStreamInfo(page, strutsAction, addLink, "configure");
 		super.addActivityStreamInfo(asi);
 	}
-	
+
 	public WidgetType getShowletType(String typeCode) {
 		return this.getWidgetTypeManager().getWidgetType(typeCode);
 	}
-	
+
 	public IPage getCurrentPage() {
 		return this.getPage(this.getPageCode());
 	}
-	
+
 	public String getPageCode() {
 		return _pageCode;
 	}
 	public void setPageCode(String pageCode) {
 		this._pageCode = pageCode;
 	}
-	
+
 	public int getFrame() {
 		return _frame;
 	}
 	public void setFrame(int frame) {
 		this._frame = frame;
 	}
-	
+
 	@Deprecated
 	public String getShowletAction() {
 		return this.getWidgetAction();
@@ -314,14 +319,14 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public void setShowletAction(String showletAction) {
 		this.setWidgetAction(showletAction);
 	}
-	
+
 	public String getWidgetAction() {
 		return _widgetAction;
 	}
 	public void setWidgetAction(String widgetAction) {
 		this._widgetAction = widgetAction;
 	}
-	
+
 	@Deprecated
 	public String getShowletTypeCode() {
 		return this.getWidgetTypeCode();
@@ -330,14 +335,14 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public void setShowletTypeCode(String showletTypeCode) {
 		this.setWidgetTypeCode(showletTypeCode);
 	}
-	
+
 	public String getWidgetTypeCode() {
 		return _widgetTypeCode;
 	}
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}
-	
+
 	@Deprecated
 	public Widget getShowlet() {
 		return this.getWidget();
@@ -346,7 +351,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public void setShowlet(Widget widget) {
 		this.setWidget(widget);
 	}
-	
+
 	public Widget getWidget() {
 		return _widget;
 	}
@@ -374,7 +379,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	private String _widgetTypeCode;	
 	private Widget _widget;
 	private SwapWidgetRequest swapWidgetRequest;
-	
+
 	private IPageActionHelper _pageActionHelper;
 
 }

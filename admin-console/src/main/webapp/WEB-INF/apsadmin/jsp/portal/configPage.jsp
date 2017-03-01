@@ -15,11 +15,11 @@
 
 
     <div class="widget-list">
-        <div class="widget-square" data-widget-id="logo">
+        <div class="widget-square" data-widget-id="content_viewer">
             <i class="widget-icon fa fa-picture-o"></i>
-            <div class="widget-name">Logo</div>
+            <div class="widget-name">Content Viewer</div>
         </div>
-        <div class="widget-square" data-widget-id="login">
+        <div class="widget-square" data-widget-id="login_form">
             <i class="widget-icon fa fa-sign-in"></i>
             <div class="widget-name">Login form</div>
         </div>

@@ -511,7 +511,7 @@ public class PageAction extends AbstractPortalAction {
 	public PageResponse getPageResponse() {
 		PageResponse response = new PageResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPageManager().getPage(this.getPageCode());
+			IPage page = this.getPage(this.getPageCode());
 			response.setPage(page);
 		}
 		response.setReferences(this.getReferences());

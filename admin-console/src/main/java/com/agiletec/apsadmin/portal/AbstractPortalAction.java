@@ -224,19 +224,6 @@ public abstract class AbstractPortalAction extends BaseAction {
 		return this.getInternalServletWidgetCode().equals(widgetTypeCode);
 	}
 	
-	public PageResponse getPageResponse() {
-		return getPageResponse(this.getSelectedNode());
-	}
-	
-	public PageResponse getPageResponse(String pageCode) {
-		PageResponse response = new PageResponse(this);
-		if (StringUtils.isNotBlank(pageCode)) {
-			IPage page = this.getPageManager().getPage(pageCode);
-			response.setPage(page);
-		}
-		return response;
-	}
-	
 	/**
 	 * Return the node selected in the tree of pages.
 	 * @return The node selected in the tree of pages.

@@ -153,7 +153,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public JoinWidgetResponse getJoinWidgetResponse() {
 		JoinWidgetResponse response = new JoinWidgetResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPageManager().getPage(this.getPageCode());
+			IPage page = this.getPage(this.getPageCode());
 			response.setPage(page);
 			if (StringUtils.isNotBlank(this.getWidgetAction())) {
 				String url = "/do/Page/SpecialWidget/" + this.getWidgetAction() + "?";
@@ -224,7 +224,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public DeleteWidgetResponse getDeleteWidgetResponse() {
 		DeleteWidgetResponse response = new DeleteWidgetResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPageManager().getPage(this.getPageCode());
+			IPage page = this.getPage(this.getPageCode());
 			response.setPage(page);
 		}
 		return response;		
@@ -254,7 +254,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public SwapWidgetResponse getMoveWidgetResponse() {
 		SwapWidgetResponse response = new SwapWidgetResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPageManager().getPage(this.getPageCode());
+			IPage page = this.getPage(this.getPageCode());
 			response.setPage(page);
 		}
 		return response;

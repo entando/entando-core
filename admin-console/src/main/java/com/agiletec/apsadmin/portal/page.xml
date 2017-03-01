@@ -51,6 +51,10 @@
 			<result name="failure" type="json">
 				<param name="root">joinWidgetResponse</param>
 			</result>
+			<result name="configureSpecialWidget" type="json">
+				<param name="root">joinWidgetResponse</param>
+			</result>
+			<!-- 
         	<result name="configureSpecialWidget" type="redirectAction">
         		<param name="namespace">/do/Page/SpecialWidget</param>
     			<param name="actionName">${widgetAction}</param>
@@ -58,6 +62,7 @@
     			<param name="widgetTypeCode">${widgetTypeCode}</param>
     			<param name="frame">${frame}</param>
             </result>
+			 -->
 
 			<interceptor-ref name="jsonStack">
 			</interceptor-ref>

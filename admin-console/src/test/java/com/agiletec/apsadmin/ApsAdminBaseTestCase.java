@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import junit.framework.TestCase;
@@ -247,6 +248,10 @@ public class ApsAdminBaseTestCase extends TestCase {
 		return result;
 	}
 
+	protected Object getResponseStatusCode() {
+		return ((MockHttpServletResponse)this.getResponse()).getStatus();
+	}
+	
 	protected IManager getService(String name) {
 		return (IManager) this.getApplicationContext().getBean(name);
 	}
@@ -265,6 +270,10 @@ public class ApsAdminBaseTestCase extends TestCase {
 
     protected HttpServletRequest getRequest() {
     	return this._request;
+    }
+ 
+    protected HttpServletResponse getResponse() {
+    	return this._response;
     }
 
     private static ApplicationContext _applicationContext;

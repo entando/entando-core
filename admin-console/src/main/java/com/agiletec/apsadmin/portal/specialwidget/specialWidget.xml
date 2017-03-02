@@ -12,9 +12,10 @@
     			<param name="namespace">/do/Page</param>
     			<param name="actionName">viewTree</param>
     		</result>
-    		<result name="configure" type="chain">
+    		<result name="configure" type="redirectAction">
             	<param name="namespace">/do/Page</param>
     			<param name="actionName">configure</param>
+    			<param name="pageCode">${pageCode}</param>
             </result>
 		</global-results>
 

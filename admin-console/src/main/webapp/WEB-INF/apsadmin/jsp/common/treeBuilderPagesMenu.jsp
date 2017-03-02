@@ -14,11 +14,13 @@
             <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 
                class="subTreeToggler hidden <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
                <s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
-        &#32;<label for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
-                <span class="text-muted icon fa fa-lock"></span></s:if></label>
-        </td>
-        <td class="moveButtons-right-container">
-            <div class="moveButtons-right hidden">
+        &#32;<label class="word-wrap" for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
+                <span class="text-muted icon fa fa-lock"></span>
+            </s:if>
+        </label>
+    </td>
+    <td class="moveButtons-right-container">
+        <div class="moveButtons-right hidden">
             <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </wpsf:submit>
@@ -45,7 +47,7 @@
 
         <td class=" table-view-pf-actions hidden">
             <div class="dropdown dropdown-kebab-pf">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="fa fa-ellipsis-v"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                     <li>
@@ -53,7 +55,7 @@
                         <span class="">Edit </span>
                     </wpsf:submit>
                 </li>
-                <li><wpsf:submit action="configure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
+                <li><wpsf:submit action="doConfigure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
                         <span class="">Configure</span>
                     </wpsf:submit>
                 </li>

@@ -37,11 +37,14 @@
                         <span class="list-group-item-value">Page Tree</span>
                     </a>
                 </li>
-
+                <li class="list-group-item">
+                    <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page" />'>
+                        <span class="list-group-item-value">Page Tree Advanced </span>
+                    </a>
+                </li>
                 <li class="list-group-item">
                     <a >
                         <span class="list-group-item-value">General Settings Page TO_DO</span>
-
                     </a>
                 </li>
 
@@ -360,5 +363,4 @@
         </div>
 
     </li>
-
 </ul>

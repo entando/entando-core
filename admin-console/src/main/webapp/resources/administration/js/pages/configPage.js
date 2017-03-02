@@ -129,6 +129,11 @@ $(function() {
 
             var framePos = +$elem.parent().attr('data-pos');
 
+            // FIXME use styled modal
+            if (!confirm('Delete widget "'+widgetCode+'" from page "'+PROPERTY.code+'" position "'+framePos+'"?')) {
+                return;
+            }
+
             // delete the widget
             $.ajax(deleteWidgetUrl, {
                 method: 'POST',
@@ -141,11 +146,7 @@ $(function() {
                     if (hasErrors(data)) {
                         return;
                     }
-
-                    window.location = deleteConfirmUrl +
-                        '?pageCode=' + PROPERTY.code +
-                        '&frame=' + framePos +
-                        '&widgetTypeCode=' + widgetCode;
+                    setEmptySlot($elem.parent());
                 }
             });
         });
@@ -335,7 +336,7 @@ $(function() {
 
     initWidgetList();
 
-    
+
 
 
 });//domready

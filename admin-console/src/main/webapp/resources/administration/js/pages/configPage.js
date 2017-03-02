@@ -3,12 +3,73 @@ $(function() {
     var serviceUrl = PROPERTY.baseUrl + 'do/rs/PageModel/frames?code=' + PROPERTY.pagemodel,
         addWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/joinWidget?code=' + PROPERTY.pagemodel,
         moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget?code=' + PROPERTY.pagemodel,
-        deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel;
+        deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel,
+        getWidgetListUrl = PROPERTY.baseUrl + 'do/rs/Portal/WidgetType/list.action';
 
 
     // contains previous slots HTML
     var gridSlots = {};
 
+
+    /**
+     * Initializes drag helpers (to call after the widget list is populated)
+     */
+    function initDragHelpers() {
+        // an invisible div to store drag helpers
+        var $helperContainer = $('<div/>')
+            .addClass('drag-helper-list')
+            .css({ display: 'none' });
+        $('.widget-square').each(function(index, el) {
+            $helperContainer.append($(el).clone().addClass('drag-helper'));
+        });
+
+        $('.widget-list').append($helperContainer);
+    }
+
+    function initWidgetList() {
+        // get the widget list
+        $.ajax(getWidgetListUrl, {
+            method: 'GET',
+            success: function(data) {
+                var widgetList = _.flatten(data);
+                _.forEach(widgetList, function(widget) {
+                    var widgetSquare = $('<div/>')
+                        .addClass('widget-square')
+                        .attr('data-widget-id', _.escape(widget.key))
+                        .append('<i class="widget-icon fa fa-picture-o"></i>')
+                        .append('<div class="widget-name">' + _.escape(widget.value) + '</div>');
+                    $('.widget-list').append(widgetSquare);
+                });
+                initDragHelpers();
+                setDraggable($('.widget-square'), null);
+                initGrid();
+            }
+        });
+    }
+
+
+    function initGrid() {
+        // Initializes the grid
+        $.ajax(serviceUrl, {
+            method: 'GET',
+            success: function(data) {
+                updateGridPreview(data);
+            },
+            error: function() {
+                showGridWarning('Error getting template data.');
+            }
+        });
+    }
+
+
+    /**
+     * Tells if a call response has action errors
+     * @param {Object} data - the response
+     * @returns {boolean}
+     */
+    function hasErrors(data) {
+        return !_.isEmpty(data.actionErrors);
+    }
 
 
     /**
@@ -66,6 +127,9 @@ $(function() {
                     frame: +$elem.parent().attr('data-pos')
                 }),
                 success: function(data) {
+                    if (hasErrors(data)) {
+                        return;
+                    }
                     setEmptySlot($elem.parent());
                 }
             });
@@ -156,7 +220,7 @@ $(function() {
                     }
 
 
-                    $curSlot.droppable('disable');
+
 
                     // it's a widget square
                     if (!$curWidget.hasClass('instance')) {
@@ -172,11 +236,15 @@ $(function() {
                                 frame: +$curSlot.attr('data-pos')
                             }),
                             success: function(data) {
+                                if (hasErrors(data)) {
+                                    return;
+                                }
                                 // widget needs configuration
                                 if (data.redirectLocation) {
                                     window.location = PROPERTY.baseUrl + data.redirectLocation.replace(/^\//, '');
                                     return;
                                 }
+                                $curSlot.droppable('disable');
                                 // no need for configuration
                                 populateSlot($curSlot, $curWidget);
                             }
@@ -193,7 +261,11 @@ $(function() {
                                 dest: +$curSlot.attr('data-pos')
                             }}),
                             success: function(data) {
+                                if (hasErrors(data)) {
+                                    return;
+                                }
                                 setEmptySlot($prevSlot);
+                                $curSlot.droppable('disable');
                                 populateSlot($curSlot, $curWidget);
                             }
                         });
@@ -250,31 +322,11 @@ $(function() {
 
     }
 
-
-    // Initializes the grid
-    $.ajax(serviceUrl, {
-        method: 'GET',
-        success: function(data) {
-            updateGridPreview(data);
-        },
-        error: function() {
-            showGridWarning('Error getting template data.');
-        }
-    });
+    initWidgetList();
 
 
-    // an invisible div to store drag helpers
-    $helperContainer = $('<div/>')
-        .addClass('drag-helper-list')
-        .css({ display: 'none' });
-    $('.widget-square').each(function(index, el) {
-        $helperContainer.append($(el).clone().addClass('drag-helper'));
-    });
-
-    $('.widget-list').append($helperContainer);
 
 
-    setDraggable($('.widget-square'), null);
 
 
 });//domready

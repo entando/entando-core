@@ -35,7 +35,7 @@ public class PageTreeAction extends AbstractTreeAction {
 	@Override
 	public String execute() throws Exception {
 		if (null != this.getSelectedNode()) {
-			super.getTreeNodesToOpen().add(this.getSelectedNode());
+			this.getTreeNodesToOpen().add(this.getSelectedNode());
 		}
 		return super.execute();
 	}

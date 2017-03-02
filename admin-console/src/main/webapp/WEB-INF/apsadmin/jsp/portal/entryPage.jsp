@@ -116,10 +116,11 @@
 					}
 					</style>
 					<s:set var="treeNodeActionMarkerCode" value="treeNodeActionMarkerCode" />
-					<s:set var="targetNode" value="targetNode" />
+					<s:set var="targetNode" value="%{parentPageCode}" />
 					<s:set var="treeNodesToOpen" value="treeNodesToOpen" />
+
 					<wpsa:pageTree allowedGroups="${groupsByPermission}" var="currentRoot" online="false" onDemand="true" 
-							open="${treeNodeActionMarkerCode}" targetNode="${targetNode}" treeNodesToOpen="${treeNodesToOpen}" />
+							open="${treeNodeActionMarkerCode!='close'}" targetNode="${targetNode}" treeNodesToOpen="${treeNodesToOpen}" />
 					<s:include value="include/entryPage_treeBuilder-request-linksPages.jsp" />
 				</s:elseif>
 			</tbody>

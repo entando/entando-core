@@ -56,15 +56,13 @@ public class PageTreeTag extends StrutsBodyTagSupport {
 	public Set<String> getTargetNodes(Collection<String> allowedGroups, ITreeNodeBaseActionHelper helper) {
 		Set<String> targets = this.convertCollection(this.getTreeNodesToOpen());
 		try {
-			// TODO Verificare
 			String targetNode = this.getTargetNode();
+			// TODO Verificare
 			Boolean open = this.getOpen();
-			if (open != null) {
-				if (open) {
-					targets = helper.checkTargetNodes(targetNode, targets, allowedGroups);
-				} else {
-					targets = helper.checkTargetNodesOnClosing(targetNode, targets, allowedGroups);
-				}
+			if (open != null && !open) {
+				targets = helper.checkTargetNodesOnClosing(targetNode, targets, allowedGroups);
+			} else {
+				targets = helper.checkTargetNodes(targetNode, targets, allowedGroups);
 			}
 		} catch (Throwable t) {
 			_logger.error("error in buildTree", t);

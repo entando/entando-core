@@ -58,7 +58,6 @@
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
 
-
 		<action name="moveWidget" class="pageConfigAction" method="move">
 			<param name="swapWidgetRequest">true</param>
 			<result type="json">
@@ -158,6 +157,11 @@
         </action>
         
         <action name="edit" class="pageAction" method="edit">
+            <result type="tiles">admin.Page.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="entryEdit*" class="pageAction" >
             <result type="tiles">admin.Page.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>

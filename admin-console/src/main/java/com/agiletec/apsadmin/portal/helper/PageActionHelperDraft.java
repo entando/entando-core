@@ -41,6 +41,11 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 	private static final Logger _logger = LoggerFactory.getLogger(PageActionHelperDraft.class);
 
 	@Override
+	protected IPage getPage(String pageCode) {
+		return this.getPageManager().getDraftPage(pageCode);
+	}
+
+	@Override
 	protected PageMetadata getPageMetadata(IPage page) {
 		return page.getDraftMetadata();
 	}

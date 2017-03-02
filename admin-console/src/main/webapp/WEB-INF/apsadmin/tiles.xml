@@ -196,7 +196,7 @@
     <!-- Menu albero pagine right -->
     <definition extends="layout.default" name="admin.Page.viewTreeMenu">
         <put-attribute name="title" value="title.pageManagement" />
-        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageTree.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageTreeMenu-extra.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageTreeMenu.jsp" />
     </definition>
     

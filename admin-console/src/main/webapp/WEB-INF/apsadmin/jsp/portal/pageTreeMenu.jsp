@@ -25,6 +25,8 @@
     </div>
 </s:if>
 
+<!----------------- griglia del template ----------->
+<div class="grid-container"></div>
 
 <!----------------- widget menu sinistra ----------->
 

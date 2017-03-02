@@ -59,6 +59,22 @@
         </action>
 
 
+		<action name="detail" class="pageAction" method="pageDetails">
+			<result type="json">
+				<param name="root">pageDetailResponse</param>
+			</result>
+			<result name="pageTree" type="json">
+				<param name="root">pageDetailResponse</param>
+			</result>			
+			<interceptor-ref name="jsonStack">
+			</interceptor-ref>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">managePages</param>
+				<param name="params.excludeParams">swapWidgetRequest</param>
+			</interceptor-ref>
+		</action>
+
+
 		<action name="moveWidget" class="pageConfigAction" method="move">
 			<param name="swapWidgetRequest">true</param>
 			<result type="json">
@@ -144,13 +160,22 @@
         	</interceptor-ref>
         </action>
         
-        <action name="viewTreeMenu" class="pageTreeMenuAction">
+        <action name="viewTreeMenu" class="pageTreeMenuAction" method="intro">
             <result type="tiles">admin.Page.viewTreeMenu</result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">managePages</param>
         		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
         	</interceptor-ref>
         </action>
+        
+        <action name="configure" class="pageConfigAction" method="configure">
+        	<result type="tiles">admin.Page.viewTreeMenu</result>
+            <interceptor-ref name="entandoDefaultStack">
+            	<param name="requestAuth.requiredPermission">managePages</param>
+            	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action>        
+        
         
         <action name="new" class="pageAction" method="newPage">
             <result type="tiles">admin.Page.entry</result>
@@ -268,6 +293,7 @@
             </interceptor-ref>
         </action>
         
+        <!-- 
         <action name="configure" class="pageConfigAction" method="configure">
         	<result type="tiles">admin.Page.configure</result>
             <interceptor-ref name="entandoDefaultStack">
@@ -275,6 +301,7 @@
             	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
             </interceptor-ref>
         </action>
+         -->
         
         <action name="editFrame" class="pageConfigAction" method="editFrame">
         	<result name="configureSpecialWidget" type="chain">

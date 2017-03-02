@@ -21,8 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +51,20 @@ import com.agiletec.apsadmin.system.BaseActionHelper;
  * Main action for pages handling
  * @author E.Santoboni
  */
-public class PageAction extends AbstractPortalAction {
+public class PageAction extends AbstractPortalAction implements ServletResponseAware {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageAction.class);
+	private HttpServletResponse response;
+	
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;
+	}
+	
+	public HttpServletResponse getServletResponse() {
+		return this.response;
+	}
+	
 	
 	@Override
 	public void validate() {
@@ -296,6 +311,31 @@ public class PageAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
+	
+	public String pageDetails() {
+		return SUCCESS;
+	}
+	
+	public PageResponse getPageDetailResponse() {
+		PageResponse response = null;
+		try {
+			String pageCode = this.getPageCode();
+			String check = this.checkSelectedNode(pageCode);
+			if (null != check) {
+				response = new PageResponse(this);
+				return response;
+			}
+			response = new PageResponse(this);
+			IPage page = this.getPage(pageCode);
+			response.setPage(page);
+		} catch (Throwable t) {
+			_logger.error("error in getPageJsonResponse", t);
+			this.getServletResponse().setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return null;
+		}
+		return response;
+	}
+	
 	
 	protected IPage buildNewPage() throws ApsSystemException {
 		Page page = new Page();

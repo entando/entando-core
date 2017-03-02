@@ -4,12 +4,44 @@ $(function() {
         addWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/joinWidget?code=' + PROPERTY.pagemodel,
         moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget?code=' + PROPERTY.pagemodel,
         deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel,
+        getPageDetailUrl = PROPERTY.baseUrl + 'do/rs/Page/detail',
         PAGE_IS_SELECTED = !!PROPERTY.pagemodel;
 
 
     // contains previous slots HTML
     var gridSlots = {};
 
+
+
+    function initPageDetail() {
+
+        // Initializes page detail
+        $.ajax(getPageDetailUrl, {
+            method: 'POST',
+            contentType : 'application/json',
+            data: JSON.stringify({
+                pageCode: PROPERTY.code
+            }),
+            success: function(data) {
+                var $pageInfo = $('#page-info'),
+                    metadata = data.page.draftMetadata,
+                    checkElems = {
+                        'true': '<span title="Yes" class="icon fa fa-check-square-o"></span>',
+                        'false': '<span title="No" class="icon fa fa-square-o"></span>'
+                    };
+                $pageInfo.find('[data-info-pagecode]').text(data.page.code);
+                var titles = _.map(metadata.titles, function (title, abbr) {
+                    return '<span class="monospace">(<abbr title="English">'+abbr+'</abbr>)</span> ' + title
+                }).join(', ');
+                $pageInfo.find('[data-info-titles]').html(titles);
+                $pageInfo.find('[data-info-group]').text(data.page.group);
+                $pageInfo.find('[data-info-model]').text(metadata.model.descr);
+                $pageInfo.find('[data-info-showmenu]').html(checkElems[_.toString(data.page.showable)]);
+                $pageInfo.find('[data-info-extratitles]').html(checkElems[_.toString(data.page.useExtraTitles)]);
+
+            }
+        });
+    }
 
 
     function initGrid() {
@@ -302,6 +334,7 @@ $(function() {
     if (PAGE_IS_SELECTED) {
         setDraggable($('.widget-square'), null);
         initGrid();
+        initPageDetail();
     }
 
 

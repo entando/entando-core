@@ -335,6 +335,8 @@ $(function() {
         setDraggable($('.widget-square'), null);
         initGrid();
         initPageDetail();
+    } else {
+        $('#page-info').remove();
     }
 
 

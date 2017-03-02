@@ -2,11 +2,21 @@
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
-<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
+
+<script>
+    $(document).ready(function () {
+        // matchHeight the contents of each .card-pf and then the .card-pf itself
+        $(".row-cards-pf > [class*='col'] > .card-pf .card-pf-title").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-body").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-footer").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
+        // Initialize the vertical navigation
+        $().setupVerticalNavigation(true);
+    });
+</script>
 
 <ul class="list-group">
     <!-- Page Designer -->
-
     <li class="list-group-item secondary-nav-item-pf" data-target="#page-designer-secondary">
         <a>
             <span class="fa fa-files-o" data-toggle="tooltip" title="Page Designer" ></span>
@@ -23,8 +33,8 @@
 
             <ul class="list-group">
                 <li class="list-group-item">
-                    <a id="linkHome" href="<s:url action="viewTree" namespace="/do/Page" />">
-                        <span class="list-group-item-value">Page Tree</span>
+                    <a id="linkHome" href='<s:url action="viewTree" namespace="/do/Page" />'>
+                       <span class="list-group-item-value">Page Tree</span>
                     </a>
                 </li>
 
@@ -58,20 +68,20 @@
 
             <ul class="list-group">
                 <li class="list-group-item">
-                    <a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />">
-                        <span class="list-group-item-value">Widgets</span>
+                    <a href='<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />'>
+                       <span class="list-group-item-value">Widgets</span>
                     </a>
                 </li>
                 <li class="list-group-item">
-                    <a href="<s:url action="list" namespace="/do/Portal/GuiFragment" />">
-                        <span class="list-group-item-value">Containers</span>
+                    <a href='<s:url action="list" namespace="/do/Portal/GuiFragment" />'>
+                       <span class="list-group-item-value">Containers</span>
 
                     </a>
                 </li>
 
                 <li class="list-group-item">
-                    <a href="<s:url action="list" namespace="/do/PageModel" />">
-                        <span class="list-group-item-value">Page Models</span>
+                    <a href='<s:url action="list" namespace="/do/PageModel" />'>
+                       <span class="list-group-item-value">Page Models</span>
                     </a>
                 </li>
 
@@ -131,20 +141,20 @@
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Resource" />">
-                                    <span class="list-group-item-value">Resources</span>
+                                <a href='<s:url action="list" namespace="/do/Api/Resource" />'>
+                                   <span class="list-group-item-value">Resources</span>
 
                                 </a>
                             </li>
                             <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Service" />">
-                                    <span  class="list-group-item-value">Services</span>
+                                <a href='<s:url action="list" namespace="/do/Api/Service" />'>
+                                   <span  class="list-group-item-value">Services</span>
 
                                 </a>
                             </li>
                             <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Consumer" />">
-                                    <span class="list-group-item-value">Consumers</span>
+                                <a href='<s:url action="list" namespace="/do/Api/Consumer" />'>
+                                   <span class="list-group-item-value">Consumers</span>
                                 </a>
                             </li>
                         </ul>
@@ -158,7 +168,7 @@
 
     <li class="list-group-item secondary-nav-item-pf" data-target="#user-settings-secondary">
         <a>
-            <span class="fa fa-users" data-toggle="tooltip" title="Users Settings" ></span>
+            <span class="fa fa-files-o" data-toggle="tooltip" title="Users Settings" ></span>
             <span class="list-group-item-value">Users Settings</span>
         </a>
 
@@ -172,26 +182,26 @@
 
             <ul class="list-group">
                 <li class="list-group-item">
-                    <a href="<s:url action="list" namespace="/do/User" />">
-                        <span class="list-group-item-value">Users</span>
+                    <a href='<s:url action="list" namespace="/do/User" />'>
+                       <span class="list-group-item-value">Users</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
-                    <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>">
-                                <span class="list-group-item-value">Profiles</span>
-                            </a>
-                        </li>
+                    <a href='<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>'>
+                        <span class="list-group-item-value">Profiles</span>
+                    </a>
+                </li>
 
-                        <li class="list-group-item">
-                            <a>
-                                <span class="list-group-item-value">User Settings TO_DO</span>
-                            </a>
-                        </li>
+                <li class="list-group-item">
+                    <a>
+                        <span class="list-group-item-value">User Settings TO_DO</span>
+                    </a>
+                </li>
 
-                        <li class="list-group-item">
-                            <a href="<s:url action="list" namespace="/do/Role" />">
-                        <span class="list-group-item-value">Roles</span>
+                <li class="list-group-item">
+                    <a href='<s:url action="list" namespace="/do/Role" />'>
+                       <span class="list-group-item-value">Roles</span>
                     </a>
                 </li>
             </ul>
@@ -199,113 +209,62 @@
         </div>
 
     </li>
-    <!-- APPS -->    
-
-    <li class="list-group-item secondary-nav-item-pf" data-target="#integration-secondary">
+    <!--  CMS -->
+    <li class="list-group-item secondary-nav-item-pf" data-target="#cms-secondary">
         <a>
-            <span class="fa fa-cubes" data-toggle="tooltip" title="Integrations"></span>
-            <span class="list-group-item-value">APPS</span>
+            <span class="fa fa-pencil-square-o" data-toggle="tooltip" title="CMS"></span>
+            <span class="list-group-item-value">CMS</span>
         </a>
 
-        <!--Integrations secondary-->
-
-        <div id="integration-secondary" class="nav-pf-secondary-nav">
+        <div id="#cms-secondary" class="nav-pf-secondary-nav">
             <div class="nav-item-pf-header">
                 <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
-                <span>APPS</span>
+                <span>CMS</span>
             </div>
 
+            <!-- CMS Secondary -->
+
             <ul class="list-group">
-
-                <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-ux-components-tertiary">
-                    <a>
-                        <span class="list-group-item-value">CMS</span>
+                <li class="list-group-item">
+                    <a href='<s:url action="list" namespace="/do/jacms/Content" />'>
+                       <span class="list-group-item-value">Contents</span>
                     </a>
-
-                    <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
-                        <div class="nav-item-pf-header">
-                            <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-                            <span>APPS</span>
-                        </div>
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/jacms/Content" />">
-                                    <span class="list-group-item-value">Contents</span>
-                                </a>
-                            </li>
-
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                                    <span class="list-group-item-value">Digital Assets TO_DO</span>
-                                </a>
-                            </li>              
-
-                            <li class="list-group-item">
-                                <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>">
-                                            <span class="list-group-item-value">Content Types</span>
-                                        </a>
-                                    </li>
-
-                                    <li class="list-group-item">
-                                        <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
-                                    <span class="list-group-item-value">Content Model</span>
-                                </a>
-                            </li>
-
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                                    <span class="list-group-item-value">Content Settings TO_DO</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>                    
-
-                <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-api-tertiary">
-                    <a>
-                        <span class="list-group-item-value">APP X</span>
-                    </a>
-
-                    <div id="integrations-api-tertiary" class="nav-pf-tertiary-nav">
-                        <div class="nav-item-pf-header">
-                            <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-                            <span>TO_DO X</span>
-                        </div>
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Resource" />">
-                                    <span class="list-group-item-value">TO_DO X</span>
-
-                                </a>
-                            </li>
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Service" />">
-                                    <span  class="list-group-item-value">TO_DO X</span>
-
-                                </a>
-                            </li>
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Consumer" />">
-                                    <span class="list-group-item-value">TO_DO X</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
+
+                <li class="list-group-item">
+                    <a href='<s:url action="list" namespace="/do/Api/Resources" />'>
+                       <span class="list-group-item-value">Digital Assets TO_DO</span>
+                    </a>
+                </li>              
+
+                <li class="list-group-item">
+                    <a href='<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>'>
+                        <span class="list-group-item-value">Content Types</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href='<s:url action="list" namespace="/do/jacms/ContentModel" />'>
+                       <span class="list-group-item-value">Content Model</span>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href='<s:url action="list" namespace="/do/Api/Resources" />'>
+                       <span class="list-group-item-value">Content Settings TO_DO</span>
+                    </a>
+                </li>
+
             </ul>
+            <!--Fine Users Settings Secondary-->
         </div>
     </li>
-
 
     <!--fine CMS-->
 
 </ul>
 
 <ul class="list-group fixed-bottom">
-
-
-
-
 
     <li class="list-group-item secondary-nav-item-pf" data-target="#settings-secondary">
         <a>
@@ -323,38 +282,38 @@
 
             <ul class="list-group">
                 <li class="list-group-item">
-                    <a href="<s:url action="viewTree" namespace="/do/Category" />">
-                        <span class="list-group-item-value">Categories</span>
+                    <a href='<s:url action="viewTree" namespace="/do/Category" />'>
+                       <span class="list-group-item-value">Categories</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
-                    <a href="<s:url action="list" namespace="/do/Lang" />">
-                        <span class="list-group-item-value">Labels &amp; Languages</span>
+                    <a href='<s:url action="list" namespace="/do/Lang" />'>
+                       <span class="list-group-item-value">Labels &amp; Languages</span>
                     </a>
                 </li>              
 
                 <li class="list-group-item">
-                    <a href="<s:url action="reloadConfig" namespace="/do/BaseAdmin" />">
-                        <span class="list-group-item-value">Reload Config</span>
+                    <a href='<s:url action="reloadConfig" namespace="/do/BaseAdmin" />'>
+                       <span class="list-group-item-value">Reload Config</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
-                    <a href="<s:url action="entry" namespace="/do/Admin/Database" />">
-                        <span class="list-group-item-value">Database</span>
+                    <a href='<s:url action="entry" namespace="/do/Admin/Database" />'>
+                       <span class="list-group-item-value">Database</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
-                    <a href="<s:url action="list" namespace="/do/FileBrowser" />">
-                        <span class="list-group-item-value">File Browser</span>
+                    <a href='<s:url action="list" namespace="/do/FileBrowser" />'>
+                       <span class="list-group-item-value">File Browser</span>
                     </a>
                 </li>
 
                 <li class="list-group-item">
-                    <a href="<s:url action="list" namespace="/do/Group" />">
-                        <span class="list-group-item-value">Groups</span>
+                    <a href='<s:url action="list" namespace="/do/Group" />'>
+                       <span class="list-group-item-value">Groups</span>
                     </a>
                 </li>
             </ul>

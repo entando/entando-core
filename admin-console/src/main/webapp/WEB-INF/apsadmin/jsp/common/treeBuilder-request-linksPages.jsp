@@ -83,7 +83,7 @@
                         <span class="">Edit </span>
                     </wpsf:submit>
                 </li>
-                <li><wpsf:submit action="configure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
+                <li><wpsf:submit action="doConfigure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
                         <span class="">Configure</span>
                     </wpsf:submit>
                 </li>

@@ -194,6 +194,7 @@
     </definition>
     <definition extends="layout.default" name="admin.Page.entry">
         <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/entryPage.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/entryPage.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Page.trash">

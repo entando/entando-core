@@ -54,8 +54,41 @@ public class PageAction extends AbstractPortalAction {
 	@Override
 	public void validate() {
 		super.validate();
+		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD || 
+				this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
+			this.checkParentNode(this.getParentPageCode());
+		}
 		this.checkCode();
 		this.checkTitles();
+	}
+	
+	@Override
+	public String execute() throws Exception {
+		if (null != this.getSelectedNode()) {
+			this.getTreeNodesToOpen().add(this.getSelectedNode());
+		}
+		return super.execute();
+	}
+	
+	protected String checkParentNode(String selectedNode) {
+		if (null == selectedNode || selectedNode.trim().length() == 0) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.noSelection"));
+			return "pageTree";
+		}
+		if (VIRTUAL_ROOT_CODE.equals(selectedNode)) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.virtualRootSelected"));
+			return "pageTree";
+		}
+		IPage selectedPage = this.getPage(selectedNode);
+		if (null == selectedPage) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.selectedPage.null"));
+			return "pageTree";
+		}
+		if (!this.isUserAllowed(selectedPage)) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.userNotAllowed"));
+			return "pageTree";
+		}
+		return null;
 	}
 	
 	protected void checkTitles() {
@@ -99,13 +132,19 @@ public class PageAction extends AbstractPortalAction {
 	}
 	
 	public String newPage() {
-		String selectedNode = this.getSelectedNode();
+		String selectedNode = this.getParentPageCode();
 		try {
-			String check = this.checkSelectedNode(this.getSelectedNode());
-			if (null != check) {
-				return check;
+			if (StringUtils.isEmpty(selectedNode)) {
+				selectedNode = this.getSelectedNode();
 			}
-			IPage parentPage = this.getPage(selectedNode);
+			IPage parentPage = null;
+			if (StringUtils.isNotEmpty(selectedNode)) {
+				String check = this.checkSelectedNode(selectedNode);
+				if (null != check) {
+					return check;
+				}
+				parentPage = this.getPage(selectedNode);
+			}
 			this.valueFormForNew(parentPage);
 		} catch (Throwable t) {
 			_logger.error("error in newPage", t);
@@ -115,11 +154,17 @@ public class PageAction extends AbstractPortalAction {
 	}
 	
 	protected void valueFormForNew(IPage parentPage) {
+		String groupName = null;
+		boolean groupSelectLock = false;
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);
-		this.setParentPageCode(parentPage.getCode());
-		this.setGroup(parentPage.getGroup());
-		boolean isParentFree = parentPage.getGroup().equals(Group.FREE_GROUP_NAME);
-		this.setGroupSelectLock(!(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree));
+		if (parentPage != null) {
+			this.setParentPageCode(parentPage.getCode());
+			groupName = parentPage.getGroup();
+			this.setGroup(groupName);
+			boolean isParentFree = Group.FREE_GROUP_NAME.equals(groupName);
+			groupSelectLock = !(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree);
+		}
+		this.setGroupSelectLock(groupSelectLock);
 		this.setDefaultShowlet(true);
 		this.setShowable(true);
 	}
@@ -683,7 +728,27 @@ public class PageAction extends AbstractPortalAction {
 		this._allowedMimeTypesCSV = allowedMimeTypesCSV;
 	}
 	
-
+	public String getTargetNode() {
+		return _targetNode;
+	}
+	public void setTargetNode(String targetNode) {
+		this._targetNode = targetNode;
+	}
+	
+	public Set<String> getTreeNodesToOpen() {
+		return _treeNodesToOpen;
+	}
+	public void setTreeNodesToOpen(Set<String> treeNodesToOpen) {
+		this._treeNodesToOpen = treeNodesToOpen;
+	}
+	
+	public String getTreeNodeActionMarkerCode() {
+		return _treeNodeActionMarkerCode;
+	}
+	public void setTreeNodeActionMarkerCode(String treeNodeActionMarkerCode) {
+		this._treeNodeActionMarkerCode = treeNodeActionMarkerCode;
+	}
+	
 	protected IPageActionHelper getPageActionHelper() {
 		return _pageActionHelper;
 	}
@@ -722,6 +787,10 @@ public class PageAction extends AbstractPortalAction {
 	
 	private String _allowedMimeTypesCSV;
 	private String _allowedCharsetsCSV;
+	
+	private String _targetNode;
+	private Set<String> _treeNodesToOpen = new HashSet<String>();
+	private String _treeNodeActionMarkerCode;
 	
 	private IPageModelManager _pageModelManager;
 	private IPageActionHelper _pageActionHelper;

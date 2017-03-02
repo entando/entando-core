@@ -2,6 +2,26 @@
 <%@ taglib uri="/aps-core" prefix="wp" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<style>
+    .treeInteractionButtons{
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .green{
+        color: green;
+    }
+    
+   #pageTree .statusField i.fa {
+        font-size: 15px;
+        margin-top: 6px;
+    }
+    
+    .table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
+        text-align: center;
+    }
+</style>
 
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
@@ -39,12 +59,11 @@
 		</div>
 	</s:if>
 	<p class="sr-only">
-		<wpsf:hidden name="selectedNode" />
 		<wpsf:hidden name="strutsAction" />
 		<wpsf:hidden name="copyPageCode" />
-		<wpsf:hidden name="parentPageCode" />
 		<wpsf:hidden name="groupSelectLock" />
 		<s:if test="strutsAction == 2">
+			<wpsf:hidden name="parentPageCode" />
 			<wpsf:hidden name="pageCode" />
 		</s:if>
 		<s:iterator value="extraGroups" id="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
@@ -59,7 +78,60 @@
 		</s:if>
 	</p>
 	<fieldset class="col-xs-12"><legend><s:text name="label.info" /></legend>
-
+	<s:if test="strutsAction != 2">
+	<s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
+	<div class="table-responsive overflow-visible">
+		<table id="pageTree"
+			class="table table-bordered table-hover table-treegrid">
+			<thead>
+				<tr>
+					<th style="width: 68%;">Tree Pages <s:if test="#pageTreeStyleVar == 'classic'">
+							<button type="button" class="btn-no-button expand-button" id="expandAll">
+								<i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Expand All
+							</button>
+							<button type="button" class="btn-no-button" id="collapseAll">
+								<i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Collapse All
+							</button>
+						</s:if>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<s:set var="inputFieldName" value="%{'parentPageCode'}" />
+				<s:set var="selectedTreeNode" value="%{parentPageCode}" />
+				<s:set var="liClassName" value="'page'" />
+				<s:set var="treeItemIconName" value="'fa-folder'" />
+				
+				<wpsa:groupsByPermission permission="managePages" var="groupsByPermission" />
+				
+				<s:if test="#pageTreeStyleVar == 'classic'">
+					<wpsa:pageTree allowedGroups="${groupsByPermission}" var="currentRoot" online="false" />
+					<s:include value="include/entryPage_treeBuilderPages.jsp" />
+				</s:if>
+				<s:elseif test="#pageTreeStyleVar == 'request'">
+					<style>
+					.table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+						cursor: pointer;
+						display: none;
+					}
+					</style>
+					<s:set var="treeNodeActionMarkerCode" value="treeNodeActionMarkerCode" />
+					<s:set var="targetNode" value="targetNode" />
+					<s:set var="treeNodesToOpen" value="treeNodesToOpen" />
+					<wpsa:pageTree allowedGroups="${groupsByPermission}" var="currentRoot" online="false" onDemand="true" 
+							open="${treeNodeActionMarkerCode}" targetNode="${targetNode}" treeNodesToOpen="${treeNodesToOpen}" />
+					<s:include value="include/entryPage_treeBuilder-request-linksPages.jsp" />
+				</s:elseif>
+			</tbody>
+		</table>
+	</div>
+	<s:set var="fieldErrorsVar" value="%{fieldErrors['parentPageCode']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+	<s:if test="#hasFieldErrorVar">
+	  <p class="text-danger padding-small-vertical"><s:iterator value="#fieldErrorsVar"><s:property /> </s:iterator></p>
+	</s:if>
+	</s:if>
+	
 	<s:set var="controlGroupErrorClassVar" value="''" />
 	<s:if test="#pageCodeHasFieldErrorVar">
 	  <s:set var="controlGroupErrorClassVar" value="' has-error'" />

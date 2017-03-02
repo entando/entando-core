@@ -14,14 +14,10 @@
 package com.agiletec.apsadmin.portal;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
@@ -318,10 +314,20 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			IPage root = this._pageManager.getRoot();
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
-			params.put("parentPageCode", root.getCode());
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.INPUT, result);
 			Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
+			assertEquals(5, fieldErrors.size());
+			assertTrue(fieldErrors.containsKey("parentPageCode"));
+			assertTrue(fieldErrors.containsKey("model"));
+			assertTrue(fieldErrors.containsKey("group"));
+			assertTrue(fieldErrors.containsKey("langit"));
+			assertTrue(fieldErrors.containsKey("langen"));
+			
+			params.put("parentPageCode", root.getCode());
+			result = this.executeSave(params, "admin");
+			assertEquals(Action.INPUT, result);
+			fieldErrors = this.getAction().getFieldErrors();
 			assertEquals(4, fieldErrors.size());
 			assertTrue(fieldErrors.containsKey("model"));
 			assertTrue(fieldErrors.containsKey("group"));
@@ -618,12 +624,11 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		} else {
 			assertEquals(0, response.getActionErrors().size());
 		}
-		if (expectedFieldErrors != null) {
+		if (expectedFieldErrors != null && expectedFieldErrors.length > 0) {
 			assertEquals(expectedFieldErrors.length, response.getFieldErrors().size());
-			Object[] actualFieldErrors = response.getFieldErrors().keySet().toArray();
-			Arrays.sort(expectedFieldErrors);
-			Arrays.sort(actualFieldErrors);
-			assertEquals(expectedFieldErrors, actualFieldErrors);
+			List<String> expectedFieldErrorsList = Arrays.asList(expectedFieldErrors);
+			expectedFieldErrorsList.removeAll(response.getFieldErrors().keySet());
+			assertEquals(0, expectedFieldErrors);
 		} else {
 			assertEquals(0, response.getFieldErrors().size());
 		}

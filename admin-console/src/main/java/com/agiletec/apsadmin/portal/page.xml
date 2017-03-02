@@ -159,7 +159,17 @@
         		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
         	</interceptor-ref>
         </action>
-        
+
+        <action name="systemParams" class="pageSettingsAction" method="configSystemParams">
+            <result type="tiles">admin.Page.settings</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+        <action name="updateSystemParams" class="pageSettingsAction" method="updateSystemParams">
+            <result type="tiles">admin.Page.settings</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+  
         <action name="viewTreeMenu" class="pageTreeMenuAction" method="intro">
             <result type="tiles">admin.Page.viewTreeMenu</result>
         	<interceptor-ref name="entandoDefaultStack">

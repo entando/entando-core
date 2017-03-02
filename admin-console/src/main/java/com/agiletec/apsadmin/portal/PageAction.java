@@ -167,6 +167,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		}
 		return SUCCESS;
 	}
+
+	public String settingsPage() {
+      // stub method
+  		return SUCCESS;
+  }
 	
 	protected void valueFormForNew(IPage parentPage) {
 		String groupName = null;

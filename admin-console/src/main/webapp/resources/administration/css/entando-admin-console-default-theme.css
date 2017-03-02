@@ -28,7 +28,6 @@
     background: none;
     border: 0;
 }
-
 /*-----ouline tolto-----*/
 button:focus {outline:0 !important;}
 
@@ -171,4 +170,176 @@ a {
 }
 .expand-button{
     margin-left: 4em;
+}
+
+.pagination button {
+    margin-right: -5px !important;
+    background-color: #f1f1f1;
+    border: 1px solid #bbb !important;
+    font-weight: 600 !important;
+    padding: 2px 10px !important;
+}
+.paginator-position-fixed {
+    position: absolute;
+    top: -30px;
+    right: 5px;
+}
+.blank-slate-pf-custom{
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 1px;
+    margin-bottom: 20px;
+    padding:0 !important ;
+}
+/*----------------lateral right menu-----------------*/ 
+
+.drawer-pf-sidebar-right {
+    position: fixed;
+    top: 58px;
+    height: calc(100vh - 0px);
+    z-index: 10;
+    background-color: #fafafa;
+    border: 1px solid #d1d1d1;
+    box-shadow: 0 6px 12px rgba(3,3,3,.175);
+    overflow-y: auto;
+    right: 0;
+    width: 320px;
+}
+
+
+.drawer-pf{
+    position: fixed !important;
+    top: 58px !important;
+    height: calc(100vh - 0px) !important;
+    z-index:10 !important;
+    /*background: #23a8e0;*/
+}
+.right-bar-title{
+    margin-left: 19px;
+    font-size: 14px;
+    line-height: 18px;
+}
+.right-bar-title:hover {
+    font-weight:bold;
+}
+.right-bar-title2{
+    margin-left: 19px;
+    font-size: 14px;
+    line-height: 18px;
+}
+.right-bar-title2:hover {
+    font-weight:bold;
+}
+.drawer-pf-title {
+    width: 100% !important;
+    padding: 1.2em 0 1.2em 0;
+}
+.drawer-pf-title {
+    border-bottom: 1px solid #d1d1d1;
+    position: absolute;
+    font-weight:normal;
+    background: #292e34;
+    color: #fff;
+}
+.drawer-pf .panel-group {
+    top: 48px !important;
+
+}
+
+.drawer-pf-notification-bottom{
+    position:fixed;
+    bottom:0;
+    width: 100%;
+}
+.btn-links{
+    padding: 0px;
+    /*    color: #ffffff;*/
+    font-size: 20px;
+    background: transparent;
+    border: none;
+    padding: 10px 0px 10px 5px;
+}
+/*.drawer-pf-notification-right-menu{
+    padding:0px !important;
+    background: #23a8e0;
+    color: #fff;
+}*/
+.btn-no-button-right{
+    border:none;
+    background: transparent;
+    font-size: 20px;
+}
+.table-treegrid span.icon {
+    margin-right: 1px !important;
+}
+.table-treegrid span.indent {
+    /* margin:0 !important; */
+}
+.moveButtons-right{
+    font-size: 12px;
+}
+.drawer-pf-container{
+    margin-top: 50px;
+}
+.close-button-menu-right{
+    position:absolute;
+    top: 6px;
+    right: 18px;
+    font-size: 20px;
+}
+.drawer-pf-toggle-expand {
+    left: 4px !important;
+    padding: 0 !important;
+    position: absolute;
+    font-size: 23px;
+    top: 3px;
+}
+.right-menu-title{
+    padding: 15px 0px 15px 18px;
+    font-size: 16px;
+    text-transform: uppercase;
+    background: #babdbc;
+}
+.fa-16px{
+    font-size: 16px;
+}
+.widget-title{
+    padding: 16px 0px 16px 18px;
+    font-size: 14px;
+    background: #e0e0db;
+    font-weight: 600 !important;
+}
+.input-pf-right-menu{
+    width:94%;
+}
+.drawer-pf-icons-right-menu{
+    margin-right: 18px
+}
+.drawer-pf-title-right-menu{
+
+}
+.list-group-item-custom{
+    border: 0px solid #e0e0db !important;
+    /* margin: 2px 0 2px 4px; */
+}
+.widget-grid{
+    display: block;
+    float: left;
+    width: 146px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 2px 0 2px 4px;
+}
+.widget-grid .widget-icon{
+    display: none;
+}
+.widget-spacer{
+    width: 100%;
+    float: left;
+}
+.list-view-pf-main-info{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden
 }

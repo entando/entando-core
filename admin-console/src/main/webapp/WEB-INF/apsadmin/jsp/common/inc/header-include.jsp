@@ -2,7 +2,6 @@
 
 
 <!--Font Awesome CDN
-
 TO_DO : Download last FontAwesome
 -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" media="screen" />
@@ -14,10 +13,16 @@ TO_DO : Download last FontAwesome
 
 
 <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css">
-<link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-blue-theme2.css">
+<!--<link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-blue-theme2.css">-->
 
 <!--JS inclusions-->
 <script src="<wp:resourceURL />administration/js/jquery-2.2.4.min.js"></script>
 <script src="<wp:resourceURL />administration/js/jquery.matchHeight-min.js"></script>
 <script src="<wp:resourceURL />administration/patternfly/js/patternfly.js"></script>
 <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
+<script src="<wp:resourceURL />administration/js/bootstrap-switch.min.js"></script>
+
+
+<!--<script src="<wp:resourceURL />administration/js/bootstrap-offcanvas.js"></script>-->
+<!--<script src="<wp:resourceURL />administration/js/shortcuts.js"></script>-->
+<!--<script src="<wp:resourceURL />administration/js/jquery.entando.js"></script>-->

@@ -58,6 +58,11 @@
         <property name="allowedMimeTypesCSV"><value>${page.mimeType.allowedValues}</value></property>
         <property name="allowedCharsetsCSV"><value>${page.charset.allowedValues}</value></property>
     </bean>
+
+    <bean id="pageSettingsAction" scope="prototype" 
+              class="com.agiletec.apsadmin.portal.PageSettingsAction" parent="baseAdminAction">
+              
+    </bean>
     
     <bean id="pageConfigAction" scope="prototype" 
               class="com.agiletec.apsadmin.portal.PageConfigAction" parent="abstractPortalAction">

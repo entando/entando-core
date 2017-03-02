@@ -71,8 +71,8 @@
                     <!-- list item start-->
                     <div class="list-group-item widget-square list-group-item-custom pointer" data-widget-id="<s:property value="#showletType.key" />">
                     <div class="list-view-pf-main-info">
-                        <div class="list-view-pf-left widget-icon">
-                            <span class="fa fa-cube list-view-pf-icon-sm"></span>
+                        <div class="list-view-pf-left">
+                            <span class="fa fa-cube list-view-pf-icon-sm widget-icon"></span>
                         </div>
                         <div class="list-view-pf-body">
                             <div class="list-view-pf-description">

@@ -25,6 +25,56 @@
     </div>
 </s:if>
 
+<div class="main-container">
+
+    <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-link">
+        Info
+        <span class="icon fa fa-chevron-down"></span>
+    </button>
+    <div id="page-info" class="collapse">
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th class="text-right"><s:text name="name.pageCode" /></th>
+                <td data-info-pagecode></td>
+            </tr>
+            <tr>
+                <th class="text-right"><s:text name="name.pageTitle" /></th>
+                <td data-info-titles></td>
+            </tr>
+            <tr>
+                <th class="text-right">Owner Group</th>
+                <td data-info-group></td>
+            </tr>
+            <tr>
+                <th class="text-right"><s:text name="name.pageModel" /></th>
+                <td data-info-model></td>
+            </tr>
+            <tr>
+                <th class="text-right"><s:text name="name.isShowablePage" /></th>
+                <td data-info-showmenu></td>
+            </tr>
+            <tr>
+                <th class="text-right">
+                    <abbr lang="en" title="<s:text name="name.SEO.full" />">
+                        <s:text name="name.SEO.short" />
+                    </abbr>: <s:text name="name.useBetterTitles" />   </th>
+                <td data-info-extratitles></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+
+
+    <!----------------- griglia del template ----------->
+    <div class="grid-container"></div>
+</div>
+
+
 
 <!----------------- widget menu sinistra ----------->
 

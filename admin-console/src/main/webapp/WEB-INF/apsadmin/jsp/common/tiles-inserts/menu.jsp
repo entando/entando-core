@@ -31,21 +31,34 @@
 
             <!-- Page Designer Secondary -->
 
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <a id="linkHome" href='<s:url action="viewTree" namespace="/do/Page" />'>
-                        <span class="list-group-item-value">Page Tree</span>
-                    </a>
-                </li>
-
-                <li class="list-group-item">
-                    <a >
-                        <span class="list-group-item-value">General Settings Page TO_DO</span>
-
-                    </a>
-                </li>
-
-            </ul>
+            <wp:ifauthorized permission="managePages" var="isManagePage" />
+            <wp:ifauthorized permission="superuser" var="isSuperUser" />
+           
+            <c:choose>
+            	<c:when test="${isManagePage ||  isSuperUser}">
+		            <ul class="list-group">
+	            		<c:if test="${isManagePage}">
+			                <li class="list-group-item">
+			                    <a id="linkHome" href='<s:url action="viewTree" namespace="/do/Page" />'>
+			                        <span class="list-group-item-value">Page Tree</span>
+			                    </a>
+			                </li>
+			                <li class="list-group-item">
+			                    <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page" />'>
+			                        <span class="list-group-item-value">Page Tree Advanced </span>
+			                    </a>
+			                </li>
+	            		</c:if>
+	            		<c:if test="${isSuperUser}">
+			                <li class="list-group-item">
+			                    <a href='<s:url action="systemParams" namespace="/do/Page" />'>
+			                        <span class="list-group-item-value">General Settings Page</span>
+			                    </a>
+			                </li>
+	            		</c:if>
+		            </ul>
+            	</c:when>
+            </c:choose>
             <!--Fine Page Designer Secondary-->
         </div>
     </li>
@@ -360,5 +373,4 @@
         </div>
 
     </li>
-
 </ul>

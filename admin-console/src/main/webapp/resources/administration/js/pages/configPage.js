@@ -4,7 +4,6 @@ $(function() {
         addWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/joinWidget?code=' + PROPERTY.pagemodel,
         moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget?code=' + PROPERTY.pagemodel,
         deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel,
-        deleteConfirmUrl = PROPERTY.baseUrl + 'do/Page/trashWidgetFromPage.action',
         getWidgetListUrl = PROPERTY.baseUrl + 'do/rs/Portal/WidgetType/list.action';
 
 

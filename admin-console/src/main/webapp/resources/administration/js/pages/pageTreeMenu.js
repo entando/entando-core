@@ -336,7 +336,7 @@ $(function() {
         initGrid();
         initPageDetail();
     } else {
-        $('#page-info').remove();
+        $('#page-info, [data-target="#page-info"]').remove();
     }
 
 

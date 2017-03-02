@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
@@ -33,8 +34,10 @@ import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import com.agiletec.apsadmin.portal.model.SwapWidgetRequest;
 
 
 /**
@@ -45,6 +48,20 @@ public class PageTreeMenuAction extends PageTreeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageTreeMenuAction.class);
 	
+	
+	public String intro() {
+		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
+		if (StringUtils.isBlank(pageCode)) {
+			pageCode = this.getAllowedTreeRootNode().getCode();
+		}
+		
+		this.setPageCode(pageCode);
+		this.setSelectedNode(pageCode);
+		
+		String check = this.checkSelectedNode(pageCode);
+		if (null != check) return check;
+		return SUCCESS;
+	}
 
 	@Deprecated
 	public List<List<SelectItem>> getShowletFlavours() {
@@ -417,8 +434,17 @@ public class PageTreeMenuAction extends PageTreeAction {
 		this._pageActionHelper = pageActionHelper;
 	}
 	
+	public String getPageCode() {
+		return pageCode;
+	}
+	public void setPageCode(String pageCode) {
+		this.pageCode = pageCode;
+	}
+
 	private String _widgetTypeCode;
 	private IPageActionHelper _pageActionHelper;
+	private String pageCode;
+	
 	
 	
 }

@@ -62,9 +62,8 @@
         <%--<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />--%>
         <s:form cssClass="action-form">
 
-            <div class="drawer-pf-notification drawer-pf-notification-right-menu ">
+            <div class="">
 
-                <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-links " data-toggle="tooltip">
                     <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;<s:text name="title.addPage" />
                 </wpsf:submit>
             </div>
@@ -73,7 +72,7 @@
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
             <s:if test="#pageTreeStyleVar == 'classic'">
-                <div class="drawer-pf-notification drawer-pf-notification-right-menu ">
+                <div class="drawer-pf-notification drawer-pf-notification-right-menu-expansion ">
                     <button type="button" class="btn-no-button-right" id="expandAll">
                         <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>
                     </button>

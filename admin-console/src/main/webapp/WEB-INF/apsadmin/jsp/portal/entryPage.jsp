@@ -99,6 +99,7 @@
 			<tbody>
 				<s:set var="inputFieldName" value="%{'parentPageCode'}" />
 				<s:set var="selectedTreeNode" value="%{parentPageCode}" />
+				<s:set var="selectedPage" value="%{getPage(parentPageCode)}" />
 				<s:set var="liClassName" value="'page'" />
 				<s:set var="treeItemIconName" value="'fa-folder'" />
 				

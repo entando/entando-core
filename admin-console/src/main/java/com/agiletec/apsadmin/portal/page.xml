@@ -197,7 +197,7 @@
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
         
-        <action name="entryEdit*" class="pageAction" >
+        <action name="entryEdit*" class="pageAction" method="entryEdit" >
             <result type="tiles">admin.Page.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
@@ -209,7 +209,10 @@
         </action>
         
         <action name="delete" class="pageAction" method="delete">
-        	<result type="chain">viewTree</result>
+        	<result type="redirectAction">
+        		<param name="actionName">viewTree</param>
+        		<param name="selectedNode">${selectedNode}</param>
+        	</result>
         	<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
@@ -251,7 +254,10 @@
         
         <action name="save" class="pageAction" method="save">
             <result name="input" type="tiles">admin.Page.entry</result>
-            <result type="chain">viewTree</result>
+        	<result type="redirectAction">
+        		<param name="actionName">viewTree</param>
+        		<param name="selectedNode">${pageCode}</param>
+        	</result>
 			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
@@ -267,14 +273,20 @@
         <action name="doPutOffline" class="pageAction" method="doPutOffline">
         	<result name="references" type="tiles">admin.Page.references</result>
             <result name="input" type="tiles">admin.Page.entry</result>
-            <result type="chain">viewTree</result>
+        	<result type="redirectAction">
+        		<param name="actionName">viewTree</param>
+        		<param name="selectedNode">${pageCode}</param>
+        	</result>
 			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
         
         <action name="doPutOnline" class="pageAction" method="doPutOnline">
             <result name="input" type="tiles">admin.Page.entry</result>
-            <result type="chain">viewTree</result>
+        	<result type="redirectAction">
+        		<param name="actionName">viewTree</param>
+        		<param name="selectedNode">${pageCode}</param>
+        	</result>
 			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>

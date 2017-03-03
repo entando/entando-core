@@ -138,6 +138,15 @@ public class PageTreeAction extends AbstractTreeAction {
 		return codes.contains(pageGroup);
 	}
 	
+	/**
+	 * Return the page given its code.
+	 * @param pageCode The code of the requested page.
+	 * @return The page associated to the given code, null if the code is unknown.
+	 */
+	public IPage getPage(String pageCode) {
+		return this.getPageManager().getDraftPage(pageCode);
+	}
+	
 	@Deprecated
 	public IPage getRoot() {
 		return this.getPageManager().getRoot();

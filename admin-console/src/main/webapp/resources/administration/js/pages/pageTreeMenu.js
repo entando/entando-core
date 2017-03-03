@@ -104,7 +104,7 @@ $(function() {
      */
     function createGridWidget(widgetCode) {
 
-        var $widget = $('.widget-square[data-widget-id="' + widgetCode + '"]'),
+        var $widget = $('.widget-square[data-widget-id="' + widgetCode + '"]').first(),
             widgetDescr = $widget.find('.widget-name').text(),
             $widgetIcon = $widget.find('.widget-icon').clone();
 

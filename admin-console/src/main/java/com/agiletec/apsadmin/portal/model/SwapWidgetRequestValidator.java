@@ -14,53 +14,44 @@
 package com.agiletec.apsadmin.portal.model;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.apsadmin.portal.PageConfigAction;
 import com.opensymphony.xwork2.ActionSupport;
 
 @Component
 public class SwapWidgetRequestValidator {
 
-	@Autowired
-	private IPageManager pageManager;
-
-	private IPage getPage(String pageCode) {
-		IPage page = this.pageManager.getDraftPage(pageCode);
-		return page;
-	}
-
-
 	public void validateRequest(SwapWidgetRequest swapWidgetRequest, PageConfigAction pageConfigAction) {
-		int framesCount = pageConfigAction.getPage(swapWidgetRequest.getPageCode()).getDraftMetadata().getModel().getFrames().length;
-		validate(swapWidgetRequest, pageConfigAction, framesCount);
+		if (null == swapWidgetRequest) {
+			pageConfigAction.addActionError(pageConfigAction.getText("error.request.null"));
+			return;
+		}
+		if (StringUtils.isBlank(swapWidgetRequest.getPageCode())) {
+			pageConfigAction.addActionError(pageConfigAction.getText("error.request.pageCode.blank"));
+			return;
+		}
+
+		IPage page = pageConfigAction.getPage(swapWidgetRequest.getPageCode());
+
+		if (null == page) {
+			pageConfigAction.addActionError(pageConfigAction.getText("error.request.page.notFound"));
+			return;
+		}
+
+		if (null != page) {
+			int framesCount = page.getDraftMetadata().getModel().getFrames().length;
+			validate(page, swapWidgetRequest, pageConfigAction, framesCount);
+		}
 	}
 
-	protected  void validate(SwapWidgetRequest swapWidgetRequest, ActionSupport action, int framesCount) {
-		if (null == swapWidgetRequest) {
-			action.addActionError(action.getText("error.request.null"));
-			return;
-		}
-		
-		if (StringUtils.isBlank(swapWidgetRequest.getPageCode())) {
-			action.addActionError(action.getText("error.request.pageCode.blank"));
-			return;
-		}
-		String pageCode = swapWidgetRequest.getPageCode();
-		IPage page = this.getPage(pageCode);
-		if (null == page) {
-			action.addActionError(action.getText("error.request.page.notFound"));
-			return;
-		}
-		
+	protected  void validate(IPage page, SwapWidgetRequest swapWidgetRequest, ActionSupport action, int framesCount) {
 		if (swapWidgetRequest.getSrc() == swapWidgetRequest.getDest()) {
 			action.addActionError(action.getText("error.request.src.dest.equals"));
 			return;
 		}
-		
+
 		//array min max
 		if (swapWidgetRequest.getSrc() < 0) {
 			action.addActionError(action.getText("error.request.src.invalid"));
@@ -75,12 +66,12 @@ public class SwapWidgetRequestValidator {
 			action.addActionError(action.getText("error.request.src.invalid"));
 			return;
 		}
-	
+
 		if (swapWidgetRequest.getDest() > framesCount) {
 			action.addActionError(action.getText("error.request.dest.invalid"));
 			return;
 		}
-		
+
 		//src cannot be null
 		if (null == page.getDraftWidgets()[swapWidgetRequest.getSrc()]) {			
 			action.addActionError(action.getText("error.request.src.nullFrame"));

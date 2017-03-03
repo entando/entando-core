@@ -102,9 +102,9 @@
         var txt = $('#search-widget').val();
         $('.widget-name').each(function () {
             if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
-                $(this).parentsUntil('.list-group-item ').show();
+                $(this).parentsUntil('.list-group-item').show();
             } else {
-                $(this).parentsUntil('.list-group-item ').hide();
+                $(this).parentsUntil('.list-group-item').hide();
             }
         });
     });

@@ -48,7 +48,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageTreeMenuAction.class);
 	
-	
+
 	public String intro() {
 		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
 		if (StringUtils.isBlank(pageCode)) {
@@ -61,6 +61,10 @@ public class PageTreeMenuAction extends PageTreeAction {
 		String check = this.checkSelectedNode(pageCode);
 		if (null != check) return check;
 		return SUCCESS;
+	}
+
+	public IPage getCurrentPage() {
+		return this.getPage(this.getPageCode());
 	}
 
 	@Deprecated

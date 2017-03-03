@@ -213,6 +213,14 @@
         <put-attribute name="title" value="title.pageManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/trashPage.jsp" />
     </definition>
+    <definition extends="layout.default" name="admin.Page.offline">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/putPageOffline.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.online">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/putPageOnline.jsp" />
+    </definition>
     <definition extends="layout.default" name="admin.Page.references">
         <put-attribute name="title" value="title.pageManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageReferences.jsp" />

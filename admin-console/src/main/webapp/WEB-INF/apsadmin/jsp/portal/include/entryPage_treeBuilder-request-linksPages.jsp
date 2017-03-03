@@ -11,28 +11,27 @@
 </s:else>
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
         <td class="treegrid-node pointer">
-        <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
-        <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
+        <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'entryEdit'" /></s:if>
+        <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'entryEdit'" /></s:if>
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
-            <a class="treeOpenCloseJS"
-               href="<s:url action="%{#openTreeActionName}">
-                   <wpsa:paramMap map="#treeNodeExtraParamsMap" />
-                   <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
-                   <s:param name="copyingPageCode" value="copyingPageCode" />
-                   <s:param name="treeNodeActionMarkerCode" value="'open'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
+            <wpsa:actionParam action="%{#openTreeActionName}" var="actionName" >
+                <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="'open'" />
+                <wpsa:actionSubParam name="%{#inputFieldName}" value="%{#currentRoot.code}" />
+            </wpsa:actionParam>
+            <wpsf:submit cssClass="treeOpenCloseJS btn btn-link btn-xs" action="%{#actionName}" type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
                 <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open" /></span>
-            </a>
+            </wpsf:submit>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
-            <a class="treeOpenCloseJS noborder" href="<s:url action="%{#closeTreeActionName}">
-                   <wpsa:paramMap map="#treeNodeExtraParamsMap" />
-                   <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
-                   <s:param name="copyingPageCode" value="copyingPageCode" />
-                   <s:param name="treeNodeActionMarkerCode" value="'close'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
+            <wpsa:actionParam action="%{#openTreeActionName}" var="actionName" >
+                <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="'close'" />
+                <wpsa:actionSubParam name="%{#inputFieldName}" value="%{#currentRoot.code}" />
+            </wpsa:actionParam>
+            <wpsf:submit cssClass="treeOpenCloseJS btn btn-link btn-xs" action="%{#actionName}" type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">
                 <span class="treeOpenCloseJS icon fa fa-minus" title="<s:text name="label.close" />"></span>
                 <span class="sr-only"><s:text name="label.close" /></span>
-            </a>
+            </wpsf:submit>
         </s:elseif>
         <input
             type="radio"

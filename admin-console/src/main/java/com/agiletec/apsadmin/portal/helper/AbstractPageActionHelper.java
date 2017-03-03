@@ -49,6 +49,8 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
 
     private static final Logger _logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
     
+	protected abstract IPage getPage(String pageCode);
+    
     protected abstract PageMetadata getPageMetadata(IPage page);
 	
 	protected abstract TreeNode createNodeInstance(IPage page);
@@ -163,7 +165,7 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
         if (parent == null) {
             return;
         }
-        IPage page = this.getPageManager().getPage(parent.getCode());
+        IPage page = this.getPage(parent.getCode());
         if (!this.isPageAllowed(page, groupCodes, false)) {
             checkNodes.add(AbstractPortalAction.VIRTUAL_ROOT_CODE);
             return;
@@ -193,7 +195,7 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
         if (null != code && code.equals(AbstractPortalAction.VIRTUAL_ROOT_CODE)) {
             return true;
         }
-        IPage page = this.getPageManager().getPage(code);
+        IPage page = this.getPage(code);
         return this.isPageAllowed(page, groupCodes, false);
     }
 
@@ -202,7 +204,7 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
         if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(code)) {
             return this.getVirtualRoot();
         }
-        return this.getPageManager().getPage(code);
+        return this.getPage(code);
     }
 
     @Override

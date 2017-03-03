@@ -9,17 +9,20 @@
     <s:set name="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}">collapsed childrenNodes</s:if>" >
+<s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
+<s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
+
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage' && #isHidden}">collapsed childrenNodes</s:if>" >
         <td class="treegrid-node pointer">
          
         <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 
-              class="subTreeToggler hidden <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
-               <s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
+              class="subTreeToggler <s:if test="#isSelected">active </s:if><s:if test="#isHidden" >hidden </s:if><s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
+               <s:if test="#isSelected"> checked="checked"</s:if> />
         &#32;<label for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
                 <span class="text-muted icon fa fa-lock"></span></s:if></label>
         </td>
         <td class="text-center">
-            <div class="moveButtons hidden">
+            <div class="moveButtons<s:if test="!#isSelected" > hidden</s:if>">
         <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
            <i class="fa fa-plus" aria-hidden="true"></i>
         </wpsf:submit>
@@ -76,6 +79,20 @@
                         <span class="">Delete</span>
                     </wpsf:submit>
                 </li>
+                <s:if test="%{#currentRoot.getEntity().online}">
+                <li>
+                    <wpsf:submit action="doPutOffline" type="button" title="%{getText('page.options.offline')}" cssClass="btn btn-warning" data-toggle="tooltip">
+                        <span class=""><s:text name="page.options.offline" /></span>
+                    </wpsf:submit>
+                </li>
+                </s:if>
+                <s:if test="%{!#currentRoot.getEntity().online || #currentRoot.getEntity().changed}">
+                <li>
+                    <wpsf:submit action="doPutOnline" type="button" title="%{getText('page.options.online')}" cssClass="btn btn-warning" data-toggle="tooltip">
+                        <span class=""><s:text name="page.options.online" /></span>
+                    </wpsf:submit>
+                </li>
+                </s:if>
             </ul>
         </div>  
     </td>

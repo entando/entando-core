@@ -7,9 +7,6 @@
     <li><s:text name="title.pageTree" /></li>
 </ol>
 
-
-
-
 <s:if test="hasActionErrors()">
     <div class="alert alert-danger alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
@@ -140,6 +137,7 @@
                     <tbody>  
                         <s:set var="inputFieldName" value="%{'selectedNode'}" />
                         <s:set var="selectedTreeNode" value="%{selectedNode}" />
+                        <s:set var="selectedPage" value="%{getPage(selectedNode)}" />
                         <s:set var="liClassName" value="'page'" />
                         <s:set var="treeItemIconName" value="'fa-folder'" />
                         <s:if test="#pageTreeStyleVar == 'classic'">

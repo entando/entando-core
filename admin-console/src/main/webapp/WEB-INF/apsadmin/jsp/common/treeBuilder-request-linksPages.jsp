@@ -40,7 +40,7 @@
             name="<s:property value="#inputFieldName" />"
             id="fagianonode_<s:property value="#currentRoot.code" />"
             value="<s:property value="#currentRoot.code" />" <s:if test="#currentRoot.children.length > 0">class="subTreeToggler tree_<s:property value="#currentRoot.code" />" </s:if>
-            <s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
+            <s:if test="#selectedTreeNode != null && #currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
         <label for="fagianonode_<s:property value="#currentRoot.code" />">
             <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
             <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />

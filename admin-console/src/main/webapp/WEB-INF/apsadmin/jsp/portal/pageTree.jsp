@@ -79,16 +79,17 @@
                             <th class="text-center" style="width: 5%;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>  
+                    <tbody>
                         <s:set var="inputFieldName" value="%{'selectedNode'}" />
                         <s:set var="selectedTreeNode" value="%{selectedNode}" />
+                        <s:set var="selectedPage" value="%{getPage(selectedNode)}" />
                         <s:set var="liClassName" value="'page'" />
                         <s:set var="treeItemIconName" value="'fa-folder'" />
                         <s:if test="#pageTreeStyleVar == 'classic'">
                             <s:set var="currentRoot" value="allowedTreeRootNode" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderPages.jsp" />
                         </s:if>
-                        <s:elseif test="#pageTreeStyleVar == 'request'">
+                        <s:else>
                         <style>
                             .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
                                 cursor: pointer;
@@ -97,7 +98,7 @@
                         </style>
                             <s:set var="currentRoot" value="showableTree" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
-                        </s:elseif>
+                        </s:else>
                     </tbody>
                 </table>     
             </div>

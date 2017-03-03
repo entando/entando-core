@@ -6,7 +6,7 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
-    <li><s:text name="title.pageTree" /></li>
+    <li><s:text name="title.configPage.full" /></li>
 </ol>
 
 <h1><s:property value="%{getTitle(selectedNode, #selectedPage.draftTitles)}" /></h1>
@@ -120,8 +120,8 @@
                     </button>
                 </div>
             </s:if>
-            <div class="table-responsive overflow-visible table-menu-left-postion">
-                <table id="pageTree" class="table table-tree-sidebar table-hover table-treegrid table-tree-right">
+            <div class="table-responsive overflow-visible table-menu-left-postion" >
+                <table id="pageTree" class="table table-tree-sidebar table-hover table-treegrid table-tree-right" style="overflow:  scroll; margin-bottom: 6em;">
                     <thead>
 
                     </thead>

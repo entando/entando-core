@@ -108,13 +108,9 @@
 
         <%--<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />--%>
         <s:form cssClass="action-form">
-
-            <div class="">
-
-                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;<s:text name="title.addPage" />
-                </wpsf:submit>
-            </div>
-
+ 			<wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass=" btn-primary btn-links " data-toggle="tooltip">
+                <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;<s:text name="title.addPage" />
+            </wpsf:submit>
 
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 

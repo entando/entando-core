@@ -75,18 +75,6 @@
             </ul>
         </div>
     </s:if>
-	
-	<s:if test="#passwordHasFieldErrorVar || #usernameFieldErrorsVar">
-	   <div class="alert alert-danger alert-dismissable">
-	       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-	           <span class="pficon pficon-close"></span>
-	       </button>
-	       <span class="pficon pficon-error-circle-o"></span>
-	       <ul class="margin-base-vertical">
-	           <s:text name="error.user.login.credentialsEmpty" />
-	       </ul>
-	   </div>
-	</s:if>
 
 <s:if test="strutsAction == 2"><s:set var="breadcrumbs_pivotPageCode" value="pageCode" /></s:if>
 <s:else><s:set var="breadcrumbs_pivotPageCode" value="parentPageCode" /></s:else>
@@ -128,8 +116,8 @@
 
 	<s:iterator value="langs">
 	    <%-- lang --%>
-		<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['lang'+code]}" />
-		<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+		<s:set var="fieldErrorsVar" value="%{fieldErrors['lang'+code]}" />
+		<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
 	    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 	    
 	    <div class="form-group<s:property value="#controlGroupErrorClass" />">
@@ -139,17 +127,17 @@
             </label>
 	        <div class="col-sm-10">
                	<wpsf:textfield name="%{'lang'+code}" id="%{'lang'+code}" value="%{titles.get(code)}" cssClass="form-control" />
-	            <s:if test="#fieldHasFieldErrorVar">
+	            <s:if test="#hasFieldErrorVar">
 	                <span class="help-block text-danger">
-	                    <s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+	                    <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
                     </span>
 	            </s:if>
 	        </div>
         </div>
 	</s:iterator>
 	    <%-- pageCode --%>
-		<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['pageCode']}" />
-		<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+		<s:set var="fieldErrorsVar" value="%{fieldErrors['pageCode']}" />
+		<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
 	    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 	    
 	    <div class="form-group<s:property value="#controlGroupErrorClass" />">
@@ -159,9 +147,9 @@
             </label>
 	        <div class="col-sm-10">
 				<wpsf:textfield name="pageCode" id="pageCode" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
-	            <s:if test="#fieldHasFieldErrorVar">
+	            <s:if test="#hasFieldErrorVar">
 	                <span class="help-block text-danger">
-	                    <s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+	                    <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
 	                    </span>
 	            </s:if>
 	        </div>
@@ -236,8 +224,8 @@
 
 <s:if test="strutsAction != 3">
     <%-- ownerGroup --%>
-	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['ownerGroup']}" />
-	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="fieldErrorsVar" value="%{fieldErrors['ownerGroup']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
     
     <div class="form-group<s:property value="#controlGroupErrorClass" />">
@@ -247,17 +235,17 @@
            </label>
         <div class="col-sm-10">
 			<wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="descr" disabled="%{groupSelectLock}" cssClass="form-control"></wpsf:select>
-            <s:if test="#fieldHasFieldErrorVar">
+            <s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
-					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+					<s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
 				</span>
             </s:if>
         </div>
 	</div>
 	
     <%-- extraGroups --%>
-	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['extraGroups']}" />
-	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="fieldErrorsVar" value="%{fieldErrors['extraGroups']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
     
     <div class="form-group<s:property value="#controlGroupErrorClass" />">
@@ -275,9 +263,9 @@
 					</wpsf:submit>
 				</span>
 			</div>
-            <s:if test="#fieldHasFieldErrorVar">
+            <s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
-					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+					<s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
 				</span>
             </s:if>
         </div>
@@ -301,8 +289,8 @@
 	</div>
 	
     <%-- pageModel --%>
-	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['model']}" />
-	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="fieldErrorsVar" value="%{fieldErrors['model']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
     
     <div class="form-group<s:property value="#controlGroupErrorClass" />">
@@ -312,9 +300,9 @@
            </label>
         <div class="col-sm-10">
 			<wpsf:select name="model" id="model" list="pageModels" listKey="code" listValue="descr" cssClass="form-control"></wpsf:select>
-            <s:if test="#fieldHasFieldErrorVar">
+            <s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
-					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+					<s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
 				</span>
             </s:if>
         </div>
@@ -373,8 +361,8 @@
 	
 	
     <%-- charset --%>
-	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['charset']}" />
-	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="fieldErrorsVar" value="%{fieldErrors['charset']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
     
     <div class="form-group<s:property value="#controlGroupErrorClass" />">
@@ -385,17 +373,17 @@
         <div class="col-sm-10">
 			<wpsf:select name="charset" id="charset"
 					 headerKey="" headerValue="%{getText('label.default')}" list="allowedCharsets" cssClass="form-control" />
-            <s:if test="#fieldHasFieldErrorVar">
+            <s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
-					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+					<s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
 				</span>
             </s:if>
         </div>
 	</div>
 	
     <%-- mimeType --%>
-	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['mimeType']}" />
-	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="fieldErrorsVar" value="%{fieldErrors['mimeType']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
     
     <div class="form-group<s:property value="#controlGroupErrorClass" />">
@@ -406,9 +394,9 @@
         <div class="col-sm-10">
 			<wpsf:select name="mimeType" id="mimeType"
 					 headerKey="" headerValue="%{getText('label.default')}" list="allowedMimeTypes" cssClass="form-control" />
-            <s:if test="#fieldHasFieldErrorVar">
+            <s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
-					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+					<s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
 				</span>
             </s:if>
         </div>

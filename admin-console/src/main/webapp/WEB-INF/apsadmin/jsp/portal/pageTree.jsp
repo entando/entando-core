@@ -8,7 +8,6 @@
 </ol>
 
 <style>
-    
     .treeInteractionButtons{
         font-size: 16px;
         font-weight: bold;
@@ -25,7 +24,7 @@
     .table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
         text-align: center;
     }
-    </style>
+</style>
 
 <h1><s:text name="title.pageTree" /></h1>
 
@@ -40,7 +39,7 @@
             <ul>
                 <s:iterator value="actionErrors">
                     <li><s:property escape="false" /></li>
-                    </s:iterator>
+				</s:iterator>
             </ul>
         </div>
     </s:if>

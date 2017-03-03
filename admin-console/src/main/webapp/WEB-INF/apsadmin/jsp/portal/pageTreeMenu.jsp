@@ -22,67 +22,17 @@
     </div>
 </s:if>
 
-<div class="main-container">
-
-    <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-link">
-        Info
-        <span class="icon fa fa-chevron-down"></span>
-    </button>
-    <div id="page-info" class="collapse">
-        <table class="table table-bordered">
-            <tbody>
-            <tr>
-                <th class="text-right"><s:text name="name.pageCode" /></th>
-                <td data-info-pagecode></td>
-            </tr>
-            <tr>
-                <th class="text-right"><s:text name="name.pageTitle" /></th>
-                <td data-info-titles></td>
-            </tr>
-            <tr>
-                <th class="text-right">Owner Group</th>
-                <td data-info-group></td>
-            </tr>
-            <tr>
-                <th class="text-right"><s:text name="name.pageModel" /></th>
-                <td data-info-model></td>
-            </tr>
-            <tr>
-                <th class="text-right"><s:text name="name.isShowablePage" /></th>
-                <td data-info-showmenu></td>
-            </tr>
-            <tr>
-                <th class="text-right">
-                    <abbr lang="en" title="<s:text name="name.SEO.full" />">
-                        <s:text name="name.SEO.short" />
-                    </abbr>: <s:text name="name.useBetterTitles" />   </th>
-                <td data-info-extratitles></td>
-            </tr>
-            </tbody>
-        </table>
-
-    </div>
-
-
-
-
-
-    <!----------------- griglia del template ----------->
-    <div class="grid-container"></div>
-</div>
-
-
-
 <!----------------- widget menu sinistra ----------->
 
 <div id="widget-sidebar" class="drawer-pf-sidebar-right">
 
 
-    <div class="drawer-pf-title drawer-pf-title-right-menu ">
-        <span id="widget-sidebar-page-tree-btn" class="right-bar-title" >
-            <span class="fa fa-sitemap fa-16px" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;<span class="list-group-item-value"><s:text name="title.pages" /></span>
+    <a  id="widget-sidebar-page-tree-btn" class="drawer-pf-title drawer-pf-title-right-menu drawer-pf-title-clickable ">
+        <span class="right-bar-title" >
+            <i class="fa fa-sitemap fa-16px" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span class="list-group-item-value"><s:text name="title.pages" /></span>
+            <span class="open-button-menu-right pull-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
         </span>
-    </div>
+    </a>
     <div class="panel-group">
         <div class="drawer-pf-container">
             <s:include value="/WEB-INF/apsadmin/jsp/portal/widget-list-menu.jsp" />
@@ -95,44 +45,36 @@
 
 <div id="sidebar-page-tree" class="drawer-pf hide drawer-pf-notifications-non-clickable">
     <div class="drawer-pf-title drawer-pf-title-right-menu">
-
         <a class="drawer-pf-toggle-expand"></a>        
-
-        <div class="right-bar-title"><s:text name="title.pages" /></div>
-
+        <span class="right-bar-title-pages"><s:text name="title.pages" /></span>
         <span id="close-page-tree-sidebar" class=" close-button-menu-right pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
-
     </div>
     <div class="panel-group" id="notification-drawer-accordion">
 
-
         <%--<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />--%>
         <s:form cssClass="action-form">
- 			<wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass=" btn-primary btn-links " data-toggle="tooltip">
+            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass=" btn-primary btn-links " data-toggle="tooltip">
                 <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;<s:text name="title.addPage" />
             </wpsf:submit>
-
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
-
             <s:if test="#pageTreeStyleVar == 'classic'">
                 <div class="drawer-pf-notification drawer-pf-notification-right-menu-expansion ">
                     <button type="button" class="btn-no-button-right" id="expandAll">
-                        <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>
+                        <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i><span class="treeInteractionButtons">&nbsp;<s:text name="title.expand" /></span>
                     </button>
                     <button type="button" class="btn-no-button-right" id="collapseAll">
-                        <i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i>
+                        <i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i><span class="treeInteractionButtons">&nbsp;<s:text name="title.collapse" /></span>
                     </button>
                 </div>
             </s:if>
-            <div class="table-responsive overflow-visible">
-                <table id="pageTree" class="table table-bordered table-hover table-treegrid table-tree-right">
+            <div class="table-responsive overflow-visible table-menu-left-postion">
+                <table id="pageTree" class="table table-tree-sidebar table-hover table-treegrid table-tree-right">
                     <thead>
 
                     </thead>
                     <tbody>  
                         <s:set var="inputFieldName" value="%{'selectedNode'}" />
                         <s:set var="selectedTreeNode" value="%{selectedNode}" />
-                        <s:set var="selectedPage" value="%{getPage(selectedNode)}" />
                         <s:set var="liClassName" value="'page'" />
                         <s:set var="treeItemIconName" value="'fa-folder'" />
                         <s:if test="#pageTreeStyleVar == 'classic'">
@@ -168,28 +110,7 @@
     </div>
 </fieldset>-->
         </s:form>
-
-
     </div>
-
-
-    <style>
-
-        .treeInteractionButtons{
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .green{
-            color: green;
-        }
-
-        #pageTree .statusField i.fa {
-            font-size: 15px;
-            margin-top: 6px;
-        }
-    </style>
-
-
     <script>
 
         $(document).ready(function () {
@@ -268,11 +189,6 @@
         });
 
     </script>
-
-
-    <h1><s:text name="title.pageTree" /></h1>
-
-
     <script>
 
         $(document).ready(function () {

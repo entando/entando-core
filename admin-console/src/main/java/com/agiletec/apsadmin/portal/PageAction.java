@@ -482,8 +482,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				return check;
 			}
 			IPage currentPage = this.getPage(pageCode);
-			this.setNodeToBeDelete(pageCode);
-			this.setSelectedNode(currentPage.getParent().getCode());
+			this.setSelectedNode(currentPage.getCode());
 		} catch (Throwable t) {
 			_logger.error("error checking before putting page {} offline", pageCode, t);
 			return FAILURE;
@@ -510,6 +509,24 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			this.addActivityStreamInfo(page, ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
 			_logger.error("error putting page {} offline", pageCode, t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String checkPutOnline() {
+		String pageCode = this.getPageCode();
+		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
+			String check = this.checkSelectedNode(pageCode);
+			if (null != check) {
+				return check;
+			}
+		} catch (Throwable t) {
+			_logger.error("error checking before putting page {} online", pageCode, t);
 			return FAILURE;
 		}
 		return SUCCESS;

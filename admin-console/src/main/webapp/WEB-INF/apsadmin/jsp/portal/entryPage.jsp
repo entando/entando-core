@@ -71,7 +71,7 @@
 <s:else><s:set var="breadcrumbs_pivotPageCode" value="parentPageCode" /></s:else>
 <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
 
-<s:form action="save">
+<s:form action="save" cssClass="form-horizontal">
 	<p class="sr-only">
 		<wpsf:hidden name="strutsAction" />
 		<wpsf:hidden name="copyPageCode" />
@@ -213,43 +213,70 @@
 	</s:if>
 
 <s:if test="strutsAction != 3">
-	<div class="form-group">
-		<label for="group"><s:text name="label.ownerGroup" /></label>
-		<wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="descr" disabled="%{groupSelectLock}" cssClass="form-control"></wpsf:select>
-		<s:if test="groupSelectLock"><p class="sr-only"><wpsf:hidden name="group" /></p></s:if>
+    <%-- ownerGroup --%>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['ownerGroup']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+    
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+           <label class="col-sm-2 control-label" for="ownerGroup">
+           	<s:text name="label.ownerGroup" />
+           	<i class="fa fa-asterisk required-icon"></i>
+           </label>
+        <div class="col-sm-10">
+			<wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="descr" disabled="%{groupSelectLock}" cssClass="form-control"></wpsf:select>
+            <s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+            </s:if>
+        </div>
 	</div>
 	
-	<fieldset class="col-xs-12"><legend><s:text name="label.extraGroups" /></legend>
-	<div class="form-group">
-		<label for="extraGroups"><s:text name="label.join" />&#32;<s:text name="label.group" /></label>
-		<div class="input-group">
-			<wpsf:select name="extraGroupName" id="extraGroups" list="groups"
-				listKey="name" listValue="descr" cssClass="form-control" />
-			<span class="input-group-btn">
-				<wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-default">
-					<span class="icon fa fa-plus"></span>&#32;
-					<s:property value="label.join" />
-				</wpsf:submit>
-			</span>
-		</div>
+    <%-- ownerGroup --%>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['extraGroups']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+    
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+           <label class="col-sm-2 control-label" for="extraGroups">
+           	<s:text name="label.join" />&#32;<s:text name="label.group" />
+           	<i class="fa fa-asterisk required-icon"></i>
+           </label>
+        <div class="col-sm-10">
+			<div class="input-group">
+				<wpsf:select name="extraGroupName" id="extraGroups" list="groups" listKey="name" listValue="descr" cssClass="form-control" />
+				<span class="input-group-btn">
+					<wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-default">
+						<span class="icon fa fa-plus"></span>&#32;
+						<s:property value="label.join" />
+					</wpsf:submit>
+				</span>
+			</div>
+            <s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+            </s:if>
+        </div>
+        <div class="col-sm-12">
+		<s:if test="extraGroups.size() != 0">
+			<s:iterator value="extraGroups" id="groupName">
+				<wpsa:actionParam action="removeExtraGroup" var="actionName" >
+					<wpsa:actionSubParam name="extraGroupName" value="%{#groupName}" />
+				</wpsa:actionParam>
+				<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
+					<span class="icon fa fa-tag"></span>&#32;
+					<s:property value="%{getSystemGroups()[#groupName].getDescr()}"/>&#32;
+					<wpsf:submit type="button" action="%{#actionName}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-default btn-xs badge">
+						<span class="icon fa fa-times"></span>
+						<span class="sr-only">x</span>
+					</wpsf:submit>
+				</span>
+			</s:iterator>
+		</s:if>
+        </div>
 	</div>
-	<s:if test="extraGroups.size() != 0">
-		<s:iterator value="extraGroups" id="groupName">
-			<wpsa:actionParam action="removeExtraGroup" var="actionName" >
-				<wpsa:actionSubParam name="extraGroupName" value="%{#groupName}" />
-			</wpsa:actionParam>
-			<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
-				<span class="icon fa fa-tag"></span>&#32;
-				<s:property value="%{getSystemGroups()[#groupName].getDescr()}"/>&#32;
-				<wpsf:submit type="button" action="%{#actionName}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-default btn-xs badge">
-					<span class="icon fa fa-times"></span>
-					<span class="sr-only">x</span>
-				</wpsf:submit>
-			</span>
-		</s:iterator>
-	</s:if>
-	
-	</fieldset>
 	
 	<fieldset class="col-xs-12"><legend><s:text name="label.settings" /></legend>
 	

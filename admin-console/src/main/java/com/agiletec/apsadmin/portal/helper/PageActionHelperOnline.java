@@ -40,6 +40,11 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
 	private static final Logger _logger = LoggerFactory.getLogger(PageActionHelperOnline.class);
 
 	@Override
+	protected IPage getPage(String pageCode) {
+		return this.getPageManager().getOnlinePage(pageCode);
+	}
+
+	@Override
 	protected PageMetadata getPageMetadata(IPage page) {
 		return page.getOnlineMetadata();
 	}

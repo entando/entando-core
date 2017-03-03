@@ -167,6 +167,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		}
 		return SUCCESS;
 	}
+
+	public String settingsPage() {
+      // stub method
+  		return SUCCESS;
+  }
 	
 	protected void valueFormForNew(IPage parentPage) {
 		String groupName = null;
@@ -195,6 +200,16 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			this.valueFormForEdit(page);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String entryEdit() {
+		try {
+			this.updateTitles();
+		} catch (Throwable t) {
+			_logger.error("error in entry edit", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -298,10 +313,12 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				page = this.getUpdatedPage();
 				this.getPageManager().updatePage(page);
+				this.addActionMessage(this.getText("message.page.info.updated", this.getTitle(page.getCode(), page.getDraftTitles())));
 				_logger.debug("Updating page " + page.getCode());
 			} else {
 				page = this.buildNewPage();
 				this.getPageManager().addPage(page);
+				this.addActionMessage(this.getText("message.page.info.added", this.getTitle(page.getCode(), page.getDraftTitles())));
 				_logger.debug("Adding new page");
 			}
 			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
@@ -456,6 +473,10 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	public String checkPutOffline() {
 		String pageCode = this.getPageCode();
 		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
 			String check = this.checkPutOffline(pageCode);
 			if (null != check) {
 				return check;
@@ -473,14 +494,20 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	public String doPutOffline() {
 		String pageCode = this.getPageCode();
 		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
 			IPageManager pageManager = this.getPageManager();
 			String check = this.checkPutOffline(pageCode);
 			if (null != check) {
 				return check;
 			}
 			pageManager.setPageOffline(pageCode);
+			IPage page = this.getPage(pageCode);
+			this.addActionMessage(this.getText("message.page.set.offline", this.getTitle(page.getCode(), page.getDraftTitles())));
 			// TODO Define a new strutsAction to map "offline" operation
-			this.addActivityStreamInfo(this.getPage(pageCode), ApsAdminSystemConstants.EDIT, true);
+			this.addActivityStreamInfo(page, ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
 			_logger.error("error putting page {} offline", pageCode, t);
 			return FAILURE;
@@ -491,14 +518,20 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	public String doPutOnline() {
 		String pageCode = this.getPageCode();
 		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
 			IPageManager pageManager = this.getPageManager();
 			String check = this.checkSelectedNode(pageCode);
 			if (null != check) {
 				return check;
 			}
 			pageManager.setPageOnline(pageCode);
-			// TODO Define a new strutsAction to map "online" operation
-			this.addActivityStreamInfo(this.getPage(pageCode), ApsAdminSystemConstants.EDIT, true);
+			IPage page = this.getPage(pageCode);
+			this.addActionMessage(this.getText("message.page.set.online", this.getTitle(page.getCode(), page.getDraftTitles())));
+			// TODO Define a new strutsAction to map "offline" operation
+			this.addActivityStreamInfo(page, ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
 			_logger.error("error putting page {} online", pageCode, t);
 			return FAILURE;

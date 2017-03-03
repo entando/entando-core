@@ -35,7 +35,7 @@ public class PageTreeAction extends AbstractTreeAction {
 	@Override
 	public String execute() throws Exception {
 		if (null != this.getSelectedNode()) {
-			super.getTreeNodesToOpen().add(this.getSelectedNode());
+			this.getTreeNodesToOpen().add(this.getSelectedNode());
 		}
 		return super.execute();
 	}
@@ -136,6 +136,15 @@ public class PageTreeAction extends AbstractTreeAction {
 		String pageGroup = page.getGroup();
 		Collection<String> codes = this.getNodeGroupCodes();
 		return codes.contains(pageGroup);
+	}
+	
+	/**
+	 * Return the page given its code.
+	 * @param pageCode The code of the requested page.
+	 * @return The page associated to the given code, null if the code is unknown.
+	 */
+	public IPage getPage(String pageCode) {
+		return this.getPageManager().getDraftPage(pageCode);
 	}
 	
 	@Deprecated

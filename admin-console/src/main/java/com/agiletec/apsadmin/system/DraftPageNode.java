@@ -25,6 +25,11 @@ public class DraftPageNode extends TreeNode {
 		return metadata;
 	}
 	
+	@Override
+	public boolean isChildOf(String nodeCode) {
+		return this.getEntity().isChildOf(nodeCode);
+	}
+	
 	public IPage getEntity() {
 		return entity;
 	}

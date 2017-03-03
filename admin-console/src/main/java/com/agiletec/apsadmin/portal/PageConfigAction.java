@@ -156,10 +156,11 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			IPage page = this.getPage(this.getPageCode());
 			response.setPage(page);
 			if (StringUtils.isNotBlank(this.getWidgetAction())) {
-				String url = "/do/Page/SpecialWidget/" + this.getWidgetAction() + "?";
-				String[] params = new String[]{"pageCode="+ this.getPageCode(), "widgetTypeCode="+ this.getWidgetTypeCode(), "frame="+ this.getFrame() };
-				url = url + StringUtils.join(params, "&");
-				response.setRedirectLocation(url);
+				StringBuffer url = new StringBuffer("/do/Page/SpecialWidget/");
+				url.append(this.getWidgetAction()).append("?");
+				String[] params = new String[]{"pageCode="+ this.getPageCode(), "widgetTypeCode="+ this.getWidgetTypeCode(), "frame="+ this.getFrame()};
+				url.append(StringUtils.join(params, "&"));
+				response.setRedirectLocation(url.toString());
 			}
 		}
 		return response;

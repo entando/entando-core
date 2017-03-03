@@ -41,12 +41,11 @@
         CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
         --%>
         <span class="statusField">
-            <s:if test="%{#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle green" aria-hidden="true"></i></s:if>
-            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true"></i></s:if>
-            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}"><i class="fa fa-circle red" aria-hidden="true"></i></s:if>
-            </span>
-
-        </td>
+        	<s:if test="%{!#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle red" aria-hidden="true"></i></s:if>
+            <s:elseif test="%{#currentRoot.getEntity().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true"></i></s:elseif>
+            <s:else><i class="fa fa-circle green" aria-hidden="true"></i></s:else>
+        </span>
+    </td>
 
         <td class=" table-view-pf-actions hidden" style="width: 30px">
             <div class="dropdown dropdown-kebab-pf">

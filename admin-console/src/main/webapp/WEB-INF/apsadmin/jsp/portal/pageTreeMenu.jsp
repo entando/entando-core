@@ -2,10 +2,14 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
+<s:set var="selectedPage" value="%{getPage(selectedNode)}" />
+
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
     <li><s:text name="title.pageTree" /></li>
 </ol>
+
+<h1><s:property value="%{getTitle(selectedNode, #selectedPage.draftTitles)}" /></h1>
 
 <s:if test="hasActionErrors()">
     <div class="alert alert-danger alert-dismissable">
@@ -124,7 +128,6 @@
                     <tbody>  
                         <s:set var="inputFieldName" value="%{'selectedNode'}" />
                         <s:set var="selectedTreeNode" value="%{selectedNode}" />
-                        <s:set var="selectedPage" value="%{getPage(selectedNode)}" />
                         <s:set var="liClassName" value="'page'" />
                         <s:set var="treeItemIconName" value="'fa-folder'" />
                         <s:if test="#pageTreeStyleVar == 'classic'">

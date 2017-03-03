@@ -196,7 +196,6 @@ a {
 .drawer-pf-sidebar-right {
     position: fixed;
     top: 58px;
-    height: calc(100vh - 0px);
     z-index: 10;
     background-color: #fafafa;
     border: 1px solid #d1d1d1;
@@ -204,23 +203,13 @@ a {
     overflow-y: auto;
     right: 0;
     width: 320px;
+    height: 93%;
 }
-
-
 .drawer-pf{
     position: fixed !important;
     top: 58px !important;
     height: calc(100vh - 0px) !important;
     z-index:10 !important;
-    /*background: #23a8e0;*/
-}
-.right-bar-title{
-    margin-left: 19px;
-    font-size: 14px;
-    line-height: 18px;
-}
-.right-bar-title:hover {
-    font-weight:bold;
 }
 .right-bar-title2{
     margin-left: 19px;
@@ -235,17 +224,14 @@ a {
     padding: 1.2em 0 1.2em 0;
 }
 .drawer-pf-title {
-    border-bottom: 1px solid #d1d1d1;
     position: absolute;
     font-weight:normal;
     background: #292e34;
     color: #fff;
 }
 .drawer-pf .panel-group {
-    top: 48px !important;
-
+    top: 47px !important;
 }
-
 .drawer-pf-notification-bottom{
     position:fixed;
     bottom:0;
@@ -253,17 +239,32 @@ a {
 }
 .btn-links{
     padding: 0px;
-    /*    color: #ffffff;*/
-    font-size: 20px;
-    background: transparent;
+    font-size: 17px;
+    /* background: transparent; */
     border: none;
     padding: 10px 0px 10px 5px;
+    width: 100%;
+    border: none;
+    text-transform: capitalize;
 }
-/*.drawer-pf-notification-right-menu{
+.drawer-pf-notification-right-menu{
     padding:0px !important;
-    background: #23a8e0;
-    color: #fff;
-}*/
+    background: #e0e0db;
+    color: #000;
+}
+.drawer-pf-notification-right-menu:hover{
+    background: #e0e0db !important;
+    color: #000 !important;
+}
+.drawer-pf-notification-right-menu-expansion{
+    padding:0px !important;
+    background: #e0e0db;
+    color: #000;
+}
+.drawer-pf-notification-right-menu-expansion:hover{
+    background: #e0e0db !important;
+    color: #000 !important;
+}
 .btn-no-button-right{
     border:none;
     background: transparent;
@@ -273,26 +274,26 @@ a {
     margin-right: 1px !important;
 }
 .table-treegrid span.indent {
-    /* margin:0 !important; */
 }
 .moveButtons-right{
     font-size: 12px;
 }
 .drawer-pf-container{
-    margin-top: 50px;
+    margin-top: 48px;
 }
 .close-button-menu-right{
     position:absolute;
     top: 6px;
     right: 18px;
     font-size: 20px;
+    color: #727676;
 }
 .drawer-pf-toggle-expand {
-    left: 4px !important;
+    left: 18px !important;
     padding: 0 !important;
     position: absolute;
-    font-size: 23px;
-    top: 3px;
+    font-size: 22px;
+    top: 4px;
 }
 .right-menu-title{
     padding: 15px 0px 15px 18px;
@@ -315,12 +316,8 @@ a {
 .drawer-pf-icons-right-menu{
     margin-right: 18px
 }
-.drawer-pf-title-right-menu{
-
-}
 .list-group-item-custom{
     border: 0px solid #e0e0db !important;
-    /* margin: 2px 0 2px 4px; */
 }
 .widget-grid{
     display: block;
@@ -342,4 +339,80 @@ a {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden
+}
+td{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 1px;
+}
+.word-wrap {
+    width:80%;
+}
+.btn-menu-right{
+    background: transparent;
+}
+.table-tree-sidebar>tbody>tr>td, .table-tree-sidebar>tbody>tr>th, .table-tree-sidebar>tfoot>tr>td, .table-tree-sidebar>tfoot>tr>th, .table-tree-sidebar>thead>tr>td, .table-tree-sidebar>thead>tr>th {
+    line-height: 1.66666667;
+    vertical-align: top;
+    border-top: 0px solid #d1d1d1;
+}
+.red{
+    color:red; 
+}
+.yellow{
+    color: yellow;
+}
+.green{
+    color: green;
+}
+.table-menu-left-postion{
+    margin-left: -12px;
+    margin-top: 20px;
+}
+.treeInteractionButtons{
+    font-size: 16px;
+    margin-left: 6px;
+}
+#pageTree .statusField i.fa {
+    font-size: 15px;
+    margin-top: 6px;
+}
+.table-tree-right  span.indent {
+    margin: 7px !important;
+}
+.right-bar-title-pages {
+    margin-left: 47px;
+    font-size: 15px;
+    line-height: 19px;
+    text-transform: capitalize;
+}
+.right-bar-title{
+    margin-left: 19px;
+    font-size: 15px;
+    line-height: 18px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+.drawer-pf-title-right-menu:hover{   
+    color: #fff;
+    text-decoration: none;
+}
+#widget-sidebar-page-tree-btn .right-bar-title:hover>i{ 
+    color: #23a8e0;
+    text-decoration: none;
+}
+.drawer-pf-title-clickable{
+}
+.drawer-pf-title-clickable:hover{
+    background:#393f44 !important;
+    cursor:pointer;
+}
+.open-button-menu-right{
+    position: absolute;
+    top: 11px;
+    right: 10px;
+    font-size: 23px;
+    color: #64737b;
 }

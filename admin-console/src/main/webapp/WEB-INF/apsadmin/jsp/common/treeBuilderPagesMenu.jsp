@@ -9,21 +9,18 @@
     <s:set name="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
-<s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
-<s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
-
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage' && #isHidden}">collapsed childrenNodes</s:if>" >
-        <td class="treegrid-node pointer">
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}">collapsed childrenNodes</s:if>" >
+        <td class="treegrid-node pointer word-wrap">
             <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 
-               class="subTreeToggler <s:if test="#isSelected">active </s:if><s:if test="#isHidden" >hidden </s:if><s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
-               <s:if test="#isSelected"> checked="checked"</s:if> />
+               class="subTreeToggler hidden <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
+               <s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
         &#32;<label class="word-wrap" for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
                 <span class="text-muted icon fa fa-lock"></span>
             </s:if>
         </label>
     </td>
-    <td class="moveButtons-right-container">
-        <div class="moveButtons-right<s:if test="!#isSelected" > hidden</s:if>">
+    <td class="moveButtons-right-container" style="width:40px">
+        <div class="moveButtons-right hidden">
             <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </wpsf:submit>
@@ -35,20 +32,20 @@
             </wpsf:submit>
         </div>
     </td>
-    <td class="text-center">
+    <td style="width:20px">
         <%-- FOR DEV. DEGUB
         ONLINE: <s:property value="%{#currentRoot.getEntity().isOnline()}"/>
         CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
         --%>
         <span class="statusField">
-            <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
-            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
-            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
+            <s:if test="%{#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle green" aria-hidden="true"></i></s:if>
+            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true"></i></s:if>
+            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}"><i class="fa fa-circle red" aria-hidden="true"></i></s:if>
             </span>
 
         </td>
 
-        <td class=" table-view-pf-actions hidden">
+        <td class=" table-view-pf-actions hidden" style="width: 30px">
             <div class="dropdown dropdown-kebab-pf">
                 <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="fa fa-ellipsis-v"></span></button>

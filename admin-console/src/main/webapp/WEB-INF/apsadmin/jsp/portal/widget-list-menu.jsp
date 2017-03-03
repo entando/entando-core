@@ -4,7 +4,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
 <div class="right-menu-title">
-    <s:text name="title.list" /><span class="pull-right drawer-pf-icons-right-menu"><i id="widgetGrid" class="fa fa-th-large pointer" aria-hidden="true"></i>&nbsp;&nbsp;<i id="widgetList" class="fa fa-th-list pointer"  aria-hidden="true"></i></span>
+	<s:text name="title.widgetlist" /><span class="pull-right drawer-pf-icons-right-menu"><i id="widgetGrid" class="fa fa-th-large pointer" aria-hidden="true"></i>&nbsp;&nbsp;<i id="widgetList" class="fa fa-th-list pointer"  aria-hidden="true"></i></span>
     <input  id="search-widget" class="input-pf-right-menu" type="text" placeholder="<s:text name="widget.search" />" />
 </div>
 
@@ -76,7 +76,7 @@
                         </div>
                         <div class="list-view-pf-body">
                             <div class="list-view-pf-description">
-                                <div class="list-group-item-heading widget-name ">
+                                <div class="list-group-item-heading widget-name widget-name-list ">
                                     <a href="<s:url namespace="/do/Portal/WidgetType" action="edit"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="label.configWidget" />: <s:property value="#showletType.value" />" >
                                         <s:property value="#showletType.value" /></a>
                                     <s:if test="%{#concreteShowletTypeVar.mainGroup != null && !#concreteShowletTypeVar.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
@@ -100,7 +100,7 @@
 
     $("#search-widget").on("keyup input", function () {
         var txt = $('#search-widget').val();
-        $('.widget-name').each(function () {
+        $('.widget-name-list').each(function () {
             if ($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1) {
                 $(this).parentsUntil('.list-group-item').show();
             } else {

@@ -77,6 +77,20 @@
                         <span class="">Delete</span>
                     </wpsf:submit>
                 </li>
+                <s:if test="%{#currentRoot.getEntity().online}">
+                <li>
+                    <wpsf:submit action="checkPutOffline" type="button" title="%{getText('page.options.offline')}" cssClass="btn btn-warning" data-toggle="tooltip">
+                        <span class=""><s:text name="page.options.offline" /></span>
+                    </wpsf:submit>
+                </li>
+                </s:if>
+                <s:if test="%{!#currentRoot.getEntity().online || #currentRoot.getEntity().changed}">
+                <li>
+                    <wpsf:submit action="checkPutOnline" type="button" title="%{getText('page.options.online')}" cssClass="btn btn-warning" data-toggle="tooltip">
+                        <span class=""><s:text name="page.options.online" /></span>
+                    </wpsf:submit>
+                </li>
+                </s:if>
             </ul>
         </div>  
     </td>

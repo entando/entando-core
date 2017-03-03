@@ -178,7 +178,7 @@
         	</interceptor-ref>
         </action>
         
-        <action name="configure" class="pageConfigAction" method="configure">
+        <action name="configure" class="pageTreeMenuAction" method="intro">
         	<result type="tiles">admin.Page.viewTreeMenu</result>
             <interceptor-ref name="entandoDefaultStack">
             	<param name="requestAuth.requiredPermission">managePages</param>

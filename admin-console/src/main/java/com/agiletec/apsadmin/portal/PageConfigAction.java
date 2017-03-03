@@ -55,6 +55,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String configure() {
 		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
 		this.setPageCode(pageCode);
+		this.setSelectedNode(pageCode);
 		String check = this.checkSelectedNode(pageCode);
 		if (null != check) return check;
 		return SUCCESS;

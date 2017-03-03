@@ -52,7 +52,7 @@
 </h1>
 
 <div id="main" role="main">
-    <s:if test="hasActionErrors()">
+    <s:if test="hasErrors()">
         <div class="alert alert-danger alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
                 <span class="pficon pficon-close"></span>
@@ -60,12 +60,33 @@
             <span class="pficon pficon-error-circle-o"></span>
             <s:text name="message.title.ActionErrors" />
             <ul>
+    		<s:if test="hasActionErrors()">
                 <s:iterator value="actionErrors">
                     <li><s:property escape="false" /></li>
 				</s:iterator>
+    		</s:if>
+    		<s:if test="hasFieldErrors()">
+				<s:iterator value="fieldErrors">
+					<s:iterator value="value">
+						<li><s:property escape="false" /></li>
+					</s:iterator>
+				</s:iterator>
+    		</s:if>
             </ul>
         </div>
     </s:if>
+	
+	<s:if test="#passwordHasFieldErrorVar || #usernameFieldErrorsVar">
+	   <div class="alert alert-danger alert-dismissable">
+	       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+	           <span class="pficon pficon-close"></span>
+	       </button>
+	       <span class="pficon pficon-error-circle-o"></span>
+	       <ul class="margin-base-vertical">
+	           <s:text name="error.user.login.credentialsEmpty" />
+	       </ul>
+	   </div>
+	</s:if>
 
 <s:if test="strutsAction == 2"><s:set var="breadcrumbs_pivotPageCode" value="pageCode" /></s:if>
 <s:else><s:set var="breadcrumbs_pivotPageCode" value="parentPageCode" /></s:else>
@@ -79,6 +100,7 @@
 		<s:if test="strutsAction == 2">
 			<wpsf:hidden name="parentPageCode" />
 			<wpsf:hidden name="pageCode" />
+			<wpsf:hidden name="group" />
 		</s:if>
 		<s:iterator value="extraGroups" id="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
 		<s:if test="strutsAction == 3">
@@ -177,7 +199,7 @@
 			<tbody>
 				<s:set var="inputFieldName" value="%{'parentPageCode'}" />
 				<s:set var="selectedTreeNode" value="%{parentPageCode}" />
-				<s:set var="selectedPage" value="%{getPage(parentPageCode)}" />
+                <s:set var="selectedPage" value="%{getPage(parentPageCode)}" />
 				<s:set var="liClassName" value="'page'" />
 				<s:set var="treeItemIconName" value="'fa-folder'" />
 				
@@ -233,7 +255,7 @@
         </div>
 	</div>
 	
-    <%-- ownerGroup --%>
+    <%-- extraGroups --%>
 	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['extraGroups']}" />
 	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
@@ -278,40 +300,119 @@
         </div>
 	</div>
 	
-	<fieldset class="col-xs-12"><legend><s:text name="label.settings" /></legend>
-	
-	<div class="form-group" id="pagemodel">
-		<label for="model"><s:text name="name.pageModel" /></label>
-		<wpsf:select name="model" id="model" list="pageModels" listKey="code" listValue="descr" cssClass="form-control"></wpsf:select>
+    <%-- pageModel --%>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['model']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+    
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+           <label class="col-sm-2 control-label" for="ownerGroup">
+           	<s:text name="name.pageModel" />
+           	<i class="fa fa-asterisk required-icon"></i>
+           </label>
+        <div class="col-sm-10">
+			<wpsf:select name="model" id="model" list="pageModels" listKey="code" listValue="descr" cssClass="form-control"></wpsf:select>
+            <s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+            </s:if>
+        </div>
 	</div>
 	
 	<ul>
 		<li class="checkbox">
-			<label for="defaultShowlet"><s:text name="name.hasDefaultWidgets" /><wpsf:checkbox name="defaultShowlet" id="defaultShowlet" /></label>
 		</li>
 		<li class="checkbox">
-			<label for="viewerPage"><s:text name="name.isViewerPage" /><wpsf:checkbox name="viewerPage" id="viewerPage" /></label>
 		</li>
 		<li class="checkbox">
-			<label for="showable"><s:text name="name.isShowablePage" /><wpsf:checkbox name="showable" id="showable" /></label>
 		</li>
-		<li class="checkbox">
-			<label for="useExtraTitles"><abbr lang="en" title="<s:text name="name.SEO.full" />"><s:text name="name.SEO.short" /></abbr>:&#32;<s:text name="name.useBetterTitles" /><wpsf:checkbox name="useExtraTitles" id="useExtraTitles" /></label>
-		</li>
+		<li class="checkbox"></li>
 	</ul>
 	
-	<div class="form-group">
-		<label for="charset"><s:text name="name.charset" /></label>
-		<wpsf:select name="charset" id="charset"
-					 headerKey="" headerValue="%{getText('label.default')}" list="allowedCharsets" cssClass="form-control" />
+	
+	
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-4 col-label">
+				<label class="display-block" for="defaultShowlet"><s:text name="name.hasDefaultWidgets" /></label>
+            </div>
+            <div class="col-xs-2">
+            	<wpsf:checkbox name="defaultShowlet" id="defaultShowlet" cssClass="bootstrap-switch" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-4 col-label">
+				<label class="display-block" for="viewerPage"><s:text name="name.isViewerPage" /></label>
+            </div>
+            <div class="col-xs-2">
+				<wpsf:checkbox name="viewerPage" id="viewerPage" cssClass="bootstrap-switch" />
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+		<label class="col-sm-2 control-label" for="showable">Main Menu</label>
+        <div class="col-sm-10">
+        	<wpsf:checkbox name="showable" id="showable" />&#32;<s:text name="name.isShowablePage" />
+        </div>
+	</div>
+    
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+		<label class="col-sm-2 control-label" for="useExtraTitles">SEO</label>
+        <div class="col-sm-10">
+        	<wpsf:checkbox name="useExtraTitles" id="useExtraTitles" />&#32<abbr lang="en" title="<s:text name="name.SEO.full" />"><s:text name="name.SEO.short" /></abbr>
+        </div>
 	</div>
 	
-	<div class="form-group">
-		<label for="mimeType"><s:text name="name.mimeType" /></label>
-		<wpsf:select name="mimeType" id="mimeType"
-					 headerKey="" headerValue="%{getText('label.default')}" list="allowedMimeTypes" cssClass="form-control" />
+	
+	
+	
+    <%-- charset --%>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['charset']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+    
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+           <label class="col-sm-2 control-label" for="ownerGroup">
+           	<s:text name="name.charset" />
+           	<i class="fa fa-asterisk required-icon"></i>
+           </label>
+        <div class="col-sm-10">
+			<wpsf:select name="charset" id="charset"
+					 headerKey="" headerValue="%{getText('label.default')}" list="allowedCharsets" cssClass="form-control" />
+            <s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+            </s:if>
+        </div>
 	</div>
-	</fieldset>
+	
+    <%-- mimeType --%>
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['mimeType']}" />
+	<s:set var="hasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+    
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+           <label class="col-sm-2 control-label" for="ownerGroup">
+           	<s:text name="name.mimeType" />
+           	<i class="fa fa-asterisk required-icon"></i>
+           </label>
+        <div class="col-sm-10">
+			<wpsf:select name="mimeType" id="mimeType"
+					 headerKey="" headerValue="%{getText('label.default')}" list="allowedMimeTypes" cssClass="form-control" />
+            <s:if test="#fieldHasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</span>
+            </s:if>
+        </div>
+	</div>
 </s:if>
 	
 	<wpsa:hookPoint key="core.entryPage" objectName="hookPointElements_core_entryPage">
@@ -319,18 +420,17 @@
 		<wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
 	</s:iterator>
 	</wpsa:hookPoint>
-
-	<div class="form-horizontal">
-		<div class="form-group">
-			<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-				<wpsf:submit type="button" cssClass="btn btn-primary btn-block">
-					<span class="icon fa fa-floppy-o"></span>&#32;
-					<s:text name="label.save" />
-				</wpsf:submit>
-			</div>
-		</div>
-	</div>
-		
+	
+    <div class="col-md-12"> 
+        <div class="form-group pull-right "> 
+            <div class="btn-group">
+                <wpsf:submit type="button" action="save" cssClass="btn btn-primary btn-block">
+                    <s:text name="label.save" />
+                </wpsf:submit>
+            </div>
+        </div>
+    </div>
+	
 	</fieldset>
 </s:form>
 

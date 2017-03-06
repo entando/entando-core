@@ -79,7 +79,6 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertEquals("Page 1", action.getTitles().getProperty("en"));
 	}
 	
-	
 	public void testEditForCoachUser() throws Throwable {
 		String selectedPageCode = this._pageManager.getRoot().getCode();
 		String result = this.executeActionOnPage(selectedPageCode, "pageManagerCoach", "edit");
@@ -260,47 +259,44 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		return result;
 	}
 	
-	public void testPasteForAdminUser() throws Throwable {
-		IPage parent = this._pageManager.getDraftPage("service");
-		IPage copied = this._pageManager.getRoot();
-		String result = this.executePastePage(copied, parent, "admin");
+	public void testCloneForAdminUser() throws Throwable {
+		IPage copied = this._pageManager.getDraftPage("service");
+		String result = this.executeCopyPage(copied, "admin");
 		assertEquals(Action.SUCCESS, result);
 		
 		PageAction action = (PageAction) this.getAction();
 		assertEquals(action.getStrutsAction(), ApsAdminSystemConstants.PASTE);
 		assertEquals(copied.getCode(), action.getCopyPageCode());
-		assertEquals(parent.getCode(), action.getParentPageCode());
+		assertEquals(copied.getCode(), action.getParentPageCode());
 		assertEquals(copied.getModel().getCode(), action.getModel());
-		assertEquals(parent.getGroup(), action.getGroup());
+		assertEquals(copied.getGroup(), action.getGroup());
 		assertEquals(copied.isShowable(), action.isShowable());
 		assertNull(action.getTitles().getProperty("it"));
 		assertNull(action.getTitles().getProperty("en"));
 	}
 	
-	public void testPasteForCoachUser() throws Throwable {
+	public void testCloneForCoachUser() throws Throwable {
 		IPage copied = this._pageManager.getDraftPage("coach_page");
-		IPage parent = this._pageManager.getDraftPage("customers_page");
-		String result = this.executePastePage(copied, parent, "admin");
+		String result = this.executeCopyPage(copied, "admin");
 		assertEquals(Action.SUCCESS, result);
 		
 		PageAction action = (PageAction) this.getAction();
 		assertEquals(action.getStrutsAction(), ApsAdminSystemConstants.PASTE);
 		assertEquals(copied.getCode(), action.getCopyPageCode());
 		
-		assertEquals(parent.getCode(), action.getParentPageCode());
+		assertEquals(copied.getCode(), action.getParentPageCode());
 		assertEquals(copied.getModel().getCode(), action.getModel());
-		assertEquals(parent.getGroup(), action.getGroup());
+		assertEquals(copied.getGroup(), action.getGroup());
 		assertEquals(copied.isShowable(), action.isShowable());
 		assertNull(action.getTitles().getProperty("it"));
 		assertNull(action.getTitles().getProperty("en"));
 	}
 	
-	private String executePastePage(IPage copiedPage, IPage selectedPage, String userName) throws Throwable {
+	private String executeCopyPage(IPage copiedPage, String userName) throws Throwable {
 		this.setUserOnSession(userName);
-		this.initAction("/do/Page", "paste");
-		this.addParameter("btnCopy", "paste");
-		this.addParameter("selectedNode", selectedPage.getCode());
-		this.addParameter("copyingPageCode", copiedPage.getCode());
+		this.initAction("/do/Page", "copy");
+		this.addParameter("btnCopy", "copy");
+		this.addParameter("selectedNode", copiedPage.getCode());
 		String result = this.executeAction();
 		return result;
 	}
@@ -434,6 +430,41 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
+	public void testSavePage_Clone() throws Throwable {
+		String copiedPageCode = "pagina_2";
+		IPage copiedPage = this._pageManager.getDraftPage(copiedPageCode);
+		assertNotNull(copiedPage);
+		String pageCode = "pagina_test";
+		assertNull(this._pageManager.getDraftPage(pageCode));
+		try {
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.PASTE));
+			params.put("parentPageCode", "pagina_1");
+			params.put("copyPageCode", copiedPageCode);
+			params.put("langit", "Pagina Test 1");
+			params.put("langen", "Test Page 1");
+			params.put("model", "aaaa");
+			params.put("group", "aaaa");
+			params.put("pageCode", pageCode);
+			String result = this.executeSave(params, "admin");
+			assertEquals(Action.SUCCESS, result);
+			IPage addedPage = this._pageManager.getPage(pageCode, false);
+			assertNotNull(addedPage);
+			assertEquals("Pagina Test 1", addedPage.getDraftMetadata().getTitles().getProperty("it"));
+			assertEquals("Test Page 1", addedPage.getDraftMetadata().getTitles().getProperty("en"));
+			assertNull(addedPage.getOnlineMetadata());
+			assertNull(addedPage.getOnlineWidgets());
+			PageMetadata addedMetadata = addedPage.getDraftMetadata().clone();
+			PageMetadata expectedMetadata = copiedPage.getDraftMetadata();
+			addedMetadata.setTitles(expectedMetadata.getTitles());
+			PageTestUtil.comparePageMetadata(expectedMetadata, addedMetadata, null);
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._pageManager.deletePage(pageCode);
+		}
+	}
+	
 	private String executeSave(Map<String, String> params, String username) throws Throwable {
 		this.setUserOnSession(username);
 		this.initAction("/do/Page", "save");
@@ -506,24 +537,24 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertNull(targets);
 	}
 	
-	public void testPutOffline_Wrong() throws Throwable {
-		this.checkActionOnPage("checkPutOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
-		this.checkActionOnPage("doPutOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
-		this.checkActionOnPage("putOffline", "/do/rs/Page", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+	public void testSetOffline_Wrong() throws Throwable {
+		this.checkActionOnPage("checkSetOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkActionOnPage("doSetOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkActionOnPage("setOffline", "/do/rs/Page", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
 		this.checkPageResponse("homepage", "error.page.userNotAllowed");
 		
-		this.checkActionOnPage("checkPutOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
-		this.checkActionOnPage("doPutOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
-		this.checkActionOnPage("putOffline", "/do/rs/Page", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("checkSetOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("doSetOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("setOffline", "/do/rs/Page", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
 		this.checkPageResponse("homepage", "error.page.offlineHome.notAllowed");
 		
-		this.checkActionOnPage("checkPutOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
-		this.checkActionOnPage("doPutOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
-		this.checkActionOnPage("putOffline", "/do/rs/Page", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkActionOnPage("checkSetOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkActionOnPage("doSetOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkActionOnPage("setOffline", "/do/rs/Page", "service", "admin", "pageTree", "error.page.offline.notAllowed");
 		this.checkPageResponse("service", "error.page.offline.notAllowed");
 	}
 	
-	public void testPutOnlineOffline() throws Throwable {
+	public void testSetOnlineOffline() throws Throwable {
 		String pageCode = "temp";
 		try {
 			this.addPage(pageCode);
@@ -531,17 +562,17 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			assertTrue(page.isOnline());
 			assertFalse(page.isChanged());
 			
-			this.checkActionOnPage("checkPutOffline", pageCode, "admin", Action.SUCCESS, null);
+			this.checkActionOnPage("checkSetOffline", pageCode, "admin", Action.SUCCESS, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertTrue(page.isOnline());
 			assertFalse(page.isChanged());
 			
-			this.checkActionOnPage("doPutOffline", pageCode, "admin", Action.SUCCESS, null);
+			this.checkActionOnPage("doSetOffline", pageCode, "admin", Action.SUCCESS, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertFalse(page.isOnline());
 			assertFalse(page.isChanged());
 			
-			this.checkActionOnPage("doPutOnline", pageCode, "admin", Action.SUCCESS, null);
+			this.checkActionOnPage("doSetOnline", pageCode, "admin", Action.SUCCESS, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertTrue(page.isOnline());
 			assertFalse(page.isChanged());
@@ -552,7 +583,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
-	public void testPutOnlineOfflineJson() throws Throwable {
+	public void testSetOnlineOfflineJson() throws Throwable {
 		String pageCode = "temp";
 		try {
 			this.addPage(pageCode);
@@ -560,13 +591,13 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			assertTrue(page.isOnline());
 			assertFalse(page.isChanged());
 			
-			this.checkActionOnPage("putOffline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
+			this.checkActionOnPage("setOffline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
 			this.checkPageResponse(pageCode, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertFalse(page.isOnline());
 			assertFalse(page.isChanged());
 			
-			this.checkActionOnPage("putOnline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
+			this.checkActionOnPage("setOnline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
 			this.checkPageResponse(pageCode, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertTrue(page.isOnline());

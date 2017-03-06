@@ -69,6 +69,8 @@ public class PageResponse {
 		page.setCode(src.getCode());
 		page.setDraftMetadata(src.getDraftMetadata());
 		page.setDraftWidgets(src.getDraftWidgets());
+		page.setOnlineMetadata(src.getOnlineMetadata());
+		page.setOnlineWidgets(src.getOnlineWidgets());
 		page.setParentCode(page.getParentCode());
 		page.setGroup(src.getGroup());
 		this.page = page;

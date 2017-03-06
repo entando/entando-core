@@ -71,7 +71,6 @@
     
     <bean id="widgetsViewerAction" scope="prototype" 
               class="com.agiletec.apsadmin.portal.WidgetsViewerAction" parent="abstractPortalAction">
-		<property name="pageActionHelper" ref="pageActionHelperDraft" />
     </bean>
     
     <bean id="widgetTypeAction" scope="prototype" 

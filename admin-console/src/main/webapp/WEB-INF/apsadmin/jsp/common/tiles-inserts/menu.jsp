@@ -45,7 +45,7 @@
 			                </li>
 			                <li class="list-group-item">
 			                    <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page" />'>
-			                        <span class="list-group-item-value">Page Tree Advanced </span>
+			                        <span class="list-group-item-value">Configure Page</span>
 			                    </a>
 			                </li>
 	            		</c:if>

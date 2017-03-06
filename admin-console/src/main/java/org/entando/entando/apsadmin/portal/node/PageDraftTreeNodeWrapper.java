@@ -11,30 +11,30 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.apsadmin.system;
+package org.entando.entando.apsadmin.portal.node;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
-public class PageOnlineTreeNodeWrapper extends TreeNodeWrapper {
+public class PageDraftTreeNodeWrapper extends TreeNodeWrapper {
 
-	public PageOnlineTreeNodeWrapper(ITreeNode node) {
+	public PageDraftTreeNodeWrapper(ITreeNode node) {
 		super(node);
-		this.entity =  ((DraftPageNode)node).getEntity();
+		this._entity =  ((DraftPageNode)node).getEntity();
 	}
 
-	public PageOnlineTreeNodeWrapper(ITreeNode tree, String currentLang) {
+	public PageDraftTreeNodeWrapper(ITreeNode tree, String currentLang) {
 		super(tree, currentLang);
-		this.entity =  ((OnlinePageNode) tree).getEntity();
+		this._entity =  ((DraftPageNode) tree).getEntity();
 	}
-	
-	
-	
+
 	public Object getEntity() {
-		return entity;
+		return _entity;
 	}
 	public void setEntity(Object entity) {
-		this.entity = entity;
+		this._entity = entity;
 	}
-	
-	private Object entity;
+
+	private Object _entity;
+
 }

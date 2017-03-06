@@ -110,18 +110,40 @@ $(function() {
 
         var html = '<div>' +
             '<div class="slot-name"></div>' +
-            '<i class="remove-btn fa fa-close"></i>' +
             '</div>';
 
+
+        function createMenuItem(label, classes) {
+            var $menuItem = $('<li role="presentation"><a role="menuitem" tabindex="-1" href="#"></a></li>');
+            $menuItem.find('a[role="menuitem"]').text(label);
+            if (classes) {
+                $menuItem.addClass(classes);
+            }
+            return $menuItem;
+        }
+
+        var $dropdown = $('<div class="dropdown" />');
+        $dropdown.append('<i class="menu-btn fa fa-ellipsis-v dropdown-toggle" type="button"  data-toggle="dropdown"></i>');
+
+        var $dropDownMenu = $('<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu">');
+        $dropDownMenu.append(createMenuItem('Details'));
+        $dropDownMenu.append(createMenuItem('Settings'));
+        $dropDownMenu.append(createMenuItem('Delete', 'remove-btn'));
+
+        $dropdown.append($dropDownMenu);
         var $elem = $(html)
             .addClass('grid-widget instance')
             .attr('data-widget-id', widgetCode)
             .append($widgetIcon)
-            .append('<div class="widget-name">' + widgetDescr + '</div>');
+            .append('<div class="widget-name">' + widgetDescr + '</div>')
+            .append($dropdown);
 
 
-        $elem.find('.remove-btn').click(function() {
 
+        // FIXME menu-btn
+        $elem.find('.remove-btn').click(function(e) {
+
+            e.stopPropagation();
             var framePos = +$elem.parent().attr('data-pos');
 
             // FIXME use styled modal
@@ -145,6 +167,7 @@ $(function() {
                 }
             });
         });
+
 
         return $elem;
     }

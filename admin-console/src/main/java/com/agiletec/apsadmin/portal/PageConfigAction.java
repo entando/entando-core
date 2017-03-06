@@ -25,10 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.portal.model.DeleteWidgetResponse;
 import com.agiletec.apsadmin.portal.model.JoinWidgetResponse;
+import com.agiletec.apsadmin.portal.model.PageResponse;
 import com.agiletec.apsadmin.portal.model.SwapWidgetRequest;
 import com.agiletec.apsadmin.portal.model.SwapWidgetRequestValidator;
 import com.agiletec.apsadmin.portal.model.SwapWidgetResponse;
@@ -255,6 +257,45 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 
 	public SwapWidgetResponse getMoveWidgetResponse() {
 		SwapWidgetResponse response = new SwapWidgetResponse(this);
+		if (StringUtils.isNotBlank(this.getPageCode())) {
+			IPage page = this.getPage(this.getPageCode());
+			response.setPage(page);
+		}
+		return response;
+	}
+
+
+	public String restoreOnlineConfig() {
+		try {
+			IPage page = this.getPage(this.getPageCode());
+			if (!this.isUserAllowed(page)) {
+				_logger.info("Curent user not allowed");
+				this.addActionError(this.getText("error.page.userNotAllowed"));
+				return "pageTree";
+			}
+			if (null == page) {
+				_logger.info("Null page code");
+				this.addActionError(this.getText("error.page.invalidPageCode"));
+				return "pageTree";
+			}
+			if (!page.isOnline()) {				
+				this.addActionError(this.getText("error.page.restore.invalidStatus"));
+				return "pageTree";
+			}
+
+			((Page)page).setDraftMetadata(page.getOnlineMetadata());
+			((Page)page).setDraftWidgets(page.getOnlineWidgets());
+			this.getPageManager().updatePage(page);
+			this.addActivityStreamInfo(ApsAdminSystemConstants.EDIT, true);
+		} catch (Exception e) {
+			_logger.error("error in restoreOnlineConfig", e);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public PageResponse getRestoreOnlineConfigResponse() {
+		PageResponse response = new PageResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
 			IPage page = this.getPage(this.getPageCode());
 			response.setPage(page);

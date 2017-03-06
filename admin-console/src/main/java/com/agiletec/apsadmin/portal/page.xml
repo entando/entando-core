@@ -142,6 +142,27 @@
 				<param name="requestAuth.requiredPermission">managePages</param>
 			</interceptor-ref>
 		</action>
+		
+		<action name="restoreOnlineConfig" class="pageConfigAction" method="restoreOnlineConfig">
+			<result type="json">
+				<param name="root">restoreOnlineConfigResponse</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">deleteWidgetResponse</param>
+			</result>
+			<result name="pageTree" type="json">
+				<param name="root">deleteWidgetResponse</param>
+			</result>
+			<result name="failure" type="json">
+				<param name="root">deleteWidgetResponse</param>
+			</result>
+			<interceptor-ref name="jsonStack">
+			</interceptor-ref>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">managePages</param>
+			</interceptor-ref>
+		</action>
+
 
 
 	</package>

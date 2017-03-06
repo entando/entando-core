@@ -24,13 +24,28 @@
     margin: 0;
 }
 
-.grid-widget .remove-btn {
+.grid-widget .menu-btn {
     position: absolute;
     top: 5px;
     right: 5px;
+    width: 20px;
     font-size: 20px;
     color: #fff;
     cursor: pointer;
+    z-index: 1100;
+}
+
+.grid-widget .menu-btn[aria-expanded="true"] {
+    color: #000000;
+}
+
+
+.grid-widget .dropdown {
+    position: absolute;
+    top: 0;
+    height: 0;
+    width: 20px;
+    right: 0;
 }
 
 .grid-widget .slot-name {

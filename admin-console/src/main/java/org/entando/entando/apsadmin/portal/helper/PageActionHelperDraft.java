@@ -11,13 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.apsadmin.portal.helper;
+package org.entando.entando.apsadmin.portal.helper;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.entando.entando.apsadmin.portal.node.DraftPageNode;
+import org.entando.entando.apsadmin.portal.node.PageDraftTreeNodeWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +29,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.PageMetadata;
-import com.agiletec.apsadmin.system.DraftPageNode;
-import com.agiletec.apsadmin.system.PageDraftTreeNodeWrapper;
+import com.agiletec.apsadmin.portal.helper.AbstractPageActionHelper;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
 

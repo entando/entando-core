@@ -10,8 +10,8 @@
         <property name="configService" ref="BaseConfigManager" />
     </bean>
     
-    <bean id="pageActionHelperOnline" class="com.agiletec.apsadmin.portal.helper.PageActionHelperOnline" parent="abstractPageActionHelper" />
-    <bean id="pageActionHelperDraft" class="com.agiletec.apsadmin.portal.helper.PageActionHelperDraft" parent="abstractPageActionHelper" />
+    <bean id="pageActionHelperOnline" class="org.entando.entando.apsadmin.portal.helper.PageActionHelperOnline" parent="abstractPageActionHelper" />
+    <bean id="pageActionHelperDraft" class="org.entando.entando.apsadmin.portal.helper.PageActionHelperDraft" parent="abstractPageActionHelper" />
     
     <bean id="abstractPortalAction" abstract="true" class="com.agiletec.apsadmin.portal.AbstractPortalAction" parent="abstractBaseAction" >
         <property name="groupManager" ref="GroupManager" />

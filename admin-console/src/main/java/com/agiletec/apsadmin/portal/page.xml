@@ -146,52 +146,17 @@
 
 	</package>
 	
-    <package name="core_do/Page" namespace="/do/Page" extends="entando-default">
-    	
+    <package name="core_do/ABSTRACT/Page" extends="entando-default" abstract="true">
+
     	<global-results>
     		<result name="pageTree" type="chain">viewTree</result>
     	</global-results>
-    	
-    	<action name="viewTree" class="pageTreeAction">
-            <result type="tiles">admin.Page.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack">
-        		<param name="requestAuth.requiredPermission">managePages</param>
-        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
-        	</interceptor-ref>
-        </action>
 
-        <action name="systemParams" class="pageSettingsAction" method="configSystemParams">
-            <result type="tiles">admin.Page.settings</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
-        </action>
-
-        <action name="updateSystemParams" class="pageSettingsAction" method="updateSystemParams">
-            <result type="tiles">admin.Page.settings</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
-        </action>
-  
-        <action name="viewTreeMenu" class="pageTreeMenuAction" method="intro">
-            <result type="tiles">admin.Page.viewTreeMenu</result>
-        	<interceptor-ref name="entandoDefaultStack">
-        		<param name="requestAuth.requiredPermission">managePages</param>
-        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
-        	</interceptor-ref>
-        </action>
-        
-        <action name="configure" class="pageTreeMenuAction" method="intro">
-        	<result type="tiles">admin.Page.viewTreeMenu</result>
-            <interceptor-ref name="entandoDefaultStack">
-            	<param name="requestAuth.requiredPermission">managePages</param>
-            	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
-            </interceptor-ref>
-        </action>        
-        
-        
         <action name="new" class="pageAction" method="newPage">
             <result type="tiles">admin.Page.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
-        
+    
         <action name="edit" class="pageAction" method="edit">
             <result type="tiles">admin.Page.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
@@ -201,7 +166,7 @@
             <result type="tiles">admin.Page.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
-        
+
         <action name="trash" class="pageAction" method="trash">
         	<result name="references" type="tiles">admin.Page.references</result>
         	<result type="tiles">admin.Page.trash</result>
@@ -216,42 +181,7 @@
         	<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
-        
-        <action name="moveUp" class="pageTreeAction" method="moveUp">
-        	<result type="tiles">admin.Page.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <action name="moveDown" class="pageTreeAction" method="moveDown">
-        	<result type="tiles">admin.Page.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <action name="openCloseTreeNode" class="pageTreeAction" method="buildTree">
-    		<result type="tiles">admin.Page.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <action name="copy" class="pageTreeAction" method="copy">
-        	<result type="tiles">admin.Page.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <action name="paste" class="pageAction" method="paste">
-            <result type="tiles">admin.Page.entry</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <action name="joinExtraGroup*" class="pageAction" method="joinExtraGroup">
-            <result type="tiles">admin.Page.entry</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <action name="removeExtraGroup*" class="pageAction" method="removeExtraGroup">
-            <result type="tiles">admin.Page.entry</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
+
         <action name="save" class="pageAction" method="save">
             <result name="input" type="tiles">admin.Page.entry</result>
         	<result type="redirectAction">
@@ -260,6 +190,16 @@
         	</result>
 			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+ 
+        <action name="detail" class="pageAction" method="showDetail">
+            <result type="tiles">admin.Page.detail</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+		
+        <action name="printPageDetails" class="pageAction" method="showDetail">
+            <result type="dispatcher">/WEB-INF/apsadmin/jsp/portal/include/pageInfo_details.jsp</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
         
         <action name="checkPutOffline" class="pageAction" method="checkPutOffline">
@@ -297,25 +237,7 @@
 			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
-		
-        <action name="detail" class="pageAction" method="showDetail">
-            <result type="tiles">admin.Page.detail</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-		
-        <action name="printPageDetails" class="pageAction" method="showDetail">
-            <result type="dispatcher">/WEB-INF/apsadmin/jsp/portal/include/pageInfo_details.jsp</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <action name="search" class="pageFinderAction">
-        	<result name="input" type="tiles">admin.Page.searchResult</result>
-        	<result type="tiles">admin.Page.searchResult</result>
-        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
-        </action>
-        
-        <!-- ######### INIZIO OPERAZIONI CONFIGURAZIONE FRAME PAGINA ######### -->
-        
+
         <action name="doConfigure" class="pageConfigAction" >
         	<result type="redirectAction">
         		<param name="actionName">configure</param>
@@ -326,17 +248,135 @@
             	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
             </interceptor-ref>
         </action>
-        
-        <!-- 
-        <action name="configure" class="pageConfigAction" method="configure">
-        	<result type="tiles">admin.Page.configure</result>
+
+    </package>
+	
+	
+    <package name="core_do/Page/Console" namespace="/do/Page/Console" extends="core_do/ABSTRACT/Page">
+
+        <action name="viewTree" class="pageConfigAction" >
+        	<result type="redirectAction">
+        		<param name="actionName">configure</param>
+        		<param name="pageCode">${selectedNode}</param>
+        	</result>
             <interceptor-ref name="entandoDefaultStack">
             	<param name="requestAuth.requiredPermission">managePages</param>
             	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
             </interceptor-ref>
-        </action>
-         -->
+        </action> 
         
+        <action name="viewTreeMenu" class="pageTreeMenuAction" method="intro">
+            <result type="tiles">admin.Page.viewTreeMenu</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">managePages</param>
+        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+        	</interceptor-ref>
+        </action>
+   
+        <action name="configure" class="pageTreeMenuAction" method="intro">
+        	<result type="tiles">admin.Page.viewTreeMenu</result>
+            <interceptor-ref name="entandoDefaultStack">
+            	<param name="requestAuth.requiredPermission">managePages</param>
+            	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action> 
+
+
+        <action name="copy" class="pageTreeAction" method="copy">
+        	<result type="tiles">admin.Page.viewTree</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="paste" class="pageAction" method="paste">
+            <result type="tiles">admin.Page.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+	</package>
+	
+	
+    <package name="core_do/Page" namespace="/do/Page" extends="core_do/ABSTRACT/Page">
+
+    	<action name="viewTree" class="pageTreeAction">
+            <result type="tiles">admin.Page.viewTree</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">managePages</param>
+        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+        	</interceptor-ref>
+        </action>
+
+        <action name="systemParams" class="pageSettingsAction" method="configSystemParams">
+            <result type="tiles">admin.Page.settings</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+
+        <action name="updateSystemParams" class="pageSettingsAction" method="updateSystemParams">
+            <result type="tiles">admin.Page.settings</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+  
+        <action name="viewTreeMenu" class="pageTreeMenuAction" method="intro">
+            <result type="tiles">admin.Page.viewTreeMenu</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">managePages</param>
+        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+        	</interceptor-ref>
+        </action>
+        
+        <action name="configure" class="pageTreeMenuAction" method="intro">
+        	<result type="tiles">admin.Page.viewTreeMenu</result>
+            <interceptor-ref name="entandoDefaultStack">
+            	<param name="requestAuth.requiredPermission">managePages</param>
+            	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action>        
+
+        
+        <action name="moveUp" class="pageTreeAction" method="moveUp">
+        	<result type="tiles">admin.Page.viewTree</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="moveDown" class="pageTreeAction" method="moveDown">
+        	<result type="tiles">admin.Page.viewTree</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="openCloseTreeNode" class="pageTreeAction" method="buildTree">
+    		<result type="tiles">admin.Page.viewTree</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="copy" class="pageTreeAction" method="copy">
+        	<result type="tiles">admin.Page.viewTree</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="paste" class="pageAction" method="paste">
+            <result type="tiles">admin.Page.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="joinExtraGroup*" class="pageAction" method="joinExtraGroup">
+            <result type="tiles">admin.Page.entry</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <action name="removeExtraGroup*" class="pageAction" method="removeExtraGroup">
+            <result type="tiles">admin.Page.entry</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        
+        <action name="search" class="pageFinderAction">
+        	<result name="input" type="tiles">admin.Page.searchResult</result>
+        	<result type="tiles">admin.Page.searchResult</result>
+        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
+        </action>
+        
+        <!-- ######### INIZIO OPERAZIONI CONFIGURAZIONE FRAME PAGINA ######### -->
+        
+
         <action name="editFrame" class="pageConfigAction" method="editFrame">
         	<result name="configureSpecialWidget" type="chain">
         		<param name="namespace">/do/Page/SpecialWidget</param>

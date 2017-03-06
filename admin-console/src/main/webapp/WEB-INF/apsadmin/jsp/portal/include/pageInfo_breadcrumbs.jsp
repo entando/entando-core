@@ -13,7 +13,7 @@
 		<s:property value="getTitle(#target.code, #target.draftTitles)" />
 	</s:if>
 	<s:else>
-		<a href="<s:url namespace="/do/Page" action="viewTree" ><s:param name="selectedNode"><s:property value="#target.code" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: <s:property value="getTitle(#target.code, #target.draftTitles)" />">
+		<a href="<s:url action="viewTree" ><s:param name="selectedNode"><s:property value="#target.code" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: <s:property value="getTitle(#target.code, #target.draftTitles)" />">
 			<s:if test="%{#rowstatus.index == 0}"><span class="icon fa fa-home"></span>&#32;</s:if>
 			<s:property value="getTitle(#target.code, #target.draftTitles)" />
 		</a>

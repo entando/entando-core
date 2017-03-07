@@ -119,7 +119,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			if (null != result) return result;
 			
 			IPage page = this.getPage(this.getPageCode());
-			if (null != page.getDraftWidgets()[0]) {
+			if (null != page.getDraftWidgets()[this.getFrame()]) {
 				this.addActionError(this.getText("error.page.join.frameNotEmpty"));
 				return "pageTree";
 			}

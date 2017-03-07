@@ -11,6 +11,9 @@ $(function() {
     // contains previous slots HTML
     var gridSlots = {};
 
+    // contains page details data
+    var pageData = null;
+
 
 
     function initPageDetail() {
@@ -23,6 +26,9 @@ $(function() {
                 pageCode: PROPERTY.code
             }),
             success: function(data) {
+
+                pageData = data.page;
+
                 var $pageInfo = $('#page-info'),
                     metadata = data.page.draftMetadata,
                     checkElems = {
@@ -39,6 +45,8 @@ $(function() {
                 $pageInfo.find('[data-info-showmenu]').html(checkElems[_.toString(data.page.showable)]);
                 $pageInfo.find('[data-info-extratitles]').html(checkElems[_.toString(data.page.useExtraTitles)]);
 
+                // now we have page and widget data, we can initialize the grid
+                initGrid();
             }
         });
     }
@@ -98,6 +106,14 @@ $(function() {
     }
 
 
+
+    function findWidgetInfo(widgetCode) {
+        if (!pageData) {
+            return null;
+        }
+        return _.find(pageData.draftWidgets, { type: { code: widgetCode } });
+    }
+
     /**
      * Creates a grid widget element
      * @param {string} widgetCode
@@ -106,19 +122,17 @@ $(function() {
 
         var $widget = $('.widget-square[data-widget-id="' + widgetCode + '"]').first(),
             widgetDescr = $widget.find('.widget-name').text(),
-            $widgetIcon = $widget.find('.widget-icon').clone();
+            $widgetIcon = $widget.find('.widget-icon').clone(),
+            widgetInfo = findWidgetInfo(widgetCode);
 
         var html = '<div>' +
             '<div class="slot-name"></div>' +
             '</div>';
 
 
-        function createMenuItem(label, classes) {
+        function createMenuItem(label) {
             var $menuItem = $('<li role="presentation"><a role="menuitem" tabindex="-1" href="#"></a></li>');
             $menuItem.find('a[role="menuitem"]').text(label);
-            if (classes) {
-                $menuItem.addClass(classes);
-            }
             return $menuItem;
         }
 
@@ -126,24 +140,40 @@ $(function() {
         $dropdown.append('<i class="menu-btn fa fa-ellipsis-v dropdown-toggle" type="button"  data-toggle="dropdown"></i>');
 
         var $dropDownMenu = $('<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu">');
-        $dropDownMenu.append(createMenuItem('Details'));
-        $dropDownMenu.append(createMenuItem('Settings'));
-        $dropDownMenu.append(createMenuItem('Delete', 'remove-btn'));
-
         $dropdown.append($dropDownMenu);
-        var $elem = $(html)
-            .addClass('grid-widget instance')
-            .attr('data-widget-id', widgetCode)
-            .append($widgetIcon)
-            .append('<div class="widget-name">' + widgetDescr + '</div>')
-            .append($dropdown);
+
+        // create menu items
+        var $detailsItem = createMenuItem(TEXT['widgetActions.details']),
+            $settingsItem = createMenuItem(TEXT['widgetActions.settings']),
+            $apiItem = createMenuItem(TEXT['widgetActions.api']);
+
+        $dropDownMenu.append($detailsItem);
+        $dropDownMenu.append($settingsItem);
+        $dropDownMenu.append($apiItem);
 
 
 
-        // FIXME menu-btn
-        $elem.find('.remove-btn').click(function(e) {
+        $detailsItem.click(function(e) {
+            window.location = PROPERTY.baseUrl +
+                'do/Portal/WidgetType/viewWidgetUtilizers.action?widgetTypeCode=' + widgetCode
+        });
 
-            e.stopPropagation();
+
+        if (widgetInfo && widgetInfo.config && widgetInfo.type.logic === false) {
+            var $newWidgetItem = createMenuItem(TEXT['widgetActions.newWidget']);
+            $dropDownMenu.append($newWidgetItem);
+            $newWidgetItem.click(function(e) {
+                var framePos = +$elem.parent().attr('data-pos');
+                window.location = PROPERTY.baseUrl +
+                    'do/Portal/WidgetType/copy.action?pageCode=' + PROPERTY.code + '&framePos=' + framePos
+            });
+        }
+
+
+        var $deleteItem = createMenuItem(TEXT['widgetActions.delete']);
+        $dropDownMenu.append($deleteItem);
+        $deleteItem.click(function(e) {
+
             var framePos = +$elem.parent().attr('data-pos');
 
             // FIXME use styled modal
@@ -167,6 +197,15 @@ $(function() {
                 }
             });
         });
+
+
+        // widget element
+        var $elem = $(html)
+            .addClass('grid-widget instance')
+            .attr('data-widget-id', widgetCode)
+            .append($widgetIcon)
+            .append('<div class="widget-name">' + widgetDescr + '</div>')
+            .append($dropdown);
 
 
         return $elem;
@@ -222,10 +261,10 @@ $(function() {
             });
 
             // populates the slots
-            _.forEach(curWidgets, function (widget) {
-                if (widget.widgetType) {
-                    var $curWidget = createGridWidget(widget.widgetType);
-                    var $slot = $('.grid-slot[data-pos="' + widget.index + '"]');
+            _.forEach(pageData.draftWidgets, function (widget, index) {
+                if (widget) {
+                    var $curWidget = createGridWidget(_.get(widget, 'type.code'));
+                    var $slot = $('.grid-slot[data-pos="' + index + '"]');
                     populateSlot($slot, $curWidget);
                 }
             });
@@ -356,7 +395,6 @@ $(function() {
 
     if (PAGE_IS_SELECTED) {
         setDraggable($('.widget-square'), null);
-        initGrid();
         initPageDetail();
     } else {
         $('#page-info, [data-target="#page-info"]').remove();

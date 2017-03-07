@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 
 /**
  * @author E.Santoboni
@@ -108,15 +107,8 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}
-
-	protected IPageActionHelper getPageActionHelper() {
-		return _pageActionHelper;
-	}
-	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
-		this._pageActionHelper = pageActionHelper;
-	}
 	
 	private String _widgetTypeCode;
-	private IPageActionHelper _pageActionHelper;
+
 	
 }

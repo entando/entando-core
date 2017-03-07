@@ -32,7 +32,7 @@
     font-size: 20px;
     color: #fff;
     cursor: pointer;
-    z-index: 1100;
+    z-index: 1010;
 }
 
 .grid-widget .menu-btn[aria-expanded="true"] {

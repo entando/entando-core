@@ -1,4 +1,4 @@
-package com.agiletec.apsadmin.tags;
+package org.entando.entando.apsadmin.tags;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -57,7 +57,6 @@ public class PageTreeTag extends StrutsBodyTagSupport {
 		Set<String> targets = this.convertCollection(this.getTreeNodesToOpen());
 		try {
 			String targetNode = this.getTargetNode();
-			// TODO Verificare
 			Boolean open = this.getOpen();
 			if (open != null && !open) {
 				targets = helper.checkTargetNodesOnClosing(targetNode, targets, allowedGroups);

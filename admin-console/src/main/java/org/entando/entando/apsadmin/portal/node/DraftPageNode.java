@@ -1,4 +1,4 @@
-package com.agiletec.apsadmin.system;
+package org.entando.entando.apsadmin.portal.node;
 
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.page.IPage;

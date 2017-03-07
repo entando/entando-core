@@ -20,6 +20,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.apsadmin.portal.rs.model.DeleteWidgetResponse;
+import org.entando.entando.apsadmin.portal.rs.model.JoinWidgetResponse;
+import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
+import org.entando.entando.apsadmin.portal.rs.model.SwapWidgetRequest;
+import org.entando.entando.apsadmin.portal.rs.model.SwapWidgetResponse;
+import org.entando.entando.apsadmin.portal.rs.validator.ISwapWidgetRequestValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +34,6 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import com.agiletec.apsadmin.portal.model.DeleteWidgetResponse;
-import com.agiletec.apsadmin.portal.model.JoinWidgetResponse;
-import com.agiletec.apsadmin.portal.model.PageResponse;
-import com.agiletec.apsadmin.portal.model.SwapWidgetRequest;
-import com.agiletec.apsadmin.portal.model.SwapWidgetRequestValidator;
-import com.agiletec.apsadmin.portal.model.SwapWidgetResponse;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
 /**
@@ -43,16 +43,6 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 public class PageConfigAction extends AbstractPortalAction implements ServletResponseAware {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageConfigAction.class);
-	private HttpServletResponse response;
-
-	@Autowired
-	private SwapWidgetRequestValidator validator;
-
-	@Override
-	public void setServletResponse(HttpServletResponse response) {
-		this.response = response;
-	}
-
 
 	public String configure() {
 		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
@@ -240,12 +230,11 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		return response;		
 	}
-
-
+	
 	public String move() {
 		try {
 			SwapWidgetRequest ajaxRequest = this.getSwapWidgetRequest();
-			this.validator.validateRequest(ajaxRequest, this);
+			this.getValidator().validateRequest(ajaxRequest, this);
 			if (this.hasActionErrors() || this.hasFieldErrors()) {
 				this.response.setStatus(Status.BAD_REQUEST.getStatusCode());
 				return INPUT;
@@ -261,7 +250,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		this.setPageCode(swapWidgetRequest.getPageCode());
 		return SUCCESS;
 	}
-
+	
 	public SwapWidgetResponse getMoveWidgetResponse() {
 		SwapWidgetResponse response = new SwapWidgetResponse(this);
 		if (StringUtils.isNotBlank(this.getPageCode())) {
@@ -408,6 +397,11 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public void setWidget(Widget widget) {
 		this._widget = widget;
 	}
+	
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;
+	}
 
 	public SwapWidgetRequest getSwapWidgetRequest() {
 		return swapWidgetRequest;
@@ -423,13 +417,23 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		this._pageActionHelper = pageActionHelper;
 	}
 
+	protected ISwapWidgetRequestValidator getValidator() {
+		return validator;
+	}
+	@Autowired
+	public void setValidator(ISwapWidgetRequestValidator validator) {
+		this.validator = validator;
+	}
+
 	private String _pageCode;
 	private int _frame = -1;
 	private String _widgetAction;
 	private String _widgetTypeCode;	
 	private Widget _widget;
 	private SwapWidgetRequest swapWidgetRequest;
-
+	
+	private HttpServletResponse response;
 	private IPageActionHelper _pageActionHelper;
-
+	private ISwapWidgetRequestValidator validator;
+	
 }

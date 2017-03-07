@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response.Status;
@@ -28,6 +29,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +45,6 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import com.agiletec.apsadmin.portal.model.PageResponse;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
 
@@ -52,19 +53,8 @@ import com.agiletec.apsadmin.system.BaseActionHelper;
  * @author E.Santoboni
  */
 public class PageAction extends AbstractPortalAction implements ServletResponseAware {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(PageAction.class);
-	private HttpServletResponse response;
-	
-	@Override
-	public void setServletResponse(HttpServletResponse response) {
-		this.response = response;
-	}
-	
-	public HttpServletResponse getServletResponse() {
-		return this.response;
-	}
-	
 	
 	@Override
 	public void validate() {
@@ -77,13 +67,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		this.checkTitles();
 	}
 	
-	@Override
-	public String execute() throws Exception {
-		if (null != this.getSelectedNode()) {
-			this.getTreeNodesToOpen().add(this.getSelectedNode());
-		}
-		return super.execute();
-	}
+//	@Override
+//	// TODO Verificare
+//	public String execute() throws Exception {
+//		if (null != this.getSelectedNode()) {
+//			this.getTreeNodesToOpen().add(this.getSelectedNode());
+//		}
+//		return super.execute();
+//	}
 	
 	protected String checkParentNode(String selectedNode) {
 		if (null == selectedNode || selectedNode.trim().length() == 0) {
@@ -169,9 +160,9 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	}
 
 	public String settingsPage() {
-      // stub method
-  		return SUCCESS;
-  }
+		// stub method
+		return SUCCESS;
+	}
 	
 	protected void valueFormForNew(IPage parentPage) {
 		String groupName = null;
@@ -257,7 +248,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		return SUCCESS;
 	}
 	
-	protected void valueFormForEdit(IPage pageToEdit) {
+	protected void valueFormForEdit(IPage pageToEdit) throws CloneNotSupportedException {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		this.setParentPageCode(pageToEdit.getParent().getCode());
 		this.setPageCode(pageToEdit.getCode());
@@ -267,25 +258,19 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		this.setGroupSelectLock(true);
 	}
 	
-	public String paste() {
+	public String copy() {
 		String selectedNode = this.getSelectedNode();
-		String copyingPageCode = this.getRequest().getParameter("copyingPageCode");
 		try {
 			String check = this.checkSelectedNode(selectedNode);
 			if (null != check) {
 				return check;
 			}
-			if ("".equals(copyingPageCode) || null == this.getPage(copyingPageCode)) {
-				this.addActionError(this.getText("error.page.selectPageToCopy"));
-				return "pageTree";
-			}
-			IPage selectedPage = this.getPage(selectedNode);
-			IPage copiedPage = this.getPage(copyingPageCode);
+			IPage pageToCopy = this.getPage(selectedNode);
 			this.setStrutsAction(ApsAdminSystemConstants.PASTE);
-			this.setCopyPageCode(copyingPageCode);
-			this.setGroup(selectedPage.getGroup());
-			PageMetadata draftMetadata = copiedPage.getDraftMetadata();
-			this.copyMetadataToForm(draftMetadata);
+			this.setCopyPageCode(selectedNode);
+			this.setGroup(pageToCopy.getGroup());
+			PageMetadata metadata = pageToCopy.isOnline() ? pageToCopy.getOnlineMetadata() : pageToCopy.getDraftMetadata();
+			this.copyMetadataToForm(metadata);
 			this.getTitles().clear();
 			this.setParentPageCode(selectedNode);
 		} catch (Throwable t) {
@@ -295,8 +280,9 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		return SUCCESS;
 	}
 	
-	private void copyMetadataToForm(PageMetadata metadata) {
+	private void copyMetadataToForm(PageMetadata metadata) throws CloneNotSupportedException {
 		if (metadata != null) {
+			metadata = metadata.clone();
 			this.setTitles(metadata.getTitles());
 			this.setExtraGroups(metadata.getExtraGroups());
 			this.setModel(metadata.getModel().getCode());
@@ -353,35 +339,35 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		return response;
 	}
 	
-	
 	protected IPage buildNewPage() throws ApsSystemException {
 		Page page = new Page();
 		try {
 			page.setParent(this.getPage(this.getParentPageCode()));
-			page.setGroup(this.getGroup());
-			PageMetadata draftMetadata = new PageMetadata();
-			this.valueMetadataFromForm(draftMetadata);
-			page.setDraftMetadata(draftMetadata);
 			
 			if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
 				IPage copyPage = this.getPage(this.getCopyPageCode());
-				page.setOnlineWidgets(copyPage.getOnlineWidgets());
-				page.setDraftWidgets(copyPage.getDraftWidgets());
-				PageMetadata onlineMetadata = copyPage.getOnlineMetadata();
-				if (onlineMetadata != null) {
-					PageMetadata cloneMetadata = onlineMetadata.clone();
-					cloneMetadata.setTitles(draftMetadata.getTitles());
-					page.setOnlineMetadata(cloneMetadata);
+				boolean online = copyPage.isOnline();
+				page.setDraftWidgets(online ? copyPage.getOnlineWidgets() : copyPage.getDraftWidgets());
+				PageMetadata metadata = online ? copyPage.getOnlineMetadata() : copyPage.getDraftMetadata();
+				if (metadata != null) {
+					metadata = metadata.clone();
+					metadata.setTitles(this.getTitles());
+					page.setDraftMetadata(metadata);
 				}
+				page.setGroup(copyPage.getGroup());
 			} else {
+				page.setGroup(this.getGroup());
+				PageMetadata metadata = new PageMetadata();
+				this.valueMetadataFromForm(metadata);
+				page.setDraftMetadata(metadata);
 				if (this.isDefaultShowlet()) {
 					this.setDefaultWidgets(page);
 				} else {
-					page.setDraftWidgets(new Widget[draftMetadata.getModel().getFrames().length]);
+					page.setDraftWidgets(new Widget[metadata.getModel().getFrames().length]);
 				}
 			}
 			//ricava il codice
-			page.setCode(this.buildNewPageCode(draftMetadata));
+			page.setCode(this.buildNewPageCode(page.getDraftMetadata()));
 		} catch (Throwable t) {
 			_logger.error("Error building new page", t);
 			throw new ApsSystemException("Error building new page", t);
@@ -414,7 +400,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			
 			this.valueMetadataFromForm(metadata);
 			if (oldModel == null || !oldModel.getCode().equals(this.getModel())) {
-				//Ho cambiato modello e allora cancello tutte le showlets Precedenti
+				// The model is changed, so I drop all the previous widgets
 				page.setDraftWidgets(new Widget[metadata.getModel().getFrames().length]);
 			}
 			if (this.isDefaultShowlet()) {
@@ -470,14 +456,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		}
 	}
 	
-	public String checkPutOffline() {
+	public String checkSetOffline() {
 		String pageCode = this.getPageCode();
 		try {
 			if (StringUtils.isEmpty(pageCode)) {
 				pageCode = this.getSelectedNode();
 				this.setPageCode(pageCode);
 			}
-			String check = this.checkPutOffline(pageCode);
+			String check = this.checkSetOffline(pageCode);
 			if (null != check) {
 				return check;
 			}
@@ -490,7 +476,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		return SUCCESS;
 	}
 	
-	public String doPutOffline() {
+	public String doSetOffline() {
 		String pageCode = this.getPageCode();
 		try {
 			if (StringUtils.isEmpty(pageCode)) {
@@ -498,7 +484,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				this.setPageCode(pageCode);
 			}
 			IPageManager pageManager = this.getPageManager();
-			String check = this.checkPutOffline(pageCode);
+			String check = this.checkSetOffline(pageCode);
 			if (null != check) {
 				return check;
 			}
@@ -508,13 +494,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			// TODO Define a new strutsAction to map "offline" operation
 			this.addActivityStreamInfo(page, ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
-			_logger.error("error putting page {} offline", pageCode, t);
+			_logger.error("error setting page {} offline", pageCode, t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
 	
-	public String checkPutOnline() {
+	public String checkSetOnline() {
 		String pageCode = this.getPageCode();
 		try {
 			if (StringUtils.isEmpty(pageCode)) {
@@ -532,7 +518,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		return SUCCESS;
 	}
 	
-	public String doPutOnline() {
+	public String doSetOnline() {
 		String pageCode = this.getPageCode();
 		try {
 			if (StringUtils.isEmpty(pageCode)) {
@@ -550,7 +536,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			// TODO Define a new strutsAction to map "offline" operation
 			this.addActivityStreamInfo(page, ApsAdminSystemConstants.EDIT, true);
 		} catch (Throwable t) {
-			_logger.error("error putting page {} online", pageCode, t);
+			_logger.error("error setting page {} online", pageCode, t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -564,11 +550,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				return check;
 			}
 			IPage currentPage = this.getPage(selectedNode);
-			Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
-			if (references.size()>0) {
-				this.setReferences(references);
-				return "references";
-			}
 			this.setNodeToBeDelete(selectedNode);
 			this.setSelectedNode(currentPage.getParent().getCode());
 		} catch (Throwable t) {
@@ -579,14 +560,16 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	}
 	
 	public String delete() {
+		String selectedNode = this.getNodeToBeDelete();
 		try {
 			IPageManager pageManager = this.getPageManager();
-			String check = this.checkDelete(this.getNodeToBeDelete());
+			String check = this.checkDelete(selectedNode);
 			if (null != check) {
 				return check;
 			}
-			IPage pageToDelete = this.getPage(this.getNodeToBeDelete());
-			pageManager.deletePage(this.getNodeToBeDelete());
+			IPage pageToDelete = this.getPage(selectedNode);
+			pageManager.deletePage(selectedNode);
+			this.setSelectedNode(pageToDelete.getParentCode());
 			this.addActivityStreamInfo(pageToDelete, ApsAdminSystemConstants.DELETE, false);
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
@@ -595,7 +578,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		return SUCCESS;
 	}
 	
-	protected String checkPutOffline(String selectedNode) throws ApsSystemException {
+	protected String checkSetOffline(String selectedNode) throws ApsSystemException {
 		String check = this.checkSelectedNode(selectedNode);
 		if (null != check) {
 			return check;
@@ -617,7 +600,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		return null;
 	}
 	
-	protected String checkDelete(String selectedNode) {
+	protected String checkDelete(String selectedNode) throws ApsSystemException {
 		String check = this.checkSelectedNode(selectedNode);
 		if (null != check) {
 			return check;
@@ -633,6 +616,12 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		} else if (currentPage.getAllChildren().length != 0) {
 			this.addActionError(this.getText("error.page.remove.notAllowed2"));
 			return "pageTree";
+        } else {
+        	Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
+        	if (references.size()>0) {
+        		this.setReferences(references);
+        		return "references";
+        	}
         }
 		return null;
 	}
@@ -839,6 +828,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		this._treeNodeActionMarkerCode = treeNodeActionMarkerCode;
 	}
 	
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;
+	}
+	public HttpServletResponse getServletResponse() {
+		return this.response;
+	}
+	
 	protected IPageActionHelper getPageActionHelper() {
 		return _pageActionHelper;
 	}
@@ -858,7 +855,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	private String _copyPageCode;
 	private String _group;
 	private boolean _groupSelectLock;
-	private Set<String> _extraGroups = new HashSet<String>();
+	private Set<String> _extraGroups = new TreeSet<String>();
 	private String _model;
 	private boolean _defaultShowlet = false;
 	private ApsProperties _titles = new ApsProperties();
@@ -881,6 +878,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	private String _targetNode;
 	private Set<String> _treeNodesToOpen = new HashSet<String>();
 	private String _treeNodeActionMarkerCode;
+	
+	private HttpServletResponse response;
 	
 	private IPageModelManager _pageModelManager;
 	private IPageActionHelper _pageActionHelper;

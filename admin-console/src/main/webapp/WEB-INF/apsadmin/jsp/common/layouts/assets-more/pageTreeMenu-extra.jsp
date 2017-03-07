@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/entando.grid-generator.css"/>
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/pageTreeMenu.css"/>
 
+<script src="<wp:resourceURL />administration/js/entando.alert.js"></script>
 <script src="<wp:resourceURL />administration/js/jquery.xml2json.js"></script>
 <script src="<wp:resourceURL />administration/js/lodash.js"></script>
 <script src="<wp:resourceURL />administration/js/entando.grid-generator.js"></script>

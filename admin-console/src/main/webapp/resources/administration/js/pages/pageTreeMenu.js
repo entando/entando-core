@@ -5,6 +5,9 @@ $(function() {
         moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget?code=' + PROPERTY.pagemodel,
         deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel,
         getPageDetailUrl = PROPERTY.baseUrl + 'do/rs/Page/detail',
+	      restoreOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/restoreOnlineConfig',
+	      setOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOnline',
+	      setOfflineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOffline',
         PAGE_IS_SELECTED = !!PROPERTY.pagemodel;
 
 
@@ -14,8 +17,77 @@ $(function() {
     // contains page details data
     var pageData = null;
 
+		var alertService = new EntandoAlert('.alert-container');
 
 
+		/**
+		 * Restores online configuration of the page
+		 */
+		function restoreOnlineConfig() {
+			$.ajax(restoreOnlineUrl, {
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					pageCode: PROPERTY.code
+				}),
+				success: function (data) {
+					if (alertService.showResponseAlerts(data)) {
+						return;
+					}
+					pageData = data.page;
+					initPageDetail();
+					updatePageStatus(pageData);
+				}
+			});
+		}
+
+		/**
+		 * Publish / unpublish the page
+		 * @param {boolean} online - true to publish, false to unpublish
+		 */
+		function setPageOnlineStatus(online) {
+			$.ajax(online ? setOnlineUrl : setOfflineUrl, {
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					pageCode: PROPERTY.code
+				}),
+				success: function (data) {
+					if (alertService.showResponseAlerts(data)) {
+						return;
+					}
+					pageData = data.page;
+					updatePageStatus(pageData);
+				}
+			});
+		}
+
+
+		/**
+		 * Updates the page status circle color
+		 */
+		function updatePageStatus(pageData) {
+			var hasChanges = !_.isEqual(pageData.draftWidgets, pageData.onlineWidgets);
+
+			// updates the yellow/green page circle in the tree
+			$('#pageTree tr#' + PROPERTY.code + ' .statusField .fa')
+				.removeClass('green yellow')
+				.addClass(hasChanges ? 'yellow' : 'green');
+
+			// updates the buttons visibility
+			var showPublish = !pageData.online || pageData.online && hasChanges ? 'show' : 'hide';
+			var showUnpublish = pageData.online ? 'show' : 'hide';
+			var showRestoreOnline = pageData.online ? 'show' : 'hide';
+
+			$('.restore-online-btn')[showRestoreOnline]();
+			$('.publish-btn')[showPublish]();
+			$('.unpublish-btn')[showUnpublish]();
+
+		}
+
+		/**
+		 * Initializes page detail and widget data
+		 */
     function initPageDetail() {
 
         // Initializes page detail
@@ -26,8 +98,11 @@ $(function() {
                 pageCode: PROPERTY.code
             }),
             success: function(data) {
-
+	              if (alertService.showResponseAlerts(data)) {
+		              return;
+	              }
                 pageData = data.page;
+	              updatePageStatus(pageData);
 
                 var $pageInfo = $('#page-info'),
                     metadata = data.page.draftMetadata,
@@ -57,6 +132,9 @@ $(function() {
         $.ajax(serviceUrl, {
             method: 'GET',
             success: function(data) {
+		            if (alertService.showResponseAlerts(data)) {
+			            return;
+		            }
                 updateGridPreview(data);
             },
             error: function() {
@@ -67,15 +145,6 @@ $(function() {
 
     function isEmptySlot(slot) {
         return _.isEmpty($(slot).find('.grid-widget'));
-    }
-
-    /**
-     * Tells if a call response has action errors
-     * @param {Object} data - the response
-     * @returns {boolean}
-     */
-    function hasErrors(data) {
-        return !_.isEmpty(data.actionErrors);
     }
 
 
@@ -190,10 +259,14 @@ $(function() {
                     frame: framePos
                 }),
                 success: function(data) {
-                    if (hasErrors(data)) {
-                        return;
-                    }
+		                if (alertService.showResponseAlerts(data)) {
+			                return;
+		                }
                     setEmptySlot($elem.parent());
+
+	                  // update local draft status
+	                  pageData.draftWidgets[framePos] = null;
+	                  updatePageStatus(pageData);
                 }
             });
         });
@@ -282,7 +355,8 @@ $(function() {
                     var $prevSlot = $(ui.draggable).parent(),
                         $curSlot = $(ev.target),
                         $curWidget = $(ui.draggable),
-                        curWidgetType = $curWidget.attr('data-widget-id');
+                        curWidgetType = $curWidget.attr('data-widget-id'),
+	                      curSlotPos = +$curSlot.attr('data-pos');
 
 
                     if ($prevSlot.is($curSlot)) {
@@ -307,12 +381,12 @@ $(function() {
                             data: JSON.stringify({
                                 pageCode: PROPERTY.code,
                                 widgetTypeCode: curWidgetType,
-                                frame: +$curSlot.attr('data-pos')
+                                frame: curSlotPos
                             }),
                             success: function(data) {
-                                if (hasErrors(data)) {
-                                    return;
-                                }
+		                            if (alertService.showResponseAlerts(data)) {
+			                            return;
+		                            }
                                 // widget needs configuration
                                 if (data.redirectLocation) {
                                     window.location = PROPERTY.baseUrl + data.redirectLocation.replace(/^\//, '');
@@ -321,9 +395,20 @@ $(function() {
 
                                 // no need for configuration
                                 populateSlot($curSlot, $curWidget);
+
+	                              // update local draft status
+	                              pageData.draftWidgets[curSlotPos] = {
+		                              config: null,
+		                              type: {
+			                              code: curWidgetType
+		                              }
+	                              };
+	                              updatePageStatus(pageData);
                             }
                         });
                     } else {
+
+	                      var prevSlotPos = +$prevSlot.attr('data-pos');
 
                         // move/swap the widget
                         $.ajax(moveWidgetUrl, {
@@ -331,25 +416,33 @@ $(function() {
                             contentType : 'application/json',
                             data: JSON.stringify({ swapWidgetRequest: {
                                 pageCode: PROPERTY.code,
-                                src: +$prevSlot.attr('data-pos'),
-                                dest: +$curSlot.attr('data-pos')
+                                src: prevSlotPos,
+                                dest: curSlotPos
                             }}),
                             success: function(data) {
-                                if (hasErrors(data)) {
-                                    return;
-                                }
+		                            if (alertService.showResponseAlerts(data)) {
+			                            return;
+		                            }
                                 var $prevWidget = $curSlot.find('.grid-widget');
                                 setEmptySlot($prevSlot);
                                 setEmptySlot($curSlot);
 
+																var prevDraftWidget = null;
 
                                 if (!_.isEmpty($prevWidget)) {
                                     var $otherWidget = createGridWidget($prevWidget.attr('data-widget-id'));
                                     populateSlot($prevSlot, $otherWidget);
+	                                  prevDraftWidget = pageData.draftWidgets[+$prevWidget.attr('data-widget-id')];
                                 }
 
                                 var $newCurWidget = createGridWidget(curWidgetType);
                                 populateSlot($curSlot, $newCurWidget);
+
+		                            // update local draft status
+	                              var park = pageData.draftWidgets[curSlotPos];
+		                            pageData.draftWidgets[curSlotPos] = pageData.draftWidgets[prevSlotPos];
+	                              pageData.draftWidgets[prevSlotPos] = park;
+		                            updatePageStatus(pageData);
                             }
                         });
                     }
@@ -396,8 +489,18 @@ $(function() {
     if (PAGE_IS_SELECTED) {
         setDraggable($('.widget-square'), null);
         initPageDetail();
+		    $('.restore-online-btn').click(function() {
+			      restoreOnlineConfig();
+		    });
+		    $('.publish-btn').click(function() {
+			      setPageOnlineStatus(true);
+		    });
+		    $('.unpublish-btn').click(function() {
+			      setPageOnlineStatus(false);
+		    });
     } else {
         $('#page-info, [data-target="#page-info"]').remove();
+	      $('.restore-online-btn').remove();
     }
 
 

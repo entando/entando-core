@@ -160,8 +160,6 @@
 			</interceptor-ref>
 		</action>
 
-
-
 	</package>
 	
     <package name="core_do/ABSTRACT/Page" extends="entando-default" abstract="true">

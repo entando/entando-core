@@ -11,9 +11,11 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.apsadmin.portal.model;
+package org.entando.entando.apsadmin.portal.rs.validator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.apsadmin.portal.rs.model.SwapWidgetRequest;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.agiletec.aps.system.services.page.IPage;
@@ -21,8 +23,10 @@ import com.agiletec.apsadmin.portal.PageConfigAction;
 import com.opensymphony.xwork2.ActionSupport;
 
 @Component
-public class SwapWidgetRequestValidator {
-
+@Qualifier(ISwapWidgetRequestValidator.BEAN_NAME)
+public class SwapWidgetRequestValidator implements ISwapWidgetRequestValidator {
+	
+	@Override
 	public void validateRequest(SwapWidgetRequest swapWidgetRequest, PageConfigAction pageConfigAction) {
 		if (null == swapWidgetRequest) {
 			pageConfigAction.addActionError(pageConfigAction.getText("error.request.null"));

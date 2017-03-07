@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.apsadmin.portal.model;
+package org.entando.entando.apsadmin.portal.rs.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,12 +21,13 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
 import com.opensymphony.xwork2.ActionSupport;
 
-public class SwapWidgetResponse {
+public class JoinWidgetResponse {
 
 	private Map<String, List<String>> fieldErrors;
 	private Collection<String> actionErrors;
 	private Collection<String> actionMessages;
 	private IPage page;
+	private String redirectLocation;
 
 	public Map<String, List<String>> getFieldErrors() {
 		return fieldErrors;
@@ -53,6 +54,13 @@ public class SwapWidgetResponse {
 		return page;
 	}
 
+	public String getRedirectLocation() {
+		return redirectLocation;
+	}
+	public void setRedirectLocation(String redirectLocation) {
+		this.redirectLocation = redirectLocation;
+	}
+
 	public void setPage(IPage src) {
 		if (null == src) {
 			return;
@@ -66,18 +74,15 @@ public class SwapWidgetResponse {
 		this.page = page;
 	}
 
-	public SwapWidgetResponse() {
+	public JoinWidgetResponse() {
 		//
 	}
 
-	public SwapWidgetResponse(ActionSupport actionSupport) {
+	public JoinWidgetResponse(ActionSupport actionSupport) {
 		super();
 		this.setFieldErrors(actionSupport.getFieldErrors());
 		this.setActionErrors(actionSupport.getActionErrors());
 		this.setActionMessages(actionSupport.getActionMessages());
 	}
-
-
-
-
+	
 }

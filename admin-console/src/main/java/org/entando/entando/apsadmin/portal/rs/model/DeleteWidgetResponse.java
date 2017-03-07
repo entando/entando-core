@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.apsadmin.portal.model;
+package org.entando.entando.apsadmin.portal.rs.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +22,6 @@ import com.agiletec.aps.system.services.page.Page;
 import com.opensymphony.xwork2.ActionSupport;
 
 public class DeleteWidgetResponse {
-
 
 	private Map<String, List<String>> fieldErrors;
 	private Collection<String> actionErrors;

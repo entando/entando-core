@@ -3,7 +3,7 @@
 
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
-		<a href="<s:url action="viewTree" namespace="/do/Page" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />">
+		<a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />">
 			<s:text name="title.pageManagement" /></a>&#32;/&#32;
 		<s:text name="title.detailPage" />
 	</span>
@@ -14,7 +14,7 @@
 <s:set var="breadcrumbs_pivotPageCode" value="selectedNode" />
 <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
 
-<s:action namespace="/do/Page" name="printPageDetails" executeResult="true" ignoreContextParams="true"><s:param name="selectedNode" value="selectedNode"></s:param></s:action>
+<s:action  name="printPageDetails" executeResult="true" ignoreContextParams="true"><s:param name="selectedNode" value="selectedNode"></s:param></s:action>
 
 <wpsa:hookPoint key="core.detailPage" objectName="hookPointElements_core_detailPage">
 <s:iterator value="#hookPointElements_core_detailPage" var="hookPointElement">

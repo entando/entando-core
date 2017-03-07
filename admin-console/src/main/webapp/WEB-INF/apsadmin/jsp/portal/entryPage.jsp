@@ -6,7 +6,7 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
-    <li><a href="<s:url action="viewTree" namespace="/do/Page" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageTree" />"><s:text name="title.pageTree" /></a></li>
+    <li><a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageTree" />"><s:text name="title.pageTree" /></a></li>
     <li>
     	<s:if test="strutsAction == 1">
 			<s:text name="title.newPage" />

@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.apsadmin.portal.model;
+package org.entando.entando.apsadmin.portal.rs.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,13 +21,13 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
 import com.opensymphony.xwork2.ActionSupport;
 
-public class JoinWidgetResponse {
+public class PageResponse {
 
 	private Map<String, List<String>> fieldErrors;
 	private Collection<String> actionErrors;
 	private Collection<String> actionMessages;
 	private IPage page;
-	private String redirectLocation;
+	private Map _references;
 
 	public Map<String, List<String>> getFieldErrors() {
 		return fieldErrors;
@@ -49,16 +49,16 @@ public class JoinWidgetResponse {
 	public void setActionMessages(Collection<String> actionMessages) {
 		this.actionMessages = actionMessages;
 	}
+	
+	public Map getReferences() {
+		return _references;
+	}
+	public void setReferences(Map references) {
+		this._references = references;
+	}
 
 	public IPage getPage() {
 		return page;
-	}
-
-	public String getRedirectLocation() {
-		return redirectLocation;
-	}
-	public void setRedirectLocation(String redirectLocation) {
-		this.redirectLocation = redirectLocation;
 	}
 
 	public void setPage(IPage src) {
@@ -69,16 +69,18 @@ public class JoinWidgetResponse {
 		page.setCode(src.getCode());
 		page.setDraftMetadata(src.getDraftMetadata());
 		page.setDraftWidgets(src.getDraftWidgets());
+		page.setOnlineMetadata(src.getOnlineMetadata());
+		page.setOnlineWidgets(src.getOnlineWidgets());
 		page.setParentCode(page.getParentCode());
 		page.setGroup(src.getGroup());
 		this.page = page;
 	}
 
-	public JoinWidgetResponse() {
+	public PageResponse() {
 		//
 	}
 
-	public JoinWidgetResponse(ActionSupport actionSupport) {
+	public PageResponse(ActionSupport actionSupport) {
 		super();
 		this.setFieldErrors(actionSupport.getFieldErrors());
 		this.setActionErrors(actionSupport.getActionErrors());

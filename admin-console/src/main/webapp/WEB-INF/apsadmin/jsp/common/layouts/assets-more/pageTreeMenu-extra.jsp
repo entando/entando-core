@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/entando.grid-generator.css"/>
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/pageTreeMenu.css"/>
 
+<script src="<wp:resourceURL />administration/js/entando.alert.js"></script>
 <script src="<wp:resourceURL />administration/js/jquery.xml2json.js"></script>
 <script src="<wp:resourceURL />administration/js/lodash.js"></script>
 <script src="<wp:resourceURL />administration/js/entando.grid-generator.js"></script>
@@ -17,19 +18,18 @@
     PROPERTY.baseUrl = '<wp:info key="systemParam" paramName="applicationBaseURL" />';
     
 
-    var TEXT = {};
-    TEXT['error.grid.overlappingFrames'] = '<s:text name="error.grid.overlappingFrames"/>';
-    TEXT['error.grid.malformedFrames'] = '<s:text name="error.grid.malformedFrames"/>';
-    TEXT['error.grid.gridError'] = '<s:text name="error.grid.gridError"/>';
+    var TEXT = {
+        'error.grid.overlappingFrames': '<s:text name="error.grid.overlappingFrames"/>',
+        'error.grid.malformedFrames': '<s:text name="error.grid.malformedFrames"/>',
+        'error.grid.gridError': '<s:text name="error.grid.gridError"/>',
 
-    var curWidgets = [
-    <s:iterator var="curr_widget" value="currentPage.draftWidgets" status="rowstatus">
-        {
-            index: <s:property value="#rowstatus.index" />,
-            widgetType: '<s:property value="%{#curr_widget.getType().getCode()}" />'
-        },
-    </s:iterator>
-        ];
+        'widgetActions.details': '<s:text name="widgetActions.details"/>',
+        'widgetActions.settings': '<s:text name="widgetActions.settings"/>',
+        'widgetActions.api': '<s:text name="widgetActions.api"/>',
+        'widgetActions.newWidget': '<s:text name="widgetActions.newWidget"/>',
+        'widgetActions.delete': '<s:text name="widgetActions.delete"/>'
+    };
+
 </script>
 <script src="<wp:resourceURL />administration/js/pages/pageTreeMenu.js"></script>
 

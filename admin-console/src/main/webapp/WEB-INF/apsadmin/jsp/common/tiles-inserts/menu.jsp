@@ -44,7 +44,7 @@
 			                    </a>
 			                </li>
 			                <li class="list-group-item">
-			                    <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page" />'>
+			                    <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page/Console" />'>
 			                        <span class="list-group-item-value">Configure Page</span>
 			                    </a>
 			                </li>

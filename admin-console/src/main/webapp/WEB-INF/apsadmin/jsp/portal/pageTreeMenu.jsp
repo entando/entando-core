@@ -28,10 +28,19 @@
 
 <div class="main-container">
 
-    <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-link">
+    <div class="alert-container"></div>
+
+    <div>
+        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-link">
         Info
         <span class="icon fa fa-chevron-down"></span>
-    </button>
+        </button>
+
+        <button class="publish-btn pull-right">PUBLISH</button>
+        <button class="unpublish-btn pull-right">UNPUBLISH</button>
+        <button class="restore-online-btn pull-right">RESTORE ONLINE</button>
+    </div>
+
     <div id="page-info" class="collapse">
         <table class="table table-bordered">
             <tbody>
@@ -66,9 +75,6 @@
         </table>
 
     </div>
-
-
-
 
 
     <!----------------- griglia del template ----------->

@@ -1,4 +1,4 @@
-package com.agiletec.apsadmin.tags;
+package org.entando.entando.apsadmin.tags;
 
 import java.util.HashSet;
 import java.util.List;

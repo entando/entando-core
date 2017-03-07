@@ -263,7 +263,7 @@
 			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property through the "property" attribute.]]>
 		</description>
 		<name>pageTree</name>
-		<tag-class>com.agiletec.apsadmin.tags.PageTreeTag</tag-class>
+		<tag-class>org.entando.entando.apsadmin.tags.PageTreeTag</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
 			<description><![CDATA[Name used to reference the page (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
@@ -315,7 +315,7 @@
 			<![CDATA[Tag used to fing the groups for the current user, associated with the given permission.]]>
 		</description>
 		<name>groupsByPermission</name>
-		<tag-class>com.agiletec.apsadmin.tags.GroupsByPermissionTag</tag-class>
+		<tag-class>org.entando.entando.apsadmin.tags.GroupsByPermissionTag</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
 			<description><![CDATA[Name used to reference the page (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>

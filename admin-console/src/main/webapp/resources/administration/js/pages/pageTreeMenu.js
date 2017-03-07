@@ -5,14 +5,89 @@ $(function() {
         moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget?code=' + PROPERTY.pagemodel,
         deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel,
         getPageDetailUrl = PROPERTY.baseUrl + 'do/rs/Page/detail',
+	      restoreOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/restoreOnlineConfig',
+	      setOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOnline',
+	      setOfflineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOffline',
         PAGE_IS_SELECTED = !!PROPERTY.pagemodel;
 
 
     // contains previous slots HTML
     var gridSlots = {};
 
+    // contains page details data
+    var pageData = null;
+
+		var alertService = new EntandoAlert('.alert-container');
 
 
+		/**
+		 * Restores online configuration of the page
+		 */
+		function restoreOnlineConfig() {
+			$.ajax(restoreOnlineUrl, {
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					pageCode: PROPERTY.code
+				}),
+				success: function (data) {
+					if (alertService.showResponseAlerts(data)) {
+						return;
+					}
+					pageData = data.page;
+					initPageDetail();
+					updatePageStatus(pageData);
+				}
+			});
+		}
+
+		/**
+		 * Publish / unpublish the page
+		 * @param {boolean} online - true to publish, false to unpublish
+		 */
+		function setPageOnlineStatus(online) {
+			$.ajax(online ? setOnlineUrl : setOfflineUrl, {
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					pageCode: PROPERTY.code
+				}),
+				success: function (data) {
+					if (alertService.showResponseAlerts(data)) {
+						return;
+					}
+					pageData = data.page;
+					updatePageStatus(pageData);
+				}
+			});
+		}
+
+
+		/**
+		 * Updates the page status circle color
+		 */
+		function updatePageStatus(pageData) {
+			var hasChanges = !_.isEqual(pageData.draftWidgets, pageData.onlineWidgets);
+
+			// updates the yellow/green page circle in the tree
+			$('#pageTree tr#' + PROPERTY.code + ' .statusField .fa')
+				.removeClass('green yellow')
+				.addClass(hasChanges ? 'yellow' : 'green');
+
+			// updates the buttons visibility
+			var showPublish = !pageData.online || pageData.online && hasChanges ? 'show' : 'hide';
+			var showUnpublish = pageData.online ? 'show' : 'hide';
+			var showRestoreOnline = pageData.online ? 'show' : 'hide';
+
+			$('.restore-online-btn')[showRestoreOnline]();
+			$('.publish-btn')[showPublish]();
+			$('.unpublish-btn')[showUnpublish]();
+
+		}
+
+		/**
+		 * Initializes page detail and widget data
+		 */
     function initPageDetail() {
 
         // Initializes page detail
@@ -23,6 +98,12 @@ $(function() {
                 pageCode: PROPERTY.code
             }),
             success: function(data) {
+	              if (alertService.showResponseAlerts(data)) {
+		              return;
+	              }
+                pageData = data.page;
+	              updatePageStatus(pageData);
+
                 var $pageInfo = $('#page-info'),
                     metadata = data.page.draftMetadata,
                     checkElems = {
@@ -39,6 +120,8 @@ $(function() {
                 $pageInfo.find('[data-info-showmenu]').html(checkElems[_.toString(data.page.showable)]);
                 $pageInfo.find('[data-info-extratitles]').html(checkElems[_.toString(data.page.useExtraTitles)]);
 
+                // now we have page and widget data, we can initialize the grid
+                initGrid();
             }
         });
     }
@@ -49,6 +132,9 @@ $(function() {
         $.ajax(serviceUrl, {
             method: 'GET',
             success: function(data) {
+		            if (alertService.showResponseAlerts(data)) {
+			            return;
+		            }
                 updateGridPreview(data);
             },
             error: function() {
@@ -59,15 +145,6 @@ $(function() {
 
     function isEmptySlot(slot) {
         return _.isEmpty($(slot).find('.grid-widget'));
-    }
-
-    /**
-     * Tells if a call response has action errors
-     * @param {Object} data - the response
-     * @returns {boolean}
-     */
-    function hasErrors(data) {
-        return !_.isEmpty(data.actionErrors);
     }
 
 
@@ -98,6 +175,14 @@ $(function() {
     }
 
 
+
+    function findWidgetInfo(widgetCode) {
+        if (!pageData) {
+            return null;
+        }
+        return _.find(pageData.draftWidgets, { type: { code: widgetCode } });
+    }
+
     /**
      * Creates a grid widget element
      * @param {string} widgetCode
@@ -106,21 +191,57 @@ $(function() {
 
         var $widget = $('.widget-square[data-widget-id="' + widgetCode + '"]').first(),
             widgetDescr = $widget.find('.widget-name').text(),
-            $widgetIcon = $widget.find('.widget-icon').clone();
+            $widgetIcon = $widget.find('.widget-icon').clone(),
+            widgetInfo = findWidgetInfo(widgetCode);
 
         var html = '<div>' +
             '<div class="slot-name"></div>' +
-            '<i class="remove-btn fa fa-close"></i>' +
             '</div>';
 
-        var $elem = $(html)
-            .addClass('grid-widget instance')
-            .attr('data-widget-id', widgetCode)
-            .append($widgetIcon)
-            .append('<div class="widget-name">' + widgetDescr + '</div>');
+
+        function createMenuItem(label) {
+            var $menuItem = $('<li role="presentation"><a role="menuitem" tabindex="-1" href="#"></a></li>');
+            $menuItem.find('a[role="menuitem"]').text(label);
+            return $menuItem;
+        }
+
+        var $dropdown = $('<div class="dropdown" />');
+        $dropdown.append('<i class="menu-btn fa fa-ellipsis-v dropdown-toggle" type="button"  data-toggle="dropdown"></i>');
+
+        var $dropDownMenu = $('<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu">');
+        $dropdown.append($dropDownMenu);
+
+        // create menu items
+        var $detailsItem = createMenuItem(TEXT['widgetActions.details']),
+            $settingsItem = createMenuItem(TEXT['widgetActions.settings']),
+            $apiItem = createMenuItem(TEXT['widgetActions.api']);
+
+        $dropDownMenu.append($detailsItem);
+        $dropDownMenu.append($settingsItem);
+        $dropDownMenu.append($apiItem);
 
 
-        $elem.find('.remove-btn').click(function() {
+
+        $detailsItem.click(function(e) {
+            window.location = PROPERTY.baseUrl +
+                'do/Portal/WidgetType/viewWidgetUtilizers.action?widgetTypeCode=' + widgetCode
+        });
+
+
+        if (widgetInfo && widgetInfo.config && widgetInfo.type.logic === false) {
+            var $newWidgetItem = createMenuItem(TEXT['widgetActions.newWidget']);
+            $dropDownMenu.append($newWidgetItem);
+            $newWidgetItem.click(function(e) {
+                var framePos = +$elem.parent().attr('data-pos');
+                window.location = PROPERTY.baseUrl +
+                    'do/Portal/WidgetType/copy.action?pageCode=' + PROPERTY.code + '&framePos=' + framePos
+            });
+        }
+
+
+        var $deleteItem = createMenuItem(TEXT['widgetActions.delete']);
+        $dropDownMenu.append($deleteItem);
+        $deleteItem.click(function(e) {
 
             var framePos = +$elem.parent().attr('data-pos');
 
@@ -138,13 +259,27 @@ $(function() {
                     frame: framePos
                 }),
                 success: function(data) {
-                    if (hasErrors(data)) {
-                        return;
-                    }
+		                if (alertService.showResponseAlerts(data)) {
+			                return;
+		                }
                     setEmptySlot($elem.parent());
+
+	                  // update local draft status
+	                  pageData.draftWidgets[framePos] = null;
+	                  updatePageStatus(pageData);
                 }
             });
         });
+
+
+        // widget element
+        var $elem = $(html)
+            .addClass('grid-widget instance')
+            .attr('data-widget-id', widgetCode)
+            .append($widgetIcon)
+            .append('<div class="widget-name">' + widgetDescr + '</div>')
+            .append($dropdown);
+
 
         return $elem;
     }
@@ -199,10 +334,10 @@ $(function() {
             });
 
             // populates the slots
-            _.forEach(curWidgets, function (widget) {
-                if (widget.widgetType) {
-                    var $curWidget = createGridWidget(widget.widgetType);
-                    var $slot = $('.grid-slot[data-pos="' + widget.index + '"]');
+            _.forEach(pageData.draftWidgets, function (widget, index) {
+                if (widget) {
+                    var $curWidget = createGridWidget(_.get(widget, 'type.code'));
+                    var $slot = $('.grid-slot[data-pos="' + index + '"]');
                     populateSlot($slot, $curWidget);
                 }
             });
@@ -220,7 +355,8 @@ $(function() {
                     var $prevSlot = $(ui.draggable).parent(),
                         $curSlot = $(ev.target),
                         $curWidget = $(ui.draggable),
-                        curWidgetType = $curWidget.attr('data-widget-id');
+                        curWidgetType = $curWidget.attr('data-widget-id'),
+	                      curSlotPos = +$curSlot.attr('data-pos');
 
 
                     if ($prevSlot.is($curSlot)) {
@@ -245,12 +381,12 @@ $(function() {
                             data: JSON.stringify({
                                 pageCode: PROPERTY.code,
                                 widgetTypeCode: curWidgetType,
-                                frame: +$curSlot.attr('data-pos')
+                                frame: curSlotPos
                             }),
                             success: function(data) {
-                                if (hasErrors(data)) {
-                                    return;
-                                }
+		                            if (alertService.showResponseAlerts(data)) {
+			                            return;
+		                            }
                                 // widget needs configuration
                                 if (data.redirectLocation) {
                                     window.location = PROPERTY.baseUrl + data.redirectLocation.replace(/^\//, '');
@@ -259,9 +395,20 @@ $(function() {
 
                                 // no need for configuration
                                 populateSlot($curSlot, $curWidget);
+
+	                              // update local draft status
+	                              pageData.draftWidgets[curSlotPos] = {
+		                              config: null,
+		                              type: {
+			                              code: curWidgetType
+		                              }
+	                              };
+	                              updatePageStatus(pageData);
                             }
                         });
                     } else {
+
+	                      var prevSlotPos = +$prevSlot.attr('data-pos');
 
                         // move/swap the widget
                         $.ajax(moveWidgetUrl, {
@@ -269,25 +416,33 @@ $(function() {
                             contentType : 'application/json',
                             data: JSON.stringify({ swapWidgetRequest: {
                                 pageCode: PROPERTY.code,
-                                src: +$prevSlot.attr('data-pos'),
-                                dest: +$curSlot.attr('data-pos')
+                                src: prevSlotPos,
+                                dest: curSlotPos
                             }}),
                             success: function(data) {
-                                if (hasErrors(data)) {
-                                    return;
-                                }
+		                            if (alertService.showResponseAlerts(data)) {
+			                            return;
+		                            }
                                 var $prevWidget = $curSlot.find('.grid-widget');
                                 setEmptySlot($prevSlot);
                                 setEmptySlot($curSlot);
 
+																var prevDraftWidget = null;
 
                                 if (!_.isEmpty($prevWidget)) {
                                     var $otherWidget = createGridWidget($prevWidget.attr('data-widget-id'));
                                     populateSlot($prevSlot, $otherWidget);
+	                                  prevDraftWidget = pageData.draftWidgets[+$prevWidget.attr('data-widget-id')];
                                 }
 
                                 var $newCurWidget = createGridWidget(curWidgetType);
                                 populateSlot($curSlot, $newCurWidget);
+
+		                            // update local draft status
+	                              var park = pageData.draftWidgets[curSlotPos];
+		                            pageData.draftWidgets[curSlotPos] = pageData.draftWidgets[prevSlotPos];
+	                              pageData.draftWidgets[prevSlotPos] = park;
+		                            updatePageStatus(pageData);
                             }
                         });
                     }
@@ -333,10 +488,19 @@ $(function() {
 
     if (PAGE_IS_SELECTED) {
         setDraggable($('.widget-square'), null);
-        initGrid();
         initPageDetail();
+		    $('.restore-online-btn').click(function() {
+			      restoreOnlineConfig();
+		    });
+		    $('.publish-btn').click(function() {
+			      setPageOnlineStatus(true);
+		    });
+		    $('.unpublish-btn').click(function() {
+			      setPageOnlineStatus(false);
+		    });
     } else {
         $('#page-info, [data-target="#page-info"]').remove();
+	      $('.restore-online-btn').remove();
     }
 
 

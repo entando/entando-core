@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 
 /**
  * @author E.Santoboni
@@ -40,8 +39,8 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 	}
 	
 	@Deprecated
-	public List<IPage> getShowletUtilizers(String showletTypeCode) {
-		return this.getWidgetUtilizers(showletTypeCode);
+	public List<IPage> getShowletUtilizers(String widgetTypeCode) {
+		return this.getWidgetUtilizers(widgetTypeCode);
 	}
 
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) {
@@ -97,8 +96,8 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this._widgetTypeCode = showletTypeCode;
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this._widgetTypeCode = widgetTypeCode;
 	}
 	
 	public String getWidgetTypeCode() {
@@ -108,15 +107,8 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}
-
-	protected IPageActionHelper getPageActionHelper() {
-		return _pageActionHelper;
-	}
-	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
-		this._pageActionHelper = pageActionHelper;
-	}
 	
 	private String _widgetTypeCode;
-	private IPageActionHelper _pageActionHelper;
+
 	
 }

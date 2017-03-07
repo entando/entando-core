@@ -61,3 +61,24 @@
 .main-container {
     width: calc(100% - 323px);
 }
+
+.button-bar .restore-online-btn {
+    background: #d01f24;
+    border-color: #d01f24;
+    color: #fff;
+    margin-left: 5px;
+}
+
+.button-bar .publish-btn {
+    background: #31a2de;
+    border-color: #31a2de;
+    color: #fff;
+    margin-left: 5px;
+}
+
+.button-bar .unpublish-btn {
+    background: #515f76;
+    border-color: #515f76;
+    color: #fff;
+    margin-left: 5px;
+}

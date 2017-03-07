@@ -140,8 +140,8 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this.setWidgetTypeCode(showletTypeCode);
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this.setWidgetTypeCode(widgetTypeCode);
 	}
 	
 	public String getWidgetTypeCode() {

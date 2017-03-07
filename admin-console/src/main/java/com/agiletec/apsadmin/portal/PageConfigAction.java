@@ -60,7 +60,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 				return result;
 			}
 			Widget widget = this.getCurrentPage().getDraftWidgets()[this.getFrame()];// can be null
-			this.setShowlet(widget);
+			this.setWidget(widget);
 			if (widget != null) {
 				WidgetType widgetType = widget.getType();
 				_logger.debug("pageCode: {}, frame: {}, widgetType: {}", this.getPageCode(), this.getFrame(), widgetType.getCode());
@@ -371,8 +371,8 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this.setWidgetTypeCode(showletTypeCode);
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this.setWidgetTypeCode(widgetTypeCode);
 	}
 
 	public String getWidgetTypeCode() {

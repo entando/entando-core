@@ -26,6 +26,18 @@
 				<param name="requestAuth.requiredPermission">managePages</param>
 			</interceptor-ref>
 		</action>
+		
+		<action name="apiMappings" class="widgetsViewerAction">
+			<result type="json">
+				<param name="root">widgetTypeApiMappings</param>
+			</result>
+			<interceptor-ref name="jsonStack">
+			</interceptor-ref>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">enterBackend</param>
+			</interceptor-ref>
+		</action>
+
 
 	</package>
 	

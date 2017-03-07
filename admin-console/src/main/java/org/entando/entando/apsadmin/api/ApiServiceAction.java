@@ -562,8 +562,8 @@ public class ApiServiceAction extends AbstractApiAction {
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this.setWidgetTypeCode(showletTypeCode);
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this.setWidgetTypeCode(widgetTypeCode);
 	}
 	
 	public String getWidgetTypeCode() {

@@ -366,8 +366,8 @@ public class PageTreeMenuAction extends PageTreeAction {
 	}
 	
 	@Deprecated
-	public List<IPage> getShowletUtilizers(String showletTypeCode) {
-		return this.getWidgetUtilizers(showletTypeCode);
+	public List<IPage> getShowletUtilizers(String widgetTypeCode) {
+		return this.getWidgetUtilizers(widgetTypeCode);
 	}
 
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) {
@@ -419,8 +419,8 @@ public class PageTreeMenuAction extends PageTreeAction {
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this._widgetTypeCode = showletTypeCode;
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this._widgetTypeCode = widgetTypeCode;
 	}
 	
 	public String getWidgetTypeCode() {

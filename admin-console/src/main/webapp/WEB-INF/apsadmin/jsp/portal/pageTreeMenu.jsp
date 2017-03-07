@@ -30,15 +30,15 @@
 
     <div class="alert-container"></div>
 
-    <div>
+    <div class="button-bar">
         <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-link">
         Info
         <span class="icon fa fa-chevron-down"></span>
         </button>
 
-        <button class="publish-btn pull-right">PUBLISH</button>
-        <button class="unpublish-btn pull-right">UNPUBLISH</button>
-        <button class="restore-online-btn pull-right">RESTORE ONLINE</button>
+        <button class="publish-btn pull-right"><s:text name="pageActions.publish" /></button>
+        <button class="unpublish-btn pull-right"><s:text name="pageActions.unpublish" /></button>
+        <button class="restore-online-btn pull-right"><s:text name="pageActions.restore" /></button>
     </div>
 
     <div id="page-info" class="collapse">

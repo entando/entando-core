@@ -276,3 +276,11 @@
 
 </div>
 
+
+<s:url action="preview" var="previewURL">
+	<s:param name="pageCode" value="pageCode" />
+	<s:param name="token" value="previewToken" />
+</s:url>
+<a href="<s:property value="#previewURL" escape="false" escapeXml="false" escapeHtml="false" />" target="_blank">PREVIEW</a>
+
+

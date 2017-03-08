@@ -24,6 +24,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
+import org.entando.entando.aps.system.services.page.IPageTokenMager;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.apsadmin.portal.rs.model.SwapWidgetRequest;
@@ -285,13 +286,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 		this._internalServletWidgetCode = internalServletWidgetCode;
 	}
 	
-	protected IPageManager getPageManager() {
-		return _pageManager;
-	}
-	public void setPageManager(IPageManager pageManager) {
-		this._pageManager = pageManager;
-	}
-	
+
 	protected IGroupManager getGroupManager() {
 		return _groupManager;
 	}
@@ -320,7 +315,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 	private String _stockWidgetCodes;
 	private String _internalServletWidgetCode;
 	
-	private IPageManager _pageManager;
+
 	private IGroupManager _groupManager;
 	
 
@@ -389,6 +384,13 @@ public class PageTreeMenuAction extends PageTreeAction {
 		return group;
 	}
 	
+	public String getPreviewToken() {
+		if (StringUtils.isNotBlank(this.getPageCode())) {
+			return this.pageTokenMager.encrypt(this.getPageCode());
+		}
+		return null;
+	}
+	
 	@Deprecated
 	public String viewShowletUtilizers() {
 		return viewWidgetUtilizers();
@@ -444,10 +446,19 @@ public class PageTreeMenuAction extends PageTreeAction {
 	public void setPageCode(String pageCode) {
 		this.pageCode = pageCode;
 	}
+	
+	public IPageTokenMager getPageTokenMager() {
+		return pageTokenMager;
+	}
+
+	public void setPageTokenMager(IPageTokenMager pageTokenMager) {
+		this.pageTokenMager = pageTokenMager;
+	}
 
 	private String _widgetTypeCode;
 	private IPageActionHelper _pageActionHelper;
 	private String pageCode;
+	private IPageTokenMager pageTokenMager;
 	
 	
 	

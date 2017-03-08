@@ -238,5 +238,9 @@
 		<property name="cleanOldActivities"><value>true</value></property>
 		<property name="maxActivitySizeByGroup"><value>10</value></property>
 	</bean>
+
+	<bean id="PageTokenManager" class="org.entando.entando.aps.system.services.page.PageTokenManager" parent="abstractService" >
+
+	</bean>
 	
 </beans>

@@ -27,54 +27,55 @@
 </s:if>
 
 <div class="main-container">
-
     <div class="alert-container"></div>
-
     <div>
-    <button type="button" data-toggle="collapse" data-target="#page-info" class="btn margin-large-bottom">
-        <span class="icon fa fa-chevron-down"></span>&nbsp;&nbsp;
-        <span class="info-title"><s:text name="page.treeInfo" /></span>
+        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-sm btn-primary margin-large-bottom">
+            <span class="icon fa fa-chevron-down"></span>&nbsp;&nbsp;
+            <span class="info-title"><s:text name="page.treeInfo" /></span>
         </button>
 
-        <button class="publish-btn pull-right">PUBLISH</button>
-        <button class="unpublish-btn pull-right">UNPUBLISH</button>
-        <button class="restore-online-btn pull-right">RESTORE ONLINE</button>
+        <button class="btn btn-warning publish-btn pull-right"><s:text name="page.restoreOnline" /></button>
+        <button class="btn btn-danger unpublish-btn pull-right"><s:text name="page.unpublish" /></button>
+        <button class="btn btn-success restore-online-btn pull-right"><s:text name="page.publish" /></button>
     </div>
 
     <div id="page-info" class="collapse">
         <table class="table">
             <tbody>
-            <tr>
+                <tr>
                     <th class="td-pagetree-width"><s:text name="name.pageCode" /></th>
-                <td data-info-pagecode></td>
-            </tr>
-            <tr>
+                    <td data-info-pagecode></td>
+                </tr>
+                <tr>
                     <th class="td-pagetree-width"><s:text name="name.pageTitle" /></th>
-                <td data-info-titles></td>
-            </tr>
-            <tr>
+                    <td data-info-titles></td>
+                </tr>
+                <tr>
                     <th class="td-pagetree-width">Owner Group</th>
-                <td data-info-group></td>
-            </tr>
-            <tr>
+                    <td data-info-group></td>
+                </tr>
+                <tr>
                     <th class="td-pagetree-width"><s:text name="name.pageModel" /></th>
-                <td data-info-model></td>
-            </tr>
-            <tr>
+                    <td data-info-model></td>
+                </tr>
+                <tr>
                     <th class="td-pagetree-width"><s:text name="name.isShowablePage" /></th>
-                <td data-info-showmenu></td>
-            </tr>
-            <tr>
+                    <td data-info-showmenu></td>
+                </tr>
+                <tr>
                     <th class="td-pagetree-width">
-                    <abbr lang="en" title="<s:text name="name.SEO.full" />">
-                        <s:text name="name.SEO.short" />
-                    </abbr>: <s:text name="name.useBetterTitles" />   </th>
-                <td data-info-extratitles></td>
-            </tr>
+                        <abbr lang="en" title="<s:text name="name.SEO.full" />">
+                            <s:text name="name.SEO.short" />
+                        </abbr>: <s:text name="name.useBetterTitles" />   </th>
+                    <td data-info-extratitles></td>
+                </tr>
             </tbody>
         </table>
 
     </div>
+
+
+
 
 
     <!----------------- griglia del template ----------->
@@ -143,15 +144,15 @@
 
                         </s:if>
                         <s:else>
-	                        <style>
-	                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
-	                                cursor: pointer;
-	                                display: none;
-	                            }
-	                        </style>
-	                        <s:set var="currentRoot" value="showableTree" />
-	                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
-	                    </s:else>
+                        <style>
+                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                cursor: pointer;
+                                display: none;
+                            }
+                        </style>
+                        <s:set var="currentRoot" value="showableTree" />
+                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
+                    </s:else>
                     </tbody>
                 </table>     
             </div>
@@ -207,7 +208,7 @@
 
             $('#close-page-tree-sidebar').click(function () {
                 var $drawer = $('.drawer-pf');
-                             $drawer.addClass('hide');
+                $drawer.addClass('hide');
 
             });
 

@@ -407,7 +407,7 @@ td{
 .drawer-pf-title-clickable{
 }
 .drawer-pf-title-clickable:hover{
-    background:#393f44 !important;
+    background: #393f44 !important;
     cursor:pointer;
     font-weight: 600;
 }
@@ -467,7 +467,7 @@ td{
     width: 28%;
 }
 .info-title{
-    font-size: 16px;
+    font-size: 13px;
     text-transform: capitalize;
     margin-left: -6px;
     text-decoration: none !important;

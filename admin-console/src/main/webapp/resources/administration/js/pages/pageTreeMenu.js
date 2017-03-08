@@ -8,6 +8,7 @@ $(function() {
 	      restoreOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/restoreOnlineConfig',
 	      setOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOnline',
 	      setOfflineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOffline',
+	      configureWidgetUrl = PROPERTY.baseUrl + 'do/Page/editFrame.action',
         PAGE_IS_SELECTED = !!PROPERTY.pagemodel;
 
 
@@ -82,6 +83,20 @@ $(function() {
 			$('.restore-online-btn')[showRestoreOnline]();
 			$('.publish-btn')[showPublish]();
 			$('.unpublish-btn')[showUnpublish]();
+
+			// diff
+			$('.diff-slot').removeClass('diff-slot');
+			if (pageData.online) {
+				if (pageData.draftMetadata.model.code !== pageData.draftMetadata.model.code) {
+					$('.grid-slot').addClass('diff-slot');
+				} else if (pageData.draftWidgets.length === pageData.onlineWidgets.length) {
+					for (var i=0; i<pageData.draftWidgets.length; ++i) {
+						if (!_.isEqual(pageData.draftWidgets[i], pageData.onlineWidgets[i])) {
+							$('.grid-slot[data-pos="' + i + '"]').addClass('diff-slot');
+						}
+					}
+				}
+			}
 
 		}
 
@@ -212,20 +227,31 @@ $(function() {
         $dropdown.append($dropDownMenu);
 
         // create menu items
-        var $detailsItem = createMenuItem(TEXT['widgetActions.details']),
-            $settingsItem = createMenuItem(TEXT['widgetActions.settings']),
-            $apiItem = createMenuItem(TEXT['widgetActions.api']);
-
+        var $detailsItem = createMenuItem(TEXT['widgetActions.details']);
         $dropDownMenu.append($detailsItem);
-        $dropDownMenu.append($settingsItem);
+		    $detailsItem.click(function(e) {
+			    window.location = PROPERTY.baseUrl +
+				    'do/Portal/WidgetType/viewWidgetUtilizers.action?widgetTypeCode=' + widgetCode
+		    });
+
+
+				if (widgetInfo && widgetInfo.config) {
+
+					var $settingsItem = createMenuItem(TEXT['widgetActions.settings']);
+					$dropDownMenu.append($settingsItem);
+					$settingsItem.click(function(e) {
+						var framePos = +$(e.target).closest('.grid-slot').attr('data-pos');
+						window.location = configureWidgetUrl +
+							'?pageCode=' + PROPERTY.code + '&frame=' + framePos;
+					});
+
+				}
+
+
+	    // FIXME TO DO
+	      var $apiItem = createMenuItem(TEXT['widgetActions.api']);
         $dropDownMenu.append($apiItem);
 
-
-
-        $detailsItem.click(function(e) {
-            window.location = PROPERTY.baseUrl +
-                'do/Portal/WidgetType/viewWidgetUtilizers.action?widgetTypeCode=' + widgetCode
-        });
 
 
         if (widgetInfo && widgetInfo.config && widgetInfo.type.logic === false) {

@@ -82,3 +82,7 @@
     color: #fff;
     margin-left: 5px;
 }
+
+.grid-slot.diff-slot {
+    border-color: red;
+}

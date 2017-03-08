@@ -31,9 +31,9 @@
     <div class="alert-container"></div>
 
     <div>
-        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-link">
-        Info
-        <span class="icon fa fa-chevron-down"></span>
+    <button type="button" data-toggle="collapse" data-target="#page-info" class="btn margin-large-bottom">
+        <span class="icon fa fa-chevron-down"></span>&nbsp;&nbsp;
+        <span class="info-title"><s:text name="page.treeInfo" /></span>
         </button>
 
         <button class="publish-btn pull-right">PUBLISH</button>
@@ -42,30 +42,30 @@
     </div>
 
     <div id="page-info" class="collapse">
-        <table class="table table-bordered">
+        <table class="table">
             <tbody>
             <tr>
-                <th class="text-right"><s:text name="name.pageCode" /></th>
+                    <th class="td-pagetree-width"><s:text name="name.pageCode" /></th>
                 <td data-info-pagecode></td>
             </tr>
             <tr>
-                <th class="text-right"><s:text name="name.pageTitle" /></th>
+                    <th class="td-pagetree-width"><s:text name="name.pageTitle" /></th>
                 <td data-info-titles></td>
             </tr>
             <tr>
-                <th class="text-right">Owner Group</th>
+                    <th class="td-pagetree-width">Owner Group</th>
                 <td data-info-group></td>
             </tr>
             <tr>
-                <th class="text-right"><s:text name="name.pageModel" /></th>
+                    <th class="td-pagetree-width"><s:text name="name.pageModel" /></th>
                 <td data-info-model></td>
             </tr>
             <tr>
-                <th class="text-right"><s:text name="name.isShowablePage" /></th>
+                    <th class="td-pagetree-width"><s:text name="name.isShowablePage" /></th>
                 <td data-info-showmenu></td>
             </tr>
             <tr>
-                <th class="text-right">
+                    <th class="td-pagetree-width">
                     <abbr lang="en" title="<s:text name="name.SEO.full" />">
                         <s:text name="name.SEO.short" />
                     </abbr>: <s:text name="name.useBetterTitles" />   </th>
@@ -88,7 +88,7 @@
 
     <a  id="widget-sidebar-page-tree-btn" class="drawer-pf-title drawer-pf-title-right-menu drawer-pf-title-clickable ">
         <span class="right-bar-title" >
-            <i class="fa fa-sitemap fa-16px" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span class="list-group-item-value"><s:text name="title.pages" /></span>
+            <i class="fa fa-sitemap fa-18px" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span class="list-group-item-value"><s:text name="title.pages" /></span>
             <span class="open-button-menu-right pull-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
         </span>
     </a>
@@ -104,7 +104,7 @@
 
 <div id="sidebar-page-tree" class="drawer-pf hide drawer-pf-notifications-non-clickable">
     <div class="drawer-pf-title drawer-pf-title-right-menu">
-        <a class="drawer-pf-toggle-expand"></a>        
+        <a id="toggle-expand" class="drawer-pf-toggle-expand"></a>        
         <span class="right-bar-title-pages"><s:text name="title.pages" /></span>
         <span id="close-page-tree-sidebar" class=" close-button-menu-right pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
     </div>
@@ -174,7 +174,7 @@
 
         $(document).ready(function () {
             // Show/Hide Notifications Drawer
-            if ($('.drawer-pf').hasClass('drawer-pf-expanded')) {
+            if ($('#sidebar-page-tree').hasClass('drawer-pf-expanded')) {
                 $('.moveButtons-right-container').show();
             } else {
                 $('.moveButtons-right-container').hide();
@@ -182,11 +182,10 @@
 
             $('#widget-sidebar-page-tree-btn').click(function () {
 
-                var $drawer = $('.drawer-pf');
+                var $drawer = $('#sidebar-page-tree');
 
                 $(this).toggleClass('open');
                 if ($drawer.hasClass('hide')) {
-                    // $('.drawer-pf').animate({width:'toggle'},300);
                     $drawer.removeClass('hide');
 
 
@@ -201,7 +200,6 @@
                     }, 100);
                 } else {
                     console.log('animate in');
-                    // $('.drawer-pf').animate({width:'toggle'},300);
                     $drawer.addClass('hide');
                 }
             });
@@ -209,17 +207,13 @@
 
             $('#close-page-tree-sidebar').click(function () {
                 var $drawer = $('.drawer-pf');
-                //console.log("CLOSE CLICK");
-                //$drawer.animate({width:'toggle'},300, function() {                        
-                //   $drawer.addClass('hide')
-                //});
-                $drawer.addClass('hide');
+                             $drawer.addClass('hide');
 
             });
 
 
-            $('.drawer-pf-toggle-expand').click(function () {
-                var $drawer = $('.drawer-pf');
+            $('#toggle-expand').click(function () {
+                var $drawer = $('#sidebar-page-tree');
                 var $drawerNotifications = $drawer.find('.drawer-pf-notification');
 
                 if ($drawer.hasClass('drawer-pf-expanded')) {

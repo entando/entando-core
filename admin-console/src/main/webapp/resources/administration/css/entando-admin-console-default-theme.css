@@ -226,7 +226,7 @@ a {
 .drawer-pf-title {
     position: absolute;
     font-weight:normal;
-    background: #292e34;
+    background: #4d5258;
     color: #fff;
 }
 .drawer-pf .panel-group {
@@ -301,8 +301,9 @@ a {
     text-transform: uppercase;
     background: #babdbc;
 }
-.fa-16px{
-    font-size: 16px;
+.fa-18px{
+    font-size: 18px;
+    color: #6b6f74 !important;
 }
 .widget-title{
     padding: 16px 0px 16px 18px;
@@ -317,7 +318,7 @@ a {
     margin-right: 18px
 }
 .list-group-item-custom{
-    border: 0px solid #e0e0db !important;
+    border: 1px solid #e0e0db !important;
 }
 .widget-grid{
     display: block;
@@ -399,8 +400,8 @@ td{
     color: #fff;
     text-decoration: none;
 }
-#widget-sidebar-page-tree-btn .right-bar-title:hover>i{ 
-    color: #23a8e0;
+#widget-sidebar-page-tree-btn:hover .right-bar-title >i { 
+    color: #23a8e0 !important;
     text-decoration: none;
 }
 .drawer-pf-title-clickable{
@@ -408,6 +409,7 @@ td{
 .drawer-pf-title-clickable:hover{
     background:#393f44 !important;
     cursor:pointer;
+    font-weight: 600;
 }
 .open-button-menu-right{
     position: absolute;
@@ -415,4 +417,145 @@ td{
     right: 10px;
     font-size: 23px;
     color: #64737b;
+}
+.treeInteractionButtons{
+    font-size: 14px;
+    /* font-weight: bold; */
+}
+.green{
+    color: green;
+}
+
+#pageTree .statusField i.fa {
+    font-size: 15px;
+    margin-top: 6px;
+}
+
+.table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
+    text-align: center;
+}
+.text-right{
+    text-align: end;
+}
+.section-divider{
+    background: #292e34;
+    padding: 11px 17px 11px 17px;
+    border-radius: 25em;
+    color: #fff;
+    margin-right: 5%;
+    font-size: 17px;
+}
+.section-divider-wrapper{
+    margin-bottom: 3em;
+}
+.form-checkbox{
+    margin:30px 0 30px 0; 
+}
+.label-group-name{
+    font-size: 19px;
+    font-weight: 100;
+}
+.label-tag {
+    background-color: #0088ce !important;
+    margin: 3px 3px 0px 0px !important;
+}
+.btn-tag{
+    color:#fff;
+    background: transparent;
+}
+.td-pagetree-width{
+    width: 28%;
+}
+.info-title{
+    font-size: 16px;
+    text-transform: capitalize;
+    margin-left: -6px;
+    text-decoration: none !important;
+    font-weight: normal;
+}
+.info-title:hover{
+    text-decoration: none !important;
+}
+.margin-large-bottom{
+    margin-bottom: 2.5em;
+}
+.avatar-utente{
+    float:left;
+    margin-right: 3px;
+    min-height: 56px;
+}
+.avatar-utente-logger{
+    padding-top: 7px;
+}
+.avatar-utente-comment{
+
+}
+.avatar-utente-comment-img{
+    float: left;
+    margin-right: 0;
+}
+.avatar-utente-comment-img{
+    width: 25px;
+}
+.comment-panel{
+    background: #ffffff;
+    padding: 7px 0 0px 7px;
+    border-radius: 2px;
+    margin: 2px 8px 0 27px;
+    border-bottom: 1px solid #eaeaea;
+}
+.insert-comment{
+    padding: 9px;
+    background: #ffffff;
+    margin: 9px 0 11px 0;
+}
+.li-custom-avatar{
+    background: #ffffff;
+    margin: 0 0px 4px 0px;
+    padding: 6px 0px 0px 10px;
+    border-bottom: 1px solid #c1c1c1;
+}
+.comment-box{
+    padding: 0px 10px 0px 0px;
+}
+.btn-delete-comment{
+    margin: 2px;
+}
+.drawer-pf-custom { 
+    border: 0px solid #d1d1d1 !important;
+}
+.comment-box-panel{
+    max-height: 135px !important;
+    overflow-y: auto;
+}
+.comment-panel-insert{
+    text-align: end;
+    padding: 5px 13px 6px 0;
+}
+.user-notification{
+    font-size: 13px;
+    font-weight: 600;
+}
+.time-notifications{
+    font-size: 11px !important;
+    color: #9c9c9c !important;
+}
+.like-notifications{
+
+    font-size: 14px;
+}
+.user-notification-comment, .avatar-utente-comment{
+    font-size:11px;
+    text-shadow: none;
+}
+.btn-submit-spacer{
+    margin: 4px 0 0 0;
+}
+
+.notification-active{
+    background-color: #4d5258;
+
+}
+.notification-active .fa{   
+    color: #fff !important;
 }

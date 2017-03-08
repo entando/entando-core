@@ -12,6 +12,8 @@
         $(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
         // Initialize the vertical navigation
         $().setupVerticalNavigation(true);
+        $('[data-toggle=popover]').popovers();
+        $(".bootstrap-switch").bootstrapSwitch();
     });
 </script>
 

@@ -70,7 +70,7 @@
             <s:set var="searchableAttributesPageScope" value="%{#searchableAttributesVar}" scope="page" />
 
             <div class="form-group">
-                <label class="control-label col-sm-2 text-right">Users</label>
+                <label class="control-label col-sm-2 text-right"><s:text name="label.users" /></label>
                 <div class="btn-group col-lg-10" data-toggle="buttons">
                     <label class="btn btn-default <s:if test="%{withProfile==null}"> active </s:if>">
                             <wpsf:radio id="" name="withProfile" value="" checked="%{withProfile==null}" />

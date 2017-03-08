@@ -10,6 +10,7 @@ $(function () {
 		setOfflineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOffline',
 		configureWidgetUrl = PROPERTY.baseUrl + 'do/Page/editFrame.action',
 		apiMappingsUrl = PROPERTY.baseUrl + 'do/rs/Portal/WidgetType/apiMappings',
+		apiCopyFromWidgetUrl = PROPERTY.baseUrl + 'do/Api/Service/copyFromWidget.action',
 		PAGE_IS_SELECTED = !!PROPERTY.pagemodel;
 
 
@@ -223,7 +224,7 @@ $(function () {
 			$dropDownMenu.append($apiItem);
 			$apiItem.click(function (e) {
 				var framePos = +$elem.parent().attr('data-pos');
-				window.location = PROPERTY.baseUrl + 'do/Api/Service' +
+				window.location = apiCopyFromWidgetUrl +
 					'?pageCode=' + PROPERTY.code +
 					'&framePos=' + framePos +
 					'&resourceName=' + apiMappings[apiWidgetCode].resourceName +

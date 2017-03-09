@@ -24,7 +24,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
-import org.entando.entando.aps.system.services.page.IPageTokenMager;
+import org.entando.entando.aps.system.services.page.IPageTokenManager;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.apsadmin.portal.rs.model.SwapWidgetRequest;
@@ -447,18 +447,18 @@ public class PageTreeMenuAction extends PageTreeAction {
 		this.pageCode = pageCode;
 	}
 	
-	public IPageTokenMager getPageTokenMager() {
+	public IPageTokenManager getPageTokenMager() {
 		return pageTokenMager;
 	}
 
-	public void setPageTokenMager(IPageTokenMager pageTokenMager) {
+	public void setPageTokenMager(IPageTokenManager pageTokenMager) {
 		this.pageTokenMager = pageTokenMager;
 	}
 
 	private String _widgetTypeCode;
 	private IPageActionHelper _pageActionHelper;
 	private String pageCode;
-	private IPageTokenMager pageTokenMager;
+	private IPageTokenManager pageTokenMager;
 	
 	
 	

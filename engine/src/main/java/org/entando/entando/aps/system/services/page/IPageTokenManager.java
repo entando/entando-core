@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.page;
 
-public interface IPageTokenMager {
+public interface IPageTokenManager {
 
 	public static final String PREVIEW_HASH = "page_preview_hash";
 

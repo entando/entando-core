@@ -29,15 +29,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
-public class PageTokenManager extends AbstractService implements IPageTokenMager {
+public class PageTokenManager extends AbstractService implements IPageTokenManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(PageTokenManager.class);
 
@@ -101,9 +101,9 @@ public class PageTokenManager extends AbstractService implements IPageTokenMager
 			pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(this.getSalt().getBytes(), 20));
 			return new String(pbeCipher.doFinal(base64Decode(property)), "UTF-8");
 		} catch (GeneralSecurityException e) {
-			logger.error("Error in decrypt", e);
+			logger.error("Error in decrypt");
 		} catch (IOException e) {
-			logger.error("Error in decrypt", e);
+			logger.error("Error in decrypt");
 		} 
 		return null;
 	}
@@ -127,7 +127,7 @@ public class PageTokenManager extends AbstractService implements IPageTokenMager
 		try {
 			String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
 			Map<String, String> params = SystemParamsUtils.getParams(xmlParams);
-			if (!params.containsKey(IPageTokenMager.PREVIEW_HASH)) {
+			if (!params.containsKey(IPageTokenManager.PREVIEW_HASH)) {
 				param = RandomStringUtils.randomAlphanumeric(HASH_LENGTH);
 				params.put(PREVIEW_HASH, param);
 				String newXmlParams = SystemParamsUtils.getNewXmlParams(xmlParams, params);

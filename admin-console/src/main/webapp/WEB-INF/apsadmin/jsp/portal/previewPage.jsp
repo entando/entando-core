@@ -12,6 +12,7 @@
         var PROPERTY = {
             baseUrl: '<wp:info key="systemParam" paramName="applicationBaseURL" />',
             lang: '<s:property value="lang" />',
+            token: '<s:property value="token" />',
             pageCode: '<s:property value="pageCode" />',
             previewWidth: '<s:property value="#currentSize.width" />',
             previewHeight: '<s:property value="#currentSize.width" />'

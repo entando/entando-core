@@ -29,6 +29,7 @@ import org.entando.entando.apsadmin.portal.rs.validator.ISwapWidgetRequestValida
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
@@ -421,6 +422,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		return validator;
 	}
 	@Autowired
+	@Qualifier(ISwapWidgetRequestValidator.BEAN_NAME)
 	public void setValidator(ISwapWidgetRequestValidator validator) {
 		this.validator = validator;
 	}

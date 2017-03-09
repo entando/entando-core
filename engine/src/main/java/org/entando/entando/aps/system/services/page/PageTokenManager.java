@@ -27,12 +27,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.common.AbstractService;
-
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-public class PageTokenManager extends AbstractService implements IPageTokenMager {
+import com.agiletec.aps.system.common.AbstractService;
+
+public class PageTokenManager extends AbstractService implements IPageTokenManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(PageTokenManager.class);
 	private static final String SALT_DEFAULT = "AAAAAAAA";
@@ -78,7 +78,6 @@ public class PageTokenManager extends AbstractService implements IPageTokenMager
 
 			pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(this.getSalt().getBytes(), 20));
 			return base64Encode(pbeCipher.doFinal(property.getBytes("UTF-8")));
-
 		} catch (GeneralSecurityException e) {
 			logger.error("Error in encrypt", e);
 		} catch (UnsupportedEncodingException e) {

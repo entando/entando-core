@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.entando.entando.aps.system.services.page.IPageTokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

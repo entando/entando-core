@@ -17,6 +17,7 @@
 			parent="abstractControlService" >
 		<property name="authManager" ref="AuthorizationManager"/>
 		<property name="userManager" ref="UserManager"/>
+		<property name="pageTokenMager" ref="PageTokenManager" />
 	</bean>
 	
 	<bean id="PreviewErrorManagerControlService" class="org.entando.entando.aps.system.services.controller.preview.control.PreviewErrorManager" 

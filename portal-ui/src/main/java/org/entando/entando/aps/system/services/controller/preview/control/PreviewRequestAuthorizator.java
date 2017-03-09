@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.page.IPageTokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,7 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.controller.ControllerManager;
 import com.agiletec.aps.system.services.controller.control.AbstractControlService;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 
@@ -47,8 +50,7 @@ public class PreviewRequestAuthorizator extends AbstractControlService {
 
 	/**
 	 * Verifica che l'utente in sessione sia abilitato all'accesso alla pagina richiesta.
-	 * Se è autorizzato il metodo termina con CONTINUE, altrimenti 
-	 * con REDIRECT impostando prima i parametri di redirezione alla pagina di login.
+	 * Se è autorizzato il metodo termina con CONTINUE, altrimenti con SYS_ERROR.
 	 * @param reqCtx Il contesto di richiesta
 	 * @param status Lo stato di uscita del servizio precedente
 	 * @return Lo stato di uscita
@@ -61,17 +63,15 @@ public class PreviewRequestAuthorizator extends AbstractControlService {
 			return status;
 		}
 		try {
-			HttpServletRequest req = reqCtx.getRequest();
-			HttpSession session = req.getSession();
+			HttpServletRequest request = reqCtx.getRequest();
+			HttpSession session = request.getSession();
 			IPage currentPage = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
 			UserDetails currentUser = (UserDetails) session.getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
 			if (null == currentUser) {
 				currentUser = this.getUserManager().getGuestUser();
                 session.setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, currentUser);
 			}
-			// TODO check token
-			boolean authorized = this.getAuthManager().isAuth(currentUser, currentPage);
-			if (authorized) {
+			if (this.isAllowed(currentUser, currentPage, request)) {
 				retStatus = ControllerManager.CONTINUE;
 			} else {
 				retStatus = ControllerManager.SYS_ERROR;
@@ -83,6 +83,26 @@ public class PreviewRequestAuthorizator extends AbstractControlService {
 			reqCtx.setHTTPError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 		return retStatus;
+	}
+
+	private boolean isAllowed(UserDetails currentUser, IPage currentPage, HttpServletRequest request) {
+		boolean isValid = false;
+		IAuthorizationManager authManager = this.getAuthManager();
+		if (authManager.isAuthOnPermission(currentUser, Permission.SUPERUSER)) {
+			isValid = true;
+		} else {
+			String token = request.getParameter("token");
+			if (StringUtils.isNotEmpty(token)) {
+				String result = this.getPageTokenMager().decrypt(token);
+				if (result != null && currentPage != null && result.equals(currentPage.getCode())) {
+					isValid = true;
+				}
+			}
+		}
+		if (isValid) {
+			isValid = authManager.isAuth(currentUser, currentPage);
+		}
+		return isValid;
 	}
 
 	protected IAuthorizationManager getAuthManager() {
@@ -99,7 +119,15 @@ public class PreviewRequestAuthorizator extends AbstractControlService {
 		this._userManager = userManager;
 	}
 
+	protected IPageTokenManager getPageTokenMager() {
+		return _pageTokenMager;
+	}
+	public void setPageTokenMager(IPageTokenManager pageTokenMager) {
+		this._pageTokenMager = pageTokenMager;
+	}
+
 	private IAuthorizationManager _authManager;
     private IUserManager _userManager;
+    private IPageTokenManager _pageTokenMager;
 
 }

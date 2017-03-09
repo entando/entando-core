@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.page;
 
-public interface IPageTokenMager {
+public interface IPageTokenManager {
 
 	public String encrypt(String pageCode);
 

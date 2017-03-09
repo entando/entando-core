@@ -3,6 +3,7 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
+<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/entando-widget-icons.css"/>
 <div class="right-menu-title">
 	<s:text name="title.widgetlist" /><span class="pull-right drawer-pf-icons-right-menu"><i id="widgetGrid" class="fa fa-th-large pointer" aria-hidden="true"></i>&nbsp;&nbsp;<i id="widgetList" class="fa fa-th-list pointer"  aria-hidden="true"></i></span>
     <input  id="search-widget" class="input-pf-right-menu" type="text" placeholder="<s:text name="widget.search" />" />
@@ -70,13 +71,14 @@
                 <s:set var="concreteShowletTypeVar" value="%{getShowletType(#showletType.key)}"></s:set>
                     <!-- list item start-->
                     <div class="list-group-item widget-square list-group-item-custom pointer" data-widget-id="<s:property value="#showletType.key" />">
+                    <div class="icon-pos hidden fa fa-default fa-<s:property value="#showletType.key" />"></div>
                     <div class="list-view-pf-main-info">
                         <div class="list-view-pf-left">
-                            <span class="fa fa-cube list-view-pf-icon-sm widget-icon"></span>
+                            <span class="fa fa-default list-view-pf-icon-sm widget-icon fa-<s:property value="#showletType.key" />"></span>
                         </div>
                         <div class="list-view-pf-body">
                             <div class="list-view-pf-description">
-                                <div class="list-group-item-heading widget-name widget-name-list ">
+                                <div id="description-widget" class="list-group-item-heading widget-name widget-name-list ">
                                     <a href="<s:url namespace="/do/Portal/WidgetType" action="edit"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="label.configWidget" />: <s:property value="#showletType.value" />" >
                                         <s:property value="#showletType.value" /></a>
                                     <s:if test="%{#concreteShowletTypeVar.mainGroup != null && !#concreteShowletTypeVar.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
@@ -112,10 +114,14 @@
 
     $("#widgetGrid").click(function () {
         $(".widget-square").addClass("widget-grid");
+        $(".icon-pos").removeClass("hidden");
+        $(".list-group-item-heading").addClass("descrition-widget-overlay");
     });
 
     $("#widgetList").click(function () {
         $(".widget-square").removeClass("widget-grid");
+        $(".icon-pos").addClass("hidden");
+        $(".list-group-item-heading").removeClass("descrition-widget-overlay");
     })
 
 

@@ -3,7 +3,13 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
-<h1 class="panel panel-default title-page"><span class="panel-body display-block"><s:text name="title.widgetManagement" /></span></h1>
+<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/entando-widget-icons.css"/>
+
+<h1 class="panel panel-default title-page">
+    <span class="panel-body display-block">
+        <s:text name="title.widgetManagement" />
+    </span>
+</h1>
 
 <div id="main" role="main">
     

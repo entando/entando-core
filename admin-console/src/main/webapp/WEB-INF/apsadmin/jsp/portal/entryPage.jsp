@@ -29,7 +29,7 @@
             <s:text name="title.editPage" />
         </s:elseif>
         <s:elseif test="strutsAction == 3">
-            <s:text name="title.pastePage" />
+            <s:text name="title.clonePage" />
         </s:elseif>
     </li>
 </ol>
@@ -61,7 +61,7 @@
                 <s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
             </s:elseif>
             <s:elseif test="strutsAction == 3">
-                <s:text name="title.pastePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+                <s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
             </s:elseif>
 </h1>
 
@@ -234,7 +234,8 @@
                 </div>
             </s:if>
 
-
+            <s:if test="strutsAction != 3">
+            
             <div class="section-divider-wrapper form-group">
                 <div class="col-sm-2">
                     <span class="section-divider">2</span><span class="control-label label-group-name"><s:text name="label.groups" /></span>
@@ -245,7 +246,7 @@
             </div>
 
 
-            <s:if test="strutsAction != 3">
+
                 <%-- ownerGroup --%>
                 <s:set var="fieldErrorsVar" value="%{fieldErrors['ownerGroup']}" />
                 <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />

@@ -18,15 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.Page;
 import com.opensymphony.xwork2.ActionSupport;
 
-public class JoinWidgetResponse {
+public class JoinWidgetResponse extends AbstractPageResponse {
 
 	private Map<String, List<String>> fieldErrors;
 	private Collection<String> actionErrors;
 	private Collection<String> actionMessages;
-	private IPage page;
+	private PageJO page;
 	private String redirectLocation;
 
 	public Map<String, List<String>> getFieldErrors() {
@@ -50,8 +49,11 @@ public class JoinWidgetResponse {
 		this.actionMessages = actionMessages;
 	}
 
-	public IPage getPage() {
+	public PageJO getPage() {
 		return page;
+	}
+	public void setPage(PageJO page) {
+		this.page = page;
 	}
 
 	public String getRedirectLocation() {
@@ -61,28 +63,16 @@ public class JoinWidgetResponse {
 		this.redirectLocation = redirectLocation;
 	}
 
-	public void setPage(IPage src) {
-		if (null == src) {
-			return;
-		}
-		Page page = new Page();
-		page.setCode(src.getCode());
-		page.setDraftMetadata(src.getDraftMetadata());
-		page.setDraftWidgets(src.getDraftWidgets());
-		page.setParentCode(page.getParentCode());
-		page.setGroup(src.getGroup());
-		this.page = page;
-	}
-
 	public JoinWidgetResponse() {
 		//
 	}
 
-	public JoinWidgetResponse(ActionSupport actionSupport) {
+	public JoinWidgetResponse(ActionSupport actionSupport, IPage page) {
 		super();
 		this.setFieldErrors(actionSupport.getFieldErrors());
 		this.setActionErrors(actionSupport.getActionErrors());
 		this.setActionMessages(actionSupport.getActionMessages());
+		this.setPage(this.copyPage(page));
 	}
 	
 }

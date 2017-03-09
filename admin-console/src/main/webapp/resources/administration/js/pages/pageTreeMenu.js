@@ -72,9 +72,9 @@ $(function () {
 	 * Updates the page status circle color
 	 */
 	function updatePageStatus(pageData) {
-
-		var hasChanges = !_.isEqual(pageData.draftWidgets, pageData.onlineWidgets) || !_.isEqual(pageData.draftMetadata, pageData.onlineMetadata);
-
+		var title = getPageTitle(pageData);// TODO Verificare e agganciare dove serve
+		var hasChanges = pageData.changed;
+		//!_.isEqual(pageData.draftWidgets, pageData.onlineWidgets) || !_.isEqual(pageData.draftMetadata, pageData.onlineMetadata);
 		// updates the yellow/green page circle in the tree
 		$('#pageTree tr#' + PROPERTY.code + ' .statusField .fa')
 			.removeClass('green yellow')
@@ -124,8 +124,8 @@ $(function () {
 		$pageInfo.find('[data-info-titles]').html(titles);
 		$pageInfo.find('[data-info-group]').text(pageData.group);
 		$pageInfo.find('[data-info-model]').text(metadata.model.descr);
-		$pageInfo.find('[data-info-showmenu]').html(checkElems[_.toString(pageData.showable)]);
-		$pageInfo.find('[data-info-extratitles]').html(checkElems[_.toString(pageData.useExtraTitles)]);
+		$pageInfo.find('[data-info-showmenu]').html(checkElems[_.toString(metadata.showable)]);
+		$pageInfo.find('[data-info-extratitles]').html(checkElems[_.toString(metadata.useExtraTitles)]);
 
 	}
 
@@ -589,6 +589,14 @@ $(function () {
 		}, handleApiError);
 	}
 
+	function getPageTitle(pageData) {
+		debugger;
+		var title = pageData.draftMetadata.titles[PROPERTY.currentLang];
+		if (title == null || title == 'undefined') {// TODO Verificare
+			title = pageData.draftMetadata.titles[PROPERTY.defaultLang];
+		}
+		return title;
+	}
 
 	if (PAGE_IS_SELECTED) {
 		setDraggable($('.widget-square'), null);

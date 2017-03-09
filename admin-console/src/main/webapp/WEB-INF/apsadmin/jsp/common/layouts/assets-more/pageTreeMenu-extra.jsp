@@ -16,11 +16,12 @@
     PROPERTY.code = '<s:property value="pageCode"/>' || '<s:property value="selectedNode"/>';
     PROPERTY.pagemodel = '<s:property value="%{getCurrentPage().getDraftMetadata().getModel().getCode()}"/>';
     PROPERTY.baseUrl = '<wp:info key="systemParam" paramName="applicationBaseURL" />';
+    PROPERTY.currentLang = '<s:property value="%{currentLang.code}"/>';
+    PROPERTY.defaultLang = '<wp:info key="defaultLang" />';
 
     var PERMISSION = {
         <wp:ifauthorized permission="superuser">superuser: true,</wp:ifauthorized>
     };
-    
 
     var TEXT = {
         'error.grid.overlappingFrames': '<s:text name="error.grid.overlappingFrames"/>',

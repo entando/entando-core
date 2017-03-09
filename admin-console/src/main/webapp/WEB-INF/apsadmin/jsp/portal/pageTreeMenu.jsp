@@ -34,9 +34,9 @@
             <span class="info-title"><s:text name="page.treeInfo" /></span>
         </button>
 
-        <button class="btn btn-success publish-btn pull-right"><s:text name="page.publish" /></button>
-        <button class="btn btn-danger unpublish-btn pull-right"><s:text name="page.unpublish" /></button>
-        <button class="btn btn-warning restore-online-btn pull-right"><s:text name="page.restoreOnline" /></button>
+        <button class="btn btn-success publish-btn pull-right"><s:text name="pageActions.publish" /></button>
+        <button class="btn btn-danger unpublish-btn pull-right"><s:text name="pageActions.unpublish" /></button>
+        <button class="btn btn-warning restore-online-btn pull-right"><s:text name="pageActions.restore" /></button>
     </div>
 
     <div id="page-info" class="collapse">

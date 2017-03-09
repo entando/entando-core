@@ -23,7 +23,8 @@ $(function () {
 
 
 	// jQuery selectors
-	var $pageCircle = $('#pageTree tr#' + PROPERTY.code + ' .statusField .fa'),
+	var $gridContainer = $('.grid-container'),
+		$pageCircle = $('#pageTree tr#' + PROPERTY.code + ' .statusField .fa'),
 		$restoreOnlineBtn = $('.restore-online-btn'),
 		$publishBtn = $('.publish-btn'),
 		$unpublishBtn = $('.unpublish-btn'),
@@ -45,9 +46,8 @@ $(function () {
 				if (alertService.showResponseAlerts(data)) {
 					return;
 				}
-				pageData = data.page;
+				updatePageStatus(data.page);
 				initPage();
-				updatePageStatus(pageData);
 			}
 		});
 	}
@@ -67,8 +67,7 @@ $(function () {
 				if (alertService.showResponseAlerts(data)) {
 					return;
 				}
-				pageData = data.page;
-				updatePageStatus(pageData);
+				updatePageStatus(data.page);
 			}
 		});
 	}
@@ -79,8 +78,9 @@ $(function () {
 	/**
 	 * Updates the page status circle color
 	 */
-	function updatePageStatus(pageData) {
-		var title = getPageTitle(pageData);// TODO Verificare e agganciare dove serve
+	function updatePageStatus(newData) {
+
+		pageData = newData || pageData;
 		var hasChanges = pageData.changed;
 		//!_.isEqual(pageData.draftWidgets, pageData.onlineWidgets) || !_.isEqual(pageData.draftMetadata, pageData.onlineMetadata);
 		// updates the yellow/green page circle in the tree
@@ -114,8 +114,12 @@ $(function () {
 		}
 
 		// titles
-		$pageTitleBig.text(pageData.draftTitles.en); // FIXME select based on curr language
-		$pageTitleTree.text(pageData.draftTitles.en);
+		var title = getPageTitle(pageData);
+		$pageTitleBig.text(title);
+		$pageTitleTree.text(title);
+
+		// online/offline class
+		$gridContainer.attr('data-online', _.toString(pageData.online));
 
 	}
 
@@ -158,7 +162,7 @@ $(function () {
 			'<span class="pficon pficon-warning-triangle-o"></span>' +
 			'<strong>' + alertText + '</strong>' +
 			'</div>';
-		$('.grid-container').html(alert);
+		$gridContainer.html(alert);
 	}
 
 	/**
@@ -285,7 +289,7 @@ $(function () {
 
 					// update local draft status
 					pageData.draftWidgets[framePos] = null;
-					updatePageStatus(pageData);
+					updatePageStatus(data.page);
 				}
 			});
 		});
@@ -344,7 +348,7 @@ $(function () {
 			});
 
 			var gridHtml = '<div class="grid-preview">' + gen.getHtml() + '</div>';
-			$('.grid-container').html(gridHtml);
+			$gridContainer.html(gridHtml);
 
 			// init original html map (empty slot)
 			$('.grid-slot').each(function (index, el) {
@@ -402,9 +406,8 @@ $(function () {
 							}),
 							success: function (data) {
 								if (alertService.showResponseAlerts(data)) {
-									pageData = data.page || pageData;
+									updatePageStatus(data.page);
 									updateGridPreview(pageData);
-									updatePageStatus(pageData);
 									return;
 								}
 								// widget needs configuration
@@ -416,14 +419,7 @@ $(function () {
 								// no need for configuration
 								populateSlot($curSlot, $curWidget);
 
-								// update local draft status
-								pageData.draftWidgets[curSlotPos] = {
-									config: null,
-									type: {
-										code: curWidgetType
-									}
-								};
-								updatePageStatus(pageData);
+								updatePageStatus(data.page);
 							}
 						});
 					} else {
@@ -443,9 +439,9 @@ $(function () {
 							}),
 							success: function (data) {
 								if (alertService.showResponseAlerts(data)) {
-									pageData = data.page || pageData;
+									updatePageStatus(data.page);
 									updateGridPreview(pageData);
-									updatePageStatus(pageData);
+
 									return;
 								}
 								var $prevWidget = $curSlot.find('.grid-widget');
@@ -461,11 +457,7 @@ $(function () {
 								var $newCurWidget = createGridWidget(curWidgetType);
 								populateSlot($curSlot, $newCurWidget);
 
-								// update local draft status
-								var park = pageData.draftWidgets[curSlotPos];
-								pageData.draftWidgets[curSlotPos] = pageData.draftWidgets[prevSlotPos];
-								pageData.draftWidgets[prevSlotPos] = park;
-								updatePageStatus(pageData);
+								updatePageStatus(data.page);
 							}
 						});
 					}
@@ -603,7 +595,6 @@ $(function () {
 	}
 
 	function getPageTitle(pageData) {
-		debugger;
 		var title = pageData.draftMetadata.titles[PROPERTY.currentLang];
 		if (title == null || title == 'undefined') {// TODO Verificare
 			title = pageData.draftMetadata.titles[PROPERTY.defaultLang];

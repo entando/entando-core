@@ -27,7 +27,7 @@
     right: 5px;
     width: 20px;
     font-size: 20px;
-    color: #444;
+    color: #bbb;
     cursor: pointer;
     z-index: 1010;
 }
@@ -44,12 +44,12 @@
 .grid-widget .slot-name {
     position: absolute;
     left: 10px;
+    color: #bbb;
 }
 
 .grid-widget .widget-icon {
     font-size: 20px;
     line-height: 35px;
-    color: #31a2de;
 }
 
 .main-container {
@@ -78,6 +78,14 @@
 }
 
 
-.grid-slot.diff-slot {
-    background: #feffd3;
+.grid-container[data-online="false"] .grid-slot .widget-icon {
+    color: #8b8d8f;
 }
+.grid-container[data-online="true"] .grid-slot .widget-icon {
+    color: #3f9c35;
+}
+
+.grid-container[data-online="true"] .grid-slot.diff-slot .widget-icon {
+    color: #f0ab00;
+}
+

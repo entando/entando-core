@@ -72,12 +72,13 @@ $(function () {
 	 * Updates the page status circle color
 	 */
 	function updatePageStatus(pageData) {
+
 		var hasChanges = !_.isEqual(pageData.draftWidgets, pageData.onlineWidgets);
 
 		// updates the yellow/green page circle in the tree
 		$('#pageTree tr#' + PROPERTY.code + ' .statusField .fa')
 			.removeClass('green yellow')
-			.addClass(hasChanges ? 'yellow' : 'green');
+			.addClass(pageData.online ? hasChanges ? 'yellow' : 'green' : 'red');
 
 		// updates the buttons visibility
 		var showPublish = !pageData.online || pageData.online && hasChanges ? 'show' : 'hide';
@@ -581,7 +582,8 @@ $(function () {
 			loadApiMappings(function() {
 				loadPageFrames(function() {
 					updatePageDetail(pageData);
-					updateGridPreview(pageFrames)
+					updateGridPreview(pageFrames);
+					updatePageStatus(pageData);
 				}, handleApiError);
 			}, handleApiError);
 		}, handleApiError);

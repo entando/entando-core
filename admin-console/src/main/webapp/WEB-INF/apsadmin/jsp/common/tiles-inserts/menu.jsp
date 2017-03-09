@@ -12,6 +12,8 @@
         $(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
         // Initialize the vertical navigation
         $().setupVerticalNavigation(true);
+        $('[data-toggle=popover]').popovers();
+//        $(".bootstrap-switch").bootstrapSwitch();
     });
 </script>
 
@@ -33,31 +35,31 @@
 
             <wp:ifauthorized permission="managePages" var="isManagePage" />
             <wp:ifauthorized permission="superuser" var="isSuperUser" />
-           
+
             <c:choose>
-            	<c:when test="${isManagePage ||  isSuperUser}">
-		            <ul class="list-group">
-	            		<c:if test="${isManagePage}">
-			                <li class="list-group-item">
-			                    <a id="linkHome" href='<s:url action="viewTree" namespace="/do/Page" />'>
-			                        <span class="list-group-item-value">Page Tree</span>
-			                    </a>
-			                </li>
-			                <li class="list-group-item">
-			                    <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page/Console" />'>
-			                        <span class="list-group-item-value">Configure Page</span>
-			                    </a>
-			                </li>
-	            		</c:if>
-	            		<c:if test="${isSuperUser}">
-			                <li class="list-group-item">
-			                    <a href='<s:url action="systemParams" namespace="/do/Page" />'>
-			                        <span class="list-group-item-value">General Settings Page</span>
-			                    </a>
-			                </li>
-	            		</c:if>
-		            </ul>
-            	</c:when>
+                <c:when test="${isManagePage ||  isSuperUser}">
+                    <ul class="list-group">
+                        <c:if test="${isManagePage}">
+                            <li class="list-group-item">
+                                <a id="linkHome" href='<s:url action="viewTree" namespace="/do/Page" />'>
+                                    <span class="list-group-item-value">Page Tree</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page/Console" />'>
+                                    <span class="list-group-item-value">Configure Page</span>
+                                </a>
+                            </li>
+                        </c:if>
+                        <c:if test="${isSuperUser}">
+                            <li class="list-group-item">
+                                <a href='<s:url action="systemParams" namespace="/do/Page" />'>
+                                    <span class="list-group-item-value">General Settings Page</span>
+                                </a>
+                            </li>
+                        </c:if>
+                    </ul>
+                </c:when>
             </c:choose>
             <!--Fine Page Designer Secondary-->
         </div>
@@ -181,7 +183,7 @@
 
     <li class="list-group-item secondary-nav-item-pf" data-target="#user-settings-secondary">
         <a>
-            <span class="fa fa-files-o" data-toggle="tooltip" title="Users Settings" ></span>
+            <span class="fa fa-users" data-toggle="tooltip" title="Users Settings" ></span>
             <span class="list-group-item-value">Users Settings</span>
         </a>
 
@@ -202,18 +204,18 @@
 
                 <li class="list-group-item">
                     <a href='<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>'>
-                        <span class="list-group-item-value">Profiles</span>
-                    </a>
-                </li>
+                                <span class="list-group-item-value">Profiles</span>
+                            </a>
+                        </li>
 
-                <li class="list-group-item">
-                    <a>
-                        <span class="list-group-item-value">User Settings TO_DO</span>
-                    </a>
-                </li>
+                        <li class="list-group-item">
+                            <a>
+                                <span class="list-group-item-value">User Settings TO_DO</span>
+                            </a>
+                        </li>
 
-                <li class="list-group-item">
-                    <a href='<s:url action="list" namespace="/do/Role" />'>
+                        <li class="list-group-item">
+                            <a href='<s:url action="list" namespace="/do/Role" />'>
                         <span class="list-group-item-value">Roles</span>
                     </a>
                 </li>
@@ -253,31 +255,31 @@
                         <ul class="list-group">
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/jacms/Content" />">
-                                   <span class="list-group-item-value">Contents</span>
+                                    <span class="list-group-item-value">Contents</span>
                                 </a>
                             </li>
 
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                                   <span class="list-group-item-value">Digital Assets TO_DO</span>
+                                    <span class="list-group-item-value">Digital Assets TO_DO</span>
                                 </a>
                             </li>              
 
                             <li class="list-group-item">
                                 <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>">
-                                    <span class="list-group-item-value">Content Types</span>
-                                </a>
-                            </li>
+                                            <span class="list-group-item-value">Content Types</span>
+                                        </a>
+                                    </li>
 
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
-                                   <span class="list-group-item-value">Content Model</span>
+                                    <li class="list-group-item">
+                                        <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
+                                    <span class="list-group-item-value">Content Model</span>
                                 </a>
                             </li>
 
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                                   <span class="list-group-item-value">Content Settings TO_DO</span>
+                                    <span class="list-group-item-value">Content Settings TO_DO</span>
                                 </a>
                             </li>
                         </ul>

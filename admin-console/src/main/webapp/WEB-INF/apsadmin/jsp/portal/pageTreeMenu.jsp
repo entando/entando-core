@@ -27,50 +27,48 @@
 </s:if>
 
 <div class="main-container">
-
     <div class="alert-container"></div>
-
-    <div class="button-bar">
-        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-link">
-        Info
-        <span class="icon fa fa-chevron-down"></span>
+    <div>
+        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-sm btn-primary margin-large-bottom">
+            <span class="icon fa fa-chevron-down"></span>&nbsp;&nbsp;
+            <span class="info-title"><s:text name="page.treeInfo" /></span>
         </button>
 
-        <button class="publish-btn pull-right"><s:text name="pageActions.publish" /></button>
-        <button class="unpublish-btn pull-right"><s:text name="pageActions.unpublish" /></button>
-        <button class="restore-online-btn pull-right"><s:text name="pageActions.restore" /></button>
+        <button class="btn btn-success publish-btn pull-right"><s:text name="page.publish" /></button>
+        <button class="btn btn-danger unpublish-btn pull-right"><s:text name="page.unpublish" /></button>
+        <button class="btn btn-warning restore-online-btn pull-right"><s:text name="page.restoreOnline" /></button>
     </div>
 
     <div id="page-info" class="collapse">
-        <table class="table table-bordered">
+        <table class="table">
             <tbody>
-            <tr>
-                <th class="text-right"><s:text name="name.pageCode" /></th>
-                <td data-info-pagecode></td>
-            </tr>
-            <tr>
-                <th class="text-right"><s:text name="name.pageTitle" /></th>
-                <td data-info-titles></td>
-            </tr>
-            <tr>
-                <th class="text-right">Owner Group</th>
-                <td data-info-group></td>
-            </tr>
-            <tr>
-                <th class="text-right"><s:text name="name.pageModel" /></th>
-                <td data-info-model></td>
-            </tr>
-            <tr>
-                <th class="text-right"><s:text name="name.isShowablePage" /></th>
-                <td data-info-showmenu></td>
-            </tr>
-            <tr>
-                <th class="text-right">
-                    <abbr lang="en" title="<s:text name="name.SEO.full" />">
-                        <s:text name="name.SEO.short" />
-                    </abbr>: <s:text name="name.useBetterTitles" />   </th>
-                <td data-info-extratitles></td>
-            </tr>
+                <tr>
+                    <th class="td-pagetree-width"><s:text name="name.pageCode" /></th>
+                    <td data-info-pagecode></td>
+                </tr>
+                <tr>
+                    <th class="td-pagetree-width"><s:text name="name.pageTitle" /></th>
+                    <td data-info-titles></td>
+                </tr>
+                <tr>
+                    <th class="td-pagetree-width">Owner Group</th>
+                    <td data-info-group></td>
+                </tr>
+                <tr>
+                    <th class="td-pagetree-width"><s:text name="name.pageModel" /></th>
+                    <td data-info-model></td>
+                </tr>
+                <tr>
+                    <th class="td-pagetree-width"><s:text name="name.isShowablePage" /></th>
+                    <td data-info-showmenu></td>
+                </tr>
+                <tr>
+                    <th class="td-pagetree-width">
+                        <abbr lang="en" title="<s:text name="name.SEO.full" />">
+                            <s:text name="name.SEO.short" />
+                        </abbr>: <s:text name="name.useBetterTitles" />   </th>
+                    <td data-info-extratitles></td>
+                </tr>
             </tbody>
         </table>
 
@@ -88,7 +86,7 @@
 
     <a  id="widget-sidebar-page-tree-btn" class="drawer-pf-title drawer-pf-title-right-menu drawer-pf-title-clickable ">
         <span class="right-bar-title" >
-            <i class="fa fa-sitemap fa-16px" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span class="list-group-item-value"><s:text name="title.pages" /></span>
+            <i class="fa fa-sitemap fa-18px" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span class="list-group-item-value"><s:text name="title.pages" /></span>
             <span class="open-button-menu-right pull-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
         </span>
     </a>
@@ -104,7 +102,7 @@
 
 <div id="sidebar-page-tree" class="drawer-pf hide drawer-pf-notifications-non-clickable">
     <div class="drawer-pf-title drawer-pf-title-right-menu">
-        <a class="drawer-pf-toggle-expand"></a>        
+        <a id="toggle-expand" class="drawer-pf-toggle-expand"></a>        
         <span class="right-bar-title-pages"><s:text name="title.pages" /></span>
         <span id="close-page-tree-sidebar" class=" close-button-menu-right pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
     </div>
@@ -143,15 +141,15 @@
 
                         </s:if>
                         <s:else>
-	                        <style>
-	                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
-	                                cursor: pointer;
-	                                display: none;
-	                            }
-	                        </style>
-	                        <s:set var="currentRoot" value="showableTree" />
-	                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
-	                    </s:else>
+                        <style>
+                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                cursor: pointer;
+                                display: none;
+                            }
+                        </style>
+                        <s:set var="currentRoot" value="showableTree" />
+                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
+                    </s:else>
                     </tbody>
                 </table>     
             </div>
@@ -174,7 +172,7 @@
 
         $(document).ready(function () {
             // Show/Hide Notifications Drawer
-            if ($('.drawer-pf').hasClass('drawer-pf-expanded')) {
+            if ($('#sidebar-page-tree').hasClass('drawer-pf-expanded')) {
                 $('.moveButtons-right-container').show();
             } else {
                 $('.moveButtons-right-container').hide();
@@ -182,11 +180,10 @@
 
             $('#widget-sidebar-page-tree-btn').click(function () {
 
-                var $drawer = $('.drawer-pf');
+                var $drawer = $('#sidebar-page-tree');
 
                 $(this).toggleClass('open');
                 if ($drawer.hasClass('hide')) {
-                    // $('.drawer-pf').animate({width:'toggle'},300);
                     $drawer.removeClass('hide');
 
 
@@ -201,7 +198,6 @@
                     }, 100);
                 } else {
                     console.log('animate in');
-                    // $('.drawer-pf').animate({width:'toggle'},300);
                     $drawer.addClass('hide');
                 }
             });
@@ -209,17 +205,13 @@
 
             $('#close-page-tree-sidebar').click(function () {
                 var $drawer = $('.drawer-pf');
-                //console.log("CLOSE CLICK");
-                //$drawer.animate({width:'toggle'},300, function() {                        
-                //   $drawer.addClass('hide')
-                //});
                 $drawer.addClass('hide');
 
             });
 
 
-            $('.drawer-pf-toggle-expand').click(function () {
-                var $drawer = $('.drawer-pf');
+            $('#toggle-expand').click(function () {
+                var $drawer = $('#sidebar-page-tree');
                 var $drawerNotifications = $drawer.find('.drawer-pf-notification');
 
                 if ($drawer.hasClass('drawer-pf-expanded')) {
@@ -275,8 +267,6 @@
     </script> 
 
 </div>
-
-
 <s:url action="preview" var="previewURL">
 	<s:param name="pageCode" value="pageCode" />
 	<s:param name="token" value="previewToken" />

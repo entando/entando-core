@@ -73,7 +73,7 @@
                                 </s:if>
                             </th>
                             <th class="text-center" style="width: 8%;">Add&#32;&vert;&#32;Move</th>
-                            <th class="text-center" style="width: 8%;">State</th>
+                            <th class="text-center" style="width: 8%;">Status</th>
                             <th class="text-center" style="width: 8%;">Menu List</th>
                             <th class="text-center" style="width: 5%;">Actions</th>
                         </tr>

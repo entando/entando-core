@@ -31,8 +31,8 @@
     <table class="table table-bordered">
         <tr>
             <th class="text-center text-nowap col-xs-6 col-sm-3 col-md-3 col-lg-3 "><s:text name="label.actions" /></th>
-            <th><s:text name="name.userRoles" /></th>
-            <th><s:text name="label.description" /></th>
+            <th><s:text name="label.code" /></th>
+            <th><s:text name="label.name" /></th>
         </tr>
         <s:iterator value="roles" var="role">
             <tr>

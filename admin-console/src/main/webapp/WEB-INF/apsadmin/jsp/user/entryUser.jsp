@@ -210,7 +210,6 @@
         </div>
     </div>
 
-
     <%-- save buttons --%>
     <div class="col-md-12"> 
         <div class="form-group pull-right "> 
@@ -230,16 +229,4 @@
             </s:if>
         </div>
     </div>
-
 </s:form>
-
-
-
-
-<script>
-// Initialize Popovers
-    $(document).ready(function () {
-        $('[data-toggle=popover]').popovers();
-        $(".bootstrap-switch").bootstrapSwitch();
-    });
-</script>

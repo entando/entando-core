@@ -47,6 +47,8 @@ $(function () {
 
 	var normalizedBaseUrl = PROPERTY.baseUrl.replace(/\/$/, ''),
 		previewUrl = [normalizedBaseUrl, 'preview', PROPERTY.lang, PROPERTY.pageCode].join('/');
+	previewUrl += '?' + [ 'token='+encodeURIComponent(PROPERTY.token) ].join('&');
+
 	$previewFrame.attr('src', previewUrl);
 	$customWidthInput.val(PROPERTY.previewWidth);
 	$customHeightInput.val(PROPERTY.previewHeight);

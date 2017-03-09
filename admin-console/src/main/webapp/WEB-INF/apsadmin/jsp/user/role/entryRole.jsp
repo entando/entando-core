@@ -1,6 +1,15 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+<%@ taglib prefix="wp" uri="/aps-core" %>
+
+<script src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
+<script>
+        $(document).ready(function () {
+            generateCodeFromTitle('description', 'name');
+        });
+</script>
+
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
 		<a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a>
@@ -48,26 +57,15 @@
 			<wpsf:hidden name="name" />
 		</s:if>
 	</p>
-	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['name']}" />
-	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-		<div class="col-xs-12">
-			<label for="name"><s:text name="name" /></label>
-			<wpsf:textfield name="name" id="name" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
-			<s:if test="#fieldHasFieldErrorVar">
-				<p class="text-danger padding-small-vertical">
-					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
-				</p>
-			</s:if>
-		</div>
-	</div>
+	
+	<!--  NAME  -->
+	
 	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['description']}" />
 	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
 	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
 	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
 		<div class="col-xs-12">
-			<label for="description"><s:text name="description" /></label>
+			<label for="description"><s:text name="label.name" /></label>
 			<wpsf:textfield name="description" id="description" cssClass="form-control" />
 			<s:if test="#fieldHasFieldErrorVar">
 				<p class="text-danger padding-small-vertical">
@@ -76,6 +74,23 @@
 			</s:if>
 		</div>
 	</div>
+	
+	<!--  CODE  -->
+	<s:set var="fieldFieldErrorsVar" value="%{fieldErrors['name']}" />
+	<s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<div class="col-xs-12">
+			<label for="name"><s:text name="label.code" /></label>
+			<wpsf:textfield name="name" id="name" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
+			<s:if test="#fieldHasFieldErrorVar">
+				<p class="text-danger padding-small-vertical">
+					<s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>
+				</p>
+			</s:if>
+		</div>
+	</div>
+	
 	<div class="form-group">
 		<div class="col-xs-12">
 			<label><s:text name="name.permissions" /></label>

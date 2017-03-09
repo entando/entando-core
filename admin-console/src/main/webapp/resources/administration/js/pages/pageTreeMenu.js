@@ -22,6 +22,14 @@ $(function () {
 		alertService = new EntandoAlert('.alert-container');
 
 
+	// jQuery selectors
+	var $pageCircle = $('#pageTree tr#' + PROPERTY.code + ' .statusField .fa'),
+		$restoreOnlineBtn = $('.restore-online-btn'),
+		$publishBtn = $('.publish-btn'),
+		$unpublishBtn = $('.unpublish-btn'),
+		$pageInfo = $('#page-info'),
+		$pageTitleBig = $('.page-title-big'),
+		$pageTitleTree = $('#pageTree tr#' + PROPERTY.code + ' .tree-item-page-title');
 
 	/**
 	 * Restores online configuration of the page
@@ -76,18 +84,20 @@ $(function () {
 		var hasChanges = pageData.changed;
 		//!_.isEqual(pageData.draftWidgets, pageData.onlineWidgets) || !_.isEqual(pageData.draftMetadata, pageData.onlineMetadata);
 		// updates the yellow/green page circle in the tree
-		$('#pageTree tr#' + PROPERTY.code + ' .statusField .fa')
-			.removeClass('green yellow')
+		$pageCircle
+			.removeClass('green yellow red')
 			.addClass(pageData.online ? hasChanges ? 'yellow' : 'green' : 'red');
 
 		// updates the buttons visibility
-		var showPublish = !pageData.online || pageData.online && hasChanges ? 'show' : 'hide';
-		var showUnpublish = pageData.online ? 'show' : 'hide';
-		var showRestoreOnline = pageData.online && hasChanges ? 'show' : 'hide';
+		var enablePublish = !(!pageData.online || pageData.online && hasChanges);
+		var enableUnpublish = !pageData.online;
+		var enableRestoreOnline = !(pageData.online && hasChanges);
 
-		$('.restore-online-btn')[showRestoreOnline]();
-		$('.publish-btn')[showPublish]();
-		$('.unpublish-btn')[showUnpublish]();
+		$restoreOnlineBtn.prop('disabled', enableRestoreOnline);
+		$publishBtn.prop('disabled', enablePublish);
+		$unpublishBtn.prop('disabled', enableUnpublish);
+
+
 
 		// diff
 		$('.diff-slot').removeClass('diff-slot');
@@ -103,6 +113,10 @@ $(function () {
 			}
 		}
 
+		// titles
+		$pageTitleBig.text(pageData.draftTitles.en); // FIXME select based on curr language
+		$pageTitleTree.text(pageData.draftTitles.en);
+
 	}
 
 	/**
@@ -111,8 +125,7 @@ $(function () {
 	 */
 	function updatePageDetail(pageData) {
 
-		var $pageInfo = $('#page-info'),
-			metadata = pageData.draftMetadata,
+		var metadata = pageData.draftMetadata,
 			checkElems = {
 				'true': '<span title="Yes" class="icon fa fa-check-square-o"></span>',
 				'false': '<span title="No" class="icon fa fa-square-o"></span>'

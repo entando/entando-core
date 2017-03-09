@@ -337,7 +337,7 @@
 
                 var content;
                 if (isLeaf) {
-                    content = _.escape(col.description) || '';
+                    content = '<span class="data-description">' + (_.escape(col.description) || '') + '</span>';
                 } else {
                     content = this.readTree(col);
                 }

@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.page;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -23,50 +24,54 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
+
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-import com.agiletec.aps.system.common.AbstractService;
-
-public class PageTokenManager extends AbstractService implements IPageTokenManager {
+public class PageTokenManager extends AbstractService implements IPageTokenMager {
 
 	private static final Logger logger = LoggerFactory.getLogger(PageTokenManager.class);
-	private static final String SALT_DEFAULT = "AAAAAAAA";
-	private static final String PASSWORD_DEFAULT = "ABC12345678";
+
+	private static final int SALT_LENGTH = 8;
+	private static final int HASH_LENGTH = 20;
+
 	private String salt;
 	private String password;
 
-	@Override
-	public void init() throws Exception {
-		logger.debug("ready");
-		if (StringUtils.isBlank(this.salt)) {
-			this.salt = SALT_DEFAULT;
-			logger.warn("Using default salt. Please define a value");
-		}
-		if (StringUtils.isBlank(this.password)) {
-			this.password = PASSWORD_DEFAULT;
-			logger.warn("Using default password. Please define a value");
-		}
-	}
-	
+	private ConfigInterface configManager;
+
+
 	public String getSalt() {
 		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	protected ConfigInterface getConfigManager() {
+		return configManager;
+	}
+	public void setConfigManager(ConfigInterface configManager) {
+		this.configManager = configManager;
+	}
+
+	@Override
+	public void init() throws Exception {
+		String param = this.getConfigManager().getParam(PREVIEW_HASH);
+		if (StringUtils.isBlank(param)) {
+			param = this.generateRandomHash();
+		}
+		this.generateInternalSaltAndPassword(param);
 	}
 
 	public String encrypt(String property) {
@@ -78,6 +83,7 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 
 			pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(this.getSalt().getBytes(), 20));
 			return base64Encode(pbeCipher.doFinal(property.getBytes("UTF-8")));
+
 		} catch (GeneralSecurityException e) {
 			logger.error("Error in encrypt", e);
 		} catch (UnsupportedEncodingException e) {
@@ -102,17 +108,50 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 		return null;
 	}
 
-	private char[] getPasswordCharArray() {
+	public void updateHash() throws Exception {
+		try {
+			String param = this.generateRandomHash();
+			this.generateInternalSaltAndPassword(param);
+		} catch (Throwable t) {
+			throw new Exception("error in updateHash", t);
+		}
+	}
+
+	protected void generateInternalSaltAndPassword(String param) {
+		this.salt = StringUtils.left(param, SALT_LENGTH);
+		this.password = StringUtils.substring(param, SALT_LENGTH);
+	}
+
+	protected String generateRandomHash() throws Exception  {
+		String param = "";
+		try {
+			String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+			Map<String, String> params = SystemParamsUtils.getParams(xmlParams);
+			if (!params.containsKey(IPageTokenMager.PREVIEW_HASH)) {
+				param = RandomStringUtils.randomAlphanumeric(HASH_LENGTH);
+				params.put(PREVIEW_HASH, param);
+				String newXmlParams = SystemParamsUtils.getNewXmlParams(xmlParams, params);
+				this.getConfigManager().updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);
+			}
+			logger.info("Successfully created a random page_preview_hash");
+		} catch (Throwable t) {
+			throw new Exception("Error occurred generating a random page_preview_hash", t);
+		}
+		return param;
+	}
+
+	protected char[] getPasswordCharArray() {
 		return this.getPassword().toCharArray();
 	}
 
 	@SuppressWarnings("restriction")
-	private static byte[] base64Decode(String property) throws IOException {
+	protected static byte[] base64Decode(String property) throws IOException {
 		return new BASE64Decoder().decodeBuffer(property);
 	}
 
 	@SuppressWarnings("restriction")
-	private static String base64Encode(byte[] bytes) {
+	protected static String base64Encode(byte[] bytes) {
 		return new BASE64Encoder().encode(bytes);
 	}
+
 }

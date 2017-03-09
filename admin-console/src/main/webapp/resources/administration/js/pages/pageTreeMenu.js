@@ -73,7 +73,7 @@ $(function () {
 	 */
 	function updatePageStatus(pageData) {
 
-		var hasChanges = !_.isEqual(pageData.draftWidgets, pageData.onlineWidgets);
+		var hasChanges = !_.isEqual(pageData.draftWidgets, pageData.onlineWidgets) || !_.isEqual(pageData.draftMetadata, pageData.onlineMetadata);
 
 		// updates the yellow/green page circle in the tree
 		$('#pageTree tr#' + PROPERTY.code + ' .statusField .fa')
@@ -83,7 +83,7 @@ $(function () {
 		// updates the buttons visibility
 		var showPublish = !pageData.online || pageData.online && hasChanges ? 'show' : 'hide';
 		var showUnpublish = pageData.online ? 'show' : 'hide';
-		var showRestoreOnline = pageData.online ? 'show' : 'hide';
+		var showRestoreOnline = pageData.online && hasChanges ? 'show' : 'hide';
 
 		$('.restore-online-btn')[showRestoreOnline]();
 		$('.publish-btn')[showPublish]();

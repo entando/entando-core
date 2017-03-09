@@ -40,6 +40,10 @@
             <input class="custom-height" onkeypress="return event.charCode >= 48 && event.charCode <= 57"/>
             <button class="btn custom-size-btn"><s:text name="label.ok" /></button>
         </div>
+        
+        <label for="preview-mode-lang"><s:text name="previewPage.lang" /></label>
+        <s:select  list="langs" id="preview-mode-lang" name="lang" listKey="code" listValue="descr"></s:select>
+        
     </div>
 </body>
 </html>

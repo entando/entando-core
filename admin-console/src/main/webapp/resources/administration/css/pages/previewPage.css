@@ -1,0 +1,22 @@
+html, body {
+    padding: 0;
+    margin: 0;
+}
+
+.main-container {
+    background: #4c4a4c;
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+#previewFrame {
+    background: #fff;
+}
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background: #dcdadc;
+}

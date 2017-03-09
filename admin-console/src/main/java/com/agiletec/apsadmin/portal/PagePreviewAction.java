@@ -144,7 +144,7 @@ public class PagePreviewAction extends AbstractPortalAction {
 	protected boolean checkToken(String token, String expected) {
 		if (StringUtils.isNotBlank(this.getToken())) {
 			String page = this.getPageTokenMager().decrypt(token);
-			return page.trim().equalsIgnoreCase(expected);
+			return null != page && page.trim().equalsIgnoreCase(expected);
 		}
 		return false;
 	}

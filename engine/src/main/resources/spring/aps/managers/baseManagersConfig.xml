@@ -240,7 +240,7 @@
 	</bean>
 
 	<bean id="PageTokenManager" class="org.entando.entando.aps.system.services.page.PageTokenManager" parent="abstractService" >
-
+		<property name="configManager" ref="BaseConfigManager" />
 	</bean>
 	
 </beans>

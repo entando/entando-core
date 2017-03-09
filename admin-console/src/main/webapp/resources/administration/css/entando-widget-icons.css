@@ -30,7 +30,9 @@ and open the template in the editor.
     vertical-align: middle;
 }
 /*Custom widget*/
-.fa-userprofile_editCurrentUser:before, .fa-userprofile_editCurrentUser_password:before, .fa-userprofile_editCurrentUser_profile:before{
+.fa-userprofile_editCurrentUser:before, .fa-userprofile_editCurrentUser_password:before, .fa-userprofile_editCurrentUser_profile:before,
+.fa-entando-widget-search_form:before, .fa-entando-widget-navigation_breadcrumbs:before, .fa-entando-widget-navigation_bar:before, 
+.fa-entando-widget-login_form:before, .fa-entando-widget-language_choose:before, .fa-entando-widget-navigation_menu:before{
     font-family: FontAwesome;
     content: "\f1b2" !important;
     display: inline-block;

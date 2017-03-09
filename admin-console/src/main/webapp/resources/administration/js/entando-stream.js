@@ -3,7 +3,7 @@ jQuery(function(){ //dom is ready...
 	var $ = jQuery;
 	var WINDOW_TITLE_DEFAULT = window.document.title;
 	var routineInterval = null;
-	var CLOCK = 4 * 1000;
+	var CLOCK = 180 * 1000;
 	var ANIMATION_DURATION = 600;
 	var TIMESTAMP_ATTR = 'data-entando-creationdate';
 	var TIMESTAMP_LAST_UPDATE_ATTR = 'data-entando-updatedate';

@@ -228,15 +228,18 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		String copyingPageCode = ((AbstractPortalAction)this.getAction()).getSelectedNode();
+		PageAction action = (PageAction) this.getAction();
+		String copyingPageCode = action.getSelectedNode();
 		assertEquals(pageToCopy, copyingPageCode);
+		assertEquals(pageToCopy, action.getParentPageCode());
 
 		this.executeCopyPage("wrongPageCode", "admin");
 		result = this.executeAction();
 		assertEquals("pageTree", result);
-		PageTreeAction action = (PageTreeAction)this.getAction();
-		copyingPageCode = action.getCopyingPageCode();
-		assertNull(copyingPageCode);
+		action = (PageAction) this.getAction();
+		copyingPageCode = action.getSelectedNode();
+		assertNotNull(copyingPageCode);
+		assertNull(action.getParentPageCode());
 		assertEquals(1, action.getActionErrors().size());
 	}
 

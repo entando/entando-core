@@ -16,6 +16,7 @@ $(function () {
 			height: '640px'
 		}
 	};
+	var customSizes = {};
 
 	var $customPanel = $('.custom-panel'),
 		$customWidthInput = $customPanel.find('.custom-width'),
@@ -32,15 +33,31 @@ $(function () {
 			width, height;
 
 		if (key === 'custom') {
-			width = ($customWidthInput.val() || 100) + 'px';
-			height = ($customHeightInput.val() || 100) + 'px';
+			$customWidthInput.removeAttr('disabled');
+			$customHeightInput.removeAttr('disabled');
+
+			customSizes = {
+				width: customSizes.width || $customWidthInput.val() || 100,
+				height: customSizes.height || $customHeightInput.val() || 100
+			};
+			width = customSizes.width + 'px';
+			height = customSizes.height + 'px';
+			$customWidthInput.val(customSizes.width);
+			$customHeightInput.val(customSizes.height);
+
 		} else if (key && sizeMap[key]) {
+			$customWidthInput.attr('disabled', 'disabled');
+			$customHeightInput.attr('disabled', 'disabled');
+
 			width = sizeMap[key].width;
 			height = sizeMap[key].height;
+			$customWidthInput.val(width);
+			$customHeightInput.val(height);
 		}
 		$previewFrame
 			.attr('width', width)
 			.attr('height', height);
+
 	}
 
 
@@ -59,16 +76,11 @@ $(function () {
 	$previewModeSelect.val('custom');
 	$langSelect.val(PROPERTY.lang);
 
+	updatePreviewSize();
 
 
 
 	$previewModeSelect.change(function () {
-		var key = $previewModeSelect.val();
-		if (key === 'custom') {
-			$customPanel.show();
-		} else {
-			$customPanel.hide();
-		}
 		updatePreviewSize();
 	});
 	
@@ -79,7 +91,7 @@ $(function () {
 	});
 
 	$customOkBtn.click(function() {
-		updatePreviewSize();
+
 	});
 
 });

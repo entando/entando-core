@@ -103,13 +103,21 @@ $(function () {
 
 		// diff
 		$('.diff-slot').removeClass('diff-slot');
+		$('.grid-slot').find('.ghost').remove();
 		if (pageData.online) {
 			if (pageData.draftMetadata.model.code !== pageData.draftMetadata.model.code) {
 				$('.grid-slot').addClass('diff-slot');
 			} else if (pageData.draftWidgets.length === pageData.onlineWidgets.length) {
 				for (var i = 0; i < pageData.draftWidgets.length; ++i) {
-					if (!_.isEqual(pageData.draftWidgets[i], pageData.onlineWidgets[i])) {
-						$('.grid-slot[data-pos="' + i + '"]').addClass('diff-slot');
+					var
+						$gridSlot = $('.grid-slot[data-pos="' + i + '"]'),
+						draftW = pageData.draftWidgets[i],
+						onlineW = pageData.onlineWidgets[i];
+					if (!_.isEqual(draftW, onlineW)) {
+						$gridSlot.addClass('diff-slot');
+					}
+					if (!draftW && onlineW) {
+						$gridSlot.append(createGhostIconBlock(i));
 					}
 				}
 			}
@@ -313,6 +321,27 @@ $(function () {
 		return $elem;
 	}
 
+
+	function getWidgetIcon(widgetCode) {
+		return $('.widget-list [data-widget-id="' + widgetCode + '"] .widget-icon').clone();
+	}
+
+	function createGhostIconBlock(framePos) {
+		var onlineWidget = _.get(pageData, 'onlineWidgets');
+		if (!onlineWidget) {
+			return $('<div />');
+		}
+		var widgetInfo = pageData.onlineWidgets[framePos],
+			widgetCode = widgetInfo.type.code,
+			widgetDescr = widgetInfo.type.titles[PROPERTY.currentLang || PROPERTY.defaultLang];
+
+		var $iconTextBlock = $('<div />')
+			.addClass('icon-text-block ghost')
+			.append(getWidgetIcon(widgetCode))
+			.append('<div class="widget-name">' + widgetDescr + '</div>');
+
+		return $iconTextBlock;
+	}
 
 	/**
 	 * Sets the slot name in the widget

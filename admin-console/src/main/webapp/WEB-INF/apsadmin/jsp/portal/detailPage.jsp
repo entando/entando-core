@@ -1,13 +1,16 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
-<h1 class="panel panel-default title-page">
-	<span class="panel-body display-block">
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li>
 		<a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />">
-			<s:text name="title.pageManagement" /></a>&#32;/&#32;
-		<s:text name="title.detailPage" />
-	</span>
-</h1>
+            <s:text name="title.pageManagement" />
+        </a>
+    </li>
+    <li><s:text name="title.detailPage" /></li>
+</ol>
+
+<h1><s:text name="title.detailPage" /></h1>
 
 <div id="main" role="main">
 

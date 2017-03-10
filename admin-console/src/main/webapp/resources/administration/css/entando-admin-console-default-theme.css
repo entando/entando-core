@@ -354,6 +354,8 @@ td{
 }
 .btn-menu-right{
     background: transparent;
+    border: none !important;
+    box-shadow: none !important;
 }
 .table-tree-sidebar>tbody>tr>td, .table-tree-sidebar>tbody>tr>th, .table-tree-sidebar>tfoot>tr>td, .table-tree-sidebar>tfoot>tr>th, .table-tree-sidebar>thead>tr>td, .table-tree-sidebar>thead>tr>th {
     line-height: 1.66666667;
@@ -561,4 +563,20 @@ td{
 }
 .notification-active .fa{   
     color: #fff !important;
+}
+.required-icon-iterator{
+    font-size: 8px;
+    line-height: 18px;
+    color: #4e4e4e;
+    margin-left: -17px;
+}
+.spacer-right-on-form{
+    margin: 0px 4px 9px 13px;
+    line-height: 27px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.button-position-on-save{
+    text-align: end;
+    padding-right: 10px;
 }

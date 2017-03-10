@@ -30,5 +30,8 @@
 
 </s:if>
 <s:else>
-<p class="alert alert-info"><s:text name="note.referencedContent.empty" /></p>
+    <div class="alert alert-info">
+        <span class="pficon pficon-info"></span>
+        <strong><s:text name="note.referencedContent.empty" /></strong>
+    </div>
 </s:else>

@@ -54,6 +54,12 @@
 
 .grid-slot .icon-text-block {
     position: relative;
+    top: calc(50% - 50px);
+    text-align: center;
+}
+
+.grid-widget .icon-text-block {
+    position: relative;
     top: calc(50% - 30px);
     text-align: center;
 }

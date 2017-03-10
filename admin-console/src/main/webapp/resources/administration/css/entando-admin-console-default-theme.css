@@ -360,14 +360,14 @@ td{
     vertical-align: top;
     border-top: 0px solid #d1d1d1;
 }
-.red{
-    color:red; 
+.gray{
+    color: #8b8d8f;
 }
 .yellow{
-    color: #ffa500;
+    color: #f0ab00;
 }
 .green{
-    color: green;
+    color: #3f9c35;
 }
 .table-menu-left-postion{
     margin-left: -12px;

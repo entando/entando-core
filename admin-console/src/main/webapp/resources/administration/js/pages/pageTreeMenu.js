@@ -85,8 +85,8 @@ $(function () {
 		//!_.isEqual(pageData.draftWidgets, pageData.onlineWidgets) || !_.isEqual(pageData.draftMetadata, pageData.onlineMetadata);
 		// updates the yellow/green page circle in the tree
 		$pageCircle
-			.removeClass('green yellow red')
-			.addClass(pageData.online ? hasChanges ? 'yellow' : 'green' : 'red');
+			.removeClass('green yellow gray')
+			.addClass(pageData.online ? hasChanges ? 'yellow' : 'green' : 'gray');
 
 		// updates the buttons visibility
 		var enablePublish = !(!pageData.online || pageData.online && hasChanges);

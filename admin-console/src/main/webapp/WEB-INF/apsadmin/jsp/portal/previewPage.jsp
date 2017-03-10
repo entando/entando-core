@@ -22,7 +22,7 @@
 </head>
 <body>
     <div class="main-container">
-        <iframe id="previewFrame" height="100%" width="<s:property value="#currentSize.width" />px">
+        <iframe id="previewFrame">
         </iframe>
     </div>
     <div class="bottom-bar">

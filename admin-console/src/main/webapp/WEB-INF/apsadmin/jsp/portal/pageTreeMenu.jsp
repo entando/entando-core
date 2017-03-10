@@ -9,7 +9,10 @@
     <li><s:text name="title.configPage.full" /></li>
 </ol>
 
-<h1 class="page-title-big"><s:property value="%{getTitle(selectedNode, #selectedPage.draftTitles)}" /></h1>
+<h1 class="page-title-container">
+    <i class="fa fa-circle green" title="Online"></i>
+    <span class="page-title-big"><s:property value="%{getTitle(selectedNode, #selectedPage.draftTitles)}" /></span>
+</h1>
 
 <s:if test="hasActionErrors()">
     <div class="alert alert-danger alert-dismissable">

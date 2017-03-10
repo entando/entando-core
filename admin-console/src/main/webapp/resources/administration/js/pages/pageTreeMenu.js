@@ -24,7 +24,7 @@ $(function () {
 
 	// jQuery selectors
 	var $gridContainer = $('.grid-container'),
-		$pageCircle = $('#pageTree tr#' + PROPERTY.code + ' .statusField .fa'),
+		$pageCircle = $('#pageTree tr#' + PROPERTY.code + ' .statusField .fa, .page-title-container .fa'),
 		$restoreOnlineBtn = $('.restore-online-btn'),
 		$publishBtn = $('.publish-btn'),
 		$unpublishBtn = $('.unpublish-btn'),
@@ -82,11 +82,14 @@ $(function () {
 
 		pageData = newData || pageData;
 		var hasChanges = pageData.changed;
-		//!_.isEqual(pageData.draftWidgets, pageData.onlineWidgets) || !_.isEqual(pageData.draftMetadata, pageData.onlineMetadata);
-		// updates the yellow/green page circle in the tree
+
+		// updates the yellow/green page circles
+		var colorClass = pageData.online ? hasChanges ? 'yellow' : 'green' : 'gray',
+			title = pageData.online ? hasChanges ? 'Online \u2260 Draft' : 'Online' : 'Draft';
 		$pageCircle
 			.removeClass('green yellow gray')
-			.addClass(pageData.online ? hasChanges ? 'yellow' : 'green' : 'gray');
+			.addClass(colorClass)
+			.attr('title', title);
 
 		// updates the buttons visibility
 		var enablePublish = !(!pageData.online || pageData.online && hasChanges);
@@ -96,7 +99,6 @@ $(function () {
 		$restoreOnlineBtn.prop('disabled', enableRestoreOnline);
 		$publishBtn.prop('disabled', enablePublish);
 		$unpublishBtn.prop('disabled', enableUnpublish);
-
 
 
 		// diff

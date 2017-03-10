@@ -22,6 +22,7 @@ $(function () {
 		$customHeightInput = $customPanel.find('.custom-height'),
 		$customOkBtn = $('.custom-size-btn'),
 		$previewModeSelect = $('.preview-mode-select'),
+		$langSelect = $('#preview-mode-lang'),
 		$previewFrame = $('iframe#previewFrame');
 
 
@@ -43,16 +44,20 @@ $(function () {
 	}
 
 
-
-
-	var normalizedBaseUrl = PROPERTY.baseUrl.replace(/\/$/, ''),
+	function updateIframeUrl() {
+		var normalizedBaseUrl = PROPERTY.baseUrl.replace(/\/$/, ''),
 		previewUrl = [normalizedBaseUrl, 'preview', PROPERTY.lang, PROPERTY.pageCode].join('/');
-	previewUrl += '?' + [ 'token='+encodeURIComponent(PROPERTY.token) ].join('&');
-
-	$previewFrame.attr('src', previewUrl);
+		previewUrl += '?' + [ 'token='+encodeURIComponent(PROPERTY.token) ].join('&');
+	
+		$previewFrame.attr('src', previewUrl);
+	}
+	
+	
+	updateIframeUrl();
 	$customWidthInput.val(PROPERTY.previewWidth);
 	$customHeightInput.val(PROPERTY.previewHeight);
 	$previewModeSelect.val('custom');
+	$langSelect.val(PROPERTY.lang);
 
 
 
@@ -65,6 +70,12 @@ $(function () {
 			$customPanel.hide();
 		}
 		updatePreviewSize();
+	});
+	
+	$langSelect.change(function(){
+		PROPERTY.lang = $langSelect.val();
+		updateIframeUrl();
+		
 	});
 
 	$customOkBtn.click(function() {

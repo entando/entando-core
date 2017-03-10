@@ -1,21 +1,7 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
-
 <%@ taglib prefix="wp" uri="/aps-core" %>
-
-<script src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
-<script>
-        $(document).ready(function () {
-        	var language = "<wp:info key="defaultLang" />";
-        	<s:iterator value="langs">
-				if (language == "<s:property value="code" />") {
-					generateCodeFromTitle("lang<s:property value="code" />",
-							'categoryCode');
-				}
-			</s:iterator>
-			});
-</script>
 
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">

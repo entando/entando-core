@@ -103,6 +103,7 @@ $(function () {
 
 		// diff
 		$('.diff-slot').removeClass('diff-slot');
+		$('.grid-slot').find('.ghost').remove();
 		if (pageData.online) {
 			if (pageData.draftMetadata.model.code !== pageData.draftMetadata.model.code) {
 				$('.grid-slot').addClass('diff-slot');

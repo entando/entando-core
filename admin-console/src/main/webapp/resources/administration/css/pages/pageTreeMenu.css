@@ -41,20 +41,25 @@
     right: 0;
 }
 
-.grid-widget .slot-name {
+.grid-slot .slot-name {
     position: absolute;
     left: 10px;
     color: #bbb;
 }
 
-.grid-widget .widget-icon {
+.grid-slot .widget-icon {
     font-size: 20px;
     line-height: 35px;
 }
 
-.grid-widget .icon-text-block {
+.grid-slot .icon-text-block {
     position: relative;
     top: calc(50% - 30px);
+    text-align: center;
+}
+
+.grid-slot .icon-text-block.ghost .widget-icon {
+    color: #bbb!important;
 }
 
 .main-container {

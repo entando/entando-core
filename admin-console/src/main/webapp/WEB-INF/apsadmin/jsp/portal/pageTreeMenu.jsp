@@ -9,7 +9,10 @@
     <li><s:text name="title.configPage.full" /></li>
 </ol>
 
-<h1 class="page-title-big"><s:property value="%{getTitle(selectedNode, #selectedPage.draftTitles)}" /></h1>
+<h1 class="page-title-container">
+    <i class="fa fa-circle green" title="Online"></i>
+    <span class="page-title-big"><s:property value="%{getTitle(selectedNode, #selectedPage.draftTitles)}" /></span>
+</h1>
 
 <s:if test="hasActionErrors()">
     <div class="alert alert-danger alert-dismissable">
@@ -28,15 +31,31 @@
 
 <div class="main-container">
     <div class="alert-container"></div>
-    <div>
-        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-sm btn-primary margin-large-bottom">
+    <div class="button-bar">
+        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-sm btn-primary">
             <span class="icon fa fa-chevron-down"></span>&nbsp;&nbsp;
             <span class="info-title"><s:text name="page.treeInfo" /></span>
         </button>
 
-        <button class="btn btn-success publish-btn pull-right"><s:text name="pageActions.publish" /></button>
-        <button class="btn btn-danger unpublish-btn pull-right"><s:text name="pageActions.unpublish" /></button>
-        <button class="btn btn-warning restore-online-btn pull-right"><s:text name="pageActions.restore" /></button>
+        <div class="pull-right">
+
+
+
+
+            <s:url action="preview" var="previewURL">
+                <s:param name="pageCode" value="pageCode" />
+                <s:param name="token" value="previewToken" />
+            </s:url>
+            <a href="<s:property value="#previewURL" escape="false" escapeXml="false" escapeHtml="false" />" target="_blank">
+                <button class="btn btn-primary"><s:text name="pageActions.preview" /></button>
+            </a>
+
+            <button class="btn btn-warning restore-online-btn"><s:text name="pageActions.restore" /></button>
+            <button class="btn btn-danger unpublish-btn"><s:text name="pageActions.unpublish" /></button>
+            <button class="btn btn-success publish-btn"><s:text name="pageActions.publish" /></button>
+
+        </div>
+
     </div>
 
     <div id="page-info" class="collapse">
@@ -267,10 +286,4 @@
     </script> 
 
 </div>
-<s:url action="preview" var="previewURL">
-	<s:param name="pageCode" value="pageCode" />
-	<s:param name="token" value="previewToken" />
-</s:url>
-<a href="<s:property value="#previewURL" escape="false" escapeXml="false" escapeHtml="false" />" target="_blank">PREVIEW</a>
-
 

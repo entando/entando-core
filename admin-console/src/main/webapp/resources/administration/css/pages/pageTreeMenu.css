@@ -52,6 +52,11 @@
     line-height: 35px;
 }
 
+.grid-widget .icon-text-block {
+    position: relative;
+    top: calc(50% - 30px);
+}
+
 .main-container {
     width: calc(100% - 323px);
 }

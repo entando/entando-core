@@ -297,12 +297,16 @@ $(function () {
 		});
 
 
+		var $iconTextBlock = $('<div />')
+			.addClass('icon-text-block')
+			.append($widgetIcon)
+			.append('<div class="widget-name">' + widgetDescr + '</div>');
+
 		// widget element
 		var $elem = $(html)
 			.addClass('grid-widget instance')
 			.attr('data-widget-id', widgetCode)
-			.append($widgetIcon)
-			.append('<div class="widget-name">' + widgetDescr + '</div>')
+			.append($iconTextBlock)
 			.append($dropdown);
 
 

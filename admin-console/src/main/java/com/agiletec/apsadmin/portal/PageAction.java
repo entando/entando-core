@@ -29,6 +29,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.entando.entando.apsadmin.portal.PageActionConstants;
 import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -490,7 +491,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			IPage page = this.getPage(pageCode);
 			this.addActionMessage(this.getText("message.page.set.offline", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
 			// TODO Define a new strutsAction to map "offline" operation
-			this.addActivityStreamInfo(page, ApsAdminSystemConstants.EDIT, true);
+			this.addActivityStreamInfo(page, PageActionConstants.UNPUBLISH, true);
 		} catch (Throwable t) {
 			_logger.error("error setting page {} offline", pageCode, t);
 			return FAILURE;
@@ -532,7 +533,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			IPage page = this.getPage(pageCode);
 			this.addActionMessage(this.getText("message.page.set.online", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
 			// TODO Define a new strutsAction to map "offline" operation
-			this.addActivityStreamInfo(page, ApsAdminSystemConstants.EDIT, true);
+			this.addActivityStreamInfo(page, PageActionConstants.PUBLISH, true);
 		} catch (Throwable t) {
 			_logger.error("error setting page {} online", pageCode, t);
 			return FAILURE;
@@ -592,6 +593,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         }
 		Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
 		if (references.size()>0) {
+			this.addActionError(this.getText("error.page.offline.references", new String[] {this.getTitle(currentPage.getCode(), currentPage.getDraftTitles())}));
 			this.setReferences(references);
 			return "references";
 		}

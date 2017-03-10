@@ -19,6 +19,7 @@ html, body {
     width: 100%;
     height: 50px;
     background: #dcdadc;
+    text-align: center;
 }
 
 .bottom-bar label[for="preview-mode-select"] {

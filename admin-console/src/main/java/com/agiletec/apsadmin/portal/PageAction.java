@@ -322,15 +322,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	public PageResponse getPageDetailResponse() {
 		PageResponse response = null;
 		try {
+			IPage page = null;
 			String pageCode = this.getPageCode();
 			String check = this.checkSelectedNode(pageCode);
-			if (null != check) {
-				response = new PageResponse(this);
-				return response;
+			if (null == check) {
+				page = this.getPage(pageCode);
 			}
-			response = new PageResponse(this);
-			IPage page = this.getPage(pageCode);
-			response.setPage(page);
+			response = new PageResponse(this, page);
 		} catch (Throwable t) {
 			_logger.error("error in getPageJsonResponse", t);
 			this.getServletResponse().setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -633,11 +631,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	}
 	
 	public PageResponse getPageResponse() {
-		PageResponse response = new PageResponse(this);
+		IPage page = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPage(this.getPageCode());
-			response.setPage(page);
+			page = this.getPage(this.getPageCode());
 		}
+		PageResponse response = new PageResponse(this, page);
 		response.setReferences(this.getReferences());
 		return response;
 	}

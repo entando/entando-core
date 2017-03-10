@@ -17,7 +17,7 @@
             <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 
                class="subTreeToggler <s:if test="#isSelected">active </s:if> hidden <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
                <s:if test="#isSelected"> checked="checked"</s:if> />
-        &#32;<label class="word-wrap" for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
+        &#32;<label class="word-wrap" for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><span class="tree-item-page-title"><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /></span><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
                 <span class="text-muted icon fa fa-lock"></span>
             </s:if>
         </label>
@@ -41,7 +41,7 @@
         CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
         --%>
         <span class="statusField">
-            <s:if test="%{!#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle red" aria-hidden="true" title="Draft"></i></s:if>
+            <s:if test="%{!#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i></s:if>
             <s:elseif test="%{#currentRoot.getEntity().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true" title="Online&#32;&ne;&#32;Draft"></i></s:elseif>
             <s:else><i class="fa fa-circle green" aria-hidden="true" title="Online"></i></s:else>
         </span>

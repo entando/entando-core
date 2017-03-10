@@ -7,9 +7,10 @@
     background: lightgray;
 }
 .grid-slot {
-    border: 1px dashed gray;
-    background: #fff;
-
+    border: 1px dashed #bbb;
+    background: #fafafa;
+    padding: 2px;
+    color: #bbb;
 }
 
 .grid-slot.ui-droppable-disabled {
@@ -17,4 +18,8 @@
     margin: 0;
     border: none;
     position: relative;
+}
+
+.grid-slot .data-description {
+    margin: 5px 10px;
 }

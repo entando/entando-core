@@ -130,6 +130,7 @@ public interface SystemConstants {
      * Nome del servizio che gestisce le pagine del portale.
      */
     public static final String PAGE_MANAGER = "PageManager";
+    public static final String PAGETOKEN_MANAGER = "PageTokenManager";
 	
 	public static final String NAVIGATOR_PARSER = "NavigatorParser";
     

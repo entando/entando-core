@@ -18,15 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.Page;
 import com.opensymphony.xwork2.ActionSupport;
 
-public class DeleteWidgetResponse {
+public class DeleteWidgetResponse extends AbstractPageResponse {
 
 	private Map<String, List<String>> fieldErrors;
 	private Collection<String> actionErrors;
 	private Collection<String> actionMessages;
-	private IPage page;
+	private PageJO page;
 
 	public Map<String, List<String>> getFieldErrors() {
 		return fieldErrors;
@@ -49,20 +48,10 @@ public class DeleteWidgetResponse {
 		this.actionMessages = actionMessages;
 	}
 
-	public IPage getPage() {
+	public PageJO getPage() {
 		return page;
 	}
-
-	public void setPage(IPage src) {
-		if (null == src) {
-			return;
-		}
-		Page page = new Page();
-		page.setCode(src.getCode());
-		page.setDraftMetadata(src.getDraftMetadata());
-		page.setDraftWidgets(src.getDraftWidgets());
-		page.setParentCode(page.getParentCode());
-		page.setGroup(src.getGroup());
+	public void setPage(PageJO page) {
 		this.page = page;
 	}
 
@@ -70,10 +59,11 @@ public class DeleteWidgetResponse {
 		//
 	}
 
-	public DeleteWidgetResponse(ActionSupport actionSupport) {
+	public DeleteWidgetResponse(ActionSupport actionSupport, IPage page) {
 		super();
 		this.setFieldErrors(actionSupport.getFieldErrors());
 		this.setActionErrors(actionSupport.getActionErrors());
 		this.setActionMessages(actionSupport.getActionMessages());
+		this.setPage(this.copyPage(page));
 	}
 }

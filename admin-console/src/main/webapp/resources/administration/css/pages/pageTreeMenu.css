@@ -8,17 +8,14 @@
 
 .grid-widget {
     min-width: 70px;
-    background: #23a8e0;
-    color: #fff;
-    border: 3px solid #00659c;
+    color: #444;
+    border: 1px solid #666;
     border-radius: 3px;
     text-align: center;
     cursor: move;
     display: inline-block;
     padding: 5px;
-    position: absolute;
-    left: 0;
-    top: 0;
+    position: relative;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -30,13 +27,9 @@
     right: 5px;
     width: 20px;
     font-size: 20px;
-    color: #fff;
+    color: #bbb;
     cursor: pointer;
     z-index: 1010;
-}
-
-.grid-widget .menu-btn[aria-expanded="true"] {
-    color: #000000;
 }
 
 
@@ -51,6 +44,7 @@
 .grid-widget .slot-name {
     position: absolute;
     left: 10px;
+    color: #bbb;
 }
 
 .grid-widget .widget-icon {
@@ -58,6 +52,32 @@
     line-height: 35px;
 }
 
+.grid-widget .icon-text-block {
+    position: relative;
+    top: calc(50% - 30px);
+}
+
 .main-container {
     width: calc(100% - 323px);
 }
+
+.button-bar .restore-online-btn {
+    margin-left: 10px;
+}
+
+
+.grid-container {
+    margin-top: 15px;
+}
+
+.grid-container[data-online="false"] .grid-slot .widget-icon {
+    color: #8b8d8f;
+}
+.grid-container[data-online="true"] .grid-slot .widget-icon {
+    color: #3f9c35;
+}
+
+.grid-container[data-online="true"] .grid-slot.diff-slot .widget-icon {
+    color: #f0ab00;
+}
+

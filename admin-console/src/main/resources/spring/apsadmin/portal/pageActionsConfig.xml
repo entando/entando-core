@@ -39,11 +39,11 @@
               class="com.agiletec.apsadmin.portal.PageTreeMenuAction" parent="pageTreeAction">
         <property name="pageActionHelper" ref="pageActionHelperDraft" />
 		<property name="groupManager" ref="GroupManager" />
-        <property name="pageManager" ref="PageManager" />
         <property name="widgetTypeManager" ref="WidgetTypeManager" />
         <property name="apiCatalogManager" ref="ApiCatalogManager" />
         <property name="stockWidgetCodes"><value>${widgets.stock}</value></property>
         <property name="internalServletWidgetCode"><value>${widgets.internalServlet}</value></property>
+        <property name="pageTokenMager" ref="PageTokenManager" />
     </bean>
     
     <bean id="pageFinderAction" scope="prototype"
@@ -68,6 +68,13 @@
               class="com.agiletec.apsadmin.portal.PageConfigAction" parent="abstractPortalAction">
 		<property name="pageActionHelper" ref="pageActionHelperDraft" />
     </bean>
+    
+    <bean id="pagePreviewAction" scope="prototype" 
+              class="com.agiletec.apsadmin.portal.PagePreviewAction" parent="abstractPortalAction">
+            <property name="userManager" ref="UserManager" />
+			<property name="pageTokenMager" ref="PageTokenManager" />
+    </bean>
+    
     
     <bean id="widgetsViewerAction" scope="prototype" 
               class="com.agiletec.apsadmin.portal.WidgetsViewerAction" parent="abstractPortalAction">

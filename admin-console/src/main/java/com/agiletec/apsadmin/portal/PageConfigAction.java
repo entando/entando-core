@@ -29,6 +29,7 @@ import org.entando.entando.apsadmin.portal.rs.validator.ISwapWidgetRequestValida
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Page;
@@ -151,17 +152,17 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	}
 
 	public JoinWidgetResponse getJoinWidgetResponse() {
-		JoinWidgetResponse response = new JoinWidgetResponse(this);
+		IPage page = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPage(this.getPageCode());
-			response.setPage(page);
-			if (StringUtils.isNotBlank(this.getWidgetAction())) {
-				StringBuffer url = new StringBuffer("/do/Page/SpecialWidget/");
-				url.append(this.getWidgetAction()).append("?");
-				String[] params = new String[]{"pageCode="+ this.getPageCode(), "widgetTypeCode="+ this.getWidgetTypeCode(), "frame="+ this.getFrame()};
-				url.append(StringUtils.join(params, "&"));
-				response.setRedirectLocation(url.toString());
-			}
+			page = this.getPage(this.getPageCode());
+		}
+		JoinWidgetResponse response = new JoinWidgetResponse(this, page);
+		if (page != null && StringUtils.isNotBlank(this.getWidgetAction())) {
+			StringBuffer url = new StringBuffer("/do/Page/SpecialWidget/");
+			url.append(this.getWidgetAction()).append("?");
+			String[] params = new String[]{"pageCode="+ this.getPageCode(), "widgetTypeCode="+ this.getWidgetTypeCode(), "frame="+ this.getFrame()};
+			url.append(StringUtils.join(params, "&"));
+			response.setRedirectLocation(url.toString());
 		}
 		return response;
 	}
@@ -223,11 +224,11 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	}
 
 	public DeleteWidgetResponse getDeleteWidgetResponse() {
-		DeleteWidgetResponse response = new DeleteWidgetResponse(this);
+		IPage page = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPage(this.getPageCode());
-			response.setPage(page);
+			page = this.getPage(this.getPageCode());
 		}
+		DeleteWidgetResponse response = new DeleteWidgetResponse(this, page);
 		return response;		
 	}
 	
@@ -252,11 +253,11 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	}
 	
 	public SwapWidgetResponse getMoveWidgetResponse() {
-		SwapWidgetResponse response = new SwapWidgetResponse(this);
+		IPage page = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPage(this.getPageCode());
-			response.setPage(page);
+			page = this.getPage(this.getPageCode());
 		}
+		SwapWidgetResponse response = new SwapWidgetResponse(this, page);
 		return response;
 	}
 
@@ -291,14 +292,13 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	}
 	
 	public PageResponse getRestoreOnlineConfigResponse() {
-		PageResponse response = new PageResponse(this);
+		IPage page = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			IPage page = this.getPage(this.getPageCode());
-			response.setPage(page);
+			page = this.getPage(this.getPageCode());
 		}
+		PageResponse response = new PageResponse(this, page);
 		return response;
 	}
-
 
 	//TODO METODO COMUNE ALLA CONFIG SPECIAL WIDGET
 	protected String checkBaseParams() {
@@ -421,6 +421,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		return validator;
 	}
 	@Autowired
+	@Qualifier(ISwapWidgetRequestValidator.BEAN_NAME)
 	public void setValidator(ISwapWidgetRequestValidator validator) {
 		this.validator = validator;
 	}

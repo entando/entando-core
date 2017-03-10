@@ -98,7 +98,6 @@
                 </div>
             </div>
         </div>
-
         <div class="form-group">
             <div class="row">
                 <s:set name="paramName" value="'baseUrl'" />
@@ -107,16 +106,16 @@
                 </div>
                 <div class="col-xs-4">
                     <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-default active">
-                            <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-classic" name="baseUrl" value="relative" checked="checked"/>
+                        <label class="btn btn-default <s:if test="%{systemParams[#paramName].equals('relative')}">active</s:if>">
+                            <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-relative" name="<s:property value="#paramName"/>" value="relative" <s:if test="%{systemParams[#paramName].equals('relative')}">checked="checked"</s:if> />
                             <s:text name="baseURL.relative" />
                         </label>
-                        <label class="btn btn-default">
-                            <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-breadcrumbs" name="baseUrl" value="request" />
+                        <label class="btn btn-default <s:if test="%{systemParams[#paramName].equals('request')}">active</s:if>">
+                            <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-baseUrl" name="<s:property value="#paramName"/>" value="request" <s:if test="%{systemParams[#paramName].equals('request')}">checked="checked"</s:if> />
                             <s:text name="baseURL.request" />
                         </label>
-                        <label class="btn btn-default">
-                            <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-breadcrumbs" name="baseUrl" value="static" />
+                        <label class="btn btn-default <s:if test="%{systemParams[#paramName].equals('static')}">active</s:if>">
+                            <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-static" name="<s:property value="#paramName"/>" value="static" <s:if test="%{systemParams[#paramName].equals('static')}">checked="checked"</s:if> />
                             <s:text name="baseURL.static" />
                         </label>
                     </div>
@@ -132,14 +131,34 @@
                     <span class="display-block"><s:text name="sysconfig.baseURL.contextName" /></span>
                 </div>
                 <div class="col-xs-2">
-                    <input class="bootstrap-switch" id="bootstrap-switch-state" type="checkbox" checked>
+					<s:set name="paramName" value="'baseUrlContext'" />
+					<input type="hidden" 
+						value="<s:property value="systemParams[#paramName]" />"
+						id="<s:property value="#paramName"/>" 
+						name="<s:property value="#paramName"/>" />
+					<input 
+						type="checkbox" 	
+						value="<s:property value="systemParams[#paramName]" />"
+						id="ch_<s:property value="#paramName"/>" 
+						class="bootstrap-switch" 
+						<s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                 </div>
 
                 <div class="col-xs-4 col-label">
                     <span class="display-block"><s:text name="sysconfig.useJsessionId" /></span>
                 </div>
                 <div class="col-xs-2">
-                    <input class="bootstrap-switch" id="bootstrap-switch-state" type="checkbox" checked>
+					<s:set name="paramName" value="'useJsessionId'" />
+					<input type="hidden" 
+						value="<s:property value="systemParams[#paramName]" />"
+						id="<s:property value="#paramName"/>" 
+						name="<s:property value="#paramName"/>" />
+					<input 
+						type="checkbox" 	
+						value="<s:property value="systemParams[#paramName]" />"
+						id="ch_<s:property value="#paramName"/>" 
+						class="bootstrap-switch" 
+						<s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                 </div>
             </div>
 		</div>
@@ -150,16 +169,21 @@
                     <span class="display-block"><s:text name="sysconfig.lang.browser" /></span>
                 </div>
                 <div class="col-xs-2">
-                    <input class="bootstrap-switch" id="bootstrap-switch-state" type="checkbox" checked>
+                	<s:set name="paramName" value="'startLangFromBrowser'" />
+					<input type="hidden" 
+						value="<s:property value="systemParams[#paramName]" />"
+						id="<s:property value="#paramName"/>" 
+						name="<s:property value="#paramName"/>" />
+					<input 
+						type="checkbox" 	
+						value="<s:property value="systemParams[#paramName]" />"
+						id="ch_<s:property value="#paramName"/>" 
+						class="bootstrap-switch" 
+						<s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                 </div>
 
-                <div class="col-xs-4 col-label">
-                    <span class="display-block"><s:text name="sysconfig.pageTreeOnTable" /></span>
-                    <i class="fa fa-question-circle help-icon"></i>
-                </div>
-                <div class="col-xs-2">
-                    <input class="bootstrap-switch" id="bootstrap-switch-state" type="checkbox" checked>
-                </div>
+                
+                
             </div>
         </div>
 
@@ -183,6 +207,32 @@
                 </div>
             </div>
         </div>
+        
+        <div class="form-group">
+            <div class="row">
+               	<s:set name="paramName" value="'treeStyle_page'" />
+                <div class="col-xs-2 col-label">
+                    <span class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></span>
+                </div>
+                <div class="col-xs-4">
+                    <div class="btn-group" data-toggle="buttons">
+                    	
+                        <label class="btn btn-default <s:if test="systemParams[#paramName] == 'classic'"> active</s:if>">
+                            <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_classic" name="<s:property value="#paramName"/>" value="classic" <s:if test="systemParams[#paramName] == 'classic'">checked="checked"</s:if> />
+                            <s:text name="URLstyle.classic" />
+                        </label>
+                        <label class="btn btn-default <s:if test="systemParams[#paramName] == 'request'"> active</s:if>">
+                            <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_request" name="<s:property value="#paramName"/>" value="request" <s:if test="systemParams[#paramName] == 'request'">checked="checked"</s:if> />
+                            <s:text name="treeStyle.request" />
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
 
 	</fieldset>
 
@@ -199,7 +249,15 @@
 
 </s:form>
 
-
-
-
 </div>
+
+<script type="application/javascript" >
+    $('input[type="checkbox"][id^="ch_"]').on('switchChange.bootstrapSwitch', function (ev, data) {
+    	var id = ev.target.id.substring(3);
+    	console.log("id", id);
+    	var $element = $('#'+id);
+        $element.attr('value', ''+data);
+    });
+</script>
+
+

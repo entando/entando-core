@@ -1,7 +1,9 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
-
+<s:if test="strutsAction != 2" >
+	<script src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
+</s:if>
 <script>
     $(document).ready(function () {
         $("#expandAll").click(function () {
@@ -19,6 +21,8 @@
             $(this).addClass("active");
             $(this).find(".moveButtons").removeClass("hidden");
         });
-
-    });
+	<s:if test="strutsAction != 2" >
+		generateCodeFromTitle("lang<wp:info key="defaultLang" />", 'pageCode');
+	</s:if>
+	});
 </script>

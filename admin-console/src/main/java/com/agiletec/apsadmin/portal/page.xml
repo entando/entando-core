@@ -332,11 +332,15 @@
         <action name="systemParams" class="pageSettingsAction" method="configSystemParams">
             <result type="tiles">admin.Page.settings</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+			<interceptor-ref name="redirectMessage" />
         </action>
 
         <action name="updateSystemParams" class="pageSettingsAction" method="updateSystemParams">
-            <result type="tiles">admin.Page.settings</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+            <result type="redirectAction">systemParams</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">superuser</param>
+        	</interceptor-ref>
+			<interceptor-ref name="redirectMessage" />
         </action>
   
         <action name="viewTreeMenu" class="pageTreeMenuAction" method="intro">

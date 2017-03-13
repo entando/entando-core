@@ -3,12 +3,14 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
+<s:if test="strutsAction != 2" >
 <script src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
 <script>
-        $(document).ready(function () {
-            generateCodeFromTitle('description', 'name');
-        });
+$(document).ready(function () {
+	generateCodeFromTitle('description', 'name');
+});
 </script>
+</s:if>
  
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">

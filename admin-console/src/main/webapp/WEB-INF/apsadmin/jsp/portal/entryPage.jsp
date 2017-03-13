@@ -5,19 +5,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
-<script src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
-<script>
-        $(document).ready(function () {
-        	var language = "<wp:info key="defaultLang" />";
-        	<s:iterator value="langs">
-				if (language == "<s:property value="code" />") {
-					generateCodeFromTitle("lang<s:property value="code" />",
-							'pageCode');
-				}
-			</s:iterator>
-			});
-</script>
-        	
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
     <li><a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageTree" />"><s:text name="title.pageTree" /></a></li>
@@ -34,35 +21,16 @@
     </li>
 </ol>
 
-<style>
-    .treeInteractionButtons{
-        font-size: 16px;
-        font-weight: bold;
-    }
-    .green{
-        color: green;
-    }
-    
-   #pageTree .statusField i.fa {
-        font-size: 15px;
-        margin-top: 6px;
-    }
-    
-    .table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
-        text-align: center;
-    }
-</style>
-
 <h1>
     <s:if test="strutsAction == 1">
         <s:text name="title.newPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-            </s:if>
-            <s:elseif test="strutsAction == 2">
-                <s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-            </s:elseif>
-            <s:elseif test="strutsAction == 3">
-                <s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-            </s:elseif>
+    </s:if>
+    <s:elseif test="strutsAction == 2">
+        <s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+    </s:elseif>
+    <s:elseif test="strutsAction == 3">
+        <s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+    </s:elseif>
 </h1>
 
 <div id="main" role="main">

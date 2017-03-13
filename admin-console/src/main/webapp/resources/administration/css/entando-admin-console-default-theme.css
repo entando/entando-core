@@ -469,7 +469,7 @@ td{
     background: transparent;
 }
 .td-pagetree-width{
-    width: 28%;
+    width: 244px;
 }
 .info-title{
     font-size: 13px;
@@ -579,4 +579,40 @@ td{
 .button-position-on-save{
     text-align: end;
     padding-right: 10px;
+}
+.esclamation-big{
+    font-size: 10em;
+    color: #72767b;
+}
+.button-fixed-width{
+    width: 100px;
+    margin: 3px;
+}
+.esclamation-underline{
+    font-size:2em;
+}
+.esclamation-underline-text{
+    font-size:1.3em;
+}
+.spacer-form{
+    padding: 0 0 10px 0
+}
+.spacer-form2{
+    margin-bottom: 8px;  
+}
+
+#notifications-badge{
+    background-color: #23a8e0;
+    color: #212121;
+    border-radius: 50%;
+    position: absolute;
+    top: 12px;
+    right: 0px;
+}
+.well-auto-height{
+    padding: 2em;
+    overflow:hidden;
+}
+.navbar-pf-vertical .nav .nav-item-iconic {
+    text-decoration: none;
 }

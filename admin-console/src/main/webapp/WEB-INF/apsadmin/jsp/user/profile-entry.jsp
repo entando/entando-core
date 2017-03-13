@@ -5,7 +5,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a></li>
+    <li><s:text name="title.userSetting" /></li>
     <li> <a href="<s:url namespace="/do/User" action="list" />"><s:text name="title.userManagement" /></a></li>
     <li><s:text name="title.userProfile.edit" /></li>
 </ol>
@@ -20,22 +20,25 @@
 </h1>
 
 <div class="text-right">
-    <div class="form-group-separator">* Required Fields</div>               
+    <div class="form-group-separator"><s:text name="label.requiredFields" /></div>               
 </div>
 <br>
 
 <div id="main" role="main">
     <s:form cssClass="form-horizontal">
         <s:if test="hasFieldErrors()">
-            <div class="alert alert-danger alert-dismissable fade in">
-                <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-                <h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" />&ensp;<span
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    <span class="pficon pficon-close"></span>
+                </button>
+                <span class="pficon pficon-error-circle-o"></span>
+                <strong><s:text name="message.title.FieldErrors" />&ensp;<span
                         class="icon fa fa-question-circle cursor-pointer" 
                         title="<s:text name="label.all" />" data-toggle="collapse" 
                         data-target="#content-error-messages"></span>
                     <span class="sr-only"><s:text name="label.all" /></span>
-                </h2>
-                <ul class="unstyled collapse margin-small-top" id="content-error-messages">
+                </strong>
+                <ul class="unstyled" id="content-error-messages">
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
                             <li><s:property escape="false" /></li>
@@ -84,8 +87,10 @@
                 <s:set var="controlGroupErrorClassVar" value="''" />
                 <s:set var="inputErrorClassVar" value="''" />
                 <s:if test="#attributeHasErrorVar">
-                    <s:set var="controlGroupErrorClassVar" value="' has-error'" />
-                    <s:set var="inputErrorClassVar" value="' input-with-feedback'" />
+                    <div style="position: absolute">
+                        <s:set var="controlGroupErrorClassVar" value="' has-error'" />
+                        <s:set var="inputErrorClassVar" value="' input-with-feedback'" />
+                    </div>
                 </s:if>
 
                 <s:if test="null != #attribute.description"><s:set var="attributeLabelVar" value="#attribute.description" /></s:if>

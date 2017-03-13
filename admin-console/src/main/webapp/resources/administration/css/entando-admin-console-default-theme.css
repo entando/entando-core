@@ -602,12 +602,15 @@ td{
 }
 
 #notifications-badge{
-    background-color: #23a8e0;
-    color: #212121;
+    background-color: #c20000;
+    color: #fff;
     border-radius: 50%;
     position: absolute;
     top: 12px;
-    right: 0px;
+    right: 4px;
+    padding: 3px 5px !important;
+    font-size: 10px !important;
+    cursor: pointer;
 }
 .well-auto-height{
     padding: 2em;
@@ -615,4 +618,8 @@ td{
 }
 .navbar-pf-vertical .nav .nav-item-iconic {
     text-decoration: none;
+}
+#stream-updates-alert{
+    text-align: center;
+    cursor: pointer;
 }

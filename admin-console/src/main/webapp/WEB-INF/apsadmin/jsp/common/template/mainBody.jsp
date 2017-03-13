@@ -11,7 +11,7 @@
     <s:set var="currentUsernameVar"><c:out value="${sessionScope.currentUser.username}" /></s:set>
         <wpsa:activityStream var="activityStreamListVar" />
     <s:if test="null != #activityStreamListVar && #activityStreamListVar.size() != 0">
-        <div id="stream-updates-alert" aria-live="polite" class="btn-primary btn-links">
+        <div id="stream-updates-alert" aria-live="polite" class="hide btn-primary btn-links">
             <s:text name="activity.stream.note.show.updates" /> (<span class="n"></span>)
         </div>
         <ul class="list-unstyled" id="activity-stream">

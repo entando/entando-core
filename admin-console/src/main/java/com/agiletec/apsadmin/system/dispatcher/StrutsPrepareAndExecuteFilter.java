@@ -15,32 +15,35 @@ package com.agiletec.apsadmin.system.dispatcher;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-
 import org.apache.struts2.dispatcher.Dispatcher;
-import org.apache.struts2.dispatcher.ng.ExecuteOperations;
-import org.apache.struts2.dispatcher.ng.filter.FilterHostConfig;
+import org.apache.struts2.dispatcher.ExecuteOperations;
+import org.apache.struts2.dispatcher.filter.FilterHostConfig;
 
 /**
  * Extension of the Struts2 main filter.
  * Handles both the preparation and execution phases of the Struts dispatching process.
  * @author E.Santoboni
  */
-public class StrutsPrepareAndExecuteFilter extends org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter {
+public class StrutsPrepareAndExecuteFilter extends org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter {
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		InitOperations init = new InitOperations();
-		try {
+		Dispatcher dispatcher = null;
+        try {
 			FilterHostConfig config = new FilterHostConfig(filterConfig);
 			init.initLogging(config);
-			Dispatcher dispatcher = init.initDispatcher(config);
+			dispatcher = init.initDispatcher(config);
 			init.initStaticContentLoader(config, dispatcher);
-			this.prepare = new PrepareOperations(filterConfig.getServletContext(), dispatcher);
-			this.execute = new ExecuteOperations(filterConfig.getServletContext(), dispatcher);
+			this.prepare = new PrepareOperations(dispatcher);
+			this.execute = new ExecuteOperations(dispatcher);
 			this.excludedPatterns = init.buildExcludedPatternsList(dispatcher);
 			this.postInit(dispatcher, filterConfig);
 		} finally {
-			init.cleanup();
+			if (dispatcher != null) {
+                dispatcher.cleanUpAfterInit();
+            }
+            init.cleanup();
 		}
 	}
 	

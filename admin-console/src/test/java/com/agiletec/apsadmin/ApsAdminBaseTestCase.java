@@ -49,6 +49,7 @@ import com.opensymphony.xwork2.ActionProxyFactory;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.ContainerBuilder;
+import org.apache.struts2.dispatcher.HttpParameters;
 
 /**
  * The base Class for all test of admin area.
@@ -84,7 +85,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 		}
 
 		// Use spring as the object factory for Struts
-		StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, _servletContext, null, this.createContainer());
+		StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, null, _servletContext, null, this.createContainer());
 		ssf.setApplicationContext(_applicationContext);
 
 		// Dispatcher is the guy that actually handles all requests.  Pass in
@@ -144,7 +145,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 		// set to true if you want to process Freemarker or JSP results
 		this._proxy.setExecuteResult(false);
 		// by default, don't pass in any request parameters
-		this._proxy.getInvocation().getInvocationContext().setParameters(new HashMap());
+		//this._proxy.getInvocation().getInvocationContext().setParameters(new HashMap());
 
 		// set the actions context to the one which the proxy is using
 		ServletActionContext.setContext(_proxy.getInvocation().getInvocationContext());

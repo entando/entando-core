@@ -20,7 +20,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.tiles.TilesContainer;
 import org.apache.tiles.TilesException;
-import org.apache.tiles.factory.TilesContainerFactory;
+import org.apache.tiles.factory.TilesContainerFactoryException;
 
 import org.entando.entando.apsadmin.system.tiles.EntandoStrutsTilesListener;
 import org.entando.entando.apsadmin.system.tiles.impl.EntandoBasicTilesContainer;
@@ -29,8 +29,8 @@ import org.entando.entando.apsadmin.system.tiles.impl.EntandoBasicTilesContainer
  * @see org.entando.entando.apsadmin.system.tiles.EntandoStrutsTilesListener
  * @author zuanni G.Cocco
  */
-public class EntandoTilesContainerFactory extends TilesContainerFactory {
-	 
+public class EntandoTilesContainerFactory /*extends TilesContainerFactory*/ {
+	/*
 	private static final Map<String, String> DEFAULTS = new HashMap<String, String>();
 
 	static {
@@ -55,9 +55,9 @@ public class EntandoTilesContainerFactory extends TilesContainerFactory {
 	public TilesContainer createTilesContainer(Object context) throws TilesException {
 		ServletContext servletContext = (ServletContext) context;
 		EntandoBasicTilesContainer container = new EntandoBasicTilesContainer();
-		container.setServletContext(servletContext);
+		//container.setServletContext(servletContext);
 		this.initializeContainer(context, container);
 		return container;
 	}
-	
+	*/
 }

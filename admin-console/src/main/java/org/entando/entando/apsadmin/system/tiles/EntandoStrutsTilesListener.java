@@ -37,10 +37,11 @@ import org.entando.entando.apsadmin.system.tiles.factory.EntandoTilesContainerFa
  */
 public class EntandoStrutsTilesListener extends StrutsTilesListener {
 	
+	/*
 	@Override
 	protected TilesContainer createContainer(ServletContext context) throws TilesException {
 		EntandoTilesContainerFactory factory = EntandoTilesContainerFactory.getFactory(context);
 		return factory.createContainer(context);
 	}
-	
+	*/
 }

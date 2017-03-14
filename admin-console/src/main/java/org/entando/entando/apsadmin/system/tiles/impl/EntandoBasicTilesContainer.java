@@ -20,9 +20,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.servlet.ServletContext;
-
 import org.apache.tiles.impl.BasicTilesContainer;
 
 /**
@@ -31,6 +29,7 @@ import org.apache.tiles.impl.BasicTilesContainer;
  */
 public class EntandoBasicTilesContainer extends BasicTilesContainer {
 	
+	/*
 	@Override
 	public List<String> getResourceNames(String resourceString) {
 		StringTokenizer tokenizer = new StringTokenizer(resourceString, ",");
@@ -51,7 +50,7 @@ public class EntandoBasicTilesContainer extends BasicTilesContainer {
 		}
 		return filenames;
 	}
-	
+	*/
 	private void inspectResources(String currentFilenamesConf, String rootInspectionDir, List<String> confFiles) {
 		Set<String> resourcesPath = this.getServletContext().getResourcePaths(rootInspectionDir);
 		if (null != resourcesPath) {

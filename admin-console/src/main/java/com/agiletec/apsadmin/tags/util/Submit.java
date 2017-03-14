@@ -36,9 +36,11 @@ public class Submit extends org.apache.struts2.components.Submit {
 	@Override
 	public void evaluateExtraParams() {
 		super.evaluateExtraParams();
+		/*
 		if (align == null) {
 			align = "right";
 		}
+		*/
 		String submitType = BUTTONTYPE_INPUT;
 		if (type != null && (BUTTONTYPE_BUTTON.equalsIgnoreCase(type) || (supportsImageType() && BUTTONTYPE_IMAGE.equalsIgnoreCase(type)))) {
 			submitType = type;
@@ -62,7 +64,7 @@ public class Submit extends org.apache.struts2.components.Submit {
 			}
 			addParameter("name", name);
 		}
-		addParameter("align", findString(align));
+		//addParameter("align", findString(align));
 	}
 	
 	@Override

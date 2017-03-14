@@ -91,7 +91,7 @@ $(function () {
 	});
 
 	$customOkBtn.click(function() {
-
+		updatePreviewSize();
 	});
 
 });

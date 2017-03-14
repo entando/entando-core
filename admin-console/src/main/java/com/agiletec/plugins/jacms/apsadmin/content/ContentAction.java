@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,6 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
-import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
 
 /**
@@ -292,7 +292,7 @@ public class ContentAction extends AbstractContentAction {
 			Content content = this.getContent();
 			if (null != content) {
 				IPage defaultViewerPage = this.getPageManager().getOnlinePage(content.getViewPage());
-				if (null != defaultViewerPage && CmsPageActionUtil.isOnlineFreeViewerPage(defaultViewerPage, null)) {
+				if (null != defaultViewerPage && CmsPageUtil.isOnlineFreeViewerPage(defaultViewerPage, null)) {
 					pageItems.add(new SelectItem("", this.getText("label.default")));
 				}
 				if (null == content.getId()) return pageItems;

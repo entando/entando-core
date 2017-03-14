@@ -113,4 +113,13 @@ $(function() {
 
 
 
+	// ACE EDITOR
+	var templateEditor = ace.edit('template');
+	templateEditor.setTheme('ace/theme/chrome');
+	templateEditor.getSession().setMode('ace/mode/jsp');
+
+	var xmlEditor = ace.edit('xmlConfiguration');
+	xmlEditor.setTheme('ace/theme/chrome');
+	xmlEditor.getSession().setMode('ace/mode/xml');
+
 });//domready

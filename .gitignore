@@ -26,3 +26,6 @@ local.properties
 *.launch
 .classpath
 .springBeans
+
+# Webstorm
+.idea

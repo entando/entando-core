@@ -3,10 +3,12 @@
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/entando.grid-generator.css"/>
+<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/pageModel-entry.css"/>
 
 <script src="<wp:resourceURL />administration/js/jquery.xml2json.js"></script>
 <script src="<wp:resourceURL />administration/js/lodash.js"></script>
 <script src="<wp:resourceURL />administration/js/entando.grid-generator.js"></script>
+<script src="<wp:resourceURL />administration/ace-editor/ace.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
     var PROPERTY = {};

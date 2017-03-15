@@ -29,11 +29,19 @@
     </button>
     <a href="<s:url action="main" namespace="/do" />" class="navbar-brand">
         <img class="navbar-brand-icon logo-entando" src="<wp:resourceURL />administration/img/entando-logo.svg" alt="Entando 4.3" />
-    </a>
+        <span class="entando-development"><s:text name="note.administration.console" /></span>    </a>
 </div>
 <nav class="collapse navbar-collapse">
 
     <ul class="nav navbar-nav navbar-right navbar-iconic">
+
+
+        <li id="preview-portal" class="drawer-pf-trigger2 notifications dropdown">
+            <a class="nav-item-iconic" target="#" href="<s:url value="/" />" title="<s:text name="note.goToPortal" /> ( <s:text name="note.sameWindow" /> )">
+                <span class="icon fa fa-globe fa-fw"></span>&#32;
+                <s:text name="note.goToPortal" />
+            </a>
+        </li>
 
 
         <li id="notification-ico" class="drawer-pf-trigger2 notifications dropdown">
@@ -69,17 +77,11 @@
                 <c:if test="${sessionScope.currentUser.japsUser}">
                     <li>
                         <a href="<s:url action="editProfile" namespace="/do/CurrentUser" />">
-                            <i class="fa fa-id-card-o" aria-hidden="true"></i>
+                            <i class="fa fa-user" aria-hidden="true"></i>
                             <s:text name="note.changeYourPassword" />
                         </a>
                     </li>
                 </c:if>
-                <li>
-                    <a target="#" href="<s:url value="/" />" title="<s:text name="note.goToPortal" /> ( <s:text name="note.sameWindow" /> )">
-                        <span class="icon fa fa-globe fa-fw"></span>&#32;
-                        <s:text name="note.goToPortal" />
-                    </a>
-                </li>
                 <li>
                     <a href="<s:url action="logout" namespace="/do" />">
                         <i class="fa fa-sign-out" aria-hidden="true"></i>&#32;
@@ -109,7 +111,7 @@
             $(this).toggleClass('open');
             if ($drawer.hasClass('hide')) {
                 $drawer.removeClass('hide');
-                $("#notification-ico").addClass("notification-active")  
+                $("#notification-ico").addClass("notification-active")
                 setTimeout(function () {
                     if (window.dispatchEvent) {
                         window.dispatchEvent(new Event('resize'));

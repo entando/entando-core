@@ -9,10 +9,10 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a></li>
     <li> <a href="<s:url namespace="/do/User" action="list" />"><s:text name="title.userManagement" /></a></li>
-    <li> <s:text name="title.userManagement.userAuthorizations" /></li>
+    <li class="page-title-container"> <s:text name="title.userManagement.userAuthorizations" /></li>
 </ol>
 
-<h1>
+<h1 class="page-title-container">
     <s:text name="title.userManagement.userAuthorizations" />&nbsp;<s:text name="label.for" />&nbsp;<s:property value="userAuthsFormBean.username" />
     <span class="pull-right">
         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="text to be inserted" data-placement="left" data-original-title="">

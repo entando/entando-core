@@ -4,11 +4,11 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.users" /></a></li>
     <li><a href="<s:url namespace="/do/User" action="list" />"><s:text name="title.userManagement" /></a></li>
-    <li><s:text name="title.userManagement.userTrash" /></li>
+    <li class="page-title-container"><s:text name="title.userManagement.userTrash" /></li>
 </ol>
 
 
-<h1>
+<h1 class="page-title-container">
     <s:text name="title.userManagement.userTrash" />&nbsp;<s:text name="label.for.user" /> - <s:property value="%{username}" />
     <span class="pull-right">
         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="text to be inserted" data-placement="left" data-original-title="">

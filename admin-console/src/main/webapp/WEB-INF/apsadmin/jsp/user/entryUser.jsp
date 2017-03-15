@@ -8,7 +8,7 @@
     <li>
         <a href="<s:url namespace="/do/User" action="list" />"><s:text name="title.userManagement" /></a>
     </li>
-    <li>
+    <li class="page-title-container">
         <s:if test="getStrutsAction() == 1">
             <s:text name="title.userManagement.userNew" />
         </s:if>
@@ -18,7 +18,7 @@
     </li>
 </ol>
 
-<h1> <s:if test="getStrutsAction() == 1">
+<h1 class="page-title-container"> <s:if test="getStrutsAction() == 1">
         <s:text name="title.userManagement.userNew" />
     </s:if>
     <s:elseif test="getStrutsAction() == 2">
@@ -228,12 +228,6 @@
     <%-- save buttons --%>
     <div class="col-md-12"> 
         <div class="form-group pull-right "> 
-            <div class="btn-group">
-                <wpsf:submit type="button" action="save" cssClass="btn btn-primary btn-block">
-
-                    <s:text name="label.save" />
-                </wpsf:submit>
-            </div>
             <s:if test="strutsAction == 1">
                 <div class="btn-group">
                     <wpsf:submit type="button" action="saveAndContinue" cssClass="btn btn-default btn-block">
@@ -242,6 +236,12 @@
                     </wpsf:submit>
                 </div>
             </s:if>
+            <div class="btn-group">
+                <wpsf:submit type="button" action="save" cssClass="btn btn-primary btn-block">
+
+                    <s:text name="label.save" />
+                </wpsf:submit>
+            </div>
         </div>
     </div>
 </s:form>

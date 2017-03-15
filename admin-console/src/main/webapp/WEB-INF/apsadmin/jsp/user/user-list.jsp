@@ -6,11 +6,11 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.userSetting" /></li>
-    <li><s:text name="title.userManagement" /></li>
+    <li class="page-title-container"><s:text name="title.userManagement" /></li>
 </ol>
 
 
-<h1><s:text name="title.userManagement" /></h1>
+<h1 class="page-title-container"><s:text name="title.userManagement" /></h1>
 
 
 <s:form action="search"  role="search" >
@@ -429,7 +429,7 @@
 
                             <td class=" table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
-                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
+                                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
                                     <ul class="dropdown-menu dropdown-menu-right">								
                                         <li>
                                             <%-- edit --%>

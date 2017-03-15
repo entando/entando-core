@@ -14,6 +14,7 @@ TO_DO : Download last FontAwesome
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/settingsPage.css"/>
 <!--<link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-blue-theme2.css">-->
 
+
 <!--JS inclusions-->
 <script src="<wp:resourceURL />administration/js/jquery-2.2.4.min.js"></script>
 <script src="<wp:resourceURL />administration/js/entando-stream.js"></script>
@@ -22,4 +23,5 @@ TO_DO : Download last FontAwesome
 <script src="<wp:resourceURL />administration/js/pages/settingsPage.js"></script>
 <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
 <script src="<wp:resourceURL />administration/js/bootstrap-switch.min.js"></script>
+<script src="<wp:resourceURL />administration\js\bootstrap-datepicker\bootstrap-datepicker.js"></script>
 

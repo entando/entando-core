@@ -44,7 +44,6 @@ public class EntandoStrutsTilesContainerFactory extends StrutsTilesContainerFact
         return this.getResourceNames(TILES_DEFAULT_PATTERN);
     }
 	
-	//@Override
 	protected Set<String> getResourceNames(String resourceString) {
 		StringTokenizer tokenizer = new StringTokenizer(resourceString, ",");
 		Set<String> filenames = new HashSet<String>();
@@ -88,10 +87,10 @@ public class EntandoStrutsTilesContainerFactory extends StrutsTilesContainerFact
 		return m.matches();
 	}
 	
-	public void setServletContext(ServletContext servletContext) {
+	protected void setServletContext(ServletContext servletContext) {
 		this._servletContext = servletContext;
 	}
-	public ServletContext getServletContext() {
+	protected ServletContext getServletContext() {
 		return _servletContext;
 	}
 	

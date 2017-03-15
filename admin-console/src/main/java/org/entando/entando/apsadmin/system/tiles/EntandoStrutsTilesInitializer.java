@@ -30,13 +30,20 @@ public class EntandoStrutsTilesInitializer extends StrutsTilesInitializer {
 	private ServletContext _servletContext;
 	
 	protected EntandoStrutsTilesInitializer(ServletContext servletContext) {
-		this._servletContext = servletContext;
+		this.setServletContext(servletContext);
 	}
 	
 	@Override
     protected AbstractTilesContainerFactory createContainerFactory(ApplicationContext context) {
         LOG.trace("Creating dedicated Struts factory to create Tiles container");
-        return new EntandoStrutsTilesContainerFactory(this._servletContext);
+        return new EntandoStrutsTilesContainerFactory(this.getServletContext());
     }
+	
+	protected void setServletContext(ServletContext servletContext) {
+		this._servletContext = servletContext;
+	}
+	protected ServletContext getServletContext() {
+		return _servletContext;
+	}
 	
 }

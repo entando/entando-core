@@ -36,17 +36,24 @@ public class EntandoStrutsTilesListener extends StrutsTilesListener {
 	
     private static final Logger LOG = LogManager.getLogger(StrutsTilesListener.class);
 	private ServletContext _servletContext;
-
+	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		this._servletContext = event.getServletContext();
-		super.contextInitialized(event); //To change body of generated methods, choose Tools | Templates.
+		this.setServletContext(event.getServletContext());
+		super.contextInitialized(event);
 	}
 	
     @Override
     protected TilesInitializer createTilesInitializer() {
         LOG.info("Starting Struts Tiles 3 integration ...");
-        return new EntandoStrutsTilesInitializer(this._servletContext);
+        return new EntandoStrutsTilesInitializer(this.getServletContext());
     }
+	
+	protected void setServletContext(ServletContext servletContext) {
+		this._servletContext = servletContext;
+	}
+	protected ServletContext getServletContext() {
+		return _servletContext;
+	}
 	
 }

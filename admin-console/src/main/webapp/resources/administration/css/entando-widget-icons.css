@@ -10,14 +10,13 @@ and open the template in the editor.
 
 .icon-pos{
     position: absolute;
-    top: 8px;
-    left: 59px;
-    font-size: 21px;
+    top: 6px;
+    left: 55px;
 }
 
 .descrition-widget-overlay{
     min-width: 115px !important;
-    margin: 14px 0px -3px -20px !important;
+    margin: 17px 0px -3px -20px !important;
     font-size:11px !important;
     white-space: normal !important;
     height: 53px;

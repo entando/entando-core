@@ -27,6 +27,7 @@
 .btn-no-button{
     background: none;
     border: 0;
+    width: 100%;
 }
 /*-----ouline tolto-----*/
 button:focus {outline:0 !important;}
@@ -437,7 +438,7 @@ td{
 }
 
 .table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
-    text-align: center;
+    /* text-align: center; */
 }
 .text-right{
     text-align: end;
@@ -794,7 +795,8 @@ a {
     color: #4d5258 !important;
 }
 .expand-button{
-    margin-left: 4em;
+    /* margin-left: 5em; */
+    font-size: 11px;
 }
 
 .pagination button {
@@ -1062,7 +1064,7 @@ td{
 }
 
 .table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
-    text-align: center;
+    /* text-align: center; */
 }
 .text-right{
     text-align: end;
@@ -1258,4 +1260,29 @@ td{
     line-height: 36px;
     margin-left: 7em;
     text-transform: capitalize;
+}
+.treeInteractionButtons{
+    font-size: 13px;
+}
+.green{
+    color: green;
+}
+#pageTree .statusField i.fa {
+    font-size: 15px;
+    margin-top: 6px;
+}
+.table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
+}
+.fa-question-circle-o{
+    color:#72767b !important;
+}
+.dropdown-menu.dropdown-menu-right {
+    right: 4px !important;
+
+}
+.page-title-container{
+    font-weight: bold;
+}
+.table-in-col10{
+    padding: 0px 0 0 6px; 
 }

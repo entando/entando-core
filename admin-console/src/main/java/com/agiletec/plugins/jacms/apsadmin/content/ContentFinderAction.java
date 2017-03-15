@@ -14,28 +14,34 @@
 package com.agiletec.plugins.jacms.apsadmin.content;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.common.entity.model.ApsEntity;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.util.DateConverter;
 import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.entity.AbstractApsEntityFinderAction;
+import com.agiletec.apsadmin.tags.util.AdminPagerTagHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
 
 /**
@@ -45,10 +51,15 @@ import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
 public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentFinderAction.class);
-	
+
 	@Override
 	public String execute() {
 		try {
+			ContentFinderSearchInfo searchInfo = this.getContentSearchInfo();
+			if (null == searchInfo) {
+				searchInfo = new ContentFinderSearchInfo();
+				this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME, searchInfo);
+			}
 			this.createFilters();
 		} catch (Throwable t) {
 			_logger.error("error in execute", t);
@@ -56,7 +67,41 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return SUCCESS;
 	}
-	
+
+	public String list() {
+		try {
+			this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME, new ContentFinderSearchInfo());
+			this.createFilters();
+		} catch (Throwable t) {
+			_logger.error("error in execute", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+
+
+	public String results() {
+		try {
+			ContentFinderSearchInfo searchInfo = this.getContentSearchInfo();
+			if (null == searchInfo) {
+				searchInfo = new ContentFinderSearchInfo();
+				this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME, searchInfo);
+			}
+			this.restoreCommonSearchState(searchInfo);
+			this.restoreCategorySearchState(searchInfo);
+			this.restoreEntitySearchState(searchInfo);
+			this.restorePagerSearchState(searchInfo);
+			
+			this.addFilter(searchInfo.getFilter(ContentFinderSearchInfo.ORDER_FILTER));
+		} catch (Throwable t) {
+			_logger.error("error in results", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+
+
+
 	/**
 	 * Restituisce la lista identificativi di contenuti che deve essere erogata dall'interfaccia di 
 	 * visualizzazione dei contenuti. La lista deve essere filtrata secondo i parametri di ricerca impostati.
@@ -66,11 +111,16 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	public List<String> getContents() {
 		List<String> result = null;
 		try {
+			ContentFinderSearchInfo searchInfo = getContentSearchInfo();
 			List<String> allowedGroups = this.getContentGroupCodes();
 			String[] categories = null;
 			Category category = this.getCategoryManager().getCategory(this.getCategoryCode());
 			if (null != category && !category.isRoot()) {
-				categories = new String[]{this.getCategoryCode().trim()};
+				String catCode = this.getCategoryCode().trim();
+				categories = new String[]{catCode};
+				searchInfo.setCategoryCode(catCode);
+			} else {
+				searchInfo.setCategoryCode(null);
 			}
 			result = this.getContentManager().loadWorkContentsId(categories, this.getFilters(), allowedGroups);
 		} catch (Throwable t) {
@@ -79,7 +129,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Restituisce la lista di gruppi (codici) dei contenuti che devono essere visualizzati in lista.
 	 * La lista viene ricavata in base alle autorizzazioni dall'utente corrente.
@@ -88,39 +138,98 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	protected List<String> getContentGroupCodes() {
 		return super.getActualAllowedGroupCodes();
 	}
-	
+
 	/**
 	 * Restitusce i filtri per la selezione e l'ordinamento dei contenuti erogati nell'interfaccia.
 	 * @return Il filtri di selezione ed ordinamento dei contenuti.
 	 */
+	@SuppressWarnings("rawtypes")
 	protected EntitySearchFilter[] createFilters() {
-		super.createBaseFilters();
+		ContentFinderSearchInfo searchInfo = getContentSearchInfo();
+		this.createBaseFilters();
+
 		if (null != this.getState() && this.getState().trim().length()>0) {
 			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_STATUS_FILTER_KEY, false, this.getState(), false);
 			this.addFilter(filterToAdd);
+			searchInfo.addFilter(IContentManager.CONTENT_STATUS_FILTER_KEY, filterToAdd);
+		} else {
+			searchInfo.removeFilter(IContentManager.CONTENT_STATUS_FILTER_KEY);
 		}
+
 		if (null != this.getText() && this.getText().trim().length()>0) {
 			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, this.getText(), true);
 			this.addFilter(filterToAdd);
+			searchInfo.addFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, filterToAdd);
+		} else {
+			searchInfo.removeFilter(IContentManager.CONTENT_DESCR_FILTER_KEY);
 		}
+
 		if (null != this.getOwnerGroupName() && this.getOwnerGroupName().trim().length()>0) {
 			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY, false, this.getOwnerGroupName(), false);
 			this.addFilter(filterToAdd);
+			searchInfo.addFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY, filterToAdd);
+		} else {
+			searchInfo.removeFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY);
 		}
+
 		if (null != this.getOnLineState() && this.getOnLineState().trim().length()>0) {
 			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, false);
 			filterToAdd.setNullOption(this.getOnLineState().trim().equals("no"));
 			this.addFilter(filterToAdd);
+			searchInfo.addFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, filterToAdd);
+		} else {
+			searchInfo.removeFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY);
 		}
+
 		if (null != this.getContentIdToken() && this.getContentIdToken().trim().length()>0) {
 			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false, this.getContentIdToken(), true);
 			this.addFilter(filterToAdd);
+			searchInfo.addFilter(IContentManager.ENTITY_ID_FILTER_KEY, filterToAdd);
+		} else {
+			searchInfo.removeFilter(IContentManager.ENTITY_ID_FILTER_KEY);
 		}
+
+		this.savePagerSearchState(searchInfo);
 		EntitySearchFilter orderFilter = this.getContentActionHelper().getOrderFilter(this.getLastGroupBy(), this.getLastOrder());
 		super.addFilter(orderFilter);
+		searchInfo.addFilter(ContentFinderSearchInfo.ORDER_FILTER, orderFilter);
+
 		return this.getFilters();
 	}
-	
+
+	@SuppressWarnings("rawtypes")
+	protected void createBaseFilters() {
+		try {
+			int initSize = this.getFilters().length;
+			ContentFinderSearchInfo searchInfo = getContentSearchInfo();
+
+			EntitySearchFilter[] roleFilters = this.getEntityActionHelper().getRoleFilters(this);
+			this.addFilters(roleFilters);
+			IApsEntity prototype = this.getEntityPrototype();
+			searchInfo.removeFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY);
+			searchInfo.removeFilterByPrefix(ContentFinderSearchInfo.ATTRIBUTE_FILTER);
+			if (null != prototype) {
+				EntitySearchFilter filterToAdd = new EntitySearchFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY, false, prototype.getTypeCode(), false);
+				this.addFilter(filterToAdd);
+				searchInfo.addFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY, filterToAdd);
+
+				EntitySearchFilter[] filters = this.getEntityActionHelper().getAttributeFilters(this, prototype);
+				this.addFilters(filters);
+				searchInfo.addAttributeFilters(filters);
+			} 
+			this.setAddedAttributeFilter(this.getFilters().length > initSize);
+		} catch (Throwable t) {
+			_logger.error("Error while creating entity filters", t);
+			throw new RuntimeException("Error while creating entity filters", t);
+		}
+	}
+
+	private ContentFinderSearchInfo getContentSearchInfo() {
+		ContentFinderSearchInfo searchInfo = (ContentFinderSearchInfo) this.getRequest().getSession().getAttribute(ContentFinderSearchInfo.SESSION_NAME);
+		return searchInfo;
+	}
+
+
 	public String changeOrder() {
 		try {
 			if (null == this.getGroupBy()) return SUCCESS;
@@ -138,7 +247,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return this.execute();
 	}
-	
+
 	/**
 	 * Esegue la publicazione di un singolo contenuto direttamente 
 	 * dall'interfaccia di visualizzazione dei contenuti in lista.
@@ -184,7 +293,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Esegue la rimozione dall'area pubblica di un singolo contenuto direttamente 
 	 * dall'interfaccia di visualizzazione dei contenuti in lista.
@@ -199,7 +308,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			Iterator<String> contentsIdsItr = this.getContentIds().iterator();
 			List<Content> removedContents = new ArrayList<Content>();
 			while (contentsIdsItr.hasNext()) {
-			String contentId = (String) contentsIdsItr.next();
+				String contentId = (String) contentsIdsItr.next();
 				Content contentToSuspend = this.getContentManager().loadContent(contentId, false);
 				String[] msgArg = new String[1];					
 				if (null == contentToSuspend) {
@@ -230,7 +339,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * We've moved to deletion check here in the 'trash' action so to have errors notified immediately. Be design we
 	 * share all the messages with the 'delete' action.
@@ -269,7 +378,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		if (this.getActionErrors().isEmpty()) return SUCCESS;
 		return "cannotProceed";
 	}
-	
+
 	/**
 	 * Esegue l'operazione di cancellazione contenuto o gruppo contenuti.
 	 * @return Il codice del risultato.
@@ -313,11 +422,11 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	protected boolean isUserAllowed(Content content) {
 		return this.getContentActionHelper().isUserAllowed(content, this.getCurrentUser());
 	}
-	
+
 	protected void addConfirmMessage(String key, List<Content> contents) {
 		if (contents.size()>0) {
 			//RIVISITARE LOGICA DI COSTRUZIONE MESSAGGIO
@@ -332,7 +441,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			this.addActionMessage(confirm);
 		}
 	}
-	
+
 	/**
 	 * Restituisce il contenuto vo in base all'identificativo.
 	 * @param contentId L'identificativo del contenuto.
@@ -348,15 +457,15 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return contentVo;
 	}
-	
-	public List<SmallContentType> getContentTypes() {
-		return this.getContentManager().getSmallContentTypes();
+
+	public List<SmallEntityType> getContentTypes() {
+		return this.getContentManager().getSmallEntityTypes();
 	}
-	
-	public SmallContentType getSmallContentType(String code) {
+
+	public SmallEntityType getSmallContentType(String code) {
 		return this.getContentManager().getSmallContentTypesMap().get(code);
 	}
-	
+
 	/**
 	 * Restituisce la lista di stati di contenuto definiti nel sistema, come insieme di chiave e valore
 	 * Il metodo è a servizio delle jsp che richiedono questo dato per fornire 
@@ -372,12 +481,108 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 		return items;
 	}
-	
+
 	protected void addActivityStreamInfo(Content content, int strutsAction, boolean addLink) {
 		ActivityStreamInfo asi = this.getContentActionHelper().createActivityStreamInfo(content, strutsAction, addLink);
 		super.addActivityStreamInfo(asi);
 	}
-	
+
+	protected void savePagerSearchState(ContentFinderSearchInfo searchInfo) {
+		boolean found = searchInfo.setPagerFromParameters(this.getRequest().getParameterNames());
+		if (!found) {
+			String pagerName = this.getPagerName();
+			String pos = this.getRequest().getParameter(pagerName);
+			if (StringUtils.isNotBlank(pos) && StringUtils.isNumeric(pos)) {
+				searchInfo.setPageName(pagerName);
+				searchInfo.setPagePos(new Integer(pos));
+			}
+		}
+	}
+
+	protected void restorePagerSearchState(ContentFinderSearchInfo searchInfo) {
+		String pageName = searchInfo.getPageName();
+		if (StringUtils.isNotBlank(pageName)) {
+			this.getRequest().setAttribute(pageName, searchInfo.getPagePos());
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected void restoreEntitySearchState(ContentFinderSearchInfo searchInfo) {
+		if (null != searchInfo.getFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY)) {
+			EntitySearchFilter filter = searchInfo.getFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY);
+			this.addFilter(filter);
+			this.setEntityTypeCode((String)filter.getValue());
+
+			EntitySearchFilter[] filters = searchInfo.getFiltersByKeyPrefix(ContentFinderSearchInfo.ATTRIBUTE_FILTER);
+			if (null != filters && filters.length > 0) {
+				for (EntitySearchFilter entitySearchFilter : filters) {
+					this.addFilter(entitySearchFilter);
+
+					String attrName = entitySearchFilter.getKey();
+					ApsEntity proto = (ApsEntity) this.getEntityPrototype();
+
+					String[] attributeFilterFieldNames = this.getEntityActionHelper().getAttributeFilterFieldName(proto, attrName);
+					if (null != attributeFilterFieldNames && attributeFilterFieldNames.length == 1) {
+						this.getRequest().setAttribute(attributeFilterFieldNames[0], entitySearchFilter.getValue());
+					} else if (null != attributeFilterFieldNames && attributeFilterFieldNames.length == 2) {
+						Date start = (Date) entitySearchFilter.getStart(); 
+						if (null != start) {
+							this.getRequest().setAttribute(attributeFilterFieldNames[0], DateConverter.getFormattedDate(start, EntitySearchFilter.DATE_PATTERN));
+						}
+						Date end = (Date) entitySearchFilter.getEnd(); 
+						if (null != end) {
+							this.getRequest().setAttribute(attributeFilterFieldNames[1], DateConverter.getFormattedDate(end, EntitySearchFilter.DATE_PATTERN));
+						}							
+					}
+
+				}
+			}
+		}
+	}
+
+	private void restoreCategorySearchState(ContentFinderSearchInfo searchInfo) {
+		String catCode = searchInfo.getCategoryCode();
+		if (StringUtils.isNotBlank(catCode))  {
+			Category category = this.getCategoryManager().getCategory(catCode);
+			if (null != category && !category.isRoot()) {
+				this.setCategoryCode(catCode);
+			}
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected void restoreCommonSearchState(ContentFinderSearchInfo searchInfo) {
+		if (null != searchInfo.getFilter(IContentManager.CONTENT_STATUS_FILTER_KEY))  {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_STATUS_FILTER_KEY);
+			this.addFilter(filterToAdd);
+			this.setState((String) filterToAdd.getValue());
+		}
+
+		if (null != searchInfo.getFilter(IContentManager.CONTENT_DESCR_FILTER_KEY))  {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_DESCR_FILTER_KEY);
+			this.addFilter(filterToAdd);
+			this.setText((String) filterToAdd.getValue());
+		}
+
+		if (null != searchInfo.getFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY))  {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY);
+			this.addFilter(filterToAdd);
+			this.setOwnerGroupName((String) filterToAdd.getValue());
+		}
+
+		if (null != searchInfo.getFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY))  {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY);
+			this.addFilter(filterToAdd);
+			this.setOnLineState(filterToAdd.isNullOption() ? "no" : "yes");
+		}
+
+		if (null != searchInfo.getFilter(IContentManager.ENTITY_ID_FILTER_KEY))  {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.ENTITY_ID_FILTER_KEY);
+			this.addFilter(filterToAdd);
+			this.setContentIdToken((String) filterToAdd.getValue());
+		}
+	}
+
 	/**
 	 * Restituisce un gruppo in base al nome.
 	 * @param groupName Il nome del gruppo da restituire.
@@ -386,11 +591,11 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	public Group getGroup(String groupName) {
 		return this.getGroupManager().getGroup(groupName);
 	}
-	
+
 	public List<Group> getAllowedGroups() {
 		return super.getActualAllowedGroups();
 	}
-	
+
 	/**
 	 * Restituisce la lista ordinata dei gruppi presenti nel sistema.
 	 * @return La lista dei gruppi presenti nel sistema.
@@ -398,20 +603,20 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	public List<Group> getGroups() {
 		return this.getGroupManager().getGroups();
 	}
-	
+
 	public Category getCategoryRoot() {
 		return (Category) this.getCategoryManager().getRoot();
 	}
-	
+
 	protected IContentActionHelper getContentActionHelper() {
 		return (IContentActionHelper) super.getEntityActionHelper();
 	}
-	
+
 	@Override
 	protected void deleteEntity(String entityId) throws Throwable {
 		// method not supported
 	}
-	
+
 	@Override
 	protected IEntityManager getEntityManager() {
 		return this.getContentManager();
@@ -423,163 +628,172 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	public void setContentType(String contentType) {
 		super.setEntityTypeCode(contentType);
 	}
-	
+
 	public String getState() {
 		return _state;
 	}
 	public void setState(String state) {
 		this._state = state;
 	}
-	
+
 	public String getText() {
 		return _text;
 	}
 	public void setText(String text) {
 		this._text = text;
 	}
-	
+
 	public String getOnLineState() {
 		return _onLineState;
 	}
 	public void setOnLineState(String onLineState) {
 		this._onLineState = onLineState;
 	}
-	
+
 	public void setContentIdToken(String contentIdToken) {
 		this._contentIdToken = contentIdToken;
 	}
 	public String getContentIdToken() {
 		return _contentIdToken;
 	}
-	
+
 	public String getOwnerGroupName() {
 		return _ownerGroupName;
 	}
 	public void setOwnerGroupName(String ownerGroupName) {
 		this._ownerGroupName = ownerGroupName;
 	}
-	
+
 	public String getCategoryCode() {
 		return _categoryCode;
 	}
 	public void setCategoryCode(String categoryCode) {
 		this._categoryCode = categoryCode;
 	}
-	
+
 	public String getLastOrder() {
 		return _lastOrder;
 	}
 	public void setLastOrder(String order) {
 		this._lastOrder = order;
 	}
-	
+
 	public String getLastGroupBy() {
 		return _lastGroupBy;
 	}
 	public void setLastGroupBy(String lastGroupBy) {
 		this._lastGroupBy = lastGroupBy;
 	}
-	
+
 	public String getGroupBy() {
 		return _groupBy;
 	}
 	public void setGroupBy(String groupBy) {
 		this._groupBy = groupBy;
 	}
-	
+
 	public boolean isViewCode() {
 		return _viewCode;
 	}
 	public void setViewCode(boolean viewCode) {
 		this._viewCode = viewCode;
 	}
-	
+
 	public boolean isViewStatus() {
 		return _viewStatus;
 	}
 	public void setViewStatus(boolean viewStatus) {
 		this._viewStatus = viewStatus;
 	}
-	
+
 	public boolean isViewCreationDate() {
 		return _viewCreationDate;
 	}
 	public void setViewCreationDate(boolean viewCreationDate) {
 		this._viewCreationDate = viewCreationDate;
 	}
-	
+
 	public boolean getViewGroup() {
 		return _viewGroup;
 	}
 	public void setViewGroup(boolean viewGroup) {
 		this._viewGroup = viewGroup;
 	}
-	
+
 	public boolean getViewTypeDescr() {
 		return _viewTypeDescr;
 	}
 	public void setViewTypeDescr(boolean viewTypeDescr) {
 		this._viewTypeDescr = viewTypeDescr;
 	}
-	
+
+	public String getPagerName() {
+		return pagerName;
+	}
+	public void setPagerName(String pagerName) {
+		this.pagerName = pagerName;
+	}
+
 	public Set<String> getContentIds() {
 		return _contentIds;
 	}
 	public void setContentIds(Set<String> contentIds) {
 		this._contentIds = contentIds;
 	}
-	
+
 	public String getActionCode() {
 		return _actionCode;
 	}
 	public void setActionCode(String actionCode) {
 		this._actionCode = actionCode;
 	}
-	
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
 	protected IGroupManager getGroupManager() {
 		return _groupManager;
 	}
 	public void setGroupManager(IGroupManager groupManager) {
 		this._groupManager = groupManager;
 	}
-	
+
 	protected ICategoryManager getCategoryManager() {
 		return _categoryManager;
 	}
 	public void setCategoryManager(ICategoryManager categoryManager) {
 		this._categoryManager = categoryManager;
 	}
-	
+
 	private String _state = "";
 	private String _text = "";
 	private String _onLineState = "";
 	private String _contentIdToken = "";
 	private String _ownerGroupName;
 	private String _categoryCode;
-	
+
 	private String _lastOrder;
 	private String _lastGroupBy;
 	private String _groupBy;
-	
+
 	private boolean _viewCode;
 	private boolean _viewGroup;
 	private boolean _viewStatus;
 	private boolean _viewTypeDescr;
 	private boolean _viewCreationDate;
-	
+
 	private Set<String> _contentIds;
-	
+
 	private String _actionCode = null;
 	
+	private String pagerName = AdminPagerTagHelper.DEFAULT_PAGER_NAME;
+
 	private IContentManager _contentManager;
 	private IGroupManager _groupManager;
 	private ICategoryManager _categoryManager;
-	
+
 }

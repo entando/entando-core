@@ -48,7 +48,7 @@
 							</label>
 							<div class="col-sm-6 input-group">
 								<wpsf:select cssClass="form-control" name="contentType" id="contentType"
-									list="contentTypes" listKey="code" listValue="descr"
+									list="contentTypes" listKey="code" listValue="description"
 									headerKey="" headerValue="%{getText('label.all')}" />
 								<div class="input-group-btn">
 									<wpsa:actionParam action="changeContentType" var="changeContentTypeActionName" >

@@ -17,10 +17,10 @@ import java.util.Collection;
 
 import javax.servlet.ServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.tags.util.IPagerVO;
 import com.agiletec.aps.tags.util.PagerTagHelper;
@@ -33,6 +33,7 @@ import com.agiletec.apsadmin.util.ApsRequestParamsUtil;
 public class AdminPagerTagHelper extends PagerTagHelper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(AdminPagerTagHelper.class);
+	public static final String DEFAULT_PAGER_NAME = "pagerItem";
 	
 	public IPagerVO getPagerVO(Collection collection, int max, boolean isAdvanced, 
 			int offset, ServletRequest request) throws ApsSystemException {
@@ -47,7 +48,6 @@ public class AdminPagerTagHelper extends PagerTagHelper {
 			pagerVo = this.buildPageVO(collection, item, max, pagerId, isAdvanced, offset);
 		} catch (Throwable t) {
 			_logger.error("Error while building pagerVo", t);
-			//ApsSystemUtils.logThrowable(t, this, "getPagerVO");
 			throw new ApsSystemException("Error while building pagerVo", t);
 		}
 		return pagerVo;
@@ -59,12 +59,20 @@ public class AdminPagerTagHelper extends PagerTagHelper {
 	
 	protected int getItemNumber(String pagerId, ServletRequest request) {
 		String stringItem = null;
-		String marker = (null != pagerId && pagerId.trim().length() > 0) ? pagerId : "pagerItem"; 
+		String marker = (null != pagerId && pagerId.trim().length() > 0) ? pagerId : DEFAULT_PAGER_NAME; 
 		String[] params = ApsRequestParamsUtil.getApsParams(marker, "_", request);
 		if (params != null && params.length == 2) {
 			stringItem = params[1];
 		} else {
-			stringItem = request.getParameter(marker);
+			String paramItem = request.getParameter(marker);
+			if (StringUtils.isNotBlank(paramItem)) {
+				stringItem = paramItem;
+			} else {
+				Object reqItem =  request.getAttribute(marker);
+				if (null != reqItem && StringUtils.isNotBlank(reqItem.toString())) {
+					stringItem = reqItem.toString();
+				}
+			}
 		}
 		int item = 0;
 		if (stringItem != null) {

@@ -23,8 +23,12 @@
 .pointer{
     cursor: pointer;
 }
-
 .btn-no-button{
+    background: none;
+    border: 0;
+}
+
+.dropdown-menu-right .btn-no-button{
     background: none;
     border: 0;
     width: 100%;
@@ -650,10 +654,6 @@ td{
     cursor: pointer;
 }
 
-.btn-no-button{
-    background: none;
-    border: 0;
-}
 /*-----ouline tolto-----*/
 button:focus {outline:0 !important;}
 

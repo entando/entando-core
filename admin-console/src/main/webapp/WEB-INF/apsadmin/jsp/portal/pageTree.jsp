@@ -53,10 +53,10 @@
                                     </button>
                                 </s:if>
                             </th>
-                            <th class="text-center" style="min-width: 89px;">Add&#32;&vert;&#32;Move</th>
-                            <th class="text-center" style="min-width: 96px;">Status</th>
-                            <th class="text-center" style="min-width: 89px;">Menu List</th>
-                            <th style="min-width: 59px;">Actions</th>
+                            <th class="text-center" style="width: 8%;">Add&#32;&vert;&#32;Move</th>
+                            <th class="text-center" style="width: 8%;">Status</th>
+                            <th class="text-center" style="width: 8%;">Menu List</th>
+                            <th class="text-center" style="width: 5%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,29 +97,5 @@
 </fieldset>-->
         </s:form>
     </div>
-    <script>
-
-        $(document).ready(function () {
-
-            $("#expandAll").click(function () {
-                $(".childrenNodes").removeClass("hidden");
-            });
-            $("#collapseAll").click(function () {
-                $(".childrenNodes").addClass("hidden");
-            });
-
-            var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
-            $('.table-treegrid').treegrid(null, isTreeOnRequest);
-            $(".treeRow ").on("click", function (event) {
-                $(".treeRow").removeClass("active");
-                $(".moveButtons").addClass("hidden");
-                $(this).find('.subTreeToggler').prop("checked", true);
-                $(this).addClass("active");
-                $(this).find(".moveButtons").removeClass("hidden");
-            });
-
-        });
-
-    </script> 
 
 </div>

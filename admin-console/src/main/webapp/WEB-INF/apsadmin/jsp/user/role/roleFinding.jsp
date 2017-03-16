@@ -1,17 +1,33 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
-<h1 class="panel panel-default title-page">
-    <span class="panel-body display-block">
-        <a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a>
-        &#32;/&#32;
-        <s:text name="title.roleManagement" />
+
+
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a></li>
+    <li  class="page-title-container"><s:text name="title.roleManagement" /></li>
+</ol>
+
+<h1 class="page-title-container">
+    <s:text name="title.roleManagement" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
+
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
+
 <s:if test="hasActionErrors()">
-    <div class="alert alert-danger alert-dismissable fade in">
-        <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-        <h2 class="h4 margin-none"><s:text name="messages.title.ActionErrors" /></h2>
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <span class="pficon pficon-close"></span>
+        </button>
+        <span class="pficon pficon-error-circle-o"></span>
+        <s:text name="messages.title.ActionErrors" />
         <ul class="margin-base-top">
             <s:iterator value="actionErrors">
                 <li><s:property escape="false" /></li>
@@ -19,52 +35,56 @@
         </ul>
     </div>
 </s:if>
-<a 
-    class="btn btn-default margin-base-bottom"
-    href="<s:url namespace="/do/Role" action="new" />">
-    <span class="icon fa fa-plus-circle">
-        &#32;
-        <s:text name="title.roleManagement.roleNew" />
-    </span>
+
+<a class="btn btn-primary"
+   href="<s:url namespace="/do/Role" action="new" />">
+    <s:text name="title.roleManagement.roleNew" />
 </a>
-<div class="table-responsive">
-    <table class="table table-bordered">
+<br>
+<br>
+
+
+<table class="table table-striped table-bordered table-hover">
+    <tr>
+        <th><s:text name="label.code" /></th>
+        <th><s:text name="label.name" /></th>
+        <th class="text-designer"><s:text name="label.actions" /></th>
+    </tr>
+
+    <s:iterator value="roles" var="role">
         <tr>
-            <th class="text-center text-nowap col-xs-6 col-sm-3 col-md-3 col-lg-3 "><s:text name="label.actions" /></th>
-            <th><s:text name="label.code" /></th>
-            <th><s:text name="label.name" /></th>
-        </tr>
-        <s:iterator value="roles" var="role">
-            <tr>
-                <td class="text-center text-nowrap">
-                    <div class="btn-group btn-group-xs">
-                        <a class="btn btn-default" 
-                           href="<s:url action="detail"><s:param name="name" value="#role.name"/></s:url>" 
-                           title="<s:text name="note.detailsFor" />: <s:property value="#role.name" />">
-                            <span class="icon fa fa-info"></span>
-                            <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#role.name" /></span>
-                        </a>
-                        <a 
-                            class="btn btn-default" 
-                            title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />" 
-                            href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
-                                <span class="icon fa fa-pencil-square-o"></span>
+            <td><s:property value="#role.name" /></td>
+            <td><s:property value="#role.description" /></td>
+            <td class=" table-view-pf-actions">
+
+                <div class="dropdown dropdown-kebab-pf">
+                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
+                    <ul class="dropdown-menu dropdown-menu-right">								
+                        <li>
+                            <a href="<s:url action="detail"><s:param name="name" value="#role.name"/></s:url>" 
+                               title="<s:text name="note.detailsFor" />: <s:property value="#role.name" />">
+                                <s:text name="note.detailsFor" />: <s:property value="#role.name" />
+                                <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#role.name" /></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />" 
+                               href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
+                                <s:text name="label.edit" />:&#32;<s:property value="#role.name" />
                                 <span class="sr-only"><s:text name="label.edit" />:&#32;<s:property value="#role.name" /></span>
-                        </a>
-                    </div>
-                    <div class="btn-group btn-group-xs">
-                        <a 
-                            class="btn btn-warning" 
-                            title="<s:text name="label.remove" />: <s:property value="#role.name" />" 
-                            href="<s:url action="trash"><s:param name="name" value="#role.name"/></s:url>">
-                                <span class="icon fa fa-times-circle-o" />
+                            </a>
+                        </li>
+                        <li>
+                            <a  title="<s:text name="label.remove" />: <s:property value="#role.name" />" 
+                                href="<s:url action="trash"><s:param name="name" value="#role.name"/></s:url>">
+                                <s:text name="label.remove" />: <s:property value="#role.name" />
                                 <span class="sr-only"><s:text name="label.remove" />: <s:property value="#role.name" /></span>
-                        </a>
-                    </div>
-                </td>
-                <td><code><s:property value="#role.name" /></a></td>
-                <td><s:property value="#role.description" /></td>
-            </tr>
-        </s:iterator>
-    </table>
-</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </s:iterator>
+</table>
+

@@ -3,19 +3,15 @@
 .bold{
     font-weight: bold;
 }
-
 .right{
     float: right;
 }
-
 .left{
     float: left;
 }
-
 .no-padding{
     padding: 0;
 }
-
 .overflow-visible{
     overflow: visible;
 }
@@ -27,7 +23,6 @@
     background: none;
     border: 0;
 }
-
 .dropdown-menu-right .btn-no-button{
     background: none;
     border: 0;
@@ -54,7 +49,6 @@ button:focus {outline:0 !important;}
 }
 .logo-entando-login {
     height: 35px;
-
 }
 .navbar-pf-vertical {
     background-color: #212121;
@@ -1071,11 +1065,11 @@ td{
 }
 .section-divider{
     background: #292e34;
-    padding: 11px 17px 11px 17px;
+    padding: 9px 13px 9px 13px;
     border-radius: 25em;
     color: #fff;
     margin-right: 5%;
-    font-size: 17px;
+    font-size: 10px;
 }
 .section-divider-wrapper{
     margin-bottom: 3em;
@@ -1278,7 +1272,6 @@ td{
 }
 .dropdown-menu.dropdown-menu-right {
     right: 4px !important;
-
 }
 .page-title-container{
     font-weight: bold;
@@ -1293,4 +1286,40 @@ td{
 #type-width-custom .input-group[class*=col-]{
     padding-left: 20px !important;
     padding-right: 20px !important;
+}
+.foti_class option:before { 
+    font-family: FontAwesome;
+    content: "\f10c";
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+    color: #0086cc;
+    font-size: 15px !important;
+}
+.foti_class option:checked:before { 
+    font-family: FontAwesome;
+    content: "\f192";
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+    color: #0086cc;
+    font-size: 15px !important;
+}
+#form-custom-select .form-control , output {
+    font-size: 15px !important;
+    line-height: 1.66666667;
+    color: #363636;
+    display: block;
+}
+#form-custom-select2 .form-control , output {
+    font-size: 15px !important;
+    line-height: 1.66666667;
+    color: #363636;
+    display: block;
+}
+.col-10-checkbox-list{
+    margin-left:-20px;
+}
+ul {
+    list-style-type: none;
 }

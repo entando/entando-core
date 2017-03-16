@@ -200,22 +200,17 @@
 		</attribute>
 	</tag>
 	<tag>
-		<description><![CDATA[Includes a servlet's output (result of servlet or a JSP page).]]></description>
+		<description><![CDATA[Includes a servlet's output (result of servlet or a JSP page). **DEPRECATED**]]></description>
 		<name>include</name>
-		<tag-class>com.agiletec.apsadmin.tags.IncludeTag</tag-class>
+		<tag-class>org.apache.struts2.views.jsp.IncludeTag</tag-class>
 		<body-content>JSP</body-content>
-		<attribute>
-			<description><![CDATA[id for referencing element. For UI and form tags it will be used as HTML id attribute.]]></description>
-			<name>id</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
 		<attribute>
 			<description><![CDATA[The jsp/servlet output to include.]]></description>
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
+		<dynamic-attributes>false</dynamic-attributes>
 	</tag>
 	<tag>
 		<description>

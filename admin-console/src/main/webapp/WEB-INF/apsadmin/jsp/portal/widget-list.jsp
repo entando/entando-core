@@ -12,7 +12,10 @@
 
 <h1 class="page-title-container">
     <span class="page-title-big"><s:text name="title.widgetManagement" /></span>
+    <span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="help block  <a href='#'>help widget edit</a>." data-placement="top" data-original-title="Section Help"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
 </h1>
+
+<hr/>
 
 <div id="main" role="main">
     
@@ -88,14 +91,14 @@
                         <s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
                             <a href="<s:url namespace="/do/Portal/WidgetType" action="viewWidgetUtilizers"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="title.widgetManagement.howmanypages.goToSee" />: <s:property value="#showletType.value" />" class="btn btn-default"><span class="icon fa fa-info"></span></a>
                             </s:if>
-                        <wp:ifauthorized permission="superuser">
-                            <s:if test="#concreteShowletTypeVar.isLogic()">
-                                <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.parentType.code]" />
-                            </s:if>
-                            <s:elseif test="null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0">
-                                <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.code]" />
-                            </s:elseif>
-                            <s:if test="%{(null != #relatedApiMethodVar) || (null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0) ||(#firstType.optgroup == 'userShowletCode' && !#concreteShowletTypeVar.isLocked() && (#showletUtilizers == null || #showletUtilizers.size() == 0))}">
+                            <wp:ifauthorized permission="superuser">
+                                <s:if test="#concreteShowletTypeVar.isLogic()">
+                                    <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.parentType.code]" />
+                                </s:if>
+                                <s:elseif test="null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0">
+                                    <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.code]" />
+                                </s:elseif>
+                                <s:if test="%{(null != #relatedApiMethodVar) || (null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0) ||(#firstType.optgroup == 'userShowletCode' && !#concreteShowletTypeVar.isLocked() && (#showletUtilizers == null || #showletUtilizers.size() == 0))}">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         <span class="fa fa-ellipsis-v"></span></button>
@@ -138,7 +141,7 @@
                         <wpsa:hookPoint key="core.showletType.list.table.td" objectName="hookPointElements_core_showletType_list_table_td">
                             <s:iterator value="#hookPointElements_core_showletType_list_table_td" var="hookPointElement">
                                 <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                                </s:iterator>
+                            </s:iterator>
                         </wpsa:hookPoint>
                     </div>
                     <div class="list-view-pf-main-info">
@@ -167,8 +170,8 @@
                                             <span class="sr-only"><s:text name="title.widgetManagement.widgets.plugin" /></span>&#32;
                                         </s:if>
                                         <s:set var="pluginTitleCheck" value="'true'" ></s:set>
-                                            <wpsa:set var="pluginPropertyName" value="%{getText(#firstType.optgroup + '.name')}" />
-                                            <wpsa:set var="pluginPropertyCode" value="%{getText(#firstType.optgroup + '.code')}" />
+                                        <wpsa:set var="pluginPropertyName" value="%{getText(#firstType.optgroup + '.name')}" />
+                                        <wpsa:set var="pluginPropertyCode" value="%{getText(#firstType.optgroup + '.code')}" />
                                         <s:text name="#pluginPropertyName" />
                                     </s:else> 
                                 </div>

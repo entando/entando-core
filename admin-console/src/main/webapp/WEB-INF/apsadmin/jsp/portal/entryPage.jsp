@@ -5,8 +5,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
-
-
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
     <li><a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageTree" />"><s:text name="title.pageTree" /></a></li>
@@ -356,8 +354,8 @@
                     <s:text name="name.charset" />
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
-                <div class="col-sm-10">
-                    <wpsf:select name="charset" id="charset"
+                <div class="col-sm-3">
+                    <wpsf:select name="charset" id="charset" size="3"
                                  headerKey="" headerValue="%{getText('label.default')}" list="allowedCharsets" cssClass="form-control" />
                     <s:if test="#hasFieldErrorVar">
                         <span class="help-block text-danger">
@@ -377,8 +375,8 @@
                     <s:text name="name.mimeType" />
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
-                <div class="col-sm-10">
-                    <wpsf:select name="mimeType" id="mimeType"
+                <div class="col-sm-3">
+                    <wpsf:select name="mimeType" id="mimeType" size="5"
                                  headerKey="" headerValue="%{getText('label.default')}" list="allowedMimeTypes" cssClass="form-control" />
                     <s:if test="#hasFieldErrorVar">
                         <span class="help-block text-danger">

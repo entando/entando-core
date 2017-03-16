@@ -3,15 +3,12 @@
 .bold{
     font-weight: bold;
 }
-
 .right{
     float: right;
 }
-
 .left{
     float: left;
 }
-
 .no-padding{
     padding: 0;
 }
@@ -1278,11 +1275,14 @@ td{
 }
 .dropdown-menu.dropdown-menu-right {
     right: 4px !important;
-
 }
 .page-title-container{
     font-weight: bold;
 }
 .table-in-col10{
     padding: 0px 0 0 6px; 
+}
+#type-width-custom .input-group[class*=col-]{
+    padding-left: 20px !important;
+    padding-right: 20px !important;
 }

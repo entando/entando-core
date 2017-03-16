@@ -1286,3 +1286,7 @@ td{
 .table-in-col10{
     padding: 0px 0 0 6px; 
 }
+.required-fields{
+    color: #aaabad;
+    font-size: 12px;
+}

@@ -100,8 +100,7 @@
                 <s:if test="#pageCodeHasFieldErrorVar">
                     <s:set var="controlGroupErrorClassVar" value="' has-error'" />
                 </s:if>
-            
-            <s:if test="strutsAction != 2">
+                <s:if test="strutsAction != 2">
                 <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                     <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['showletTypeCode']}" />
                     <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
@@ -323,18 +322,18 @@
         
         <div class="row">
             <div class="form-group col-md-12">
-                <div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-                    <wpsf:submit type="button" cssClass="btn btn-primary btn-block">
-                        <span class="icon fa fa-floppy-o"></span>&#32;
+                
+                <div class="form-group pull-right "> 
+                    <wpsf:submit type="button" cssClass="btn btn-primary">
                         <s:text name="label.save" />
                     </wpsf:submit>
                 </div>
                 <s:if test="strutsAction == 3">
-                    <div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
+                    <div class="form-group pull-right "> 
                         <wpsa:actionParam action="save" var="actionName" >
                             <wpsa:actionSubParam name="replaceOnPage" value="true" />
                         </wpsa:actionParam>
-                        <wpsf:submit type="button" action="%{#actionName}" cssClass="btn btn-default btn-block">
+                        <wpsf:submit type="button" action="%{#actionName}" cssClass="btn btn-primary">
                             <span class="icon fa fa-exchange"></span>&#32;
                             <s:text name="label.save.replace" />
                         </wpsf:submit>

@@ -6,7 +6,7 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
-    <li><s:text name="title.configPage.full" /></li>
+    <li class="page-title-container"><s:text name="title.configPage.full" /></li>
 </ol>
 
 <h1 class="page-title-container">
@@ -32,9 +32,8 @@
 <div class="main-container">
     <div class="alert-container"></div>
     <div class="button-bar">
-        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-sm btn-primary">
-            <span class="icon fa fa-chevron-down"></span>&nbsp;&nbsp;
-            <span class="info-title"><s:text name="page.treeInfo" /></span>
+        <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-default">
+            <span><s:text name="page.treeInfo" /></span>
         </button>
 
         <div class="pull-right">
@@ -43,8 +42,7 @@
                 <s:param name="token" value="previewToken" />
             </s:url>
             <a href="<s:property value="#previewURL" escape="false" escapeXml="false" escapeHtml="false" />" target="_blank">
-                <button class="btn btn-primary"><s:text name="pageActions.preview" /></button>
-            </a>
+                <button class="btn btn-primary"><s:text name="pageActions.preview" /></button></a>
 
             <button class="btn btn-warning restore-online-btn"><s:text name="pageActions.restore" /></button>
             <button class="btn btn-danger unpublish-btn"><s:text name="pageActions.unpublish" /></button>
@@ -54,7 +52,7 @@
 
     </div>
 
-    <div id="page-info" class="collapse">
+    <div id="page-info" class="collapse" style="margin-top:1em;">
         <table class="table">
             <tbody>
                 <tr>

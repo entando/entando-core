@@ -63,7 +63,7 @@
 
     <td class=" table-view-pf-actions">
         <div class="dropdown dropdown-kebab-pf">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span class="fa fa-ellipsis-v"></span></button>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                 <li>

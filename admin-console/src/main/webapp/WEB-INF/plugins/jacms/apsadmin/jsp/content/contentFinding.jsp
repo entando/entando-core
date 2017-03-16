@@ -27,10 +27,7 @@
 					<label for="text" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.description"/></label>
 					<wpsf:textfield name="text" id="text" cssClass="form-control input-lg" placeholder="%{getText('label.description')}" title="%{getText('label.search.by')} %{getText('label.description')}" />
 					<span class="input-group-btn">
-						<wpsa:actionParam action="search" var="searchActionName" >
-							<wpsa:actionSubParam name="actionCode" value="search" />
-						</wpsa:actionParam>
-						<wpsf:submit action="%{#searchActionName}" type="button" cssClass="btn btn-primary btn-lg" title="%{getText('label.search')}">
+						<wpsf:submit type="button" cssClass="btn btn-primary btn-lg" title="%{getText('label.search')}">
 							<span class="sr-only"><s:text name="label.search" /></span>
 							<span class="icon fa fa-search"></span>
 						</wpsf:submit>
@@ -48,13 +45,10 @@
 							</label>
 							<div class="col-sm-6 input-group">
 								<wpsf:select cssClass="form-control" name="contentType" id="contentType"
-									list="contentTypes" listKey="code" listValue="descr"
+									list="contentTypes" listKey="code" listValue="description"
 									headerKey="" headerValue="%{getText('label.all')}" />
 								<div class="input-group-btn">
-									<wpsa:actionParam action="changeContentType" var="changeContentTypeActionName" >
-										<wpsa:actionSubParam name="actionCode" value="changeContentType" />
-									</wpsa:actionParam>
-									<wpsf:submit action="%{#changeContentTypeActionName}" cssClass="btn btn-default" value="%{getText('label.set')}" />
+									<wpsf:submit cssClass="btn btn-default" value="%{getText('label.set')}" />
 								</div>
 							</div>
 						</div>
@@ -166,7 +160,7 @@
 						</div>
 						<div class="form-group">
 							<div class="col-sm-5 col-sm-offset-2">
-								<wpsf:submit action="%{#searchActionName}" type="button" cssClass="btn btn-primary">
+								<wpsf:submit type="button" cssClass="btn btn-primary">
 									<span class="icon fa fa-search"></span>&#32;<s:text name="label.search" />
 								</wpsf:submit>
 							</div>
@@ -211,7 +205,7 @@
 				</div>
 
 				<div class="form-group col-sm-12">
-					<wpsf:submit action="%{#searchActionName}" type="button" cssClass="btn btn-primary">
+					<wpsf:submit type="button" cssClass="btn btn-primary">
 							<span class="icon fa fa-search"></span>&#32;<s:text name="label.search" />
 					</wpsf:submit>
 				</div>
@@ -325,7 +319,7 @@
 			<tr>
 				<th class="text-center padding-large-left padding-large-right"><abbr title="<s:text name="label.actions" />">&ndash;</abbr></th>
 				<th>
-				<a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+				<a href="<s:url action="changeOrder" includeParams="all" >
 					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
 					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
 					<s:param name="groupBy">descr</s:param>

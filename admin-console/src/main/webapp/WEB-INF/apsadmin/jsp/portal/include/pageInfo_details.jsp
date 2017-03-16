@@ -1,23 +1,22 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
-<p class="margin-base-vertical text-right">
-	<button type="button" data-toggle="collapse" data-target="#page-info"  class="btn btn-link">
-		<s:text name="label.info" />&#32;
-		<span class="icon fa fa-chevron-down"></span>
+    <button type="button" data-toggle="collapse" data-target="#page-info"  class="btn btn-sm btn-primary margin-large-bottom">
+        <span class="icon fa fa-chevron-down"></span>&nbsp;&nbsp;
+        <span class="info-title"><s:text name="label.info" /></span>
 	</button>
-</p>
+
 
 <s:set var="details_pivotPage" value="pageToShow" />
 <div class="collapse" id="page-info">
 
-	<table class="table table-bordered">
+    <table class="table">
 		<tr>
-			<th class="text-right"><s:text name="name.pageCode" /></th>
+            <th class="td-pagetree-width"><s:text name="name.pageCode" /></th>
 			<td><s:property value="#details_pivotPage.code" /></td>
 		</tr>
 		<tr>
-			<th class="text-right"><s:text name="name.pageTitle" /></th>
+            <th class="td-pagetree-width"><s:text name="name.pageTitle" /></th>
 			<td>
 	<s:iterator value="langs" status="pageInfo_rowStatus" var="lang">
 			<s:if test="#pageInfo_rowStatus.index != 0">, </s:if><span class="monospace">(<abbr title="<s:property value="descr" />"><s:property value="code" /></abbr>)</span> <s:property value="#details_pivotPage.getTitles()[#lang.code]" />
@@ -25,11 +24,11 @@
 			</td>
 		</tr>
 		<tr>
-			<th class="text-right"><s:text name="label.ownerGroup" /></th>
+            <th class="td-pagetree-width"><s:text name="label.ownerGroup" /></th>
 			<td><s:property value="systemGroups[#details_pivotPage.group].descr" /></td>
 		</tr>
 		<tr>
-			<th class="text-right"><s:text name="label.extraGroups" /></th>
+            <th class="td-pagetree-width"><s:text name="label.extraGroups" /></th>
 			<td>
 				<s:if test="#details_pivotPage.extraGroups.size() != 0">
 					<s:iterator value="#details_pivotPage.extraGroups" id="groupName" status="groupStatus">
@@ -42,7 +41,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th class="text-right"><s:text name="name.pageModel" /></th>
+            <th class="td-pagetree-width"><s:text name="name.pageModel" /></th>
 			<td><s:property value="#details_pivotPage.model.descr" /></td>
 		</tr>
 
@@ -57,7 +56,7 @@
 	</s:elseif>
 
 		<tr>
-			<th class="text-right"><s:text name="name.isViewerPage" /></th>
+            <th class="td-pagetree-width"><s:text name="name.isViewerPage" /></th>
 			<td><span title="<s:property value="freeViewerPageBooleanStatus" />" class="icon fa fa-<s:property value="#iconName" />"></span></td>
 		</tr>
 
@@ -71,7 +70,7 @@
 	</s:else>
 
 		<tr>
-			<th class="text-right"><s:text name="name.isShowablePage" /></th>
+            <th class="td-pagetree-width"><s:text name="name.isShowablePage" /></th>
 			<td><span title="<s:property value="booleanStatus" />" class="icon fa fa-<s:property value="#iconName" />"></span></td>
 		</tr>
 
@@ -85,7 +84,7 @@
 	</s:else>
 
 		<tr>
-			<th class="text-right"><abbr lang="en" title="<s:text name="name.SEO.full" />"><s:text name="name.SEO.short" /></abbr>:&#32;<s:text name="name.useBetterTitles" /></th>
+            <th class="td-pagetree-width"><abbr lang="en" title="<s:text name="name.SEO.full" />"><s:text name="name.SEO.short" /></abbr>:&#32;<s:text name="name.useBetterTitles" /></th>
 			<td><span title="<s:property value="useExtraTitlesBooleanStatus" />" class="icon fa fa-<s:property value="#iconName" />"></span></td>
 		</tr>
 

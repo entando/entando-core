@@ -14,12 +14,17 @@
 		
     	<!-- ######### INIZIO OPERAZIONI IN INTERFACCIA LISTA CONTENUTI ######### -->
     	
-    	<action name="list" class="jacmsContentFinderAction">
+    	<action name="list" class="jacmsContentFinderAction" method="list">
             <result type="tiles">admin.jacms.content.list</result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">editContents</param>
         		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
         	</interceptor-ref>
+        </action>
+
+        <action name="results" class="jacmsContentFinderAction"  method="results">
+            <result type="tiles">admin.jacms.content.list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
         </action>
         
         <action name="search*" class="jacmsContentFinderAction">
@@ -159,7 +164,7 @@
         
         <action name="save" class="jacmsContentAction" method="saveContent">
         	<result name="input" type="tiles">admin.jacms.content.entry</result>
-            <result type="redirectAction">list</result>
+            <result type="redirectAction">results</result>
 			<interceptor-ref name="entandoActionLogger" />
         	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
         </action>
@@ -171,7 +176,7 @@
         
         <action name="saveAndApprove" class="jacmsContentAction" method="saveAndApprove">
         	<result name="input" type="tiles">admin.jacms.content.entry</result>
-            <result type="redirectAction">list</result>
+            <result type="redirectAction">results</result>
         	<interceptor-ref name="entandoActionLogger" />
         	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
         </action>
@@ -179,7 +184,7 @@
         <action name="suspend" class="jacmsContentAction" method="suspend">
         	<result name="input" type="tiles">admin.jacms.content.entry</result>
             <result name="references" type="tiles">admin.jacms.content.references</result>
-            <result type="redirectAction">list</result>
+            <result type="redirectAction">results</result>
         	<interceptor-ref name="entandoActionLogger" />
         	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
         </action>

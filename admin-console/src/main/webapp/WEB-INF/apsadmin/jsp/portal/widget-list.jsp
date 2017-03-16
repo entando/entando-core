@@ -5,12 +5,14 @@
 
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/entando-widget-icons.css"/>
 
-<h1 class="panel panel-default title-page">
-    <span class="panel-body display-block">
-        <s:text name="title.widgetManagement" />
-    </span>
-</h1>
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="title.uxPatterns" /></li>
+    <li class="page-title-container"><s:text name="title.widgetManagement" /></li>
+</ol>
 
+<h1 class="page-title-container">
+    <span class="page-title-big"><s:text name="title.widgetManagement" /></span>
+</h1>
     
 <div id="main" role="main">
 
@@ -30,12 +32,13 @@
             </ul>
         </div>
     </s:if>
-
-    <a class="btn btn-default margin-base-bottom" href="<s:url namespace="/do/Portal/WidgetType" action="newWidget" />">
-        <span class="icon fa fa-plus-circle" />
-        &#32;<s:text name="label.new" />
-    </a>
-
+    <div class="row">
+        <div class="form-group col-md-12">
+            <a class="btn btn-primary pull-right" href="<s:url namespace="/do/Portal/WidgetType" action="newWidget" />">
+                <s:text name="label.add" />&#32;<s:text name="label.widget" />
+            </a>
+        </div>
+    </div>       
     <s:set var="pluginTitleCheck" value="'false'" />
     <s:set var="showletFlavours" value="showletFlavours" />
     <s:set var="showletTypeApiMappingsVar" value="showletTypeApiMappings" />
@@ -126,7 +129,6 @@
                     </div>
                     <div class="list-view-pf-main-info">
                         <div class="list-view-pf-left">
-                            
                             <span class="fa fa-default list-view-pf-icon-sm widget-icon fa-<s:property value="#showletType.key" />"></span>
                         </div>
                         <div class="list-view-pf-body">

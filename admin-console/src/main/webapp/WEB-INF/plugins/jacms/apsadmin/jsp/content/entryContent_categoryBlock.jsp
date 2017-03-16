@@ -15,19 +15,19 @@
 	<legend><span class="icon fa fa-tags"></span>&#32;<s:text name="title.categoriesManagement"/></legend>
 	<div class="well">
 		<ul id="categoryTree" class="fa-ul list-unstyled">
-			<s:set name="inputFieldName" value="'categoryCode'" />
-			<s:set name="selectedTreeNode" value="categoryCode" />
-			<s:set name="liClassName" value="'category'" />
-			<s:set name="treeItemIconName" value="'fa-folder'" />
+			<s:set var="inputFieldName" value="'categoryCode'" />
+			<s:set var="selectedTreeNode" value="categoryCode" />
+			<s:set var="liClassName" value="'category'" />
+			<s:set var="treeItemIconName" value="'fa-folder'" />
 
 			<s:if test="#categoryTreeStyleVar == 'classic'">
-				<s:set name="currentRoot" value="categoryRoot" />
+				<s:set var="currentRoot" value="categoryRoot" />
 			 	<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
 			</s:if>
 			<s:elseif test="#categoryTreeStyleVar == 'request'">
-				<s:set name="currentRoot" value="showableTree" />
-				<s:set name="openTreeActionName" value="'entryContent'" />
-				<s:set name="closeTreeActionName" value="'entryContent'" />
+				<s:set var="currentRoot" value="showableTree" />
+				<s:set var="openTreeActionName" value="'entryContent'" />
+				<s:set var="closeTreeActionName" value="'entryContent'" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
 			</s:elseif>
 		</ul>

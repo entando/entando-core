@@ -88,18 +88,18 @@
                                         <div class="col-sm-5">
                                                 <div class="well">
                                                         <ul id="categoryTree" class="fa-ul list-unstyled">
-                                                                <s:set name="inputFieldName" value="'categoryCode'" />
-                                                                <s:set name="selectedTreeNode" value="categoryCode" />
-                                                                <s:set name="liClassName" value="'category'" />
-                                                                <s:set name="treeItemIconName" value="'fa-folder'" />
+                                                                <s:set var="inputFieldName" value="'categoryCode'" />
+                                                                <s:set var="selectedTreeNode" value="categoryCode" />
+                                                                <s:set var="liClassName" value="'category'" />
+                                                                <s:set var="treeItemIconName" value="'fa-folder'" />
                                                                 <s:if test="#categoryTreeStyleVar == 'classic'">
-                                                                        <s:set name="currentRoot" value="categoryRoot" />
+                                                                        <s:set var="currentRoot" value="categoryRoot" />
                                                                         <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
                                                                 </s:if>
                                                                 <s:elseif test="#categoryTreeStyleVar == 'request'">
-                                                                        <s:set name="currentRoot" value="showableTree" />
-                                                                        <s:set name="openTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
-                                                                        <s:set name="closeTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
+                                                                        <s:set var="currentRoot" value="showableTree" />
+                                                                        <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
+                                                                        <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
                                                                         <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
                                                                 </s:elseif>
                                                         </ul>
@@ -148,7 +148,7 @@
 </p>
 
 <wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5" >
-<s:set name="group" value="#groupResource" />
+<s:set var="group" value="#groupResource" />
 <div class="pager margin-more-bottom">
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -158,7 +158,7 @@
 
 	<s:set var="imageDimensionsVar" value="imageDimensions" />
 	<s:iterator var="resourceid" status="status">
-		<s:set name="resource" value="%{loadResource(#resourceid)}" />
+		<s:set var="resource" value="%{loadResource(#resourceid)}" />
 		<s:set var="resourceInstance" value='%{#resource.getInstance(0,null)}' />
 		<s:set var="URLoriginal" value="%{#resource.getImagePath(0)}" />
 		<s:url var="URLedit" action="edit" namespace="/do/jacms/Resource">

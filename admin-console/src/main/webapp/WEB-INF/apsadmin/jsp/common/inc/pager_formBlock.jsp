@@ -48,7 +48,7 @@
 	</li>
 
 	<s:if test="#group.advanced">
-	<s:set name="jumpForwardStep" value="#group.currItem + #group.offset"></s:set>
+	<s:set var="jumpForwardStep" value="#group.currItem + #group.offset"></s:set>
 	<li>
 		<wpsf:submit name="%{#pagerIdMarker + '_' + (#jumpForwardStep)}" type="button" disabled="%{#group.maxItem == #group.endItemAnchor}" title="%{getText('label.jump') + ' ' + #group.offset + ' ' + getText('label.forward')}">
 			<span class="icon fa fa-fast-forward"></span>

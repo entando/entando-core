@@ -32,7 +32,7 @@
 </p>
 
 <wpsa:subset source="#showletUtilizers" count="10" objectName="groupShowletUtilizers" advanced="true" offset="5">
-<s:set name="group" value="#groupShowletUtilizers" />
+<s:set var="group" value="#groupShowletUtilizers" />
 
 <div class="text-center">
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />

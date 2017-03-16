@@ -3,7 +3,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-<s:set name="lang" value="defaultLang" />
+<s:set var="lang" value="defaultLang" />
 <div class="col-xs-12 margin-large-top">
 <%-- START CICLO ATTRIBUTI --%> 
 <s:iterator value="userProfile.attributeList" var="attribute">

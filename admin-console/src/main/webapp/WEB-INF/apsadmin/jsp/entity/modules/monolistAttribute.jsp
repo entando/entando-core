@@ -5,12 +5,12 @@
 <s:if test="#attribute.attributes.size() != 0">
 <ul>
 </s:if>
-<s:set name="masterListAttributeTracer" value="#attributeTracer" />
-<s:set name="masterListAttribute" value="#attribute" />
+<s:set var="masterListAttributeTracer" value="#attributeTracer" />
+<s:set var="masterListAttribute" value="#attribute" />
 <s:iterator value="#attribute.attributes" var="attribute" status="elementStatus">
-<s:set name="attributeTracer" value="#masterListAttributeTracer.getMonoListElementTracer(#elementStatus.index)"></s:set>
+<s:set var="attributeTracer" value="#masterListAttributeTracer.getMonoListElementTracer(#elementStatus.index)"></s:set>
 
-<s:set name="elementIndex" value="#elementStatus.index" />
+<s:set var="elementIndex" value="#elementStatus.index" />
 
 	<s:if test="#attribute.type == 'Composite'">
 <li class="contentAttributeBox">	
@@ -74,9 +74,9 @@
 </li>
 </s:iterator>
 
-<s:set name="attributeTracer" value="#masterListAttributeTracer" />
-<s:set name="attribute" value="#masterListAttribute" />
-<s:set name="elementIndex" value="" />
+<s:set var="attributeTracer" value="#masterListAttributeTracer" />
+<s:set var="attribute" value="#masterListAttribute" />
+<s:set var="elementIndex" value="" />
 <s:if test="#attribute.attributes.size() != 0">
 </ul>
 </s:if>

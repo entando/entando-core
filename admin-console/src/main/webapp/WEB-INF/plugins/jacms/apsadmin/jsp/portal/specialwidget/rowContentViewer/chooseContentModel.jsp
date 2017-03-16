@@ -67,7 +67,7 @@
 		</div>
 		</s:if>
 		
-		<s:set name="contentVoVar" value="%{getContentVo(contentId)}"></s:set>
+		<s:set var="contentVoVar" value="%{getContentVo(contentId)}"></s:set>
 		
 		<fieldset class="margin-large-top"><legend><s:text name="label.info" /></legend>
 			<div class="form-group">

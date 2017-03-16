@@ -52,10 +52,10 @@
 </s:if>
 
 <s:if test="strutsAction == 1">
-	<s:set name="attribute" value="getAttributePrototype(attributeTypeCode)" />
+	<s:set var="attribute" value="getAttributePrototype(attributeTypeCode)" />
 </s:if>
 <s:else>
-	<s:set name="attribute" value="entityType.getAttribute(attributeName)" />
+	<s:set var="attribute" value="entityType.getAttribute(attributeName)" />
 </s:else>
 
 <fieldset class="col-xs-12 margin-base-top"><legend><s:text name="label.info" /></legend>

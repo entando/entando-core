@@ -117,7 +117,7 @@
 <s:set var="guiFragmentsCodes_list" value="guiFragmentsCodes" />
 <s:if test="#guiFragmentsCodes_list.size > 0">
 	<wpsa:subset source="#guiFragmentsCodes_list" count="10" objectName="groupGuiFragments" advanced="true" offset="5">
-		<s:set name="group" value="#groupGuiFragments" />
+		<s:set var="group" value="#groupGuiFragments" />
 		<div class="text-center">
 			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -131,7 +131,7 @@
 					<th><s:text name="label.plugin" /></th>
 				</tr>
 				<s:iterator var="codeVar">
-					<s:set name="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />
+					<s:set var="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />
 					<s:url action="edit" var="editGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
 						<tr>
 							<td class="text-center text-nowrap">

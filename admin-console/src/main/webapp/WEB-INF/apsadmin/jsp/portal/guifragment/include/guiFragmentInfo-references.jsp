@@ -13,7 +13,7 @@
 		<div class="panel-body">
 			<s:if test="null != references['GuiFragmentManagerUtilizers']">
 				<wpsa:subset source="references['GuiFragmentManagerUtilizers']" count="10" objectName="guiFragmentReferencesVar" advanced="true" offset="5" pagerId="pageManagerReferences">
-					<s:set name="group" value="#guiFragmentReferencesVar" />
+					<s:set var="group" value="#guiFragmentReferencesVar" />
 					<div class="text-center">
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -56,7 +56,7 @@
 			<div class="panel-body">
 				<s:if test="null != references['PageModelManagerUtilizers']">
 					<wpsa:subset source="references['PageModelManagerUtilizers']" count="10" objectName="pageModelReferencesVar" advanced="true" offset="5" pagerId="userManagerReferences">
-						<s:set name="group" value="#pageModelReferencesVar" />
+						<s:set var="group" value="#pageModelReferencesVar" />
 						<div class="text-center">
 							<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 							<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -103,7 +103,7 @@
 		<div class="panel-body">
 			<s:if test="null != references['WidgetTypeManagerUtilizers']">
 				<wpsa:subset source="references['WidgetTypeManagerUtilizers']" count="10" objectName="widgetTypeReferencesVar" advanced="true" offset="5" pagerId="widgetTypeReferences">
-					<s:set name="group" value="#widgetTypeReferencesVar" />
+					<s:set var="group" value="#widgetTypeReferencesVar" />
 					<div class="text-center">
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />

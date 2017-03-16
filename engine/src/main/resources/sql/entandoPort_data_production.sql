@@ -360,7 +360,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			</ul>
 		</div>
 	</@s.if>
-	<@s.set name="lang" value="defaultLang" />
+	<@s.set var="lang" value="defaultLang" />
 	<@s.iterator value="userProfile.attributeList" var="attribute">
 		<@s.if test="%{#attribute.active}">
 			<@wpsa.tracerFactory var="attributeTracer" lang="%{#lang.code}" />
@@ -388,10 +388,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign currentLangVar ><@wp.info key="currentLang" /></#assign>
 
 <@s.if test="#attribute.failedDateString == null">
-<@s.set name="dateAttributeValue" value="#attribute.getFormattedDate(''dd/MM/yyyy'')" />
+<@s.set var="dateAttributeValue" value="#attribute.getFormattedDate(''dd/MM/yyyy'')" />
 </@s.if>
 <@s.else>
-<@s.set name="dateAttributeValue" value="#attribute.failedDateString" />
+<@s.set var="dateAttributeValue" value="#attribute.failedDateString" />
 </@s.else>
 <@wpsf.textfield 
 useTabindexAutoIncrement=true id="%{attribute_id}" 
@@ -492,10 +492,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 
 <@s.if test="#attribute.failedNumberString == null">
-	<@s.set name="numberAttributeValue" value="#attribute.value"></@s.set>
+	<@s.set var="numberAttributeValue" value="#attribute.value"></@s.set>
 </@s.if>
 <@s.else>
-	<@s.set name="numberAttributeValue" value="#attribute.failedNumberString"></@s.set>
+	<@s.set var="numberAttributeValue" value="#attribute.failedNumberString"></@s.set>
 </@s.else>
 <@wpsf.textfield 
 		useTabindexAutoIncrement=true 
@@ -623,7 +623,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<@wpsa.actionSubParam name="attributeName" value="%{#attribute.name}" />
 	<@wpsa.actionSubParam name="listLangCode" value="%{#lang.code}" />
 </@wpsa.actionParam>
-<@s.set name="iconImagePath" id="iconImagePath"><@wp.resourceURL/>administration/common/img/icons/list-add.png</@s.set> 
+<@s.set var="iconImagePath" id="iconImagePath"><@wp.resourceURL/>administration/common/img/icons/list-add.png</@s.set> 
 <@wpsf.submit 
 	cssClass="btn"
 	useTabindexAutoIncrement=true 
@@ -895,12 +895,12 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<ul class="unstyled">
 </@s.if>
 
-<@s.set name="masterListAttributeTracer" value="#attributeTracer" />
-<@s.set name="masterListAttribute" value="#attribute" />
+<@s.set var="masterListAttributeTracer" value="#attributeTracer" />
+<@s.set var="masterListAttribute" value="#attribute" />
 
 <@s.iterator value="#attribute.attributes" var="attribute" status="elementStatus">
-	<@s.set name="attributeTracer" value="#masterListAttributeTracer.getMonoListElementTracer(#elementStatus.index)"></@s.set>
-	<@s.set name="elementIndex" value="#elementStatus.index" />
+	<@s.set var="attributeTracer" value="#masterListAttributeTracer.getMonoListElementTracer(#elementStatus.index)"></@s.set>
+	<@s.set var="elementIndex" value="#elementStatus.index" />
 	<@s.set var="i18n_attribute_name">userprofile_ATTR<@s.property value="#attribute.name" /></@s.set>
 	<@s.set var="attribute_id">userprofile_<@s.property value="#attribute.name" />_<@s.property value="#elementStatus.count" /></@s.set>
 
@@ -964,9 +964,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	</li>
 </@s.iterator>
 
-<@s.set name="attributeTracer" value="#masterListAttributeTracer" />
-<@s.set name="attribute" value="#masterListAttribute" />
-<@s.set name="elementIndex" value="" />
+<@s.set var="attributeTracer" value="#masterListAttributeTracer" />
+<@s.set var="attribute" value="#masterListAttribute" />
+<@s.set var="elementIndex" value="" />
 <@s.if test="#attribute.attributes.size() != 0">
 </ul>
 </@s.if>
@@ -999,7 +999,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			</ul>
 		</div>
 	</@s.if>
-	<@s.set name="lang" value="defaultLang" />
+	<@s.set var="lang" value="defaultLang" />
 	<@s.iterator value="userProfile.attributeList" var="attribute">
 		<@s.if test="%{#attribute.active}">
 			<@wpsa.tracerFactory var="attributeTracer" lang="%{#lang.code}" />
@@ -1038,18 +1038,18 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign wpsa=JspTaglibs["/apsadmin-core"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 <@s.set var="i18n_parent_attribute_name" value="#attribute.name" />
-<@s.set name="masterCompositeAttributeTracer" value="#attributeTracer" />
-<@s.set name="masterCompositeAttribute" value="#attribute" />
+<@s.set var="masterCompositeAttributeTracer" value="#attributeTracer" />
+<@s.set var="masterCompositeAttribute" value="#attribute" />
 <@s.iterator value="#attribute.attributes" var="attribute">
-	<@s.set name="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></@s.set>
-	<@s.set name="parentAttribute" value="#masterCompositeAttribute"></@s.set>
+	<@s.set var="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></@s.set>
+	<@s.set var="parentAttribute" value="#masterCompositeAttribute"></@s.set>
 	<@s.set var="i18n_attribute_name">userprofile_ATTR<@s.property value="%{i18n_parent_attribute_name}" /><@s.property value="#attribute.name" /></@s.set>
 	<@s.set var="attribute_id">userprofile_<@s.property value="%{i18n_parent_attribute_name}" /><@s.property value="#attribute.name" />_<@s.property value="#elementIndex" /></@s.set>
 	<@wp.fragment code="userprofile_is_IteratorAttribute" escapeXml=false />
 </@s.iterator>
-<@s.set name="attributeTracer" value="#masterCompositeAttributeTracer" />
-<@s.set name="attribute" value="#masterCompositeAttribute" />
-<@s.set name="parentAttribute" value=""></@s.set>', 1);
+<@s.set var="attributeTracer" value="#masterCompositeAttributeTracer" />
+<@s.set var="attribute" value="#masterCompositeAttribute" />
+<@s.set var="parentAttribute" value=""></@s.set>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-EnumeratorAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 <@wpsf.select useTabindexAutoIncrement=true
@@ -1731,7 +1731,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		</@wpsf.submit>
 	</li>
 	<@s.if test="#group.advanced">
-	<@s.set name="jumpForwardStep" value="#group.currItem + #group.offset"></@s.set>
+	<@s.set var="jumpForwardStep" value="#group.currItem + #group.offset"></@s.set>
 	<li>
 		<@wpsf.submit name="%{#pagerIdMarker + ''_'' + (#jumpForwardStep)}" type="button" disabled="%{#group.maxItem == #group.endItemAnchor}" title="%{getText(''label.jump'') + '' '' + #group.offset + '' '' + getText(''label.forward'')}">
 			<span class="icon fa fa-fast-forward"></span>

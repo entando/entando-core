@@ -2,10 +2,10 @@
 <%@ taglib uri="/aps-core" prefix="wp" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <s:if test="#currentRoot.isEmpty()">
-	<s:set name="treeItemIconNameVar" value="'fa-folder-o'" />
+	<s:set var="treeItemIconNameVar" value="'fa-folder-o'" />
 </s:if>
 <s:else>
-	<s:set name="treeItemIconNameVar" value="#treeItemIconName" />
+	<s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 <li class="<s:property value="#liClassName" /> tree_node_flag">
 	<span class="icon fa fa-li <s:property value="#treeItemIconNameVar" />"></span>&#32;

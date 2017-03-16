@@ -56,7 +56,7 @@
 				<s:iterator value="#userAuthorizationsVar" var="userAuthorizationVar" status="elementStatus">
 					<tr>
 						<td class="text-center text-nowrap">
-							<s:set name="elementIndexVar" value="#elementStatus.index" />
+							<s:set var="elementIndexVar" value="#elementStatus.index" />
 							<div class="btn-group btn-group-xs">
 								<wpsa:actionParam action="removeAuthorization" var="actionName" >
 									<wpsa:actionSubParam name="index" value="%{#elementIndexVar}" />

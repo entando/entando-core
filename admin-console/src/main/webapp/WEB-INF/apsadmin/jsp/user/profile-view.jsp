@@ -14,7 +14,7 @@
 </h1>
 <div id="main" role="main">
 
-	<s:set name="lang" value="defaultLang" />
+	<s:set var="lang" value="defaultLang" />
 	<s:set var="userProfileVar" value="%{getUserProfile(username)}" />
 	<s:if test="%{null != #userProfileVar}">
 	<table class="table table-bordered">
@@ -23,11 +23,11 @@
 			<td><code><s:property value="username" /></code></td>
 		</tr>
 
-				<s:set name="lang" value="defaultLang" />
+				<s:set var="lang" value="defaultLang" />
 				<s:iterator value="#userProfileVar.attributeList" var="attribute">
 				<tr>
 				<%-- INIZIALIZZAZIONE TRACCIATORE --%>
-				<s:set name="attributeTracer" value="initAttributeTracer(#attribute, #lang)" />
+				<s:set var="attributeTracer" value="initAttributeTracer(#attribute, #lang)" />
 					<s:if test="null != #attribute.description"><s:set var="attributeLabelVar" value="#attribute.description" /></s:if>
 					<s:else><s:set var="attributeLabelVar" value="#attribute.name" /></s:else>
 					

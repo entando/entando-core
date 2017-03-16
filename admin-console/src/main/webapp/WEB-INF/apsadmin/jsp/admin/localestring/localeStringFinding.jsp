@@ -74,9 +74,9 @@
 			<wpsf:hidden name="text" />
 			<wpsf:hidden name="searchOption" />
 		</p>
-		<s:set name="currentLocaleStrings" value="localeStrings"/>
+		<s:set var="currentLocaleStrings" value="localeStrings"/>
 		<wpsa:subset source="currentLocaleStrings" count="10" objectName="groupContent" advanced="true" offset="5">
-			<s:set name="group" value="#groupContent" />
+			<s:set var="group" value="#groupContent" />
 			<div  class="text-center">
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -90,7 +90,7 @@
 				<div class="dl-list">
 					<s:iterator var="key">
 						<dl class="dl-horizontal dl-striped panel padding-base-top padding-base-bottom">
-							<s:set name="currentLabel" value="labels[#key]" />
+							<s:set var="currentLabel" value="labels[#key]" />
 							<dt class="hidden-sm"><s:text name="label.code" /></dt>
 								<dd><s:property value="#key" /></dd>
 								<s:iterator value="systemLangs" var="lang">

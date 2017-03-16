@@ -41,7 +41,7 @@
 	<s:if test="%{#pagesFound != null && #pagesFound.isEmpty() == false}">
 
 		<wpsa:subset source="#pagesFound" count="10" objectName="groupPage" advanced="true" offset="5">
-		<s:set name="group" value="#groupPage" />
+		<s:set var="group" value="#groupPage" />
 
 		<div class="text-center">
 			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
@@ -52,7 +52,7 @@
 			<ul id="pageTree" class="fa-ul list-unstyled">
 			<s:iterator var="singlePage">
 
-				<s:set name="pageFullPath">
+				<s:set var="pageFullPath">
 					<s:set value="%{getBreadCrumbsTargets(#singlePage.code)}" name="breadCrumbsTargets" ></s:set>
 					<s:iterator value="#breadCrumbsTargets" var="target" status="rowstatus">
 						<s:if test="%{#rowstatus.index != 0}"> | </s:if>

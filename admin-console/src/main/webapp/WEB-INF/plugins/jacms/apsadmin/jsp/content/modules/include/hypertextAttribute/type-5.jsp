@@ -64,7 +64,7 @@
 				<wpsf:hidden name="linkTypeVar" value="5" />
 			</p>
 			<wpsa:subset source="resources" count="10" objectName="groupContent" advanced="true" offset="5">
-				<s:set name="group" value="#groupContent" />
+				<s:set var="group" value="#groupContent" />
 				<div class="text-center">
 					<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 					<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -81,7 +81,7 @@
 							<th class="text-center"><s:text name="label.typeCode" /></th>
 						</tr>
 						<s:iterator var="resourceIdVar">
-							<s:set name="resourceVar" value="%{loadResource(#resourceIdVar)}" />
+							<s:set var="resourceVar" value="%{loadResource(#resourceIdVar)}" />
 							<tr>
 								<%-- description --%>
 								<td>

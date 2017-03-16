@@ -3,16 +3,16 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <s:if test="#currentRoot.isEmpty()">
-	<s:set name="treeItemIconNameVar" value="'fa-folder-o'" />
+	<s:set var="treeItemIconNameVar" value="'fa-folder-o'" />
 </s:if>
 <s:else>
-	<s:set name="treeItemIconNameVar" value="#treeItemIconName" />
+	<s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 <li class="<s:property value="#liClassName" /> tree_node_flag">
 	<span class="icon fa fa-li <s:property value="#treeItemIconNameVar" />"></span>&#32;
 
-	<s:if test="null == #openTreeActionName"><s:set name="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
-	<s:if test="null == #closeTreeActionName"><s:set name="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
+	<s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
+	<s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
 
 	<s:if test="!#currentRoot.open && !#currentRoot.empty">
 		<wpsa:actionParam action="%{#openTreeActionName}" var="openTreeAction" >
@@ -50,7 +50,7 @@
 	<s:if test="#currentRoot.children.length > 0">
 		<ul class="treeToggler fa-ul" id="tree_<s:property value="#currentRoot.code" />">
 			<s:iterator value="#currentRoot.children" var="node">
-				<s:set name="currentRoot" value="#node" />
+				<s:set var="currentRoot" value="#node" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
 			</s:iterator>
 		</ul>

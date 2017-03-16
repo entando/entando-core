@@ -32,7 +32,7 @@
 	<div class="panel-body">
 		<s:if test="null != references['CmsPageManagerWrapperUtilizers']">
 			<wpsa:subset source="references['CmsPageManagerWrapperUtilizers']" count="10" objectName="pageReferences" advanced="true" offset="5" pagerId="pageManagerReferences">
-				<s:set name="group" value="#pageReferences" />
+				<s:set var="group" value="#pageReferences" />
 				<div class="text-center">
 					<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 					<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />

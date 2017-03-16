@@ -77,7 +77,7 @@
 										<tr>
 											<td class="text-center text-nowrap">
 
-												<s:set name="elementIndex" value="#elementStatus.index" />
+												<s:set var="elementIndex" value="#elementStatus.index" />
 
 												<div class="btn-group btn-group-xs">
 													<wpsa:actionParam action="moveContent" var="actionName" >

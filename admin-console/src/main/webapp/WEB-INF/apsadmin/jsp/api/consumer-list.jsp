@@ -77,8 +77,8 @@
 			<wpsf:hidden name="insertedDescription" />
 		</p>
 		<wpsa:subset source="searchResult" count="10" objectName="groupSearchResult" advanced="true" offset="5">
-			<s:set name="group" value="#groupSearchResult" />
-			<s:set name="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />
+			<s:set var="group" value="#groupSearchResult" />
+			<s:set var="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />
 			<div class="text-center">
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />

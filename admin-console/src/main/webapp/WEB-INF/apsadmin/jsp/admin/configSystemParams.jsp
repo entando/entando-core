@@ -23,37 +23,37 @@
 	<fieldset class="col-xs-12 margin-large-top" id="additional-features"><legend><s:text name="sysconfig.legend.featuresOnDemand" /></legend>
 
 		<div class="form-group">
-			<s:set name="paramName" value="'firstTimeMessages'" />
+			<s:set var="paramName" value="'firstTimeMessages'" />
 			<label class="checkbox">
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
 				&#32;<s:text name="menu.accountAdmin.firstTimeMessages" />
 			</label>
-			<s:set name="paramName" value="'groupsOnDemand'" />
+			<s:set var="paramName" value="'groupsOnDemand'" />
 			<label class="checkbox">
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
 				&#32;<s:text name="menu.accountAdmin.groups" />
 			</label>
-			<s:set name="paramName" value="'categoriesOnDemand'" />
+			<s:set var="paramName" value="'categoriesOnDemand'" />
 			<label class="checkbox">
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
 				&#32;<s:text name="menu.categoryAdmin" />
 			</label>
-			<s:set name="paramName" value="'contentTypesOnDemand'" />
+			<s:set var="paramName" value="'contentTypesOnDemand'" />
 			<label class="checkbox">
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
 				&#32;<s:text name="jacms.menu.contentTypeAdmin" />
 			</label>
-			<s:set name="paramName" value="'contentModelsOnDemand'" />
+			<s:set var="paramName" value="'contentModelsOnDemand'" />
 			<label class="checkbox">
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
 				&#32;<s:text name="jacms.menu.contentModelAdmin" />
 			</label>
-			<s:set name="paramName" value="'apisOnDemand'" />
+			<s:set var="paramName" value="'apisOnDemand'" />
 			<label class="checkbox">
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
 				&#32;<s:text name="menu.apisAdmin" />
 			</label>
-			<s:set name="paramName" value="'resourceArchivesOnDemand'" />
+			<s:set var="paramName" value="'resourceArchivesOnDemand'" />
 			<label class="checkbox">
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
 				&#32;<s:text name="jacms.menu.resourceAdmin" />
@@ -72,30 +72,30 @@
 
 		<div class="form-group">
 			<label for="admin-settings-area-homePageCode"><s:text name="sysconfig.homePageCode" /></label>
-			<s:set name="paramName" value="'homePageCode'" />
+			<s:set var="paramName" value="'homePageCode'" />
 			<s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
 		</div>
 
 		<div class="form-group">
 			<label for="admin-settings-area-notFoundPageCode"><s:text name="sysconfig.notFoundPageCode" /></label>
-			<s:set name="paramName" value="'notFoundPageCode'" />
+			<s:set var="paramName" value="'notFoundPageCode'" />
 			<s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
 		</div>
 
 		<div class="form-group">
 			<label for="admin-settings-area-errorPageCode"><s:text name="sysconfig.errorPageCode" /></label>
-			<s:set name="paramName" value="'errorPageCode'" />
+			<s:set var="paramName" value="'errorPageCode'" />
 			<s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
 		</div>
 
 		<div class="form-group">
 			<label for="admin-settings-area-loginPageCode"><s:text name="sysconfig.loginPageCode" /></label>
-			<s:set name="paramName" value="'loginPageCode'" />
+			<s:set var="paramName" value="'loginPageCode'" />
 			<s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
 		</div>
 		
 		<div class="form-group">
-			<s:set name="paramName" value="'baseUrl'" />
+			<s:set var="paramName" value="'baseUrl'" />
 			<label class="display-block"><s:text name="sysconfig.baseURL" /></label>
 			<div class="btn-group" data-toggle="buttons">
 				<label class="btn btn-default <s:if test="systemParams['baseUrl'] == 'relative'"> active</s:if>">
@@ -118,7 +118,7 @@
 		<div class="form-group">
 			<label class="display-block"><s:text name="sysconfig.baseURL.contextName" /></label>
 			<div class="btn-group" data-toggle="buttons">
-				<s:set name="paramName" value="'baseUrlContext'" />
+				<s:set var="paramName" value="'baseUrlContext'" />
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/booleanParamBlock.jsp" />
 				<%-- hidden parameter to delete --%>
 				<wpsf:hidden name="%{#paramName + externalParamMarker}" value="true"/>
@@ -128,7 +128,7 @@
 		<div class="form-group">
 			<label class="display-block"><s:text name="sysconfig.useJsessionId" /></label>
 			<div class="btn-group" data-toggle="buttons">
-				<s:set name="paramName" value="'useJsessionId'" />
+				<s:set var="paramName" value="'useJsessionId'" />
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/booleanParamBlock.jsp" />
 				<%-- hidden parameter to delete --%>
 				<wpsf:hidden name="%{#paramName + externalParamMarker}" value="true"/>
@@ -136,7 +136,7 @@
 		</div>
 		
 		<div class="form-group">
-			<s:set name="paramName" value="'urlStyle'" />
+			<s:set var="paramName" value="'urlStyle'" />
 			<label class="display-block"><s:text name="sysconfig.URLstyle" /></label>
 			<div class="btn-group" data-toggle="buttons">
 				<label class="btn btn-default <s:if test="systemParams['urlStyle'] == 'classic'"> active</s:if>">
@@ -153,7 +153,7 @@
 		<div class="form-group">
 			<label class="display-block"><s:text name="sysconfig.lang.browser" /></label>
 			<div class="btn-group" data-toggle="buttons">
-				<s:set name="paramName" value="'startLangFromBrowser'" />
+				<s:set var="paramName" value="'startLangFromBrowser'" />
 				<s:include value="/WEB-INF/apsadmin/jsp/admin/booleanParamBlock.jsp" />
 			</div>
 		</div>
@@ -161,7 +161,7 @@
 
 	<fieldset class="col-xs-12 margin-large-top"><legend><s:text name="sysconfig.legend.privacyModule" /></legend>
 		<div class="form-group">
-			<s:set name="paramName" value="'extendedPrivacyModuleEnabled'" />
+			<s:set var="paramName" value="'extendedPrivacyModuleEnabled'" />
 			<div class="checkbox-inline">
 				<label>
 					<s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
@@ -172,13 +172,13 @@
 
 		<div class="form-group">
 			<label for="admin-settings-area-maxMonthsSinceLastAccess"><s:text name="sysconfig.maxMonthsSinceLastAccess" /></label>
-			<s:set name="paramName" value="'maxMonthsSinceLastAccess'" />
+			<s:set var="paramName" value="'maxMonthsSinceLastAccess'" />
 			<s:include value="/WEB-INF/apsadmin/jsp/admin/textParamBlock.jsp" />
 		</div>
 
 		<div class="form-group">
 			<label for="admin-settings-area-maxMonthsSinceLastPasswordChange"><s:text name="sysconfig.maxMonthsSinceLastPasswordChange" /></label>
-			<s:set name="paramName" value="'maxMonthsSinceLastPasswordChange'" />
+			<s:set var="paramName" value="'maxMonthsSinceLastPasswordChange'" />
 			<s:include value="/WEB-INF/apsadmin/jsp/admin/textParamBlock.jsp" />
 		</div>
 	</fieldset>
@@ -207,7 +207,7 @@
                 <div class="form-group">
                     <label class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></label>
                     <div class="btn-group" data-toggle="buttons">
-                        <s:set name="paramName" value="'treeStyle_page'" />
+                        <s:set var="paramName" value="'treeStyle_page'" />
                         <s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
                     </div>
                 </div>
@@ -215,13 +215,13 @@
                 <div class="form-group">
                     <label class="display-block"><s:text name="sysconfig.chooseYourCategoriesTreeStyle" /></label>
                     <div class="btn-group" data-toggle="buttons">
-                        <s:set name="paramName" value="'treeStyle_category'" />
+                        <s:set var="paramName" value="'treeStyle_category'" />
                         <s:include value="/WEB-INF/apsadmin/jsp/admin/treeStyleParamBlock.jsp" />
                     </div>
                 </div>
 		
                 <div class="form-group">
-                    <s:set name="paramName" value="'gravatarIntegrationEnabled'" />
+                    <s:set var="paramName" value="'gravatarIntegrationEnabled'" />
                     <div class="checkbox-inline">
                         <label>
                             <s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />
@@ -233,7 +233,7 @@
                 </div>
 		
                 <div class="form-group">
-                    <s:set name="paramName" value="'editEmptyFragmentEnabled'" />
+                    <s:set var="paramName" value="'editEmptyFragmentEnabled'" />
                     <div class="checkbox-inline">
                         <label>
                             <s:include value="/WEB-INF/apsadmin/jsp/admin/simpleCheckboxParamBlock.jsp" />

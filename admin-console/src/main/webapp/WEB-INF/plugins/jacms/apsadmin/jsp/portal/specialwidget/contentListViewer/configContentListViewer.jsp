@@ -151,7 +151,7 @@
 				<s:if test="null != categoryCodes && categoryCodes.size() > 0">
 					<h3 class="sr-only"><s:text name="title.resourceCategories.list"/></h3>
 					<s:iterator value="categoryCodes" var="categoryCodeVar">
-					<s:set name="showletCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
+					<s:set var="showletCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
 
 					<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
 					  <span class="icon fa fa-tag"></span>&#32;
@@ -410,7 +410,7 @@
                                                         <s:elseif test="#userFilter['key'] == 'category'">
                                                             <s:text name="label.category" />
                                                             <s:if test="null != #userFilter['categoryCode']">
-                                                                <s:set name="userFilterCategoryRoot" value="%{getCategory(#userFilter['categoryCode'])}"></s:set>
+                                                                <s:set var="userFilterCategoryRoot" value="%{getCategory(#userFilter['categoryCode'])}"></s:set>
                                                                 (<s:property value="#userFilterCategoryRoot.getFullTitle(currentLang.code)"/>)
                                                             </s:if>
                                                         </s:elseif>

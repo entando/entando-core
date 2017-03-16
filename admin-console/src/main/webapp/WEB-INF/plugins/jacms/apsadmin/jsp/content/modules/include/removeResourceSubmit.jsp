@@ -3,7 +3,7 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%-- remove button --%>
-<s:set name="resourceTypeCode"><%= request.getParameter("resourceTypeCode")%></s:set>
+<s:set var="resourceTypeCode"><%= request.getParameter("resourceTypeCode")%></s:set>
 <wpsa:actionParam action="removeResource" var="removeResourceActionName" >
 	<wpsa:actionSubParam name="parentAttributeName" value="%{#parentAttribute.name}" />
 	<wpsa:actionSubParam name="attributeName" value="%{#attribute.name}" />

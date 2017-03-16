@@ -21,7 +21,7 @@
 				</div>
 			</s:if>
 
-			<s:set name="lang" value="defaultLang" />
+			<s:set var="lang" value="defaultLang" />
 
 			<s:iterator value="userProfile.attributeList" id="attribute">
 				<s:if test="%{#attribute.active}">

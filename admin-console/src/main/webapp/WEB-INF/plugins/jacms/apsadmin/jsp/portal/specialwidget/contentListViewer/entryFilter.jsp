@@ -86,12 +86,12 @@
 				<wpsf:hidden name="attributeFilter" value="%{filterTypeId>0 && filterTypeId<5}"/>
 			</p>
 
-			<s:set name="filterDescription" value="%{filterKey}" />
+			<s:set var="filterDescription" value="%{filterKey}" />
 			<s:if test="%{filterKey == 'created'}">
-				<s:set name="filterDescription" value="%{getText('label.creationDate')}" />
+				<s:set var="filterDescription" value="%{getText('label.creationDate')}" />
 			</s:if>
 			<s:elseif test="%{filterKey == 'modified'}">
-				<s:set name="filterDescription" value="%{getText('label.lastModifyDate')}" />
+				<s:set var="filterDescription" value="%{getText('label.lastModifyDate')}" />
 			</s:elseif>
 
 			<p>
@@ -369,7 +369,7 @@
 				</div>
 			</fieldset>
 
-			<s:set name="saveFilterActionName"><s:if test="filterTypeId == 0">saveFilter</s:if><s:elseif test="filterTypeId == 1">saveTextFilter</s:elseif><s:elseif test="filterTypeId == 2">saveNumberFilter</s:elseif><s:elseif test="filterTypeId == 3">saveBooleanFilter</s:elseif><s:elseif test="filterTypeId == 4">saveDateFilter</s:elseif></s:set>
+			<s:set var="saveFilterActionName"><s:if test="filterTypeId == 0">saveFilter</s:if><s:elseif test="filterTypeId == 1">saveTextFilter</s:elseif><s:elseif test="filterTypeId == 2">saveNumberFilter</s:elseif><s:elseif test="filterTypeId == 3">saveBooleanFilter</s:elseif><s:elseif test="filterTypeId == 4">saveDateFilter</s:elseif></s:set>
 
 
 			</s:else>

@@ -53,7 +53,7 @@
 				<th><s:text name="contentModel.type" /></th>
 			</tr>
 			
-			<s:iterator id="model">
+			<s:iterator var="model">
 				<tr>
 					<td class="text-center text-nowrap">
 						<div class="btn-group btn-group-xs">

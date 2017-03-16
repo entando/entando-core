@@ -49,7 +49,7 @@
 			<ul>
 			<s:iterator value="fieldErrors">
 				<s:iterator value="value">
-				<li><s:property escape="false" /></li>
+				<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</s:iterator>
 			</ul>
@@ -333,7 +333,7 @@
                             <div class="collapse" id="options-extra">
                                 <p><s:text name="note.extraOption.intro" /></p>
                                 <s:if test="%{widget.type.hasParameter('title_%')}" >
-                                    <s:iterator id="lang" value="langs">
+                                    <s:iterator var="lang" value="langs">
                                         <div class="form-group">
                                             <div class="col-xs-12">
                                                 <label for="title_<s:property value="#lang.code" />">
@@ -399,7 +399,7 @@
                                 
                                 <s:if test="null != userFiltersProperties && userFiltersProperties.size() > 0" >
                                     <ol class="list-group">
-                                        <s:iterator value="userFiltersProperties" id="userFilter" status="rowstatus">
+                                        <s:iterator value="userFiltersProperties" var="userFilter" status="rowstatus">
                                             <li class="list-group-item">
                                                 <s:text name="label.filterBy" />
                                                 <strong>

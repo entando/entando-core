@@ -15,7 +15,7 @@
 	<h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h2>
 	<ul>
 	<s:iterator value="fieldErrors">
-		<li><s:property escape="false" /></li>
+		<li><s:property escapeHtml="false" /></li>
 	</s:iterator>
 	</ul>
 </div>
@@ -54,7 +54,7 @@
 
 				<s:set name="pageFullPath">
 					<s:set value="%{getBreadCrumbsTargets(#singlePage.code)}" name="breadCrumbsTargets" ></s:set>
-					<s:iterator value="#breadCrumbsTargets" id="target" status="rowstatus">
+					<s:iterator value="#breadCrumbsTargets" var="target" status="rowstatus">
 						<s:if test="%{#rowstatus.index != 0}"> | </s:if>
 						<s:property value="#target.titles[currentLang.code]" />
 					</s:iterator>

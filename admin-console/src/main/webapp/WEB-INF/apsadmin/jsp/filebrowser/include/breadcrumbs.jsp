@@ -14,13 +14,13 @@
 			<li>
 				<s:if test="!#statusVar.last">
 					<a href="<s:url namespace="/do/FileBrowser" action="list" >
-							<s:param name="currentPath"><s:property escape="true" value="#targetVar.key"/></s:param>
+							<s:param name="currentPath"><s:property escapeHtml="true" value="#targetVar.key"/></s:param>
 							<s:param name="protectedFolder"><s:property value="#isProtectedBrCrDirectoryVar"/></s:param>
 						</s:url>"><s:property value="#targetVar.value" />
 					</a>
 				</s:if>
 				<s:else>
-					<s:property escape="false" value="#targetVar.value" />
+					<s:property escapeHtml="false" value="#targetVar.value" />
 				</s:else>
 			</li>
 		</s:iterator>

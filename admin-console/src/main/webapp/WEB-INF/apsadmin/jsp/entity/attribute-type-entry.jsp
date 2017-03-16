@@ -25,7 +25,7 @@
 			<ul>
 				<s:iterator value="fieldErrors">
 					<s:iterator value="value">
-			            <li><s:property escape="false" /></li>
+			            <li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</s:iterator>
 			</ul>
@@ -38,10 +38,10 @@
 	<wpsf:hidden name="attributeTypeCode" />
 	<wpsf:hidden name="strutsAction" />
 	<s:if test="null != attributeRoles && attributeRoles.size() > 0">
-	<s:iterator value="attributeRoles" id="attributeRole"><wpsf:hidden name="attributeRoles" value="%{#attributeRole}" /></s:iterator>
+	<s:iterator value="attributeRoles" var="attributeRole"><wpsf:hidden name="attributeRoles" value="%{#attributeRole}" /></s:iterator>
 	</s:if>
 	<s:if test="null != disablingCodes && disablingCodes.size() > 0">
-	<s:iterator value="disablingCodes" id="disablingCode"><wpsf:hidden name="disablingCodes" value="%{#disablingCode}" /></s:iterator>
+	<s:iterator value="disablingCodes" var="disablingCode"><wpsf:hidden name="disablingCodes" value="%{#disablingCode}" /></s:iterator>
 	</s:if>
 </p>
 
@@ -123,7 +123,7 @@
 		<s:if test="null != attributeRoles && attributeRoles.size() > 0">
 		<h3 class="margin-none"><s:text name="label.roles.assigned" /></h3>
 		<ul class="list-group">
-		<s:iterator value="attributeRoles" id="attributeRole">
+		<s:iterator value="attributeRoles" var="attributeRole">
 			<wpsa:actionParam action="removeAttributeRole" var="actionName" >
 				<wpsa:actionSubParam name="attributeRoleName" value="%{#attributeRole}" />
 			</wpsa:actionParam>
@@ -164,7 +164,7 @@
 	<s:if test="null != disablingCodes && disablingCodes.size() > 0">
 	<h3 class="margin-none"><s:text name="label.disablingCodes.assigned" /></h3>
 	<ul class="list-group">
-		<s:iterator value="disablingCodes" id="disablingCode">
+		<s:iterator value="disablingCodes" var="disablingCode">
 			<wpsa:actionParam action="removeAttributeDisablingCode" var="actionName" >
 				<wpsa:actionSubParam name="attributeRoleName" value="%{#disablingCode}" />
 			</wpsa:actionParam>

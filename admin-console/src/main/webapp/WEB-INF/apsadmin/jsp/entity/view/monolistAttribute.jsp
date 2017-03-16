@@ -7,7 +7,7 @@
 </s:if>
 <s:set name="masterListAttributeTracer" value="#attributeTracer" />
 <s:set name="masterListAttribute" value="#attribute" />
-<s:iterator value="#attribute.attributes" id="attribute" status="elementStatus">
+<s:iterator value="#attribute.attributes" var="attribute" status="elementStatus">
 <s:set name="attributeTracer" value="#masterListAttributeTracer.getMonoListElementTracer(#elementStatus.index)"></s:set>
 
 <s:set name="elementIndex" value="#elementStatus.index" />

@@ -7,7 +7,7 @@
 		<s:text name="title.changePassword" />
 	</span>
 </h1>
-
+	
 <div id="main" role="main">
 	<s:form action="changePassword" cssClass="form-horizontal">
 		<s:if test="hasFieldErrors()">
@@ -22,7 +22,7 @@
 				<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
 				<ul class="margin-base-top">
 					<s:iterator value="actionErrors">
-						<li><s:property escape="false" /></li>
+						<li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</ul>
 			</div>
@@ -40,7 +40,7 @@
 						<wpsf:password name="oldPassword" id="oldPassword" cssClass="form-control" />
 						<s:if test="#fieldHasFieldErrorVar">
 							<span class="help-block text-danger">
-								<s:iterator value="%{#fieldFieldErrorsVar}"><s:property escape="false" />&#32;</s:iterator>
+								<s:iterator value="%{#fieldFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
 							</span>
 						</s:if>
 					</div>
@@ -55,7 +55,7 @@
 						<wpsf:password name="password" id="password" cssClass="form-control" />
 						<s:if test="#fieldHasFieldErrorVar">
 							<span class="help-block text-danger">
-								<s:iterator value="%{#fieldFieldErrorsVar}"><s:property escape="false" />&#32;</s:iterator>
+								<s:iterator value="%{#fieldFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
 							</span>
 						</s:if>
 					</div>
@@ -70,7 +70,7 @@
 						<wpsf:password name="passwordConfirm" id="passwordConfirm" cssClass="form-control" />
 						<s:if test="#fieldHasFieldErrorVar">
 							<span class="help-block text-danger">
-								<s:iterator value="%{#fieldFieldErrorsVar}"><s:property escape="false" />&#32;</s:iterator>
+								<s:iterator value="%{#fieldFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
 							</span>
 						</s:if>
 					</div>

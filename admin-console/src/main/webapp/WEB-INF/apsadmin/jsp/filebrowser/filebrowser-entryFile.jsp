@@ -23,7 +23,7 @@
 				<ul class="margin-base-top">
 					<s:iterator value="fieldErrors">
 						<s:iterator value="value">
-							<li><s:property escape="false" /></li>
+							<li><s:property escapeHtml="false" /></li>
 						</s:iterator>
 					</s:iterator>
 				</ul>
@@ -35,7 +35,7 @@
 				<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
 				<ul class="margin-base-top">
 					<s:iterator value="actionErrors">
-						<li><s:property escape="false" /></li>
+						<li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</ul>
 			</div>
@@ -59,8 +59,8 @@
 					<a
 						title="Download: <s:property value="#fileVar.name"/>"
 						href="<s:url namespace="/do/FileBrowser" action="download" >
-							<s:param name="currentPath"><s:property escape="true" value="%{currentPath}"/></s:param>
-							<s:param name="filename"> <s:property escape="false" value="filename"/></s:param>
+							<s:param name="currentPath"><s:property escapeHtml="true" value="%{currentPath}"/></s:param>
+							<s:param name="filename"> <s:property escapeHtml="false" value="filename"/></s:param>
 						</s:url>">
 						<span class="icon fa fa-download"></span>
 						<span class="sr-only">

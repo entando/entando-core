@@ -45,7 +45,7 @@
 
 <h4 class="margin-base-vertical"><s:text name="note.contentCategories.summary"/></h4>
 
-<s:iterator value="#contentCategories" id="contentCategory">
+<s:iterator value="#contentCategories" var="contentCategory">
 	<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
 		<span class="icon fa fa-tag"></span>&#32;
 		<abbr title="<s:property value="#contentCategory.getFullTitle(currentLang.code)"/>"><s:property value="#contentCategory.getShortFullTitle(currentLang.code)" /></abbr>&#32;

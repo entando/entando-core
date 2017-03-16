@@ -60,7 +60,7 @@
 			<s:text name="note.trashContent.areYouSure" />
 		</p>
 		<ul class="margin-small-vertical">
-			<s:iterator id="contentIdToDelete" value="contentIds">
+			<s:iterator var="contentIdToDelete" value="contentIds">
 			<s:set name="content" value="%{getContentVo(#contentIdToDelete)}"></s:set>
 				<li><code><s:property value="#contentIdToDelete" /></code> &ndash; <s:property value="#content.descr" /> (<s:property value="%{getSmallContentType(#content.typeCode).descr}" />)</li>
 			</s:iterator>

@@ -6,7 +6,7 @@
 
 <s:set value="%{getBreadCrumbsTargets(#breadcrumbs_pivotPageCode)}" name="breadCrumbsTargets" ></s:set>
 <ol class="breadcrumb margin-base-vertical">
-<s:iterator value="#breadCrumbsTargets" id="target" status="rowstatus">
+<s:iterator value="#breadCrumbsTargets" var="target" status="rowstatus">
 	<li>
 <%--	<s:if test="%{#rowstatus.index != 0}">&#32;/&#32;</s:if> --%>
 	<s:if test="%{!isUserAllowed(#target)}">

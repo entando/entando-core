@@ -14,7 +14,7 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 		<ul>
 			<s:iterator value="fieldErrors">
 				<s:iterator value="value">
-					<li><s:property escape="false" /></li>
+					<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</s:iterator>
 		</ul>

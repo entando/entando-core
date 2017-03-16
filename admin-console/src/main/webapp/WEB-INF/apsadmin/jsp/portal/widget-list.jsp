@@ -13,11 +13,11 @@
 		<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
 		<ul class="margin-base-vertical">
 		<s:iterator value="actionErrors">
-			<li><s:property escape="false" /></li>
+			<li><s:property escapeHtml="false" /></li>
 		</s:iterator>
 		<s:iterator value="fieldErrors">
 			<s:iterator value="value">
-			<li><s:property escape="false" /></li>
+			<li><s:property escapeHtml="false" /></li>
 			</s:iterator>
 		</s:iterator>
 		</ul>
@@ -102,7 +102,7 @@
 						<s:param name="namespace" value="#relatedApiMethodVar.namespace" />
 					</s:url>
 				</s:else>
-				<a href="<s:property value="#newServiceUrlVar" escape="false" />" title="<s:text name="note.api.apiMethodList.createServiceFromMethod" />: <s:property value="#relatedApiMethodVar.methodName" />" class="btn btn-default"><span class="icon fa fa-code-fork"></span></a>
+				<a href="<s:property value="#newServiceUrlVar" escapeHtml="false" />" title="<s:text name="note.api.apiMethodList.createServiceFromMethod" />: <s:property value="#relatedApiMethodVar.methodName" />" class="btn btn-default"><span class="icon fa fa-code-fork"></span></a>
 				<s:set var="newServiceUrlVar" value="null" />
 			</s:if>
 			<s:set var="relatedApiMethodVar" value="null" />

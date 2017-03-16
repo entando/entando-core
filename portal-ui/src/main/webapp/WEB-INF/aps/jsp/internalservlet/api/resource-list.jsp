@@ -9,7 +9,7 @@
 		<h3 class="alert-heading"><wp:i18n key="ENTANDO_API_ERROR" /></h3>
 		<ul>
 			<s:iterator value="actionErrors">
-				<li><s:property escape="false" /></li>
+				<li><s:property escapeHtml="false" /></li>
 			</s:iterator>
 		</ul>
 	</div>

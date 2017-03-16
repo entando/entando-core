@@ -181,7 +181,7 @@
                     <div class="panel panel-default text-center">
 			<s:if test="!onEditContent">
 				<div class="panel-heading text-right padding-small-vertical padding-small-right">
-					<a href="<s:property value="URLtrash" escape="false" />" class="icon fa fa-times-circle text-warning">
+					<a href="<s:property value="URLtrash" escapeHtml="false" />" class="icon fa fa-times-circle text-warning">
 						<span class="sr-only">Delete</span>
 					</a>
 				</div>
@@ -192,7 +192,7 @@
                         </div>
                         <div class="btn-group margin-small-vertical">
                         <s:if test="!onEditContent">
-                                <a href="<s:property value="URLedit" escape="false" />"
+                                <a href="<s:property value="URLedit" escapeHtml="false" />"
                                          class="btn btn-default"
                                          title="<s:text name="label.edit" />: <s:property value="#resource.descr" />">
                                         <span class="icon fa fa-pencil-square-o"></span>&#32;
@@ -200,7 +200,7 @@
                                 </a>
                         </s:if>
                         <s:else>
-                                <a href="<s:property value="URLuse" escape="false" />"
+                                <a href="<s:property value="URLuse" escapeHtml="false" />"
                                          class="btn btn-default"
                                          title="<s:text name="note.joinThisToThat" />:	<s:property value="content.descr" />" >
                                         <span class="icon fa fa-picture-o"></span>&#32;
@@ -221,7 +221,7 @@
                                 $("[data-toggle=popover]").popover({
                                         html: true,
                                         placement: "top",
-                                        content: '<s:property value="fileInfo" escape="false" />'
+                                        content: '<s:property value="fileInfo" escapeHtml="false" />'
                                 });
                         </script>
 

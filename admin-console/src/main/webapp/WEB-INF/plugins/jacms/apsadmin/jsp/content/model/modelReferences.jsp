@@ -31,8 +31,8 @@
 		<th>Page</th>
 		<th>Content</th>
 	</tr>
-	<s:iterator id="contentId" value="referencedContentsOnPages">
-		<s:iterator id="page" value="referencingPages[#contentId]">
+	<s:iterator var="contentId" value="referencedContentsOnPages">
+		<s:iterator var="page" value="referencingPages[#contentId]">
 			<tr>
 				<s:set name="pageGroup" value="#page.group"></s:set>
 				<wp:ifauthorized groupName="${pageGroup}">

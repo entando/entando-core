@@ -83,7 +83,7 @@
 							<jacmswpsa:resource resourceId="%{#currentResourceIdVar}" var="currentResourceVar" />
 							<tr>
 								<s:set var="canEditCurrentResource" value="%{false}" />
-								<c:set var="currentResourceGroup"><s:property value="#currentResourceVar.mainGroup" escape="false"/></c:set>
+								<c:set var="currentResourceGroup"><s:property value="#currentResourceVar.mainGroup" escapeHtml="false"/></c:set>
 								<td>
 									<wp:ifauthorized groupName="${currentResourceGroup}" permission="manageResources"><s:set var="canEditCurrentResource" value="%{true}" /></wp:ifauthorized>
 									<s:if test="#canEditCurrentResource">

@@ -46,7 +46,7 @@
 						<ul class="margin-base-vertical">
 						<s:iterator value="fieldErrors">
 							<s:iterator value="value">
-							<li><s:property escape="false" /></li>
+							<li><s:property escapeHtml="false" /></li>
 							</s:iterator>
 						</s:iterator>
 						</ul>
@@ -252,7 +252,7 @@
 							</s:url>
 						"><s:text name="label.lastEdit" /></a></th>
 						</tr>
-						<s:iterator id="contentId">
+						<s:iterator var="contentId">
 								<s:set var="content" value="%{getContentVo(#contentId)}"></s:set>
 						<tr>
 						<td><input type="radio" name="contentId" id="contentId_<s:property value="#content.id"/>" value="<s:property value="#content.id"/>" />

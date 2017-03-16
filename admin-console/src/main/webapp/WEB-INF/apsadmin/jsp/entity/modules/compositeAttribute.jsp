@@ -3,7 +3,7 @@
 
 <s:set name="masterCompositeAttributeTracer" value="#attributeTracer" />
 <s:set name="masterCompositeAttribute" value="#attribute" />
-<s:iterator value="#attribute.attributes" id="attribute">
+<s:iterator value="#attribute.attributes" var="attribute">
 <s:set name="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></s:set>
 <s:set name="parentAttribute" value="#masterCompositeAttribute"></s:set>
 	<p>

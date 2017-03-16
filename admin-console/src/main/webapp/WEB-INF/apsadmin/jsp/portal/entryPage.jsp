@@ -47,7 +47,7 @@
 		<s:if test="strutsAction == 2">
 			<wpsf:hidden name="pageCode" />
 		</s:if>
-		<s:iterator value="extraGroups" id="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
+		<s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
 		<s:if test="strutsAction == 3">
 			<wpsf:hidden name="group" />
 			<wpsf:hidden name="model" />
@@ -114,7 +114,7 @@
 	</div>
 </div>
 <s:if test="extraGroups.size() != 0">
-	<s:iterator value="extraGroups" id="groupName">
+	<s:iterator value="extraGroups" var="groupName">
 		<wpsa:actionParam action="removeExtraGroup" var="actionName" >
 			<wpsa:actionSubParam name="extraGroupName" value="%{#groupName}" />
 		</wpsa:actionParam>

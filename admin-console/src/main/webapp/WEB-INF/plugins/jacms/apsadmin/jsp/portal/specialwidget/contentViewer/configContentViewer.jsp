@@ -50,7 +50,7 @@
 			<ul class="margin-base-vertical">
 			<s:iterator value="fieldErrors">
 				<s:iterator value="value">
-				<li><s:property escape="false" /></li>
+				<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</s:iterator>
 			</ul>
@@ -68,7 +68,7 @@
 		<s:if test="showlet.config['contentId'] != null">
 			<s:set name="content" value="%{getContentVo(showlet.config['contentId'])}"></s:set>
 			<s:set var="canEditCurrentContent" value="%{false}" />
-			<c:set var="currentContentGroup"><s:property value="#content.mainGroupCode" escape="false"/></c:set>
+			<c:set var="currentContentGroup"><s:property value="#content.mainGroupCode" escapeHtml="false"/></c:set>
 
 			<wp:ifauthorized groupName="${currentContentGroup}" permission="editContents"><s:set var="canEditCurrentContent" value="%{true}" /></wp:ifauthorized>
 
@@ -121,7 +121,7 @@
 			<s:set var="showletTypeParameters" value="showlet.type.typeParameters"></s:set>
 			<s:if test="#showletTypeParameters.size()>2">
 			<fieldset class="col-xs-12 margin-large-top"><legend><s:text name="label.otherSettings" /></legend>
-				<s:iterator value="#showletTypeParameters" id="showletParam" >
+				<s:iterator value="#showletTypeParameters" var="showletParam" >
 					<s:if test="!#showletParam.name.equals('contentId') && !#showletParam.name.equals('modelId')">
 						<div class="form-group">
 							<label for="fagianoParam_<s:property value="#showletParam.name" />" class="control-label"><s:property value="#showletParam.descr" /></label>

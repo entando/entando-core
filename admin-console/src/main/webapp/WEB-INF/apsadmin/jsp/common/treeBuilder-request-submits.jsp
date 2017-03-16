@@ -49,7 +49,7 @@
 	</label>
 	<s:if test="#currentRoot.children.length > 0">
 		<ul class="treeToggler fa-ul" id="tree_<s:property value="#currentRoot.code" />">
-			<s:iterator value="#currentRoot.children" id="node">
+			<s:iterator value="#currentRoot.children" var="node">
 				<s:set name="currentRoot" value="#node" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
 			</s:iterator>

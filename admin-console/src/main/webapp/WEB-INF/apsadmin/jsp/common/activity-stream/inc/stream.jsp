@@ -82,7 +82,7 @@
 								var="actionUrlVar">
 									<wpsa:paramMap map="#activityStreamInfoVar.linkParameters" />
 							</s:url>
-							<a href="<s:property value="#actionUrlVar" escape="false" />"><s:property value="#linkTitleVar" /></a>
+							<a href="<s:property value="#actionUrlVar" escapeHtml="false" />"><s:property value="#linkTitleVar" /></a>
 						</c:when>
 						<c:otherwise>
 							<s:property value="#linkTitleVar" />

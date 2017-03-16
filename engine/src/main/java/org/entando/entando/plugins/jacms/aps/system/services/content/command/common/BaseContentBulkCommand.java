@@ -3,7 +3,7 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.co
 import java.util.Collection;
 
 import org.entando.entando.aps.system.common.command.BaseBulkCommand;
-import org.entando.entando.aps.system.common.command.constants.CommandErrorCode;
+import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -22,7 +22,7 @@ public abstract class BaseContentBulkCommand<P> extends BaseBulkCommand<String, 
 		boolean performed = false;
 		Content content = this.getContent(item);
 		if (content == null) {
-			this.getTracer().traceError(item, CommandErrorCode.NOT_FOUND);
+			this.getTracer().traceError(item, ApsCommandErrorCode.NOT_FOUND);
 		} else {
 			performed = this.apply(content);
 		}

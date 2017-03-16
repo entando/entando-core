@@ -5,7 +5,7 @@ package org.entando.entando.aps.system.common.command.constants;
  * @author E.Mezzano
  *
  */
-public enum CommandErrorCode {
+public enum ApsCommandErrorCode {
 	/**
 	 * Returned when the item on which to run the command is not found.
 	 */

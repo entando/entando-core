@@ -2,7 +2,7 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.gr
 
 import java.util.Collection;
 
-import org.entando.entando.aps.system.common.command.constants.CommandErrorCode;
+import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -24,7 +24,7 @@ public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 		boolean performed = true;
 		Collection<String> groups = this.getItemProperties();
 		if (null == groups || groups.isEmpty()) {
-			this.getTracer().traceError(content.getId(), CommandErrorCode.PARAMS_NOT_VALID);
+			this.getTracer().traceError(content.getId(), ApsCommandErrorCode.PARAMS_NOT_VALID);
 			performed = false;
 //		} else if (content.getGroups()==null || !content.getGroups().contains(group)) {
 //			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);

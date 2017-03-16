@@ -5,7 +5,7 @@ package org.entando.entando.aps.system.common.command.constants;
  * @author E.Mezzano
  *
  */
-public enum CommandWarningCode {
+public enum ApsCommandWarningCode {
 	/**
 	 * Returned when the command is non necessary for the given item.
 	 */

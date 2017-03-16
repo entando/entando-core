@@ -1,11 +1,13 @@
 package org.entando.entando.aps.system.common.command.constants;
 
+import org.entando.entando.aps.system.common.command.ApsCommand;
+
 /**
- * The status of a command
+ * The status of an {@link ApsCommand}
  * @author E.Mezzano
  *
  */
-public enum CommandStatus {
+public enum ApsCommandStatus {
 	/**
 	 * A new command, not yet sent running
 	 */

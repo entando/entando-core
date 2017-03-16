@@ -2,7 +2,7 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.ca
 
 import java.util.Collection;
 
-import org.entando.entando.aps.system.common.command.constants.CommandErrorCode;
+import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
 
@@ -21,7 +21,7 @@ public class RemoveCategoryBulkCommand extends BaseContentBulkCommand<Category> 
 	protected boolean apply(Content content) throws ApsSystemException {
 		Collection<Category> categories = this.getItemProperties();
 		if (null == categories || categories.isEmpty()) {
-			this.getTracer().traceError(content.getId(), CommandErrorCode.PARAMS_NOT_VALID);
+			this.getTracer().traceError(content.getId(), ApsCommandErrorCode.PARAMS_NOT_VALID);
 			return false;
 		} else {
 			for (Category category : categories) {

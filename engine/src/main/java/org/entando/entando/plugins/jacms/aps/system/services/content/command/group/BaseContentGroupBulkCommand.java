@@ -3,7 +3,7 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.gr
 import java.util.Collection;
 import java.util.List;
 
-import org.entando.entando.aps.system.common.command.constants.CommandErrorCode;
+import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
 import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
@@ -46,13 +46,13 @@ public abstract class BaseContentGroupBulkCommand extends BaseContentBulkCommand
 						Content refContent = contentManager.loadContent(utilizer.toString(), true);
 						if (!content.getMainGroup().equals(refContent.getMainGroup()) && 
 								!content.getGroups().contains(refContent.getMainGroup())) {
-							this.getTracer().traceError(content.getId(), CommandErrorCode.NOT_ALLOWED);
+							this.getTracer().traceError(content.getId(), ApsCommandErrorCode.NOT_ALLOWED);
 							return false;
 						}
 					} else if (utilizer instanceof IPage) {
 						IPage page = (IPage) utilizer;
 						if (!CmsPageUtil.isContentPublishableOnPageOnline(content, page)) {
-							this.getTracer().traceError(content.getId(), CommandErrorCode.NOT_ALLOWED);
+							this.getTracer().traceError(content.getId(), ApsCommandErrorCode.NOT_ALLOWED);
 							return false;
 						}
 					}
@@ -76,7 +76,7 @@ public abstract class BaseContentGroupBulkCommand extends BaseContentBulkCommand
 							String result = validator.scan(symbolicLink, content);
 							if (ICmsAttributeErrorCodes.INVALID_CONTENT_GROUPS.equals(result) || ICmsAttributeErrorCodes.INVALID_RESOURCE_GROUPS.equals(result) || 
 									ICmsAttributeErrorCodes.INVALID_PAGE_GROUPS.equals(result)) {
-								this.getTracer().traceError(content.getId(), CommandErrorCode.NOT_ALLOWED);
+								this.getTracer().traceError(content.getId(), ApsCommandErrorCode.NOT_ALLOWED);
 								return false;
 							}
 						}

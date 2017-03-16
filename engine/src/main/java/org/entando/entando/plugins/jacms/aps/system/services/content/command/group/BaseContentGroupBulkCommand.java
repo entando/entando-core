@@ -26,16 +26,16 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 
 public abstract class BaseContentGroupBulkCommand extends BaseContentBulkCommand<String> {
 
-	public BaseContentGroupBulkCommand(Collection<String> items, String group, IContentManager manager, 
+	public BaseContentGroupBulkCommand(Collection<String> items, Collection<String> groups, IContentManager manager, 
 			ContentUtilizer[] contentUtilizers, ILangManager langManager, IPageManager pageManager, BulkCommandTracer<String> tracer) {
-		super(items, group, manager, tracer);
+		super(items, groups, manager, tracer);
 		this.setContentUtilizers(contentUtilizers);
 		this.setSystemLangs(langManager.getLangs());
 		this.setPageManager(pageManager);
 	}
 
 	protected boolean checkContentUtilizers(Content content) throws ApsSystemException {
-		String groupToRemove = this.getItemProperty();
+		Collection<String> groupToRemove = this.getItemProperties();
 		if (!content.getMainGroup().equals(groupToRemove) && !Group.FREE_GROUP_NAME.equals(content.getMainGroup()) && 
 				!content.getGroups().contains(Group.FREE_GROUP_NAME)) {
 			IContentManager contentManager = this.getApplier();

@@ -12,9 +12,9 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public abstract class BaseContentBulkCommand<P> extends BaseBulkCommand<String, IContentManager> {
 
-	public BaseContentBulkCommand(Collection<String> items, P itemProperty, IContentManager manager, BulkCommandTracer<String> tracer) {
+	public BaseContentBulkCommand(Collection<String> items, Collection<P> itemProperties, IContentManager manager, BulkCommandTracer<String> tracer) {
 		super(items, manager, tracer);
-		this.setItemProperty(itemProperty);
+		this.setItemProperties(itemProperties);
 	}
 
 	@Override
@@ -35,13 +35,13 @@ public abstract class BaseContentBulkCommand<P> extends BaseBulkCommand<String, 
 		return this.getApplier().loadContent(id, false);
 	}
 
-	public P getItemProperty() {
-		return _itemProperty;
+	public Collection<P> getItemProperties() {
+		return _itemProperties;
 	}
-	protected void setItemProperty(P itemProperty) {
-		this._itemProperty = itemProperty;
+	protected void setItemProperties(Collection<P> itemProperties) {
+		this._itemProperties = itemProperties;
 	}
 
-	private P _itemProperty;
+	private Collection<P> _itemProperties;
 
 }

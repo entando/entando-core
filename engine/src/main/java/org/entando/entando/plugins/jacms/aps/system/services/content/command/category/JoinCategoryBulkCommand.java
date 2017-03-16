@@ -3,7 +3,6 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.ca
 import java.util.Collection;
 
 import org.entando.entando.aps.system.common.command.constants.CommandErrorCode;
-import org.entando.entando.aps.system.common.command.constants.CommandWarningCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
 
@@ -14,20 +13,22 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class JoinCategoryBulkCommand extends BaseContentBulkCommand<Category> {
 
-	public JoinCategoryBulkCommand(Collection<String> items, Category category, IContentManager manager, BulkCommandTracer<String> tracer) {
-		super(items, category, manager, tracer);
+	public JoinCategoryBulkCommand(Collection<String> items, Collection<Category> categories, IContentManager manager, BulkCommandTracer<String> tracer) {
+		super(items, categories, manager, tracer);
 	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {
-		Category category = this.getItemProperty();
-		if (null == category || category.getCode().equals(category.getParentCode())) {
+		Collection<Category> categories = this.getItemProperties();
+		if (null == categories || categories.isEmpty()) {
 			this.getTracer().traceError(content.getId(), CommandErrorCode.PARAMS_NOT_VALID);
 			return false;
-		} else if (content.getCategories().contains(category)) {
-			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
 		} else {
-			content.addCategory(category);
+			for (Category category : categories) {
+				if (null != category && !category.getCode().equals(category.getParentCode())) {
+					content.addCategory(category);
+				}
+			}
 			this.getApplier().saveContent(content);
 			this.getTracer().traceSuccess(content.getId());
 		}

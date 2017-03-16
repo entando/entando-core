@@ -13,18 +13,22 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class RemoveCategoryBulkCommand extends BaseContentBulkCommand<Category> {
 
-	public RemoveCategoryBulkCommand(Collection<String> items, Category category, IContentManager manager, BulkCommandTracer<String> tracer) {
-		super(items, category, manager, tracer);
+	public RemoveCategoryBulkCommand(Collection<String> items, Collection<Category> categories, IContentManager manager, BulkCommandTracer<String> tracer) {
+		super(items, categories, manager, tracer);
 	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {
-		Category category = this.getItemProperty();
-		if (null == category || category.getCode().equals(category.getParentCode())) {
+		Collection<Category> categories = this.getItemProperties();
+		if (null == categories || categories.isEmpty()) {
 			this.getTracer().traceError(content.getId(), CommandErrorCode.PARAMS_NOT_VALID);
 			return false;
 		} else {
-			content.removeCategory(category);
+			for (Category category : categories) {
+				if (null != category && !category.getCode().equals(category.getParentCode())) {
+					content.removeCategory(category);
+				}
+			}
 			this.getApplier().saveContent(content);
 			this.getTracer().traceSuccess(content.getId());
 		}

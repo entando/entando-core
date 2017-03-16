@@ -15,23 +15,23 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class JoinGroupBulkCommand extends BaseContentGroupBulkCommand {
 
-	public JoinGroupBulkCommand(Collection<String> items, String group, IContentManager manager, 
+	public JoinGroupBulkCommand(Collection<String> items, Collection<String> groups, IContentManager manager, 
 			ContentUtilizer[] contentUtilizers, ILangManager langManager, IPageManager pageManager, BulkCommandTracer<String> tracer) {
-		super(items, group, manager, contentUtilizers, langManager, pageManager, tracer);
+		super(items, groups, manager, contentUtilizers, langManager, pageManager, tracer);
 	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {
 		boolean performed = true;
-		String group = this.getItemProperty();
-		if (null == group) {
+		Collection<String> groups = this.getItemProperties();
+		if (null == groups || groups.isEmpty()) {
 			this.getTracer().traceError(content.getId(), CommandErrorCode.PARAMS_NOT_VALID);
 			performed = false;
-		} else if (group.equals(content.getMainGroup()) || (content.getGroups()!=null && content.getGroups().contains(group))) {
-			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
+//		} else if (group.equals(content.getMainGroup()) || (content.getGroups()!=null && content.getGroups().contains(group))) {
+//			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
 		} else {
 			// TODO assicurarsi che l'add non abbia impatto su contenuti in cache (o meglio ancora scrivere un'operazione che faccia un restore)
-			content.addGroup(group);// Preliminar ADD, useful for check
+			content.getGroups().addAll(groups);// Preliminar ADD, useful for check
 			performed = this.checkContentUtilizers(content) && this.checkContentReferences(content);
 			if (performed) {
 				this.getApplier().saveContent(content);

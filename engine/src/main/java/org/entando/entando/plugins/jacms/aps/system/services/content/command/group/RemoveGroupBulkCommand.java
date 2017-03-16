@@ -3,7 +3,6 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.gr
 import java.util.Collection;
 
 import org.entando.entando.aps.system.common.command.constants.CommandErrorCode;
-import org.entando.entando.aps.system.common.command.constants.CommandWarningCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -15,7 +14,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 
-	public RemoveGroupBulkCommand(Collection<String> items, String group, IContentManager manager, 
+	public RemoveGroupBulkCommand(Collection<String> items, Collection<String> group, IContentManager manager, 
 			ContentUtilizer[] contentUtilizers, ILangManager langManager, IPageManager pageManager, BulkCommandTracer<String> tracer) {
 		super(items, group, manager, contentUtilizers, langManager, pageManager, tracer);
 	}
@@ -23,15 +22,15 @@ public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {
 		boolean performed = true;
-		String group = this.getItemProperty();
-		if (null == group) {
+		Collection<String> groups = this.getItemProperties();
+		if (null == groups || groups.isEmpty()) {
 			this.getTracer().traceError(content.getId(), CommandErrorCode.PARAMS_NOT_VALID);
 			performed = false;
-		} else if (content.getGroups()==null || !content.getGroups().contains(group)) {
-			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
+//		} else if (content.getGroups()==null || !content.getGroups().contains(group)) {
+//			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
 		} else {
 			// TODO assicurarsi che il remove non abbia impatto su contenuti in cache (o meglio ancora scrivere un'operazione che faccia un restore)
-			content.getGroups().remove(group);// Preliminar REMOVE, useful for check
+			content.getGroups().removeAll(groups);// Preliminar REMOVE, useful for check
 			performed = this.checkContentUtilizers(content) && this.checkContentReferences(content);
 			if (performed) {
 				this.getApplier().saveContent(content);

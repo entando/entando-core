@@ -30,7 +30,8 @@ public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 		} else if (content.getGroups()==null || !content.getGroups().contains(group)) {
 			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
 		} else {
-			content.getGroups().remove(group);
+			// TODO assicurarsi che il remove non abbia impatto su contenuti in cache (o meglio ancora scrivere un'operazione che faccia un restore)
+			content.getGroups().remove(group);// Preliminar REMOVE, useful for check
 			performed = this.checkContentUtilizers(content) && this.checkContentReferences(content);
 			if (performed) {
 				this.getApplier().saveContent(content);

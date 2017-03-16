@@ -30,7 +30,8 @@ public class JoinGroupBulkCommand extends BaseContentGroupBulkCommand {
 		} else if (group.equals(content.getMainGroup()) || (content.getGroups()!=null && content.getGroups().contains(group))) {
 			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
 		} else {
-			content.addGroup(group);
+			// TODO assicurarsi che l'add non abbia impatto su contenuti in cache (o meglio ancora scrivere un'operazione che faccia un restore)
+			content.addGroup(group);// Preliminar ADD, useful for check
 			performed = this.checkContentUtilizers(content) && this.checkContentReferences(content);
 			if (performed) {
 				this.getApplier().saveContent(content);

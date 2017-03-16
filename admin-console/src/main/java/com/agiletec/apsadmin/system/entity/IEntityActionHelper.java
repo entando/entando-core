@@ -15,6 +15,7 @@ package com.agiletec.apsadmin.system.entity;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.agiletec.aps.system.common.entity.model.ApsEntity;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.opensymphony.xwork2.ActionSupport;
@@ -53,5 +54,15 @@ public interface IEntityActionHelper {
 	 * @return the search filter.
 	 */
 	public EntitySearchFilter[] getAttributeFilters(AbstractApsEntityFinderAction entityFinderAction, IApsEntity prototype);
+
+	
+	/**
+	 * Returns the AttributeFilter field name(s). 
+	 * If the attribute expects a start/end value (DateAttribute and NumberAttrivute ) the the returned array will contain two elements, otherwise one.
+	 * @param prototype The entity prototype used to extract the attributes
+	 * @param attrName The name of the attribute 
+	 * @return an array of field names used as AttributeFilter
+	 */
+	public String[] getAttributeFilterFieldName(ApsEntity prototype, String attrName);
 
 }

@@ -4,29 +4,10 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
-    <li><s:text name="title.pageTree" /></li>
+    <li class="page-title-container"><s:text name="title.pageTree" /></li>
 </ol>
 
-<style>
-    .treeInteractionButtons{
-        font-size: 16px;
-        font-weight: bold;
-    }
-    .green{
-        color: green;
-    }
-    
-   #pageTree .statusField i.fa {
-        font-size: 15px;
-        margin-top: 6px;
-    }
-    
-    .table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
-        text-align: center;
-    }
-</style>
-
-<h1><s:text name="title.pageTree" /></h1>
+<h1 class="page-title-container"><s:text name="title.pageTree" /></h1>
 
 <div id="main" role="main">
     <s:if test="hasActionErrors()">
@@ -39,15 +20,15 @@
             <ul>
                 <s:iterator value="actionErrors">
                     <li><s:property escape="false" /></li>
-				</s:iterator>
+                    </s:iterator>
             </ul>
         </div>
     </s:if>
-    
+
     <div role="search">
-        
+
         <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
-        
+
         <hr />
         <s:form cssClass="action-form">
             <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-primary pull-right " data-toggle="tooltip">
@@ -55,9 +36,9 @@
             </wpsf:submit>
             <br/>
             <br/>
-            
+
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
-                
+
                 <div class="table-responsive overflow-visible">
                     <table id="pageTree" class="table table-bordered table-hover table-treegrid">
                         <thead>
@@ -95,19 +76,19 @@
                                 display: none;
                             }
                         </style>
-                            <s:set var="currentRoot" value="showableTree" />
-                            <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
-                        </s:else>
+                        <s:set var="currentRoot" value="showableTree" />
+                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
+                    </s:else>
                     </tbody>
                 </table>     
             </div>
             <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
-            
-            <!--            <fieldset data-toggle="tree-toolbar"><legend><s:text name="title.pageActions" /></legend>
-                            <p class="sr-only"><s:text name="title.pageActionsIntro" /></p>
-            
-                            <div class="btn-toolbar" data-toggle="tree-toolbar-actions">
-                                <div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
+
+<!--            <fieldset data-toggle="tree-toolbar"><legend><s:text name="title.pageActions" /></legend>
+                <p class="sr-only"><s:text name="title.pageActionsIntro" /></p>
+
+                <div class="btn-toolbar" data-toggle="tree-toolbar-actions">
+                    <div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
             <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info" data-toggle="tooltip">
                 <span class="icon fa fa-plus-circle"></span>
             </wpsf:submit>
@@ -116,5 +97,5 @@
 </fieldset>-->
         </s:form>
     </div>
-    
+
 </div>

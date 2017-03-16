@@ -34,22 +34,24 @@
         </wpsf:submit>
             </div>
     </td>
-    <td class="text-center">
+    <td class="text-center" style="width:20px">
         <%-- FOR DEV. DEGUB
         ONLINE: <s:property value="%{#currentRoot.getEntity().isOnline()}"/>
         CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
         --%>
         <span class="statusField">
-            <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
-            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
-            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
+            <span class="statusField">
+                <s:if test="%{!#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i></s:if>
+                <s:elseif test="%{#currentRoot.getEntity().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true" title="Online&#32;&ne;&#32;Draft"></i></s:elseif>
+                <s:else><i class="fa fa-circle green" aria-hidden="true" title="Online"></i></s:else>
         </span>
         
+            </span>
     </td>
     <td class="text-center">Menu List</td>
-    <td class=" table-view-pf-actions text-center">
+        <td class=" table-view-pf-actions">
         <div class="dropdown dropdown-kebab-pf">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span class="fa fa-ellipsis-v"></span></button>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                 <li>
@@ -62,7 +64,7 @@
                     </wpsf:submit>
                 </li>
                 <li><wpsf:submit action="detail" type="button" title="%{getText('page.options.detail')}" cssClass="btn btn-info" data-toggle="tooltip">
-                        <span class="">Detail</span>
+                        <span class="">Details</span>
                     </wpsf:submit>
                 </li>
                 <li><wpsf:submit action="copy" type="button" title="%{getText('page.options.copy')}" cssClass="btn btn-info" data-toggle="tooltip">

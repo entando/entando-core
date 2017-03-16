@@ -30,7 +30,7 @@
     <s:set var="fullnameVar" value="#attr.fullnameVar" />
     <s:set var="emailAttributeVar" value="#attr.emailAttributeVar" />
 
-    <c:out value="${emailAttributeVar}" />
+    <%--<c:out value="${emailAttributeVar}" />--%>
     <li class="li-custom-avatar" data-entando-id="<s:property value="#actionLogRecordVar.id" />" data-entando-creationdate="<s:date name="#actionLogRecordVar.actionDate" format="yyyy-MM-dd HH:mm:ss|SSS" />"
         data-entando-updatedate="<s:property value="#lastUpdateDateVar" />">
         <div class="avatar-utente">

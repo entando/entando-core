@@ -4,8 +4,9 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/entando-widget-icons.css"/>
+
 <div class="right-menu-title">
-	<s:text name="title.widgetlist" /><span class="pull-right drawer-pf-icons-right-menu"><i id="widgetGrid" class="fa fa-th-large pointer" aria-hidden="true"></i>&nbsp;&nbsp;<i id="widgetList" class="fa fa-th-list pointer"  aria-hidden="true"></i></span>
+    <s:text name="title.widgetlist" /><span class="pull-right drawer-pf-icons-right-menu"><i id="widgetGrid" class="fa fa-th-large pointer" aria-hidden="true"></i>&nbsp;&nbsp;<i id="widgetList" class="fa fa-th-list pointer"  aria-hidden="true"></i></span>
     <input  id="search-widget" class="input-pf-right-menu" type="text" placeholder="<s:text name="widget.search" />" />
 </div>
 
@@ -70,8 +71,14 @@
                 <s:set var="showletUtilizers" value="getShowletUtilizers(#showletType.key)" ></s:set>
                 <s:set var="concreteShowletTypeVar" value="%{getShowletType(#showletType.key)}"></s:set>
                     <!-- list item start-->
+
                     <div class="list-group-item widget-square list-group-item-custom pointer" data-widget-id="<s:property value="#showletType.key" />">
-                    <div class="icon-pos hidden fa fa-default fa-<s:property value="#showletType.key" />"></div>
+
+                    <div class=" hidden list-view-pf-left icon-pos">
+                        <span class="  fa fa-default list-view-pf-icon-sm  fa-<s:property value="#showletType.key" />"></span>
+                    </div>
+
+
                     <div class="list-view-pf-main-info">
                         <div class="list-view-pf-left">
                             <span class="fa fa-default list-view-pf-icon-sm widget-icon fa-<s:property value="#showletType.key" />"></span>
@@ -110,14 +117,12 @@
             }
         });
     });
-
-
     $("#widgetGrid").click(function () {
         $(".widget-square").addClass("widget-grid");
         $(".icon-pos").removeClass("hidden");
         $(".list-group-item-heading").addClass("descrition-widget-overlay");
-    });
 
+    });
     $("#widgetList").click(function () {
         $(".widget-square").removeClass("widget-grid");
         $(".icon-pos").addClass("hidden");

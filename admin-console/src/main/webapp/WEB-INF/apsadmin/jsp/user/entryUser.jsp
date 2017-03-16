@@ -8,7 +8,7 @@
     <li>
         <a href="<s:url namespace="/do/User" action="list" />"><s:text name="title.userManagement" /></a>
     </li>
-    <li>
+    <li class="page-title-container">
         <s:if test="getStrutsAction() == 1">
             <s:text name="title.userManagement.userNew" />
         </s:if>
@@ -18,14 +18,22 @@
     </li>
 </ol>
 
-<h1> <s:if test="getStrutsAction() == 1">
+<h1 class="page-title-container"> <s:if test="getStrutsAction() == 1">
         <s:text name="title.userManagement.userNew" />
     </s:if>
     <s:elseif test="getStrutsAction() == 2">
         <s:text name="title.userManagement.userEdit" />
     </s:elseif>
+    <span class="pull-right">
+    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="help.user.page" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
 </h1>
 
+<i class="fa fa-asterisk required-icon"></i>
+<div class="text-right">
+    <div class="form-group-separator"><s:text name="label.requiredFields" /></div>               
+</div>
+<br/>
 <s:form action="save" cssClass="form-horizontal">
 
     <s:if test="hasActionErrors()">
@@ -74,7 +82,10 @@
     </s:if>
 
     <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-        <label class="col-sm-2 control-label" for="username"><s:text name="username" />&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a></label>
+        <label class="col-sm-2 control-label" for="username"><s:text name="username" />&nbsp;
+		<i class="fa fa-asterisk required-icon"></i>        
+        <a role="button" tabindex="0"  data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="help.user.username" /> " >
+        <span class="fa fa-info-circle"></span></a></label>
         <div class="col-sm-10">
             <wpsf:textfield name="username" id="username" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
             <s:if test="#fieldHasFieldErrorVar">
@@ -86,7 +97,10 @@
     </div>
 
     <div class="form-group<s:property value="#controlGroupErrorClassVar2" />">
-        <label class="col-sm-2 control-label" for="password"><s:text name="password" />&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a></label>
+        <label class="col-sm-2 control-label" for="password"><s:text name="password" />&nbsp;
+        <i class="fa fa-asterisk required-icon"></i>
+        <a role="button" tabindex="0"  data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="help.user.password" /> " >
+        <span class="fa fa-info-circle"></span></a></label>
         <div class="col-sm-10">
             <wpsf:password name="password" id="password" cssClass="form-control" />
 
@@ -163,7 +177,7 @@
             <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
             <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
             <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-                <label class="col-sm-2 control-label"  for="profileType"><s:text name="profileType.reset.status" />&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a></label>
+                <label class="col-sm-2 control-label"  for="profileType"><s:text name="profileType.reset.status" /></label>
                 <div class="col-sm-10">
                     <wpsf:checkbox name="reset" cssClass="bootstrap-switch" />
                     <%--<s:text name="note.userStatus.reset" />--%>
@@ -182,7 +196,8 @@
         <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-            <label class="col-sm-2 control-label"  for="profileType"><s:text name="profileType" />&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a></label>
+            <label class="col-sm-2 control-label"  for="profileType"><s:text name="profileType" />            
+            </label>
             <div class="col-sm-10">
                 <wpsf:select name="profileTypeCode" id="profileType" list="profileTypes" listKey="code" listValue="description" cssClass="form-control" />
                 <s:if test="#fieldHasFieldErrorVar">
@@ -199,7 +214,7 @@
     <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
     <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-        <label class="col-sm-2 control-label"  for="profileType"><s:text name="profileType.status" />&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a></label>
+        <label class="col-sm-2 control-label" for="profileType"><s:text name="profileType.status" /></label>
         <div class="col-sm-10">
             <wpsf:checkbox name="active"  id="active" cssClass="bootstrap-switch" />
             <s:if test="#fieldHasFieldErrorVar">
@@ -213,12 +228,6 @@
     <%-- save buttons --%>
     <div class="col-md-12"> 
         <div class="form-group pull-right "> 
-            <div class="btn-group">
-                <wpsf:submit type="button" action="save" cssClass="btn btn-primary btn-block">
-
-                    <s:text name="label.save" />
-                </wpsf:submit>
-            </div>
             <s:if test="strutsAction == 1">
                 <div class="btn-group">
                     <wpsf:submit type="button" action="saveAndContinue" cssClass="btn btn-default btn-block">
@@ -227,6 +236,12 @@
                     </wpsf:submit>
                 </div>
             </s:if>
+            <div class="btn-group">
+                <wpsf:submit type="button" action="save" cssClass="btn btn-primary btn-block">
+
+                    <s:text name="label.save" />
+                </wpsf:submit>
+            </div>
         </div>
     </div>
 </s:form>

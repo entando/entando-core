@@ -65,7 +65,7 @@
 		<ul clasS="margin-base-vertical">
 		<s:iterator value="fieldErrors">
 			<s:iterator value="value">
-			<li><s:property escape="false" /></li>
+			<li><s:property escapeHtml="false" /></li>
 			</s:iterator>
 		</s:iterator>
 		</ul>
@@ -76,7 +76,7 @@
 	<wpsf:hidden name="strutsAction" />
 	<wpsf:hidden name="resourceTypeCode" />
 	<wpsf:hidden name="contentOnSessionMarker" />
-	<s:iterator value="categoryCodes" id="categoryCode" status="rowstatus">
+	<s:iterator value="categoryCodes" var="categoryCode" status="rowstatus">
 	<input type="hidden" name="categoryCodes" value="<s:property value="#categoryCode" />" id="categoryCodes-<s:property value="#rowstatus.index" />"/>
 	</s:iterator>
 	<s:if test="strutsAction != 1">
@@ -93,7 +93,7 @@
             <label class="control-label" for="descr"><s:text name="label.description" /></label>
         <wpsf:textfield name="descr" id="descr" cssClass="form-control" />
     </div>
-    <s:set name="lockGroupSelect" value="%{resourceId != null && resourceId != 0}"></s:set>
+    <s:set var="lockGroupSelect" value="%{resourceId != null && resourceId != 0}"></s:set>
         <div class="form-group">
             <label class="control-label" for="mainGroup"><s:text name="label.group" /></label>
         <wpsf:select name="mainGroup" id="mainGroup" list="allowedGroups" value="mainGroup"
@@ -114,19 +114,19 @@
 	<legend><span class="icon fa fa-tags"></span>&#32;<s:text name="title.categoriesManagement"/></legend>
 	<div class="well">
 		<ul id="categoryTree" class="fa-ul list-unstyled">
-		<s:set name="inputFieldName" value="'categoryCode'" />
-		<s:set name="selectedTreeNode" value="selectedNode" />
-		<s:set name="liClassName" value="'category'" />
-		<s:set name="treeItemIconName" value="'fa-folder'" />
+		<s:set var="inputFieldName" value="'categoryCode'" />
+		<s:set var="selectedTreeNode" value="selectedNode" />
+		<s:set var="liClassName" value="'category'" />
+		<s:set var="treeItemIconName" value="'fa-folder'" />
 
 		<s:if test="#categoryTreeStyleVar == 'classic'">
-		<s:set name="currentRoot" value="categoryRoot" />
+		<s:set var="currentRoot" value="categoryRoot" />
 		<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
 		</s:if>
 		<s:elseif test="#categoryTreeStyleVar == 'request'">
-		<s:set name="currentRoot" value="showableTree" />
-		<s:set name="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'" />
-		<s:set name="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'" />
+		<s:set var="currentRoot" value="showableTree" />
+		<s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'" />
+		<s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'" />
 		<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
 		</s:elseif>
 		</ul>
@@ -142,8 +142,8 @@
 <s:if test="categoryCodes != null && categoryCodes.size() > 0">
 <h2 class="h4 margin-base-vertical"><s:text name="note.resourceCategories.summary"/></h2>
 
-<s:iterator value="categoryCodes" id="categoryCode">
-<s:set name="resourceCategory" value="%{getCategory(#categoryCode)}"></s:set>
+<s:iterator value="categoryCodes" var="categoryCode">
+<s:set var="resourceCategory" value="%{getCategory(#categoryCode)}"></s:set>
 	<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
 		<span class="icon fa fa-tag"></span>&#32;
 		<abbr title="<s:property value="#resourceCategory.getFullTitle(currentLang.code)"/>"><s:property value="#resourceCategory.getShortFullTitle(currentLang.code)" /></abbr>&#32;

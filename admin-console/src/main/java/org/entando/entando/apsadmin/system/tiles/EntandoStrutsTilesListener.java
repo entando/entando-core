@@ -14,12 +14,11 @@
 package org.entando.entando.apsadmin.system.tiles;
 
 import javax.servlet.ServletContext;
-
+import javax.servlet.ServletContextEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts2.tiles.StrutsTilesListener;
-import org.apache.tiles.TilesContainer;
-import org.apache.tiles.TilesException;
-
-import org.entando.entando.apsadmin.system.tiles.factory.EntandoTilesContainerFactory;
+import org.apache.tiles.startup.TilesInitializer;
 
 /**
  * Listener for loading during init struts2 tiles configuration files.
@@ -30,17 +29,31 @@ import org.entando.entando.apsadmin.system.tiles.factory.EntandoTilesContainerFa
  *	  <listener-class>org.entando.entando.apsadmin.system.tiles.EntandoStrutsTilesListener</listener-class>
  *  </listener>
  * 
- * 
  * @see org.apache.struts2.tiles.StrutsTilesListener
- * @version 1.0
- * @author zuanni G.Cocco
+ * @author E.Santoboni
  */
 public class EntandoStrutsTilesListener extends StrutsTilesListener {
 	
+    private static final Logger LOG = LogManager.getLogger(StrutsTilesListener.class);
+	private ServletContext _servletContext;
+	
 	@Override
-	protected TilesContainer createContainer(ServletContext context) throws TilesException {
-		EntandoTilesContainerFactory factory = EntandoTilesContainerFactory.getFactory(context);
-		return factory.createContainer(context);
+	public void contextInitialized(ServletContextEvent event) {
+		this.setServletContext(event.getServletContext());
+		super.contextInitialized(event);
+	}
+	
+    @Override
+    protected TilesInitializer createTilesInitializer() {
+        LOG.info("Starting Struts Tiles 3 integration ...");
+        return new EntandoStrutsTilesInitializer(this.getServletContext());
+    }
+	
+	protected void setServletContext(ServletContext servletContext) {
+		this._servletContext = servletContext;
+	}
+	protected ServletContext getServletContext() {
+		return _servletContext;
 	}
 	
 }

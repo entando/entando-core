@@ -1,10 +1,10 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
-<s:set name="masterCompositeAttributeTracer" value="#attributeTracer" />
-<s:set name="masterCompositeAttribute" value="#attribute" />
-<s:iterator value="#attribute.attributes" id="attribute">
-<s:set name="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></s:set>
-<s:set name="parentAttribute" value="#masterCompositeAttribute"></s:set>
+<s:set var="masterCompositeAttributeTracer" value="#attributeTracer" />
+<s:set var="masterCompositeAttribute" value="#attribute" />
+<s:iterator value="#attribute.attributes" var="attribute">
+<s:set var="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></s:set>
+<s:set var="parentAttribute" value="#masterCompositeAttribute"></s:set>
 	<p>	
 		<label for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />"><s:property value="#attribute.name"/></label>
 		<s:if test="#attribute.type == 'Text'">
@@ -45,6 +45,6 @@
 		</s:elseif>
 	</p>
 </s:iterator>
-<s:set name="attributeTracer" value="#masterCompositeAttributeTracer" />
-<s:set name="attribute" value="#masterCompositeAttribute" />
-<s:set name="parentAttribute" value=""></s:set>
+<s:set var="attributeTracer" value="#masterCompositeAttributeTracer" />
+<s:set var="attribute" value="#masterCompositeAttribute" />
+<s:set var="parentAttribute" value=""></s:set>

@@ -4,10 +4,10 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
 <s:if test="#attribute.failedDateString == null">
-	<s:set name="dateAttributeValue" value="#attribute.getFormattedDate('dd/MM/yyyy')" />
+	<s:set var="dateAttributeValue" value="#attribute.getFormattedDate('dd/MM/yyyy')" />
 </s:if>
 <s:else>
-	<s:set name="dateAttributeValue" value="#attribute.failedDateString" />
+	<s:set var="dateAttributeValue" value="#attribute.failedDateString" />
 </s:else>
 	<wpsf:textfield 
 		useTabindexAutoIncrement="true" 

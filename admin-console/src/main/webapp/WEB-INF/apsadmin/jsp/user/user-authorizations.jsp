@@ -52,7 +52,7 @@
                     <span class="pficon pficon-error-circle-o"></span><s:text name="message.title.ActionErrors" /></span>
                     <ul class="margin-base-top">
                         <s:iterator value="actionErrors">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                     </ul>
                 </div>

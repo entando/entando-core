@@ -38,8 +38,8 @@
 				</div>
 				<div id="submenu-plugins" class="panel-collapse collapse">
 					<ul class="panel-body nav nav-pills nav-stacked" role="menubar" aria-labelledby="aria-menu-plugin">
-						<s:iterator value="#pluginsSubMenus" id="pluginSubMenu">
-							<wpsa:include value="%{#pluginSubMenu.subMenuFilePath}"></wpsa:include>
+						<s:iterator value="#pluginsSubMenus" var="pluginSubMenu">
+							<s:include value="%{#pluginSubMenu.subMenuFilePath}" />
 						</s:iterator>
 					</ul>
 				</div>

@@ -50,7 +50,7 @@
 				<h3 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h3>
 				<ul class="margin-base-vertical">
 				<s:iterator value="actionErrors">
-					<li><s:property escape="false" /></li>
+					<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 				</ul>
 			</div>
@@ -63,7 +63,7 @@
 				<ul class="margin-base-vertical">
 				<s:iterator value="fieldErrors">
 					<s:iterator value="value">
-					<li><s:property escape="false" /></li>
+					<li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</s:iterator>
 				</ul>
@@ -75,7 +75,7 @@
 		<s:if test="expressions.size != 0">
 
 		<ul class="list-group">
-			<s:iterator value="expressions" id="expression" status="rowstatus">
+			<s:iterator value="expressions" var="expression" status="rowstatus">
 			<li class="list-group-item">
 				<div class="row">
 				<div class="col-md-6">

@@ -12,7 +12,7 @@
 			<h2 class="h4 margin-none"><s:text name="messages.confirm" /></h2>
 			<ul class="margin-base-top">
 				<s:iterator value="actionMessages">
-					<li><s:property escape="false" /></li>
+					<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</ul>
 		</div>
@@ -23,7 +23,7 @@
 			<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
 			<ul class="margin-base-top">
 				<s:iterator value="actionErrors">
-					<li><s:property escape="false" /></li>
+					<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</ul>
 		</div>
@@ -77,8 +77,8 @@
 			<wpsf:hidden name="insertedDescription" />
 		</p>
 		<wpsa:subset source="searchResult" count="10" objectName="groupSearchResult" advanced="true" offset="5">
-			<s:set name="group" value="#groupSearchResult" />
-			<s:set name="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />
+			<s:set var="group" value="#groupSearchResult" />
+			<s:set var="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />
 			<div class="text-center">
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />

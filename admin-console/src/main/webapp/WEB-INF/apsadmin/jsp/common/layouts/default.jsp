@@ -10,7 +10,7 @@
     <!--<![endif]-->
 
     <head>
-        <title>Entando - <s:set var="documentTitle"><tiles:getAsString name="title"/></s:set><s:property value="%{getText(#documentTitle)}" escape="false" /></title>
+        <title>Entando - <s:set var="documentTitle"><tiles:getAsString name="title"/></s:set><s:property value="%{getText(#documentTitle)}" escapeHtml="false" /></title>
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=Edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">

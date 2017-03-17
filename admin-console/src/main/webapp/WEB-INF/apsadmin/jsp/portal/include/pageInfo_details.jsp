@@ -31,7 +31,7 @@
             <th class="td-pagetree-width"><s:text name="label.extraGroups" /></th>
 			<td>
 				<s:if test="#details_pivotPage.extraGroups.size() != 0">
-					<s:iterator value="#details_pivotPage.extraGroups" id="groupName" status="groupStatus">
+					<s:iterator value="#details_pivotPage.extraGroups" var="groupName" status="groupStatus">
 						<s:property value="systemGroups[#groupName].descr"/><s:if test="!#groupStatus.last">,&#32;</s:if>
 					</s:iterator>
 				</s:if>

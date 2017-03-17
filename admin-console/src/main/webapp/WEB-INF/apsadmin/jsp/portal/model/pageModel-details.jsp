@@ -57,15 +57,10 @@
 			<s:text name="label.edit" />
 		</a>
 	</p>
-
 	<s:include value="/WEB-INF/apsadmin/jsp/portal/model/include/pageModel-references.jsp" />
-
 	<wpsa:hookPoint key="core.pageModelDetails" objectName="hookPointElements_core_pageModelDetails">
 		<s:iterator value="#hookPointElements_core_pageModelDetails" var="hookPointElementVar">
 			<wpsa:include value="%{#hookPointElementvar.filePath}"></wpsa:include>
 		</s:iterator>
 	</wpsa:hookPoint>
-
-
-
 </div>

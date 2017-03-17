@@ -46,13 +46,13 @@
             <ul>
                 <s:if test="hasActionErrors()">
                     <s:iterator value="actionErrors">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                         </s:iterator>
                     </s:if>
                     <s:if test="hasFieldErrors()">
                         <s:iterator value="fieldErrors">
                             <s:iterator value="value">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                     </s:if>

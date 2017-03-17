@@ -83,7 +83,7 @@
 			<wpsf:hidden name="linkTypeVar" value="3" />
 		</p>
 		<wpsa:subset source="contents" count="10" objectName="groupContent" advanced="true" offset="5">
-			<s:set name="group" value="#groupContent" />
+			<s:set var="group" value="#groupContent" />
 			<div class="text-center">
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -114,7 +114,7 @@
 						<th class="text-center"><s:text name="label.lastEdit" /></th>
 					</tr>
 					<s:iterator var="contentId">
-						<s:set name="content" value="%{getContentVo(#contentId)}" />
+						<s:set var="content" value="%{getContentVo(#contentId)}" />
 						<tr>
 							<%-- description --%>
 							<td>

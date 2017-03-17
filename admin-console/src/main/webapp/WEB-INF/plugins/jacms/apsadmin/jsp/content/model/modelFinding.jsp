@@ -36,7 +36,7 @@
 	<s:if test="%{contentModels.size > 0}" >
 	
 		<wpsa:subset source="contentModels" count="10" objectName="groupContentModel" advanced="true" offset="5">
-		<s:set name="group" value="#groupContentModel" />
+		<s:set var="group" value="#groupContentModel" />
 		
 		<div class="text-center">
 			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
@@ -53,7 +53,7 @@
 				<th><s:text name="contentModel.type" /></th>
 			</tr>
 			
-			<s:iterator id="model">
+			<s:iterator var="model">
 				<tr>
 					<td class="text-center text-nowrap">
 						<div class="btn-group btn-group-xs">

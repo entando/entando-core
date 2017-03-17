@@ -23,7 +23,7 @@
         <s:text name="message.title.ActionErrors" />
         <ul>
             <s:iterator value="actionErrors">
-                <li><s:property escape="false" /></li>
+                <li><s:property escapeHtml="false" /></li>
                 </s:iterator>
         </ul>
     </div>
@@ -45,7 +45,7 @@
                 <s:param name="pageCode" value="pageCode" />
                 <s:param name="token" value="previewToken" />
             </s:url>
-            <a href="<s:property value="#previewURL" escape="false" escapeXml="false" escapeHtml="false" />" target="_blank">
+            <a href="<s:property value="#previewURL" escapeHtml="false" escapeXml="false" escapeHtml="false" />" target="_blank">
                 <button class="btn btn-primary"><s:text name="pageActions.preview" /></button></a>
 
             <button class="btn btn-warning restore-online-btn"><s:text name="pageActions.restore" /></button>

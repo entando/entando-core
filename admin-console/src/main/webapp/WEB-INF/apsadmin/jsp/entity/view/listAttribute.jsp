@@ -4,7 +4,7 @@
 <s:if test="#attribute.getAttributeList(#lang.code).size() != 0">
 	<div class="clearfix"></div>
 	<ul class="media-list">
-		<s:iterator value="#attribute.getAttributeList(#lang.code)" id="attribute" status="elementStatus">
+		<s:iterator value="#attribute.getAttributeList(#lang.code)" var="attribute" status="elementStatus">
 			<s:set var="attributeTracer" value="#masterListAttributeTracer.getListElementTracer(#lang, #elementStatus.index)" />
 			<s:set var="elementIndex" value="#elementStatus.index" />
 			<li class="media padding-small-bottom padding-top-bottom">

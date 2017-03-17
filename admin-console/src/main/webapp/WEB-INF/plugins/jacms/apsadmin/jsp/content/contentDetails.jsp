@@ -205,7 +205,7 @@
 								<s:iterator var="curReferencingPage" value="#referencingPagesVar">
 									<dd>
 										<s:set var="canEdit" value="%{false}" />
-										<c:set var="curReferencingPageMainGroupCode"><s:property value="#curReferencingPage.group" escape="false"/></c:set>
+										<c:set var="curReferencingPageMainGroupCode"><s:property value="#curReferencingPage.group" escapeHtml="false"/></c:set>
 										<wp:ifauthorized groupName="${curReferencingPageMainGroupCode}" permission="managePages"><s:set var="canEdit" value="%{true}" /></wp:ifauthorized>
 										<s:if test="#canEdit">
 											<s:url var="pageEditURL" action="viewTree" namespace="/do/Page"><s:param name="selectedNode" value="#curReferencingPage.code" /></s:url>

@@ -15,7 +15,7 @@
 			<ul class="margin-none margin-base-top">
 				<s:iterator value="fieldErrors">
 					<s:iterator value="value">
-									<li><s:property escape="false" /></li>
+									<li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</s:iterator>
 			</ul>
@@ -44,17 +44,17 @@
 				<s:set var="pageTreeStyleVar"><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 				<div class="well">
 					<ul id="pageTree" class="fa-ul list-unstyled">
-						<s:set name="inputFieldName" value="'selectedNode'" />
-						<s:set name="selectedTreeNode" value="selectedNode" />
-						<s:set name="liClassName" value="'page'" />
+						<s:set var="inputFieldName" value="'selectedNode'" />
+						<s:set var="selectedTreeNode" value="selectedNode" />
+						<s:set var="liClassName" value="'page'" />
 						<s:set var="treeItemIconName" value="'fa-folder'" />
 
 						<s:if test="#pageTreeStyleVar == 'classic'">
-						<s:set name="currentRoot" value="allowedTreeRootNode" />
+						<s:set var="currentRoot" value="allowedTreeRootNode" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
 						</s:if>
 						<s:elseif test="#pageTreeStyleVar == 'request'">
-						<s:set name="currentRoot" value="showableTree" />
+						<s:set var="currentRoot" value="showableTree" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
 						</s:elseif>
 					</ul>

@@ -2,15 +2,15 @@
 <s:if test="#attribute.getAttributeList(#lang.code).size() != 0">
 <ul>
 </s:if> 
-<s:set name="masterListAttributeTracer" value="#attributeTracer" />
-<s:set name="masterListAttribute" value="#attribute" />
-	<s:iterator value="#attribute.getAttributeList(#lang.code)" id="attribute" status="elementStatus">
-		<s:set name="attributeTracer" value="#masterListAttributeTracer.getListElementTracer(#lang, #elementStatus.index)"></s:set>
+<s:set var="masterListAttributeTracer" value="#attributeTracer" />
+<s:set var="masterListAttribute" value="#attribute" />
+	<s:iterator value="#attribute.getAttributeList(#lang.code)" var="attribute" status="elementStatus">
+		<s:set var="attributeTracer" value="#masterListAttributeTracer.getListElementTracer(#lang, #elementStatus.index)"></s:set>
 		<s:set var="i18n_attribute_name">userprofile_ATTR<s:property value="#attribute.name" /></s:set>
 		<s:set var="attribute_id">userprofile_<s:property value="#attribute.name" />_<s:property value="#elementStatus.index + 1" /></s:set>
 		
 		
-		<s:set name="elementIndex" value="#elementStatus.index" />
+		<s:set var="elementIndex" value="#elementStatus.index" />
 		
 			<s:if test="#attribute.type == 'Composite'">
 				<li class="contentAttributeBox">
@@ -59,9 +59,9 @@
 			</li>
 	</s:iterator>
 
-<s:set name="attributeTracer" value="#masterListAttributeTracer" />
-<s:set name="attribute" value="#masterListAttribute" />
-<s:set name="elementIndex" value="" />
+<s:set var="attributeTracer" value="#masterListAttributeTracer" />
+<s:set var="attribute" value="#masterListAttribute" />
+<s:set var="elementIndex" value="" />
 <s:if test="#attribute.getAttributeList(#lang.code).size() != 0">
 </ul>
 </s:if>

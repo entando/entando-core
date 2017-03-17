@@ -31,10 +31,10 @@
 		<th>Page</th>
 		<th>Content</th>
 	</tr>
-	<s:iterator id="contentId" value="referencedContentsOnPages">
-		<s:iterator id="page" value="referencingPages[#contentId]">
+	<s:iterator var="contentId" value="referencedContentsOnPages">
+		<s:iterator var="page" value="referencingPages[#contentId]">
 			<tr>
-				<s:set name="pageGroup" value="#page.group"></s:set>
+				<s:set var="pageGroup" value="#page.group"></s:set>
 				<wp:ifauthorized groupName="${pageGroup}">
 					<td class="text-center text-nowrap">
 						<div class="btn-group btn-group-xs">
@@ -49,7 +49,7 @@
 					<s:property value="#page.titles[currentLang.code]" />
 				</td>
 				<td>
-					<s:set name="content" value="%{getContentVo(#contentId)}"></s:set>
+					<s:set var="content" value="%{getContentVo(#contentId)}"></s:set>
 					<code><s:property value="#content.id" /></code>&#32;<s:property value="#content.descr" />
 				</td>
 			</tr>

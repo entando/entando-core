@@ -41,7 +41,7 @@
                 <ul class="unstyled" id="content-error-messages">
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                 </ul>

@@ -7,14 +7,14 @@
 		<s:if test="hasFieldErrors()">
 			<s:iterator value="fieldErrors" status="fieldStatus">
 				<s:iterator value="value" status="valueStatus">
-					"<s:property escape="false" escapeJavaScript="true" />"<s:if test="%{!(#valueStatus.last)}">,</s:if>
+					"<s:property escapeHtml="false" escapeJavaScript="true" />"<s:if test="%{!(#valueStatus.last)}">,</s:if>
 				</s:iterator><s:if test="%{!(#fieldStatus.last)}">,</s:if>
 			</s:iterator>
 		</s:if>
 		<s:if test="hasActionErrors()">
 			<s:if test="hasFieldErrors()">,</s:if>
 			<s:iterator value="actionErrors" status="valueStatus">
-				"<s:property escape="false" escapeJavaScript="true" />"<s:if test="%{!(#valueStatus.last)}">,</s:if>
+				"<s:property escapeHtml="false" escapeJavaScript="true" />"<s:if test="%{!(#valueStatus.last)}">,</s:if>
 			</s:iterator>
 		</s:if>	
 	]

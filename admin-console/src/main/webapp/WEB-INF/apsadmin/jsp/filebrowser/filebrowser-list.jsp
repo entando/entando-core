@@ -29,7 +29,7 @@
 							<s:if test="currentPath!=''"><s:set var="isUpProtectedFileVar" value="protectedFolder" /></s:if>
 							<a href="<s:url namespace="/do/FileBrowser" action="list" >
 								   <s:param name="protectedFolder" value="#isUpProtectedFileVar" />
-								   <s:param name="currentPath"><s:property escape="true" value="breadCrumbsTargets.get(breadCrumbsTargets.size()-2).key"/></s:param>
+								   <s:param name="currentPath"><s:property escapeHtml="true" value="breadCrumbsTargets.get(breadCrumbsTargets.size()-2).key"/></s:param>
 							   </s:url>">
 								<span class="icon fa fa-share fa-rotate-270"></span>
 								&#32;
@@ -59,8 +59,8 @@
 										class="btn btn-default"
 										title="Edit: <s:property value="#fileVar.name"/>"
 										href="<s:url namespace="/do/FileBrowser" action="edit" >
-											<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
-											<s:param name="filename"> <s:property escape="false" value="#fileVar.name"/></s:param>
+											<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
+											<s:param name="filename"> <s:property escapeHtml="false" value="#fileVar.name"/></s:param>
 										</s:url>">
 											<span class="icon fa fa-pencil-square-o"></span>
 											<span class="sr-only">
@@ -74,8 +74,8 @@
 									class="btn btn-default"
 									title="Download: <s:property value="#fileVar.name"/>"
 									href="<s:url namespace="/do/FileBrowser" action="download" >
-										<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
-										<s:param name="filename"><s:property escape="false" value="#filenameVar"/></s:param>
+										<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
+										<s:param name="filename"><s:property escapeHtml="false" value="#filenameVar"/></s:param>
 										<s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
 									</s:url>">
 									<span class="icon fa fa-download"></span>
@@ -91,7 +91,7 @@
 								class="btn btn-warning"
 								title="Delete: <s:property value="#fileVar.name"/>"
 								href="<s:url namespace="/do/FileBrowser" action="trash" >
-									<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
+									<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
 									<s:param name="filename"><s:property value="#fileVar.name"/></s:param>
 									<s:param name="deleteFile" value="%{!#fileVar.directory}" />
 									<s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
@@ -109,7 +109,7 @@
 					<td class="text-nowrap">
 						<s:if test="#fileVar.directory">
 							<a class="display-block" href="<s:url namespace="/do/FileBrowser" action="list" >
-								   <s:param name="currentPath"><s:property escape="true" value="currentPath"/><s:property escape="true" value="#filenameVar"/></s:param>
+								   <s:param name="currentPath"><s:property escapeHtml="true" value="currentPath"/><s:property escapeHtml="true" value="#filenameVar"/></s:param>
 								   <s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
 							   </s:url>">
 								<span class="icon fa fa-folder"></span>
@@ -124,8 +124,8 @@
 									class="display-block"
 									title="Edit: <s:property value="#fileVar.name"/>"
 									href="<s:url namespace="/do/FileBrowser" action="edit" >
-										<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
-										<s:param name="filename"> <s:property escape="false" value="#filenameVar"/></s:param>
+										<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
+										<s:param name="filename"> <s:property escapeHtml="false" value="#filenameVar"/></s:param>
 										<s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
 									</s:url>">
 									<span class="icon fa fa-file-text"></span>
@@ -137,8 +137,8 @@
 									class="display-block"
 									title="Download: <s:property value="#fileVar.name"/>"
 									href="<s:url namespace="/do/FileBrowser" action="download" >
-										<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
-										<s:param name="filename"> <s:property escape="false" value="#filenameVar"/></s:param>
+										<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
+										<s:param name="filename"> <s:property escapeHtml="false" value="#filenameVar"/></s:param>
 										<s:param name="protectedFolder"><s:property value="#isProtectedFileVar"/></s:param>
 									</s:url>">
 									<span class="icon fa fa-file-archive"></span>
@@ -180,7 +180,7 @@
 			<a 
 				class="btn btn-default" 
 				href="<s:url namespace="/do/FileBrowser" action="uploadNewFileEntry" >
-					<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
+					<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
 					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 				<span class="icon fa fa-upload"></span>&#32;
@@ -189,7 +189,7 @@
 			<a 
 				class="btn btn-default" 
 				href="<s:url namespace="/do/FileBrowser" action="newFileEntry" >
-					<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
+					<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
 					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 				<span class="icon fa fa-file-text"></span>&#32;
@@ -198,7 +198,7 @@
 			<a 
 				class="btn btn-default" 
 				href="<s:url namespace="/do/FileBrowser" action="newDirEntry" >
-					<s:param name="currentPath"><s:property escape="true" value="%{#currentPath}"/></s:param>
+					<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
 					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 				<span class="icon fa fa-folder"></span>&#32;

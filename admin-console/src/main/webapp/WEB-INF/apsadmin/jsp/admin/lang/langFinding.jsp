@@ -17,7 +17,7 @@
 			<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
 			<ul class="margin-base-top">
 				<s:iterator value="actionErrors">
-					<li><s:property escape="false" /></li>
+					<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</ul>
 		</div>
@@ -27,7 +27,7 @@
 			<label for="langCode"><s:text name="name.chooseALanguage" /></label>
 			<div class="input-group">
 				<select name="langCode" id="langCode" class="form-control">
-					<s:iterator id="lang" value="assignableLangs">
+					<s:iterator var="lang" value="assignableLangs">
 					<option value="<s:property value="#lang.code"/>"><s:property value="#lang.code"/> &ndash; <s:property value="#lang.descr"/></option>
 					</s:iterator>
 				</select>
@@ -46,7 +46,7 @@
 			<th><s:text name="label.code" /></th>
 			<th><s:text name="label.description" /></th>
 		</tr>
-		<s:iterator id="lang" value="langs">
+		<s:iterator var="lang" value="langs">
 		<tr>
 			<td class="text-center">
 				<a

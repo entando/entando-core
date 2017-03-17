@@ -138,7 +138,7 @@ public class TreeNode implements ITreeNode, Serializable {
 		return this.getFullTitle(langCode, separator, true);
 	}
 	
-	private String getFullTitle(String langCode, String separator, boolean shortTitle) {
+	protected String getFullTitle(String langCode, String separator, boolean shortTitle) {
 		String title = this.getTitles().getProperty(langCode);
 		if (null == title) title = this.getCode();
 		if (this.isRoot()) return title;

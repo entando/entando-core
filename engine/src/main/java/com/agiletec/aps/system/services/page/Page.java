@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -414,11 +415,32 @@ public class Page extends TreeNode implements IPage {
 		this._allChildren = newChildren;
 	}
 	
+
+	@Override
+	protected String getFullTitle(String langCode, String separator, boolean shortTitle) {
+		String title = this.getDraftTitles().getProperty(langCode);
+		if (null == title) title = this.getCode();
+		if (this.isRoot()) return title;
+		ITreeNode parent = this.getParent();
+		while (parent != null && parent.getParent() != null) {
+			String parentTitle = "..";
+			if (!shortTitle) {
+				parentTitle = parent.getTitles().getProperty(langCode);
+				if (null == parentTitle) parentTitle = parent.getCode();
+			}
+			title = parentTitle + separator + title;
+			if (parent.isRoot()) return title;
+			parent = parent.getParent();
+		}
+		return title;
+	}
+	
 	@Override
 	public String toString() {
 		return "Page: " + this.getCode();
 	}
 
+	
 	/**
 	 * The code of the higher level page
 	 */

@@ -1323,3 +1323,7 @@ td{
 ul {
     list-style-type: none;
 }
+.search-label{
+    font-size: 16px;
+    text-transform: capitalize;
+}

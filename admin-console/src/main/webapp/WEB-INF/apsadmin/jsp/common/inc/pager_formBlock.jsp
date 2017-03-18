@@ -32,7 +32,7 @@
 	</li>
 
 	<s:subset source="#group.items" count="#group.endItemAnchor-#group.beginItemAnchor+1" start="#group.beginItemAnchor-1">
-		<s:iterator id="item">
+		<s:iterator var="item">
 			<li>
 				<wpsf:submit name="%{#pagerIdMarker + '_' + #item}" type="button" disabled="%{#item == #group.currItem}">
 					<s:property value="%{#item}" />

@@ -177,7 +177,7 @@
 	<td><s:property value="%{#singlePage.getFullTitle(currentLang.code)}" /></td>
 	<td>
 		<ul class="noBullet">
-	<s:iterator value="#singlePage.showlets" id="showlet" status="rowstatus">
+	<s:iterator value="#singlePage.showlets" var="showlet" status="rowstatus">
 		<s:if test="#showlet != null && #showlet.type != null && #showlet.type.code.equals(widgetTypeCode)">
 			<li>
 			<s:if test="null != #showlet.type.typeParameters && #showlet.type.typeParameters.size() > 0">

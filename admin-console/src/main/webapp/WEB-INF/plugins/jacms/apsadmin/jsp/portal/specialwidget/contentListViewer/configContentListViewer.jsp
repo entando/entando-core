@@ -225,7 +225,7 @@
 
 				<s:if test="null != filtersProperties && filtersProperties.size()>0" >
 					<ol class="list-group">
-					<s:iterator value="filtersProperties" id="filter" status="rowstatus">
+					<s:iterator value="filtersProperties" var="filter" status="rowstatus">
 					<%--
 						<s:property value="#rowstatus.index+1"/>
 					--%>

@@ -70,7 +70,7 @@
                     <span class="spacer-right-on-form" ><s:property value="userProfile.username" /></span>
                 </div>
             </div>
-            <s:set name="lang" value="defaultLang" />
+            <s:set var="lang" value="defaultLang" />
             <%-- attribute iterator --%>
             <s:iterator value="userProfile.attributeList" var="attribute">
                 <%-- tracer start --%>

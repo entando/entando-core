@@ -4,10 +4,10 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:if test="#currentRoot.isEmpty()">
-    <s:set name="treeItemIconNameVar" value="'fa-folder-o'" />
+    <s:set var="treeItemIconNameVar" value="'fa-folder-o'" />
 </s:if>
 <s:else>
-    <s:set name="treeItemIconNameVar" value="#treeItemIconName" />
+    <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
         <td class="treegrid-node pointer">

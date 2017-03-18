@@ -12,8 +12,8 @@
 
 <div id="main" role="main">
 
-<s:set name="listAttribute" value="listAttribute" />
-<s:set name="compositeAttribute" value="compositeAttributeOnEdit" />
+<s:set var="listAttribute" value="listAttribute" />
+<s:set var="compositeAttribute" value="compositeAttributeOnEdit" />
 
 <div class="alert alert-info">
 	<s:text name="note.workingOnAttribute" />:&#32;
@@ -28,7 +28,7 @@
 	</s:else>
 </div>
 
-<s:set name="attribute" value="getAttributePrototype(attributeTypeCode)" />
+<s:set var="attribute" value="getAttributePrototype(attributeTypeCode)" />
 
 <s:form action="saveAttributeElement">
 

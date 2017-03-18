@@ -3,10 +3,10 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:if test="%{#currentRoot.getChildren().length==0}">
-    <s:set name="treeItemIconNameVar" value="'fa-folder-o'" />
+    <s:set var="treeItemIconNameVar" value="'fa-folder-o'" />
 </s:if>
 <s:else>
-    <s:set name="treeItemIconNameVar" value="#treeItemIconName" />
+    <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
 <s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
@@ -25,7 +25,7 @@
 
 <s:if test="%{#currentRoot.getChildren().length>0}">
     <s:iterator value="#currentRoot.children" var="node">
-        <s:set name="currentRoot" value="#node" />
+        <s:set var="currentRoot" value="#node" />
         <s:include value="entryPage_treeBuilderPages.jsp" />
     </s:iterator>
 </s:if>

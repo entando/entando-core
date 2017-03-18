@@ -45,7 +45,7 @@
                 <s:param name="pageCode" value="pageCode" />
                 <s:param name="token" value="previewToken" />
             </s:url>
-            <a href="<s:property value="#previewURL" escapeHtml="false" escapeXml="false" escapeHtml="false" />" target="_blank">
+            <a href="<s:property value="#previewURL" escapeXml="false" escapeHtml="false" />" target="_blank">
                 <button class="btn btn-primary"><s:text name="pageActions.preview" /></button></a>
 
             <button class="btn btn-warning restore-online-btn"><s:text name="pageActions.restore" /></button>

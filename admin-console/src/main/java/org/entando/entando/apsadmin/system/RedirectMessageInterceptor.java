@@ -29,14 +29,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.dispatcher.ServletActionRedirectResult;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
 
-import com.agiletec.apsadmin.system.dispatcher.FrontServletActionRedirectResult;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.Result;
-import com.opensymphony.xwork2.ValidationAware;
 import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
+import com.opensymphony.xwork2.interceptor.ValidationAware;
+import org.apache.struts2.result.ServletActionRedirectResult;
+import org.apache.struts2.result.ServletRedirectResult;
+import org.entando.entando.aps.internalservlet.system.dispatcher.FrontServletActionRedirectResult;
 
 /**
  * @author  http://glindholm.wordpress.com/2008/07/02/preserving-messages-across-a-redirect-in-struts-2/
@@ -65,18 +65,15 @@ public class RedirectMessageInterceptor extends MethodFilterInterceptor
 	public static final String ACTION_ERRORS_KEY   = "RedirectMessageInterceptor_ActionErrors";
 	public static final String ACTION_MESSAGES_KEY = "RedirectMessageInterceptor_ActionMessages";
 
-	public RedirectMessageInterceptor() {
-
-	}
-
+	public RedirectMessageInterceptor() {}
+	
+	@Override
 	public String doIntercept(ActionInvocation invocation) throws Exception {
 		Object action = invocation.getAction();
 		if (action instanceof ValidationAware) {
-			before(invocation, (ValidationAware) action);
+			this.before(invocation, (ValidationAware) action);
 		}
-
 		String result = invocation.invoke();
-
 		if (action instanceof ValidationAware) {
 			after(invocation, (ValidationAware) action);
 		}
@@ -86,10 +83,12 @@ public class RedirectMessageInterceptor extends MethodFilterInterceptor
 	/**
 	 * Retrieve the errors and messages from the session and add them to the
 	 * action.
+	 * @param invocation
+	 * @param validationAware
+	 * @throws java.lang.Exception
 	 */
 	protected void before(ActionInvocation invocation, ValidationAware validationAware) throws Exception {
 		Map<String, ?> session = invocation.getInvocationContext().getSession();
-		
 		if (session!=null) {
 			Collection<String> actionErrors = (Collection) session.remove(ACTION_ERRORS_KEY);
 			if (actionErrors != null && actionErrors.size() > 0) {
@@ -97,14 +96,12 @@ public class RedirectMessageInterceptor extends MethodFilterInterceptor
 					validationAware.addActionError(error);
 				}
 			}
-			
 			Collection<String> actionMessages = (Collection) session.remove(ACTION_MESSAGES_KEY);
 			if (actionMessages != null && actionMessages.size() > 0) {
 				for (String message : actionMessages) {
 					validationAware.addActionMessage(message);
 				}
 			}
-			
 			Map<String, List<String>> fieldErrors = (Map) session.remove(FIELD_ERRORS_KEY);
 			if (fieldErrors != null && fieldErrors.size() > 0) {
 				for (Map.Entry<String, List<String>> fieldError : fieldErrors.entrySet()) {
@@ -118,6 +115,9 @@ public class RedirectMessageInterceptor extends MethodFilterInterceptor
 
 	/**
 	 * If the result is a redirect then store error and messages in the session.
+	 * @param invocation
+	 * @param validationAware
+	 * @throws java.lang.Exception
 	 */
 	protected void after(ActionInvocation invocation, ValidationAware validationAware) throws Exception {
 		Result result = invocation.getResult();

@@ -13,7 +13,7 @@
 <s:if test="!#publishedContents.empty">
 
 <wpsa:subset source="#publishedContents" count="10" objectName="publishedContentsGroup" advanced="true" offset="5" pagerId="publishedContents">
-<s:set name="group" value="#publishedContentsGroup" />
+<s:set var="group" value="#publishedContentsGroup" />
 <div class="text-center">
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />

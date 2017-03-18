@@ -83,7 +83,7 @@
                                     <s:else><code>&ndash;</code></s:else>
                                     </td>
                                     <td style="text-align: center;">
-                                    <s:set name="elementIndexVar" value="#elementStatus.index" />
+                                    <s:set var="elementIndexVar" value="#elementStatus.index" />
                                     <wpsa:actionParam action="removeAuthorization" var="actionName" >
                                         <wpsa:actionSubParam name="index" value="%{#elementIndexVar}" />
                                     </wpsa:actionParam>

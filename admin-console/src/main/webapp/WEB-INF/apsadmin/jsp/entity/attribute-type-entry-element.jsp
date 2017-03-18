@@ -42,8 +42,8 @@
 
 <div id="main" role="main">
 
-    <s:set name="listAttribute" value="listAttribute" />
-    <s:set name="attributeElement" value="attributeElement" />
+    <s:set var="listAttribute" value="listAttribute" />
+    <s:set var="attributeElement" value="attributeElement" />
 
     <div class="alert alert-info">
         <span class="pficon pficon-info"></span>

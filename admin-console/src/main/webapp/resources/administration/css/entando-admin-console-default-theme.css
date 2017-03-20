@@ -1331,3 +1331,17 @@ ul {
 .badge-list{
     width: 30px;
 }
+
+.table-w-10{
+    width: 10%;
+}
+
+.table-w-60{
+    width: 60%;
+}
+
+.table-txt-wrap{
+    white-space: normal !important;
+    word-wrap: break-word  !important;  
+    
+}

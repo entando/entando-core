@@ -1327,14 +1327,10 @@ ul {
     font-size: 16px;
     text-transform: capitalize;
 }
-
-.badge-list{
-    width: 30px;
-}
-
 .table-w-10{
     width: 10%;
 }
+
 
 .table-w-60{
     width: 60%;
@@ -1343,5 +1339,11 @@ ul {
 .table-txt-wrap{
     white-space: normal !important;
     word-wrap: break-word  !important;  
-    
+
+}
+.filter-list{
+    z-index: 99;
+    position: absolute;
+    right: 20px;
+    top: 30px;
 }

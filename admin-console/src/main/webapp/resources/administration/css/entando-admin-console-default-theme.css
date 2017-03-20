@@ -1327,3 +1327,7 @@ ul {
     font-size: 16px;
     text-transform: capitalize;
 }
+
+.badge-list{
+    width: 30px;
+}

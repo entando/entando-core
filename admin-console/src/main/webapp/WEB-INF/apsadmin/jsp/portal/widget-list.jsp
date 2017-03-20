@@ -50,7 +50,7 @@
     <div class="list-group list-view-pf">
         <div class="list-group-item table-header-custom">
             <div class="list-view-pf-checkbox">
-                <span class="badge bold" title="<s:text name="title.widgetManagement.howmanypages.long" />">N</span>&#32;
+                <span class="badge badge-list bold" title="<s:text name="title.widgetManagement.howmanypages.long" />">N</span>&#32;
             </div>
             <div class="list-view-pf-actions bold">
                 Actions
@@ -85,7 +85,7 @@
                     <!-- list item start-->
                     <div class="list-group-item">
                         <div class="list-view-pf-checkbox">
-                            <span class="badge" title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />"><s:property value="#showletUtilizers.size()" /></span>&#32;
+                            <span class="badge badge-list" title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />"><s:property value="#showletUtilizers.size()" /></span>&#32;
                     </div>
                     <div class="list-view-pf-actions">
                             <wp:ifauthorized permission="superuser">

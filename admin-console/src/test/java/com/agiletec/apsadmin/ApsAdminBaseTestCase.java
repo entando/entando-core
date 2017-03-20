@@ -51,6 +51,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.ContainerBuilder;
 import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
 
 /**
  * The base Class for all test of admin area.
@@ -146,8 +147,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 		// set to true if you want to process Freemarker or JSP results
 		this._proxy.setExecuteResult(false);
 		// by default, don't pass in any request parameters
-		//this._proxy.getInvocation().getInvocationContext().setParameters(new HashMap());
-
+		
 		// set the actions context to the one which the proxy is using
 		ServletActionContext.setContext(_proxy.getInvocation().getInvocationContext());
 		ServletActionContext.setRequest(_request);
@@ -162,7 +162,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 			this.removeParameter(paramName);
 		}
 	}
-
+	
     /**
      * Metodo da estendere in caso che si voglia impiantare un'altro struts-config.
      */
@@ -222,15 +222,15 @@ public class ApsAdminBaseTestCase extends TestCase {
 			this.addParameter(key, params.get(key).toString());
 		}
 	}
-
+	
 	protected void addParameter(String name, Object value) {
 		this._request.removeParameter(name);
 		if (null == value) return;
 		this._request.addParameter(name, value.toString());
-		Map parameters = this._proxy.getInvocation().getInvocationContext().getParameters();
-		parameters.put(name, value);
+		org.apache.struts2.dispatcher.Parameter parameter = new Parameter.Request(name, value);
+		this._parameters.put(name, parameter);
 	}
-
+	
 	protected void addAttribute(String name, Object value) {
 		this._request.removeAttribute(name);
 		if (null == value) return;
@@ -240,15 +240,17 @@ public class ApsAdminBaseTestCase extends TestCase {
 	private void removeParameter(String name) {
 		this._request.removeParameter(name);
 		this._request.removeAttribute(name);
-		Map parameters = this._proxy.getInvocation().getInvocationContext().getParameters();
-		parameters.remove(name);
+		this._parameters.remove(name);
 	}
-
+	
 	protected String executeAction() throws Throwable {
+		HttpParameters.Builder builder = HttpParameters.create(this._parameters);
+		HttpParameters httpParameters = builder.build();
+		this._proxy.getInvocation().getInvocationContext().setParameters(httpParameters);
 		String result = this._proxy.execute();
 		return result;
 	}
-
+	
 	protected Object getResponseStatusCode() {
 		return ((MockHttpServletResponse)this.getResponse()).getStatus();
 	}
@@ -284,5 +286,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 	private MockHttpServletRequest _request;
 	private MockHttpServletResponse _response;
 	private ActionSupport _action;
-
+	
+	private Map<String, Parameter> _parameters = new HashMap<String, Parameter>();
+	
 }

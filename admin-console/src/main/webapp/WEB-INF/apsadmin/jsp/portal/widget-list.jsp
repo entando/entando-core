@@ -88,9 +88,6 @@
                             <span class="badge" title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />"><s:property value="#showletUtilizers.size()" /></span>&#32;
                     </div>
                     <div class="list-view-pf-actions">
-                        <s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
-                            <a href="<s:url namespace="/do/Portal/WidgetType" action="viewWidgetUtilizers"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="title.widgetManagement.howmanypages.goToSee" />: <s:property value="#showletType.value" />" class="btn btn-default"><span class="icon fa fa-info"></span></a>
-                            </s:if>
                             <wp:ifauthorized permission="superuser">
                                 <s:if test="#concreteShowletTypeVar.isLogic()">
                                     <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.parentType.code]" />
@@ -102,9 +99,14 @@
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         <span class="fa fa-ellipsis-v"></span></button>
-                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
-                                        <s:if test="null != #relatedApiMethodVar">
-                                            <s:if test="#concreteShowletTypeVar.isLogic()">
+                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                                            <s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
+                                                <li>
+                                                    <a href="<s:url namespace="/do/Portal/WidgetType" action="viewWidgetUtilizers"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="title.widgetManagement.howmanypages.goToSee" />: <s:property value="#showletType.value" />" class="text-center"><span class="icon fa fa-info"></span>&#32;<s:text name="info" /></a>
+                                                </li>
+                                            </s:if>
+                                            <s:if test="null != #relatedApiMethodVar">
+                                                <s:if test="#concreteShowletTypeVar.isLogic()">
                                                 <s:url action="newService" namespace="/do/Api/Service" var="newServiceUrlVar">
                                                     <s:param name="resourceName" value="#relatedApiMethodVar.resourceName" />
                                                     <s:param name="namespace" value="#relatedApiMethodVar.namespace" />

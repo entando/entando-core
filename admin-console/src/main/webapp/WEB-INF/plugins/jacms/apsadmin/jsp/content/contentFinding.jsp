@@ -319,7 +319,7 @@
                 <s:text name="message.title.ActionErrors" />
                 <ul class="margin-base-top">
                     <s:iterator value="ActionErrors">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                     </s:iterator>
                 </ul>
             </div>
@@ -334,7 +334,7 @@
                 <s:text name="messages.confirm" />
                 <ul class="margin-base-top">
                     <s:iterator value="actionMessages">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                     </s:iterator>
                 </ul>
             </div>

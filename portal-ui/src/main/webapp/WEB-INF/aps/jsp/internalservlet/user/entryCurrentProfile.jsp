@@ -23,7 +23,7 @@
 
 			<s:set var="lang" value="defaultLang" />
 
-			<s:iterator value="userProfile.attributeList" id="attribute">
+			<s:iterator value="userProfile.attributeList" var="attribute">
 				<s:if test="%{#attribute.active}">
 					<wpsa:tracerFactory var="attributeTracer" lang="%{#lang.code}" />
 					<s:set var="i18n_attribute_name">userprofile_<s:property value="userProfile.typeCode" />_<s:property value="#attribute.name" /></s:set>

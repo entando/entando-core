@@ -4,7 +4,7 @@
 
 <p class="sr-only"><s:text name="note.youAreHere" /></p>
 
-<s:set value="%{getBreadCrumbsTargets(#breadcrumbs_pivotPageCode)}" name="breadCrumbsTargets" ></s:set>
+<s:set value="%{getBreadCrumbsTargets(#breadcrumbs_pivotPageCode)}" var="breadCrumbsTargets" ></s:set>
 <ol class="breadcrumb margin-base-vertical">
 <s:iterator value="#breadCrumbsTargets" id="target" status="rowstatus">
 	<li>

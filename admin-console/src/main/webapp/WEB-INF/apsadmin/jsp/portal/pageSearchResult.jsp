@@ -53,7 +53,7 @@
 			<s:iterator var="singlePage">
 
 				<s:set var="pageFullPath">
-					<s:set value="%{getBreadCrumbsTargets(#singlePage.code)}" name="breadCrumbsTargets" ></s:set>
+					<s:set value="%{getBreadCrumbsTargets(#singlePage.code)}" var="breadCrumbsTargets" ></s:set>
 					<s:iterator value="#breadCrumbsTargets" var="target" status="rowstatus">
 						<s:if test="%{#rowstatus.index != 0}"> | </s:if>
 						<s:property value="#target.titles[currentLang.code]" />

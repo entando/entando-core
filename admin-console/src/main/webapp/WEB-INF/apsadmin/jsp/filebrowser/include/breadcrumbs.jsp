@@ -1,5 +1,5 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<s:set value="breadCrumbsTargets" name="breadCrumbsTargetsVar" />
+<s:set value="breadCrumbsTargets" var="breadCrumbsTargetsVar" />
 <p class="sr-only">You are here:</p>
 <ol class="breadcrumb margin-none">
 	<s:if test="null != #breadCrumbsTargetsVar">

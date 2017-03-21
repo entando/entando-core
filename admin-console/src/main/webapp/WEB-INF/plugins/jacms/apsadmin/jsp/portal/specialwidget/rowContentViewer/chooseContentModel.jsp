@@ -60,14 +60,14 @@
 			<ul class="margin-base-vertical">
 			<s:iterator value="fieldErrors">
 				<s:iterator value="value">
-				<li><s:property escape="false" /></li>
+				<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</s:iterator>
 			</ul>
 		</div>
 		</s:if>
 		
-		<s:set name="contentVoVar" value="%{getContentVo(contentId)}"></s:set>
+		<s:set var="contentVoVar" value="%{getContentVo(contentId)}"></s:set>
 		
 		<fieldset class="margin-large-top"><legend><s:text name="label.info" /></legend>
 			<div class="form-group">

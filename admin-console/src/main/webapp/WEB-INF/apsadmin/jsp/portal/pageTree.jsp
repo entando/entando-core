@@ -19,7 +19,7 @@
             <s:text name="message.title.ActionErrors" />
             <ul>
                 <s:iterator value="actionErrors">
-                    <li><s:property escape="false" /></li>
+                    <li><s:property escapeHtml="false" /></li>
                     </s:iterator>
             </ul>
         </div>
@@ -29,14 +29,12 @@
 
         <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
 
-        <hr />
-        <s:form cssClass="action-form">
-            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-primary pull-right " data-toggle="tooltip">
-                Add page
+        <s:form cssClass="form-horizontal">
+            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-primary  " data-toggle="tooltip">
+                <s:text name="label.add" />
             </wpsf:submit>
-            <br/>
-            <br/>
-
+            <br>
+            <br>
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
                 <div class="table-responsive overflow-visible">
@@ -53,10 +51,10 @@
                                     </button>
                                 </s:if>
                             </th>
-                            <th class="text-center" style="width: 8%;">Add&#32;&vert;&#32;Move</th>
-                            <th class="text-center" style="width: 8%;">Status</th>
-                            <th class="text-center" style="width: 8%;">Menu List</th>
-                            <th class="text-center" style="width: 5%;">Actions</th>
+                            <th class="text-center" style="width: 8%;"><s:text name="label.add|move" /></th>
+                            <th class="text-center" style="width: 8%;"><s:text name="label.state" /></th>
+                            <th class="text-center" style="width: 8%;"><s:text name="label.pageInMenu" /></th>
+                            <th class="text-center" style="width: 5%;"><s:text name="label.actions" /></th>
                         </tr>
                     </thead>
                     <tbody>

@@ -36,7 +36,6 @@
     <div class="form-group-separator"> <s:text name="note.entityTypes.editType.intro.2" /></div>
 </div>
 
-
 <div id="main" role="main">
 
     <s:if test="hasFieldErrors()">
@@ -49,7 +48,7 @@
             <ul>
                 <s:iterator value="fieldErrors">
                     <s:iterator value="value">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                         </s:iterator>
                     </s:iterator>
             </ul>
@@ -93,7 +92,7 @@
                 </s:else>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label"><s:text name="label.description" />
+                <label class="col-sm-2 control-label"><s:text name="label.name" />
                     <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="to be inserted   " data-original-title="">
                         <span class="fa fa-info-circle"></span></a>
                 </label>

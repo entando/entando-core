@@ -43,7 +43,7 @@
         <ul>
             <s:iterator value="fieldErrors">
                 <s:iterator value="value">
-                    <li><s:property escape="false" /></li>
+                    <li><s:property escapeHtml="false" /></li>
                     </s:iterator>
                 </s:iterator>
         </ul>
@@ -70,10 +70,10 @@
     </s:if>
 
     <s:if test="strutsAction == 1">
-        <s:set name="attribute" value="getAttributePrototype(attributeTypeCode)" />
+        <s:set var="attribute" value="getAttributePrototype(attributeTypeCode)" />
     </s:if>
     <s:else>
-        <s:set name="attribute" value="entityType.getAttribute(attributeName)" />
+        <s:set var="attribute" value="entityType.getAttribute(attributeName)" />
     </s:else>
 
     <fieldset class="col-xs-12">

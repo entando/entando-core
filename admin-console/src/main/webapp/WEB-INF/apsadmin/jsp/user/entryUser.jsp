@@ -45,7 +45,7 @@
             <s:text name="message.title.ActionErrors" />
             <ul class="margin-base-top">
                 <s:iterator value="actionErrors">
-                    <li><s:property escape="false" /></li>
+                    <li><s:property escapeHtml="false" /></li>
                     </s:iterator>
             </ul>
         </div>

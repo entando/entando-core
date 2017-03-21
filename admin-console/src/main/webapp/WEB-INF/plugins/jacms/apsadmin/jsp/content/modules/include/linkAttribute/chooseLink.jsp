@@ -14,7 +14,7 @@
 			<ul class="margin-none margin-base-top">
 				<s:iterator value="fieldErrors">
 					<s:iterator value="value">
-						<li><s:property escape="false" /></li>
+						<li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</s:iterator>
 			</ul>
@@ -29,15 +29,15 @@
 						<s:if test="#typeId < 4">
 							<s:if test="#typeId == 1">
 								<s:set var="statusIconVar">icon fa fa-globe</s:set>
-								<s:set name="linkDestination" value="%{getText('note.URLLinkTo')}" />
+								<s:set var="linkDestination" value="%{getText('note.URLLinkTo')}" />
 							</s:if>
 							<s:elseif test="#typeId == 2">
 								<s:set var="statusIconVar">icon fa fa-folder</s:set>
-								<s:set name="linkDestination" value="%{getText('note.pageLinkTo')}" />
+								<s:set var="linkDestination" value="%{getText('note.pageLinkTo')}" />
 							</s:elseif>
 							<s:elseif test="#typeId == 3">
 								<s:set var="statusIconVar">icon fa fa-file-text-o</s:set>
-								<s:set name="linkDestination" value="%{getText('note.contentLinkTo')}" />
+								<s:set var="linkDestination" value="%{getText('note.contentLinkTo')}" />
 							</s:elseif>
 							<label class="btn btn-default <s:if test="#typeId == symbolicLink.destType || (symbolicLink.destType == 4 && #typeId == 3)"> active </s:if>" for="linkType_<s:property value="#typeId"/>">
 								<input

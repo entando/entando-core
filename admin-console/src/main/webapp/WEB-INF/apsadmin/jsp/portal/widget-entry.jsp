@@ -2,6 +2,7 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.widgetManagement" />">
@@ -24,14 +25,18 @@
 </ol>
     
 <h1 class="page-title-container">
+    <s:if test="strutsAction == 1">
+            <span class="page-title-big"><s:text name="title.newWidgetType" /></span>
+    </s:if>
+    <s:else>
     <span class="page-title-big"><s:text name="title.widgetManagement.edit" /></span>
+    </s:else>       
+    <span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="help block  <a href='#'>help widget edit</a>." data-placement="top" data-original-title="Section Help"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
 </h1>
+<hr/>
 
 <div id="main" role="main">
     <p>
-        <s:if test="strutsAction == 1">
-            <s:text name="title.newWidgetType" />
-        </s:if>
         <s:elseif test="strutsAction != 2">
             <s:text name="title.newWidgetType.from" />:&#32;
             <s:if test="strutsAction == 5">
@@ -54,7 +59,7 @@
                 <p><s:text name="message.title.ActionErrors" /></p>
                 <ul>
                     <s:iterator value="actionErrors">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                         </s:iterator>
                 </ul>
             </div>
@@ -74,7 +79,7 @@
                 <ul class="unstyled collapse margin-small-top" id="content-error-messages">
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
-                            <li><%-- <s:property value="key" />&emsp;|--%><s:property escape="false" /></li>
+                            <li><%-- <s:property value="key" />&emsp;|--%><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                 </ul>
@@ -95,7 +100,10 @@
             </s:elseif>
         </p>
         
-        <fieldset class="col-xs-12 no-padding"><legend><s:text name="label.info" /></legend>
+        <fieldset class="col-xs-12 no-padding">
+             <legend><s:text name="label.info" />
+                <div class="required-fields text-right"><s:text name="label.requiredFields" /></div>
+            </legend>
                 <s:set var="controlGroupErrorClassVar" value="''" />
                 <s:if test="#pageCodeHasFieldErrorVar">
                     <s:set var="controlGroupErrorClassVar" value="' has-error'" />
@@ -104,7 +112,7 @@
                 <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                     <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['showletTypeCode']}" />
                     <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
-                    <label for="showletTypeCode" class="col-sm-2 control-label"><s:text name="label.code" /></label>
+                    <label for="showletTypeCode" class="col-sm-2 control-label"><s:text name="label.code" />&#32;<i class="fa fa-asterisk required-icon"></i></label>
                     <div class="col-sm-10">
                         <wpsf:textfield id="showletTypeCode" name="showletTypeCode" cssClass="form-control" />
                         <s:if test="#pageCodeHasFieldErrorVar">
@@ -117,7 +125,7 @@
             <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                 <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['englishTitle']}" />
                 <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
-                <label for="englishTitle" class="col-sm-2 control-label"><code class="label label-info">en</code>&#32;<s:text name="label.title" /></label>
+                <label for="englishTitle" class="col-sm-2 control-label"><code class="label label-info">en</code>&#32;<s:text name="label.title" />&#32;<i class="fa fa-asterisk required-icon"></i></label>
                 <div class="col-sm-10">
                     <wpsf:textfield id="englishTitle" name="englishTitle" cssClass="form-control" />
                     <s:if test="#pageCodeHasFieldErrorVar">
@@ -129,7 +137,7 @@
             <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                 <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['italianTitle']}" />
                 <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
-                <label for="italianTitle" class="col-sm-2 control-label"><code class="label label-info">it</code>&#32;<s:text name="label.title" /></label>
+                <label for="italianTitle" class="col-sm-2 control-label"><code class="label label-info">it</code>&#32;<s:text name="label.title" />&#32;<i class="fa fa-asterisk required-icon"></i></label>
                 <div class="col-sm-10">
                     <wpsf:textfield id="italianTitle" name="italianTitle" cssClass="form-control" />
                     <s:if test="#pageCodeHasFieldErrorVar">
@@ -162,19 +170,19 @@
         </fieldset>
         
         <s:if test="strutsAction != 1 && (strutsAction != 2 || #widgetTypeVar.logic)">
-            <fieldset class="col-xs-12 col-md-12 no-padding"><legend><s:text name="title.widgetType.settings" /></legend>
+            <fieldset class="col-xs-12 col-md-12 no-padding">
+                <legend><s:text name="title.widgetType.settings" /></legend>
                     <s:if test="strutsAction == 5">
                         <s:set var="parentWidgetTypeVar" value="%{getWidgetType(parentShowletTypeCode)}" />
                         <s:iterator value="#parentWidgetTypeVar.typeParameters" var="widgetParamVar" >
                         <div class="form-group">
-                            <label for="<s:property value="#widgetParamVar.name" />" class="col-sm-2 control-label"><s:property value="#widgetParamVar.name" /></label>
+                            <label for="<s:property value="#widgetParamVar.name" />" class="col-sm-2 control-label"><s:property value="#widgetParamVar.name" />
+                             <s:if test="#widgetParamVar.descr != ''">
+                                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:property value='#widgetParamVar.descr' />" data-placement="top" data-original-title="Help Info"><span class="fa fa-info-circle"></span></a>
+                            </s:if>
+                            </label>
                             <div class="col-sm-10">
                                 <wpsf:textfield id="%{#widgetParamVar.name}" name="%{#widgetParamVar.name}" value="%{#request.parameters[#widgetParamVar.name]}" cssClass="form-control" />
-                                <s:if test="#widgetParamVar.descr != ''">
-                                    <span class="help-block"><span class="icon fa fa-info-circle"></span>&#32;
-                                        <s:property value="#widgetParamVar.descr" />
-                                    </span>
-                                </s:if>
                             </div>
                         </div>
                     </s:iterator>
@@ -182,7 +190,11 @@
                 <s:elseif test="strutsAction == 2">
                     <s:iterator value="#widgetTypeVar.parentType.typeParameters" var="widgetParamVar" >
                         <div class="form-group">
-                            <label for="<s:property value="#widgetParamVar.name" />" class="col-sm-2 control-label"><s:property value="#widgetParamVar.name" /></label>
+                            <label for="<s:property value="#widgetParamVar.name" />" class="col-sm-2 control-label"><s:property value="#widgetParamVar.name" />
+                             <s:if test="#widgetParamVar.descr != ''">
+                                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:property value='#widgetParamVar.descr' />" data-placement="top" data-original-title="Help Info"><span class="fa fa-info-circle"></span></a>
+                            </s:if>
+                            </label>
                             <div class="col-sm-10">
                                 <s:if test="#isSuperuserVar && #widgetTypeVar.userType">
                                     <wpsf:textfield id="%{#widgetParamVar.name}" name="%{#widgetParamVar.name}" value="%{#widgetTypeVar.config[#widgetParamVar.name]}" cssClass="form-control" />
@@ -191,9 +203,6 @@
                                     <span class="text-important"><s:property value="#widgetParamVar.name" /></span>&#32;
                                     <s:property value="%{#widgetTypeVar.config[#widgetParamVar.name]}" />
                                 </s:else>
-                                <s:if test="#widgetParamVar.descr != ''">
-                                    <span class="help-block"><span class="icon fa fa-info-circle"></span>&#32;<s:property value="#widgetParamVar.descr" /></span>
-                                </s:if>
                             </div>
                         </div>
                     </s:iterator>

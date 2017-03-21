@@ -19,16 +19,13 @@
                 <h2 class="h4 margin-none"><s:text name="messages.confirm" /></h2>
                 <ul class="margin-base-top">
                     <s:iterator value="actionMessages">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                         </s:iterator>
                 </ul>
             </div>
         </s:if>
-
-
-
+		
         <fieldset class="col-xs-12 settings-form">
-
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-2">
@@ -39,7 +36,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-2 col-label">
@@ -47,12 +43,11 @@
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
                     <div class="col-xs-10">
-                        <s:set name="paramName" value="'homePageCode'" />
+                        <s:set var="paramName" value="'homePageCode'" />
                         <s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
                     </div>
                 </div>
             </div>
-
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-2 col-label">
@@ -60,12 +55,11 @@
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
                     <div class="col-xs-10">
-                        <s:set name="paramName" value="'notFoundPageCode'" />
+                        <s:set var="paramName" value="'notFoundPageCode'" />
                         <s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
                     </div>
                 </div>
             </div>
-
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-2 col-label">
@@ -73,7 +67,7 @@
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
                     <div class="col-xs-10">
-                        <s:set name="paramName" value="'errorPageCode'" />
+                        <s:set var="paramName" value="'errorPageCode'" />
                         <s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
                     </div>
                 </div>
@@ -86,14 +80,14 @@
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
                     <div class="col-xs-10">
-                        <s:set name="paramName" value="'loginPageCode'" />
+                        <s:set var="paramName" value="'loginPageCode'" />
                         <s:include value="/WEB-INF/apsadmin/jsp/admin/selectPageParamBlock.jsp" />
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
-                    <s:set name="paramName" value="'baseUrl'" />
+                    <s:set var="paramName" value="'baseUrl'" />
                     <div class="col-xs-2 col-label">
                         <span class="display-block"><s:text name="sysconfig.baseURL" /></span>
                     </div>
@@ -122,7 +116,7 @@
                         <span class="display-block"><s:text name="sysconfig.baseURL.contextName" /></span>
                     </div>
                     <div class="col-xs-2">
-                        <s:set name="paramName" value="'baseUrlContext'" />
+                        <s:set var="paramName" value="'baseUrlContext'" />
                         <input type="hidden" 
                                value="<s:property value="systemParams[#paramName]" />"
                                id="<s:property value="#paramName"/>" 
@@ -139,7 +133,7 @@
                             <span class="display-block"><s:text name="sysconfig.useJsessionId" /></span>
                     </div>
                     <div class="col-xs-2">
-                        <s:set name="paramName" value="'useJsessionId'" />
+                        <s:set var="paramName" value="'useJsessionId'" />
                         <input type="hidden" 
                                value="<s:property value="systemParams[#paramName]" />"
                                id="<s:property value="#paramName"/>" 
@@ -160,7 +154,7 @@
                             <span class="display-block"><s:text name="sysconfig.lang.browser" /></span>
                     </div>
                     <div class="col-xs-2">
-                        <s:set name="paramName" value="'startLangFromBrowser'" />
+                        <s:set var="paramName" value="'startLangFromBrowser'" />
                         <input type="hidden" 
                                value="<s:property value="systemParams[#paramName]" />"
                                id="<s:property value="#paramName"/>" 
@@ -177,7 +171,7 @@
 
                 <div class="form-group">
                     <div class="row">
-                    <s:set name="paramName" value="'urlStyle'" />
+                    <s:set var="paramName" value="'urlStyle'" />
                     <div class="col-xs-2 col-label">
                         <span class="display-block"><s:text name="sysconfig.URLstyle" /></span>
                     </div>
@@ -198,7 +192,7 @@
 
             <div class="form-group">
                 <div class="row">
-                    <s:set name="paramName" value="'treeStyle_page'" />
+                    <s:set var="paramName" value="'treeStyle_page'" />
                     <div class="col-xs-2 col-label">
                         <span class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></span>
                     </div>

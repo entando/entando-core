@@ -5,8 +5,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
-
-
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
     <li><a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageTree" />"><s:text name="title.pageTree" /></a></li>
@@ -35,6 +33,12 @@
             </s:elseif>
 </h1>
 
+
+<div class="text-right">
+    <div class="form-group-separator"></div>               
+</div>
+<br>
+
 <div id="main" role="main">
     <s:if test="hasErrors()">
         <div class="alert alert-danger alert-dismissable">
@@ -46,13 +50,13 @@
             <ul>
                 <s:if test="hasActionErrors()">
                     <s:iterator value="actionErrors">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                         </s:iterator>
                     </s:if>
                     <s:if test="hasFieldErrors()">
                         <s:iterator value="fieldErrors">
                             <s:iterator value="value">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                     </s:if>
@@ -74,7 +78,7 @@
                 <wpsf:hidden name="pageCode" />
                 <wpsf:hidden name="group" />
             </s:if>
-            <s:iterator value="extraGroups" id="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
+            <s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
             <s:if test="strutsAction == 3">
                 <wpsf:hidden name="group" />
                 <wpsf:hidden name="model" />
@@ -92,7 +96,7 @@
                 <span class="section-divider">1</span> <span class="control-label label-group-name"><s:text name="label.info" /></span>
             </div>
             <div class="col-sm-10 text-right">
-                <div class="form-group-separator">* <s:text name="label.requiredFields" /></div>               
+                <div class="form-group-separator"><s:text name="label.requiredFields" /></div>               
             </div>
         </div>
 
@@ -211,7 +215,7 @@
                     <span class="section-divider">2</span><span class="control-label label-group-name"><s:text name="label.groups" /></span>
                 </div>
                 <div class="col-sm-10 text-right">
-                    <div class="form-group-separator">* <s:text name="label.requiredFields" /></div>
+                    <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
                 </div>
             </div>
 
@@ -259,7 +263,7 @@
                     </div>
                     <br/>
                     <s:if test="extraGroups.size() != 0">
-                        <s:iterator value="extraGroups" id="groupName">
+                        <s:iterator value="extraGroups" var="groupName">
                             <wpsa:actionParam action="removeExtraGroup" var="actionName" >
                                 <wpsa:actionSubParam name="extraGroupName" value="%{#groupName}" />
                             </wpsa:actionParam>
@@ -286,7 +290,7 @@
                     <span class="section-divider">3</span> <span class="control-label label-group-name"><s:text name="label.settings" /></span>
                 </div>
                 <div class="col-sm-10 text-right">
-                    <div class="form-group-separator">* <s:text name="label.requiredFields" /></div>
+                    <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
                 </div>
             </div>
 
@@ -346,45 +350,47 @@
             </div>
 
 
-            <%-- charset --%>
-            <s:set var="fieldErrorsVar" value="%{fieldErrors['charset']}" />
-            <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
-            <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
-
-            <div class="form-group<s:property value="#controlGroupErrorClass" />">
-                <label class="col-sm-2 control-label" for="ownerGroup">
-                    <s:text name="name.charset" />
-                    <i class="fa fa-asterisk required-icon"></i>
-                </label>
-                <div class="col-sm-10">
-                    <wpsf:select name="charset" id="charset"
-                                 headerKey="" headerValue="%{getText('label.default')}" list="allowedCharsets" cssClass="form-control" />
-                    <s:if test="#hasFieldErrorVar">
-                        <span class="help-block text-danger">
-                            <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                            </span>
-                    </s:if>
+            <div class="col-sm-6" id="form-custom-select">
+                <%-- charset --%>
+                <s:set var="fieldErrorsVar" value="%{fieldErrors['charset']}" />
+                <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+                <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+                <div class=" form-group<s:property value="#controlGroupErrorClass" />">
+                    <label class="col-sm-4 control-label" for="ownerGroup" style="margin-left: -15px">
+                        <s:text name="name.charset" />
+                        <i class="fa fa-asterisk required-icon"></i>
+                    </label>
+                    <div class="col-sm-6 foti_class">
+                        <wpsf:select name="charset" id="charset" size="3" style="overflow:hidden"
+                                     headerKey="" headerValue="%{getText('label.default')}" list="allowedCharsets" cssClass="form-control" />
+                        <s:if test="#hasFieldErrorVar">
+                            <span class="help-block text-danger">
+                                <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
+                                </span>
+                        </s:if>
+                    </div>
                 </div>
             </div>
+            <div class="col-sm-6" id="form-custom-select2">
+                <%-- mimeType --%>
+                <s:set var="fieldErrorsVar" value="%{fieldErrors['mimeType']}" />
+                <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+                <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 
-            <%-- mimeType --%>
-            <s:set var="fieldErrorsVar" value="%{fieldErrors['mimeType']}" />
-            <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
-            <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
-
-            <div class="form-group<s:property value="#controlGroupErrorClass" />">
-                <label class="col-sm-2 control-label" for="ownerGroup">
-                    <s:text name="name.mimeType" />
-                    <i class="fa fa-asterisk required-icon"></i>
-                </label>
-                <div class="col-sm-10">
-                    <wpsf:select name="mimeType" id="mimeType"
-                                 headerKey="" headerValue="%{getText('label.default')}" list="allowedMimeTypes" cssClass="form-control" />
-                    <s:if test="#hasFieldErrorVar">
-                        <span class="help-block text-danger">
-                            <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                            </span>
-                    </s:if>
+                <div class="form-group<s:property value="#controlGroupErrorClass" />">
+                    <label class="col-sm-4 control-label" for="ownerGroup">
+                        <s:text name="name.mimeType" />
+                        <i class="fa fa-asterisk required-icon"></i>
+                    </label>
+                    <div class="col-sm-6 foti_class"  style="margin-left: 6px">
+                        <wpsf:select name="mimeType" id="mimeType" size="5" style="overflow:hidden"
+                                     headerKey="" headerValue="%{getText('label.default')}" list="allowedMimeTypes" cssClass="form-control" />
+                        <s:if test="#hasFieldErrorVar">
+                            <span class="help-block text-danger">
+                                <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
+                                </span>
+                        </s:if>
+                    </div>
                 </div>
             </div>
         </s:if>
@@ -404,8 +410,6 @@
                 </div>
             </div>
         </div>
-
-
     </s:form>
-
 </div>
+

@@ -2,12 +2,12 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <s:set var="parentListAttribute" value="#masterListAttribute" />
-<s:set name="masterCompositeAttributeTracer" value="#attributeTracer" />
-<s:set name="masterCompositeAttribute" value="#attribute" />
+<s:set var="masterCompositeAttributeTracer" value="#attributeTracer" />
+<s:set var="masterCompositeAttribute" value="#attribute" />
 <ul class="list-group">
 	<s:iterator value="#attribute.attributes" var="attribute">
-		<s:set name="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></s:set>
-		<s:set name="parentAttribute" value="#masterCompositeAttribute"></s:set>
+		<s:set var="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></s:set>
+		<s:set var="parentAttribute" value="#masterCompositeAttribute"></s:set>
 		<s:property value="%{#attributeTracer.setLang(null)}" />
 
 		<s:set var="CompositeAttributeNestedErrorKeyVar" value="%{(#parentListAttribute!=null ? #parentListAttribute.type+':' : '')+(#masterCompositeAttribute.type)+':'+(#attribute.type)+':'+(#masterCompositeAttribute.name)+'_'+(#attribute.name)+(#parentListAttribute!=null ? '_'+#elementStatus.index.toString() : '')}" />

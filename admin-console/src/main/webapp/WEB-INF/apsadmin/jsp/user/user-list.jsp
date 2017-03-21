@@ -9,11 +9,19 @@
     <li class="page-title-container"><s:text name="title.userManagement" /></li>
 </ol>
 
+<h1 class="page-title-container"><s:text name="title.userManagement" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+</h1>
 
-<h1 class="page-title-container"><s:text name="title.userManagement" /></h1>
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
 
-
-<s:form action="search"  role="search" >
+<s:form action="search"  role="search" cssClass="form-horizontal" >
     <s:if test="hasActionErrors()">
         <div class="alert alert-danger alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
@@ -23,7 +31,7 @@
             <s:text name="message.title.ActionErrors" />
             <ul>
                 <s:iterator value="actionErrors">
-                    <li><s:property escape="false" /></li>
+                    <li><s:property escapeHtml="false" /></li>
                     </s:iterator>
             </ul>
         </div>
@@ -38,268 +46,272 @@
             <ul>
                 <s:iterator value="fieldErrors">
                     <s:iterator value="value">
-                        <li><s:property escape="false" /></li>
+                        <li><s:property escapeHtml="false" /></li>
                         </s:iterator>
                     </s:iterator>
             </ul>
         </div>
     </s:if>
 
-    <div class="input-group col-md-offset-3 col-md-6">
-        <div class="input-group">
-            <wpsf:textfield  name="username" id="search-username" cssClass="form-control " title="%{getText('label.search.by')+' '+getText('label.username')}" placeholder="%{getText('label.username')}" />
-            <div class="input-group-btn">
-                <wpsf:submit type="button" cssClass="btn btn-default " title="%{getText('label.search')}">
-                    <span class="sr-only"><s:text name="label.search" /></span>
-                    <span class="icon fa fa-search" title="<s:text name="label.search" />"></span>
-                </wpsf:submit>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="collapse" data-target="#search-advanced" title="<s:text name="title.searchFilters" />">
-                    <span class="sr-only"><s:text name="title.searchFilters" /></span>
-                    <span class="caret"></span>
-                </button>
 
+    <div class="form-group ">
+        <div class="well col-md-offset-3 col-md-6  ">
+            <p class="search-label"><s:text name="label.search.label"/></p>
+
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label"><s:text name="label.username"/></label>
+                <div class="col-sm-9">
+                    <wpsf:textfield  name="username" id="search-username" cssClass="form-control " title="%{getText('label.search.by')+' '+getText('label.username')}" placeholder="%{getText('label.username')}" />
+                </div>
             </div>
-        </div>
-    </div>
-
-
-    <div class="input-group col-md-offset-3 col-md-6">
-        <div id="search-advanced" class="collapse well collapse-input-group well-auto-height">
-
             <s:set var="searchableAttributesVar" value="searchableAttributes" />
             <s:set var="searchableAttributesPageScope" value="%{#searchableAttributesVar}" scope="page" />
-
-
             <!--users section-->
             <div class="form-group">
                 <label class="control-label col-sm-2">
                     <s:text name="label.users" />
                 </label>
-
                 <!--button role-->
-                <div class="btn-group col-sm-10 spacer-form" data-toggle="buttons">
-                    <label class="btn btn-default <s:if test="%{withProfile==null}"> active </s:if>">
-                        <wpsf:radio id="" name="withProfile" value="" checked="%{withProfile==null}" />
-                        &#32;<s:text name="label.userprofile.search.usersAllProfile" />
-                    </label>
-                    <label class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('1')}"> active </s:if>">
-                        <wpsf:radio id="" name="withProfile" value="1" checked="%{withProfile.toString().equalsIgnoreCase('1')}" />
-                        &#32;<s:text name="label.userprofile.search.usersWithProfile" />
-                    </label>
-                    <label class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('0')}"> active </s:if>">
-                        <wpsf:radio id="" name="withProfile" value="0" checked="%{withProfile.toString().equalsIgnoreCase('0')}"  />
-                        &#32;<s:text name="label.userprofile.search.usersWithoutProfile" />
-                    </label>
-                </div>
-            </div>
-            <br>
-            <!--users section end-->
-            <div class="form-group">
-                <label for="userprofile_src_entityPrototypes" class="control-label col-sm-2">
-                    <s:text name="note.userprofile.search.profileType" />
-                </label>
-
-                <div class="col-sm-10 input-group">
-                    <wpsf:select id="userprofile_src_entityPrototypes" list="entityPrototypes" name="entityTypeCode" headerKey="" headerValue="%{getText('label.all')}" listKey="typeCode" listValue="typeDescr" cssClass="form-control" />
-                    <div class="input-group-btn">
-                        <wpsf:submit type="button" cssClass="btn btn-default" action="changeProfileType" value="set">
-                            <s:text name="label.set" />
-                        </wpsf:submit>
+                <div class="col-sm-10">
+                    <div class="btn-group col-sm-10 spacer-form" data-toggle="buttons">
+                        <label class="btn btn-default <s:if test="%{withProfile==null}"> active </s:if>">
+                            <wpsf:radio id="" name="withProfile" value="" checked="%{withProfile==null}" />
+                            &#32;<s:text name="label.userprofile.search.usersAllProfile" />
+                        </label>
+                        <label class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('1')}"> active </s:if>">
+                            <wpsf:radio id="" name="withProfile" value="1" checked="%{withProfile.toString().equalsIgnoreCase('1')}" />
+                            &#32;<s:text name="label.userprofile.search.usersWithProfile" />
+                        </label>
+                        <label class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('0')}"> active </s:if>">
+                            <wpsf:radio id="" name="withProfile" value="0" checked="%{withProfile.toString().equalsIgnoreCase('0')}"  />
+                            &#32;<s:text name="label.userprofile.search.usersWithoutProfile" />
+                        </label>
                     </div>
                 </div>
             </div>
 
-            <c:if test="${empty searchableAttributesPageScope}">
-                <div class="form-group">
-                    <div class="text-center">
-                        <span class="text-info">
-                            <s:text name="note.userprofile.searchAdvanced.chooseType" />
-                        </span>
+            <!-------------Advanced Search----------->
+
+            <div class="panel-group" id="accordion-markup" style="margin:-24px 0 0 0;" >
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="padding:0 0 10px;">
+                        <p class="panel-title" style="text-align: end">
+                            <a  data-toggle="collapse" data-parent="#accordion-markup" href="#collapseOne">
+                                Advanced search
+                            </a>
+                        </p>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <c:if test="${empty searchableAttributesPageScope}">
+                                <div class="form-group">
+                                    <div class="text-center">
+                                        <span class="text-info">
+                                            <s:text name="note.userprofile.searchAdvanced.chooseType" />
+                                        </span>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <!--users section end-->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="userprofile_src_entityPrototypes" >
+                                    <s:text name="note.userprofile.search.profileType" />
+                                </label>
+
+                                <div class="col-sm-8 input-group" style="padding:0 20px 0 20px">
+                                    <wpsf:select id="userprofile_src_entityPrototypes" list="entityPrototypes" name="entityTypeCode" headerKey="" headerValue="%{getText('label.all')}" listKey="typeCode" listValue="typeDescr" cssClass="form-control" />
+                                    <div class="input-group-btn">
+                                        <wpsf:submit type="button" cssClass="btn btn-default" action="changeProfileType" value="set">
+                                            <s:text name="label.set" />
+                                        </wpsf:submit>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <s:if test="null != #searchableAttributesVar && #searchableAttributesVar.size() > 0">
+                                <s:iterator value="#searchableAttributesVar" var="attribute">
+                                    <%-- Text Attribute --%>
+                                    <s:if test="#attribute.textAttribute">
+                                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
+                                        <s:set var="textInputFieldName" value="%{#attribute.name+'_textFieldName'}" />
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3" style="text-align:end" for="<s:property value="#currentAttributeHtmlId" />"><s:property value="#attribute.name" /></label>
+                                            <div class="col-sm-8">
+                                                <wpsf:textfield id="%{#currentAttributeHtmlId}" ame="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" cssClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </s:if>
+                                    <%-- Date Attribute --%>
+                                    <s:elseif test="#attribute.type == 'Date'">
+                                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
+                                        <s:set var="dateStartInputFieldName" value="%{#attribute.name+'_dateStartFieldName'}" />
+                                        <s:set var="dateEndInputFieldName" value="%{#attribute.name+'_dateEndFieldName'}" />
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3" style="text-align:end"><s:property value="#attribute.name" /></label>
+                                            <div class="col-sm-8">
+                                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_dateStartFieldName_cal'}" />">
+                                                    <s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.from.date" />
+                                                </label>
+                                                <wpsf:textfield  cssClass="form-control"  placeholder="%{getText('label.userprofile.from.date')}" title="%{#attribute.name+' '+getText('label.userprofile.from.date')}"
+                                                                 id="%{#currentAttributeHtmlId}_dateStartFieldName_cal"
+                                                                 name="%{#dateStartInputFieldName}"
+                                                                 value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_dateEndFieldName_cal'}" />">
+                                                    <s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.to.date" />
+                                                </label>
+                                                <wpsf:textfield
+                                                    cssClass="form-control"
+                                                    placeholder="%{getText('label.userprofile.to.date')}"
+                                                    title="%{#attribute.name+' '+getText('label.userprofile.to.date')}"
+                                                    id="%{#currentAttributeHtmlId}_dateEndFieldName_cal"
+                                                    name="%{#dateEndInputFieldName}"
+                                                    value="%{getSearchFormFieldValue(#dateEndInputFieldName)}" />
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <span class="help-block"><s:text name="label.userprofile.date.pattern" /></span>
+                                            </div>
+                                        </div>
+                                    </s:elseif>
+                                    <%-- Number Attribute --%>
+                                    <s:elseif test="#attribute.type == 'Number'">
+                                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
+                                        <s:set var="numberStartInputFieldName" value="%{#attribute.name+'_numberStartFieldName'}" />
+                                        <s:set var="numberEndInputFieldName" value="%{#attribute.name+'_numberEndFieldName'}" />
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3" style="text-align:end"><s:property value="#attribute.name" /></label>
+                                            <div class="col-lg-2">
+                                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_start'}" />"><s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.from.value" /></label>
+                                                <wpsf:textfield title="%{#attribute.name+' '+getText('label.userprofile.from.value')}" id="%{#currentAttributeHtmlId}_start" name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" cssClass="form-control" placeholder="%{getText('label.userprofile.from.value')}" />
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_end'}" />"><s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.to.value" /></label>
+                                                <wpsf:textfield title="%{#attribute.name+' '+getText('label.userprofile.to.value')}" id="%{#currentAttributeHtmlId}_end" name="%{#numberEndInputFieldName}" value="%{getSearchFormFieldValue(#numberEndInputFieldName)}" cssClass="form-control" placeholder="%{getText('label.userprofile.to.value')}" />
+                                            </div>
+                                        </div>
+                                    </s:elseif>
+                                    <%-- Boolean & ThreeState --%>
+                                    <s:elseif test="#attribute.type == 'Boolean' || #attribute.type == 'ThreeState'">
+                                        <s:set var="booleanInputFieldName" value="%{#attribute.name+'_booleanFieldName'}" />
+                                        <s:set var="booleanInputFieldValue" value="%{getSearchFormFieldValue(#booleanInputFieldName)}" />
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 "><s:property value="#attribute.name" /></label>
+
+                                            <div class="btn-group col-xs-9" data-toggle="buttons">
+                                                <label class="btn btn-default <s:if test="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}"> active </s:if>">
+                                                    <wpsf:radio id="none_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="" checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" />
+                                                    &#32;<s:text name="label.bothYesAndNo"/>
+                                                </label>
+                                                <label class="btn btn-default <s:if test="%{#booleanInputFieldValue == 'true'}"> active </s:if>">
+                                                    <wpsf:radio id="true_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="true" checked="%{#booleanInputFieldValue == 'true'}" />
+                                                    &#32;<s:text name="label.yes"/>
+                                                </label>
+                                                <label class="btn btn-default <s:if test="%{#booleanInputFieldValue == 'false'}"> active </s:if>">
+                                                    <wpsf:radio id="false_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="false" checked="%{#booleanInputFieldValue == 'false'}" />
+                                                    &#32;<s:text name="label.no"/>
+                                                </label>
+
+                                            </div>
+                                        </div>
+                                    </s:elseif>
+                                    <%-- unknown attribute --%>
+                                    <s:else>
+                                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
+                                        <s:set var="textInputFieldName" value="%{#attribute.name+'_textFieldName'}" />
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3" style="text-align:end" for="<s:property value="#currentAttributeHtmlId" />">
+                                                <s:property value="#attribute.name" />
+                                            </label>
+                                            <div class="col-sm-8">
+                                                <wpsf:textfield id="%{#currentAttributeHtmlId}" name="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" cssClass="form-control" />
+                                            </div>
+                                        </div>
+                                    </s:else>
+                                </s:iterator>
+                            </s:if>    
+
+                            <%-- search by role --%>
+                            <s:set var="attributeRolesVar" value="attributeRoles" />
+                            <s:if test="null != #attributeRolesVar && #attributeRolesVar.size() > 0">
+                                <s:iterator var="attributeRoleVar" value="#attributeRolesVar">
+                                    <s:set var="currentFieldIdVar">userFinding_<s:property value="#attributeRoleVar.name" /></s:set>
+                                        <div class="form-group">
+                                        <s:if test="%{#attributeRoleVar.formFieldType.toString().equals('TEXT')}">
+                                            <div class="col-sm-3" style="text-align:end">
+                                                <label for="<s:property value="%{#currentFieldIdVar}" />">
+                                                    <!--<span class="label label-default"><s:text name="name.role" /></span>&#32;-->
+                                                    <s:property value="#attributeRoleVar.name" />
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <s:set var="textInputFieldName"><s:property value="#attributeRoleVar.name" />_textFieldName</s:set>
+                                                <wpsf:textfield id="%{#currentFieldIdVar}" name="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" cssClass="form-control" />
+                                            </div>
+                                        </s:if>
+                                    </div>
+                                    <%-- COMMENTING OUT UNTIL WE ENCOUNTER SOME VALID USER STORY THAT MAKES US TEST IT
+                                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('DATE')}">
+                                            <s:set var="dateStartInputFieldName"><s:property value="#attributeRoleVar.name" />_dateStartFieldName</s:set>
+                                            <s:set var="dateEndInputFieldName"><s:property value="#attributeRoleVar.name" />_dateEndFieldName</s:set>
+                                            <div class="form-group">
+                                                    <div class="col-sm-10 col-md-offset-2">
+                                                            <label for="<s:property value="%{#currentFieldIdVar}" />_dateStartFieldName"><s:property value="#attributeRoleVar.name" /> ** from date **</label>
+                                                            <wpsf:textfield id="%{#currentFieldIdVar}_dateStartFieldName" name="%{#dateStartInputFieldName}" value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" />
+                                                            <span class="help-block">dd/MM/yyyy</span>
+                                                    </div>
+                                            </div>
+                                            <div class="form-group">
+                                                    <div class="col-sm-10 col-md-offset-2">
+                                                            <label for="<s:property value="%{#currentFieldIdVar}" />_dateEndFieldName"><s:property value="#attributeRoleVar.name" />** to date **</label>
+                                                            <wpsf:textfield id="%{#currentFieldIdVar}_dateEndFieldName" name="%{#dateEndInputFieldName}" value="%{getSearchFormFieldValue(#dateEndInputFieldName)}" />
+                                                            <span class="help-block">dd/MM/yyyy</span>
+                                                    </div>
+                                            </div>
+                                    </s:elseif>
+                                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('NUMBER')}">
+                                            <s:set var="numberStartInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberStartFieldName</s:set>
+                                            <s:set var="numberEndInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberEndFieldName</s:set>
+                                            <p>
+                                                    <label for="<s:property value="%{#currentFieldIdVar}" />_start"><s:property value="#attributeRoleVar.name" /> ** from value **</label>
+                                                    <wpsf:textfield id="%{#currentFieldIdVar}_start" name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" />
+                                            </p>
+                                            <p>
+                                                    <label for="<s:property value="%{#currentFieldIdVar}" />_end"><s:property value="#attributeRoleVar.name" /> ** to value **</label>
+                                                    <wpsf:textfield id="%{#currentFieldIdVar}_end" name="%{#numberEndInputFieldName}" value="%{getSearchFormFieldValue(#numberEndInputFieldName)}" />
+                                            </p>
+                                    </s:elseif>
+                                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('BOOLEAN')}">
+                                            <p>
+                                                    <span class="important"><s:property value="#attributeRoleVar.name" /></span>
+                                            </p>
+                                            <s:set var="booleanInputFieldName" ><s:property value="#attributeRoleVar.name" />_booleanFieldName</s:set>
+                                            <s:set var="booleanInputFieldValue" ><s:property value="%{getSearchFormFieldValue(#booleanInputFieldName)}" /></s:set>
+                                            <ul>
+                                                    <li><wpsf:radio id="none_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="" checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" /><label for="none_<s:property value="#booleanInputFieldName" />"><s:text name="label.bothYesAndNo"/></label></li>
+                                                    <li><wpsf:radio id="true_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="true" checked="%{#booleanInputFieldValue == 'true'}" /><label for="true_<s:property value="#booleanInputFieldName" />"><s:text name="label.yes"/></label></li>
+                                                    <li><wpsf:radio id="false_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="false" checked="%{#booleanInputFieldValue == 'false'}" /><label for="false_<s:property value="#booleanInputFieldName" />"><s:text name="label.no"/></label></li>
+                                            </ul>
+                                    </s:elseif>
+                                    --%>
+                                </s:iterator>
+                            </s:if> <%-- //search by role --%>
+
+                            <%-- hookpoint core.user-list.core-field --%>
+                            <wpsa:hookPoint key="core.user-list.form-field" objectName="hookPointElements_core_user_list_core_field">
+                                <s:iterator value="#hookPointElements_core_user_list_core_field" var="hookPointElement">
+                                    <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                                </s:iterator>
+                            </wpsa:hookPoint>
+                        </div>
                     </div>
                 </div>
-            </c:if>
-
-            <s:if test="null != #searchableAttributesVar && #searchableAttributesVar.size() > 0">
-                <s:iterator value="#searchableAttributesVar" var="attribute">
-                    <%-- Text Attribute --%>
-                    <s:if test="#attribute.textAttribute">
-                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
-                        <s:set var="textInputFieldName" value="%{#attribute.name+'_textFieldName'}" />
-                        <div class="form-group">
-                            <label class="control-label col-sm-2" for="<s:property value="#currentAttributeHtmlId" />">
-                                <s:property value="#attribute.name" />
-                            </label>
-                            <div class="col-sm-10 spacer-form">
-                                <wpsf:textfield id="%{#currentAttributeHtmlId}" ame="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" cssClass="form-control" />
-                            </div>
-                        </div>
-                    </s:if>
-                    <%-- Date Attribute --%>
-                    <s:elseif test="#attribute.type == 'Date'">
-                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
-                        <s:set var="dateStartInputFieldName" value="%{#attribute.name+'_dateStartFieldName'}" />
-                        <s:set var="dateEndInputFieldName" value="%{#attribute.name+'_dateEndFieldName'}" />
-                        <div class="form-group">
-                            <label class="control-label col-sm-2"><s:property value="#attribute.name" /></label>
-                            <div class="col-lg-3">
-                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_dateStartFieldName_cal'}" />">
-                                    <s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.from.date" />
-                                </label>
-                                <wpsf:textfield  cssClass="form-control"  placeholder="%{getText('label.userprofile.from.date')}" title="%{#attribute.name+' '+getText('label.userprofile.from.date')}"
-                                                 id="%{#currentAttributeHtmlId}_dateStartFieldName_cal"
-                                                 name="%{#dateStartInputFieldName}"
-                                                 value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" />
-                            </div>
-                            <div class="col-lg-3">
-                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_dateEndFieldName_cal'}" />">
-                                    <s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.to.date" />
-                                </label>
-                                <wpsf:textfield
-                                    cssClass="form-control"
-                                    placeholder="%{getText('label.userprofile.to.date')}"
-                                    title="%{#attribute.name+' '+getText('label.userprofile.to.date')}"
-                                    id="%{#currentAttributeHtmlId}_dateEndFieldName_cal"
-                                    name="%{#dateEndInputFieldName}"
-                                    value="%{getSearchFormFieldValue(#dateEndInputFieldName)}" />
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <span class="help-block"><s:text name="label.userprofile.date.pattern" /></span>
-                            </div>
-                        </div>
-                    </s:elseif>
-                    <%-- Number Attribute --%>
-                    <s:elseif test="#attribute.type == 'Number'">
-                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
-                        <s:set var="numberStartInputFieldName" value="%{#attribute.name+'_numberStartFieldName'}" />
-                        <s:set var="numberEndInputFieldName" value="%{#attribute.name+'_numberEndFieldName'}" />
-                        <div class="form-group">
-                            <label class="control-label col-sm-2 text-right"><s:property value="#attribute.name" /></label>
-                            <div class="col-lg-2">
-                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_start'}" />"><s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.from.value" /></label>
-                                <wpsf:textfield title="%{#attribute.name+' '+getText('label.userprofile.from.value')}" id="%{#currentAttributeHtmlId}_start" name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" cssClass="form-control" placeholder="%{getText('label.userprofile.from.value')}" />
-                            </div>
-                            <div class="col-lg-2">
-                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_end'}" />"><s:property value="#attribute.name" />&#32;<s:text name="label.userprofile.to.value" /></label>
-                                <wpsf:textfield title="%{#attribute.name+' '+getText('label.userprofile.to.value')}" id="%{#currentAttributeHtmlId}_end" name="%{#numberEndInputFieldName}" value="%{getSearchFormFieldValue(#numberEndInputFieldName)}" cssClass="form-control" placeholder="%{getText('label.userprofile.to.value')}" />
-                            </div>
-                        </div>
-                    </s:elseif>
-                    <%-- Boolean & ThreeState --%>
-                    <s:elseif test="#attribute.type == 'Boolean' || #attribute.type == 'ThreeState'">
-                        <s:set var="booleanInputFieldName" value="%{#attribute.name+'_booleanFieldName'}" />
-                        <s:set var="booleanInputFieldValue" value="%{getSearchFormFieldValue(#booleanInputFieldName)}" />
-                        <div class="form-group">
-                            <label class="control-label col-sm-2 text-right"><s:property value="#attribute.name" /></label>
-                            <div class="btn-group col-lg-10" data-toggle="buttons">
-                                <label class="btn btn-default <s:if test="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}"> active </s:if>">
-                                    <wpsf:radio id="none_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="" checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" />
-                                    &#32;<s:text name="label.bothYesAndNo"/>
-                                </label>
-                                <label class="btn btn-default <s:if test="%{#booleanInputFieldValue == 'true'}"> active </s:if>">
-                                    <wpsf:radio id="true_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="true" checked="%{#booleanInputFieldValue == 'true'}" />
-                                    &#32;<s:text name="label.yes"/>
-                                </label>
-                                <label class="btn btn-default <s:if test="%{#booleanInputFieldValue == 'false'}"> active </s:if>">
-                                    <wpsf:radio id="false_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="false" checked="%{#booleanInputFieldValue == 'false'}" />
-                                    &#32;<s:text name="label.no"/>
-                                </label>
-                            </div>
-                        </div>
-                    </s:elseif>
-                    <%-- unknown attribute --%>
-                    <s:else>
-                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
-                        <s:set var="textInputFieldName" value="%{#attribute.name+'_textFieldName'}" />
-                        <div class="form-group">
-                            <label class="control-label col-sm-2 text-right" for="<s:property value="#currentAttributeHtmlId" />">
-                                <s:property value="#attribute.name" />
-                            </label>
-                            <div class="col-sm-5">
-                                <wpsf:textfield id="%{#currentAttributeHtmlId}" name="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" cssClass="form-control" />
-                            </div>
-                        </div>
-                    </s:else>
-                </s:iterator>
-            </s:if>
-
-            <%-- search by role --%>
-            <s:set var="attributeRolesVar" value="attributeRoles" />
-            <s:if test="null != #attributeRolesVar && #attributeRolesVar.size() > 0">
-                <s:iterator var="attributeRoleVar" value="#attributeRolesVar">
-                    <s:set var="currentFieldIdVar">userFinding_<s:property value="#attributeRoleVar.name" /></s:set>
-                        <div class="form-group">
-                        <s:if test="%{#attributeRoleVar.formFieldType.toString().equals('TEXT')}">
-                            <div class="col-sm-4 spacer-form2">
-                                <label for="<s:property value="%{#currentFieldIdVar}" />">
-                                    <span class="label label-default"><s:text name="name.role" /></span>&#32;
-                                    <s:property value="#attributeRoleVar.name" />
-                                </label>
-                            </div>
-                            <div class="col-sm-7 spacer-form2">
-                                <s:set name="textInputFieldName"><s:property value="#attributeRoleVar.name" />_textFieldName</s:set>
-                                <wpsf:textfield id="%{#currentFieldIdVar}" name="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" cssClass="form-control" />
-                            </div>
-                        </s:if>
-                    </div>
-                    <%-- COMMENTING OUT UNTIL WE ENCOUNTER SOME VALID USER STORY THAT MAKES US TEST IT
-                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('DATE')}">
-                            <s:set name="dateStartInputFieldName"><s:property value="#attributeRoleVar.name" />_dateStartFieldName</s:set>
-                            <s:set name="dateEndInputFieldName"><s:property value="#attributeRoleVar.name" />_dateEndFieldName</s:set>
-                            <div class="form-group">
-                                    <div class="col-sm-10 col-md-offset-2">
-                                            <label for="<s:property value="%{#currentFieldIdVar}" />_dateStartFieldName"><s:property value="#attributeRoleVar.name" /> ** from date **</label>
-                                            <wpsf:textfield id="%{#currentFieldIdVar}_dateStartFieldName" name="%{#dateStartInputFieldName}" value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" />
-                                            <span class="help-block">dd/MM/yyyy</span>
-                                    </div>
-                            </div>
-                            <div class="form-group">
-                                    <div class="col-sm-10 col-md-offset-2">
-                                            <label for="<s:property value="%{#currentFieldIdVar}" />_dateEndFieldName"><s:property value="#attributeRoleVar.name" />** to date **</label>
-                                            <wpsf:textfield id="%{#currentFieldIdVar}_dateEndFieldName" name="%{#dateEndInputFieldName}" value="%{getSearchFormFieldValue(#dateEndInputFieldName)}" />
-                                            <span class="help-block">dd/MM/yyyy</span>
-                                    </div>
-                            </div>
-                    </s:elseif>
-                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('NUMBER')}">
-                            <s:set name="numberStartInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberStartFieldName</s:set>
-                            <s:set name="numberEndInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberEndFieldName</s:set>
-                            <p>
-                                    <label for="<s:property value="%{#currentFieldIdVar}" />_start"><s:property value="#attributeRoleVar.name" /> ** from value **</label>
-                                    <wpsf:textfield id="%{#currentFieldIdVar}_start" name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" />
-                            </p>
-                            <p>
-                                    <label for="<s:property value="%{#currentFieldIdVar}" />_end"><s:property value="#attributeRoleVar.name" /> ** to value **</label>
-                                    <wpsf:textfield id="%{#currentFieldIdVar}_end" name="%{#numberEndInputFieldName}" value="%{getSearchFormFieldValue(#numberEndInputFieldName)}" />
-                            </p>
-                    </s:elseif>
-                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('BOOLEAN')}">
-                            <p>
-                                    <span class="important"><s:property value="#attributeRoleVar.name" /></span>
-                            </p>
-                            <s:set name="booleanInputFieldName" ><s:property value="#attributeRoleVar.name" />_booleanFieldName</s:set>
-                            <s:set name="booleanInputFieldValue" ><s:property value="%{getSearchFormFieldValue(#booleanInputFieldName)}" /></s:set>
-                            <ul>
-                                    <li><wpsf:radio id="none_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="" checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" /><label for="none_<s:property value="#booleanInputFieldName" />"><s:text name="label.bothYesAndNo"/></label></li>
-                                    <li><wpsf:radio id="true_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="true" checked="%{#booleanInputFieldValue == 'true'}" /><label for="true_<s:property value="#booleanInputFieldName" />"><s:text name="label.yes"/></label></li>
-                                    <li><wpsf:radio id="false_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="false" checked="%{#booleanInputFieldValue == 'false'}" /><label for="false_<s:property value="#booleanInputFieldName" />"><s:text name="label.no"/></label></li>
-                            </ul>
-                    </s:elseif>
-                    --%>
-                </s:iterator>
-            </s:if>
-            <%-- //search by role --%>
-
-            <%-- hookpoint core.user-list.core-field --%>
-            <wpsa:hookPoint key="core.user-list.form-field" objectName="hookPointElements_core_user_list_core_field">
-                <s:iterator value="#hookPointElements_core_user_list_core_field" var="hookPointElement">
-                    <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                </s:iterator>
-            </wpsa:hookPoint>
-            <br>
+            </div>
             <%-- second search button --%>
-            <div class="form-group">
-                <div class="col-sm-12 text-center">
-                    <wpsf:submit type="button" cssClass="btn btn-default">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
                         <s:text name="label.search" />
                     </wpsf:submit>
                 </div>
@@ -321,8 +333,6 @@
             <%--<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />--%>
         </div>
         <div>
-
-
             <table class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
@@ -496,3 +506,27 @@
         </div>
     </wpsa:subset>
 </s:form>
+
+<style>
+    .panel {
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 0px solid transparent;
+        border-radius: 1px;
+        box-shadow: none;
+    }
+    .panel-group .panel-heading {
+        background-image: none;
+    }
+    .panel-group .panel-heading+.panel-collapse .panel-body {
+        border-top: 1px solid #ecebeb;
+    }
+    .panel-group .panel-title>a {
+        color: #4d5258;
+        font-weight: 400;
+        font-size: 13px;
+    }
+    .panel-group .panel-title>a:after {
+        margin-left: 10px;
+    }
+</style>

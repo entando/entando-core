@@ -42,8 +42,8 @@
 
 <div id="main" role="main">
 
-    <s:set name="listAttribute" value="listAttribute" />
-    <s:set name="attributeElement" value="attributeElement" />
+    <s:set var="listAttribute" value="listAttribute" />
+    <s:set var="attributeElement" value="attributeElement" />
 
     <div class="alert alert-info">
         <span class="pficon pficon-info"></span>
@@ -62,7 +62,7 @@
                 <ul>
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                 </ul>

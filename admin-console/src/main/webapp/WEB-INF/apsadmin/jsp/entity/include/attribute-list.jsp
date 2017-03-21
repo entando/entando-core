@@ -69,7 +69,7 @@
                                         </wpsf:submit>
                                     </li>
 
-                                    <s:set name="elementIndex" value="#elementStatus.index" />
+                                    <s:set var="elementIndex" value="#elementStatus.index" />
                                     <s:include value="/WEB-INF/apsadmin/jsp/entity/include/attribute-operations-misc.jsp" />
                                 </ul>
                             </div>

@@ -34,7 +34,7 @@
                 <ul>
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                 </ul>
@@ -130,11 +130,11 @@
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-condensed table-striped">
                             <tr>
-                                <th><s:text name="label.name" /></th>
-                                <th><s:text name="label.description" /></th>
-                                <th><s:text name="label.required" /></th>
-                                <th><s:text name="label.default" /></th>
-                                <th><s:text name="label.canBeOverridden" /></th>
+                                <th class="table-w-10"><s:text name="label.name" /></th>
+                                <th class="table-w-60"><s:text name="label.description" /></th>
+                                <th class="table-w-10"><s:text name="label.required" /></th>
+                                <th class="table-w-10"><s:text name="label.default" /></th>
+                                <th class="table-w-10"><s:text name="label.canBeOverridden" /></th>
                             </tr>
                             <s:iterator value="apiParameters" var="apiParameterVar" >
                                 <tr>
@@ -143,7 +143,7 @@
                                             <s:property value="#apiParameterVar.key" />
                                         </label>
                                     </td>
-                                    <td><s:property value="#apiParameterVar.description" /></td>
+                                    <td class="table-txt-wrap"><s:property value="#apiParameterVar.description" /></td>
                                     <td>
                                         <s:property value="#apiParameterVar.required"/>
                                     </td>
@@ -165,7 +165,7 @@
                 </div>
         </fieldset>
         <div class="row"> 
-            <div class="form-group col-md-12"> 
+            <div class=""> 
                 <div class="pull-right">
                     <wpsf:submit type="button" action="save" cssClass="btn btn-primary ">
                         <s:text name="label.save" />

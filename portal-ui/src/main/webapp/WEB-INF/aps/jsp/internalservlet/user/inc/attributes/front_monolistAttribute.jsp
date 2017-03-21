@@ -7,12 +7,12 @@
 	<ul class="unstyled">
 </s:if>
 
-<s:set name="masterListAttributeTracer" value="#attributeTracer" />
-<s:set name="masterListAttribute" value="#attribute" />	
+<s:set var="masterListAttributeTracer" value="#attributeTracer" />
+<s:set var="masterListAttribute" value="#attribute" />	
 
 <s:iterator value="#attribute.attributes" var="attribute" status="elementStatus">
-	<s:set name="attributeTracer" value="#masterListAttributeTracer.getMonoListElementTracer(#elementStatus.index)"></s:set>
-	<s:set name="elementIndex" value="#elementStatus.index" />
+	<s:set var="attributeTracer" value="#masterListAttributeTracer.getMonoListElementTracer(#elementStatus.index)"></s:set>
+	<s:set var="elementIndex" value="#elementStatus.index" />
 	<s:set var="i18n_attribute_name">userprofile_ATTR<s:property value="#attribute.name" /></s:set>
 	<s:set var="attribute_id">userprofile_<s:property value="#attribute.name" />_<s:property value="#elementStatus.count" /></s:set>
 
@@ -126,9 +126,9 @@
 	--%>
 </s:iterator>
 
-<s:set name="attributeTracer" value="#masterListAttributeTracer" />
-<s:set name="attribute" value="#masterListAttribute" />
-<s:set name="elementIndex" value="" />
+<s:set var="attributeTracer" value="#masterListAttributeTracer" />
+<s:set var="attribute" value="#masterListAttribute" />
+<s:set var="elementIndex" value="" />
 <s:if test="#attribute.attributes.size() != 0">
 </ul>
 </s:if>

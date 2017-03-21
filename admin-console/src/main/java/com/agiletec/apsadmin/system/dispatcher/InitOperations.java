@@ -13,14 +13,12 @@
  */
 package com.agiletec.apsadmin.system.dispatcher;
 
+import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.apache.struts2.dispatcher.Dispatcher;
-import org.apache.struts2.dispatcher.ng.HostConfig;
-
-import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
+import org.apache.struts2.dispatcher.HostConfig;
 
 /**
  * Extension of the InitOperations class used by Struts2 main filter.
@@ -30,7 +28,7 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
  * in the interface {@link ApsAdminSystemConstants}.
  * @author E.Santoboni
  */
-public class InitOperations extends org.apache.struts2.dispatcher.ng.InitOperations {
+public class InitOperations extends org.apache.struts2.dispatcher.InitOperations {
 	
 	@Override
 	public Dispatcher initDispatcher(HostConfig filterConfig) {

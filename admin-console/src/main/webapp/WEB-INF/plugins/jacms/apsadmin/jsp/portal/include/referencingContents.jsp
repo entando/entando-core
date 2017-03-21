@@ -6,7 +6,7 @@
 
 <s:if test="!#referencingContentsId.empty">
 <wpsa:subset source="#referencingContentsId" count="10" objectName="contentReferencesGroup" advanced="true" offset="5" pagerId="referencingContentsId">
-<s:set name="group" value="#contentReferencesGroup" />
+<s:set var="group" value="#contentReferencesGroup" />
 <div class="text-center">
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />

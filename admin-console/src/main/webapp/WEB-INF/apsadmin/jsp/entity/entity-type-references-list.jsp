@@ -19,7 +19,7 @@
 	<p><s:text name="note.entityTypes.deleteType.references.outro" />:</p>
 
 	<ul class="list-group">
-		<s:iterator value="references" id="entityId">
+		<s:iterator value="references" var="entityId">
 			<li class="list-group-item">
 				<a href="<s:url action="edit" namespace="/do/jacms/Content"><s:param name="contentType"><s:property value="entityTypeCode" /></s:param><s:param name="viewCode"><s:property value="true" /></s:param><s:param name="viewTypeDescr"><s:property value="true" /></s:param><s:param name="contentId"><s:property value="entityId" /></s:param></s:url>">
 				<s:property value="#entityId" />

@@ -13,10 +13,8 @@
  */
 package com.agiletec.apsadmin.system.dispatcher;
 
-import java.util.Arrays;
-import java.util.List;
+import org.apache.struts2.result.ServletRedirectResult;
 
-import org.apache.struts2.dispatcher.ServletRedirectResult;
 import org.apache.struts2.dispatcher.mapper.ActionMapper;
 import org.apache.struts2.dispatcher.mapper.ActionMapping;
 
@@ -24,6 +22,8 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.util.reflection.ReflectionExceptionHandler;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Redirect Action Result con ancora.
@@ -78,14 +78,14 @@ public class ServletActionRedirectResultWithAnchor extends ServletRedirectResult
 	
 	/** The default parameter */
     public static final String DEFAULT_PARAM = "actionName";
-
+	
     private static final Logger LOG = LoggerFactory.getLogger(ServletActionRedirectResultWithAnchor.class);
     
     protected String actionName;
     protected String namespace;
     protected String method;
     protected String _anchorDest;
-
+	
     public ServletActionRedirectResultWithAnchor() {
         super();
     }
@@ -173,5 +173,5 @@ public class ServletActionRedirectResultWithAnchor extends ServletRedirectResult
                 DEFAULT_PARAM, "namespace", "method", "encode", "parse", "location",
                 "prependServletContext", "supressEmptyParameters", "anchor", "anchorDest"});
     }
-
+	
 }

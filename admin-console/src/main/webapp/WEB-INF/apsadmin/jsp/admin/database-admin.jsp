@@ -13,7 +13,7 @@
 		<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
 		<ul class="margin-base-top">
 			<s:iterator value="actionErrors">
-				<li><s:property escape="false" /></li>
+				<li><s:property escapeHtml="false" /></li>
 			</s:iterator>
 		</ul>
 	</div>
@@ -25,7 +25,7 @@
 		<ul class="margin-base-top">
 			<s:iterator value="fieldErrors">
 					<s:iterator value="value">
-						<li><s:property escape="false" /></li>
+						<li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</s:iterator>
 		</ul>
@@ -37,7 +37,7 @@
 		<h2 class="h4 margin-none"><s:text name="messages.confirm" /></h2>
 		<ul class="margin-base-top">
 			<s:iterator value="actionMessages">
-				<li><s:property escape="false" /></li>
+				<li><s:property escapeHtml="false" /></li>
 			</s:iterator>
 		</ul>
 	</div>

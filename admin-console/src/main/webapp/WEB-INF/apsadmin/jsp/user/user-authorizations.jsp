@@ -52,7 +52,7 @@
                     <span class="pficon pficon-error-circle-o"></span><s:text name="message.title.ActionErrors" /></span>
                     <ul class="margin-base-top">
                         <s:iterator value="actionErrors">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                     </ul>
                 </div>
@@ -83,7 +83,7 @@
                                     <s:else><code>&ndash;</code></s:else>
                                     </td>
                                     <td style="text-align: center;">
-                                    <s:set name="elementIndexVar" value="#elementStatus.index" />
+                                    <s:set var="elementIndexVar" value="#elementStatus.index" />
                                     <wpsa:actionParam action="removeAuthorization" var="actionName" >
                                         <wpsa:actionSubParam name="index" value="%{#elementIndexVar}" />
                                     </wpsa:actionParam>

@@ -41,7 +41,7 @@
                 <ul class="unstyled" id="content-error-messages">
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
-                            <li><s:property escape="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                 </ul>
@@ -70,7 +70,7 @@
                     <span class="spacer-right-on-form" ><s:property value="userProfile.username" /></span>
                 </div>
             </div>
-            <s:set name="lang" value="defaultLang" />
+            <s:set var="lang" value="defaultLang" />
             <%-- attribute iterator --%>
             <s:iterator value="userProfile.attributeList" var="attribute">
                 <%-- tracer start --%>

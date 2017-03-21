@@ -16,20 +16,20 @@
 				<ul id="pageTree" class="fa-ul list-unstyled">
 					<s:set var="inputFieldName" value="%{'selectedNode'}" />
 					<s:set var="selectedTreeNode" value="%{selectedNode}" />
-					<s:set name="liClassName" value="'page'" />
+					<s:set var="liClassName" value="'page'" />
 					<s:set var="treeItemIconName" value="'fa-folder'" />
 
 					<s:if test="#pageTreeStyleVar == 'classic'">
-						<s:set name="currentRoot" value="allowedTreeRootNode" />
+						<s:set var="currentRoot" value="allowedTreeRootNode" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
 					</s:if>
 					<s:elseif test="#pageTreeStyleVar == 'request'">
 						<s:set var="treeNodeExtraParamsMap" value="#{'contentOnSessionMarker': contentOnSessionMarker}" />
-						<s:set name="currentRoot" value="showableTree" />
+						<s:set var="currentRoot" value="showableTree" />
 						<s:set var="treeNodeExtraParamName" value="'activeTab'" />
 						<s:set var="treeNodeExtraParamValue" value="1" />
-						<s:set name="closeTreeActionName" value="'openCloseTreeNode'" />
-						<s:set name="openTreeActionName" value="'openCloseTreeNode'" />
+						<s:set var="closeTreeActionName" value="'openCloseTreeNode'" />
+						<s:set var="openTreeActionName" value="'openCloseTreeNode'" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
 					</s:elseif>
 				</ul>

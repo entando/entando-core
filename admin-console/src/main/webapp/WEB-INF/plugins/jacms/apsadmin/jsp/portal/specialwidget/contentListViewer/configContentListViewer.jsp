@@ -49,7 +49,7 @@
 			<ul>
 			<s:iterator value="fieldErrors">
 				<s:iterator value="value">
-				<li><s:property escape="false" /></li>
+				<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</s:iterator>
 			</ul>
@@ -151,7 +151,7 @@
 				<s:if test="null != categoryCodes && categoryCodes.size() > 0">
 					<h3 class="sr-only"><s:text name="title.resourceCategories.list"/></h3>
 					<s:iterator value="categoryCodes" var="categoryCodeVar">
-					<s:set name="showletCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
+					<s:set var="showletCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
 
 					<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
 					  <span class="icon fa fa-tag"></span>&#32;
@@ -225,7 +225,7 @@
 
 				<s:if test="null != filtersProperties && filtersProperties.size()>0" >
 					<ol class="list-group">
-					<s:iterator value="filtersProperties" id="filter" status="rowstatus">
+					<s:iterator value="filtersProperties" var="filter" status="rowstatus">
 					<%--
 						<s:property value="#rowstatus.index+1"/>
 					--%>
@@ -333,7 +333,7 @@
                             <div class="collapse" id="options-extra">
                                 <p><s:text name="note.extraOption.intro" /></p>
                                 <s:if test="%{widget.type.hasParameter('title_%')}" >
-                                    <s:iterator id="lang" value="langs">
+                                    <s:iterator var="lang" value="langs">
                                         <div class="form-group">
                                             <div class="col-xs-12">
                                                 <label for="title_<s:property value="#lang.code" />">
@@ -399,7 +399,7 @@
                                 
                                 <s:if test="null != userFiltersProperties && userFiltersProperties.size() > 0" >
                                     <ol class="list-group">
-                                        <s:iterator value="userFiltersProperties" id="userFilter" status="rowstatus">
+                                        <s:iterator value="userFiltersProperties" var="userFilter" status="rowstatus">
                                             <li class="list-group-item">
                                                 <s:text name="label.filterBy" />
                                                 <strong>
@@ -410,7 +410,7 @@
                                                         <s:elseif test="#userFilter['key'] == 'category'">
                                                             <s:text name="label.category" />
                                                             <s:if test="null != #userFilter['categoryCode']">
-                                                                <s:set name="userFilterCategoryRoot" value="%{getCategory(#userFilter['categoryCode'])}"></s:set>
+                                                                <s:set var="userFilterCategoryRoot" value="%{getCategory(#userFilter['categoryCode'])}"></s:set>
                                                                 (<s:property value="#userFilterCategoryRoot.getFullTitle(currentLang.code)"/>)
                                                             </s:if>
                                                         </s:elseif>

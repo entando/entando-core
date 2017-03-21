@@ -2,7 +2,7 @@
 <%@ taglib uri="/aps-core" prefix="wp" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-<s:set name="NScurrent" value="#context['struts.actionMapping'].getNamespace()" />
+<s:set var="NScurrent" value="#context['struts.actionMapping'].getNamespace()" />
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
 	<s:if test="%{#NScurrent == '/do/Portal/WidgetType'}">

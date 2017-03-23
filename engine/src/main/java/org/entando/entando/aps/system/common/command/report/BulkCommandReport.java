@@ -1,5 +1,6 @@
 package org.entando.entando.aps.system.common.command.report;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,12 @@ import org.entando.entando.aps.system.common.command.constants.ApsCommandWarning
  * @param <I> The type of items on which the command is applied.
  */
 public interface BulkCommandReport<I> {
+	
+	/**
+	 * The ID of the given command. Can coincide with the thread name.
+	 * @return The ID of the given command.
+	 */
+	public String getCommandId();
 
 	/**
 	 * Returns the number items onto apply the command.
@@ -63,5 +70,11 @@ public interface BulkCommandReport<I> {
 	 * @return The status of the command
 	 */
 	public ApsCommandStatus getStatus();
+
+	/**
+	 * Returns the instant of the end of the command.
+	 * @return The instant of the end of the command.
+	 */
+	public Date getEndingTime();
 
 }

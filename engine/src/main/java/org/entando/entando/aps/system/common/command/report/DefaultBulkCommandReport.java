@@ -1,5 +1,6 @@
 package org.entando.entando.aps.system.common.command.report;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,11 @@ public class DefaultBulkCommandReport<I> implements BulkCommandReport<I> {
 	 */
 	public DefaultBulkCommandReport(BaseBulkCommand<I, ?> command) {
 		this._command = command;
+	}
+
+	@Override
+	public String getCommandId() {
+		return this._command.getId();
 	}
 
 	@Override
@@ -68,6 +74,11 @@ public class DefaultBulkCommandReport<I> implements BulkCommandReport<I> {
 		return this._command.getStatus();
 	}
 
+	@Override
+	public Date getEndingTime() {
+		return this._command.getEndingTime();
+	}
+	
 	private BaseBulkCommand<I, ?> _command;
 
 }

@@ -131,6 +131,8 @@ public interface SystemConstants {
      */
     public static final String PAGE_MANAGER = "PageManager";
     public static final String PAGETOKEN_MANAGER = "PageTokenManager";
+    
+    public static final String BULK_COMMAND_MANAGER = "BulkCommandManager";
 	
 	public static final String NAVIGATOR_PARSER = "NavigatorParser";
     

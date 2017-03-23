@@ -27,5 +27,5 @@ public enum ApsCommandStatus {
 	/**
 	 * A command completely executed
 	 */
-	ENDED
+	COMPLETED
 }

@@ -1,6 +1,7 @@
 package org.entando.entando.aps.system.common.command;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandStatus;
@@ -42,7 +43,7 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 	@Override
 	public void apply() {
 		if (this.getItems() == null) {
-			this._status = ApsCommandStatus.ENDED;
+			this._status = ApsCommandStatus.COMPLETED;
 		} else {
 			for (I item : this.getItems()) {
 				if (this.checkStatus()) {
@@ -63,8 +64,9 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 				}
 			}
 			if (!ApsCommandStatus.STOPPED.equals(this._status)) {
-				this._status = ApsCommandStatus.ENDED;
+				this._status = ApsCommandStatus.COMPLETED;
 			}
+			this.setEndingTime(new Date());
 		}
 	}
 
@@ -98,9 +100,26 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 
 	@Override
 	public synchronized void stopCommand() {
-		this.setStatus(ApsCommandStatus.STOPPING);
+		if (!ApsCommandStatus.COMPLETED.equals(this._status)) {
+			this.setStatus(ApsCommandStatus.STOPPING);
+		}
 	}
-
+	
+	/**
+	 * Returns the ID of the given command. Can coincide with the thread name.
+	 * @return The ID of the given command.
+	 */
+	public String getId() {
+		return _id;
+	}
+	/**
+	 * Sets the ID of the given command. Can coincide with the thread name.
+	 * @param id The ID of the given command.
+	 */
+	public void setId(String id) {
+		this._id = id;
+	}
+	
 	/**
 	 * Returns the items on which to apply the command.
 	 * @return The items on which to apply the command.
@@ -188,6 +207,19 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 		this._status = status;
 	}
 
+	@Override
+	public Date getEndingTime() {
+		return endingTime;
+	}
+	protected void setEndingTime(Date endingTime) {
+		this.endingTime = endingTime;
+	}
+
+	@Override
+	public boolean isEnded() {
+		return ApsCommandStatus.COMPLETED.equals(this._status) || ApsCommandStatus.STOPPED.equals(this._status);
+	}
+
 	/**
 	 * Returns the tracer of the command execution.
 	 * @return The tracer of the command execution.
@@ -211,11 +243,13 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 		return _report;
 	}
 
+	private String _id;
 	private Collection<I> _items;
 	private A _applier;
 	private int _total = 0;
 	private int _applySuccesses = 0;
 	private int applyErrors = 0;
+	private Date endingTime;
 	private volatile ApsCommandStatus _status = ApsCommandStatus.NEW;
 	private BulkCommandTracer<I> _tracer;
 	private BulkCommandReport<I> _report = new DefaultBulkCommandReport<I>(this);

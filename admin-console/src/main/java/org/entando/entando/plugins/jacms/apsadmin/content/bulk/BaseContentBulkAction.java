@@ -1,9 +1,11 @@
 package org.entando.entando.plugins.jacms.apsadmin.content.bulk;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
+import org.entando.entando.aps.system.services.command.IBulkCommandManager;
 
 import com.agiletec.plugins.jacms.apsadmin.content.ContentFinderAction;
 
@@ -16,7 +18,7 @@ public class BaseContentBulkAction extends ContentFinderAction {
 
 	protected boolean checkSelectedContents() {
 		boolean result = true;
-		Collection<String> selectedContents = this.getSelectedContents();
+		Collection<String> selectedContents = this.getContentIds();
 		if (selectedContents == null || selectedContents.isEmpty()) {
 			this.addActionError(this.getText("error.content.bulk.noItems"));
 			result = false;
@@ -24,13 +26,6 @@ public class BaseContentBulkAction extends ContentFinderAction {
 		return result;
 	}
 
-	protected Collection<String> getSelectedContents() {
-		if (this._selectedContents == null) {
-			this._selectedContents = this.getContentIds();
-		}
-		return this._selectedContents;
-	}
-	
 	public BulkCommandReport<?> getReport() {
 		BulkCommandReport<?> report = null;
 		if (StringUtils.isNotEmpty(this.getThreadName())) {
@@ -42,6 +37,13 @@ public class BaseContentBulkAction extends ContentFinderAction {
 		return report;
 	}
 
+	public Set<String> getContentIds() {
+		return _contentIds;
+	}
+	public void setContentIds(Set<String> contentIds) {
+		this._contentIds = contentIds;
+	}
+
 	public int getStrutsAction() {
 		return _strutsAction;
 	}
@@ -50,15 +52,23 @@ public class BaseContentBulkAction extends ContentFinderAction {
 	}
 
 	public String getThreadName() {
-		return threadName;
+		return _threadName;
 	}
 	public void setThreadName(String threadName) {
-		this.threadName = threadName;
+		this._threadName = threadName;
 	}
 
-	private Collection<String> _selectedContents;
-	
+	protected IBulkCommandManager getBulkCommandManager() {
+		return _bulkCommandManager;
+	}
+	public void setBulkCommandManager(IBulkCommandManager bulkCommandManager) {
+		this._bulkCommandManager = bulkCommandManager;
+	}
+
+	private Set<String> _contentIds;
+
 	private int _strutsAction;
-	private String threadName;
+	private String _threadName;
+	private IBulkCommandManager _bulkCommandManager;
 
 }

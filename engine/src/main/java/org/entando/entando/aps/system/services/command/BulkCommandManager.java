@@ -26,7 +26,6 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 
 	@Override
 	public void init() throws Exception {
-		this.initScheduler();
 		_logger.debug("{} ready", this.getClass().getName());
 	}
 
@@ -34,24 +33,18 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 	public void destroy() {
 		super.destroy();
 		this.stopCommands();
-		this.stopScheduler();
 	}
 
 	@Override
 	protected void release() {
 		super.release();
-		this.stopScheduler();
+	}
+	
+	@Override
+	public void cleanCache() {
+		this.cleanCommands();
 	}
 
-	protected void initScheduler() {
-		// TODO Inizializzare scheduler che cerca i processi in esecuzione e libera la memoria
-		
-	}
-
-	protected void stopScheduler() {
-		// TODO
-		
-	}
 
 	@Override
 	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?> command) {
@@ -131,20 +124,23 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 		}
 		return str.toString();
 	}
+	
 
 	protected synchronized void cleanCommands() {
+		Map<String, Map<String, BulkCommandContainer>> newcommands = new HashMap<String, Map<String,BulkCommandContainer>>();
 		for (Map<String, BulkCommandContainer> commandsByOwner : this._commands.values()) {
 			for (BulkCommandContainer container : commandsByOwner.values()) {
-				if (this.isCommandExpired(container.getCommand())) {
-					commandsByOwner.remove(container.getCommand().getId());
-					if (commandsByOwner.isEmpty()) {
-						String owner = container.getOwner();
-						this._commands.remove(owner);
+				if (!this.isCommandExpired(container.getCommand())) {
+					if (null == newcommands.get(container.getOwner())) {
+						newcommands.put(container.getOwner(), new HashMap<String, BulkCommandContainer>());
 					}
+					newcommands.get(container.getOwner()).put(container.getCommand().getId(), container);
 				}
 			}
 		}
+		this._commands = newcommands;
 	}
+
 
 	protected synchronized void stopCommands() {
 		for (Map<String, BulkCommandContainer> commandsByOwner : this._commands.values()) {
@@ -172,7 +168,6 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	protected Map<String, Map<String, BulkCommandContainer>> getCommands() {

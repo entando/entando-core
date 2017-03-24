@@ -1,6 +1,7 @@
 package org.entando.entando.aps.system.services.command;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import org.entando.entando.aps.system.common.command.BaseBulkCommand;
@@ -33,6 +34,9 @@ public class FakeBulkCommand extends BaseBulkCommand<String, Object> {
 			if (this._endSignal != null) {
 				this._endSignal.countDown();
 			}
+			if (null != fakeEndingTime) {
+				this.setEndingTime(fakeEndingTime);
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -52,8 +56,14 @@ public class FakeBulkCommand extends BaseBulkCommand<String, Object> {
 		}
 		return result;
 	}
+	
+	
+	public void setFakeEndingTime(Date endingTime) {
+		this.fakeEndingTime = endingTime;
+	}
 
 	private CountDownLatch _startSignal;
 	private CountDownLatch _endSignal;
+	private Date fakeEndingTime;
 
 }

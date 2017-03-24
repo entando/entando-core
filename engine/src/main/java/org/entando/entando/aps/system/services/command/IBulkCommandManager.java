@@ -49,4 +49,6 @@ public interface IBulkCommandManager {
 	 */
 	public BulkCommandReport<?> getCommandReport(String owner, String commandId);
 
+	
+	public void cleanCache();
 }

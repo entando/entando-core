@@ -4,6 +4,12 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
+<style>
+    .text-left{
+        text-align: left !important;
+    }
+</style>
+
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
     <li class="page-title-container"><s:text name="title.settingsPage" /></li>
@@ -24,7 +30,7 @@
                 </ul>
             </div>
         </s:if>
-		
+        
         <fieldset class="col-xs-12 settings-form">
             <div class="form-group">
                 <div class="row">
@@ -72,7 +78,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-2 col-label">
@@ -91,7 +97,7 @@
                     <div class="col-xs-2 col-label">
                         <span class="display-block"><s:text name="sysconfig.baseURL" /></span>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-xs-10 text-left">
                         <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-default <s:if test="%{systemParams[#paramName].equals('relative')}">active</s:if>">
                                 <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-relative" name="<s:property value="#paramName"/>" value="relative" <s:if test="%{systemParams[#paramName].equals('relative')}">checked="checked"</s:if> />
@@ -109,13 +115,13 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="form-group">
                 <div class="row">
-                    <div class="col-xs-4 col-label">
+                    <div class="col-xs-2 col-label">
                         <span class="display-block"><s:text name="sysconfig.baseURL.contextName" /></span>
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-4 text-left">
                         <s:set var="paramName" value="'baseUrlContext'" />
                         <input type="hidden" 
                                value="<s:property value="systemParams[#paramName]" />"
@@ -128,11 +134,11 @@
                             class="bootstrap-switch" 
                             <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                         </div>
-
-                        <div class="col-xs-4 col-label">
+                        
+                        <div class="col-xs-2 col-label">
                             <span class="display-block"><s:text name="sysconfig.useJsessionId" /></span>
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-4 text-left">
                         <s:set var="paramName" value="'useJsessionId'" />
                         <input type="hidden" 
                                value="<s:property value="systemParams[#paramName]" />"
@@ -147,13 +153,13 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-xs-4 col-label">
+                        <div class="col-xs-2 col-label">
                             <span class="display-block"><s:text name="sysconfig.lang.browser" /></span>
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-4 text-left">
                         <s:set var="paramName" value="'startLangFromBrowser'" />
                         <input type="hidden" 
                                value="<s:property value="systemParams[#paramName]" />"
@@ -168,14 +174,32 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <div class="row">
+                    <s:set var="paramName" value="'treeStyle_page'" />
+                    <div class="col-xs-2 col-label">
+                        <span class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></span>
+                    </div>
+                    <div class="col-xs-4 text-left">
+                        <div class="btn-group" data-toggle="buttons">
+                            
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 'classic'"> active</s:if>">
+                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_classic" name="<s:property value="#paramName"/>" value="classic" <s:if test="systemParams[#paramName] == 'classic'">checked="checked"</s:if> />
+                                <s:text name="URLstyle.classic" />
+                            </label>
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 'request'"> active</s:if>">
+                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_request" name="<s:property value="#paramName"/>" value="request" <s:if test="systemParams[#paramName] == 'request'">checked="checked"</s:if> />
+                                <s:text name="treeStyle.request" />
+                            </label>
+                        </div>
+                    </div>
+                    
                     <s:set var="paramName" value="'urlStyle'" />
                     <div class="col-xs-2 col-label">
                         <span class="display-block"><s:text name="sysconfig.URLstyle" /></span>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-xs-4 text-left">
                         <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-default <s:if test="systemParams['urlStyle'] == 'classic'"> active</s:if>">
                                 <input type="radio" class="radiocheck" id="admin-settings-area-urlStyle-classic" name="urlStyle" value="classic" <s:if test="systemParams['urlStyle'] == 'classic'">checked="checked"</s:if> />
@@ -187,33 +211,11 @@
                             </label>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row">
-                    <s:set var="paramName" value="'treeStyle_page'" />
-                    <div class="col-xs-2 col-label">
-                        <span class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></span>
-                    </div>
-                    <div class="col-xs-4">
-                        <div class="btn-group" data-toggle="buttons">
-
-                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 'classic'"> active</s:if>">
-                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_classic" name="<s:property value="#paramName"/>" value="classic" <s:if test="systemParams[#paramName] == 'classic'">checked="checked"</s:if> />
-                                <s:text name="URLstyle.classic" />
-                            </label>
-                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 'request'"> active</s:if>">
-                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_request" name="<s:property value="#paramName"/>" value="request" <s:if test="systemParams[#paramName] == 'request'">checked="checked"</s:if> />
-                                <s:text name="treeStyle.request" />
-                            </label>
-                        </div>
-                    </div>
-
+                    
                 </div>
             </div>
         </fieldset>
-
+        
         <div class="form-group bottom-row">
             <div class="row">
                 <div class="col-xs-12">
@@ -224,9 +226,9 @@
                 </div>
             </div>
         </div>
-
+        
     </s:form>
-
+    
 </div>
 
 <script type="application/javascript" >

@@ -2,12 +2,15 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.gr
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
 import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
+import org.springframework.web.context.WebApplicationContext;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
@@ -26,12 +29,13 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 
 public abstract class BaseContentGroupBulkCommand extends BaseContentBulkCommand<String> {
 
-	public BaseContentGroupBulkCommand(Collection<String> items, Collection<String> groups, IContentManager manager, 
-			ContentUtilizer[] contentUtilizers, ILangManager langManager, IPageManager pageManager, BulkCommandTracer<String> tracer) {
+	public BaseContentGroupBulkCommand(Collection<String> items, Collection<String> groups, 
+			IContentManager manager, BulkCommandTracer<String> tracer, WebApplicationContext wax) {
 		super(items, groups, manager, tracer);
-		this.setContentUtilizers(contentUtilizers);
-		this.setSystemLangs(langManager.getLangs());
-		this.setPageManager(pageManager);
+		Map<String, ContentUtilizer> contentUtilizers = wax.getBeansOfType(ContentUtilizer.class);
+		this.setContentUtilizers(contentUtilizers.values());
+		this.setSystemLangs(((ILangManager) wax.getBean(SystemConstants.LANGUAGE_MANAGER)).getLangs());
+		this.setPageManager((IPageManager) wax.getBean(SystemConstants.PAGE_MANAGER));
 	}
 
 	protected boolean checkContentUtilizers(Content content) throws ApsSystemException {
@@ -116,10 +120,10 @@ public abstract class BaseContentGroupBulkCommand extends BaseContentBulkCommand
 		this.systemLangs = systemLangs;
 	}
 
-	public ContentUtilizer[] getContentUtilizers() {
+	public Collection<ContentUtilizer> getContentUtilizers() {
 		return _contentUtilizers;
 	}
-	protected void setContentUtilizers(ContentUtilizer[] contentUtilizers) {
+	protected void setContentUtilizers(Collection<ContentUtilizer> contentUtilizers) {
 		this._contentUtilizers = contentUtilizers;
 	}
 
@@ -131,7 +135,7 @@ public abstract class BaseContentGroupBulkCommand extends BaseContentBulkCommand
 	}
 
 	private List<Lang> systemLangs;
-	private ContentUtilizer[] _contentUtilizers;
+	private Collection<ContentUtilizer> _contentUtilizers;
 	private IPageManager pageManager;
 
 }

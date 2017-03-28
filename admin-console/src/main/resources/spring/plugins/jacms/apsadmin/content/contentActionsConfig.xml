@@ -66,6 +66,24 @@
 		<property name="searchEngineManager" ref="jacmsSearchEngineManager"/>
   	</bean>
 	
+	<!-- BEANS PER GESTONE BULK ACTIONS - INIZIO -->
+	<bean id="jacmsBaseContentBulkAction" abstract="true" parent="abstractBaseAction" 
+			class="org.entando.entando.plugins.jacms.apsadmin.content.bulk.BaseContentBulkAction">
+		<property name="contentManager" ref="jacmsContentManager"/>
+		<property name="bulkCommandManager" ref="BulkCommandManager"/>
+  	</bean>
+  	
+	<bean id="jacmsContentGroupBulkAction" scope="prototype" parent="jacmsBaseContentBulkAction" 
+			class="org.entando.entando.plugins.jacms.apsadmin.content.bulk.ContentGroupBulkAction">
+		<property name="groupManager" ref="GroupManager"/>
+  	</bean>
+  	
+	<bean id="jacmsContentCategoryBulkAction" scope="prototype" parent="jacmsBaseContentBulkAction" 
+			class="org.entando.entando.plugins.jacms.apsadmin.content.bulk.ContentCategoryBulkAction">
+		<property name="categoryManager" ref="CategoryManager"/>
+  	</bean>
+	<!-- BEANS PER GESTONE BULK ACTIONS - FINE -->
+	
 	<!-- BEANS PER GESTONE ATTRIBUTI RISORSA - INIZIO -->
 	<bean id="jacmsResourceAttributeAction" scope="prototype" 
 			class="com.agiletec.plugins.jacms.apsadmin.content.attribute.action.resource.ResourceAttributeAction" 

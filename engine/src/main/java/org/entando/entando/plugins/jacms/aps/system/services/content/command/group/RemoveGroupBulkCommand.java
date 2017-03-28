@@ -4,19 +4,17 @@ import java.util.Collection;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.lang.ILangManager;
-import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 
-	public RemoveGroupBulkCommand(Collection<String> items, Collection<String> group, IContentManager manager, 
-			ContentUtilizer[] contentUtilizers, ILangManager langManager, IPageManager pageManager, BulkCommandTracer<String> tracer) {
-		super(items, group, manager, contentUtilizers, langManager, pageManager, tracer);
+	public RemoveGroupBulkCommand(Collection<String> items, Collection<String> groups, 
+			IContentManager manager, BulkCommandTracer<String> tracer, WebApplicationContext wax) {
+		super(items, groups, manager, tracer, wax);
 	}
 
 	@Override

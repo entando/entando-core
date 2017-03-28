@@ -35,6 +35,34 @@
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/contentReferences.jsp" />
 	</definition>
 
+	<!-- *** Content Bulk Actions - Init *** -->
+	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.entryChoice">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-choice.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-confirm.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.result">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-result.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.entryChoice">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-choice.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-confirm.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.result">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-result.jsp" />
+	</definition>
+	<!-- *** Content Bulk Actions - End *** -->
+
 	<!-- *** Inizio Area Gestione Risorse Contenuti *** -->
 	<definition extends="layout.default" name="admin.jacms.content.findResource.Image">
 		<put-attribute name="title" value="title.contentManagement" />

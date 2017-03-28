@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
@@ -582,6 +583,30 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			this.setContentIdToken((String) filterToAdd.getValue());
 		}
 	}
+	
+	public String entryBulkActions() {
+		try {
+			Set<String> contentIds = null;
+			if (this.isAllContentsSelected()) {
+				this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME, new ContentFinderSearchInfo());
+				this.createFilters();
+				List<String> allContentIds = this.getContents();
+				if (allContentIds != null) {
+					contentIds = new TreeSet<String>(allContentIds);
+					this.setContentIds(contentIds);
+				}
+			} else {
+				contentIds = this.getContentIds();
+			}
+			if (contentIds == null || contentIds.isEmpty()) {
+				this.addActionError(this.getText("error.content.bulkAction.empty"));
+			}
+		} catch (Throwable t) {
+			_logger.error("error in execute", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
 
 	/**
 	 * Restituisce un gruppo in base al nome.
@@ -748,6 +773,13 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		this._actionCode = actionCode;
 	}
 
+	public boolean isAllContentsSelected() {
+		return _allContentsSelected;
+	}
+	public void setAllContentsSelected(boolean allContentsSelected) {
+		this._allContentsSelected = allContentsSelected;
+	}
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
@@ -785,6 +817,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	private boolean _viewStatus;
 	private boolean _viewTypeDescr;
 	private boolean _viewCreationDate;
+	private boolean _allContentsSelected;
 
 	private Set<String> _contentIds;
 

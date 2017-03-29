@@ -404,6 +404,11 @@
         <div class="col-md-12"> 
             <div class="form-group pull-right "> 
                 <div class="btn-group">
+                    <wpsf:submit type="button" action="saveConfigure" cssClass="btn btn-primary ">
+                        <s:text name="label.saveConfig" />
+                    </wpsf:submit>
+                </div>
+                <div class="btn-group">
                     <wpsf:submit type="button" action="save" cssClass="btn btn-primary ">
                         <s:text name="label.save" />
                     </wpsf:submit>

@@ -62,15 +62,15 @@ public class TestContentCategoryBulkAction extends ApsAdminBaseTestCase {
 		
 		String result = this.executeEntry(currentUser, ApsAdminSystemConstants.ADD, contentIds);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((BaseContentBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getContentIds());
 		
 		result = this.executeEntry(currentUser, ApsAdminSystemConstants.DELETE, contentIds);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((BaseContentBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getContentIds());
 		
 		result = this.executeCheckApply(currentUser, ApsAdminSystemConstants.ADD, contentIds, categoryCodes);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((BaseContentBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getContentIds());
 		this.checkItems(categoryCodes, ((ContentCategoryBulkAction) this.getAction()).getCategoryCodes());
 	}
 
@@ -240,7 +240,7 @@ public class TestContentCategoryBulkAction extends ApsAdminBaseTestCase {
 	}
 	
 	private void checkReport(int total, int applyTotal, int applySuccesses, int applyErrors, ApsCommandStatus status) {
-		BulkCommandReport<?> report = ((BaseContentBulkAction) this.getAction()).getReport();
+		BulkCommandReport<?> report = ((ContentGroupBulkAction) this.getAction()).getReport();
 		assertEquals(total, report.getTotal());
 		assertEquals(applyTotal, report.getApplyTotal());
 		assertEquals(applySuccesses, report.getApplySuccesses());

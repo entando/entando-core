@@ -67,20 +67,25 @@
   	</bean>
 	
 	<!-- BEANS PER GESTONE BULK ACTIONS - INIZIO -->
-	<bean id="jacmsBaseContentBulkAction" abstract="true" parent="abstractBaseAction" 
-			class="org.entando.entando.plugins.jacms.apsadmin.content.bulk.BaseContentBulkAction">
-		<property name="contentManager" ref="jacmsContentManager"/>
-		<property name="bulkCommandManager" ref="BulkCommandManager"/>
-  	</bean>
-  	
-	<bean id="jacmsContentGroupBulkAction" scope="prototype" parent="jacmsBaseContentBulkAction" 
+	<bean id="jacmsContentBulkActionHelper" 
+			class="org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.ContentBulkActionHelper" >
+		<property name="contentManager" ref="jacmsContentManager" />
+	</bean>
+	
+	<bean id="jacmsContentGroupBulkAction" scope="prototype" parent="abstractBaseAction" 
 			class="org.entando.entando.plugins.jacms.apsadmin.content.bulk.ContentGroupBulkAction">
 		<property name="groupManager" ref="GroupManager"/>
+		<property name="contentManager" ref="jacmsContentManager"/>
+		<property name="bulkCommandManager" ref="BulkCommandManager"/>
+		<property name="bulkActionHelper" ref="jacmsContentBulkActionHelper"/>
   	</bean>
   	
-	<bean id="jacmsContentCategoryBulkAction" scope="prototype" parent="jacmsBaseContentBulkAction" 
+	<bean id="jacmsContentCategoryBulkAction" scope="prototype" parent="abstractBaseAction" 
 			class="org.entando.entando.plugins.jacms.apsadmin.content.bulk.ContentCategoryBulkAction">
 		<property name="categoryManager" ref="CategoryManager"/>
+		<property name="contentManager" ref="jacmsContentManager"/>
+		<property name="bulkCommandManager" ref="BulkCommandManager"/>
+		<property name="bulkActionHelper" ref="jacmsContentBulkActionHelper"/>
   	</bean>
 	<!-- BEANS PER GESTONE BULK ACTIONS - FINE -->
 	

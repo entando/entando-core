@@ -1,16 +1,20 @@
 package org.entando.entando.plugins.jacms.apsadmin.content.bulk;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.entando.entando.aps.system.common.command.BaseBulkCommand;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTracer;
+import org.entando.entando.aps.system.services.command.IBulkCommandManager;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.group.BaseContentGroupBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.group.JoinGroupBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.group.RemoveGroupBulkCommand;
+import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.ContentBulkActionSummary;
+import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.IContentBulkActionHelper;
+import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.SmallBulkCommandReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -19,10 +23,15 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
+import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 
 public class ContentGroupBulkAction extends BaseContentBulkAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentGroupBulkAction.class);
+
+	public String entry() {
+		return this.checkAllowedContents(false) ? SUCCESS : "list";
+	}
 
 	public String join() {
 		try {
@@ -49,10 +58,7 @@ public class ContentGroupBulkAction extends BaseContentBulkAction {
 	}
 
 	public String checkApply() {
-		if (!this.checkGroups()) {
-			return INPUT;
-		}
-		return SUCCESS;
+		return this.checkGroups() ? SUCCESS : INPUT;
 	}
 
 	public String apply() {
@@ -82,35 +88,65 @@ public class ContentGroupBulkAction extends BaseContentBulkAction {
 		return SUCCESS;
 	}
 
-	protected boolean checkGroups() {
-		boolean allowed = true;
-		Set<String> extraGroupNames = this.getExtraGroupNames();
-		if (extraGroupNames == null || extraGroupNames.isEmpty()) {
-			this.addActionError(this.getText("error.bulk.groups.empty"));
-			allowed = false;
-		} else {
-			List<String> groupNames = this.getAllowedGroupNames();
-			for (String groupName : extraGroupNames) {
-				if (!groupNames.contains(groupName)) {
-					this.addActionError(this.getText("error.bulk.groups.notAllowed", groupName));
-					allowed = false;
-				}
-			}
-		}
-		return allowed;
+	public String viewResult() {
+		return this.getReport() == null ? "expired" : SUCCESS;
 	}
 
-	protected List<String> getAllowedGroupNames() {
-		List<Group> groups = this.getAllowedGroups();
-		List<String> groupNames = new ArrayList<String>(groups.size());
-		for (Group group : groups) {
-			groupNames.add(group.getAuthority());
-		}
-		return groupNames;
+	public ContentBulkActionSummary getSummary() {
+		return this.getBulkActionHelper().getSummary(this.getContentIds());
+	}
+
+	public BaseBulkCommand<?, ?> getCommand() {
+		return this.getBulkCommandManager().getCommand(this.getCommandOwner(), this.getCommandId());
+	}
+
+	public BulkCommandReport<?> getReport() {
+		return this.getBulkCommandManager().getCommandReport(this.getCommandOwner(), this.getCommandId());
+	}
+
+	public SmallBulkCommandReport getSmallReport() {
+		return this.getBulkActionHelper().getSmallReport(this.getReport());
+	}
+
+	protected boolean checkAllowedContents(boolean fullCheck) {
+		return this.getBulkActionHelper().checkAllowedContents(this.getContentIds(), fullCheck, this, this);
+	}
+
+	protected boolean checkGroups() {
+		return this.getBulkActionHelper().checkGroups(this.getAllowedGroups(), this.getExtraGroupNames(), this, this);
+	}
+
+	public Group getGroup(String groupName) {
+		return this.getGroupManager().getGroup(groupName);
 	}
 
 	public List<Group> getAllowedGroups() {
-		return super.getActualAllowedGroups();
+		return this.getActualAllowedGroups();
+	}
+
+	public String getCommandOwner() {
+		return IContentBulkActionHelper.BULK_COMMAND_OWNER;
+	}
+
+	public Set<String> getContentIds() {
+		return _contentIds;
+	}
+	public void setContentIds(Set<String> contentIds) {
+		this._contentIds = contentIds;
+	}
+
+	public int getStrutsAction() {
+		return _strutsAction;
+	}
+	public void setStrutsAction(int strutsAction) {
+		this._strutsAction = strutsAction;
+	}
+
+	public String getCommandId() {
+		return _commandId;
+	}
+	public void setCommandId(String commandId) {
+		this._commandId = commandId;
 	}
 
 	public Set<String> getExtraGroupNames() {
@@ -134,8 +170,38 @@ public class ContentGroupBulkAction extends BaseContentBulkAction {
 		this._groupManager = groupManager;
 	}
 
+	protected IBulkCommandManager getBulkCommandManager() {
+		return _bulkCommandManager;
+	}
+	public void setBulkCommandManager(IBulkCommandManager bulkCommandManager) {
+		this._bulkCommandManager = bulkCommandManager;
+	}
+
+	protected IContentManager getContentManager() {
+		return _contentManager;
+	}
+	public void setContentManager(IContentManager contentManager) {
+		this._contentManager = contentManager;
+	}
+
+	protected IContentBulkActionHelper getBulkActionHelper() {
+		return _bulkActionHelper;
+	}
+	public void setBulkActionHelper(IContentBulkActionHelper bulkActionHelper) {
+		this._bulkActionHelper = bulkActionHelper;
+	}
+
+	private Set<String> _contentIds;
+
+	private int _strutsAction;
+	private String _commandId;
+
 	private Set<String> _extraGroupNames = new TreeSet<String>();
 	private String _groupName;
 	private IGroupManager _groupManager;
+
+	private IBulkCommandManager _bulkCommandManager;
+	private IContentManager _contentManager;
+	private IContentBulkActionHelper _bulkActionHelper;
 
 }

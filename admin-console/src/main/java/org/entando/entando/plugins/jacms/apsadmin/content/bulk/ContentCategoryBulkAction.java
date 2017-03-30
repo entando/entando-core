@@ -118,6 +118,10 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		return this.getBulkActionHelper().checkCategories(this.getCategoryCodes(), this, this);
 	}
 
+	public Category getCategory(String categoryCode) {
+		return this.getCategoryManager().getCategory(categoryCode);
+	}
+
 	public String getCommandOwner() {
 		return IContentBulkActionHelper.BULK_COMMAND_OWNER;
 	}

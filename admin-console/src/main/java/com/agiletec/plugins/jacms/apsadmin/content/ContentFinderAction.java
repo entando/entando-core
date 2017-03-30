@@ -780,6 +780,13 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		this._allContentsSelected = allContentsSelected;
 	}
 
+	public int getStrutsAction() {
+		return _strutsAction;
+	}
+	public void setStrutsAction(int strutsAction) {
+		this._strutsAction = strutsAction;
+	}
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
@@ -817,7 +824,9 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	private boolean _viewStatus;
 	private boolean _viewTypeDescr;
 	private boolean _viewCreationDate;
+	
 	private boolean _allContentsSelected;
+	private int _strutsAction;
 
 	private Set<String> _contentIds;
 

@@ -29,6 +29,7 @@ import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.ContainerBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -218,6 +219,12 @@ public class ApsAdminBaseTestCase extends TestCase {
 		while (iter.hasNext()) {
 			String key = (String) iter.next();
 			this.addParameter(key, params.get(key).toString());
+		}
+	}
+	
+	protected void addParameter(String name, String[] values) {
+		if (null != values) {
+			this.addParameter(name, Arrays.asList(values));
 		}
 	}
 	

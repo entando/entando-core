@@ -99,7 +99,7 @@ public class NumberAttribute extends AbstractAttribute {
 	@Override
     public List<AttributeSearchInfo> getSearchInfos(List<Lang> systemLangs) {
         if (this.getValue() != null) {
-            List<AttributeSearchInfo> infos = new ArrayList<AttributeSearchInfo>();
+            List<AttributeSearchInfo> infos = new ArrayList<>();
             AttributeSearchInfo info = new AttributeSearchInfo(null, null, this.getValue(), null);
             infos.add(info);
             return infos;

@@ -44,6 +44,7 @@ import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.ActionProxyFactory;
 import com.opensymphony.xwork2.ActionSupport;
@@ -138,8 +139,6 @@ public class ApsAdminBaseTestCase extends TestCase {
 		// struts.xml configuration
 	    ActionProxyFactory proxyFactory = (ActionProxyFactory) this._dispatcher.getContainer().getInstance(ActionProxyFactory.class);
 	    this._proxy = proxyFactory.createActionProxy(namespace, name, null, null, true, false);
-		
-		this._proxy.getInvocation().getInvocationContext().setParameters(HttpParameters.create(this._request.getParameterMap()).build());
 		
 		// set to true if you want to process Freemarker or JSP results
 		this._proxy.setExecuteResult(false);
@@ -243,11 +242,13 @@ public class ApsAdminBaseTestCase extends TestCase {
 	}
 	
 	protected String executeAction() throws Throwable {
-		this._proxy.getInvocation().getInvocationContext().getParameters().appendAll(this._parameters);
+		ActionContext ac = this._proxy.getInvocation().getInvocationContext();
+		ac.setParameters(HttpParameters.create(this._request.getParameterMap()).build());
+		ac.getParameters().appendAll(this._parameters);
 		String result = this._proxy.execute();
 		return result;
 	}
-
+	
 	protected IManager getService(String name) {
 		return (IManager) this.getApplicationContext().getBean(name);
 	}

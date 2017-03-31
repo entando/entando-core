@@ -50,6 +50,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.ContainerBuilder;
 import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
 
 /**
  * The base Class for all test of admin area.
@@ -226,10 +227,10 @@ public class ApsAdminBaseTestCase extends TestCase {
 		this._request.removeParameter(name);
 		if (null == value) return;
 		this._request.addParameter(name, value.toString());
-		Map parameters = this._proxy.getInvocation().getInvocationContext().getParameters();
-		parameters.put(name, value);
+		Parameter.Request parameter = new Parameter.Request(name, value);
+		this._parameters.put(name, parameter);
 	}
-
+	
 	protected void addAttribute(String name, Object value) {
 		this._request.removeAttribute(name);
 		if (null == value) return;
@@ -239,11 +240,12 @@ public class ApsAdminBaseTestCase extends TestCase {
 	private void removeParameter(String name) {
 		this._request.removeParameter(name);
 		this._request.removeAttribute(name);
-		Map parameters = this._proxy.getInvocation().getInvocationContext().getParameters();
-		parameters.remove(name);
+		this._parameters.remove(name);
 	}
-
+	
 	protected String executeAction() throws Throwable {
+		HttpParameters parameters = HttpParameters.create(this._parameters).build();
+		this._proxy.getInvocation().getInvocationContext().setParameters(parameters);
 		String result = this._proxy.execute();
 		return result;
 	}
@@ -267,7 +269,7 @@ public class ApsAdminBaseTestCase extends TestCase {
     protected HttpServletRequest getRequest() {
     	return this._request;
     }
-
+	
     private static ApplicationContext _applicationContext;
     private Dispatcher _dispatcher;
 	private ActionProxy _proxy;
@@ -275,5 +277,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 	private MockHttpServletRequest _request;
 	private MockHttpServletResponse _response;
 	private ActionSupport _action;
-
+	
+	private Map<String, Parameter> _parameters = new HashMap<String, Parameter>();
+	
 }

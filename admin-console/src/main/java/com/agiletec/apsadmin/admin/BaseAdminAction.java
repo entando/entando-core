@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.event.ReloadingEntitiesReferencesEvent;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
@@ -132,7 +133,7 @@ public class BaseAdminAction extends BaseAction {
         return SUCCESS;
     }
 
-    protected void initLocalMap() throws Throwable {
+    private void initLocalMap() throws Throwable {
         String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
         Map<String, String> systemParams = SystemParamsUtils.getParams(xmlParams);
         this.setSystemParams(systemParams);
@@ -142,7 +143,7 @@ public class BaseAdminAction extends BaseAction {
      * Refresh the map of parameters with values fetched from the request
      * @param keepOldParam when true, when a system parameter is not found in request, the previous system parameter will be stored
      */
-    protected void updateLocalParams(boolean keepOldParam) {
+    private void updateLocalParams(boolean keepOldParam) {
         Iterator<String> paramNames = this.getSystemParams().keySet().iterator();
         while (paramNames.hasNext()) {
             String paramName = (String) paramNames.next();
@@ -192,8 +193,7 @@ public class BaseAdminAction extends BaseAction {
         if (page.getGroup().equals(Group.FREE_GROUP_NAME)) {
             pages.add(page);
         }
-        // TODO Verificare ONLINE/DRAFT
-        IPage[] children = page.getAllChildren();
+        IPage[] children = page.getChildren();
         for (int i = 0; i < children.length; i++) {
             this.addPages(children[i], pages);
         }

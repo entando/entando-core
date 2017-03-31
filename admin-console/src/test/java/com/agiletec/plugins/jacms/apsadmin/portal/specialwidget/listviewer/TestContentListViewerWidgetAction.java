@@ -200,7 +200,7 @@ public class TestContentListViewerWidgetAction extends ApsAdminBaseTestCase {
 		Properties newFilter = temp.get(0);
 		this.initAction("/do/jacms/Page/SpecialWidget/ListViewer", "addFilter");
 		this.addParameters(params);
-		this.addParameter("newFilter", newFilter);
+		((ContentListViewerWidgetAction) this.getAction()).setNewFilter(newFilter);
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 		

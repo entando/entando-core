@@ -13,29 +13,6 @@
  */
 package com.agiletec.apsadmin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import junit.framework.TestCase;
-
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.dispatcher.Dispatcher;
-import org.apache.struts2.spring.StrutsSpringObjectFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.FileSystemResourceLoader;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.WebApplicationContext;
-
 import com.agiletec.ConfigTestUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.IManager;
@@ -50,8 +27,31 @@ import com.opensymphony.xwork2.ActionProxyFactory;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.ContainerBuilder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import junit.framework.TestCase;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.Parameter;
+import org.apache.struts2.spring.StrutsSpringObjectFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.FileSystemResourceLoader;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * The base Class for all test of admin area.
@@ -220,7 +220,24 @@ public class ApsAdminBaseTestCase extends TestCase {
 			this.addParameter(key, params.get(key).toString());
 		}
 	}
-
+	
+	protected void addParameter(String name, Collection<String> value) {
+		this._request.removeParameter(name);
+		if (null == value) {
+			return;
+		}
+		String[] array = new String[value.size()];
+		Iterator<String> iter = value.iterator();
+		int i = 0;
+		while (iter.hasNext()) {
+			String stringValue = iter.next();
+			this._request.addParameter(name, stringValue);
+			array[i++] = stringValue;
+		}
+		Parameter.Request parameter = new Parameter.Request(name, array);
+		this._parameters.put(name, parameter);
+	}
+	
 	protected void addParameter(String name, Object value) {
 		this._request.removeParameter(name);
 		if (null == value) return;

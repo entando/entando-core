@@ -76,7 +76,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 	public EntitySearchFilter(String key, boolean isAttributeFilter, Object value, boolean useLikeOption) {
 		this(key, isAttributeFilter);
 		if (null != value && value instanceof Collection && ((Collection) value).size() > 0) {
-			List<Object> allowedValues = new ArrayList<Object>();
+			List<Object> allowedValues = new ArrayList<>();
 			allowedValues.addAll((Collection) value);
 			this.setAllowedValues(allowedValues);
 			if (allowedValues.get(0) instanceof String) {
@@ -158,7 +158,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 		filter.setAttributeFilter(true);
 		filter.setRoleName(roleName);
 		if (null != value && value instanceof Collection && ((Collection) value).size() > 0) {
-			List<T> allowedValues = new ArrayList<T>();
+			List<T> allowedValues = new ArrayList<>();
 			allowedValues.addAll((Collection) value);
 			filter.setAllowedValues(allowedValues);
 			if (allowedValues.get(0) instanceof String) {
@@ -395,9 +395,8 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 			}
 			String order = props.getProperty(EntitySearchFilter.ORDER_PARAM);
 			filter.setOrder(order);
-		} catch (Throwable t) {
+		} catch (ApsSystemException | NumberFormatException t) {
 			_logger.error("Error on creation of filter instance", t);
-			//ApsSystemUtils.logThrowable(t, EntitySearchFilter.class, "Error on creation of filter instance");
 			throw new RuntimeException("Error on creation of filter instance", t);
 		}
 		return filter;
@@ -424,7 +423,6 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 				likeOptionType = Enum.valueOf(LikeOptionType.class, likeOptionTypeString.trim().toUpperCase());
 			} catch (Throwable t) {
 				_logger.error("Error parsing 'like option type' parameter", t);
-				//ApsSystemUtils.logThrowable(t, EntitySearchFilter.class, "setValues", "Error parsing 'like option type' parameter");
 			}
 		}
 		if (objectValue != null) {
@@ -458,7 +456,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 		List<Object> values = null;
 		String[] stringValues = allowedValues.split(ALLOWED_VALUES_SEPARATOR);
 		if (null != stringValues && stringValues.length > 0) {
-			values = new ArrayList<Object>();
+			values = new ArrayList<>();
 			for (int i = 0; i < stringValues.length; i++) {
 				String stringValue = stringValues[i];
 				Object object = getDataObject(stringValue, dataType);
@@ -492,7 +490,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 		String today = "today, oggi, odierna";
 		Date data = null;
 		try {
-			if (today.indexOf(dateString) != -1) {
+			if (today.contains(dateString)) {
 				data = new java.util.Date();
 			} else {
 				SimpleDateFormat dataF = new SimpleDateFormat(EntitySearchFilter.DATE_PATTERN);

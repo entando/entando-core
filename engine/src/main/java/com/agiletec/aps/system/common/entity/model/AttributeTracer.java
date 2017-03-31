@@ -39,7 +39,7 @@ public class AttributeTracer {
             clone.setCompositeElement(this._compositeElement);
             clone.setParentAttribute(this._parentAttribute);
             clone.setLang(this._lang);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Error cloning Attribute tracer", e);
         }
         return clone;

@@ -65,30 +65,24 @@ public class ApsAdminBaseTestCase extends TestCase {
 		if (null == _applicationContext) {
 			// Link the servlet context and the Spring context
 			_servletContext = new MockServletContext("", new FileSystemResourceLoader());
-
 			_applicationContext = this.getConfigUtils().createApplicationContext(_servletContext);
-
 			_servletContext.setAttribute(
 					WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, _applicationContext);
 		} else {
 			refresh = true;
 		}
-
 		this._request = new MockHttpServletRequest();
 		this._response = new MockHttpServletResponse();
 		this._request.setSession(new MockHttpSession(this._servletContext));
-
 		if (refresh) {
 			try {
 				ApsWebApplicationUtils.executeSystemRefresh(this._request);
 				this.waitNotifyingThread();
 			} catch (Throwable e) {}
 		}
-
 		// Use spring as the object factory for Struts
 		StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, null, _servletContext, null, this.createContainer());
 		ssf.setApplicationContext(_applicationContext);
-
 		// Dispatcher is the guy that actually handles all requests.  Pass in
 		// an empty Map as the parameters but if you want to change stuff like
 		// what config files to read, you need to specify them here
@@ -97,7 +91,6 @@ public class ApsAdminBaseTestCase extends TestCase {
 	    Properties props = new Properties();
 		props.load(url.openStream());
 		this.setInitParameters(props);
-
 		Map params = new HashMap(props);
 		this._dispatcher = new Dispatcher(_servletContext, params);
 		this._dispatcher.init();
@@ -135,6 +128,9 @@ public class ApsAdminBaseTestCase extends TestCase {
 
 	/**
 	 * Created action class based on namespace and name
+	 * @param namespace The namespace
+	 * @param name The name of the action
+	 * @throws java.lang.Exception In case of error
 	 */
 	protected void initAction(String namespace, String name) throws Exception {
 		// create a proxy class which is just a wrapper around the action call.
@@ -142,7 +138,9 @@ public class ApsAdminBaseTestCase extends TestCase {
 		// struts.xml configuration
 	    ActionProxyFactory proxyFactory = (ActionProxyFactory) this._dispatcher.getContainer().getInstance(ActionProxyFactory.class);
 	    this._proxy = proxyFactory.createActionProxy(namespace, name, null, null, true, false);
-
+		
+		this._proxy.getInvocation().getInvocationContext().setParameters(HttpParameters.create(this._request.getParameterMap()).build());
+		
 		// set to true if you want to process Freemarker or JSP results
 		this._proxy.setExecuteResult(false);
 		// by default, don't pass in any request parameters
@@ -162,9 +160,10 @@ public class ApsAdminBaseTestCase extends TestCase {
 			this.removeParameter(paramName);
 		}
 	}
-
+	
     /**
      * Metodo da estendere in caso che si voglia impiantare un'altro struts-config.
+	 * @param params The parameters
      */
     protected void setInitParameters(Properties params) {
     	params.setProperty("config",
@@ -227,7 +226,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 		this._request.removeParameter(name);
 		if (null == value) return;
 		this._request.addParameter(name, value.toString());
-		Parameter.Request parameter = new Parameter.Request(name, value);
+		Parameter.Request parameter = new Parameter.Request(name, value.toString());
 		this._parameters.put(name, parameter);
 	}
 	
@@ -244,8 +243,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 	}
 	
 	protected String executeAction() throws Throwable {
-		HttpParameters parameters = HttpParameters.create(this._parameters).build();
-		this._proxy.getInvocation().getInvocationContext().setParameters(parameters);
+		this._proxy.getInvocation().getInvocationContext().getParameters().appendAll(this._parameters);
 		String result = this._proxy.execute();
 		return result;
 	}

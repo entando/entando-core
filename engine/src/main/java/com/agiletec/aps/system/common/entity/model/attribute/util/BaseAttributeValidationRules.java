@@ -43,8 +43,7 @@ public class BaseAttributeValidationRules implements IAttributeValidationRules {
             if (null != this.getOgnlValidationRule()) {
                 clone.setOgnlValidationRule(this.getOgnlValidationRule().clone());
             }
-        } catch (Exception e) {
-            //ApsSystemUtils.logThrowable(e, this, "clone");
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             _logger.error("Error detected while cloning the ValidationRules", e);
             throw new RuntimeException("Error detected while cloning the ValidationRules class '" + this.getClass().getName() + "' ");
         }
@@ -61,7 +60,6 @@ public class BaseAttributeValidationRules implements IAttributeValidationRules {
             configElement = new Element(VALIDATIONS_ELEMENT_NAME);
             this.fillJDOMConfigElement(configElement);
         } catch (Throwable t) {
-            //ApsSystemUtils.logThrowable(t, this, "getJDOMConfigElement");
             _logger.error("Error detected while creating jdom element", t);
             throw new RuntimeException("Error detected while creating jdom element", t);
         }
@@ -115,7 +113,7 @@ public class BaseAttributeValidationRules implements IAttributeValidationRules {
 	
 	@Override 
     public List<AttributeFieldError> validate(AttributeInterface attribute, AttributeTracer tracer, ILangManager langManager) {
-        List<AttributeFieldError> errors = new ArrayList<AttributeFieldError>();
+        List<AttributeFieldError> errors = new ArrayList<>();
         if (this.isEmpty()) {
 			return errors;
 		}
@@ -133,7 +131,6 @@ public class BaseAttributeValidationRules implements IAttributeValidationRules {
                 }
             }
         } catch (Throwable t) {
-            //ApsSystemUtils.logThrowable(t, this, "validate", "Error validating Attribute '" + attribute.getName() + "'");
             _logger.error("Error validating Attribute '{}'", attribute.getName(), t);
             throw new RuntimeException("Error validating Attribute '" + attribute.getName() + "'", t);
         }

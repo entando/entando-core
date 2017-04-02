@@ -22,12 +22,14 @@ import org.xml.sax.SAXException;
  */
 public class HypertextAttributeHandler extends TextAttributeHandler {
 	
+	@Override
 	public void startAttribute(Attributes attributes, String qName) throws SAXException {
 		if (qName.equals("hypertext")) {
 			this.startText(attributes, qName);
 		}
 	}
 	
+	@Override
 	public void endAttribute(String qName, StringBuffer textBuffer) {
 		if (qName.equals("hypertext")) {
 			this.endText(textBuffer);

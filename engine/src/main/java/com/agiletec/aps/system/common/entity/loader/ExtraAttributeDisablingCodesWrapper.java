@@ -30,7 +30,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @author E.Santoboni
  */
 public class ExtraAttributeDisablingCodesWrapper extends AbstractExtraAttributeSupportObject {
-
+	
 	private static final Logger _logger =  LoggerFactory.getLogger(ExtraAttributeDisablingCodesWrapper.class);
 	
 	public void executeLoading(Map<String, String> collectionToFill, IEntityManager entityManager) throws ApsSystemException {
@@ -42,7 +42,7 @@ public class ExtraAttributeDisablingCodesWrapper extends AbstractExtraAttributeS
 			String xml = super.extractXml();
 			AttributeDisablingCodesDOM dom = new AttributeDisablingCodesDOM();
 			Map<String, String> codeMap = dom.extractDisablingCodes(xml, this.getDefsFilePath());
-			List<String> codes = new ArrayList<String>(codeMap.keySet());
+			List<String> codes = new ArrayList<>(codeMap.keySet());
 			for (int i = 0; i < codes.size(); i++) {
 				String code = codes.get(i);
 				if (collectionToFill.containsKey(code)) {

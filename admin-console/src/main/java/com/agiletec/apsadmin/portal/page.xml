@@ -216,7 +216,20 @@
 			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
- 
+
+         <action name="saveConfigure" class="pageAction" method="saveAndConfigure">
+             <result name="input" type="tiles">admin.Page.entry</result>
+        	<result type="redirectAction">
+        		<param name="actionName">configure</param>
+        		<param name="pageCode">${selectedNode}</param>
+        	</result>
+                <interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoValidationStack">
+            	<param name="requestAuth.requiredPermission">managePages</param>
+            	<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+            </interceptor-ref>
+        </action>
+         
         <action name="detail" class="pageAction" method="showDetail">
             <result type="tiles">admin.Page.detail</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>

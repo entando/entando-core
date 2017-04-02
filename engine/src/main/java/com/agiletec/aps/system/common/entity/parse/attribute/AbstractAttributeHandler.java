@@ -30,8 +30,8 @@ public abstract class AbstractAttributeHandler implements AttributeHandlerInterf
 		try {
 			Class attributeHandlerClass = Class.forName(this.getClass().getName());
 			handler = (AttributeHandlerInterface) attributeHandlerClass.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Error detected while cloning the handler" + this.getClass().getName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("Error detected while cloning the handler" + this.getClass().getName(), e);
 		}
 		return handler;
 	}
@@ -55,6 +55,7 @@ public abstract class AbstractAttributeHandler implements AttributeHandlerInterf
 		return value;
 	}
 	
+	@Override
 	public boolean isEndAttribute(String qName) {
 		return qName.equals("attribute");
 	}
@@ -67,6 +68,7 @@ public abstract class AbstractAttributeHandler implements AttributeHandlerInterf
 		return _currentAttr;
 	}
 	
+	@Override
 	public void setCurrentAttr(AttributeInterface currentAttr) {
 		this._currentAttr = currentAttr;
 	}

@@ -79,7 +79,7 @@ public class MonoTextAttribute extends AbstractTextAttribute {
     @Override
     public List<AttributeSearchInfo> getSearchInfos(List<Lang> systemLangs) {
         if (this.getText() != null) {
-            List<AttributeSearchInfo> infos = new ArrayList<AttributeSearchInfo>();
+            List<AttributeSearchInfo> infos = new ArrayList<>();
             String text = this.getText();
             if (text != null && text.length() >= 255) {
                 text = text.substring(0, 254);

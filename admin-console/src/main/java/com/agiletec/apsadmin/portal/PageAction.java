@@ -315,7 +315,31 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		}
 		return SUCCESS;
 	}
-	
+
+        public String saveAndConfigure() {
+		IPage page = null;
+		try {
+			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
+				page = this.getUpdatedPage();
+				this.getPageManager().updatePage(page);
+				this.addActionMessage(this.getText("message.page.info.updated", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
+				_logger.debug("Updating page " + page.getCode());
+			} else {
+				page = this.buildNewPage();
+				this.getPageManager().addPage(page);
+				this.addActionMessage(this.getText("message.page.info.added", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
+				_logger.debug("Adding new page");
+			}
+			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
+                        this.setPageCode(page.getCode());
+                        this.setSelectedNode(page.getCode());
+		} catch (Throwable t) {
+			_logger.error("error in save and configure", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+                
 	public String pageDetails() {
 		return SUCCESS;
 	}

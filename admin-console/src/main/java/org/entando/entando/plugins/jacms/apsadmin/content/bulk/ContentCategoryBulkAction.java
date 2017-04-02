@@ -11,7 +11,7 @@ import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTr
 import org.entando.entando.aps.system.services.command.IBulkCommandManager;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.category.JoinCategoryBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.category.RemoveCategoryBulkCommand;
-import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.ContentBulkActionSummary;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.IContentBulkActionHelper;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.SmallBulkCommandReport;
@@ -30,9 +30,13 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 	private static final Logger _logger = LoggerFactory.getLogger(ContentCategoryBulkAction.class);
 
 	public String entry() {
-		return this.checkAllowedContents(false) ? SUCCESS : "list";
+		if (this.checkAllowedContents(false)) {
+			return this.buildTree();
+		} else {
+			return "list";
+		}
 	}
-
+	
 	public String join() {
 		try {
 			String categoryCode = this.getCategoryCode();
@@ -71,7 +75,7 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 					return INPUT;
 				} else {
 					BulkCommandTracer<String> tracer = new DefaultBulkCommandTracer<String>();
-					BaseContentBulkCommand<Category> command = null;
+					BaseContentPropertyBulkCommand<Category> command = null;
 					if (ApsAdminSystemConstants.DELETE == this.getStrutsAction()) {
 						command = new RemoveCategoryBulkCommand(this.getContentIds(), categories, 
 								this.getContentManager(), tracer);
@@ -142,7 +146,11 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		}
 		return SUCCESS;
 	}
-
+	
+	public Category getCategoryRoot() {
+		return (Category) this.getCategoryManager().getRoot();
+	}
+	
 	public Set<String> getContentIds() {
 		return _contentIds;
 	}

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
-import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
 import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -27,7 +27,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.util.ICmsAttributeErrorCodes;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.util.SymbolicLinkValidator;
 
-public abstract class BaseContentGroupBulkCommand extends BaseContentBulkCommand<String> {
+public abstract class BaseContentGroupBulkCommand extends BaseContentPropertyBulkCommand<String> {
 
 	public BaseContentGroupBulkCommand(Collection<String> items, Collection<String> groups, 
 			IContentManager manager, BulkCommandTracer<String> tracer, WebApplicationContext wax) {

@@ -29,14 +29,14 @@
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
         </action>	
 
-    	<action name="join" class="jacmsContentGroupBulkAction" method="join">
+    	<action name="join*" class="jacmsContentGroupBulkAction" method="join">
             <result type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">editContents</param>
         	</interceptor-ref>
         </action>
 
-    	<action name="disjoin" class="jacmsContentGroupBulkAction" method="disjoin">
+    	<action name="disjoin*" class="jacmsContentGroupBulkAction" method="disjoin">
             <result type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">editContents</param>
@@ -57,9 +57,10 @@
     			<param name="actionName">results</param>
             </result>
             <result name="input" type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
-            <result type="chain">
+            <result type="redirectAction">
     			<param name="actionName">viewResult</param>
     			<param name="commandId">${commandId}</param>
+    			<param name="strutsAction">${strutsAction}</param>
             </result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">editContents</param>
@@ -96,16 +97,16 @@
             </result>
             <result type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
-        </action>	
+        </action>
 
-    	<action name="join" class="jacmsContentCategoryBulkAction" method="join">
+    	<action name="join*" class="jacmsContentCategoryBulkAction" method="join">
             <result type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">editContents</param>
         	</interceptor-ref>
         </action>
 
-    	<action name="disjoin" class="jacmsContentCategoryBulkAction" method="disjoin">
+    	<action name="disjoin*" class="jacmsContentCategoryBulkAction" method="disjoin">
             <result type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">editContents</param>
@@ -126,7 +127,11 @@
     			<param name="actionName">results</param>
             </result>
             <result name="input" type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
-            <result type="chain">viewResult</result>
+            <result type="redirectAction">
+    			<param name="actionName">viewResult</param>
+    			<param name="commandId">${commandId}</param>
+    			<param name="strutsAction">${strutsAction}</param>
+            </result>
         	<interceptor-ref name="entandoDefaultStack">
         		<param name="requestAuth.requiredPermission">editContents</param>
         	</interceptor-ref>

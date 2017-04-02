@@ -51,6 +51,7 @@
 	
 	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.entryChoice">
 		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/content/bulk_categories.jsp" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-choice.jsp" />
 	</definition>
 	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.entryConfirm">

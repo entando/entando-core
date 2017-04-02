@@ -351,6 +351,12 @@
             </div>
 
             <s:if test="%{#contentIdsVar.size() > 0}">
+				<div class="form-group">
+					<label for="allContentsSelected" class="control-label col-sm-2 text-right"><s:text name="label.allContentsSelected"/></label>
+					<div class="col-sm-9">
+						<wpsf:checkbox name="allContentsSelected" id="allContentsSelected" cssClass="bootstrap-switch" />
+					</div>
+				</div>
                 <table class="table table-striped table-bordered table-hover" id="contentListTable">
                     <caption class="sr-only"><s:text name="title.contentList" /></caption>
                     <tr>

@@ -10,10 +10,11 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
-public abstract class BaseContentBulkCommand extends BaseBulkCommand<String, IContentManager> {
+public abstract class BaseContentPropertyBulkCommand<P> extends BaseBulkCommand<String, IContentManager> {
 
-	public BaseContentBulkCommand(Collection<String> items, IContentManager manager, BulkCommandTracer<String> tracer) {
+	public BaseContentPropertyBulkCommand(Collection<String> items, Collection<P> itemProperties, IContentManager manager, BulkCommandTracer<String> tracer) {
 		super(items, manager, tracer);
+		this.setItemProperties(itemProperties);
 	}
 
 	@Override
@@ -33,5 +34,14 @@ public abstract class BaseContentBulkCommand extends BaseBulkCommand<String, ICo
 	protected Content getContent(String id) throws ApsSystemException {
 		return this.getApplier().loadContent(id, false);
 	}
+
+	public Collection<P> getItemProperties() {
+		return _itemProperties;
+	}
+	protected void setItemProperties(Collection<P> itemProperties) {
+		this._itemProperties = itemProperties;
+	}
+
+	private Collection<P> _itemProperties;
 
 }

@@ -4,21 +4,21 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-<s:if test="getStrutsAction() == 1">
-	<s:set var="labelTitle" value="%{getText('label.addGroups')}"/>
+<s:if test="strutsAction == 1">
+	<s:set var="labelTitle" value="%{getText('title.bulk.addGroups')}"/>
 </s:if>
-<s:elseif test="getStrutsAction() == 4" >
-	<s:set var="labelTitle" value="%{getText('label.removeGroups')}"/>
+<s:elseif test="strutsAction == 4" >
+	<s:set var="labelTitle" value="%{getText('title.bulk.removeGroups')}"/>
 </s:elseif>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url action="checkApply" namespace="/do/jacms/Content"/>"><s:text name="jacms.menu.contentAdmin" /></a></li>
+    <li><a href="<s:url action="list" namespace="/do/jacms/Content"/>"><s:text name="jacms.menu.contentAdmin" /></a></li>
     <li>
 		<s:property value="%{#labelTitle}" />
     </li>
 </ol>
 
-<h1 class="page-title-container"><s:text name="title.contentManagement.addGroups" /></h1>
+<h1 class="page-title-container"><s:property value="%{#labelTitle}" />&#32;-&#32;<s:text name="label.bulk.groupChoice" /></h1>
 
 <div id="main" role="main">
 	<s:if test="hasErrors()">
@@ -51,10 +51,14 @@
 			<wpsf:hidden name="contentIds" value="%{#contentId}" />
 		</s:iterator>
 		</p>
-		<div class="alert alert-warning">
+		<div>
 			<p>
-				<s:text name="note.addGroups.areYouSure" />&#32;
-				<code><s:property value="%{contentIds.size()}"/></code>?
+			<s:if test="strutsAction == 1">
+				<s:text name="note.bulk.addGroups.choose" ><s:param name="items" value="%{contentIds.size()}" /></s:text>
+			</s:if>
+			<s:elseif test="strutsAction == 4">
+				<s:text name="note.bulk.removeGroups.choose" ><s:param name="items" value="%{contentIds.size()}" /></s:text>
+			</s:elseif>
 			</p>
 		</div>
 		<div>
@@ -67,6 +71,13 @@
 			</s:iterator>
 			</ul>
 		</div>
+
+		<s:if test="strutsAction == 1">
+			<s:set var="labelAction" value="%{getText('label.bulk.addGroups')}"/>
+		</s:if>
+		<s:elseif test="strutsAction == 4" >
+			<s:set var="labelAction" value="%{getText('label.bulk.removeGroups')}"/>
+		</s:elseif>
 		<div class="col-xs-12">
 			<wpsf:submit type="button" title="%{#labelTitle}" cssClass="btn btn-success">
 				<span class="icon fa fa-times-circle"></span>

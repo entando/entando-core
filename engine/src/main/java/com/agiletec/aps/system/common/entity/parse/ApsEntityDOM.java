@@ -44,7 +44,7 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 		try {
 			copy = this.getClass().newInstance();
 			this.copyInto(copy);
-		} catch (Throwable t) {
+		} catch (InstantiationException | IllegalAccessException t) {
 			_logger.error("Error cloning {}" + this.getClass(), t);
 			throw new RuntimeException("Error cloning " + this.getClass(), t);
 		}
@@ -56,7 +56,6 @@ public class ApsEntityDOM implements IApsEntityDOM, Serializable {
 	}
 	
 	/**
-	 * 
 	 * DOM initialization;
 	 * this method must be invoked when starting to populate the fields.
 	 */

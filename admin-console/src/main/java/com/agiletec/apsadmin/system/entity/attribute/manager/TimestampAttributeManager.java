@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.TimestampAttribute;
-import com.agiletec.apsadmin.util.CheckFormatUtil;
+import com.agiletec.aps.util.CheckFormatUtil;
 
 /**
  * @author E.Santoboni

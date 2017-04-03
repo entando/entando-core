@@ -7,7 +7,6 @@
 //one domready to rule 'em all
 $(function() {
 //	$('[data-toggle="popover"]').popover();
-	debugger;
 
 //for content categories
 <s:if test="#categoryTreeStyleVar != 'request'">

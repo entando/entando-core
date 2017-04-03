@@ -13,6 +13,14 @@
  */
 package com.agiletec.aps.system.services.lang;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
+import com.agiletec.aps.util.FileTextReader;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,14 +30,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
-import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
-import com.agiletec.aps.util.FileTextReader;
 
 /**
  * Servizio di gestione delle lingue.
@@ -52,8 +52,8 @@ public class LangManager extends AbstractService implements ILangManager {
 	private void loadSystemLangs() throws ApsSystemException {
 		String xmlConfig = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_LANGS);
 		List<Lang> tempList = this.parse(xmlConfig);
-		this._langs = new HashMap<String, Lang>(tempList.size());
-		this._langList = new ArrayList<Lang>(tempList.size());
+		this._langs = new HashMap<>(tempList.size());
+		this._langList = new ArrayList<>(tempList.size());
 		for (int i=0; i<tempList.size(); i++){
 			Lang lang = (Lang) tempList.get(i);
 			this._langs.put(lang.getCode(), lang);
@@ -83,24 +83,30 @@ public class LangManager extends AbstractService implements ILangManager {
 	 * @return The List of assignable langs.
 	 * @throws ApsSystemException 
 	 */
+	@Override
 	public List<Lang> getAssignableLangs() throws ApsSystemException {
 		if (_assignableLangs == null) {
 			this.loadAssignableLangs();
 		}
-		List<Lang> assignables = new ArrayList<Lang>(_assignableLangs.values());
+		List<Lang> assignables = new ArrayList<>(_assignableLangs.values());
 		Collections.sort(assignables);
 		return assignables;
 	}
 	
 	private void loadAssignableLangs() throws ApsSystemException {
-		InputStream is = this.getClass().getResourceAsStream("ISO_639 -1_langs.xml");
-		String xmlConfig = FileTextReader.getText(is);
-		LangDOM langDom = new LangDOM(xmlConfig);
-		List<Lang> tempList = langDom.getLangs();
-		this._assignableLangs = new HashMap<String, Lang>();
-		for (int i=0; i<tempList.size(); i++){
-			Lang lang = (Lang) tempList.get(i);
-			this._assignableLangs.put(lang.getCode(), lang);
+		try {
+			InputStream is = this.getClass().getResourceAsStream("ISO_639 -1_langs.xml");
+			String xmlConfig = FileTextReader.getText(is);
+			LangDOM langDom = new LangDOM(xmlConfig);
+			List<Lang> tempList = langDom.getLangs();
+			this._assignableLangs = new HashMap<>();
+			for (int i=0; i<tempList.size(); i++){
+				Lang lang = (Lang) tempList.get(i);
+				this._assignableLangs.put(lang.getCode(), lang);
+			}
+		} catch (ApsSystemException | IOException e) {
+			_logger.error("Error loading langs from iso definition", e);
+			throw new ApsSystemException("Error loading langs from iso definition", e);
 		}
 	}
 	

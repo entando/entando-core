@@ -89,6 +89,10 @@ public class ContentCategoryAction extends AbstractTreeAction {
 		return SUCCESS;
 	}
 	
+	public Category getCategoryRoot() {
+		return (Category) this.getCategoryManager().getRoot();
+	}
+	
 	public Content getContent() {
 		return (Content) this.getRequest().getSession()
 				.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());

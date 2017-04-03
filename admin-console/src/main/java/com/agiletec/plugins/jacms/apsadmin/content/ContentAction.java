@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
-import com.agiletec.aps.system.services.category.Category;
-import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
@@ -256,7 +254,7 @@ public class ContentAction extends AbstractContentAction {
 				this.getContentManager().removeOnLineContent(currentContent);
 				this.addActivityStreamInfo(currentContent, (ApsAdminSystemConstants.DELETE + 10), true);
 				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + super.getContentOnSessionMarker());
-				_logger.info("Content {} suspended - Description: '{}' - Utente: {}", currentContent.getId(), currentContent.getDescr(), this.getCurrentUser().getUsername());
+				_logger.info("Content {} suspended - Description: '{}' - Utente: {}", currentContent.getId(), currentContent.getDescription(), this.getCurrentUser().getUsername());
 			}
 		} catch (Throwable t) {
 			_logger.error("error in suspend", t);
@@ -269,11 +267,6 @@ public class ContentAction extends AbstractContentAction {
 		return SymbolicLink.getDestinationTypes();
 	}
 	
-	@Deprecated (/** From jAPS 2.0 version 2.1, use {@link IContentCategoryAction} action */)
-	public Category getCategoryRoot() {
-		return (Category) this.getCategoryManager().getRoot();
-	}
-
 	public IPage getPage(String pageCode) {
 		return this.getPageManager().getOnlinePage(pageCode);
 	}
@@ -315,15 +308,6 @@ public class ContentAction extends AbstractContentAction {
 		return this.getResourceIconUtil().getIconByFilename(fileName);
 	}
 
-	@Deprecated (/** From jAPS 2.0 version 2.1, use {@link IContentCategoryAction} action */)
-	protected ICategoryManager getCategoryManager() {
-		return _categoryManager;
-	}
-	@Deprecated (/** From jAPS 2.0 version 2.1, use {@link IContentCategoryAction} action */)
-	public void setCategoryManager(ICategoryManager categoryManager) {
-		this._categoryManager = categoryManager;
-	}
-
 	public Map getReferences() {
 		return _references;
 	}
@@ -352,15 +336,6 @@ public class ContentAction extends AbstractContentAction {
 		this._contentId = contentId;
 	}
 
-	@Deprecated (/** From jAPS 2.0 version 2.1, use {@link IContentCategoryAction} action */)
-	public String getCategoryCode() {
-		return _categoryCode;
-	}
-	@Deprecated (/** From jAPS 2.0 version 2.1, use {@link IContentCategoryAction} action */)
-	public void setCategoryCode(String categoryCode) {
-		this._categoryCode = categoryCode;
-	}
-
 	public String getExtraGroupName() {
 		return _extraGroupName;
 	}
@@ -382,7 +357,6 @@ public class ContentAction extends AbstractContentAction {
 		this._resourceIconUtil = resourceIconUtil;
 	}
 
-	private ICategoryManager _categoryManager;
 	private IPageManager _pageManager;
 	private ConfigInterface _configManager;
 
@@ -390,7 +364,6 @@ public class ContentAction extends AbstractContentAction {
 
 	private String _contentId;
 
-	private String _categoryCode;
 	private String _extraGroupName;
 
 	private boolean _copyPublicVersion;

@@ -49,10 +49,10 @@ public class ApsEntity implements IApsEntity {
      * Initialization of the entity with its related elements.
      */
     public ApsEntity() {
-        this._attributeList = new ArrayList<AttributeInterface>();
-        this._attributeMap = new HashMap<String, AttributeInterface>();
-        this._categories = new ArrayList<Category>();
-        this._groups = new HashSet<String>();
+        this._attributeList = new ArrayList<>();
+        this._attributeMap = new HashMap<>();
+        this._categories = new ArrayList<>();
+        this._groups = new HashSet<>();
     }
 
     /**
@@ -311,7 +311,7 @@ public class ApsEntity implements IApsEntity {
                 entity.addAttribute(attr);
             }
             entity.setEntityDOM(this.getEntityDOM());
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
         	_logger.error("Error creating entity prototype", e);
             throw new RuntimeException("Error creating entity prototype", e);
         }
@@ -400,39 +400,34 @@ public class ApsEntity implements IApsEntity {
     
 	@Override
     public List<FieldError> validate(IGroupManager groupManager) {
-        List<FieldError> errors = new ArrayList<FieldError>();
-        try {
-            if (null != this.getMainGroup() && null == groupManager.getGroup(this.getMainGroup())) {
-                FieldError error = new FieldError("mainGroup", FieldError.INVALID);
-                error.setMessage("Invalid main group - " + this.getMainGroup());
-                errors.add(error);
-            }
-            if (null != this.getGroups()) {
-                Iterator<String> groupsIter = this.getGroups().iterator();
-                while (groupsIter.hasNext()) {
-                    String groupName = groupsIter.next();
-                    if (null == groupManager.getGroup(groupName)) {
-                        FieldError error = new FieldError("extraGroup", FieldError.INVALID);
-                        error.setMessage("Invalid extra group - " + groupName);
-                        errors.add(error);
-                    }
-                }
-            }
-            if (null != this.getAttributeList()) {
-                List<AttributeInterface> attributes = this.getAttributeList();
-                for (int i = 0; i < attributes.size(); i++) {
-                    AttributeInterface attribute = attributes.get(i);
-                    AttributeTracer tracer = new AttributeTracer();
-                    List<AttributeFieldError> attributeErrors = attribute.validate(tracer);
-                    if (null != attributeErrors) {
-                        errors.addAll(attributeErrors);
-                    }
-                }
-            }
-        } catch (Throwable t) {
-        	_logger.error("Error validating entity", t);
-            throw new RuntimeException("Error validating entity");
-        }
+        List<FieldError> errors = new ArrayList<>();
+		if (null != this.getMainGroup() && null == groupManager.getGroup(this.getMainGroup())) {
+			FieldError error = new FieldError("mainGroup", FieldError.INVALID);
+			error.setMessage("Invalid main group - " + this.getMainGroup());
+			errors.add(error);
+		}
+		if (null != this.getGroups()) {
+			Iterator<String> groupsIter = this.getGroups().iterator();
+			while (groupsIter.hasNext()) {
+				String groupName = groupsIter.next();
+				if (null == groupManager.getGroup(groupName)) {
+					FieldError error = new FieldError("extraGroup", FieldError.INVALID);
+					error.setMessage("Invalid extra group - " + groupName);
+					errors.add(error);
+				}
+			}
+		}
+		if (null != this.getAttributeList()) {
+			List<AttributeInterface> attributes = this.getAttributeList();
+			for (int i = 0; i < attributes.size(); i++) {
+				AttributeInterface attribute = attributes.get(i);
+				AttributeTracer tracer = new AttributeTracer();
+				List<AttributeFieldError> attributeErrors = attribute.validate(tracer);
+				if (null != attributeErrors) {
+					errors.addAll(attributeErrors);
+				}
+			}
+		}
         return errors;
     }
     

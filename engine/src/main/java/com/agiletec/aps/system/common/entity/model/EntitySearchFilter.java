@@ -369,7 +369,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 					filter.setRoleName(roleName);
 				}
 				filter.setAttributeFilter(true);
-				if (null != attr && null != prototype) {
+				if (null != attr) {
 					String dataType = null;
 					if (attr instanceof DateAttribute) {
 						dataType = DATA_TYPE_DATE;

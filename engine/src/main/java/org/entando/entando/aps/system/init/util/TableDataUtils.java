@@ -119,13 +119,14 @@ public class TableDataUtils {
 		TableDumpReport report = new TableDumpReport(tableName);
 		StringBuilder scriptPrefix = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
 		Connection conn = null;
-        PreparedStatement stat = null;
+        Statement stat = null;
 		ResultSet res = null;
 		long start = System.currentTimeMillis();
 		try {
 			conn = dataSource.getConnection();
-			stat = conn.prepareStatement("SELECT * FROM " + tableName);
-			res = stat.executeQuery();
+			String query = "SELECT * FROM " + tableName;
+			stat = conn.createStatement();
+			res = stat.executeQuery(query);
 			ResultSetMetaData metaData = res.getMetaData();
             int columnCount = metaData.getColumnCount();
 			int[] types = new int[columnCount];

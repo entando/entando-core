@@ -602,6 +602,13 @@
 			<groupId>org.codehaus.jettison</groupId>
 			<artifactId>jettison</artifactId>
 			<version>1.3.7</version>
+			<exclusions>
+				<!--  STAX comes with Java 1.6 -->
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>stax</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.oauth.core</groupId>

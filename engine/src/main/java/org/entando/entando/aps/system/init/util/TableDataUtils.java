@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -71,16 +72,17 @@ public class TableDataUtils {
 	public static void executeQueries(DataSource dataSource, String[] queries, boolean traceException) throws ApsSystemException {
 		if (null == queries || queries.length == 0) return;
 		Connection conn = null;
-        PreparedStatement stat = null;
+        Statement stat = null;
 		String currentQuery = null;
 		try {
 			conn = dataSource.getConnection();
             conn.setAutoCommit(false);
+			stat = conn.createStatement();
 			for (int i = 0; i < queries.length; i++) {
 				currentQuery = queries[i];
-				stat = conn.prepareStatement(currentQuery);
-				stat.executeUpdate();
+				stat.addBatch(currentQuery);
 			}
+			stat.executeBatch();
 			conn.commit();
 		} catch (Throwable t) {
 			try {

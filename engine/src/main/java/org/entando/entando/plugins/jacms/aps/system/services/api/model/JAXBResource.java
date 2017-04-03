@@ -54,14 +54,14 @@ public class JAXBResource {
 
 	public JAXBResource(ResourceInterface resource) throws ApsSystemException {
 		try {
-			this.setDescription(resource.getDescr());
+			this.setDescription(resource.getDescription());
 			this.setFileName(resource.getMasterFileName());
 			this.setId(resource.getId());
 			this.setMainGroup(resource.getMainGroup());
 			this.setTypeCode(resource.getType());
 			List<Category> resourceCategories = resource.getCategories();
 			if (null != resourceCategories && !resourceCategories.isEmpty()) {
-				List<String> categories = new ArrayList<String>();
+				List<String> categories = new ArrayList<>();
 				for (int i = 0; i < resourceCategories.size(); i++) {
 					Category category = resourceCategories.get(i);
 					if (null != category) {
@@ -77,54 +77,62 @@ public class JAXBResource {
 				this.setBase64(bytes);
 				tempFile.delete();
 			}
-		} catch (Throwable t) {
+		} catch (IOException t) {
 			_logger.error("Error creating jaxb resource", t);
-			//ApsSystemUtils.logThrowable(t, this, "JAXBResource");
 			throw new ApsSystemException("Error creating jaxb resource", t);
 		}
 	}
 	
-	protected File createTempFile(String filename, InputStream is) throws ApsSystemException {
+	protected File createTempFile(String filename, InputStream is) throws IOException {
 		String tempDir = System.getProperty("java.io.tmpdir");
 		String filePath = tempDir + File.separator + filename;
+		FileOutputStream outStream = null;
 		try {
 			byte[] buffer = new byte[1024];
 			int length = -1;
-			FileOutputStream outStream = new FileOutputStream(filePath);
+			outStream = new FileOutputStream(filePath);
 			while ((length = is.read(buffer)) != -1) {
 				outStream.write(buffer, 0, length);
 				outStream.flush();
 			}
-			outStream.close();
-			is.close();
-		} catch (Throwable t) {
+		} catch (IOException t) {
 			_logger.error("Error on saving temporary file", t);
-			//ApsSystemUtils.logThrowable(t, this, "saveTempFile");
-			throw new ApsSystemException("Error on saving temporary file", t);
+			throw t;
+		} finally {
+			if (null != outStream) {
+				outStream.close();
+			}
+			if (null != is) {
+				is.close();
+			}
 		}
 		return new File(filePath);
 	}
-
-	private byte[] fileToByteArray(File file) throws Throwable {
-		FileInputStream fis = new FileInputStream(file);
+	
+	private byte[] fileToByteArray(File file) throws IOException {
+		FileInputStream fis = null;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		byte[] buf = new byte[1024];
 		try {
+			fis = new FileInputStream(file);
+			byte[] buf = new byte[1024];
 			for (int readNum; (readNum = fis.read(buf)) != -1;) {
 				bos.write(buf, 0, readNum);
 			}
 		} catch (IOException ex) {
 			_logger.error("Error creating byte array", ex);
-			//ApsSystemUtils.logThrowable(ex, this, "fileToByteArray");
-			throw new ApsSystemException("Error creating byte array", ex);
+			throw ex;
+		} finally {
+			if (null != fis) {
+				fis.close();
+			}
 		}
 		return bos.toByteArray();
 	}
-
+	
 	public BaseResourceDataBean createBataBean(ICategoryManager categoryManager) throws Throwable {
 		BaseResourceDataBean bean = new BaseResourceDataBean();
 		if (null != this.getCategories()) {
-			List<Category> categories = new ArrayList<Category>();
+			List<Category> categories = new ArrayList<>();
 			for (int i = 0; i < this.getCategories().size(); i++) {
 				String categoryCode = this.getCategories().get(i);
 				Category category = categoryManager.getCategory(categoryCode);
@@ -149,23 +157,29 @@ public class JAXBResource {
 		return bean;
 	}
 	
-	private File byteArrayToFile() throws Throwable {
+	private File byteArrayToFile() throws IOException {
 		String tempDir = System.getProperty("java.io.tmpdir");
 		File file = new File(tempDir + File.separator + this.getFileName());
-		InputStream inputStream = new ByteArrayInputStream(this.getBase64());
+		InputStream inputStream = null;
+		OutputStream out = null;
 		try {
-			OutputStream out = new FileOutputStream(file);
+			inputStream = new ByteArrayInputStream(this.getBase64());
+			out = new FileOutputStream(file);
 			byte buf[] = new byte[1024];
 			int len;
 			while ((len = inputStream.read(buf)) > 0) {
 				out.write(buf, 0, len);
 			}
-			out.close();
-			inputStream.close();
 		} catch (IOException ex) {
 			_logger.error("rror creating file from byte array", ex);
-			//ApsSystemUtils.logThrowable(ex, this, "byteArrayToFile");
-			throw new ApsSystemException("Error creating file from byte array", ex);
+			throw ex;
+		} finally {
+			if (null != out) {
+				out.close();
+			}
+			if (null != inputStream) {
+				inputStream.close();
+			}
 		}
 		return file;
 	}
@@ -234,5 +248,5 @@ public class JAXBResource {
 	private String _fileName;
 	private List<String> _categories;
 	private byte[] _base64;
-
+	
 }

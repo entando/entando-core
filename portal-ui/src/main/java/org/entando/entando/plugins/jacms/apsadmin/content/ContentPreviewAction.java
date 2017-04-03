@@ -116,7 +116,7 @@ public class ContentPreviewAction extends AbstractContentAction implements Servl
 		IPage pageDest = pageManager.getOnlinePage(pageDestCode);
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("contentOnSessionMarker", this.getContentOnSessionMarker());
-		String redirectUrl = this.getUrlManager().createUrl(pageDest, currentLang, parameters, false);
+		String redirectUrl = this.getUrlManager().createURL(pageDest, currentLang, parameters, false);
 		this.getServletResponse().sendRedirect(redirectUrl);
 	}
 	

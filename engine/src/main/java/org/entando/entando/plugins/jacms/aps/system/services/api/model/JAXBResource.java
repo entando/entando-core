@@ -171,7 +171,7 @@ public class JAXBResource {
 				out.write(buf, 0, len);
 			}
 		} catch (IOException ex) {
-			_logger.error("rror creating file from byte array", ex);
+			_logger.error("Error creating file from byte array", ex);
 			throw ex;
 		} finally {
 			if (null != out) {

@@ -31,6 +31,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.util.EntityAttributeIterator;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
+import java.sql.SQLException;
 
 /**
  * Abstract DAO class used for the management of the ApsEntities.
@@ -292,7 +293,7 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 		Connection conn = null;
 		Statement stat = null;
 		ResultSet res = null;
-		List<String> entitiesId = new ArrayList<String>();
+		List<String> entitiesId = new ArrayList<>();
 		try {
 			conn = this.getConnection();
 			stat = conn.createStatement();
@@ -300,7 +301,7 @@ public abstract class AbstractEntityDAO extends AbstractDAO implements IEntityDA
 			while (res.next()) {
 				entitiesId.add(res.getString(1));
 			}
-		} catch (Throwable t) {
+		} catch (ApsSystemException | SQLException t) {
 			_logger.error("Error retrieving the list of entity IDs",  t);
 			throw new RuntimeException("Error retrieving the list of entity IDs", t);
 		} finally {

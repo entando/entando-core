@@ -73,10 +73,10 @@ public class ContentGroupBulkAction extends BaseAction {
 				WebApplicationContext wax = ApsWebApplicationUtils.getWebApplicationContext(this.getRequest());
 				BaseContentGroupBulkCommand command = null;
 				if (ApsAdminSystemConstants.DELETE == this.getStrutsAction()) {
-					command = new RemoveGroupBulkCommand(this.getContentIds(), this.getExtraGroupNames(), 
+					command = new RemoveGroupBulkCommand(this.getSelectedIds(), this.getExtraGroupNames(), 
 							this.getContentManager(), tracer, wax);
 				} else {
-					command = new JoinGroupBulkCommand(this.getContentIds(), this.getExtraGroupNames(), 
+					command = new JoinGroupBulkCommand(this.getSelectedIds(), this.getExtraGroupNames(), 
 							this.getContentManager(), tracer, wax);
 				}
 				BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(this.getCommandOwner(), command);
@@ -94,7 +94,7 @@ public class ContentGroupBulkAction extends BaseAction {
 	}
 
 	public ContentBulkActionSummary getSummary() {
-		return this.getBulkActionHelper().getSummary(this.getContentIds());
+		return this.getBulkActionHelper().getSummary(this.getSelectedIds());
 	}
 
 	public BaseBulkCommand<?, ?> getCommand() {
@@ -110,7 +110,7 @@ public class ContentGroupBulkAction extends BaseAction {
 	}
 
 	protected boolean checkAllowedContents(boolean fullCheck) {
-		return this.getBulkActionHelper().checkAllowedContents(this.getContentIds(), fullCheck, this, this);
+		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), fullCheck, this, this);
 	}
 
 	protected boolean checkGroups() {
@@ -129,11 +129,11 @@ public class ContentGroupBulkAction extends BaseAction {
 		return IContentBulkActionHelper.BULK_COMMAND_OWNER;
 	}
 
-	public Set<String> getContentIds() {
-		return _contentIds;
+	public Set<String> getSelectedIds() {
+		return _selectedIds;
 	}
-	public void setContentIds(Set<String> contentIds) {
-		this._contentIds = contentIds;
+	public void setSelectedIds(Set<String> selectedIds) {
+		this._selectedIds = selectedIds;
 	}
 
 	public int getStrutsAction() {
@@ -192,7 +192,9 @@ public class ContentGroupBulkAction extends BaseAction {
 		this._bulkActionHelper = bulkActionHelper;
 	}
 
+	private Set<String> _forcedContentIds;
 	private Set<String> _contentIds;
+	private Set<String> _selectedIds;
 
 	private int _strutsAction;
 	private String _commandId;

@@ -1,19 +1,16 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<script src="<wp:resourceURL />administration/js/jquery.entando.js"/>
+<s:set var="categoryTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
+<script src="<wp:resourceURL />administration/js/jquery.entando.js"></script>
 <script>
 //one domready to rule 'em all
 $(function() {
 //	$('[data-toggle="popover"]').popover();
-
-	/* contentDescription routine //end */
-
-<s:set var="categoryTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
+	debugger;
 
 //for content categories
-<s:if test="#categoryTreeStyleVar == 'classic'">
-
+<s:if test="#categoryTreeStyleVar != 'request'">
 	var catTree = jQuery("#categoryTree").EntandoWoodMenu({
 		menuToggler: "subTreeToggler",
 		menuRetriever: function(toggler) {

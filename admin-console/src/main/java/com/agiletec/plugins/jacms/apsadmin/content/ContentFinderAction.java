@@ -593,11 +593,11 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 				List<String> allContentIds = this.getContents();
 				if (allContentIds != null) {
 					contentIds = new TreeSet<String>(allContentIds);
-					this.setContentIds(contentIds);
 				}
 			} else {
 				contentIds = this.getContentIds();
 			}
+			this.setSelectedIds(contentIds);
 			if (contentIds == null || contentIds.isEmpty()) {
 				this.addActionError(this.getText("error.content.bulkAction.empty"));
 			}
@@ -766,6 +766,13 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		this._contentIds = contentIds;
 	}
 
+	public Set<String> getSelectedIds() {
+		return _selectedIds;
+	}
+	public void setSelectedIds(Set<String> selectedIds) {
+		this._selectedIds = selectedIds;
+	}
+
 	public String getActionCode() {
 		return _actionCode;
 	}
@@ -829,6 +836,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	private int _strutsAction;
 
 	private Set<String> _contentIds;
+	private Set<String> _selectedIds;// Used in bulk actions
 
 	private String _actionCode = null;
 	

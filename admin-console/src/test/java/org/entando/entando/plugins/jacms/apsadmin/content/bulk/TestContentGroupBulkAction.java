@@ -59,18 +59,18 @@ public class TestContentGroupBulkAction extends ApsAdminBaseTestCase {
 		
 		String result = this.executeEntry(currentUser, ApsAdminSystemConstants.ADD, contentIds);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getSelectedIds());
 		
 		result = this.executeEntry(currentUser, ApsAdminSystemConstants.DELETE, contentIds);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getSelectedIds());
 		
 		result = this.executeCheckApply(currentUser, ApsAdminSystemConstants.ADD, contentIds, groupCodes);
 		assertEquals(Action.INPUT, result);
 		
 		result = this.executeCheckApply("mainEditor", ApsAdminSystemConstants.ADD, contentIds, groupCodes);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentGroupBulkAction) this.getAction()).getSelectedIds());
 		this.checkItems(groupCodes, ((ContentGroupBulkAction) this.getAction()).getExtraGroupNames());
 	}
 
@@ -114,7 +114,7 @@ public class TestContentGroupBulkAction extends ApsAdminBaseTestCase {
 			String result = this.executeApply(currentUser, ApsAdminSystemConstants.ADD, contentIds, groupCodes);
 			assertEquals(Action.SUCCESS, result);
 			ContentGroupBulkAction action = (ContentGroupBulkAction) this.getAction();
-			this.checkItems(contentIds, action.getContentIds());
+			this.checkItems(contentIds, action.getSelectedIds());
 			this.checkItems(groupCodes, action.getExtraGroupNames());
 			String commandId = action.getCommandId();
 			assertNotNull(commandId);

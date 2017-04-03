@@ -41,7 +41,7 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		try {
 			String categoryCode = this.getCategoryCode();
 			Category category = this.getCategoryManager().getCategory(categoryCode);
-			if (null != category) {
+			if (null != category && !category.isRoot()) {
 				this.getCategoryCodes().add(categoryCode);
 			}
 		} catch (Throwable t) {
@@ -77,10 +77,10 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 					BulkCommandTracer<String> tracer = new DefaultBulkCommandTracer<String>();
 					BaseContentPropertyBulkCommand<Category> command = null;
 					if (ApsAdminSystemConstants.DELETE == this.getStrutsAction()) {
-						command = new RemoveCategoryBulkCommand(this.getContentIds(), categories, 
+						command = new RemoveCategoryBulkCommand(this.getSelectedIds(), categories, 
 								this.getContentManager(), tracer);
 					} else {
-						command = new JoinCategoryBulkCommand(this.getContentIds(), categories, 
+						command = new JoinCategoryBulkCommand(this.getSelectedIds(), categories, 
 								this.getContentManager(), tracer);
 					}
 					BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(this.getCommandOwner(), command);
@@ -99,7 +99,7 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 	}
 
 	public ContentBulkActionSummary getSummary() {
-		return this.getBulkActionHelper().getSummary(this.getContentIds());
+		return this.getBulkActionHelper().getSummary(this.getSelectedIds());
 	}
 
 	public BaseBulkCommand<?, ?> getCommand() {
@@ -115,7 +115,7 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 	}
 
 	protected boolean checkAllowedContents(boolean fullCheck) {
-		return this.getBulkActionHelper().checkAllowedContents(this.getContentIds(), fullCheck, this, this);
+		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), fullCheck, this, this);
 	}
 
 	protected boolean checkCategories() {
@@ -150,12 +150,12 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 	public Category getCategoryRoot() {
 		return (Category) this.getCategoryManager().getRoot();
 	}
-	
-	public Set<String> getContentIds() {
-		return _contentIds;
+
+	public Set<String> getSelectedIds() {
+		return _selectedIds;
 	}
-	public void setContentIds(Set<String> contentIds) {
-		this._contentIds = contentIds;
+	public void setSelectedIds(Set<String> selectedIds) {
+		this._selectedIds = selectedIds;
 	}
 
 	public int getStrutsAction() {
@@ -214,7 +214,9 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		this._bulkActionHelper = bulkActionHelper;
 	}
 
+	private Set<String> _forcedContentIds;
 	private Set<String> _contentIds;
+	private Set<String> _selectedIds;
 
 	private int _strutsAction;
 	private String _commandId;

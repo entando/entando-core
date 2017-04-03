@@ -18,7 +18,7 @@
     </li>
 </ol>
 
-<h1 class="page-title-container"><s:property value="%{#labelTitle}" />&#32;-&#32;<s:text name="label.bulk.confirm" /></h1>
+<h1 class="page-title-container"><s:property value="%{#labelTitle}" />&#32;-&#32;<s:text name="title.bulk.confirm" /></h1>
 
 <div id="main" role="main">
 	<s:if test="hasErrors()">
@@ -47,8 +47,8 @@
 	<s:form action="apply" namespace="/do/jacms/Content/Group" >
 		<p class="sr-only">
 			<wpsf:hidden name="strutsAction"/>
-		<s:iterator var="contentId" value="contentIds" >
-			<wpsf:hidden name="contentIds" value="%{#contentId}" />
+		<s:iterator var="contentId" value="selectedIds" >
+			<wpsf:hidden name="selectedIds" value="%{#contentId}" />
 		</s:iterator>
 		<s:iterator var="groupCode" value="extraGroupNames" >
 			<wpsf:hidden name="extraGroupNames" value="%{#groupCode}" />
@@ -57,10 +57,10 @@
 		<div>
 			<p>
 			<s:if test="strutsAction == 1">
-				<s:text name="note.bulk.addGroups.doYouConfirm" ><s:param name="items" value="%{contentIds.size()}" /></s:text>
+				<s:text name="note.bulk.addGroups.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
 			</s:if>
 			<s:elseif test="strutsAction == 4">
-				<s:text name="note.bulk.removeGroups.doYouConfirm" ><s:param name="items" value="%{contentIds.size()}" /></s:text>
+				<s:text name="note.bulk.removeGroups.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
 			</s:elseif>
 			</p>
 		</div>

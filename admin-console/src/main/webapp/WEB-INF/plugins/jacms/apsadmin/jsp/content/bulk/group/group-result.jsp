@@ -16,7 +16,7 @@
     </li>
 </ol>
 
-<h1 class="page-title-container"><s:property value="%{#labelTitle}" />&#32;-&#32;<s:text name="label.bulk.result" /></h1>
+<h1 class="page-title-container"><s:property value="%{#labelTitle}" />&#32;-&#32;<s:text name="title.bulk.result" /></h1>
 
 <s:set var="command" value="command" />
 <div id="main" role="main">
@@ -28,7 +28,7 @@
 <s:else>
 	<s:set var="report" value="#command.report" />
 	<p>
-		<s:text name="label.bulk.status" />: <s:text name="label.bulk.status.%{#command.status}" />
+		<s:text name="label.bulk.status" />: <s:text name="name.bulk.status.%{#command.status}" />
 	</p>
 	<s:if test="%{#report.endingTime != null}" >
 	<p>
@@ -53,7 +53,7 @@
 		<ul>
 		<s:iterator var="error" value="%{#report.errors}" >
 			<jacmswpsa:content contentId="#error.key" var="content" />
-			<s:text name="label.bulk.group.error.%{#error.value}" var="errorDescr" />
+			<s:text name="name.bulk.group.error.%{#error.value}" var="errorDescr" />
 			<li>
 				<s:text name="label.bulk.report.error" >
 					<s:param name="content" value="%{#content.description}" />

@@ -62,15 +62,15 @@ public class TestContentCategoryBulkAction extends ApsAdminBaseTestCase {
 		
 		String result = this.executeEntry(currentUser, ApsAdminSystemConstants.ADD, contentIds);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((ContentCategoryBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentCategoryBulkAction) this.getAction()).getSelectedIds());
 		
 		result = this.executeEntry(currentUser, ApsAdminSystemConstants.DELETE, contentIds);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((ContentCategoryBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentCategoryBulkAction) this.getAction()).getSelectedIds());
 		
 		result = this.executeCheckApply(currentUser, ApsAdminSystemConstants.ADD, contentIds, categoryCodes);
 		assertEquals(Action.SUCCESS, result);
-		this.checkItems(contentIds, ((ContentCategoryBulkAction) this.getAction()).getContentIds());
+		this.checkItems(contentIds, ((ContentCategoryBulkAction) this.getAction()).getSelectedIds());
 		this.checkItems(categoryCodes, ((ContentCategoryBulkAction) this.getAction()).getCategoryCodes());
 	}
 
@@ -114,7 +114,7 @@ public class TestContentCategoryBulkAction extends ApsAdminBaseTestCase {
 			String result = this.executeApply(currentUser, ApsAdminSystemConstants.ADD, contentIds, categoryCodes);
 			assertEquals(Action.SUCCESS, result);
 			ContentCategoryBulkAction action = (ContentCategoryBulkAction) this.getAction();
-			this.checkItems(contentIds, action.getContentIds());
+			this.checkItems(contentIds, action.getSelectedIds());
 			this.checkItems(categoryCodes, action.getCategoryCodes());
 			String commandId = action.getCommandId();
 			assertNotNull(commandId);

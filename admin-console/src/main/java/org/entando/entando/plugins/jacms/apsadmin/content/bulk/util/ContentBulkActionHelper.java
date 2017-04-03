@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
-import org.entando.entando.plugins.jacms.apsadmin.content.bulk.BaseContentBulkAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ import com.opensymphony.xwork2.interceptor.ValidationAware;
 
 public class ContentBulkActionHelper implements IContentBulkActionHelper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(BaseContentBulkAction.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ContentBulkActionHelper.class);
 
 	/**
 	 * Checks if the contents are allowed.<br/>
@@ -47,7 +46,7 @@ public class ContentBulkActionHelper implements IContentBulkActionHelper {
 			List<String> groupNames = this.getAllowedGroupNames(allowedGroups);
 			for (String groupName : selectedGroupCodes) {
 				if (!groupNames.contains(groupName)) {
-					validation.addActionError(textProvider.getText("error.bulk.groups.notAllowed", groupName));
+					validation.addActionError(textProvider.getText("error.bulk.groups.notAllowed", new String[] {groupName}));
 					allowed = false;
 				}
 			}
@@ -77,7 +76,7 @@ public class ContentBulkActionHelper implements IContentBulkActionHelper {
 			for (String categoryCode : categoryCodes) {
 				Category category = categoryManager.getCategory(categoryCode);
 				if (category == null || category.isRoot()) {
-					validation.addActionError(textProvider.getText("error.bulk.categories.notAllowed", categoryCode));
+					validation.addActionError(textProvider.getText("error.bulk.categories.notAllowed", new String[] {categoryCode}));
 					allowed = false;
 				} else {
 					categories.add(category);

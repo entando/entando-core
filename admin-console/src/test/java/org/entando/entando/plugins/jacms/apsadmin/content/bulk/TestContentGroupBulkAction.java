@@ -223,7 +223,7 @@ public class TestContentGroupBulkAction extends ApsAdminBaseTestCase {
 		this.setUserOnSession(currentUser);
 		this.initAction(NAMESPACE, actionName);
 		this.addParameter("strutsAction", strutsAction);
-		this.addParameter("contentIds", contentIds);
+		this.addParameter("selectedIds", contentIds);
 		this.addParameter("extraGroupNames", groupCodes);
 		this.addParameter("groupName", groupName);
 		return this.executeAction();

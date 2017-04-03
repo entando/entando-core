@@ -233,7 +233,7 @@ public class TestContentCategoryBulkAction extends ApsAdminBaseTestCase {
 		this.setUserOnSession(currentUser);
 		this.initAction(NAMESPACE, actionName);
 		this.addParameter("strutsAction", strutsAction);
-		this.addParameter("contentIds", contentIds);
+		this.addParameter("selectedIds", contentIds);
 		this.addParameter("categoryCodes", categoryCodes);
 		this.addParameter("categoryCode", categoryCode);
 		return this.executeAction();

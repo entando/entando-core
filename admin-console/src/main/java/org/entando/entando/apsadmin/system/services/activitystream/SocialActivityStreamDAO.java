@@ -54,7 +54,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			super.executeQueryWithoutResultset(DELETE_LOG_LIKE_RECORD, id, username, conn);
+			super.executeQueryWithoutResultset(conn, DELETE_LOG_LIKE_RECORD, id, username);
 			stat = conn.prepareStatement(ADD_ACTION_LIKE_RECORD);
 			stat.setInt(1, id);
 			stat.setString(2, username);

@@ -73,7 +73,20 @@
             <result name="userList" type="chain">list</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editUsers</param></interceptor-ref>
         </action>
-    	
+        
+        <action name="systemParams" class="userSettingsAction" method="configSystemParams">
+            <result type="tiles">admin.User.settings</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+			<interceptor-ref name="redirectMessage" />
+        </action>
+
+        <action name="updateSystemParams" class="userSettingsAction" method="updateSystemParams">
+            <result type="redirectAction">systemParams</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">superuser</param>
+        	</interceptor-ref>
+			<interceptor-ref name="redirectMessage" />
+        </action>
     	<!-- ######## add/edit user - end ######## -->
     	
     </package>

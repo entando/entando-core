@@ -83,7 +83,11 @@
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/profile-entry.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/profile-entry.jsp" />
     </definition>
-	
+    <definition extends="layout.default" name="admin.User.settings">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/userSettings.jsp" />
+        <!--<put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/settingsPage-extra.jsp" />-->
+    </definition>
     <!-- ********* User management - END ********* -->
 	
     <!-- ********* User Role management - START ********* -->

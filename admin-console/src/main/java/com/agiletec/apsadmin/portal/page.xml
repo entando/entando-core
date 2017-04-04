@@ -65,16 +65,13 @@
 			<result name="pageTree" type="json">
 				<param name="root">pageDetailResponse</param>
 			</result>			
-			<interceptor-ref name="jsonStack">
-			</interceptor-ref>
+			<interceptor-ref name="jsonStack" />
 			<interceptor-ref name="entandoDefaultStack">
 				<param name="requestAuth.requiredPermission">managePages</param>
-				<param name="params.excludeParams">swapWidgetRequest</param>
 			</interceptor-ref>
 		</action>
 
 		<action name="moveWidget" class="pageConfigAction" method="move">
-			<param name="swapWidgetRequest">true</param>
 			<result type="json">
 				<param name="root">moveWidgetResponse</param>
 			</result>
@@ -85,11 +82,9 @@
 				<param name="root">moveWidgetResponse</param>
 			</result>
 
-			<interceptor-ref name="jsonStack">
-			</interceptor-ref>
+			<interceptor-ref name="jsonStack" />
 			<interceptor-ref name="entandoDefaultStack">
 				<param name="requestAuth.requiredPermission">managePages</param>
-				<param name="params.excludeParams">swapWidgetRequest</param>
 			</interceptor-ref>
 		</action>
 
@@ -111,8 +106,7 @@
 				<param name="root">joinWidgetResponse</param>
 			</result>
 
-			<interceptor-ref name="jsonStack">
-			</interceptor-ref>
+			<interceptor-ref name="jsonStack" />
 			<interceptor-ref name="entandoDefaultStack">
 				<param name="requestAuth.requiredPermission">managePages</param>
 			</interceptor-ref>
@@ -133,8 +127,7 @@
 				<param name="root">deleteWidgetResponse</param>
 			</result>
 
-			<interceptor-ref name="jsonStack">
-			</interceptor-ref>
+			<interceptor-ref name="jsonStack" />
 			<interceptor-ref name="entandoDefaultStack">
 				<param name="requestAuth.requiredPermission">managePages</param>
 			</interceptor-ref>
@@ -153,8 +146,7 @@
 			<result name="failure" type="json">
 				<param name="root">deleteWidgetResponse</param>
 			</result>
-			<interceptor-ref name="jsonStack">
-			</interceptor-ref>
+			<interceptor-ref name="jsonStack" />
 			<interceptor-ref name="entandoDefaultStack">
 				<param name="requestAuth.requiredPermission">managePages</param>
 			</interceptor-ref>
@@ -244,7 +236,6 @@
         	<result name="references" type="tiles">admin.Page.references</result>
             <result name="input" type="chain">viewTree</result>
             <result type="tiles">admin.Page.offline</result>
-			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
         
@@ -262,7 +253,6 @@
         <action name="checkSetOnline" class="pageAction" method="checkSetOnline">
             <result name="input" type="chain">viewTree</result>
             <result type="tiles">admin.Page.online</result>
-			<interceptor-ref name="entandoActionLogger" />
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">managePages</param></interceptor-ref>
         </action>
         

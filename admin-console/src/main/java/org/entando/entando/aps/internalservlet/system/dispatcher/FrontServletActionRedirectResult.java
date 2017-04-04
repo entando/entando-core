@@ -97,7 +97,7 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
             IURLManager urlManager = (IURLManager) ApsWebApplicationUtils.getBean(SystemConstants.URL_MANAGER, request);
             Page currentPage = (Page) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
             Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-            String url = urlManager.createUrl(currentPage, currentLang, redirectParams, false, request);
+            String url = urlManager.createURL(currentPage, currentLang, redirectParams, false, request);
             if (null != anchorDest) {
                 url += "#" + anchorDest;
             }

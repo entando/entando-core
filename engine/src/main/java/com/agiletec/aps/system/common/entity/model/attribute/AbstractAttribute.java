@@ -180,7 +180,7 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
             clone.setValidationRules(this.getValidationRules().clone());
 			clone.setLangManager(this.getLangManager());
 			clone.setAttributeManagerClassName(this.getAttributeManagerClassName());
-        } catch (Throwable t) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException t) {
             String message = "Error detected while creating the attribute prototype '"  + this.getName() + "' type '" + this.getType() + "'";
             _logger.error("Error detected while creating the attribute prototype '{}' type '{}'", this.getName(), this.getType(), t);
             throw new RuntimeException(message, t);
@@ -246,7 +246,7 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
         if (null == elements) {
             return null;
         }
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         List<Element> subElements = elements.getChildren(subElementName);
         if (null == subElements || subElements.isEmpty()) {
             return null;
@@ -483,7 +483,7 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
     
 	@Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
-        List<AttributeFieldError> errors = new ArrayList<AttributeFieldError>();
+        List<AttributeFieldError> errors = new ArrayList<>();
         try {
             if (this.getStatus().equals(Status.INCOMPLETE)) {
                 errors.add(new AttributeFieldError(this, FieldError.INVALID, tracer));

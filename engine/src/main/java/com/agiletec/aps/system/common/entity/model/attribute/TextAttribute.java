@@ -34,7 +34,7 @@ public class TextAttribute extends AbstractTextAttribute {
      * Initialize the map of the texts.
      */
     public TextAttribute() {
-        this._textMap = new HashMap<String, String>();
+        this._textMap = new HashMap<>();
     }
     
     @Override
@@ -115,7 +115,7 @@ public class TextAttribute extends AbstractTextAttribute {
     public List<AttributeSearchInfo> getSearchInfos(List<Lang> systemLangs) {
         List<AttributeSearchInfo> infos = null;
         if (null != this.getTextMap() && this.getTextMap().size() > 0) {
-            infos = new ArrayList<AttributeSearchInfo>();
+            infos = new ArrayList<>();
             for (int i = 0; i < systemLangs.size(); i++) {
                 Lang lang = systemLangs.get(i);
                 String text = this.getTextMap().get(lang.getCode());

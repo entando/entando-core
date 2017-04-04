@@ -84,7 +84,29 @@
 			<result type="tiles">admin.jacms.content.inspect</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
-		
+        
+		<action name="bulkOnGroups*" class="jacmsContentFinderAction" method="entryBulkActions" >
+        	<result name="input" type="chain">list</result>
+			<result type="chain">
+            	<param name="namespace">/do/jacms/Content/Group</param>
+    			<param name="actionName">entry</param>
+    			<param name="strutsAction">${strutsAction}</param>
+    			<param name="selectedIds">${selectedIds}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+        
+		<action name="bulkOnCategories*" class="jacmsContentFinderAction" method="entryBulkActions" >
+        	<result name="input" type="chain">list</result>
+			<result type="chain">
+            	<param name="namespace">/do/jacms/Content/Category</param>
+    			<param name="actionName">entry</param>
+    			<param name="strutsAction">${strutsAction}</param>
+    			<param name="selectedIds">${selectedIds}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+        
         <!-- ######### FINE OPERAZIONI IN INTERFACCIA LISTA CONTENUTI ######### -->
     	
     	<action name="edit" class="jacmsContentAction" method="edit">

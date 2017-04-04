@@ -24,6 +24,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
  */
 public class BooleanAttributeHandler extends AbstractAttributeHandler {
     
+	@Override
     public void startAttribute(Attributes attributes, String qName) throws SAXException {
         if (qName.equals("boolean")) {
             this.startBoolean(attributes, qName);
@@ -34,6 +35,7 @@ public class BooleanAttributeHandler extends AbstractAttributeHandler {
         //nothing to do
     }
     
+	@Override
     public void endAttribute(String qName, StringBuffer textBuffer) {
         if (qName.equals("boolean")) {
             this.endBoolean(textBuffer);
@@ -42,7 +44,7 @@ public class BooleanAttributeHandler extends AbstractAttributeHandler {
     
     private void endBoolean(StringBuffer textBuffer) {
         if (null != textBuffer && null != this.getCurrentAttr()) {
-            Boolean booleanValue = new Boolean(textBuffer.toString());
+            Boolean booleanValue = Boolean.valueOf(textBuffer.toString());
             ((BooleanAttribute) this.getCurrentAttr()).setBooleanValue(booleanValue);
         }
     }

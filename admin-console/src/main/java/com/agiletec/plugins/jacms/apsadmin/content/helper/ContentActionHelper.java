@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentAuthorizationHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -243,7 +243,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 							} else if (object instanceof IPage) { //Content ID
 								IPage page = (IPage) object;
 								// Verifies the online version. On putting the page online, must be done the same check
-								if (!CmsPageActionUtil.isContentPublishableOnPageOnline(content, page)) {
+								if (!CmsPageUtil.isContentPublishableOnPageOnline(content, page)) {
 									PageMetadata metadata = page.getOnlineMetadata();
 									List<String> pageGroups = new ArrayList<String>();
 									pageGroups.add(page.getGroup());

@@ -351,6 +351,12 @@
             </div>
 
             <s:if test="%{#contentIdsVar.size() > 0}">
+				<div class="form-group">
+					<label for="allContentsSelected" class="control-label col-sm-2 text-right"><s:text name="label.allContentsSelected"/></label>
+					<div class="col-sm-9">
+						<wpsf:checkbox name="allContentsSelected" id="allContentsSelected" cssClass="bootstrap-switch" />
+					</div>
+				</div>
                 <table class="table table-striped table-bordered table-hover" id="contentListTable">
                     <caption class="sr-only"><s:text name="title.contentList" /></caption>
                     <tr>
@@ -513,6 +519,27 @@
                             </wpsf:submit>
                         </div>
                     </wp:ifauthorized>
+                    	<wpsa:actionParam action="bulkOnGroups" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="1" /></wpsa:actionParam>
+						<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.addGroups')}" cssClass="btn btn-success">
+							<span class="icon fa"></span>
+							<s:text name="label.addGroups" />
+						</wpsf:submit>
+                    	<wpsa:actionParam action="bulkOnGroups" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="4" /></wpsa:actionParam>
+						<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.removeGroups')}" cssClass="btn btn-success">
+							<span class="icon fa"></span>
+							<s:text name="label.removeGroups" />
+						</wpsf:submit>
+                    	<wpsa:actionParam action="bulkOnCategories" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="1" /></wpsa:actionParam>
+						<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.addCategories')}" cssClass="btn btn-success">
+							<span class="icon fa"></span>
+							<s:text name="label.addCategories" />
+						</wpsf:submit>
+                    	<wpsa:actionParam action="bulkOnCategories" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="4" /></wpsa:actionParam>
+						<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.removeCategories')}" cssClass="btn btn-success">
+							<span class="icon fa"></span>
+							<s:text name="label.removeCategories" />
+						</wpsf:submit>
+						
                     <wpsa:hookPoint key="jacms.contentFinding.allContents.actions" objectName="hookpoint_contentFinding_allContents">
                         <s:iterator value="#hookpoint_contentFinding_allContents" var="hookPointElement">
                             <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>

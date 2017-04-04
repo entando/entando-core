@@ -233,9 +233,7 @@ $(function () {
 				'do/Portal/WidgetType/viewWidgetUtilizers.action?widgetTypeCode=' + widgetCode
 		});
 
-
-		if (widgetInfo && widgetInfo.config) {
-
+		if (widgetInfo && widgetInfo.type && widgetInfo.type.typeParameters) {
 			var $settingsItem = createMenuItem(TEXT['widgetActions.settings']);
 			$dropDownMenu.append($settingsItem);
 			$settingsItem.click(function (e) {
@@ -260,7 +258,6 @@ $(function () {
 			});
 		}
 
-
 		if (widgetInfo && widgetInfo.config && widgetInfo.type.logic === false) {
 			var $newWidgetItem = createMenuItem(TEXT['widgetActions.newWidget']);
 			$dropDownMenu.append($newWidgetItem);
@@ -270,7 +267,6 @@ $(function () {
 					'do/Portal/WidgetType/copy.action?pageCode=' + PROPERTY.code + '&framePos=' + framePos
 			});
 		}
-
 
 		var $deleteItem = createMenuItem(TEXT['widgetActions.delete']);
 		$dropDownMenu.append($deleteItem);

@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 import com.agiletec.apsadmin.admin.BaseAdminAction;
-import com.agiletec.apsadmin.admin.SystemParamsUtils;
 
 public class PageSettingsAction extends BaseAdminAction {
 

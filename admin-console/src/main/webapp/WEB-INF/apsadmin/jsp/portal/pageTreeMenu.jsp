@@ -37,10 +37,6 @@
         </button>
 
         <div class="pull-right">
-
-
-
-
             <s:url action="preview" var="previewURL">
                 <s:param name="pageCode" value="pageCode" />
                 <s:param name="token" value="previewToken" />
@@ -284,4 +280,3 @@
     </script> 
 
 </div>
-

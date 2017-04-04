@@ -76,7 +76,6 @@ public class NumberAttributeValidationRules extends AbstractAttributeValidationR
             valueInteger = Integer.parseInt(text);
         } catch (NumberFormatException e) {
            _logger.error("Error in parsing number '{}' for extracting attribute roles", text, e);
-        	//ApsSystemUtils.logThrowable(e, this, "getIntegerValue", "Error in parsing number '" + text + "' for extracting attribute roles");
         }
         return valueInteger;
     }
@@ -106,13 +105,12 @@ public class NumberAttributeValidationRules extends AbstractAttributeValidationR
                 errors.add(error);
             }
             Integer value = (this.getValue() != null) ? (Integer) this.getValue() : this.getOtherAttributeValue(attribute, this.getValueAttribute());
-            if (null != value && attributeValue != value.intValue()) {
+            if (null != value && attributeValue != value) {
                 AttributeFieldError error = new AttributeFieldError(attribute, FieldError.INVALID, tracer);
                 error.setMessage("Number not equals than " + value);
                 errors.add(error);
             }
         } catch (Throwable t) {
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             _logger.error("Error validating number attribute", t);
             throw new RuntimeException("Error validating number attribute", t);
         }

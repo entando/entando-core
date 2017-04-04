@@ -26,6 +26,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
  */
 public class NumberAttributeHandler extends AbstractAttributeHandler {
 	
+	@Override
 	public void startAttribute(Attributes attributes, String qName) throws SAXException {
 		if (qName.equals("number")) {
 			this.startNumber(attributes, qName);
@@ -36,6 +37,7 @@ public class NumberAttributeHandler extends AbstractAttributeHandler {
 		//nothing to do
 	}
 	
+	@Override
 	public void endAttribute(String qName, StringBuffer textBuffer) {
 		if (qName.equals("number")) {
 			this.endNumber(textBuffer);

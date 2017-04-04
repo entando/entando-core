@@ -60,6 +60,6 @@ public class JAXBCompositeAttributeType extends DefaultJAXBAttributeType {
         this._elementTypes = elementTypes;
     }
     
-    private List<Object> _elementTypes = new ArrayList<Object>();
+    private List<Object> _elementTypes = new ArrayList<>();
     
 }

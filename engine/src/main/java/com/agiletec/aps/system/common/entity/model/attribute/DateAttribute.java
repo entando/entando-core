@@ -143,7 +143,7 @@ public class DateAttribute extends AbstractAttribute {
     @Override
     public List<AttributeSearchInfo> getSearchInfos(List<Lang> systemLangs) {
         if (this.getDate() != null) {
-            List<AttributeSearchInfo> infos = new ArrayList<AttributeSearchInfo>();
+            List<AttributeSearchInfo> infos = new ArrayList<>();
             AttributeSearchInfo info = new AttributeSearchInfo(null, this.getDate(), null, null);
             infos.add(info);
             return infos;

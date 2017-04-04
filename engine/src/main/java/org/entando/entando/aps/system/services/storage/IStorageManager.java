@@ -13,17 +13,18 @@
  */
 package org.entando.entando.aps.system.services.storage;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
  * @author E.Santoboni
  */
 public interface IStorageManager extends Serializable {
 	
-	public void saveFile(String subPath, boolean isProtectedResource, InputStream is) throws ApsSystemException;
+	public void saveFile(String subPath, boolean isProtectedResource, InputStream is) throws ApsSystemException, IOException;
 	
 	public boolean deleteFile(String subPath, boolean isProtectedResource) throws ApsSystemException;
 	

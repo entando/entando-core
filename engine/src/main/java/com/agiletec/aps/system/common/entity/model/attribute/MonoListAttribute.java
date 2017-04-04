@@ -36,7 +36,7 @@ public class MonoListAttribute extends AbstractListAttribute {
      * Initialize the list of attributes.
      */
     public MonoListAttribute() {
-        this._attributes = new ArrayList<AttributeInterface>();
+        this._attributes = new ArrayList<>();
     }
 
     /**
@@ -116,7 +116,7 @@ public class MonoListAttribute extends AbstractListAttribute {
         if (this.getNestedAttributeType().isSimple()) {
             return this.getAttributes();
         } else {
-            List<Object> attributes = new ArrayList<Object>();
+            List<Object> attributes = new ArrayList<>();
             for (int i = 0; i < this.getAttributes().size(); i++) {
                 AbstractComplexAttribute complexAttr = (AbstractComplexAttribute) this.getAttributes().get(i);
                 attributes.add(complexAttr.getRenderingAttributes());

@@ -207,12 +207,13 @@
                     </a>
                 </li>
 
-                <li class="list-group-item">
-                    <a>
-                        <span class="list-group-item-value">User Settings TO_DO</span>
-                    </a>
-                </li>
-
+                        <c:if test="${isSuperUser}">
+                            <li class="list-group-item">
+                                <a href='<s:url action="systemParams" namespace="/do/User" />'>
+                                    <span class="list-group-item-value">User Restriction </span>
+                                </a>
+                            </li>
+                        </c:if>
                 <li class="list-group-item">
                     <a href='<s:url action="list" namespace="/do/Role" />'>
                 		<span class="list-group-item-value">Roles</span>

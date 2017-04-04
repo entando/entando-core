@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.apsadmin.admin.BaseAdminAction;
-import com.agiletec.apsadmin.admin.SystemParamsUtils;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 
 public class UserSettingsAction extends BaseAdminAction {
 

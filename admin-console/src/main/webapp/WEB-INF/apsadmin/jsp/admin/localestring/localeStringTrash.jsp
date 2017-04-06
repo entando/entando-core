@@ -16,8 +16,7 @@
 </ol>
 <h1 class="page-title-container">
 	<div>
-		<s:if test="getStrutsAction() == 1"><s:text name="title.generalSettings.locale.new" /></s:if>
-		<s:elseif test="getStrutsAction() == 2"><s:text name="title.generalSettings.locale.edit" /> </s:elseif>
+		<s:text name="title.generalSettings.locale.delete" />
 		<span class="pull-right">
             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
 			   data-content="TO be inserted" data-placement="left" data-original-title="">
@@ -26,6 +25,9 @@
         </span>
 	</div>
 </h1>
+<div class="text-right">
+	<div class="form-group-separator"></div>
+</div>
 <br>
 
 
@@ -52,7 +54,7 @@
 
 		<div class="text-center margin-large-top">
 			<a class="btn btn-default button-fixed-width" href="<s:url namespace="/do/LocaleString" action="list" />">
-				<s:text name="title.languageAndLabels" />
+				<s:text name="menu.languageAdmin.labels" />
 			</a>
 		</div>
 

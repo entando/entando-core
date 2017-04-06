@@ -27,6 +27,9 @@
         </span>
 	</div>
 </h1>
+<div class="text-right">
+	<div class="form-group-separator"></div>
+</div>
 <br>
 
 <s:form action="save" namespace="/do/LocaleString" cssClass="form-horizontal">

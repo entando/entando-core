@@ -1,16 +1,10 @@
 package org.entando.entando.plugins.jacms.aps.system.services.content.command.group;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
 import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
-import org.springframework.web.context.WebApplicationContext;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
@@ -29,43 +23,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 
 public abstract class BaseContentGroupBulkCommand extends BaseContentPropertyBulkCommand<String> {
 
-	public BaseContentGroupBulkCommand(Collection<String> items, Collection<String> groups, 
-			IContentManager manager, BulkCommandTracer<String> tracer, WebApplicationContext wax) {
-		super(items, groups, manager, tracer);
-		Map<String, ContentUtilizer> contentUtilizers = wax.getBeansOfType(ContentUtilizer.class);
-		this.setContentUtilizers(contentUtilizers.values());
-		this.setSystemLangs(((ILangManager) wax.getBean(SystemConstants.LANGUAGE_MANAGER)).getLangs());
-		this.setPageManager((IPageManager) wax.getBean(SystemConstants.PAGE_MANAGER));
-	}
-
-	protected boolean checkContentUtilizers(Content content) throws ApsSystemException {
-		Collection<String> groupToRemove = this.getItemProperties();
-		if (!content.getMainGroup().equals(groupToRemove) && !Group.FREE_GROUP_NAME.equals(content.getMainGroup()) && 
-				!content.getGroups().contains(Group.FREE_GROUP_NAME)) {
-			IContentManager contentManager = this.getApplier();
-			for (ContentUtilizer contentUtilizer : this.getContentUtilizers()) {
-				List<?> utilizers = contentUtilizer.getContentUtilizers(content.getId());
-				for (Object utilizer : utilizers) {
-					if (contentUtilizer instanceof IContentManager) {
-						Content refContent = contentManager.loadContent(utilizer.toString(), true);
-						if (!content.getMainGroup().equals(refContent.getMainGroup()) && 
-								!content.getGroups().contains(refContent.getMainGroup())) {
-							this.getTracer().traceError(content.getId(), ApsCommandErrorCode.NOT_ALLOWED);
-							return false;
-						}
-					} else if (utilizer instanceof IPage) {
-						IPage page = (IPage) utilizer;
-						if (!CmsPageUtil.isContentPublishableOnPageOnline(content, page)) {
-							this.getTracer().traceError(content.getId(), ApsCommandErrorCode.NOT_ALLOWED);
-							return false;
-						}
-					}
-				}
-			}
-		}
-		return true;
-	}
-
 	protected boolean checkContentReferences(Content content) {
 		List<Lang> systemLangs = this.getSystemLangs();
 		IPageManager pageManager = this.getPageManager();
@@ -80,7 +37,6 @@ public abstract class BaseContentGroupBulkCommand extends BaseContentPropertyBul
 							String result = validator.scan(symbolicLink, content);
 							if (ICmsAttributeErrorCodes.INVALID_CONTENT_GROUPS.equals(result) || ICmsAttributeErrorCodes.INVALID_RESOURCE_GROUPS.equals(result) || 
 									ICmsAttributeErrorCodes.INVALID_PAGE_GROUPS.equals(result)) {
-								this.getTracer().traceError(content.getId(), ApsCommandErrorCode.NOT_ALLOWED);
 								return false;
 							}
 						}
@@ -90,7 +46,7 @@ public abstract class BaseContentGroupBulkCommand extends BaseContentPropertyBul
 		}
 		return true;
 	}
-	
+
 	protected SymbolicLink convertToSymbolicLink(CmsAttributeReference reference) {
 		SymbolicLink symbolicLink = null;
 		if (reference != null) {
@@ -113,29 +69,25 @@ public abstract class BaseContentGroupBulkCommand extends BaseContentPropertyBul
 		return symbolicLink;
 	}
 
-	public List<Lang> getSystemLangs() {
-		return systemLangs;
+	protected List<Lang> getSystemLangs() {
+		return _systemLangs;
 	}
 	protected void setSystemLangs(List<Lang> systemLangs) {
-		this.systemLangs = systemLangs;
+		this._systemLangs = systemLangs;
 	}
 
-	public Collection<ContentUtilizer> getContentUtilizers() {
-		return _contentUtilizers;
-	}
-	protected void setContentUtilizers(Collection<ContentUtilizer> contentUtilizers) {
-		this._contentUtilizers = contentUtilizers;
+	public void setLangManager(ILangManager langManager) {
+		this.setSystemLangs(langManager.getLangs());
 	}
 
-	public IPageManager getPageManager() {
-		return pageManager;
+	protected IPageManager getPageManager() {
+		return _pageManager;
 	}
-	protected void setPageManager(IPageManager pageManager) {
-		this.pageManager = pageManager;
+	public void setPageManager(IPageManager pageManager) {
+		this._pageManager = pageManager;
 	}
 
-	private List<Lang> systemLangs;
-	private Collection<ContentUtilizer> _contentUtilizers;
-	private IPageManager pageManager;
+	private List<Lang> _systemLangs;
+	private IPageManager _pageManager;
 
 }

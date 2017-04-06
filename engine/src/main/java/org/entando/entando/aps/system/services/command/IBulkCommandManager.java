@@ -19,7 +19,7 @@ public interface IBulkCommandManager {
 	 * @param command The command to be runned.
 	 * @return The report of the command.
 	 */
-	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?> command);
+	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?, ?> command);
 
 	/**
 	 * Add a command to the execution system.<br/>
@@ -30,7 +30,7 @@ public interface IBulkCommandManager {
 	 * If null, the manager can decide how to run the command.
 	 * @return The report of the command.
 	 */
-	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?> command, Boolean execInThread);
+	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?, ?> command, Boolean execInThread);
 
 	/**
 	 * Returns the command.<br/> If null, the command can be expired and removed from cache.
@@ -38,7 +38,7 @@ public interface IBulkCommandManager {
 	 * @param commandId The id of the command.
 	 * @return The desired command.
 	 */
-	public BaseBulkCommand<?, ?> getCommand(String owner, String commandId);
+	public BaseBulkCommand<?, ?, ?> getCommand(String owner, String commandId);
 
 	/**
 	 * Returns report of the command.<br/>

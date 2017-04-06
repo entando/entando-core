@@ -16,14 +16,14 @@ public class BulkCommandContainer {
 		this.owner = owner;
 	}
 
-	public BaseBulkCommand<?, ?> getCommand() {
+	public BaseBulkCommand<?, ?, ?> getCommand() {
 		return command;
 	}
-	public void setCommand(BaseBulkCommand<?, ?> command) {
+	public void setCommand(BaseBulkCommand<?, ?, ?> command) {
 		this.command = command;
 	}
 
 	private String owner;
-	private BaseBulkCommand<?, ?> command;
+	private BaseBulkCommand<?, ?, ?> command;
 
 }

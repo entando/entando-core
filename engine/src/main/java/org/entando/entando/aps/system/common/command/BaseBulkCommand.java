@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandStatus;
+import org.entando.entando.aps.system.common.command.context.BulkCommandContext;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
 import org.entando.entando.aps.system.common.command.report.DefaultBulkCommandReport;
 import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
@@ -21,23 +22,13 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @param <I> The type of items on which to apply the command.
  * @param <A> The applier of the command (for example: the Content Manager that execute the update of a Content).
  */
-public abstract class BaseBulkCommand<I, A> implements ApsCommand {
+public abstract class BaseBulkCommand<I, A, C extends BulkCommandContext<I>> implements ApsCommand<C> {
 
 	private static final Logger _logger = LoggerFactory.getLogger(BaseBulkCommand.class);
 
-	/**
-	 * The constructor of the Command. 
-	 * 
-	 * @param items The items on which to run the command.
-	 * @param applier The applier of the command (for example: the Content Manager that execute the update of a Content).
-	 * @param tracer The tracer of the command execution.
-	 */
-	public BaseBulkCommand(Collection<I> items, A applier, BulkCommandTracer<I> tracer) {
-		this.setItems(items);
-		this.setTotal(items != null ? items.size() : 0);
-		this.setApplier(applier);
-		this.setTracer(tracer);
-		this.setStatus(ApsCommandStatus.NEW);
+	@Override
+	public void init(C context) {
+		this.setContext(context);
 	}
 
 	@Override
@@ -125,14 +116,7 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 	 * @return The items on which to apply the command.
 	 */
 	public Collection<I> getItems() {
-		return _items;
-	}
-	/**
-	 * Sets the items on which to apply the command.
-	 * @param items The items on which to apply the command.
-	 */
-	protected void setItems(Collection<I> items) {
-		this._items = items;
+		return this.getContext().getItems();
 	}
 
 	/**
@@ -155,14 +139,7 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 	 * @return The number items onto apply the command.
 	 */
 	public int getTotal() {
-		return _total;
-	}
-	/**
-	 * Sets the number items onto apply the command.
-	 * @param total The number items onto apply the command.
-	 */
-	protected void setTotal(int total) {
-		this._total = total;
+		return this.getItems().size();
 	}
 
 	/**
@@ -220,19 +197,19 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 		return ApsCommandStatus.COMPLETED.equals(this._status) || ApsCommandStatus.STOPPED.equals(this._status);
 	}
 
+	protected C getContext() {
+		return _context;
+	}
+	protected void setContext(C context) {
+		this._context = context;
+	}
+
 	/**
 	 * Returns the tracer of the command execution.
 	 * @return The tracer of the command execution.
 	 */
 	public BulkCommandTracer<I> getTracer() {
-		return _tracer;
-	}
-	/**
-	 * Sets the tracer of the command execution.
-	 * @param tracer The tracer of the command execution.
-	 */
-	protected void setTracer(BulkCommandTracer<I> tracer) {
-		this._tracer = tracer;
+		return this.getContext().getTracer();
 	}
 
 	/**
@@ -244,14 +221,13 @@ public abstract class BaseBulkCommand<I, A> implements ApsCommand {
 	}
 
 	private String _id;
-	private Collection<I> _items;
 	private A _applier;
-	private int _total = 0;
 	private int _applySuccesses = 0;
 	private int applyErrors = 0;
 	private Date endingTime;
 	private volatile ApsCommandStatus _status = ApsCommandStatus.NEW;
-	private BulkCommandTracer<I> _tracer;
+	
+	private C _context;
 	private BulkCommandReport<I> _report = new DefaultBulkCommandReport<I>(this);
 
 }

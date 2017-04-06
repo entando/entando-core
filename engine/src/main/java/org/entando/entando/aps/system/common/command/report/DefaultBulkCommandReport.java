@@ -25,7 +25,7 @@ public class DefaultBulkCommandReport<I> implements BulkCommandReport<I> {
 	 * The constructor for the report.
 	 * @param command The bulk command.
 	 */
-	public DefaultBulkCommandReport(BaseBulkCommand<I, ?> command) {
+	public DefaultBulkCommandReport(BaseBulkCommand<I, ?, ?> command) {
 		this._command = command;
 	}
 
@@ -79,6 +79,6 @@ public class DefaultBulkCommandReport<I> implements BulkCommandReport<I> {
 		return this._command.getEndingTime();
 	}
 	
-	private BaseBulkCommand<I, ?> _command;
+	private BaseBulkCommand<I, ?, ?> _command;
 
 }

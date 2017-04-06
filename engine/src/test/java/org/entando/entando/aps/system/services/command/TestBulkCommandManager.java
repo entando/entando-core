@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandStatus;
+import org.entando.entando.aps.system.common.command.context.BaseBulkCommandContext;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
 import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTracer;
 
@@ -24,7 +25,7 @@ public class TestBulkCommandManager extends BaseTestCase {
 		String owner = "test";
 		Collection<String> items = Arrays.asList(new String[] { "1_succ", "2_err", "3_warn", "4_err", "5_warn", 
 				"6_succ", "7_succ", "8_err", "9_succ" });
-		FakeBulkCommand command = new FakeBulkCommand(items, null, new DefaultBulkCommandTracer<String>());
+		FakeBulkCommand command = new FakeBulkCommand(new BaseBulkCommandContext<String>(items, new DefaultBulkCommandTracer<String>()));
 		int numOfThreads = this.countThreads();
 		BulkCommandReport<String> report = this._bulkCommandManager.addCommand(owner, command);
 		assertEquals(numOfThreads, this.countThreads());
@@ -34,7 +35,7 @@ public class TestBulkCommandManager extends BaseTestCase {
 
 		items = Arrays.asList(new String[] { "1_succ", "2_err", "3_warn", "4_err", "5_warn", 
 				"6_succ", "7_succ", "8_err", "9_succ", "10_err", "11_warn", "12_succ" });
-		command = new FakeBulkCommand(items, null, new DefaultBulkCommandTracer<String>());
+		command = new FakeBulkCommand(new BaseBulkCommandContext<String>(items, new DefaultBulkCommandTracer<String>()));
 		report = this._bulkCommandManager.addCommand(owner, command, false);
 		assertEquals(numOfThreads, this.countThreads());
 		assertNull(this.getThreadByName(command.getId()));
@@ -48,7 +49,8 @@ public class TestBulkCommandManager extends BaseTestCase {
 				"6_succ", "7_succ", "8_err", "9_succ" });
 		CountDownLatch startSignal = new CountDownLatch(1);
 		CountDownLatch doneSignal = new CountDownLatch(1);
-		FakeBulkCommand command = new FakeBulkCommand(items, null, new DefaultBulkCommandTracer<String>(), startSignal, doneSignal);
+		BaseBulkCommandContext<String> context = new BaseBulkCommandContext<String>(items, new DefaultBulkCommandTracer<String>());
+		FakeBulkCommand command = new FakeBulkCommand(context, startSignal, doneSignal);
 		int numOfThreads = this.countThreads();
 		BulkCommandReport<String> report = this._bulkCommandManager.addCommand(owner, command, true);
 		assertEquals(numOfThreads + 1, this.countThreads());
@@ -62,9 +64,10 @@ public class TestBulkCommandManager extends BaseTestCase {
 
 		items = Arrays.asList(new String[] { "1_succ", "2_err", "3_warn", "4_err", "5_warn", 
 				"6_succ", "7_succ", "8_err", "9_succ", "10_err", "11_warn", "12_succ" });
+		context = new BaseBulkCommandContext<String>(items, new DefaultBulkCommandTracer<String>());
 		startSignal = new CountDownLatch(1);
 		doneSignal = new CountDownLatch(1);
-		command = new FakeBulkCommand(items, null, new DefaultBulkCommandTracer<String>(), startSignal, doneSignal);
+		command = new FakeBulkCommand(context, startSignal, doneSignal);
 		numOfThreads = this.countThreads();
 		report = this._bulkCommandManager.addCommand(owner, command);
 		assertEquals(numOfThreads + 1, this.countThreads());

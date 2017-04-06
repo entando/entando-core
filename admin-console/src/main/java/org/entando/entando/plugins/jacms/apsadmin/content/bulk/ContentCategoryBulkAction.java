@@ -6,20 +6,22 @@ import java.util.TreeSet;
 
 import org.entando.entando.aps.system.common.command.BaseBulkCommand;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTracer;
 import org.entando.entando.aps.system.services.command.IBulkCommandManager;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.category.JoinCategoryBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.category.RemoveCategoryBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.ContentPropertyBulkCommandContext;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.ContentBulkActionSummary;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.IContentBulkActionHelper;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.SmallBulkCommandReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
@@ -74,15 +76,7 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 				if (categories == null) {
 					return INPUT;
 				} else {
-					BulkCommandTracer<String> tracer = new DefaultBulkCommandTracer<String>();
-					BaseContentPropertyBulkCommand<Category> command = null;
-					if (ApsAdminSystemConstants.DELETE == this.getStrutsAction()) {
-						command = new RemoveCategoryBulkCommand(this.getSelectedIds(), categories, 
-								this.getContentManager(), tracer);
-					} else {
-						command = new JoinCategoryBulkCommand(this.getSelectedIds(), categories, 
-								this.getContentManager(), tracer);
-					}
+					BaseContentPropertyBulkCommand<Category> command = this.initBulkCommand(categories);
 					BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(this.getCommandOwner(), command);
 					this.setCommandId(report.getCommandId());
 				}
@@ -94,6 +88,17 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		return SUCCESS;
 	}
 
+	private BaseContentPropertyBulkCommand<Category> initBulkCommand(List<Category> categories) {
+		String commandBeanName = ApsAdminSystemConstants.DELETE == this.getStrutsAction() ? 
+				RemoveCategoryBulkCommand.BEAN_NAME : JoinCategoryBulkCommand.BEAN_NAME;
+		WebApplicationContext applicationContext = ApsWebApplicationUtils.getWebApplicationContext(this.getRequest());
+		BaseContentPropertyBulkCommand<Category> command = (BaseContentPropertyBulkCommand<Category>) applicationContext.getBean(commandBeanName);
+		ContentPropertyBulkCommandContext<Category> context = new ContentPropertyBulkCommandContext<Category>(this.getSelectedIds(), 
+				categories, this.getCurrentUser(), new DefaultBulkCommandTracer<String>());
+		command.init(context);
+		return command;
+	}
+
 	public String viewResult() {
 		return this.getReport() == null ? "expired" : SUCCESS;
 	}
@@ -102,7 +107,7 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		return this.getBulkActionHelper().getSummary(this.getSelectedIds());
 	}
 
-	public BaseBulkCommand<?, ?> getCommand() {
+	public BaseBulkCommand<?, ?, ?> getCommand() {
 		return this.getBulkCommandManager().getCommand(this.getCommandOwner(), this.getCommandId());
 	}
 
@@ -214,8 +219,6 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		this._bulkActionHelper = bulkActionHelper;
 	}
 
-	private Set<String> _forcedContentIds;
-	private Set<String> _contentIds;
 	private Set<String> _selectedIds;
 
 	private int _strutsAction;

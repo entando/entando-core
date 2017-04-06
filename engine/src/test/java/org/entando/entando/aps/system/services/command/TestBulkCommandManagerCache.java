@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
 
-import org.entando.entando.aps.system.services.command.util.BulkCommandContainer;
-
 import junit.framework.TestCase;
+
+import org.entando.entando.aps.system.common.command.context.BaseBulkCommandContext;
+import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTracer;
+import org.entando.entando.aps.system.services.command.util.BulkCommandContainer;
 
 public class TestBulkCommandManagerCache extends TestCase /* BaseTestCase*/ {
 
@@ -18,7 +20,7 @@ public class TestBulkCommandManagerCache extends TestCase /* BaseTestCase*/ {
 	public void testClean() {
 		for (int i = 0; i < 10; i++) {
 			String name = "test" + i;
-			FakeBulkCommand command = new FakeBulkCommand(new ArrayList<String>(), null, null);
+			FakeBulkCommand command = new FakeBulkCommand(new BaseBulkCommandContext<String>(new ArrayList<String>(), new DefaultBulkCommandTracer<String>()));
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MINUTE, -1*((i+1)*10));
 			command.setFakeEndingTime(cal.getTime());

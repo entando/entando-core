@@ -3,19 +3,15 @@ package org.entando.entando.plugins.jacms.aps.system.services.content.command.ca
 import java.util.Collection;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class JoinCategoryBulkCommand extends BaseContentPropertyBulkCommand<Category> {
 
-	public JoinCategoryBulkCommand(Collection<String> items, Collection<Category> categories, IContentManager manager, BulkCommandTracer<String> tracer) {
-		super(items, categories, manager, tracer);
-	}
+	public static String BEAN_NAME = "jacmsJoinCategoryBulkCommand";
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {

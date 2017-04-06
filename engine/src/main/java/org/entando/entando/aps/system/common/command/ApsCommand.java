@@ -3,13 +3,20 @@ package org.entando.entando.aps.system.common.command;
 import java.util.Date;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandStatus;
+import org.entando.entando.aps.system.common.command.context.ApsCommandContext;
 
 /**
  * Class that applies a command on one or multiple items.
  * 
  * @author E.Mezzano
  */
-public interface ApsCommand {
+public interface ApsCommand<C extends ApsCommandContext> {
+
+	/**
+	 * Init the context of the command.
+	 * @param context The context of the command.
+	 */
+	public void init(C context);
 
 	/**
 	 * Returns the ID of the given command.

@@ -1,25 +1,23 @@
 package org.entando.entando.aps.system.services.command;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import org.entando.entando.aps.system.common.command.BaseBulkCommand;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandWarningCode;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
+import org.entando.entando.aps.system.common.command.context.BaseBulkCommandContext;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 
-public class FakeBulkCommand extends BaseBulkCommand<String, Object> {
+public class FakeBulkCommand extends BaseBulkCommand<String, Object, BaseBulkCommandContext<String>> {
 
-	public FakeBulkCommand(Collection<String> items, Object applier, BulkCommandTracer<String> tracer) {
-		super(items, applier, tracer);
+	public FakeBulkCommand(BaseBulkCommandContext<String> context) {
+		this.setContext(context);
 	}
 
-	public FakeBulkCommand(Collection<String> items, Object applier, BulkCommandTracer<String> tracer, 
-			CountDownLatch startSignal, CountDownLatch endSignal) {
-		super(items, applier, tracer);
+	public FakeBulkCommand(BaseBulkCommandContext<String> context, CountDownLatch startSignal, CountDownLatch endSignal) {
+		this(context);
 		this._startSignal = startSignal;
 		this._endSignal = endSignal;
 	}
@@ -56,8 +54,7 @@ public class FakeBulkCommand extends BaseBulkCommand<String, Object> {
 		}
 		return result;
 	}
-	
-	
+
 	public void setFakeEndingTime(Date endingTime) {
 		this.fakeEndingTime = endingTime;
 	}

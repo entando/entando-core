@@ -454,6 +454,10 @@
         <put-attribute name="title" value="title.languageAdmin.labels" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringEntry.jsp" />
     </definition>
+    <definition extends="layout.settings" name="admin.LocaleString.trash">
+        <put-attribute name="title" value="title.languageAdmin.labels" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringTrash.jsp" />
+    </definition>
 
     <!-- ********* FINE Area Gestione Etichette ********* -->
 

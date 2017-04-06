@@ -216,15 +216,15 @@
             </div>
         </fieldset>
         
-        <div class="form-group bottom-row">
-            <div class="row">
+        <div class="form-group">
+            
                 <div class="col-xs-12">
-                    <wpsf:submit type="button" cssClass="btn btn-primary btn-block pull-right">
-                        <span class="icon fa fa-floppy-o"></span>&#32;
+                    <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+<!--                        <span class="icon fa fa-floppy-o"></span>&#32;-->
                         <s:text name="label.save" />
                     </wpsf:submit>
                 </div>
-            </div>
+            
         </div>
         
     </s:form>

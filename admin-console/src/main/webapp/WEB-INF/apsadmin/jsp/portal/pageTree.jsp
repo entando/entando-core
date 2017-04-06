@@ -7,7 +7,17 @@
     <li class="page-title-container"><s:text name="title.pageTree" /></li>
 </ol>
 
-<h1 class="page-title-container"><s:text name="title.pageTree" /></h1>
+<h1 class="page-title-container"><s:text name="title.pageTree" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+</h1>
+
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
 
 <div id="main" role="main">
     <s:if test="hasActionErrors()">
@@ -28,16 +38,14 @@
     <div role="search">
 
         <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
-
-        <s:form cssClass="form-horizontal">
-            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-primary  " data-toggle="tooltip">
-                <s:text name="label.add" />
-            </wpsf:submit>
-            <br>
-            <br>
+        <a href="<s:url namespace="/do/Page" action="new" />" class="btn btn-primary pull-right" title="<s:text name="label.new" />" style="margin-bottom: 5px">
+            <s:text name="label.add" />
+        </a>
+        <s:form cssClass="form-horizontal">           
+    
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
-                <div class="table-responsive overflow-visible">
+            <div class="table-responsive overflow-visible">
                     <table id="pageTree" class="table table-bordered table-hover table-treegrid">
                         <thead>
                             <tr>

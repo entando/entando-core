@@ -203,7 +203,7 @@
 			<c:if test="${isSuperUser}">
                 <li class="list-group-item">
                     <a href='<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>'>
-                        <span class="list-group-item-value">Profiles</span>
+                        <span class="list-group-item-value">Profile Types</span>
                     </a>
                 </li>
 

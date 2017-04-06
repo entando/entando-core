@@ -23,6 +23,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 public class JoinGroupBulkCommand extends BaseContentGroupBulkCommand {
 
 	public static String BEAN_NAME = "jacmsJoinGroupBulkCommand";
+	public static String COMMAND_NAME = "content.group.join";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
+	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {

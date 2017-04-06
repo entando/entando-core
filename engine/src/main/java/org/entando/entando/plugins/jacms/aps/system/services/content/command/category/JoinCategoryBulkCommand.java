@@ -25,6 +25,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 public class JoinCategoryBulkCommand extends BaseContentPropertyBulkCommand<Category> {
 
 	public static String BEAN_NAME = "jacmsJoinCategoryBulkCommand";
+	public static String COMMAND_NAME = "content.category.join";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
+	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {

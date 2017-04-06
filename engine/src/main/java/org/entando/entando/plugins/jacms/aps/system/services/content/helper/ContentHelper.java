@@ -14,6 +14,7 @@
 package org.entando.entando.plugins.jacms.aps.system.services.content.helper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,13 +35,13 @@ public class ContentHelper implements IContentHelper, ApplicationContextAware {
 
 	@Override
 	public Map<String, List<?>> getReferencingObjects(Content content) throws ApsSystemException {
-		List<ContentUtilizer> contentUtilizers = this.getContentUtilizers();
+		Collection<ContentUtilizer> contentUtilizers = this.getContentUtilizers();
     	Map<String, List<?>> references = this.getReferencingObjects(content, contentUtilizers);
     	return references;
     }
 
 	@Override
-	public Map<String, List<?>> getReferencingObjects(Content content, List<ContentUtilizer> contentUtilizers) throws ApsSystemException {
+	public Map<String, List<?>> getReferencingObjects(Content content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException {
     	Map<String, List<?>> references = new HashMap<String, List<?>>();
     	try {
     		for (ContentUtilizer contentUtilizer : contentUtilizers) {

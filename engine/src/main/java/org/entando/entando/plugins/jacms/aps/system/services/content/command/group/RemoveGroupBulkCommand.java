@@ -23,6 +23,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 
 	public static String BEAN_NAME = "jacmsRemoveGroupBulkCommand";
+	public static String COMMAND_NAME = "content.group.rem";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
+	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {

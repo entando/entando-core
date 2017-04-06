@@ -11,33 +11,33 @@
 		<property name="contentAuthHelper" ref="jacmsContentAuthorizationHelper" />
 	</bean>
 	
-	<bean id="jacmsJoinCategoryBulkCommand" parent="jacmsBaseContentBulkCommand" 
+	<bean id="jacmsJoinCategoryBulkCommand" parent="jacmsBaseContentBulkCommand" scope="prototype" 
 			class="org.entando.entando.plugins.jacms.aps.system.services.content.command.category.JoinCategoryBulkCommand" />
 	
-	<bean id="jacmsRemoveCategoryBulkCommand" parent="jacmsBaseContentBulkCommand" 
+	<bean id="jacmsRemoveCategoryBulkCommand" parent="jacmsBaseContentBulkCommand" scope="prototype" 
 			class="org.entando.entando.plugins.jacms.aps.system.services.content.command.category.RemoveCategoryBulkCommand" />
 	
-	<bean id="jacmsJoinGroupBulkCommand" parent="jacmsBaseContentBulkCommand" 
+	<bean id="jacmsJoinGroupBulkCommand" parent="jacmsBaseContentBulkCommand" scope="prototype" 
 			class="org.entando.entando.plugins.jacms.aps.system.services.content.command.group.JoinGroupBulkCommand" >
 		<property name="langManager" ref="LangManager" />
 		<property name="pageManager" ref="PageManager" />
 	</bean>
 	
-	<bean id="jacmsRemoveGroupBulkCommand" parent="jacmsBaseContentBulkCommand" 
+	<bean id="jacmsRemoveGroupBulkCommand" parent="jacmsBaseContentBulkCommand" scope="prototype" 
 			class="org.entando.entando.plugins.jacms.aps.system.services.content.command.group.RemoveGroupBulkCommand" >
 		<property name="langManager" ref="LangManager" />
 		<property name="pageManager" ref="PageManager" />
 	</bean>
 	
-	<bean id="jacmsDeleteContentBulkCommand" parent="jacmsBaseContentBulkCommand" 
+	<bean id="jacmsDeleteContentBulkCommand" parent="jacmsBaseContentBulkCommand" scope="prototype" 
 			class="org.entando.entando.plugins.jacms.aps.system.services.content.command.DeleteContentBulkCommand" />
 	
-	<bean id="jacmsRemoveOnlineContentBulkCommand" parent="jacmsBaseContentBulkCommand" 
+	<bean id="jacmsRemoveOnlineContentBulkCommand" parent="jacmsBaseContentBulkCommand" scope="prototype" 
 			class="org.entando.entando.plugins.jacms.aps.system.services.content.command.RemoveOnlineContentBulkCommand" >
 		<property name="contentHelper" ref="jacmsContentHelper" />
 	</bean>
 	
-	<bean id="jacmsInsertOnlineContentBulkCommand" parent="jacmsBaseContentBulkCommand" 
+	<bean id="jacmsInsertOnlineContentBulkCommand" parent="jacmsBaseContentBulkCommand" scope="prototype" 
 			class="org.entando.entando.plugins.jacms.aps.system.services.content.command.InsertOnlineContentBulkCommand" >
 		<property name="groupManager" ref="GroupManager" />
 	</bean>

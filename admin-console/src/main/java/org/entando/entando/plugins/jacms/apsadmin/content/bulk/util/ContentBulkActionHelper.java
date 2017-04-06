@@ -36,11 +36,10 @@ public class ContentBulkActionHelper implements IContentBulkActionHelper {
 	/**
 	 * Checks if the contents are allowed.<br/>
 	 * The check can be done only on the number of elements, or can be more 
-	 * @param fullCheck If true, checks also the existence and the user permissions on contents.
 	 * @return True if the contents are allowed, false otherwise.
 	 */
 	@Override
-	public boolean checkAllowedContents(Collection<String> contentIds, boolean fullCheck, ValidationAware validation, TextProvider textProvider) {
+	public boolean checkAllowedContents(Collection<String> contentIds, ValidationAware validation, TextProvider textProvider) {
 		boolean result = true;
 		if (contentIds == null || contentIds.isEmpty()) {
 			validation.addActionError(textProvider.getText("error.content.bulk.noItems"));

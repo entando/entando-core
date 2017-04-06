@@ -36,6 +36,19 @@
 	</definition>
 
 	<!-- *** Content Bulk Actions - Init *** -->
+	<definition extends="layout.default" name="admin.jacms.content.bulkOnline.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/online-confirm.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkOffline.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/offline-confirm.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkRemove.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/remove-confirm.jsp" />
+	</definition>
+	
 	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.entryChoice">
 		<put-attribute name="title" value="title.contentManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-choice.jsp" />
@@ -43,10 +56,6 @@
 	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.entryConfirm">
 		<put-attribute name="title" value="title.contentManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-confirm.jsp" />
-	</definition>
-	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.result">
-		<put-attribute name="title" value="title.contentManagement" />
-		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-result.jsp" />
 	</definition>
 	
 	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.entryChoice">
@@ -58,9 +67,10 @@
 		<put-attribute name="title" value="title.contentManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-confirm.jsp" />
 	</definition>
-	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.result">
+	
+	<definition extends="layout.default" name="admin.jacms.content.bulk.result">
 		<put-attribute name="title" value="title.contentManagement" />
-		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-result.jsp" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/bulk-result.jsp" />
 	</definition>
 	<!-- *** Content Bulk Actions - End *** -->
 

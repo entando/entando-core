@@ -25,6 +25,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 public class RemoveCategoryBulkCommand extends BaseContentPropertyBulkCommand<Category> {
 
 	public static String BEAN_NAME = "jacmsRemoveCategoryBulkCommand";
+	public static String COMMAND_NAME = "content.category.rem";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
+	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {

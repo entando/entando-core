@@ -13,6 +13,7 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.services.content.helper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public interface IContentHelper {
 
 	public Map<String, List<?>> getReferencingObjects(Content content) throws ApsSystemException;
 
-	public Map<String, List<?>> getReferencingObjects(Content content, List<ContentUtilizer> contentUtilizers) throws ApsSystemException;
+	public Map<String, List<?>> getReferencingObjects(Content content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException;
 
 	public List<ContentUtilizer> getContentUtilizers();
 

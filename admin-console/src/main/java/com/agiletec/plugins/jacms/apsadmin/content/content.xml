@@ -107,6 +107,36 @@
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
         
+		<action name="bulkPutOnline*" class="jacmsContentFinderAction" method="entryBulkActions" >
+        	<result name="input" type="chain">list</result>
+			<result type="chain">
+            	<param name="namespace">/do/jacms/Content/Bulk</param>
+    			<param name="actionName">entryPutOnline</param>
+    			<param name="selectedIds">${selectedIds}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+        
+		<action name="bulkPutOffline*" class="jacmsContentFinderAction" method="entryBulkActions" >
+        	<result name="input" type="chain">list</result>
+			<result type="chain">
+            	<param name="namespace">/do/jacms/Content/Bulk</param>
+    			<param name="actionName">entryPutOffline</param>
+    			<param name="selectedIds">${selectedIds}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+        
+		<action name="bulkRemove*" class="jacmsContentFinderAction" method="entryBulkActions" >
+        	<result name="input" type="chain">list</result>
+			<result type="chain">
+            	<param name="namespace">/do/jacms/Content/Bulk</param>
+    			<param name="actionName">entryRemove</param>
+    			<param name="selectedIds">${selectedIds}</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+		</action>
+        
         <!-- ######### FINE OPERAZIONI IN INTERFACCIA LISTA CONTENUTI ######### -->
     	
     	<action name="edit" class="jacmsContentAction" method="edit">

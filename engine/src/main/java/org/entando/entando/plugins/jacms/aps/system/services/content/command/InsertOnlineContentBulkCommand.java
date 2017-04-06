@@ -28,6 +28,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 public class InsertOnlineContentBulkCommand extends BaseContentBulkCommand<ContentBulkCommandContext> {
 
 	public static String BEAN_NAME = "jacmsInsertOnlineContentBulkCommand";
+	public static String COMMAND_NAME = "content.online";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
+	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {
@@ -36,6 +42,7 @@ public class InsertOnlineContentBulkCommand extends BaseContentBulkCommand<Conte
 			return false;
 		} else {
 			this.getApplier().insertOnLineContent(content);
+			this.getTracer().traceSuccess(content.getId());
 			return true;
 		}
 	}

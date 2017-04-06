@@ -25,6 +25,11 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 
 public class FakeBulkCommand extends BaseBulkCommand<String, Object, BaseBulkCommandContext<String>> {
 
+	@Override
+	public String getName() {
+		return "fake";
+	}
+
 	public FakeBulkCommand(BaseBulkCommandContext<String> context) {
 		this.setContext(context);
 	}

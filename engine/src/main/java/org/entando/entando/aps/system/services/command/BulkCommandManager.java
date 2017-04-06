@@ -33,7 +33,7 @@ import com.agiletec.aps.util.DateConverter;
  * @author E.Mezzano
  *
  */
-public class BulkCommandManager extends AbstractService implements IBulkCommandManager, Runnable {
+public class BulkCommandManager extends AbstractService implements IBulkCommandManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(BulkCommandManager.class);
 
@@ -176,11 +176,6 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 			}
 		}
 		return expired;
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
 	}
 
 	protected Map<String, Map<String, BulkCommandContainer>> getCommands() {

@@ -23,6 +23,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 public class DeleteContentBulkCommand extends BaseContentBulkCommand<ContentBulkCommandContext> {
 
 	public static String BEAN_NAME = "jacmsDeleteContentBulkCommand";
+	public static String COMMAND_NAME = "content.delete";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
+	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {
@@ -31,6 +37,7 @@ public class DeleteContentBulkCommand extends BaseContentBulkCommand<ContentBulk
 			return false;
 		} else {
 			this.getApplier().deleteContent(content);
+			this.getTracer().traceSuccess(content.getId());
 			return true;
 		}
 	}

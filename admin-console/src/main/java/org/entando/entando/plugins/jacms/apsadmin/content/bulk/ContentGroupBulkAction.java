@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.entando.entando.aps.system.common.command.BaseBulkCommand;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
 import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTracer;
 import org.entando.entando.aps.system.services.command.IBulkCommandManager;
@@ -27,7 +26,6 @@ import org.entando.entando.plugins.jacms.aps.system.services.content.command.gro
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.group.RemoveGroupBulkCommand;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.ContentBulkActionSummary;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.IContentBulkActionHelper;
-import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.SmallBulkCommandReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -44,7 +42,7 @@ public class ContentGroupBulkAction extends BaseAction {
 	private static final Logger _logger = LoggerFactory.getLogger(ContentGroupBulkAction.class);
 
 	public String entry() {
-		return this.checkAllowedContents(false) ? SUCCESS : "list";
+		return this.checkAllowedContents() ? SUCCESS : "list";
 	}
 
 	public String join() {
@@ -77,13 +75,13 @@ public class ContentGroupBulkAction extends BaseAction {
 
 	public String apply() {
 		try {
-			if (!this.checkAllowedContents(true)) {
+			if (!this.checkAllowedContents()) {
 				return "list";
 			} else if (!this.checkGroups()) {
 				return INPUT;
 			} else {
 				BaseContentPropertyBulkCommand<String> command = this.initBulkCommand();
-				BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(this.getCommandOwner(), command);
+				BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(IContentBulkActionHelper.BULK_COMMAND_OWNER, command);
 				this.setCommandId(report.getCommandId());
 			}
 		} catch (Throwable t) {
@@ -104,28 +102,12 @@ public class ContentGroupBulkAction extends BaseAction {
 		return command;
 	}
 
-	public String viewResult() {
-		return this.getReport() == null ? "expired" : SUCCESS;
-	}
-
 	public ContentBulkActionSummary getSummary() {
 		return this.getBulkActionHelper().getSummary(this.getSelectedIds());
 	}
 
-	public BaseBulkCommand<?, ?, ?> getCommand() {
-		return this.getBulkCommandManager().getCommand(this.getCommandOwner(), this.getCommandId());
-	}
-
-	public BulkCommandReport<?> getReport() {
-		return this.getBulkCommandManager().getCommandReport(this.getCommandOwner(), this.getCommandId());
-	}
-
-	public SmallBulkCommandReport getSmallReport() {
-		return this.getBulkActionHelper().getSmallReport(this.getReport());
-	}
-
-	protected boolean checkAllowedContents(boolean fullCheck) {
-		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), fullCheck, this, this);
+	protected boolean checkAllowedContents() {
+		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), this, this);
 	}
 
 	protected boolean checkGroups() {
@@ -138,10 +120,6 @@ public class ContentGroupBulkAction extends BaseAction {
 
 	public List<Group> getAllowedGroups() {
 		return this.getActualAllowedGroups();
-	}
-
-	public String getCommandOwner() {
-		return IContentBulkActionHelper.BULK_COMMAND_OWNER;
 	}
 
 	public Set<String> getSelectedIds() {

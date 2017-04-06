@@ -26,16 +26,22 @@ import org.entando.entando.aps.system.common.command.context.ApsCommandContext;
 public interface ApsCommand<C extends ApsCommandContext> {
 
 	/**
-	 * Init the context of the command.
-	 * @param context The context of the command.
-	 */
-	public void init(C context);
-
-	/**
 	 * Returns the ID of the given command.
 	 * @return The ID of the given command.
 	 */
 	public String getId();
+
+	/**
+	 * Returns the conventional name of the given command.
+	 * @return The conventional name of the given command.
+	 */
+	public String getName();
+
+	/**
+	 * Init the context of the command.
+	 * @param context The context of the command.
+	 */
+	public void init(C context);
 
 	/**
 	 * Apply the command.

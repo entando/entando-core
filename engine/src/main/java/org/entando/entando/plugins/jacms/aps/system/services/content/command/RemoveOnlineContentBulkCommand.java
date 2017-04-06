@@ -22,12 +22,17 @@ import org.entando.entando.plugins.jacms.aps.system.services.content.command.com
 import org.entando.entando.plugins.jacms.aps.system.services.content.helper.IContentHelper;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class RemoveOnlineContentBulkCommand extends BaseContentBulkCommand<ContentBulkCommandContext> {
 
 	public static String BEAN_NAME = "jacmsRemoveOnlineContentBulkCommand";
+	public static String COMMAND_NAME = "content.offline";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
+	}
 
 	@Override
 	protected boolean apply(Content content) throws ApsSystemException {
@@ -36,6 +41,7 @@ public class RemoveOnlineContentBulkCommand extends BaseContentBulkCommand<Conte
 			return false;
 		} else {
 			this.getApplier().removeOnLineContent(content);
+			this.getTracer().traceSuccess(content.getId());
 			return true;
 		}
 	}
@@ -50,17 +56,8 @@ public class RemoveOnlineContentBulkCommand extends BaseContentBulkCommand<Conte
 	}
 	public void setContentHelper(IContentHelper contentHelper) {
 		this._contentHelper = contentHelper;
-		this._contentUtilizers = this.getContentHelper().getContentUtilizers();
-	}
-
-	protected List<ContentUtilizer> getContentUtilizers() {
-		return _contentUtilizers;
-	}
-	protected void setContentUtilizers(List<ContentUtilizer> contentUtilizers) {
-		this._contentUtilizers = contentUtilizers;
 	}
 
 	private IContentHelper _contentHelper;
-	private List<ContentUtilizer> _contentUtilizers;
 
 }

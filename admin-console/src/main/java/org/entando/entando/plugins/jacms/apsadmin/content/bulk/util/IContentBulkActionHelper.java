@@ -25,7 +25,7 @@ import com.opensymphony.xwork2.interceptor.ValidationAware;
 
 public interface IContentBulkActionHelper {
 	
-	public boolean checkAllowedContents(Collection<String> contentIds, boolean fullCheck, ValidationAware validation, TextProvider textProvider);
+	public boolean checkAllowedContents(Collection<String> contentIds, ValidationAware validation, TextProvider textProvider);
 	
 	public boolean checkGroups(Collection<Group> allowedGroups, Collection<String> selectedGroupCodes, ValidationAware validation, TextProvider textProvider);
 	
@@ -38,5 +38,5 @@ public interface IContentBulkActionHelper {
 	public SmallBulkCommandReport getSmallReport(BulkCommandReport<?> report);
 	
 	public static final String BULK_COMMAND_OWNER = "jacms";
-
+	
 }

@@ -361,8 +361,7 @@
                         <i class="fa fa-asterisk required-icon"></i>
                     </label>
                     <div class="col-sm-6 foti_class">
-                        <wpsf:select name="charset" id="charset" size="3" style="overflow:hidden"
-                                     headerKey="" headerValue="%{getText('label.default')}" list="allowedCharsets" cssClass="form-control" />
+                        <wpsf:select name="charset" id="charset" size="3" style="overflow:hidden" list="allowedCharsets" cssClass="form-control"/>
                         <s:if test="#hasFieldErrorVar">
                             <span class="help-block text-danger">
                                 <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
@@ -383,8 +382,7 @@
                         <i class="fa fa-asterisk required-icon"></i>
                     </label>
                     <div class="col-sm-6 foti_class"  style="margin-left: 6px">
-                        <wpsf:select name="mimeType" id="mimeType" size="5" style="overflow:hidden"
-                                     headerKey="" headerValue="%{getText('label.default')}" list="allowedMimeTypes" cssClass="form-control" />
+                        <wpsf:select name="mimeType" id="mimeType" size="5" style="overflow:hidden" list="allowedMimeTypes" cssClass="form-control" />
                         <s:if test="#hasFieldErrorVar">
                             <span class="help-block text-danger">
                                 <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>

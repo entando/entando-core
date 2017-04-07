@@ -1,14 +1,31 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
-<h1 class="panel panel-default title-page">
-	<span class="panel-body display-block">
-		<a href="<s:url action="list" namespace="/do/Group"></s:url>"
+
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+	<li><a
+		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
+				name="menu.configure" /></a></li>
+	<li><a href="<s:url action="list" namespace="/do/Group"></s:url>"
 		title="<s:text name="note.goToSomewhere" />: <s:text name="title.groupManagement" />">
-		<s:text name="title.groupManagement" /></a>
-		&#32;/&#32;
-		<s:text name="title.groupDetail" />
+			<s:text name="title.groupManagement" />
+	</a></li>
+	<li class="page-title-container"><s:text
+			name="title.groupDetail" /></li>
+</ol>
+<h1 class="page-title-container">
+	<s:text name="title.groupDetail" />
+	<span class="pull-right"> <a tabindex="0" role="button"
+		data-toggle="popover" data-trigger="focus" data-html="true" title=""
+		data-content="TO be inserted" data-placement="left"
+		data-original-title=""><i class="fa fa-question-circle-o"
+			aria-hidden="true"></i></a>
 	</span>
 </h1>
+<div class="text-right">
+	<div class="form-group-separator"></div>
+</div>
+<br>
+
 <div class="form-horizontal">
 	<div class="form-group">
 		<label class="control-label col-lg-3 col-md-3"><s:text name="label.group" /></label>

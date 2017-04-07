@@ -1,25 +1,41 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.command;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import org.entando.entando.aps.system.common.command.BaseBulkCommand;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandWarningCode;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
+import org.entando.entando.aps.system.common.command.context.BaseBulkCommandContext;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 
-public class FakeBulkCommand extends BaseBulkCommand<String, Object> {
+public class FakeBulkCommand extends BaseBulkCommand<String, Object, BaseBulkCommandContext<String>> {
 
-	public FakeBulkCommand(Collection<String> items, Object applier, BulkCommandTracer<String> tracer) {
-		super(items, applier, tracer);
+	@Override
+	public String getName() {
+		return "fake";
 	}
 
-	public FakeBulkCommand(Collection<String> items, Object applier, BulkCommandTracer<String> tracer, 
-			CountDownLatch startSignal, CountDownLatch endSignal) {
-		super(items, applier, tracer);
+	public FakeBulkCommand(BaseBulkCommandContext<String> context) {
+		this.setContext(context);
+	}
+
+	public FakeBulkCommand(BaseBulkCommandContext<String> context, CountDownLatch startSignal, CountDownLatch endSignal) {
+		this(context);
 		this._startSignal = startSignal;
 		this._endSignal = endSignal;
 	}
@@ -56,8 +72,7 @@ public class FakeBulkCommand extends BaseBulkCommand<String, Object> {
 		}
 		return result;
 	}
-	
-	
+
 	public void setFakeEndingTime(Date endingTime) {
 		this.fakeEndingTime = endingTime;
 	}

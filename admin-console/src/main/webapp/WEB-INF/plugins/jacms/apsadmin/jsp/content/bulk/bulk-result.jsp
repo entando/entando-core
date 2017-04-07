@@ -2,12 +2,15 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
 
-<s:if test="strutsAction == 1">
-	<s:set var="labelTitle" value="%{getText('title.bulk.addCategories')}"/>
+<s:set var="command" value="command" />
+
+<s:if test="%{#command == null}" >
+	<p>
+		<s:text name="note.bulk.report.notFound" />
+	</p>
 </s:if>
-<s:elseif test="strutsAction == 4" >
-	<s:set var="labelTitle" value="%{getText('title.bulk.removeCategories')}"/>
-</s:elseif>
+<s:else>
+	<s:set var="labelTitle" value="%{getText('title.bulk.' + #command.name)}"/>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><a href="<s:url action="list" namespace="/do/jacms/Content"/>"><s:text name="jacms.menu.contentAdmin" /></a></li>
@@ -18,14 +21,7 @@
 
 <h1 class="page-title-container"><s:property value="%{#labelTitle}" />&#32;-&#32;<s:text name="title.bulk.result" /></h1>
 
-<s:set var="command" value="command" />
 <div id="main" role="main">
-<s:if test="#command == null" >
-	<p>
-		<s:text name="note.bulk.report.notFound" />
-	</p>
-</s:if>
-<s:else>
 	<s:set var="report" value="#command.report" />
 	<p>
 		<s:text name="label.bulk.status" />: <s:text name="name.bulk.status.%{#command.status}" />
@@ -49,11 +45,13 @@
 		<s:text name="label.bulk.report.errorCount" />: <s:property value="%{#report.applyErrors}" />
 	</p>
 	<s:if test="%{#report.applyErrors > 0}" >
-	<p>
+	<div class="alert alert-danger">
+		<span class="pficon pficon-error-circle-o"></span>
+		<s:text name="message.title.ActionErrors" />
 		<ul>
 		<s:iterator var="error" value="%{#report.errors}" >
-			<jacmswpsa:content contentId="#error.key" var="content" />
-			<s:text name="name.bulk.category.error.%{#error.value}" var="errorDescr" />
+			<jacmswpsa:content contentId="${error.key}" var="content" workVersion="true" />
+			<s:text name="error.bulk.%{#command.name}.%{#error.value}" var="errorDescr" />
 			<li>
 				<s:text name="label.bulk.report.error" >
 					<s:param name="content" value="%{#content.description}" />
@@ -62,10 +60,10 @@
 			</li>
 		</s:iterator>
 		</ul>
-	</p>
+	</div>
 	</s:if>
 <s:if test="%{#report.endingTime == null}" >
-	<s:form action="viewResult" namespace="/do/jacms/Content/Category" method="get" >
+	<s:form action="viewResult" namespace="/do/jacms/Content/Bulk" method="get" >
 		<wpsf:hidden name="commandId"/>
 		<s:set var="labelAction" value="%{getText('label.bulk.report.refresh')}"/>
 		<wpsf:submit type="button" title="%{#labelAction}" cssClass="btn btn-success">
@@ -74,5 +72,5 @@
 		</wpsf:submit>
 	</s:form>
 </s:if>
-</s:else>
 </div>
+</s:else>

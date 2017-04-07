@@ -1,20 +1,33 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.plugins.jacms.aps.system.services.content.command.group;
 
 import java.util.Collection;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 
-	public RemoveGroupBulkCommand(Collection<String> items, Collection<String> groups, 
-			IContentManager manager, BulkCommandTracer<String> tracer, WebApplicationContext wax) {
-		super(items, groups, manager, tracer, wax);
+	public static String BEAN_NAME = "jacmsRemoveGroupBulkCommand";
+	public static String COMMAND_NAME = "content.group.rem";
+
+	@Override
+	public String getName() {
+		return COMMAND_NAME;
 	}
 
 	@Override
@@ -24,8 +37,6 @@ public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 		if (null == groups || groups.isEmpty()) {
 			this.getTracer().traceError(content.getId(), ApsCommandErrorCode.PARAMS_NOT_VALID);
 			performed = false;
-//		} else if (content.getGroups()==null || !content.getGroups().contains(group)) {
-//			this.getTracer().traceWarning(content.getId(), CommandWarningCode.NOT_NECESSARY);
 		} else {
 			// TODO assicurarsi che il remove non abbia impatto su contenuti in cache (o meglio ancora scrivere un'operazione che faccia un restore)
 			content.getGroups().removeAll(groups);// Preliminar REMOVE, useful for check
@@ -33,6 +44,8 @@ public class RemoveGroupBulkCommand extends BaseContentGroupBulkCommand {
 			if (performed) {
 				this.getApplier().saveContent(content);
 				this.getTracer().traceSuccess(content.getId());
+			} else {
+				this.getTracer().traceError(content.getId(), ApsCommandErrorCode.NOT_APPLICABLE);
 			}
 		}
 		return performed;

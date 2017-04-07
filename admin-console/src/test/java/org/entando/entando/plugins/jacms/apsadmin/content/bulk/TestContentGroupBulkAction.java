@@ -1,3 +1,16 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.plugins.jacms.apsadmin.content.bulk;
 
 import java.util.ArrayList;
@@ -6,7 +19,10 @@ import java.util.List;
 
 import org.entando.entando.aps.system.common.command.constants.ApsCommandStatus;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
+import org.entando.entando.aps.system.services.command.IBulkCommandManager;
+import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.IContentBulkActionHelper;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
@@ -124,16 +140,16 @@ public class TestContentGroupBulkAction extends ApsAdminBaseTestCase {
 			
 			result = this.executeViewResult(currentUser, commandId);
 			assertEquals(Action.SUCCESS, result);
-			action = (ContentGroupBulkAction) this.getAction();
-			
-			this.checkReport(size, size, size, 0, ApsCommandStatus.COMPLETED);
+
+			commandId = ((ContentBulkAction) this.getAction()).getCommandId();
+			this.checkReport(commandId, size, size, size, 0, ApsCommandStatus.COMPLETED);
 
 			this.checkContentGroups(contentIds, groupCodes, true, false);
 			result = this.executeApply(currentUser, ApsAdminSystemConstants.DELETE, contentIds, groupCodes);
 			this.checkContentGroups(contentIds, groupCodes, false, false);
 			commandId = ((ContentGroupBulkAction) this.getAction()).getCommandId();
 			
-			this.checkReport(size, size, size, 0, ApsCommandStatus.COMPLETED);
+			this.checkReport(commandId, size, size, size, 0, ApsCommandStatus.COMPLETED);
 		} finally {
 			this.deleteContents(contentList);
 		}
@@ -229,8 +245,8 @@ public class TestContentGroupBulkAction extends ApsAdminBaseTestCase {
 		return this.executeAction();
 	}
 	
-	private void checkReport(int total, int applyTotal, int applySuccesses, int applyErrors, ApsCommandStatus status) {
-		BulkCommandReport<?> report = ((ContentGroupBulkAction) this.getAction()).getReport();
+	private void checkReport(String commandId, int total, int applyTotal, int applySuccesses, int applyErrors, ApsCommandStatus status) {
+		BulkCommandReport<?> report = this._bulkCommandManager.getCommandReport(IContentBulkActionHelper.BULK_COMMAND_OWNER, commandId);
 		assertEquals(total, report.getTotal());
 		assertEquals(applyTotal, report.getApplyTotal());
 		assertEquals(applySuccesses, report.getApplySuccesses());
@@ -245,9 +261,12 @@ public class TestContentGroupBulkAction extends ApsAdminBaseTestCase {
 	
 	private void init() {
 		this._contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
+		this._bulkCommandManager = (IBulkCommandManager) this.getApplicationContext().getBean(SystemConstants.BULK_COMMAND_MANAGER);
 	}
 
 	private IContentManager _contentManager;
+	private IBulkCommandManager _bulkCommandManager;
+	
 	private static final String NAMESPACE = "/do/jacms/Content/Group";
 
 }

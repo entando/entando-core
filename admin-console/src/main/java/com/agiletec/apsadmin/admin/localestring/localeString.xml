@@ -38,6 +38,11 @@
         	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
     	
+    	<action name="trash" class="localeStringAction" method="trash">
+			<result type="tiles">admin.LocaleString.trash</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+		
     	<action name="delete" class="localeStringAction" method="delete">
         	<result type="chain">list</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>

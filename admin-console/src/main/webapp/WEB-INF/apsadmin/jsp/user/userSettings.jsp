@@ -15,7 +15,17 @@
     <li class="page-title-container"><s:text name="title.userSettings" /></li>
 </ol>
 
-<h1 class="page-title-container"><s:text name="title.userSettings" /></h1>
+<h1 class="page-title-container"><s:text name="title.userSettings" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+</h1>
+
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
 
 <div id="main" role="main">
     <s:form action="updateSystemParams">
@@ -32,16 +42,6 @@
         </s:if>
         
         <fieldset class="col-xs-12 settings-form">
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-xs-2">
-                        <div class="form-group-label"><s:text name="names.users" /></div>
-                    </div>
-                    <div class="col-xs-10">
-                        <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
-                    </div>
-                </div>
-            </div>
             
             <div class="form-group">
                 <div class="row">

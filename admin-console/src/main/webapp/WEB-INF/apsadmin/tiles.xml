@@ -391,6 +391,10 @@
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/settings.jsp" />
     </definition>
 
+    <definition extends="layout.settings" name="admin.BaseAdmin.reloadConfigChoose">
+        <put-attribute name="title" value="menu.reload.config" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/reloadChoose.jsp" />
+    </definition>
     <definition extends="layout.settings" name="admin.BaseAdmin.reloadConfigResult">
         <put-attribute name="title" value="menu.reload.config" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/reloadConfig.jsp" />

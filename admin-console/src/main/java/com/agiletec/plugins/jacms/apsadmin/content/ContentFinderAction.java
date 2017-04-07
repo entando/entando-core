@@ -600,6 +600,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			this.setSelectedIds(contentIds);
 			if (contentIds == null || contentIds.isEmpty()) {
 				this.addActionError(this.getText("error.content.bulkAction.empty"));
+				return INPUT;
 			}
 		} catch (Throwable t) {
 			_logger.error("error in execute", t);

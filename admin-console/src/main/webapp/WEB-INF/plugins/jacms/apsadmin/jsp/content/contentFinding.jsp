@@ -509,29 +509,23 @@
                 <div class="btn-toolbar">
                     <wp:ifauthorized permission="validateContents">
                         <div class="btn-group margin-small-vertical">
+                        <%-- 
                             <wpsf:submit action="approveContentGroup" type="button" title="%{getText('note.button.approve')}" cssClass="btn btn-success">
-                                <span class="icon fa fa-check"></span>
-                                <s:text name="label.approve" />
-                            </wpsf:submit>
-                            <wpsf:submit action="suspendContentGroup" type="button" title="%{getText('note.button.suspend')}" cssClass="btn btn-warning">
-                                <span class="icon fa fa-pause"></span>
-                                <s:text name="label.suspend" />
-                            </wpsf:submit>
-                        </div>
-                    </wp:ifauthorized>
-                    
-                    <wp:ifauthorized permission="validateContents">
-                        <div class="btn-group margin-small-vertical">
+                         --%>
                             <wpsf:submit action="bulkPutOnline" type="button" title="%{getText('note.button.approve')}" cssClass="btn btn-success">
                                 <span class="icon fa fa-check"></span>
                                 <s:text name="label.approve" />
                             </wpsf:submit>
+                        <%-- 
+                            <wpsf:submit action="suspendContentGroup" type="button" title="%{getText('note.button.suspend')}" cssClass="btn btn-warning">
+                         --%>
                             <wpsf:submit action="bulkPutOffline" type="button" title="%{getText('note.button.suspend')}" cssClass="btn btn-warning">
                                 <span class="icon fa fa-pause"></span>
                                 <s:text name="label.suspend" />
                             </wpsf:submit>
                         </div>
                     </wp:ifauthorized>
+                    
                         <div class="btn-group margin-small-vertical">
 	                    	<wpsa:actionParam action="bulkOnGroups" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="1" /></wpsa:actionParam>
 							<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.addGroups')}" cssClass="btn btn-success">
@@ -553,10 +547,6 @@
 								<span class="icon fa"></span>
 								<s:text name="label.removeCategories" />
 							</wpsf:submit>
-	                        <wpsf:submit action="bulkRemove" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
-	                            <span class="icon fa fa-times-circle"></span>
-	                            <s:text name="label.remove" />
-	                        </wpsf:submit>
                         </div>
 						
                     <wpsa:hookPoint key="jacms.contentFinding.allContents.actions" objectName="hookpoint_contentFinding_allContents">
@@ -565,7 +555,10 @@
                         </s:iterator>
                     </wpsa:hookPoint>
                     <div class="btn-group margin-small-vertical">
+                        <%-- 
                         <wpsf:submit action="trashContentGroup" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
+                         --%>
+                        <wpsf:submit action="bulkRemove" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
                             <span class="icon fa fa-times-circle"></span>
                             <s:text name="label.remove" />
                         </wpsf:submit>

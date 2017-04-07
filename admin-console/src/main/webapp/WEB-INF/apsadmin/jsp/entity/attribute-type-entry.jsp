@@ -176,24 +176,36 @@
 
             <s:if test="null != attributeRoles && attributeRoles.size() > 0">
                 <h3 class="margin-none"><s:text name="label.roles.assigned" /></h3>
-                <ul class="list-group">
-                    <s:iterator value="attributeRoles" var="attributeRole">
+                <!--<ul class="list-group">-->   
+
+                <div class="form-group-separator" style="border-bottom-color: #ededed">
+                </div>
+
+                <s:iterator value="attributeRoles" var="attributeRole">
+                    <div class="form-group"style="margin-top: 10px">
                         <wpsa:actionParam action="removeAttributeRole" var="actionName" >
                             <wpsa:actionSubParam name="attributeRoleName" value="%{#attributeRole}" />
                         </wpsa:actionParam>
-                        <li class="list-group-item">
-                            <div class="col-sm-4">
-                                <code><s:property value="attributeRole" /></code>
+                        <label class="col-sm-2 control-label">
+
+                        </label>
+                        <div class="col-sm-10" style="margin-left: -20px;">
+                            <!--<li class="list-group-item">-->
+                            <div class="col-md-4">
+                                <!--<code><s:property value="attributeRole" /></code>-->
                                 <s:property value="%{getAttributeRole(#attributeRole).description}" />
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-sm-8" >
                                 <wpsf:submit type="button" action="%{#actionName}" cssClass="btn btn-danger" title="%{getText('label.remove')}" >
                                     <s:text name="label.delete" />
                                 </wpsf:submit>
                             </div>
-                        </li>
-                    </s:iterator>
-                </ul>
+                            <!--</li>-->
+                        </div>
+                    </div>
+                </s:iterator>
+
+                <!--</ul>-->
             </s:if>
         </s:else>
     </fieldset>
@@ -223,26 +235,33 @@
                 <h3 class="margin-none">
                     <s:text name="label.disablingCodes.assigned" />
                 </h3>
+                <div class="form-group-separator" style="border-bottom-color: #ededed">
+                </div>
 
-                <ul class="list-group">
-                    <s:iterator value="disablingCodes" var="disablingCode">
+                <s:iterator value="disablingCodes" var="disablingCode">
+                    <div class="form-group"style="margin-top: 10px">
                         <wpsa:actionParam action="removeAttributeDisablingCode" var="actionName" >
                             <wpsa:actionSubParam name="attributeRoleName" value="%{#disablingCode}" />
                         </wpsa:actionParam>
-                        <li class="list-group-item">
+                        <label class="col-sm-2 control-label">
+
+                        </label>
+                        <div class="col-sm-10" style="margin-left: -20px;">
                             <div class="col-sm-4">
-                                <code><s:property value="#disablingCode" /></code>
+                                <!--<code><s:property value="#disablingCode" /></code>-->
                                 <s:property value="%{#attributeDisablingCodesVar[#disablingCode]}" />
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-sm-8">
                                 <wpsf:submit type="button" action="%{#actionName}" cssClass="btn btn-danger" title="%{getText('label.remove')}" >
                                     <s:text name="label.delete" />
                                 </wpsf:submit>
                             </div>
-                        </li>
-                    </s:iterator>
-                </ul>
+                        </div>
+                    </div>
+                </s:iterator>
             </s:if>
+
+
         </fieldset>
     </s:if>
 
@@ -259,7 +278,7 @@
     </s:elseif>
 
     <s:if test="#attribute.type == 'List' || #attribute.type == 'Monolist'">
-        <fieldset class="col-xs-12 lol">
+        <fieldset class="col-xs-12">
             <legend><s:text name="label.settings" /></legend>
 
             <div class="form-group">

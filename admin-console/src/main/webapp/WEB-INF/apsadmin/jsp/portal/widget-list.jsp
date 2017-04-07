@@ -42,7 +42,7 @@
     <div class="row">
         <div class="form-group col-md-12">
             <a class="btn btn-primary pull-right" href="<s:url namespace="/do/Portal/WidgetType" action="newWidget" />">
-                <s:text name="label.add" />&#32;<s:text name="label.widget" />
+                <s:text name="label.add" />&#32;widget
             </a>
         </div>
     </div>       

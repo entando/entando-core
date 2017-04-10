@@ -52,6 +52,7 @@
 		</ul>
 	</div>
 </div>
+
 <div class="tab-content" class="tab-pane active" >
 
 	<s:include value="inc/resource_searchForm.jsp" />

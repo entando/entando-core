@@ -1347,3 +1347,25 @@ ul {
     right: 20px;
     top: 30px;
 }
+
+.searchPanel .panel {
+		margin-bottom: 20px;
+		background-color: #fff;
+		border: 0px solid transparent;
+		border-radius: 1px;
+		box-shadow: none;
+}
+.searchPanel .panel-group .panel-heading {
+	background-image: none;
+}
+.searchPanel .panel-group .panel-heading+.panel-collapse .panel-body {
+	border-top: 1px solid #ecebeb;
+}
+.searchPanel .panel-group .panel-title>a {
+	color: #4d5258;
+	font-weight: 400;
+	font-size: 13px;
+}
+.searchPanel .panel-group .panel-title>a:after {
+	margin-left: 10px;
+}

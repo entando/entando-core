@@ -54,7 +54,7 @@
     </s:if>
 
 
-    <div class="form-group ">
+    <div class="searchPanel form-group">
         <div class="well col-md-offset-3 col-md-6  ">
             <p class="search-label"><s:text name="label.search.label"/></p>
 
@@ -98,7 +98,7 @@
                     <div class="panel-heading" style="padding:0 0 10px;">
                         <p class="panel-title" style="text-align: end">
                             <a  data-toggle="collapse" data-parent="#accordion-markup" href="#collapseOne">
-                                Advanced search
+                                <s:text name="label.search.advanced" />
                             </a>
                         </p>
                     </div>
@@ -506,27 +506,3 @@
         </div>
     </wpsa:subset>
 </s:form>
-
-<style>
-    .panel {
-        margin-bottom: 20px;
-        background-color: #fff;
-        border: 0px solid transparent;
-        border-radius: 1px;
-        box-shadow: none;
-    }
-    .panel-group .panel-heading {
-        background-image: none;
-    }
-    .panel-group .panel-heading+.panel-collapse .panel-body {
-        border-top: 1px solid #ecebeb;
-    }
-    .panel-group .panel-title>a {
-        color: #4d5258;
-        font-weight: 400;
-        font-size: 13px;
-    }
-    .panel-group .panel-title>a:after {
-        margin-left: 10px;
-    }
-</style>

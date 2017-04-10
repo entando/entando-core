@@ -3,8 +3,22 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
+<style>
+    .nav-tabs-pattern > li > a {
+        background: #f5f5f5;
+        border: 1px solid #ccc !important;
+        margin-bottom: 0 !important;
+    }
+
+    .nav-tabs-pattern > li > a {
+        line-height: 59px;
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+</style>
+
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure"/></a></li>
+    <li><s:text name="menu.configure"/></li>
     <li>
         <a href="<s:url namespace="/do/LocaleString" action="list" />">
             <s:text name="title.languageAndLabels"/>
@@ -12,27 +26,31 @@
     </li>
     <li class="page-title-container"><s:text name="title.languageAdmin"/></li>
 </ol>
-<h1 class="page-title-container row">
-    <div class="col-sm-7">
-        <s:text name="title.languageAdmin"/>
-        <span class="pull-right">
-            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-               data-content="TO be inserted" data-placement="left" data-original-title="">
-                <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-            </a>
-        </span>
+<div class="page-tabs-header">
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>
+                <s:text name="title.languageAdmin"/>
+                <span class="pull-right">
+                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                   data-content="TO be inserted" data-placement="left" data-original-title="">
+                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                </a>
+                </span>
+            </h1>
+        </div>
+        <div class="col-sm-6">
+            <ul class="nav nav-tabs nav-justified nav-tabs-pattern">
+                <li class="active"><a href="<s:url namespace="/do/Lang" action="list" />"><s:text
+                        name="title.languageAdmin"/></a></li>
+                <li>
+                    <a href="<s:url namespace="/do/LocaleString" action="list" />"><s:text
+                            name="title.languageAdmin.labels"/></a>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="col-sm-5">
-        <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a href="<s:url namespace="/do/Lang" action="list" />"><s:text
-                    name="title.languageAdmin"/></a></li>
-            <li>
-                <a href="<s:url namespace="/do/LocaleString" action="list" />"><s:text
-                        name="title.languageAdmin.labels"/></a>
-            </li>
-        </ul>
-    </div>
-</h1>
+</div>
 <br>
 
 
@@ -64,7 +82,6 @@
                         </select>
                         <div class="input-group-btn">
                             <wpsf:submit type="button" cssClass="btn btn-primary">
-                                <span class="icon fa fa-plus-square"></span>&#32;
                                 <s:text name="label.add"/>
                             </wpsf:submit>
                         </div>
@@ -74,40 +91,40 @@
 
             <table class="table table-striped table-bordered table-hover">
                 <thead>
-                    <tr>
-                        <th class="col-sm-5"><s:text name="label.code"/></th>
-                        <th class="col-sm-6"><s:text name="label.description"/></th>
-                        <th class="text-center col-sm-1"><s:text name="label.remove"/></th>
-                    </tr>
+                <tr>
+                    <th class="col-sm-5"><s:text name="label.code"/></th>
+                    <th class="col-sm-6"><s:text name="label.description"/></th>
+                    <th class="text-center col-sm-1"><s:text name="label.remove"/></th>
+                </tr>
                 </thead>
                 <tbody>
-                    <s:iterator var="lang" value="langs">
-                        <tr>
-                            <td>
-                                <s:set var="labelModifier" value="''"/>
-                                <s:set var="labelTitle" value="''"/>
-                                <s:if test="#lang.default">
-                                    <s:set var="labelModifier" value="'*'"/>
-                                    <s:set var="labelTitle">
-                                        title="<s:text name="label.default"/>"
-                                    </s:set>
-                                </s:if>
-                                <span class="text-capitalize" <s:property value="labelTitle"/>>
+                <s:iterator var="lang" value="langs">
+                    <tr>
+                        <td>
+                            <s:set var="labelModifier" value="''"/>
+                            <s:set var="labelTitle" value="''"/>
+                            <s:if test="#lang.default">
+                                <s:set var="labelModifier" value="'*'"/>
+                                <s:set var="labelTitle">
+                                    title="<s:text name="label.default"/>"
+                                </s:set>
+                            </s:if>
+                            <span class="text-capitalize" <s:property value="labelTitle"/>>
                                     <s:property value="#lang.code"/><s:property value="labelModifier"/>
                                 </span>
-                            </td>
-                            <td><s:property value="#lang.descr"/></td>
-                            <td class="text-center">
+                        </td>
+                        <td><s:property value="#lang.descr"/></td>
+                        <td class="text-center">
 
-                                <a
-                                        href="<s:url action="remove"><s:param name="langCode" value="#lang.code"/></s:url>"
-                                        title="<s:text name="label.remove" />: <s:property value="#lang.descr" />">
-                                    <span class="fa fa-trash-o fa-lg"></span>
-                                </a>
-                            </td>
+                            <a
+                                    href="<s:url action="remove"><s:param name="langCode" value="#lang.code"/></s:url>"
+                                    title="<s:text name="label.remove" />: <s:property value="#lang.descr" />">
+                                <span class="fa fa-trash-o fa-lg"></span>
+                            </a>
+                        </td>
 
-                        </tr>
-                    </s:iterator>
+                    </tr>
+                </s:iterator>
                 </tbody>
             </table>
         </s:form>

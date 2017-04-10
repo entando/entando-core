@@ -1,34 +1,39 @@
-<%@ taglib prefix="s" uri="/struts-tags" %>
-<%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
-<%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
-<%@ taglib prefix="wp" uri="/aps-core" %>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib uri="/apsadmin-core" prefix="wpsa"%>
+<%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
+<%@ taglib prefix="wp" uri="/aps-core"%>
 
-<s:if test="strutsAction != 2" >
-<script src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
-<script>
-$(document).ready(function () {
-	generateCodeFromTitle('description', 'name');
-});
-</script>
+<s:if test="strutsAction != 2">
+	<script
+		src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
+	<script>
+		$(document).ready(function() {
+			generateCodeFromTitle('description', 'name');
+		});
+	</script>
 </s:if>
- 
+
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
+	<li><s:text name="menu.configure" /></li>
 	<li><a href="<s:url action="list" namespace="/do/Group"></s:url>"
 		title="<s:text name="note.goToSomewhere" />: <s:text name="title.groupManagement" />">
 			<s:text name="title.groupManagement" />
 	</a></li>
-	<li class="page-title-container">
-		<s:if test="getStrutsAction() == 1"><s:text name="title.groupManagement.groupNew" /></s:if>
-		<s:elseif test="getStrutsAction() == 2"><s:text name="title.groupManagement.groupEdit" /> </s:elseif>
-	</li>
+	<li class="page-title-container"><s:if
+			test="getStrutsAction() == 1">
+			<s:text name="title.groupManagement.groupNew" />
+		</s:if> <s:elseif test="getStrutsAction() == 2">
+			<s:text name="title.groupManagement.groupEdit" />
+		</s:elseif></li>
 </ol>
 <h1 class="page-title-container">
 	<div>
-		<s:if test="getStrutsAction() == 1"><s:text name="title.groupManagement.groupNew" /></s:if>
-		<s:elseif test="getStrutsAction() == 2"><s:text name="title.groupManagement.groupEdit" /> </s:elseif>
+		<s:if test="getStrutsAction() == 1">
+			<s:text name="title.groupManagement.groupNew" />
+		</s:if>
+		<s:elseif test="getStrutsAction() == 2">
+			<s:text name="title.groupManagement.groupEdit" />
+		</s:elseif>
 		<span class="pull-right"> <a tabindex="0" role="button"
 			data-toggle="popover" data-trigger="focus" data-html="true" title=""
 			data-content="TO be inserted" data-placement="left"
@@ -38,16 +43,20 @@ $(document).ready(function () {
 		</span>
 	</div>
 </h1>
+<div class="text-right">
+	<div class="form-group-separator"></div>
+</div>
 <br>
 <br>
- 
-<s:form action="save" cssClass="form-horizontal" >
+
+<s:form action="save" cssClass="form-horizontal">
 	<s:if test="hasActionErrors()">
 		<div class="alert alert-danger alert-dismissable fade in">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-hidden="true">
 				<span class="pficon pficon-close"></span>
 			</button>
-			<span class="pficon pficon-error-circle-o"></span> 
+			<span class="pficon pficon-error-circle-o"></span>
 			<s:text name="message.title.ActionErrors" />
 			<ul class="margin-base-top">
 				<s:iterator value="actionErrors">
@@ -58,10 +67,11 @@ $(document).ready(function () {
 	</s:if>
 	<s:if test="hasFieldErrors()">
 		<div class="alert alert-danger alert-dismissable fade in">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-hidden="true">
 				<span class="pficon pficon-close"></span>
 			</button>
-			<span class="pficon pficon-error-circle-o"></span> 
+			<span class="pficon pficon-error-circle-o"></span>
 			<s:text name="message.title.FieldErrors" />
 		</div>
 	</s:if>
@@ -74,53 +84,66 @@ $(document).ready(function () {
 
 	<%-- NAME --%>
 	<s:set var="fieldErrorsVar" value="%{fieldErrors['description']}" />
-	<s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
-	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+	<s:set var="fieldHasFieldErrorVar"
+		value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar"
+		value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
 
-	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-		<label class="col-sm-2" for="description"><s:text name="label.name" /></label>
+	<div
+		class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<label class="col-sm-2 control-label" for="description"><s:text
+				name="label.name" />&nbsp;<a tabindex="0" role="button"
+			data-toggle="popover" data-trigger="focus" data-html="true" title=""
+			data-content="TO DO" data-placement="top" data-original-title=""><span
+				class="fa fa-info-circle"></span></a></label>
 		<div class="col-sm-10">
-			<wpsf:textfield name="description" id="description" cssClass="form-control" />
+			<wpsf:textfield name="description" id="description"
+				cssClass="form-control" />
 			<s:if test="#fieldHasFieldErrorVar">
-				<span class="help-block text-danger">
-					<s:iterator value="#fieldErrorsVar"><s:property />&#32;</s:iterator>
+				<span class="help-block text-danger"> <s:iterator
+						value="#fieldErrorsVar">
+						<s:property />
+						&#32;
+					</s:iterator>
 				</span>
 			</s:if>
 		</div>
 	</div>
-		
-		
-			
+
+
+
 	<%-- CODE --%>
 	<s:set var="fieldErrorsVar" value="%{fieldErrors['name']}" />
-	<s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
-	<s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-	
-	<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-		<label class="col-sm-2" for="name"> <s:text name="label.descr" />
-			<span tabindex="0" role="button"
-				data-toggle="tooltip" data-trigger="focus" data-html="true" title="TO be inserted"
-				data-placement="bottom"> 
-					<i class="fa fa-question-circle" aria-hidden="true"></i>
-			</span>
+	<s:set var="fieldHasFieldErrorVar"
+		value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+	<s:set var="controlGroupErrorClassVar"
+		value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+
+	<div
+		class="form-group<s:property value="#controlGroupErrorClassVar" />">
+		<label class="col-sm-2 control-label" for="name"> <s:text
+				name="label.code" />
 		</label>
 		<div class="col-sm-10">
-			<wpsf:textfield name="name" id="name" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
+			<wpsf:textfield name="name" id="name"
+				disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
 			<s:if test="#fieldHasFieldErrorVar">
-				<span class="help-block text-danger">
-					<s:iterator value="#fieldErrorsVar"><s:property />&#32;</s:iterator>
+				<span class="help-block text-danger"> <s:iterator
+						value="#fieldErrorsVar">
+						<s:property />
+						&#32;
+					</s:iterator>
 				</span>
 			</s:if>
 		</div>
 	</div>
-	
 	<br>
-	<br>
-	
+
 	<%-- save --%>
 	<div class="form-group">
 		<div class="col-sm-12">
-			<wpsf:submit type="button" cssClass="btn btn-primary btn-lg pull-right">
+			<wpsf:submit type="button"
+				cssClass="btn btn-primary btn-lg pull-right">
 				<s:text name="label.save" />
 			</wpsf:submit>
 		</div>

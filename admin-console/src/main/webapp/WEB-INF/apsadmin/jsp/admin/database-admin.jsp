@@ -3,12 +3,9 @@
 <%@ taglib prefix="wp" uri="/aps-core"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
-	<li><a href="<s:url namespace="/do/LocaleString" action="list" />">
-			<s:text name="title.databaseManagement" />
-	</a></li>
+	<li><s:text name="menu.configure" /></li>
+	<li class="page-title-container"><s:text
+			name="title.databaseManagement" /></li>
 </ol>
 <h1 class="page-title-container">
 	<div>
@@ -21,6 +18,9 @@
 		</a> </span>
 	</div>
 </h1>
+<div class="text-right">
+	<div class="form-group-separator"></div>
+</div>
 <br>
 <s:if test="hasActionErrors()">
 	<div class="alert alert-danger alert-dismissable fade in">
@@ -118,9 +118,9 @@
 							   		</s:url>"><code>
 									<s:date name="#dumpReportVar.date" format="dd/MM/yyyy HH:mm:ss" />
 								</code></a></td>
-						<td class="text-nowrap text-center"><code>
-								<s:property value="#dumpReportVar.requiredTime" />
-							</code>&#32;<s:text name="database.management.label.milliseconds" /></td>
+						<td class="text-nowrap text-center"><s:property
+								value="#dumpReportVar.requiredTime" />&#32;<s:text
+								name="database.management.label.milliseconds" /></td>
 						<td class="text-nowrap text-center"><a
 							title="<s:text name="database.management.label.remove" />:&#32;<s:property value="#status.count" />&#32;&ndash;&#32;<s:date name="#dumpReportVar.date" format="dd/MM/yyyy HH:mm:ss" />"
 							href="<s:url namespace="/do/Admin/Database" action="trashBackup" >

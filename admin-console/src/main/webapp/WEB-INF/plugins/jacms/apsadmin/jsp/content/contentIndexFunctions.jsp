@@ -3,7 +3,7 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure"/></a></li>
+	<li><s:text name="menu.configure"/></li>
 	<li>
 		<a href="<s:url action="reloadChoose" namespace="/do/BaseAdmin" />">
 			<s:text name="menu.reload" />
@@ -15,7 +15,7 @@
 </ol>
 <h1 class="page-title-container">
 	<div>
-		<s:text name="menu.reload.contentReferences" />
+		<s:text name="title.reload.contentReferences" />
 		<span class="pull-right">
             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
 			   data-content="TO be inserted" data-placement="left" data-original-title="">

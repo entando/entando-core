@@ -4,29 +4,36 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure"/></a></li>
+    <li><s:text name="menu.configure"/></li>
     <li class="page-title-container">
         <s:text name="title.languageAndLabels"/>
     </li>
 </ol>
-<h1 class="page-title-container row">
-    <div class="col-sm-7">
-        <s:text name="title.languageAdmin.labels"/>
-        <span class="pull-right">
-            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-               data-content="TO be inserted" data-placement="left" data-original-title="">
-                <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-            </a>
-        </span>
+<div class="page-tabs-header">
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>
+                <s:text name="title.languageAdmin.labels"/>
+                <span class="pull-right">
+                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                       data-content="TO be inserted" data-placement="left" data-original-title="">
+                        <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                    </a>
+                </span>
+            </h1>
+        </div>
+        <div class="col-sm-6">
+            <ul class="nav nav-tabs nav-justified nav-tabs-pattern">
+                <li>
+                    <a href="<s:url namespace="/do/Lang" action="list" />"><s:text name="title.languageAdmin"/></a>
+                </li>
+                <li class="active">
+                    <a href="<s:url namespace="/do/LocaleString" action="list" />"><s:text name="title.languageAdmin.labels"/></a>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="col-sm-5">
-        <ul class="nav nav-tabs nav-justified">
-            <li><a href="<s:url namespace="/do/Lang" action="list" />"><s:text name="title.languageAdmin"/></a></li>
-            <li class="active"><a href="<s:url namespace="/do/LocaleString" action="list" />"><s:text
-                    name="title.languageAdmin.labels"/></a></li>
-        </ul>
-    </div>
-</h1>
+</div>
 <br>
 
 <div id="main" role="main">
@@ -55,7 +62,7 @@
     <div class="row">
         <div class="col-sm-12">
             <a href="<s:url namespace="/do/LocaleString" action="new" />" class="btn btn-primary btn-lg pull-right">
-                <s:text name="title.generalSettings.locale.new"/>
+                <s:text name="locale.addNewLabel"/>
             </a>
         </div>
     </div>
@@ -64,20 +71,18 @@
     <ul class="nav nav-tabs">
         <s:iterator value="systemLangs" var="lang">
             <s:set var="labelModifier" value="''"/>
+            <s:set var="thModifier" value="''"/>
             <s:set var="labelTitle" value="''"/>
             <s:set var="activeTab" value="''"/>
             <s:if test="#lang.default">
                 <s:set var="labelModifier" value="'*'"/>
-                <s:set var="labelTitle">
-                    title="<s:text name="label.default"/>"
-                </s:set>
+                <s:set var="thModifier" value="' (Default Language)'"/>
                 <s:set var="activeTab">
                     class=active
                 </s:set>
             </s:if>
             <li <s:property value="activeTab"/>>
-                <a class="text-capitalize" data-toggle="tab" href="#<s:property value="#lang.code"/>" <s:property
-                        value="labelTitle"/>>
+                <a class="text-capitalize" data-toggle="tab" href="#<s:property value="#lang.code"/>" title="<s:property value="#lang.descr" />">
                     <s:property value="#lang.code"/><s:property value="labelModifier"/>
                 </a>
             </li>
@@ -110,7 +115,7 @@
                             <thead>
                             <tr>
                                 <th><s:text name="label.code"/></th>
-                                <th>Default Language</th>
+                                <th><s:property value="#lang.descr" /><s:property value="thModifier"/></th>
                                 <th class="text-center " style="width: 20px"><s:text name="label.actions"/></th>
                             </tr>
                             </thead>

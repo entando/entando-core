@@ -4,7 +4,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure"/></a></li>
+	<li><s:text name="menu.configure"/></li>
 	<li>
 		<a href="<s:url namespace="/do/LocaleString" action="list" />">
 			<s:text name="title.languageAndLabels" />
@@ -33,22 +33,12 @@
 <br>
 
 <s:form action="save" namespace="/do/LocaleString" cssClass="form-horizontal">
-	<div class="pull-right"><s:text name="label.default" /></div>
 	<s:if test="hasFieldErrors()">
-		<div class="alert alert-danger">
-			<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-			<h2 class="h4 margin-none">
-				<s:text name="message.title.FieldErrors" />
-			</h2>
-				<%--
-                    <ul class="margin-base-top">
-                    <s:iterator value="fieldErrors">
-                        <s:iterator value="value">
-                        <li><s:property escapeHtml="false" /></li>
-                        </s:iterator>
-                    </s:iterator>
-                    </ul>
-                --%>
+		<div class="alert alert-danger alert-dismissable">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+				<span class="pficon pficon-close"></span>
+			</button>
+			<strong><s:text name="message.title.FieldErrors" /></strong>
 		</div>
 	</s:if>
 	<p class="sr-only">
@@ -57,6 +47,9 @@
 			<wpsf:hidden value="%{key}" name="key" />
 		</s:if>
 	</p>
+	<div class="row">
+		<div class="col-sm-12"><span class="pull-right"><s:text name="label.default" /></span></div>
+	</div>
 	<s:set var="keyFieldErrorsVar" value="%{fieldErrors['key']}"/>
 	<s:set var="keyHasFieldErrorVar" value="#keyFieldErrorsVar != null && !#keyFieldErrorsVar.isEmpty()"/>
 	<s:set var="controlGroupErrorClassVar" value="%{#keyHasFieldErrorVar ? ' has-error' : ''}"/>

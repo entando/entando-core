@@ -4,22 +4,18 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core"%>
-<style>
-a {
-	text-decoration: none;
-}
-</style>
+
 <div class="with-nav-tabs">
 	<ul class="nav nav-tabs">
-		<li class="active"><a data-toggle="tab" href="#pages"><s:text
+		<li class="active"><a data-toggle="tab" class="no-decorations" href="#pages"><s:text
 					name="title.group.pages" /></a></li>
-		<li><a data-toggle="tab" href="#users"><s:text
+		<li><a data-toggle="tab" class="no-decorations" href="#users"><s:text
 					name="title.group.users" /></a></li>
-		<li><a data-toggle="tab" href="#widget"><s:text
+		<li><a data-toggle="tab" class="no-decorations" href="#widget"><s:text
 					name="title.group.widgetTypes" /></a></li>
-		<li><a data-toggle="tab" href="#contents"><s:text
+		<li><a data-toggle="tab" class="no-decorations" href="#contents"><s:text
 					name="title.group.contents" /></a></li>
-		<li><a data-toggle="tab" href="#resources"><s:text
+		<li><a data-toggle="tab" class="no-decorations" href="#resources"><s:text
 					name="title.group.resources" /></a></li>
 	</ul>
 	<div class="tab-content">

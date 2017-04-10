@@ -18,7 +18,7 @@
     <div class="form-group-separator">
     </div>
 </div>
-<br>
+<br />
 
 <div id="main" role="main">
 

@@ -186,7 +186,7 @@
                             
                             <label class="btn btn-default <s:if test="systemParams[#paramName] == 'classic'"> active</s:if>">
                                 <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_classic" name="<s:property value="#paramName"/>" value="classic" <s:if test="systemParams[#paramName] == 'classic'">checked="checked"</s:if> />
-                                <s:text name="URLstyle.classic" />
+                                <s:text name="treeStyle.classic" />
                             </label>
                             <label class="btn btn-default <s:if test="systemParams[#paramName] == 'request'"> active</s:if>">
                                 <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_request" name="<s:property value="#paramName"/>" value="request" <s:if test="systemParams[#paramName] == 'request'">checked="checked"</s:if> />
@@ -216,15 +216,15 @@
             </div>
         </fieldset>
         
-        <div class="form-group bottom-row">
-            <div class="row">
+        <div class="form-group">
+            
                 <div class="col-xs-12">
-                    <wpsf:submit type="button" cssClass="btn btn-primary btn-block pull-right">
-                        <span class="icon fa fa-floppy-o"></span>&#32;
+                    <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+<!--                        <span class="icon fa fa-floppy-o"></span>&#32;-->
                         <s:text name="label.save" />
                     </wpsf:submit>
                 </div>
-            </div>
+            
         </div>
         
     </s:form>

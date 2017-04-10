@@ -211,7 +211,7 @@
                     }, 100);
                 } else {
                     console.log('animate in');
-                    $drawer.addClass('hide');
+//                    $drawer.addClass('hide');
                 }
             });
 

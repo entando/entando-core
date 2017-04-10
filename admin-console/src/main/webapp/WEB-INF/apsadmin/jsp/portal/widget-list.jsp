@@ -15,7 +15,11 @@
     <span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="help block  <a href='#'>help widget edit</a>." data-placement="top" data-original-title="Section Help"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
 </h1>
 
-<hr/>
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
 
 <div id="main" role="main">
     
@@ -38,7 +42,7 @@
     <div class="row">
         <div class="form-group col-md-12">
             <a class="btn btn-primary pull-right" href="<s:url namespace="/do/Portal/WidgetType" action="newWidget" />">
-                <s:text name="label.add" />&#32;<s:text name="label.widget" />
+                <s:text name="label.add" />&#32;widget
             </a>
         </div>
     </div>       

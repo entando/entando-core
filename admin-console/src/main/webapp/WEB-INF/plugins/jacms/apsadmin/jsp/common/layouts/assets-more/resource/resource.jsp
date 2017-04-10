@@ -4,6 +4,7 @@
 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-common.jsp" />
 <%--<s:include value="/WEB-INF/apsadmin/jsp/common/template/defaultExtraResources.jsp" />--%>
 
+<%-- 
 <s:set var="categoryTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
 <script>
 //one domready to rule 'em all
@@ -38,3 +39,4 @@ $(function() {
 	<s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/inc/js_trees_context_menu.jsp" />
 });
 </script>
+ --%>

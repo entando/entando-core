@@ -124,6 +124,8 @@
         </property>
         <property name="contentManager" ref="jacmsContentManager" />
     </bean>
+    
+    <bean id="jacmsContentHelper" class="org.entando.entando.plugins.jacms.aps.system.services.content.helper.ContentHelper" />
 	
     <bean id="jacmsBaseContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper" >
         <property name="contentManager" ref="jacmsContentManager" />

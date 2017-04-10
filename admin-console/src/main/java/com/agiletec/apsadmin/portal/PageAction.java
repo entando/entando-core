@@ -153,6 +153,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				parentPage = this.getPage(selectedNode);
 			}
 			this.valueFormForNew(parentPage);
+                        this.setCharset("utf-8");
+                        this.setMimeType("text/html");
 		} catch (Throwable t) {
 			_logger.error("error in newPage", t);
 			return FAILURE;
@@ -289,8 +291,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			this.setModel(metadata.getModel().getCode());
 			this.setShowable(metadata.isShowable());
 			this.setUseExtraTitles(metadata.isUseExtraTitles());
-			this.setCharset(metadata.getCharset());
-			this.setMimeType(metadata.getMimeType());
+                        if(StringUtils.isNotBlank(metadata.getCharset()))
+                            this.setCharset(metadata.getCharset());
+                        else
+                            this.setCharset("utf-8");
+                        if(StringUtils.isNotBlank(metadata.getMimeType()))
+                            this.setMimeType(metadata.getMimeType());
+                        else
+                            this.setMimeType("text/html");
 		}
 	}
 	

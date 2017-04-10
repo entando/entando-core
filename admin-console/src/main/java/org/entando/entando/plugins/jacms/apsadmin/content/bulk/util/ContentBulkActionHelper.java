@@ -1,3 +1,16 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.plugins.jacms.apsadmin.content.bulk.util;
 
 import java.util.ArrayList;
@@ -23,11 +36,10 @@ public class ContentBulkActionHelper implements IContentBulkActionHelper {
 	/**
 	 * Checks if the contents are allowed.<br/>
 	 * The check can be done only on the number of elements, or can be more 
-	 * @param fullCheck If true, checks also the existence and the user permissions on contents.
 	 * @return True if the contents are allowed, false otherwise.
 	 */
 	@Override
-	public boolean checkAllowedContents(Collection<String> contentIds, boolean fullCheck, ValidationAware validation, TextProvider textProvider) {
+	public boolean checkAllowedContents(Collection<String> contentIds, ValidationAware validation, TextProvider textProvider) {
 		boolean result = true;
 		if (contentIds == null || contentIds.isEmpty()) {
 			validation.addActionError(textProvider.getText("error.content.bulk.noItems"));

@@ -1,25 +1,38 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.plugins.jacms.apsadmin.content.bulk;
 
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.entando.entando.aps.system.common.command.BaseBulkCommand;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTracer;
 import org.entando.entando.aps.system.services.command.IBulkCommandManager;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.category.JoinCategoryBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.category.RemoveCategoryBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.ContentPropertyBulkCommandContext;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.ContentBulkActionSummary;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.IContentBulkActionHelper;
-import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.SmallBulkCommandReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
@@ -30,13 +43,9 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 	private static final Logger _logger = LoggerFactory.getLogger(ContentCategoryBulkAction.class);
 
 	public String entry() {
-		if (this.checkAllowedContents(false)) {
-			return this.buildTree();
-		} else {
-			return "list";
-		}
+		return this.checkAllowedContents() ? this.buildTree() : "list";
 	}
-	
+
 	public String join() {
 		try {
 			String categoryCode = this.getCategoryCode();
@@ -67,23 +76,15 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 
 	public String apply() {
 		try {
-			if (!this.checkAllowedContents(true)) {
+			if (!this.checkAllowedContents()) {
 				return "list";
 			} else {
 				List<Category> categories = this.getBulkActionHelper().getCategoriesToManage(this.getCategoryCodes(), this, this);
 				if (categories == null) {
 					return INPUT;
 				} else {
-					BulkCommandTracer<String> tracer = new DefaultBulkCommandTracer<String>();
-					BaseContentPropertyBulkCommand<Category> command = null;
-					if (ApsAdminSystemConstants.DELETE == this.getStrutsAction()) {
-						command = new RemoveCategoryBulkCommand(this.getSelectedIds(), categories, 
-								this.getContentManager(), tracer);
-					} else {
-						command = new JoinCategoryBulkCommand(this.getSelectedIds(), categories, 
-								this.getContentManager(), tracer);
-					}
-					BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(this.getCommandOwner(), command);
+					BaseContentPropertyBulkCommand<Category> command = this.initBulkCommand(categories);
+					BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(IContentBulkActionHelper.BULK_COMMAND_OWNER, command);
 					this.setCommandId(report.getCommandId());
 				}
 			}
@@ -94,28 +95,23 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		return SUCCESS;
 	}
 
-	public String viewResult() {
-		return this.getReport() == null ? "expired" : SUCCESS;
+	private BaseContentPropertyBulkCommand<Category> initBulkCommand(List<Category> categories) {
+		String commandBeanName = ApsAdminSystemConstants.DELETE == this.getStrutsAction() ? 
+				RemoveCategoryBulkCommand.BEAN_NAME : JoinCategoryBulkCommand.BEAN_NAME;
+		WebApplicationContext applicationContext = ApsWebApplicationUtils.getWebApplicationContext(this.getRequest());
+		BaseContentPropertyBulkCommand<Category> command = (BaseContentPropertyBulkCommand<Category>) applicationContext.getBean(commandBeanName);
+		ContentPropertyBulkCommandContext<Category> context = new ContentPropertyBulkCommandContext<Category>(this.getSelectedIds(), 
+				categories, this.getCurrentUser(), new DefaultBulkCommandTracer<String>());
+		command.init(context);
+		return command;
 	}
 
 	public ContentBulkActionSummary getSummary() {
 		return this.getBulkActionHelper().getSummary(this.getSelectedIds());
 	}
 
-	public BaseBulkCommand<?, ?> getCommand() {
-		return this.getBulkCommandManager().getCommand(this.getCommandOwner(), this.getCommandId());
-	}
-
-	public BulkCommandReport<?> getReport() {
-		return this.getBulkCommandManager().getCommandReport(this.getCommandOwner(), this.getCommandId());
-	}
-
-	public SmallBulkCommandReport getSmallReport() {
-		return this.getBulkActionHelper().getSmallReport(this.getReport());
-	}
-
-	protected boolean checkAllowedContents(boolean fullCheck) {
-		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), fullCheck, this, this);
+	protected boolean checkAllowedContents() {
+		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), this, this);
 	}
 
 	protected boolean checkCategories() {
@@ -126,10 +122,10 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		return this.getCategoryManager().getCategory(categoryCode);
 	}
 
-	public String getCommandOwner() {
-		return IContentBulkActionHelper.BULK_COMMAND_OWNER;
+	public Category getCategoryRoot() {
+		return (Category) this.getCategoryManager().getRoot();
 	}
-	
+
 	@Override
 	public String buildTree() {
 		try {
@@ -145,10 +141,6 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 			return FAILURE;
 		}
 		return SUCCESS;
-	}
-	
-	public Category getCategoryRoot() {
-		return (Category) this.getCategoryManager().getRoot();
 	}
 
 	public Set<String> getSelectedIds() {
@@ -214,8 +206,6 @@ public class ContentCategoryBulkAction extends AbstractTreeAction {
 		this._bulkActionHelper = bulkActionHelper;
 	}
 
-	private Set<String> _forcedContentIds;
-	private Set<String> _contentIds;
 	private Set<String> _selectedIds;
 
 	private int _strutsAction;

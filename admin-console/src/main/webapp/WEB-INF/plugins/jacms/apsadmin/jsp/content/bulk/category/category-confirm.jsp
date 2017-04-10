@@ -1,14 +1,12 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
-<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:if test="strutsAction == 1">
-	<s:set var="labelTitle" value="%{getText('title.bulk.addCategories')}"/>
+	<s:set var="labelTitle" value="%{getText('title.bulk.content.category.join')}"/>
 </s:if>
 <s:elseif test="strutsAction == 4" >
-	<s:set var="labelTitle" value="%{getText('title.bulk.removeCategories')}"/>
+	<s:set var="labelTitle" value="%{getText('title.bulk.content.category.rem')}"/>
 </s:elseif>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
@@ -57,10 +55,10 @@
 		<div>
 			<p>
 			<s:if test="strutsAction == 1">
-				<s:text name="note.bulk.addCategories.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
+				<s:text name="note.bulk.content.category.join.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
 			</s:if>
 			<s:elseif test="strutsAction == 4">
-				<s:text name="note.bulk.removeCategories.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
+				<s:text name="note.bulk.content.category.rem.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
 			</s:elseif>
 			</p>
 		</div>
@@ -74,13 +72,15 @@
 			</s:iterator>
 			</ul>
 		</div>
-		<s:if test="strutsAction == 1">
-			<s:set var="labelAction" value="%{getText('label.bulk.addCategories.confirm')}"/>
-		</s:if>
-		<s:elseif test="strutsAction == 4" >
-			<s:set var="labelAction" value="%{getText('label.bulk.removeCategories.confirm')}"/>
-		</s:elseif>
+		<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/inc/inc_contentSummary.jsp" />
+		
 		<div class="col-xs-12">
+			<s:if test="strutsAction == 1">
+				<s:set var="labelAction" value="%{getText('label.bulk.content.category.join.confirm')}"/>
+			</s:if>
+			<s:elseif test="strutsAction == 4" >
+				<s:set var="labelAction" value="%{getText('label.bulk.content.category.rem.confirm')}"/>
+			</s:elseif>
 			<wpsf:submit type="button" title="%{#labelAction}" cssClass="btn btn-success">
 				<span class="icon fa fa-times-circle"></span>
 				<s:property value="%{#labelAction}" />

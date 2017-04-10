@@ -203,7 +203,7 @@
 			<c:if test="${isSuperUser}">
                 <li class="list-group-item">
                     <a href='<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>'>
-                        <span class="list-group-item-value">Profiles</span>
+                        <span class="list-group-item-value">Profile Types</span>
                     </a>
                 </li>
 
@@ -266,8 +266,13 @@
 
 						<c:if test="${isManageResources}">
                             <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/jacms/Resource" />">
-                                    <span class="list-group-item-value">Digital Assets TO_DO</span>
+                                <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Image</s:param></s:url>">
+                                    <span class="list-group-item-value">Digital Assets - Images</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Attach</s:param></s:url>">
+                                    <span class="list-group-item-value">Digital Assets - Attaches</span>
                                 </a>
                             </li>
 						</c:if>

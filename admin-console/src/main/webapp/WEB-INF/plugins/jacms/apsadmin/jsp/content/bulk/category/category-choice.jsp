@@ -1,14 +1,13 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:if test="strutsAction == 1">
-	<s:set var="labelTitle" value="%{getText('title.bulk.addCategories')}"/>
+	<s:set var="labelTitle" value="%{getText('title.bulk.content.category.join')}"/>
 </s:if>
 <s:elseif test="strutsAction == 4" >
-	<s:set var="labelTitle" value="%{getText('title.bulk.removeCategories')}"/>
+	<s:set var="labelTitle" value="%{getText('title.bulk.content.category.rem')}"/>
 </s:elseif>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
@@ -58,10 +57,10 @@
 		<div>
 			<p>
 			<s:if test="strutsAction == 1">
-				<s:text name="note.bulk.addCategories.choose" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
+				<s:text name="note.bulk.content.category.join.choose" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
 			</s:if>
 			<s:elseif test="strutsAction == 4">
-				<s:text name="note.bulk.removeCategories.choose" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
+				<s:text name="note.bulk.content.category.rem.choose" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
 			</s:elseif>
 			</p>
 		</div>
@@ -125,15 +124,15 @@
 		</fieldset>
 		
 		<s:if test="strutsAction == 1">
-			<s:set var="labelAction" value="%{getText('label.bulk.addCategories')}"/>
+			<s:set var="labelAction" value="%{getText('label.bulk.content.category.join')}"/>
 		</s:if>
 		<s:elseif test="strutsAction == 4" >
-			<s:set var="labelAction" value="%{getText('label.bulk.removeCategories')}"/>
+			<s:set var="labelAction" value="%{getText('label.bulk.content.category.rem')}"/>
 		</s:elseif>
 		<div class="col-xs-12">
-			<wpsf:submit type="button" title="%{#labelTitle}" cssClass="btn btn-success">
+			<wpsf:submit type="button" title="%{#labelAction}" cssClass="btn btn-success">
 				<span class="icon fa fa-times-circle"></span>
-				<s:property value="%{#labelTitle}" />
+				<s:property value="%{#labelAction}" />
 			</wpsf:submit>
 		</div>
 	</s:form>

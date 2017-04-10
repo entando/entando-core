@@ -1,20 +1,31 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.plugins.jacms.apsadmin.content.bulk;
 
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.entando.entando.aps.system.common.command.BaseBulkCommand;
 import org.entando.entando.aps.system.common.command.report.BulkCommandReport;
-import org.entando.entando.aps.system.common.command.tracer.BulkCommandTracer;
 import org.entando.entando.aps.system.common.command.tracer.DefaultBulkCommandTracer;
 import org.entando.entando.aps.system.services.command.IBulkCommandManager;
-import org.entando.entando.plugins.jacms.aps.system.services.content.command.group.BaseContentGroupBulkCommand;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.ContentPropertyBulkCommandContext;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.group.JoinGroupBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.group.RemoveGroupBulkCommand;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.ContentBulkActionSummary;
 import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.IContentBulkActionHelper;
-import org.entando.entando.plugins.jacms.apsadmin.content.bulk.util.SmallBulkCommandReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -31,7 +42,7 @@ public class ContentGroupBulkAction extends BaseAction {
 	private static final Logger _logger = LoggerFactory.getLogger(ContentGroupBulkAction.class);
 
 	public String entry() {
-		return this.checkAllowedContents(false) ? SUCCESS : "list";
+		return this.checkAllowedContents() ? SUCCESS : "list";
 	}
 
 	public String join() {
@@ -64,22 +75,13 @@ public class ContentGroupBulkAction extends BaseAction {
 
 	public String apply() {
 		try {
-			if (!this.checkAllowedContents(true)) {
+			if (!this.checkAllowedContents()) {
 				return "list";
 			} else if (!this.checkGroups()) {
 				return INPUT;
 			} else {
-				BulkCommandTracer<String> tracer = new DefaultBulkCommandTracer<String>();
-				WebApplicationContext wax = ApsWebApplicationUtils.getWebApplicationContext(this.getRequest());
-				BaseContentGroupBulkCommand command = null;
-				if (ApsAdminSystemConstants.DELETE == this.getStrutsAction()) {
-					command = new RemoveGroupBulkCommand(this.getSelectedIds(), this.getExtraGroupNames(), 
-							this.getContentManager(), tracer, wax);
-				} else {
-					command = new JoinGroupBulkCommand(this.getSelectedIds(), this.getExtraGroupNames(), 
-							this.getContentManager(), tracer, wax);
-				}
-				BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(this.getCommandOwner(), command);
+				BaseContentPropertyBulkCommand<String> command = this.initBulkCommand();
+				BulkCommandReport<String> report = this.getBulkCommandManager().addCommand(IContentBulkActionHelper.BULK_COMMAND_OWNER, command);
 				this.setCommandId(report.getCommandId());
 			}
 		} catch (Throwable t) {
@@ -89,28 +91,23 @@ public class ContentGroupBulkAction extends BaseAction {
 		return SUCCESS;
 	}
 
-	public String viewResult() {
-		return this.getReport() == null ? "expired" : SUCCESS;
+	private BaseContentPropertyBulkCommand<String> initBulkCommand() {
+		String commandBeanName = ApsAdminSystemConstants.DELETE == this.getStrutsAction() ? 
+				RemoveGroupBulkCommand.BEAN_NAME : JoinGroupBulkCommand.BEAN_NAME;
+		WebApplicationContext applicationContext = ApsWebApplicationUtils.getWebApplicationContext(this.getRequest());
+		BaseContentPropertyBulkCommand<String> command = (BaseContentPropertyBulkCommand<String>) applicationContext.getBean(commandBeanName);
+		ContentPropertyBulkCommandContext<String> context = new ContentPropertyBulkCommandContext<String>(this.getSelectedIds(), 
+				this.getExtraGroupNames(), this.getCurrentUser(), new DefaultBulkCommandTracer<String>());
+		command.init(context);
+		return command;
 	}
 
 	public ContentBulkActionSummary getSummary() {
 		return this.getBulkActionHelper().getSummary(this.getSelectedIds());
 	}
 
-	public BaseBulkCommand<?, ?> getCommand() {
-		return this.getBulkCommandManager().getCommand(this.getCommandOwner(), this.getCommandId());
-	}
-
-	public BulkCommandReport<?> getReport() {
-		return this.getBulkCommandManager().getCommandReport(this.getCommandOwner(), this.getCommandId());
-	}
-
-	public SmallBulkCommandReport getSmallReport() {
-		return this.getBulkActionHelper().getSmallReport(this.getReport());
-	}
-
-	protected boolean checkAllowedContents(boolean fullCheck) {
-		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), fullCheck, this, this);
+	protected boolean checkAllowedContents() {
+		return this.getBulkActionHelper().checkAllowedContents(this.getSelectedIds(), this, this);
 	}
 
 	protected boolean checkGroups() {
@@ -123,10 +120,6 @@ public class ContentGroupBulkAction extends BaseAction {
 
 	public List<Group> getAllowedGroups() {
 		return this.getActualAllowedGroups();
-	}
-
-	public String getCommandOwner() {
-		return IContentBulkActionHelper.BULK_COMMAND_OWNER;
 	}
 
 	public Set<String> getSelectedIds() {
@@ -192,8 +185,6 @@ public class ContentGroupBulkAction extends BaseAction {
 		this._bulkActionHelper = bulkActionHelper;
 	}
 
-	private Set<String> _forcedContentIds;
-	private Set<String> _contentIds;
 	private Set<String> _selectedIds;
 
 	private int _strutsAction;

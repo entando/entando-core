@@ -1,3 +1,16 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.command;
 
 import java.util.Date;
@@ -20,7 +33,7 @@ import com.agiletec.aps.util.DateConverter;
  * @author E.Mezzano
  *
  */
-public class BulkCommandManager extends AbstractService implements IBulkCommandManager, Runnable {
+public class BulkCommandManager extends AbstractService implements IBulkCommandManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(BulkCommandManager.class);
 
@@ -47,12 +60,12 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 
 
 	@Override
-	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?> command) {
+	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?, ?> command) {
 		return this.addCommand(owner, command, null);
 	}
 
 	@Override
-	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?> command, Boolean execInThread) {
+	public <I> BulkCommandReport<I> addCommand(String owner, BaseBulkCommand<I, ?, ?> command, Boolean execInThread) {
 		String commandId = this.generateId();
 		command.setId(commandId);
 		this.runCommand(command, execInThread);
@@ -61,15 +74,15 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 	}
 
 	@Override
-	public BaseBulkCommand<?, ?> getCommand(String owner, String commandId) {
+	public BaseBulkCommand<?, ?, ?> getCommand(String owner, String commandId) {
 		BulkCommandContainer container = this.getCommandContainer(owner, commandId);
-		BaseBulkCommand<?, ?> command = container != null ? container.getCommand() : null;
+		BaseBulkCommand<?, ?, ?> command = container != null ? container.getCommand() : null;
 		return command;
 	}
 
 	@Override
 	public BulkCommandReport<?> getCommandReport(String owner, String commandId) {
-		BaseBulkCommand<?, ?> command = this.getCommand(owner, commandId);
+		BaseBulkCommand<?, ?, ?> command = this.getCommand(owner, commandId);
 		BulkCommandReport<?> report = command != null ? command.getReport() : null;
 		return report;
 	}
@@ -83,7 +96,7 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 		return container;
 	}
 
-	protected void runCommand(BaseBulkCommand<?, ?> command, Boolean execInThread) {
+	protected void runCommand(BaseBulkCommand<?, ?, ?> command, Boolean execInThread) {
 		if (this.isToExecInThread(command, execInThread)) {
 			ApsCommandThread thread = new ApsCommandThread(command);
 			thread.start();
@@ -92,7 +105,7 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 		}
 	}
 
-	protected boolean isToExecInThread(BaseBulkCommand<?, ?> command, Boolean execInThread) {
+	protected boolean isToExecInThread(BaseBulkCommand<?, ?, ?> command, Boolean execInThread) {
 		boolean inThread = false;
 		if (execInThread == null) {
 			inThread = command.getItems().size() > 10;
@@ -102,7 +115,7 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 		return inThread;
 	}
 
-	protected synchronized void putCommandInMap(String owner, BaseBulkCommand<?, ?> command) {
+	protected synchronized void putCommandInMap(String owner, BaseBulkCommand<?, ?, ?> command) {
 		BulkCommandContainer container = new BulkCommandContainer();
 		container.setOwner(owner);
 		container.setCommand(command);
@@ -145,7 +158,7 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 	protected synchronized void stopCommands() {
 		for (Map<String, BulkCommandContainer> commandsByOwner : this._commands.values()) {
 			for (BulkCommandContainer container : commandsByOwner.values()) {
-				BaseBulkCommand<?, ?> command = container.getCommand();
+				BaseBulkCommand<?, ?, ?> command = container.getCommand();
 				if (!command.isEnded()) {
 					command.stopCommand();
 				}
@@ -153,7 +166,7 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 		}
 	}
 
-	protected boolean isCommandExpired(BaseBulkCommand<?, ?> command) {
+	protected boolean isCommandExpired(BaseBulkCommand<?, ?, ?> command) {
 		boolean expired = false;
 		if (command.isEnded()) {
 			Date endingDate = command.getEndingTime();
@@ -163,11 +176,6 @@ public class BulkCommandManager extends AbstractService implements IBulkCommandM
 			}
 		}
 		return expired;
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
 	}
 
 	protected Map<String, Map<String, BulkCommandContainer>> getCommands() {

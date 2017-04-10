@@ -62,7 +62,7 @@
     <div class="row">
         <div class="col-sm-12">
             <a href="<s:url namespace="/do/LocaleString" action="new" />" class="btn btn-primary btn-lg pull-right">
-                <s:text name="title.generalSettings.locale.new"/>
+                <s:text name="locale.addNewLabel"/>
             </a>
         </div>
     </div>

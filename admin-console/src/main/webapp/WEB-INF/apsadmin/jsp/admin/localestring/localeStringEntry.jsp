@@ -4,7 +4,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure"/></a></li>
+	<li><s:text name="menu.configure"/></li>
 	<li>
 		<a href="<s:url namespace="/do/LocaleString" action="list" />">
 			<s:text name="title.languageAndLabels" />

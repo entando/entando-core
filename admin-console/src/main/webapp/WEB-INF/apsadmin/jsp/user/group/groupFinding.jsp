@@ -2,9 +2,7 @@
 <%@ taglib prefix="wp" uri="/aps-core"%>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
+	<li><s:text name="menu.configure" /></li>
 	<li class="page-title-container"><s:text
 			name="title.groupManagement" /></li>
 </ol>
@@ -20,6 +18,9 @@
 		</span>
 	</div>
 </h1>
+<div class="text-right">
+	<div class="form-group-separator"></div>
+</div>
 <br>
 <s:if test="hasActionErrors()">
 	<div class="alert alert-danger alert-dismissable fade in">
@@ -50,15 +51,15 @@
 			<thead>
 				<tr>
 					<th><s:text name="label.name" /></th>
-					<th><s:text name="label.descr" /></th>
+					<th><s:text name="label.code" /></th>
 					<th><s:text name="label.actions" /></th>
 				</tr>
 			</thead>
 			<tbody>
 				<s:iterator value="groups" var="group">
 					<tr>
-						<td><s:property value="#group.name" /></td>
 						<td><s:property value="#group.descr" /></td>
+						<td><s:property value="#group.name" /></td>
 						<td class="table-view-pf-actions">
 							<div class="dropdown dropdown-kebab-pf">
 								<button class="btn btn-menu-right dropdown-toggle" type="button"
@@ -68,22 +69,19 @@
 								</button>
 								<ul class="dropdown-menu dropdown-menu-right">
 									<li><a
-										title="<s:text name="note.detailsFor" />: <s:property value="#group.name" />"
+										title="<s:text name="title.groupDetail" />: <s:property value="#group.name" />"
 										href="<s:url action="detail"><s:param name="name" value="#group.name"/></s:url>">
-											<span><s:text name="note.detailsFor" />: <s:property
-													value="#group.name" /></span>
+											<span><s:text name="title.groupDetail" /></span>
 									</a></li>
 									<li><a
 										title="<s:text name="label.edit" />:&#32;<s:property value="#group.name" />"
 										href="<s:url action="edit"><s:param name="name" value="#group.name"/></s:url>">
-											<span><s:text name="label.edit" />:&#32;<s:property
-													value="#group.name" /></span>
+											<span><s:text name="label.edit" /></span>
 									</a></li>
 									<li><a
 										title="<s:text name="label.remove" />: <s:property value="#group.name" />"
 										href="<s:url action="trash"><s:param name="name" value="#group.name"/></s:url>">
-											<span><s:text name="label.remove" />: <s:property
-													value="#group.name" /></span>
+											<span><s:text name="label.remove" /></span>
 									</a></li>
 								</ul>
 							</div>

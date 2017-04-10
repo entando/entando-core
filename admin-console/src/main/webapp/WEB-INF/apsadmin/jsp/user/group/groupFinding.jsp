@@ -23,13 +23,11 @@
 </div>
 <br>
 <s:if test="hasActionErrors()">
-	<div class="alert alert-danger alert-dismissable fade in">
-		<button class="close" data-dismiss="alert">
-			<span class="icon fa fa-times"></span>
+	<div class="alert alert-danger alert-dismissable">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+			<span class="pficon pficon-close"></span>
 		</button>
-		<h2 class="h4 margin-none">
-			<s:text name="messages.title.ActionErrors" />
-		</h2>
+		<strong><s:text name="messages.title.ActionErrors" /></strong>
 		<ul class="margin-base-top">
 			<s:iterator value="actionErrors">
 				<li><s:property escapeHtml="false" /></li>

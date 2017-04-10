@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
@@ -582,6 +583,31 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			this.setContentIdToken((String) filterToAdd.getValue());
 		}
 	}
+	
+	public String entryBulkActions() {
+		try {
+			Set<String> contentIds = null;
+			if (this.isAllContentsSelected()) {
+				this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME, new ContentFinderSearchInfo());
+				this.createFilters();
+				List<String> allContentIds = this.getContents();
+				if (allContentIds != null) {
+					contentIds = new TreeSet<String>(allContentIds);
+				}
+			} else {
+				contentIds = this.getContentIds();
+			}
+			this.setSelectedIds(contentIds);
+			if (contentIds == null || contentIds.isEmpty()) {
+				this.addActionError(this.getText("error.content.bulkAction.empty"));
+				return INPUT;
+			}
+		} catch (Throwable t) {
+			_logger.error("error in execute", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
 
 	/**
 	 * Restituisce un gruppo in base al nome.
@@ -741,11 +767,32 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		this._contentIds = contentIds;
 	}
 
+	public Set<String> getSelectedIds() {
+		return _selectedIds;
+	}
+	public void setSelectedIds(Set<String> selectedIds) {
+		this._selectedIds = selectedIds;
+	}
+
 	public String getActionCode() {
 		return _actionCode;
 	}
 	public void setActionCode(String actionCode) {
 		this._actionCode = actionCode;
+	}
+
+	public boolean isAllContentsSelected() {
+		return _allContentsSelected;
+	}
+	public void setAllContentsSelected(boolean allContentsSelected) {
+		this._allContentsSelected = allContentsSelected;
+	}
+
+	public int getStrutsAction() {
+		return _strutsAction;
+	}
+	public void setStrutsAction(int strutsAction) {
+		this._strutsAction = strutsAction;
 	}
 
 	protected IContentManager getContentManager() {
@@ -785,8 +832,12 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	private boolean _viewStatus;
 	private boolean _viewTypeDescr;
 	private boolean _viewCreationDate;
+	
+	private boolean _allContentsSelected;
+	private int _strutsAction;
 
 	private Set<String> _contentIds;
+	private Set<String> _selectedIds;// Used in bulk actions
 
 	private String _actionCode = null;
 	

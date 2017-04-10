@@ -39,6 +39,8 @@ import com.agiletec.aps.system.common.entity.model.attribute.AbstractComplexAttr
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
+import java.io.IOException;
+import org.jdom.JDOMException;
 
 /**
  * This class parses the XML that defines the Entity Types as obtained from the configuration file.
@@ -106,7 +108,7 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 		try {
 			Element rootElement = new Element(this.getEntityTypesRootElementName());
 			document.setRootElement(rootElement);
-			List<String> entityTypeCodes = new ArrayList<String>(entityTypes.keySet());
+			List<String> entityTypeCodes = new ArrayList<>(entityTypes.keySet());
 			Collections.sort(entityTypeCodes);
 			for (int i=0; i<entityTypeCodes.size(); i++) {
 				IApsEntity currentEntityType = entityTypes.get(entityTypeCodes.get(i));
@@ -179,7 +181,7 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 		StringReader reader = new StringReader(xmlText);
 		try {
 			doc = builder.build(reader);
-		} catch (Exception ex) {
+		} catch (JDOMException | IOException ex) {
 			throw new ApsSystemException("Error while parsing: " + ex.getMessage(), ex);
 		}
 		return doc;
@@ -260,7 +262,7 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 			String typeDescr = this.extractXmlAttribute(entityElem, "typedescr", true);
 			entity.setTypeDescr(typeDescr);
 			return entity;
-		} catch (Throwable t) {
+		} catch (InstantiationException | IllegalAccessException | ApsSystemException t) {
 			throw new ApsSystemException("Error detected while creating a new entity", t);
 		}
 	}
@@ -360,7 +362,7 @@ public class EntityTypeDOM implements IEntityTypeDOM, BeanFactoryAware {
 	}
 	
 	private Map<String, AttributeInterface> _attributeTypes;
-	private Map<String, IApsEntity> _entityTypes = new HashMap<String, IApsEntity>();
+	private Map<String, IApsEntity> _entityTypes = new HashMap<>();
 	
 	private String _entityManagerName;
 	private BeanFactory _beanFactory;

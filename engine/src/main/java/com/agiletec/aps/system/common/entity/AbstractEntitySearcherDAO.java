@@ -40,7 +40,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 	@Override
 	public List<ApsEntityRecord> searchRecords(EntitySearchFilter[] filters) {
 		Connection conn = null;
-		List<ApsEntityRecord> records = new ArrayList<ApsEntityRecord>();
+		List<ApsEntityRecord> records = new ArrayList<>();
 		PreparedStatement stat = null;
 		ResultSet result = null;
 		try {
@@ -88,7 +88,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 	@Override
 	public List<String> searchId(EntitySearchFilter[] filters) {
 		Connection conn = null;
-		List<String> idList = new ArrayList<String>();
+		List<String> idList = new ArrayList<>();
 		PreparedStatement stat = null;
 		ResultSet result = null;
 		try {

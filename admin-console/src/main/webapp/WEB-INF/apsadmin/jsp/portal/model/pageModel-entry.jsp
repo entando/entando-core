@@ -89,6 +89,7 @@
                 <label class="col-sm-2 control-label" for="xmlConfiguration">Xml Configuration</label>
                 <div class="col-sm-10">
                     <wpsf:textarea name="xmlConfiguration" id="xmlConfiguration" cssClass="autotextarea form-control" rows="8" />
+                    <textarea id="ace_xmlConfiguration" style="display: none;" ></textarea>
                 </div>
             </div>
         </div>
@@ -96,7 +97,8 @@
             <div class="col-xs-12">
                 <label class="col-sm-2 control-label" for="template">Template</label>
                 <div class="col-sm-10">
-                    <wpsf:textarea name="template" id="template" cssClass="autotextarea  form-control" rows="8" />
+                    <wpsf:textarea name="template" id="template" cssClass="autotextarea form-control" rows="8" />
+                    <textarea id="ace_template" style="display: none;" ></textarea>
                 </div>
             </div>
         </div>

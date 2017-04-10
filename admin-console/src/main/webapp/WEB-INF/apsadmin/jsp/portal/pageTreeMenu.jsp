@@ -37,10 +37,6 @@
         </button>
 
         <div class="pull-right">
-
-
-
-
             <s:url action="preview" var="previewURL">
                 <s:param name="pageCode" value="pageCode" />
                 <s:param name="token" value="previewToken" />
@@ -215,7 +211,7 @@
                     }, 100);
                 } else {
                     console.log('animate in');
-                    $drawer.addClass('hide');
+//                    $drawer.addClass('hide');
                 }
             });
 
@@ -284,4 +280,3 @@
     </script> 
 
 </div>
-

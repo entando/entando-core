@@ -1,3 +1,17 @@
+
+function registerAceTextarea(fieldId, theme, mode) {
+	var editor = ace.edit('ace_' + fieldId);
+	var textarea = $('#' + fieldId);
+	textarea.hide();
+	editor.getSession().setValue(textarea.val());
+	editor.setTheme(theme);
+	editor.getSession().setMode(mode);
+	editor.getSession().on('change', function(){
+		textarea.val(editor.getSession().getValue());
+		textarea.trigger("change");
+	});
+}
+
 $(function() {
 
     var match = window.location.href.match(/(^.+\/do\/)/ ),
@@ -111,15 +125,8 @@ $(function() {
         }
     });
 
-
-
 	// ACE EDITOR
-	var templateEditor = ace.edit('template');
-	templateEditor.setTheme('ace/theme/chrome');
-	templateEditor.getSession().setMode('ace/mode/jsp');
-
-	var xmlEditor = ace.edit('xmlConfiguration');
-	xmlEditor.setTheme('ace/theme/chrome');
-	xmlEditor.getSession().setMode('ace/mode/xml');
+    registerAceTextarea('xmlConfiguration', 'ace/theme/chrome', 'ace/mode/xml');
+    registerAceTextarea('template', 'ace/theme/chrome', 'ace/mode/jsp');
 
 });//domready

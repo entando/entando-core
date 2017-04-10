@@ -16,6 +16,7 @@ package com.agiletec.plugins.jacms.apsadmin.system;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,6 @@ import com.agiletec.apsadmin.system.entity.type.EntityTypeConfigAction;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModel;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelManager;
-import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 
 /**
  * @author E.Santoboni
@@ -61,7 +61,7 @@ public class ContentTypeConfigAction extends EntityTypeConfigAction {
 	}
 	
 	private void addPages(IPage page, List<IPage> pages) {
-		if (page.getGroup().equals(Group.FREE_GROUP_NAME) && CmsPageActionUtil.isOnlineFreeViewerPage(page, null)) {
+		if (page.getGroup().equals(Group.FREE_GROUP_NAME) && CmsPageUtil.isOnlineFreeViewerPage(page, null)) {
 			pages.add(page);
 		}
 		IPage[] children = page.getOnlineChildren();

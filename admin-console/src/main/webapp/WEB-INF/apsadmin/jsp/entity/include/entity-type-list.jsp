@@ -35,7 +35,7 @@
     </div>
 </s:if>
 
-<a href="<s:url namespace="/do/Entity" action="initAddEntityType" ><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>" class="btn btn-primary">
+<a href="<s:url namespace="/do/Entity" action="initAddEntityType" ><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>" class="btn btn-primary pull-right" style="margin-bottom: 5px">
     <s:text name="menu.entityAdmin.entityTypes.new" />
 </a>
 
@@ -44,7 +44,7 @@
         <table class="table table-bordered table-hover table-treegrid" style="margin-top: 1em;">
             <tr>
                 <th><s:text name="label.code" /></th>
-                <th><s:text name="label.description" /></th>
+                <th><s:text name="label.name" /></th>
                 <th class="text-center" style="width: 89px;"><s:text name="label.state" /></th>
                 <th style="width: 59px;"><s:text name="label.actions" /></th>
             </tr> 
@@ -89,7 +89,7 @@
                                     <a href="<s:url namespace="/do/Entity" action="reloadEntityTypeReferences" anchor="%{#entityAnchor}"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param><s:param name="entityTypeCode"><s:property value="#entityType.typeCode" /></s:param>
                                        </s:url>" title="<s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 2"><s:text name="label.references.status.ko" /></s:if><s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 0"><s:text name="label.references.status.ok" /></s:if>" class=""
                                        <s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 1">disabled="true"</s:if>>
-                                        <s:text name="label.refresh" />
+                                        <s:text name="label.reload" />
                                         <span class="sr-only"><s:text name="label.references.status.ko" /></span>
                                         </span>
                                     </a>

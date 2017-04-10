@@ -25,6 +25,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
  */
 public class TextAttributeHandler extends AbstractMLAttributeHandler {
 	
+	@Override
 	public void startAttribute(Attributes attributes, String qName) throws SAXException {
 		if (qName.equals("text")) {
 			this.startText(attributes, qName);
@@ -44,6 +45,7 @@ public class TextAttributeHandler extends AbstractMLAttributeHandler {
 		this.setCurrentLangId(idLang);
 	}
 	
+	@Override
 	public void endAttribute(String qName, StringBuffer textBuffer) {
 		if (qName.equals("text")) {
 			this.endText(textBuffer);

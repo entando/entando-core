@@ -23,6 +23,7 @@ import java.util.Set;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,6 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
-import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 
 /**
  * @author E.Santoboni
@@ -58,7 +58,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			IPage page = this.createTempPage();
 			Collection<Content> contents = this.getPublishedContents(this.getPageCode());
 			for (Content content : contents) {
-				if (null != content && !CmsPageActionUtil.isContentPublishableOnPageDraft(content, page)) {
+				if (null != content && !CmsPageUtil.isContentPublishableOnPageDraft(content, page)) {
 					List<String> contentGroups = new ArrayList<String>();
 					contentGroups.add(content.getMainGroup());
 					if (null != content.getGroups()) {
@@ -73,7 +73,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 				for (int i = 0; i < linkingContentsVo.size(); i++) {
 					String contentId = linkingContentsVo.get(i);
 					Content linkingContent = contentManager.loadContent(contentId, true);
-					if (null != linkingContent && !CmsPageActionUtil.isPageLinkableByContentDraft(page, linkingContent)) {
+					if (null != linkingContent && !CmsPageUtil.isPageLinkableByContentDraft(page, linkingContent)) {
 						this.addFieldError("extraGroups", this.getText("error.page.extraGoups.pageHasToBeFree", 
 								new String[]{linkingContent.getId(), linkingContent.getDescription()}));
 					}
@@ -105,7 +105,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 	 * @return True if the page can publish a free content, else false.
 	 */
 	public boolean isFreeViewerPage(IPage page) {
-		return CmsPageActionUtil.isDraftFreeViewerPage(page, this.getViewerWidgetCode());
+		return CmsPageUtil.isDraftFreeViewerPage(page, this.getViewerWidgetCode());
 	}
 	
 	@Override

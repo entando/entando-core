@@ -36,13 +36,15 @@
     </div>
 </s:if>
 
-<a class="btn btn-primary"
+<!--<a class="btn btn-primary"
    href="<s:url namespace="/do/Role" action="new" />">
     <s:text name="title.roleManagement.roleNew" />
-</a>
-<br>
-<br>
+</a>-->
 
+<br>
+<a href="<s:url namespace="/do/Role" action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
+        <s:text name="title.roleManagement.roleNew" />
+    </a>
 
 <table class="table table-striped table-bordered table-hover">
     <tr>

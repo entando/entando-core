@@ -124,7 +124,6 @@ public class DateAttributeValidationRules extends AbstractAttributeValidationRul
             }
         } catch (Throwable t) {
         	_logger.error("Error validating Attribute '{}'", attribute.getName(), t);
-           // ApsSystemUtils.logThrowable(t, this, "validate", "Error validating Attribute '" + attribute.getName() + "'");
             throw new RuntimeException("Error validating Attribute '" + attribute.getName() + "'", t);
         }
         return errors;
@@ -140,7 +139,6 @@ public class DateAttributeValidationRules extends AbstractAttributeValidationRul
         }
         return null;
     }
-    
     
     public static final String DATE_PATTERN = "dd/MM/yyyy";
     

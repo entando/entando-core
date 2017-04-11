@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.SystemOutLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

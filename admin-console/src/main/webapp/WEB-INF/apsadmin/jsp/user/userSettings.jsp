@@ -41,11 +41,11 @@
             </div>
         </s:if>
         
-        <fieldset class="col-xs-12 settings-form">
-            
+        <fieldset class="col-xs-12 margin-large-top">
+            <legend><s:text name="sysconfig.legend.privacyModule" /></legend>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-4 col-label">
                         <span class="display-block"><s:text name="label.active" /></span>
                     </div>
                     <div class="col-xs-4 text-left">
@@ -60,9 +60,56 @@
                             id="ch_<s:property value="#paramName"/>" 
                             class="bootstrap-switch" 
                             <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
+                        </div>
                     </div>
-                            
-                    <div class="col-xs-2 col-label">
+                </div>                
+                
+                <div class="form-group">
+                    <div class="row">
+                    <s:set var="paramName" value="'maxMonthsSinceLastAccess'" />
+                    <div class="col-xs-4 col-label">
+                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastAccess" /></span>
+                    </div>
+                    <div class="col-xs-4 text-left">
+                        <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
+                        <div class="btn-group" data-toggle="buttons">                            
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
+                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
+                                <s:property value="systemParams[#paramName]"/>
+                            </label>
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 0"> active</s:if>" onclick="hideCustomValue('<s:property value="#paramName"/>')">
+                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_false" name="<s:property value="#paramName"/>" value="0" <s:if test="systemParams[#paramName] == 0">checked="checked"</s:if> />
+                                    false
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">                
+                    <s:set var="paramName" value="'maxMonthsSinceLastPasswordChange'" />
+                    <div class="col-xs-4 col-label">
+                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastPasswordChange" /></span>
+                    </div>
+                    <div class="col-xs-4 text-left">
+                        <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
+                        <div class="btn-group" data-toggle="buttons">                            
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
+                                <input type="radio" class="" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
+                                <s:property value="systemParams[#paramName]"/>
+                            </label>
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 0"> active</s:if>" onclick="hideCustomValue('<s:property value="#paramName"/>')">
+                                <input type="radio" class="" id="admin-settings-area-<s:property value="#paramName"/>_false" name="<s:property value="#paramName"/>" value="0" <s:if test="systemParams[#paramName] == 0">checked="checked"</s:if> />
+                                    false
+                                </label>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <legend><s:text name="sysconfig.legend.misc" /></legend>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-4 col-label">
                             <span class="display-block"><s:text name="sysconfig.gravatarIntegrationEnabled" /></span>
                     </div>
                     <div class="col-xs-4 text-left">
@@ -77,58 +124,17 @@
                             id="ch_<s:property value="#paramName"/>" 
                             class="bootstrap-switch" 
                             <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
-                    </div>
-                </div>
-            </div>                
-                
-                <div class="form-group">
-                    <div class="row">
-                    <s:set var="paramName" value="'maxMonthsSinceLastAccess'" />
-                    <div class="col-xs-2 col-label">
-                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastAccess" /></span>
-                    </div>
-                    <div class="col-xs-4 text-left">
-                        <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
-                        <div class="btn-group" data-toggle="buttons">                            
-                            <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
-                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
-                                <s:property value="systemParams[#paramName]"/>
-                            </label>
-                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 0"> active</s:if>" onclick="hideCustomValue('<s:property value="#paramName"/>')">
-                                <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_false" name="<s:property value="#paramName"/>" value="0" <s:if test="systemParams[#paramName] == 0">checked="checked"</s:if> />
-                                false
-                            </label>
                         </div>
                     </div>
-                    
-                    <s:set var="paramName" value="'maxMonthsSinceLastPasswordChange'" />
-                    <div class="col-xs-2 col-label">
-                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastPasswordChange" /></span>
-                    </div>
-                    <div class="col-xs-4 text-left">
-                        <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
-                        <div class="btn-group" data-toggle="buttons">                            
-                            <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
-                                <input type="radio" class="" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
-                                <s:property value="systemParams[#paramName]"/>
-                            </label>
-                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 0"> active</s:if>" onclick="hideCustomValue('<s:property value="#paramName"/>')">
-                                <input type="radio" class="" id="admin-settings-area-<s:property value="#paramName"/>_false" name="<s:property value="#paramName"/>" value="0" <s:if test="systemParams[#paramName] == 0">checked="checked"</s:if> />
-                                false
-                            </label>
-                        </div>
-                    </div>
-                    
                 </div>
-            </div>
-        </fieldset>
-        
-                <div class="col-xs-12">
-                    <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
-<!--                        <span class="icon fa fa-floppy-o"></span>&#32;-->
-                        <s:text name="label.save" />
-                    </wpsf:submit>
-                </div>
+            </fieldset>
+            
+            <div class="col-xs-12">
+            <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+                <!--                        <span class="icon fa fa-floppy-o"></span>&#32;-->
+                <s:text name="label.save" />
+            </wpsf:submit>
+        </div>
         
     </s:form>
     

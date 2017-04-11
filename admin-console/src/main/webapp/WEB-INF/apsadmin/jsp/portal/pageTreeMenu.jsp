@@ -255,27 +255,27 @@
     </script>
     <script>
 
-        $(document).ready(function () {
-
-            $("#expandAll").click(function () {
-                $(".childrenNodes").removeClass("hidden");
-            });
-            $("#collapseAll").click(function () {
-                $(".childrenNodes").addClass("hidden");
-            });
-
-            var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
-            $('.table-treegrid').treegrid(null, isTreeOnRequest);
-            $(".treeRow ").on("click", function (event) {
-                $(".treeRow").removeClass("active");
-                $(".moveButtons-right").addClass("hidden");
-                $(".table-view-pf-actions").addClass("hidden");
-                $(this).find('.subTreeToggler').prop("checked", true);
-                $(this).addClass("active");
-                $(this).find(".moveButtons-right").removeClass("hidden");
-                $(this).find(".table-view-pf-actions").removeClass("hidden");
-            });
-        });
+//        $(document).ready(function () {
+//
+//            $("#expandAll").click(function () {
+//                $(".childrenNodes").removeClass("hidden");
+//            });
+//            $("#collapseAll").click(function () {
+//                $(".childrenNodes").addClass("hidden");
+//            });
+//
+//            var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
+//            $('.table-treegrid').treegrid(null, isTreeOnRequest);
+//            $(".treeRow ").on("click", function (event) {
+//                $(".treeRow").removeClass("active");
+//                $(".moveButtons-right").addClass("hidden");
+//                $(".table-view-pf-actions").addClass("hidden");
+//                $(this).find('.subTreeToggler').prop("checked", true);
+//                $(this).addClass("active");
+//                $(this).find(".moveButtons-right").removeClass("hidden");
+//                $(this).find(".table-view-pf-actions").removeClass("hidden");
+//            });
+//        });
 
     </script> 
 

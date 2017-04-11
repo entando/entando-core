@@ -368,8 +368,8 @@
                 </li>
 
                 <li class="list-group-item">
-                    <a href='<s:url action="reloadConfig" namespace="/do/BaseAdmin" />'>
-                        <span class="list-group-item-value">Reload Config</span>
+                    <a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
+                        <span class="list-group-item-value">Reload</span>
                     </a>
                 </li>
 

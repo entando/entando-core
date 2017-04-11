@@ -395,6 +395,10 @@
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/settings.jsp" />
     </definition>
 
+    <definition extends="layout.settings" name="admin.BaseAdmin.reloadConfigChoose">
+        <put-attribute name="title" value="menu.reload.config" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/reloadChoose.jsp" />
+    </definition>
     <definition extends="layout.settings" name="admin.BaseAdmin.reloadConfigResult">
         <put-attribute name="title" value="menu.reload.config" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/reloadConfig.jsp" />
@@ -457,6 +461,10 @@
     <definition extends="layout.settings" name="admin.LocaleString.entry">
         <put-attribute name="title" value="title.languageAdmin.labels" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringEntry.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.LocaleString.trash">
+        <put-attribute name="title" value="title.languageAdmin.labels" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringTrash.jsp" />
     </definition>
 
     <!-- ********* FINE Area Gestione Etichette ********* -->

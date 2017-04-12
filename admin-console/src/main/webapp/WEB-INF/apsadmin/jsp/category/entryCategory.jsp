@@ -3,20 +3,33 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
-<h1 class="panel panel-default title-page">
-	<span class="panel-body display-block">
-		<a href="<s:url action="viewTree" namespace="/do/Category" />"
-		title="<s:text name="note.goToSomewhere" />: <s:text name="title.categoryManagement" />">
-		<s:text name="title.categoryManagement" /></a>
-		&#32;/&#32;
-		<s:if test="strutsAction == 1">
-			<s:text name="title.newCategory" />
-		</s:if>
-		<s:elseif test="strutsAction == 2">
-			<s:text name="title.editCategory" />
-		</s:elseif>
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+	<li><s:text name="menu.configure"/></li>
+	<li><s:text name="title.categoryManagement"/></li>
+	<li class="page-title-container">
+		<s:if test="strutsAction == 1"><s:text name="title.addCategory"/></s:if>
+		<s:elseif test="strutsAction == 2"><s:text name="title.editCategory"/></s:elseif>
+	</li>
+</ol>
+<h1 class="page-title-container">
+	<s:if test="strutsAction == 1"><s:text name="title.addCategory"/></s:if>
+	<s:elseif test="strutsAction == 2"><s:text name="title.editCategory"/></s:elseif>
+	<span class="pull-right">
+		<a tabindex="0" role="button"
+		   data-toggle="popover" data-trigger="focus" data-html="true" title=""
+		   data-content="TO be inserted" data-placement="left"
+		   data-original-title="">
+			<i class="fa fa-question-circle-o" aria-hidden="true"></i>
+		</a>
 	</span>
 </h1>
+<div class="text-right">
+	<div class="form-group-separator"></div>
+</div>
+<br>
+
+
+
 <div id="main" role="main">
 	<s:if test="strutsAction == 2"><s:set var="breadcrumbs_pivotCategoryCode" value="categoryCode" /></s:if>
 	<s:else><s:set var="breadcrumbs_pivotCategoryCode" value="parentCategoryCode" /></s:else>

@@ -15,18 +15,38 @@
         <s:set var="masterApiMethodVar" value="%{getMethod(namespace, resourceName)}" />
     </s:if>
     <s:if test="strutsAction == 2">
-        <h2 class="margin-more-bottom"><s:text name="label.edit" />: <s:property value="serviceKey" /></h2>
+        <h1 class="page-title-container">
+            <s:text name="label.edit" />: <s:property value="serviceKey" />
+                <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+        </h1>
     </s:if>
     <s:elseif test="strutsAction == 1">
-        <h2 class="margin-more-bottom"><s:text name="title.api.apiService.newFrom" />: <span class="monospace"><s:property value="#masterApiMethodVar.methodName" /></span></h2>
+        <h1 class="page-title-container">
+            <s:text name="title.api.apiService.newFrom" />: <span class="monospace"><s:property value="#masterApiMethodVar.methodName" /></span>
+                <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+        </h1>
         </s:elseif>
         <s:elseif test="strutsAction == 3">
-        <h2 class="margin-more-bottom"><s:text name="title.api.apiService.copyFrom" />: <span class="monospace"><s:property value="#masterApiMethodVar.methodName" /></span> in <span class="monospace"><s:property value="pageCode" /></span></h2>
+        <h1 class="page-title-container">
+            <s:text name="title.api.apiService.copyFrom" />: <span class="monospace"><s:property value="#masterApiMethodVar.methodName" /></span> in <span class="monospace"><s:property value="pageCode" /></span>
+                <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+        </h1>
         </s:elseif>
     <p>
         <s:set var="masterMethodVar" value="%{getMethod(namespace, resourceName)}" />
         <s:text name="label.service.parentApi" />: <em><s:property value="#masterMethodVar.description" />&#32;(/<s:if test="namespace!=null && namespace.length()>0"><s:property value="namespace" />/</s:if><s:property value="resourceName" />)</em>
         </p>
+        <div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
     <s:form cssClass="form-horizontal" action="save" >
         <s:if test="hasFieldErrors()">
             <div class="alert alert-danger alert-dismissable">
@@ -164,14 +184,10 @@
                     </div>
                 </div>
         </fieldset>
-        <div class="row"> 
-            <div class=""> 
-                <div class="pull-right">
-                    <wpsf:submit type="button" action="save" cssClass="btn btn-primary ">
-                        <s:text name="label.save" />
-                    </wpsf:submit>
-                </div>
-            </div>
+                            <div class="col-xs-12" style="margin-bottom: 20px">
+            <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+                <s:text name="label.save" />
+            </wpsf:submit>
         </div>
     </s:form>
 </div>

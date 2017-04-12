@@ -29,22 +29,22 @@
 	<s:set var="filesAttributes" value="filesAttributes" />
 	<s:if test="%{null != getProtectedFolder()}">
 		<div class="pull-right">
-			<p class="margin-large-top btn-group btn-group-lg pull-right">
-				<a class="btn btn-primary btn-lg"
+			<p class="margin-large-top btn-group pull-right">
+				<a class="btn btn-primary"
 					href="<s:url namespace="/do/FileBrowser" action="uploadNewFileEntry" >
 					<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
 					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 					<span class="icon fa fa-upload"></span>&#32;<s:text
 						name="label.upload" />
-				</a> <a class="btn btn-primary btn-lg pull-right"
+				</a> <a class="btn btn-primary pull-right"
 					href="<s:url namespace="/do/FileBrowser" action="newFileEntry" >
 					<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
 					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>
 				</s:url>">
 					<span class="icon fa fa-file-text"></span>&#32;<s:text
 						name="label.addTextFile" />
-				</a> <a class="btn btn-primary btn-lg pull-right"
+				</a> <a class="btn btn-primary pull-right"
 					href="<s:url namespace="/do/FileBrowser" action="newDirEntry" >
 					<s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
 					<s:param name="protectedFolder"><s:property value="%{getProtectedFolder()}"/></s:param>

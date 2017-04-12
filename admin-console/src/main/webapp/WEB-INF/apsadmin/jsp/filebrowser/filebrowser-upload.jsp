@@ -70,10 +70,10 @@
 		<div class="row form-group pull-right">
 			<div class="col-sm-12">
 				<wpsf:submit type="button" action="list"
-					cssClass="btn btn-default btn-lg">
+					cssClass="btn btn-default">
 					<s:text name="label.cancel" />
 				</wpsf:submit>
-				<wpsf:submit type="button" cssClass="btn btn-primary btn-lg">
+				<wpsf:submit type="button" cssClass="btn btn-primary">
 					<span class="icon fa fa-save"></span>
 					&#32;
 					<s:text name="label.save" />

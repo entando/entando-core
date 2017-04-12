@@ -1369,3 +1369,42 @@ ul {
 .searchPanel .panel-group .panel-title>a:after {
 	margin-left: 10px;
 }
+
+/* --------------- margini e padding --------------- */
+
+.mt-10 {margin-top: 10px;}
+.mt-20 {margin-top: 20px;}
+.mt-40 {margin-top: 40px;}
+.mt-60 {margin-top: 60px;}
+.no-mt {margin-top: 0;}
+
+.mb-10 {margin-bottom: 10px;}
+.mb-20 {margin-bottom: 20px;}
+.mb-40 {margin-bottom: 40px;}
+.mb-60 {margin-bottom: 60px;}
+.no-mb {margin-bottom: 0;}
+
+/* --------------- Button group with form-control --------------- */
+
+.btn-with-form-control-container .btn-default {
+	padding: 9px;
+}
+.btn-with-form-control-container .btn-with-form-control {
+	padding: 5px;
+}
+.btn-with-form-control-container .btn-with-form-control .form-control {
+	margin-left: 2px;
+	display: inline;
+   	width: auto;
+}
+
+@media (max-width: 767px) {
+	.btn-with-form-control-container {
+		width: 100%;
+	}	
+	.btn-with-form-control-container .btn {
+		display: block;
+		float: none;
+		margin: 0!important;
+	}		
+}

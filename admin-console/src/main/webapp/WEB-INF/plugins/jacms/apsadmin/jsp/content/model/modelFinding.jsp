@@ -42,7 +42,7 @@
 				<div class="form-group">
 					<div class="col-sm-12">
 						<div class="pull-right">
-							<wpsf:submit type="button" cssClass="btn btn-primary btn-lg">
+							<wpsf:submit type="button" cssClass="btn btn-primary">
 								<s:text name="label.search" />
 							</wpsf:submit>
 						</div>
@@ -55,7 +55,7 @@
 	<div class="row form-group">
 		<div class="col-sm-12">
 			<a href="<s:url action="new" namespace="/do/jacms/ContentModel"/>"
-				class="btn btn-primary btn-lg pull-right"> <span
+				class="btn btn-primary pull-right"> <span
 				class="icon fa fa-plus-circle"></span>&#32; <s:text
 					name="title.contentModels.new" />
 			</a>

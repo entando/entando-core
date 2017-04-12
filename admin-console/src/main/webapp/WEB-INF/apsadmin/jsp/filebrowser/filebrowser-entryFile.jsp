@@ -142,9 +142,9 @@
 		<div class="row form-group pull-right">
 			<div class="col-sm-12">
 				<wpsf:submit action="list" value="%{getText('label.cancel')}"
-					cssClass="btn btn-default btn-lg" />
+					cssClass="btn btn-default" />
 				<wpsf:submit type="button" action="save"
-					cssClass="btn btn-primary btn-lg">
+					cssClass="btn btn-primary">
 					<span class="icon fa fa-save"></span>
 					&#32;
 					<s:text name="label.save" />

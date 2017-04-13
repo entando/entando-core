@@ -9,7 +9,7 @@
 		<div class="input-group">
 			<wpsf:select id="attributeTypeCode" list="attributeTypes"
 				name="attributeTypeCode" listKey="type" listValue="type"
-				cssClass="form-control" headerKey="-1"
+				cssClass="form-control" headerKey=""
 				headerValue="%{getText('note.choose')}" />
 			<span class="input-group-btn"> <wpsf:submit type="button"
 					action="addAttribute" cssClass="btn btn-default"

@@ -1398,6 +1398,12 @@ ul {
    	width: auto;
 }
 
+/* --------------- Table Responsive --------------- */
+
+.table-responsive table td {
+	white-space: normal!important;
+}
+
 @media (max-width: 767px) {
 	.btn-with-form-control-container {
 		width: 100%;

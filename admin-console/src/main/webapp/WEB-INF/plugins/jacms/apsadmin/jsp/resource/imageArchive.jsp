@@ -21,7 +21,7 @@
 
 <div class="row">
 	<div class="col-sm-12 col-md-6 cols-nopad-right">
-		<h1 class="page-title-container">
+		<h1 class="page-title-container page-title-caret">
 			<s:property value="%{getText('title.' + resourceTypeCode + '.management')}" />
 			<span class="pull-right">
 				<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" 

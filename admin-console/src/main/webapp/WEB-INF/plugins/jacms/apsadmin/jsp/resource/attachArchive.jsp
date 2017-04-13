@@ -21,7 +21,7 @@
 
 <div class="row">
 	<div class="col-sm-12 col-md-6 cols-nopad-right">
-		<h1 class="page-title-container">
+		<h1 class="page-title-container page-title-caret">
 			<s:property value="%{getText('title.' + resourceTypeCode + '.management')}" />
 			<span class="pull-right">
 				<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" 
@@ -83,7 +83,7 @@
 	
 	<wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5" >
 	<s:set var="group" value="#groupResource" />
-	
+
 	<s:if test="onEditContent"><h3><s:text name="title.chooseAttach" /></h3><div class="list-group"></s:if>
 	<s:if test="!onEditContent"><ul></s:if>
 	<s:iterator var="resourceid" status="status">

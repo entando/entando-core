@@ -4,14 +4,14 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="breadcrumb.app"/></li>
-	<li>CMS</li>
+	<li><s:text name="jacms.menu.cmsAdmin"/></li>
 	<li class="page-title-container">
-		<s:text name="menu.configure" />
+		<s:text name="menu.contents.settings" />
 	</li>
 </ol>
 <h1 class="page-title-container">
 	<div>
-		<s:text name="menu.configure" />
+		<s:text name="menu.contents.settings" />
 		<span class="pull-right">
             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
 			   data-content="TO be inserted" data-placement="left" data-original-title="">

@@ -18,7 +18,7 @@
 					list="#freeViewerPagesVar" listKey="code"
 					listValue="%{getShortFullTitle(currentLang.code)}"
 					value="%{#entityType.viewPage}" cssClass="form-control"
-					headerKey="-1" headerValue="%{getText('note.choose')}" />
+					headerKey="" headerValue="%{getText('note.choose')}" />
 			</s:if>
 			<s:else>
 				<s:text name="label.none" />
@@ -37,7 +37,7 @@
 				<wpsf:select name="defaultModelId" id="defaultModelId"
 					list="#contentModelsVar" listKey="id" listValue="description"
 					value="%{#entityType.defaultModel}" cssClass="form-control"
-					headerKey="-1" headerValue="%{getText('note.choose')}" />
+					headerKey="" headerValue="%{getText('note.choose')}" />
 			</s:if>
 			<s:else>
 				<abbr title="<s:text name="note.defaultModelId.notAvailable" />">&ndash;</abbr>
@@ -53,7 +53,7 @@
 				<wpsf:select name="listModelId" id="listModelId"
 					list="#contentModelsVar" listKey="id" listValue="description"
 					value="%{#entityType.listModel}" cssClass="form-control"
-					headerKey="-1" headerValue="%{getText('note.choose')}" />
+					headerKey="" headerValue="%{getText('note.choose')}" />
 			</s:if>
 			<s:else>
 				<abbr title="<s:text name="note.listModelId.notAvailable" />">&ndash;</abbr>

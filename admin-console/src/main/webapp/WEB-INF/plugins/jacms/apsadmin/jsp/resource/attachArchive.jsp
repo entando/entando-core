@@ -75,11 +75,11 @@
     <br/>
 
     <div class="col-md-offset-1 col-md-10">
-        <span class="fa fa-th pull-right btn btn-lg"></span>
-        <span class="fa fa-list pull-right btn btn-lg"></span>
+        <span class="fa fa-th pull-right fa-2x"></span>
+        <span class="fa fa-list pull-right fa-2x"></span>
     </div>
 
-    <div class="col-md-offset-1 col-md-10">
+    <div class="col-md-12">
         <s:form action="search">
         <p class="sr-only">
             <wpsf:hidden name="text" />
@@ -104,16 +104,21 @@
         <s:set var="resource" value="%{loadResource(#resourceid)}"></s:set>
         <s:set var="resourceInstance" value="%{#resource.getInstance()}"></s:set>
             <s:if test="onEditContent">
-            <a href="<s:url action="joinResource" namespace="/do/jacms/Content/Resource"><s:param name="resourceId" value="%{#resourceid}" /><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>"
-            title="<s:text name="label.use"/>" class="list-group-item" >
+            <a href="<s:url action="joinResource" namespace="/do/jacms/Content/Resource">
+                        <s:param name="resourceId" value="%{#resourceid}" />
+                        <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
+                    </s:url>"
+                title="<s:text name="label.use"/>" class="list-group-item" >
                 <s:if test="!#resource.categories.empty">
-                <div class="row"><div class="col-lg-12">
-                    <s:iterator var="category_resource" value="#resource.categories">
-                            <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
-                                <span class="icon fa fa-tag"></span>&#32;
-                                <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
-                    </s:iterator>
-                </div></div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <s:iterator var="category_resource" value="#resource.categories">
+                                    <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
+                                    <span class="icon fa fa-tag"></span>&#32;
+                                    <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
+                        </s:iterator>
+                    </div>
+                </div>
                 </s:if>
                 <div class="row">
                 <div class="col-lg-12">
@@ -146,6 +151,7 @@
                 <li class="list-group-item">
                 <div class="row">
                     <div class="col-xs-10 col-lg-8">
+                        <span class="fa fa-file-text fa-2x"/>
                     <s:if test="!#resource.categories.empty">
                             <s:iterator var="category_resource" value="#resource.categories">
                                 <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
@@ -189,6 +195,28 @@
                     </p>
                 </div>
                 </div>
+                    <div class="dropdown dropdown-kebab-pf">
+                        <p class="sr-only"><s:text name="label.actions"/></p>
+                        <span class="btn btn-menu-right dropdown-toggle pull-right" type="button"
+                              data-toggle="dropdown" aria-haspopup="true"
+                              aria-expanded="false">
+                                                    <span class="fa fa-ellipsis-v"></span>
+                                                </span>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a href="<s:url action="edit" namespace="/do/LocaleString" />?key=<s:property value="#key" />"
+                                   title="<s:text name="label.edit" />: <s:property value="#key" />">
+                                    <s:text name="label.edit"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<s:url action="trash" namespace="/do/LocaleString"><s:param name="key" value="#key" /></s:url>"
+                                   title="<s:text name="label.remove" />: <s:property value="#key" />">
+                                    <s:text name="label.remove"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </s:if>
         </s:iterator>

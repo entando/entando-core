@@ -17,7 +17,8 @@
 				<wpsf:select name="viewPageCode" id="viewPageCode"
 					list="#freeViewerPagesVar" listKey="code"
 					listValue="%{getShortFullTitle(currentLang.code)}"
-					value="%{#entityType.viewPage}" cssClass="form-control" />
+					value="%{#entityType.viewPage}" cssClass="form-control"
+					headerKey="-1" headerValue="%{getText('note.choose')}" />
 			</s:if>
 			<s:else>
 				<s:text name="label.none" />
@@ -35,7 +36,8 @@
 			<s:if test="#contentModelsVar.size() > 0">
 				<wpsf:select name="defaultModelId" id="defaultModelId"
 					list="#contentModelsVar" listKey="id" listValue="description"
-					value="%{#entityType.defaultModel}" cssClass="form-control" />
+					value="%{#entityType.defaultModel}" cssClass="form-control"
+					headerKey="-1" headerValue="%{getText('note.choose')}" />
 			</s:if>
 			<s:else>
 				<abbr title="<s:text name="note.defaultModelId.notAvailable" />">&ndash;</abbr>
@@ -50,7 +52,8 @@
 			<s:if test="#contentModelsVar.size() > 0">
 				<wpsf:select name="listModelId" id="listModelId"
 					list="#contentModelsVar" listKey="id" listValue="description"
-					value="%{#entityType.listModel}" cssClass="form-control" />
+					value="%{#entityType.listModel}" cssClass="form-control"
+					headerKey="-1" headerValue="%{getText('note.choose')}" />
 			</s:if>
 			<s:else>
 				<abbr title="<s:text name="note.listModelId.notAvailable" />">&ndash;</abbr>

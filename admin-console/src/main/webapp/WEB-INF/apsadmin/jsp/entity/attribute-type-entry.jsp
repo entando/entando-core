@@ -216,7 +216,8 @@
 					<div class="input-group">
 						<wpsf:select name="attributeRoleName" id="attributeRoleName"
 							list="#freeAttributeRoles" listKey="name"
-							listValue="%{name + ' - ' + description}" cssClass="form-control" />
+							listValue="%{name + ' - ' + description}" cssClass="form-control"
+							headerKey="-1" headerValue="%{getText('note.choose')}" />
 						<span class="input-group-btn"> <wpsf:submit type="button"
 								action="addAttributeRole" value="%{getText('label.add')}"
 								cssClass="btn btn-info" />
@@ -359,7 +360,8 @@
 				<div class="col-sm-10">
 					<wpsf:select list="getAllowedNestedTypes(#attribute)"
 						name="listNestedType" id="listNestedType" listKey="type"
-						listValue="type" cssClass="form-control" />
+						listValue="type" cssClass="form-control" headerKey="-1"
+						headerValue="%{getText('note.choose')}" />
 				</div>
 			</div>
 		</fieldset>

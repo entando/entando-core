@@ -291,8 +291,8 @@
                             </li>
 
                             <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                                    <span class="list-group-item-value">Content Settings TO_DO</span>
+                                <a href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />">
+                                    <span class="list-group-item-value">Content Settings<%--<s:text name="menu.reload.contents" />--%></span>
                                 </a>
                             </li>
 						</c:if>

@@ -63,7 +63,7 @@
 					<div class="input-group">
 						<wpsf:select id="contentType" list="smallContentTypes"
 							name="contentType" listKey="code" listValue="descr"
-							cssClass="form-control" headerKey="-1"
+							cssClass="form-control" headerKey=""
 							headerValue="%{getText('note.choose')}" />
 						<span class="input-group-btn"> <s:if
 								test="strutsAction == 1 && null == contentType">

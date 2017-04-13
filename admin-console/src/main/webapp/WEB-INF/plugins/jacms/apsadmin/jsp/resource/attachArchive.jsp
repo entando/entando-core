@@ -53,21 +53,29 @@
 	</div>
 </div>
 
-<br>
+<br/>
 
 <div class="tab-content" class="tab-pane active" >
 
 	<s:include value="inc/resource_searchForm.jsp" />
-	
-	<wp:ifauthorized permission="manageResources">
-		<p><a href="<s:url action="new" >
-				<s:param name="resourceTypeCode" value="resourceTypeCode" /><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
-			</s:url>"
-			class="btn btn-primary pull-right" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
-			<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" />
-		</a></p>
-	</wp:ifauthorized>
-	
+
+    <wp:ifauthorized permission="manageResources">
+        <div class="col-md-offset-1 col-md-10">
+            <p><a href="<s:url action="new" >
+                    <s:param name="resourceTypeCode" value="resourceTypeCode" />
+                    <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
+                </s:url>"
+                  class="btn btn-primary pull-right" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
+                <s:property value="%{getText('label.' + resourceTypeCode + '.new')}" />
+            </a></p>
+        </div>
+    </wp:ifauthorized>
+
+    <div class="col-md-offset-1 col-md-10 pull-right">
+        <span class="fa fa-th"></span>
+        <span class="fa fa-list"></span>
+    </div>
+
 	<s:form action="search">
 	<p class="sr-only">
 		<wpsf:hidden name="text" />
@@ -114,7 +122,7 @@
 					<s:else>
 						<s:property value="#resource.descr" />
 					</s:else>
-	                                <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
+	                <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
 					<s:set var="fileNameVar" value="#resource.masterFileName" />
 					<s:if test='%{#fileNameVar.length()>25}'>
 						<s:set var="fileNameVar" value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}' />

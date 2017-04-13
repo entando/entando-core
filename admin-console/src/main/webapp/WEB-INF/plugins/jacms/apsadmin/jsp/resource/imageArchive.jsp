@@ -53,19 +53,22 @@
 	</div>
 </div>
 
-<br>
+<br/>
 
 <div class="tab-content" class="tab-pane active" >
 
 	<s:include value="inc/resource_searchForm.jsp" />
 	
 	<wp:ifauthorized permission="manageResources">
-		<p><a href="<s:url action="new" >
-				<s:param name="resourceTypeCode" value="resourceTypeCode" /><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
-			</s:url>"
-			class="btn btn-primary pull-right" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
-			<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" />
-		</a></p>
+        <div class="col-md-offset-1 col-md-10">
+            <p><a href="<s:url action="new" >
+                    <s:param name="resourceTypeCode" value="resourceTypeCode" />
+                    <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
+                </s:url>"
+                class="btn btn-primary pull-right" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
+                <s:property value="%{getText('label.' + resourceTypeCode + '.new')}" />
+            </a></p>
+        </div>
 	</wp:ifauthorized>
 	
 	<s:form action="search">

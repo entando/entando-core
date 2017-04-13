@@ -63,7 +63,8 @@
 					<div class="input-group">
 						<wpsf:select id="contentType" list="smallContentTypes"
 							name="contentType" listKey="code" listValue="descr"
-							cssClass="form-control" />
+							cssClass="form-control" headerKey="-1"
+							headerValue="%{getText('note.choose')}" />
 						<span class="input-group-btn"> <s:if
 								test="strutsAction == 1 && null == contentType">
 								<wpsf:submit type="button" action="lockContentType"
@@ -177,8 +178,7 @@
 
 		<div class="form-group">
 			<div class="col-xs-12">
-				<wpsf:submit type="button"
-					cssClass="btn btn-primary pull-right">
+				<wpsf:submit type="button" cssClass="btn btn-primary pull-right">
 					<s:text name="label.save" />
 				</wpsf:submit>
 			</div>

@@ -51,37 +51,88 @@
     <s:set var="showletTypeApiMappingsVar" value="showletTypeApiMappings" />
     
     <!--HEADER Start -->
-    <div class="list-group list-view-pf">
-        <div class="list-group-item table-header-custom">
-            <div class="list-view-pf-checkbox">
-                <span class="badge badge-list bold" title="<s:text name="title.widgetManagement.howmanypages.long" />">N</span>&#32;
-            </div>
-            <div class="list-view-pf-actions bold">
-                Actions
-            </div>
-            <div class="list-view-pf-main-info">
-                <div class="list-view-pf-left">
-                    <span class="fa fa-cubes list-view-pf-icon-sm"></span>
+    <!--    <div class="list-group list-view-pf">
+            <div class="list-group-item table-header-custom">
+                <div class="list-view-pf-checkbox">
+                    <span class="badge badge-list bold" title="<s:text name="title.widgetManagement.howmanypages.long" />">N</span>&#32;
                 </div>
-                <div class="list-view-pf-body">
-                    <div class="list-view-pf-description">
-                        <div class="list-group-item-heading bold">
-                            Widget Name
+                <div class="list-view-pf-actions bold">
+                    Actions
+                </div>
+                <div class="list-view-pf-main-info">
+                    <div class="list-view-pf-left">
+                        <span class="fa fa-cubes list-view-pf-icon-sm"></span>
+                    </div>
+                    <div class="list-view-pf-body">
+                        <div class="list-view-pf-description">
+                            <div class="list-group-item-heading bold">
+                                Widget Name
+                            </div>
+                            <div class="list-group-item-text bold">
+                                WIdget Group
+                            </div>
                         </div>
-                        <div class="list-group-item-text bold">
-                            WIdget Group
+                        <div class="list-view-pf-additional-info bold">
+                            Widget Code
                         </div>
                     </div>
-                    <div class="list-view-pf-additional-info bold">
-                        Widget Code
+                </div>
+            </div>-->
+    <!--HEADER End-->
+    
+    <s:iterator var="showletFlavour" value="#showletFlavours">
+        <s:set var="firstType" value="%{#showletFlavour.get(0)}"></s:set>
+            <legend style="margin-top: 30px">
+            <s:if test="%{#firstType.optgroup == 'stockShowletCode'}">
+                <s:text name="title.widgetManagement.widgets.stock" />
+            </s:if>
+            <s:elseif test="%{#firstType.optgroup == 'customShowletCode'}">
+                <s:text name="title.widgetManagement.widgets.custom" />
+            </s:elseif>
+            <s:elseif test="%{#firstType.optgroup == 'userShowletCode'}">
+                <s:text name="title.widgetManagement.widgets.user" />
+            </s:elseif>
+            <s:else>
+                <s:if test="#pluginTitleCheck.equals('false')">
+                    <span class="sr-only"><s:text name="title.widgetManagement.widgets.plugin" /></span>&#32;
+                </s:if>
+                <s:set var="pluginTitleCheck" value="'true'" ></s:set>
+                <wpsa:set var="pluginPropertyName" value="%{getText(#firstType.optgroup + '.name')}" />
+                <wpsa:set var="pluginPropertyCode" value="%{getText(#firstType.optgroup + '.code')}" />
+                <s:property value="#pluginPropertyName" />
+            </s:else> 
+        </legend>
+        <!--HEADER Start -->
+        <div class="list-group list-view-pf">
+            <div class="list-group-item table-header-custom">
+                <div class="list-view-pf-checkbox">
+                    <span class="badge badge-list bold" title="<s:text name="title.widgetManagement.howmanypages.long" />">N</span>&#32;
+                </div>
+                <div class="list-view-pf-actions bold">
+                    Actions
+                </div>
+                <div class="list-view-pf-main-info">
+                    <div class="list-view-pf-left">
+                        <span class="fa fa-cubes list-view-pf-icon-sm"></span>
+                    </div>
+                    <div class="list-view-pf-body">
+                        <div class="list-view-pf-description">
+                            <div class="list-group-item-heading bold">
+                                Widget Name
+                            </div>
+<!--                            <div class="list-group-item-text bold">
+                                WIdget Group
+                            </div>-->
+                        </div>
+                        <div class="list-view-pf-additional-info bold">
+                            Widget Code
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!--HEADER End-->
-        
-        <s:iterator var="showletFlavour" value="#showletFlavours">
-            <s:set var="firstType" value="%{#showletFlavour.get(0)}"></s:set>
+            <!--HEADER End-->            
+            
+            
             <s:iterator var="showletType" value="#showletFlavour" >
                 <s:set var="showletUtilizers" value="getShowletUtilizers(#showletType.key)" ></s:set>
                 <s:set var="concreteShowletTypeVar" value="%{getShowletType(#showletType.key)}"></s:set>
@@ -92,25 +143,25 @@
                             <span class="badge badge-list" title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />"><s:property value="#showletUtilizers.size()" /></span>&#32;
                     </div>
                     <div class="list-view-pf-actions">
-                            <wp:ifauthorized permission="superuser">
-                                <s:if test="#concreteShowletTypeVar.isLogic()">
-                                    <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.parentType.code]" />
-                                </s:if>
-                                <s:elseif test="null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0">
-                                    <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.code]" />
-                                </s:elseif>
-                                <s:if test="%{(null != #relatedApiMethodVar) || (null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0) ||(#firstType.optgroup == 'userShowletCode' && !#concreteShowletTypeVar.isLocked() && (#showletUtilizers == null || #showletUtilizers.size() == 0))}">
+                        <wp:ifauthorized permission="superuser">
+                            <s:if test="#concreteShowletTypeVar.isLogic()">
+                                <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.parentType.code]" />
+                            </s:if>
+                            <s:elseif test="null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0">
+                                <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.code]" />
+                            </s:elseif>
+                            <s:if test="%{(null != #relatedApiMethodVar) || (null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0) ||(#firstType.optgroup == 'userShowletCode' && !#concreteShowletTypeVar.isLocked() && (#showletUtilizers == null || #showletUtilizers.size() == 0))}">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         <span class="fa fa-ellipsis-v"></span></button>
-                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
-                                            <s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
-                                                <li>
-                                                    <a href="<s:url namespace="/do/Portal/WidgetType" action="viewWidgetUtilizers"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="title.widgetManagement.howmanypages.goToSee" />: <s:property value="#showletType.value" />" class="text-center"><span class="icon fa fa-info"></span>&#32;<s:text name="info" /></a>
+                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                                        <s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
+                                            <li>
+                                                <a href="<s:url namespace="/do/Portal/WidgetType" action="viewWidgetUtilizers"><s:param name="widgetTypeCode" value="#showletType.key" /></s:url>" title="<s:text name="title.widgetManagement.howmanypages.goToSee" />: <s:property value="#showletType.value" />" class="text-center"><span class="icon fa fa-info"></span>&#32;<s:text name="info" /></a>
                                                 </li>
-                                            </s:if>
-                                            <s:if test="null != #relatedApiMethodVar">
-                                                <s:if test="#concreteShowletTypeVar.isLogic()">
+                                        </s:if>
+                                        <s:if test="null != #relatedApiMethodVar">
+                                            <s:if test="#concreteShowletTypeVar.isLogic()">
                                                 <s:url action="newService" namespace="/do/Api/Service" var="newServiceUrlVar">
                                                     <s:param name="resourceName" value="#relatedApiMethodVar.resourceName" />
                                                     <s:param name="namespace" value="#relatedApiMethodVar.namespace" />
@@ -161,7 +212,7 @@
                                         <s:property value="#showletType.value" /></a>
                                     <s:if test="%{#concreteShowletTypeVar.mainGroup != null && !#concreteShowletTypeVar.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
                                     </div>
-                                    <div class="list-group-item-text">
+<!--                                    <div class="list-group-item-text">
                                     <s:if test="%{#firstType.optgroup == 'stockShowletCode'}">
                                         <s:text name="title.widgetManagement.widgets.stock" />
                                     </s:if>
@@ -180,7 +231,7 @@
                                         <wpsa:set var="pluginPropertyCode" value="%{getText(#firstType.optgroup + '.code')}" />
                                         <s:text name="#pluginPropertyName" />
                                     </s:else> 
-                                </div>
+                                </div>-->
                             </div>
                             <div class="list-view-pf-additional-info">
                                 <s:property value="#showletType.key" />

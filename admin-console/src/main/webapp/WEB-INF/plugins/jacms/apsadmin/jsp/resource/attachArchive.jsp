@@ -83,10 +83,6 @@
 	
 	<wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5" >
 	<s:set var="group" value="#groupResource" />
-	<div class="pager margin-more-bottom">
-		<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-		<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-	</div>
 	
 	<s:if test="onEditContent"><h3><s:text name="title.chooseAttach" /></h3><div class="list-group"></s:if>
 	<s:if test="!onEditContent"><ul></s:if>

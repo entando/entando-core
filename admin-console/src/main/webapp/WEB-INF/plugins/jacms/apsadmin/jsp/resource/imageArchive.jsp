@@ -82,13 +82,8 @@
 	
 	<wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5" >
 	<s:set var="group" value="#groupResource" />
-	<div class="pager margin-more-bottom">
-		<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-		<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-	</div>
-	
+
 	<div class="row">
-	
 		<s:set var="imageDimensionsVar" value="imageDimensions" />
 		<s:iterator var="resourceid" status="status">
 			<s:set var="resource" value="%{loadResource(#resourceid)}" />

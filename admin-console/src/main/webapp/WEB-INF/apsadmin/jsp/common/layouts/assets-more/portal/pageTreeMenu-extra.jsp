@@ -97,9 +97,14 @@ $(document).ready(function () {
 
 	$("#expandAll").click(function() {
 		$(".childrenNodes").removeClass("hidden");
+                $(".childrenNodes").removeClass("collapsed");                
+                $('.icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
 	});
 	$("#collapseAll").click(function() {
 		$(".childrenNodes").addClass("hidden");
+                $(".childrenNodes").addClass("collapsed");
+                $('.icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
+
 	});
 	var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
 	$('.table-treegrid').treegrid(null, isTreeOnRequest);

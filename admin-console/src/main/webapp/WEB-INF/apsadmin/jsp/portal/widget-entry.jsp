@@ -232,6 +232,7 @@
             <s:if test="%{null == #widgetTypeVar || (!#widgetTypeVar.logic && !isInternalServletWidget(#widgetTypeVar.code))}">
                 <s:set var="uniqueGuiFragmentVar" value="%{extractUniqueGuiFragment(widgetTypeCode)}" />
                 <s:if test="%{strutsAction == 1 || isEditEmptyFragment() || (null != #uniqueGuiFragmentVar && (null != #uniqueGuiFragmentVar.gui || null != #uniqueGuiFragmentVar.defaultGui))}">
+ <div style="margin-left: 230px">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#widget-gui" data-toggle="tab">Custom <abbr title="User Interface">UI</abbr></a></li>
                             <s:if test="strutsAction == 2">
@@ -260,6 +261,7 @@
                             </s:if>
                         </div>
                     </div>
+ </div>
                 </s:if>
                 <s:else><div class="margin-none alert alert-info"><s:text name="label.widgetType.fragmentEditingNotAvailable" /></div></s:else>
             </s:if>
@@ -282,7 +284,7 @@
                                             </h4>
                                         </div>
                                         <div id="collapse-<s:property value="#status.count" />" class="panel-collapse collapse in">
-                                            <div class="panel-body">
+                                            <div class="panel-body" style="margin-left: 230px">
                                                 <ul class="nav nav-tabs">
                                                     <li class="active"><a href="#widget-gui-<s:property value="#status.count" />" data-toggle="tab">Custom <abbr title="User Interface">UI</abbr></a></li>
                                                     <li><a href="#widget-default-gui-<s:property value="#status.count" />" data-toggle="tab">Default <abbr title="User Interface">UI</abbr></a></li>

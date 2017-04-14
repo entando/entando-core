@@ -44,13 +44,13 @@
                 </li>
                 <li class="list-group-item">
                     <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page/Console" />'>
-                        <span class="list-group-item-value">Configure Page</span>
+                        <span class="list-group-item-value">Page Configuration</span>
                     </a>
                 </li>
             <c:if test="${isSuperUser}">
                 <li class="list-group-item">
                     <a href='<s:url action="systemParams" namespace="/do/Page" />'>
-                        <span class="list-group-item-value">General Settings Page</span>
+                        <span class="list-group-item-value">Page Settings</span>
                     </a>
                 </li>
             </c:if>

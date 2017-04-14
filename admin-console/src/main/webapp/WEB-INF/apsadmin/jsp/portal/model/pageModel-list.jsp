@@ -38,8 +38,8 @@
         </div>
     </s:if>
     <p>
-        <a class="btn btn-primary"
-           href="<s:url namespace="/do/PageModel" action="new" />">
+        <a class="btn btn-primary pull-right"
+           href="<s:url namespace="/do/PageModel" action="new" />" style="margin-bottom: 5px">
             <s:text name="label.add" />
             </span>
         </a>
@@ -50,7 +50,7 @@
         <table class="table table-striped table-bordered table-hover">
             <tr>
                 <th><s:text name="label.code" /></th> 
-                <th><s:text name="label.description" /></th>
+                <th><s:text name="label.name" /></th>
                 <th class="text-center " style="width: 20px"><s:text name="label.actions" /></th>
             </tr>
             <s:iterator value="#pageModelsVar" var="pageModelVar">

@@ -56,4 +56,5 @@
         </s:iterator>
     </wpsa:hookPoint>
     <s:include value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo-references.jsp"/>
+    
 </div>

@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.util.SystemOutLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +33,7 @@ import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThre
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.category.helper.ICategoryActionHelper;
+import com.agiletec.apsadmin.portal.AbstractPortalAction;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
@@ -270,6 +270,18 @@ public class CategoryAction extends AbstractTreeAction {
 			return FAILURE;
 		}
 		return SUCCESS;
+	}
+	
+	protected String checkSelectedNode(String selectedNode) {
+		if (null == selectedNode || selectedNode.trim().length() == 0) {
+			this.addActionError(this.getText("error.page.noSelection"));
+			return "categoryTree";
+		}
+		if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(selectedNode)) {
+			this.addActionError(this.getText("error.page.virtualRootSelected"));
+			return "categoryTree";
+		}
+		return null;
 	}
 
 	public String moveTree() {

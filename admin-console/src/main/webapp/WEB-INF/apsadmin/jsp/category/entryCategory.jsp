@@ -28,12 +28,10 @@
 </div>
 <br>
 
-
-
 <div id="main" role="main">
 	<s:if test="strutsAction == 2"><s:set var="breadcrumbs_pivotCategoryCode" value="categoryCode" /></s:if>
 	<s:else><s:set var="breadcrumbs_pivotCategoryCode" value="parentCategoryCode" /></s:else>
-	<s:include value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo_breadcrumbs.jsp" />
+<%-- 	<s:include value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo_breadcrumbs.jsp" /> --%>
 
 	<s:form action="save" cssClass="form-horizontal">
 		<s:if test="hasFieldErrors()">
@@ -63,11 +61,13 @@
 				<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />
 				<s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
 				<div class="form-group<s:property value="controlGroupErrorClassVar" />">
-					<div class="col-xs-12">
+					<div class="col-xs-2">
 						<label for="lang<s:property value="code" />">
 							<abbr class="label label-info" title="<s:property value="descr" />"><s:property value="code" /></abbr>&#32;
-							<s:text name="name.categoryTitle" />
+							<s:text name="name.categoryTitle" /> 
 						</label>
+					</div>
+					<div class="col-xs-10">
 						<wpsf:textfield name="%{'lang'+code}" id="%{'lang'+code}" value="%{titles.get(code)}" cssClass="form-control" />
 						<s:if test="#currentFieldHasFieldErrorVar">
 							<p class="help help-block"><s:iterator value="#currentFieldFieldErrorsVar"><s:property />&#32;</s:iterator></p>
@@ -81,8 +81,10 @@
 			<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />
 			<s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
 			<div class="form-group<s:property value="controlGroupErrorClassVar" />">
-				<div class="col-xs-12">
+				<div class="col-xs-2">
 					<label for="categoryCode"><s:text name="name.categoryCode" /></label>
+				</div>
+				<div class="col-xs-10">
 						<wpsf:textfield name="categoryCode" id="categoryCode" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
 						<s:if test="getStrutsAction() != 2">
 							<wpsf:hidden name="selectedNode" value="%{parentCategoryCode}" />
@@ -93,6 +95,63 @@
 						<s:if test="#currentFieldHasFieldErrorVar">
 							<p class="help help-block"><s:iterator value="#currentFieldFieldErrorsVar"><s:property />&#32;</s:iterator></p>
 						</s:if>
+				</div>
+			</div>
+			<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+				<div class="col-xs-2">
+					<label><s:text name="name.tree.position" /></label>
+				</div>
+				<div class="col-xs-10">
+					<script src="<wp:resourceURL />administration/js/entando-typeahead-tree.js"></script>
+					<s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp" />
+					<table id="categoryTree"
+						class="table table-bordered table-hover table-treegrid">
+						<thead>
+							<tr>
+	<!-- 						class="col-sm-10" -->
+								<th> <s:text name="label.category.tree"/> 
+									<button type="button" class="btn-no-button expand-button"
+										id="expandAll">
+										<i class="fa fa-plus-square-o treeInteractionButtons"
+											aria-hidden="true"></i>&#32;<s:text name="label.category.expandAll"/>
+									</button>
+									<button type="button" class="btn-no-button" id="collapseAll">
+										<i class="fa fa-minus-square-o treeInteractionButtons"
+											aria-hidden="true"></i>&#32;<s:text name="label.category.collapseAll"/>
+									</button>
+								</th>
+								<th class="col-sm-1 text-center"><s:text name="label.category.actions"/></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="<s:if test="#currentRoot.isRoot()">home</s:if><s:else><s:property value="#node.code"/></s:else>" data-parent='#<s:property value="#currentRoot.parent.code"/>' class="treeRow <s:if test="%{#currentRoot.code != 'home' && #isHidden}">collapsed childrenNodes</s:if>">
+							    <td class="treegrid-node">
+							    
+							        <input type="radio" name="<s:property value="#inputFieldName" />"
+							         id="fagianonode_<s:property value="#currentRoot.code" />" 
+							         value="<s:property value="#currentRoot.code" />" 
+							         class="subTreeToggler <s:if test="#isSelected">active </s:if> <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
+							         <s:if test="#isSelected"> checked="checked"</s:if> />
+							        
+							        <span class='class="icon fa <s:property value="treeItemIconNameVar"/>'></span> &#32;
+							        <label for="fagianonode_<s:property value="#currentRoot.code" />">
+							            <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
+							            <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
+							                <span class="text-muted icon fa fa-lock"></span>
+							            </s:if>
+							        </label>
+							    </td>
+   							</tr>
+   							
+   							<s:set var="inputFieldName" value="%{'selectedNode'}" />
+							<s:set var="selectedTreeNode" value="%{selectedNode}" />
+							<s:set var="selectedPage" value="%{getCategory(selectedNode)}" />
+							<s:set var="currentRoot" value="treeRootNode" />
+							<s:set var="isPosition" value="false" />
+							<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
+   							
+						</tbody>
+					</table>
 				</div>
 			</div>
 			

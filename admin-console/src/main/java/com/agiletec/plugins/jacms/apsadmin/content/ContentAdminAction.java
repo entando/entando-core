@@ -13,6 +13,7 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content;
 
+import com.agiletec.apsadmin.admin.BaseAdminAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ import com.agiletec.plugins.jacms.aps.system.services.searchengine.LastReloadInf
  * Classi Action delegata alla esecuzione delle operazioni di amministrazione dei contenuti.
  * @author E.Santoboni
  */
-public class ContentAdminAction extends BaseAction {
+public class ContentAdminAction extends BaseAdminAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentAdminAction.class);
 	

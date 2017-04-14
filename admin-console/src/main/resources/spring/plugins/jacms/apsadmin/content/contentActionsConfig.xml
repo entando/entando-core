@@ -61,7 +61,7 @@
 	</bean>
 	
 	<bean id="jacmsContentAdminAction" scope="prototype" 
-			class="com.agiletec.plugins.jacms.apsadmin.content.ContentAdminAction">
+			class="com.agiletec.plugins.jacms.apsadmin.content.ContentAdminAction" parent="baseAdminAction">
 		<property name="contentManager" ref="jacmsContentManager"/>
 		<property name="searchEngineManager" ref="jacmsSearchEngineManager"/>
   	</bean>

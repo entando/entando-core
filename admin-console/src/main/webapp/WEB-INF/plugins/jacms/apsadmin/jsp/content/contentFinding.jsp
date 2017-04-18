@@ -1,24 +1,46 @@
-<%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
-<%-- radios + checkboxes only --%>
-<%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+<%-- radios + checkboxes only --%>
+<%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
+
+<style type="text/css">
+    .table.content-list input,
+    .table.content-list span {
+        margin: 0;
+        vertical-align: middle;
+    }
+    .w2perc {width: 2%!important}
+    .w4perc {width: 4%}
+    .w10perc {width: 10%}
+
+</style>
 
 <s:set var="targetNS" value="%{'/do/jacms/Content'}" />
+<!-- Admin console Breadcrumbs -->
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="jacms.menu.contentAdmin" /></li>
-<li class="page-title-container"><s:text name="title.contentList" /></li>
+    <li>APPS</li>
+    <li><s:text name="breadcrumb.jacms" /></li>
+    <li class="page-title-container"><s:text name="breadcrumb.jacms.content.list" /></li>
 </ol>
 
+<!-- Page Title -->
+<s:set var="dataContent" value="%{'help block'}" />
+<s:set var="dataOriginalTitle" value="%{'Section Help'}"/>
 <h1 class="page-title-container">
     <s:text name="title.contentList" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" 
+            data-toggle="popover" data-trigger="focus" 
+            data-html="true" title="" data-content="${dataContent}" 
+            data-placement="left" data-original-title="${dataOriginalTitle}">
+            <span class="fa fa-question-circle-o" aria-hidden="true"></span>
+        </a>
     </span>
 </h1>
 
+<!-- Default separator -->
 <div class="text-right">
     <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
 </div>
@@ -342,13 +364,9 @@
 
         <s:set var="contentIdsVar" value="contents" />
 
-        <wpsa:subset source="#contentIdsVar" count="10" objectName="groupContent" advanced="true" offset="5">
+        <!-- Content List -->
+        <wpsa:subset source="#contentIdsVar" count="1" objectName="groupContent" advanced="true" offset="5">
             <s:set var="group" value="#groupContent" />
-
-            <div class="text-center">
-                <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-                <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-            </div>
 
             <s:if test="%{#contentIdsVar.size() > 0}">
 				<div class="form-group">
@@ -357,63 +375,179 @@
 						<wpsf:checkbox name="allContentsSelected" id="allContentsSelected" cssClass="bootstrap-switch" />
 					</div>
 				</div>
-                <table class="table table-striped table-bordered table-hover" id="contentListTable">
-                    <caption class="sr-only"><s:text name="title.contentList" /></caption>
-                    <tr>
-
-                        <th>
-                            <a href="<s:url action="changeOrder" includeParams="all" >
-                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                                <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-                                <s:param name="groupBy">descr</s:param>
-                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                                </s:url>"><s:text name="label.description" /></a>
-                        </th>
-                    <s:if test="viewCode">
-                        <th>
-                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
-                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                                <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
-                                <s:param name="groupBy">code</s:param>
-                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                                </s:url>"><s:text name="label.code" /></a>
-                        </th>
-                    </s:if>
-                    <s:if test="viewTypeDescr"><th><s:text name="label.type" /></th></s:if>
-                    <s:if test="viewStatus"><th><s:text name="label.state" /></th></s:if>
-                    <s:if test="viewGroup"><th><s:text name="label.group" /></th></s:if>
-                    <s:if test="viewCreationDate">
-                        <th>
-                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
-                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                                <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
-                                <s:param name="groupBy">created</s:param>
-                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                                </s:url>"><s:text name="label.creationDate" /></a>
-                        </th>
-                    </s:if>
-                    <th>
-                        <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
-                           <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                            <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
-                            <s:param name="groupBy">lastModified</s:param>
-                            <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                            </s:url>"><s:text name="label.lastEdit" /></a>
-                    </th>
-                    <th class="text-center"> <s:text name="name.onLine" /></th>
-
-                    <th class="text-center"><s:text name="label.actions" /></th>
+				
+                <!-- Toolbar -->
+				<div class="row toolbar-pf table-view-pf-toolbar" id="{{include.toolbarId}}">
+				  <div class="col-sm-12">
+				    <div class="toolbar-pf-actions">
+				    <div class="col-sm-12">
+				      <div class="form-group toolbar-pf-filter">
+				        <label class="sr-only" for="filter">Rendering Engine</label>
+				        <div class="input-group">
+				          <div class="input-group-btn">
+				            <button type="button" class="btn btn-default dropdown-toggle" id="filter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Rendering Engine <span class="caret"></span></button>
+				            <ul class="dropdown-menu">
+				              <li><a href="#" id="{{include.filterId1}}">Rendering Engine</a></li>
+				              <li><a href="#" id="{{include.filterId2}}">Browser</a></li>
+				              <li><a href="#" id="{{include.filterId3}}">Platform(s)</a></li>
+				              <li><a href="#" id="{{include.filterId4}}">Engine Version</a></li>
+				              <li><a href="#" id="{{include.filterId5}}">CSS Grade</a></li>
+				            </ul>
+				          </div>
+				          <input type="text" class="form-control" placeholder="Filter By Rendering Engine..." autocomplete="off" id="filterInput">
+				        </div>
+				      </div>
+				      <div class="form-group">
+				        <button class="btn btn-default" type="button" id="{{include.actionId1}}">Delete Rows</button>
+				        <button class="btn btn-default" type="button" id="{{include.actionId2}}" disabled>Restore Rows</button>
+				      </div>
+				      <div class="toolbar-pf-action-right">
+				      
+				      
+                <fieldset>
+                <legend class="sr-only"><s:text name="title.contentActions" /></legend>
+                <p class="sr-only"><s:text name="title.contentActionsIntro" /></p>
+                <div class="btn-toolbar">
+                    <wp:ifauthorized permission="validateContents">
+                        <div class="btn-group margin-small-vertical">
+                        <%-- 
+                            <wpsf:submit action="approveContentGroup" type="button" title="%{getText('note.button.approve')}" cssClass="btn btn-success">
+                         --%>
+                            <wpsf:submit action="bulkPutOnline" type="button" title="%{getText('note.button.approve')}" cssClass="btn btn-success">
+                                <span class="icon fa fa-check"></span>
+                                <s:text name="label.approve" />
+                            </wpsf:submit>
+                        <%-- 
+                            <wpsf:submit action="suspendContentGroup" type="button" title="%{getText('note.button.suspend')}" cssClass="btn btn-warning">
+                         --%>
+                            <wpsf:submit action="bulkPutOffline" type="button" title="%{getText('note.button.suspend')}" cssClass="btn btn-warning">
+                                <span class="icon fa fa-pause"></span>
+                                <s:text name="label.suspend" />
+                            </wpsf:submit>
+                        </div>
+                    </wp:ifauthorized>
+                    
+                        <div class="btn-group margin-small-vertical">
+                            <wpsa:actionParam action="bulkOnGroups" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="1" /></wpsa:actionParam>
+                            <wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.addGroups')}" cssClass="btn btn-success">
+                                <span class="icon fa"></span>
+                                <s:text name="label.addGroups" />
+                            </wpsf:submit>
+                            <wpsa:actionParam action="bulkOnGroups" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="4" /></wpsa:actionParam>
+                            <wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.removeGroups')}" cssClass="btn btn-success">
+                                <span class="icon fa"></span>
+                                <s:text name="label.removeGroups" />
+                            </wpsf:submit>
+                            <wpsa:actionParam action="bulkOnCategories" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="1" /></wpsa:actionParam>
+                            <wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.addCategories')}" cssClass="btn btn-success">
+                                <span class="icon fa"></span>
+                                <s:text name="label.addCategories" />
+                            </wpsf:submit>
+                            <wpsa:actionParam action="bulkOnCategories" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="4" /></wpsa:actionParam>
+                            <wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.removeCategories')}" cssClass="btn btn-success">
+                                <span class="icon fa"></span>
+                                <s:text name="label.removeCategories" />
+                            </wpsf:submit>
+                        </div>
+                        
+                    <wpsa:hookPoint key="jacms.contentFinding.allContents.actions" objectName="hookpoint_contentFinding_allContents">
+                        <s:iterator value="#hookpoint_contentFinding_allContents" var="hookPointElement">
+                            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                        </s:iterator>
+                    </wpsa:hookPoint>
+                    <div class="btn-group margin-small-vertical">
+                        <%-- 
+                        <wpsf:submit action="trashContentGroup" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
+                         --%>
+                        <wpsf:submit action="bulkRemove" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
+                            <span class="icon fa fa-times-circle"></span>
+                            <s:text name="label.remove" />
+                        </wpsf:submit>
+                    </div>
+                </div>
+            </fieldset>
+            
+            
+				      </div>
+				    </div>
+				    </div>
+				    <div class="row toolbar-pf-results">
+				      <div class="col-sm-9">
+				        <div class="hidden">
+				          <h5>0 Results</h5>
+				          <p>Active filters:</p>
+				          <ul class="list-inline"></ul>
+				          <p><a href="#">Clear All Filters</a></p>
+				        </div>
+				      </div>
+				      <div class="col-sm-3 table-view-pf-select-results">
+				        <strong>0</strong> of <strong>0</strong> selected
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				
+                <%-- <caption class="sr-only"><s:text name="title.contentList" /></caption> --%>
+                <table class="table table-striped table-bordered table-hover content-list no-mb" id="contentListTable">
+	                <thead>
+	                    <tr>
+	                        <th class="w2perc">
+	                           <label class="sr-only" for="selectAll">
+	                               <s:text name="label.selectAll" />
+	                           </label>
+	                           <input type="checkbox" id="selectAll" name="selectAll">
+	                        </th>
+	                        <th>
+	                            <a href="<s:url action="changeOrder" includeParams="all" >
+	                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+	                                <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+	                                <s:param name="groupBy">descr</s:param>
+	                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+	                                </s:url>"><s:text name="label.description" /></a>
+	                        </th>
+	                    <s:if test="viewCode">
+	                        <th>
+	                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+	                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+	                                <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
+	                                <s:param name="groupBy">code</s:param>
+	                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+	                                </s:url>"><s:text name="label.code" /></a>
+	                        </th>
+	                    </s:if>
+	                    <s:if test="viewTypeDescr"><th><s:text name="label.type" /></th></s:if>
+	                    <s:if test="viewStatus"><th class="text-center w4perc"><s:text name="label.state" /></th></s:if>
+	                    <s:if test="viewGroup"><th><s:text name="label.group" /></th></s:if>
+	                    <s:if test="viewCreationDate">
+	                        <th>
+	                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+	                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+	                                <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
+	                                <s:param name="groupBy">created</s:param>
+	                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+	                                </s:url>"><s:text name="label.creationDate" /></a>
+	                        </th>
+	                    </s:if>
+	                    <th>
+	                        <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+	                           <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+	                            <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
+	                            <s:param name="groupBy">lastModified</s:param>
+	                            <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+	                            </s:url>"><s:text name="label.lastEdit" /></a>
+	                    </th>
+	                    <th class="text-center w4perc"> <s:text name="name.onLine" /></th>
+	                    <th class="text-center"><s:text name="label.actions" /></th>
                     </tr>
+                    </thead>
+	                <tbody>
                     <s:iterator var="contentId">
                         <s:set var="content" value="%{getContentVo(#contentId)}"></s:set>
                         <tr>
-
+                            <td><input type="checkbox" name="contentIds" id="content_<s:property value="#content.id" />" value="<s:property value="#content.id" />" /></td>
                             <td>
-                                <label>
-                                    <input type="checkbox" name="contentIds" id="content_<s:property value="#content.id" />" value="<s:property value="#content.id" />" />&#32;
-                                    <s:property value="#content.descr" />&#32;
-                                    <s:if test="%{#content.mainGroupCode != null && !#content.mainGroupCode.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
-                                </label>
+                                <s:property value="#content.descr" />&#32;
+                                <s:if test="%{#content.mainGroupCode != null && !#content.mainGroupCode.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
                             </td>
                         <s:if test="viewCode">
                             <td class="table-txt-wrap">
@@ -426,8 +560,26 @@
                             </td>
                         </s:if>
                         <s:if test="viewStatus">
-                            <td class="table-txt-wrap">
-                            <s:property value="%{getText('name.contentStatus.' + #content.status)}" />
+                            <td class="text-center">
+                                <s:set value="%{getText('name.contentStatus.' + #content.status)}" var="statusLabel"/>
+						        <span class="statusField">
+					                <s:if test="%{#content.status == 'OFFLINE'}">
+					                   <span class="fa fa-circle gray" aria-hidden="true" 
+					                       title="${statusLabel}"></span>
+					                </s:if>
+					                <s:elseif test="%{#content.status == 'DRAFT'}">
+					                   <s:set var="statusLabel">
+					                       <s:property value="%{getText('name.contentStatus.' + 'PUBLIC')}"/>&#32;&ne;&#32;<s:property value="%{getText('name.contentStatus.' + 'DRAFT')}"/>
+					                   </s:set>
+					                   <span class="fa fa-circle yellow" aria-hidden="true" title="${statusLabel}"></span>
+					                </s:elseif>
+					                <s:else>
+					                   <span class="fa fa-circle green" 
+					                       aria-hidden="true" 
+					                       title="${statusLabel}">
+					                   </span>
+					                </s:else>
+						        </span>
                             </td>
                         </s:if>
                         <s:if test="viewGroup">
@@ -500,74 +652,61 @@
                         </td>
                         </tr>
                     </s:iterator>
+                    </tbody>
                 </table>
+
+                <div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+                    <%-- TODO: abilitare selezione elementi per pagina --%>
+                    <%--
+					<div class="form-group">
+						<div class="btn-group bootstrap-select pagination-pf-pagesize class="mt-5"">
+							<button type="button" class="btn dropdown-toggle btn-default"
+								data-toggle="dropdown" title="15">
+								<span class="filter-option pull-left">15</span>&nbsp;<span
+									class="bs-caret"><span class="caret"></span></span>
+							</button>
+							<div class="dropdown-menu open">
+								<ul class="dropdown-menu inner" role="menu">
+									<li data-original-index="0"><a tabindex="0" class=""
+										style="" data-tokens="null"><span class="text">6</span><span
+											class="glyphicon glyphicon-ok check-mark"></span></a></li>
+									<li data-original-index="1"><a tabindex="0" class=""
+										style="" data-tokens="null"><span class="text">10</span><span
+											class="glyphicon glyphicon-ok check-mark"></span></a></li>
+									<li data-original-index="2" class="selected"><a
+										tabindex="0" class="" style="" data-tokens="null"><span
+											class="text">15</span><span
+											class="glyphicon glyphicon-ok check-mark"></span></a></li>
+									<li data-original-index="3"><a tabindex="0" class=""
+										style="" data-tokens="null"><span class="text">25</span><span
+											class="glyphicon glyphicon-ok check-mark"></span></a></li>
+									<li data-original-index="4"><a tabindex="0" class=""
+										style="" data-tokens="null"><span class="text">50</span><span
+											class="glyphicon glyphicon-ok check-mark"></span></a></li>
+								</ul>
+							</div>
+							<select class="selectpicker pagination-pf-pagesize"
+								tabindex="-98">
+								<option value="6">6</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="25">25</option>
+								<option value="50">50</option>
+							</select>
+						</div>
+						<span>per page</span>
+					</div>
+					 --%>
+					<div class="form-group">
+                    <span><s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                    <div class="mt-5">
+                        <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                    </div>
+                  </div>
+                </div>
             </s:if>
 
-            <fieldset>
-                <legend class="sr-only"><s:text name="title.contentActions" /></legend>
-                <p class="sr-only"><s:text name="title.contentActionsIntro" /></p>
-                <div class="btn-toolbar">
-                    <wp:ifauthorized permission="validateContents">
-                        <div class="btn-group margin-small-vertical">
-                        <%-- 
-                            <wpsf:submit action="approveContentGroup" type="button" title="%{getText('note.button.approve')}" cssClass="btn btn-success">
-                         --%>
-                            <wpsf:submit action="bulkPutOnline" type="button" title="%{getText('note.button.approve')}" cssClass="btn btn-success">
-                                <span class="icon fa fa-check"></span>
-                                <s:text name="label.approve" />
-                            </wpsf:submit>
-                        <%-- 
-                            <wpsf:submit action="suspendContentGroup" type="button" title="%{getText('note.button.suspend')}" cssClass="btn btn-warning">
-                         --%>
-                            <wpsf:submit action="bulkPutOffline" type="button" title="%{getText('note.button.suspend')}" cssClass="btn btn-warning">
-                                <span class="icon fa fa-pause"></span>
-                                <s:text name="label.suspend" />
-                            </wpsf:submit>
-                        </div>
-                    </wp:ifauthorized>
-                    
-                        <div class="btn-group margin-small-vertical">
-	                    	<wpsa:actionParam action="bulkOnGroups" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="1" /></wpsa:actionParam>
-							<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.addGroups')}" cssClass="btn btn-success">
-								<span class="icon fa"></span>
-								<s:text name="label.addGroups" />
-							</wpsf:submit>
-	                    	<wpsa:actionParam action="bulkOnGroups" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="4" /></wpsa:actionParam>
-							<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.removeGroups')}" cssClass="btn btn-success">
-								<span class="icon fa"></span>
-								<s:text name="label.removeGroups" />
-							</wpsf:submit>
-	                    	<wpsa:actionParam action="bulkOnCategories" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="1" /></wpsa:actionParam>
-							<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.addCategories')}" cssClass="btn btn-success">
-								<span class="icon fa"></span>
-								<s:text name="label.addCategories" />
-							</wpsf:submit>
-	                    	<wpsa:actionParam action="bulkOnCategories" var="bulkActionName" ><wpsa:actionSubParam name="strutsAction" value="4" /></wpsa:actionParam>
-							<wpsf:submit action="%{#bulkActionName}" type="button" title="%{getText('note.button.removeCategories')}" cssClass="btn btn-success">
-								<span class="icon fa"></span>
-								<s:text name="label.removeCategories" />
-							</wpsf:submit>
-                        </div>
-						
-                    <wpsa:hookPoint key="jacms.contentFinding.allContents.actions" objectName="hookpoint_contentFinding_allContents">
-                        <s:iterator value="#hookpoint_contentFinding_allContents" var="hookPointElement">
-                            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                        </s:iterator>
-                    </wpsa:hookPoint>
-                    <div class="btn-group margin-small-vertical">
-                        <%-- 
-                        <wpsf:submit action="trashContentGroup" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
-                         --%>
-                        <wpsf:submit action="bulkRemove" type="button" title="%{getText('note.button.delete')}" cssClass="btn btn-danger">
-                            <span class="icon fa fa-times-circle"></span>
-                            <s:text name="label.remove" />
-                        </wpsf:submit>
-                    </div>
-                </div>
-            </fieldset>
-            <div class="text-center">
-                <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-            </div>
+            
         </wpsa:subset>
 </div>
 </s:form>

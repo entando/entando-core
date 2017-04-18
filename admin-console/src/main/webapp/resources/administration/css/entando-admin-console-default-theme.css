@@ -1372,12 +1372,14 @@ ul {
 
 /* --------------- margini e padding --------------- */
 
+.mt-5 {margin-top: 5px;}
 .mt-10 {margin-top: 10px;}
 .mt-20 {margin-top: 20px;}
 .mt-40 {margin-top: 40px;}
 .mt-60 {margin-top: 60px;}
 .no-mt {margin-top: 0;}
 
+.mb-5 {margin-bottom: 5px;}
 .mb-10 {margin-bottom: 10px;}
 .mb-20 {margin-bottom: 20px;}
 .mb-40 {margin-bottom: 40px;}
@@ -1396,6 +1398,12 @@ ul {
 	margin-left: 2px;
 	display: inline;
    	width: auto;
+}
+
+/* --------------- Table Responsive --------------- */
+
+.table-responsive table td {
+	white-space: normal!important;
 }
 
 @media (max-width: 767px) {

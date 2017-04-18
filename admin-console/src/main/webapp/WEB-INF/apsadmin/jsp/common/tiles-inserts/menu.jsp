@@ -291,8 +291,8 @@
                             </li>
 
                             <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                                    <span class="list-group-item-value">Content Settings TO_DO</span>
+                                <a href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />">
+                                    <span class="list-group-item-value"><s:text name="menu.contents.settings" /></span>
                                 </a>
                             </li>
 						</c:if>
@@ -369,7 +369,7 @@
 
                 <li class="list-group-item">
                     <a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
-                        <span class="list-group-item-value">Reload</span>
+                        <span class="list-group-item-value"><s:text name="title.reload.confi" /></span>
                     </a>
                 </li>
 

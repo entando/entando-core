@@ -3,10 +3,7 @@
 <%@ taglib prefix="jacms" uri="/jacms-apsadmin-core"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
-			<s:text name="title.contentModels" />
-	</a></li>
+	<li><s:text name="title.contentModels" /></li>
 	<li class="page-title-container"><s:if test="strutsAction == 1">
 			<s:text name="title.contentModels.new" />
 		</s:if> <s:if test="strutsAction == 2">
@@ -39,12 +36,12 @@
 		cssClass="form-horizontal">
 		<s:if test="hasFieldErrors()">
 			<div class="alert alert-danger alert-dismissable">
-				<button type="button" class="close" data-dismiss="alert">
-					<span class="icon fa fa-times"></span>
+				<button type="button" class="close" data-dismiss="alert"
+					aria-hidden="true">
+					<span class="pficon pficon-close"></span>
 				</button>
-				<p>
-					<s:text name="message.title.FieldErrors" />
-				</p>
+				<span class="pficon pficon-error-circle-o"></span>
+				<s:text name="message.title.FieldErrors" />
 			</div>
 		</s:if>
 		<p class="sr-only">
@@ -155,14 +152,14 @@
 								class="important"><s:text name="label.on" /></em>]</s:if> <s:else>[<s:text
 								name="note.contentModel.attributeHelp" />:&#32;<em
 								class="important"><s:text name="label.off" /></em>]</s:else> </span>
+					<s:if test="#contentShapeHasFieldErrorVar">
+						<p class="text-danger padding-small-vertical">
+							<s:iterator value="#contentShapeFieldErrorsVar">
+								<s:property />
+							</s:iterator>
+						</p>
+					</s:if>
 				</div>
-				<s:if test="#contentShapeHasFieldErrorVar">
-					<p class="text-danger padding-small-vertical">
-						<s:iterator value="#contentShapeFieldErrorsVar">
-							<s:property />
-						</s:iterator>
-					</p>
-				</s:if>
 			</div>
 		</div>
 		<div class="form-group">

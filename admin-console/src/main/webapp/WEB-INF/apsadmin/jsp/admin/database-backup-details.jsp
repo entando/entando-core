@@ -3,9 +3,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="menu.configure" /></li>
-	<li><a
-		href="<s:url namespace="/do/Admin/Database" action="entry" />"><s:text
-				name="title.databaseManagement" /></a></li>
+	<li><s:text name="title.databaseManagement" /></li>
 	<li class="page-title-container"><s:text
 			name="title.databaseBackup.details" /></li>
 </ol>
@@ -251,7 +249,7 @@
 					<wpsf:hidden name="subFolderName"
 						value="%{#dumpReportVar.subFolderName}" />
 					<wpsf:submit type="button" action="restoreIntro"
-						cssClass="btn btn-primary btn-lg pull-right">
+						cssClass="btn btn-primary pull-right">
 						<s:text name="database.management.label.restore" />
 					</wpsf:submit>
 				</p>

@@ -37,7 +37,7 @@
 <br>
 
 <div id="main" role="main">
-    <div class="row">
+<!--    <div class="row">
         <div class="col-md-offset-2 col-md-8  ">
             <p class="search-label "><s:text name="label.message.seach"/></p>
             <s:form action="search" cssClass="search-pf has-button">
@@ -55,13 +55,37 @@
                 </div>
             </s:form>
         </div>
+    </div>-->
+<div class="col-xs-12  ">
+    <div class="well col-md-offset-3 col-md-6  ">
+        <p class="search-label"><s:text name="label.message.seach" /></p>
+        <s:form action="search" class="search-pf has-button " cssClass="form-horizontal" >
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="text" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.text"/></label>
+                <div class="col-sm-9">
+                    <wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
+                                    title="%{getText('label.search.by') +' '+ getText('label.text')}"
+                                    placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"
+                    />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2"></label>
+                <div class="col-sm-9">
+                    <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+                        <s:text name="label.search" />
+                    </wpsf:submit>
+                </div>
+            </s:form>
+        </div>
     </div>
+</div>            
 	<br>
 	<br>
 	
     <div class="row">
         <div class="col-sm-12">
-            <a href="<s:url namespace="/do/LocaleString" action="new" />" class="btn btn-primary btn-lg pull-right">
+            <a href="<s:url namespace="/do/LocaleString" action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
                 <s:text name="locale.addNewLabel"/>
             </a>
         </div>

@@ -84,7 +84,7 @@
 			<c:if test="${isSuperUser}">
                 <li class="list-group-item">
                     <a href='<s:url action="list" namespace="/do/Portal/GuiFragment" />'>
-                        <span class="list-group-item-value">Containers</span>
+                        <span class="list-group-item-value">Fragments</span>
 
                     </a>
                 </li>
@@ -121,13 +121,13 @@
 
                 <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-ux-components-tertiary">
                     <a>
-                        <span class="list-group-item-value">UX Components</span>
+                        <span class="list-group-item-value">Components</span>
                     </a>
 
                     <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
                         <div class="nav-item-pf-header">
                             <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-                            <span>UX Components</span>
+                            <span>Components</span>
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item ">

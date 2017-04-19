@@ -140,11 +140,14 @@ public class CategoryAction extends AbstractTreeAction {
 	public String add() {
 		String selectedNode = this.getSelectedNode();
 		try {
-			Category category = this.getCategory(selectedNode);
-			if (null == category) {
-				this.addActionError(this.getText("error.category.selectCategory"));
-				return "categoryTree";
-			}
+			System.out.println("===============");
+			System.out.println(selectedNode);
+			System.out.println("===============");
+//			Category category = this.getCategory(selectedNode);
+//			if (null == category) {
+//				this.addActionError(this.getText("error.category.selectCategory"));
+//				return "categoryTree";
+//			}
 			this.setStrutsAction(ApsAdminSystemConstants.ADD);
 			this.setParentCategoryCode(selectedNode);
 		} catch (Throwable t) {
@@ -257,11 +260,21 @@ public class CategoryAction extends AbstractTreeAction {
 		try {
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				Category category = this.getCategory(this.getCategoryCode());
+				System.out.println(this.getCategoryCode());
+				System.out.println("------------");
+				System.out.println(this.getCategory(this.getCategoryCode()));
+				System.out.println("------------");
 				category.setTitles(this.getTitles());
+				System.out.println(this.getCategoryManager());
+				System.out.println("------------");
 				this.getCategoryManager().updateCategory(category);
 				_logger.debug("Updated category {}", category.getCode());
 			} else {
 				Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), this.getParentCategoryCode(), this.getTitles());
+				System.out.println("category: ----> " + category);
+				System.out.println("parent settato: ----> " + this.getParentCategoryCode());
+				System.out.println("parent: ----> " + category.getParentCode());
+				System.out.println("this object is --->" + this.getClass());
 				this.getCategoryManager().addCategory(category);
 				_logger.debug("Added new category {}", this.getCategoryCode());
 			}

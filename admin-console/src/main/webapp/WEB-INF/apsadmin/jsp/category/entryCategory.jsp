@@ -29,8 +29,8 @@
 <br>
 
 <div id="main" role="main">
-	<s:if test="strutsAction == 2"><s:set var="breadcrumbs_pivotCategoryCode" value="categoryCode" /></s:if>
-	<s:else><s:set var="breadcrumbs_pivotCategoryCode" value="parentCategoryCode" /></s:else>
+<%-- 	<s:if test="strutsAction == 2"><s:set var="breadcrumbs_pivotCategoryCode" value="categoryCode" /></s:if> --%>
+<%-- 	<s:else><s:set var="breadcrumbs_pivotCategoryCode" value="parentCategoryCode" /></s:else> --%>
 <%-- 	<s:include value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo_breadcrumbs.jsp" /> --%>
 
 	<s:form action="save" cssClass="form-horizontal">
@@ -38,14 +38,6 @@
 			<div class="alert alert-danger alert-dismissable fade in">
 				<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
 				<h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h2>
-					<%-- <ul class="margin-base-top">
-						<s:iterator value="fieldErrors">
-							<s:iterator value="value">
-								<li><s:property escapeHtml="false" /></li>
-							</s:iterator>
-						</s:iterator>
-					</ul>
-					--%>
 			</div>
 		</s:if>
 
@@ -97,6 +89,8 @@
 						</s:if>
 				</div>
 			</div>
+			
+<!-- 		tree position -->
 			<div class="form-group<s:property value="controlGroupErrorClassVar" />">
 				<div class="col-xs-2">
 					<label><s:text name="name.tree.position" /></label>
@@ -104,8 +98,8 @@
 				<div class="col-xs-10">
 					<script src="<wp:resourceURL />administration/js/entando-typeahead-tree.js"></script>
 					<s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp" />
-					<table id="categoryTree"
-						class="table table-bordered table-hover table-treegrid">
+					
+					<table id="categoryTree" class="table table-bordered table-hover table-treegrid">
 						<thead>
 							<tr>
 	<!-- 						class="col-sm-10" -->
@@ -120,38 +114,22 @@
 											aria-hidden="true"></i>&#32;<s:text name="label.category.collapseAll"/>
 									</button>
 								</th>
-								<th class="col-sm-1 text-center"><s:text name="label.category.actions"/></th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr id="<s:if test="#currentRoot.isRoot()">home</s:if><s:else><s:property value="#node.code"/></s:else>" data-parent='#<s:property value="#currentRoot.parent.code"/>' class="treeRow <s:if test="%{#currentRoot.code != 'home' && #isHidden}">collapsed childrenNodes</s:if>">
-							    <td class="treegrid-node">
-							    
-							        <input type="radio" name="<s:property value="#inputFieldName" />"
-							         id="fagianonode_<s:property value="#currentRoot.code" />" 
-							         value="<s:property value="#currentRoot.code" />" 
-							         class="subTreeToggler <s:if test="#isSelected">active </s:if> <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
-							         <s:if test="#isSelected"> checked="checked"</s:if> />
-							        
-							        <span class='class="icon fa <s:property value="treeItemIconNameVar"/>'></span> &#32;
-							        <label for="fagianonode_<s:property value="#currentRoot.code" />">
-							            <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
-							            <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
-							                <span class="text-muted icon fa fa-lock"></span>
-							            </s:if>
-							        </label>
-							    </td>
-   							</tr>
-   							
-   							<s:set var="inputFieldName" value="%{'selectedNode'}" />
-							<s:set var="selectedTreeNode" value="%{selectedNode}" />
-							<s:set var="selectedPage" value="%{getCategory(selectedNode)}" />
+							   							
+   							<s:set var="inputFieldName" value="%{'parentCategoryCode'}" />
+							<s:set var="selectedTreeNode" value="%{parentCategoryCode}" />
+							<s:set var="selectedPage" value="%{getCategory(parentCategoryCode)}" />
 							<s:set var="currentRoot" value="treeRootNode" />
 							<s:set var="isPosition" value="false" />
 							<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
    							
 						</tbody>
 					</table>
+					<script>
+						$('.table-treegrid').treegrid();
+					</script>
 				</div>
 			</div>
 			

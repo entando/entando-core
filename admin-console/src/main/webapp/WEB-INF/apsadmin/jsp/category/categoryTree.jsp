@@ -33,36 +33,31 @@
 			<s:text name="label.add" />
 		</a>
 		<s:form cssClass="action-form">
-			<s:if test="hasActionErrors()">
-				<div class="alert alert-danger alert-dismissable fade in">
-					<button class="close" data-dismiss="alert">
-						<span class="icon fa fa-times"></span>
-					</button>
-					<h2 class="h4 margin-none">
-						<s:text name="message.title.ActionErrors" />
-					</h2>
-					<ul class="margin-base-top">
-						<s:iterator value="actionErrors">
-							<li><s:property escapeHtml="false" /></li>
-						</s:iterator>
-					</ul>
+			<s:if test="hasActionErrors()">			
+				<div class="alert alert-danger alert-dismissable">
+				  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+				    <span class="pficon pficon-close"></span>
+				  </button>
+				  <span class="pficon pficon-error-circle-o"></span>
+				  <strong><s:text name="message.title.ActionErrors" /></strong> 
+				  <s:iterator value="actionErrors">
+				      <span><s:property escapeHtml="false" /></span>
+				  </s:iterator>
 				</div>
+				
 			</s:if>
 			<s:if test="hasActionMessages()">
-				<div class="alert alert-info alert-dismissable fade in">
-					<button class="close" data-dismiss="alert">
-						<span class="icon fa fa-times"></span>
-					</button>
-					<h2 class="h4 margin-none">
-						<s:text name="messages.confirm" />
-						</h3>
-						<ul class="margin-base-top">
-							<s:iterator value="actionMessages">
-								<li><s:property escapeHtml="false" /></li>
-							</s:iterator>
-						</ul>
-					</h2>
+				<div class="alert alert-danger alert-dismissable">
+				  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+				    <span class="pficon pficon-close"></span>
+				  </button>
+				  <span class="pficon pficon-error-circle-o"></span>
+				  <strong><s:text name="messages.confirm" /></strong> 
+				  <s:iterator value="actionMessages">
+				      <span><s:property escapeHtml="false" /></span>
+				  </s:iterator>
 				</div>
+				
 			</s:if>
 			<%-- <fieldset class="margin-more-top"><legend><s:text name="title.categoryTree" /></legend> --%>
 

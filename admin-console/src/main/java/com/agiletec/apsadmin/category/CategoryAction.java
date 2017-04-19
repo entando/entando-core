@@ -149,6 +149,7 @@ public class CategoryAction extends AbstractTreeAction {
 //				return "categoryTree";
 //			}
 			this.setStrutsAction(ApsAdminSystemConstants.ADD);
+			System.out.println(selectedNode);
 			this.setParentCategoryCode(selectedNode);
 		} catch (Throwable t) {
 			_logger.error("error in add", t);
@@ -189,7 +190,7 @@ public class CategoryAction extends AbstractTreeAction {
 	
 	public String trash() {
 		try {
-			String check = this.chechDelete();
+			String check = this.checkDelete();
 			if (null != check) return check;
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
@@ -201,7 +202,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public String delete() {
 		String selectedNode = this.getSelectedNode();
 		try {
-			String check = this.chechDelete();
+			String check = this.checkDelete();
 			if (null != check) return check;
 			Category currentCategory = this.getCategory(selectedNode);
 			this.getCategoryManager().deleteCategory(selectedNode);
@@ -218,7 +219,7 @@ public class CategoryAction extends AbstractTreeAction {
 	 * When errors are detected a new actionMessaged, containing the appropriate error code and messaged, is created.
 	 * @return null if the deletion operation is successful, otherwise the error code
 	 */
-	protected String chechDelete() {
+	protected String checkDelete() {
 		Category currentCategory = this.getCategory(this.getSelectedNode());
 		if (null == currentCategory) {
 			_logger.info("Required a selected node");
@@ -260,17 +261,18 @@ public class CategoryAction extends AbstractTreeAction {
 		try {
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				Category category = this.getCategory(this.getCategoryCode());
-				System.out.println(this.getCategoryCode());
-				System.out.println("------------");
-				System.out.println(this.getCategory(this.getCategoryCode()));
-				System.out.println("------------");
+//				System.out.println(this.getCategoryCode());
+//				System.out.println("------------");
+//				System.out.println(this.getCategory(this.getCategoryCode()));
+//				System.out.println("------------");
 				category.setTitles(this.getTitles());
-				System.out.println(this.getCategoryManager());
-				System.out.println("------------");
+				category.setParentCode(StringUtils.trim(this.getParentCategoryCode().split(",")[1]));
+//				System.out.println(this.getCategoryManager());
+//				System.out.println("------------");
 				this.getCategoryManager().updateCategory(category);
 				_logger.debug("Updated category {}", category.getCode());
 			} else {
-				Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), this.getParentCategoryCode(), this.getTitles());
+				Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), StringUtils.trim(this.getParentCategoryCode().split(",")[1]), this.getTitles());
 				System.out.println("category: ----> " + category);
 				System.out.println("parent settato: ----> " + this.getParentCategoryCode());
 				System.out.println("parent: ----> " + category.getParentCode());
@@ -283,18 +285,6 @@ public class CategoryAction extends AbstractTreeAction {
 			return FAILURE;
 		}
 		return SUCCESS;
-	}
-	
-	protected String checkSelectedNode(String selectedNode) {
-		if (null == selectedNode || selectedNode.trim().length() == 0) {
-			this.addActionError(this.getText("error.page.noSelection"));
-			return "categoryTree";
-		}
-		if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(selectedNode)) {
-			this.addActionError(this.getText("error.page.virtualRootSelected"));
-			return "categoryTree";
-		}
-		return null;
 	}
 
 	public String moveTree() {

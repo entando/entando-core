@@ -4,11 +4,7 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="menu.configure"/></li>
-    <li><a href="<s:url action="viewTree" namespace="/do/Category"></s:url>"
-           title="<s:text name="note.goToSomewhere" />: <s:text name="title.categoryManagement" />">
-        <s:text name="title.categoryManagement"/>
-    </a>
-    </li>
+    <li><s:text name="title.categoryManagement"/></li>
     <li class="page-title-container"><s:text name="title.deleteCategory"/></li>
 </ol>
 <h1 class="page-title-container">
@@ -34,7 +30,7 @@
         <p class="esclamation-underline"><s:text name="category.delete"/></p>
         <p>
             <s:text name="category.delete.confirm"/>&#32;
-            <s:property value="getCategory(selectedNode)"/>
+            <s:property value="getCategory(selectedNode).code"/>
 
         </p>
         <div class="text-center margin-large-top">

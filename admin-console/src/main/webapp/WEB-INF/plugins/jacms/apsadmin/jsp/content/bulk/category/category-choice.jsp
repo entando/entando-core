@@ -10,14 +10,37 @@
 	<s:set var="labelTitle" value="%{getText('title.bulk.content.category.rem')}"/>
 </s:elseif>
 
+<!-- Admin console Breadcrumbs -->
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url action="list" namespace="/do/jacms/Content"/>"><s:text name="jacms.menu.contentAdmin" /></a></li>
+    <li>APPS</li>
+    <li><s:text name="breadcrumb.jacms" /></li>
     <li>
-		<s:property value="%{#labelTitle}" />
+        <a href="<s:url action="list" namespace="/do/jacms/Content"/>">
+            <s:text name="breadcrumb.jacms.content.list" />
+        </a>
     </li>
+    <li class="page-title-container"><s:property value="%{#labelTitle}" /></li>
 </ol>
 
-<h1 class="page-title-container"><s:property value="%{#labelTitle}" />&#32;-&#32;<s:text name="title.bulk.categoryChoice" /></h1>
+<!-- Page Title -->
+<s:set var="dataContent" value="%{'help block'}" />
+<s:set var="dataOriginalTitle" value="%{'Section Help'}"/>
+<h1 class="page-title-container">
+    <s:property value="%{#labelTitle}" />&#32;&ndash;&#32;<s:text name="title.bulk.categoryChoice" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" 
+            data-toggle="popover" data-trigger="focus" 
+            data-html="true" title="" data-content="${dataContent}" 
+            data-placement="left" data-original-title="${dataOriginalTitle}">
+            <span class="fa fa-question-circle-o" aria-hidden="true"></span>
+        </a>
+    </span>
+</h1>
+
+<!-- Default separator -->
+<div class="text-right">
+    <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
+</div>
 
 <div id="main" role="main">
 	<s:if test="hasErrors()">

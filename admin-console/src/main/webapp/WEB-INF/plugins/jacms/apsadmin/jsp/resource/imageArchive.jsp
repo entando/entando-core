@@ -150,7 +150,7 @@
                                 <s:param name="treeNodesToOpen" value="%{treeNodesToOpen}"/>
                             </s:url>
                             <div class="col-xs-6 col-sm-4 col-md-3">
-                                <div class="card-pf card-pf-view card-pf-view-select card-pf-view-single-select">
+                                <div class="card-pf card-pf-view card-pf-view-select">
                                     <div class="card-pf-body">
                                         <div class="card-pf-heading-kebab">
                                             <div class="dropdown pull-right dropdown-kebab-pf">
@@ -212,8 +212,6 @@
                     </div>
                 </wpsa:subset>
             </s:form>
-
-
         </div>
         <div id="list-view" class="tab-pane fade">
             <s:form action="search" class="container-fluid">
@@ -261,12 +259,12 @@
                                     </div>--%>
                                 <div class="list-view-pf-actions">
                                     <div class="dropdown pull-right dropdown-kebab-pf">
-                                        <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight3"
+                                        <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight2"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                             <span class="fa fa-ellipsis-v"></span>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-right"
-                                            aria-labelledby="dropdownKebabRight3">
+                                            aria-labelledby="dropdownKebabRight2">
                                             <li>
                                                 <s:if test="!onEditContent">
                                                     <a href="<s:property value="URLedit" escapeHtml="false" />"

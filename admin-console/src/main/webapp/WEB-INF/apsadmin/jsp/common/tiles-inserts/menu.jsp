@@ -131,7 +131,7 @@
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item ">
-                                <a href='<s:url action="list" namespace="/do/jacms/Integration" />'>
+                                <a href='<s:url action="edit" namespace="/do/jpavatar/Avatar" />'>
                                     <span class="list-group-item-value">Avatar Management</span>
                                 </a>
                             </li>

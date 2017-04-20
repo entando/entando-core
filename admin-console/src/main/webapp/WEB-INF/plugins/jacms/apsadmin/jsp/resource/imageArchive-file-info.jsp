@@ -8,10 +8,10 @@
     <s:else>
         <s:property value="#fileNameVar" />
     </s:else>
-</code>--%>
+</code>
 <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}">
     <span class="text-muted icon fa fa-lock"></span>
-</s:if>
+</s:if>--%>
 <s:set var="dimensionId" value="0"/>
 <s:set var="resourceInstance" value='%{#resource.getInstance(#dimensionId,null)}'/>
 <a href="<s:property value="%{#resource.getImagePath(#dimensionId)}" />" class="list-group-item">

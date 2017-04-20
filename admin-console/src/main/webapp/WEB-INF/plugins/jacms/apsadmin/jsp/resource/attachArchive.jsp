@@ -76,7 +76,7 @@
 <div class="tab-content" class="tab-pane active">
     <s:include value="inc/resource_searchForm.jsp"/>
     <wp:ifauthorized permission="manageResources">
-        <div class="col-md-offset-1 col-md-10">
+        <div class="col-sm-12">
             <p><a href="<s:url action="new" >
                     <s:param name="resourceTypeCode" value="resourceTypeCode" />
                     <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
@@ -239,23 +239,23 @@
                                             </h2>
                                             <p class="card-pf-info text-center">
                                                 <a href="<s:property value="%{#resource.documentPath}" />"
-                                                   title="<s:text name="label.download" />: <s:property value="#resource.masterFileName" />"
-                                                   class="pull-left margin-small-top">
+                                                   title="<s:text name="label.download" />: <s:property value="#resource.masterFileName" />"    >
                                                     <s:set var="fileNameVar" value="#resource.masterFileName"/>
                                                     <s:if test='%{#fileNameVar.length()>25}'>
                                                         <s:set var="fileNameVar"
                                                                value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}'/>
                                                         <span>
-                                                                    <abbr title="<s:property value="#resource.masterFileName" />">
-                                                                        <s:property value="#fileNameVar"/>
-                                                                    </abbr>
-                                                                </span>
+                                                            <abbr title="<s:property value="#resource.masterFileName" />">
+                                                                <s:property value="#fileNameVar"/>
+                                                            </abbr>
+                                                        </span>
                                                     </s:if>
                                                     <s:else>
                                                         <span><s:property value="#fileNameVar"/></span>
                                                     </s:else>
                                                 </a>
                                             </p>
+
                                         </div>
                                     </div>
                                 </div>

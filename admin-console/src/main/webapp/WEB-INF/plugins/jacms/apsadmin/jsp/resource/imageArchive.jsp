@@ -189,13 +189,13 @@
                                         <div class="card-pf-top-element">
                                                 <%-- Dimension forced for img thumbnail --%>
                                             <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" "
-                                                 style="height:90px;max-width:130px" class="margin-small-top"/>
+                                                 style="height:90px;max-width:130px" class="img-responsive center-block"/>
                                         </div>
                                         <h2 class="card-pf-title text-center">
                                             <s:set var="fileNameVar" value="#resource.masterFileName"/>
-                                            <s:if test='%{#fileNameVar.length()>24}'>
+                                            <s:if test='%{#fileNameVar.length()>15}'>
                                                 <s:set var="fileNameVar"
-                                                       value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}'/>
+                                                       value='%{#fileNameVar.substring(0,7)+"..."+#fileNameVar.substring(#fileNameVar.length()-5)}'/>
                                                 <s:property value="#fileNameVar"/>
                                             </s:if>
                                             <s:else>
@@ -286,8 +286,8 @@
                                     </div>
                                 </div>
                                 <div class="list-view-pf-main-info">
-                                    <div class="list-view-pf-left col-o">
-                                        <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" " class="margin-small-top"/>
+                                    <div class="list-view-pf-left col-o" style="width: 130px">
+                                        <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" " class="img-responsive center-block"/>
                                     </div>
                                     <div class="list-view-pf-body">
                                         <div class="list-view-pf">

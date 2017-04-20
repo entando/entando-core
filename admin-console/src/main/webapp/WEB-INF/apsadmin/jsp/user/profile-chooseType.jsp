@@ -56,7 +56,7 @@
                     <s:text name="label.profile" />
                 </label>
                 <div class="col-sm-8">
-                    <wpsf:select list="userProfileTypes" id="profileTypeCode" name="profileTypeCode" listKey="code" listValue="description" cssClass="form-control" />
+                    <wpsf:select list="userProfileTypes" headerKey="" headerValue="%{getText('note.choose')}" id="profileTypeCode" name="profileTypeCode" listKey="code" listValue="description" cssClass="form-control" />
                 </div>
             </div>
         </div>

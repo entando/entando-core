@@ -210,6 +210,7 @@
 												name="%{'jacmsPreviewActionPageCode_' + #lang.code}"
 												id="%{#previewActionPageCodeLabelId}"
 												list="#showingPageSelectItems"
+                                                                                                headerKey="" headerValue="%{getText('note.choose')}"
 												listKey="key"
 												listValue="%{getText('name.preview.page') + ': ' +value}"
 												cssClass="form-control"
@@ -255,6 +256,7 @@
 							<div class="input-group">
 								<wpsf:select
 									name="extraGroupName"
+                                                                        headerKey="" headerValue="%{getText('note.choose')}"
 									id="extraGroups"
 									list="groups"
 									listKey="name"

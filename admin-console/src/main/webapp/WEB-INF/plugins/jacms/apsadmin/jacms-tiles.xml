@@ -228,4 +228,11 @@
 	</definition>
     <!-- ********* FINE Area Gestione Entità ********* -->
 
+    <!-- *** Inizio Area Integrations - UX Components *** -->
+    <definition extends="layout.default" name="admin.jacms.integration.avatar">
+        <put-attribute name="title" value="title.avatarManagement" />
+        <put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/integration/avatarManagement.jsp" />
+    </definition>
+    <!-- *** Fine Area Integrations - UX Components  *** -->
+
 </tiles-definitions>

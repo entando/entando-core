@@ -131,9 +131,8 @@
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item ">
-                                <a>
-                                    <span id="compute-containers-users-nav-item" class="list-group-item-value">TO_DO</span>
-
+                                <a href='<s:url action="list" namespace="/do/jacms/Integration" />'>
+                                    <span class="list-group-item-value">Avatar Management</span>
                                 </a>
                             </li>
                         </ul>

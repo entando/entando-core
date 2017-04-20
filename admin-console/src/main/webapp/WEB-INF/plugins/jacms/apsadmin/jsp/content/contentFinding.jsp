@@ -429,6 +429,7 @@
 							</s:if>
 						</s:iterator>
 					</ul>
+<%-- 					<jacmswpsa:content contentId="" ></jacmswpsa:content> --%>
 				</div>
 			</div>
 
@@ -469,7 +470,7 @@
 			<s:set var="contentIdsVar" value="contents" />
 
 			<!-- Content List -->
-			<wpsa:subset source="#contentIdsVar" count="2"
+			<wpsa:subset source="#contentIdsVar" count="10"
 				objectName="groupContent" advanced="true" offset="5">
 				<s:set var="group" value="#groupContent" />
 
@@ -506,13 +507,14 @@
                                 <div class="toolbar-pf-actions">
                                     <!-- items selected -->
                                     <div class="col-md-6 col-xs-12 no-padding">
-                                        <span class="selected-items-counter">0</span> item(s) selected
+                                        <span class="selected-items-counter">0</span> <s:text name="title.itemSelected" />
                                     </div>
 
                                     <!-- toolbar -->
                                     <div class="col-md-6 col-xs-12 no-padding">
-                                        <label class="col-md-2 control-label"> <%--                                 <s:text name="title.contentActions" /> --%>
-                                            Set as
+                                        <label class="col-md-2 control-label"> 
+                                        	<%-- <s:text name="title.contentActions" /> --%>
+                                            <s:text name="label.setAs" />
                                         </label>
 
                                         <div class="col-sm-10 no-padding">
@@ -809,7 +811,7 @@
 					<div class="content-view-pf-pagination table-view-pf-pagination clearfix">
 						<%-- TODO: abilitare selezione elementi per pagina --%>
 						<div class="form-group">
-							<div class="btn-group bootstrap-select pagination-pf-pagesize mt-5">
+							<div class="btn-group bootstrap-select pagination-pf-pagesize">
 								<button type="button" class="btn dropdown-toggle btn-default"
 									data-toggle="dropdown" title="15">
 									<span class="filter-option pull-left">15</span>&nbsp;<span

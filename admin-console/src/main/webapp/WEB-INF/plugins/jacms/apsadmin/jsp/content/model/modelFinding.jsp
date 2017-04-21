@@ -52,15 +52,10 @@
 		</div>
 	</div>
 
-	<div class="row form-group">
-		<div class="col-sm-12">
-			<a href="<s:url action="new" namespace="/do/jacms/ContentModel"/>"
-				class="btn btn-primary pull-right"> <span
-				class="icon fa fa-plus-circle"></span>&#32; <s:text
-					name="title.contentModels.new" />
-			</a>
-		</div>
-	</div>
+	<a href="<s:url action="new" namespace="/do/jacms/ContentModel"/>"
+		class="btn btn-primary pull-right" style="margin-bottom: 5px">
+		<s:text name="contentModels.label.add" />
+	</a>
 
 	<s:form action="search">
 
@@ -109,8 +104,8 @@
 											</a></li>
 											<li><a
 												href="<s:url action="trash" namespace="/do/jacms/ContentModel" />?modelId=<s:property value="#model.id" />"
-												title="<s:text name="label.remove" />: <s:property value="#model.description" />"><span><s:text
-															name="label.remove" /></span></a></li>
+												title="<s:text name="label.delete" />: <s:property value="#model.description" />"><span><s:text
+															name="label.delete" /></span></a></li>
 										</ul>
 									</div>
 								</td>

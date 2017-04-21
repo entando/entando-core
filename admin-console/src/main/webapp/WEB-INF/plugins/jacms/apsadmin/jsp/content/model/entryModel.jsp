@@ -51,125 +51,114 @@
 			</s:if>
 		</p>
 
-		<div
-			class="form-group<s:if test="strutsAction == 1 && null == contentType"> has-warning</s:if>">
-			<div class="col-xs-12">
-				<label for="contentType" class="col-sm-2 control-label"><s:text
-						name="contentModel.type" /></label>
-				<div class="col-sm-10">
-					<div class="input-group">
-						<wpsf:select id="contentType" list="smallContentTypes"
-							name="contentType" listKey="code" listValue="descr"
-							cssClass="form-control" headerKey=""
-							headerValue="%{getText('note.choose')}" />
-						<span class="input-group-btn"> <s:if
-								test="strutsAction == 1 && null == contentType">
-								<wpsf:submit type="button" action="lockContentType"
-									cssClass="btn btn-warning" value="%{getText('label.set')}" />
-							</s:if> <s:else>
-								<wpsf:submit type="button" action="lockContentType"
-									cssClass="btn btn-info" value="%{getText('label.change')}" />
-							</s:else>
-						</span>
-					</div>
-					<s:if test="strutsAction == 1 && null == contentType">
-						<span class="help-block pull-right"><span
-							class="icon fa fa-info-circle"></span>&#32;<s:text
-								name="note.contentModel.assist.intro" /></span>
-					</s:if>
+		<div class="form-group<s:if test="strutsAction == 1 && null == contentType"> has-warning</s:if>">
+			<label for="contentType" class="col-sm-2 control-label"><s:text
+					name="contentModel.type" /></label>
+			<div class="col-sm-10">
+				<div class="input-group">
+					<wpsf:select id="contentType" list="smallContentTypes"
+						name="contentType" listKey="code" listValue="descr"
+						cssClass="form-control" headerKey=""
+						headerValue="%{getText('note.choose')}" />
+					<span class="input-group-btn"> <s:if
+							test="strutsAction == 1 && null == contentType">
+							<wpsf:submit type="button" action="lockContentType"
+								cssClass="btn btn-warning" value="%{getText('label.set')}" />
+						</s:if> <s:else>
+							<wpsf:submit type="button" action="lockContentType"
+								cssClass="btn btn-info" value="%{getText('label.change')}" />
+						</s:else>
+					</span>
 				</div>
-			</div>
-		</div>
-		<div
-			class="form-group<s:property value="controlGroupErrorClassVar" />">
-			<div class="col-xs-12">
-				<s:set var="modelIdFieldErrorsVar" value="%{fieldErrors['modelId']}" />
-				<s:set var="modelIdHasFieldErrorVar"
-					value="#modelIdFieldErrorsVar!= null && !#modelIdFieldErrorsVar.isEmpty()" />
-				<s:set var="controlGroupErrorClassVar"
-					value="%{#modelIdHasFieldErrorVar ? ' has-error' : ''}" />
-				<label class="col-sm-2 control-label" for="modelId"><s:text
-						name="contentModel.id" /></label>
-				<div class="col-sm-10">
-					<wpsf:textfield name="modelId" id="modelId"
-						disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
-					<s:if test="#modelIdHasFieldErrorVar">
-						<p class="text-danger padding-small-vertical">
-							<s:iterator value="#modelIdFieldErrorsVar">
-								<s:property />
-							</s:iterator>
-						</p>
-					</s:if>
-				</div>
-			</div>
-		</div>
-		<div
-			class="form-group<s:property value="controlGroupErrorClassVar" />">
-			<div class="col-xs-12">
-				<s:set var="descriptionFieldErrorsVar"
-					value="%{fieldErrors['description']}" />
-				<s:set var="descriptionHasFieldErrors"
-					value="#descriptionFieldErrorsVar!= null && !#descriptionFieldErrorsVar.isEmpty()" />
-				<s:set var="controlGroupErrorClassVar"
-					value="%{#descriptionHasFieldErrors ? ' has-error' : ''}" />
-				<label class="col-sm-2 control-label" for="description"><s:text
-						name="label.description" /></label>
-				<div class="col-sm-10">
-					<wpsf:textfield name="description" id="description"
-						cssClass="form-control" />
-					<s:if test="#descriptionHasFieldErrors">
-						<p class="text-danger padding-small-vertical">
-							<s:iterator value="#descriptionFieldErrorsVar">
-								<s:property />
-							</s:iterator>
-						</p>
-					</s:if>
-				</div>
-			</div>
-		</div>
-		<div
-			class="form-group<s:property value="controlGroupErrorClassVar" />">
-			<div class="col-xs-12">
-				<s:set var="contentShapeFieldErrorsVar"
-					value="%{fieldErrors['contentShape']}" />
-				<s:set var="contentShapeHasFieldErrorVar"
-					value="#contentShapeFieldErrorsVar != null && !#contentShapeFieldErrorsVar.isEmpty()" />
-				<label class="col-sm-2 control-label" for="contentShape"><s:text
-						name="contentModel.label.shape" /></label>
-				<div class="col-sm-10">
-					<div class="display-block">
-						<s:textarea name="contentShape" id="contentShape" cols="50"
-							rows="10" cssClass="form-control" />
-					</div>
+				<s:if test="strutsAction == 1 && null == contentType">
 					<span class="help-block pull-right"><span
-						class="icon fa fa-info-circle"></span>&#32; <s:if
-							test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">(<s:text
-								name="note.contentModel.help" />)&#32;</s:if> <s:text
-							name="note.contentModel.contentAssist" />:&#32;<em
-						class="important"><s:text name="label.on" /></em>.&#32; <s:if
-							test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">[<s:text
-								name="note.contentModel.attributeHelp" />:&#32;<em
-								class="important"><s:text name="label.on" /></em>]</s:if> <s:else>[<s:text
-								name="note.contentModel.attributeHelp" />:&#32;<em
-								class="important"><s:text name="label.off" /></em>]</s:else> </span>
-					<s:if test="#contentShapeHasFieldErrorVar">
-						<p class="text-danger padding-small-vertical">
-							<s:iterator value="#contentShapeFieldErrorsVar">
-								<s:property />
-							</s:iterator>
-						</p>
-					</s:if>
+						class="icon fa fa-info-circle"></span>&#32;<s:text
+							name="note.contentModel.assist.intro" /></span>
+				</s:if>
+			</div>
+		</div>
+		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+			<s:set var="modelIdFieldErrorsVar" value="%{fieldErrors['modelId']}" />
+			<s:set var="modelIdHasFieldErrorVar"
+				value="#modelIdFieldErrorsVar!= null && !#modelIdFieldErrorsVar.isEmpty()" />
+			<s:set var="controlGroupErrorClassVar"
+				value="%{#modelIdHasFieldErrorVar ? ' has-error' : ''}" />
+			<label class="col-sm-2 control-label" for="modelId"><s:text
+					name="contentModel.id" /></label>
+			<div class="col-sm-10">
+				<wpsf:textfield name="modelId" id="modelId"
+					disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
+				<s:if test="#modelIdHasFieldErrorVar">
+					<p class="text-danger padding-small-vertical">
+						<s:iterator value="#modelIdFieldErrorsVar">
+							<s:property />
+						</s:iterator>
+					</p>
+				</s:if>
+			</div>
+		</div>
+		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+			<s:set var="descriptionFieldErrorsVar"
+				value="%{fieldErrors['description']}" />
+			<s:set var="descriptionHasFieldErrors"
+				value="#descriptionFieldErrorsVar!= null && !#descriptionFieldErrorsVar.isEmpty()" />
+			<s:set var="controlGroupErrorClassVar"
+				value="%{#descriptionHasFieldErrors ? ' has-error' : ''}" />
+			<label class="col-sm-2 control-label" for="description"><s:text
+					name="label.description" /></label>
+			<div class="col-sm-10">
+				<wpsf:textfield name="description" id="description"
+					cssClass="form-control" />
+				<s:if test="#descriptionHasFieldErrors">
+					<p class="text-danger padding-small-vertical">
+						<s:iterator value="#descriptionFieldErrorsVar">
+							<s:property />
+						</s:iterator>
+					</p>
+				</s:if>
+			</div>
+		</div>
+		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+			<s:set var="contentShapeFieldErrorsVar"
+				value="%{fieldErrors['contentShape']}" />
+			<s:set var="contentShapeHasFieldErrorVar"
+				value="#contentShapeFieldErrorsVar != null && !#contentShapeFieldErrorsVar.isEmpty()" />
+			<label class="col-sm-2 control-label" for="contentShape"><s:text
+					name="contentModel.label.shape" /></label>
+			<div class="col-sm-10">
+				<div class="display-block">
+					<s:textarea name="contentShape" id="contentShape" cols="50"
+						rows="10" cssClass="form-control" />
 				</div>
+				<span class="help-block pull-right">
+					<span class="icon fa fa-info-circle"></span>&#32;
+					<s:if test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">(<s:text name="note.contentModel.help" />)&#32;</s:if>
+					<s:text name="note.contentModel.contentAssist" />:&#32;
+					<em class="important">
+						<s:text name="label.on" /></em>.&#32;
+					<s:if test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">[<s:text
+							name="note.contentModel.attributeHelp" />:&#32;<em
+							class="important"><s:text name="label.on" /></em>]</s:if>
+					<s:else>[<s:text name="note.contentModel.attributeHelp" />:&#32;
+						<em
+							class="important"><s:text name="label.off" /></em>]
+					</s:else>
+				</span>
+				<s:if test="#contentShapeHasFieldErrorVar">
+					<p class="text-danger padding-small-vertical">
+						<s:iterator value="#contentShapeFieldErrorsVar">
+							<s:property />
+						</s:iterator>
+					</p>
+				</s:if>
 			</div>
 		</div>
 		<div class="form-group">
-			<div class="col-xs-12">
-				<label class="col-sm-2 control-label" for="newModel_stylesheet"><s:text
-						name="contentModel.label.stylesheet" /></label>
-				<div class="col-sm-10">
-					<wpsf:textfield name="stylesheet" id="newModel_stylesheet"
-						cssClass="form-control" />
-				</div>
+			<label class="col-sm-2 control-label" for="newModel_stylesheet"><s:text
+					name="contentModel.label.stylesheet" /></label>
+			<div class="col-sm-10">
+				<wpsf:textfield name="stylesheet" id="newModel_stylesheet"
+					cssClass="form-control" />
 			</div>
 		</div>
 

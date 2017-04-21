@@ -48,7 +48,11 @@
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/profile-entry.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userProfile-entry.jsp" />
     </definition>
-	
+
+	<definition extends="layout.default" name="admin.common.profile.edit">
+        <put-attribute name="title" value="title.avatarManagement" />
+        <put-attribute name="body" value="/WEB-INF/plugins/jpavatar/apsadmin/jsp/config/jpavatar_config.jsp" />
+    </definition>
     <!-- ********* User management - START ********* -->
 	
     <definition extends="layout.settings" name="admin.User.list">

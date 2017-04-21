@@ -37,52 +37,52 @@
 <br>
 
 <div id="main" role="main">
-<!--    <div class="row">
-        <div class="col-md-offset-2 col-md-8  ">
-            <p class="search-label "><s:text name="label.message.seach"/></p>
-            <s:form action="search" cssClass="search-pf has-button">
-                <div class="form-group has-clear">
-                    <label class="sr-only" for="text"><s:text name="label.search.by"/>&#32;<s:text name="label.text"/></label>
-                    <wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
-                                    title="%{getText('label.search.by') +' '+ getText('label.text')}"
-                                    placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"
-                    />
+    <!--    <div class="row">
+            <div class="col-md-offset-2 col-md-8  ">
+                <p class="search-label "><s:text name="label.message.seach"/></p>
+    <s:form action="search" cssClass="search-pf has-button">
+        <div class="form-group has-clear">
+            <label class="sr-only" for="text"><s:text name="label.search.by"/>&#32;<s:text name="label.text"/></label>
+            <wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
+                            title="%{getText('label.search.by') +' '+ getText('label.text')}"
+                            placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"
+            />
+        </div>
+        <div class="form-group">
+            <wpsf:submit type="button" cssClass="btn btn-default btn-lg pull-right">
+                <span class="fa fa-search"></span>
+            </wpsf:submit>
+        </div>
+    </s:form>
+</div>
+</div>-->
+    <div class="col-xs-12  ">
+        <div class="well col-md-offset-3 col-md-6  ">
+            <p class="search-label"><s:text name="label.message.seach" /></p>
+            <s:form action="search" class="search-pf has-button " cssClass="form-horizontal" >
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="text" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.text"/></label>
+                    <div class="col-sm-9">
+                        <wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
+                                        title="%{getText('label.search.by') +' '+ getText('label.text')}"
+                                        placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"
+                                        />
+                    </div>
                 </div>
                 <div class="form-group">
-                    <wpsf:submit type="button" cssClass="btn btn-default btn-lg pull-right">
-                        <span class="fa fa-search"></span>
-                    </wpsf:submit>
-                </div>
-            </s:form>
-        </div>
-    </div>-->
-<div class="col-xs-12  ">
-    <div class="well col-md-offset-3 col-md-6  ">
-        <p class="search-label"><s:text name="label.message.seach" /></p>
-        <s:form action="search" class="search-pf has-button " cssClass="form-horizontal" >
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="text" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.text"/></label>
-                <div class="col-sm-9">
-                    <wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
-                                    title="%{getText('label.search.by') +' '+ getText('label.text')}"
-                                    placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"
-                    />
-                </div>
+                    <label class="col-sm-2"></label>
+                    <div class="col-sm-9">
+                        <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+                            <s:text name="label.search" />
+                        </wpsf:submit>
+                    </div>
+                </s:form>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2"></label>
-                <div class="col-sm-9">
-                    <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
-                        <s:text name="label.search" />
-                    </wpsf:submit>
-                </div>
-            </s:form>
         </div>
-    </div>
-</div>            
-	<br>
-	<br>
-	
+    </div>            
+    <br>
+    <br>
+    
     <div class="row">
         <div class="col-sm-12">
             <a href="<s:url namespace="/do/LocaleString" action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
@@ -90,8 +90,8 @@
             </a>
         </div>
     </div>
-
-
+    
+    
     <ul class="nav nav-tabs">
         <s:iterator value="systemLangs" var="lang">
             <s:set var="labelModifier" value="''"/>
@@ -112,8 +112,8 @@
             </li>
         </s:iterator>
     </ul>
-
-
+    
+    
     <div class="tab-content">
         <s:iterator value="systemLangs" var="lang">
             <s:set var="classModifier" value="''"/>
@@ -123,75 +123,85 @@
             <div id="<s:property value="#lang.code"/>" class="tab-pane fade <s:property value="classModifier"/>">
                 <s:form action="search" cssClass="form-horizontal margin-large-top">
                     <p class="sr-only">
-                        <wpsf:hidden name="text"/>
-                        <wpsf:hidden name="searchOption"/>
+                    <wpsf:hidden name="text"/>
+                    <wpsf:hidden name="searchOption"/>
                     </p>
                     <s:set var="currentLocaleStrings" value="localeStrings"/>
                     <wpsa:subset source="currentLocaleStrings" count="20" objectName="groupContent"
                                  advanced="true" offset="5">
                         <s:set var="group" value="#groupContent"/>
                         <p class="sr-only">
-                            <wpsf:hidden name="lastGroupBy"/>
-                            <wpsf:hidden name="lastOrder"/>
-
+                        <wpsf:hidden name="lastGroupBy"/>
+                        <wpsf:hidden name="lastOrder"/>
+                        
                         </p>
-                        <table class="table table-striped table-bordered table-hover" id="labelTable">
-                            <thead>
-                            <tr>
-                                <th><s:text name="label.code"/></th>
-                                <th><s:property value="#lang.descr" /><s:property value="thModifier"/></th>
-                                <th class="text-center " style="width: 20px"><s:text name="label.actions"/></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <s:if test="%{#currentLocaleStrings.size > 0}">
-                                <p class="sr-only"><s:text name="title.generalSettings.locale.installedLabels"/></p>
-                                <s:iterator var="key">
-                                    <tr class="dl-horizontal dl-striped panel padding-base-top padding-base-bottom">
-
-                                        <s:set var="currentLabel" value="labels[#key]"/>
-
-                                        <td class="col-md-5"><s:property value="#key"/></td>
-                                        <td class="col-md-6">
-                                            <s:if test="%{#currentLabel[#lang.code]==null || #currentLabel[#lang.code].length()==0}">
-                                                <abbr title="empty">&ndash;</abbr>
-                                            </s:if>
-                                            <s:else>
-                                                <s:property value="#currentLabel[#lang.code]"/>
-                                            </s:else>
-                                        </td>
-                                        <td class="col-md-1 text-center">
-                                            <div class="dropdown dropdown-kebab-pf">
-                                                <p class="sr-only"><s:text name="label.actions"/></p>
-                                                <span class="btn btn-menu-right dropdown-toggle" type="button"
-                                                      data-toggle="dropdown" aria-haspopup="true"
-                                                      aria-expanded="false">
-                                                    <span class="fa fa-ellipsis-v"></span>
-                                                </span>
-                                                <ul class="dropdown-menu dropdown-menu-right">
-                                                    <li>
-                                                        <a href="<s:url action="edit" namespace="/do/LocaleString" />?key=<s:property value="#key" />"
-                                                           title="<s:text name="label.edit" />: <s:property value="#key" />">
-                                                            <s:text name="label.edit"/>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="<s:url action="trash" namespace="/do/LocaleString"><s:param name="key" value="#key" /></s:url>"
-                                                           title="<s:text name="label.remove" />: <s:property value="#key" />">
-                                                            <s:text name="label.remove"/>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </s:iterator>
-                            </s:if>
-                            </tbody>
-                        </table>
-                        <div class="text-center">
-                            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp"/>
-                            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp"/>
+                        <div class="col-xs-12 no-padding">
+                            <div class="mt-20">
+                                <table class="table table-striped table-bordered table-hover content-list no-mb" id="labelTable">
+                                    <thead>
+                                        <tr>
+                                            <th><s:text name="label.code"/></th>
+                                            <th><s:property value="#lang.descr" /><s:property value="thModifier"/></th>
+                                            <th class="text-center " style="width: 20px"><s:text name="label.actions"/></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <s:if test="%{#currentLocaleStrings.size > 0}">
+                                        <p class="sr-only"><s:text name="title.generalSettings.locale.installedLabels"/></p>
+                                        <s:iterator var="key">
+                                            <tr class="dl-horizontal dl-striped panel padding-base-top padding-base-bottom">
+                                                
+                                                <s:set var="currentLabel" value="labels[#key]"/>
+                                                
+                                                <td class="col-md-5"><s:property value="#key"/></td>
+                                                <td class="col-md-6">
+                                                    <s:if test="%{#currentLabel[#lang.code]==null || #currentLabel[#lang.code].length()==0}">
+                                                        <abbr title="empty">&ndash;</abbr>
+                                                    </s:if>
+                                                    <s:else>
+                                                        <s:property value="#currentLabel[#lang.code]"/>
+                                                    </s:else>
+                                                </td>
+                                                <td class="col-md-1 text-center">
+                                                    <div class="dropdown dropdown-kebab-pf">
+                                                        <p class="sr-only"><s:text name="label.actions"/></p>
+                                                        <span class="btn btn-menu-right dropdown-toggle" type="button"
+                                                              data-toggle="dropdown" aria-haspopup="true"
+                                                              aria-expanded="false">
+                                                            <span class="fa fa-ellipsis-v"></span>
+                                                        </span>
+                                                        <ul class="dropdown-menu dropdown-menu-right">
+                                                            <li>
+                                                                <a href="<s:url action="edit" namespace="/do/LocaleString" />?key=<s:property value="#key" />"
+                                                                   title="<s:text name="label.edit" />: <s:property value="#key" />">
+                                                                    <s:text name="label.edit"/>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="<s:url action="trash" namespace="/do/LocaleString"><s:param name="key" value="#key" /></s:url>"
+                                                                   title="<s:text name="label.remove" />: <s:property value="#key" />">
+                                                                    <s:text name="label.remove"/>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </s:iterator>
+                                    </s:if>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+                            <div class="form-group">
+                                <span><s:include
+                                        value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                                <div class="mt-5">
+                                    <s:include
+                                        value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                                </div>
+                            </div>
                         </div>
                     </wpsa:subset>
                 </s:form>

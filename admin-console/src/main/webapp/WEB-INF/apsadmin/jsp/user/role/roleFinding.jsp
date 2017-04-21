@@ -38,55 +38,71 @@
 
 <!--<a class="btn btn-primary"
    href="<s:url namespace="/do/Role" action="new" />">
-    <s:text name="title.roleManagement.roleNew" />
+<s:text name="title.roleManagement.roleNew" />
 </a>-->
 
 <br>
 <a href="<s:url namespace="/do/Role" action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
-        <s:text name="title.roleManagement.roleNew" />
-    </a>
-
-<table class="table table-striped table-bordered table-hover">
-    <tr>
-        <th><s:text name="label.code" /></th>
-        <th><s:text name="label.name" /></th>
-        <th class="text-designer"><s:text name="label.actions" /></th>
-    </tr>
-
-    <s:iterator value="roles" var="role">
-        <tr>
-            <td><s:property value="#role.name" /></td>
-            <td><s:property value="#role.description" /></td>
-            <td class=" table-view-pf-actions">
-
-                <div class="dropdown dropdown-kebab-pf">
-                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
-                    <ul class="dropdown-menu dropdown-menu-right">								
-                        <li>
-                            <a href="<s:url action="detail"><s:param name="name" value="#role.name"/></s:url>" 
-                               title="<s:text name="note.detailsFor" />: <s:property value="#role.name" />">
-                                <s:text name="note.detailsFor" />: <s:property value="#role.name" />
-                                <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#role.name" /></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />" 
-                               href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
-                                <s:text name="label.edit" />:&#32;<s:property value="#role.name" />
-                                <span class="sr-only"><s:text name="label.edit" />:&#32;<s:property value="#role.name" /></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a  title="<s:text name="label.remove" />: <s:property value="#role.name" />" 
-                                href="<s:url action="trash"><s:param name="name" value="#role.name"/></s:url>">
-                                <s:text name="label.remove" />: <s:property value="#role.name" />
-                                <span class="sr-only"><s:text name="label.remove" />: <s:property value="#role.name" /></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </td>
-        </tr>
-    </s:iterator>
-</table>
-
+    <s:text name="title.roleManagement.roleNew" />
+</a>
+<s:set var="roles_list" value="roles" />
+<wpsa:subset source="#roles_list" count="10" objectName="rolesList" advanced="true" offset="5">
+    <s:set var="group" value="#rolesList" />
+    <div class="col-xs-12 no-padding">
+        <div class="mt-20">
+            <table class="table table-striped table-bordered table-hover content-list no-mb">
+                <tr>
+                    <th><s:text name="label.code" /></th>
+                    <th><s:text name="label.name" /></th>
+                    <th class="text-designer"><s:text name="label.actions" /></th>
+                </tr>
+                
+                <s:iterator var="role">
+                    <tr>
+                        <td><s:property value="#role.name" /></td>
+                        <td><s:property value="#role.description" /></td>
+                        <td class=" table-view-pf-actions">
+                            
+                            <div class="dropdown dropdown-kebab-pf">
+                                <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
+                                <ul class="dropdown-menu dropdown-menu-right">								
+                                    <li>
+                                        <a href="<s:url action="detail"><s:param name="name" value="#role.name"/></s:url>" 
+                                           title="<s:text name="note.detailsFor" />: <s:property value="#role.name" />">
+                                            <s:text name="note.detailsFor" />: <s:property value="#role.name" />
+                                            <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#role.name" /></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />" 
+                                           href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
+                                            <s:text name="label.edit" />:&#32;<s:property value="#role.name" />
+                                            <span class="sr-only"><s:text name="label.edit" />:&#32;<s:property value="#role.name" /></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a  title="<s:text name="label.remove" />: <s:property value="#role.name" />" 
+                                            href="<s:url action="trash"><s:param name="name" value="#role.name"/></s:url>">
+                                            <s:text name="label.remove" />: <s:property value="#role.name" />
+                                            <span class="sr-only"><s:text name="label.remove" />: <s:property value="#role.name" /></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </s:iterator>
+            </table>
+        </div>
+    </div>
+    <div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+        <div class="form-group">
+            <span><s:include
+                    value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+            <div class="mt-5">
+                <s:include
+                    value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+            </div>
+        </div>
+    </div>
+</wpsa:subset>

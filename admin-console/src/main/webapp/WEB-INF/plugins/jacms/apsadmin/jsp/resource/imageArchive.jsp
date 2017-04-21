@@ -84,12 +84,11 @@
                     <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
                 </s:url>"
                   class="btn btn-primary pull-right"
-                  title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
+                  title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />" style="margin-bottom: 5px">
                 <s:property value="%{getText('label.' + resourceTypeCode + '.new')}"/>
             </a></p>
         </div>
     </wp:ifauthorized>
-    <br>
     <br>
 
     <div class="container-fluid">
@@ -108,7 +107,7 @@
     </div>
 
     <div class="tab-content">
-        <div id="table-view" class="tab-pane fade in active">
+        <div id="table-view" class="tab-pane fade">
 
             <s:form action="search" class="container-fluid container-cards-pf">
                 <p class="sr-only">
@@ -179,7 +178,7 @@
                                                         </s:else>
                                                     </li>
                                                     <li>
-                                                        <a href="<s:property value="URLtrash" escapeHtml="false" />">Remove</a>
+                                                        <a href="<s:property value="URLtrash" escapeHtml="false" />"><s:text name="label.delete"/></a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -213,7 +212,7 @@
                 </wpsa:subset>
             </s:form>
         </div>
-        <div id="list-view" class="tab-pane fade">
+        <div id="list-view" class="tab-pane fade in active">
             <s:form action="search" class="container-fluid">
                 <p class="sr-only">
                 <wpsf:hidden name="text"/>
@@ -280,7 +279,7 @@
                                                 </s:else>
                                             </li>
                                             <li>
-                                                <a href="<s:property value="URLtrash" escapeHtml="false" />">Remove</a>
+                                                <a href="<s:property value="URLtrash" escapeHtml="false" />"><s:text name="label.delete"/></a>
                                             </li>
                                         </ul>
                                     </div>

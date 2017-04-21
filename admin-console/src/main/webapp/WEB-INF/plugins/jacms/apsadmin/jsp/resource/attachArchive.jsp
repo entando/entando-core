@@ -82,12 +82,11 @@
                     <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
                 </s:url>"
                   class="btn btn-primary pull-right"
-                  title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
+                  title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />" style="margin-bottom: 5px">
                 <s:property value="%{getText('label.' + resourceTypeCode + '.new')}"/>
             </a></p>
         </div>
     </wp:ifauthorized>
-    <br/>
     <br/>
 
     <div class="container-fluid">
@@ -208,8 +207,8 @@
                                                                 <s:param name="ownerGroupName" value="%{ownerGroupName}" />
                                                                 <s:param name="treeNodesToOpen" value="%{treeNodesToOpen}" />
                                                                 </s:url>"
-                                                               title="<s:text name="label.remove" />: <s:property value="#resource.descr" /> ">
-                                                                <span><s:text name="label.remove"/></span>
+                                                               title="<s:text name="label.delete"/>: <s:property value="#resource.descr" /> ">
+                                                                <span><s:text name="label.delete"/></span>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -370,8 +369,8 @@
                                                         <s:param name="ownerGroupName" value="%{ownerGroupName}" />
                                                         <s:param name="treeNodesToOpen" value="%{treeNodesToOpen}" />
                                                         </s:url>"
-                                                       title="<s:text name="label.remove" />: <s:property value="#resource.descr" /> ">
-                                                        <span><s:text name="label.remove"/></span>
+                                                       title="<s:text name="label.delete"/>: <s:property value="#resource.descr" /> ">
+                                                        <span><s:text name="label.delete"/></span>
                                                     </a>
                                                 </li>
                                             </ul>

@@ -24,7 +24,8 @@
 <br>
 <s:if test="hasActionErrors()">
 	<div class="alert alert-danger alert-dismissable">
-		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+		<button type="button" class="close" data-dismiss="alert"
+			aria-hidden="true">
 			<span class="pficon pficon-close"></span>
 		</button>
 		<strong><s:text name="messages.title.ActionErrors" /></strong>
@@ -37,7 +38,7 @@
 </s:if>
 <div class="row form-group">
 	<div class="col-sm-12">
-		<a class="btn btn-primary btn-lg pull-right"
+		<a class="btn btn-primary pull-right"
 			href="<s:url namespace="/do/Group" action="new" />"> <s:text
 				name="title.groupManagement.groupNew" />
 		</a>

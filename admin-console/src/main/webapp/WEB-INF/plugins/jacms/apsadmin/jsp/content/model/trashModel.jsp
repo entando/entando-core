@@ -3,10 +3,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
-			<s:text name="title.contentModels" />
-	</a></li>
+	<li><s:text name="title.contentModels" /></li>
 	<li class="page-title-container"><s:text
 			name="title.contentModels.remove" /></li>
 </ol>

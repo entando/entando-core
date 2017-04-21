@@ -2,21 +2,6 @@
 <%@ taglib uri="/aps-core" prefix="wp" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-<!-- 
-<span><span class="pagination-pf-items-current">1-15</span> of <span class="pagination-pf-items-total">75</span></span>
-<ul class="pagination pagination-pf-back">
-  <li class="disabled"><a href="#" title="First Page"><span class="i fa fa-angle-double-left"></span></a></li>
-<li class="disabled"><a href="#" title="Previous Page"><span class="i fa fa-angle-left"></span></a></li>
-</ul>
-<label for="{{include.id}}-page" class="sr-only">Current Page</label>
-<input class="pagination-pf-page" type="text" value="1" id="{{include.id}}-page"/>
-<span>of <span class="pagination-pf-pages">5</span></span>
-<ul class="pagination pagination-pf-forward">
-  <li><a href="#" title="Next Page"><span class="i fa fa-angle-right"></span></a></li>
-<li><a href="#" title="Last Page"><span class="i fa fa-angle-double-right"></span></a></li>
-</ul>
- -->
- 
 <s:if test="#group.size > #group.max">
 	<div class="pagination">
 		<s:if test="null != #group.pagerId">
@@ -47,14 +32,16 @@
                 <a href="#" title="<s:text name="label.prev.full"/>">
                     <span class="i fa fa-angle-left"></span>
                 </a>
-				<wpsf:submit name="%{#pagerIdMarker + '_' + #group.prevItem}" type="button" title="%{getText('label.prev.full')}" disabled="%{1 == #group.currItem}" cssClass="hidden">
+				<wpsf:submit name="%{#pagerIdMarker + '_' + #group.prevItem}" 
+				    type="button" title="%{getText('label.prev.full')}" 
+				    disabled="%{1 == #group.currItem}" cssClass="hidden">
 					<span class="i fa fa-angle-left"></span>
 				</wpsf:submit>
 			</li>
 		</ul>
 	
 	    <s:subset source="#group.items" count="#group.endItemAnchor-#group.beginItemAnchor+1" start="#group.beginItemAnchor-1">
-			<select class="pagination-pf-page form-control" style="width: 50px">
+			<select class="pagination-pf-page form-control page-selector">
 			 <s:iterator var="item">
 			     <s:if test="%{#item == #group.currItem}">
 			         <option value="${pagerIdMarker}_${item}" selected="selected"><s:property value="#item"/></option>
@@ -70,9 +57,7 @@
 	    </s:subset>	
 	
         <!-- Current Page -->
-<%--         <label for="{{include.id}}-page" class="sr-only"><s:text name="label.currentPage"/></label> --%>
-<%--         <input class="pagination-pf-page" type="text" value="${group.currItem}" data-button-prefix="${pagerIdMarker}" data-submit="${pagerIdMarker}_${group.currItem}"/> --%>
-            <span style="margin-top: 3px">of <span class="pagination-pf-pages"><s:property value="#group.maxItem" /></span></span>
+        <span class="page-count">of <span class="pagination-pf-pages"><s:property value="#group.maxItem" /></span></span>
         
 		<wpsf:submit name="%{#pagerIdMarker + '_' + #group.currItem}" type="button" cssClass="hidden page-navigator"/>
 

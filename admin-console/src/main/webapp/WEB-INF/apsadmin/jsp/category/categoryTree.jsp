@@ -29,22 +29,22 @@
 
 		<a href="<s:url namespace="/do/Category" action="new" />"
 			class="btn btn-primary pull-right"
-			title="<s:text name="label.new" />" style="margin-bottom: 5px"> 
+			title="<s:text name="label.new" />" style="margin-bottom: 5px">
 			<s:text name="label.add" />
 		</a>
 		<s:form cssClass="action-form">
-			<s:if test="hasActionErrors()">			
+			<s:if test="hasActionErrors()">
 				<div class="alert alert-danger alert-dismissable">
 				  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
 				    <span class="pficon pficon-close"></span>
 				  </button>
 				  <span class="pficon pficon-error-circle-o"></span>
-				  <strong><s:text name="message.title.ActionErrors" /></strong> 
+				  <strong><s:text name="message.title.ActionErrors" /></strong>
 				  <s:iterator value="actionErrors">
 				      <span><s:property escapeHtml="false" /></span>
 				  </s:iterator>
 				</div>
-				
+
 			</s:if>
 			<s:if test="hasActionMessages()">
 				<div class="alert alert-danger alert-dismissable">
@@ -52,12 +52,12 @@
 				    <span class="pficon pficon-close"></span>
 				  </button>
 				  <span class="pficon pficon-error-circle-o"></span>
-				  <strong><s:text name="messages.confirm" /></strong> 
+				  <strong><s:text name="messages.confirm" /></strong>
 				  <s:iterator value="actionMessages">
 				      <span><s:property escapeHtml="false" /></span>
 				  </s:iterator>
 				</div>
-				
+
 			</s:if>
 			<%-- <fieldset class="margin-more-top"><legend><s:text name="title.categoryTree" /></legend> --%>
 
@@ -88,7 +88,7 @@
 					<thead>
 						<tr>
 <!-- 						class="col-sm-10" -->
-							<th> <s:text name="label.category.tree"/> 
+							<th> <s:text name="label.category.tree"/>
 								<button type="button" class="btn-no-button expand-button"
 									id="expandAll">
 									<i class="fa fa-plus-square-o treeInteractionButtons"

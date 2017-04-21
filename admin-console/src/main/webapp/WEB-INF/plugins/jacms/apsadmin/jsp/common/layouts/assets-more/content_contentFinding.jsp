@@ -22,7 +22,7 @@
             $(this).find(".moveButtons").removeClass("hidden");
         });
 	<s:if test="strutsAction != 2" >
-		generateCodeFromTitle("lang<wp:info key="defaultLang" />", 'pageCode');
+		generateCodeFromTitle("lang<wp:info key="defaultLang" />", 'categryCode');
 	</s:if>
 	});
 </script>

@@ -6,9 +6,10 @@
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core"%>
 
 <s:set var="targetNS" value="%{'/do/jacms/Content'}" />
+
 <!-- Admin console Breadcrumbs -->
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li>APPS</li>
+	<li><s:text name="breadcrumb.apps" /></li>
 	<li><s:text name="breadcrumb.jacms" /></li>
 	<li class="page-title-container"><s:text
 			name="breadcrumb.jacms.content.list" /></li>
@@ -350,9 +351,36 @@
 		</div>
 	</div>
 	<!-- Fine aggiunta colonne tabella lista contenuti-->
+	
+    <!-- New Content Button -->
+    <div class="col-xs-12">
+        <div class="btn-group pull-right mt-20">
+            <button type="button" class="btn btn-primary dropdown-toggle"
+                data-toggle="dropdown">
+
+                <s:text name="label.addContent" />
+                &#32; <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <s:iterator var="contentTypeVar" value="#contentTypesVar">
+                    <jacmswpsa:contentType typeCode="%{#contentTypeVar.typeCode}"
+                        property="isAuthToEdit" var="isAuthToEditVar" />
+                    <s:if test="%{#isAuthToEditVar}">
+                        <li><a
+                            href="<s:url action="createNew" namespace="/do/jacms/Content" >
+                           <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
+                            </s:url>"><s:text
+                                    name="label.new" />&#32;<s:property
+                                    value="%{#contentTypeVar.typeDescr}" /></a></li>
+                    </s:if>
+                </s:iterator>
+            </ul>
+        </div>
+    </div>
+	
 	</s:form>
 
-	<div class="col-xs-12  ">
+	<div class="col-xs-12 mt-20">
 		<s:form action="search" cssClass="form-horizontal">
 			<p class="sr-only">
 				<wpsf:hidden name="text" />
@@ -406,33 +434,6 @@
 				</s:iterator>
 			</p>
 
-			<!-- New Content Button -->
-			<div class="col-xs-12 no-padding">
-				<div class="btn-group pull-right mt-20">
-					<button type="button" class="btn btn-primary dropdown-toggle"
-						data-toggle="dropdown">
-	
-						<s:text name="label.addContent" />
-						&#32; <span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" role="menu">
-						<s:iterator var="contentTypeVar" value="#contentTypesVar">
-							<jacmswpsa:contentType typeCode="%{#contentTypeVar.typeCode}"
-								property="isAuthToEdit" var="isAuthToEditVar" />
-							<s:if test="%{#isAuthToEditVar}">
-								<li><a
-									href="<s:url action="createNew" namespace="/do/jacms/Content" >
-	                               <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
-	                                </s:url>"><s:text
-											name="label.new" />&#32;<s:property
-											value="%{#contentTypeVar.typeDescr}" /></a></li>
-							</s:if>
-						</s:iterator>
-					</ul>
-<%-- 					<jacmswpsa:content contentId="" ></jacmswpsa:content> --%>
-				</div>
-			</div>
-
 			<s:if test="hasActionErrors()">
 				<!--<div class="alert alert-danger alert-dismissable fade in margin-base-top">-->
 				<div class="alert alert-danger alert-dismissable"
@@ -468,13 +469,13 @@
 			</s:if>
 
 			<s:set var="contentIdsVar" value="contents" />
-
+			
+			<s:if test="%{#contentIdsVar.size() > 0}">
+			
 			<!-- Content List -->
-			<wpsa:subset source="#contentIdsVar" count="10"
-				objectName="groupContent" advanced="true" offset="5">
+			<wpsa:subset source="#contentIdsVar" count="10" objectName="groupContent" advanced="true" offset="5">
 				<s:set var="group" value="#groupContent" />
 
-				<s:if test="%{#contentIdsVar.size() > 0}">
 					<%--
 				<div class="form-group">
 					<label for="allContentsSelected" class="control-label col-sm-2 text-right"><s:text name="label.allContentsSelected"/></label>
@@ -483,7 +484,7 @@
 					</div>
 				</div>
 				 --%>
-                    
+
                     <%-- TODO: verificare filtri per lista
 					<!-- Tabs -->
 					<div class="col-xs-12 no-padding mt-20">
@@ -501,7 +502,7 @@
 					<!-- Toolbar -->
                     <div class="col-xs-12 no-padding">
                         <div class="row toolbar-pf table-view-pf-toolbar mt-20 border-bottom">
-                            <div class="col-sm-12">
+                            <div class="col-xs-12">
 
                                 <!-- toolbar first row  -->
                                 <div class="toolbar-pf-actions">
@@ -560,18 +561,19 @@
                                 <!-- toolbar second row -->
                                 <div class="row toolbar-pf-results">
                                     <div class="col-md-6 col-xs-12 col-md-offset-6 no-padding">
-                                        <label class="col-md-2 control-label">Actions</label>
+                                        <label class="col-md-2 control-label"><s:text name="label.actions" /></label>
                                         <div class="dropdown col-md-10 no-padding"
                                             style="padding-right: 20px">
                                             <button type="button"
                                                 class="btn btn-default dropdown-toggle w100perc text-right"
                                                 id="bulkAction" data-toggle="dropdown" aria-haspopup="true"
                                                 aria-expanded="false">
-                                                <span class="pull-left">Select an action</span> <span
+                                                <span class="pull-left"><s:text name="label.selectAction"/></span> <span
                                                     class="caret"></span>
                                             </button>
                                             <ol class="dropdown-menu w100perc"
                                                 aria-labelledby="bulkAction">
+                                                <%-- Group Bulk Action disabled
                                                 <li><wpsa:actionParam action="bulkOnGroups"
                                                         var="bulkActionName">
                                                         <wpsa:actionSubParam name="strutsAction" value="1" />
@@ -590,6 +592,7 @@
                                                         <span class="icon fa"></span>
                                                         <s:text name="label.removeGroups" />
                                                     </wpsf:submit></li>
+                                                --%>
                                                 <li><wpsa:actionParam action="bulkOnCategories"
                                                         var="bulkActionName">
                                                         <wpsa:actionSubParam name="strutsAction" value="1" />
@@ -615,7 +618,23 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Content List - Table -->
 					<%-- <caption class="sr-only"><s:text name="title.contentList" /></caption> --%>
+					
+					<div class="alert alert-warning alert-dismissable">
+    					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+						  <span class="pficon pficon-close"></span>
+						</button>
+						<span class="pficon pficon-warning-triangle-o"></span>
+						<strong>There might be a problem here!</strong> We are not really sure, but
+						<input type="checkbox" id="allContentsSelected" 
+						  name="allContentsSelected" class="js_selectAll" />
+						<button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+						  Single toggle
+						</button>
+					</div>
+					
 					<div class="col-xs-12 no-padding">
 						<div class="mt-20">
 							<table class="table table-striped table-bordered table-hover content-list no-mb"
@@ -634,16 +653,17 @@
 	                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
 	                                </s:url>"><s:text
 													name="label.description" /></a></th>
-									<th>Author</th>
+									<th><s:text name="label.author"/></th>
 										<s:if test="viewCode">
-											<th><a
-												href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
-	                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-	                                <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
-	                                <s:param name="groupBy">code</s:param>
-	                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-	                                </s:url>"><s:text
-														name="label.code" /></a></th>
+											<th>
+                                                <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+					                                <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					                                <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
+					                                <s:param name="groupBy">code</s:param>
+					                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					                                </s:url>"><s:text name="label.code" />
+				                                </a>
+			                                </th>
 										</s:if>
 										<s:if test="viewTypeDescr">
 											<th><s:text name="label.type" /></th>
@@ -652,7 +672,7 @@
 											<th class="text-center w4perc"><s:text
 													name="label.state" /></th>
 										</s:if>
-										<th class="text-center w4perc">Visible</th>
+										<th class="text-center w4perc"><s:text name="label.visible"/></th>
 										<s:if test="viewGroup">
 											<th><s:text name="label.group" /></th>
 										</s:if>
@@ -740,7 +760,7 @@
                                                 class="icon fa fa-<s:property value="iconName" /> text-<s:property value="textVariant" />"
                                                 title="<s:property value="isOnlineStatus" />"></span> <span
                                                 class="sr-only"><s:property value="isOnlineStatus" /></span>
-                                            </td>											
+                                            </td>
 											<s:if test="viewGroup">
 												<td class="table-txt-wrap"><s:property
 														value="%{getGroup(#content.mainGroupCode).descr}" /></td>
@@ -810,6 +830,7 @@
 
 					<div class="content-view-pf-pagination table-view-pf-pagination clearfix">
 						<%-- TODO: abilitare selezione elementi per pagina --%>
+						<%-- 
 						<div class="form-group">
 							<div class="btn-group bootstrap-select pagination-pf-pagesize">
 								<button type="button" class="btn dropdown-toggle btn-default"
@@ -842,8 +863,9 @@
 									<option value="50">50</option>
 								</select>
 							</div>
-							<span>per page</span>
+							<span><s:text name="label.elementsPerPage"/></span>
 						</div>
+						--%>
 						<div class="form-group">
 							<span><s:include
 									value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
@@ -853,12 +875,14 @@
 							</div>
 						</div>
 					</div>
-                    </div>
-					
-				</s:if>
-
-
 			</wpsa:subset>
+		</s:if>
+		<s:else>
+	        <div class="alert alert-info">
+	            <span class="pficon pficon-info"></span>
+	            <strong><s:text name="label.listEmpty" /></strong>&#32;<s:text name="label.noContentFound" />
+	        </div>
+		</s:else>
 	</div>
 	</s:form>
 </div>
@@ -873,28 +897,38 @@
     
     $(function(){
     	
+    	var itemsNum = $('.content-list tbody input[type="checkbox"]').length;
+    	
     	$(".js_selectAll").click(function(){
+    		updateCounter();
 			var isChecked = ($(this).prop("checked") == true);
 			if(isChecked) {
 	    		$(".content-list tbody input").prop("checked",true);
 			} else {
 				$(".content-list tbody input").prop("checked",false);
 			}
-			
-			
+    	});
+    	
+    	$('.content-list input[type="checkbox"]').click(function(){
+    		var selectedItemsNum = updateCounter();
+    		
+    		if(itemsNum == selectedItemsNum) {
+    			$(".js_selectAll").prop("checked", true);
+    		} else {
+    			$(".js_selectAll").prop("checked", false);
+    		}
     	});
     });
     
-    function toggleToolbar() {
-    	var selectedItemsNum = $(".content-list tbody input:checked").length;
-    	var isVisible = (selectedItemsNum > 0)?true:false;
+    function showSelectAll() {
     	
+    	
+    }
+    
+    function updateCounter() {
+    	var selectedItemsNum = $('.content-list tbody input[type="checkbox"]:checked').length;
     	$(".selected-items-counter").html(selectedItemsNum);
     	
-    	if(isVisible) {
-    		$(".table-view-pf-toolbar").removeClass("hidden");
-    	} else {
-    		$(".table-view-pf-toolbar").addClass("hidden");
-    	}
+    	return selectedItemsNum;
     }
 </script>

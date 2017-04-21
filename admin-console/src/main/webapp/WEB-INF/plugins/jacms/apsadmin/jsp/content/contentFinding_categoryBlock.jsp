@@ -30,7 +30,7 @@
 		</s:elseif>
 	</ul>
 </div>
- --%>
+  --%>
  
   <div class="table-responsive overflow-visible">
       <table id="categoryTree" class="table table-bordered table-hover table-treegrid">
@@ -39,10 +39,10 @@
                   <th style="width: 68%;"> <s:text name="label.categoriesTree" />
                   <s:if test="#categoryTreeStyleVar == 'classic'">
                       <button type="button" class="btn-no-button expand-button" id="expandAll">
-                          <span class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></span>&#32;Expand All
+                          <span class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></span>&#32;<s:text name="label.expandAll" />
                       </button>
                       <button type="button" class="btn-no-button" id="collapseAll">
-                          <span class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></span>&#32;Collapse All
+                          <span class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></span>&#32;<s:text name="label.collapseAll" />
                       </button>
                   </s:if>
               </th>
@@ -54,7 +54,6 @@
 			<s:set var="liClassName" value="'category'" />
 			<s:set var="treeItemIconName" value="'fa-folder'" />
 
-			<wpsa:groupsByPermission permission="managePages" var="groupsByPermission" />
 			<s:if test="#categoryTreeStyleVar == 'classic'">
 				<s:set var="currentRoot" value="categoryRoot" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategories.jsp" />
@@ -69,14 +68,12 @@
 	          <s:set var="treeNodeActionMarkerCode" value="treeNodeActionMarkerCode" />
 	          <s:set var="targetNode" value="%{parentPageCode}" />
 	          <s:set var="treeNodesToOpen" value="treeNodesToOpen" />
-	
-	          <wpsa:pageTree allowedGroups="${groupsByPermission}" var="currentRoot" online="false" onDemand="true" 
-	                         open="${treeNodeActionMarkerCode!='close'}" targetNode="${targetNode}" treeNodesToOpen="${treeNodesToOpen}" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
+				
       	</s:elseif>
         </tbody>
     </table>
 </div>
 <s:if test="#hasFieldErrorVar">
-  <p class="text-danger padding-small-vertical"><s:iterator value="#fieldErrorsVar"><s:property /> </s:iterator></p>
+  <p class="text-danger padding-small-vertical"><s:iterator value="#fieldErrorsVar"><s:property /></s:iterator></p>
 </s:if>

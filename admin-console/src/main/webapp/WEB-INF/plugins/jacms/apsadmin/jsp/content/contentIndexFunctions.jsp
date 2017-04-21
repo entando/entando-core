@@ -4,7 +4,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="breadcrumb.app"/></li>
-	<li><s:text name="jacms.menu.cmsAdmin"/></li>
+	<li><s:text name="breadcrumb.jacms"/></li>
 	<li class="page-title-container">
 		<s:text name="menu.contents.settings" />
 	</li>

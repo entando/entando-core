@@ -8,17 +8,17 @@
 	<li><s:text name="breadcrumb.app" /></li>
 	<li><s:text name="breadcrumb.jacms" /></li>
 	<s:if test="onEditContent">
-		<li><a href="<s:url action="list" namespace="/do/jacms/Content"/>"><s:text name="breadcrumb.jacms.content.list" /></a></li>
-		<li><a href="<s:url action="backToEntryContent" ><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>">
+		<li><s:text name="breadcrumb.jacms.content.list" /></li>
+		<li>
 			<s:if test="getStrutsAction() == 1"><s:text name="breadcrumb.jacms.content.new" /></s:if><s:else><s:text name="breadcrumb.jacms.content.edit" /></s:else>
-		</a></li>
+		</li>
 	</s:if>
 	<s:else>
 		<li><s:text name="breadcrumb.dataAsset" /></li>
 	</s:else>
-	<li class="page-title-container"><a href="<s:url action="list" >
-		<s:param name="resourceTypeCode" value="resourceTypeCode" /><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
-	</s:url>" ><s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" /></a></li>
+	<li class="page-title-container">
+		<s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+	</li>
 </ol>
 
 <h1 class="page-title-container">
@@ -41,6 +41,9 @@
     <div class="form-group-separator"><s:text name="label.requiredFields" /></div>               
 </div>
 <br/>
+
+
+
 
 <s:set var="categoryTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
 <s:set var="lockGroupSelect" value="%{resourceId != null && resourceId != 0}"></s:set>
@@ -97,7 +100,7 @@
 			<i class="fa fa-asterisk required-icon"></i>
 		</label>
 		<div class="col-sm-10">
-			<wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="description" disabled="%{lockGroupSelect}" cssClass="combobox form-control"></wpsf:select>
+			<wpsf:select name="mainGroup" id="mainGroup" list="allowedGroups" listKey="name" listValue="description" disabled="%{lockGroupSelect}" cssClass="combobox form-control"></wpsf:select>
 			<s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
 					<s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
@@ -185,9 +188,8 @@
 	
 	<div class="form-horizontal">
 		<div class="form-group">
-			<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-				<wpsf:submit type="button" cssClass="btn btn-primary btn-block">
-					<span class="icon fa fa-floppy-o"></span>&#32;
+			<div class="col-sm-12 margin-small-vertical">
+				<wpsf:submit type="button" cssClass="btn btn-primary pull-right">
 					<s:text name="label.save" />
 				</wpsf:submit>
 			</div>

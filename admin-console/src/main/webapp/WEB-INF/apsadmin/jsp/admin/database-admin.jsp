@@ -79,7 +79,7 @@
 <s:else>
 	<div class="row form-group">
 		<div class="col-sm-12">
-			<a class="btn btn-primary btn-lg pull-right"
+			<a class="btn btn-primary pull-right"
 				href="<s:url namespace="/do/Admin/Database" action="backupIntro" />">
 				<s:text name="database.management.label.backup.create" />
 			</a>

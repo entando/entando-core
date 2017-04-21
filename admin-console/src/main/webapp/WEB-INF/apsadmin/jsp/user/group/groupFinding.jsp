@@ -37,7 +37,7 @@
 </s:if>
 <div class="row form-group">
 	<div class="col-sm-12">
-		<a class="btn btn-primary btn-lg pull-right"
+		<a class="btn btn-primary pull-right"
 			href="<s:url namespace="/do/Group" action="new" />"> <s:text
 				name="title.groupManagement.groupNew" />
 		</a>

@@ -251,7 +251,7 @@
 					<wpsf:hidden name="subFolderName"
 						value="%{#dumpReportVar.subFolderName}" />
 					<wpsf:submit type="button" action="restoreIntro"
-						cssClass="btn btn-primary btn-lg pull-right">
+						cssClass="btn btn-primary pull-right">
 						<s:text name="database.management.label.restore" />
 					</wpsf:submit>
 				</p>

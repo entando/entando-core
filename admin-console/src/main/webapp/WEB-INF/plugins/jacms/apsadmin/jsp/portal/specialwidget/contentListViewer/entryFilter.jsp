@@ -1,57 +1,93 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
-<h1 class="panel panel-default title-page">
-	<span class="panel-body display-block">
-		<a href="<s:url action="viewTree" namespace="/do/Page" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />">
-			<s:text name="title.pageManagement" /></a>&#32;/&#32;
-		<a href="<s:url action="configure" namespace="/do/Page">
-					<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
-				</s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.configPage" />"><s:text name="title.configPage" /></a>&#32;/&#32;
-		<s:text name="name.widget" />
-	</span>
+
+<!-- Admin console Breadcrumbs -->
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="title.pageDesigner" /></li>
+    <li>
+        <a href="<s:url action="viewTree" namespace="/do/Page" />" 
+        	title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageTree" />">
+            <s:text name="title.pageTree" />
+        </a>
+    </li>
+    <li>
+		<s:url action="configure" namespace="/do/Page" var="configureURL">
+			<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
+		</s:url>
+		<s:set var="configureTitle">
+			<s:text name="note.goToSomewhere" />: <s:text name="title.configPage" />
+		</s:set>
+		<a href="${configureURL}" title="${configureTitle}"><s:text name="title.configPage" /></a>
+    </li>
+    <li class="page-title-container"><s:text name="name.widget" /></li>
+</ol>
+
+<!-- Page Title -->
+<s:set var="dataContent" value="%{'help block'}" />
+<s:set var="dataOriginalTitle" value="%{'Section Help'}"/>
+<h1 class="page-title-container">
+    <s:text name="name.widget" />
+    <span class="pull-right"> 
+    	<a tabindex="0" role="button"
+        	data-toggle="popover" data-trigger="focus" data-html="true"
+        	data-content="${dataContent}" data-placement="left" 
+        	data-original-title="${dataOriginalTitle}">
+			<span class="fa fa-question-circle-o" aria-hidden="true"></span> 
+		</a>
+    </span>
 </h1>
 
+<hr>
+
 <div id="main" role="main">
+	<%--
+	<s:set var="breadcrumbs_pivotPageCode" value="pageCode" />
+	<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
+	 --%>
+	 
+	<!-- Info Details  -->
+    <div class="button-bar mt-20">
+        <s:action namespace="/do/Page" name="printPageDetails"
+            executeResult="true" ignoreContextParams="true">
+            <s:param name="selectedNode" value="currentPage.code"></s:param>
+        </s:action>
+    </div>
 
-<s:set var="breadcrumbs_pivotPageCode" value="pageCode" />
-<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
-
-<s:action namespace="/do/Page" name="printPageDetails" executeResult="true" ignoreContextParams="true"><s:param name="selectedNode" value="pageCode"></s:param></s:action>
-
-<s:form namespace="/do/jacms/Page/SpecialWidget/ListViewer" cssClass="form-horizontal">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<s:include value="/WEB-INF/apsadmin/jsp/portal/include/frameInfo.jsp" />
-		</div>
-
-		<div class="panel-body">
-
-			<s:set var="showletType" value="%{getShowletType(widgetTypeCode)}"></s:set>
-			<h2 class="h5 margin-small-vertical">
-				<label class="sr-only"><s:text name="name.widget" /></label>
-				<span class="icon fa fa-puzzle-piece" title="<s:text name="name.widget" />"></span>&#32;
-				<s:property value="%{getTitle(#showletType.code, #showletType.titles)}" />
-			</h2>
-
-			<p class="sr-only">
-				<wpsf:hidden name="pageCode" />
-				<wpsf:hidden name="frame" />
-				<wpsf:hidden name="widgetTypeCode" />
-			</p>
-
-			<s:if test="hasFieldErrors()">
-			<div class="alert alert-danger alert-dismissable">
-				<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-				<h3 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h3>
-				<ul>
-				<s:iterator value="fieldErrors">
-					<s:iterator value="value">
-					<li><s:property escapeHtml="false" /></li>
-					</s:iterator>
-				</s:iterator>
-				</ul>
+	<s:form namespace="/do/jacms/Page/SpecialWidget/ListViewer" cssClass="form-horizontal mt-20">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<s:include value="/WEB-INF/apsadmin/jsp/portal/include/frameInfo.jsp" />
 			</div>
-			</s:if>
+			<div class="panel-body">
+				<s:set var="showletType" value="%{getShowletType(widgetTypeCode)}"></s:set>
+				<h2 class="h5 margin-small-vertical">
+					<label class="sr-only"><s:text name="name.widget" /></label>
+					<span class="icon fa fa-puzzle-piece" title="<s:text name="name.widget" />"></span>&#32;
+					<s:property value="%{getTitle(#showletType.code, #showletType.titles)}" />
+				</h2>
+	
+				<p class="sr-only">
+					<wpsf:hidden name="pageCode" />
+					<wpsf:hidden name="frame" />
+					<wpsf:hidden name="widgetTypeCode" />
+				</p>
+	
+				<s:if test="hasFieldErrors()">
+		            <div class="alert alert-danger alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							<span class="pficon pficon-close"></span>
+						</button>
+		                <span class="pficon pficon-error-circle-o"></span>
+						<h3 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h3>
+						<ul>
+						<s:iterator value="fieldErrors">
+							<s:iterator value="value">
+							<li><s:property escapeHtml="false" /></li>
+							</s:iterator>
+						</s:iterator>
+						</ul>
+					</div>
+				</s:if>
 
 			<p class="sr-only">
 				<wpsf:hidden name="contentType" />
@@ -377,10 +413,10 @@
 		</div>
 	</div>
 
-	<div class="form-group">
-		<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-			<wpsf:submit action="%{#saveFilterActionName}" type="button" cssClass="btn btn-primary btn-block">
-				<span class="icon fa fa-filter"></span>&#32;
+	<div class="row">
+		<div class="col-xs-12">
+			<wpsf:submit type="button" action="%{#saveFilterActionName}" 
+				cssClass="btn btn-primary pull-right">
 				<s:text name="label.save" />
 			</wpsf:submit>
 		</div>

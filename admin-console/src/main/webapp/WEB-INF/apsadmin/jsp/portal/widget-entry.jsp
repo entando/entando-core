@@ -151,7 +151,7 @@
                 <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
                 <label for="mainGroup" class="col-sm-2 control-label"><s:text name="label.group" /></label>
                 <div class="col-sm-10">
-                    <wpsf:select name="mainGroup" id="mainGroup" list="groups" listKey="name" listValue="descr" cssClass="form-control" disabled="%{!#isSuperuserVar}" />
+                    <wpsf:select name="mainGroup" headerKey="" headerValue="%{getText('note.choose')}" id="mainGroup" list="groups" listKey="name" listValue="descr" cssClass="form-control" disabled="%{!#isSuperuserVar}" />
                     <s:if test="#pageCodeHasFieldErrorVar">
                         <p class="text-danger padding-small-vertical"><s:iterator value="#pageCodeFieldErrorsVar"><s:property /> </s:iterator></p>
                     </s:if>

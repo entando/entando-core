@@ -38,11 +38,11 @@
 				<label for="search_consumer_description" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.consumer.description"/></label>
 				<wpsf:textfield name="text" id="search_consumer_description" cssClass="form-control input-lg" placeholder="%{getText('label.description')}" title="%{getText('label.search.by')} %{getText('label.consumer.description')}" />
 				<span class="input-group-btn">
-					<wpsf:submit type="button" cssClass="btn btn-primary btn-lg" title="%{getText('label.search')}">
+					<wpsf:submit type="button" cssClass="btn btn-primary" title="%{getText('label.search')}">
 						<span class="sr-only"><s:text name="label.search" /></span>
 						<span class="icon fa fa-search"></span>
 					</wpsf:submit>
-					<button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="collapse" data-target="#search-advanced" title="<s:text name="title.searchFilters" />">
+					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="collapse" data-target="#search-advanced" title="<s:text name="title.searchFilters" />">
 							<span class="sr-only"><s:text name="title.searchFilters" /></span>
 							<span class="caret"></span>
 					</button>

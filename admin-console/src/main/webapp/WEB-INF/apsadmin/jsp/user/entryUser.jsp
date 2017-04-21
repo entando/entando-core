@@ -199,7 +199,7 @@
             <label class="col-sm-2 control-label"  for="profileType"><s:text name="profileType" />            
             </label>
             <div class="col-sm-10">
-                <wpsf:select name="profileTypeCode" id="profileType" list="profileTypes" listKey="code" listValue="description" cssClass="form-control" />
+                <wpsf:select name="profileTypeCode" headerKey="" headerValue="%{getText('note.choose')}" id="profileType" list="profileTypes" listKey="code" listValue="description" cssClass="form-control" />
                 <s:if test="#fieldHasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>

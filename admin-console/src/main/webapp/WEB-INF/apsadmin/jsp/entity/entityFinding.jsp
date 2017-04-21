@@ -34,7 +34,7 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 				<wpsf:hidden name="entityTypeCode" />
 			</s:if>
 			<s:else>
-				<wpsf:select useTabindexAutoIncrement="true" list="entityPrototypes" name="entityTypeCode" headerKey="" headerValue="" 
+				<wpsf:select useTabindexAutoIncrement="true" list="entityPrototypes" name="entityTypeCode" headerKey="" headerValue="%{getText('note.choose')}" 
 					listKey="typeCode" listValue="typeDescr"></wpsf:select>
 			</s:else>
 			

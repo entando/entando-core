@@ -143,7 +143,7 @@
 	<div class="form-group">
 		<div class="col-sm-12">
 			<wpsf:submit type="button"
-				cssClass="btn btn-primary btn-lg pull-right">
+				cssClass="btn btn-primary pull-right">
 				<s:text name="label.save" />
 			</wpsf:submit>
 		</div>

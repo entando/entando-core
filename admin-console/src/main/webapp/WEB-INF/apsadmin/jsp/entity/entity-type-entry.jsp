@@ -55,22 +55,17 @@
         </div>
     </s:if>
 
-
     <s:form action="saveEntityType" cssClass="form-horizontal">
-
         <s:set var="entityType" value="entityType" />
         <s:if test="operationId != 1">
             <p class="sr-only">	
                 <wpsf:hidden name="entityTypeCode" value="%{#entityType.typeCode}" />
             </p>
         </s:if>
-
         <fieldset class="col-xs-12">
-
             <legend>
                 <s:text name="label.info" />
             </legend>
-
             <div class="form-group">
                 <s:if test="operationId == 1">
                     <label class="col-sm-2 control-label" for="entityTypeCode"><s:text name="label.code" />
@@ -101,7 +96,6 @@
                 </div>
             </div>
         </fieldset>
-
         <%-- 
                 hookpoint for meta-info and the like
                 allowed Plugins: jacms (but so far we have not a check on this)
@@ -114,7 +108,6 @@
         </s:if>
 
         <!--Attributes-->
-
         <fieldset class="col-xs-12">
             <legend>
                 <s:text name="label.attributes" />
@@ -124,7 +117,6 @@
             <s:include value="/WEB-INF/apsadmin/jsp/entity/include/attribute-list.jsp" />
         </fieldset>
         <fieldset class="col-xs-12">
-
             <div class="form-group">
                 <div class="col-xs-12">
                     <wpsf:submit type="button" cssClass="btn btn-primary  pull-right " action="saveEntityType" >
@@ -134,6 +126,5 @@
             </div>
         </fieldset>
     </div>
-
 </s:form>
 

@@ -97,7 +97,7 @@
 			<i class="fa fa-asterisk required-icon"></i>
 		</label>
 		<div class="col-sm-10">
-			<wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="description" disabled="%{lockGroupSelect}" cssClass="combobox form-control"></wpsf:select>
+			<wpsf:select name="mainGroup" id="mainGroup" list="allowedGroups" listKey="name" listValue="description" disabled="%{lockGroupSelect}" cssClass="combobox form-control"></wpsf:select>
 			<s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
 					<s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>

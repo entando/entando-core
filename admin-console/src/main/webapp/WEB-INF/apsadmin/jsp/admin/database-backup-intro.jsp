@@ -67,13 +67,13 @@
 			<div class="col-sm-12">
 				<s:form action="executeBackup" namespace="/do/Admin/Database"
 					method="get">
-					<a class="btn btn-default btn-lg"
+					<a class="btn btn-default"
 						href="<s:url namespace="/do/Admin/Database" action="entry" />">
 						<s:text name="database.management.label.go.to.list" />
 					</a>
 					<wpsf:submit type="button" action="executeBackup"
 						value="%{getText('database.management.label.backup.execute')}"
-						cssClass="btn btn-primary btn-lg">
+						cssClass="btn btn-primary">
 						<s:text name="database.management.label.backup.execute" />
 					</wpsf:submit>
 				</s:form>

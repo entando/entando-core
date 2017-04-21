@@ -61,8 +61,7 @@
 		<p><a href="<s:url action="new" >
 				<s:param name="resourceTypeCode" value="resourceTypeCode" /><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
 			</s:url>"
-			class="btn btn-default" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
-			<span class="icon fa fa-plus-circle"></span>&#32;
+			class="btn btn-primary pull-right" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />">
 			<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" />
 		</a></p>
 	</wp:ifauthorized>

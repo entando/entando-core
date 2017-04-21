@@ -13,18 +13,23 @@
 		<wpsf:hidden name="contentOnSessionMarker" />
 	</p>
 	<div class="searchPanel form-group">
-		<div class="well col-md-offset-3 col-md-6">
-			<p class="search-label"><s:text name="label.search.label"/></p>
+		<div class="well col-md-offset-1 col-md-10">
 			<div class="form-group">
-				<label class="col-sm-2 control-label"><s:text name="label.description"/></label>
-				<div class="col-sm-9">
-					<wpsf:textfield name="text" id="search-text" cssClass="form-control" title="%{getText('label.search.by')+' '+getText('label.description')}" placeholder="%{getText('label.description')}" />
-				</div>
+				<s:form action="search" cssClass="search-pf has-button">
+					<div class="col-md-offset-1 col-md-10 has-clear">
+						<wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
+										title="%{getText('label.search.by')+' '+getText('label.description')}"/>
+
+						<wpsf:submit type="button" cssClass="btn btn-default btn-lg pull-right">
+							<span class="fa fa-search"></span>
+						</wpsf:submit>
+					</div>
+				</s:form>
 			</div>
 			<div class="panel-group" id="accordion-markup" >
 				<div class="panel panel-default">
 					<div class="panel-heading" style="padding:0 0 10px;">
-						<p class="panel-title" style="text-align: end">
+						<p class="panel-title active" style="text-align: end">
 							<a data-toggle="collapse" data-parent="#accordion-markup" href="#collapseOne">
 								<s:text name="label.search.advanced" />
 							</a>
@@ -80,14 +85,6 @@
 							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-			<%-- search button --%>
-			<div class="col-sm-12">
-				<div class="form-group">
-					<wpsf:submit type="button" cssClass="btn btn-primary pull-right">
-						<s:text name="label.search" />
-					</wpsf:submit>
 				</div>
 			</div>
 		</div>

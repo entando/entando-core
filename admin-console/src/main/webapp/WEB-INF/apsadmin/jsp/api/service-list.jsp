@@ -51,6 +51,7 @@
 			</label>
 			<div class="input-group col-md-9 col-lg-9">
 				<select id="service-list" name="resourceCode" class="form-control">
+                                    <option value=""><s:text name="%{getText('note.choose')}" /></option>
 					<s:iterator value="#resourceFlavoursVar" var="resourceFlavourGroup">
 						<optgroup label="<s:property value="%{getText(#resourceFlavourGroup.get(0).getSectionCode()+'.name')}" escapeHtml="false" />">
 							<s:iterator value="#resourceFlavourGroup" var="resource">

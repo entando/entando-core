@@ -153,7 +153,7 @@
 									<label for="methodAuthority_<s:property value="%{#methodVar.httpMethod}" />">
 										<s:text name="label.api.authorization" />
 									</label>
-									<wpsf:select cssClass="form-control" name="%{#methodVar.httpMethod}_methodAuthority" list="methodAuthorityOptions" listKey="key" listValue="value" value="%{selectFieldValue}" id="methodAuthority_%{#methodVar.httpMethod}" />
+									<wpsf:select cssClass="form-control" name="%{#methodVar.httpMethod}_methodAuthority" list="methodAuthorityOptions" listKey="key" listValue="value" value="%{selectFieldValue}" headerKey="" headerValue="%{getText('note.choose')}" id="methodAuthority_%{#methodVar.httpMethod}" />
 								</div>
 							</div>
 							<div class="form-group">

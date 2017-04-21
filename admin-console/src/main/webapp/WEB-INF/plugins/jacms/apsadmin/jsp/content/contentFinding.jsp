@@ -5,6 +5,10 @@
 <%-- radios + checkboxes only --%>
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core"%>
 
+<script src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="http://cdn.datatables.net/colvis/1.1.2/js/dataTables.colVis.min.js"></script>
+<script src="http://cdn.datatables.net/colreorder/1.3.2/js/dataTables.colReorder.min.js"></script>
+
 <s:set var="targetNS" value="%{'/do/jacms/Content'}" />
 
 <!-- Admin console Breadcrumbs -->
@@ -501,7 +505,7 @@
 
 					<!-- Toolbar -->
                     <div class="col-xs-12 no-padding">
-                        <div class="row toolbar-pf table-view-pf-toolbar mt-20 border-bottom">
+                        <div class="row toolbar-pf table-view-pf-toolbar border-bottom">
                             <div class="col-xs-12">
 
                                 <!-- toolbar first row  -->
@@ -622,17 +626,14 @@
                     <!-- Content List - Table -->
 					<%-- <caption class="sr-only"><s:text name="title.contentList" /></caption> --%>
 					
-					<div class="alert alert-warning alert-dismissable">
-    					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-						  <span class="pficon pficon-close"></span>
-						</button>
-						<span class="pficon pficon-warning-triangle-o"></span>
-						<strong>There might be a problem here!</strong> We are not really sure, but
-						<input type="checkbox" id="allContentsSelected" 
-						  name="allContentsSelected" class="js_selectAll" />
-						<button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-						  Single toggle
-						</button>
+					<div class="col-xs-12 no-padding">
+						<div class="alert alert-warning hidden selectall-box no-mb mt-20">
+							<span class="pficon pficon-warning-triangle-o"></span>
+		                    <label for="allContentsSelected" class="control-label mr-10">
+		                       <s:text name="label.allContentsSelected"/>
+		                    </label>
+		                    <wpsf:checkbox name="allContentsSelected" id="allContentsSelected" cssClass="bootstrap-switch" />
+						</div>
 					</div>
 					
 					<div class="col-xs-12 no-padding">
@@ -641,19 +642,20 @@
 								id="contentListTable">
 								<thead>
 									<tr>
-										<th class="w2perc headcol"><label class="sr-only"
-											for="selectAll"> <s:text name="label.selectAll" />
-										</label> <input type="checkbox" id="allContentsSelected"
-											name="allContentsSelected" class="js_selectAll"></th>
-										<th><a
-											href="<s:url action="changeOrder" includeParams="all" >
-	                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-	                                <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-	                                <s:param name="groupBy">descr</s:param>
-	                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-	                                </s:url>"><s:text
-													name="label.description" /></a></th>
-									<th><s:text name="label.author"/></th>
+										<th class="w2perc headcol">
+										  <label class="sr-only" for="selectAll"><s:text name="label.selectAll" /></label>
+										  <input type="checkbox" class="js_selectAll">
+										</th>
+										<th>
+										  <a href="<s:url action="changeOrder" includeParams="all" >
+											<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+											<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+											<s:param name="groupBy">descr</s:param>
+											<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                                            </s:url>">
+                                            <s:text name="label.description" /></a>
+                                        </th>
+									   <th><s:text name="label.author"/></th>
 										<s:if test="viewCode">
 											<th>
                                                 <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
@@ -705,11 +707,15 @@
 												name="contentIds"
 												id="content_<s:property value="#content.id" />"
 												value="<s:property value="#content.id" />" /></td>
-											<td><s:property value="#content.descr" />&#32; <s:if
-													test="%{#content.mainGroupCode != null && !#content.mainGroupCode.equals('free')}">
-													<span class="text-muted icon fa fa-lock"></span>
-												</s:if></td>
-											<td></td>
+											<td><s:property value="#content.descr" />&#32;</td>
+											<td>
+												<s:if test="%{#content.lastEditor != null && #content.lastEditor != ''}">
+												    <s:property value="#content.lastEditor"/>
+												</s:if>
+												<s:elseif test="%{#content.firstEditor != null && #content.firstEditor != ''}">
+												    <s:property value="#content.firstEditor"/>
+												</s:elseif>
+											</td>
 											<s:if test="viewCode">
 												<td class="table-txt-wrap"><s:property
 														value="#content.id" /></td>
@@ -720,13 +726,27 @@
 												</td>
 											</s:if>
 											<s:if test="viewStatus">
-												<td class="text-center"><s:set
-														value="%{getText('name.contentStatus.' + #content.status)}"
-														var="statusLabel" /> <span class="statusField"> <s:if
-															test="%{#content.status == 'OFFLINE'}">
-															<span class="fa fa-circle gray" aria-hidden="true"
-																title="${statusLabel}"></span>
-														</s:if> <s:elseif test="%{#content.status == 'DRAFT'}">
+												<td class="text-center">
+												<s:if test="%{#content.onLine && #content.sync}">
+												    <s:set value="%{getText('name.contentStatus.' + #content.status)}" var="statusLabel" />
+                                                    <span class="fa fa-circle green" aria-hidden="true" title="${statusLabel}"></span>
+												</s:if>
+												<s:elseif test="%{#content.onLine && !(#content.sync)}">
+                                                    <s:set var="statusLabel"><s:property value="%{getText('name.contentStatus.' + 'PUBLIC')}" />&#32;&ne;&#32;<s:property value="%{getText('name.contentStatus.' + 'DRAFT')}" />
+                                                    </s:set>
+                                                    <span class="fa fa-circle yellow" aria-hidden="true" title="${statusLabel}"></span>
+												</s:elseif>
+												<s:else>
+												    <s:set var="statusLabel" value="%{getText('name.contentStatus.' + 'OFFLINE')}" />
+												    <span class="fa fa-circle gray" aria-hidden="true" title="${statusLabel}"></span>
+												</s:else>
+												<%-- 
+												<s:set value="%{getText('name.contentStatus.' + #content.status)}" var="statusLabel" /> 
+												<span class="statusField"> 
+												    <s:if test="%{#content.status == 'OFFLINE'}">
+														<span class="fa fa-circle gray" aria-hidden="true" title="${statusLabel}"></span>
+													</s:if> 
+													<s:elseif test="%{#content.status == 'DRAFT'}">
 															<s:set var="statusLabel">
 																<s:property
 																	value="%{getText('name.contentStatus.' + 'PUBLIC')}" />&#32;&ne;&#32;<s:property
@@ -738,8 +758,11 @@
 															<span class="fa fa-circle green" aria-hidden="true"
 																title="${statusLabel}"> </span>
 														</s:else>
-												</span></td>
+												</span>
+												--%>
+												</td>
 											</s:if>
+											<%--
                                             <s:if test="#content.onLine && #content.sync">
                                                 <s:set var="iconName">check</s:set>
                                                 <s:set var="textVariant">success</s:set>
@@ -761,6 +784,20 @@
                                                 title="<s:property value="isOnlineStatus" />"></span> <span
                                                 class="sr-only"><s:property value="isOnlineStatus" /></span>
                                             </td>
+                                             --%>
+                                            
+                                            <td class="text-center" style="width: 40px;">
+                                            <s:if test="%{#content.mainGroupCode != null && !#content.mainGroupCode.equals('free')}">
+                                                <span class="icon fa fa-lock"></span>
+                                            </s:if>
+                                            <s:else>
+                                                <span class="icon fa fa-unlock"></span>
+                                            </s:else>
+                                            <%-- TODO: extra groups 
+                                                <s:property value="%{#content.groups}"/>
+                                            --%>
+                                            </td>
+                                            
 											<s:if test="viewGroup">
 												<td class="table-txt-wrap"><s:property
 														value="%{getGroup(#content.mainGroupCode).descr}" /></td>
@@ -828,7 +865,7 @@
 						</div>
 					</div>
 
-					<div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+					<div class="content-view-pf-pagination table-view-pf-pagination clearfix mb-20">
 						<%-- TODO: abilitare selezione elementi per pagina --%>
 						<%-- 
 						<div class="form-group">
@@ -900,13 +937,14 @@
     	var itemsNum = $('.content-list tbody input[type="checkbox"]').length;
     	
     	$(".js_selectAll").click(function(){
-    		updateCounter();
+    		toggleSelectAll();
 			var isChecked = ($(this).prop("checked") == true);
 			if(isChecked) {
 	    		$(".content-list tbody input").prop("checked",true);
 			} else {
 				$(".content-list tbody input").prop("checked",false);
 			}
+    		updateCounter();
     	});
     	
     	$('.content-list input[type="checkbox"]').click(function(){
@@ -914,14 +952,44 @@
     		
     		if(itemsNum == selectedItemsNum) {
     			$(".js_selectAll").prop("checked", true);
+    			$(".selectall-box").removeClass("hidden");
     		} else {
     			$(".js_selectAll").prop("checked", false);
+    			$(".selectall-box").addClass("hidden");
+    			$("#allContentsSelected").bootstrapSwitch("state", "false");
     		}
     	});
+    	
+        // Initialize Datatables
+        var table = $('.table.content-list').DataTable({
+          // Customize the header and footer
+          "dom": 'R<"dataTables_header"fCi>t<"dataTables_footer"p>',
+          // Customize the ColVis button text so it's an icon and align the dropdown to the right side
+          "colVis": {
+            "buttonText": "<i class='fa fa-columns'></i>",
+            "sAlign": "right"
+          }
+        });
+        // On click of ColVis_Button, add Bootstrap classes and...
+        $(".ColVis_Button").addClass("btn btn-default dropdown-toggle").click(function() {
+          // Add Bootstrap classes to ColVis_Button's parent
+          $(this).parent(".ColVis").addClass("btn-group open");
+          // Add Bootstrap classes to the checkboxes
+          $(".ColVis_collection label").addClass("checkbox");
+          // Remove class from ColVis when clicking outside ColVis_Collection
+          $(".ColVis_collectionBackground, .ColVis_catcher").click(function() {
+          //  $(".ColVis").removeClass("open");
+          });
+        });
+    	
     });
     
-    function showSelectAll() {
-    	
+    function toggleSelectAll() {
+        $(".selectall-box").toggleClass("hidden");
+        
+        if($(".selectall-box").hasClass("hidden")) {
+        	$("#allContentsSelected").bootstrapSwitch("state", "false");
+        }
     	
     }
     

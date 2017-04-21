@@ -36,12 +36,12 @@
             </ul>
         </div>
     </s:if>
-
+    
     <div class="form-group ">
         <div class="well col-md-offset-3 col-md-6  ">
-
+            
             <p class="search-label"><s:text name="label.search.label"/></p>
-
+            
             <div class="form-group">
                 <label for="search-code" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.code"/></label>
                 <label class="col-sm-2 control-label"><s:text name="label.code"/></label>
@@ -58,26 +58,26 @@
                     <option value=""><s:text name="label.all" /></option>
                     <s:iterator var="widgetFlavourVar" value="widgetFlavours">
                         <wpsa:set var="tmpShowletType">tmpShowletTypeValue</wpsa:set>
-                        <s:iterator var="widgetTypeVar" value="#widgetFlavourVar" >
-                            <s:if test="#widgetTypeVar.optgroup != #tmpShowletType">
-                                <s:if test="#widgetTypeVar.optgroup == 'stockShowletCode'">
+                            <s:iterator var="widgetTypeVar" value="#widgetFlavourVar" >
+                                <s:if test="#widgetTypeVar.optgroup != #tmpShowletType">
+                                    <s:if test="#widgetTypeVar.optgroup == 'stockShowletCode'">
                                     <wpsa:set var="optgroupLabel"><s:text name="title.widgetManagement.widgets.stock" /></wpsa:set>
-                                </s:if>
-                                <s:elseif test="#widgetTypeVar.optgroup == 'customShowletCode'">
+                                    </s:if>
+                                    <s:elseif test="#widgetTypeVar.optgroup == 'customShowletCode'">
                                     <wpsa:set var="optgroupLabel"><s:text name="title.widgetManagement.widgets.custom" /></wpsa:set>
-                                </s:elseif>
-                                <s:elseif test="#widgetTypeVar.optgroup == 'userShowletCode'">
+                                    </s:elseif>
+                                    <s:elseif test="#widgetTypeVar.optgroup == 'userShowletCode'">
                                     <wpsa:set var="optgroupLabel"><s:text name="title.widgetManagement.widgets.user" /></wpsa:set>
-                                </s:elseif>
-                                <s:else>
+                                    </s:elseif>
+                                    <s:else>
                                     <wpsa:set var="pluginPropertyName" value="%{getText(#widgetTypeVar.optgroup + '.name')}" />
                                     <wpsa:set var="pluginPropertyCode" value="%{getText(#widgetTypeVar.optgroup + '.code')}" />
                                     <wpsa:set var="optgroupLabel"><s:text name="%{#pluginPropertyName}" /></wpsa:set>
-                                </s:else>
+                                    </s:else>
                                 <optgroup label="<s:property value="#optgroupLabel" />">
                                 </s:if>
                                 <option <s:if test="%{#widgetTypeVar.key.equals(widgetTypeCode)}"> selected="selected" </s:if> value="<s:property value="#widgetTypeVar.key" />"><s:property value="#widgetTypeVar.value" /></option>
-                                <wpsa:set var="tmpShowletType"><s:property value="#widgetTypeVar.optgroup" /></wpsa:set>
+                            <wpsa:set var="tmpShowletType"><s:property value="#widgetTypeVar.optgroup" /></wpsa:set>
                             </s:iterator>
                         </optgroup>
                     </s:iterator>
@@ -108,98 +108,106 @@
 <!--    <a class="btn btn-primary" href="<s:url action="new" />">
         &#32;<s:text name="guiFragment.label.new" />
     </a>-->
-            <a href="<s:url action="new" />" class="btn btn-primary pull-right" title="<s:text name="guiFragment.label.new" />" style="margin-bottom: 5px">
-            <s:text name="guiFragment.label.new" />
-        </a>
+    <a href="<s:url action="new" />" class="btn btn-primary pull-right" title="<s:text name="guiFragment.label.new" />" style="margin-bottom: 5px">
+        <s:text name="guiFragment.label.new" />
+    </a>
 </p>
 <s:form action="search">
     <p class="sr-only">
-        <wpsf:hidden name="code" />
-        <wpsf:hidden name="widgetTypeCode" />
-        <wpsf:hidden name="pluginCode" />
-    </p>
+    <wpsf:hidden name="code" />
+    <wpsf:hidden name="widgetTypeCode" />
+    <wpsf:hidden name="pluginCode" />
+</p>
 
-    <s:set var="guiFragmentsCodes_list" value="guiFragmentsCodes" />
-    <s:if test="#guiFragmentsCodes_list.size > 0">
-        <wpsa:subset source="#guiFragmentsCodes_list" count="10" objectName="groupGuiFragments" advanced="true" offset="5">
-            <s:set var="group" value="#groupGuiFragments" />
-            <div class="text-center">
-                <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-                <%--<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />--%>
-            </div>
-
-            <table class="table table-striped table-bordered table-hover">
-                <tr>
-                    <th><s:text name="label.code" /></th>
-                    <th><s:text name="label.widgetType" /></th>
-                    <th><s:text name="label.plugin" /></th>
-                    <th style="width: 20px"><s:text name="label.actions" /></th>
-                </tr>
-                <s:iterator var="codeVar">
-                    <s:set var="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />
-                    <s:url action="edit" var="editGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
-                        <tr>
-                            <td><s:property value="#codeVar"/></td>
-                        <td>
-                            <s:set value="%{getWidgetType(#guiFragmentVar.widgetTypeCode)}" var="widgetTypeVar" />
-                            <s:property value="getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)" />
-                        </td>
-                        <td>
-                            <s:if test="null != #guiFragmentVar.pluginCode">
-                                <s:text name="%{#guiFragmentVar.pluginCode+'.name'}" />&nbsp;<s:property value="#guiFragmentVar.pluginCode"/>
-                            </s:if>
-                            <s:else>&ndash;</s:else>
-                            </td>
-                            <td class="text-center text-nowrap">
-
-                                <div class="dropdown dropdown-kebab-pf">
-                                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
-                                    <ul class="dropdown-menu dropdown-menu-right">								
-                                        <li>
-                                        <%-- edit --%>
-                                        <a  title="<s:text name="label.edit" />&#32;<s:property value="#codeVar" />" href="<s:property value="#editGuiFragmentActionVar" escapeHtml="false" />">
-                                            <span class="sr-only"><s:text name="label.edit" />&#32;<s:property value="#codeVar" /></span>
-                                            <s:text name="label.edit" />&#32;<s:property value="#codeVar" />
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <%-- detail --%>
-                                        <a 
-                                            href="<s:url action="detail"><s:param name="code" value="#codeVar"/></s:url>"
-                                            title="<s:text name="note.detailsFor" />: <s:property value="#codeVar" />">
-                                            <s:text name="note.detailsFor" />: <s:property value="#codeVar" />
-                                            <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#codeVar" /></span>
-                                        </a>
-
-                                    </li>
-                                    <li>
-                                        <s:if test="%{!#guiFragmentVar.locked}" >
-                                            <%-- remove --%>
-                                            <s:url action="trash" var="trashGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
-                                            <a href="<s:property value="#trashGuiFragmentActionVar" escapeHtml="false" />" 
-                                               title="<s:text name="label.remove" />: <s:property value="#codeVar" />">
-                                                <span class="sr-only"><s:text name="label.alt.clear" /></span>
-                                                <s:text name="label.alt.clear" />
-                                            </a>
-                                        </s:if>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
+<s:set var="guiFragmentsCodes_list" value="guiFragmentsCodes" />
+<s:if test="#guiFragmentsCodes_list.size > 0">
+    <wpsa:subset source="#guiFragmentsCodes_list" count="10" objectName="groupGuiFragments" advanced="true" offset="5">
+        <s:set var="group" value="#groupGuiFragments" />
+        <%--<div class="text-center">
+            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
+            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
+        </div>--%>
+        
+        <div class="col-xs-12 no-padding">
+            <div class="mt-20">
+                <table class="table table-striped table-bordered table-hover content-list no-mb">
+                    <tr>
+                        <th><s:text name="label.code" /></th>
+                        <th><s:text name="label.widgetType" /></th>
+                        <th><s:text name="label.plugin" /></th>
+                        <th style="width: 20px"><s:text name="label.actions" /></th>
                     </tr>
-                </s:iterator>
-            </table>
-
-            <div class="form-group">
-                <div class="pull-right">
-                    <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-                </div>
+                    <s:iterator var="codeVar">
+                        <s:set var="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />
+                        <s:url action="edit" var="editGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
+                            <tr>
+                                <td><s:property value="#codeVar"/></td>
+                            <td>
+                                <s:set value="%{getWidgetType(#guiFragmentVar.widgetTypeCode)}" var="widgetTypeVar" />
+                                <s:property value="getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)" />
+                            </td>
+                            <td>
+                                <s:if test="null != #guiFragmentVar.pluginCode">
+                                    <s:text name="%{#guiFragmentVar.pluginCode+'.name'}" />&nbsp;<s:property value="#guiFragmentVar.pluginCode"/>
+                                </s:if>
+                                <s:else>&ndash;</s:else>
+                                </td>
+                                <td class="text-center text-nowrap">
+                                    
+                                    <div class="dropdown dropdown-kebab-pf">
+                                        <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
+                                        <ul class="dropdown-menu dropdown-menu-right">								
+                                            <li>
+                                            <%-- edit --%>
+                                            <a  title="<s:text name="label.edit" />&#32;<s:property value="#codeVar" />" href="<s:property value="#editGuiFragmentActionVar" escapeHtml="false" />">
+                                                <span class="sr-only"><s:text name="label.edit" />&#32;<s:property value="#codeVar" /></span>
+                                                <s:text name="label.edit" />&#32;<s:property value="#codeVar" />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <%-- detail --%>
+                                            <a 
+                                                href="<s:url action="detail"><s:param name="code" value="#codeVar"/></s:url>"
+                                                title="<s:text name="note.detailsFor" />: <s:property value="#codeVar" />">
+                                                <s:text name="note.detailsFor" />: <s:property value="#codeVar" />
+                                                <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#codeVar" /></span>
+                                            </a>
+                                            
+                                        </li>
+                                        <li>
+                                            <s:if test="%{!#guiFragmentVar.locked}" >
+                                                <%-- remove --%>
+                                                <s:url action="trash" var="trashGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
+                                                <a href="<s:property value="#trashGuiFragmentActionVar" escapeHtml="false" />" 
+                                                   title="<s:text name="label.remove" />: <s:property value="#codeVar" />">
+                                                    <span class="sr-only"><s:text name="label.alt.clear" /></span>
+                                                    <s:text name="label.alt.clear" />
+                                                </a>
+                                            </s:if>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </s:iterator>
+                </table>
             </div>
-        </wpsa:subset>
-    </s:if>
-    <s:else>
-        <div class="alert alert-info">
-            <s:text name="guiFragment.message.list.empty" />
         </div>
-    </s:else>
-</s:form>
+                <div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+                    <div class="form-group">
+                        <span><s:include
+                                value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                        <div class="mt-5">
+                            <s:include
+                                value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                        </div>
+                    </div>
+                </div>
+                </wpsa:subset>
+            </s:if>
+            <s:else>
+                <div class="alert alert-info">
+                    <s:text name="guiFragment.message.list.empty" />
+                </div>
+            </s:else>
+        </s:form>

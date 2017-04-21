@@ -110,7 +110,7 @@
                     <label class="col-sm-2 control-label" for="userGroup"><s:text name="label.userGroup" /></label>
                     <div class="col-sm-8">
                         <wpsf:select id="userGroup" name="groupName" list="groups" 
-                                     headerKey="" headerValue="" 
+                                     headerKey="" headerValue="%{getText('note.choose')}" 
                                      listKey="name" listValue="description" cssClass="form-control" />
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                     <label class="col-sm-2 control-label" for="userRole"><s:text name="label.userRole" /></label>
                     <div class="col-sm-8">
                         <wpsf:select id="userRole" name="roleName" list="roles" 
-                                     headerKey="" headerValue="" 
+                                     headerKey="" headerValue="%{getText('note.choose')}" 
                                      listKey="name" listValue="description" cssClass="form-control" />
                     </div>
                 </div>

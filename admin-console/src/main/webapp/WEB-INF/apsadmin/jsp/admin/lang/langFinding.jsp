@@ -74,6 +74,7 @@
                     <label for="langCode"><s:text name="name.chooseALanguage"/></label>
                     <div class="input-group">
                         <select name="langCode" id="langCode" class="form-control">
+                            <option value=""><s:text name="%{getText('note.choose')}" /></option>
                             <s:iterator var="lang" value="assignableLangs">
                                 <option value="<s:property value="#lang.code"/>"><s:property value="#lang.code"/>
                                     &ndash;

@@ -50,8 +50,13 @@
 	<s:text name="menu.entityAdmin.entityTypes.new" />
 </a>
 
-<s:if test="%{entityPrototypes.size > 0}">
-	<table class="table table-striped table-bordered"
+    <s:set var="entity_list" value="entityPrototypes" />
+    <s:if test="%{#entity_list.size > 0}">
+    <wpsa:subset source="#entity_list" count="10" objectName="entityGroup" advanced="true" offset="5">
+        <s:set var="group" value="#entityGroup" />    
+        <div class="col-xs-12 no-padding">
+            <div class="mt-20">
+                <table class="table table-striped table-bordered table-hover content-list no-mb"
 		style="margin-top: 1em;">
 		<thead>
 			<tr>
@@ -63,7 +68,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<s:iterator value="entityPrototypes" var="entityType"
+			<s:iterator var="entityType"
 				status="counter">
 				<s:set var="entityAnchor" value="%{'entityCounter'+#counter.count}" />
 				<tr>
@@ -134,6 +139,19 @@
 			</s:iterator>
 		</tbody>
 	</table>
+                                            </div>
+        </div>
+        <div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+            <div class="form-group">
+                <span><s:include
+                        value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                <div class="mt-5">
+                    <s:include
+                        value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                </div>
+            </div>
+        </div>
+                </wpsa:subset>
 </s:if>
 <s:else>
 	<p>

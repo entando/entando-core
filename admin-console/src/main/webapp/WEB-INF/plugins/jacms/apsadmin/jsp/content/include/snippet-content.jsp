@@ -80,7 +80,7 @@
 				<label class="control-label" for="contentMainGroup"><s:text name="label.ownerGroup" /></label>
 				<div class="input-group">
 					<wpsf:select name="mainGroup" id="contentMainGroup" list="allowedGroups" 
-								 value="#session.contentGroupOnSession" 
+						 headerKey="" headerValue="%{getText('note.choose')}" value="#session.contentGroupOnSession" 
 								 listKey="name" listValue="descr" cssClass="form-control" />
 					<span class="input-group-btn">
 						<wpsf:submit action="configureMainGroup"

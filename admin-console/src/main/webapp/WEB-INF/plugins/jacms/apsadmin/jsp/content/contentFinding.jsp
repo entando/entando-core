@@ -632,7 +632,7 @@
 		                    <label for="allContentsSelected" class="control-label mr-10">
 		                       <s:text name="label.allContentsSelected"/>
 		                    </label>
-		                    <wpsf:checkbox name="allContentsSelected" id="allContentsSelected" cssClass="bootstrap-switch" />
+		                    <wpsf:checkbox name="allContentsSelected" id="allContentsSelected" cssClass="bootstrap-switch" value="false"/>
 						</div>
 					</div>
 					
@@ -642,7 +642,7 @@
 								id="contentListTable">
 								<thead>
 									<tr>
-										<th class="w2perc headcol">
+										<th class="w2perc">
 										  <label class="sr-only" for="selectAll"><s:text name="label.selectAll" /></label>
 										  <input type="checkbox" class="js_selectAll">
 										</th>
@@ -703,7 +703,7 @@
 									<s:iterator var="contentId">
 										<s:set var="content" value="%{getContentVo(#contentId)}"></s:set>
 										<tr>
-											<td class="headcol"><input type="checkbox"
+											<td><input type="checkbox"
 												name="contentIds"
 												id="content_<s:property value="#content.id" />"
 												value="<s:property value="#content.id" />" /></td>
@@ -956,39 +956,16 @@
     		} else {
     			$(".js_selectAll").prop("checked", false);
     			$(".selectall-box").addClass("hidden");
-    			$("#allContentsSelected").bootstrapSwitch("state", "false");
+    			$("#allContentsSelected").bootstrapSwitch("state", "false").val("false");
     		}
     	});
-    	
-        // Initialize Datatables
-        var table = $('.table.content-list').DataTable({
-          // Customize the header and footer
-          "dom": 'R<"dataTables_header"fCi>t<"dataTables_footer"p>',
-          // Customize the ColVis button text so it's an icon and align the dropdown to the right side
-          "colVis": {
-            "buttonText": "<i class='fa fa-columns'></i>",
-            "sAlign": "right"
-          }
-        });
-        // On click of ColVis_Button, add Bootstrap classes and...
-        $(".ColVis_Button").addClass("btn btn-default dropdown-toggle").click(function() {
-          // Add Bootstrap classes to ColVis_Button's parent
-          $(this).parent(".ColVis").addClass("btn-group open");
-          // Add Bootstrap classes to the checkboxes
-          $(".ColVis_collection label").addClass("checkbox");
-          // Remove class from ColVis when clicking outside ColVis_Collection
-          $(".ColVis_collectionBackground, .ColVis_catcher").click(function() {
-          //  $(".ColVis").removeClass("open");
-          });
-        });
-    	
     });
     
     function toggleSelectAll() {
         $(".selectall-box").toggleClass("hidden");
         
         if($(".selectall-box").hasClass("hidden")) {
-        	$("#allContentsSelected").bootstrapSwitch("state", "false");
+        	$("#allContentsSelected").bootstrapSwitch("state", "false").val("false");
         }
     	
     }

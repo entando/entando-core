@@ -4,10 +4,7 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="menu.configure" /></li>
-	<li><a href="<s:url action="list" />"
-		title="<s:text name="note.goToSomewhere" />: <s:text name="menu.filebrowserAdmin" />">
-			<s:text name="menu.filebrowserAdmin" />
-	</a></li>
+	<li><s:text name="menu.filebrowserAdmin" /></li>
 	<li class="page-title-container"><s:text name="label.delete" /></li>
 </ol>
 <h1 class="page-title-container">

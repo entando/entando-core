@@ -1,12 +1,8 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
-	<li><a
-		href="<s:url namespace="/do/Admin/Database" action="entry" />"><s:text
-				name="title.databaseManagement" /></a></li>
+	<li><s:text name="menu.configure" /></li>
+	<li><s:text name="title.databaseManagement" /></li>
 	<li><s:text name="title.databaseBackup.new" /></li>
 </ol>
 <h1 class="page-title-container">

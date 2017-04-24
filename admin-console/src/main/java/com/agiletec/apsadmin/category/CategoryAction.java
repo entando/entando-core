@@ -33,6 +33,7 @@ import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThre
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.category.helper.ICategoryActionHelper;
+import com.agiletec.apsadmin.portal.AbstractPortalAction;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
@@ -139,11 +140,6 @@ public class CategoryAction extends AbstractTreeAction {
 	public String add() {
 		String selectedNode = this.getSelectedNode();
 		try {
-			Category category = this.getCategory(selectedNode);
-			if (null == category) {
-				this.addActionError(this.getText("error.category.selectCategory"));
-				return "categoryTree";
-			}
 			this.setStrutsAction(ApsAdminSystemConstants.ADD);
 			this.setParentCategoryCode(selectedNode);
 		} catch (Throwable t) {
@@ -173,7 +169,7 @@ public class CategoryAction extends AbstractTreeAction {
 				this.addActionError(this.getText("error.category.selectCategory"));
 				return "categoryTree";
 			}
-			this.setParentCategoryCode(category.getParentCode());
+//			this.setParentCategoryCode(category.getParentCode());
 			this.setCategoryCode(category.getCode());
 			this.setTitles(category.getTitles());
 		} catch (Throwable t) {
@@ -185,7 +181,7 @@ public class CategoryAction extends AbstractTreeAction {
 	
 	public String trash() {
 		try {
-			String check = this.chechDelete();
+			String check = this.checkDelete();
 			if (null != check) return check;
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
@@ -197,7 +193,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public String delete() {
 		String selectedNode = this.getSelectedNode();
 		try {
-			String check = this.chechDelete();
+			String check = this.checkDelete();
 			if (null != check) return check;
 			Category currentCategory = this.getCategory(selectedNode);
 			this.getCategoryManager().deleteCategory(selectedNode);
@@ -214,7 +210,7 @@ public class CategoryAction extends AbstractTreeAction {
 	 * When errors are detected a new actionMessaged, containing the appropriate error code and messaged, is created.
 	 * @return null if the deletion operation is successful, otherwise the error code
 	 */
-	protected String chechDelete() {
+	protected String checkDelete() {
 		Category currentCategory = this.getCategory(this.getSelectedNode());
 		if (null == currentCategory) {
 			_logger.info("Required a selected node");
@@ -257,12 +253,18 @@ public class CategoryAction extends AbstractTreeAction {
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				Category category = this.getCategory(this.getCategoryCode());
 				category.setTitles(this.getTitles());
+				category.setParentCode(StringUtils.trim(this.getParentCategoryCode().split(",")[1]));
 				this.getCategoryManager().updateCategory(category);
 				_logger.debug("Updated category {}", category.getCode());
 			} else {
-				Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), this.getParentCategoryCode(), this.getTitles());
-				this.getCategoryManager().addCategory(category);
-				_logger.debug("Added new category {}", this.getCategoryCode());
+				if(!StringUtils.isEmpty(this.getParentCategoryCode())) {
+					Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), StringUtils.trim(this.getParentCategoryCode().split(",")[1]), this.getTitles());
+					this.getCategoryManager().addCategory(category);
+					_logger.debug("Added new category {}", this.getCategoryCode());
+				} else {
+					_logger.error("Select a position");
+					return FAILURE;
+				}
 			}
 		} catch (Exception e) {
 			_logger.error("error in save", e);

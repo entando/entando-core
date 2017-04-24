@@ -46,8 +46,8 @@
 
 <a
 	href="<s:url namespace="/do/Entity" action="initAddEntityType" ><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>"
-	class="btn btn-primary pull-right" style="margin-bottom: 5px"> <s:text
-		name="menu.entityAdmin.entityTypes.new" />
+	class="btn btn-primary pull-right" style="margin-bottom: 5px">
+	<s:text name="menu.entityAdmin.entityTypes.new" />
 </a>
 
     <s:set var="entity_list" value="entityPrototypes" />

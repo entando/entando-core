@@ -1,16 +1,10 @@
-<%@ taglib prefix="s" uri="/struts-tags" %>
-<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="wpsa" uri="/apsadmin-core"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
-	<li><a href="<s:url action="list" namespace="/do/Group"></s:url>"
-		title="<s:text name="note.goToSomewhere" />: <s:text name="title.groupManagement" />">
-			<s:text name="title.groupManagement" />
-	</a></li>
-	<li class="page-title-container"><s:text
-			name="title.groupDetail" /></li>
+	<li><s:text name="menu.configure" /></li>
+	<li><s:text name="title.groupManagement" /></li>
+	<li class="page-title-container"><s:text name="title.groupDetail" /></li>
 </ol>
 <h1 class="page-title-container">
 	<s:text name="title.groupDetail" />
@@ -28,21 +22,28 @@
 
 <div class="form-horizontal">
 	<div class="form-group">
-		<label class="control-label col-lg-3 col-md-3"><s:text name="label.group" /></label>
+		<label class="control-label col-lg-3 col-md-3"><s:text
+				name="label.group" /></label>
 		<div class="col-md-9 col-lg-9 form-control-static">
-			<code><s:property value="name" /></code>
+			<code>
+				<s:property value="name" />
+			</code>
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-lg-3 col-md-3"><s:text name="label.description" /></label>
+		<label class="control-label col-lg-3 col-md-3"><s:text
+				name="label.description" /></label>
 		<div class="col-md-9 col-lg-9 form-control-static">
 			<s:property value="description" />
 		</div>
 	</div>
-	<wpsa:hookPoint key="core.groupDetails" objectName="hookPointElements_core_groupDetails">
-		<s:iterator value="#hookPointElements_core_groupDetails" var="hookPointElement">
+	<wpsa:hookPoint key="core.groupDetails"
+		objectName="hookPointElements_core_groupDetails">
+		<s:iterator value="#hookPointElements_core_groupDetails"
+			var="hookPointElement">
 			<wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
 		</s:iterator>
 	</wpsa:hookPoint>
 </div>
-<s:include value="/WEB-INF/apsadmin/jsp/user/group/include/groupInfo-references.jsp" />
+<s:include
+	value="/WEB-INF/apsadmin/jsp/user/group/include/groupInfo-references.jsp" />

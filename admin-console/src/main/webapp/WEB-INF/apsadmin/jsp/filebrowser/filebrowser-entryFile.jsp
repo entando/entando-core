@@ -5,10 +5,7 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="menu.configure" /></li>
-	<li><a href="<s:url action="list" />"
-		title="<s:text name="note.goToSomewhere" />: <s:text name="menu.filebrowserAdmin" />">
-			<s:text name="menu.filebrowserAdmin" />
-	</a></li>
+	<li><s:text name="menu.filebrowserAdmin" /></li>
 	<li class="page-title-container"><s:text name="label.addTextFile" /></li>
 </ol>
 <h1 class="page-title-container">
@@ -37,12 +34,12 @@
 
 		<s:if test="hasFieldErrors()">
 			<div class="alert alert-danger alert-dismissable fade in">
-				<button class="close" data-dismiss="alert">
-					<span class="icon fa fa-times"></span>
+				<button type="button" class="close" data-dismiss="alert"
+					aria-hidden="true">
+					<span class="pficon pficon-close"></span>
 				</button>
-				<h2 class="h4 margin-none">
-					<s:text name="message.title.FieldErrors" />
-				</h2>
+				<span class="pficon pficon-error-circle-o"></span>
+				<s:text name="message.title.FieldErrors" />
 				<ul class="margin-base-top">
 					<s:iterator value="fieldErrors">
 						<s:iterator value="value">
@@ -143,8 +140,7 @@
 			<div class="col-sm-12">
 				<wpsf:submit action="list" value="%{getText('label.cancel')}"
 					cssClass="btn btn-default" />
-				<wpsf:submit type="button" action="save"
-					cssClass="btn btn-primary">
+				<wpsf:submit type="button" action="save" cssClass="btn btn-primary">
 					<span class="icon fa fa-save"></span>
 					&#32;
 					<s:text name="label.save" />

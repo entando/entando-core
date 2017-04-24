@@ -3,14 +3,8 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
-	<li><a
-		href="<s:url action="entry" namespace="/do/Admin/Database"></s:url>"
-		title="<s:text name="title.databaseManagement" />"> <s:text
-				name="title.databaseManagement" />
-	</a></li>
+	<li><s:text name="menu.configure" /></li>
+	<li><s:text name="title.databaseManagement" /></li>
 	<li class="page-title-container"><s:text
 			name="title.databaseBackup.remove" /></li>
 </ol>

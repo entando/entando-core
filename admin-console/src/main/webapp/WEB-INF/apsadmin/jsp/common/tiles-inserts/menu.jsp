@@ -267,12 +267,7 @@
 						<c:if test="${isManageResources}">
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Image</s:param></s:url>">
-                                    <span class="list-group-item-value">Digital Assets - Images</span>
-                                </a>
-                            </li>
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Attach</s:param></s:url>">
-                                    <span class="list-group-item-value">Digital Assets - Attaches</span>
+                                    <span class="list-group-item-value">Digital Assets</span>
                                 </a>
                             </li>
 						</c:if>
@@ -369,7 +364,7 @@
 
                 <li class="list-group-item">
                     <a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
-                        <span class="list-group-item-value"><s:text name="title.reload.confi" /></span>
+                        <span class="list-group-item-value"><s:text name="title.reload.config" /></span>
                     </a>
                 </li>
 

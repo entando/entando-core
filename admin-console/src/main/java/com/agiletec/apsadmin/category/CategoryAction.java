@@ -50,6 +50,10 @@ public class CategoryAction extends AbstractTreeAction {
 	@Override
 	public void validate() {
 		super.validate();
+		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD ||
+			this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
+			this.checkParentNode(this.getParentCategoryCode());
+		}
 		this.checkCode();
 		this.checkTitles();
 	}
@@ -125,7 +129,7 @@ public class CategoryAction extends AbstractTreeAction {
 
 	private void checkCode() {
 		String code = this.getCategoryCode();
-		if ((this.getStrutsAction() == ApsAdminSystemConstants.ADD || 
+		if ((this.getStrutsAction() == ApsAdminSystemConstants.ADD ||
 				this.getStrutsAction() == ApsAdminSystemConstants.PASTE) 
 				&& null != code && code.trim().length() > 0) {
 			String currectCode = BaseActionHelper.purgeString(code.trim());
@@ -133,8 +137,17 @@ public class CategoryAction extends AbstractTreeAction {
 				String[] args = {currectCode};
 				this.addFieldError("categoryCode", this.getText("error.category.duplicateCode", args));
 			}
+
 			this.setCategoryCode(currectCode);
 		}
+	}
+
+	protected String checkParentNode(String selectedNode) {
+		if (null == selectedNode || selectedNode.trim().length() == 0) {
+			this.addFieldError("parentCategoryCode", this.getText("error.category.noParentSelected"));
+			return "categoryTree";
+		}
+		return null;
 	}
 	
 	public String add() {
@@ -263,6 +276,7 @@ public class CategoryAction extends AbstractTreeAction {
 					_logger.debug("Added new category {}", this.getCategoryCode());
 				} else {
 					_logger.error("Select a position");
+					this.addFieldError("categoryCode", this.getText("error.category.noParentSelected"));
 					return FAILURE;
 				}
 			}

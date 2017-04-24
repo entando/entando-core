@@ -34,12 +34,22 @@
 <%-- 	<s:include value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo_breadcrumbs.jsp" /> --%>
 
 	<s:form action="save" cssClass="form-horizontal">
+		<s:set var="currentFieldFieldErrorsVar" value="%{fieldErrors['parentCategoryCode']}" />
 		<s:if test="hasFieldErrors()">
-			<div class="alert alert-danger alert-dismissable fade in">
-				<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-				<h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h2>
+			<div class="alert alert-danger alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+					<span class="pficon pficon-close"></span>
+				</button>
+				<span class="pficon pficon-error-circle-o"></span>
+				<s:if test="currentFieldFieldErrorsVar">
+					<div><s:text name="error.category.noParentSelected" /></div>
+				</s:if>
+				<s:else>
+					<div><s:text name="message.title.FieldErrors" /></div>
+				</s:else>
 			</div>
 		</s:if>
+
 
 		<p class="sr-only">
 			<wpsf:hidden name="strutsAction" />
@@ -67,7 +77,7 @@
 					</div>
 				</div>
 			</s:iterator>
-			
+
 			<%-- category code --%>
 			<s:set var="currentFieldFieldErrorsVar" value="%{fieldErrors['categoryCode']}" />
 			<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />

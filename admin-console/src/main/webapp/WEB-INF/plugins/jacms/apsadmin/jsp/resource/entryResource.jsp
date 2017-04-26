@@ -138,7 +138,7 @@
 	<fieldset class="margin-base-vertical" id="category-content-block">
 
 		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
-			<div class="col-xs-2">
+			<div class="col-xs-2 control-label">
 				<label><s:text name="title.categoriesManagement"/></label>
 			</div>
 			<div class="col-xs-10">
@@ -159,8 +159,8 @@
 								   aria-hidden="true"></i>&#32;<s:text name="label.category.collapseAll"/>
 							</button>
 						</th>
-						<th>
-							JOIN
+						<th class="text-center">
+                            <s:text name="label.category.join" />
 						</th>
 					</tr>
 					</thead>
@@ -209,7 +209,7 @@
 		<s:set var="referencingContentsId" value="references['jacmsContentManagerUtilizers']" />
 		<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
 	</s:if>
-	
+	<br>
 	<div class="form-horizontal">
 		<div class="form-group">
 			<div class="col-sm-12 margin-small-vertical">

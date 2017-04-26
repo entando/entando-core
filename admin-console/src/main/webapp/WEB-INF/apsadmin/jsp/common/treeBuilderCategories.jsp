@@ -29,7 +29,7 @@
 			</s:if>
         </span>
 	</td>
-	<td>
+	<td class="text-center">
 		<wpsf:submit action="joinCategory" type="button" title="%{getText('label.join')}" cssClass="btn btn-menu-right btn-sm margin-small-vertical" data-toggle="tooltip">
 			<span class="icon fa fa-plus"></span>
 		</wpsf:submit>

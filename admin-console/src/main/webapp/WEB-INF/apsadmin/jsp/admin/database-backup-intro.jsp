@@ -1,12 +1,8 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
-	<li><a
-		href="<s:url namespace="/do/Admin/Database" action="entry" />"><s:text
-				name="title.databaseManagement" /></a></li>
+	<li><s:text name="menu.configure" /></li>
+	<li><s:text name="title.databaseManagement" /></li>
 	<li><s:text name="title.databaseBackup.new" /></li>
 </ol>
 <h1 class="page-title-container">
@@ -67,13 +63,13 @@
 			<div class="col-sm-12">
 				<s:form action="executeBackup" namespace="/do/Admin/Database"
 					method="get">
-					<a class="btn btn-default btn-lg"
+					<a class="btn btn-default"
 						href="<s:url namespace="/do/Admin/Database" action="entry" />">
 						<s:text name="database.management.label.go.to.list" />
 					</a>
 					<wpsf:submit type="button" action="executeBackup"
 						value="%{getText('database.management.label.backup.execute')}"
-						cssClass="btn btn-primary btn-lg">
+						cssClass="btn btn-primary">
 						<s:text name="database.management.label.backup.execute" />
 					</wpsf:submit>
 				</s:form>

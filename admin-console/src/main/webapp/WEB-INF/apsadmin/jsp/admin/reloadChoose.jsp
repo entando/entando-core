@@ -3,12 +3,12 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="menu.configure"/></li>
 	<li class="page-title-container">
-		<s:text name="menu.reload" />
+		<s:text name="title.reload.config" />
 	</li>
 </ol>
 <h1 class="page-title-container">
 	<div>
-		<s:text name="menu.reload" />
+		<s:text name="title.reload.config" />
 		<span class="pull-right">
             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
 			   data-content="TO be inserted" data-placement="left" data-original-title="">
@@ -23,29 +23,17 @@
 <br>
 <br>
 
-
-<div>
-	<wp:ifauthorized permission="editContents">
-		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
-			<a href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />" class="btn btn-default btn-lg btn-block">
-				<span class="icon fa fa-refresh"></span>&#32;
-				<s:text name="menu.reload.contents" />
-			</a>
-			<small class="text-muted display-block margin-base-bottom">
-				<s:text name="menu.reload.contents.keywords" />
-			</small>
-		</div>
-	</wp:ifauthorized>
-
+<div class="text-center">
 	<wp:ifauthorized permission="superuser">
-		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 margin-large-bottom">
-			<a href="<s:url namespace="/do/BaseAdmin" action="reloadConfig" />" class="btn btn-default btn-lg btn-block">
-				<span class="icon fa fa-refresh"></span>&#32;
-				<s:text name="menu.reload.config" />
+		<i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
+		<p class="esclamation-underline"><s:text name="menu.reload.config"/></p>
+		<p>
+			<s:text name="label.reload.confirm"/>
+		</p>
+		<div class="btn btn-danger button-fixed-width">
+			<a href="<s:url namespace="/do/BaseAdmin" action="reloadConfig" />" class="btn-danger button-fixed-width">
+				<s:text name="label.reload" />
 			</a>
-			<small class="text-muted display-block margin-base-bottom">
-				<s:text name="menu.reload.config.keywords" />
-			</small>
 		</div>
 	</wp:ifauthorized>
 </div>

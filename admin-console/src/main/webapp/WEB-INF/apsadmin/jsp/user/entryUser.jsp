@@ -83,7 +83,7 @@
 
     <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
         <label class="col-sm-2 control-label" for="username"><s:text name="username" />&nbsp;
-		<i class="fa fa-asterisk required-icon"></i>        
+		<i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>        
         <a role="button" tabindex="0"  data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="help.user.username" /> " >
         <span class="fa fa-info-circle"></span></a></label>
         <div class="col-sm-10">
@@ -98,7 +98,7 @@
 
     <div class="form-group<s:property value="#controlGroupErrorClassVar2" />">
         <label class="col-sm-2 control-label" for="password"><s:text name="password" />&nbsp;
-        <i class="fa fa-asterisk required-icon"></i>
+        <i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
         <a role="button" tabindex="0"  data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="help.user.password" /> " >
         <span class="fa fa-info-circle"></span></a></label>
         <div class="col-sm-10">
@@ -199,7 +199,7 @@
             <label class="col-sm-2 control-label"  for="profileType"><s:text name="profileType" />            
             </label>
             <div class="col-sm-10">
-                <wpsf:select name="profileTypeCode" id="profileType" list="profileTypes" listKey="code" listValue="description" cssClass="form-control" />
+                <wpsf:select name="profileTypeCode" headerKey="" headerValue="%{getText('note.choose')}" id="profileType" list="profileTypes" listKey="code" listValue="description" cssClass="form-control" />
                 <s:if test="#fieldHasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator>

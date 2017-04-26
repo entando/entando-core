@@ -136,11 +136,10 @@
 	</div>
 
 	<fieldset class="margin-base-vertical" id="category-content-block">
-		<legend><span class="icon fa fa-tags"></span>&#32;<s:text name="title.categoriesManagement"/></legend>
 
 		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
 			<div class="col-xs-2">
-				<label><s:text name="name.tree.position" /></label>
+				<label><s:text name="title.categoriesManagement"/></label>
 			</div>
 			<div class="col-xs-10">
 				<script src="<wp:resourceURL />administration/js/entando-typeahead-tree.js"></script>
@@ -149,7 +148,6 @@
 				<table id="categoryTree" class="table table-bordered table-hover table-treegrid">
 					<thead>
 					<tr>
-						<!-- 						class="col-sm-10" -->
 						<th> <s:text name="label.category.tree"/>
 							<button type="button" class="btn-no-button expand-button"
 									id="expandAll">
@@ -160,6 +158,9 @@
 								<i class="fa fa-minus-square-o treeInteractionButtons"
 								   aria-hidden="true"></i>&#32;<s:text name="label.category.collapseAll"/>
 							</button>
+						</th>
+						<th>
+							JOIN
 						</th>
 					</tr>
 					</thead>
@@ -173,7 +174,7 @@
 					<s:set var="selectedPage" value="%{getCategory(selectedTreeNode)}" />
 					<s:set var="currentRoot" value="categoryRoot" />
 					<s:set var="isPosition" value="false" />
-					<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
+					<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategories.jsp" />
 
 					</tbody>
 				</table>
@@ -183,30 +184,6 @@
 			</div>
 		</div>
 
-
-
-
-		<%--<div class="well">
-			<ul id="categoryTree" class="fa-ul list-unstyled">
-			<s:set var="inputFieldName" value="'categoryCode'" />
-			<s:set var="selectedTreeNode" value="selectedNode" />
-			<s:set var="liClassName" value="'category'" />
-			<s:set var="treeItemIconName" value="'fa-folder'" />
-	
-			<s:if test="#categoryTreeStyleVar == 'classic'">
-			<s:set var="currentRoot" value="categoryRoot" />
-			<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
-			</s:if>
-			</ul>
-		</div>--%>
-		<div data-toggle="tree-toolbar">
-			<div data-toggle="tree-toolbar-actions">
-				<wpsf:submit action="joinCategory" type="button" title="%{getText('label.join')}" cssClass="btn btn-info btn-sm margin-small-vertical" data-toggle="tooltip">
-					<span class="icon fa fa-plus"></span>
-				</wpsf:submit>
-			</div>
-		</div>
-		
 		<s:if test="categoryCodes != null && categoryCodes.size() > 0">
 		<h2 class="h4 margin-base-vertical"><s:text name="note.resourceCategories.summary"/></h2>
 		

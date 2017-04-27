@@ -1276,6 +1276,13 @@ td{
 .page-title-container{
     font-weight: bold;
 }
+.page-title-caret:before{
+    content: "\2039";
+    color: #aaabad;
+    margin-right: 6px;
+    vertical-align: middle;
+    font-family: monospace;
+}
 .table-in-col10{
     padding: 0px 0 0 6px; 
 }

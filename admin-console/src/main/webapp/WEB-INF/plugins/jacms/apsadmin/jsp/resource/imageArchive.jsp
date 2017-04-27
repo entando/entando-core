@@ -358,5 +358,4 @@
             </s:action>
         </s:if>
     </wp:ifauthorized>
-
 </div>

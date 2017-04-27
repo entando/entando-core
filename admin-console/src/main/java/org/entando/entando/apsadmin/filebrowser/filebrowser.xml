@@ -51,7 +51,7 @@
 		<action name="createDir" class="filebrowserAction" method="createDir">
 			<result name="input" type="tiles">admin.Filebrowser.newDir</result>
 			<result type="redirectAction">
-    			<param name="actionName">list</param>
+    			<param name="actionName">list</param>currentUserProfile
     			<param name="currentPath">${currentPath}</param>
     			<param name="protectedFolder">${protectedFolder}</param>
             </result>

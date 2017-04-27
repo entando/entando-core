@@ -1413,8 +1413,16 @@ ul {
 .btn-with-form-control-container .btn-with-form-control .form-control {
 	margin-left: 2px;
 	display: inline;
-   	width: auto;
+    width: auto;
 }
+
+.btn-with-form-control-container .input-group input[type="text"] {height: 40px; width:100%}
+.btn-with-form-control-container .input-group input[type="radio"] {display: none}
+.btn-with-form-control-container .input-group label {margin: 0;}
+.btn-with-form-control-container .input-group {width: 250px;}
+.btn-with-form-control-container .inline-block {display: inline-block}
+.btn-with-form-control-container .inline-block + .inline-block {margin-left: -3px}
+
 
 /* --------------- Table Responsive --------------- */
 
@@ -1492,9 +1500,7 @@ ul {
 
 @media (max-width: 767px) {
     .table-view-pf-toolbar label {display: none};
-}
 
-@media (max-width: 767px) {
 	.btn-with-form-control-container {
 		width: 100%;
 	}	
@@ -1502,5 +1508,15 @@ ul {
 		display: block;
 		float: none;
 		margin: 0!important;
-	}		
+	}
+    .btn-with-form-control-container .input-group .btn.input-group-addon {
+        display: table-cell;
+    }
+    .btn-with-form-control-container .input-group {
+        width: 100%;
+    }
+    .btn-with-form-control-container .inline-block {
+        display: block;
+    }
+    .btn-with-form-control-container .inline-block + .inline-block {margin-left: 0}	
 }

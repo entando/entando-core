@@ -182,7 +182,7 @@ public class CategoryAction extends AbstractTreeAction {
 				this.addActionError(this.getText("error.category.selectCategory"));
 				return "categoryTree";
 			}
-//			this.setParentCategoryCode(category.getParentCode());
+			this.setParentCategoryCode(category.getParentCode());
 			this.setCategoryCode(category.getCode());
 			this.setTitles(category.getTitles());
 		} catch (Throwable t) {
@@ -262,16 +262,22 @@ public class CategoryAction extends AbstractTreeAction {
 	}
 	
 	public String save() {
+		String parentCategoryCode;
 		try {
+			if(this.getParentCategoryCode().contains(",") && !StringUtils.endsWith(this.getParentCategoryCode(), ",")) {
+				parentCategoryCode = StringUtils.trim(this.getParentCategoryCode().split(",")[1]);
+			} else {
+				parentCategoryCode = this.getParentCategoryCode();
+			}
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				Category category = this.getCategory(this.getCategoryCode());
 				category.setTitles(this.getTitles());
-				category.setParentCode(StringUtils.trim(this.getParentCategoryCode().split(",")[1]));
+				category.setParentCode(parentCategoryCode);
 				this.getCategoryManager().updateCategory(category);
 				_logger.debug("Updated category {}", category.getCode());
 			} else {
 				if(!StringUtils.isEmpty(this.getParentCategoryCode())) {
-					Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), StringUtils.trim(this.getParentCategoryCode().split(",")[1]), this.getTitles());
+					Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), parentCategoryCode, this.getTitles());
 					this.getCategoryManager().addCategory(category);
 					_logger.debug("Added new category {}", this.getCategoryCode());
 				} else {

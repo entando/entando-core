@@ -14,10 +14,18 @@
 		</li>
 	</s:if>
 	<s:else>
-		<li><s:text name="breadcrumb.dataAsset" /></li>
+		<li><s:text name="breadcrumb.digitalAsset" /></li>
 	</s:else>
-	<li class="page-title-container">
+	<li>
 		<s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+	</li>
+	<li class="page-title-container">
+		<s:if test="getStrutsAction() == 1">
+			<s:text name="title.%{resourceTypeCode}.new" />
+		</s:if>
+		<s:elseif test="getStrutsAction() == 2">
+			<s:text name="title.%{resourceTypeCode}.edit" />
+		</s:elseif>
 	</li>
 </ol>
 

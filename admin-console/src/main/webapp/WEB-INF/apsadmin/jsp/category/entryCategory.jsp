@@ -63,7 +63,7 @@
 				<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />
 				<s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
 				<div class="form-group<s:property value="controlGroupErrorClassVar" />">
-					<div class="col-xs-2">
+					<div class="col-xs-2 control-label">
 						<label for="lang<s:property value="code" />">
 							<abbr class="label label-info" title="<s:property value="descr" />"><s:property value="code" /></abbr>&#32;
 							<s:text name="name.categoryTitle" /> 
@@ -83,7 +83,7 @@
 			<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />
 			<s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
 			<div class="form-group<s:property value="controlGroupErrorClassVar" />">
-				<div class="col-xs-2">
+				<div class="col-xs-2 control-label">
 					<label for="categoryCode"><s:text name="name.categoryCode" /></label>
 				</div>
 				<div class="col-xs-10">
@@ -102,7 +102,7 @@
 			
 <!-- 		tree position -->
 			<div class="form-group<s:property value="controlGroupErrorClassVar" />">
-				<div class="col-xs-2">
+				<div class="col-xs-2 control-label">
 					<label><s:text name="name.tree.position" /></label>
 				</div>
 				<div class="col-xs-10">

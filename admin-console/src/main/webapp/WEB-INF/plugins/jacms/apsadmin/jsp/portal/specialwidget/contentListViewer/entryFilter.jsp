@@ -248,17 +248,37 @@
 				<s:text name="note.filterTypes.BooleanAttribute" /><span>
 			</p>
 			<fieldset class="margin-base-top"><legend><s:text name="label.settings"/></legend>
-			<ul class="list-unstyled">
-				<li class="radio">
-					<label><input type="radio" name="booleanValue" id="booleanValue_true" value="true" />&#32;<s:text name="label.yes" /></label>
-				</li>
-				<li class="radio">
-					<label><input type="radio" name="booleanValue" id="booleanValue_false" value="false" />&#32;<s:text name="label.no" /></label>
-				</li>
-				<li class="radio">
-					<label><input type="radio" name="booleanValue" id="booleanValue_none" checked="checked" value="" /><s:text name="label.all" /></label>
-				</li>
-			</ul>
+			
+                <div class="form-group">
+                    <div class="btn-group col-sm-5" data-toggle="buttons">
+
+                        <label class="btn btn-default active">
+                            <input type="radio" name="booleanValue" id="booleanValue_true" value="true" />&#32;
+                            <s:text name="label.yes" />
+                        </label>
+                        <label class="btn btn-default">
+                            <input type="radio" name="booleanValue" id="booleanValue_false" value="false" />&#32;
+                            <s:text name="label.no" />
+                        </label>
+                        <label class="btn btn-default">
+                            <input type="radio" name="booleanValue" id="booleanValue_none" checked="checked" value="" />
+                            <s:text name="label.all" />
+                        </label>
+                    </div>
+                </div>
+                <%--
+				<ul class="list-unstyled">
+					<li class="radio">
+						<label><input type="radio" name="booleanValue" id="booleanValue_true" value="true" />&#32;<s:text name="label.yes" /></label>
+					</li>
+					<li class="radio">
+						<label><input type="radio" name="booleanValue" id="booleanValue_false" value="false" />&#32;<s:text name="label.no" /></label>
+					</li>
+					<li class="radio">
+						<label><input type="radio" name="booleanValue" id="booleanValue_none" checked="checked" value="" /><s:text name="label.all" /></label>
+					</li>
+				</ul>
+				 --%>
 			</fieldset>
 			<%-- // Boolean --%>
 			</s:elseif>
@@ -287,14 +307,57 @@
 				</div>
 
 				<s:if test="filterOptionId==1">
+				
+	                <div class="form-group">
+	                    <div class="btn-group btn-with-form-control-container col-xs-12" data-toggle="buttons">
+	                        <label class="btn btn-default">
+                                <input type="radio" name="dateValueType" id="dateValueType_today" 
+                                    value="2" <s:if test="(2 == dateValueType)">checked="checked"</s:if> />&#32;
+                                <s:text name="label.today" />
+	                        </label>
+	                        <div class="inline-block">
+		                        <div class="input-group">
+		                            <div class="btn btn-default btn-with-form-control input-group-addon">
+		                                <label for="dateStartType_today">
+                                            <input type="radio" name="dateValueType" id="dateValueType_today" value="2" 
+                                                <s:if test="(2 == dateValueType)">checked="checked"</s:if> />&#32;
+                                            <s:text name="label.today" />
+		                                </label>
+		                            </div>
+                                    <label for="valueDateDelay" class="sr-only"><s:text name="label.delay" /></label>
+                                    <wpsf:textfield name="valueDateDelay" id="valueDateDelay" cssClass="form-control" 
+                                        placeholder="%{getText('label.delay')}" />
+		                        </div>
+	                        </div>
+	                        <div class="inline-block">
+		                        <div class="input-group">
+		                            <div class="btn btn-default btn-with-form-control input-group-addon">
+		                                <label for="dateStartType_today">
+                                            <input type="radio" name="dateValueType" id="dateValueType_chosen" value="3" 
+                                                <s:if test="(3 == dateValueType)">checked="checked"</s:if> />&#32;
+                                            <s:text name="label.chosenDate" />
+		                                </label>
+		                            </div>
+                                    <label for="dateValue_cal" class="sr-only"><s:text name="label.filterValue.exact" /></label>
+                                    <wpsf:textfield name="dateValue" id="dateValue_cal" cssClass="form-control datepicker" 
+                                        placeholder="dd/MM/yyyy" data-provide="datepicker"/>
+		                        </div>
+	                        </div>
+	                    </div>
+	                </div>
+				<%--
 				<ul class="list-unstyled">
 					<li class="form-inline margin-base-vertical">
+					    <label class="btn btn-default active">
+                            <input type="radio" name="dateValueType" id="dateValueType_today" value="2" <s:if test="(2 == dateValueType)">checked="checked"</s:if> />&#32;
+                            <s:text name="label.today" />
+                        </label>
 						<div class="radio-inline">
 							<label>
 								<input type="radio" name="dateValueType" id="dateValueType_today" value="2" <s:if test="(2 == dateValueType)">checked="checked"</s:if> />&#32;<s:text name="label.today" />
 							</label>
 						</div>
-						<div class="form-group margin-small-left">
+						<div class="form-group">
 							<label for="valueDateDelay" class="sr-only"><s:text name="label.delay" /></label>
 							<wpsf:textfield name="valueDateDelay" id="valueDateDelay" cssClass="form-control" style="width: 60%;" placeholder="%{getText('label.delay')}" />
 						</div>
@@ -311,11 +374,55 @@
 						</div>
 					</li>
 				</ul>
+				 --%>
 				</s:if>
 			</fieldset>
 
 			<s:if test="filterOptionId==2">
+			
+			<!-- Start Date -->
 			<fieldset class="margin-base-top"><legend><s:text name="label.filterFrom" /></legend>
+				<div class="form-group">
+					<div class="btn-group btn-with-form-control-container col-xs-12" data-toggle="buttons">
+                        <label class="btn btn-default">
+                            <input type="radio" name="dateStartType" 
+                                id="dateStartType_none" value="1" 
+                                <s:if test="(1 == dateStartType)">checked="checked"</s:if> />&#32;
+                            <s:text name="label.none" />
+                        </label>
+                        <div class="inline-block">
+                        <div class="input-group">
+	                        <div class="btn btn-default btn-with-form-control input-group-addon">
+		                        <label for="dateStartType_today">
+		                            <input type="radio" name="dateStartType" 
+		                                id="dateStartType_today" value="2" 
+		                                <s:if test="(2 == dateStartType)">checked="checked"</s:if> />&#32;
+		                            <s:text name="label.today" />
+		                        </label>
+	                        </div>
+		                        <label for="startDateDelay" class="sr-only"><s:text name="label.delay" /></label>
+		                        <wpsf:textfield name="startDateDelay" id="startDateDelay" 
+		                            cssClass="form-control" placeholder="%{getText('label.delay')}" />
+                        </div>
+                        </div>
+                        <div class="inline-block">
+                        <div class="input-group">
+	                        <div class="btn btn-default btn-with-form-control input-group-addon">
+	                            <label for="dateStartType_today">
+	                                <input type="radio" name="dateStartType" id="dateStartType_chosen" 
+	                                    value="3" <s:if test="(3 == dateStartType)">checked="checked"</s:if> />&#32;
+	                                    <s:text name="label.chosenDate" />
+	                            </label>
+	                        </div>
+                            <label for="dateStart_cal" class="sr-only"><s:text name="label.filterValue.exact" /></label>
+                            <wpsf:textfield name="dateStart" id="dateStart_cal" 
+                                cssClass="form-control datepicker" placeholder="dd/MM/yyyy" />
+                        </div>
+                        </div>
+					</div>
+				</div>
+			
+            <%--
 			<ul class="list-unstyled">
 				<li class="form-inline margin-base-vertical">
 					<div class="radio-inline">
@@ -347,39 +454,82 @@
 					</div>
 				</li>
 			</ul>
+			--%>
 			</fieldset>
+			
+			<!-- End Date -->
 			<fieldset class="margin-base-top"><legend><s:text name="label.filterTo" /></legend>
-			<ul class="list-unstyled">
-				<li class="form-inline margin-base-vertical">
-					<div class="radio-inline">
-						<label>
-							<input type="radio" name="dateEndType" id="dateEndType_none" value="1" <s:if test="(1 == dateEndType)">checked="checked"</s:if> />&#32;<s:text name="label.none" />
-						</label>
-					</div>
-				</li>
-				<li class="form-inline margin-base-vertical">
-					<div class="radio-inline">
-						<label>
-							<input type="radio" name="dateEndType" id="dateEndType_today" value="2" <s:if test="(2 == dateEndType)">checked="checked"</s:if> />&#32;<s:text name="label.today" />
-						</label>
-					</div>
-					<div class="form-group margin-small-left">
-						<label for="endDateDelay" class="sr-only"><s:text name="label.delay" /></label>
-						<wpsf:textfield name="endDateDelay" id="endDateDelay" cssClass="form-control" style="width: 60%" placeholder="%{getText('label.delay')}" />
-					</div>
-				</li>
-				<li class="form-inline margin-base-vertical">
-					<div class="radio-inline">
-						<label>
-							<input type="radio" name="dateEndType" id="dateEndType_chosen" value="3" <s:if test="(3 == dateEndType)">checked="checked"</s:if> /><s:text name="label.chosenDate" />,
-						</label>
-					</div>
-					<div class="form-group margin-small-left">
-						<label for="dateEnd_cal"><s:text name="label.filterValue.exact" />:</label> 
-						<wpsf:textfield name="dateEnd" id="dateEnd_cal" cssClass="form-control datepicker" style="width: 60%;" placeholder="dd/MM/yyyy" />
-					</div>
-				</li>
-			</ul>
+                <div class="form-group">
+                    <div class="btn-group btn-with-form-control-container col-xs-12" data-toggle="buttons">
+                        <label class="btn btn-default">
+                            <input type="radio" name="dateEndType" id="dateEndType_none" 
+                                value="1" <s:if test="(1 == dateEndType)">checked="checked"</s:if> />&#32;
+                            <s:text name="label.none" />
+                        </label>
+                        <div class="inline-block">
+	                        <div class="input-group">
+	                            <div class="btn btn-default btn-with-form-control input-group-addon">
+	                                <label for="dateEndType_today">
+	                                    <input type="radio" name="dateEndType" id="dateEndType_today" 
+	                                       value="2" <s:if test="(2 == dateEndType)">checked="checked"</s:if> />&#32;
+	                                    <s:text name="label.today" />
+	                                </label>
+	                            </div>
+                                    <label for="endDateDelay" class="sr-only"><s:text name="label.delay" /></label>
+                                    <wpsf:textfield name="endDateDelay" id="endDateDelay" cssClass="form-control" 
+                                        placeholder="%{getText('label.delay')}" />
+	                        </div>
+                        </div>
+                        <div class="inline-block">
+	                        <div class="input-group">
+	                            <div class="btn btn-default btn-with-form-control input-group-addon">
+	                                <label for="dateEndType_chosen">
+	                                    <input type="radio" name="dateEndType" id="dateEndType_chosen" value="3" 
+	                                       <s:if test="(3 == dateEndType)">checked="checked"</s:if> />
+	                                    <s:text name="label.chosenDate" />
+	                                </label>
+	                            </div>
+                                <label for="dateEnd_cal" class="sr-only"><s:text name="label.filterValue.exact" />:</label> 
+                                <wpsf:textfield name="dateEnd" id="dateEnd_cal" 
+                                    cssClass="form-control datepicker" placeholder="dd/MM/yyyy" />
+	                        </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <%--
+				<ul class="list-unstyled">
+					<li class="form-inline margin-base-vertical">
+						<div class="radio-inline">
+							<label>
+								<input type="radio" name="dateEndType" id="dateEndType_none" value="1" <s:if test="(1 == dateEndType)">checked="checked"</s:if> />&#32;<s:text name="label.none" />
+							</label>
+						</div>
+					</li>
+					<li class="form-inline margin-base-vertical">
+						<div class="radio-inline">
+							<label>
+								<input type="radio" name="dateEndType" id="dateEndType_today" value="2" <s:if test="(2 == dateEndType)">checked="checked"</s:if> />&#32;<s:text name="label.today" />
+							</label>
+						</div>
+						<div class="form-group margin-small-left">
+							<label for="endDateDelay" class="sr-only"><s:text name="label.delay" /></label>
+							<wpsf:textfield name="endDateDelay" id="endDateDelay" cssClass="form-control" style="width: 60%" placeholder="%{getText('label.delay')}" />
+						</div>
+					</li>
+					<li class="form-inline margin-base-vertical">
+						<div class="radio-inline">
+							<label>
+								<input type="radio" name="dateEndType" id="dateEndType_chosen" value="3" <s:if test="(3 == dateEndType)">checked="checked"</s:if> /><s:text name="label.chosenDate" />,
+							</label>
+						</div>
+						<div class="form-group margin-small-left">
+							<label for="dateEnd_cal"><s:text name="label.filterValue.exact" />:</label> 
+							<wpsf:textfield name="dateEnd" id="dateEnd_cal" cssClass="form-control datepicker" style="width: 60%;" placeholder="dd/MM/yyyy" />
+						</div>
+					</li>
+				</ul>
+				 --%>
 			</fieldset>
 			</s:if>
 

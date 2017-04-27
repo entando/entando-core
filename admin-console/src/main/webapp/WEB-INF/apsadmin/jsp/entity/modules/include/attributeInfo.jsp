@@ -3,13 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <s:set var="validationRules" value="#attribute.validationRules" />
 <s:set var="hasValidationRulesVar" value="%{#validationRules != null && #validationRules.ognlValidationRule != null&& #validationRules.ognlValidationRule.expression != null}" />
-<s:if test="#attribute.required"><span class="fa fa-asterisk required-icon-iterator pull-left" title="<s:text name="Entity.attribute.flag.mandatory.full" />"></span></s:if>
+<s:if test="#attribute.required"><i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i></s:if>
 <s:if test="#attribute.required || #attribute.searchable || #attribute.indexingType != 'NONE' || (#attribute.textAttribute && (#attribute.minLength != -1 || #attribute.maxLength != -1)) || (#hasValidationRulesVar) ">
 
 <s:set var="htmlContent">
         <!--	<ul class="fa-ul">-->
 	<s:if test="#attribute.required">
-		<li><span class="icon fa fa-li fa-asterisk"></span><s:text name="Entity.attribute.flag.mandatory.full" /></li>
+		<li><span class="fa fa-asterisk required-icon"></span><s:text name="Entity.attribute.flag.mandatory.full" /></li>
 	</s:if>
 	<s:if test="#attribute.searchable">
 		<li><span class="icon fa fa-li fa-filter"></span><s:text name="Entity.attribute.flag.searchable.full" /></li>
@@ -40,6 +40,6 @@
         <!--</ul>-->
 </s:set>
     <!--<span class="label label-info pull-left" data-toggle="popover" data-placement="left" data-html="true" data-content="<s:property value="htmlContent" />" title="" data-original-title="Attribute info"><span class="icon fa fa-info"></span></span>-->
-    <a class="pull-left" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:property value="htmlContent" />" data-placement="top" data-original-title=""><span class="fa fa-info-circle"></span></a>
+    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:property value="htmlContent" />" data-placement="top" data-original-title=""><span class="fa fa-info-circle"></span></a>
 </s:if>
 

@@ -1,5 +1,5 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<div class="col-sm-8">
+<div class="col-sm-10">
 <s:if test="#lang.default">
 	<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
 </s:if>

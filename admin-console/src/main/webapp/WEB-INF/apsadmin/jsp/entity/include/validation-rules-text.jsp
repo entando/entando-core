@@ -6,7 +6,7 @@
     <s:if test="#attribute.type == 'Enumerator' || #attribute.type == 'EnumeratorMap'">
         <div class="form-group">
             <label class="col-sm-2 control-label" for="enumeratorStaticItems"><s:text name="Entity.attribute.setting.enumerator.items" />
-                <i class="fa fa-asterisk required-icon"></i>
+                <i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
                 <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="to be inserted   " data-original-title="">
                     <span class="fa fa-info-circle"></span></a>
             </label>

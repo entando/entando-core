@@ -128,8 +128,8 @@
 
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="pageCode">
-                <s:text name="name.pageCode" />&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
-                <i class="fa fa-asterisk required-icon"></i>
+                <s:text name="name.pageCode" />&nbsp;<i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
+                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>                
             </label>
             <div class="col-sm-10">
                 <wpsf:textfield name="pageCode" id="pageCode" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
@@ -302,8 +302,8 @@
 
             <div class="form-group<s:property value="#controlGroupErrorClass" />">
                 <label class="col-sm-2 control-label" for="ownerGroup">
-                    <s:text name="name.pageModel" />&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
-                    <i class="fa fa-asterisk required-icon"></i>
+                    <s:text name="name.pageModel" />&nbsp;<i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
+                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
                 </label>
                 <div class="col-sm-10">
                     <wpsf:select name="model" headerKey="" headerValue="%{getText('note.choose')}" id="model" list="pageModels" listKey="code" listValue="descr" cssClass="form-control"></wpsf:select>

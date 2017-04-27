@@ -4,7 +4,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:set var="lang" value="defaultLang" />
-<div class="col-xs-12 margin-large-top">
+<div>
 <%-- START CICLO ATTRIBUTI --%> 
 <s:iterator value="userProfile.attributeList" var="attribute">
 	<%-- INIZIALIZZAZIONE TRACCIATORE --%>
@@ -27,16 +27,15 @@
 	<div class="form-group<s:property value="controlGroupErrorClassVar" />">
 	
 	<s:if test="#attribute.type == 'List' || #attribute.type == 'Monolist'">
-	<label class="display-block"><span class="icon fa fa-list"></span>&#32;
+	<label class="col-sm-2 control-label"><span class="icon fa fa-list"></span>&#32;
 	<s:property value="#attributeLabelVar" /><s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
 	</s:if>
 	<s:elseif test="#attribute.type == 'Image' || #attribute.type == 'CheckBox' || #attribute.type == 'Boolean' || #attribute.type == 'ThreeState' || #attribute.type == 'Composite'">
-	<label class="display-block"><s:property value="#attributeLabelVar" />&#32;<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
+	<label class="col-sm-2 control-label"><s:property value="#attributeLabelVar" />&#32;<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
 	</s:elseif>
 	<s:else>
-		<label class="display-block" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />"><s:property value="#attributeLabelVar" /><s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
+		<label class="col-sm-2 control-label" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />"><s:property value="#attributeLabelVar" /><s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" /></label>
 	</s:else>
-
 	<s:if test="#attribute.type == 'Monotext'">
 	<!-- ############# ATTRIBUTE Monotext ############# -->
 	<s:include value="%{'/WEB-INF/apsadmin/jsp/entity/' + #attributeActiveMarker + '/monotextAttribute.jsp'}" />

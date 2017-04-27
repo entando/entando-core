@@ -83,7 +83,7 @@
                 <label class="col-sm-2 control-label"  for="attributeTypeCode"><s:text name="label.type" />:</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <wpsf:select list="allowedAttributeElementTypes" id="attributeTypeCode" name="attributeTypeCode" listKey="type" listValue="type" cssClass="form-control"/>
+                        <wpsf:select list="allowedAttributeElementTypes" headerKey="" headerValue="%{getText('note.choose')}" id="attributeTypeCode" name="attributeTypeCode" listKey="type" listValue="type" cssClass="form-control"/>
                         <span class="input-group-btn">
                             <wpsf:submit type="button" value="%{getText('label.add')}" action="addAttributeElement" cssClass="btn btn-default" />
                         </span>

@@ -44,13 +44,13 @@
                 </li>
                 <li class="list-group-item">
                     <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page/Console" />'>
-                        <span class="list-group-item-value">Configure Page</span>
+                        <span class="list-group-item-value">Page Configuration</span>
                     </a>
                 </li>
             <c:if test="${isSuperUser}">
                 <li class="list-group-item">
                     <a href='<s:url action="systemParams" namespace="/do/Page" />'>
-                        <span class="list-group-item-value">General Settings Page</span>
+                        <span class="list-group-item-value">Page Settings</span>
                     </a>
                 </li>
             </c:if>
@@ -84,7 +84,7 @@
 			<c:if test="${isSuperUser}">
                 <li class="list-group-item">
                     <a href='<s:url action="list" namespace="/do/Portal/GuiFragment" />'>
-                        <span class="list-group-item-value">Containers</span>
+                        <span class="list-group-item-value">Fragments</span>
 
                     </a>
                 </li>
@@ -121,13 +121,13 @@
 
                 <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-ux-components-tertiary">
                     <a>
-                        <span class="list-group-item-value">UX Components</span>
+                        <span class="list-group-item-value">Components</span>
                     </a>
 
                     <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
                         <div class="nav-item-pf-header">
                             <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-                            <span>UX Components</span>
+                            <span>Components</span>
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item ">
@@ -266,12 +266,7 @@
 						<c:if test="${isManageResources}">
                             <li class="list-group-item">
                                 <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Image</s:param></s:url>">
-                                    <span class="list-group-item-value">Digital Assets - Images</span>
-                                </a>
-                            </li>
-                            <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Attach</s:param></s:url>">
-                                    <span class="list-group-item-value">Digital Assets - Attaches</span>
+                                    <span class="list-group-item-value">Digital Assets</span>
                                 </a>
                             </li>
 						</c:if>
@@ -290,8 +285,8 @@
                             </li>
 
                             <li class="list-group-item">
-                                <a href="<s:url action="list" namespace="/do/Api/Resources" />">
-                                    <span class="list-group-item-value">Content Settings TO_DO</span>
+                                <a href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />">
+                                    <span class="list-group-item-value"><s:text name="menu.contents.settings" /></span>
                                 </a>
                             </li>
 						</c:if>
@@ -368,7 +363,7 @@
 
                 <li class="list-group-item">
                     <a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
-                        <span class="list-group-item-value">Reload</span>
+                        <span class="list-group-item-value"><s:text name="title.reload.config" /></span>
                     </a>
                 </li>
 

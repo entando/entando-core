@@ -1376,3 +1376,110 @@ ul {
 .searchPanel .panel-group .panel-title>a:after {
 	margin-left: 10px;
 }
+
+/* --------------- margini e padding --------------- */
+
+.mt-5 {margin-top: 5px;}
+.mt-10 {margin-top: 10px;}
+.mt-20 {margin-top: 20px;}
+.mt-40 {margin-top: 40px;}
+.mt-60 {margin-top: 60px;}
+.no-mt {margin-top: 0;}
+
+.mb-5 {margin-bottom: 5px;}
+.mb-10 {margin-bottom: 10px;}
+.mb-20 {margin-bottom: 20px;}
+.mb-40 {margin-bottom: 40px;}
+.mb-60 {margin-bottom: 60px;}
+.no-mb {margin-bottom: 0;}
+
+/* --------------- Button group with form-control --------------- */
+
+.btn-with-form-control-container .btn-default {
+	padding: 9px;
+}
+.btn-with-form-control-container .btn-with-form-control {
+	padding: 5px;
+}
+.btn-with-form-control-container .btn-with-form-control .form-control {
+	margin-left: 2px;
+	display: inline;
+   	width: auto;
+}
+
+/* --------------- Table Responsive --------------- */
+
+.table-responsive table td {
+	white-space: normal!important;
+}
+
+/* --------------- Content List Table --------------- */
+
+.table.content-list input,
+.table.content-list span {
+    margin: 0;
+    vertical-align: middle;
+}
+
+.w2perc {width: 2%!important}
+.w4perc {width: 4%}
+.w10perc {width: 10%}
+.w100perc {width: 100%;}
+
+.table-view-pf-toolbar.border-bottom {border-bottom: 1px solid #d1d1d1;}
+.toolbar-pf-filter .dropdown-menu {left: -1px!important}
+.toolbar-pf-results .dropdown-menu li .btn {width:100%}
+.toolbar-pf-actions label {
+    line-height: 2;
+}
+.filter-list {position: relative}
+
+.prelative {position: relative}
+/* --------------- Advanced Search --------------- */
+
+.advanced-search {margin: -24px 0 0 0;}
+.advanced-search .panel-heading {
+    padding: 0 0 10px;
+    background: #f5f5f5!important;
+}
+.advanced-search .panel-title {text-align: end;}
+
+.advanced-search .panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 0px solid transparent;
+    border-radius: 1px;
+    box-shadow: none;
+}
+
+.advanced-search  .panel-group .panel-heading {
+    background-image: none;
+}
+
+.advanced-search  .panel-group .panel-heading+.panel-collapse .panel-body {
+    border-top: 1px solid #ecebeb;
+}
+
+.advanced-search  .panel-group .panel-title>a {
+    color: #4d5258;
+    font-weight: 400;
+    font-size: 13px;
+}
+
+.advanced-search.panel-group .panel-title>a:after {
+    margin-left: 10px;
+
+@media (max-width: 767px) {
+    .table-view-pf-toolbar label {display: none};
+}
+
+@media (max-width: 767px) {
+	.btn-with-form-control-container {
+		width: 100%;
+	}	
+	.btn-with-form-control-container .btn {
+		display: block;
+		float: none;
+		margin: 0!important;
+	}		
+}

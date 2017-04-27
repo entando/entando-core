@@ -232,7 +232,7 @@
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
                 <div class="col-sm-10">
-                    <wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="descr" disabled="%{groupSelectLock}" cssClass="combobox form-control"></wpsf:select>
+                    <wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" disabled="%{groupSelectLock}" cssClass="combobox form-control"></wpsf:select>
                     <s:if test="#hasFieldErrorVar">
                         <span class="help-block text-danger">
                             <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
@@ -253,7 +253,7 @@
                 </label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <wpsf:select name="extraGroupName" id="extraGroups" list="groups" listKey="name" listValue="descr" cssClass="combobox form-control" />
+                        <wpsf:select name="extraGroupName" id="extraGroups" list="groups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" cssClass="combobox form-control" />
                         <span class="input-group-btn">
                             <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-default">
                                 <span class="icon fa fa-plus"></span>&#32;
@@ -306,7 +306,7 @@
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
                 <div class="col-sm-10">
-                    <wpsf:select name="model" id="model" list="pageModels" listKey="code" listValue="descr" cssClass="form-control"></wpsf:select>
+                    <wpsf:select name="model" headerKey="" headerValue="%{getText('note.choose')}" id="model" list="pageModels" listKey="code" listValue="descr" cssClass="form-control"></wpsf:select>
                     <s:if test="#hasFieldErrorVar">
                         <span class="help-block text-danger">
                             <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>

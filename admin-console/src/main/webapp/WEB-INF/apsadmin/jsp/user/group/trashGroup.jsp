@@ -3,13 +3,8 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><a
-		href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text
-				name="menu.configure" /></a></li>
-	<li><a href="<s:url action="list" namespace="/do/Group"></s:url>"
-		title="<s:text name="note.goToSomewhere" />: <s:text name="title.groupManagement" />">
-			<s:text name="title.groupManagement" />
-	</a></li>
+	<li><s:text name="menu.configure" /></li>
+	<li><s:text name="title.groupManagement" /></li>
 	<li class="page-title-container"><s:text
 			name="title.groupManagement.groupTrash" /></li>
 </ol>

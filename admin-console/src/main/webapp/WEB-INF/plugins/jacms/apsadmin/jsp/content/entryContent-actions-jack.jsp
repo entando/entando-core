@@ -22,7 +22,7 @@
 	<div class="input-group col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
 		<label for="status" class="sr-only"><s:text name="label.state" /></label>
 		<wpsf:select name="status" id="status" list="avalaibleStatus" 
-					 value="%{content.status}" listKey="key" listValue="%{getText(value)}" cssClass="form-control btn-sm selectCustom" />
+					  headerKey="" headerValue="%{getText('note.choose')}" value="%{content.status}" listKey="key" listValue="%{getText(value)}" cssClass="form-control btn-sm selectCustom" />
 		<span class="input-group-btn">
 			<wpsf:submit action="save" type="button" cssClass="btn btn-sm btn-default" title="%{getText('note.button.saveContent')}">
 				<span class="icon fa fa-floppy-o"></span>

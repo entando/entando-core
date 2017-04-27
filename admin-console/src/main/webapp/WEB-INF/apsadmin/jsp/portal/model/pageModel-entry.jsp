@@ -60,7 +60,7 @@
         </p>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="key">Key</label>
+                <label class="col-sm-2 control-label" for="key"><s:text name="label.code" /></label>
                 <div class="col-sm-10">
                     <wpsf:textfield name="code" id="code" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
                 </div>
@@ -68,7 +68,7 @@
         </div>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="description">Description</label>
+                <label class="col-sm-2 control-label" for="description"><s:text name="label.name" /></label>
                 <div class="col-sm-10">
                     <wpsf:textfield name="description" id="description" cssClass="form-control" />
                 </div>

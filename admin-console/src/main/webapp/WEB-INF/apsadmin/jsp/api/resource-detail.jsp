@@ -113,7 +113,7 @@
 				<div class="form-group">
 					<div class="col-xs-12">
 						<label for="all_auth"><s:text name="label.api.authorization" />:</label>
-						<wpsf:select name="methodAuthority" list="methodAuthorityOptions" listKey="key" listValue="value" id="all_auth" cssClass="form-control" />
+						<wpsf:select name="methodAuthority" list="methodAuthorityOptions" listKey="key" listValue="value" headerKey="" headerValue="%{getText('note.choose')}" id="all_auth" cssClass="form-control" />
 					</div>
 				</div>
 				<div class="form-group">

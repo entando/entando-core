@@ -9,7 +9,7 @@
 		<s:set var="group" value="#contentReferencesGroup" />
 
 		<div class="table-responsive">
-			<table class="table table-striped table-bordered table-hover" id="contentListTable" summary="<s:text name="note.resources.referencingContent.summary" />">
+			<table class="table table-striped table-bordered table-hover no-mb" id="contentListTable" summary="<s:text name="note.resources.referencingContent.summary" />">
 			<caption class="text-strong margin-base-vertical"><s:text name="title.referencedContents" /></caption>
 				<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/contentReferencesTable_header.jsp" />
 
@@ -20,8 +20,14 @@
 			</table>
 		</div>
 
+		<div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+			<div class="form-group">
+				<span>
+					<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp"/>
+				</span>
+			</div>
+		</div>
 		<div class="text-center">
-			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
 		</div>
 	</wpsa:subset>

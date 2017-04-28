@@ -2,6 +2,7 @@
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
+<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 
 <script>
     $(document).ready(function () {
@@ -118,26 +119,26 @@
             </div>
 
             <ul class="list-group">
-
                 <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-ux-components-tertiary">
                     <a>
-                        <span class="list-group-item-value">Components</span>
-                    </a>
-
+						<span class="list-group-item-value">Components</span>
+					</a>
+					<wpsa:pluginsSubMenu objectName="pluginsSubMenusVar" />
+					<s:if test="#pluginsSubMenusVar.size > 0">
                     <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
                         <div class="nav-item-pf-header">
                             <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
                             <span>Components</span>
                         </div>
                         <ul class="list-group">
-                            <li class="list-group-item ">
-                                <a href='<s:url action="management" namespace="/do/jpavatar/Config" />'>
-                                    <span class="list-group-item-value">Avatar Management</span>
-                                </a>
-                            </li>
+
+							<s:iterator value="#pluginsSubMenusVar" var="pluginSubMenuVar">
+                            <s:include value="%{#pluginSubMenuVar.subMenuFilePath}" />
+							</s:iterator>
                         </ul>
                     </div>
-                </li>                    
+					</s:if>
+                </li>
 				<c:if test="${isSuperUser}">
                 <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-api-tertiary">
                     <a>

@@ -48,7 +48,7 @@
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/profile-entry.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userProfile-entry.jsp" />
     </definition>
-	
+
     <!-- ********* User management - START ********* -->
 	
     <definition extends="layout.settings" name="admin.User.list">
@@ -550,9 +550,7 @@
 	    <put-attribute name="title" value="title.fileManagement" />
 	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/filebrowser/filebrowser-newdir.jsp" />
 	</definition>
-	
-	<!-- ********* END Filebrowser ********* -->
-	
+
     <definition extends="layout.default" name="admin.userNotAllowedMessage">
         <put-attribute name="title" value="document.title.main" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userNotAllowedMessage.jsp" />

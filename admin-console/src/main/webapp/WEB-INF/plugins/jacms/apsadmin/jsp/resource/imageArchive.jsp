@@ -24,7 +24,7 @@
             </a></li>
     </s:if>
     <s:else>
-        <li><s:text name="breadcrumb.dataAsset"/></li>
+        <li><s:text name="breadcrumb.digitalAsset"/></li>
     </s:else>
     <li class="page-title-container">
         <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}"/>
@@ -358,5 +358,4 @@
             </s:action>
         </s:if>
     </wp:ifauthorized>
-
 </div>

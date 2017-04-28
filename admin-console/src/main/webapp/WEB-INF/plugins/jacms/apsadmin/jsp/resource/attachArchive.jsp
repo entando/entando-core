@@ -24,12 +24,13 @@
             </a></li>
     </s:if>
     <s:else>
-        <li><s:text name="breadcrumb.dataAsset"/></li>
+        <li><s:text name="breadcrumb.digitalAsset"/></li>
     </s:else>
     <li class="page-title-container">
         <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}"/>
     </li>
 </ol>
+
 <div class="page-tabs-header">
     <div class="row">
         <div class="col-sm-12 col-md-6">
@@ -178,7 +179,6 @@
                                 </a>
                             </s:if>
                             <s:if test="!onEditContent">
-
                                 <div class="col-xs-6 col-sm-4 col-md-3">
                                     <div class="card-pf card-pf-view card-pf-view-select">
                                         <div class="card-pf-body">

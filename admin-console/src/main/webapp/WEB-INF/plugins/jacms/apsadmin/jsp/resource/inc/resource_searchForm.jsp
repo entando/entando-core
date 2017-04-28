@@ -12,6 +12,7 @@
 		<wpsf:hidden name="contentOnSessionMarker" />
 	</p>
 	<div class="searchPanel form-group">
+
 		<div class="well col-md-offset-3 col-md-6">
 			<p class="search-label col-sm-12"><s:text name="label.search.label"/></p>
 			<div class="form-group">

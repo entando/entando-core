@@ -14,10 +14,18 @@
 		</li>
 	</s:if>
 	<s:else>
-		<li><s:text name="breadcrumb.dataAsset" /></li>
+		<li><s:text name="breadcrumb.digitalAsset" /></li>
 	</s:else>
-	<li class="page-title-container">
+	<li>
 		<s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+	</li>
+	<li class="page-title-container">
+		<s:if test="getStrutsAction() == 1">
+			<s:text name="title.%{resourceTypeCode}.new" />
+		</s:if>
+		<s:elseif test="getStrutsAction() == 2">
+			<s:text name="title.%{resourceTypeCode}.edit" />
+		</s:elseif>
 	</li>
 </ol>
 
@@ -118,8 +126,12 @@
 	<div class="form-group<s:property value="#controlGroupErrorClass" />">
 		<label class="col-sm-2 control-label" for="upload">
 			<s:text name="label.file" />
-			<i class="fa fa-asterisk required-icon"></i>
-		</label>
+			<i class="fa fa-asterisk" style="font-size: 8px; top: -4px; position: relative;"></i>
+            <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="to be inserted" data-original-title="" style="position: absolute; right: 8px;">
+                <span class="fa fa-info-circle"></span>
+            </a>
+
+        </label>
 		<div class="col-sm-10">
 			<s:file name="upload" id="upload" label="label.file" />
 			<s:if test="#hasFieldErrorVar">
@@ -132,34 +144,54 @@
 	</div>
 
 	<fieldset class="margin-base-vertical" id="category-content-block">
-		<legend><span class="icon fa fa-tags"></span>&#32;<s:text name="title.categoriesManagement"/></legend>
-		<div class="well">
-			<ul id="categoryTree" class="fa-ul list-unstyled">
-			<s:set var="inputFieldName" value="'categoryCode'" />
-			<s:set var="selectedTreeNode" value="selectedNode" />
-			<s:set var="liClassName" value="'category'" />
-			<s:set var="treeItemIconName" value="'fa-folder'" />
-	
-			<s:if test="#categoryTreeStyleVar == 'classic'">
-			<s:set var="currentRoot" value="categoryRoot" />
-			<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
-			</s:if>
-			<s:elseif test="#categoryTreeStyleVar == 'request'">
-			<s:set var="currentRoot" value="showableTree" />
-			<s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'" />
-			<s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'" />
-			<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
-			</s:elseif>
-			</ul>
-		</div>
-		<div data-toggle="tree-toolbar">
-			<div data-toggle="tree-toolbar-actions">
-				<wpsf:submit action="joinCategory" type="button" title="%{getText('label.join')}" cssClass="btn btn-info btn-sm margin-small-vertical" data-toggle="tooltip">
-					<span class="icon fa fa-plus"></span>
-				</wpsf:submit>
+
+		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+			<div class="col-xs-2 control-label">
+				<label><s:text name="title.categoriesManagement"/></label>
+			</div>
+			<div class="col-xs-10">
+				<script src="<wp:resourceURL />administration/js/entando-typeahead-tree.js"></script>
+				<s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp" />
+
+				<table id="categoryTree" class="table table-bordered table-hover table-treegrid">
+					<thead>
+					<tr>
+						<th> <s:text name="label.category.tree"/>
+							<button type="button" class="btn-no-button expand-button"
+									id="expandAll">
+								<i class="fa fa-plus-square-o treeInteractionButtons"
+								   aria-hidden="true"></i>&#32;<s:text name="label.category.expandAll"/>
+							</button>
+							<button type="button" class="btn-no-button" id="collapseAll">
+								<i class="fa fa-minus-square-o treeInteractionButtons"
+								   aria-hidden="true"></i>&#32;<s:text name="label.category.collapseAll"/>
+							</button>
+						</th>
+						<th class="text-center">
+                            <s:text name="label.category.join" />
+						</th>
+					</tr>
+					</thead>
+					<tbody>
+
+                    <s:set var="inputFieldName" value="'categoryCode'" />
+                    <s:set var="selectedTreeNode" value="selectedNode" />
+
+					<%--<s:set var="inputFieldName" value="%{'parentCategoryCode'}" />--%>
+					<%--<s:set var="selectedTreeNode" value="%{parentCategoryCode}" />--%>
+					<s:set var="selectedPage" value="%{getCategory(selectedTreeNode)}" />
+					<s:set var="currentRoot" value="categoryRoot" />
+					<s:set var="isPosition" value="false" />
+					<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategories.jsp" />
+
+					</tbody>
+				</table>
+				<script>
+                    $('.table-treegrid').treegrid();
+				</script>
 			</div>
 		</div>
-		
+
 		<s:if test="categoryCodes != null && categoryCodes.size() > 0">
 		<h2 class="h4 margin-base-vertical"><s:text name="note.resourceCategories.summary"/></h2>
 		
@@ -185,7 +217,7 @@
 		<s:set var="referencingContentsId" value="references['jacmsContentManagerUtilizers']" />
 		<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
 	</s:if>
-	
+	<br>
 	<div class="form-horizontal">
 		<div class="form-group">
 			<div class="col-sm-12 margin-small-vertical">

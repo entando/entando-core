@@ -12,7 +12,7 @@
 <s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
 
-<tr id="<s:if test="#currentRoot.isRoot()">home</s:if><s:else><s:property value="#node.code"/></s:else>" data-parent='#<s:property value="#currentRoot.parent.code"/>' class="treeRow <s:if test="%{#currentRoot.code != 'home' && #isHidden}">collapsed childrenNodes</s:if>">
+<tr id="<s:if test="#currentRoot.isRoot()">home</s:if><s:else><s:property value="#node.code"/></s:else>" data-parent='#<s:property value="#currentRoot.parent.code"/>' class="treeRow pointer <s:if test="%{#currentRoot.code != 'home' && #isHidden}">collapsed childrenNodes</s:if>">
     <td class="treegrid-node">
 
         <input type="radio" name="<s:property value="#inputFieldName" />"
@@ -38,36 +38,36 @@
 		        </button>
 		        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight1">
 		            <li>
-		                    <wpsf:submit type="button" name="entandoaction:detail" value="Submit"
-		                                 title="<s:text name='category.options.detail'/>"
-		                                 data-toggle="tooltip" cssClass="btn-block">
-		<%--                         <span class="sr-only"><s:text name="category.options.detail"/></span> --%>
-		                        <span> <s:text name="category.options.detail"/> </span>
-		                    </wpsf:submit>
-		                </li>
-		                <li>
-		                	<wpsf:submit type="button" name="entandoaction:new"
-			                                 title="<s:text name='category.options.add'/>" data-toggle="tooltip" cssClass="btn-block">
-		<%-- 	                        <span class="sr-only"><s:text name="category.options.add"/></span> --%>
-			                        <span> <s:text name="category.options.add"/> </span>
-		                    </wpsf:submit>
-		                </li>
-		                <li>
-		                	<wpsf:submit type="button" name="entandoaction:edit" value="Submit"
-			                                 title="<s:text name='category.options.modify'/>"
-			                                 data-toggle="tooltip" cssClass="btn-block">
-		<%-- 									<span class="sr-only"><s:text name="category.options.modify"/></span> --%>
-			                        <span> <s:text name="category.options.modify"/> </span>
-			                </wpsf:submit>
-		                </li>
-		                <li>
-		                	<wpsf:submit type="button" name="entandoaction:trash" value="Submit"
-			                                 title="<s:text name='category.options.delete'/>"
-			                                 data-toggle="tooltip" cssClass="btn-block">
-		<%-- 									<span class="sr-only"><s:text name="category.options.delete"/></span> --%>
-			                        <span> <s:text name="category.options.delete"/> </span>
-		                    </wpsf:submit>
-		                </li>
+						<wpsf:submit type="button" name="entandoaction:detail" value="Submit"
+									 title="<s:text name='category.options.detail'/>"
+									 data-toggle="tooltip" cssClass="btn-block">
+	<%--                         <span class="sr-only"><s:text name="category.options.detail"/></span> --%>
+							<span> <s:text name="category.options.detail"/> </span>
+						</wpsf:submit>
+					</li>
+					<li>
+						<wpsf:submit type="button" name="entandoaction:new"
+										 title="<s:text name='category.options.add'/>" data-toggle="tooltip" cssClass="btn-block">
+	<%-- 	                        <span class="sr-only"><s:text name="category.options.add"/></span> --%>
+								<span> <s:text name="category.options.add"/> </span>
+						</wpsf:submit>
+					</li>
+					<li>
+						<wpsf:submit type="button" name="entandoaction:edit" value="Submit"
+										 title="<s:text name='category.options.modify'/>"
+										 data-toggle="tooltip" cssClass="btn-block">
+	<%-- 									<span class="sr-only"><s:text name="category.options.modify"/></span> --%>
+								<span> <s:text name="category.options.modify"/> </span>
+						</wpsf:submit>
+					</li>
+					<li>
+						<wpsf:submit type="button" name="entandoaction:trash" value="Submit"
+										 title="<s:text name='category.options.delete'/>"
+										 data-toggle="tooltip" cssClass="btn-block">
+	<%-- 									<span class="sr-only"><s:text name="category.options.delete"/></span> --%>
+								<span> <s:text name="category.options.delete"/> </span>
+						</wpsf:submit>
+					</li>
 		        </ul>
 		    </div>
 	    </td>

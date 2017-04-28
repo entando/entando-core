@@ -131,6 +131,7 @@
                             <span>Components</span>
                         </div>
                         <ul class="list-group">
+
 							<s:iterator value="#pluginsSubMenusVar" var="pluginSubMenuVar">
                             <s:include value="%{#pluginSubMenuVar.subMenuFilePath}" />
 							</s:iterator>

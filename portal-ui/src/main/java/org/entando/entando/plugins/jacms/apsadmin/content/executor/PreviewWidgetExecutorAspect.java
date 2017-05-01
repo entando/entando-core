@@ -38,6 +38,8 @@ public class PreviewWidgetExecutorAspect extends WidgetExecutorService {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(PreviewWidgetExecutorAspect.class);
 	
+	private static final String CONTENT_VIEWER_JSP="/WEB-INF/plugins/jacms/apsadmin/jsp/content/preview/content_viewer.jsp";
+	
 	@After("execution(* org.entando.entando.aps.system.services.controller.executor.WidgetExecutorService.service(..)) && args(reqCtx)")
 	public void checkContentPreview(RequestContext reqCtx) {
 		HttpServletRequest request = reqCtx.getRequest();
@@ -58,16 +60,15 @@ public class PreviewWidgetExecutorAspect extends WidgetExecutorService {
 			Widget[] widgets = currentPage.getWidgets();
 			for (int frame = 0; frame < widgets.length; frame++) {
 				Widget widget = widgets[frame];
-				if (widget != null && "viewerConfig".equals(widget.getType().getAction())) {
-					if ((currentPage.getCode().equals(contentOnSession.getViewPage()) && (widget.getConfig() == null || widget.getConfig().size() == 0)) 
-							|| (widget.getConfig() != null && widget.getConfig().get("contentId") != null && widget.getConfig().get("contentId").equals(contentOnSession.getId()))) {
-						reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET, widget);
-						reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME, new Integer(frame));
-						String output = super.extractJspOutput(reqCtx, CONTENT_VIEWER_JSP);
-						String[] widgetOutput = (String[]) reqCtx.getExtraParam("ShowletOutput");
-						widgetOutput[frame] = output; 
-						return;
-					}
+				if (widget != null && "viewerConfig".equals(widget.getType().getAction()) &&
+					(currentPage.getCode().equals(contentOnSession.getViewPage()) && (widget.getConfig() == null || widget.getConfig().size() == 0)) 
+						|| (widget.getConfig() != null && widget.getConfig().get("contentId") != null && widget.getConfig().get("contentId").equals(contentOnSession.getId()))) {
+					reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET, widget);
+					reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME, new Integer(frame));
+					String output = super.extractJspOutput(reqCtx, CONTENT_VIEWER_JSP);
+					String[] widgetOutput = (String[]) reqCtx.getExtraParam("ShowletOutput");
+					widgetOutput[frame] = output; 
+					return;
 				}
 			}
 		} catch (Throwable t) {
@@ -76,7 +77,5 @@ public class PreviewWidgetExecutorAspect extends WidgetExecutorService {
 			throw new RuntimeException(msg, t);
 		}
 	}
-	
-	private final String CONTENT_VIEWER_JSP="/WEB-INF/plugins/jacms/apsadmin/jsp/content/preview/content_viewer.jsp";
 	
 }

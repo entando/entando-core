@@ -50,6 +50,9 @@ import org.slf4j.LoggerFactory;
 public class ControllerServlet extends freemarker.ext.servlet.FreemarkerServlet {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(ControllerServlet.class);
+	private static final String ATTR_APPLICATION_MODEL = ".freemarker.Application";
+	private static final String ATTR_JSP_TAGLIBS_MODEL = ".freemarker.JspTaglibs";
+	private static final String SERVICE_NOT_AVAILABLE = "Service not available";
 	
 	@Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -92,7 +95,7 @@ public class ControllerServlet extends freemarker.ext.servlet.FreemarkerServlet 
             this.outputError(reqCtx, response);
         } else {
         	_logger.error("Error: final status = {} - request: {}", ControllerManager.getStatusDescription(status),request.getServletPath());
-            throw new ServletException("Service not available");
+            throw new ServletException(SERVICE_NOT_AVAILABLE);
         }
         return;
     }
@@ -102,7 +105,7 @@ public class ControllerServlet extends freemarker.ext.servlet.FreemarkerServlet 
 			HttpServletRequest request, HttpServletResponse response) throws TemplateModelException {
 		TemplateModel template = super.createModel(wrapper, servletContext, request, response);
 		if (template instanceof AllHttpScopesHashModel) {
-			AllHttpScopesHashModel hashModel = ((AllHttpScopesHashModel) template);
+			AllHttpScopesHashModel hashModel = (AllHttpScopesHashModel) template;
 			ServletContextHashModel servletContextModel = (ServletContextHashModel) hashModel.get(KEY_APPLICATION);
 			if (null == servletContextModel.getServlet()) {
 				ServletContextHashModel newServletContextModel = new ServletContextHashModel(this, wrapper);
@@ -122,7 +125,7 @@ public class ControllerServlet extends freemarker.ext.servlet.FreemarkerServlet 
             String url = (String) reqCtx.getExtraParam(RequestContext.EXTRAPAR_REDIRECT_URL);
             response.sendRedirect(url);
         } catch (Exception e) {
-            throw new ServletException("Service not available", e);
+            throw new ServletException(SERVICE_NOT_AVAILABLE, e);
         }
     }
     
@@ -138,11 +141,8 @@ public class ControllerServlet extends freemarker.ext.servlet.FreemarkerServlet 
             }
         } catch (IOException e) {
         	_logger.error("outputError", e);
-            throw new ServletException("Service not available");
+            throw new ServletException(SERVICE_NOT_AVAILABLE);
         }
     }
     
-	private static final String ATTR_APPLICATION_MODEL = ".freemarker.Application";
-	private static final String ATTR_JSP_TAGLIBS_MODEL = ".freemarker.JspTaglibs";
-	
 }

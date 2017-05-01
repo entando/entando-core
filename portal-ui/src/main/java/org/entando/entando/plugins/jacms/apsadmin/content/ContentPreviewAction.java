@@ -41,6 +41,18 @@ public class ContentPreviewAction extends AbstractContentAction implements Servl
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentPreviewAction.class);
 	
+	public static final String PAGE_CODE_PARAM_PREFIX = "jacmsPreviewActionPageCode";
+	
+	public static final String LANG_CODE_PARAM_PREFIX = "jacmsPreviewActionLangCode";
+	
+	private HttpServletResponse _response;
+	
+	private String _previewPageCode;
+	private String _previewLangCode;
+	
+	private IPageManager _pageManager;
+	private IURLManager _urlManager;
+	
 	public String preview() {
 		Content content = this.getContent();
 		this.getContentActionHelper().updateEntity(content, this.getRequest());
@@ -80,7 +92,9 @@ public class ContentPreviewAction extends AbstractContentAction implements Servl
 	public String executePreview() {
 		try {
 			String pageDestCode = this.getCheckPageDestinationCode();
-			if (null == pageDestCode) return INPUT;
+			if (null == pageDestCode) {
+				return INPUT;
+			}
 			this.prepareForward(pageDestCode);
 			this.getRequest().setCharacterEncoding("UTF-8");
 		} catch (Throwable t) {
@@ -157,17 +171,5 @@ public class ContentPreviewAction extends AbstractContentAction implements Servl
 	public void setUrlManager(IURLManager urlManager) {
 		this._urlManager = urlManager;
 	}
-	
-	private HttpServletResponse _response;
-	
-	private String _previewPageCode;
-	private String _previewLangCode;
-	
-	private IPageManager _pageManager;
-	private IURLManager _urlManager;
-	
-	public static final String PAGE_CODE_PARAM_PREFIX = "jacmsPreviewActionPageCode";
-	
-	public static final String LANG_CODE_PARAM_PREFIX = "jacmsPreviewActionLangCode";
 	
 }

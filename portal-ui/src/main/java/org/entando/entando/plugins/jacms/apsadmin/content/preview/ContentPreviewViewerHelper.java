@@ -52,11 +52,11 @@ public class ContentPreviewViewerHelper extends ContentViewerHelper {
 			Widget widget = (Widget) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET);
 			Content contentOnSession = (Content) request.getSession()
 					.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentOnSessionMarker);
-			contentId = (contentOnSession.getId() == null ? contentOnSession.getTypeCode()+"123" : contentOnSession.getId());
+			contentId = contentOnSession.getId() == null ? contentOnSession.getTypeCode()+"123" : contentOnSession.getId();
 			ApsProperties widgetConfig = widget.getConfig();
 			modelId = this.extractModelId(contentId, modelId, widgetConfig);
 			if (null != contentId && null != modelId) {
-				long longModelId = new Long(modelId).longValue();
+				long longModelId = Long.parseLong(modelId);
 				this.setStylesheet(longModelId, reqCtx);
 				ContentRenderizationInfo renderizationInfo = this.getContentDispenser().getRenderizationInfo(contentId, longModelId, langCode, reqCtx);
 	            if (null == renderizationInfo) {
@@ -70,7 +70,6 @@ public class ContentPreviewViewerHelper extends ContentViewerHelper {
 			}
 		} catch (Throwable t) {
 			_logger.error("error loading rendered content for preview", t);
-			//ApsSystemUtils.logThrowable(t, this, "getRenderedContent");
 			throw new ApsSystemException("error loading rendered content for preview", t);
 		}
 		return renderedContent;

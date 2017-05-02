@@ -1461,6 +1461,40 @@ ul {
 
 .prelative {position: relative}
 
+table.content-list {
+    table-layout: fixed;
+    width: 100%;
+}
+table.content-list td, 
+table.content-list th {
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap!important;
+}
+   
+div.dataTables_wrapper table tr.odd td:not(:last-child) {background: #fff}
+div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
+
+.ColVis {
+    float: right;
+    clearfix: both;
+    margin: 10px 0;
+}
+.ColVis_collection li:last-child, 
+.ColVis_collection li:nth-child(2) {
+    display: none;
+}
+
+.toolbar-pf-results .dropdown {
+    padding: 0 20px 0 0;
+}
+
+.DTFC_RightBodyWrapper tbody tr,
+.DTFC_RightBodyWrapper tbody td {
+    height: auto;
+}
+
 /* --------------- Pager --------------- */
 
 .pagination-pf-page.page-selector {width: 50px;}
@@ -1504,6 +1538,28 @@ ul {
 /* --------------- Color --------------- */
 .white {color: #fff}
 .white:hover {color: #fff}
+
+@media (max-width: 991px) {
+    .table-view-pf-toolbar label {display: none}
+    .toolbar-pf-actions .selected-items {margin: 10px 0;}
+    .toolbar-pf-actions .btn-group {margin: 10px 0}
+    .toolbar-pf-actions .btn-group,
+    .toolbar-pf-actions .btn {
+        width: 100%;
+        display: block;
+        float: none !important;
+        margin: 0 !important;
+        padding: 0;
+    }
+    .toolbar-pf-actions .btn {
+        padding: 5px 0;
+    }
+    
+    .toolbar-pf-results .dropdown {
+        padding: 0 20px;
+    }
+    
+}
 
 @media (max-width: 767px) {
     .table-view-pf-toolbar label {display: none};

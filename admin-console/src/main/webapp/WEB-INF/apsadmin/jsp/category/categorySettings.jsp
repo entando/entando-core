@@ -51,10 +51,10 @@
 
         <div class="form-group">
             <div class="row">
-                <label class="col-sm-2 control-label">
-                    <s:text name="sysconfig.chooseYourCategoriesTreeStyle" />
+                <label class="col-sm-3 control-label">
+                    <s:text name="label.chooseYourCategoriesTreeStyle" />
                 </label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <s:set var="paramName" value="'treeStyle_category'" />
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-default <s:if test="systemParams[#paramName] == 'classic'"> active</s:if>">

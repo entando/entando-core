@@ -1378,6 +1378,14 @@ ul {
 }
 
 
+/* --------------- Display e Visibility --------------- */
+
+.display-block {display: block;}
+.display-inline {display: inline;}
+.display-inline-block {display: inline-block;}
+.display-table-cell {display: table-cell;}
+
+
 /* --------------- margini e padding --------------- */
 
 .mt-5 {margin-top: 5px;}
@@ -1407,6 +1415,27 @@ ul {
 .ml-40 {margin-left: 40px;}
 .ml-60 {margin-left: 60px;}
 .no-ml {margin-left: 0;}
+
+
+.pr-5 {padding-left: 5px;}
+.pr-10 {padding-right: 10px}
+.pr-20 {padding-left: 20px;}
+.pr-40 {padding-left: 40px;}
+.pr-60 {padding-left: 60px;}
+.no-pr {padding-left: 0;}
+
+
+/* --------------- Buttons --------------- */
+
+.btn-long {padding: 2px 60px;}
+
+
+/* --------------- Forms --------------- */
+.form-group .control-label .fa.required-icon {
+    position: relative;
+    top: -2px;
+    right: 0;
+}
 
 
 /* --------------- Button group with form-control --------------- */
@@ -1495,6 +1524,25 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     height: auto;
 }
 
+
+/* --------------- Category List Table --------------- */
+
+.table-treegrid .expand-button {
+    font-size: inherit;
+}
+.js_joinCategory {
+    color: #363636;
+    vertical-align: middle;
+    vertical-align: -webkit-baseline-middle;
+}
+
+.table-treegrid.request span.collapse-icon, 
+.table-treegrid.request span.expand-icon {
+    cursor: pointer;
+    display: none;
+}
+
+
 /* --------------- Pager --------------- */
 
 .pagination-pf-page.page-selector {width: 50px;}
@@ -1535,7 +1583,9 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     margin-left: 10px;
 }
 
+
 /* --------------- Color --------------- */
+
 .white {color: #fff}
 .white:hover {color: #fff}
 

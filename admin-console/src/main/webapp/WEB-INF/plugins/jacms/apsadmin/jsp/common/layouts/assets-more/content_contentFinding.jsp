@@ -12,24 +12,32 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#expandAll").click(function () {
-            $(".childrenNodes").removeClass("hidden");
-        });
-        $("#collapseAll").click(function () {
-            $(".childrenNodes").addClass("hidden");
-        });
+
         var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
         $('.table-treegrid').treegrid(null, isTreeOnRequest);
         $(".treeRow ").on("click", function (event) {
             $(".treeRow").removeClass("active");
-            $(".moveButtons").addClass("hidden");
             $(this).find('.subTreeToggler').prop("checked", true);
             $(this).addClass("active");
-            $(this).find(".moveButtons").removeClass("hidden");
         });
         
+        $("#expandAll").click(function() {
+            $('#categoryTree .treeRow').removeClass('hidden');
+            $('#categoryTree .treeRow').removeClass('collapsed');
+            $('#categoryTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
+        });
+        
+        $("#collapseAll").click(function() {
+            $('#categoryTree .treeRow:not(:first-child)').addClass('hidden');
+            $('#categoryTree .treeRow').addClass('collapsed');
+            $('#categoryTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
+        });
+        
+        var selectedNode = $(".table-treegrid .subTreeToggler:checked");
+        $(selectedNode).closest(".treeRow").addClass("active").removeClass("hidden").addClass("collapsed");
+        
 		<s:if test="strutsAction != 2" >
-			generateCodeFromTitle("lang<wp:info key="defaultLang" />", 'categryCode');
+			generateCodeFromTitle("lang<wp:info key="defaultLang" />", 'categoryCode');
 		</s:if>
 		
 		/* DataTables con ColVis e FixeColumns */

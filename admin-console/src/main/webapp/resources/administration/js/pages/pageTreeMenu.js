@@ -275,29 +275,47 @@ $(function () {
 			var framePos = +$elem.parent().attr('data-pos');
 
 			// FIXME use styled modal
-			if (!confirm('Delete widget "' + widgetCode + '" from page "' + PROPERTY.code + '" position "' + framePos + '"?')) {
-				return;
-			}
+//			if (!confirm('Delete widget "' + widgetCode + '" from oooooooooooopage "' + PROPERTY.code + '" position "' + framePos + '"?')) {
+//				return;
+//			}
+                        var msgDelete = 'Delete widget "' + widgetCode + '" from page "' + PROPERTY.code + '" position "' + framePos + '"?';
 
-			// delete the widget
-			$.ajax(deleteWidgetUrl, {
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					pageCode: PROPERTY.code,
-					frame: framePos
-				}),
-				success: function (data) {
-					if (alertService.showResponseAlerts(data)) {
+                    $.confirm({
+                        title: 'Confirm!',
+                        content: msgDelete,
+                        buttons: {
+                            confirm: { 
+                                btnClass: 'btn-red',
+                                action: function(){
+                                    // delete the widget
+                                    $.ajax(deleteWidgetUrl, {
+                                        method: 'POST',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify({
+                                            pageCode: PROPERTY.code,
+                                            frame: framePos
+                                        }),
+                                        success: function (data) {
+                                            if (alertService.showResponseAlerts(data)) {
 						return;
-					}
-					setEmptySlot($elem.parent());
+                                            }
+                                            setEmptySlot($elem.parent());
+                                            
+                                            // update local draft status
+                                            pageData.draftWidgets[framePos] = null;
+                                            updatePageStatus(data.page);
+                                        }
+                                    });
+                                }
+                            },
+                            cancel: {
+                                action: function(){
+                                    return;
+                                }
+                            }
+                        }
+                    });
 
-					// update local draft status
-					pageData.draftWidgets[framePos] = null;
-					updatePageStatus(data.page);
-				}
-			});
 		});
 
 

@@ -54,7 +54,7 @@
     <wpsa:subset source="#entity_list" count="10" objectName="entityGroup" advanced="true" offset="5">
         <s:set var="group" value="#entityGroup"/>
         <div class="mt-20">
-            <table class="table table-striped table-bordered table-hover content-list no-mb"
+            <table class="table table-striped table-bordered table-hover no-mb"
                    style="margin-top: 1em;">
                 <thead>
                 <tr>

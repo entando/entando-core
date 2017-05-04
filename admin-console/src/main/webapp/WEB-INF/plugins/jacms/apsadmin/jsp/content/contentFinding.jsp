@@ -622,7 +622,7 @@
 					
 					<div class="col-xs-12 no-padding">
 						<div class="mt-20">
-							<table class="table table-striped table-bordered table-hover content-list" id="contentListTable">
+							<table class="table table-striped table-bordered table-hover" id="contentListTable">
 								<thead>
 									<tr>
 										<th class="text-center">

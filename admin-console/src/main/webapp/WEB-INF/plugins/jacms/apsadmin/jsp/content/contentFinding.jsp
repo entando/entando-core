@@ -5,15 +5,11 @@
 <%-- radios + checkboxes only --%>
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core"%>
 
-<script src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-<script src="http://cdn.datatables.net/colvis/1.1.2/js/dataTables.colVis.min.js"></script>
-<script src="http://cdn.datatables.net/colreorder/1.3.2/js/dataTables.colReorder.min.js"></script>
-
 <s:set var="targetNS" value="%{'/do/jacms/Content'}" />
 
 <!-- Admin console Breadcrumbs -->
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><s:text name="breadcrumb.apps" /></li>
+	<li><s:text name="breadcrumb.app" /></li>
 	<li><s:text name="breadcrumb.jacms" /></li>
 	<li class="page-title-container"><s:text
 			name="breadcrumb.jacms.content.list" /></li>
@@ -54,7 +50,7 @@
 				<wpsf:hidden name="lastOrder" />
 			</p>
 
-			<div class="well col-md-offset-3 col-md-6">
+			<div class="well col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 col-sm-offset-1 col-sm-10">
 				<p class="search-label">
 					<s:text name="label.search.label" />
 				</p>
@@ -99,8 +95,7 @@
 											class="control-label col-sm-2 text-right"> <s:text
 												name="label.type" />
 										</label>
-										<div class="col-sm-9 input-group"
-											style="padding: 0 20px 0 20px">
+										<div class="col-sm-9 input-group">
 											<wpsf:select cssClass="form-control" name="contentType"
 												id="contentType" list="contentTypes" listKey="code"
 												listValue="description" headerKey=""
@@ -307,7 +302,8 @@
 			</div>
 	</div>
 
-	<!--Aggiunta colonne tabella lista contentui-->
+	<!--Aggiunta colonne tabella lista contenuti-->
+	<%-- Sostituito da funzionalità ColVis di DataTables
 	<div class="col-xs-12">
 		<div class="dropdown  pull-right dropdown-menu-right"
 			id="search-configure-results">
@@ -354,7 +350,7 @@
 			</ul>
 		</div>
 	</div>
-	<!-- Fine aggiunta colonne tabella lista contenuti-->
+	--%>
 	
     <!-- New Content Button -->
     <div class="col-xs-12">
@@ -439,9 +435,7 @@
 			</p>
 
 			<s:if test="hasActionErrors()">
-				<!--<div class="alert alert-danger alert-dismissable fade in margin-base-top">-->
-				<div class="alert alert-danger alert-dismissable"
-					style="margin-top: 3em">
+				<div class="alert alert-danger alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert"
 						aria-hidden="true">
 						<span class="pficon pficon-close"></span>
@@ -454,7 +448,6 @@
 						</s:iterator>
 					</ul>
 				</div>
-				<!--</div>-->
 			</s:if>
 			<s:if test="hasActionMessages()">
 				<div class="alert alert-danger alert-dismissable">
@@ -480,15 +473,6 @@
 			<wpsa:subset source="#contentIdsVar" count="10" objectName="groupContent" advanced="true" offset="5">
 				<s:set var="group" value="#groupContent" />
 
-					<%--
-				<div class="form-group">
-					<label for="allContentsSelected" class="control-label col-sm-2 text-right"><s:text name="label.allContentsSelected"/></label>
-					<div class="col-sm-9">
-						<wpsf:checkbox name="allContentsSelected" id="allContentsSelected" cssClass="bootstrap-switch" />
-					</div>
-				</div>
-				 --%>
-
                     <%-- TODO: verificare filtri per lista
 					<!-- Tabs -->
 					<div class="col-xs-12 no-padding mt-20">
@@ -504,25 +488,27 @@
                      --%>
 
 					<!-- Toolbar -->
-                    <div class="col-xs-12 no-padding">
+                    <div class="col-xs-12 no-padding" id="content-list-toolbar">
                         <div class="row toolbar-pf table-view-pf-toolbar border-bottom">
                             <div class="col-xs-12">
 
                                 <!-- toolbar first row  -->
                                 <div class="toolbar-pf-actions">
                                     <!-- items selected -->
-                                    <div class="col-md-6 col-xs-12 no-padding">
-                                        <span class="selected-items-counter">0</span> <s:text name="title.itemSelected" />
+                                    <div class="col-lg-6 col-md-4 col-xs-12 no-padding">
+	                                    <div class="selected-items">
+	                                        <span class="selected-items-counter">0</span> <s:text name="title.itemSelected" />
+	                                    </div>
                                     </div>
 
                                     <!-- toolbar -->
-                                    <div class="col-md-6 col-xs-12 no-padding">
-                                        <label class="col-md-2 control-label"> 
-                                        	<%-- <s:text name="title.contentActions" /> --%>
+                                    <div class="col-lg-6 col-md-8 col-xs-12 no-padding">
+                                        <label class="col-lg-2 col-md-4 control-label"> 
+                                            <%-- <s:text name="title.contentActions" /> --%>
                                             <s:text name="label.setAs" />
                                         </label>
 
-                                        <div class="col-sm-10 no-padding">
+                                        <div class="col-lg-10 col-md-8 col-sm-12 no-padding">
                                             <div class="btn-toolbar">
                                                 <wp:ifauthorized permission="validateContents">
                                                     <div class="btn-group">
@@ -564,10 +550,9 @@
 
                                 <!-- toolbar second row -->
                                 <div class="row toolbar-pf-results">
-                                    <div class="col-md-6 col-xs-12 col-md-offset-6 no-padding">
-                                        <label class="col-md-2 control-label"><s:text name="label.actions" /></label>
-                                        <div class="dropdown col-md-10 no-padding"
-                                            style="padding-right: 20px">
+                                    <div class="col-lg-6 col-lg-offset-6 col-md-8 col-md-offset-4 col-xs-12 no-padding">
+                                        <label class="col-lg-2 col-md-4 control-label"><s:text name="label.actions" /></label>
+                                        <div class="dropdown col-lg-10 col-md-8 no-padding">
                                             <button type="button"
                                                 class="btn btn-default dropdown-toggle w100perc text-right"
                                                 id="bulkAction" data-toggle="dropdown" aria-haspopup="true"
@@ -621,11 +606,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                     
                     <!-- Content List - Table -->
 					<%-- <caption class="sr-only"><s:text name="title.contentList" /></caption> --%>
-					
 					<div class="col-xs-12 no-padding">
 						<div class="alert alert-warning hidden selectall-box no-mb mt-20">
 							<span class="pficon pficon-warning-triangle-o"></span>
@@ -638,11 +622,10 @@
 					
 					<div class="col-xs-12 no-padding">
 						<div class="mt-20">
-							<table class="table table-striped table-bordered table-hover content-list no-mb"
-								id="contentListTable">
+							<table class="table table-striped table-bordered table-hover" id="contentListTable">
 								<thead>
 									<tr>
-										<th class="w2perc">
+										<th class="text-center">
 										  <label class="sr-only" for="selectAll"><s:text name="label.selectAll" /></label>
 										  <input type="checkbox" class="js_selectAll">
 										</th>
@@ -656,7 +639,7 @@
                                             <s:text name="label.description" /></a>
                                         </th>
 									   <th><s:text name="label.author"/></th>
-										<s:if test="viewCode">
+<%-- 										<s:if test="viewCode"> --%>
 											<th>
                                                 <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
 					                                <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
@@ -666,44 +649,44 @@
 					                                </s:url>"><s:text name="label.code" />
 				                                </a>
 			                                </th>
-										</s:if>
-										<s:if test="viewTypeDescr">
+<%-- 										</s:if> --%>
+<%-- 										<s:if test="viewTypeDescr"> --%>
 											<th><s:text name="label.type" /></th>
-										</s:if>
-										<s:if test="viewStatus">
-											<th class="text-center w4perc"><s:text
+<%-- 										</s:if> --%>
+<%-- 										<s:if test="viewStatus"> --%>
+											<th class="text-center cell-w100"><s:text
 													name="label.state" /></th>
-										</s:if>
-										<th class="text-center w4perc"><s:text name="label.visible"/></th>
-										<s:if test="viewGroup">
+<%-- 										</s:if> --%>
+										<th class="text-center cell-w100"><s:text name="label.visible"/></th>
+<%-- 										<s:if test="viewGroup"> --%>
 											<th><s:text name="label.group" /></th>
-										</s:if>
-										<s:if test="viewCreationDate">
-											<th><a
-												href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
-	                               <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-	                                <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
-	                                <s:param name="groupBy">created</s:param>
-	                                <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-	                                </s:url>"><s:text
-														name="label.creationDate" /></a></th>
-										</s:if>
-										<th><a
-											href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
-	                           <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-	                            <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
-	                            <s:param name="groupBy">lastModified</s:param>
-	                            <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-	                            </s:url>"><s:text
-													name="label.lastEdit" /></a></th>
-										<th class="text-center"><s:text name="label.actions" /></th>
+<%-- 										</s:if> --%>
+<%-- 										<s:if test="viewCreationDate"> --%>
+											<th><a  href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+												<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+												<s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
+												<s:param name="groupBy">created</s:param>
+												<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                                                </s:url>">
+                                                <s:text name="label.creationDate" /></a>
+                                            </th>
+<%-- 										</s:if> --%>
+										<th>
+											<a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+											<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+											<s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
+											<s:param name="groupBy">lastModified</s:param>
+											<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+											</s:url>"><s:text name="label.lastEdit" /></a>
+										</th>
+										<th class="text-center cell-w100"><s:text name="label.actions" /></th>
 									</tr>
 								</thead>
 								<tbody>
 									<s:iterator var="contentId">
 										<s:set var="content" value="%{getContentVo(#contentId)}"></s:set>
 										<tr>
-											<td><input type="checkbox"
+											<td class="text-center"><input type="checkbox"
 												name="contentIds"
 												id="content_<s:property value="#content.id" />"
 												value="<s:property value="#content.id" />" /></td>
@@ -716,16 +699,13 @@
 												    <s:property value="#content.firstEditor"/>
 												</s:elseif>
 											</td>
-											<s:if test="viewCode">
-												<td class="table-txt-wrap"><s:property
-														value="#content.id" /></td>
-											</s:if>
-											<s:if test="viewTypeDescr">
-												<td class="table-txt-wrap"><s:property
-														value="%{getSmallContentType(#content.typeCode).descr}" />
-												</td>
-											</s:if>
-											<s:if test="viewStatus">
+<%-- 											<s:if test="viewCode"> --%>
+												<td ><s:property value="#content.id" /></td>
+<%-- 											</s:if> --%>
+<%-- 											<s:if test="viewTypeDescr"> --%>
+												<td><s:property value="%{getSmallContentType(#content.typeCode).descr}" /></td>
+<%-- 											</s:if> --%>
+<%-- 											<s:if test="viewStatus"> --%>
 												<td class="text-center">
 												<s:if test="%{#content.onLine && #content.sync}">
 												    <s:set value="%{getText('name.contentStatus.' + #content.status)}" var="statusLabel" />
@@ -740,28 +720,8 @@
 												    <s:set var="statusLabel" value="%{getText('name.contentStatus.' + 'OFFLINE')}" />
 												    <span class="fa fa-circle gray" aria-hidden="true" title="${statusLabel}"></span>
 												</s:else>
-												<%-- 
-												<s:set value="%{getText('name.contentStatus.' + #content.status)}" var="statusLabel" /> 
-												<span class="statusField"> 
-												    <s:if test="%{#content.status == 'OFFLINE'}">
-														<span class="fa fa-circle gray" aria-hidden="true" title="${statusLabel}"></span>
-													</s:if> 
-													<s:elseif test="%{#content.status == 'DRAFT'}">
-															<s:set var="statusLabel">
-																<s:property
-																	value="%{getText('name.contentStatus.' + 'PUBLIC')}" />&#32;&ne;&#32;<s:property
-																	value="%{getText('name.contentStatus.' + 'DRAFT')}" />
-															</s:set>
-															<span class="fa fa-circle yellow" aria-hidden="true"
-																title="${statusLabel}"></span>
-														</s:elseif> <s:else>
-															<span class="fa fa-circle green" aria-hidden="true"
-																title="${statusLabel}"> </span>
-														</s:else>
-												</span>
-												--%>
 												</td>
-											</s:if>
+<%-- 											</s:if> --%>
 											<%--
                                             <s:if test="#content.onLine && #content.sync">
                                                 <s:set var="iconName">check</s:set>
@@ -786,7 +746,7 @@
                                             </td>
                                              --%>
                                             
-                                            <td class="text-center" style="width: 40px;">
+                                            <td class="text-center">
                                             <s:if test="%{#content.mainGroupCode != null && !#content.mainGroupCode.equals('free')}">
                                                 <span class="icon fa fa-lock"></span>
                                             </s:if>
@@ -798,21 +758,20 @@
                                             --%>
                                             </td>
                                             
-											<s:if test="viewGroup">
-												<td class="table-txt-wrap"><s:property
+<%-- 											<s:if test="viewGroup"> --%>
+												<td ><s:property
 														value="%{getGroup(#content.mainGroupCode).descr}" /></td>
-											</s:if>
-											<s:if test="viewCreationDate">
-												<td class="text-nowrap" style="width: 118px;"><s:date
+<%-- 											</s:if> --%>
+<%-- 											<s:if test="viewCreationDate"> --%>
+												<td class="text-nowrap"><s:date
 														name="#content.create" format="dd/MM/yyyy HH:mm" /></td>
-											</s:if>
-											<td class=" text-nowrap" style="width: 118px;"><s:date
+<%-- 											</s:if> --%>
+											<td class=" text-nowrap"><s:date
 													name="#content.modify" format="dd/MM/yyyy HH:mm" /></td>
 											<td class=" table-view-pf-actions">
 												<div class="dropdown dropdown-kebab-pf">
 													<button class="btn btn-menu-right dropdown-toggle"
-														type="button" data-toggle="dropdown" aria-haspopup="true"
-														aria-expanded="false">
+														type="button" data-toggle="dropdown">
 														<span class="fa fa-ellipsis-v"></span>
 													</button>
 													<ul class="dropdown-menu dropdown-menu-right">
@@ -865,7 +824,7 @@
 						</div>
 					</div>
 
-					<div class="content-view-pf-pagination table-view-pf-pagination clearfix mb-20">
+					<div class="content-view-pf-pagination table-view-pf-pagination clearfix mt-20 mb-20">
 						<%-- TODO: abilitare selezione elementi per pagina --%>
 						<%-- 
 						<div class="form-group">
@@ -921,59 +880,6 @@
 	        </div>
 		</s:else>
 	</div>
+	
 	</s:form>
 </div>
-
-<script type="text/javascript">
-    //-- Boostrap-bootstrap-datepicker---
-    $('.bootstrap-datepicker').datepicker({
-        autoclose: true,
-        todayBtn: "linked",
-        todayHighlight: true
-    });
-    
-    $(function(){
-    	
-    	var itemsNum = $('.content-list tbody input[type="checkbox"]').length;
-    	
-    	$(".js_selectAll").click(function(){
-    		toggleSelectAll();
-			var isChecked = ($(this).prop("checked") == true);
-			if(isChecked) {
-	    		$(".content-list tbody input").prop("checked",true);
-			} else {
-				$(".content-list tbody input").prop("checked",false);
-			}
-    		updateCounter();
-    	});
-    	
-    	$('.content-list input[type="checkbox"]').click(function(){
-    		var selectedItemsNum = updateCounter();
-    		
-    		if(itemsNum == selectedItemsNum) {
-    			$(".js_selectAll").prop("checked", true);
-    			$(".selectall-box").removeClass("hidden");
-    		} else {
-    			$(".js_selectAll").prop("checked", false);
-    			$(".selectall-box").addClass("hidden");
-    			$("#allContentsSelected").bootstrapSwitch("state", "false").val("false");
-    		}
-    	});
-    });
-    
-    function toggleSelectAll() {
-        $(".selectall-box").toggleClass("hidden");
-        
-        if($(".selectall-box").hasClass("hidden")) {
-        	$("#allContentsSelected").bootstrapSwitch("state", "false").val("false");
-        }
-    	
-    }
-    
-    function updateCounter() {
-    	var selectedItemsNum = $('.content-list tbody input[type="checkbox"]:checked').length;
-    	$(".selected-items-counter").html(selectedItemsNum);
-    	
-    	return selectedItemsNum;
-    }
-</script>

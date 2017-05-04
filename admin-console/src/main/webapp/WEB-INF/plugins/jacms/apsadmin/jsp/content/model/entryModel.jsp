@@ -3,7 +3,10 @@
 <%@ taglib prefix="jacms" uri="/jacms-apsadmin-core"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><s:text name="title.contentModels" /></li>
+	<li><a
+		href="<s:url action="list" namespace="/do/jacms/ContentModel" />"
+		title="<s:text name="note.goToSomewhere" />: <s:text name="title.contentModels" />"><s:text
+				name="title.contentModels" /></a></li>
 	<li class="page-title-container"><s:if test="strutsAction == 1">
 			<s:text name="title.contentModels.new" />
 		</s:if> <s:if test="strutsAction == 2">
@@ -51,7 +54,8 @@
 			</s:if>
 		</p>
 
-		<div class="form-group<s:if test="strutsAction == 1 && null == contentType"> has-warning</s:if>">
+		<div
+			class="form-group<s:if test="strutsAction == 1 && null == contentType"> has-warning</s:if>">
 			<label for="contentType" class="col-sm-2 control-label"><s:text
 					name="contentModel.type" /></label>
 			<div class="col-sm-10">
@@ -77,7 +81,8 @@
 				</s:if>
 			</div>
 		</div>
-		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+		<div
+			class="form-group<s:property value="controlGroupErrorClassVar" />">
 			<s:set var="modelIdFieldErrorsVar" value="%{fieldErrors['modelId']}" />
 			<s:set var="modelIdHasFieldErrorVar"
 				value="#modelIdFieldErrorsVar!= null && !#modelIdFieldErrorsVar.isEmpty()" />
@@ -97,7 +102,8 @@
 				</s:if>
 			</div>
 		</div>
-		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+		<div
+			class="form-group<s:property value="controlGroupErrorClassVar" />">
 			<s:set var="descriptionFieldErrorsVar"
 				value="%{fieldErrors['description']}" />
 			<s:set var="descriptionHasFieldErrors"
@@ -118,7 +124,8 @@
 				</s:if>
 			</div>
 		</div>
-		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+		<div
+			class="form-group<s:property value="controlGroupErrorClassVar" />">
 			<s:set var="contentShapeFieldErrorsVar"
 				value="%{fieldErrors['contentShape']}" />
 			<s:set var="contentShapeHasFieldErrorVar"
@@ -130,18 +137,17 @@
 					<s:textarea name="contentShape" id="contentShape" cols="50"
 						rows="10" cssClass="form-control" />
 				</div>
-				<span class="help-block pull-right">
-					<span class="icon fa fa-info-circle"></span>&#32;
-					<s:if test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">(<s:text name="note.contentModel.help" />)&#32;</s:if>
-					<s:text name="note.contentModel.contentAssist" />:&#32;
-					<em class="important">
-						<s:text name="label.on" /></em>.&#32;
-					<s:if test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">[<s:text
+				<span class="help-block pull-right"> <span
+					class="icon fa fa-info-circle"></span>&#32; <s:if
+						test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">(<s:text
+							name="note.contentModel.help" />)&#32;</s:if> <s:text
+						name="note.contentModel.contentAssist" />:&#32; <em
+					class="important"> <s:text name="label.on" /></em>.&#32; <s:if
+						test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">[<s:text
 							name="note.contentModel.attributeHelp" />:&#32;<em
-							class="important"><s:text name="label.on" /></em>]</s:if>
-					<s:else>[<s:text name="note.contentModel.attributeHelp" />:&#32;
-						<em
-							class="important"><s:text name="label.off" /></em>]
+							class="important"><s:text name="label.on" /></em>]</s:if> <s:else>[<s:text
+							name="note.contentModel.attributeHelp" />:&#32;
+						<em class="important"><s:text name="label.off" /></em>]
 					</s:else>
 				</span>
 				<s:if test="#contentShapeHasFieldErrorVar">

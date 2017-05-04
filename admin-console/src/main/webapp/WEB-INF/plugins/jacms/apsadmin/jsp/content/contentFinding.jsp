@@ -621,7 +621,6 @@
 					</div>
 					
 					<div class="col-xs-12 no-padding">
-						<div class="mt-20">
 							<table class="table table-striped table-bordered table-hover content-list" id="contentListTable">
 								<thead>
 									<tr>
@@ -821,7 +820,6 @@
 									</s:iterator>
 								</tbody>
 							</table>
-						</div>
 					</div>
 
 					<div class="content-view-pf-pagination table-view-pf-pagination clearfix mt-20 mb-20">

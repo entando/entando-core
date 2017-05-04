@@ -49,7 +49,6 @@
     <wpsa:subset source="#userGroup_list" count="10" objectName="userGroups" advanced="true" offset="5">
         <s:set var="group" value="#userGroups" />    
     <div class="col-xs-12 no-padding">
-        <div class="mt-20">
             <table class="table table-striped table-bordered table-hover content-list no-mb">
                 <thead>
                     <tr>
@@ -93,7 +92,6 @@
                     </s:iterator>
                 </tbody>
             </table>
-        </div>
     </div>
     <div class="content-view-pf-pagination clearfix">
         <div class="form-group">

@@ -53,7 +53,6 @@
 <s:if test="%{#entity_list.size > 0}">
     <wpsa:subset source="#entity_list" count="10" objectName="entityGroup" advanced="true" offset="5">
         <s:set var="group" value="#entityGroup"/>
-        <div class="mt-20">
             <table class="table table-striped table-bordered table-hover content-list no-mb"
                    style="margin-top: 1em;">
                 <thead>
@@ -137,7 +136,6 @@
                 </s:iterator>
                 </tbody>
             </table>
-        </div>
         <div class="content-view-pf-pagination clearfix">
             <div class="form-group">
                 <span><s:include

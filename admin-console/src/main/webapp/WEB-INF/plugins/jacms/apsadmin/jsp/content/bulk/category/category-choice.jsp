@@ -12,7 +12,7 @@
 
 <!-- Admin console Breadcrumbs -->
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li>APPS</li>
+    <li><s:text name="breadcrumb.app" /></li>
     <li><s:text name="breadcrumb.jacms" /></li>
     <li>
         <a href="<s:url action="list" namespace="/do/jacms/Content"/>">
@@ -90,44 +90,60 @@
 		</div>
 
 		<s:set var="categoryTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
-		
+
 		<s:if test="#categoryTreeStyleVar == 'request'">
-		<p class="sr-only">
-		<s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar"><wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"></wpsf:hidden></s:iterator>
-		</p>
+			<p class="sr-only">
+                <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
+                    <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"></wpsf:hidden>
+                </s:iterator>
+			</p>
 		</s:if>
-		
+		 
 		<fieldset class="col-xs-12 no-padding" id="category-content-block">
 			<legend><span class="icon fa fa-tags"></span>&#32;<s:text name="title.categoriesManagement"/></legend>
-			
-			<div class="well">
-				<ul id="categoryTree" class="fa-ul list-unstyled">
-					<s:set var="inputFieldName" value="'categoryCode'" />
-					<s:set var="selectedTreeNode" value="categoryCode" />
-					<s:set var="liClassName" value="'category'" />
-					<s:set var="treeItemIconName" value="'fa-folder'" />
-		
+
+                <table id="categoryTree" class="table table-bordered table-hover table-treegrid ${categoryTreeStyleVar}">
+                    <thead>
+	                    <tr>
+	                        <th>
+	                            <s:text name="label.category.tree"/>
+	                            <button type="button" class="btn-no-button expand-button"
+	                                    id="expandAll">
+	                                <span class="fa fa-plus-square-o treeInteractionButtons"
+	                                   aria-hidden="true"></span>&#32;
+	                                <s:text name="label.category.expandAll"/>
+	                            </button>
+	                            <button type="button" class="btn-no-button" id="collapseAll">
+	                                <span class="fa fa-minus-square-o treeInteractionButtons"
+	                                   aria-hidden="true"></span>&#32;
+	                                <s:text name="label.category.collapseAll"/>
+	                            </button>
+	                        </th>
+	                        <th class="text-center w4perc">
+	                            <s:text name="label.category.join" />
+	                        </th>
+	                    </tr>
+                    </thead>
+                    <tbody>
+                    <s:set var="inputFieldName" value="'categoryCode'" />
+                    <s:set var="selectedTreeNode" value="categoryCode" />
+                    <s:set var="liClassName" value="'category'" />
+                    <s:set var="treeItemIconName" value="'fa-folder'" />
 					<s:if test="#categoryTreeStyleVar == 'classic'">
-						<s:set var="currentRoot" value="categoryRoot" />
-					 	<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
+					   <s:set var="currentRoot" value="categoryRoot" />
+					   <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategoriesJoin.jsp" />
 					</s:if>
+
 					<s:elseif test="#categoryTreeStyleVar == 'request'">
-						<s:set var="currentRoot" value="showableTree" />
-						<s:set var="openTreeActionName" value="'entry'" />
-						<s:set var="closeTreeActionName" value="'entry'" />
-						<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
-					</s:elseif>
-				</ul>
-				<div data-toggle="tree-toolbar">
-					<div data-toggle="tree-toolbar-actions">
-						<wpsf:submit action="join" type="button" title="%{getText('label.join')}" cssClass="btn btn-info btn-sm margin-small-vertical" data-toggle="tooltip">
-							<span class="icon fa fa-plus"></span>
-						</wpsf:submit>
-					</div>
-				</div>
-			</div>
-			
-			
+			            <s:set var="currentRoot" value="showableTree" />
+			            <s:set var="openTreeActionName" value="'backToContentList'" />
+			            <s:set var="closeTreeActionName" value="'backToContentList'" />
+			            <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />
+			        </s:elseif>
+	                    
+                    </tbody>
+                </table>
+
 			<s:if test="categoryCodes != null && categoryCodes.size() > 0">
 			
 				<h4 class="margin-base-vertical"><s:text name="note.contentCategories.summary"/></h4>

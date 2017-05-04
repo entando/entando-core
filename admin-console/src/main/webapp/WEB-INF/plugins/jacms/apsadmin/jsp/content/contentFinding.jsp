@@ -303,7 +303,7 @@
 	</div>
 
 	<!--Aggiunta colonne tabella lista contenuti-->
-	<%-- Sostituito da funzionalità ColVis di DataTables
+	<%-- Sostituito da funzionalitÃ  ColVis di DataTables
 	<div class="col-xs-12">
 		<div class="dropdown  pull-right dropdown-menu-right"
 			id="search-configure-results">
@@ -821,7 +821,7 @@
 									</s:iterator>
 								</tbody>
 							</table>
-						</div>
+            </div>
 					</div>
 
 					<div class="content-view-pf-pagination table-view-pf-pagination clearfix mt-20 mb-20">

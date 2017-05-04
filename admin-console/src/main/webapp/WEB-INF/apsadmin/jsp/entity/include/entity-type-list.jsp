@@ -137,7 +137,6 @@
                 </s:iterator>
                 </tbody>
             </table>
-        </div>
         <div class="content-view-pf-pagination clearfix">
             <div class="form-group">
                 <span><s:include
@@ -148,6 +147,7 @@
                 </div>
             </div>
         </div>
+</div>
     </wpsa:subset>
 </s:if>
 <s:else>

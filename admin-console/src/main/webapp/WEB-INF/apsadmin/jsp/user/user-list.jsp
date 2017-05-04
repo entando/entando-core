@@ -320,7 +320,7 @@
     </div>
     <br>
     <br>
-    <a href="<s:url namespace="/do/User" action="new" />" class="btn btn-primary pull-right">
+    <a href="<s:url namespace="/do/User" action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
         <s:text name="title.userManagement.userNew" />
     </a>
         
@@ -499,7 +499,7 @@
                     </s:iterator>
                     </tbody>
                 </table>
-            </div>
+          </div>
         </div>
         <div class="content-view-pf-pagination clearfix">
             <div class="form-group">

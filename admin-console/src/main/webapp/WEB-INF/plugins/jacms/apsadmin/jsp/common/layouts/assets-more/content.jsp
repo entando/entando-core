@@ -79,28 +79,27 @@ $(function() {
 
 //for content categories
 <s:if test="#categoryTreeStyleVar == 'classic'">
-
-	var catTree = jQuery("#categoryTree").EntandoWoodMenu({
-		menuToggler: "subTreeToggler",
-		menuRetriever: function(toggler) {
-			return $(toggler).parent().children("ul");
-		},
-		openClass: "node_open",
-		closedClass: "node_closed",
-		showTools: true,
-		onStart: function() {
-			this.collapseAll();
-		},
-		expandAllLabel: "<s:text name="label.expandAll" />",
-		collapseAllLabel: "<s:text name="label.collapseAll" />",
-	<s:if test="%{categoryCode != null && !(categoryCode.equalsIgnoreCase(''))}">
-		startIndex: "fagianonode_<s:property value="categoryCode" />",
-	</s:if>
-		toolTextIntro: "<s:text name="label.introExpandAll" />",
-		toolexpandAllLabelTitle: "<s:text name="label.expandAllTitle" />",
-		toolcollapseLabelTitle: "<s:text name="label.collapseAllTitle" />"
+	$('.table-treegrid').treegrid(null, false);
+	$(".treeRow ").on("click", function (event) {
+	    $(".treeRow").removeClass("active");
+	    $(this).find('.subTreeToggler').prop("checked", true);
+	    $(this).addClass("active");
 	});
-
+	
+	$("#expandAll").click(function() {
+	    $('#categoryTree .treeRow').removeClass('hidden');
+	    $('#categoryTree .treeRow').removeClass('collapsed');
+	    $('#categoryTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
+	});
+	
+	$("#collapseAll").click(function() {
+	    $('#categoryTree .treeRow:not(:first-child)').addClass('hidden');
+	    $('#categoryTree .treeRow').addClass('collapsed');
+	    $('#categoryTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
+	});
+	
+	var selectedNode = $(".table-treegrid .subTreeToggler:checked");
+	$(selectedNode).closest(".treeRow").addClass("active").removeClass("hidden").addClass("collapsed");
 </s:if>
 
 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/inc/js_trees_context_menu.jsp" />

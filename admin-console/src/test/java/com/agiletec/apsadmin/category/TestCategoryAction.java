@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2017-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -41,9 +41,9 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
 		this.setUserOnSession("admin");
 		this.initAction("/do/Category", "new");
 		String result = this.executeAction();
-		assertEquals("categoryTree", result);
+		assertEquals(Action.SUCCESS, result);
 		CategoryAction action = (CategoryAction) this.getAction();
-		assertEquals(1, action.getActionErrors().size());
+		assertEquals(0, action.getActionErrors().size());
 		
 		this.setUserOnSession("admin");
 		this.initAction("/do/Category", "new");

@@ -320,7 +320,7 @@
     </div>
     <br>
     <br>
-    <a href="<s:url namespace="/do/User" action="new" />" class="btn btn-primary pull-right">
+    <a href="<s:url namespace="/do/User" action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
         <s:text name="title.userManagement.userNew" />
     </a>
         
@@ -333,7 +333,7 @@
             <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
         </div>--%>
         <div class="col-xs-12 no-padding">
-                <table class="table table-striped table-bordered table-hover content-list no-mb">
+                <table class="table table-striped table-bordered table-hover no-mb">
                     <thead>
                         <tr>
                             <th><s:text name="label.username" /></th>

@@ -39,7 +39,7 @@
 <div class="row form-group">
     <div class="col-sm-12">
         <a class="btn btn-primary pull-right"
-           href="<s:url namespace="/do/Group" action="new" />"> <s:text
+           href="<s:url namespace="/do/Group" action="new" />" style="margin-bottom: 5px"> <s:text
                 name="title.groupManagement.groupNew" />
         </a>
     </div>
@@ -49,7 +49,7 @@
     <wpsa:subset source="#userGroup_list" count="10" objectName="userGroups" advanced="true" offset="5">
         <s:set var="group" value="#userGroups" />    
     <div class="col-xs-12 no-padding">
-            <table class="table table-striped table-bordered table-hover content-list no-mb">
+            <table class="table table-striped table-bordered table-hover no-mb">
                 <thead>
                     <tr>
                         <th><s:text name="label.name" /></th>

@@ -27,7 +27,7 @@
                     <a href="<s:url namespace="/do/Category" action="viewTree" />"><s:text name="title.categoryManagement"/></a>
                 </li>
                 <li class="active">
-                    <a href="<s:url namespace="/do/Category" action="settings" />"><s:text name="title.categorySettings"/></a>
+                    <a href="<s:url namespace="/do/Category" action="configSystemParams" />"><s:text name="title.categorySettings"/></a>
                 </li>
             </ul>
         </div>

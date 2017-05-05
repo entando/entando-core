@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 
 /**
  * This action class contains all the elements currently use to perform searches across the portal pages.
@@ -75,7 +76,16 @@ public class PageFinderAction extends AbstractPortalAction {
 	public String getPageCodeToken() {
 		return _pageCodeToken;
 	}
+
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
+	
 	
 	private String _pageCodeToken;
+	private IPageActionHelper _pageActionHelper;
 	
 }

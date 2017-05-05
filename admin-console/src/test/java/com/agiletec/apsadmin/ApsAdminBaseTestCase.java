@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import junit.framework.TestCase;
@@ -144,8 +145,7 @@ public class ApsAdminBaseTestCase extends TestCase {
 		// set to true if you want to process Freemarker or JSP results
 		this._proxy.setExecuteResult(false);
 		// by default, don't pass in any request parameters
-		//this._proxy.getInvocation().getInvocationContext().setParameters(new HashMap());
-
+		
 		// set the actions context to the one which the proxy is using
 		ServletActionContext.setContext(_proxy.getInvocation().getInvocationContext());
 		ServletActionContext.setRequest(_request);
@@ -292,7 +292,6 @@ public class ApsAdminBaseTestCase extends TestCase {
     protected HttpServletRequest getRequest() {
     	return this._request;
     }
-	
     private static ApplicationContext _applicationContext;
     private Dispatcher _dispatcher;
 	private ActionProxy _proxy;
@@ -304,3 +303,4 @@ public class ApsAdminBaseTestCase extends TestCase {
 	private Map<String, Parameter> _parameters = new HashMap<String, Parameter>();
 	
 }
+	

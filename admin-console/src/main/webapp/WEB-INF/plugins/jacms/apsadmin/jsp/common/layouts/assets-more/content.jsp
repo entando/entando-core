@@ -2,6 +2,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%-- tabs --%>
+<script src="<wp:resourceURL />administration/js/jquery.entando.js"/>
 <script>
 	jQuery(function(){
 		<%--

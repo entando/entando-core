@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.entando.entando</groupId>
 	<artifactId>entando-core</artifactId>
-	<version>4.2.1-SNAPSHOT</version>
+	<version>4.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Entando Core</name>
 	<description>Entando Core: an agile, modern and user-centric open source Portal platform.</description>
@@ -77,6 +77,15 @@
 	</properties>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<target>1.7</target>
+					<source>1.7</source>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -380,6 +389,12 @@
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 			<version>3.7.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.struts</groupId>
+					<artifactId>struts2-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!--
 		<dependency>
@@ -409,7 +424,7 @@
 			<artifactId>jdom</artifactId>
 			<version>1.1.3</version>
 			<type>jar</type>
-			<scope>compile</scope>
+			<!-- <scope>compile</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tiles</groupId>
@@ -602,6 +617,13 @@
 			<groupId>org.codehaus.jettison</groupId>
 			<artifactId>jettison</artifactId>
 			<version>1.3.7</version>
+			<exclusions>
+				<!--  STAX comes with Java 1.6 -->
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>stax</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.oauth.core</groupId>

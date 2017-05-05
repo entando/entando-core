@@ -21,11 +21,11 @@ import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
 /**
@@ -43,7 +43,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 	
 	protected String extractInitConfig() {
 		if (null != this.getWidget()) return SUCCESS;
-		Widget widget = this.getCurrentPage().getWidgets()[this.getFrame()];
+		Widget widget = this.getCurrentPage().getDraftWidgets()[this.getFrame()];
 		if (null == widget) {
 			try {
 				widget = this.createNewShowlet();
@@ -87,7 +87,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 			this.checkBaseParams();
 			this.createValuedShowlet();
 			IPage page = this.getPage(this.getPageCode());
-			int strutsAction = (null != page.getWidgets()[this.getFrame()]) ? ApsAdminSystemConstants.ADD : ApsAdminSystemConstants.EDIT;
+			int strutsAction = (null != page.getDraftWidgets()[this.getFrame()]) ? ApsAdminSystemConstants.ADD : ApsAdminSystemConstants.EDIT;
 			this.getPageManager().joinWidget(this.getPageCode(), this.getWidget(), this.getFrame());
 			_logger.debug("Saving Widget - code: {}, pageCode: {}, frame: {}", this.getWidget().getType().getCode(), this.getPageCode(), this.getFrame());
 			this.addActivityStreamInfo(strutsAction, true);
@@ -100,7 +100,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 	
 	protected void addActivityStreamInfo(int strutsAction, boolean addLink) {
 		IPage page = this.getPage(this.getPageCode());
-		ActivityStreamInfo asi = super.getPageActionHelper()
+		ActivityStreamInfo asi = this.getPageActionHelper()
 				.createConfigFrameActivityStreamInfo(page, this.getFrame(), strutsAction, true);
 		super.addActivityStreamInfo(asi);
 	}
@@ -126,7 +126,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 			this.addActionError(this.getText("error.page.userNotAllowed"));
 			return "pageTree";
 		}
-		if (this.getFrame() == -1 || this.getFrame()>= page.getWidgets().length) {
+		if (this.getFrame() == -1 || this.getFrame()>= page.getDraftWidgets().length) {
 			_logger.info("invalid frame '{}'", this.getFrame());
 			this.addActionError(this.getText("error.page.invalidPageFrame"));
 			return "pageTree";
@@ -181,8 +181,8 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this.setWidgetTypeCode(showletTypeCode);
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this.setWidgetTypeCode(widgetTypeCode);
 	}
 	
 	public String getWidgetTypeCode() {
@@ -199,4 +199,12 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 	
 	private Widget _widget;
 	
+	private IPageActionHelper _pageActionHelper;
+
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
 }

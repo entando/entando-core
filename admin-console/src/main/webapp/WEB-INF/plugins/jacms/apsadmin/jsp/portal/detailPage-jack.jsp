@@ -20,8 +20,8 @@
 </div>
 
 <div class="table-responsive">
-	<table class="table table-bordered" id="contentListTable" summary="<s:text name="note.content.publishedContent.summary" />">
-	<caption class="text-strong margin-base-vertical"><s:text name="title.publishedContent" /></caption>
+                <table class="table table-striped table-bordered" id="contentListTable" summary="<s:text name="note.content.publishedContent.summary" />">
+                    <p><s:text name="title.publishedContent" /></p>
 		<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/contentReferencesTable_header.jsp" />
 		<s:iterator var="currentContentVar" value="#publishedContents">
 		<jacmswpsa:content contentId="%{#currentContentVar.id}" var="currentContentRecordVar" record="true" />
@@ -37,7 +37,10 @@
 
 </s:if>
 <s:else>
-<p class="alert alert-info"><s:text name="note.publishedContent.empty" /></p>
+        <div class="alert alert-info">
+            <span class="pficon pficon-info"></span>
+            <strong><s:text name="note.publishedContent.empty" /></strong>
+        </div>
 </s:else>
 
 <hr />

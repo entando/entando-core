@@ -1,6 +1,8 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+<%@ taglib prefix="wp" uri="/aps-core" %>
+
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
 		<a href="<s:url action="viewTree" namespace="/do/Category" />"
@@ -41,7 +43,27 @@
 			<s:if test="getStrutsAction() == 2"><wpsf:hidden name="categoryCode" /></s:if>
 			<wpsf:hidden name="parentCategoryCode" />
 		</p>
-		<%-- category code --%>
+
+			<%-- languages --%>
+			<s:iterator value="langs">
+				<s:set var="currentFieldFieldErrorsVar" value="%{fieldErrors['lang'+code]}" />
+				<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />
+				<s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
+				<div class="form-group<s:property value="controlGroupErrorClassVar" />">
+					<div class="col-xs-12">
+						<label for="lang<s:property value="code" />">
+							<abbr class="label label-info" title="<s:property value="descr" />"><s:property value="code" /></abbr>&#32;
+							<s:text name="name.categoryTitle" />
+						</label>
+						<wpsf:textfield name="%{'lang'+code}" id="%{'lang'+code}" value="%{titles.get(code)}" cssClass="form-control" />
+						<s:if test="#currentFieldHasFieldErrorVar">
+							<p class="help help-block"><s:iterator value="#currentFieldFieldErrorsVar"><s:property />&#32;</s:iterator></p>
+						</s:if>
+					</div>
+				</div>
+			</s:iterator>
+			
+			<%-- category code --%>
 			<s:set var="currentFieldFieldErrorsVar" value="%{fieldErrors['categoryCode']}" />
 			<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />
 			<s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
@@ -60,23 +82,7 @@
 						</s:if>
 				</div>
 			</div>
-			<s:iterator value="langs">
-				<s:set var="currentFieldFieldErrorsVar" value="%{fieldErrors['lang'+code]}" />
-				<s:set var="currentFieldHasFieldErrorVar" value="#currentFieldFieldErrorsVar != null && !#currentFieldFieldErrorsVar.isEmpty()" />
-				<s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
-				<div class="form-group<s:property value="controlGroupErrorClassVar" />">
-					<div class="col-xs-12">
-						<label for="lang<s:property value="code" />">
-							<abbr class="label label-info" title="<s:property value="descr" />"><s:property value="code" /></abbr>&#32;
-							<s:text name="name.categoryTitle" />
-						</label>
-						<wpsf:textfield name="%{'lang'+code}" id="%{'lang'+code}" value="%{titles.get(code)}" cssClass="form-control" />
-						<s:if test="#currentFieldHasFieldErrorVar">
-							<p class="help help-block"><s:iterator value="#currentFieldFieldErrorsVar"><s:property />&#32;</s:iterator></p>
-						</s:if>
-					</div>
-				</div>
-			</s:iterator>
+			
 		<div class="form-group">
 			<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
 				<wpsf:submit type="button" cssClass="btn btn-primary btn-block">

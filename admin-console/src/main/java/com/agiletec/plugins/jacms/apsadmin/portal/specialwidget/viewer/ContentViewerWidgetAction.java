@@ -16,17 +16,18 @@ package com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.viewer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.apsadmin.portal.specialwidget.SimpleWidgetConfigAction;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModel;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelManager;
-import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 
 /**
  * Action per la gestione della configurazione della showlet erogatore contenuto singolo.
@@ -46,11 +47,12 @@ public class ContentViewerWidgetAction extends SimpleWidgetConfigAction {
 					this.addFieldError("contentId", this.getText("error.widget.viewer.nullContent"));
 				} else {
 					IPage currentPage = this.getCurrentPage();
-					if (!CmsPageActionUtil.isContentPublishableOnPage(publishingContent, currentPage)) {
+					if (!CmsPageUtil.isContentPublishableOnPageDraft(publishingContent, currentPage)) {
+						PageMetadata metadata = currentPage.getDraftMetadata();
 						List<String> pageGroups = new ArrayList<String>();
 						pageGroups.add(currentPage.getGroup());
-						if (null != currentPage.getExtraGroups()) {
-							pageGroups.addAll(currentPage.getExtraGroups());
+						if (null != metadata.getExtraGroups()) {
+							pageGroups.addAll(metadata.getExtraGroups());
 						}
 						this.addFieldError("contentId", this.getText("error.widget.viewer.invalidContent", new String[]{pageGroups.toString()}));
 					}

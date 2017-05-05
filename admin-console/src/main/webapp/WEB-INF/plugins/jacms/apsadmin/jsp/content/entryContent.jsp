@@ -5,7 +5,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
-		<a href="<s:url action="list" namespace="/do/jacms/Content"/>">
+		<a href="<s:url action="results" namespace="/do/jacms/Content"/>">
 			<s:text name="jacms.menu.contentAdmin" />
 		</a>&#32;/&#32;
 		<s:if test="getStrutsAction() == 1">

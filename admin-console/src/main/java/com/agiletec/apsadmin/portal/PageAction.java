@@ -14,13 +14,23 @@
 package com.agiletec.apsadmin.portal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.entando.entando.apsadmin.portal.PageActionConstants;
+import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +38,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -36,25 +48,57 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
-import java.util.Collections;
-import org.apache.commons.beanutils.BeanComparator;
 
 /**
  * Main action for pages handling
  * @author E.Santoboni
  */
-public class PageAction extends AbstractPortalAction {
-
+public class PageAction extends AbstractPortalAction implements ServletResponseAware {
+	
 	private static final Logger _logger = LoggerFactory.getLogger(PageAction.class);
 	
 	@Override
 	public void validate() {
 		super.validate();
+		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD || 
+				this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
+			this.checkParentNode(this.getParentPageCode());
+		}
 		this.checkCode();
 		this.checkTitles();
 	}
 	
-	private void checkTitles() {
+//	@Override
+//	// TODO Verificare
+//	public String execute() throws Exception {
+//		if (null != this.getSelectedNode()) {
+//			this.getTreeNodesToOpen().add(this.getSelectedNode());
+//		}
+//		return super.execute();
+//	}
+	
+	protected String checkParentNode(String selectedNode) {
+		if (null == selectedNode || selectedNode.trim().length() == 0) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.noSelection"));
+			return "pageTree";
+		}
+		if (VIRTUAL_ROOT_CODE.equals(selectedNode)) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.virtualRootSelected"));
+			return "pageTree";
+		}
+		IPage selectedPage = this.getPage(selectedNode);
+		if (null == selectedPage) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.selectedPage.null"));
+			return "pageTree";
+		}
+		if (!this.isUserAllowed(selectedPage)) {
+			this.addFieldError("parentPageCode", this.getText("error.parentPage.userNotAllowed"));
+			return "pageTree";
+		}
+		return null;
+	}
+	
+	protected void checkTitles() {
 		this.updateTitles();
 		Iterator<Lang> langsIter = this.getLangManager().getLangs().iterator();
 		while (langsIter.hasNext()) {
@@ -80,13 +124,13 @@ public class PageAction extends AbstractPortalAction {
 		}
 	}
 	
-	private void checkCode() {
+	protected void checkCode() {
 		String code = this.getPageCode();
 		if ((this.getStrutsAction() == ApsAdminSystemConstants.ADD || 
 				this.getStrutsAction() == ApsAdminSystemConstants.PASTE) 
 				&& null != code && code.trim().length() > 0) {
 			String currectCode = BaseActionHelper.purgeString(code.trim());
-			if (currectCode.length() > 0 && null != this.getPageManager().getPage(currectCode)) {
+			if (currectCode.length() > 0 && null != this.getPage(currectCode)) {
 				String[] args = {currectCode};
 				this.addFieldError("pageCode", this.getText("error.page.duplicateCode", args));
 			}
@@ -95,27 +139,46 @@ public class PageAction extends AbstractPortalAction {
 	}
 	
 	public String newPage() {
-		String selectedNode = this.getSelectedNode();
+		String selectedNode = this.getParentPageCode();
 		try {
-			String check = this.checkSelectedNode(this.getSelectedNode());
-			if (null != check) {
-				return check;
+			if (StringUtils.isEmpty(selectedNode)) {
+				selectedNode = this.getSelectedNode();
 			}
-			IPage parentPage = this.getPageManager().getPage(selectedNode);
+			IPage parentPage = null;
+			if (StringUtils.isNotEmpty(selectedNode)) {
+				String check = this.checkSelectedNode(selectedNode);
+				if (null != check) {
+					return check;
+				}
+				parentPage = this.getPage(selectedNode);
+			}
 			this.valueFormForNew(parentPage);
+                        this.setCharset("utf-8");
+                        this.setMimeType("text/html");
 		} catch (Throwable t) {
 			_logger.error("error in newPage", t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
+
+	public String settingsPage() {
+		// stub method
+		return SUCCESS;
+	}
 	
 	protected void valueFormForNew(IPage parentPage) {
+		String groupName = null;
+		boolean groupSelectLock = false;
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);
-		this.setParentPageCode(parentPage.getCode());
-		this.setGroup(parentPage.getGroup());
-		boolean isParentFree = parentPage.getGroup().equals(Group.FREE_GROUP_NAME);
-		this.setGroupSelectLock(!(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree));
+		if (parentPage != null) {
+			this.setParentPageCode(parentPage.getCode());
+			groupName = parentPage.getGroup();
+			this.setGroup(groupName);
+			boolean isParentFree = Group.FREE_GROUP_NAME.equals(groupName);
+			groupSelectLock = !(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree);
+		}
+		this.setGroupSelectLock(groupSelectLock);
 		this.setDefaultShowlet(true);
 		this.setShowable(true);
 	}
@@ -127,10 +190,20 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			IPage page = this.getPageManager().getPage(pageCode);
+			IPage page = this.getPage(pageCode);
 			this.valueFormForEdit(page);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String entryEdit() {
+		try {
+			this.updateTitles();
+		} catch (Throwable t) {
+			_logger.error("error in entry edit", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -165,7 +238,7 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			IPage page = this.getPageManager().getPage(pageCode);
+			IPage page = this.getPage(pageCode);
 			Map references = this.getPageActionHelper().getReferencingObjects(page, this.getRequest());
 			if (null != references) {
 				this.setReferences(references);
@@ -178,50 +251,55 @@ public class PageAction extends AbstractPortalAction {
 		return SUCCESS;
 	}
 	
-	protected void valueFormForEdit(IPage pageToEdit) {
+	protected void valueFormForEdit(IPage pageToEdit) throws CloneNotSupportedException {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		this.setParentPageCode(pageToEdit.getParent().getCode());
 		this.setPageCode(pageToEdit.getCode());
-		this.setTitles(pageToEdit.getTitles());
 		this.setGroup(pageToEdit.getGroup());
+		PageMetadata draftMetadata = pageToEdit.getDraftMetadata();
+		this.copyMetadataToForm(draftMetadata);
 		this.setGroupSelectLock(true);
-		this.setExtraGroups(pageToEdit.getExtraGroups());
-		this.setModel(pageToEdit.getModel().getCode());
-		this.setShowable(pageToEdit.isShowable());
-		this.setUseExtraTitles(pageToEdit.isUseExtraTitles());
-		this.setCharset(pageToEdit.getCharset());
-		this.setMimeType(pageToEdit.getMimeType());
 	}
 	
-	public String paste() {
+	public String copy() {
 		String selectedNode = this.getSelectedNode();
-		String copyingPageCode = this.getRequest().getParameter("copyingPageCode");
 		try {
 			String check = this.checkSelectedNode(selectedNode);
 			if (null != check) {
 				return check;
 			}
-			if ("".equals(copyingPageCode) || null == this.getPageManager().getPage(copyingPageCode)) {
-				this.addActionError(this.getText("error.page.selectPageToCopy"));
-				return "pageTree";
-			}
-			IPage selectedPage = this.getPageManager().getPage(selectedNode);
-			IPage copiedPage = this.getPageManager().getPage(copyingPageCode);
+			IPage pageToCopy = this.getPage(selectedNode);
 			this.setStrutsAction(ApsAdminSystemConstants.PASTE);
-			this.setCopyPageCode(copyingPageCode);
-			this.setGroup(selectedPage.getGroup());
-			this.setExtraGroups(copiedPage.getExtraGroups());
-			this.setModel(copiedPage.getModel().getCode());
-			this.setShowable(copiedPage.isShowable());
-			this.setUseExtraTitles(copiedPage.isUseExtraTitles());
+			this.setCopyPageCode(selectedNode);
+			this.setGroup(pageToCopy.getGroup());
+			PageMetadata metadata = pageToCopy.isOnline() ? pageToCopy.getOnlineMetadata() : pageToCopy.getDraftMetadata();
+			this.copyMetadataToForm(metadata);
+			this.getTitles().clear();
 			this.setParentPageCode(selectedNode);
-			this.setCharset(copiedPage.getCharset());
-			this.setMimeType(copiedPage.getMimeType());
 		} catch (Throwable t) {
 			_logger.error("error in paste", t);
 			return FAILURE;
 		}
 		return SUCCESS;
+	}
+	
+	private void copyMetadataToForm(PageMetadata metadata) throws CloneNotSupportedException {
+		if (metadata != null) {
+			metadata = metadata.clone();
+			this.setTitles(metadata.getTitles());
+			this.setExtraGroups(metadata.getExtraGroups());
+			this.setModel(metadata.getModel().getCode());
+			this.setShowable(metadata.isShowable());
+			this.setUseExtraTitles(metadata.isUseExtraTitles());
+                        if(StringUtils.isNotBlank(metadata.getCharset()))
+                            this.setCharset(metadata.getCharset());
+                        else
+                            this.setCharset("utf-8");
+                        if(StringUtils.isNotBlank(metadata.getMimeType()))
+                            this.setMimeType(metadata.getMimeType());
+                        else
+                            this.setMimeType("text/html");
+		}
 	}
 	
 	public String save() {
@@ -230,10 +308,12 @@ public class PageAction extends AbstractPortalAction {
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				page = this.getUpdatedPage();
 				this.getPageManager().updatePage(page);
+				this.addActionMessage(this.getText("message.page.info.updated", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
 				_logger.debug("Updating page " + page.getCode());
 			} else {
 				page = this.buildNewPage();
 				this.getPageManager().addPage(page);
+				this.addActionMessage(this.getText("message.page.info.added", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
 				_logger.debug("Adding new page");
 			}
 			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
@@ -243,53 +323,82 @@ public class PageAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
+
+        public String saveAndConfigure() {
+		IPage page = null;
+		try {
+			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
+				page = this.getUpdatedPage();
+				this.getPageManager().updatePage(page);
+				this.addActionMessage(this.getText("message.page.info.updated", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
+				_logger.debug("Updating page " + page.getCode());
+			} else {
+				page = this.buildNewPage();
+				this.getPageManager().addPage(page);
+				this.addActionMessage(this.getText("message.page.info.added", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
+				_logger.debug("Adding new page");
+			}
+			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
+                        this.setPageCode(page.getCode());
+                        this.setSelectedNode(page.getCode());
+		} catch (Throwable t) {
+			_logger.error("error in save and configure", t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+                
+	public String pageDetails() {
+		return SUCCESS;
+	}
+	
+	public PageResponse getPageDetailResponse() {
+		PageResponse response = null;
+		try {
+			IPage page = null;
+			String pageCode = this.getPageCode();
+			String check = this.checkSelectedNode(pageCode);
+			if (null == check) {
+				page = this.getPage(pageCode);
+			}
+			response = new PageResponse(this, page);
+		} catch (Throwable t) {
+			_logger.error("error in getPageJsonResponse", t);
+			this.getServletResponse().setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
+			return null;
+		}
+		return response;
+	}
 	
 	protected IPage buildNewPage() throws ApsSystemException {
 		Page page = new Page();
 		try {
-			page.setParent(this.getPageManager().getPage(this.getParentPageCode()));
-			page.setGroup(this.getGroup());
-			page.setShowable(this.isShowable());
-			page.setUseExtraTitles(this.isUseExtraTitles());
-			PageModel pageModel = this.getPageModelManager().getPageModel(this.getModel());
-			page.setModel(pageModel);
+			page.setParent(this.getPage(this.getParentPageCode()));
+			
 			if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
-				IPage copyPage = this.getPageManager().getPage(this.getCopyPageCode());
-				page.setWidgets(copyPage.getWidgets());
+				IPage copyPage = this.getPage(this.getCopyPageCode());
+				boolean online = copyPage.isOnline();
+				page.setDraftWidgets(online ? copyPage.getOnlineWidgets() : copyPage.getDraftWidgets());
+				PageMetadata metadata = online ? copyPage.getOnlineMetadata() : copyPage.getDraftMetadata();
+				if (metadata != null) {
+					metadata = metadata.clone();
+					metadata.setTitles(this.getTitles());
+					page.setDraftMetadata(metadata);
+				}
+				page.setGroup(copyPage.getGroup());
 			} else {
+				page.setGroup(this.getGroup());
+				PageMetadata metadata = new PageMetadata();
+				this.valueMetadataFromForm(metadata);
+				page.setDraftMetadata(metadata);
 				if (this.isDefaultShowlet()) {
 					this.setDefaultWidgets(page);
 				} else {
-					page.setWidgets(new Widget[pageModel.getFrames().length]);
+					page.setDraftWidgets(new Widget[metadata.getModel().getFrames().length]);
 				}
 			}
-			page.setTitles(this.getTitles());
-			page.setExtraGroups(this.getExtraGroups());
 			//ricava il codice
-			String newPageCode = this.getPageCode();
-			if (null != newPageCode && newPageCode.trim().length() > 0) {
-				if (newPageCode.length() > 0) {
-					page.setCode(newPageCode);
-				}
-			}
-			if (null == page.getCode()) {
-				String defaultLangCode = this.getLangManager().getDefaultLang().getCode();
-				String pageCode = 
-					this.getPageActionHelper().buildCode(page.getTitle(defaultLangCode), "page", 25);
-				page.setCode(pageCode);
-			}
-			String charset = this.getCharset();
-			if (null != charset && charset.trim().length() > 0) {
-				page.setCharset(charset);
-			} else {
-				page.setCharset(null);
-			}
-			String mimetype = this.getMimeType();
-			if (null != mimetype && mimetype.trim().length() > 0) {
-				page.setMimeType(mimetype);
-			} else {
-				page.setMimeType(null);
-			}
+			page.setCode(this.buildNewPageCode(page.getDraftMetadata()));
 		} catch (Throwable t) {
 			_logger.error("Error building new page", t);
 			throw new ApsSystemException("Error building new page", t);
@@ -297,35 +406,36 @@ public class PageAction extends AbstractPortalAction {
 		return page;
 	}
 	
+	private String buildNewPageCode(PageMetadata metadata) throws ApsSystemException {
+		String newPageCode = this.getPageCode();
+		if (StringUtils.isNotBlank(newPageCode)) {
+			newPageCode = newPageCode.trim();
+		} else {
+			String defaultLangCode = this.getLangManager().getDefaultLang().getCode();
+			newPageCode = this.getPageActionHelper().buildCode(metadata.getTitle(defaultLangCode), "page", 25);
+		}
+		return newPageCode;
+	}
+	
 	protected IPage getUpdatedPage() throws ApsSystemException {
 		Page page = null;
 		try {
-			page = (Page) this.getPageManager().getPage(this.getPageCode());
+			page = (Page) this.getPage(this.getPageCode());
 			page.setGroup(this.getGroup());
-			page.setShowable(this.isShowable());
-			page.setUseExtraTitles(this.isUseExtraTitles());
-			if (!page.getModel().getCode().equals(this.getModel())) {
-				//Ho cambiato modello e allora cancello tutte le showlets Precedenti
-				PageModel model = this.getPageModelManager().getPageModel(this.getModel());
-				page.setModel(model);
-				page.setWidgets(new Widget[model.getFrames().length]);
+			PageMetadata metadata = page.getDraftMetadata();
+			if (metadata == null) {
+				metadata = new PageMetadata();
+				page.setDraftMetadata(metadata);
+			}
+			PageModel oldModel = metadata.getModel();
+			
+			this.valueMetadataFromForm(metadata);
+			if (oldModel == null || !oldModel.getCode().equals(this.getModel())) {
+				// The model is changed, so I drop all the previous widgets
+				page.setDraftWidgets(new Widget[metadata.getModel().getFrames().length]);
 			}
 			if (this.isDefaultShowlet()) {
 				this.setDefaultWidgets(page);
-			}
-			page.setTitles(this.getTitles());
-			page.setExtraGroups(this.getExtraGroups());
-			String charset = this.getCharset();
-			if (null != charset && charset.trim().length() > 0) {
-				page.setCharset(charset);
-			} else {
-				page.setCharset(null);
-			}
-			String mimetype = this.getMimeType();
-			if (null != mimetype && mimetype.trim().length() > 0) {
-				page.setMimeType(mimetype);
-			} else {
-				page.setMimeType(null);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error updating page", t);
@@ -334,9 +444,28 @@ public class PageAction extends AbstractPortalAction {
 		return page;
 	}
 	
+	private void valueMetadataFromForm(PageMetadata metadata) {
+		if (metadata.getModel() == null || !metadata.getModel().getCode().equals(this.getModel())) {
+			//Ho cambiato modello e allora cancello tutte le showlets Precedenti
+			PageModel model = this.getPageModelManager().getPageModel(this.getModel());
+			metadata.setModel(model);
+		}
+		metadata.setShowable(this.isShowable());
+		metadata.setUseExtraTitles(this.isUseExtraTitles());
+		metadata.setTitles(this.getTitles());
+		metadata.setExtraGroups(this.getExtraGroups());
+		
+		String charset = this.getCharset();
+		metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
+		
+		String mimetype = this.getMimeType();
+		metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
+	}
+	
 	protected void setDefaultWidgets(Page page) throws ApsSystemException {
 		try {
-			Widget[] defaultWidgets = page.getModel().getDefaultWidget();
+			PageModel model = page.getDraftMetadata().getModel();
+			Widget[] defaultWidgets = model.getDefaultWidget();
 			if (null == defaultWidgets) {
 				return;
 			}
@@ -345,17 +474,103 @@ public class PageAction extends AbstractPortalAction {
 				Widget defaultWidget = defaultWidgets[i];
 				if (null != defaultWidget) {
 					if (null == defaultWidget.getType()) {
-						_logger.error("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", page.getModel().getCode(), i, page.getCode());
+						_logger.error("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", model.getCode(), i, page.getCode());
 						continue;
 					}
 					widgets[i] = defaultWidget;
 				}
 			}
-			page.setWidgets(widgets);
+			page.setDraftWidgets(widgets);
 		} catch (Throwable t) {
 			_logger.error("Error setting default widget to page {}", page.getCode(), t);
 			throw new ApsSystemException("Error setting default widget to page '" + page.getCode() + "'", t);
 		}
+	}
+	
+	public String checkSetOffline() {
+		String pageCode = this.getPageCode();
+		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
+			String check = this.checkSetOffline(pageCode);
+			if (null != check) {
+				return check;
+			}
+			IPage currentPage = this.getPage(pageCode);
+			this.setSelectedNode(currentPage.getCode());
+		} catch (Throwable t) {
+			_logger.error("error checking before putting page {} offline", pageCode, t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String doSetOffline() {
+		String pageCode = this.getPageCode();
+		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
+			IPageManager pageManager = this.getPageManager();
+			String check = this.checkSetOffline(pageCode);
+			if (null != check) {
+				return check;
+			}
+			pageManager.setPageOffline(pageCode);
+			IPage page = this.getPage(pageCode);
+			this.addActionMessage(this.getText("message.page.set.offline", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
+			// TODO Define a new strutsAction to map "offline" operation
+			this.addActivityStreamInfo(page, PageActionConstants.UNPUBLISH, true);
+		} catch (Throwable t) {
+			_logger.error("error setting page {} offline", pageCode, t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String checkSetOnline() {
+		String pageCode = this.getPageCode();
+		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
+			String check = this.checkSelectedNode(pageCode);
+			if (null != check) {
+				return check;
+			}
+		} catch (Throwable t) {
+			_logger.error("error checking before putting page {} online", pageCode, t);
+			return FAILURE;
+		}
+		return SUCCESS;
+	}
+	
+	public String doSetOnline() {
+		String pageCode = this.getPageCode();
+		try {
+			if (StringUtils.isEmpty(pageCode)) {
+				pageCode = this.getSelectedNode();
+				this.setPageCode(pageCode);
+			}
+			IPageManager pageManager = this.getPageManager();
+			String check = this.checkSelectedNode(pageCode);
+			if (null != check) {
+				return check;
+			}
+			pageManager.setPageOnline(pageCode);
+			IPage page = this.getPage(pageCode);
+			this.addActionMessage(this.getText("message.page.set.online", new String[] {this.getTitle(page.getCode(), page.getDraftTitles())}));
+			// TODO Define a new strutsAction to map "offline" operation
+			this.addActivityStreamInfo(page, PageActionConstants.PUBLISH, true);
+		} catch (Throwable t) {
+			_logger.error("error setting page {} online", pageCode, t);
+			return FAILURE;
+		}
+		return SUCCESS;
 	}
 	
 	public String trash() {
@@ -365,12 +580,7 @@ public class PageAction extends AbstractPortalAction {
 			if (null != check) {
 				return check;
 			}
-			IPage currentPage = this.getPageManager().getPage(selectedNode);
-			Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
-			if (references.size()>0) {
-				this.setReferences(references);
-				return "references";
-			}
+			IPage currentPage = this.getPage(selectedNode);
 			this.setNodeToBeDelete(selectedNode);
 			this.setSelectedNode(currentPage.getParent().getCode());
 		} catch (Throwable t) {
@@ -381,13 +591,16 @@ public class PageAction extends AbstractPortalAction {
 	}
 	
 	public String delete() {
+		String selectedNode = this.getNodeToBeDelete();
 		try {
-			String check = this.checkDelete(this.getNodeToBeDelete());
+			IPageManager pageManager = this.getPageManager();
+			String check = this.checkDelete(selectedNode);
 			if (null != check) {
 				return check;
 			}
-			IPage pageToDelete = this.getPageManager().getPage(this.getNodeToBeDelete());
-			this.getPageManager().deletePage(this.getNodeToBeDelete());
+			IPage pageToDelete = this.getPage(selectedNode);
+			pageManager.deletePage(selectedNode);
+			this.setSelectedNode(pageToDelete.getParentCode());
 			this.addActivityStreamInfo(pageToDelete, ApsAdminSystemConstants.DELETE, false);
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
@@ -396,21 +609,51 @@ public class PageAction extends AbstractPortalAction {
 		return SUCCESS;
 	}
 	
-	protected String checkDelete(String selectedNode) {
+	protected String checkSetOffline(String selectedNode) throws ApsSystemException {
 		String check = this.checkSelectedNode(selectedNode);
 		if (null != check) {
 			return check;
 		}
-		IPage currentPage = this.getPageManager().getPage(selectedNode);
-		if (this.getPageManager().getRoot().getCode().equals(currentPage.getCode())) {
+		IPage currentPage = this.getPage(selectedNode);
+		IPage root = this.getPageManager().getRoot();
+		if (root.getCode().equals(currentPage.getCode())) {
+			this.addActionError(this.getText("error.page.offlineHome.notAllowed"));
+			return "pageTree";
+		} else if (currentPage.getOnlineChildren().length != 0) {
+			this.addActionError(this.getText("error.page.offline.notAllowed"));
+			return "pageTree";
+        }
+		Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
+		if (references.size()>0) {
+			this.addActionError(this.getText("error.page.offline.references", new String[] {this.getTitle(currentPage.getCode(), currentPage.getDraftTitles())}));
+			this.setReferences(references);
+			return "references";
+		}
+		return null;
+	}
+	
+	protected String checkDelete(String selectedNode) throws ApsSystemException {
+		String check = this.checkSelectedNode(selectedNode);
+		if (null != check) {
+			return check;
+		}
+		IPage currentPage = this.getPage(selectedNode);
+		IPage root = this.getPageManager().getRoot();
+		if (root.getCode().equals(currentPage.getCode())) {
 			this.addActionError(this.getText("error.page.removeHome.notAllowed"));
 			return "pageTree";
 		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
 			this.addActionError(this.getText("error.page.remove.notAllowed"));
 			return "pageTree";
-		} else if (currentPage.getChildren().length != 0) {
+		} else if (currentPage.getAllChildren().length != 0) {
 			this.addActionError(this.getText("error.page.remove.notAllowed2"));
 			return "pageTree";
+        } else {
+        	Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
+        	if (references.size()>0) {
+        		this.setReferences(references);
+        		return "references";
+        	}
         }
 		return null;
 	}
@@ -419,6 +662,16 @@ public class PageAction extends AbstractPortalAction {
 		ActivityStreamInfo asi = this.getPageActionHelper().createActivityStreamInfo(page, 
 				strutsAction, addLink, "edit");
 		super.addActivityStreamInfo(asi);
+	}
+	
+	public PageResponse getPageResponse() {
+		IPage page = null;
+		if (StringUtils.isNotBlank(this.getPageCode())) {
+			page = this.getPage(this.getPageCode());
+		}
+		PageResponse response = new PageResponse(this, page);
+		response.setReferences(this.getReferences());
+		return response;
 	}
 	
 	/**
@@ -586,13 +839,40 @@ public class PageAction extends AbstractPortalAction {
 		this._allowedMimeTypesCSV = allowedMimeTypesCSV;
 	}
 	
-	@Deprecated
-	protected IPageActionHelper getHelper() {
-		return this.getPageActionHelper();
+	public String getTargetNode() {
+		return _targetNode;
 	}
-	@Deprecated
-	public void setHelper(IPageActionHelper helper) {
-		this.setPageActionHelper(helper);
+	public void setTargetNode(String targetNode) {
+		this._targetNode = targetNode;
+	}
+	
+	public Set<String> getTreeNodesToOpen() {
+		return _treeNodesToOpen;
+	}
+	public void setTreeNodesToOpen(Set<String> treeNodesToOpen) {
+		this._treeNodesToOpen = treeNodesToOpen;
+	}
+	
+	public String getTreeNodeActionMarkerCode() {
+		return _treeNodeActionMarkerCode;
+	}
+	public void setTreeNodeActionMarkerCode(String treeNodeActionMarkerCode) {
+		this._treeNodeActionMarkerCode = treeNodeActionMarkerCode;
+	}
+	
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;
+	}
+	public HttpServletResponse getServletResponse() {
+		return this.response;
+	}
+	
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
 	}
 	
 	protected IPageModelManager getPageModelManager() {
@@ -607,7 +887,7 @@ public class PageAction extends AbstractPortalAction {
 	private String _copyPageCode;
 	private String _group;
 	private boolean _groupSelectLock;
-	private Set<String> _extraGroups = new HashSet<String>();
+	private Set<String> _extraGroups = new TreeSet<String>();
 	private String _model;
 	private boolean _defaultShowlet = false;
 	private ApsProperties _titles = new ApsProperties();
@@ -627,6 +907,13 @@ public class PageAction extends AbstractPortalAction {
 	private String _allowedMimeTypesCSV;
 	private String _allowedCharsetsCSV;
 	
+	private String _targetNode;
+	private Set<String> _treeNodesToOpen = new HashSet<String>();
+	private String _treeNodeActionMarkerCode;
+	
+	private HttpServletResponse response;
+	
 	private IPageModelManager _pageModelManager;
+	private IPageActionHelper _pageActionHelper;
 	
 }

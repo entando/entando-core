@@ -13,17 +13,25 @@
  */
 package com.agiletec.apsadmin.portal;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.PageTestUtil;
 import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
@@ -58,7 +66,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		String result = this.executeActionOnPage(selectedPageCode, "admin", "edit");
 		assertEquals(Action.SUCCESS, result);
 		
-		IPage page = this._pageManager.getPage(selectedPageCode);
+		IPage page = this._pageManager.getDraftPage(selectedPageCode);
 		
 		PageAction action = (PageAction) this.getAction();
 		assertEquals(action.getStrutsAction(), ApsAdminSystemConstants.EDIT);
@@ -71,13 +79,12 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertEquals("Page 1", action.getTitles().getProperty("en"));
 	}
 	
-	
 	public void testEditForCoachUser() throws Throwable {
 		String selectedPageCode = this._pageManager.getRoot().getCode();
 		String result = this.executeActionOnPage(selectedPageCode, "pageManagerCoach", "edit");
 		assertEquals("pageTree", result);
 		
-		IPage customers_page = this._pageManager.getPage("customers_page"); 	// PAGINA NON PREDISPOSTA PER LA PUBBLICAZIONE VOLANTE...
+		IPage customers_page = this._pageManager.getDraftPage("customers_page"); 	// PAGINA NON PREDISPOSTA PER LA PUBBLICAZIONE VOLANTE...
 		result = this.executeActionOnPage(customers_page.getCode(), "pageManagerCustomers", "edit");
 		assertEquals(Action.SUCCESS, result);
 		
@@ -87,7 +94,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertEquals(customers_page.getModel().getCode(), action.getModel());
 		assertTrue(action.isShowable());
 		assertTrue(action.isGroupSelectLock());
-		Widget widget = customers_page.getWidgets()[customers_page.getModel().getMainFrame()];
+		Widget widget = customers_page.getDraftWidgets()[customers_page.getModel().getMainFrame()];
 		if (null != widget) {
 			assertEquals("content_viewer", widget.getType().getCode());
 			assertTrue(null != widget.getConfig() && !widget.getConfig().isEmpty());
@@ -106,7 +113,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			action = (PageFinderAction) this.getAction();
 			assertNotNull(action);
 			assertNotNull(action.getPagesFound());
-			assertEquals(action.getPagesFound().size(), 4);
+			assertEquals(action.getPagesFound().size(), 5);
 			// test unlikey events - empty search string
 			this.initAction("/do/Page", "search");
 			this.addParameter("pageCodeToken", "");
@@ -115,7 +122,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			action = (PageFinderAction) this.getAction();
 			assertNotNull(action);
 			assertNotNull(action.getPagesFound());
-			assertEquals(16, action.getPagesFound().size());
+			assertEquals(17, action.getPagesFound().size());
 			// test unlikey events - null
 			this.initAction("/do/Page", "search");
 			result = this.executeAction();
@@ -123,7 +130,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			action = (PageFinderAction) this.getAction();
 			assertNotNull(action);
 			assertNotNull(action.getPagesFound());
-			assertEquals(16, action.getPagesFound().size());
+			assertEquals(17, action.getPagesFound().size());
 		} catch (Throwable t) {
 			throw t;
 		}
@@ -134,7 +141,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		String result = this.executeActionOnPage(selectedPageCode, "admin", "detail");
 		assertEquals(Action.SUCCESS, result);
 		
-		IPage page = this._pageManager.getPage(selectedPageCode);
+		IPage page = this._pageManager.getDraftPage(selectedPageCode);
 		PageAction action = (PageAction) this.getAction();
 		IPage pageToShow = action.getPageToShow();
 		
@@ -145,7 +152,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertEquals(page.isShowable(), pageToShow.isShowable());
 		assertEquals("Publicazione Contenuto", pageToShow.getTitles().getProperty("it"));
 		assertEquals("Content Publishing", pageToShow.getTitles().getProperty("en"));
-		Widget widget = page.getWidgets()[page.getModel().getMainFrame()];
+		Widget widget = page.getDraftWidgets()[page.getModel().getMainFrame()];
 		if (null != widget) {
 			assertEquals("content_viewer", widget.getType().getCode());
 			assertTrue(null == widget.getConfig() || widget.getConfig().isEmpty());
@@ -157,7 +164,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		String result = this.executeActionOnPage(selectedPageCode, "pageManagerCoach", "detail");
 		assertEquals("pageTree", result);
 		
-		IPage customers_page = this._pageManager.getPage("customers_page");
+		IPage customers_page = this._pageManager.getDraftPage("customers_page");
 		result = this.executeActionOnPage(customers_page.getCode(), "pageManagerCustomers", "detail");
 		assertEquals(Action.SUCCESS, result);
 		
@@ -197,11 +204,11 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		result = this.executeNewPage(root.getCode(), "pageManagerCustomers");
 		assertEquals("pageTree", result);
 		
-		IPage coach_page = this._pageManager.getPage("coach_page");
+		IPage coach_page = this._pageManager.getDraftPage("coach_page");
 		result = this.executeNewPage(coach_page.getCode(), "pageManagerCustomers");
 		assertEquals("pageTree", result);
 		
-		IPage customers_page = this._pageManager.getPage("customers_page");
+		IPage customers_page = this._pageManager.getDraftPage("customers_page");
 		result = this.executeNewPage(customers_page.getCode(), "pageManagerCustomers");
 		assertEquals(Action.SUCCESS, result);
 		
@@ -219,7 +226,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		String result = this.executeNewPage(root.getCode(), "pageManagerCoach");
 		assertEquals("pageTree", result);
 		
-		IPage coach_page = this._pageManager.getPage("coach_page");
+		IPage coach_page = this._pageManager.getDraftPage("coach_page");
 		result = this.executeNewPage(coach_page.getCode(), "pageManagerCoach");
 		assertEquals(Action.SUCCESS, result);
 		
@@ -231,7 +238,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertTrue(action.isShowable());
 		assertTrue(action.isDefaultShowlet());
 		
-		IPage customers_page = this._pageManager.getPage("customers_page");
+		IPage customers_page = this._pageManager.getDraftPage("customers_page");
 		result = this.executeNewPage(customers_page.getCode(), "pageManagerCoach");
 		assertEquals(Action.SUCCESS, result);
 		
@@ -252,47 +259,44 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		return result;
 	}
 	
-	public void testPasteForAdminUser() throws Throwable {
-		IPage parent = this._pageManager.getPage("service");
-		IPage copied = this._pageManager.getRoot();
-		String result = this.executePastePage(copied, parent, "admin");
+	public void testCloneForAdminUser() throws Throwable {
+		IPage copied = this._pageManager.getDraftPage("service");
+		String result = this.executeCopyPage(copied, "admin");
 		assertEquals(Action.SUCCESS, result);
 		
 		PageAction action = (PageAction) this.getAction();
 		assertEquals(action.getStrutsAction(), ApsAdminSystemConstants.PASTE);
 		assertEquals(copied.getCode(), action.getCopyPageCode());
-		assertEquals(parent.getCode(), action.getParentPageCode());
+		assertEquals(copied.getCode(), action.getParentPageCode());
 		assertEquals(copied.getModel().getCode(), action.getModel());
-		assertEquals(parent.getGroup(), action.getGroup());
+		assertEquals(copied.getGroup(), action.getGroup());
 		assertEquals(copied.isShowable(), action.isShowable());
 		assertNull(action.getTitles().getProperty("it"));
 		assertNull(action.getTitles().getProperty("en"));
 	}
 	
-	public void testPasteForCoachUser() throws Throwable {
-		IPage copied = this._pageManager.getPage("coach_page");
-		IPage parent = this._pageManager.getPage("customers_page");
-		String result = this.executePastePage(copied, parent, "admin");
+	public void testCloneForCoachUser() throws Throwable {
+		IPage copied = this._pageManager.getDraftPage("coach_page");
+		String result = this.executeCopyPage(copied, "admin");
 		assertEquals(Action.SUCCESS, result);
 		
 		PageAction action = (PageAction) this.getAction();
 		assertEquals(action.getStrutsAction(), ApsAdminSystemConstants.PASTE);
 		assertEquals(copied.getCode(), action.getCopyPageCode());
 		
-		assertEquals(parent.getCode(), action.getParentPageCode());
+		assertEquals(copied.getCode(), action.getParentPageCode());
 		assertEquals(copied.getModel().getCode(), action.getModel());
-		assertEquals(parent.getGroup(), action.getGroup());
+		assertEquals(copied.getGroup(), action.getGroup());
 		assertEquals(copied.isShowable(), action.isShowable());
 		assertNull(action.getTitles().getProperty("it"));
 		assertNull(action.getTitles().getProperty("en"));
 	}
 	
-	private String executePastePage(IPage copiedPage, IPage selectedPage, String userName) throws Throwable {
+	private String executeCopyPage(IPage copiedPage, String userName) throws Throwable {
 		this.setUserOnSession(userName);
-		this.initAction("/do/Page", "paste");
-		this.addParameter("btnCopy", "paste");
-		this.addParameter("selectedNode", selectedPage.getCode());
-		this.addParameter("copyingPageCode", copiedPage.getCode());
+		this.initAction("/do/Page", "copy");
+		this.addParameter("btnCopy", "copy");
+		this.addParameter("selectedNode", copiedPage.getCode());
 		String result = this.executeAction();
 		return result;
 	}
@@ -300,16 +304,26 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	public void testValidateSavePage() throws Throwable {
 		String pageCode = "pagina_test";
 		String longPageCode = "very_long_page_code__very_long_page_code";
-		assertNull(this._pageManager.getPage(pageCode));
-		assertNull(this._pageManager.getPage(longPageCode));
+		assertNull(this._pageManager.getDraftPage(pageCode));
+		assertNull(this._pageManager.getDraftPage(longPageCode));
 		try {
 			IPage root = this._pageManager.getRoot();
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
-			params.put("parentPageCode", root.getCode());
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.INPUT, result);
 			Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
+			assertEquals(5, fieldErrors.size());
+			assertTrue(fieldErrors.containsKey("parentPageCode"));
+			assertTrue(fieldErrors.containsKey("model"));
+			assertTrue(fieldErrors.containsKey("group"));
+			assertTrue(fieldErrors.containsKey("langit"));
+			assertTrue(fieldErrors.containsKey("langen"));
+			
+			params.put("parentPageCode", root.getCode());
+			result = this.executeSave(params, "admin");
+			assertEquals(Action.INPUT, result);
+			fieldErrors = this.getAction().getFieldErrors();
 			assertEquals(4, fieldErrors.size());
 			assertTrue(fieldErrors.containsKey("model"));
 			assertTrue(fieldErrors.containsKey("group"));
@@ -325,7 +339,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			assertTrue(fieldErrors.containsKey("group"));
 			assertTrue(fieldErrors.containsKey("langen"));
 			
-			assertNotNull(this._pageManager.getPage("pagina_1"));
+			assertNotNull(this._pageManager.getDraftPage("pagina_1"));
 			params.put("langen", "Test Page");
 			params.put("group", Group.FREE_GROUP_NAME);
 			params.put("pageCode", "pagina_1");//page already present
@@ -348,9 +362,9 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
-	public void testSavePage_1() throws Throwable {
+	public void testSavePage_Draft_1() throws Throwable {
 		String pageCode = "pagina_test";
-		assertNull(this._pageManager.getPage(pageCode));
+		assertNull(this._pageManager.getDraftPage(pageCode));
 		try {
 			IPage root = this._pageManager.getRoot();
 			Map<String, String> params = new HashMap<String, String>();
@@ -363,9 +377,9 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode);
+			IPage addedPage = this._pageManager.getPage(pageCode, false);
 			assertNotNull(addedPage);
-			assertEquals("Pagina Test 1", addedPage.getTitles().getProperty("it"));
+			assertEquals("Pagina Test 1", addedPage.getDraftMetadata().getTitles().getProperty("it"));
 		} catch (Throwable t) {
 			throw t;
 		} finally {
@@ -373,9 +387,9 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 	
-	public void testSavePage_2() throws Throwable {
+	public void testSavePage_Draft_2() throws Throwable {
 		String pageCode = "pagina_test";
-		assertNull(this._pageManager.getPage(pageCode));
+		assertNull(this._pageManager.getDraftPage(pageCode));
 		try {
 			IPage root = this._pageManager.getRoot();
 			Map<String, String> params = new HashMap<String, String>();
@@ -389,11 +403,11 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode);
+			IPage addedPage = this._pageManager.getPage(pageCode, false);
 			assertNotNull(addedPage);
-			assertEquals("Pagina Test 2", addedPage.getTitles().getProperty("it"));
-			Widget[] showlets = addedPage.getWidgets();
-			assertEquals(addedPage.getModel().getFrames().length, showlets.length);
+			assertEquals("Pagina Test 2", addedPage.getDraftMetadata().getTitles().getProperty("it"));
+			Widget[] showlets = addedPage.getDraftWidgets();
+			assertEquals(addedPage.getDraftMetadata().getModel().getFrames().length, showlets.length);
 			for (int i = 0; i < showlets.length; i++) {
 				Widget widget = showlets[i];
 				if (i==3) {
@@ -409,6 +423,41 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 					assertNull(widget);
 				}
 			}
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._pageManager.deletePage(pageCode);
+		}
+	}
+	
+	public void testSavePage_Clone() throws Throwable {
+		String copiedPageCode = "pagina_2";
+		IPage copiedPage = this._pageManager.getDraftPage(copiedPageCode);
+		assertNotNull(copiedPage);
+		String pageCode = "pagina_test";
+		assertNull(this._pageManager.getDraftPage(pageCode));
+		try {
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.PASTE));
+			params.put("parentPageCode", "pagina_1");
+			params.put("copyPageCode", copiedPageCode);
+			params.put("langit", "Pagina Test 1");
+			params.put("langen", "Test Page 1");
+			params.put("model", "aaaa");
+			params.put("group", "aaaa");
+			params.put("pageCode", pageCode);
+			String result = this.executeSave(params, "admin");
+			assertEquals(Action.SUCCESS, result);
+			IPage addedPage = this._pageManager.getPage(pageCode, false);
+			assertNotNull(addedPage);
+			assertEquals("Pagina Test 1", addedPage.getDraftMetadata().getTitles().getProperty("it"));
+			assertEquals("Test Page 1", addedPage.getDraftMetadata().getTitles().getProperty("en"));
+			assertNull(addedPage.getOnlineMetadata());
+			assertNull(addedPage.getOnlineWidgets());
+			PageMetadata addedMetadata = addedPage.getDraftMetadata().clone();
+			PageMetadata expectedMetadata = copiedPage.getDraftMetadata();
+			addedMetadata.setTitles(expectedMetadata.getTitles());
+			PageTestUtil.comparePageMetadata(expectedMetadata, addedMetadata, null);
 		} catch (Throwable t) {
 			throw t;
 		} finally {
@@ -452,7 +501,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	}
 	
 	public void testGetBreadCrumbs() throws Throwable {
-		IPage customers_page = this._pageManager.getPage("customers_page");
+		IPage customers_page = this._pageManager.getDraftPage("customers_page");
 		String result = this.executeActionOnPage(customers_page.getCode(), "pageManagerCustomers", "edit");
 		assertEquals(Action.SUCCESS, result);
 		PageAction action = (PageAction) this.getAction();
@@ -469,7 +518,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	}
 	
 	public void testGetBreadCrumbsTargets() throws Throwable {
-		IPage customers_page = this._pageManager.getPage("customers_page");
+		IPage customers_page = this._pageManager.getDraftPage("customers_page");
 		String result = this.executeActionOnPage(customers_page.getCode(), "pageManagerCustomers", "edit");
 		assertEquals(Action.SUCCESS, result);
 		PageAction action = (PageAction) this.getAction();
@@ -488,14 +537,148 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertNull(targets);
 	}
 	
+	public void testSetOffline_Wrong() throws Throwable {
+		this.checkActionOnPage("checkSetOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkActionOnPage("doSetOffline", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkActionOnPage("setOffline", "/do/rs/Page", "homepage", "pageManagerCustomers", "pageTree", "error.page.userNotAllowed");
+		this.checkPageResponse("homepage", "error.page.userNotAllowed");
+		
+		this.checkActionOnPage("checkSetOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("doSetOffline", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkActionOnPage("setOffline", "/do/rs/Page", "homepage", "admin", "pageTree", "error.page.offlineHome.notAllowed");
+		this.checkPageResponse("homepage", "error.page.offlineHome.notAllowed");
+		
+		this.checkActionOnPage("checkSetOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkActionOnPage("doSetOffline", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkActionOnPage("setOffline", "/do/rs/Page", "service", "admin", "pageTree", "error.page.offline.notAllowed");
+		this.checkPageResponse("service", "error.page.offline.notAllowed");
+	}
+	
+	public void testSetOnlineOffline() throws Throwable {
+		String pageCode = "temp";
+		try {
+			this.addPage(pageCode);
+			IPage page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("checkSetOffline", pageCode, "admin", Action.SUCCESS, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("doSetOffline", pageCode, "admin", Action.SUCCESS, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertFalse(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("doSetOnline", pageCode, "admin", Action.SUCCESS, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._pageManager.deletePage(pageCode);
+		}
+	}
+	
+	public void testSetOnlineOfflineJson() throws Throwable {
+		String pageCode = "temp";
+		try {
+			this.addPage(pageCode);
+			IPage page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("setOffline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
+			this.checkPageResponse(pageCode, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertFalse(page.isOnline());
+			assertFalse(page.isChanged());
+			
+			this.checkActionOnPage("setOnline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
+			this.checkPageResponse(pageCode, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this._pageManager.deletePage(pageCode);
+		}
+	}
+	
+	private void addPage(String pageCode) throws ApsSystemException {
+		IPage parentPage = _pageManager.getDraftPage("service");
+		PageModel pageModel = parentPage.getOnlineMetadata().getModel();
+		PageMetadata metadata = PageTestUtil.createPageMetadata(
+				pageModel.getCode(), true, "pagina temporanea", null, null,
+				false, null, null);
+		
+		ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART11");
+		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
+		Widget[] widgets = { widgetToAdd };
+		
+		Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, metadata, widgets, widgets);
+		_pageManager.addPage(pageToAdd);
+	}
+	
+	private void checkActionOnPage(String actionName, String namespace, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
+		this.setUserOnSession(username);
+		this.initAction(namespace, actionName);
+		this.addParameter("pageCode", pageCode);
+		String actualResult = this.executeAction();
+		
+		assertEquals(expectedResult, actualResult);
+		assertEquals(0, this.getAction().getFieldErrors().size());
+		if (errorLabel != null) {
+			String[] errors = this.getAction().getActionErrors().toArray(new String[0]);
+			assertEquals(1, errors.length);
+			assertEquals(this.getAction().getText(errorLabel), errors[0]);
+		} else {
+			assertEquals(0, this.getAction().getActionErrors().size());
+		}
+	}
+	
+	private void checkPageResponse(String pageCode, String errorLabel, String... expectedFieldErrors) {
+		PageResponse response = ((PageAction) this.getAction()).getPageResponse();
+		if (pageCode == null) {
+			assertNull(response.getPage());
+		} else {
+			assertEquals(pageCode, response.getPage().getCode());
+		}
+		if (errorLabel != null) {
+			String[] errors = response.getActionErrors().toArray(new String[0]);
+			assertEquals(1, errors.length);
+			assertEquals(this.getAction().getText(errorLabel), errors[0]);
+		} else {
+			assertEquals(0, response.getActionErrors().size());
+		}
+		if (expectedFieldErrors != null && expectedFieldErrors.length > 0) {
+			assertEquals(expectedFieldErrors.length, response.getFieldErrors().size());
+			List<String> expectedFieldErrorsList = Arrays.asList(expectedFieldErrors);
+			expectedFieldErrorsList.removeAll(response.getFieldErrors().keySet());
+			assertEquals(0, expectedFieldErrors);
+		} else {
+			assertEquals(0, response.getFieldErrors().size());
+		}
+	}
+	
+	private void checkActionOnPage(String actionName, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
+		this.checkActionOnPage(actionName, "/do/Page", pageCode, username, expectedResult, errorLabel);
+	}
+	
 	private void init() throws Exception {
     	try {
     		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+			this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
     	} catch (Throwable t) {
             throw new Exception(t);
         }
     }
     
     private IPageManager _pageManager = null;
+	private IWidgetTypeManager _widgetTypeManager;
 	
 }

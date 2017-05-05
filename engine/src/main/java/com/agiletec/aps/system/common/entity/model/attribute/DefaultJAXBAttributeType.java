@@ -120,14 +120,13 @@ public class DefaultJAXBAttributeType {
             attribute.setName(this.getName());
             attribute.setDescription(this.getDescription());
             attribute.setRoles(this.toArray(this.getRoles()));
-            if (null != this.getSearchable()) attribute.setSearchable(this.getSearchable().booleanValue());
+            if (null != this.getSearchable()) attribute.setSearchable(this.getSearchable());
             if (null != this.getIndexable()) attribute.setIndexingType(IndexableAttributeInterface.INDEXING_TYPE_TEXT);
             attribute.setValidationRules((IAttributeValidationRules) this.getValidationRules());
         } catch (ApiException ae) {
             throw ae;
         } catch (Throwable t) {
         	_logger.error("Error creating attribute '{}'", this.getName(), t);
-            //ApsSystemUtils.logThrowable(t, this, "createAttribute", "Error creating attribute '" + this.getName() + "'");
             throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Error creating attribute '" + this.getName() + "'");
         }
         return attribute;

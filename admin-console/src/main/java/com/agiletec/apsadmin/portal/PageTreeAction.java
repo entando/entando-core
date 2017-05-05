@@ -35,7 +35,7 @@ public class PageTreeAction extends AbstractTreeAction {
 	@Override
 	public String execute() throws Exception {
 		if (null != this.getSelectedNode()) {
-			super.getTreeNodesToOpen().add(this.getSelectedNode());
+			this.getTreeNodesToOpen().add(this.getSelectedNode());
 		}
 		return super.execute();
 	}
@@ -53,7 +53,7 @@ public class PageTreeAction extends AbstractTreeAction {
 		try {
 			String check = this.checkSelectedNode(selectedNode);
 			if (null != check) return check;
-			IPage currentPage = this.getPageManager().getPage(selectedNode);
+			IPage currentPage = this.getPageManager().getDraftPage(selectedNode);
 			if (!isUserAllowed(currentPage.getParent())) {
 				this.addActionError(this.getText("error.page.userNotAllowed"));
 				return SUCCESS;
@@ -114,7 +114,7 @@ public class PageTreeAction extends AbstractTreeAction {
 			this.addActionError(this.getText("error.page.virtualRootSelected"));
 			return "pageTree";
 		}
-		IPage selectedPage = this.getPageManager().getPage(selectedNode);
+		IPage selectedPage = this.getPageManager().getDraftPage(selectedNode);
 		if (null == selectedPage) {
 			this.addActionError(this.getText("error.page.selectedPage.null"));
 			return "pageTree";
@@ -136,6 +136,15 @@ public class PageTreeAction extends AbstractTreeAction {
 		String pageGroup = page.getGroup();
 		Collection<String> codes = this.getNodeGroupCodes();
 		return codes.contains(pageGroup);
+	}
+	
+	/**
+	 * Return the page given its code.
+	 * @param pageCode The code of the requested page.
+	 * @return The page associated to the given code, null if the code is unknown.
+	 */
+	public IPage getPage(String pageCode) {
+		return this.getPageManager().getDraftPage(pageCode);
 	}
 	
 	@Deprecated

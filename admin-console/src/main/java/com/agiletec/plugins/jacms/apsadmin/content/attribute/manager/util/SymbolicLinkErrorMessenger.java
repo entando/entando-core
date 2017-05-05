@@ -55,7 +55,7 @@ public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
 	
 	protected int checkPageDest(SymbolicLink symbLink, Content content) {
 		String pageCode = symbLink.getPageDest();
-		IPage page = this.getPageManager().getPage(pageCode);
+		IPage page = this.getPageManager().getOnlinePage(pageCode);
 		if (null == page) {
 			return MESSAGE_CODE_INVALID_PAGE;
 		} else {
@@ -125,7 +125,7 @@ public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
 	 * che anche un frame sia occupato da una showlet.
 	 */
 	protected boolean isVoidPage(IPage page) {
-		Widget[] widgets = page.getWidgets();
+		Widget[] widgets = page.getOnlineWidgets();
 		for (int i = 0; i < widgets.length; i++) {
 			if (null != widgets[i]) {
 				return false;

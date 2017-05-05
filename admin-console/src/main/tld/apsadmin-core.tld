@@ -250,6 +250,79 @@
 	</tag>
 	<tag>
 		<description>
+			<![CDATA[Returns a page (or one of its property) through the code.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property through the "property" attribute.]]>
+		</description>
+		<name>pageTree</name>
+		<tag-class>org.entando.entando.apsadmin.tags.PageTreeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the page (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The allewd groups for current user]]></description>
+			<name>allowedGroups</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[If true, return only the 'online' nodes]]></description>
+			<name>online</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[If true, return the tree 'on demand']]></description>
+			<name>onDemand</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Used for tree 'on demand'. If true, open the target node, if false, close it. If null, nothing is done]]></description>
+			<name>open</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Used for tree 'on demand'. The current node]]></description>
+			<name>targetNode</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Used for tree 'on demand'. The current opened nodes]]></description>
+			<name>treeNodesToOpen</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Tag used to fing the groups for the current user, associated with the given permission.]]>
+		</description>
+		<name>groupsByPermission</name>
+		<tag-class>org.entando.entando.apsadmin.tags.GroupsByPermissionTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the page (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The desired permission.]]></description>
+			<name>permission</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
 			<![CDATA[Tag used to parameterize other tags with a map of parameters.]]>
 		</description>
 		<name>paramMap</name>

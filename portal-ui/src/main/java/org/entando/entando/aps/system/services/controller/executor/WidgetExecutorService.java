@@ -40,7 +40,7 @@ public class WidgetExecutorService extends AbstractWidgetExecutorService impleme
 		try {
 			reqCtx.addExtraParam(SystemConstants.EXTRAPAR_HEAD_INFO_CONTAINER, new HeadInfoContainer());
 			IPage page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
-			String[] widgetOutput = new String[page.getWidgets().length];
+			String[] widgetOutput = new String[page.getOnlineWidgets().length];
 			reqCtx.addExtraParam("ShowletOutput", widgetOutput);
 			this.buildWidgetsOutput(reqCtx, page, widgetOutput);
 			String redirect = (String) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_EXTERNAL_REDIRECT);

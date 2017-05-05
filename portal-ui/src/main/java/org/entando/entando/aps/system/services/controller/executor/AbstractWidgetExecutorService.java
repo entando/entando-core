@@ -61,7 +61,7 @@ public abstract class AbstractWidgetExecutorService {
 	protected void buildWidgetsOutput(RequestContext reqCtx, IPage page, String[] widgetOutput) throws ApsSystemException {
 		try {
 			List<IFrameDecoratorContainer> decorators = this.extractDecorators(reqCtx);
-			Widget[] widgets = page.getWidgets();
+			Widget[] widgets = page.getOnlineWidgets();
 			for (int frame = 0; frame < widgets.length; frame++) {
 				reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME, new Integer(frame));
 				Widget widget = widgets[frame];

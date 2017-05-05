@@ -81,7 +81,7 @@ public class URLManager extends AbstractURLManager {
 				lang = this.getLangManager().getDefaultLang();
 			}
 			String pageCode = pageUrl.getPageCode();
-			IPage page = this.getPageManager().getPage(pageCode);
+			IPage page = this.getPageManager().getOnlinePage(pageCode);
 			if (page == null && null != reqCtx) {
 				page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
 			}
@@ -89,7 +89,7 @@ public class URLManager extends AbstractURLManager {
 				page = this.getPageManager().getRoot();
 			}
 			HttpServletRequest request = (null != reqCtx) ? reqCtx.getRequest() : null;
-			String url = this.createUrl(page, lang, pageUrl.getParams(), pageUrl.isEscapeAmp(), request);
+			String url = this.createURL(page, lang, pageUrl.getParams(), pageUrl.isEscapeAmp(), request);
 			if (null != reqCtx && this.useJsessionId()) {
 				HttpServletResponse resp = reqCtx.getResponse();
 				String encUrl = resp.encodeURL(url.toString());  
@@ -111,25 +111,25 @@ public class URLManager extends AbstractURLManager {
 	 * @return The url.
 	 */
 	@Override
-	public String createUrl(IPage requiredPage, Lang requiredLang, Map<String, String> params) {
+	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params) {
 		try {
-			return this.createUrl(requiredPage, requiredLang, params, true, null);
+			return this.createURL(requiredPage, requiredLang, params, true, null);
 		} catch (ApsSystemException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 	
 	@Override
-	public String createUrl(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp) {
+	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp) {
 		try {
-			return this.createUrl(requiredPage, requiredLang, params, escapeAmp, null);
+			return this.createURL(requiredPage, requiredLang, params, escapeAmp, null);
 		} catch (ApsSystemException ex) {
 			throw new RuntimeException("Error creating url", ex);
 		}
 	}
 	
 	@Override
-	public String createUrl(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp, HttpServletRequest request) throws ApsSystemException {
+	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp, HttpServletRequest request) throws ApsSystemException {
 		StringBuilder url = null;
 		try {
 			url = new StringBuilder(this.getApplicationBaseURL(request));
@@ -139,7 +139,7 @@ public class URLManager extends AbstractURLManager {
 			} else {
 				url.append("pages/");
 				url.append(requiredLang.getCode()).append('/');
-				StringBuffer fullPath = PageUtils.getFullPath(requiredPage, "/");
+				StringBuffer fullPath = PageUtils.getOnlineFullPath(requiredPage, "/");
 				url.append(fullPath.append("/"));
 			}
 			String queryString = this.createQueryString(params, escapeAmp);

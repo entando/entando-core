@@ -39,8 +39,8 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 	}
 	
 	@Deprecated
-	public List<IPage> getShowletUtilizers(String showletTypeCode) {
-		return this.getWidgetUtilizers(showletTypeCode);
+	public List<IPage> getShowletUtilizers(String widgetTypeCode) {
+		return this.getWidgetUtilizers(widgetTypeCode);
 	}
 
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) {
@@ -60,6 +60,10 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 			group = super.getGroupManager().getGroup(Group.FREE_GROUP_NAME);
 		}
 		return group;
+	}
+	
+	public String listJson() {
+		return SUCCESS;
 	}
 	
 	@Deprecated
@@ -92,8 +96,8 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 		return this.getWidgetTypeCode();
 	}
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this._widgetTypeCode = showletTypeCode;
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this._widgetTypeCode = widgetTypeCode;
 	}
 	
 	public String getWidgetTypeCode() {
@@ -105,5 +109,6 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 	}
 	
 	private String _widgetTypeCode;
+
 	
 }

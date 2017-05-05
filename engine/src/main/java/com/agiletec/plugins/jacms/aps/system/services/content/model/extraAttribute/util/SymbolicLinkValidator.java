@@ -15,6 +15,7 @@ package com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttrib
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
@@ -67,7 +68,7 @@ public class SymbolicLinkValidator {
 
     protected String checkPageDest(SymbolicLink symbLink, Content content) {
         String pageCode = symbLink.getPageDest();
-        IPage page = this.getPageManager().getPage(pageCode);
+        IPage page = this.getPageManager().getOnlinePage(pageCode);
         if (null == page) {
             return ICmsAttributeErrorCodes.INVALID_PAGE;
         } else {
@@ -75,8 +76,9 @@ public class SymbolicLinkValidator {
                 return ICmsAttributeErrorCodes.VOID_PAGE;
             } else {
                 String pageGroup = page.getGroup();
+                Set<String> extraGroups = page.getOnlineMetadata().getExtraGroups();
                 if (!Group.FREE_GROUP_NAME.equals(pageGroup)
-                        && (page.getExtraGroups() == null || !page.getExtraGroups().contains(Group.FREE_GROUP_NAME))) {
+                        && (extraGroups == null || !extraGroups.contains(Group.FREE_GROUP_NAME))) {
                     //Bisogna controllare che tutti i gruppi abilitati possano accedere alla pagina lincata.
                     List<String> linkingContentGroups = new ArrayList<String>();
                     linkingContentGroups.add(content.getMainGroup());
@@ -137,7 +139,7 @@ public class SymbolicLinkValidator {
      * che anche un frame sia occupato da una widget.
      */
     protected boolean isVoidPage(IPage page) {
-        Widget[] widgets = page.getWidgets();
+        Widget[] widgets = page.getOnlineWidgets();
         for (int i = 0; i < widgets.length; i++) {
             if (null != widgets[i]) {
                 return false;

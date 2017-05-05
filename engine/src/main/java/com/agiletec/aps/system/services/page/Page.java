@@ -13,12 +13,15 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.util.ApsProperties;
 
 /**
  * This is the representation of a portal page
@@ -35,58 +38,9 @@ public class Page extends TreeNode implements IPage {
 		super.setPosition(position);
 	}
 	
-	/**
-	 * Return the related model of page
-	 * @return the page model
-	 */
-	@Override
-	public PageModel getModel() {
-		return _model;
-	}
-
-	/**
-	 * WARNING: This method is for the page manager service only exclusive use
-	 * Assign the given page model to the current object
-	 * @param pageModel the model of the page to assign
-	 */
-	public void setModel(PageModel pageModel) {
-		this._model = pageModel;
-	}
-	
-	@Override
-	public void addExtraGroup(String groupName) {
-		if (null == this.getExtraGroups()) this.setExtraGroups(new HashSet<String>());
-		this.getExtraGroups().add(groupName);
-	}
-	
-	@Override
-	public void removeExtraGroup(String groupName) {
-		if (null == this.getExtraGroups()) return;
-		this.getExtraGroups().remove(groupName);
-	}
-	
-	public void setExtraGroups(Set<String> extraGroups) {
-		this._extraGroups = extraGroups;
-		
-	}
-	
-	@Override
-	public Set<String> getExtraGroups() {
-		return _extraGroups;
-	}
-	
 	@Override
 	public IPage getParent() {
 		return (IPage) super.getParent();
-	}
-
-	@Override
-	public IPage[] getChildren() {
-		IPage[] children = new IPage[super.getChildren().length];
-		for (int i=0; i<super.getChildren().length; i++) {
-			children[i] = (IPage) super.getChildren()[i];
-		}
-		return children;
 	}
 
 	/**
@@ -111,7 +65,118 @@ public class Page extends TreeNode implements IPage {
 	public void setParentCode(String parentCode) {
 		this._parentCode = parentCode;
 	}
+	
+	@Override
+	public PageMetadata getOnlineMetadata() {
+		return _onlineMetadata;
+	}
+	public void setOnlineMetadata(PageMetadata onlineMetadata) {
+		this._onlineMetadata = onlineMetadata;
+	}
+	
+	@Override
+	public PageMetadata getDraftMetadata() {
+		return _draftMetadata;
+	}
+	public void setDraftMetadata(PageMetadata draftMetadata) {
+		this._draftMetadata = draftMetadata;
+	}
+	
+	@Override
+	public Widget[] getOnlineWidgets() {
+		return _onlineWidgets;
+	}
+	public void setOnlineWidgets(Widget[] onlineWidgets) {
+		this._onlineWidgets = onlineWidgets;
+	}
+	
+	@Override
+	public Widget[] getDraftWidgets() {
+		return _draftWidgets;
+	}
+	public void setDraftWidgets(Widget[] draftWidgets) {
+		this._draftWidgets = draftWidgets;
+	}
+	
+	/**
+	 * Return the related model of page
+	 * @return the page model
+	 */
+	@Override
+	// TODO Verify usage PLUGIN
+	public PageModel getModel() {
+		PageMetadata metadata = this.getOnlineMetadata();
+		return metadata == null ? null : metadata.getModel();
+	}
 
+	/**
+	 * WARNING: This method is for the page manager service only exclusive use
+	 * Assign the given page model to the current object
+	 * @param pageModel the model of the page to assign
+	 * @deprecated Use getOnlineMetadata().setModel(pageModel)
+	 */
+	@Deprecated
+	// TODO Verify usage PLUGIN
+	public void setModel(PageModel pageModel) {
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			metadata.setModel(pageModel);
+		}
+	}
+	
+	@Override
+	@Deprecated
+	// TODO Verify usage PLUGIN
+	public void addExtraGroup(String groupName) {
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			if (null == metadata.getExtraGroups()) metadata.setExtraGroups(new HashSet<String>());
+			metadata.getExtraGroups().add(groupName);
+		}
+	}
+	
+	@Override
+	@Deprecated
+	// TODO Verify usage PLUGIN
+	public void removeExtraGroup(String groupName) {
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			if (null == metadata.getExtraGroups()) return;
+			metadata.getExtraGroups().remove(groupName);
+		}
+	}
+	
+	@Deprecated
+	// TODO Verify usage PLUGIN
+	public void setExtraGroups(Set<String> extraGroups) {
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			metadata.setExtraGroups(extraGroups);
+		}
+	}
+	
+	@Override
+	// TODO Verify usage PLUGIN
+	public Set<String> getExtraGroups() {
+		PageMetadata metadata = this.getOnlineMetadata();
+		return metadata == null ? null : metadata.getExtraGroups();
+	}
+
+	@Override
+	// TODO Verify usage PLUGIN
+	public IPage[] getChildren() {
+		return this.getOnlineChildren();
+	}
+	
+	@Override
+	public IPage[] getOnlineChildren() {
+		IPage[] children = new IPage[super.getChildren().length];
+		for (int i=0; i<super.getChildren().length; i++) {
+			children[i] = (IPage) super.getChildren()[i];
+		}
+		return children;
+	}
+	
 	/**
 	 * WARING: this method is reserved to the page manager service only.
 	 * This returns a boolean values indicating whether the page is
@@ -119,8 +184,10 @@ public class Page extends TreeNode implements IPage {
 	 * @return true if the page must be shown in the menu, false otherwise. 
 	 */
 	@Override
+	// TODO Verify usage PLUGIN
 	public boolean isShowable() {
-		return _showable;
+		PageMetadata metadata = this.getOnlineMetadata();
+		return metadata != null && metadata.isShowable();
 	}
 
 	/**
@@ -128,8 +195,54 @@ public class Page extends TreeNode implements IPage {
 	 * Toggle the visibility of the current page in the menu or similar.
 	 * @param showable a boolean which toggles the visibility on when true, off otherwise.
 	 */
+	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setShowable(boolean showable) {
-		this._showable = showable;
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			metadata.setShowable(showable);
+		}
+	}
+	
+	@Override
+	public ApsProperties getOnlineTitles() {
+		PageMetadata metadata = this.getOnlineMetadata();
+		return metadata == null ? null : metadata.getTitles();
+	}
+	
+	@Override
+	public String getOnlineTitle(String langCode) {
+		ApsProperties titles = this.getOnlineTitles();
+		return titles != null ? titles.getProperty(langCode) : null;
+	}
+	
+	@Override
+	public ApsProperties getDraftTitles() {
+		PageMetadata metadata = this.getDraftMetadata();
+		return metadata == null ? null : metadata.getTitles();
+	}
+	
+	@Override
+	public String getDraftTitle(String langCode) {
+		ApsProperties titles = this.getDraftTitles();
+		return titles != null ? titles.getProperty(langCode) : null;
+	}
+	
+	@Override
+	// TODO Verify usage PLUGIN
+	@Deprecated
+	public ApsProperties getTitles() {
+		return this.getOnlineTitles();
+	}
+	
+	@Override
+	@Deprecated
+	// TODO Verify usage PLUGIN
+	public void setTitles(ApsProperties titles) {
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			metadata.setTitles(titles);
+		}
 	}
 
 	/**
@@ -139,24 +252,33 @@ public class Page extends TreeNode implements IPage {
 	 * @param title Il titolo da impostare
 	 * @deprecated Use setTitle(String, String)
 	 */
+	// TODO Verify usage PLUGIN
 	public void setTitle(Lang lang, String title){
 		this.setTitle(lang.getCode(), title);
 	}
-
+	
+	@Override
+	@Deprecated
+	public String getTitle(String langCode) {
+		return this.getOnlineTitle(langCode);
+	}
+	
 	/**
 	 * Restituisce il titolo della pagina nella lingua specificata
 	 * @param lang La lingua
 	 * @return il titolo della pagina
 	 * @deprecated Use getTitle(String)
 	 */
+	// TODO Verify usage PLUGIN
 	public String getTitle(Lang lang) {
 		return this.getTitle(lang.getCode());
 	}
 	
 	@Override
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public Widget[] getShowlets() {
-		return getWidgets();
+		return this.getOnlineWidgets();
 	}
 
 	/**
@@ -164,50 +286,75 @@ public class Page extends TreeNode implements IPage {
 	 * @return all the widgets of the current page
 	 */
 	@Override
+	// TODO Verify usage PLUGIN
 	public Widget[] getWidgets() {
-		return _widgets;
+		return this.getOnlineWidgets();
 	}
 	
 	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setShowlets(Widget[] widgets) {
-		setWidgets(widgets);
+		this.setOnlineWidgets(widgets);
 	}
 
 	/**
 	 * Assign a set of widgets to the current page.
 	 * @param widgets the widgets to assign.
 	 */
+	// TODO Verify usage PLUGIN
 	public void setWidgets(Widget[] widgets) {
-		this._widgets = widgets;
+		this.setOnlineWidgets(widgets);
 	}
 	
 	@Override
+	// TODO Verify usage PLUGIN
 	public boolean isUseExtraTitles() {
-		return _useExtraTitles;
+		PageMetadata metadata = this.getOnlineMetadata();
+		return metadata != null && metadata.isUseExtraTitles();
 	}
+	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setUseExtraTitles(boolean useExtraTitles) {
-		this._useExtraTitles = useExtraTitles;
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			metadata.setUseExtraTitles(useExtraTitles);
+		}
 	}
 	
 	@Override
+	// TODO Verify usage PLUGIN
 	public String getCharset() {
-		return _charset;
+		PageMetadata metadata = this.getOnlineMetadata();
+		return metadata == null ? null : metadata.getCharset();
 	}
+	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setCharset(String charset) {
-		this._charset = charset;
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			metadata.setCharset(charset);
+		}
 	}
 	
 	@Override
+	// TODO Verify usage PLUGIN
 	public String getMimeType() {
-		return _mimeType;
+		PageMetadata metadata = this.getOnlineMetadata();
+		return metadata == null ? null : metadata.getMimeType();
 	}
+	@Deprecated
+	// TODO Verify usage PLUGIN
 	public void setMimeType(String mimeType) {
-		this._mimeType = mimeType;
+		PageMetadata metadata = this.getOnlineMetadata();
+		if (metadata != null) {
+			metadata.setMimeType(mimeType);
+		}
 	}
 	
+	// TODO Verify usage PLUGIN
 	public boolean isVoid() {
 		boolean isVoid = true;
-		Widget[] widgets = this.getWidgets();
+		Widget[] widgets = this.getOnlineWidgets();
 		if (null != widgets) {
 			for (int i = 0; i < widgets.length; i++) {
 				if (null != widgets[i]) {
@@ -220,36 +367,93 @@ public class Page extends TreeNode implements IPage {
 	}
 	
 	@Override
+	public boolean isOnline() {
+		return this.getOnlineMetadata() != null;
+	}
+	
+	@Override
+	public boolean isChanged() {
+		boolean changed = false;
+		PageMetadata onlineMeta = this.getOnlineMetadata();
+		if (onlineMeta != null) {
+			PageMetadata draftMeta = this.getDraftMetadata();
+			if (draftMeta != null) {
+				boolean widgetEquals = Arrays.deepEquals(this.getDraftWidgets(), this.getOnlineWidgets());
+				boolean metaEquals = this.getOnlineMetadata().hasEqualConfiguration(this.getDraftMetadata());			
+				return !(widgetEquals && metaEquals);
+			} else {
+				changed = true;
+			}
+		}
+		return changed;
+	}
+	
+	@Override
+	public IPage[] getAllChildren() {
+		return _allChildren;
+	}
+	public void setAllChildren(IPage[] children) {
+		this._allChildren = children;
+	}
+	
+	/**
+	 * Adds a node to nodes in a lower level. 
+	 * The new node is inserted in the final position.
+	 * @param treeNode The node to add.
+	 */
+	// TODO Verify usage PLUGIN
+	public void addChild(IPage treeNode) {
+		if (treeNode.isOnline()) {
+			super.addChild(treeNode);
+		}
+		int len = this._allChildren.length;
+		IPage[] newChildren = new IPage[len + 1];
+		for (int i=0; i < len; i++) {
+			newChildren[i] = this._allChildren[i];
+		}
+		newChildren[len] = treeNode;
+		this._allChildren = newChildren;
+	}
+	
+
+	@Override
+	protected String getFullTitle(String langCode, String separator, boolean shortTitle) {
+		String title = this.getDraftTitles().getProperty(langCode);
+		if (null == title) title = this.getCode();
+		if (this.isRoot()) return title;
+		ITreeNode parent = this.getParent();
+		while (parent != null && parent.getParent() != null) {
+			String parentTitle = "..";
+			if (!shortTitle) {
+				parentTitle = parent.getTitles().getProperty(langCode);
+				if (null == parentTitle) parentTitle = parent.getCode();
+			}
+			title = parentTitle + separator + title;
+			if (parent.isRoot()) return title;
+			parent = parent.getParent();
+		}
+		return title;
+	}
+	
+	@Override
 	public String toString() {
 		return "Page: " + this.getCode();
 	}
 
+	
 	/**
 	 * The code of the higher level page
 	 */
 	private String _parentCode;
 	
-	private Set<String> _extraGroups;
+	private PageMetadata _onlineMetadata;
 	
-	/**
-	 * The page model associate to the current object
-	 */
-	private PageModel _model;
-
-	/**
-	 * Toggle menu visibility on and off
-	 */
-	private boolean _showable = false;
+	private PageMetadata _draftMetadata;
 	
-	/**
-	 * The widgets of the current page
-	 */
-	private Widget[] _widgets;
+	private Widget[] _onlineWidgets;
 	
-	private boolean _useExtraTitles = false;
+	private Widget[] _draftWidgets;
 	
-	private String _mimeType;
-	
-	private String _charset;
+	private IPage[] _allChildren = new IPage[0];
 	
 }

@@ -12,6 +12,10 @@
                 <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
 
+        <action name="reloadChoose" class="baseAdminAction">
+            <result type="tiles">admin.BaseAdmin.reloadConfigChoose</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
         <action name="reloadConfig" class="baseAdminAction" method="reloadConfig">
             <result type="tiles">admin.BaseAdmin.reloadConfigResult</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>

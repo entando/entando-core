@@ -17,12 +17,39 @@ import java.util.Set;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.util.ApsProperties;
 
 /**
  * This class describes a pages of the portal.
  * @author E.Santoboni
  */
 public interface IPage extends ITreeNode {
+	
+	/**
+	 * Returns a properties with the titles of the page, in online version, where the keys are the codes of language.
+	 * @return The page titles, in online version.
+	 */
+	public ApsProperties getOnlineTitles();
+	
+	/**
+	 * Returns the title, in online version, of the page in the specified language.
+	 * @param langCode The code of the language.
+	 * @return The title, in online version, of the page.
+	 */
+	public String getOnlineTitle(String langCode);
+	
+	/**
+	 * Returns a properties with the titles of the page, in draft version, where the keys are the codes of language.
+	 * @return The page titles, in draft version.
+	 */
+	public ApsProperties getDraftTitles();
+	
+	/**
+	 * Returns the title, in draft version, of the page in the specified language.
+	 * @param langCode The code of the language.
+	 * @return The title, in draft version, of the page.
+	 */
+	public String getDraftTitle(String langCode);
 
 	/**
 	 * Return the model of the associated page
@@ -40,12 +67,14 @@ public interface IPage extends ITreeNode {
 	 * Add a group (code) authorized to view/access the page in the Front-end.
 	 * @param groupName The group to add.
 	 */
+	@Deprecated
 	public void addExtraGroup(String groupName);
 	
 	/**
 	 * Remove a group (code) authorized to view/access the page in the Front-end.
 	 * @param groupName The group to remove.
 	 */
+	@Deprecated
 	public void removeExtraGroup(String groupName);
 	
 	/**
@@ -64,7 +93,11 @@ public interface IPage extends ITreeNode {
 	 */
 	@Override
 	public IPage[] getChildren();
-
+	
+	public IPage[] getOnlineChildren();
+	
+	public IPage[] getAllChildren();
+	
 	/**
 	 * Return the parent of the current page. 
 	 * If the current page is the root, the root page itself is returned
@@ -72,6 +105,22 @@ public interface IPage extends ITreeNode {
 	 */
 	@Override
 	public IPage getParent();
+	
+	// TODO javadoc
+	public PageMetadata getOnlineMetadata();
+	
+	// TODO javadoc
+	public PageMetadata getDraftMetadata();
+	
+	// TODO javadoc
+	public Widget[] getOnlineWidgets();
+	
+	// TODO javadoc
+	public Widget[] getDraftWidgets();
+	
+	public boolean isOnline();
+	
+	public boolean isChanged();
 	
 	/**
 	 * This returns a boolean values indicating whether the page is

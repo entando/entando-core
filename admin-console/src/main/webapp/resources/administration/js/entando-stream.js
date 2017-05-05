@@ -3,7 +3,7 @@ jQuery(function(){ //dom is ready...
 	var $ = jQuery;
 	var WINDOW_TITLE_DEFAULT = window.document.title;
 	var routineInterval = null;
-	var CLOCK = 4 * 1000;
+	var CLOCK = 30 * 1000;
 	var ANIMATION_DURATION = 600;
 	var TIMESTAMP_ATTR = 'data-entando-creationdate';
 	var TIMESTAMP_LAST_UPDATE_ATTR = 'data-entando-updatedate';
@@ -19,8 +19,7 @@ jQuery(function(){ //dom is ready...
 	var LIST_LOAD_MORE_URL = Entando.backoffice.stream.list.loadMoreUrl;
 	var COMMENT_ADD_URL = Entando.backoffice.stream.comments.addUrl;
 	var COMMENT_DELETE_URL = Entando.backoffice.stream.comments.deleteUrl;
-
-
+	var NOTIFICATIONS_ICO = $('#notification-ico');
 //utility
 	var dateFromString = function(myString) {
 		//example string 2014-01-15 10:01:08|423
@@ -60,14 +59,20 @@ jQuery(function(){ //dom is ready...
 						(10<=date.getMilliseconds()&&date.getMilliseconds()<100) ? ('0'+date.getMilliseconds()) :
 								date.getMilliseconds())
 	};
+	
 	var setWindowTitle = function(title){
 		if (title!==undefined) {
 			window.document.title = '('+title+') ' + WINDOW_TITLE_DEFAULT;
+			var notificationCounter= '<span id="notifications-badge" class="badge">'+title+'</span>';
+			NOTIFICATIONS_ICO.append(notificationCounter);
 		}
-		else {
+		else {			
 			window.document.title = WINDOW_TITLE_DEFAULT;
+			 $('#notifications-badge').remove();		
+			console.log('NOTIFICATIONS_BADGE.remove()');
 		}
-	};
+	}
+	;
 	var checkIfNewOrUpdateStreamItem = function(stream) {
 		var id = $(stream).attr(ID_ATTR);
 		var findstring = STREAM_ITEM_EL_SELECTOR+'['+ID_ATTR+'="'+id+'"]';

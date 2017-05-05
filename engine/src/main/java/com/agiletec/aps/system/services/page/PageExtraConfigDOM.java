@@ -36,12 +36,12 @@ public class PageExtraConfigDOM {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageExtraConfigDOM.class);
 	
-	public void addExtraConfig(Page page, String xml) throws ApsSystemException {
+	public void addExtraConfig(PageMetadata page, String xml) throws ApsSystemException {
 		Document doc = this.decodeDOM(xml);
 		this.addExtraConfig(page, doc);
 	}
 	
-	protected void addExtraConfig(Page page, Document doc) {
+	protected void addExtraConfig(PageMetadata page, Document doc) {
 		Element rootElement = doc.getRootElement();
 		Element useExtraTitlesElement = rootElement.getChild(USE_EXTRA_TITLES_ELEMENT_NAME);
 		if (null != useExtraTitlesElement) {
@@ -72,21 +72,7 @@ public class PageExtraConfigDOM {
 		}
 	}
 	
-	private Document decodeDOM(String xml) throws ApsSystemException {
-		Document doc = null;
-		SAXBuilder builder = new SAXBuilder();
-		builder.setValidation(false);
-		StringReader reader = new StringReader(xml);
-		try {
-			doc = builder.build(reader);
-		} catch (Throwable t) {
-			_logger.error("Error while parsing xml: {} ", xml, t);
-			throw new ApsSystemException("Error detected while parsing the XML", t);
-		}
-		return doc;
-	}
-	
-	public String extractXml(IPage page) {
+	public String extractXml(PageMetadata page) {
 		Document doc = new Document();
 		Element elementRoot = new Element("config");
 		doc.setRootElement(elementRoot);
@@ -94,7 +80,7 @@ public class PageExtraConfigDOM {
 		return this.getXMLDocument(doc);
 	}
 	
-	protected void fillDocument(Document doc, IPage page) {
+	protected void fillDocument(Document doc, PageMetadata page) {
 		Set<String> extraGroups = page.getExtraGroups();
 		Element useExtraTitlesElement = new Element(USE_EXTRA_TITLES_ELEMENT_NAME);
 		useExtraTitlesElement.setText(String.valueOf(page.isUseExtraTitles()));
@@ -122,6 +108,20 @@ public class PageExtraConfigDOM {
 			mimeTypeElement.setText(mimeType);
 			doc.getRootElement().addContent(mimeTypeElement);
 		}
+	}
+	
+	private Document decodeDOM(String xml) throws ApsSystemException {
+		Document doc = null;
+		SAXBuilder builder = new SAXBuilder();
+		builder.setValidation(false);
+		StringReader reader = new StringReader(xml);
+		try {
+			doc = builder.build(reader);
+		} catch (Throwable t) {
+			_logger.error("Error while parsing xml: {} ", xml, t);
+			throw new ApsSystemException("Error detected while parsing the XML", t);
+		}
+		return doc;
 	}
 	
 	protected String getXMLDocument(Document doc) {

@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,6 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.SelectItem;
-import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.BaseAction;
 
 /**
@@ -132,7 +133,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
-		IPage page = this.getPageManager().getPage(pageCode);
+		IPage page = this.getPage(pageCode);
 		if (null == page) return null;
 		List<IPage> pages = new ArrayList<IPage>();
 		this.getSubBreadCrumbsTargets(pages, page);
@@ -167,7 +168,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 			this.addActionError(this.getText("error.page.virtualRootSelected"));
 			return "pageTree";
 		}
-		IPage selectedPage = this.getPageManager().getPage(selectedNode);
+		IPage selectedPage = this.getPage(selectedNode);
 		if (null == selectedPage) {
 			this.addActionError(this.getText("error.page.selectedPage.null"));
 			return "pageTree";
@@ -185,7 +186,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 	 * @return The page associated to the given code, null if the code is unknown.
 	 */
 	public IPage getPage(String pageCode) {
-		return this.getPageManager().getPage(pageCode);
+		return this.getPageManager().getDraftPage(pageCode);
 	}
 	
 	/**
@@ -276,12 +277,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 		this._groupManager = groupManager;
 	}
 	
-	protected IPageActionHelper getPageActionHelper() {
-		return _pageActionHelper;
-	}
-	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
-		this._pageActionHelper = pageActionHelper;
-	}
+
 	
 	protected IApiCatalogManager getApiCatalogManager() {
 		return _apiCatalogManager;
@@ -305,7 +301,7 @@ public abstract class AbstractPortalAction extends BaseAction {
 	private IPageManager _pageManager;
 	private IGroupManager _groupManager;
 	
-	private IPageActionHelper _pageActionHelper;
+
 	
 	private IWidgetTypeManager _widgetTypeManager;
 	private IApiCatalogManager _apiCatalogManager;

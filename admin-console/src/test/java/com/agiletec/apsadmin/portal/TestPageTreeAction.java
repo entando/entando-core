@@ -44,7 +44,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(6, root.getChildren().length);
+		assertEquals(7, root.getChildren().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		assertEquals(0, showableRoot.getChildren().length);
@@ -88,7 +88,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
 		ITreeNode[] children = showableRoot.getChildren();
-		assertEquals(6, children.length);
+		assertEquals(7, children.length);
 		boolean check = false;
 		for (int i = 0; i < children.length; i++) {
 			ITreeNode child = children[i];
@@ -156,8 +156,8 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 	public void testMoveForAdminUser() throws Throwable {
 		String pageToMoveCode = "pagina_12";
 		String sisterPageCode = "pagina_11";
-		IPage pageToMove = _pageManager.getPage(pageToMoveCode);
-		IPage sisterPage = _pageManager.getPage(sisterPageCode);
+		IPage pageToMove = _pageManager.getDraftPage(pageToMoveCode);
+		IPage sisterPage = _pageManager.getDraftPage(sisterPageCode);
 		assertNotNull(pageToMove);
 		assertEquals(pageToMove.getPosition(), 2);
 		assertNotNull(sisterPage);
@@ -172,9 +172,9 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		Collection<String> messages = this.getAction().getActionMessages();
 		assertEquals(0, messages.size());
 
-		pageToMove = this._pageManager.getPage(pageToMoveCode);
+		pageToMove = this._pageManager.getDraftPage(pageToMoveCode);
 		assertEquals(pageToMove.getPosition(), 1);
-		sisterPage = this._pageManager.getPage(sisterPageCode);
+		sisterPage = this._pageManager.getDraftPage(sisterPageCode);
 		assertEquals(sisterPage.getPosition(), 2);
 
 		this.initAction("/do/Page", "moveDown");
@@ -186,9 +186,9 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		messages = this.getAction().getActionMessages();
 		assertEquals(0, messages.size());
 
-		pageToMove = _pageManager.getPage(pageToMoveCode);
+		pageToMove = _pageManager.getDraftPage(pageToMoveCode);
 		assertEquals(pageToMove.getPosition(), 2);
-		sisterPage = _pageManager.getPage(sisterPageCode);
+		sisterPage = _pageManager.getDraftPage(sisterPageCode);
 		assertEquals(sisterPage.getPosition(), 1);
 	}
 
@@ -228,15 +228,18 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		String copyingPageCode = ((PageTreeAction)this.getAction()).getCopyingPageCode();
+		PageAction action = (PageAction) this.getAction();
+		String copyingPageCode = action.getSelectedNode();
 		assertEquals(pageToCopy, copyingPageCode);
+		assertEquals(pageToCopy, action.getParentPageCode());
 
 		this.executeCopyPage("wrongPageCode", "admin");
 		result = this.executeAction();
 		assertEquals("pageTree", result);
-		PageTreeAction action = (PageTreeAction)this.getAction();
-		copyingPageCode = action.getCopyingPageCode();
-		assertNull(copyingPageCode);
+		action = (PageAction) this.getAction();
+		copyingPageCode = action.getSelectedNode();
+		assertNotNull(copyingPageCode);
+		assertNull(action.getParentPageCode());
 		assertEquals(1, action.getActionErrors().size());
 	}
 
@@ -247,11 +250,11 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		assertEquals("pageTree", result);
 		assertEquals(1, this.getAction().getActionErrors().size());
 
-		IPage customers_page = _pageManager.getPage("customers_page");
+		IPage customers_page = _pageManager.getDraftPage("customers_page");
 		this.executeCopyPage(customers_page.getCode(), "pageManagerCoach");
 		result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		String copyingPageCode = ((PageTreeAction)this.getAction()).getCopyingPageCode();
+		String copyingPageCode = ((AbstractPortalAction)this.getAction()).getSelectedNode();
 		assertEquals(customers_page.getCode(), copyingPageCode);
 	}
 
@@ -266,24 +269,24 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		IPage page = this._pageManager.getRoot();
 		String pageCode = page.getCode();
 		try {
-			Widget configWidget = page.getWidgets()[0];
-			Widget nullWidget = page.getWidgets()[1];
+			Widget configWidget = page.getDraftWidgets()[0];
+			Widget nullWidget = page.getDraftWidgets()[1];
 			assertNotNull(configWidget);
 			assertNull(nullWidget);
 			
 			String result = this.executeMoveDown(pageCode, 0, "admin");
 			assertEquals(Action.SUCCESS, result);
 			IPage updatedPage = this._pageManager.getRoot();
-			Widget w00 = updatedPage.getWidgets()[0];
-			Widget w11 = updatedPage.getWidgets()[1];
+			Widget w00 = updatedPage.getDraftWidgets()[0];
+			Widget w11 = updatedPage.getDraftWidgets()[1];
 			assertNull(w00);
 			assertEquals(w11.getType().getCode(), configWidget.getType().getCode());
 			
 			result = this.executeMoveUp(pageCode, 1, "admin");
 			assertEquals(Action.SUCCESS, result);
 			updatedPage = this._pageManager.getRoot();
-			w00 = updatedPage.getWidgets()[0];
-			w11 = updatedPage.getWidgets()[1];
+			w00 = updatedPage.getDraftWidgets()[0];
+			w11 = updatedPage.getDraftWidgets()[1];
 			assertEquals(w00.getType().getCode(),  configWidget.getType().getCode());
 			assertNull(w11);
 			

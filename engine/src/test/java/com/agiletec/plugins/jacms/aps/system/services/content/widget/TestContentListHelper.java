@@ -22,6 +22,7 @@ import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
@@ -154,9 +155,7 @@ public class TestContentListHelper extends BaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			IPage pagina_1 = this._pageManager.getPage(pageCode);
-			pagina_1.getWidgets()[frame] = null;
-			this._pageManager.updatePage(pagina_1);
+			this.setPageWidgets(pageCode, frame, null);
 		}
 	}
 	
@@ -181,30 +180,34 @@ public class TestContentListHelper extends BaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			IPage pagina_1 = this._pageManager.getPage(pageCode);
-			pagina_1.getWidgets()[frame] = null;
-			this._pageManager.updatePage(pagina_1);
+			this.setPageWidgets(pageCode, frame, null);
 		}
 	}
 	
 	private RequestContext valueRequestContext(String pageCode, int frame) throws Throwable {
 		RequestContext reqCtx = this.getRequestContext();
 		try {
-			Widget showletToAdd = this.getShowletForTest("content_viewer_list", null);
-			this._pageManager.joinWidget(pageCode, showletToAdd, frame);
-			IPage page = this._pageManager.getPage(pageCode);
+			Widget widgetToAdd = this.getShowletForTest("content_viewer_list", null);
+			this.setPageWidgets(pageCode, frame, widgetToAdd);
+			
+			IPage page = this._pageManager.getOnlinePage(pageCode);
 			reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, page);
-			Widget widget = page.getWidgets()[frame];
+			Widget widget = page.getOnlineWidgets()[frame];
 			reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET, widget);
 			reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME, new Integer(frame));
 		} catch (Throwable t) {
-			IPage pagina_1 = this._pageManager.getPage(pageCode);
-			pagina_1.getWidgets()[frame] = null;
-			this._pageManager.updatePage(pagina_1);
+			this.setPageWidgets(pageCode, frame, null);
 			throw t;
 		}
     	return reqCtx;
     }
+	
+	private void setPageWidgets(String pageCode, int frame, Widget widget) throws ApsSystemException {
+		IPage page = this._pageManager.getDraftPage(pageCode);
+		page.getOnlineWidgets()[frame] = widget;
+		page.getDraftWidgets()[frame] = widget;
+		this._pageManager.updatePage(page);
+	}
 	
 	private Widget getShowletForTest(String showletTypeCode, ApsProperties config) throws Throwable {
 		WidgetType type = this._showletTypeManager.getWidgetType(showletTypeCode);

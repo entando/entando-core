@@ -13,6 +13,21 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content.helper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.ServletActionContext;
+import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.entando.entando.plugins.jacms.aps.system.services.content.helper.IContentHelper;
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
@@ -20,6 +35,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
@@ -30,22 +46,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentAuthorizationHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 import com.opensymphony.xwork2.ActionSupport;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.ServletActionContext;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Classe Helper della ContentAction.
@@ -172,30 +173,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	
 	@Override
 	public Map getReferencingObjects(Content content, HttpServletRequest request) throws ApsSystemException {
-    	Map<String, List> references = new HashMap<String, List>();
-    	try {
-    		String[] defNames = ApsWebApplicationUtils.getWebApplicationContext(request).getBeanNamesForType(ContentUtilizer.class);
-			for (int i=0; i<defNames.length; i++) {
-				Object service = null;
-				try {
-					service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
-				} catch (Throwable t) {
-					_logger.error("error loading ReferencingObject ", t);
-					service = null;
-				}
-				if (service != null) {
-					ContentUtilizer contentUtilizer = (ContentUtilizer) service;
-					List utilizers = contentUtilizer.getContentUtilizers(content.getId());
-					if (utilizers != null && !utilizers.isEmpty()) {
-						references.put(contentUtilizer.getName()+"Utilizers", utilizers);
-					}
-				}
-			}
-    	} catch (Throwable t) {
-			_logger.error("Error extracting referencing object", t);
-    		throw new ApsSystemException("Error in hasReferencingObject method", t);
-    	}
-    	return references;
+    	return this.getContentHelper().getReferencingObjects(content);
     }
 	
 	/**
@@ -241,13 +219,15 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 								}
 							} else if (object instanceof IPage) { //Content ID
 								IPage page = (IPage) object;
-								if (!CmsPageActionUtil.isContentPublishableOnPage(content, page)) {
+								// Verifies the online version. On putting the page online, must be done the same check
+								if (!CmsPageUtil.isContentPublishableOnPageOnline(content, page)) {
+									PageMetadata metadata = page.getOnlineMetadata();
 									List<String> pageGroups = new ArrayList<String>();
 									pageGroups.add(page.getGroup());
-									if (null != page.getExtraGroups()) {
-										pageGroups.addAll(page.getExtraGroups());
+									if (metadata != null && null != metadata.getExtraGroups()) {
+										pageGroups.addAll(metadata.getExtraGroups());
 									}
-									String[] args = {pageGroups.toString(), page.getTitle(lang.getCode())};
+									String[] args = {pageGroups.toString(), page.getDraftTitle(lang.getCode())};
 									action.addFieldError("mainGroup", action.getText("error.content.referencedPage.wrongGroups", args));
 								}
 							}
@@ -290,16 +270,24 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
+	protected IContentHelper getContentHelper() {
+		return contentHelper;
+	}
+	public void setContentHelper(IContentHelper contentHelper) {
+		this.contentHelper = contentHelper;
+	}
+
 	protected IContentAuthorizationHelper getContentAuthorizationHelper() {
 		return _contentAuthorizationHelper;
 	}
 	public void setContentAuthorizationHelper(IContentAuthorizationHelper contentAuthorizationHelper) {
 		this._contentAuthorizationHelper = contentAuthorizationHelper;
 	}
-	
+
 	private IContentManager _contentManager;
-	
+	private IContentHelper contentHelper;
+
 	private IContentAuthorizationHelper _contentAuthorizationHelper;
-	
+
 }

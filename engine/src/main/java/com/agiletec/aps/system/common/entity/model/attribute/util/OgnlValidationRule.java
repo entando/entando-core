@@ -62,6 +62,7 @@ public class OgnlValidationRule implements Serializable {
         }
     }
     
+	@Override
     protected OgnlValidationRule clone() {
         OgnlValidationRule clone = new OgnlValidationRule();
         clone.setErrorMessage(this.getErrorMessage());
@@ -123,10 +124,8 @@ public class OgnlValidationRule implements Serializable {
                 error.setMessageKey(this.getErrorMessageKey());
             }
         } catch (OgnlException oe) {
-            //ApsSystemUtils.logThrowable(oe, this, "checkExpression", "Error on evaluation of expression : " + expression);
             _logger.error("Error on evaluation of expression : {}", expression, oe);
         } catch (Throwable t) {
-            //ApsSystemUtils.logThrowable(t, this, "checkExpression");
             _logger.error("Generic Error on evaluation Ognl Expression : {}", expression, t);
             throw new RuntimeException("Generic Error on evaluation Ognl Expression", t);
         }
@@ -135,7 +134,7 @@ public class OgnlValidationRule implements Serializable {
     
     protected OgnlContext createContextForExpressionValidation(AttributeInterface attribute, AttributeTracer tracer, ILangManager langManager) {
         OgnlContext context = new OgnlContext();
-        Map<String, Lang> langs = new HashMap<String, Lang>();
+        Map<String, Lang> langs = new HashMap<>();
         List<Lang> langList = langManager.getLangs();
         for (int i = 0; i < langList.size(); i++) {
             Lang lang = langList.get(i);

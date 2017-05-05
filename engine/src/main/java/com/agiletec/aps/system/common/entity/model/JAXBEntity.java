@@ -263,6 +263,6 @@ public class JAXBEntity implements Serializable {
     private String _mainGroup;
     private Set<String> _groups;
     private Set<String> _categories;
-    private List<AbstractJAXBAttribute> _attributes = new ArrayList<AbstractJAXBAttribute>();
+    private List<AbstractJAXBAttribute> _attributes = new ArrayList<>();
     
 }

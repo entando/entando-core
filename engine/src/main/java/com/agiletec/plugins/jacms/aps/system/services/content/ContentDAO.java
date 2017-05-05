@@ -205,13 +205,17 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	}
 	
 	protected void executeInsertOnLineContent(Content content, Connection conn) throws Throwable {
+		this.executeInsertOnLineContent(content, true, conn);
+	}
+	
+	protected void executeInsertOnLineContent(Content content, boolean updateDate, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_ATTRIBUTE_ROLE_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_ATTRIBUTE_ROLE_RECORD, conn);
 		super.deleteEntitySearchRecord(content.getId(), conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_REL_RECORD, conn);
-		this.updateContentRecordForInsertOnLine(content, conn);
+		this.updateContentRecordForInsertOnLine(content, updateDate, conn);
 		this.addPublicContentSearchRecord(content.getId(), content, conn);
 		super.addEntitySearchRecord(content.getId(), content, conn);
 		this.addContentAttributeRoleRecord(content.getId(), content, ADD_ATTRIBUTE_ROLE_RECORD, conn);
@@ -239,20 +243,31 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	}
 	
 	protected void updateContentRecordForInsertOnLine(Content content, Connection conn) throws ApsSystemException {
+		this.updateContentRecordForInsertOnLine(content, true, conn);
+	}
+	
+	protected void updateContentRecordForInsertOnLine(Content content, boolean updateDate, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
-			stat = conn.prepareStatement(INSERT_ONLINE_CONTENT);
-			stat.setString(1, content.getTypeCode());
-			stat.setString(2, content.getDescription());
-			stat.setString(3, content.getStatus());
+			int index = 1;
+			if (updateDate) {
+				stat = conn.prepareStatement(INSERT_ONLINE_CONTENT);
+			} else {
+				stat = conn.prepareStatement(INSERT_ONLINE_CONTENT_WITHOUT_DATE);
+			}
+			stat.setString(index++, content.getTypeCode());
+			stat.setString(index++, content.getDescription());
+			stat.setString(index++, content.getStatus());
 			String xml = content.getXML();
-			stat.setString(4, xml);
-			stat.setString(5, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
-			stat.setString(6, xml);
-			stat.setString(7, content.getMainGroup());
-			stat.setString(8, content.getVersion());
-			stat.setString(9, content.getLastEditor());
-			stat.setString(10, content.getId());
+			stat.setString(index++, xml);
+			if (updateDate) {
+				stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+			}
+			stat.setString(index++, xml);
+			stat.setString(index++, content.getMainGroup());
+			stat.setString(index++, content.getVersion());
+			stat.setString(index++, content.getLastEditor());
+			stat.setString(index++, content.getId());
 			stat.executeUpdate();
 		} catch (Throwable t) {
 			_logger.error("Error updating for insert onLine content {}", content.getId(),  t);
@@ -345,27 +360,38 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 	
+	protected void executeRemoveOnLineContent(Content content, Connection conn) {
+		this.executeRemoveOnLineContent(content, true, conn);
+	}
+	
 	/**
 	 * Unpublish a content, preventing it from being displayed in the portal. Obviously
 	 * the content itslef is not deleted.
 	 * @param content the content to unpublish.
+	 * @param updateDate 
 	 * @param conn the connection to the DB.
-	 * @throws ApsSystemException when connection errors to the database are detected.
 	 */
-	protected void executeRemoveOnLineContent(Content content, Connection conn) throws ApsSystemException {
+	protected void executeRemoveOnLineContent(Content content, boolean updateDate, Connection conn) {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_ATTRIBUTE_ROLE_RECORD, conn);
 		PreparedStatement stat = null;
 		try {
-			stat = conn.prepareStatement(REMOVE_ONLINE_CONTENT);
-			stat.setString(1, null);
-			stat.setString(2, content.getStatus());
-			stat.setString(3, content.getXML());
-			stat.setString(4, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
-			stat.setString(5, content.getVersion());
-			stat.setString(6, content.getLastEditor());
-			stat.setString(7, content.getId());
+			if (updateDate) {
+				stat = conn.prepareStatement(REMOVE_ONLINE_CONTENT);
+			} else {
+				stat = conn.prepareStatement(REMOVE_ONLINE_CONTENT_WITHOUT_DATE);
+			}
+			int index = 1;
+			stat.setString(index++, null);
+			stat.setString(index++, content.getStatus());
+			stat.setString(index++, content.getXML());
+			if (updateDate) {
+				stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+			}
+			stat.setString(index++, content.getVersion());
+			stat.setString(index++, content.getLastEditor());
+			stat.setString(index++, content.getId());
 			stat.executeUpdate();
 		} catch (Throwable t) {
 			_logger.error("Error removing online content {}", content.getId(),  t);
@@ -710,9 +736,18 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		"workxml = ? , lastmodified = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " +
 		"WHERE contentid = ? ";
 	
+	private final String INSERT_ONLINE_CONTENT_WITHOUT_DATE =
+		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +
+		"workxml = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " +
+		"WHERE contentid = ? ";
+	
 	private final String REMOVE_ONLINE_CONTENT = 
 		"UPDATE contents SET onlinexml = ? , status = ? , " +
 		"workxml = ? , lastmodified = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
+	
+	private final String REMOVE_ONLINE_CONTENT_WITHOUT_DATE = 
+		"UPDATE contents SET onlinexml = ? , status = ? , " +
+		"workxml = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
 	
 	private final String UPDATE_CONTENT =
 		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +

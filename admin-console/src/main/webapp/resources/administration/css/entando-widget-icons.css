@@ -1,0 +1,66 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 9-mar-2017, 10.20.50
+    Author     : D.Minnai A.Pintus
+*/
+
+.icon-pos{
+    position: absolute;
+    top: 6px;
+    left: 55px;
+}
+
+.descrition-widget-overlay{
+    min-width: 115px !important;
+    margin: 17px 0px -3px -20px !important;
+    font-size:11px !important;
+    white-space: normal !important;
+    height: 53px;
+}
+
+.fa-default:before{
+    font-family: FontAwesome;
+    content: "\f12e" ;
+    display: inline-block;
+    vertical-align: middle;
+}
+/*Custom widget*/
+.fa-userprofile_editCurrentUser:before, .fa-userprofile_editCurrentUser_password:before, .fa-userprofile_editCurrentUser_profile:before,
+.fa-entando-widget-search_form:before, .fa-entando-widget-navigation_breadcrumbs:before, .fa-entando-widget-navigation_bar:before, 
+.fa-entando-widget-login_form:before, .fa-entando-widget-language_choose:before, .fa-entando-widget-navigation_menu:before{
+    font-family: FontAwesome;
+    content: "\f1b2" !important;
+    display: inline-block;
+    vertical-align: middle;
+}
+/*CMS*/
+.fa-row_content_viewer_list:before, .fa-content_viewer:before, .fa-content_viewer_list:before, .fa-search_result:before {
+    font-family: FontAwesome;
+    content: "\f040" !important;
+    vertical-align: middle;
+}
+/*Avatar*/
+.fa-jpavatar_avatar:before{
+    font-family: FontAwesome;
+    content: "\f118" !important;
+    display: inline-block;
+    vertical-align: middle;
+}
+/*Dynamic web form
+.fa-jpwebdynamicform_message_choice:before, .fa-jpwebdynamicform_message_form:before{
+    font-family: FontAwesome;
+    content: "\f049" !important;
+    display: inline-block;
+    vertical-align: middle;
+}*/
+/*Stock Widget*/
+.fa-entando_apis:before, .fa-formAction:before, .fa-login_form:before, .fa-messages_system:before {
+    font-family: FontAwesome;
+    content: "\f08d" !important;
+    display: inline-block;
+    vertical-align: middle;
+}

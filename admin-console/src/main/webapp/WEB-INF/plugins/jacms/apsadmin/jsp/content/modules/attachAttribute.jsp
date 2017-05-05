@@ -33,6 +33,11 @@
 							</label>
 							<div class="col-xs-10">
 								<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
+								<code>
+									<s:text name="label.description" />:&nbsp;<s:property value="#defaultResource.description" />
+									<br />
+									<s:text name="label.filename" />:&nbsp;<s:property value="#defaultResource.masterFileName" />
+								</code>
 							</div>
 						</div>
 					</div>

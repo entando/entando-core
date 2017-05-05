@@ -11,6 +11,8 @@
 			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd" >
     
+    <context:annotation-config />
+    
     <jee:jndi-lookup id="portDataSource" jndi-name="java:comp/env/jdbc/portDataSource"/>
     
     <jee:jndi-lookup id="servDataSource" jndi-name="java:comp/env/jdbc/servDataSource"/>
@@ -42,9 +44,12 @@
         <value>org.entando.entando.aps.system.init.model.portdb.LocalString</value>
         <value>org.entando.entando.aps.system.init.model.portdb.PageModel</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Page</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.PageMetadataOnline</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.PageMetadataDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetCatalog</value>
         <value>org.entando.entando.aps.system.init.model.portdb.GuiFragment</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfig</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfigDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Uniquekeys</value>
     </util:list>
     

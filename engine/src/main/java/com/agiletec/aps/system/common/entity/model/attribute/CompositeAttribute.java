@@ -47,12 +47,13 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 	 * Attribute initialization.
 	 */
 	public CompositeAttribute() {
-		this._attributeList = new ArrayList<AttributeInterface>();
-		this._attributeMap = new HashMap<String, AttributeInterface>();
+		this._attributeList = new ArrayList<>();
+		this._attributeMap = new HashMap<>();
 	}
 
 	/**
 	 * Return the attribute prototype, that is an empty attribute.
+	 * @return The cloned attribute
 	 */
 	@Override
 	public Object getAttributePrototype() {
@@ -223,7 +224,7 @@ public class CompositeAttribute extends AbstractComplexAttribute {
 		if (null == jaxbAttribute) return null;
 		List<AttributeInterface> attributes = this.getAttributes();
 		if (null != attributes && !attributes.isEmpty()) {
-			Map<String, AbstractJAXBAttribute> jaxbAttributes = new HashMap<String, AbstractJAXBAttribute>();
+			Map<String, AbstractJAXBAttribute> jaxbAttributes = new HashMap<>();
 			for (int i = 0; i < attributes.size(); i++) {
 				AttributeInterface attribute = attributes.get(i);
 				jaxbAttributes.put(attribute.getName(), attribute.getJAXBAttribute(langCode));

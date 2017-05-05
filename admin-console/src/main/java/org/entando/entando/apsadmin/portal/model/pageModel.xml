@@ -4,7 +4,23 @@
     "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
-	
+
+    <package name="core_do/rs/PageModel" namespace="/do/rs/PageModel" extends="entando-default">
+        <action name="frames" class="pageModelAction">
+            <result type="json">
+                <param name="root">framesSketch</param>
+            </result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">enterBackend</param></interceptor-ref>
+        </action>
+        
+        <action name="updateSketch" class="pageModelAction" method="updateSketch">
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+        </action>
+                
+	</package>
+
+
+
     <package name="core_do/PageModel" namespace="/do/PageModel" extends="entando-default">
     	
 		<action name="list" class="pageModelFinderAction">

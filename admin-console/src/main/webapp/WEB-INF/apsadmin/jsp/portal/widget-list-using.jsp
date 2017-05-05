@@ -7,13 +7,30 @@
 <s:set var="showletTypeApiMappingsVar" value="showletTypeApiMappings" />
 <s:set var="showletUtilizers" value="showletUtilizers" />
 
-<h1 class="panel panel-default title-page">
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="title.widgetManagement" /></li>
+    <li class="page-title-container"><s:text name="title.widgetManagement.pages" />: <s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" /></li>
+</ol>
+
+<h1 class="page-title-container"><s:text name="title.widgetManagement.pages" />: <s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+</h1>
+
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
+
+<!--<h1 class="panel panel-default title-page">
 	<span class="panel-body display-block">
 		<a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.widgetManagement" />">
 		<s:text name="title.widgetManagement" /></a>&#32;/&#32;
 		<s:text name="title.widgetManagement.pages" />: <s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" />
 	</span>
-</h1>
+</h1>-->
 
 <div id="main" role="main">
 

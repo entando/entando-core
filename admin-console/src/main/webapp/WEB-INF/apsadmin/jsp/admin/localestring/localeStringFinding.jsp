@@ -136,7 +136,7 @@
                         
                         </p>
                         <div class="col-xs-12 no-padding">
-                                <table class="table table-striped table-bordered table-hover content-list no-mb" id="labelTable">
+                                <table class="table table-striped table-bordered table-hover no-mb" id="labelTable">
                                     <thead>
                                         <tr>
                                             <th><s:text name="label.code"/></th>

@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <h1 class="page-title-container">
-                    <s:text name="%{'title.' + entityManagerName + '.management'}"/>
+                    <s:text name="jpwebdynamicform.name"/>
                     <span class="pull-right">
                         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true"
                            title="" data-content="TO be inserted" data-placement="left" data-original-title="">

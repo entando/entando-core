@@ -2,7 +2,10 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="menu.configure" /></li>
-	<li><s:text name="title.databaseManagement" /></li>
+	<li><a
+		href="<s:url action="entry" namespace="/do/Admin/Database" />"
+		title="<s:text name="note.goToSomewhere" />: <s:text name="title.databaseManagement" />"><s:text
+				name="title.databaseManagement" /></a></li>
 	<li><s:text name="title.databaseBackup.new" /></li>
 </ol>
 <h1 class="page-title-container">

@@ -53,7 +53,8 @@
 <s:if test="%{#entity_list.size > 0}">
     <wpsa:subset source="#entity_list" count="10" objectName="entityGroup" advanced="true" offset="5">
         <s:set var="group" value="#entityGroup"/>
-            <table class="table table-striped table-bordered table-hover content-list no-mb"
+        <div class="mt-20">
+            <table class="table table-striped table-bordered table-hover no-mb"
                    style="margin-top: 1em;">
                 <thead>
                 <tr>
@@ -146,6 +147,7 @@
                 </div>
             </div>
         </div>
+</div>
     </wpsa:subset>
 </s:if>
 <s:else>

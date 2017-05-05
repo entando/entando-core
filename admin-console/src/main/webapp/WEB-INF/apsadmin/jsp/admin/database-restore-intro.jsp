@@ -4,7 +4,10 @@
 <s:set var="dumpReportVar" value="getDumpReport(#subFolderNameVar)" />
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="menu.configure" /></li>
-	<li><s:text name="title.databaseManagement" /></li>
+	<li><a
+		href="<s:url action="entry" namespace="/do/Admin/Database" />"
+		title="<s:text name="note.goToSomewhere" />: <s:text name="title.databaseManagement" />"><s:text
+				name="title.databaseManagement" /></a></li>
 	<li><s:text name="title.databaseBackup.details" /></li>
 	<li class="page-title-container"><s:text
 			name="title.databaseBackup.restore" /></li>

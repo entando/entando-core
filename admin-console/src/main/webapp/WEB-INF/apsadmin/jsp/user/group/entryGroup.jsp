@@ -15,7 +15,9 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
 	<li><s:text name="menu.configure" /></li>
-	<li><s:text name="title.groupManagement" /></li>
+	<li><a href="<s:url action="list" namespace="/do/Group" />"
+		title="<s:text name="note.goToSomewhere" />: <s:text name="title.groupManagement" />"><s:text
+				name="title.groupManagement" /></a></li>
 	<li class="page-title-container"><s:if
 			test="getStrutsAction() == 1">
 			<s:text name="title.groupManagement.groupNew" />
@@ -139,8 +141,7 @@
 	<%-- save --%>
 	<div class="form-group">
 		<div class="col-sm-12">
-			<wpsf:submit type="button"
-				cssClass="btn btn-primary pull-right">
+			<wpsf:submit type="button" cssClass="btn btn-primary pull-right">
 				<s:text name="label.save" />
 			</wpsf:submit>
 		</div>

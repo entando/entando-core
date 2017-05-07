@@ -1425,6 +1425,14 @@ ul {
 .no-pr {padding-left: 0;}
 
 
+/* --------------- Bordi --------------- */
+
+.no-top-border {border-top: 0!important}
+.no-right-border {border-top: 0!important}
+.no-bottom-border {border-top: 0!important}
+.no-left-border {border-top: 0!important}
+
+
 /* --------------- Buttons --------------- */
 
 .btn-long {padding: 2px 60px;}

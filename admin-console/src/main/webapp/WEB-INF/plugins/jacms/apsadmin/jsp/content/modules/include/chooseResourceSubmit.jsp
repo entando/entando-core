@@ -6,7 +6,7 @@
 <s:set var="resourceTypeCode"><%= request.getParameter("resourceTypeCode")%></s:set>
 <s:set var="buttonCssClass"><%= request.getParameter("buttonCssClass")%></s:set>
 <s:if test="#buttonCssClass==null||#buttonCssClass=='null'">
-	<s:set var="buttonCssClass">btn btn-default</s:set>
+	<s:set var="buttonCssClass">btn btn-default btn-long</s:set>
 </s:if>
 <wpsa:actionParam action="chooseResource" var="chooseResourceActionName" >
 	<wpsa:actionSubParam name="parentAttributeName" value="%{#parentAttribute.name}" />
@@ -17,11 +17,9 @@
 </wpsa:actionParam>
 <wpsf:submit action="%{#chooseResourceActionName}" type="button" title="%{#attribute.name + ': ' + getText('label.choose')}" cssClass="%{#buttonCssClass}">
 	<s:if test="#resourceTypeCode == 'Image'">
-			<span class="icon fa fa-picture-o"></span>&#32;
-			<s:text name="label.chooseImage" />
+		<s:text name="label.add" />
 	</s:if>
 	<s:else>
-			<span class="icon fa fa-paperclip"></span>&#32;
-			<s:text name="label.chooseAttach" />
+		<s:text name="label.add" />
 	</s:else>
 </wpsf:submit>

@@ -4,7 +4,10 @@
 <s:set var="parentListAttribute" value="#masterListAttribute" />
 <s:set var="masterCompositeAttributeTracer" value="#attributeTracer" />
 <s:set var="masterCompositeAttribute" value="#attribute" />
-<ul class="list-group">
+
+<div class="panel panel-default">
+<div class="panel-body no-padding">
+<ul class="list-group no-mb">
 	<s:iterator value="#attribute.attributes" var="attribute">
 		<s:set var="attributeTracer" value="#masterCompositeAttributeTracer.getCompositeTracer(#masterCompositeAttribute)"></s:set>
 		<s:set var="parentAttribute" value="#masterCompositeAttribute"></s:set>
@@ -122,6 +125,8 @@
 		</li>
 	</s:iterator>
 </ul>
+</div>
+</div>
 <s:set var="attributeTracer" value="#masterCompositeAttributeTracer" />
 <s:set var="attribute" value="#masterCompositeAttribute" />
 <s:set var="parentAttribute" value="%{null}" />

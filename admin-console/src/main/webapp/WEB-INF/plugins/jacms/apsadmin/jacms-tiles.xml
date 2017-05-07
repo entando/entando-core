@@ -88,10 +88,11 @@
 	<!-- *** Fine Area Gestione Risorse Contenuti *** -->
 
 	<!-- *** Inizio Area Gestione LINK *** -->
-	<definition extends="layout.default" name="admin.jacms.content.chooseLinkType">
-		<put-attribute name="title" value="title.contentManagement" />
-		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/linkAttribute/chooseLink.jsp" />
-	</definition>
+    <definition extends="layout.default" name="admin.jacms.content.chooseLinkType">
+        <put-attribute name="title" value="title.contentManagement" />
+        <put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/linkAttribute/configUrlLinkType.jsp" />
+    </definition>	
+	
 	<definition extends="layout.default" name="admin.jacms.content.link.configUrlLinkType">
 		<put-attribute name="title" value="title.contentManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/linkAttribute/configUrlLinkType.jsp" />

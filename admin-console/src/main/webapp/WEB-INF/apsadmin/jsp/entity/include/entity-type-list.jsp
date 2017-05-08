@@ -6,9 +6,9 @@
 <%--se arrivo dal plugin webdynamicform visualizzo solo la parte sotto --%>
 <s:if test="%{'jpwebdynamicformMessageManager' == entityManagerName}">
     <ol class="breadcrumb page-tabs-header breadcrumb-position">
-        <li><s:text name="jpavatar.admin.menu.integration"/></li>
+        <li><s:text name="jpwebdynamicform.menu.integration"/></li>
         <li>
-            <s:text name="jpavatar.admin.menu.uxcomponents"/>
+            <s:text name="jpwebdynamicform.menu.uxcomponents"/>
         </li>
         <li class="page-title-container">
             <s:text name="%{'title.' + entityManagerName + '.management'}"/>

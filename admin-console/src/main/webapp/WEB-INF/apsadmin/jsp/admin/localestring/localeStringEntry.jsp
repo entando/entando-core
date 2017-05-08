@@ -72,7 +72,7 @@
 			<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
 				<label class="col-sm-2 control-label" for="lang<s:property value="#l.code"/>">
 						<%-- (<s:property value="#l.code" />)&#32;<s:text name="label.description" /> --%>
-					<span lang="<s:property value="#l.code" />"><s:property value="#l.descr"/></span>*
+					<abbr title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></abbr>&#32;<span lang="<s:property value="#l.code" />"><s:property value="#l.descr"/></span>*
 				</label>
 				<div class="col-sm-10">
 					<s:textarea cols="50" rows="3" name="%{code}" id="%{'lang'+code}" value="%{labels[#l.code]}"
@@ -96,7 +96,7 @@
 				<div class="form-group<s:property value="#controlGroupErrorClassVar" />">
 					<label class="col-sm-2 control-label" for="lang<s:property value="#l.code"/>">
 							<%-- (<s:property value="#l.code" />)&#32;<s:text name="label.description" /> --%>
-						<span lang="<s:property value="#l.code" />"><s:property value="#l.descr"/></span>
+						<abbr title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></abbr>&#32;<span lang="<s:property value="#l.code" />"><s:property value="#l.descr"/></span>
 					</label>
 					<div class="col-sm-10">
 						<s:textarea cols="50" rows="3" name="%{code}" id="%{'lang'+code}" value="%{labels[#l.code]}"

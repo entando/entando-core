@@ -99,37 +99,14 @@
 	        </div>
         </div>
         
-    <%-- TODO: gestire autosave, version, autor, etc..
-		<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/include/snippet-content.jsp" />
-    --%>
-        <a href="<s:url action="backToEntryContent" >
-            <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>" 
-            title="<s:text name="note.content.backToEdit" />" >
-            <s:property value="content.descrDisablingTemporarily" />
-        </a>
+			<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/include/snippet-content.jsp" />
+			
+	        <a href="<s:url action="backToEntryContent" >
+	            <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>" 
+	            title="<s:text name="note.content.backToEdit" />" >
+	            <s:property value="content.descrDisablingTemporarily" />
+	        </a>
 		
-        <div class="form-group">
-	        <label class="col-sm-2 control-label" for="contentType"><s:text name="label.contentType"/></label>
-	        <div class="col-sm-10">
-	            <input type="text" id="contentType" readonly="readonly" class="form-control" value="${content.typeDescr}"/>
-	        </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label" for="contentType">
-                <s:text name="label.contentDescription"/>
-                <a tabindex="0" role="button" data-toggle="popover" 
-                    data-trigger="focus" data-html="true" title="" 
-                    data-content="<s:text name="note.description.provide" />&#32;<s:text name="note.description.usedefault" />." 
-                    data-placement="top"><span class="fa fa-info-circle"></span>
-                </a>
-            </label>
-            <div class="col-sm-10">
-				<input class="form-control" type="text" name="descr" 
-				    value="${content.descr}" 
-				    placeholder="<s:text name="note.description.placeholder" />" id="contentDescription"/>
-            </div>
-        </div>
-
         <!-- Groups section -->
         <div class="section-divider-wrapper form-group">
             <div class="row">
@@ -418,7 +395,10 @@
 							<wpsa:actionSubParam name="%{'jacmsPreviewActionLangCode_' + #lang.code}" value="%{#lang.code}" />
 						</wpsa:actionParam>
 						<hr />
-						<div class="form-group  margin-none margin-large-top">
+						<div class="form-group">
+                            <div class="col-xs-12">
+                            <div class="col-sm-10 col-sm-offset-2 no-padding">
+                            
 							<s:if test="!#showingPageSelectItems.isEmpty()">
 								<div class="input-group input-group-lg">
 									<s:set var="previewActionPageCodeLabelId">jacmsPreviewActionPageCode_<s:property value="#lang.code" /></s:set>
@@ -450,6 +430,8 @@
 							<s:else>
 								<p class="static-control text-center text-info"><s:text name="label.preview.noPreviewPages" /></p>
 							</s:else>
+							</div>
+							</div>
 						</div>
 					</s:if>
 				</div><%-- tab --%>
@@ -477,10 +459,17 @@
 		
 		<%-- actions --%>
 			<h2 class="sr-only"><s:text name="title.contentActionsIntro" /></h2>
-			<wpsa:hookPoint key="jacms.entryContent.actions" objectName="hookPointElements_jacms_entryContent_actions">
-				<s:iterator value="#hookPointElements_jacms_entryContent_actions" var="hookPointElement">
-					<wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-				</s:iterator>
-			</wpsa:hookPoint>
+			
+            <div class="col-xs-12 no-padding" id="sticky-toolbar">
+				<div class="row toolbar-pf table-view-pf-toolbar border-bottom">
+				    <div class="col-xs-12">
+						<wpsa:hookPoint key="jacms.entryContent.actions" objectName="hookPointElements_jacms_entryContent_actions">
+						   <s:iterator value="#hookPointElements_jacms_entryContent_actions" var="hookPointElement">
+						       <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+						   </s:iterator>
+						</wpsa:hookPoint>
+				    </div>
+				</div>
+			</div> 
 	</s:form>
 </div><%-- main --%>

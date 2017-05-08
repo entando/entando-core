@@ -1424,6 +1424,7 @@ ul {
 .pr-60 {padding-left: 60px;}
 .no-pr {padding-left: 0;}
 
+.wauto {width: auto;}
 
 /* --------------- Bordi --------------- */
 
@@ -1432,6 +1433,7 @@ ul {
 .no-bottom-border {border-top: 0!important}
 .no-left-border {border-top: 0!important}
 
+.bottom-border {border-bottom: 1px solid #d1d1d1;}
 
 /* --------------- Buttons --------------- */
 
@@ -1596,6 +1598,13 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 
 .white {color: #fff}
 .white:hover {color: #fff}
+
+
+/* --------------- Datepicker --------------- */
+
+/* datepicker dropdown hack */
+.datepicker-dropdown:before,
+.datepicker-dropdown:after {display: none!important;}
 
 @media (max-width: 991px) {
     .table-view-pf-toolbar label {display: none}

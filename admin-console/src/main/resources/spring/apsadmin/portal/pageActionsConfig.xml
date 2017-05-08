@@ -108,4 +108,8 @@
               parent="abstractBaseActionHelper">
     </bean>
     
+    <bean id="guiFragmentSettingsAction" scope="prototype" 
+                  class="org.entando.entando.apsadmin.portal.guifragment.GuiFragmentSettingAction" parent="baseAdminAction">              
+    </bean>
+    
 </beans>

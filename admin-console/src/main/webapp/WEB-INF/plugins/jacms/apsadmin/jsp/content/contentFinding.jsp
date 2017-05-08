@@ -91,8 +91,7 @@
 								<div id="search-advanced"
 									class="collapse-input-group <s:if test="(#categoryTreeStyleVar == 'request' && null != treeNodeActionMarkerCode)">in</s:if>">
 									<div class="form-group">
-										<label class="control-label col-sm-2" for="contentType"
-											class="control-label col-sm-2 text-right"> <s:text
+										<label for="contentType" class="control-label col-sm-2 text-right"> <s:text
 												name="label.type" />
 										</label>
 										<div class="col-sm-9 input-group">
@@ -302,56 +301,6 @@
 			</div>
 	</div>
 
-	<!--Aggiunta colonne tabella lista contenuti-->
-	<%-- Sostituito da funzionalità ColVis di DataTables
-	<div class="col-xs-12">
-		<div class="dropdown  pull-right dropdown-menu-right"
-			id="search-configure-results">
-			<button class="btn btn-default dropdown-toggle " type="button"
-				data-toggle="dropdown">
-				<s:text name="title.searchResultOptions" />
-				&#32;<span class="fa fa-columns" aria-hidden="true"></span>
-			</button>
-			<ul class="dropdown-menu" role="menu">
-				<li role="presentation"><a role="menuitem" tabindex="-1"
-					href="#"> <label
-						class="<s:if test="%{viewCreationDate}" > active</s:if>">
-							<wpsf:checkbox name="viewCreationDate" id="viewCreationDate" />&#32;
-							<s:text name="label.creationDate" />
-					</label></a></li>
-				<li role="presentation"><a role="menuitem" tabindex="-1"
-					href="#"> <label
-						class="<s:if test="%{viewTypeDescr}" > active</s:if>"> <wpsf:checkbox
-								name="viewTypeDescr" id="viewTypeDescr" />&#32; <s:text
-								name="name.contentType" />
-					</label></a></li>
-				<li role="presentation"><a role="menuitem" tabindex="-1"
-					href="#"> <label
-						class="<s:if test="%{viewStatus}" > active</s:if>"> <wpsf:checkbox
-								name="viewStatus" id="viewStatus" />&#32; <s:text
-								name="name.contentStatus" />
-					</label></a></li>
-				<li role="presentation"><a role="menuitem" tabindex="-1"
-					href="#"> <label
-						class="<s:if test="%{viewGroup}" > active</s:if>"> <wpsf:checkbox
-								name="viewGroup" id="viewGroup" />&#32; <s:text
-								name="label.group" />
-					</label></a></li>
-				<li role="presentation"><a role="menuitem" tabindex="-1"
-					href="#"> <label
-						class="<s:if test="%{viewCode}" > active</s:if>" for="viewCode">
-							<wpsf:checkbox name="viewCode" id="viewCode" />&#32; <s:text
-								name="label.code" />
-					</label></a></li>
-				<li role="presentation"><wpsf:submit type="button"
-						cssClass="btn-no-button">
-						<s:text name="label.table.update" />
-					</wpsf:submit></li>
-			</ul>
-		</div>
-	</div>
-	--%>
-	
     <!-- New Content Button -->
     <div class="col-xs-12">
         <div class="btn-group pull-right mt-20">
@@ -622,7 +571,7 @@
 					
 					<div class="col-xs-12 no-padding">
 						<div class="mt-20">
-							<table class="table table-striped table-bordered table-hover" id="contentListTable">
+							<table class="table table-striped table-bordered table-hover content-list" id="contentListTable">
 								<thead>
 									<tr>
 										<th class="text-center">
@@ -821,7 +770,7 @@
 									</s:iterator>
 								</tbody>
 							</table>
-            </div>
+						</div>
 					</div>
 
 					<div class="content-view-pf-pagination table-view-pf-pagination clearfix mt-20 mb-20">

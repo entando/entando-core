@@ -223,7 +223,7 @@ $(function() {
 	
 	function setStickyToolbar() {
 	    var width = $("#sticky-toolbar").parent().width();
-	    $("#sticky-toolbar").css({position: 'fixed', bottom: 0, zIndex: 9999, width: width});
+	    $("#sticky-toolbar").css({position: 'fixed', bottom: 0, zIndex: 1020, width: width});
 	}
 </script>
 

@@ -10,36 +10,43 @@
 		<s:if test="#currentResource != null">
 			<s:if test="!(#attributeTracer.monoListElement) || ((#attributeTracer.monoListElement) && (#attributeTracer.compositeElement))">
 				<div class="panel panel-default margin-small-top">
-				<%-- remove resource button --%>
-					<div class="panel-heading text-right">
-						<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/removeResourceSubmit.jsp">
-							<s:param name="resourceTypeCode">Image</s:param>
-						</s:include>
-					</div>
 			</s:if>
-			<div class="row panel-body">
+			<div class="panel-body">
 				<%-- download --%>
 					<div class="col-xs-12 col-sm-3 col-lg-2 text-center">
-						<a href="<s:property value="#defaultResource.getImagePath('0')" />" title="<s:text name="label.img.original" />">
+						<a href="<s:property value="#defaultResource.getImagePath('0')" />" 
+                            title="<s:text name="label.img.original" />" class="mt-5 mb-20 display-block">
 							<img class="img-thumbnail" src="<s:property value="#defaultResource.getImagePath('1')"/>" alt="<s:property value="#defaultResource.descr"/>" style="height:90px; max-width:130px" />
 						</a>
 					</div>
 				<%-- label and input --%>
-					<div class="col-xs-12 col-sm-9 col-lg-10 form-horizontal margin-large-top">
-				  	<div class="form-group">
-							<label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />">
-								<abbr title="<s:text name="label.img.text.long" />"><s:text name="label.img.text.short" /></abbr>
+				<div class="col-xs-12 col-sm-9 col-lg-10 form-horizontal margin-large-top">
+                    <div class="form-group">
+	                    <div class="col-xs-12">
+                            <p>
+                                <strong><s:text name="label.description" />:</strong>&nbsp;
+                                <s:property value="#defaultResource.description" />
+                                <br />
+                                <strong><s:text name="label.filename" />:</strong>&nbsp;
+                                <s:property value="#defaultResource.masterFileName" />
+                            </p>
+
+							<label class="col-md-1 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />">
+								<abbr title="<s:text name="label.img.text.long" />"><s:text name="label.img.text.short" /></abbr>:
 							</label>
-							<div class="col-xs-10">
+                            <div class="col-md-11 no-padding">
 								<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
-								<code>
-									<s:text name="label.description" />:&nbsp;<s:property value="#defaultResource.description" />
-									<br />
-									<s:text name="label.filename" />:&nbsp;<s:property value="#defaultResource.masterFileName" />
-								</code>
 							</div>
 						</div>
 					</div>
+					<s:if test="!(#attributeTracer.monoListElement) || ((#attributeTracer.monoListElement) && (#attributeTracer.compositeElement))">
+						<div class="text-right">
+		                    <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/removeResourceSubmit.jsp">
+		                        <s:param name="resourceTypeCode">Image</s:param>
+		                    </s:include>
+	                    </div>
+                    </s:if>
+				</div>
 			</div>
 			<s:if test="!(#attributeTracer.monoListElement) || ((#attributeTracer.monoListElement) && (#attributeTracer.compositeElement))">
 				</div>

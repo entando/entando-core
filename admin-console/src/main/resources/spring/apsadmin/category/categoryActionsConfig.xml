@@ -15,5 +15,4 @@
 		<property name="categoryManager" ref="CategoryManager" />
 		<property name="treeHelper" ref="categoryActionHelper" />
 	</bean>
-	
 </beans>

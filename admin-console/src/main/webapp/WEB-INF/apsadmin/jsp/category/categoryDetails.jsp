@@ -2,19 +2,21 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><s:text name="menu.configure" /></li>
-	<li><s:text name="title.categoryManagement" /></li>
-	<li class="page-title-container"><s:text
-			name="title.categoryDetail" /></li>
+    <li><s:text name="menu.configure"/></li>
+    <li>
+        <a href="<s:url namespace="/do/Category" action="viewTree" />">
+            <s:text name="title.categoryManagement" />
+        </a>
+    </li>
+    <li class="page-title-container"><s:text name="title.categoryDetail"/></li>
 </ol>
 <h1 class="page-title-container">
-	<s:text name="title.categoryDetail" />
-	<span class="pull-right"> <a tabindex="0" role="button"
-		data-toggle="popover" data-trigger="focus" data-html="true" title=""
-		data-content="TO be inserted" data-placement="left"
-		data-original-title=""><i class="fa fa-question-circle-o"
-			aria-hidden="true"></i></a>
-	</span>
+    <s:text name="title.categoryDetail"/>
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+           data-content="TO be inserted" data-placement="left" data-original-title="">
+            <i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
 </h1>
 <div class="text-right">
 	<div class="form-group-separator"></div>

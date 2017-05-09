@@ -3,7 +3,11 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="menu.configure"/></li>
-    <li><s:text name="title.categoryManagement"/></li>
+    <li>
+        <a href="<s:url namespace="/do/Category" action="viewTree" />">
+            <s:text name="title.categoryManagement" />
+        </a>
+    </li>
     <li class="page-title-container"><s:text name="title.categoryReference" /></li>
 </ol>
 <h1 class="page-title-container">

@@ -321,7 +321,12 @@
 		<put-attribute name="title" value="title.guiFragmentManagement" />
 		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-references.jsp" />
 	</definition>
-	
+        
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.settings">
+        <put-attribute name="title" value="title.guiFragmentManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-setting.jsp" />
+    </definition>
+    	
     <definition extends="layout.default" name="admin.PageModel.list">
         <put-attribute name="title" value="title.pageModelManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-list.jsp" />

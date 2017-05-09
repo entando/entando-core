@@ -150,7 +150,7 @@
                             <s:elseif test="null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0">
                                 <s:set var="relatedApiMethodVar" value="#showletTypeApiMappingsVar[#concreteShowletTypeVar.code]" />
                             </s:elseif>
-                            <s:if test="%{(null != #relatedApiMethodVar) || (null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0) ||(#firstType.optgroup == 'userShowletCode' && !#concreteShowletTypeVar.isLocked() && (#showletUtilizers == null || #showletUtilizers.size() == 0))}">
+                            <s:if test="%{(null != #relatedApiMethodVar) || (null != #concreteShowletTypeVar.typeParameters && #concreteShowletTypeVar.typeParameters.size() > 0) ||(#firstType.optgroup == 'userShowletCode' && !#concreteShowletTypeVar.isLocked() || (#showletUtilizers != null && #showletUtilizers.size() > 0))}">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         <span class="fa fa-ellipsis-v"></span></button>

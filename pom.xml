@@ -31,6 +31,17 @@
 		<name>Entando Inc.</name>
 		<url>http://www.entando.com/</url>
 	</organization>
+	<profiles>
+            <profile>
+                <id>java8</id>
+                <activation>
+                   <jdk>[1.8,)</jdk>
+                </activation>
+                <properties>
+                    <javadoc.opts>-Xdoclint:none</javadoc.opts>
+                </properties>
+             </profile>
+        </profiles>
 	<properties>
 		
 		<!--
@@ -133,10 +144,8 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
-						<!-- uncomment this configuration if you want to use jdk 1.8 -->
 						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
-							<failOnError>false</failOnError>
+							<additionalparam>${javadoc.opts}</additionalparam>
 						</configuration>
 					</execution>
 				</executions>

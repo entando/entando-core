@@ -8,7 +8,8 @@
 <s:set var="showletUtilizers" value="showletUtilizers" />
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.widgetManagement" /></li>
+    <li>UX Patterns</li>
+    <li><a href="<s:url action="viewWidgets" />"><s:text name="title.widgetManagement" /></li></a>
     <li class="page-title-container"><s:text name="title.widgetManagement.pages" />: <s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" /></li>
 </ol>
 
@@ -51,10 +52,10 @@
 <wpsa:subset source="#showletUtilizers" count="10" objectName="groupShowletUtilizers" advanced="true" offset="5">
 <s:set var="group" value="#groupShowletUtilizers" />
 
-<div class="text-center">
+<!--<div class="text-center">
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-</div>
+</div>-->
 
 <s:iterator var="singlePage">
 
@@ -158,8 +159,8 @@
 								<s:param name="pageCode"><s:property value="#singlePage.code"/></s:param>
 								<s:param name="frame"><s:property value="#rowstatus.index"/></s:param>
 								<s:param name="widgetTypeCode"><s:property value="#showletTypeVar.code"/></s:param>
-							</s:url>" title="<s:text name="label.clear" />:&#32;<s:property value="#rowstatus.index"/>&#32;&middot;&#32;<s:property value="#singlePage.model.getFrames()[#rowstatus.index]"/>" class="btn btn-warning pull-right">
-						<span class="icon fa fa-eraser"></span>
+							</s:url>" title="<s:text name="label.clear" />:&#32;<s:property value="#rowstatus.index"/>&#32;&middot;&#32;<s:property value="#singlePage.model.getFrames()[#rowstatus.index]"/>" class="pull-right">
+						<span class="fa fa-trash-o fa-lg"></span>
 					</a>
 				</div>
 
@@ -239,9 +240,16 @@
 </table>
 --%>
 
-<div class="text-center">
-	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-</div>
+        <div class="content-view-pf-pagination clearfix">
+            <div class="form-group">
+                <span><s:include
+                        value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                <div class="mt-5">
+                    <s:include
+                        value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                </div>
+            </div>
+        </div>
 </wpsa:subset>
 
 </s:form>

@@ -8,4 +8,4 @@
 	<wpsa:actionSubParam name="listLangCode" value="%{#lang.code}" />
 </wpsa:actionParam>
 
-<wpsf:submit type="button" action="%{#actionName}" cssClass="btn btn-default" ><span class="icon fa fa-plus-square"></span>&#32;<s:text name="label.add" /></wpsf:submit>
+<wpsf:submit type="button" action="%{#actionName}" cssClass="btn btn-default btn-long" >&#32;<s:text name="label.add" /></wpsf:submit>

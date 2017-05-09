@@ -136,7 +136,6 @@
                         
                         </p>
                         <div class="col-xs-12 no-padding">
-                            <div class="mt-20">
                                 <table class="table table-striped table-bordered table-hover content-list no-mb" id="labelTable">
                                     <thead>
                                         <tr>
@@ -191,9 +190,8 @@
                                     </s:if>
                                     </tbody>
                                 </table>
-                            </div>
                         </div>
-                        <div class="content-view-pf-pagination table-view-pf-pagination clearfix">
+                        <div class="content-view-pf-pagination clearfix">
                             <div class="form-group">
                                 <span><s:include
                                         value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>

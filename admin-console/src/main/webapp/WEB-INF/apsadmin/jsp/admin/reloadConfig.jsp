@@ -4,7 +4,7 @@
 	<li><s:text name="menu.configure"/></li>
 	<li>
 		<a href="<s:url action="reloadChoose" namespace="/do/BaseAdmin" />">
-			<s:text name="menu.reload" />
+			<s:text name="title.reload.config" />
 		</a>
 	</li>
 	<li class="page-title-container">

@@ -37,4 +37,8 @@
 
 	<s:include
 		value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo-references.jsp" />
+<<<<<<< HEAD
 </div>
+=======
+</div>
+>>>>>>> c18386ec3cbcc252b85d12d337c29ee10c71601d

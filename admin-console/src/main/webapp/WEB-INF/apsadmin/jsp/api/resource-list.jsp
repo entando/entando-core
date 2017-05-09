@@ -76,7 +76,7 @@
                         </s:if>
                     </s:iterator>
                 </div>
-                <table class="table table-striped table-bordered table-hover content-list no-mb">
+                <table class="table table-striped table-bordered table-hover no-mb">
                     <s:iterator value="#resourceFlavourVar" var="resourceVar" status="statusVar" >
                         <s:if test="#statusVar.first">
                             <tr>

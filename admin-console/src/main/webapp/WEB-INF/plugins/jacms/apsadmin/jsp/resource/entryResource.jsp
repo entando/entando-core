@@ -182,7 +182,7 @@
 					<s:set var="selectedPage" value="%{getCategory(selectedTreeNode)}" />
 					<s:set var="currentRoot" value="categoryRoot" />
 					<s:set var="isPosition" value="false" />
-					<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategories.jsp" />
+					<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategoriesJoin.jsp" />
 
 					</tbody>
 				</table>
@@ -196,8 +196,8 @@
 		<h2 class="h4 margin-base-vertical"><s:text name="note.resourceCategories.summary"/></h2>
 		
 		<s:iterator value="categoryCodes" var="categoryCode">
-		<s:set var="resourceCategory" value="%{getCategory(#categoryCode)}"></s:set>
-			<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
+			<s:set var="resourceCategory" value="%{getCategory(#categoryCode)}"></s:set>
+			<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom" style="margin-right: 4px;">
 				<span class="icon fa fa-tag"></span>&#32;
 				<abbr title="<s:property value="#resourceCategory.getFullTitle(currentLang.code)"/>"><s:property value="#resourceCategory.getShortFullTitle(currentLang.code)" /></abbr>&#32;
 				<wpsa:actionParam action="removeCategory" var="actionName" >

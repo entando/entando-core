@@ -6,7 +6,7 @@
     <s:set var="treeItemIconNameVar" value="'fa-folder-o'" />
 </s:if>
 <s:else>
-    <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
+    <s:set var="treeItemIconNameVar" value="'fa-folder'" />
 </s:else>
 
 <s:set var="isHidden" value="%{#selectedTreeNode == null || (#selectedTreeNode != #currentRoot.code)}" ></s:set>

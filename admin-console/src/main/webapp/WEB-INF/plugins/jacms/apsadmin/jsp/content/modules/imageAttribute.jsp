@@ -8,19 +8,21 @@
 <s:if test="#lang.default">
 	<%-- resource filled --%>
 		<s:if test="#currentResource != null">
+            <s:set var="divClass" value="'no-padding'"/>
 			<s:if test="!(#attributeTracer.monoListElement) || ((#attributeTracer.monoListElement) && (#attributeTracer.compositeElement))">
 				<div class="panel panel-default margin-small-top">
+				<s:set var="divClass" value="''"/>
 			</s:if>
-			<div class="panel-body">
+			<div class="panel-body ${divClass}">
 				<%-- download --%>
-					<div class="col-xs-12 col-sm-3 col-lg-2 text-center">
+					<div class="col-xs-12 col-sm-5 col-md-4 col-lg-3 text-center">
 						<a href="<s:property value="#defaultResource.getImagePath('0')" />" 
                             title="<s:text name="label.img.original" />" class="mt-5 mb-20 display-block">
 							<img class="img-thumbnail" src="<s:property value="#defaultResource.getImagePath('1')"/>" alt="<s:property value="#defaultResource.descr"/>" style="height:90px; max-width:130px" />
 						</a>
 					</div>
 				<%-- label and input --%>
-				<div class="col-xs-12 col-sm-9 col-lg-10 form-horizontal margin-large-top">
+				<div class="col-xs-12 col-sm-7 col-md-8 col-lg-9 form-horizontal margin-large-top">
                     <div class="form-group">
 	                    <div class="col-xs-12">
                             <p>
@@ -31,10 +33,10 @@
                                 <s:property value="#defaultResource.masterFileName" />
                             </p>
 
-							<label class="col-md-1 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />">
+							<label class="col-lg-1 col-md-2 col-sm-3 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />">
 								<abbr title="<s:text name="label.img.text.long" />"><s:text name="label.img.text.short" /></abbr>:
 							</label>
-                            <div class="col-md-11 no-padding">
+                            <div class="col-lg-11 col-md-10 col-sm-9 no-padding">
 								<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
 							</div>
 						</div>
@@ -83,21 +85,6 @@
 				<s:if test="!#attributeIsNestedVar">
 					<div class="panel panel-default margin-small-top">
 				</s:if>
-					<div class="<s:if test="#attributeIsNestedVar">pull-right margin-none</s:if><s:else>panel-heading text-right</s:else>">
-						<%-- choose resource button --%>
-						<s:if test="#currentResourceIsEmptyVar">
-							<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/chooseResourceSubmit.jsp">
-								<s:param name="resourceTypeCode">Image</s:param>
-								<s:param name="buttonCssClass">btn btn-default btn-xs</s:param>
-							</s:include>
-						</s:if>
-						<s:else>
-						<%-- remove resource button --%>
-							<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/removeResourceSubmit.jsp">
-								<s:param name="resourceTypeCode">Image</s:param>
-							</s:include>
-						</s:else>
-					</div><%-- pull-righ / panel-heading end --%>
 					<div class="row panel-body">
 						<%-- download icon + button --%>
 							<div class="col-xs-12 col-sm-3 col-lg-2 text-center">
@@ -115,6 +102,22 @@
 										<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
 									</div>
 								</div>
+								
+		                        <%-- choose resource button --%>
+		                        <div class="text-right">
+			                        <s:if test="#currentResourceIsEmptyVar">
+			                            <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/chooseResourceSubmit.jsp">
+			                                <s:param name="resourceTypeCode">Image</s:param>
+			                                <s:param name="buttonCssClass">btn btn-default</s:param>
+			                            </s:include>
+			                        </s:if>
+			                        <s:else>
+			                        <%-- remove resource button --%>
+			                            <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/removeResourceSubmit.jsp">
+			                                <s:param name="resourceTypeCode">Image</s:param>
+			                            </s:include>
+			                        </s:else>
+		                        </div>
 							</div>
 					</div>
 				<s:if test="!#attributeIsNestedVar">

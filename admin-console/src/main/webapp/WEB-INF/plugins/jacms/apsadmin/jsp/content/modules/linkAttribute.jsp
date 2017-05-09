@@ -4,6 +4,13 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <span class="sr-only"><s:text name="note.linkContent" /></span>
 
+<wpsa:actionParam action="chooseLink" var="chooseLinkActionName" >
+    <wpsa:actionSubParam name="parentAttributeName" value="%{#parentAttribute.name}" />
+    <wpsa:actionSubParam name="attributeName" value="%{#attribute.name}" />
+    <wpsa:actionSubParam name="elementIndex" value="%{#elementIndex}" />
+    <wpsa:actionSubParam name="langCode" value="%{#lang.code}" />
+</wpsa:actionParam>
+
 <s:if test="#attribute.symbolicLink != null">
   <div class="panel panel-default margin-small-top">
 </s:if>

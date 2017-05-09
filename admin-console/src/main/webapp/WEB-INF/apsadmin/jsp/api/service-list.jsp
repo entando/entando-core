@@ -97,7 +97,7 @@
                 </p>
                 <div class="panel panel-default" id="<s:property value="#serviceGroupVar" />">
                     <div class="panel-heading"><s:text name="%{#serviceGroupVar}.name" /></div>
-                    <table class="table table-striped table-bordered table-hover content-list no-mb">
+                    <table class="table table-striped table-bordered table-hover no-mb">
                         <tr>
                             <th><s:text name="name.api.service" /></th>
                             <th><s:text name="label.description" /></th>

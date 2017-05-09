@@ -100,7 +100,7 @@
         <s:set var="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />
 
         <div class="col-xs-12 no-padding">
-            <table class="table table-striped table-bordered table-hover content-list no-mb">
+            <table class="table table-striped table-bordered table-hover no-mb">
                 <thead>
                     <tr>
                         <th><s:text name="label.key" /></th>

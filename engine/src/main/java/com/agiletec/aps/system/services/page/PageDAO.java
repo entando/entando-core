@@ -116,6 +116,31 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 //		}
 //		return pages;
 //	}
+	
+	
+	public List<String> loadLastUpdatedPages(int count) {
+		Connection conn = null;
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		List<String> pages = new ArrayList<String>();
+		try {
+			conn = this.getConnection();
+			String query = "select code from pages_metadata_draft order by updatedat desc";
+			stat = conn.prepareStatement(query);
+			res = stat.executeQuery();
+			int limit = 1;
+			while (res.next() && limit <= count) {
+				
+				pages.add(res.getString("code"));
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading lastUpdatedPages",  t);
+			throw new RuntimeException("Error loading lastUpdatedPages",  t);
+		} finally {
+			closeDaoResources(res, stat, conn);
+		}
+		return pages;
+	}
 
 	public List<IPage> loadPages() {
 		Connection conn = null;

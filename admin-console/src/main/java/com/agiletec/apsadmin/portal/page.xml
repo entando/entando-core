@@ -152,6 +152,22 @@
 			</interceptor-ref>
 		</action>
 
+		<action name="status" class="pageFinderAction">
+			<result type="json">
+				<param name="root">pagesStatusResponse</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">pagesStatusResponse</param>
+			</result>
+			<result name="failure" type="json">
+				<param name="root">pagesStatusResponse</param>
+			</result>
+			<interceptor-ref name="jsonStack" />
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">managePages</param>
+			</interceptor-ref>
+		</action>
+
 	</package>
 	
     <package name="core_do/ABSTRACT/Page" extends="entando-default" abstract="true">

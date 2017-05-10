@@ -13,31 +13,29 @@
  */
 package com.agiletec.apsadmin.portal;
 
-import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.aps.system.common.tree.TreeNode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.entando.entando.apsadmin.portal.rs.model.PagesStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import com.agiletec.apsadmin.system.ITreeAction;
-import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_CLOSE;
-import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_OPEN;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
-import static com.opensymphony.xwork2.Action.SUCCESS;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This action class contains all the elements currently use to perform searches across the portal pages.
@@ -46,6 +44,19 @@ import java.util.Set;
 public class PageFinderAction extends AbstractPortalAction implements ITreeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageFinderAction.class);
+
+	public PagesStatusResponse getPagesStatusResponse() {
+		PagesStatusResponse response = null;
+		try {
+			PagesStatus pagesStatus = this.getPageManager().getPagesStatus();
+			response = new PagesStatusResponse(pagesStatus);
+		} catch (Throwable t) {
+			_logger.error("Error loading pagesStatus", t);
+			throw new RuntimeException("Error loading pagesStatus", t);
+		}
+		return response;		
+	}
+	
 	
 	public List<IPage> getPagesFound() {	
 		List<IPage> result = null;

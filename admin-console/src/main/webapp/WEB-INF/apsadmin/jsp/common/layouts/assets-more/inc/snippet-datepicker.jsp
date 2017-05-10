@@ -1,5 +1,7 @@
-<script type="text/javascript">
-$(document).ready(function(){
-	$('.datepicker').datepicker();
-});
+<script>
+    $(function () {
+        var picked = $(".datepicker").datepicker({
+            format: "dd/mm/yyyy"
+        });
+    });
 </script>

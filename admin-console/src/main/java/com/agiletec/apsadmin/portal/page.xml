@@ -159,9 +159,6 @@
 			<result name="input" type="json">
 				<param name="root">pagesStatusResponse</param>
 			</result>
-			<result name="pageTree" type="json">
-				<param name="root">pagesStatusResponse</param>
-			</result>
 			<result name="failure" type="json">
 				<param name="root">pagesStatusResponse</param>
 			</result>

@@ -433,19 +433,15 @@ public class TestPageManager extends BaseTestCase {
 		String testCode = "testcode";
 		try {
 		PagesStatus status = this._pageManager.getPagesStatus();
-		System.out.println(status);
 		
 		IPage parentPage = _pageManager.getDraftPage(this._pageManager.getRoot().getCode());
-		
 		PageModel pageModel = parentPage.getOnlineMetadata().getModel();
-		
 		PageMetadata metadata = PageTestUtil.createPageMetadata(
 				pageModel.getCode(), true, "pagina temporanea", null, null,
 				false, null, null);
 
 		PageMetadata onlineMeta = null;
 		PageMetadata draftMeta = metadata;
-		
 		Page pageToAdd = PageTestUtil.createPage(testCode, parentPage, "free",  onlineMeta, draftMeta, null, null);
 		_pageManager.addPage(pageToAdd);
 		

@@ -926,6 +926,4 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			+ " (pagecode, framepos, widgetcode, config) SELECT pagecode, framepos, widgetcode, config FROM "
 			+ WidgetConfigDraft.TABLE_NAME + " WHERE pagecode = ?";
 	
-	
-	
 }

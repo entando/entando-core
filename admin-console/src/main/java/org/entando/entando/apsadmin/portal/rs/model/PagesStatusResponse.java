@@ -19,10 +19,6 @@ import com.agiletec.aps.system.services.page.PagesStatus;
 
 public class PagesStatusResponse {
 	
-	private int online;
-	private int onlineWithChanges;
-	private int draft;
-	private Date lastUpdate;
 	
 	public PagesStatusResponse() {
 		//
@@ -34,38 +30,44 @@ public class PagesStatusResponse {
 		this.setOnlineWithChanges(pagesStatus.getOnlineWithChanges());
 		this.setLastUpdate(pagesStatus.getLastUpdate());
 	}
-	
-	public int getOnline() {
-		return online;
-	}
-	public void setOnline(int online) {
-		this.online = online;
-	}
-	
-	public int getOnlineWithChanges() {
-		return onlineWithChanges;
-	}
-	public void setOnlineWithChanges(int onlineWithChanges) {
-		this.onlineWithChanges = onlineWithChanges;
-	}
 
-	public int getDraft() {
-		return draft;
-	}
-	public void setDraft(int draft) {
-		this.draft = draft;
-	}
-
-	public Date getLastUpdate() {
-		return lastUpdate;
-	}
-
-	public void setLastUpdate(Date lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
-	
 	public int getTotal() {
 		return this.getOnline() + this.getOnlineWithChanges() + this.getDraft();
 	}
+	
+	
+	public int getOnline() {
+		return _online;
+	}
+	public void setOnline(int online) {
+		this._online = online;
+	}
+	
+	public int getOnlineWithChanges() {
+		return _onlineWithChanges;
+	}
+	public void setOnlineWithChanges(int onlineWithChanges) {
+		this._onlineWithChanges = onlineWithChanges;
+	}
 
+	public int getDraft() {
+		return _draft;
+	}
+	public void setDraft(int draft) {
+		this._draft = draft;
+	}
+
+	public Date getLastUpdate() {
+		return _lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this._lastUpdate = lastUpdate;
+	}
+
+	private int _online;
+	private int _onlineWithChanges;
+	private int _draft;
+	private Date _lastUpdate;
 }
+

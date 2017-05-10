@@ -747,5 +747,4 @@ public class PageManager extends AbstractService
 
 	private IPageDAO _pageDao;
 
-	
 }

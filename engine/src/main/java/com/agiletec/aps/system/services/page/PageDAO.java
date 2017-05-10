@@ -51,71 +51,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private enum WidgetConfigDest {
 		ON_LINE, DRAFT;
 	}
-	
-	/**
-	 * Load a sorted list of the pages and the configuration of the widgets 
-	 * @return the list of pages
-	 */
-//	@Override
-//	public List<IPage> loadPages() {
-//		Connection conn = null;
-//		Statement stat = null;
-//		ResultSet res = null;
-//		List<IPage> pages = null;
-//		try {
-//			conn = this.getConnection();
-//			stat = conn.createStatement();
-//			res = stat.executeQuery(ALL_PAGES);
-//			pages = this.createPages(res);
-//		} catch (Throwable t) {
-//			_logger.error("Error loading pages",  t);
-//			throw new RuntimeException("Error loading pages", t);
-//		} finally {
-//			closeDaoResources(res, stat, conn);
-//		}
-//		return pages;
-//	}
-//	
-//	/**
-//	 * Read & create in a single passage, for efficiency reasons, the pages and the 
-//	 * association of the associated widgets.
-//	 * @param res the result set where to extract pages information from.
-//	 * @return The list of the pages defined in the system
-//	 * @throws Throwable In case of error
-//	 */
-//	protected List<IPage> createPages(ResultSet res) throws Throwable {
-//		int widgetStartOnline = 15;
-//		int widgetStartDraft = 18;
-//		List<IPage> pages = new ArrayList<IPage>();
-//		Page page = null;
-//		Widget onlineWidgets[] = null;
-//		Widget draftWidgets[] = null;
-//		int numFramesOnline = 0;
-//		int numFramesDraft = 0;
-//		String prevCode = null;
-//		while (res.next()) {
-//			String code = res.getString(3);
-//			if (prevCode == null || !code.equals(prevCode)) {
-//				page = this.createPage(code, res);
-//				pages.add(page);
-//				
-//				numFramesOnline = this.getWidgetArrayLength(page.getOnlineMetadata());
-//				if (numFramesOnline >= 0) {
-//					onlineWidgets = new Widget[numFramesOnline];
-//					page.setOnlineWidgets(onlineWidgets);
-//				}
-//				numFramesDraft = this.getWidgetArrayLength(page.getDraftMetadata());
-//				if (numFramesDraft >= 0) {
-//					draftWidgets = new Widget[numFramesDraft];
-//					page.setDraftWidgets(draftWidgets);
-//				}
-//				prevCode = code;
-//			}
-//			this.readWidget(page, numFramesOnline, onlineWidgets, widgetStartOnline, res);
-//			this.readWidget(page, numFramesDraft, draftWidgets, widgetStartDraft, res);
-//		}
-//		return pages;
-//	}
 
 	public List<IPage> loadPages() {
 		Connection conn = null;
@@ -936,17 +871,12 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private static final String DELETE_WIDGETS_FOR_PAGE_ONLINE = 
 		"DELETE FROM " + WidgetConfig.TABLE_NAME + " WHERE pagecode = ? ";
 
-//	private static final String DELETE_WIDGET_FOR_PAGE_ONLINE = 
-//		DELETE_WIDGETS_FOR_PAGE + " AND framepos = ? ";
-
 	private static final String DELETE_WIDGETS_FOR_PAGE_DRAFT = 
 			"DELETE FROM " + WidgetConfigDraft.TABLE_NAME + " WHERE pagecode = ? ";
 
 	private static final String DELETE_WIDGET_FOR_PAGE_DRAFT  = 
 			DELETE_WIDGETS_FOR_PAGE_DRAFT + " AND framepos = ? ";
 
-	
-	
 	private static final String MOVE_UP = 
 		"UPDATE pages SET pos = (pos - 1) WHERE code = ? ";
 
@@ -995,5 +925,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			"INSERT INTO " + WidgetConfig.TABLE_NAME
 			+ " (pagecode, framepos, widgetcode, config) SELECT pagecode, framepos, widgetcode, config FROM "
 			+ WidgetConfigDraft.TABLE_NAME + " WHERE pagecode = ?";
+	
+	
 	
 }

@@ -167,5 +167,11 @@ public interface IPageManager extends ITreeNodeManager {
 	public List<IPage> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
 	
 	public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException;
+
+	/**
+	 * Extract page statistics for the given groupCodes
+	 * @return a PagesStatus pojo
+	 */
+	public PagesStatus getPagesStatus();
 	
 }

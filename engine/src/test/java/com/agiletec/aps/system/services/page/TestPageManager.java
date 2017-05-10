@@ -429,6 +429,55 @@ public class TestPageManager extends BaseTestCase {
 		assertEquals("customer_subpage_2", pageUtilizers4.get(6).getCode());
 	}
 
+	public void pageStatusTest() throws ApsSystemException {
+		String testCode = "testcode";
+		try {
+		PagesStatus status = this._pageManager.getPagesStatus();
+		System.out.println(status);
+		
+		IPage parentPage = _pageManager.getDraftPage(this._pageManager.getRoot().getCode());
+		
+		PageModel pageModel = parentPage.getOnlineMetadata().getModel();
+		
+		PageMetadata metadata = PageTestUtil.createPageMetadata(
+				pageModel.getCode(), true, "pagina temporanea", null, null,
+				false, null, null);
+
+		PageMetadata onlineMeta = null;
+		PageMetadata draftMeta = metadata;
+		
+		Page pageToAdd = PageTestUtil.createPage(testCode, parentPage, "free",  onlineMeta, draftMeta, null, null);
+		_pageManager.addPage(pageToAdd);
+		
+		PagesStatus newStatus = this._pageManager.getPagesStatus();
+		assertEquals(newStatus.getOnline(), status.getOnline());
+		assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
+		assertEquals(newStatus.getDraft(), status.getDraft() + 1);
+		assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+		
+		this._pageManager.setPageOnline(testCode);
+		newStatus = this._pageManager.getPagesStatus();
+		assertEquals(newStatus.getOnline(), status.getOnline() + 1);
+		assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
+		assertEquals(newStatus.getDraft(), status.getDraft());
+		assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+		
+		IPage test = this._pageManager.getPage(testCode);
+		test.getDraftMetadata().setTitle("it", "modxxxx");
+		this._pageManager.updatePage(test);
+		test = this._pageManager.getPage(testCode);
+		newStatus = this._pageManager.getPagesStatus();
+		
+		assertEquals(newStatus.getOnline(), status.getOnline());
+		assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges() + 1);
+		assertEquals(newStatus.getDraft(), status.getDraft());
+		assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+	
+		} finally {
+			this._pageManager.deletePage(testCode);
+		}
+	}
+	
 	private Widget getWidgetForTest(String widgetTypeCode, ApsProperties config)
 			throws Throwable {
 		WidgetType type = this._widgetTypeManager.getWidgetType(widgetTypeCode);

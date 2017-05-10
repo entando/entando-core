@@ -15,6 +15,7 @@ package com.agiletec.aps.system.services.page;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class PageManager extends AbstractService
 	 * @throws ApsSystemException In case of database access error.
 	 */
 	private void loadPageTree() throws ApsSystemException {
+		PagesStatus status = new PagesStatus();
 		IPage newRoot = null;
 		List<IPage> pageList = null;
 		try {
@@ -74,6 +76,7 @@ public class PageManager extends AbstractService
 				if (page.getCode().equals(page.getParentCode())) {
 					newRoot = page;
 				}
+				this.buildPagesStatus(status, page);
 			}
 			for (int i = 0; i < pageList.size(); i++) {
 				Page page = (Page) pageList.get(i);
@@ -88,12 +91,30 @@ public class PageManager extends AbstractService
 			}
 			this._root = newRoot;
 			this._pages = newMap;
+			this._pagesStatus = status;
 		} catch (ApsSystemException e) {
 			throw e;
 		} catch (Throwable t) {
 			_logger.error("Error while building the tree of pages", t);
 			//ApsSystemUtils.logThrowable(t, this, "loadPageTree");
 			throw new ApsSystemException("Error while building the tree of pages", t);
+		}
+	}
+
+	protected void buildPagesStatus(PagesStatus status, IPage page) {
+		Date currentDate = page.getDraftMetadata().getUpdatedAt();
+		if (page.isOnline()) {
+			if (page.isChanged()) {
+				status.setOnlineWithChanges(status.getOnlineWithChanges() + 1); 
+			} else {
+				status.setOnline(status.getOnline() + 1); 
+			}
+		} else {
+			status.setDraft(status.getDraft() + 1); 
+		}
+		
+		if (null == status.getLastUpdate() || status.getLastUpdate().before(currentDate)) {
+			status.setLastUpdate(currentDate);
 		}
 	}
 	
@@ -699,6 +720,11 @@ public class PageManager extends AbstractService
 		}
 		this.loadPageTree();
 		return resultOperation;
+	}	
+
+	@Override
+	public PagesStatus getPagesStatus() {
+		return this._pagesStatus;
 	}
 	
 	protected IPageDAO getPageDAO() {
@@ -717,7 +743,9 @@ public class PageManager extends AbstractService
 	 * The map of pages, indexed by code.
 	 */
 	private Map<String, IPage> _pages;
+	private PagesStatus _pagesStatus = new PagesStatus();
 
 	private IPageDAO _pageDao;
+
 	
 }

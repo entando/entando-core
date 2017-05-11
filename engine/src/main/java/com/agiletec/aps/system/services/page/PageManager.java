@@ -732,7 +732,7 @@ public class PageManager extends AbstractService
 				return pages;
 			}
 			for (String pageCode : paceCodes) {
-				IPage page = this.getPage(pageCode);
+				IPage page = this.getPage(pageCode, false);
 				pages.add(page);
 			}
 			
@@ -742,8 +742,6 @@ public class PageManager extends AbstractService
 		}
 		return pages;
 	}
-
-	
 
 	@Override
 	public PagesStatus getPagesStatus() {

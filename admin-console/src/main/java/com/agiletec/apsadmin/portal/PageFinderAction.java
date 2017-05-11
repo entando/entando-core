@@ -73,7 +73,6 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 			List<IPage> pages = this.getPageManager().loadLastUpdatedPages(this.getLastUpdateResponseSize());
 			if (null != pages && ! pages.isEmpty()) {
 				response = new ArrayList<PageJO>();
-				
 				Iterator<IPage> it = pages.iterator();
 				while (it.hasNext()) {
 					IPage page = it.next();

@@ -2,13 +2,12 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="menu.configure"/></li>
-    <li>
-        <a href="<s:url namespace="/do/Category" action="viewTree" />">
-            <s:text name="title.categoryManagement" />
-        </a>
-    </li>
-    <li class="page-title-container"><s:text name="title.categoryReference" /></li>
+	<li><s:text name="menu.configure" /></li>
+	<li><a href="<s:url namespace="/do/Category" action="viewTree" />">
+			<s:text name="title.categoryManagement" />
+	</a></li>
+	<li class="page-title-container"><s:text
+			name="title.categoryReference" /></li>
 </ol>
 <h1 class="page-title-container">
 	<s:text name="title.categoryReference" />
@@ -37,8 +36,4 @@
 
 	<s:include
 		value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo-references.jsp" />
-<<<<<<< HEAD
 </div>
-=======
-</div>
->>>>>>> c18386ec3cbcc252b85d12d337c29ee10c71601d

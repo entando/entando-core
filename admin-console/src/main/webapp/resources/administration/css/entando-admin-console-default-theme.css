@@ -1357,6 +1357,9 @@ ul {
 .table-w-60{
     width: 60%;
 }
+.table-w-70{
+    width: 70%;
+}
 .table-txt-wrap{
     white-space: normal !important;
     word-wrap: break-word  !important;  
@@ -1429,7 +1432,6 @@ ul {
 .ml-60 {margin-left: 60px;}
 .no-ml {margin-left: 0;}
 
-
 .pr-5 {padding-left: 5px;}
 .pr-10 {padding-right: 10px}
 .pr-20 {padding-left: 20px;}
@@ -1452,14 +1454,12 @@ ul {
 
 .btn-long {padding: 2px 60px;}
 
-
 /* --------------- Forms --------------- */
 .form-group .control-label .fa.required-icon {
     position: relative;
     top: -2px;
     right: 0;
 }
-
 
 /* --------------- Button group with form-control --------------- */
 
@@ -1482,13 +1482,11 @@ ul {
 .btn-with-form-control-container .inline-block {display: inline-block}
 .btn-with-form-control-container .inline-block + .inline-block {margin-left: -3px}
 
-
 /* --------------- Table Responsive --------------- */
 
 .table-responsive table td {
     white-space: normal!important;
 }
-
 
 /* --------------- Content List Table --------------- */
 
@@ -1547,7 +1545,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     height: auto;
 }
 
-
 /* --------------- Category List Table --------------- */
 
 .table-treegrid .expand-button {
@@ -1564,7 +1561,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     cursor: pointer;
     display: none;
 }
-
 
 /* --------------- Pager --------------- */
 
@@ -1587,7 +1583,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     border-radius: 1px;
     box-shadow: none;
 }
-
 .advanced-search  .panel-group .panel-heading {
     background-image: none;
 }
@@ -1595,22 +1590,17 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .advanced-search  .panel-group .panel-heading + .panel-collapse .panel-body {
     border-top: 1px solid #ecebeb;
 }
-
 .advanced-search  .panel-group .panel-title>a {
     color: #4d5258;
     font-weight: 400;
     font-size: 13px;
 }
-
 .advanced-search.panel-group .panel-title>a:after {
     margin-left: 10px;
 }
-
 /* --------------- Color --------------- */
-
 .white {color: #fff}
 .white:hover {color: #fff}
-
 
 /* --------------- Datepicker --------------- */
 
@@ -1637,9 +1627,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     .toolbar-pf-results .dropdown {
         padding: 0 20px;
     }
-
 }
-
 @media (max-width: 767px) {
     .table-view-pf-toolbar label {display: none};
 
@@ -1666,7 +1654,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .th-custom-width{
     width: 60px;
 }
-
 .advanced-filter{
     padding:20px 2px 10px;
 }
@@ -1678,4 +1665,19 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 }
 .table-view-pf-actions:last-child {
     background: transparent;
+}
+/*---------required fileds on page edit-------*/
+.required-fields-edit{
+    margin:10px 0 0 0;
+    float:right;
+    font-size: 12px;
+    color: #aaabad;
+}
+/*---------language chips-----------*/
+.lang-chips{
+    padding: 4px;
+    color: white;
+    background: #23a8e0;
+    font-size: 12px;
+    font-weight: 600;
 }

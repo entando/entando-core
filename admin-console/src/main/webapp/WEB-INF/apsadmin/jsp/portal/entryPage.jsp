@@ -23,13 +23,13 @@
 
 <h1 class="page-title-container">
     <s:if test="strutsAction == 1">
-        <s:text name="title.newPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+        <s:text name="title.newPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
             </s:if>
             <s:elseif test="strutsAction == 2">
-                <s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+                <s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
             </s:elseif>
             <s:elseif test="strutsAction == 3">
-                <s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+                <s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
             </s:elseif>
 </h1>
 
@@ -90,15 +90,7 @@
             </s:if>
         </p>
 
-
-        <div class="section-divider-wrapper form-group">
-            <div class="col-sm-2">
-                <span class="section-divider">1</span> <span class="control-label label-group-name"><s:text name="label.info" /></span>
-            </div>
-            <div class="col-sm-10 text-right">
-                <div class="form-group-separator"><s:text name="label.requiredFields" /></div>               
-            </div>
-        </div>
+        <legend><s:text name="label.info" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
 
         <s:iterator value="langs">
             <%-- lang --%>
@@ -129,7 +121,7 @@
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="pageCode">
                 <s:text name="name.pageCode" />&nbsp;<i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
-                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>                
+                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.code" />" data-placement="right"><span class="fa fa-info-circle"></span></a>                
             </label>
             <div class="col-sm-10">
                 <wpsf:textfield name="pageCode" id="pageCode" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
@@ -209,17 +201,7 @@
         </s:if>
 
         <s:if test="strutsAction != 3">
-
-            <div class="section-divider-wrapper form-group">
-                <div class="col-sm-2">
-                    <span class="section-divider">2</span><span class="control-label label-group-name"><s:text name="label.groups" /></span>
-                </div>
-                <div class="col-sm-10 text-right">
-                    <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
-                </div>
-            </div>
-
-
+            <legend><s:text name="page.groups" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
 
             <%-- ownerGroup --%>
             <s:set var="fieldErrorsVar" value="%{fieldErrors['ownerGroup']}" />
@@ -255,7 +237,7 @@
                     <div class="input-group">
                         <wpsf:select name="extraGroupName" id="extraGroups" list="groups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" cssClass="combobox form-control" />
                         <span class="input-group-btn">
-                            <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-default">
+                            <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-primary">
                                 <span class="icon fa fa-plus"></span>&#32;
                                 <s:property value="label.join" />
                             </wpsf:submit>
@@ -285,15 +267,7 @@
                 </div>
             </div>
 
-            <div class="section-divider-wrapper form-group">
-                <div class="col-sm-2">
-                    <span class="section-divider">3</span> <span class="control-label label-group-name"><s:text name="label.settings" /></span>
-                </div>
-                <div class="col-sm-10 text-right">
-                    <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
-                </div>
-            </div>
-
+            <legend><s:text name="label.settings" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
 
             <%-- pageModel --%>
             <s:set var="fieldErrorsVar" value="%{fieldErrors['model']}" />
@@ -303,7 +277,7 @@
             <div class="form-group<s:property value="#controlGroupErrorClass" />">
                 <label class="col-sm-2 control-label" for="ownerGroup">
                     <s:text name="name.pageModel" />&nbsp;<i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
-                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
+                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.pagemodel" />" data-placement="right"><span class="fa fa-info-circle"></span></a>
                 </label>
                 <div class="col-sm-10">
                     <wpsf:select name="model" headerKey="" headerValue="%{getText('note.choose')}" id="model" list="pageModels" listKey="code" listValue="descr" cssClass="form-control"></wpsf:select>
@@ -317,14 +291,14 @@
 
             <div class="form-group form-checkbox">
                 <div class="col-sm-2 control-label">
-                    <label class="display-block" for="defaultShowlet"><s:text name="name.hasDefaultWidgets" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
+                    <label class="display-block" for="defaultShowlet"><s:text name="name.hasDefaultWidgets" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.defaultwidget" />" data-placement="right"><span class="fa fa-info-circle"></span></a>
                 </div>
                 <div class="col-sm-3">
                     <wpsf:checkbox name="defaultShowlet" id="defaultShowlet" cssClass="bootstrap-switch" />
                 </div>
 
                 <div class="col-sm-3 control-label">
-                    <label class="display-block" for="viewerPage"><s:text name="name.isViewerPage" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
+                    <label class="display-block" for="viewerPage"><s:text name="name.isViewerPage" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.ontheflypublishing" />" data-placement="left"><span class="fa fa-info-circle"></span></a>
                 </div>
                 <div class="col-sm-4">
                     <wpsf:checkbox name="viewerPage" id="viewerPage" cssClass="bootstrap-switch" />
@@ -333,7 +307,7 @@
 
             <div class="form-checkbox form-group<s:property value="#controlGroupErrorClass" />">
                 <div class="col-sm-2 control-label">
-                    <label class="display-block" for="showable"><s:text name="name.mainMenu" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
+                    <label class="display-block" for="showable"><s:text name="name.mainMenu" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.showinmenu" />" data-placement="right"><span class="fa fa-info-circle"></span></a>
                 </div>
                 <div class="col-sm-3">
                     <wpsf:checkbox name="showable" id="showable" cssClass="bootstrap-switch" />
@@ -341,11 +315,10 @@
                 </div>
 
                 <div class="col-sm-3 control-label">
-                    <label class="display-block" for="useExtraTitles"><s:text name="name.seo" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="test di test  <a href='#'>pippo</a>." data-placement="top"><span class="fa fa-info-circle"></span></a>
+                    <label class="display-block" for="useExtraTitles"><s:text name="name.seo" /></label>&nbsp;<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.seo" />" data-placement="left"><span class="fa fa-info-circle"></span></a>
                 </div>
                 <div class="col-sm-4">
                     <wpsf:checkbox name="useExtraTitles" id="useExtraTitles" cssClass="bootstrap-switch" />
-                    <!--<span>&#32<abbr lang="en" title="<s:text name="name.SEO.full" />"><s:text name="name.SEO.short" /></abbr></span>-->
                 </div>
             </div>
 
@@ -402,7 +375,7 @@
         <div class="col-md-12"> 
             <div class="form-group pull-right "> 
                 <div class="btn-group">
-                    <wpsf:submit type="button" action="saveConfigure" cssClass="btn btn-primary ">
+                    <wpsf:submit type="button" action="saveConfigure" cssClass="btn btn-success ">
                         <s:text name="label.saveConfig" />
                     </wpsf:submit>
                 </div>

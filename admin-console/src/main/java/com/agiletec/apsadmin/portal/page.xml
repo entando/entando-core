@@ -168,6 +168,22 @@
 			</interceptor-ref>
 		</action>
 
+		<action name="lastUpdated" class="pageFinderAction" method="getLastUpdated">
+			<result type="json">
+				<param name="root">lastUpdatePagesResponse</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">lastUpdatePagesResponse</param>
+			</result>
+			<result name="failure" type="json">
+				<param name="root">lastUpdatePagesResponse</param>
+			</result>
+			<interceptor-ref name="jsonStack" />
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">managePages</param>
+			</interceptor-ref>
+		</action>
+
 	</package>
 	
     <package name="core_do/ABSTRACT/Page" extends="entando-default" abstract="true">

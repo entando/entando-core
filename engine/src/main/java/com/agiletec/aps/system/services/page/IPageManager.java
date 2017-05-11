@@ -174,4 +174,7 @@ public interface IPageManager extends ITreeNodeManager {
 	 */
 	public PagesStatus getPagesStatus();
 	
+	
+	public List<IPage> loadLastUpdatedPages(int size) throws ApsSystemException;
+	
 }

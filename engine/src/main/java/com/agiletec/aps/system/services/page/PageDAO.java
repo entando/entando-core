@@ -810,6 +810,30 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 	
+	@Override
+	public List<String> loadLastUpdatedPages(int size) {
+		Connection conn = null;
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		List<String> pages = new ArrayList<String>();
+		try {
+			conn = this.getConnection();
+			String query = LOAD_LAST_UPDATED_PAGES;
+			stat = conn.prepareStatement(query);
+			res = stat.executeQuery();
+			int limit = 1;
+			while (res.next() && limit++ <= size) {
+				pages.add(res.getString("code"));
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading lastUpdatedPages",  t);
+			throw new RuntimeException("Error loading lastUpdatedPages",  t);
+		} finally {
+			closeDaoResources(res, stat, conn);
+		}
+		return pages;
+	}
+
 	protected IPageModelManager getPageModelManager() {
 		return _pageModelManager;
 	}
@@ -925,5 +949,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			"INSERT INTO " + WidgetConfig.TABLE_NAME
 			+ " (pagecode, framepos, widgetcode, config) SELECT pagecode, framepos, widgetcode, config FROM "
 			+ WidgetConfigDraft.TABLE_NAME + " WHERE pagecode = ?";
-	
+
+	private static final String LOAD_LAST_UPDATED_PAGES = 
+			"SELECT code FROM pages_metadata_draft ORDER BY updatedat DESC";
+
 }

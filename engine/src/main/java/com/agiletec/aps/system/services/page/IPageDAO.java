@@ -93,5 +93,7 @@ public interface IPageDAO {
 	 * @param pageCode The code of the page to set as offline
 	 */
 	public void setPageOffline(String pageCode);
+
+	public List<String> loadLastUpdatedPages(int size);
 	
 }

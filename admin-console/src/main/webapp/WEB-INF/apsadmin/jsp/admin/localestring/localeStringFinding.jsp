@@ -5,15 +5,18 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="menu.configure"/></li>
-    <li class="page-title-container">
+    <li>
+        <%--<a href="<s:url namespace="/do/LocaleString" action="list" />">--%>
         <s:text name="title.languageAndLabels"/>
+        <%--</a>--%>
     </li>
+    <li class="page-title-container"><s:text name="title.languageAdmin.labels"/></li>
 </ol>
 <div class="page-tabs-header">
     <div class="row">
         <div class="col-sm-6">
             <h1>
-                <s:text name="title.languageAdmin.labels"/>
+                <s:text name="title.languageAndLabels"/>
                 <span class="pull-right">
                     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                        data-content="TO be inserted" data-placement="left" data-original-title="">

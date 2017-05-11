@@ -29,13 +29,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class PageTokenManager extends AbstractService implements IPageTokenManager {
 
@@ -68,12 +68,13 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 	@Override
 	public void init() throws Exception {
 		String param = this.getConfigManager().getParam(PREVIEW_HASH);
-		if (StringUtils.isBlank(param)) {
+		if (StringUtils.isBlank(param) || param.trim().length() < HASH_LENGTH) {
 			param = this.generateRandomHash();
 		}
 		this.generateInternalSaltAndPassword(param);
 	}
 
+	@Override
 	public String encrypt(String property) {
 		SecretKeyFactory keyFactory;
 		try {
@@ -92,6 +93,7 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 		return null;
 	}
 
+	@Override
 	public String decrypt(String property) {
 		SecretKeyFactory keyFactory;
 		try {
@@ -108,14 +110,8 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 		return null;
 	}
 
-	public void updateHash() throws Exception {
-		try {
-			String param = this.generateRandomHash();
-			this.generateInternalSaltAndPassword(param);
-		} catch (Throwable t) {
-			throw new Exception("error in updateHash", t);
-		}
-	}
+	
+
 
 	protected void generateInternalSaltAndPassword(String param) {
 		this.salt = StringUtils.left(param, SALT_LENGTH);

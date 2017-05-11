@@ -11,8 +11,7 @@
 			<s:text name="title.addCategory" />
 		</s:if> <s:elseif test="strutsAction == 2">
 			<s:text name="title.editCategory" />
-		</s:elseif>
-	</li>
+		</s:elseif></li>
 </ol>
 <h1 class="page-title-container">
 	<s:if test="strutsAction == 1">
@@ -35,10 +34,6 @@
 <br>
 
 <div id="main" role="main">
-	<%-- 	<s:if test="strutsAction == 2"><s:set var="breadcrumbs_pivotCategoryCode" value="categoryCode" /></s:if> --%>
-	<%-- 	<s:else><s:set var="breadcrumbs_pivotCategoryCode" value="parentCategoryCode" /></s:else> --%>
-	<%-- 	<s:include value="/WEB-INF/apsadmin/jsp/category/include/categoryInfo_breadcrumbs.jsp" /> --%>
-
 	<s:form action="save" cssClass="form-horizontal">
 		<s:set var="currentFieldFieldErrorsVar"
 			value="%{fieldErrors['parentCategoryCode']}" />
@@ -134,7 +129,7 @@
 			</div>
 		</div>
 
-		<!-- 		tree position -->
+		<!-- tree position -->
 		<div
 			class="form-group<s:property value="controlGroupErrorClassVar" />">
 			<div class="col-xs-2 control-label">

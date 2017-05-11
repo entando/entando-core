@@ -697,7 +697,7 @@ public class PageManager extends AbstractService
 			PageModel model = event.getPageModel();
 			String pageModelCode = (null != model) ? model.getCode() : null;
 			if (null != pageModelCode) {
-				List utilizers = this.getPageModelUtilizers(pageModelCode);
+				List<?> utilizers = this.getPageModelUtilizers(pageModelCode);
 				if (null != utilizers && utilizers.size() > 0) {
 					this.init();
 				}
@@ -720,7 +720,28 @@ public class PageManager extends AbstractService
 		}
 		this.loadPageTree();
 		return resultOperation;
-	}	
+	}
+	
+
+	@Override
+	public List<IPage> loadLastUpdatedPages(int size) throws ApsSystemException {
+		List<IPage> pages = new ArrayList<IPage>();
+		try {
+			List<String> paceCodes = this.getPageDAO().loadLastUpdatedPages(size);
+			if (null == paceCodes || paceCodes.isEmpty()) {
+				return pages;
+			}
+			for (String pageCode : paceCodes) {
+				IPage page = this.getPage(pageCode, false);
+				pages.add(page);
+			}
+			
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "loadLastUpdatedPages");
+			throw new ApsSystemException("Error loading loadLastUpdatedPages", t);
+		}
+		return pages;
+	}
 
 	@Override
 	public PagesStatus getPagesStatus() {
@@ -746,5 +767,5 @@ public class PageManager extends AbstractService
 	private PagesStatus _pagesStatus = new PagesStatus();
 
 	private IPageDAO _pageDao;
-
+	
 }

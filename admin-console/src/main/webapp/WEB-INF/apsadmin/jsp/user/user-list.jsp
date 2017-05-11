@@ -109,7 +109,6 @@
 			</div>
 
 			<!-------------Advanced Search----------->
-
 			<div class="panel-group" id="accordion-markup"
 				style="margin: -24px 0 0 0;">
 				<div class="panel panel-default">
@@ -339,50 +338,6 @@
 											</div>
 										</s:if>
 									</div>
-									<%-- COMMENTING OUT UNTIL WE ENCOUNTER SOME VALID USER STORY THAT MAKES US TEST IT
-                                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('DATE')}">
-                                            <s:set var="dateStartInputFieldName"><s:property value="#attributeRoleVar.name" />_dateStartFieldName</s:set>
-                                            <s:set var="dateEndInputFieldName"><s:property value="#attributeRoleVar.name" />_dateEndFieldName</s:set>
-                                            <div class="form-group">
-                                                    <div class="col-sm-10 col-md-offset-2">
-                                                            <label for="<s:property value="%{#currentFieldIdVar}" />_dateStartFieldName"><s:property value="#attributeRoleVar.name" /> ** from date **</label>
-                                                            <wpsf:textfield id="%{#currentFieldIdVar}_dateStartFieldName" name="%{#dateStartInputFieldName}" value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" />
-                                                            <span class="help-block">dd/MM/yyyy</span>
-                                                    </div>
-                                            </div>
-                                            <div class="form-group">
-                                                    <div class="col-sm-10 col-md-offset-2">
-                                                            <label for="<s:property value="%{#currentFieldIdVar}" />_dateEndFieldName"><s:property value="#attributeRoleVar.name" />** to date **</label>
-                                                            <wpsf:textfield id="%{#currentFieldIdVar}_dateEndFieldName" name="%{#dateEndInputFieldName}" value="%{getSearchFormFieldValue(#dateEndInputFieldName)}" />
-                                                            <span class="help-block">dd/MM/yyyy</span>
-                                                    </div>
-                                            </div>
-                                    </s:elseif>
-                                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('NUMBER')}">
-                                            <s:set var="numberStartInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberStartFieldName</s:set>
-                                            <s:set var="numberEndInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberEndFieldName</s:set>
-                                            <p>
-                                                    <label for="<s:property value="%{#currentFieldIdVar}" />_start"><s:property value="#attributeRoleVar.name" /> ** from value **</label>
-                                                    <wpsf:textfield id="%{#currentFieldIdVar}_start" name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" />
-                                            </p>
-                                            <p>
-                                                    <label for="<s:property value="%{#currentFieldIdVar}" />_end"><s:property value="#attributeRoleVar.name" /> ** to value **</label>
-                                                    <wpsf:textfield id="%{#currentFieldIdVar}_end" name="%{#numberEndInputFieldName}" value="%{getSearchFormFieldValue(#numberEndInputFieldName)}" />
-                                            </p>
-                                    </s:elseif>
-                                    <s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('BOOLEAN')}">
-                                            <p>
-                                                    <span class="important"><s:property value="#attributeRoleVar.name" /></span>
-                                            </p>
-                                            <s:set var="booleanInputFieldName" ><s:property value="#attributeRoleVar.name" />_booleanFieldName</s:set>
-                                            <s:set var="booleanInputFieldValue" ><s:property value="%{getSearchFormFieldValue(#booleanInputFieldName)}" /></s:set>
-                                            <ul>
-                                                    <li><wpsf:radio id="none_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="" checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" /><label for="none_<s:property value="#booleanInputFieldName" />"><s:text name="label.bothYesAndNo"/></label></li>
-                                                    <li><wpsf:radio id="true_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="true" checked="%{#booleanInputFieldValue == 'true'}" /><label for="true_<s:property value="#booleanInputFieldName" />"><s:text name="label.yes"/></label></li>
-                                                    <li><wpsf:radio id="false_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="false" checked="%{#booleanInputFieldValue == 'false'}" /><label for="false_<s:property value="#booleanInputFieldName" />"><s:text name="label.no"/></label></li>
-                                            </ul>
-                                    </s:elseif>
-                                    --%>
 								</s:iterator>
 							</s:if>
 							<%-- //search by role --%>
@@ -423,10 +378,6 @@
 			var="hasEditProfilePermission" />
 		<s:set var="hasEditProfilePermission"
 			value="#attr.hasEditProfilePermission" />
-		<%--<div class="text-center">
-            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-        </div>--%>
 		<div class="col-xs-12 no-padding">
 			<div class="mt-20">
 				<table class="table table-striped table-bordered table-hover no-mb">

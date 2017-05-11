@@ -110,9 +110,6 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 		return null;
 	}
 
-	
-
-
 	protected void generateInternalSaltAndPassword(String param) {
 		this.salt = StringUtils.left(param, SALT_LENGTH);
 		this.password = StringUtils.substring(param, SALT_LENGTH);

@@ -720,7 +720,28 @@ public class PageManager extends AbstractService
 		}
 		this.loadPageTree();
 		return resultOperation;
-	}	
+	}
+	
+
+	@Override
+	public List<IPage> loadLastUpdatedPages(int size) throws ApsSystemException {
+		List<IPage> pages = new ArrayList<IPage>();
+		try {
+			List<String> paceCodes = this.getPageDAO().loadLastUpdatedPages(size);
+			if (null == paceCodes || paceCodes.isEmpty()) {
+				return pages;
+			}
+			//todo todo
+			//xxxxxxxxxxxxxxxxx
+			
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "movePage");
+			throw new ApsSystemException("Error while moving a page under a root node", t);
+		}
+		return pages;
+	}
+
+	
 
 	@Override
 	public PagesStatus getPagesStatus() {
@@ -746,5 +767,5 @@ public class PageManager extends AbstractService
 	private PagesStatus _pagesStatus = new PagesStatus();
 
 	private IPageDAO _pageDao;
-
+	
 }

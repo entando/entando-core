@@ -11,7 +11,7 @@ CREATE TABLE pages_metadata_online
   titles text NOT NULL,
   showinmenu smallint NOT NULL,
   extraconfig text,
-  updatedat timestamp without time zone,
+  updatedat timestamp without time zone NOT NULL,
   CONSTRAINT pages_metadata_pkey PRIMARY KEY (code),
   CONSTRAINT pages_metadata_code_fkey FOREIGN KEY (code)
       REFERENCES pages (code) MATCH SIMPLE
@@ -25,15 +25,15 @@ CREATE TABLE pages_metadata_draft
   titles text NOT NULL,
   showinmenu smallint NOT NULL,
   extraconfig text,
-  updatedat timestamp without time zone,
+  updatedat timestamp without time zone NOT NULL,
   CONSTRAINT pages_metadata_draft_pkey PRIMARY KEY (code),
   CONSTRAINT pages_metadata_draft_code_fkey FOREIGN KEY (code)
       REFERENCES pages (code) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-insert into pages_metadata_draft select code, modelcode, titles,showinmenu, extraconfig from pages;
-insert into pages_metadata_online select code, modelcode, titles,showinmenu, extraconfig from pages;
+insert into pages_metadata_draft select code, modelcode, titles,showinmenu, extraconfig, current_timestamp from pages;
+insert into pages_metadata_online select code, modelcode, titles,showinmenu, extraconfig, current_timestamp from pages;
 
 
 

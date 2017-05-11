@@ -697,7 +697,7 @@ public class PageManager extends AbstractService
 			PageModel model = event.getPageModel();
 			String pageModelCode = (null != model) ? model.getCode() : null;
 			if (null != pageModelCode) {
-				List utilizers = this.getPageModelUtilizers(pageModelCode);
+				List<?> utilizers = this.getPageModelUtilizers(pageModelCode);
 				if (null != utilizers && utilizers.size() > 0) {
 					this.init();
 				}
@@ -731,12 +731,14 @@ public class PageManager extends AbstractService
 			if (null == paceCodes || paceCodes.isEmpty()) {
 				return pages;
 			}
-			//todo todo
-			//xxxxxxxxxxxxxxxxx
+			for (String pageCode : paceCodes) {
+				IPage page = this.getPage(pageCode);
+				pages.add(page);
+			}
 			
 		} catch (Throwable t) {
-			ApsSystemUtils.logThrowable(t, this, "movePage");
-			throw new ApsSystemException("Error while moving a page under a root node", t);
+			ApsSystemUtils.logThrowable(t, this, "loadLastUpdatedPages");
+			throw new ApsSystemException("Error loading loadLastUpdatedPages", t);
 		}
 		return pages;
 	}

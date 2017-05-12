@@ -596,6 +596,17 @@ public class ContentManager extends ApsEntityManager
     public boolean isSearchEngineUser() {
         return true;
     }
+
+	@Override
+	public ContentsStatus getContentsStatus() {
+		ContentsStatus status = null;
+		try {
+			status = this.getContentDAO().loadContentStatus();
+		} catch (Throwable t) {
+			_logger.error("error in getContentsStatus");
+		}
+		return status;
+	}
     
     /**
      * Return the DAO which handles all the operations on the contents.

@@ -2,8 +2,8 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
 <script src="<wp:resourceURL />administration/js/jquery-dateFormat.min.js"></script>
-<script src="<wp:resourceURL />administration/js/patternfly/components/c3/c3.min.js"></script>
-<script src="<wp:resourceURL />administration/js/patternfly/components/d3/d3.min.js"></script>
+<script src="<wp:resourceURL />administration/patternfly/js/components/c3/c3.min.js"></script>
+<script src="<wp:resourceURL />administration/patternfly/js/components/d3/d3.min.js"></script>
 
 <script type="text/javascript">
     var pageStatusAction = '<s:url namespace="/do/rs/Page" action="status" />';

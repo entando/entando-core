@@ -28,6 +28,7 @@ import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import static com.opensymphony.xwork2.Action.SUCCESS;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Action principale per la gestione dell'albero delle pagine.
@@ -92,7 +93,7 @@ public class PageTreeAction extends AbstractTreeAction {
     public String moveTree() {
         String selectedNode = this.getSelectedNode();
         String parentPageCode = this.getRequest().getParameter("parentPageCode");
-        if (null == parentPageCode) {
+        if (StringUtils.isBlank(parentPageCode)) {
             parentPageCode = this.getPageManager().getRoot().getCode();
         }
         try {
@@ -187,7 +188,7 @@ public class PageTreeAction extends AbstractTreeAction {
     }
 
     protected String checkSelectedNode(String selectedNode) {
-        if (null == selectedNode || selectedNode.trim().length() == 0) {
+        if (StringUtils.isBlank(selectedNode)) {
             _logger.info("no page to copy selected!");
             this.addActionError(this.getText("error.page.noSelection"));
             return "pageTree";

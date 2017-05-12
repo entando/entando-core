@@ -113,11 +113,11 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 		String filename = tableName + ".sql";
 		File tempFile = null;
 		FileWriter fileWriter = null;
-        BufferedWriter bufferWriter = null;
+		BufferedWriter bufferWriter = null;
 		try {
 			tempFile = this.createEmptyTempFile(filename);
 			fileWriter = new FileWriter(tempFile.getAbsolutePath());
-            bufferWriter = new BufferedWriter(fileWriter);
+			bufferWriter = new BufferedWriter(fileWriter);
 			TableDumpReport tableDumpReport = TableDataUtils.dumpTable(bufferWriter, dataSource, tableName);
 			report.addTableReport(dataSourceName, tableDumpReport);
 		} catch (IOException t) {

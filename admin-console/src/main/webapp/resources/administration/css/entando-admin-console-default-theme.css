@@ -1667,6 +1667,10 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .dashboard .bottom-link {padding: 5px}
 .dashboard .bottom-actions {margin-top: 100%}
 
+.spinner-xl {
+    height: 100px; 
+    width: 100px
+}
 
 @media (max-width: 991px) {
     .table-view-pf-toolbar label {display: none}

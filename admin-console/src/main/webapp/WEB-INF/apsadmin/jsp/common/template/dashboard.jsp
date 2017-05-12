@@ -6,11 +6,6 @@
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%-- TODO: inserire in extra-resources --%>
-<script src="<wp:resourceURL />administration/js/jquery-dateFormat.min.js"></script>
-<script src="<wp:resourceURL />administration/js/patternfly/components/c3/c3.min.js"></script>
-<script src="<wp:resourceURL />administration/js/patternfly/components/d3/d3.min.js"></script>
-
 <jsp:useBean id="now" class="java.util.Date"/>
 <wpsa:entityTypes entityManagerName="jacmsContentManager" var="contentTypesVar" />
 <fmt:formatDate value="${now}" pattern="EEEE, dd MMMM yyyy" var="currentDate"/>
@@ -26,7 +21,7 @@
 <s:set var="dataContent" value="%{'help block'}" />
 <s:set var="dataOriginalTitle" value="%{'Section Help'}" />
 <h1 class="page-title-container">
-    <s:text name="label.dashboard" />
+    <s:text name="title.dashboard" />
     <span class="pull-right"> 
         <span class="date mr-20"><s:property value="#attr.currentDate"/></span>
         <a tabindex="0" role="button"
@@ -44,7 +39,7 @@
 <div id="main" role="main" class="dashboard mt-20">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-8 col-lg-9">
                 <div class="cards-pf">
                     <div class="container-fluid container-cards-pf no-mt">
                         <div class="row row-cards-pf">
@@ -56,8 +51,9 @@
                                         <s:text name="dashboard.pageStatus" />
                                     </h2>
                                     <div class="text-left"><span id="lastUpdate-pages"></span></div>
-                                    <div class="card-pf-body">
-	                                    <ul class="mt-10 text-left ml-20 pt-20">
+                                    <div class="card-pf-body" id="page-status">
+                                        <div class="spinner spinner-xl"></div>
+	                                    <ul class="mt-10 text-left ml-20 pt-20 hidden">
 	                                        <li>
 	                                            <span class="fa fa-circle green mr-10"></span>
 	                                            <span class="card-pf-aggregate-status-count"> 
@@ -96,9 +92,11 @@
                                         <s:text name="dashboard.contentStatus" />
                                     </h2>
                                     <div class="text-left">Last 30 days</div>
-                                    <div class="card-pf-body">
+                                    <div class="card-pf-body" id="content-status">
                                         <div id="contents-donut-chart"
-                                            class="example-donut-chart-right-legend"></div>
+                                            class="example-donut-chart-right-legend">
+                                            <div class="spinner spinner-lg"></div>
+                                        </div>
                                     </div>
                                     <wp:ifauthorized permission="manageContents">
                                         <s:url action="results" namespace="/do/jacms/Content"
@@ -126,26 +124,28 @@
                                             <s:url namespace="/do/Page" action="new" var="newPageURL" />
                                             <s:text name="dashboard.newPage" var="newPageLabel" />
                                             <a href="${newPageURL}" class="btn btn-default"
-                                                title="${newPageLabel}"> <s:text
-                                                    name="dashboard.newPage" />
+                                                title="${newPageLabel}"> 
+                                                <s:text name="dashboard.newPage" />
                                             </a>
                                         <h2 class="card-pf-title">
                                             <s:text name="dashboard.pageList" />
                                         </h2>
                                     </div>
-                                    <div class="card-pf-body">
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th><s:text name="label.description" /></th>
-                                                    <th><s:text name="label.status" /></th>
-                                                    <th><s:text name="label.lastModified" /></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            <%-- TODO: last page list --%>
-                                            </tbody>
-                                        </table>
+                                    <div class="card-pf-body" id="page-table">
+                                        <div class="spinner spinner-xl"></div>
+	                                    <div class="table-responsive hidden">
+	                                        <table id="page-table" class="table table-striped table-bordered no-mb">
+	                                            <thead>
+	                                                <tr>
+	                                                    <th><s:text name="dashboard.pages.description" /></th>
+	                                                    <th class="w2perc text-center"><s:text name="dashboard.pages.status" /></th>
+	                                                    <th class="w4perc text-center"><s:text name="dashboard.pages.lastModified" /></th>
+	                                                </tr>
+	                                            </thead>
+	                                            <tbody>
+	                                            </tbody>
+	                                        </table>
+	                                    </div>
                                     </div>
                                     <wp:ifauthorized permission="managePages">
                                         <s:url namespace="/do/Page" action="viewTree"
@@ -201,14 +201,14 @@
                                             <s:text name="dashboard.contentList" />
                                         </h2>
                                     </div>
-                                    <div class="card-pf-body">
+                                    <div class="card-pf-body" id="content-table">
                                         <table class="table table-striped table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th><s:text name="label.description" /></th>
-                                                    <th><s:text name="label.type" /></th>
-                                                    <th><s:text name="label.status" /></th>
-                                                    <th><s:text name="label.lastModified" /></th>
+                                                    <th><s:text name="dashboard.contents..description" /></th>
+                                                    <th><s:text name="dashboard.contents.type" /></th>
+                                                    <th><s:text name="dashboard.contents.status" /></th>
+                                                    <th><s:text name="dashboard.contents.lastModified" /></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -233,7 +233,7 @@
             </div>
         
             <!-- Right Column -->
-			<div class="col-md-3 sidebar-pf sidebar-pf-right">
+			<div class="col-md-4 col-lg-3 sidebar-pf sidebar-pf-right">
 				<div class="card-pf mt-20">
 					<h2 class="card-pf-title bold no-mb mt-10">
 						<s:text name="dashboard.fastSettings"/>
@@ -251,20 +251,20 @@
 							<li>
                                 <wp:ifauthorized permission="manageCategories">
 									<a href='<s:url action="viewTree" namespace="/do/Category" />'>
-										<s:text name="label.categories" />
+										<s:text name="dashboard.categories" />
 									</a>
 								</wp:ifauthorized>
 							</li>
 							<li>
                                 <wp:ifauthorized permission="manageCategories">
 									<a href='<s:url action="list" namespace="/do/Lang" />'>
-										<s:text name="label.labels" />&amp;<s:text name="label.languages" />
+										<s:text name="dashboard.labels" /> &amp; <s:text name="dashboard.languages" />
 									</a>
 								</wp:ifauthorized>
 							</li>
 							<li>
 								<a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
-									<s:text name="title.reload.config" />
+									<s:text name="dashboard.reloadConfig" />
 								</a>
 							</li>
 						</ul>
@@ -339,74 +339,3 @@
 		</div>
     </div>
 </div>
-
-<%-- TODO: inserire in extra-resources --%>
-<script type="text/javascript">
-	$(document).ready(function(){
-	    // Page status
-		var action = '<s:url namespace="/do/rs/Page"  action="status" />';
-		$.ajax({
-	        url: action,
-	        cache: false,
-	        crossoDomain: true,
-	        complete: function(resp, status) {
-	            if (status == 'success') {
-	            	resp = $.parseJSON(resp.responseText);
-	            	$('#online-pages').html(resp.online);
-	            	$('#onlineWithChanges-pages').html(resp.onlineWithChanges);
-	            	$('#draft-pages').html(resp.draft);
-	            	$('#lastUpdate-pages').html($.format.date(resp.lastUpdate, "dd/MM/yyyy HH:mm:ss"));
-	            	console.log(resp.lastUpdate);
-	            	
-	            }
-	        },
-	        error: function(jqXHR, textStatus, errorThrown) {
-	            window.location.reload(true);
-	        },
-	        processData: false,
-	        dataType: 'json'
-	    });	
-		
-	
-		// Content status
-	    var c3ChartDefaults = $().c3ChartDefaults();
-	
-	    var donutData = {
-	        type : 'donut',
-	        colors : {
-	            "Approved (54)" : "#3f9c35",
-	            "Suspended (250)" : "#f0ab00",
-	            "ApprovedNotWork (54)" : "#8b8d8f",
-	        },
-	        columns : [
-	                [ 'Approved (54)', 54 ],
-	                [ 'Suspended (250)', 250 ],
-	                [ 'ApprovedNotWork (54)', 54 ],
-	        ],
-	    };
-	
-	    var donutChartRightConfig = c3ChartDefaults
-	            .getDefaultDonutConfig();
-	    donutChartRightConfig.bindto = '#contents-donut-chart';
-	    donutChartRightConfig.tooltip = {
-	        show : true
-	    };
-	    donutChartRightConfig.data = donutData;
-	    donutChartRightConfig.legend = {
-	        show : true,
-	        position : 'right'
-	    };
-	    donutChartRightConfig.size = {
-	        width : 400,
-	        height : 161
-	    };
-	    donutChartRightConfig.tooltip = {
-	        contents : $().pfDonutTooltipContents
-	    };
-	
-	    var donutChartRightLegend = c3
-	            .generate(donutChartRightConfig);
-	    $().pfSetDonutChartTitle(
-	            "#contents-donut-chart", "358", "Contents");
-	});
-</script>

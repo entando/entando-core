@@ -63,18 +63,22 @@ public class PageTreeAction extends AbstractTreeAction {
             }
             IPage currentPage = this.getPageManager().getDraftPage(selectedNode);
             if (!isUserAllowed(currentPage.getParent())) {
+                _logger.info("User not allowed!");
                 this.addActionError(this.getText("error.page.userNotAllowed"));
                 return SUCCESS;
             }
             if (this.getPageManager().getRoot().getCode().equals(currentPage.getCode())) {
-                this.addActionError(this.getText("error.page.movementHome.notAllowed"));
+                _logger.info("Root page cannot be moved");
+                this.addActionError(this.getText("error.page.move.rootNotAllowed"));
                 return SUCCESS;
             }
             boolean result = this.getPageManager().movePage(selectedNode, moveUp);
             if (!result) {
                 if (moveUp) {
+                    _logger.info("page movement not allowed");
                     this.addActionError(this.getText("error.page.movementUp.notAllowed"));
                 } else {
+                    _logger.info("page movement not allowed");
                     this.addActionError(this.getText("error.page.movementDown.notAllowed"));
                 }
             }
@@ -130,12 +134,12 @@ public class PageTreeAction extends AbstractTreeAction {
             return "pageTree";
         }
         if (parent.getCode().equals(currentPage.getParentCode())) {
-            _logger.debug("trying to move a node under it's own parent..");
+            _logger.info("trying to move a node under its own parent..");
             this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed"));
             return "pageTree";
         }
         if (parent.isChildOf(selectedNode)) {
-            _logger.info("trying to move a node under it's own child..");
+            _logger.info("trying to move a node under its own child..");
             List<String> args = new ArrayList<String>();
             args.add(parent.getCode());
             args.add(selectedNode);
@@ -145,6 +149,7 @@ public class PageTreeAction extends AbstractTreeAction {
         //group check
         if (!currentPage.getGroup().equals(Group.FREE_GROUP_NAME)
                 && !currentPage.getGroup().equals(parent.getGroup())) {
+            _logger.info("trying to move a node under a node with a differt restriction..");
             this.addActionError(this.getText("error.page.move.differentRestriction.notAllowed"));
             return "pageTree";
         }
@@ -183,19 +188,23 @@ public class PageTreeAction extends AbstractTreeAction {
 
     protected String checkSelectedNode(String selectedNode) {
         if (null == selectedNode || selectedNode.trim().length() == 0) {
+            _logger.info("no page to copy selected!");
             this.addActionError(this.getText("error.page.noSelection"));
             return "pageTree";
         }
         if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(selectedNode)) {
+            _logger.info("trying to copy root page..");
             this.addActionError(this.getText("error.page.virtualRootSelected"));
             return "pageTree";
         }
         IPage selectedPage = this.getPageManager().getDraftPage(selectedNode);
         if (null == selectedPage) {
+            _logger.info("elected page is null!");
             this.addActionError(this.getText("error.page.selectedPage.null"));
             return "pageTree";
         }
         if (!this.isUserAllowed(selectedPage)) {
+            _logger.info("user {} has no permission to copy this page!", this.getCurrentUser().getUsername());
             this.addActionError(this.getText("error.page.userNotAllowed"));
             return "pageTree";
         }

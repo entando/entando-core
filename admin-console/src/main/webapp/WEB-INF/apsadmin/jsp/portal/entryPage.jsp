@@ -140,7 +140,7 @@
 
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="pageCode">
-                <s:text name="title.treePosition" />
+                <s:text name="title.pageTree" />
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
             <div class="col-sm-10">

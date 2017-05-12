@@ -20,9 +20,11 @@ import java.util.Map;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
+import com.sun.tools.xjc.model.CPluginCustomization;
 
 /**
  * Interfaccia base per i Manager dei contenuti.
@@ -199,6 +201,12 @@ public interface IContentManager extends IEntityManager {
     public List<String> loadWorkContentsId(String[] categories, EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException;
     
     public List<String> loadWorkContentsId(String[] categories, boolean orClauseCategoryFilter, EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException;
+    
+	/**
+	 * Extract contents statistics 
+	 * @return a PagesStatus pojo
+	 */
+	public ContentsStatus getContentsStatus();
     
     /**
      * Restituisce la lista di tutti identificativi dei contenuti.

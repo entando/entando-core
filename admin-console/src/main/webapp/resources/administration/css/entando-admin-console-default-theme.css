@@ -1656,6 +1656,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .fs-16 {font-size: 16px}
 .fs-20 {font-size: 20px!important}
 .ln-16 {font-size: 16px}
+.w20perc {width: 20%}
 
 .dashboard .card-pf-body ul {
     line-height: 30px;
@@ -1665,7 +1666,14 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 }
 .dashboard .card-pf-body ul .fa {font-size: 16px;}
 .dashboard .bottom-link {padding: 5px}
-.dashboard .bottom-actions {margin-top: 100%}
+.dashboard .bottom-actions {
+    position: absolute; 
+    bottom: 20px;
+    margin:0;
+}
+.dashboard .sidebar-pf {
+    position: relative;
+}
 
 .spinner-xl {
     height: 100px; 
@@ -1692,8 +1700,16 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
         padding: 0 20px;
     }
     
-    .dashboard .bottom-actions {margin-top: auto;}
-
+    .dashboard .bottom-actions {
+        position: static; 
+        bottom: inherit; 
+        padding-right: 0; 
+        margin:0;
+     }
+     
+     .dashboard .sidebar-pf {
+         height: auto!important;
+     }
 }
 
 @media (max-width: 767px) {

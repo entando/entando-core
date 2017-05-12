@@ -2,7 +2,6 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
-<%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -39,7 +38,7 @@
 <div id="main" role="main" class="dashboard mt-20">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-8 col-lg-9">
+        <div class="col-md-8 col-lg-9 main-column">
                 <div class="cards-pf">
                     <div class="container-fluid container-cards-pf no-mt">
                         <div class="row row-cards-pf">
@@ -63,7 +62,9 @@
 	                                        <li>
 	                                            <span class="fa fa-circle yellow mr-10"></span>
 	                                            <span class="card-pf-aggregate-status-count"> 
-	                                                <span id="onlineWithChanges-pages"></span> <s:text name="dashboard.pages.draftnotonline" />
+	                                                <span id="onlineWithChanges-pages"></span>
+	                                                <s:text name="dashboard.pages.online"/>&#32;&ne;&#32;
+                                                    <s:text name="dashboard.pages.draft"/>
 	                                            </span>
 	                                        </li>
 	                                        <li>
@@ -75,8 +76,7 @@
 	                                    </ul>
                                     </div>
                                     <wp:ifauthorized permission="managePages">
-                                        <s:url namespace="/do/Page" action="viewTree"
-                                            var="pageListURL" />
+                                        <s:url namespace="/do/Page" action="viewTree" var="pageListURL" />
                                         <a href="${pageListURL}" class="bottom-link display-block text-right" 
                                             title="<s:text name="note.goToSomewhere" />: <s:text name="dashboard.pages.pageList" />">
                                             <s:text name="dashboard.pages.pageList" />
@@ -91,7 +91,7 @@
                                     <h2 class="card-pf-title no-mb text-left bold">
                                         <s:text name="dashboard.contentStatus" />
                                     </h2>
-                                    <div class="text-left">Last 30 days</div>
+                                    <div class="text-left"><span id="lastUpdate-contents"></span></div>
                                     <div class="card-pf-body" id="content-status">
                                         <div id="contents-donut-chart"
                                             class="example-donut-chart-right-legend">
@@ -121,11 +121,10 @@
                                 <div class="card-pf card-pf-utilization">
                                     <div class="card-pf-heading">
                                         <p class="card-pf-heading-details">
-                                            <s:url namespace="/do/Page" action="new" var="newPageURL" />
-                                            <s:text name="dashboard.newPage" var="newPageLabel" />
-                                            <a href="${newPageURL}" class="btn btn-default"
-                                                title="${newPageLabel}"> 
-                                                <s:text name="dashboard.newPage" />
+                                            <s:url namespace="/do/Page" action="new" var="addPageURL" />
+                                            <a href="${addPageURL}" class="btn btn-default"
+                                                title="<s:text name="dashboard.addPage" />"> 
+                                                <s:text name="dashboard.addPage" />
                                             </a>
                                         <h2 class="card-pf-title">
                                             <s:text name="dashboard.pageList" />
@@ -138,8 +137,8 @@
 	                                            <thead>
 	                                                <tr>
 	                                                    <th><s:text name="dashboard.pages.description" /></th>
-	                                                    <th class="w2perc text-center"><s:text name="dashboard.pages.status" /></th>
-	                                                    <th class="w4perc text-center"><s:text name="dashboard.pages.lastModified" /></th>
+	                                                    <th class="text-center w20perc"><s:text name="dashboard.pages.status" /></th>
+	                                                    <th class="text-center w20perc"><s:text name="dashboard.pages.lastModified" /></th>
 	                                                </tr>
 	                                            </thead>
 	                                            <tbody>
@@ -169,7 +168,7 @@
                             <div class="col-xs-12">
                                 <div class="card-pf card-pf-utilization">
                                     <div class="card-pf-heading">
-										<span class="card-pf-heading-details"> <wpsa
+										<span class="card-pf-heading-details">
 											<wpsa:entityTypes entityManagerName="jacmsContentManager" var="contentTypesVar" />
 											<span class="btn-group">
 									            <button type="button" class="btn btn-default dropdown-toggle"
@@ -184,10 +183,10 @@
 															property="isAuthToEdit" var="isAuthToEditVar" />
 														<s:if test="%{#isAuthToEditVar}">
 															<li>
-																<s:url action="createNew" namespace="/do/jacms/Content" var="newContentURL">
+																<s:url action="createNew" namespace="/do/jacms/Content" var="addContentURL">
 	                                                                <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
 	                                                            </s:url>
-	                                                            <a href="${newContentURL}" 
+	                                                            <a href="${addContentURL}" 
 	                                                               title="<s:text name="label.new" />&#32;<s:property value="%{#contentTypeVar.typeDescr}" />">
 	                                                                <s:text name="label.new" />&#32;<s:property value="%{#contentTypeVar.typeDescr}" />
 	                                                            </a>
@@ -202,23 +201,24 @@
                                         </h2>
                                     </div>
                                     <div class="card-pf-body" id="content-table">
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th><s:text name="dashboard.contents..description" /></th>
-                                                    <th><s:text name="dashboard.contents.type" /></th>
-                                                    <th><s:text name="dashboard.contents.status" /></th>
-                                                    <th><s:text name="dashboard.contents.lastModified" /></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            <%-- TODO: last content list --%>
-                                            </tbody>
-                                        </table>
+                                        <div class="table-responsive hidden">
+	                                        <table class="table table-striped table-bordered no-mb">
+	                                            <thead>
+	                                                <tr>
+	                                                    <th><s:text name="dashboard.contents.description" /></th>
+	                                                    <th><s:text name="dashboard.contents.author" /></th>
+	                                                    <th><s:text name="dashboard.contents.type" /></th>
+	                                                    <th class="text-center w20perc"><s:text name="dashboard.contents.status" /></th>
+	                                                    <th class="text-center w20perc"><s:text name="dashboard.contents.lastModified" /></th>
+	                                                </tr>
+	                                            </thead>
+	                                            <tbody>
+	                                            </tbody>
+	                                        </table>
+                                        </div>
                                     </div>
                                     <wp:ifauthorized permission="editContents">
-                                        <s:url action="list" namespace="/do/jacms/Content"
-                                            var="contentListURL" />
+                                        <s:url action="list" namespace="/do/jacms/Content" var="contentListURL" />
                                         <a href="${contentListURL}"
                                             class="bottom-link display-block text-right" 
                                             title="<s:text name="note.goToSomewhere" />: <s:text name="dashboard.contentList" />">
@@ -231,7 +231,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <!-- Right Column -->
 			<div class="col-md-4 col-lg-3 sidebar-pf sidebar-pf-right">
 				<div class="card-pf mt-20">
@@ -307,19 +307,19 @@
 	                        </button>
 	                        <ul class="dropdown-menu w100perc" role="menu">
 						        <li>
-		                            <s:url namespace="/do/jacms/Resource" action="new" var="newImageURL">
+		                            <s:url namespace="/do/jacms/Resource" action="new" var="addImageURL">
 										<s:param name="resourceTypeCode" value="'Image'" />
 									</s:url>
-									<a href="${newImageURL}" 
+									<a href="${addImageURL}" 
 										title="<s:text name="label.new" />&#32;<s:text name="label.image"/>">
 										<s:text name="label.image"/>
 									</a>
 								</li>
 								<li>
-								     <s:url namespace="/do/jacms/Resource" action="new" var="newAttachURL">
+								     <s:url namespace="/do/jacms/Resource" action="new" var="addAttachURL">
 										<s:param name="resourceTypeCode" value="'Attach'" />
 									</s:url>
-	                                <a href="${newAttachURL}" 
+	                                <a href="${addAttachURL}" 
 										title="<s:text name="label.new" />&#32;<s:text name="label.attach"/>">
 										<s:text name="label.attach"/>
 						            </a>
@@ -330,8 +330,8 @@
 					<wp:ifauthorized permission="editUsers">
 						<s:url namespace="/do/User" action="new" var="addUserURL" />
 						<a href="${addUserURL}" class="btn btn-default btn-block mt-10 mb-10"
-					        title="<s:text name="dashbard.addUser" />">
-					        <s:text name="dashbard.addUser" />
+					        title="<s:text name="dashboard.addUser" />">
+					        <s:text name="dashboard.addUser" />
 						</a>
 					</wp:ifauthorized>
                 </div>

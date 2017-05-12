@@ -2,17 +2,14 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li>
-        <a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />">
-            <s:text name="title.pageManagement" />
-        </a>
-    </li>
+    <li><s:text name="title.pageDesigner" /></li>
+    <li><a href="<s:url action="viewTree" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />"><s:text name="title.pageManagement" /></a></li>
     <li class="page-title-container"><s:text name="title.detailPage" /></li>
 </ol>
 
-<h1 class="page-title-container"><s:text name="title.detailPage" />
-        <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+<h1 class="page-title-container"><s:text name="title.detailPageTitle" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.details.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -34,5 +31,5 @@
             <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
         </s:iterator>
     </wpsa:hookPoint>
-
 </div>
+

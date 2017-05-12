@@ -20,7 +20,7 @@
             <span class="pficon pficon-close"></span>
         </button>
         <span class="pficon pficon-error-circle-o"></span>
-        <s:text name="message.title.ActionErrors" />
+        <strong><s:text name="message.title.ActionErrors" /></strong>
         <ul>
             <s:iterator value="actionErrors">
                 <li><s:property escapeHtml="false" /></li>
@@ -64,7 +64,7 @@
                     <td data-info-titles></td>
                 </tr>
                 <tr>
-                    <th class="td-pagetree-width">Owner Group</th>
+                    <th class="td-pagetree-width"><s:text name="name.ownerGroup" /></th>
                     <td data-info-group></td>
                 </tr>
                 <tr>
@@ -77,17 +77,14 @@
                 </tr>
                 <tr>
                     <th class="td-pagetree-width">
-                        <abbr lang="en" title="<s:text name="name.SEO.full" />">
-                            <s:text name="name.SEO.short" />
-                        </abbr>: <s:text name="name.useBetterTitles" />   </th>
+                        <span lang="en" title="<s:text name="name.SEO.full" />">
+                            <s:text name="name.SEO.short" /></span>: <s:text name="name.useBetterTitles" />
+                    </th>
                     <td data-info-extratitles></td>
                 </tr>
             </tbody>
         </table>
-
     </div>
-
-
     <!----------------- griglia del template ----------->
     <div class="grid-container"></div>
 </div>
@@ -140,7 +137,6 @@
             <div class="table-responsive overflow-visible table-menu-left-postion" >
                 <table id="pageTree" class="table table-tree-sidebar table-hover table-treegrid table-tree-right" style="overflow:  scroll; margin-bottom: 6em;">
                     <thead>
-
                     </thead>
                     <tbody>  
                         <s:set var="inputFieldName" value="%{'selectedNode'}" />
@@ -167,116 +163,6 @@
                 </table>     
             </div>
             <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
-
-<!--            <fieldset data-toggle="tree-toolbar"><legend><s:text name="title.pageActions" /></legend>
-                <p class="sr-only"><s:text name="title.pageActionsIntro" /></p>
-
-                <div class="btn-toolbar" data-toggle="tree-toolbar-actions">
-                    <div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
-            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info" data-toggle="tooltip">
-                <span class="icon fa fa-plus-circle"></span>
-            </wpsf:submit>
-        </div>
-    </div>
-</fieldset>-->
         </s:form>
     </div>
-    <script>
-
-//        $(document).ready(function () {
-//            // Show/Hide Notifications Drawer
-//            if ($('#sidebar-page-tree').hasClass('drawer-pf-expanded')) {
-//                $('.moveButtons-right-container').show();
-//            } else {
-//                $('.moveButtons-right-container').hide();
-//            }
-//
-//            $('#widget-sidebar-page-tree-btn').click(function () {
-//
-//                var $drawer = $('#sidebar-page-tree');
-//
-//                $(this).toggleClass('open');
-//                if ($drawer.hasClass('hide')) {
-//                    $drawer.removeClass('hide');
-//
-//
-//                    setTimeout(function () {
-//                        if (window.dispatchEvent) {
-//                            window.dispatchEvent(new Event('resize'));
-//                        }
-//                        // Special case for IE
-//                        if ($(document).fireEvent) {
-//                            $(document).fireEvent('onresize');
-//                        }
-//                    }, 100);
-//                } else {
-//                    console.log('animate in y');
-////                    $drawer.addClass('hide');
-//                }
-//            });
-//
-//
-//            $('#close-page-tree-sidebar').click(function () {
-//                var $drawer = $('.drawer-pf');
-//                $drawer.addClass('hide');
-//
-//            });
-//
-//
-//            $('#toggle-expand').click(function () {
-//                var $drawer = $('#sidebar-page-tree');
-//                var $drawerNotifications = $drawer.find('.drawer-pf-notification');
-//
-//                if ($drawer.hasClass('drawer-pf-expanded')) {
-//                    $('.moveButtons-right-container').hide();
-//                    $drawer.removeClass('drawer-pf-expanded');
-//                    $drawerNotifications.removeClass('expanded-notification');
-//                } else {
-//                    $('.moveButtons-right-container').show();
-//                    $drawer.addClass('drawer-pf-expanded');
-//                    $drawerNotifications.addClass('expanded-notification');
-//                }
-//
-//            });
-//
-//            // Mark All Read
-//            $('.panel-collapse').each(function (index, panel) {
-//                var $panel = $(panel);
-//                $panel.on('click', '.drawer-pf-action .btn', function () {
-//                    $panel.find('.unread').removeClass('unread');
-//                    $(panel.parentElement).find('.panel-counter').text('0 New Events');
-//                });
-//            });
-//
-//            $('#notification-drawer-accordion').initCollapseHeights('.panel-body');
-//
-//        });
-
-    </script>
-    <script>
-
-//        $(document).ready(function () {
-//
-//            $("#expandAll").click(function () {
-//                $(".childrenNodes").removeClass("hidden");
-//            });
-//            $("#collapseAll").click(function () {
-//                $(".childrenNodes").addClass("hidden");
-//            });
-//
-//            var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
-//            $('.table-treegrid').treegrid(null, isTreeOnRequest);
-//            $(".treeRow ").on("click", function (event) {
-//                $(".treeRow").removeClass("active");
-//                $(".moveButtons-right").addClass("hidden");
-//                $(".table-view-pf-actions").addClass("hidden");
-//                $(this).find('.subTreeToggler').prop("checked", true);
-//                $(this).addClass("active");
-//                $(this).find(".moveButtons-right").removeClass("hidden");
-//                $(this).find(".table-view-pf-actions").removeClass("hidden");
-//            });
-//        });
-
-    </script> 
-
 </div>

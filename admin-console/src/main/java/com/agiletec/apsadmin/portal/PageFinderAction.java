@@ -321,11 +321,11 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
         this._treeHelper = _treeHelper;
     }
         public int getLastUpdateResponseSize() {
-		return lastUpdateResponseSize;
+		return _lastUpdateResponseSize;
 	}
 
 	public void setLastUpdateResponseSize(int lastUpdateResponseSize) {
-		this.lastUpdateResponseSize = lastUpdateResponseSize;
+		this._lastUpdateResponseSize = lastUpdateResponseSize;
 	}
 
 		private String _targetNode;
@@ -339,7 +339,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	private String _copyingPageCode;
 	
 	private ITreeNodeBaseActionHelper _treeHelper;
-	private int lastUpdateResponseSize;
+	private int _lastUpdateResponseSize;
 
 	
 }

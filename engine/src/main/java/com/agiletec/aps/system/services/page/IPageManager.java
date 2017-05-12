@@ -169,7 +169,7 @@ public interface IPageManager extends ITreeNodeManager {
 	public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException;
 
 	/**
-	 * Extract page statistics for the given groupCodes
+	 * Extract page statistics
 	 * @return a PagesStatus pojo
 	 */
 	public PagesStatus getPagesStatus();

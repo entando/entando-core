@@ -107,19 +107,40 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 			throw new ApsSystemException("Error while creating backup", t);
 		}
 	}
-
+	
 	protected void dumpTableData(String tableName, String dataSourceName,
 			DataSource dataSource, DataSourceDumpReport report, String backupSubFolder) throws ApsSystemException {
 		String filename = tableName + ".sql";
 		File tempFile = null;
-		FileWriter fr = null;
-        BufferedWriter br = null;
+		FileWriter fileWriter = null;
+        BufferedWriter bufferWriter = null;
 		try {
 			tempFile = this.createEmptyTempFile(filename);
-			fr = new FileWriter(tempFile.getAbsolutePath());
-            br = new BufferedWriter(fr);
-			TableDumpReport tableDumpReport = TableDataUtils.dumpTable(br, dataSource, tableName);
+			fileWriter = new FileWriter(tempFile.getAbsolutePath());
+            bufferWriter = new BufferedWriter(fileWriter);
+			TableDumpReport tableDumpReport = TableDataUtils.dumpTable(bufferWriter, dataSource, tableName);
 			report.addTableReport(dataSourceName, tableDumpReport);
+		} catch (IOException t) {
+			_logger.error("Error dumping table '{}' - datasource '{}'", tableName, dataSourceName, t);
+			throw new ApsSystemException("Error dumping table '" + tableName + "' - datasource '" + dataSourceName + "'", t);
+		} finally {
+			try {
+				if (null != bufferWriter) {
+					bufferWriter.close();
+				}
+				if (null != fileWriter) {
+					fileWriter.close();
+				}
+			} catch (IOException t2) {
+				_logger.error("Error closing FileWriter and BufferedWriter of file '{}'", filename, t2);
+				throw new ApsSystemException("Error closing FileWriter and BufferedWriter", t2);
+			}
+		}
+		this.finalizeDumpFile(filename, dataSourceName, backupSubFolder, tempFile);
+	}
+	
+	private void finalizeDumpFile(String filename, String dataSourceName, String backupSubFolder, File tempFile) throws ApsSystemException {
+		try {
 			StringBuilder dirName = new StringBuilder(this.getLocalBackupsFolder());
 			if (null != backupSubFolder) {
 				dirName.append(backupSubFolder).append(File.separator);
@@ -128,20 +149,9 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
 			InputStream is = new FileInputStream(new File(tempFile.getAbsolutePath()));
 			this.save(filename, dirName.toString(), is);
 		} catch (ApsSystemException | IOException t) {
-			_logger.error("Error dumping table '{}' - datasource '{}'", tableName, dataSourceName, t);
-			throw new ApsSystemException("Error dumping table '" + tableName + "' - datasource '" + dataSourceName + "'", t);
+			_logger.error("Error saving dump file '{}'", tempFile.getName(), t);
+			throw new ApsSystemException("Error saving dump file '" + tempFile.getName() + "'", t);
 		} finally {
-			try {
-				if (null != br) {
-					br.close();
-				}
-				if (null != fr) {
-					fr.close();
-				}
-			} catch (IOException t2) {
-				_logger.error("Error closing FileWriter and BufferedWriter of file '{}'", filename, t2);
-				throw new ApsSystemException("Error closing FileWriter and BufferedWriter", t2);
-			}
 			if (null != tempFile) {
 				tempFile.delete();
 			}

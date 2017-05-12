@@ -119,6 +119,7 @@ public class PageTreeAction extends AbstractTreeAction {
             return "pageTree";
         }
         if ("".equals(parentPageCode) || null == this.getPageManager().getPage(parentPageCode)) {
+            _logger.info("Required a new parent node");
             this.addActionError(this.getText("error.page.move.selectPageParent"));
             return "pageTree";
         }
@@ -134,10 +135,11 @@ public class PageTreeAction extends AbstractTreeAction {
             return "pageTree";
         }
         if (parent.isChildOf(selectedNode)) {
+            _logger.info("trying to move a node under it's own child..");
             List<String> args = new ArrayList<String>();
             args.add(parent.getCode());
             args.add(selectedNode);
-            this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed"));
+            this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed", args));
             return "pageTree";
         }
         //group check

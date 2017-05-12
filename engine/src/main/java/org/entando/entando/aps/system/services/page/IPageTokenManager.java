@@ -20,7 +20,5 @@ public interface IPageTokenManager {
 	public String encrypt(String pageCode);
 
 	public  String decrypt(String encryptKey);
-	
-	public void updateHash() throws Exception;
-	
+
 }

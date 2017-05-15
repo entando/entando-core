@@ -108,7 +108,6 @@
 				</div>
 			</div>
 
-			<!-------------Advanced Search----------->
 			<div class="panel-group" id="accordion-markup"
 				style="margin: -24px 0 0 0;">
 				<div class="panel panel-default">

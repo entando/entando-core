@@ -20,9 +20,7 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="menu.configure"/></li>
     <li>
-        <%--<a href="<s:url namespace="/do/LocaleString" action="list" />">--%>
-            <s:text name="title.languageAndLabels"/>
-        <%--</a>--%>
+        <s:text name="title.languageAndLabels"/>
     </li>
     <li class="page-title-container"><s:text name="title.languageAdmin"/></li>
 </ol>
@@ -41,23 +39,23 @@
         </div>
         <div class="col-sm-6">
             <ul class="nav nav-tabs nav-justified nav-tabs-pattern">
-                <li class="active"><a href="<s:url namespace="/do/Lang" action="list" />"><s:text
-                        name="title.languageAdmin"/></a></li>
+                <li class="active"><a href="<s:url namespace="/do/Lang" action="list" />">
+                    <s:text name="title.languageAdmin"/></a>
+                </li>
                 <li>
-                    <a href="<s:url namespace="/do/LocaleString" action="list" />"><s:text
-                            name="title.languageAdmin.labels"/></a>
+                    <a href="<s:url namespace="/do/LocaleString" action="list" />">
+                        <s:text name="title.languageAdmin.labels"/>
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 </div>
-<br>
-
+<br/>
 
 <div class="tab-content">
     <div id="language" class="tab-pane fade in active">
         <s:form action="add" cssClass="form-horizontal">
-            <%-- <p><s:text name="title.languageAdmin.languages" /></p> --%>
             <s:if test="hasActionErrors()">
                 <div class="alert alert-danger alert-dismissable fade in">
                     <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
@@ -74,7 +72,7 @@
                     <label for="langCode"><s:text name="name.chooseALanguage"/></label>
                     <div class="input-group">
                         <select name="langCode" id="langCode" class="form-control">
-                            <option value=""><s:text name="%{getText('note.choose')}" /></option>
+                            <option value=""><s:text name="%{getText('note.choose')}"/></option>
                             <s:iterator var="lang" value="assignableLangs">
                                 <option value="<s:property value="#lang.code"/>"><s:property value="#lang.code"/>
                                     &ndash;
@@ -99,37 +97,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                <s:iterator var="lang" value="langs">
-                    <tr>
-                        <td>
-                            <s:set var="labelModifier" value="''"/>
-                            <s:set var="labelTitle" value="''"/>
-                            <s:if test="#lang.default">
-                                <s:set var="labelModifier" value="'*'"/>
-                                <s:set var="labelTitle">
-                                    title="<s:text name="label.default"/>"
-                                </s:set>
-                            </s:if>
-                            <span class="text-capitalize" <s:property value="labelTitle"/>>
-                                    <s:property value="#lang.code"/><s:property value="labelModifier"/>
-                                </span>
-                        </td>
-                        <td><s:property value="#lang.descr"/></td>
-                        <td class="text-center">
-
-                            <a
-                                    href="<s:url action="remove"><s:param name="langCode" value="#lang.code"/></s:url>"
-                                    title="<s:text name="label.remove" />: <s:property value="#lang.descr" />">
-                                <span class="fa fa-trash-o fa-lg"></span>
-                            </a>
-                        </td>
-
-                    </tr>
-                </s:iterator>
+                    <s:iterator var="lang" value="langs">
+                        <tr>
+                            <td>
+                                <s:set var="labelModifier" value="''"/>
+                                <s:set var="labelTitle" value="''"/>
+                                <s:if test="#lang.default">
+                                    <s:set var="labelModifier" value="'*'"/>
+                                    <s:set var="labelTitle">
+                                        title="<s:text name="label.default"/>"
+                                    </s:set>
+                                </s:if>
+                                <span class="text-capitalize" <s:property value="labelTitle"/>>
+                                        <s:property value="#lang.code"/><s:property value="labelModifier"/>
+                                    </span>
+                            </td>
+                            <td><s:property value="#lang.descr"/></td>
+                            <td class="text-center">
+                                <a href="<s:url action="remove"><s:param name="langCode" value="#lang.code"/></s:url>"
+                                   title="<s:text name="label.remove" />: <s:property value="#lang.descr" />">
+                                    <span class="fa fa-trash-o fa-lg"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </s:iterator>
                 </tbody>
             </table>
         </s:form>
     </div>
 </div>
-
-

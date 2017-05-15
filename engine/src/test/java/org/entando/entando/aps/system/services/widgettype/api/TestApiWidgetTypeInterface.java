@@ -173,6 +173,7 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
 		assertNotNull(widgetType);
 		WidgetType widgetTypeToEdit = widgetType.clone();
 		GuiFragment previousFragment = this._guiFragmentManager.getUniqueGuiFragmentByWidgetType(widgetTypeCode);
+		ApsProperties originalTitles = widgetType.getTitles();
 		try {
 			JAXBWidgetType jaxbWidgetType = this.getJaxbWidgetType(widgetTypeToEdit);
 			if (StringUtils.isNotBlank(customSingleGui)) {
@@ -219,7 +220,7 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
 					this._guiFragmentManager.updateGuiFragment(previousFragment);
 				}
 			}
-			this._widgetTypeManager.updateWidgetType(widgetType.getCode(), widgetType.getTitles(), widgetType.getConfig(), widgetType.getMainGroup());
+			this._widgetTypeManager.updateWidgetType(widgetType.getCode(), originalTitles, widgetType.getConfig(), widgetType.getMainGroup());
 		}
 	}
 	

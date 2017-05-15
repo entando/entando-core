@@ -62,6 +62,12 @@
 				</includes>
 			</resource>
 			<resource>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/*.sql</include>
+				</includes>
+			</resource>
+			<resource>
 				<directory>src/main/tld</directory>
 				<targetPath>META-INF</targetPath>
 				<includes>

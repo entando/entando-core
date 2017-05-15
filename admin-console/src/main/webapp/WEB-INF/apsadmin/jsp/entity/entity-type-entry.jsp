@@ -3,7 +3,12 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-	<li><s:text name="%{'title.' + entityManagerName + '.management'}" />
+	<%--<li><s:text name="%{'title.' + entityManagerName + '.management'}" />--%>
+	<li>
+		<a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName">jpwebdynamicformMessageManager</s:param></s:url>">
+			<s:text name="%{'title.' + entityManagerName + '.management'}" />
+		</a>
+	</li>
 	</li>
 	<s:if test="operationId == 1">
 		<li class="page-title-container"><s:text

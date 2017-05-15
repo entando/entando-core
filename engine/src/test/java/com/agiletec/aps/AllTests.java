@@ -13,13 +13,6 @@
  */
 package com.agiletec.aps;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
-import org.entando.entando.aps.system.services.userprofile.TestUserProfileManager;
-
-import com.agiletec.aps.system.TestApplicationContext;
 import com.agiletec.aps.system.common.entity.TestEntityManager;
 import com.agiletec.aps.system.services.authorization.TestAuthorityManager;
 import com.agiletec.aps.system.services.authorization.TestAuthorizationManager;
@@ -28,7 +21,6 @@ import com.agiletec.aps.system.services.baseconfig.TestConfigItemDAO;
 import com.agiletec.aps.system.services.cache.TestCacheManager;
 import com.agiletec.aps.system.services.category.TestCategoryManager;
 import com.agiletec.aps.system.services.group.TestGroupManager;
-import com.agiletec.aps.system.services.group.TestGroupUtilizer;
 import com.agiletec.aps.system.services.i18n.TestI18nManager;
 import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorDAO;
 import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorManager;
@@ -47,27 +39,35 @@ import com.agiletec.aps.system.services.role.TestRoleManager;
 import com.agiletec.aps.system.services.url.TestURLManager;
 import com.agiletec.aps.system.services.user.TestAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.TestUserDAO;
-import com.agiletec.aps.system.services.user.TestUserManager;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDAO;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDOM;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
 import com.agiletec.aps.util.TestHtmlHandler;
+import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
+import com.agiletec.plugins.jacms.aps.system.services.content.TestGroupUtilizer;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
+import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
+import org.entando.entando.aps.system.services.userprofile.TestUserManager;
+import org.entando.entando.aps.system.services.userprofile.TestUserProfileManager;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 
 /**
  * @author W.Ambu
  */
 public class AllTests {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for APS");
-		
+
 		//
 		suite.addTestSuite(TestEntityManager.class);
 		//
@@ -106,7 +106,7 @@ public class AllTests {
 		suite.addTestSuite(TestPermissionDAO.class);
 		suite.addTestSuite(TestRoleDAO.class);
 		suite.addTestSuite(TestRoleManager.class);
-		
+
 		//
 		suite.addTestSuite(TestWidgetTypeDAO.class);
 		suite.addTestSuite(TestWidgetTypeDOM.class);
@@ -118,7 +118,7 @@ public class AllTests {
 		suite.addTestSuite(TestUserDAO.class);
 		suite.addTestSuite(TestUserManager.class);
 		//
-		suite.addTestSuite(TestApplicationContext.class);	
+		suite.addTestSuite(TestApplicationContext.class);
 		//
 		suite.addTestSuite(TestHtmlHandler.class);
 		//
@@ -134,8 +134,10 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
 		suite.addTestSuite(TestApiI18nLabelInterface.class);
-		
+
+		suite.addTestSuite(TestQueryExtractor.class);
+
 		return suite;
 	}
-	
+
 }

@@ -31,11 +31,11 @@
             <wpsf:hidden name="entityTypeCode"/>
         </p>
         <i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
-        <p class="esclamation-underline-text">
+        <p>
             <s:text name="title.entityTypes.editType.remove"/>&#32;<s:text
                 name="%{'title.' + entityManagerName + '.management'}"/>
         </p>
-        <p>
+        <p class="esclamation-underline-text">
             <s:text name="note.entityTypes.deleteType.areYouSure"/>:&#32;
             <s:property value="entityTypeCode"/>
             <s:property value="%{getEntityPrototype(entityTypeCode).typeDescr}"/>?

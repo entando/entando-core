@@ -4,7 +4,49 @@
     "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
-	
+
+	<package name="jacms_do/rs/Content" namespace="/do/jacms/rs/Content" extends="entando-default">
+
+		<interceptors>
+			<interceptor name="json" class="org.apache.struts2.json.JSONInterceptor" />
+			<interceptor-stack name="jsonStack">
+				<interceptor-ref name="json">
+					<param name="enableSMD">true</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+
+		<action name="status" class="jacmsContentFinderAction">
+			<result type="json">
+				<param name="root">contentsStatusResponse</param>
+			</result>
+			<result name="failure" type="json">
+				<param name="root">contentsStatusResponse</param>
+			</result>
+			<interceptor-ref name="jsonStack" />
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">enterBackend</param>
+			</interceptor-ref>
+		</action>
+
+		<action name="lastUpdated" class="jacmsContentFinderAction" method="getLastUpdated">
+			<result type="json">
+				<param name="root">lastUpdateContentResponse</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">lastUpdateContentResponse</param>
+			</result>
+			<result name="failure" type="json">
+				<param name="root">lastUpdateContentResponse</param>
+			</result>
+			<interceptor-ref name="jsonStack" />
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">enterBackend</param>
+			</interceptor-ref>
+		</action>
+
+	</package>
+
     <package name="jacms_do/jacms/Content" namespace="/do/jacms/Content" extends="entando-default">
     	
 		<action name="intro" class="jacmsContentAction">

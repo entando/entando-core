@@ -46,7 +46,7 @@
 				<span class="pficon pficon-error-circle-o"></span>
 				<s:if test="currentFieldFieldErrorsVar">
 					<div>
-						<s:text name="error.category.noParentSelected" />
+						<strong><s:text name="error.category.noParentSelected" /></strong>
 					</div>
 				</s:if>
 				<s:else>

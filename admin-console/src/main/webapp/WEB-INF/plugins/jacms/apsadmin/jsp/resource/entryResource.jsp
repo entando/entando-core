@@ -189,27 +189,49 @@
 				<script>
                     $('.table-treegrid').treegrid();
 				</script>
+
+
+
+				<s:if test="extraGroups.size() != 0">
+					<s:iterator value="extraGroups" var="groupName">
+						<wpsa:actionParam action="removeExtraGroup" var="actionName" >
+							<wpsa:actionSubParam name="extraGroupName" value="%{#groupName}" />
+						</wpsa:actionParam>
+
+						<div class="label label-default label-tag label-sm">
+							<s:property value="%{getSystemGroups()[#groupName].getDescr()}"/>&#32;
+							<wpsf:submit type="button" action="%{#actionName}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-tag">
+								<span class="icon fa fa-times"></span>
+								<span class="sr-only">x</span>
+							</wpsf:submit>
+						</div>
+					</s:iterator>
+				</s:if>
+				<s:if test="categoryCodes != null && categoryCodes.size() > 0">
+					<%--<h2 class="h4 margin-base-vertical"><s:text name="note.resourceCategories.summary"/></h2>--%>
+					<s:iterator value="categoryCodes" var="categoryCode">
+						<s:set var="resourceCategory" value="%{getCategory(#categoryCode)}"></s:set>
+						<wpsa:actionParam action="removeCategory" var="actionName">
+							<wpsa:actionSubParam name="categoryCode" value="%{#resourceCategory.code}"/>
+						</wpsa:actionParam>
+						<div class="label label-default label-tag label-sm">
+							<span class="icon fa fa-tag"></span>&#32;
+							<abbr title="<s:property value="#resourceCategory.getFullTitle(currentLang.code)"/>">
+								<s:property value="#resourceCategory.getShortFullTitle(currentLang.code)"/>
+							</abbr>&#32;
+							<wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.remove') + ' ' + #resourceCategory.defaultFullTitle}" cssClass="btn btn-tag btn-link">
+								<span class="icon fa fa-times"></span>
+								<span class="sr-only">x</span>
+							</wpsf:submit>
+						</div>
+					</s:iterator>
+				</s:if>
+
+
 			</div>
 		</div>
 
-		<s:if test="categoryCodes != null && categoryCodes.size() > 0">
-		<h2 class="h4 margin-base-vertical"><s:text name="note.resourceCategories.summary"/></h2>
-		
-		<s:iterator value="categoryCodes" var="categoryCode">
-			<s:set var="resourceCategory" value="%{getCategory(#categoryCode)}"></s:set>
-			<span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom" style="margin-right: 4px;">
-				<span class="icon fa fa-tag"></span>&#32;
-				<abbr title="<s:property value="#resourceCategory.getFullTitle(currentLang.code)"/>"><s:property value="#resourceCategory.getShortFullTitle(currentLang.code)" /></abbr>&#32;
-				<wpsa:actionParam action="removeCategory" var="actionName" >
-					<wpsa:actionSubParam name="categoryCode" value="%{#resourceCategory.code}" />
-				</wpsa:actionParam>
-				<wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.remove') + ' ' + #resourceCategory.defaultFullTitle}" cssClass="btn btn-default btn-xs badge">
-					<span class="icon fa fa-times"></span>
-					<span class="sr-only">x</span>
-				</wpsf:submit>
-			</span>
-		</s:iterator>
-		</s:if>
+
 	
 	</fieldset>
 	

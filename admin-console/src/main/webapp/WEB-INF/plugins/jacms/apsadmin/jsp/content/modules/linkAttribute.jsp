@@ -119,3 +119,4 @@
 		<s:text name="label.add" />
 	</wpsf:submit>
 </s:else>
+

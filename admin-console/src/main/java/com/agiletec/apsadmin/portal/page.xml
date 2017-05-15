@@ -168,7 +168,7 @@
             </result>
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
-                <param name="requestAuth.requiredPermission">managePages</param>
+                <param name="requestAuth.requiredPermission">enterBackend</param>
             </interceptor-ref>
         </action>
 
@@ -184,7 +184,7 @@
             </result>
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
-                <param name="requestAuth.requiredPermission">managePages</param>
+                <param name="requestAuth.requiredPermission">enterBackend</param>
             </interceptor-ref>
         </action>
     </package>

@@ -123,16 +123,10 @@
                     <wpsf:hidden name="widgetTypeCode" />
                     <wpsf:hidden name="pluginCode" />
                 </p>
-
                 <s:set var="guiFragmentsCodes_list" value="guiFragmentsCodes" />
                 <s:if test="#guiFragmentsCodes_list.size > 0">
                     <wpsa:subset source="#guiFragmentsCodes_list" count="10" objectName="groupGuiFragments" advanced="true" offset="5">
                         <s:set var="group" value="#groupGuiFragments" />
-                        <%--<div class="text-center">
-                            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-                            <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-                        </div>--%>
-
                         <div class="col-xs-12 no-padding">
                             <table class="table table-striped table-bordered table-hover no-mb">
                                 <tr>
@@ -176,7 +170,6 @@
                                                             <s:text name="note.detailsFor" />: <s:property value="#codeVar" />
                                                             <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#codeVar" /></span>
                                                         </a>
-
                                                     </li>
                                                     <li>
                                                         <s:if test="%{!#guiFragmentVar.locked}" >

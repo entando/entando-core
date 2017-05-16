@@ -65,6 +65,7 @@ public class PageTreeAction extends AbstractTreeAction {
             }
             IPage currentPage = this.getPageManager().getDraftPage(selectedNode);
             if (!isUserAllowed(currentPage.getParent())) {
+                 _logger.info("User not allowed!");
                 this.addActionError(this.getText("error.page.userNotAllowed"));
                 return SUCCESS;
             }

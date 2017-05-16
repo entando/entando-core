@@ -30,17 +30,17 @@
             <wpsf:hidden name="entityManagerName"/>
             <wpsf:hidden name="entityTypeCode"/>
         </p>
+
         <i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
-        <p>
-            <s:text name="title.entityTypes.editType.remove"/>&#32;<s:text
-                name="%{'title.' + entityManagerName + '.management'}"/>
+        <p class="esclamation-underline">
+            <s:text name="title.entityTypes.editType.remove"/>&#32;<s:text name="%{'title.' + entityManagerName + '.management'}"/>
         </p>
         <p class="esclamation-underline-text">
             <s:text name="note.entityTypes.deleteType.areYouSure"/>:&#32;
             <s:property value="entityTypeCode"/>
             <s:property value="%{getEntityPrototype(entityTypeCode).typeDescr}"/>?
-
         </p>
+
         <div class="text-center margin-large-top">
             <a class="btn btn-default button-fixed-width"
                href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>">

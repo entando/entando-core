@@ -3,7 +3,7 @@
 
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.ux_patterns" /></li>
+    <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="list" namespace="/do/Portal/GuiFragment"></s:url>"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.guiFragmentManagement" />">
             <s:text name="title.guiFragmentManagement" /></a></li>

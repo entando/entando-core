@@ -4,6 +4,7 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.widgetManagement" />">
             <s:text name="title.widgetManagement" /></a>
@@ -18,15 +19,15 @@
         <h1 class="page-title-container">
             <s:text name="label.edit" />: <s:property value="serviceKey" />
             <span class="pull-right">
-                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="widget.api.service.new.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
             </span>
         </h1>
     </s:if>
     <s:elseif test="strutsAction == 1">
         <h1 class="page-title-container">
-            <s:text name="title.api.apiService.newFrom" />: <span class="monospace"><s:property value="#masterApiMethodVar.methodName" /></span>
+            <s:text name="title.api.apiService.newFrom" /> - <span class="monospace"><s:property value="#masterApiMethodVar.methodName" /></span>
             <span class="pull-right">
-                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="widget.api.service.new.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
             </span>
         </h1>
     </s:elseif>

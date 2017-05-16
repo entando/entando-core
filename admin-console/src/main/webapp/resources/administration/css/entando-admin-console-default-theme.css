@@ -115,7 +115,7 @@ a {
     color: #fff;
     text-decoration:underline;
     font-weight:600;
-} 
+}
 .plugin-list .nav>li>a {
     padding: 6px 11px;
 }
@@ -143,7 +143,7 @@ a {
     padding-bottom: 0;
 }
 .breadcrumb-position {
-    margin: -25px 0 0 0 ; 
+    margin: -25px 0 0 0 ;
 }
 .dropdown-menu>li>button {
     border-color: transparent;
@@ -189,7 +189,7 @@ a {
     margin-bottom: 20px;
     padding:0 !important ;
 }
-/*----------------lateral right menu-----------------*/ 
+/*----------------lateral right menu-----------------*/
 
 .drawer-pf-sidebar-right {
     position: fixed;
@@ -304,6 +304,9 @@ a {
     font-size: 18px;
     color: #6b6f74 !important;
 }
+.fa-1em{
+    font-size: 16px !important;
+}
 .widget-title{
     padding: 16px 0px 16px 18px;
     font-size: 14px;
@@ -399,11 +402,11 @@ td{
     cursor: pointer;
     text-transform: capitalize;
 }
-.drawer-pf-title-right-menu:hover{   
+.drawer-pf-title-right-menu:hover{
     color: #fff;
     text-decoration: none;
 }
-#widget-sidebar-page-tree-btn:hover .right-bar-title >i { 
+#widget-sidebar-page-tree-btn:hover .right-bar-title >i {
     color: #23a8e0 !important;
     text-decoration: none;
 }
@@ -452,7 +455,7 @@ td{
     margin-bottom: 3em;
 }
 .form-checkbox{
-    margin:30px 0 30px 0; 
+    margin:30px 0 30px 0;
 }
 .label-group-name{
     font-size: 19px;
@@ -524,7 +527,7 @@ td{
 .btn-delete-comment{
     margin: 2px;
 }
-.drawer-pf-custom { 
+.drawer-pf-custom {
     border: 0px solid #d1d1d1 !important;
 }
 .comment-box-panel{
@@ -559,7 +562,7 @@ td{
     background-color: #4d5258;
 
 }
-.notification-active .fa{   
+.notification-active .fa{
     color: #fff !important;
 }
 .required-icon-iterator{
@@ -596,7 +599,7 @@ td{
     padding: 0 0 10px 0
 }
 .spacer-form2{
-    margin-bottom: 8px;  
+    margin-bottom: 8px;
 }
 
 #notifications-badge{
@@ -735,7 +738,7 @@ a {
     color: #fff;
     text-decoration:underline;
     font-weight:600;
-} 
+}
 .plugin-list .nav>li>a {
     padding: 6px 11px;
 }
@@ -764,7 +767,7 @@ a {
     padding-bottom: 0;
 }
 .breadcrumb-position {
-    margin: -25px 0 0 0 ; 
+    margin: -25px 0 0 0 ;
 }
 .dropdown-menu>li>button {
     border-color: transparent;
@@ -811,7 +814,7 @@ a {
     margin-bottom: 20px;
     padding:0 !important ;
 }
-/*----------------lateral right menu-----------------*/ 
+/*----------------lateral right menu-----------------*/
 
 .drawer-pf-sidebar-right {
     position: fixed;
@@ -1021,11 +1024,11 @@ td{
     cursor: pointer;
     text-transform: capitalize;
 }
-.drawer-pf-title-right-menu:hover{   
+.drawer-pf-title-right-menu:hover{
     color: #fff;
     text-decoration: none;
 }
-#widget-sidebar-page-tree-btn:hover .right-bar-title >i { 
+#widget-sidebar-page-tree-btn:hover .right-bar-title >i {
     color: #23a8e0 !important;
     text-decoration: none;
 }
@@ -1074,7 +1077,7 @@ td{
     margin-bottom: 3em;
 }
 .form-checkbox{
-    margin:30px 0 30px 0; 
+    margin:30px 0 30px 0;
 }
 .label-group-name{
     font-size: 19px;
@@ -1146,7 +1149,7 @@ td{
 .btn-delete-comment{
     margin: 2px;
 }
-.drawer-pf-custom { 
+.drawer-pf-custom {
     border: 0px solid #d1d1d1 !important;
 }
 .comment-box-panel{
@@ -1181,7 +1184,7 @@ td{
     background-color: #4d5258;
 
 }
-.notification-active .fa{   
+.notification-active .fa{
     color: #fff !important;
 }
 .required-icon-iterator{
@@ -1218,7 +1221,7 @@ td{
     padding: 0 0 10px 0
 }
 .spacer-form2{
-    margin-bottom: 8px;  
+    margin-bottom: 8px;
 }
 
 #notifications-badge{
@@ -1283,7 +1286,7 @@ td{
     font-family: monospace;
 }
 .table-in-col10{
-    padding: 0px 0 0 6px; 
+    padding: 0px 0 0 6px;
 }
 .required-fields{
     color: #aaabad;
@@ -1293,7 +1296,7 @@ td{
     padding-left: 20px !important;
     padding-right: 20px !important;
 }
-.foti_class option:before { 
+.foti_class option:before {
     font-family: FontAwesome;
     content: "\f10c";
     display: inline-block;
@@ -1302,7 +1305,7 @@ td{
     color: #0086cc;
     font-size: 15px !important;
 }
-.foti_class option:checked:before { 
+.foti_class option:checked:before {
     font-family: FontAwesome;
     content: "\f192";
     display: inline-block;
@@ -1362,7 +1365,7 @@ ul {
 }
 .table-txt-wrap{
     white-space: normal !important;
-    word-wrap: break-word  !important;  
+    word-wrap: break-word  !important;
 }
 .filter-list{
     z-index: 99;
@@ -1537,7 +1540,7 @@ table.content-list {
     table-layout: fixed;
     width: 100%;
 }
-table.content-list td, 
+table.content-list td,
 table.content-list th {
     width: 200px;
     overflow: hidden;
@@ -1553,7 +1556,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     clearfix: both;
     margin: 10px 0;
 }
-.ColVis_collection li:last-child, 
+.ColVis_collection li:last-child,
 .ColVis_collection li:nth-child(2) {
     display: none;
 }
@@ -1578,7 +1581,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     vertical-align: -webkit-baseline-middle;
 }
 
-.table-treegrid.request span.collapse-icon, 
+.table-treegrid.request span.collapse-icon,
 .table-treegrid.request span.expand-icon {
     cursor: pointer;
     display: none;
@@ -1629,8 +1632,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 /* datepicker dropdown hack */
 .datepicker-dropdown:before,
 .datepicker-dropdown:after {display: none!important;}
-
-
 /* --------------- Dashboard --------------- */
 
 .page-title-container .date {
@@ -1699,14 +1700,14 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
      
      .dashboard .sidebar-pf {
          height: auto!important;
-     }
+    }
 }
 @media (max-width: 767px) {
     .table-view-pf-toolbar label {display: none};
 
     .btn-with-form-control-container {
         width: 100%;
-    }	
+    }
     .btn-with-form-control-container .btn {
         display: block;
         float: none;
@@ -1721,7 +1722,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     .btn-with-form-control-container .inline-block {
         display: block;
     }
-    .btn-with-form-control-container .inline-block + .inline-block {margin-left: 0}	
+    .btn-with-form-control-container .inline-block + .inline-block {margin-left: 0}
 }
 /*------- custom api th width-------*/
 .th-custom-width{
@@ -1754,3 +1755,4 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     font-size: 12px;
     font-weight: 600;
 }
+

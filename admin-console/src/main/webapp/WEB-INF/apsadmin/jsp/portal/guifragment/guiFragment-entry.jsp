@@ -6,9 +6,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.ux_patterns" /></li>
+    <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="list" />"><s:text name="title.guiFragmentManagement" /></a></li>
-    
+
     <s:if test="getStrutsAction() == 1">
         <li><s:text name="guiFragment.label.new" /></li>
         </s:if>
@@ -70,13 +70,13 @@
                 <wpsf:hidden name="defaultGui" />
             </s:if>
         </p>
-        
+
         <%-- code --%>
         <s:set var="fieldFieldErrorsVar" value="%{fieldErrors['code']}" />
         <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-            
+
             <label class="control-label col-sm-2" for="guiFragment_code"><s:text name="label.code" /></label>
             <div class="col-sm-10">
                 <wpsf:textfield disabled="%{getStrutsAction() == 2}" name="code" id="guiFragment_code" cssClass="form-control" />
@@ -85,7 +85,7 @@
                 </s:if>
             </div>
         </div>
-        
+
         <%-- widgetTypeCode --%>
         <s:if test="%{widgetTypeCode!=null}">
             <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
@@ -93,11 +93,11 @@
                 <div class="col-sm-10">
                     <s:set value="%{getWidgetType(widgetTypeCode)}" var="widgetTypeVar" />
                     <s:property value="getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)" />
-                    
+
                 </div>
             </div>
         </s:if>
-        
+
         <%-- pluginCode --%>
         <s:if test="%{pluginCode != null}">
             <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
@@ -110,67 +110,67 @@
         <hr>
         <!-- Nav tabs -->
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-        <label class="control-label col-sm-2"></label>
-        <div class=" col-sm-10">
-            <ul id="gui-tab" class="nav nav-tabs">
-                <li class="active"><a href="#gui-edit" data-toggle="tab">Gui Code</a></li>
-                <li><a href="#gui-default" data-toggle="tab">Default Gui Code</a></li>
-            </ul>
-            
-            <!-- Tab panes -->
-            <div class="tab-content margin-large-bottom">
-                <div class="tab-pane active" id="gui-edit">
-                    <%-- gui --%>
-                    <s:set var="fieldFieldErrorsVar" value="%{fieldErrors['gui']}" />
-                    <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-                    <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-                    <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-                        <div class="col-xs-12">
-                            <label for="guiFragment_gui" class="sr-only"><s:text name="label.gui" /></label>
-                            <wpsf:textarea name="gui" id="guiFragment_gui" cssClass="form-control" rows="8" cols="50" />
-                            <s:if test="#fieldHasFieldErrorVar">
-                                <p class="text-danger padding-small-vertical"><s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator></p>
-                            </s:if>
+            <label class="control-label col-sm-2"></label>
+            <div class=" col-sm-10">
+                <ul id="gui-tab" class="nav nav-tabs">
+                    <li class="active"><a href="#gui-edit" data-toggle="tab">Gui Code</a></li>
+                    <li><a href="#gui-default" data-toggle="tab">Default Gui Code</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content margin-large-bottom">
+                    <div class="tab-pane active" id="gui-edit">
+                        <%-- gui --%>
+                        <s:set var="fieldFieldErrorsVar" value="%{fieldErrors['gui']}" />
+                        <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+                        <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+                        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+                            <div class="col-xs-12">
+                                <label for="guiFragment_gui" class="sr-only"><s:text name="label.gui" /></label>
+                                <wpsf:textarea name="gui" id="guiFragment_gui" cssClass="form-control" rows="8" cols="50" />
+                                <s:if test="#fieldHasFieldErrorVar">
+                                    <p class="text-danger padding-small-vertical"><s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator></p>
+                                </s:if>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="tab-pane" id="gui-default">
-                    <%-- defaultGui --%>
-                    <s:if test="null != defaultGui">
-                        <%-- setup replace --%>
-                        <% pageContext.setAttribute("tabChar", "\t"); %>
-                        <% pageContext.setAttribute("carriageReturnChar", "\r"); %>
-                        <% pageContext.setAttribute("newLineChar", "\n");%>
-                        <c:set var="brChar"><br /></c:set>
-                        <%-- set the string --%>
-                        <c:set var="defguiVar"><s:property value="defaultGui" /></c:set>
-                        <c:set var="ESCAPED_STRING" value="${
-                               fn:replace(
+                    <div class="tab-pane" id="gui-default">
+                        <%-- defaultGui --%>
+                        <s:if test="null != defaultGui">
+                            <%-- setup replace --%>
+                            <% pageContext.setAttribute("tabChar", "\t"); %>
+                            <% pageContext.setAttribute("carriageReturnChar", "\r"); %>
+                            <% pageContext.setAttribute("newLineChar", "\n");%>
+                            <c:set var="brChar"><br /></c:set>
+                            <%-- set the string --%>
+                            <c:set var="defguiVar"><s:property value="defaultGui" /></c:set>
+                            <c:set var="ESCAPED_STRING" value="${
                                    fn:replace(
-                                   fn:replace(
-                                   defguiVar, tabChar, '&emsp;'),
-                                   carriageReturnChar, ''
-                                   ),
-                                   newLineChar, brChar
-                                   )
-                               }" />
-                        <%-- output --%>
-                        <pre><code><c:out value="${ESCAPED_STRING}" escapeXml="false" /></pre></code>
-                    </s:if>
-                    <s:else>
-                        <div class="margin-none alert alert-info">
-                            Not available.
-                        </div>
-                    </s:else>
+                                       fn:replace(
+                                       fn:replace(
+                                       defguiVar, tabChar, '&emsp;'),
+                                       carriageReturnChar, ''
+                                       ),
+                                       newLineChar, brChar
+                                       )
+                                   }" />
+                            <%-- output --%>
+                            <pre><code><c:out value="${ESCAPED_STRING}" escapeXml="false" /></pre></code>
+                        </s:if>
+                        <s:else>
+                            <div class="margin-none alert alert-info">
+                                Not available.
+                            </div>
+                        </s:else>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
         <%-- save button --%>
         <div class="form-group">
             <div class="col-xs-12">
                 <s:submit type="button" action="save" cssClass="btn btn-primary pull-right">
-                    
+
                     <s:text name="label.save" />
                 </s:submit>
             </div>

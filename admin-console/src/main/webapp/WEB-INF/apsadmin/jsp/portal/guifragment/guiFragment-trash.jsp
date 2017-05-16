@@ -4,7 +4,7 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.ux_patterns" /></li>
+    <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="list" />"><s:text name="title.guiFragmentManagement" /></a></li>
         <s:if test="getStrutsAction() == 4">
         <li class="page-title-container"><s:text name="guiFragment.label.delete" /></li>
@@ -48,5 +48,5 @@
             </s:submit>
         </div>
     </s:form>
-</div> 
+</div>
 

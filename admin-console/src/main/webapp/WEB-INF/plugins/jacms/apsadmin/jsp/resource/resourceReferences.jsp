@@ -10,7 +10,9 @@
     <li><s:text name="breadcrumb.app"/></li>
     <li><s:text name="breadcrumb.jacms"/></li>
     <li>
-        <s:property value="%{getText('title.' + resourceTypeCode + 'Management')}"/>
+        <a href="<s:url action="list" ><s:param name="resourceTypeCode" ><s:text name="%{resourceTypeCode}"></s:text></s:param></s:url>">
+            <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+        </a>
     </li>
     <li class="page-title-container">
         <s:text name="title.resourceManagement.resourceTrash"/>

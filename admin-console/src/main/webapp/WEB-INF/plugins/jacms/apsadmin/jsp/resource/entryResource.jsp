@@ -17,7 +17,9 @@
 		<li><s:text name="breadcrumb.digitalAsset" /></li>
 	</s:else>
 	<li>
-		<s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+		<a href="<s:url action="list" ><s:param name="resourceTypeCode" ><s:text name="%{resourceTypeCode}"></s:text></s:param></s:url>">
+			<s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+		</a>
 	</li>
 	<li class="page-title-container">
 		<s:if test="getStrutsAction() == 1">

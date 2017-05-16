@@ -46,7 +46,7 @@
                 <span class="pficon pficon-close"></span>
             </button>
             <span class="pficon pficon-error-circle-o"></span>
-            <s:text name="message.title.ActionErrors" />
+            <strong><s:text name="message.title.ActionErrors" /></strong>
             <ul>
                 <s:if test="hasActionErrors()">
                     <s:iterator value="actionErrors">
@@ -140,7 +140,7 @@
 
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="pageCode">
-                <s:text name="title.pageTree" />
+                    <s:text name="title.treePosition" />
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
             <div class="col-sm-10">
@@ -151,7 +151,7 @@
                                class="table table-bordered table-hover table-treegrid">
                             <thead>
                                 <tr>
-                                    <th style="width: 68%;"> <s:text name="title.treePages" /><s:if test="#pageTreeStyleVar == 'classic'">
+                                        <th style="width: 68%;"> <s:text name="title.pageTree" /><s:if test="#pageTreeStyleVar == 'classic'">
                                         <button type="button" class="btn-no-button expand-button" id="expandAll">
                                             <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Expand All
                                         </button>

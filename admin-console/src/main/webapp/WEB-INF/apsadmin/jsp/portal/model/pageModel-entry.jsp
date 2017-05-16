@@ -2,7 +2,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.ux_patterns" /></li>
+    <li><s:text name="title.uxPatterns" /></li>
     <li class="page-title-container">
         <s:text name="title.pageModelManagement" />
     </li>

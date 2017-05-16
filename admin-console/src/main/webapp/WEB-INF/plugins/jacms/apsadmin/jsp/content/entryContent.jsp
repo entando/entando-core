@@ -472,4 +472,5 @@
 				</div>
 			</div> 
 	</s:form>
-</div>
+</div><%-- main --%>
+

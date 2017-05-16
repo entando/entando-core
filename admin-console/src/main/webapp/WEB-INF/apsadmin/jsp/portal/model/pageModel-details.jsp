@@ -1,7 +1,7 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.ux_patterns" /></li>
+    <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="list" namespace="/do/PageModel"></s:url>"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageModelManagement" />">
             <s:text name="title.pageModelManagement" /></a></li>

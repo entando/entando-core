@@ -2,36 +2,36 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
-    
+
 <div class="nav">
     <ul class="nav nav-tabs pull-right margin-large-bottom" id="frag-tab">
         <li class="active"><a href="<s:url action="list" namespace="/do/Portal/GuiFragment"/>" role="tab"><s:text name="label.list" /></a></li>
         <li><a href="<s:url action="systemParams" namespace="/do/Portal/GuiFragment"/>" role="tab"><s:text name="label.settings" /></a></li>
     </ul>
-        
+
     <!-- Tab panes -->
     <div class="tab-content margin-large-bottom">
-        <div class="tab-pane active" id="frag-list">  
-            
+        <div class="tab-pane active" id="frag-list">
+
             <ol class="breadcrumb" style="margin-top: 40px">
-                <li><s:text name="title.ux_patterns" /></li>
+                <li><s:text name="title.uxPatterns" /></li>
                 <li class="page-title-container"><s:text name="title.guiFragmentManagement" /></li>
                 <li><s:text name="label.list" /></li>
             </ol>
-                
-                
+
+
             <h1 class="page-title-container">
                 <s:text name="title.guiFragmentManagement" />
                 <span class="pull-right">
                     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                 </span>
             </h1>
-                
+
             <div class="text-right">
                 <div class="form-group-separator"></div>
             </div>
             <br>
-                
+
             <s:form action="list" cssClass="form-horizontal">
                 <s:if test="hasActionErrors()">
                     <div class="alert alert-danger alert-dismissable">
@@ -47,12 +47,12 @@
                         </ul>
                     </div>
                 </s:if>
-                    
+
                 <div class="form-group ">
                     <div class="well col-md-offset-3 col-md-6  ">
-                        
+
                         <p class="search-label"><s:text name="label.search.label"/></p>
-                            
+
                         <div class="form-group">
                             <label for="search-code" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.code"/></label>
                             <label class="col-sm-2 control-label"><s:text name="label.code"/></label>
@@ -114,7 +114,7 @@
                     </div>
                 </div>
             </s:form>
-                
+
             <p>
             <!--    <a class="btn btn-primary" href="<s:url action="new" />">
                     &#32;<s:text name="guiFragment.label.new" />
@@ -129,7 +129,7 @@
                     <wpsf:hidden name="widgetTypeCode" />
                     <wpsf:hidden name="pluginCode" />
                 </p>
-                    
+
                 <s:set var="guiFragmentsCodes_list" value="guiFragmentsCodes" />
                 <s:if test="#guiFragmentsCodes_list.size > 0">
                     <wpsa:subset source="#guiFragmentsCodes_list" count="10" objectName="groupGuiFragments" advanced="true" offset="5">
@@ -138,7 +138,7 @@
                             <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
                         </div>--%>
-                            
+
                         <div class="col-xs-12 no-padding">
                             <table class="table table-striped table-bordered table-hover no-mb">
                                 <tr>
@@ -163,10 +163,10 @@
                                             <s:else>&ndash;</s:else>
                                             </td>
                                             <td class="text-center text-nowrap">
-                                                
+
                                                 <div class="dropdown dropdown-kebab-pf">
                                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
-                                                    <ul class="dropdown-menu dropdown-menu-right">								
+                                                    <ul class="dropdown-menu dropdown-menu-right">
                                                         <li>
                                                         <%-- edit --%>
                                                         <a  title="<s:text name="label.edit" />&#32;<s:property value="#codeVar" />" href="<s:property value="#editGuiFragmentActionVar" escapeHtml="false" />">
@@ -176,19 +176,19 @@
                                                     </li>
                                                     <li>
                                                         <%-- detail --%>
-                                                        <a 
+                                                        <a
                                                             href="<s:url action="detail"><s:param name="code" value="#codeVar"/></s:url>"
                                                             title="<s:text name="note.detailsFor" />: <s:property value="#codeVar" />">
                                                             <s:text name="note.detailsFor" />: <s:property value="#codeVar" />
                                                             <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#codeVar" /></span>
                                                         </a>
-                                                            
+
                                                     </li>
                                                     <li>
                                                         <s:if test="%{!#guiFragmentVar.locked}" >
                                                             <%-- remove --%>
                                                             <s:url action="trash" var="trashGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
-                                                            <a href="<s:property value="#trashGuiFragmentActionVar" escapeHtml="false" />" 
+                                                            <a href="<s:property value="#trashGuiFragmentActionVar" escapeHtml="false" />"
                                                                title="<s:text name="label.remove" />: <s:property value="#codeVar" />">
                                                                 <span class="sr-only"><s:text name="label.alt.clear" /></span>
                                                                 <s:text name="label.alt.clear" />

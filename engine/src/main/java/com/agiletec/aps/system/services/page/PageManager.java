@@ -15,6 +15,7 @@ package com.agiletec.aps.system.services.page;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class PageManager extends AbstractService
 	 * @throws ApsSystemException In case of database access error.
 	 */
 	private void loadPageTree() throws ApsSystemException {
+		PagesStatus status = new PagesStatus();
 		IPage newRoot = null;
 		List<IPage> pageList = null;
 		try {
@@ -74,6 +76,7 @@ public class PageManager extends AbstractService
 				if (page.getCode().equals(page.getParentCode())) {
 					newRoot = page;
 				}
+				this.buildPagesStatus(status, page);
 			}
 			for (int i = 0; i < pageList.size(); i++) {
 				Page page = (Page) pageList.get(i);
@@ -88,12 +91,30 @@ public class PageManager extends AbstractService
 			}
 			this._root = newRoot;
 			this._pages = newMap;
+			this._pagesStatus = status;
 		} catch (ApsSystemException e) {
 			throw e;
 		} catch (Throwable t) {
 			_logger.error("Error while building the tree of pages", t);
 			//ApsSystemUtils.logThrowable(t, this, "loadPageTree");
 			throw new ApsSystemException("Error while building the tree of pages", t);
+		}
+	}
+
+	protected void buildPagesStatus(PagesStatus status, IPage page) {
+		Date currentDate = page.getDraftMetadata().getUpdatedAt();
+		if (page.isOnline()) {
+			if (page.isChanged()) {
+				status.setOnlineWithChanges(status.getOnlineWithChanges() + 1); 
+			} else {
+				status.setOnline(status.getOnline() + 1); 
+			}
+		} else {
+			status.setDraft(status.getDraft() + 1); 
+		}
+		
+		if (null == status.getLastUpdate() || status.getLastUpdate().before(currentDate)) {
+			status.setLastUpdate(currentDate);
 		}
 	}
 	
@@ -676,7 +697,7 @@ public class PageManager extends AbstractService
 			PageModel model = event.getPageModel();
 			String pageModelCode = (null != model) ? model.getCode() : null;
 			if (null != pageModelCode) {
-				List utilizers = this.getPageModelUtilizers(pageModelCode);
+				List<?> utilizers = this.getPageModelUtilizers(pageModelCode);
 				if (null != utilizers && utilizers.size() > 0) {
 					this.init();
 				}
@@ -701,6 +722,32 @@ public class PageManager extends AbstractService
 		return resultOperation;
 	}
 	
+
+	@Override
+	public List<IPage> loadLastUpdatedPages(int size) throws ApsSystemException {
+		List<IPage> pages = new ArrayList<IPage>();
+		try {
+			List<String> paceCodes = this.getPageDAO().loadLastUpdatedPages(size);
+			if (null == paceCodes || paceCodes.isEmpty()) {
+				return pages;
+			}
+			for (String pageCode : paceCodes) {
+				IPage page = this.getPage(pageCode, false);
+				pages.add(page);
+			}
+			
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "loadLastUpdatedPages");
+			throw new ApsSystemException("Error loading loadLastUpdatedPages", t);
+		}
+		return pages;
+	}
+
+	@Override
+	public PagesStatus getPagesStatus() {
+		return this._pagesStatus;
+	}
+	
 	protected IPageDAO getPageDAO() {
 		return _pageDao;
 	}
@@ -717,6 +764,7 @@ public class PageManager extends AbstractService
 	 * The map of pages, indexed by code.
 	 */
 	private Map<String, IPage> _pages;
+	private PagesStatus _pagesStatus = new PagesStatus();
 
 	private IPageDAO _pageDao;
 	

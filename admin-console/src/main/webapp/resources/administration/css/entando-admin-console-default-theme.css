@@ -123,7 +123,6 @@ a {
     margin-left: -16px;
     margin-top: -53px;
 }
-
 /*---------------patternfly override alert-------*/
 .alert-danger {
     background-color: #ffe6e6 !important;
@@ -1334,19 +1333,36 @@ ul {
     font-size: 16px;
     text-transform: capitalize;
 }
+.table-w-3{
+    width: 3%;
+}
+.table-w-5{
+    width: 5%;
+}
 .table-w-10{
     width: 10%;
 }
-
-
+.table-w-15{
+    width: 15%;
+}
+.table-w-20{
+    width: 20%;
+}
+.table-w-45{
+    width: 45%;
+}
+.table-w-50{
+    width: 50%;
+}
 .table-w-60{
     width: 60%;
 }
-
+.table-w-70{
+    width: 70%;
+}
 .table-txt-wrap{
     white-space: normal !important;
     word-wrap: break-word  !important;  
-
 }
 .filter-list{
     z-index: 99;
@@ -1356,25 +1372,25 @@ ul {
 }
 
 .searchPanel .panel {
-		margin-bottom: 20px;
-		background-color: #fff;
-		border: 0px solid transparent;
-		border-radius: 1px;
-		box-shadow: none;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 0px solid transparent;
+    border-radius: 1px;
+    box-shadow: none;
 }
 .searchPanel .panel-group .panel-heading {
-	background-image: none;
+    background-image: none;
 }
 .searchPanel .panel-group .panel-heading+.panel-collapse .panel-body {
-	border-top: 1px solid #ecebeb;
+    border-top: 1px solid #ecebeb;
 }
 .searchPanel .panel-group .panel-title>a {
-	color: #4d5258;
-	font-weight: 400;
-	font-size: 13px;
+    color: #4d5258;
+    font-weight: 400;
+    font-size: 13px;
 }
 .searchPanel .panel-group .panel-title>a:after {
-	margin-left: 10px;
+    margin-left: 10px;
 }
 
 
@@ -1416,19 +1432,49 @@ ul {
 .ml-60 {margin-left: 60px;}
 .no-ml {margin-left: 0;}
 
+.pt-5 {padding-top: 5px;}
+.pt-10 {padding-top: 10px}
+.pt-20 {padding-top: 20px;}
+.pt-40 {padding-top: 40px;}
+.pt-60 {padding-top: 60px;}
+.no-pt {padding-top: 0;}
 
-.pr-5 {padding-left: 5px;}
+.pr-5 {padding-right: 5px;}
 .pr-10 {padding-right: 10px}
-.pr-20 {padding-left: 20px;}
-.pr-40 {padding-left: 40px;}
-.pr-60 {padding-left: 60px;}
-.no-pr {padding-left: 0;}
+.pr-20 {padding-right: 20px;}
+.pr-40 {padding-right: 40px;}
+.pr-60 {padding-right: 60px;}
+.no-pr {padding-right: 0;}
 
+.pb-5 {padding-bottom: 5px;}
+.pb-10 {padding-bottom: 10px}
+.pb-20 {padding-bottom: 20px;}
+.pb-40 {padding-bottom: 40px;}
+.pb-60 {padding-bottom: 60px;}
+.no-pb {padding-bottom: 0;}
+
+.pl-5 {padding-left: 5px;}
+.pl-10 {padding-left: 10px}
+.pl-20 {padding-left: 20px;}
+.pl-40 {padding-left: 40px;}
+.pl-60 {padding-left: 60px;}
+.no-pl {padding-left: 0;}
+
+.wauto {width: auto;}
+.w100perc {width: 100%;}
+
+/* --------------- Bordi --------------- */
+
+.no-top-border {border-top: 0!important}
+.no-right-border {border-top: 0!important}
+.no-bottom-border {border-top: 0!important}
+.no-left-border {border-top: 0!important}
+
+.bottom-border {border-bottom: 1px solid #d1d1d1;}
 
 /* --------------- Buttons --------------- */
 
 .btn-long {padding: 2px 60px;}
-
 
 /* --------------- Forms --------------- */
 .form-group .control-label .fa.required-icon {
@@ -1437,18 +1483,17 @@ ul {
     right: 0;
 }
 
-
 /* --------------- Button group with form-control --------------- */
 
 .btn-with-form-control-container .btn-default {
-	padding: 9px;
+    padding: 9px;
 }
 .btn-with-form-control-container .btn-with-form-control {
-	padding: 5px;
+    padding: 5px;
 }
 .btn-with-form-control-container .btn-with-form-control .form-control {
-	margin-left: 2px;
-	display: inline;
+    margin-left: 2px;
+    display: inline;
     width: auto;
 }
 
@@ -1459,13 +1504,11 @@ ul {
 .btn-with-form-control-container .inline-block {display: inline-block}
 .btn-with-form-control-container .inline-block + .inline-block {margin-left: -3px}
 
-
 /* --------------- Table Responsive --------------- */
 
 .table-responsive table td {
-	white-space: normal!important;
+    white-space: normal!important;
 }
-
 
 /* --------------- Content List Table --------------- */
 
@@ -1501,7 +1544,7 @@ table.content-list th {
     text-overflow: ellipsis;
     white-space: nowrap!important;
 }
-   
+
 div.dataTables_wrapper table tr.odd td:not(:last-child) {background: #fff}
 div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 
@@ -1524,7 +1567,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     height: auto;
 }
 
-
 /* --------------- Category List Table --------------- */
 
 .table-treegrid .expand-button {
@@ -1541,7 +1583,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     cursor: pointer;
     display: none;
 }
-
 
 /* --------------- Pager --------------- */
 
@@ -1564,7 +1605,6 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     border-radius: 1px;
     box-shadow: none;
 }
-
 .advanced-search  .panel-group .panel-heading {
     background-image: none;
 }
@@ -1572,22 +1612,63 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .advanced-search  .panel-group .panel-heading + .panel-collapse .panel-body {
     border-top: 1px solid #ecebeb;
 }
-
 .advanced-search  .panel-group .panel-title>a {
     color: #4d5258;
     font-weight: 400;
     font-size: 13px;
 }
-
 .advanced-search.panel-group .panel-title>a:after {
     margin-left: 10px;
 }
-
-
 /* --------------- Color --------------- */
-
 .white {color: #fff}
 .white:hover {color: #fff}
+
+/* --------------- Datepicker --------------- */
+
+/* datepicker dropdown hack */
+.datepicker-dropdown:before,
+.datepicker-dropdown:after {display: none!important;}
+
+
+/* --------------- Dashboard --------------- */
+
+.page-title-container .date {
+    font-size: 14px; 
+    font-weight: 300
+}
+
+.dashboard .page-title-container .date {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.fs-16 {font-size: 16px}
+.fs-20 {font-size: 20px!important}
+.ln-16 {font-size: 16px}
+.w20perc {width: 20%}
+
+.dashboard .card-pf-body ul {
+    line-height: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+}
+.dashboard .card-pf-body ul .fa {font-size: 16px;}
+.dashboard .bottom-link {padding: 5px}
+.dashboard .bottom-actions {
+    position: absolute; 
+    bottom: 20px;
+    margin:0;
+}
+.dashboard .sidebar-pf {
+    position: relative;
+}
+
+.spinner-xl {
+    height: 100px; 
+    width: 100px
+}
 
 @media (max-width: 991px) {
     .table-view-pf-toolbar label {display: none}
@@ -1604,24 +1685,33 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     .toolbar-pf-actions .btn {
         padding: 5px 0;
     }
-    
+
     .toolbar-pf-results .dropdown {
         padding: 0 20px;
     }
     
+    .dashboard .bottom-actions {
+        position: static; 
+        bottom: inherit; 
+        padding-right: 0; 
+        margin:0;
+     }
+     
+     .dashboard .sidebar-pf {
+         height: auto!important;
+     }
 }
-
 @media (max-width: 767px) {
     .table-view-pf-toolbar label {display: none};
 
-	.btn-with-form-control-container {
-		width: 100%;
-	}	
-	.btn-with-form-control-container .btn {
-		display: block;
-		float: none;
-		margin: 0!important;
-	}
+    .btn-with-form-control-container {
+        width: 100%;
+    }	
+    .btn-with-form-control-container .btn {
+        display: block;
+        float: none;
+        margin: 0!important;
+    }
     .btn-with-form-control-container .input-group .btn.input-group-addon {
         display: table-cell;
     }
@@ -1632,4 +1722,35 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
         display: block;
     }
     .btn-with-form-control-container .inline-block + .inline-block {margin-left: 0}	
+}
+/*------- custom api th width-------*/
+.th-custom-width{
+    width: 60px;
+}
+.advanced-filter{
+    padding:20px 2px 10px;
+}
+.advanced-filter{
+    padding:10px 2px 10px;
+}
+.advanced-filter .panel-title{
+    text-align: end;
+}
+.table-view-pf-actions:last-child {
+    background: transparent;
+}
+/*---------required fileds on page edit-------*/
+.required-fields-edit{
+    margin:10px 0 0 0;
+    float:right;
+    font-size: 12px;
+    color: #aaabad;
+}
+/*---------language chips-----------*/
+.lang-chips{
+    padding: 4px;
+    color: white;
+    background: #23a8e0;
+    font-size: 12px;
+    font-weight: 600;
 }

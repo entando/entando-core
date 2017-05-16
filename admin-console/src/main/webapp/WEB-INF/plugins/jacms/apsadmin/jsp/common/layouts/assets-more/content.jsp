@@ -115,9 +115,10 @@ $(function() {
 //End Hypertext Attribute
 }); //End domready
 </script>
+
 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/inc/snippet-datepicker.jsp" />
 
-<script>
+<script type="text/javascript">
 	$(function(){
 		var gatherData = function(form, ignoreSelector) {
 			var myform = form.serialize();
@@ -209,7 +210,21 @@ $(function() {
 			ev.preventDefault();
 			sendSave(true);
 		});
+
+		/* Sticky Toolbar */
+	    $("body").append("<div class='ghost-toolbar'></div>");
+	    $(".ghost-toolbar").height($("#sticky-toolbar").height());
+
+	    $(window).resize(function(){
+	        $(".ghost-toolbar").height($("#sticky-toolbar").height());
+	        setStickyToolbar();
+	    });
 	});
+	
+	function setStickyToolbar() {
+	    var width = $("#sticky-toolbar").parent().width();
+	    $("#sticky-toolbar").css({position: 'fixed', bottom: 0, zIndex: 1020, width: width});
+	}
 </script>
 
 <wpsa:hookPoint key="jacms.entryContent.extraResources" objectName="hookPointElements_jacms_entryContent_extraResources">

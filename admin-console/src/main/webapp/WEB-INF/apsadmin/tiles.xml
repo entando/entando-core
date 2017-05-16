@@ -30,7 +30,9 @@
 	<definition extends="layout.default" name="main.layout" />
 
     <definition extends="layout.default" name="admin.intro">
-        <!-- <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/startPage.jsp" /> -->
+        <put-attribute name="title" value="title.dashboard" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/dashboard.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/dashboard/dashboard-extra.jsp" />
     </definition>
 
     <definition extends="layout.default" name="admin.Common.Password.entry">
@@ -321,7 +323,12 @@
 		<put-attribute name="title" value="title.guiFragmentManagement" />
 		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-references.jsp" />
 	</definition>
-	
+        
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.settings">
+        <put-attribute name="title" value="title.guiFragmentManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-setting.jsp" />
+    </definition>
+    	
     <definition extends="layout.default" name="admin.PageModel.list">
         <put-attribute name="title" value="title.pageModelManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-list.jsp" />
@@ -379,10 +386,13 @@
         <put-attribute name="title" value="title.categoryManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryDetails.jsp" />
     </definition>
-	
     <definition extends="layout.default" name="admin.Category.moveReferences">
         <put-attribute name="title" value="title.categoryManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryMoveReferences.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Category.settings">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categorySettings.jsp" />
     </definition>
 
     <!-- ********* FINE Area Gestione Categorie ********* -->

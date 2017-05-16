@@ -232,7 +232,9 @@
             <s:if test="%{null == #widgetTypeVar || (!#widgetTypeVar.logic && !isInternalServletWidget(#widgetTypeVar.code))}">
                 <s:set var="uniqueGuiFragmentVar" value="%{extractUniqueGuiFragment(widgetTypeCode)}" />
                 <s:if test="%{strutsAction == 1 || isEditEmptyFragment() || (null != #uniqueGuiFragmentVar && (null != #uniqueGuiFragmentVar.gui || null != #uniqueGuiFragmentVar.defaultGui))}">
- <div style="margin-left: 230px">
+ <div class="form-group">
+     <label class="control-label col-sm-2"></label>
+     <div class=" col-sm-10">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#widget-gui" data-toggle="tab">Custom <abbr title="User Interface">UI</abbr></a></li>
                             <s:if test="strutsAction == 2">
@@ -261,6 +263,7 @@
                             </s:if>
                         </div>
                     </div>
+                        </div>
  </div>
                 </s:if>
                 <s:else><div class="margin-none alert alert-info"><s:text name="label.widgetType.fragmentEditingNotAvailable" /></div></s:else>
@@ -271,7 +274,9 @@
                     
                     <fieldset class="col-md-12 margin-large-bottom no-padding">
                         <legend><abbr title="User Interfaces">UIs</abbr></legend>
-                        <div class="panel-group" id="accordion">
+                         <div class="form-group">
+     <label class="control-label col-sm-2"></label>
+                        <div class="panel-group col-sm-10" id="accordion">
                             <s:iterator value="guiFragmentCodesVar" var="guiFragmentCodeVar" status="status">
                                 <s:set var="guiFragmentVar" value="getGuiFragment(#guiFragmentCodeVar)" />
                                 <s:if test="%{isEditEmptyFragment() || (null != #guiFragmentVar && (null != #guiFragmentVar.gui || null != #guiFragmentVar.defaultGui))}">
@@ -309,6 +314,7 @@
                                 <s:else><div class="margin-none alert alert-info"><s:text name="label.widgetType.fragmentEditingNotAvailable" /></div></s:else>
                             </s:iterator>
                         </div>
+                         </div>
                     </fieldset>
                     
                 </s:if>

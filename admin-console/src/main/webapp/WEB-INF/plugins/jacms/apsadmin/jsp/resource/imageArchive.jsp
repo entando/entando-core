@@ -292,6 +292,7 @@
                                         <div class="list-view-pf">
                                             <div class="list-group-item-heading" style="font-size: 16px">
                                                 <s:set var="fileNameVar" value="#resource.masterFileName"/>
+                                                <s:set var="fileDescVar" value="#resource.description"/>
                                                 <s:if test='%{#fileNameVar.length()>24}'>
                                                     <s:set var="fileNameVar"
                                                            value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}'/>
@@ -300,6 +301,9 @@
                                                 <s:else>
                                                     <s:property value="#fileNameVar"/>
                                                 </s:else>
+                                            </div>
+                                            <div class="list-group-item-text">
+                                                <s:property value="#fileDescVar"/>
                                             </div>
                                             <br>
                                             <div class="list-view-pf-additional-info" style="width: 100%">

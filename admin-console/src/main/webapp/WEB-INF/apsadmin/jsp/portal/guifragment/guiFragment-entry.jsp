@@ -109,7 +109,9 @@
         </s:if>
         <hr>
         <!-- Nav tabs -->
-        <div style="margin-left: 230px">
+        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+        <label class="control-label col-sm-2"></label>
+        <div class=" col-sm-10">
             <ul id="gui-tab" class="nav nav-tabs">
                 <li class="active"><a href="#gui-edit" data-toggle="tab">Gui Code</a></li>
                 <li><a href="#gui-default" data-toggle="tab">Default Gui Code</a></li>
@@ -163,7 +165,7 @@
                 </div>
             </div>
         </div>
-        
+        </div>
         <%-- save button --%>
         <div class="form-group">
             <div class="col-xs-12">
@@ -178,7 +180,7 @@
 
 <script>
     $('#gui-tab a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
-    })
+        e.preventDefault();
+        $(this).tab('show');
+    });
 </script>

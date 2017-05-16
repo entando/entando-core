@@ -56,7 +56,20 @@
             <result name="guiFragmentsList" type="chain">list</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
-    	
+        
+        <action name="systemParams" class="guiFragmentSettingsAction" method="configSystemParams">
+            <result type="tiles">admin.Portal.GuiFragment.settings</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+                <interceptor-ref name="redirectMessage" />
+        </action>
+
+        <action name="updateSystemParams" class="guiFragmentSettingsAction" method="updateSystemParams">
+            <result type="redirectAction">systemParams</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">superuser</param>
+        	</interceptor-ref>
+                <interceptor-ref name="redirectMessage" />
+        </action>    	
     </package>
    
 </struts>

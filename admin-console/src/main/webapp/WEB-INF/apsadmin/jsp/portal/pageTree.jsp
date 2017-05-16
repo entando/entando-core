@@ -9,7 +9,7 @@
 
 <h1 class="page-title-container"><s:text name="title.pageTree" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageTree.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -34,35 +34,33 @@
             </ul>
         </div>
     </s:if>
-
     <div role="search">
-
         <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
         <a href="<s:url namespace="/do/Page" action="new" />" class="btn btn-primary pull-right" title="<s:text name="label.new" />" style="margin-bottom: 5px">
             <s:text name="label.add" />
         </a>
         <s:form cssClass="form-horizontal">           
-    
+
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
-            <div class="table-responsive overflow-visible">
+                <div class="table-responsive overflow-visible">
                     <table id="pageTree" class="table table-bordered table-hover table-treegrid">
                         <thead>
                             <tr>
-                                <th style="width: 68%;">Tree Pages
+                                <th class="table-w-60"><s:text name="title.pageTree" />
                                 <s:if test="#pageTreeStyleVar == 'classic'">
                                     <button type="button" class="btn-no-button expand-button" id="expandAll">
-                                        <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Expand All
+                                        <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;<s:text name="title.pageTree.expand" />
                                     </button>
                                     <button type="button" class="btn-no-button" id="collapseAll">
-                                        <i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Collapse All
+                                        <i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;<s:text name="title.pageTree.collapse" />
                                     </button>
                                 </s:if>
                             </th>
-                            <th class="text-center" style="width: 8%;"><s:text name="label.add|move" /></th>
-                            <th class="text-center" style="width: 8%;"><s:text name="label.state" /></th>
-                            <th class="text-center" style="width: 8%;"><s:text name="label.pageInMenu" /></th>
-                            <th class="text-center" style="width: 5%;"><s:text name="label.actions" /></th>
+                            <th class="text-center table-w-10"><s:text name="label.add|move" /></th>
+                            <th class="text-center table-w-10"><s:text name="label.state" /></th>
+                            <th class="text-center table-w-10"><s:text name="label.pageInMenu" /></th>
+                            <th class="text-center table-w-5"><s:text name="label.actions" /></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,19 +87,7 @@
                 </table>     
             </div>
             <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
-
-<!--            <fieldset data-toggle="tree-toolbar"><legend><s:text name="title.pageActions" /></legend>
-                <p class="sr-only"><s:text name="title.pageActionsIntro" /></p>
-
-                <div class="btn-toolbar" data-toggle="tree-toolbar-actions">
-                    <div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
-            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info" data-toggle="tooltip">
-                <span class="icon fa fa-plus-circle"></span>
-            </wpsf:submit>
-        </div>
-    </div>
-</fieldset>-->
         </s:form>
     </div>
-
 </div>
+

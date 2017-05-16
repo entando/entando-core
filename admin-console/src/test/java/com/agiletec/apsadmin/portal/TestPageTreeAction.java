@@ -15,11 +15,13 @@ package com.agiletec.apsadmin.portal;
 
 import java.util.Collection;
 
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ITreeAction;
@@ -101,7 +103,9 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 				assertEquals(0, child.getChildren().length);
 			}
 		}
-		if (!check) fail();
+		if (!check) {
+			fail();
+		}
 	}
 
 	public void testViewTree_5() throws Throwable {
@@ -140,7 +144,9 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 				assertEquals(0, child.getChildren().length);
 			}
 		}
-		if (!check) fail();
+		if (!check) {
+			fail();
+		}
 	}
 
 	public void testMoveHome() throws Throwable {
@@ -254,7 +260,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		this.executeCopyPage(customers_page.getCode(), "pageManagerCoach");
 		result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
-		String copyingPageCode = ((AbstractPortalAction)this.getAction()).getSelectedNode();
+		String copyingPageCode = ((AbstractPortalAction) this.getAction()).getSelectedNode();
 		assertEquals(customers_page.getCode(), copyingPageCode);
 	}
 
@@ -264,7 +270,6 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		this.addParameter("selectedNode", pageCodeToCopy);
 	}
 
-
 	public void testMoveWidgetUp() throws Throwable {
 		IPage page = this._pageManager.getRoot();
 		String pageCode = page.getCode();
@@ -273,7 +278,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 			Widget nullWidget = page.getDraftWidgets()[1];
 			assertNotNull(configWidget);
 			assertNull(nullWidget);
-			
+
 			String result = this.executeMoveDown(pageCode, 0, "admin");
 			assertEquals(Action.SUCCESS, result);
 			IPage updatedPage = this._pageManager.getRoot();
@@ -281,15 +286,15 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 			Widget w11 = updatedPage.getDraftWidgets()[1];
 			assertNull(w00);
 			assertEquals(w11.getType().getCode(), configWidget.getType().getCode());
-			
+
 			result = this.executeMoveUp(pageCode, 1, "admin");
 			assertEquals(Action.SUCCESS, result);
 			updatedPage = this._pageManager.getRoot();
 			w00 = updatedPage.getDraftWidgets()[0];
 			w11 = updatedPage.getDraftWidgets()[1];
-			assertEquals(w00.getType().getCode(),  configWidget.getType().getCode());
+			assertEquals(w00.getType().getCode(), configWidget.getType().getCode());
 			assertNull(w11);
-			
+
 		} finally {
 			this._pageManager.updatePage(page);
 		}
@@ -311,6 +316,65 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		return this.executeAction();
 	}
 
+	public void testMoveTreeSuccess() throws Throwable {
+		String pageCode = "testPage";
+		IPage root = this._pageManager.getRoot();
+		try {
+			Page testPage = new Page();
+			testPage.setCode(pageCode);
+			testPage.setParent(this._pageManager.getRoot());
+			testPage.setParentCode(root.getCode());
+			PageMetadata draft = new PageMetadata();
+			draft.setTitle("en", pageCode);
+			draft.setTitle("it", pageCode);
+			draft.setModel(root.getDraftMetadata().getModel());
+			testPage.setDraftMetadata(draft);
+			testPage.setGroup(Group.FREE_GROUP_NAME);
+			
+			this._pageManager.addPage(testPage);
+			
+			this.setUserOnSession("pageManagerCoach");
+			this.initAction("/do/Page", "moveTree");
+			this.addParameter("selectedNode", pageCode);
+			this.addParameter("parentPageCode", "pagina_2");
+			String result = this.executeAction();
+			assertEquals("success", result);
+			
+		} finally {
+			this._pageManager.deletePage(pageCode);
+		}
+	}
+
+	public void testMoveTreeParentToChild() throws Throwable {
+		this.setUserOnSession("pageManagerCoach");
+		this.initAction("/do/Page", "moveTree");
+		this.addParameter("selectedNode", "pagina_1");
+		this.addParameter("parentPageCode", "pagina_11");
+		String result = this.executeAction();
+		assertEquals("pageTree", result);
+		assertEquals(1, this.getAction().getActionErrors().size());
+	}
+
+	public void testMoveTreeNullNode() throws Throwable {
+		this.setUserOnSession("pageManagerCoach");
+		this.initAction("/do/Page", "moveTree");
+		String node = null;
+		this.addParameter("selectedNode", node);
+		this.addParameter("parentPageCode", "pagina_11");
+		String result = this.executeAction();
+		assertEquals("pageTree", result);
+		assertEquals(1, this.getAction().getActionErrors().size());
+	}
+
+	public void testMoveTreeNotFoundNode() throws Throwable {
+		this.setUserOnSession("pageManagerCoach");
+		this.initAction("/do/Page", "moveTree");
+		this.addParameter("selectedNode", "not_existing");
+		this.addParameter("parentPageCode", "pagina_11");
+		String result = this.executeAction();
+		assertEquals("pageTree", result);
+		assertEquals(1, this.getAction().getActionErrors().size());
+	}
 
 	private void init() throws Exception {
 		try {

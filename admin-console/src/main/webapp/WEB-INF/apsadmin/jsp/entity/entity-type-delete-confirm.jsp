@@ -32,10 +32,8 @@
         </p>
 
         <i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
-
         <p class="esclamation-underline">
-            <s:text name="title.entityTypes.editType.remove"/>&#32;
-            <s:text name="%{'title.' + entityManagerName + '.management'}"/>
+            <s:text name="title.entityTypes.editType.remove"/>&#32;<s:text name="%{'title.' + entityManagerName + '.management'}"/>
         </p>
         <p class="esclamation-underline-text">
             <s:text name="note.entityTypes.deleteType.areYouSure"/>:&#32;

@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.sql.Clob;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -32,6 +31,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import org.entando.entando.aps.system.init.model.DataInstallationReport;
 import org.entando.entando.aps.system.init.model.SystemInstallationReport;
 import org.entando.entando.aps.system.init.model.TableDumpReport;
@@ -42,13 +43,13 @@ import org.slf4j.LoggerFactory;
  * @author E.Santoboni
  */
 public class TableDataUtils {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(TableDataUtils.class);
-	
-	public static void valueDatabase(String script, String databaseName, 
+
+	public static void valueDatabase(String script, String databaseName,
 			DataSource dataSource, DataInstallationReport schemaReport) throws ApsSystemException {
 		try {
-            String[] queries = (null != script) ? QueryExtractor.extractInsertQueries(script) : null;
+			String[] queries = (null != script) ? QueryExtractor.extractInsertQueries(script) : null;
 			if (null == queries || queries.length == 0) {
 				_logger.info("Script file for db {} void", databaseName);
 				if (null != schemaReport) {
@@ -68,15 +69,17 @@ public class TableDataUtils {
 			throw new ApsSystemException("Error executing script into db " + databaseName, t);
 		}
 	}
-	
+
 	public static void executeQueries(DataSource dataSource, String[] queries, boolean traceException) throws ApsSystemException {
-		if (null == queries || queries.length == 0) return;
+		if (null == queries || queries.length == 0) {
+			return;
+		}
 		Connection conn = null;
-        Statement stat = null;
+		Statement stat = null;
 		String currentQuery = null;
 		try {
 			conn = dataSource.getConnection();
-            conn.setAutoCommit(false);
+			conn.setAutoCommit(false);
 			stat = conn.createStatement();
 			for (int i = 0; i < queries.length; i++) {
 				currentQuery = queries[i];
@@ -114,12 +117,12 @@ public class TableDataUtils {
 			}
 		}
 	}
-	
+
 	public static TableDumpReport dumpTable(BufferedWriter br, DataSource dataSource, String tableName) throws ApsSystemException {
 		TableDumpReport report = new TableDumpReport(tableName);
 		StringBuilder scriptPrefix = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
 		Connection conn = null;
-        Statement stat = null;
+		Statement stat = null;
 		ResultSet res = null;
 		long start = System.currentTimeMillis();
 		try {
@@ -128,13 +131,13 @@ public class TableDataUtils {
 			stat = conn.createStatement();
 			res = stat.executeQuery(query);
 			ResultSetMetaData metaData = res.getMetaData();
-            int columnCount = metaData.getColumnCount();
+			int columnCount = metaData.getColumnCount();
 			int[] types = new int[columnCount];
 			for (int i = 0; i < columnCount; i++) {
-				if (i>0) {
+				if (i > 0) {
 					scriptPrefix.append(", ");
 				}
-				int indexColumn = i+1;
+				int indexColumn = i + 1;
 				types[i] = metaData.getColumnType(indexColumn);
 				scriptPrefix.append(metaData.getColumnName(indexColumn).toLowerCase());
 			}
@@ -142,27 +145,27 @@ public class TableDataUtils {
 			int rows = 0;
 			while (res.next()) {
 				StringBuilder newRecord = new StringBuilder(scriptPrefix);
-                for (int i=0; i<columnCount; i++) {
-                    if (i > 0) {
-                        newRecord.append(", ");
-                    }
-                    Object value = getColumnValue(res, i, types);
-                    if (value == null) {
-                        newRecord.append("NULL");
-                    } else {
-                        String outputValue = value.toString();
-						outputValue = outputValue.replaceAll("'","\\''");
+				for (int i = 0; i < columnCount; i++) {
+					if (i > 0) {
+						newRecord.append(", ");
+					}
+					Object value = getColumnValue(res, i, types);
+					if (value == null) {
+						newRecord.append("NULL");
+					} else {
+						String outputValue = value.toString();
+						outputValue = StringEscapeUtils.escapeSql(outputValue);
 						if (isDataNeedsQuotes(types[i])) {
 							newRecord.append("'").append(outputValue).append("'");
 						} else {
 							newRecord.append(outputValue);
 						}
-                    }
-                }
-                newRecord.append(");\n");
+					}
+				}
+				newRecord.append(");\n");
 				br.write(newRecord.toString());
 				rows++;
-            }
+			}
 			report.setRows(rows);
 		} catch (Throwable t) {
 			_logger.error("Error creating backup", t);
@@ -194,136 +197,136 @@ public class TableDataUtils {
 		report.setRequiredTime(time);
 		return report;
 	}
-	
+
 	private static Object getColumnValue(ResultSet res, int columnIndex, int[] columnTypes) throws SQLException {
 		int type = columnTypes[columnIndex];
 		int resIndex = columnIndex + 1;
 		switch (type) {
-            //case Types.ARRAY:
+			//case Types.ARRAY:
 			//	return ....;
-            case Types.BIGINT:
+			case Types.BIGINT:
 				Object bigintObject = res.getObject(resIndex);
 				if (null != bigintObject) {
 					return (Integer) bigintObject;
 				} else {
 					return null;
 				}
-            //case Types.BINARY: 
+			//case Types.BINARY:
 			//	return ....;
-            case Types.BIT:
+			case Types.BIT:
 				return (int) res.getByte(resIndex);
-            case Types.BLOB:
+			case Types.BLOB:
 				return res.getBlob(resIndex);
-            case Types.BOOLEAN: 
+			case Types.BOOLEAN:
 				Boolean bool = res.getBoolean(resIndex);
 				if (null == bool) {
 					return null;
 				}
 				return (bool) ? 1 : 0;
-            case Types.CHAR:
+			case Types.CHAR:
 				return res.getString(resIndex);
-            case Types.CLOB:
+			case Types.CLOB:
 				Clob clob = res.getClob(resIndex);
 				return getClobAsString(clob);
-            //case Types.DATALINK: 
+			//case Types.DATALINK:
 			//	return ....;
-            case Types.DATE:
+			case Types.DATE:
 				Date date = res.getDate(resIndex);
 				return getDateAsString(date);
-            case Types.DECIMAL:
+			case Types.DECIMAL:
 				return res.getBigDecimal(resIndex);
-            //case Types.DISTINCT: 
+			//case Types.DISTINCT:
 			//	return ....;
-            case Types.DOUBLE: 
+			case Types.DOUBLE:
 				Object doubleObject = res.getObject(resIndex);
 				if (null != doubleObject) {
 					return (Double) doubleObject;
 				} else {
 					return null;
 				}
-            case Types.FLOAT: 
+			case Types.FLOAT:
 				Object floatObject = res.getObject(resIndex);
 				if (null != floatObject) {
 					return (Float) floatObject;
 				} else {
 					return null;
 				}
-            case Types.INTEGER: 
+			case Types.INTEGER:
 				Object intObject = res.getObject(resIndex);
 				if (null != intObject) {
 					return (Integer) intObject;
 				} else {
 					return null;
 				}
-            //case Types.JAVA_OBJECT: 
+			//case Types.JAVA_OBJECT:
 			//	return ....;
-            case Types.LONGNVARCHAR: 
+			case Types.LONGNVARCHAR:
 				return res.getString(resIndex);
-            //case Types.LONGVARBINARY: 
+			//case Types.LONGVARBINARY:
 			//	return ....;
-            case Types.LONGVARCHAR: 
+			case Types.LONGVARCHAR:
 				return res.getString(resIndex);
-            //case Types.NCHAR: 
+			//case Types.NCHAR:
 			//	return ....;
-            case Types.NCLOB: 
+			case Types.NCLOB:
 				return res.getString(resIndex);
-            //case Types.NULL: 
+			//case Types.NULL:
 			//	return ....;
-            //case Types.NUMERIC: 
+			//case Types.NUMERIC:
 			//	return ....;
-            case Types.NVARCHAR: 
+			case Types.NVARCHAR:
 				return res.getString(resIndex);
-            //case Types.OTHER: 
+			//case Types.OTHER:
 			//	return ....;
-            //case Types.REAL: 
+			//case Types.REAL:
 			//	return ....;
-            //case Types.REF: 
+			//case Types.REF:
 			//	return ....;
-            //case Types.ROWID: 
+			//case Types.ROWID:
 			//	return ....;
-            case Types.SMALLINT:
+			case Types.SMALLINT:
 				Object shortObject = res.getObject(resIndex);
 				if (null != shortObject) {
 					return (Integer) shortObject;
 				} else {
 					return null;
 				}
-            //case Types.SQLXML:
+			//case Types.SQLXML:
 			//	return ....;
-            //case Types.STRUCT:
+			//case Types.STRUCT:
 			//	return ....;
-            case Types.TIME:
+			case Types.TIME:
 				Time time = res.getTime(resIndex);
 				return getTimeAsString(time);
-            case Types.TIMESTAMP:
+			case Types.TIMESTAMP:
 				Timestamp timestamp = res.getTimestamp(resIndex);
 				return getTimestampAsString(timestamp);
-            case Types.TINYINT:
+			case Types.TINYINT:
 				Object tinyintObject = res.getObject(resIndex);
 				if (null != tinyintObject) {
 					return (Integer) tinyintObject;
 				} else {
 					return null;
 				}
-            //case Types.VARBINARY:
+			//case Types.VARBINARY:
 			//	return ....;
-            case Types.VARCHAR:
+			case Types.VARCHAR:
 				return res.getString(resIndex);
-            default:
+			default:
 				return res.getObject(resIndex);
-        }
+		}
 		//return null;
 	}
-	
+
 	protected static String getClobAsString(Clob clob) {
 		if (null == clob) {
 			return null;
-		} 
+		}
 		StringBuilder strOut = new StringBuilder();
 		try {
 			String aux;
 			BufferedReader br = new BufferedReader(clob.getCharacterStream());
-			while ((aux=br.readLine()) != null){
+			while ((aux = br.readLine()) != null) {
 				strOut.append(aux);
 			}
 		} catch (Throwable t) {
@@ -331,14 +334,14 @@ public class TableDataUtils {
 		}
 		return strOut.toString().trim();
 	}
-	
+
 	private static String getDateAsString(Date date) {
 		if (null == date) {
 			return null;
 		}
 		return DateConverter.getFormattedDate(date, "yyyy-MM-dd HH:mm:ss");
 	}
-	
+
 	private static String getTimeAsString(Time time) {
 		if (null == time) {
 			return null;
@@ -346,7 +349,7 @@ public class TableDataUtils {
 		Date date = new Date(time.getTime());
 		return getDateAsString(date);
 	}
-	
+
 	private static String getTimestampAsString(Timestamp time) {
 		if (null == time) {
 			return null;
@@ -354,22 +357,34 @@ public class TableDataUtils {
 		Date date = new Date(time.getTime());
 		return getDateAsString(date);
 	}
-	
+
 	private static boolean isDataNeedsQuotes(int type) {
 		switch (type) {
-            case Types.BIGINT: return false;
-            case Types.BIT: return false;
-            case Types.BOOLEAN: return false;
-            case Types.DECIMAL: return false;
-            case Types.DOUBLE: return false;
-            case Types.FLOAT: return false;
-            case Types.INTEGER: return false;
-            case Types.NUMERIC: return false;
-            case Types.REAL: return false;
-            case Types.SMALLINT: return false;
-            case Types.TINYINT: return false;
-            default: return true;
-        }
+			case Types.BIGINT:
+				return false;
+			case Types.BIT:
+				return false;
+			case Types.BOOLEAN:
+				return false;
+			case Types.DECIMAL:
+				return false;
+			case Types.DOUBLE:
+				return false;
+			case Types.FLOAT:
+				return false;
+			case Types.INTEGER:
+				return false;
+			case Types.NUMERIC:
+				return false;
+			case Types.REAL:
+				return false;
+			case Types.SMALLINT:
+				return false;
+			case Types.TINYINT:
+				return false;
+			default:
+				return true;
+		}
 	}
-	
+
 }

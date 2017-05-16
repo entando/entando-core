@@ -13,31 +13,31 @@
  */
 package com.agiletec.apsadmin.portal;
 
-import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.aps.system.common.tree.TreeNode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.entando.entando.apsadmin.portal.rs.model.PageJO;
+import org.entando.entando.apsadmin.portal.rs.model.PagesStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import com.agiletec.apsadmin.system.ITreeAction;
-import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_CLOSE;
-import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_OPEN;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
-import static com.opensymphony.xwork2.Action.SUCCESS;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This action class contains all the elements currently use to perform searches across the portal pages.
@@ -46,6 +46,64 @@ import java.util.Set;
 public class PageFinderAction extends AbstractPortalAction implements ITreeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageFinderAction.class);
+	private static final int DEFAULT_LASTUPDATE_RESPONSE_SIZE = 5;
+
+	public PagesStatusResponse getPagesStatusResponse() {
+		PagesStatusResponse response = null;
+		try {
+			PagesStatus pagesStatus = this.getPageManager().getPagesStatus();
+			response = new PagesStatusResponse(pagesStatus);
+		} catch (Throwable t) {
+			_logger.error("Error loading pagesStatus", t);
+			throw new RuntimeException("Error loading pagesStatus", t);
+		}
+		return response;		
+	}
+	
+	public String getLastUpdated() {
+		if (this.getLastUpdateResponseSize() < 1) {
+			this.setLastUpdateResponseSize(DEFAULT_LASTUPDATE_RESPONSE_SIZE);
+		}
+		return SUCCESS;
+	}
+
+	public List<PageJO> getLastUpdatePagesResponse() {
+		List<PageJO> response = null;
+		try {
+			List<IPage> pages = this.getPageManager().loadLastUpdatedPages(this.getLastUpdateResponseSize());
+			if (null != pages && ! pages.isEmpty()) {
+				response = new ArrayList<PageJO>();
+				Iterator<IPage> it = pages.iterator();
+				while (it.hasNext()) {
+					IPage page = it.next();
+					PageJO pageJO = this.buildPageRespnseItem(page);
+					response.add(pageJO);
+				}
+				
+			}
+			
+		} catch (Throwable t) {
+			_logger.error("Error loading pagesStatus", t);
+			throw new RuntimeException("Error loading pagesStatus", t);
+		}
+		return response;		
+	}
+
+	protected PageJO buildPageRespnseItem(IPage page) {
+		PageJO pageJO = new PageJO();
+		pageJO = new PageJO();
+		pageJO.setCode(page.getCode());
+		pageJO.setRoot(page.isRoot());
+		pageJO.setOnline(page.isOnline());
+		pageJO.setChanged(page.isChanged());
+		pageJO.setParentCode(page.getParentCode());
+		pageJO.setGroup(page.getGroup());
+		pageJO.setDraftMetadata(page.getDraftMetadata());
+		pageJO.setOnlineMetadata(page.getOnlineMetadata());
+		return pageJO;
+	}
+	
+	
 	
 	public List<IPage> getPagesFound() {	
 		List<IPage> result = null;
@@ -262,7 +320,15 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
     public void setTreeHelper(ITreeNodeBaseActionHelper _treeHelper) {
         this._treeHelper = _treeHelper;
     }
-        private String _targetNode;
+        public int getLastUpdateResponseSize() {
+		return _lastUpdateResponseSize;
+	}
+
+	public void setLastUpdateResponseSize(int lastUpdateResponseSize) {
+		this._lastUpdateResponseSize = lastUpdateResponseSize;
+	}
+
+		private String _targetNode;
         private ITreeNode _firstNode;
 	private Set<String> _treeNodesToOpen = new HashSet<String>();
         private Collection<String> _resultNodes;
@@ -273,6 +339,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	private String _copyingPageCode;
 	
 	private ITreeNodeBaseActionHelper _treeHelper;
+	private int _lastUpdateResponseSize;
 
 	
 }

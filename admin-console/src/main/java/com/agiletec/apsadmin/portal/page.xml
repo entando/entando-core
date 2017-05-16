@@ -156,37 +156,19 @@
             </interceptor-ref>
         </action>
 
-        <action name="status" class="pageFinderAction">
-            <result type="json">
-                <param name="root">pagesStatusResponse</param>
+        <action name="moveTree" class="pageTreeAction" method="moveTree">
+            <result name="pageTree" type="json">
+                <param name="root">pageResponse</param>
             </result>
-            <result name="input" type="json">
-                <param name="root">pagesStatusResponse</param>
-            </result>
-            <result name="failure" type="json">
-                <param name="root">pagesStatusResponse</param>
+            <result name="success" type="json">
+                <param name="root">pageResponse</param>
             </result>
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
-                <param name="requestAuth.requiredPermission">enterBackend</param>
+                <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>
 
-        <action name="lastUpdated" class="pageFinderAction" method="getLastUpdated">
-            <result type="json">
-                <param name="root">lastUpdatePagesResponse</param>
-            </result>
-            <result name="input" type="json">
-                <param name="root">lastUpdatePagesResponse</param>
-            </result>
-            <result name="failure" type="json">
-                <param name="root">lastUpdatePagesResponse</param>
-            </result>
-            <interceptor-ref name="jsonStack" />
-            <interceptor-ref name="entandoDefaultStack">
-                <param name="requestAuth.requiredPermission">enterBackend</param>
-            </interceptor-ref>
-        </action>
     </package>
 
     <package name="core_do/ABSTRACT/Page" extends="entando-default" abstract="true">
@@ -434,13 +416,6 @@
         </action>
 
         <action name="moveDown" class="pageTreeAction" method="moveDown">
-            <result type="tiles">admin.Page.viewTree</result>
-            <interceptor-ref name="entandoDefaultStack">
-                <param name="requestAuth.requiredPermission">managePages</param>
-            </interceptor-ref>
-        </action>
-
-        <action name="moveTree" class="pageTreeAction" method="moveTree">
             <result type="tiles">admin.Page.viewTree</result>
             <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>

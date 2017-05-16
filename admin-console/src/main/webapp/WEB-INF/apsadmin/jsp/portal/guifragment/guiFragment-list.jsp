@@ -114,15 +114,9 @@
                     </div>
                 </div>
             </s:form>
-
-            <p>
-            <!--    <a class="btn btn-primary" href="<s:url action="new" />">
-                    &#32;<s:text name="guiFragment.label.new" />
-                </a>-->
                 <a href="<s:url action="new" />" class="btn btn-primary pull-right" title="<s:text name="guiFragment.label.new" />" style="margin-bottom: 5px">
                     <s:text name="guiFragment.label.new" />
                 </a>
-            </p>
             <s:form action="search">
                 <p class="sr-only">
                     <wpsf:hidden name="code" />

@@ -29,6 +29,7 @@ import static com.opensymphony.xwork2.Action.SUCCESS;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 
 /**
  * Action principale per la gestione dell'albero delle pagine.
@@ -64,7 +65,7 @@ public class PageTreeAction extends AbstractTreeAction {
             }
             IPage currentPage = this.getPageManager().getDraftPage(selectedNode);
             if (!isUserAllowed(currentPage.getParent())) {
-                _logger.info("User not allowed!");
+                 _logger.info("User not allowed!");
                 this.addActionError(this.getText("error.page.userNotAllowed"));
                 return SUCCESS;
             }
@@ -99,13 +100,16 @@ public class PageTreeAction extends AbstractTreeAction {
         try {
             String check = this.checkMovePage(selectedNode, parentPageCode);
             if (null != check) {
+                this.addActionMessage(check);
                 return check;
             }
             IPage currentPage = this.getPage(selectedNode);
             IPage parent = this.getPage(parentPageCode);
             this.getPageManager().movePage(currentPage, parent);
+            this.addActionMessage(SUCCESS);
         } catch (Throwable t) {
             _logger.error("error in move page", t);
+            this.addActionMessage(FAILURE);
             return FAILURE;
         }
         return SUCCESS;
@@ -155,6 +159,15 @@ public class PageTreeAction extends AbstractTreeAction {
             return "pageTree";
         }
         return null;
+    }
+
+    public PageResponse getPageResponse() {
+        IPage page = null;
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(this.getSelectedNode())) {
+            page = this.getPage(this.getSelectedNode());
+        }
+        PageResponse response = new PageResponse(this, page);
+        return response;
     }
 
     public String moveWidgetUp() {

@@ -35,10 +35,7 @@
             </div>
         </td>
         <td class="text-center" style="width:20px">
-        <%-- FOR DEV. DEGUB
-        ONLINE: <s:property value="%{#currentRoot.getEntity().isOnline()}"/>
-        CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
-        --%>
+
         <span class="statusField">
             <span class="statusField">
                 <s:if test="%{!#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i></s:if>

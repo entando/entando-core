@@ -9,7 +9,7 @@ nbactions.xml
 */nb-configuration.xml
 */target
 */derby.log
-
+*.jsp~
 
 ### Eclipse ###
 .metadata

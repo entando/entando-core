@@ -28,7 +28,7 @@
             <p class="esclamation-underline-text"><s:property value="%{getPage(pageCode).getDraftTitle(currentLang.getCode())}" />&nbsp;?</p>
 
             <div class="text-center margin-large-top">
-                <a class="btn btn-default button-fixed-width" href="<s:url action="viewTree" namespace="/do/Page"/>" ><s:text name="title.pageTree" /></a>
+                <a class="btn btn-default button-fixed-width" href="<s:url action="viewTree" namespace="/do/Page"/>" ><s:text name="label.back" /></a>
                 <wpsf:submit type="button" cssClass="btn btn-primary button-fixed-width">
                     <s:text name="label.setOffline" />
                 </wpsf:submit>

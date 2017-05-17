@@ -19,7 +19,7 @@
                 <s:text name="title.languageAndLabels"/>
                 <span class="pull-right">
                     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                       data-content="TO be inserted" data-placement="left" data-original-title="">
+                       data-content="<s:text name="page.lang.help"/>" data-placement="left" data-original-title="">
                         <i class="fa fa-question-circle-o" aria-hidden="true"></i>
                     </a>
                 </span>
@@ -41,25 +41,9 @@
 <br>
 
 <div id="main" role="main">
-    <s:text name="label.message.seach"/></p>
-    <s:form action="search" cssClass="search-pf has-button">
-        <div class="form-group has-clear">
-            <label class="sr-only" for="text"><s:text name="label.search.by"/>&#32;<s:text name="label.text"/></label>
-            <wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
-                title="%{getText('label.search.by') +' '+ getText('label.text')}"
-                placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"/>
-        </div>
-        <div class="form-group">
-            <wpsf:submit type="button" cssClass="btn btn-default btn-lg pull-right">
-                <span class="fa fa-search"></span>
-            </wpsf:submit>
-        </div>
-    </s:form>
-</div>
-
-<div class="col-xs-12  ">
-    <div class="well col-md-offset-3 col-md-6  ">
-        <p class="search-label"><s:text name="label.message.seach"/></p>
+    <div class="col-xs-12  ">
+        <div class="well col-md-offset-3 col-md-6  ">
+            <p class="search-label"><s:text name="label.message.seach"/></p>
             <s:form action="search" class="search-pf has-button " cssClass="form-horizontal">
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="text" class="sr-only">
@@ -67,8 +51,8 @@
                     </label>
                     <div class="col-sm-9">
                         <wpsf:textfield name="text" id="text" cssClass="form-control input-lg"
-                            title="%{getText('label.search.by') +' '+ getText('label.text')}"
-                            placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"/>
+                                        title="%{getText('label.search.by') +' '+ getText('label.text')}"
+                                        placeholder="%{getText('label.search.by') +' '+ getText('label.text')}"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -82,74 +66,74 @@
             </s:form>
         </div>
     </div>
-</div>
-<br>
-<br>
 
-<div class="row">
-    <div class="col-sm-12">
-        <a href="<s:url namespace="/do/LocaleString" action="new" />" class="btn btn-primary pull-right"
-           style="margin-bottom: 5px">
-            <s:text name="locale.addNewLabel"/>
-        </a>
-    </div>
-</div>
+    <br>
+    <br>
 
-
-<ul class="nav nav-tabs">
-    <s:iterator value="systemLangs" var="lang">
-        <s:set var="labelModifier" value="''"/>
-        <s:set var="thModifier" value="''"/>
-        <s:set var="labelTitle" value="''"/>
-        <s:set var="activeTab" value="''"/>
-        <s:if test="#lang.default">
-            <s:set var="labelModifier" value="'*'"/>
-            <s:set var="thModifier" value="' (Default Language)'"/>
-            <s:set var="activeTab">
-                class=active
-            </s:set>
-        </s:if>
-        <li <s:property value="activeTab"/>>
-            <a class="text-capitalize" data-toggle="tab" href="#<s:property value="#lang.code"/>"
-               title="<s:property value="#lang.descr" />">
-                <s:property value="#lang.code"/><s:property value="labelModifier"/>
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="<s:url namespace="/do/LocaleString" action="new" />" class="btn btn-primary pull-right"
+               style="margin-bottom: 5px">
+                <s:text name="locale.addNewLabel"/>
             </a>
-        </li>
-    </s:iterator>
-</ul>
+        </div>
+    </div>
 
 
-<div class="tab-content">
-    <s:iterator value="systemLangs" var="lang">
-        <s:set var="classModifier" value="''"/>
-        <s:if test="#lang.default">
-            <s:set var="classModifier" value="'in active'"/>
-        </s:if>
-        <div id="<s:property value="#lang.code"/>" class="tab-pane fade <s:property value="classModifier"/>">
-            <s:form action="search" cssClass="form-horizontal margin-large-top">
-                <p class="sr-only">
+    <ul class="nav nav-tabs">
+        <s:iterator value="systemLangs" var="lang">
+            <s:set var="labelModifier" value="''"/>
+            <s:set var="thModifier" value="''"/>
+            <s:set var="labelTitle" value="''"/>
+            <s:set var="activeTab" value="''"/>
+            <s:if test="#lang.default">
+                <s:set var="labelModifier" value="'*'"/>
+                <s:set var="thModifier" value="' (Default Language)'"/>
+                <s:set var="activeTab">
+                    class=active
+                </s:set>
+            </s:if>
+            <li <s:property value="activeTab"/>>
+                <a class="text-capitalize" data-toggle="tab" href="#<s:property value="#lang.code"/>"
+                   title="<s:property value="#lang.descr" />">
+                    <s:property value="#lang.code"/><s:property value="labelModifier"/>
+                </a>
+            </li>
+        </s:iterator>
+    </ul>
+
+
+    <div class="tab-content">
+        <s:iterator value="systemLangs" var="lang">
+            <s:set var="classModifier" value="''"/>
+            <s:if test="#lang.default">
+                <s:set var="classModifier" value="'in active'"/>
+            </s:if>
+            <div id="<s:property value="#lang.code"/>" class="tab-pane fade <s:property value="classModifier"/>">
+                <s:form action="search" cssClass="form-horizontal margin-large-top">
+                    <p class="sr-only">
                     <wpsf:hidden name="text"/>
                     <wpsf:hidden name="searchOption"/>
-                </p>
-                <s:set var="currentLocaleStrings" value="localeStrings"/>
-                <wpsa:subset source="currentLocaleStrings" count="20" objectName="groupContent"
-                             advanced="true" offset="5">
-                    <s:set var="group" value="#groupContent"/>
-                    <p class="sr-only">
+                    </p>
+                    <s:set var="currentLocaleStrings" value="localeStrings"/>
+                    <wpsa:subset source="currentLocaleStrings" count="20" objectName="groupContent"
+                                 advanced="true" offset="5">
+                        <s:set var="group" value="#groupContent"/>
+                        <p class="sr-only">
                         <wpsf:hidden name="lastGroupBy"/>
                         <wpsf:hidden name="lastOrder"/>
-                    </p>
-                    <div class="col-xs-12 no-padding">
-                        <table class="table table-striped table-bordered table-hover no-mb" id="labelTable">
-                            <thead>
-                                <tr>
-                                    <th><s:text name="label.code"/></th>
-                                    <th><s:property value="#lang.descr"/><s:property value="thModifier"/></th>
-                                    <th class="text-center " style="width: 20px"><s:text name="label.actions"/></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <s:if test="%{#currentLocaleStrings.size > 0}">
+                        </p>
+                        <div class="col-xs-12 no-padding">
+                            <table class="table table-bordered table-hover table-treegrid" id="labelTable">
+                                <thead>
+                                    <tr>
+                                        <th><s:text name="label.code"/></th>
+                                        <th><s:property value="#lang.descr"/><s:property value="thModifier"/></th>
+                                        <th class="text-center " style="width: 20px"><s:text name="label.actions"/></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <s:if test="%{#currentLocaleStrings.size > 0}">
                                     <p class="sr-only"><s:text name="title.generalSettings.locale.installedLabels"/></p>
                                     <s:iterator var="key">
                                         <tr class="dl-horizontal dl-striped panel padding-base-top padding-base-bottom">
@@ -190,21 +174,22 @@
                                         </tr>
                                     </s:iterator>
                                 </s:if>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="content-view-pf-pagination clearfix">
-                        <div class="form-group">
-                            <span>
-                                <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp"/>
-                            </span>
-                            <div class="mt-5">
-                                <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp"/>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="content-view-pf-pagination clearfix">
+                            <div class="form-group">
+                                <span>
+                                    <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp"/>
+                                </span>
+                                <div class="mt-5">
+                                    <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp"/>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </wpsa:subset>
-            </s:form>
-        </div>
-    </s:iterator>
+                    </wpsa:subset>
+                </s:form>
+            </div>
+        </s:iterator>
+    </div>
 </div>

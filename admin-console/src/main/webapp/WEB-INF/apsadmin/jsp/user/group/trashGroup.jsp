@@ -28,11 +28,9 @@
     <p class="esclamation-underline">
         <s:text name="note.gruopConfirm.delete" />
     </p>
-    <p>
+    <p class="esclamation-underline-text">
         <s:text name="note.groupConfirm.trash" />
-        &#32;
-        <s:property value="name" />
-        ?
+        &#32;<s:property value="name" />?
     </p>
     <div class="text-center margin-large-top">
         <wpsf:submit type="button"

@@ -1334,7 +1334,6 @@ ul {
 }
 .search-label{
     font-size: 16px;
-    text-transform: capitalize;
 }
 .table-w-3{
     width: 3%;
@@ -1635,7 +1634,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 /* --------------- Dashboard --------------- */
 
 .page-title-container .date {
-    font-size: 14px; 
+    font-size: 14px;
     font-weight: 300
 }
 
@@ -1658,7 +1657,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .dashboard .card-pf-body ul .fa {font-size: 16px;}
 .dashboard .bottom-link {padding: 5px}
 .dashboard .bottom-actions {
-    position: absolute; 
+    position: absolute;
     bottom: 20px;
     margin:0;
 }
@@ -1667,7 +1666,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 }
 
 .spinner-xl {
-    height: 100px; 
+    height: 100px;
     width: 100px
 }
 
@@ -1690,16 +1689,16 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     .toolbar-pf-results .dropdown {
         padding: 0 20px;
     }
-    
+
     .dashboard .bottom-actions {
-        position: static; 
-        bottom: inherit; 
-        padding-right: 0; 
+        position: static;
+        bottom: inherit;
+        padding-right: 0;
         margin:0;
-     }
-     
-     .dashboard .sidebar-pf {
-         height: auto!important;
+    }
+
+    .dashboard .sidebar-pf {
+        height: auto!important;
     }
 }
 @media (max-width: 767px) {
@@ -1755,4 +1754,15 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     font-size: 12px;
     font-weight: 600;
 }
-
+/*button remove*/
+.btn-remove{
+    background: transparent;
+    border: none;
+    color: #238fbc;
+}
+.label-info {
+    background-color: #23a8e0 !important;
+}
+.text-left{
+    text-align: left !important;
+}

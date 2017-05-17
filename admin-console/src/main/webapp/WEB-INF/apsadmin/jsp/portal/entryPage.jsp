@@ -324,7 +324,9 @@
             <div class="col-sm-3 control-label">
                 <label class="display-block" for="useExtraTitles"><s:text name="name.SEO.short" />
                     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.seo" />" data-placement="left">
-                        <span class="fa fa-info-circle"></span></a></label>
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    </label>
             </div>
             <div class="col-sm-4">
                 <wpsf:checkbox name="useExtraTitles" id="useExtraTitles" cssClass="bootstrap-switch" />
@@ -341,6 +343,9 @@
                 <label class="col-sm-4 control-label" for="ownerGroup" style="margin-left: -15px">
                     <s:text name="name.charset" />
                     <i class="fa fa-asterisk required-icon"></i>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.charset" />" data-placement="left">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
                 </label>
                 <div class="col-sm-6 foti_class">
                     <wpsf:select name="charset" id="charset" size="3" style="overflow:hidden" list="allowedCharsets" cssClass="form-control"/>
@@ -362,6 +367,9 @@
                 <label class="col-sm-4 control-label" for="ownerGroup">
                     <s:text name="name.mimeType" />
                     <i class="fa fa-asterisk required-icon"></i>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.mimetype" />" data-placement="left">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
                 </label>
                 <div class="col-sm-6 foti_class"  style="margin-left: 6px">
                     <wpsf:select name="mimeType" id="mimeType" size="5" style="overflow:hidden" list="allowedMimeTypes" cssClass="form-control" />

@@ -45,7 +45,7 @@
                 <button class="btn btn-primary"><s:text name="pageActions.preview" /></button></a>
 
             <button class="btn btn-warning restore-online-btn"><s:text name="pageActions.restore" /></button>
-            <button class="btn btn-danger unpublish-btn"><s:text name="pageActions.unpublish" /></button>
+            <button class="btn btn-default unpublish-btn"><s:text name="pageActions.unpublish" /></button>
             <button class="btn btn-success publish-btn"><s:text name="pageActions.publish" /></button>
 
         </div>

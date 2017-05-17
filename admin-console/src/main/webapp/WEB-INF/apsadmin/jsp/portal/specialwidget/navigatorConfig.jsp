@@ -29,10 +29,7 @@
 <h1 class="page-title-container">
     <s:text name="name.widget" />
     <span class="pull-right"> 
-    	<a tabindex="0" role="button"
-        	data-toggle="popover" data-trigger="focus" data-html="true"
-        	data-content="${dataContent}" data-placement="left" 
-        	data-original-title="${dataOriginalTitle}">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="<s:text name="name.widget.help" />" data-placement="left" data-original-title="">
 			<span class="fa fa-question-circle-o" aria-hidden="true"></span> 
 		</a>
     </span>
@@ -49,11 +46,6 @@
             <s:param name="selectedNode" value="currentPage.code"></s:param>
         </s:action>
     </div>
-    
-	<%-- 
-	<s:set var="breadcrumbs_pivotPageCode" value="pageCode" />
-	<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" /> 
-	--%>
 
 <!-- Form --> 
 <s:url action="saveNavigatorConfig" namespace="do/Page/SpecialWidget/Navigator" anchor="expressions" var="formAction"/>
@@ -171,8 +163,8 @@
 			                            <wpsa:actionParam action="removeExpression" var="actionName" >
 			                                <wpsa:actionSubParam name="expressionIndex" value="%{#rowstatus.index}" />
 			                            </wpsa:actionParam>
-			                            <wpsf:submit action="%{#actionName}" type="button" title="%{getText('label.remove')}" cssClass="btn btn-warning">
-			                                <span class="icon fa fa-times-circle-o"></span>
+                                                        <wpsf:submit action="%{#actionName}" type="button" title="%{getText('label.remove')}" cssClass="btn-remove">
+                                                            <span class="fa fa-trash-o fa-lg"></span>
 			                            </wpsf:submit>
 			                        </div>
 			                    </div>
@@ -266,7 +258,7 @@
             </div>
 	        <div class="form-group">
 		        <div class="col-sm-offset-2 col-sm-10">
-		            <wpsf:submit action="addExpression" type="button" cssClass="btn btn-default">
+                            <wpsf:submit action="addExpression" type="button" cssClass="btn btn-primary">
 		                <s:text name="widget.configNavigator.addExpression" />
 		            </wpsf:submit>
 		        </div>

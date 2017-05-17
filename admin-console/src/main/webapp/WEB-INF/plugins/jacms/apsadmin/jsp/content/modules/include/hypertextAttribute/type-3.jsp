@@ -94,27 +94,8 @@
 						<tr>
 							<th class="text-center w2perc"><input type="radio" disabled /></th>
 							<!-- description -->
-							<%-- TODO: column ordering not working
-                            <a href="<s:url action="entandoInternalLink" includeParams="all" >
-                                <s:param name="activeTab">2</s:param>
-                                <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                                <s:param name="lastOrder"><s:property value="lastOrder"/></s:param>
-                                <s:param name="groupBy">descr</s:param>
-                                <s:param name="internalActionName">entandoChangeOrder</s:param>
-                            </s:url>#divContentLink">
-							--%>
 							<th><s:text name="label.description" /></a></th>
 							<!-- key -->
-							<%-- TODO: column ordering not working
-                            <a href="<s:url action="entandoInternalLink" includeParams="all" >
-                                <s:param name="activeTab">2</s:param>
-                                <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                                <s:param name="lastOrder"><s:property value="lastOrder"/></s:param>
-                                <s:param name="groupBy">code</s:param>
-                                <s:param name="internalActionName">entandoChangeOrder</s:param>
-                            </s:url>#divContentLink">
-							</a>
-                            --%>
 							<th class="text-left"><s:text name="label.code" /></th>
 							<!-- creation date -->
 							<th class="text-center"><s:text name="label.creationDate" /></th>

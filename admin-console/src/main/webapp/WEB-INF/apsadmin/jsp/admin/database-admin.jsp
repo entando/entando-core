@@ -23,14 +23,13 @@
 </div>
 <br>
 <s:if test="hasActionErrors()">
-    <div class="alert alert-danger alert-dismissable fade in">
-        <button class="close" data-dismiss="alert">
-            <span class="icon fa fa-times"></span>
-        </button>
-        <h2 class="h4 margin-none">
-            <s:text name="message.title.ActionErrors" />
-        </h2>
-        <span class="pficon pficon-error-circle-o"></span>
+    <div class="alert alert-danger alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+    <span class="pficon pficon-close"></span>
+  </button>
+     <span class="pficon pficon-error-circle-o"></span>
+        <strong><s:text name="message.title.ActionErrors" />
+        </strong>
         <ul class="margin-base-top">
             <s:iterator value="actionErrors">
                 <li><s:property escapeHtml="false" /></li>
@@ -39,13 +38,14 @@
     </div>
 </s:if>
 <s:if test="hasFieldErrors()">
-    <div class="alert alert-danger alert-dismissable fade in">
-        <button class="close" data-dismiss="alert">
-            <span class="icon fa fa-times"></span>
-        </button>
-        <h2 class="h4 margin-none">
+    <div class="alert alert-danger alert-dismissable">
+       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+           <span class="pficon pficon-close"></span>
+       </button>
+        <span class="pficon pficon-error-circle-o"></span>
+         <strong>
             <s:text name="message.title.FieldErrors" />
-        </h2>
+        </strong>
         <ul class="margin-base-top">
             <s:iterator value="fieldErrors">
                 <s:iterator value="value">
@@ -56,13 +56,9 @@
     </div>
 </s:if>
 <s:if test="hasActionMessages()">
-    <div class="alert alert-success alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert"
-                aria-hidden="true">
-            <span class="pficon pficon-close"></span>
-        </button>
-        <span class="pficon pficon-ok"></span>
-        <s:text name="messages.confirm" />
+ <div class="alert alert-success">
+  <span class="pficon pficon-ok"></span>
+  <strong><s:text name="messages.confirm" /></strong>
         <s:iterator value="actionMessages">
             <li><s:property escapeHtml="false" /></li>
             </s:iterator>

@@ -62,17 +62,13 @@
         </div>
     </td>
     <td>
-        <%-- FOR DEV. DEGUB
-            ONLINE: <s:property value="%{#currentRoot.getEntity().isOnline()}"/>
-            CHANGED: <s:property value="%{#currentRoot.getEntity().isChanged()}"/
-        --%>
         <span class="statusField">
             <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
             <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
             <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
         </span>
         </td>
-        <td class="text-center">Menu List</td>
+        <td class="text-center"><s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().getOnlineMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
         <td class=" table-view-pf-actions text-center">
             <div class="dropdown dropdown-kebab-pf">
                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

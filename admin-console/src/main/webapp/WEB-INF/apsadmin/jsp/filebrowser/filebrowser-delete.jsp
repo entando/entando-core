@@ -31,13 +31,9 @@
         <p class="esclamation-underline">
             <s:text name="label.delete" />
         </p>
-        <p>
+        <p class="esclamation-underline-text">
             <s:text name="label.delete.confirm" />
-            &#32;
-            <code>
-                <s:property value="%{filename}" />
-            </code>
-            ?
+            &#32;<s:property value="%{filename}" />?
         </p>
         <div class="text-center margin-large-top">
             <a class="btn btn-default button-fixed-width"

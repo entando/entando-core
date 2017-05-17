@@ -173,25 +173,25 @@
 						<!-- Tab Menu -->
                         <ul class="nav nav-tabs tab-togglers mt-20" id="tab-togglers">
                             <s:url action="entandoInternalUrlLink" anchor="url-link" var="externalLinkURL">
-                                <s:param name="linkType" value="1" />
+                                <s:param name="linkTypeVar" value="1" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
                             </s:url>
                             <s:url action="entandoInternalPageLink" anchor="page-link" var="pageLinkURL">
-                                <s:param name="linkType" value="2" />
+                                <s:param name="linkTypeVar" value="2" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
                             </s:url>
                             <s:url action="entandoInternalContentLink" anchor="content-link" var="contentLinkURL">
-                                <s:param name="linkType" value="3" />
+                                <s:param name="linkTypeVar" value="3" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
                             </s:url>
                             <s:url action="entandoInternalResourceLink" anchor="resource-link" var="resourceLinkURL">
-                                <s:param name="linkType" value="4" />
+                                <s:param name="linkTypeVar" value="4" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
                             </s:url>
-							<li ${((param.linkType eq 1) || (empty param.linkType))?'class="active"':''}><a href="${externalLinkURL}"><s:text name="note.URLLinkTo" /></a></li>
-							<li ${(param.linkType eq 2)?'class="active"':''}><a href="${pageLinkURL}"><s:text name="note.pageLinkTo" /></a></li>
-							<li ${(param.linkType eq 3)?'class="active"':''}><a href="${contentLinkURL}"><s:text name="note.contentLinkTo" /></a></li>
-							<li ${(param.linkType eq 4)?'class="active"':''}><a href="${resourceLinkURL}"><s:text name="note.resourceLinkTo" /></a></li>
+							<li ${((param.linkTypeVar eq 1) || (empty param.linkTypeVar))?'class="active"':''}><a href="${externalLinkURL}"><s:text name="note.URLLinkTo" /></a></li>
+							<li ${(param.linkTypeVar eq 2)?'class="active"':''}><a href="${pageLinkURL}"><s:text name="note.pageLinkTo" /></a></li>
+							<li ${(param.linkTypeVar eq 3)?'class="active"':''}><a href="${contentLinkURL}"><s:text name="note.contentLinkTo" /></a></li>
+							<li ${(param.linkTypeVar eq 4)?'class="active"':''}><a href="${resourceLinkURL}"><s:text name="note.resourceLinkTo" /></a></li>
 						</ul>
 						<!-- Link types -->
 						<div class="panel panel-default no-top-border" id="tab-container">

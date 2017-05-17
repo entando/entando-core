@@ -1,6 +1,5 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
-<s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
 <s:form cssClass="form-horizontal" id="form_pageLink">
 
@@ -12,13 +11,13 @@
 
      <div class="form-group mt-20">
          <div class="col-xs-12">
-             <label class="col-sm-1 text-right">
+             <label class="col-sm-2 text-right">
                  <s:text name="note.choosePageToLink" />
                  <s:if test="contentId != null">&#32;<s:text name="note.choosePageToLink.forTheContent" />:
                  <s:property value="contentId"/> &ndash; <s:property value="%{getContentVo(contentId).descr}"/></s:if>
              </label>
 
-             <div class="col-sm-11">
+             <div class="col-sm-10">
                  <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
                  <s:if test="#pageTreeStyleVar == 'request'">
                      <p class="sr-only">
@@ -72,7 +71,7 @@
      </div>
      <div class="form-group">
          <div class="col-xs-12">
-             <div class="col-sm-11 col-sm-offset-1 text-right">
+             <div class="col-sm-10 col-sm-offset-2 text-right">
            <button type="submit" id="button_pageLink" name="button_pageLink" class="btn btn-primary">
                <s:text name="label.save" />
            </button>

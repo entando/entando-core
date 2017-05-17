@@ -3,31 +3,27 @@
 
 <script type="text/javascript">
     jQuery(function(){
-		<s:set var="categoryTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
-		
-		//for content categories
-		<s:if test="#categoryTreeStyleVar == 'classic'">
+		<s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
+		<s:if test="#pageTreeStyleVar == 'classic'">
 		    $('.table-treegrid').treegrid(null, false);
-		    $(".treeRow ").on("click", function (event) {
+		    $(".treeRow ").on("click", function () {
 		        $(".treeRow").removeClass("active");
-		        $(this).find('.subTreeToggler').prop("checked", true);
-		        $(this).addClass("active");
+		        $(this).addClass("active").find('.subTreeToggler').prop("checked", true);
 		    });
 		    
-		    $("#expandAll").click(function() {
-		        $('#pageTree .treeRow').removeClass('hidden');
-		        $('#pageTree .treeRow').removeClass('collapsed');
+		    $("#expandAll").on("click", function() {
+		        $('#pageTree .treeRow').removeClass("hidden collapsed");
 		        $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
 		    });
 		    
-		    $("#collapseAll").click(function() {
+		    $("#collapseAll").on("click", function() {
 		        $('#pageTree .treeRow:not(:first-child)').addClass('hidden');
 		        $('#pageTree .treeRow').addClass('collapsed');
 		        $('#pageTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
 		    });
 		    
-		    var selectedNode = $(".table-treegrid .subTreeToggler:checked");
-		    $(selectedNode).closest(".treeRow").addClass("active").removeClass("hidden").addClass("collapsed");
+		    $(".table-treegrid .subTreeToggler:checked").closest(".treeRow")
+		      .addClass("active").removeClass("hidden").addClass("collapsed");
 		</s:if>
     });
 </script>

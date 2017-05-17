@@ -181,25 +181,7 @@
                                 </s:if>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <s:if test="!#fileVar.directory">
-                                        <%-- EDIT
-                                                <li>
-                                                        <s:if test="%{isTextFile(#fileVar.name)}" >
-                                                                <a class="btn btn-default"
-                                                                        title="Edit: <s:property value="#fileVar.name"/>"
-                                                                        href="<s:url namespace="/do/FileBrowser" action="edit" >
-                                                                                <s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
-                                                                                <s:param name="filename"> <s:property escapeHtml="false" value="#fileVar.name"/></s:param>
-                                                                                </s:url>">
-                                                                                        <span class="icon fa fa-pencil-square-o"></span>
-                                                                                        <span class="sr-only">Edit: <s:property value="#fileVar.name"/>
-                                                                                        </span>
-                                                                </a>
-                                                        </s:if>
-                                                </li>
-                                        --%>
-                                        <%-- DOWNLOAD --%>
-                                        <li><a
-                                                title="<s:text name="label.download" />: <s:property value="#fileVar.name"/>"
+                                        <li><a title="<s:text name="label.download" />: <s:property value="#fileVar.name"/>"
                                                 href="<s:url namespace="/do/FileBrowser" action="download" >
                                                     <s:param name="currentPath"><s:property escapeHtml="true" value="%{#currentPath}"/></s:param>
                                                     <s:param name="filename"><s:property escapeHtml="false" value="#filenameVar"/></s:param>

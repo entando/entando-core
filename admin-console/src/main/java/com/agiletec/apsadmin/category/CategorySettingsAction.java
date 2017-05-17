@@ -11,11 +11,11 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.apsadmin.user;
+package com.agiletec.apsadmin.category;
 
 import com.agiletec.apsadmin.admin.BaseAdminAction;
 
-public class UserSettingsAction extends BaseAdminAction {
+public class CategorySettingsAction extends BaseAdminAction {
 
 	@Override
 	public String updateSystemParams() {

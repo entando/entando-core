@@ -74,6 +74,7 @@
     $('.bootstrap-datepicker').datepicker({
         autoclose: true,
         todayBtn: "linked",
-        todayHighlight: true
+        todayHighlight: true,
+        format: "dd/mm/yy"
     });
 </script>

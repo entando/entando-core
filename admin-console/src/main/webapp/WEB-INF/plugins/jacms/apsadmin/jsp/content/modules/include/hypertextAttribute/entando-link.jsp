@@ -191,7 +191,7 @@
 							<li ${((param.linkTypeVar eq 1) || (empty param.linkTypeVar))?'class="active"':''}><a href="${externalLinkURL}"><s:text name="note.URLLinkTo" /></a></li>
 							<li ${(param.linkTypeVar eq 2)?'class="active"':''}><a href="${pageLinkURL}"><s:text name="note.pageLinkTo" /></a></li>
 							<li ${(param.linkTypeVar eq 3)?'class="active"':''}><a href="${contentLinkURL}"><s:text name="note.contentLinkTo" /></a></li>
-							<li ${(param.linkTypeVar eq 4)?'class="active"':''}><a href="${resourceLinkURL}"><s:text name="note.resourceLinkTo" /></a></li>
+							<li ${(param.linkTypeVar eq 5)?'class="active"':''}><a href="${resourceLinkURL}"><s:text name="note.resourceLinkTo" /></a></li>
 						</ul>
 						<!-- Link types -->
 						<div class="panel panel-default no-top-border" id="tab-container">

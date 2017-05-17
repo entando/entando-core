@@ -4,7 +4,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <!-- Admin console Breadcrumbs -->
-<ol class="breadcrumb page-tabs-header breadcrumb-position">assas
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.pageDesigner" /></li>
     <li>
         <a href="<s:url action="viewTree" namespace="/do/Page" />"

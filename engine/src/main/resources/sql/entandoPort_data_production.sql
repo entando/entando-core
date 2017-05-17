@@ -452,7 +452,7 @@ jQuery(function($){
 		$(''input.userprofile-date'').datepicker({
       			changeMonth: true,
       			changeYear: true,
-      			dateFormat: ''dd/mm/yy''
+      			dateFormat: ''dd/mm/yyyy''
     		});
 	}
 });" >

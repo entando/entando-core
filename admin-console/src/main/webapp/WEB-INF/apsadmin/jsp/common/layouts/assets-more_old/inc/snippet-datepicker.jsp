@@ -12,7 +12,7 @@
 			 for options and proper i18n
 		*/
 		var picked = $(".datepicker").datepicker({
-			format: "dd/mm/yy"
+			format: "dd/mm/yyyy"
 		});
 	});
 </script>

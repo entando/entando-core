@@ -80,6 +80,6 @@
         autoclose: true,
         todayBtn: "linked",
         todayHighlight: true,
-        format: "dd/mm/yy"
+        format: "dd/mm/yyyy"
     });
 </script>

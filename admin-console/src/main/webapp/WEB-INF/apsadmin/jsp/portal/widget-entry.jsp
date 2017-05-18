@@ -27,10 +27,10 @@
 
 <h1 class="page-title-container">
     <s:if test="strutsAction == 1">
-        <span class="page-title-big"><s:text name="title.newWidgetType" /></span>
+        <span class="page-title-big"><s:text name="title.widgetManagement.edit" /></span>
     </s:if>
     <s:else>
-        <span class="page-title-big"><s:text name="title.widgetManagement.edit" /></span>
+        <span class="page-title-big"><s:text name="title.newWidgetType" /></span>
     </s:else>
     <span class="pull-right">
         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="widget.widgetManagement.add.help" />" data-placement="left" >

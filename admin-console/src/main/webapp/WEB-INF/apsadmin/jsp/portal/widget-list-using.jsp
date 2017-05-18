@@ -10,6 +10,7 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="viewWidgets" />"><s:text name="title.widgetManagement" /></a></li>
+    <li><s:text name="title.uxPatterns.info" /></li>
     <li class="page-title-container"><s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" /></li>
 </ol>
 

@@ -37,7 +37,7 @@
         <fieldset class="col-xs-12 settings-form">
             <div class="form-group">
                 <div class="row">
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-2 ">
                         <span for="admin-settings-area-homePageCode"><s:text name="sysconfig.homePageCode" /></span>
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
@@ -49,7 +49,7 @@
             </div>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-2 ">
                         <span for="admin-settings-area-notFoundPageCode"><s:text name="sysconfig.notFoundPageCode" /></span>
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
@@ -61,7 +61,7 @@
             </div>
             <div class="form-group">
                 <div class="row">
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-2 ">
                         <span for="admin-settings-area-errorPageCode"><s:text name="sysconfig.errorPageCode" /></span>
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
@@ -74,7 +74,7 @@
 
             <div class="form-group">
                 <div class="row">
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-2 ">
                         <span for="admin-settings-area-loginPageCode"><s:text name="sysconfig.loginPageCode" /></span>
                         <i class="fa fa-asterisk required-icon"></i>
                     </div>
@@ -87,8 +87,12 @@
             <div class="form-group">
                 <div class="row">
                     <s:set var="paramName" value="'baseUrl'" />
-                    <div class="col-xs-2 col-label">
-                        <span class="display-block"><s:text name="sysconfig.baseURL" /></span>
+                    <div class="col-xs-2 ">
+                        <span><s:text name="sysconfig.baseURL" />
+                            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="sysconfig.baseURL.contextName.help" />" data-placement="top" data-original-title="">
+                                <span class="fa fa-info-circle"></span>
+                            </a>
+                        </span>
                     </div>
                     <div class="col-xs-10 text-left">
                         <div class="btn-group" data-toggle="buttons">
@@ -111,9 +115,9 @@
 
             <div class="form-group">
                 <div class="row">
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-2 ">
                         <s:text name="sysconfig.baseURL.contextName" />
-                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="sysconfig.baseURL.contextName.help" />" data-placement="top" data-original-title="">
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="sysconfig.baseURL.contextName2.help" />" data-placement="top" data-original-title="">
                             <span class="fa fa-info-circle"></span>
                         </a>
                     </div>
@@ -131,7 +135,7 @@
                             <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                         </div>
 
-                        <div class="col-xs-2 col-label">
+                        <div class="col-xs-2 ">
                         <s:text name="sysconfig.useJsessionId" />
                         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="sysconfig.useJsessionId.help" />" data-placement="top" data-original-title="">
                             <span class="fa fa-info-circle"></span>
@@ -156,7 +160,7 @@
 
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-xs-2 col-label">
+                        <div class="col-xs-2 ">
                         <s:text name="sysconfig.lang.browser" />
                     </div>
                     <div class="col-xs-4 text-left">
@@ -178,7 +182,7 @@
                 <div class="form-group">
                     <div class="row">
                     <s:set var="paramName" value="'treeStyle_page'" />
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-2 ">
                         <span class="display-block"><s:text name="sysconfig.chooseYourPagesTreeStyle" /></span>
                     </div>
                     <div class="col-xs-4 text-left">
@@ -196,7 +200,7 @@
                     </div>
 
                     <s:set var="paramName" value="'urlStyle'" />
-                    <div class="col-xs-2 col-label">
+                    <div class="col-xs-2 ">
                         <s:text name="sysconfig.URLstyle" />
                     </div>
                     <div class="col-xs-4 text-left">

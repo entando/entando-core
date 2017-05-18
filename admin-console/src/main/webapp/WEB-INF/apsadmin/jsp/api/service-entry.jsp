@@ -5,9 +5,11 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
-    <li><a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />"
+    <li>
+        <a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.widgetManagement" />">
-            <s:text name="title.widgetManagement" /></a>
+            <s:text name="title.widgetManagement" />
+        </a>
     </li>
     <li><s:text name="title.apiServiceManagement" /></li>
 </ol>

@@ -29,14 +29,10 @@
     <i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
     <p class="esclamation-underline">
         <s:text name="title.databaseBackup.remove" />
-    </p>
-    <p>
         <s:text name="database.management.label.remove.areyousure" />
-        &#32;
-        <code>
-            <s:date name="#dumpReportVar.date" format="dd/MM/yyyy HH:mm:ss" />
-        </code>
-        ?
+    </p>
+    <p class="esclamation-underline">     
+            <s:date name="#dumpReportVar.date" format="dd/MM/yyyy HH:mm:ss" />?
     </p>
     <br>
     <div class="text-center margin-large-top">

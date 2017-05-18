@@ -103,13 +103,13 @@
             <result type="tiles">admin.Category.viewTree</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
         </action>
-
-        <action name="configSystemParams" class="baseAdminAction" method="configSystemParams">
+		
+        <action name="configSystemParams" class="categorySettingsAction" method="configSystemParams">
             <result type="tiles">admin.Category.settings</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
         </action>
-
-        <action name="updateSystemParams" class="baseAdminAction" method="updateSystemParams">
+		
+        <action name="updateSystemParams" class="categorySettingsAction" method="updateSystemParams">
             <result type="tiles">admin.Category.settings</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
         </action>

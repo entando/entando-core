@@ -10,6 +10,9 @@
             <s:text name="title.languageAndLabels" />
         </a>
     </li>
+    <li>
+        <s:text name="title.languageAdmin.labels"/>
+    </li>
     <li class="page-title-container">
         <s:text name="title.generalSettings.locale.delete" />
     </li>
@@ -32,21 +35,19 @@
 
     <i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
     <p class="esclamation-underline"><s:text name="label.delete"/></p>
-    <p>
+    <p class="esclamation-underline-text">
         <s:text name="label.delete.confirm"/>&#32;
         <s:property value="key" />&#63;
 
     </p>
-    <div class="btn btn-danger button-fixed-width">
+    <div class="text-center margin-large-top">
         <a class="btn btn-default button-fixed-width" href="<s:url namespace="/do/LocaleString" action="list" />">
             <s:text name="label.back" />
         </a>
-        <a class="btn-danger button-fixed-width"
-           href="<s:url action="delete" namespace="/do/LocaleString"><s:param name="key" value="key" /></s:url>"
-           title="<s:text name="label.remove" />: <s:property value="key" />">
-            &#32;<s:text name="label.delete"/>
-        </a>
+        <wpsf:submit type="button"
+                     cssClass="btn btn-danger button-fixed-width">
+            <s:text name="label.delete"/>
+        </wpsf:submit>
     </div>
-
 </s:form>
 </div>

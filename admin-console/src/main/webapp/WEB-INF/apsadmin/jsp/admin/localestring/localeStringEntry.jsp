@@ -10,6 +10,9 @@
             <s:text name="title.languageAndLabels" />
         </a>
     </li>
+    <li>
+        <s:text name="title.languageAdmin.labels"/>
+    </li>
     <li class="page-title-container">
         <s:if test="getStrutsAction() == 1"><s:text name="locale.addNewLabel" /></s:if>
         <s:elseif test="getStrutsAction() == 2"><s:text name="title.generalSettings.locale.edit" /> </s:elseif>
@@ -17,7 +20,7 @@
     </ol>
     <h1 class="page-title-container">
         <div>
-        <s:if test="getStrutsAction() == 1"><s:text name="title.generalSettings.locale.new" /></s:if>
+        <s:if test="getStrutsAction() == 1"><s:text name="locale.addNewLabel" /></s:if>
         <s:elseif test="getStrutsAction() == 2"><s:text name="title.generalSettings.locale.edit" /> </s:elseif>
             <span class="pull-right">
                 <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
@@ -72,7 +75,7 @@
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
             <label class="col-sm-2 control-label" for="lang<s:property value="#l.code"/>">
                 <%-- (<s:property value="#l.code" />)&#32;<s:text name="label.description" /> --%>
-                <span title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></span>&#32;<span lang="<s:property value="#l.code" />"><s:property value="#l.descr"/></span>*
+                <span title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></span>&#32;<span lang="<s:property value="#l.code" />"><s:text name="label.name"/></span>*
             </label>
             <div class="col-sm-10">
                 <s:textarea cols="50" rows="3" name="%{code}" id="%{'lang'+code}" value="%{labels[#l.code]}"
@@ -96,7 +99,7 @@
             <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
                 <label class="col-sm-2 control-label" for="lang<s:property value="#l.code"/>">
                     <%-- (<s:property value="#l.code" />)&#32;<s:text name="label.description" /> --%>
-                    <abbr title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></abbr>&#32;<span lang="<s:property value="#l.code" />"><s:property value="#l.descr"/></span>
+                    <span title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></span>&#32;<span lang="<s:property value="#l.code" />"><s:text name="label.name"/></span>
                 </label>
                 <div class="col-sm-10">
                     <s:textarea cols="50" rows="3" name="%{code}" id="%{'lang'+code}" value="%{labels[#l.code]}"

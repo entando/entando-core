@@ -93,7 +93,7 @@
     <label class="col-sm-2 control-label" for="description"><s:text
             name="label.name" />&nbsp;<a tabindex="0" role="button"
                  data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                 data-content="TO DO" data-placement="top" data-original-title=""><span
+                 data-content="<s:text name="note.group.name" />" data-placement="top" data-original-title=""><span
                 class="fa fa-info-circle"></span></a></label>
     <div class="col-sm-10">
         <wpsf:textfield name="description" id="description"
@@ -121,7 +121,10 @@
 <div
     class="form-group<s:property value="#controlGroupErrorClassVar" />">
     <label class="col-sm-2 control-label" for="name"> <s:text
-            name="label.code" />
+            name="label.code" />&nbsp;<a tabindex="0" role="button"
+                 data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                 data-content="<s:text name="note.group.code" />" data-placement="top" data-original-title=""><span
+                class="fa fa-info-circle"></span></a>
     </label>
     <div class="col-sm-10">
         <wpsf:textfield name="name" id="name"

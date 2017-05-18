@@ -33,18 +33,13 @@
         &#32;<s:property value="name" />?
     </p>
     <div class="text-center margin-large-top">
+        <a class="btn btn-default button-fixed-width"
+           href="<s:url action="list" />"> <s:text name="menu.back"/>
+        </a>
         <wpsf:submit type="button"
                      cssClass="btn btn-danger button-fixed-width">
             <s:text name="label.delete" />
         </wpsf:submit>
     </div>
-    <div class="text-center margin-large-top">
-        <a class="btn btn-default button-fixed-width"
-           href="<s:url action="list" />"> <s:text
-                name="note.backToSomewhere" />&#32;<s:text
-                name="title.groupManagement" />
-        </a>
-    </div>
-
 </s:form>
 </div>

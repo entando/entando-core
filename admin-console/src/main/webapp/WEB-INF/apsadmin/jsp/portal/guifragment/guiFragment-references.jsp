@@ -1,6 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
-<ol class="breadcrumb page-tabs-header breadcrumb-position">llllll
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="list" namespace="/do/Group"></s:url>"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.guiFragmentManagement" />">

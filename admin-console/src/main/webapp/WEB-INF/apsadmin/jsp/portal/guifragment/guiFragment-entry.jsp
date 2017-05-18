@@ -26,7 +26,7 @@
         <s:text name="guiFragment.label.edit" />
     </s:elseif>
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.guiFragments.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -77,7 +77,12 @@
         <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
 
-            <label class="control-label col-sm-2" for="guiFragment_code"><s:text name="label.code" /></label>
+            <label class="control-label col-sm-2" for="guiFragment_code"><s:text name="label.code" />
+                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="sysconfig.baseURL.contextName.help" />" data-placement="top" data-original-title="">
+                    <span class="fa fa-info-circle"></span>
+                </a>
+            </label>
+
             <div class="col-sm-10">
                 <wpsf:textfield disabled="%{getStrutsAction() == 2}" name="code" id="guiFragment_code" cssClass="form-control" />
                 <s:if test="#fieldHasFieldErrorVar">

@@ -84,7 +84,7 @@
                     <tr>
                         <th><s:text name="widget.name" /></th>
                         <th><s:text name="widget.code" /></th>
-                        <th class="table-w-5 text-center"><span title="<s:text name="title.widgetManagement.howmanypages.long" />"><s:text name="widget.time.used" /></span></th>
+                        <th class="table-w-5 text-center "><span title="<s:text name="title.widgetManagement.howmanypages.long" />"><s:text name="widget.time.used" /></span></th>
                         <th class="table-w-5"><s:text name="title.pageActions" /></th>
                     </tr>
                 </thead>
@@ -103,10 +103,10 @@
                                     <s:if test="%{#concreteShowletTypeVar.mainGroup != null && !#concreteShowletTypeVar.mainGroup.equals('free')}"><span class="text-muted icon fa fa-lock"></span></s:if>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="td-line-height-custom">
                                 <s:property value="#showletType.key" />
                             </td>
-                            <td class="text-center"><span title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />">
+                            <td class="text-center td-line-height-custom"><span title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />">
                                     <s:property value="#showletUtilizers.size()" />
                                 </span>
                             </td>

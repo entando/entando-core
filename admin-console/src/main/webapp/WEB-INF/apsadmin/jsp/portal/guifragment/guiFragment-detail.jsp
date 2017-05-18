@@ -4,16 +4,16 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
-    <li><a href="<s:url action="list" namespace="/do/Portal/GuiFragment"></s:url>"
-           title="<s:text name="note.goToSomewhere" />: <s:text name="title.guiFragmentManagement" />">
-            <s:text name="title.guiFragmentManagement" /></a></li>
-    <li ><s:text name="title.guiFragmentDetail" /></li>
+    <li><a href="<s:url action="list" namespace="/do/Portal/GuiFragment"></s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.guiFragmentManagement" />">
+            <s:text name="title.guiFragmentManagement" /></a>
+    </li>
+    <li class="page-title-container"><s:text name="title.guiFragmentDetail" /></li>
 </ol>
 
 <h1 class="page-title-container">
     <s:text name="title.guiFragmentDetail" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.guiFragments.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -23,7 +23,6 @@
 <br>
 
 <div id="main">
-
     <table class="table table-bordered ">
         <tr>
             <th class="td-pagetree-width"><s:text name="label.guiFragment" /></th>
@@ -41,14 +40,11 @@
             <td><s:property value="pluginCode"/></td>
         </tr>
     </table>
-
-    <p>
-        <a href="<s:url namespace="/do/Portal/GuiFragment" action="edit"> <s:param name="code"><s:property value="code" /></s:param>
-           </s:url>"
-           class="btn btn-primary">
-            <s:text name="label.edit" />
-        </a>
-    </p>
+    <a href="<s:url namespace="/do/Portal/GuiFragment" action="edit"> <s:param name="code"><s:property value="code" /></s:param>
+       </s:url>" class="btn btn-primary pull-right">
+        <s:text name="label.edit" />
+    </a>
+    <br>
     <hr>
     <!--
     <wpsa:hookPoint key="core.groupDetails" objectName="hookPointElements_core_groupDetails">

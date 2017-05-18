@@ -12,7 +12,7 @@
 <h1 class="page-title-container">
     <s:text name="title.pageModelDetail" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageModelManagement.pagemodels" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -37,23 +37,14 @@
             <th class="td-pagetree-width"><s:text name="label.pluginCode" /></th>
             <td><s:property value="pluginCode" /></td>
         </tr>
-        <%--
-        <tr>
-                <th class="td-pagetree-width"><s:text name="label.configuration" /></th>
-                <td><s:property value="xmlConfiguration" /></td>
-        </tr>
-        --%>
+
         <tr>
             <th class="td-pagetree-width"><s:text name="label.template" /></th>
             <td>
                 <s:set var="template"><s:property value="template" /></s:set>
-                <pre><s:property
-                        value="#template.replaceAll('\t', '&emsp;').replaceAll('\r', '').replaceAll('\n', '<br />')"
-                        escapeCsv="false"
-                        escapeHtml="false"
-                        escapeJavaScript="false"
-                        escapeXml="false"
-                        />
+                    <pre>
+                    <s:property value="#template.replaceAll('\t', '&emsp;').replaceAll('\r', '').replaceAll('\n', '<br />')"
+                                escapeCsv="false" escapeHtml="false" escapeJavaScript="false" escapeXml="false" />
                 </pre>
             </td>
         </tr>

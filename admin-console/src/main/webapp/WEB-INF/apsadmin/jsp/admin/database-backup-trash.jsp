@@ -42,8 +42,7 @@
     <div class="text-center margin-large-top">
         <a class="btn btn-default button-fixed-width"
            href="<s:url namespace="/do/Admin/Database" action="entry" />">
-            <s:text name="note.goToSomewhere" />&#32;<s:text
-                name="label.back" />
+            <s:text name="label.back" />
         </a>
         <wpsf:submit type="button"
                      cssClass="btn btn-danger button-fixed-width">

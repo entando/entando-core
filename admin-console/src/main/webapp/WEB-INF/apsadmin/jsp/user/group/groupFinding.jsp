@@ -37,10 +37,10 @@
         </ul>
     </div>
 </s:if>
-<div class="row form-group" style="margin-bottom: 5px">
+<div class="row form-group">
     <div class="col-sm-12">
         <a class="btn btn-primary pull-right"
-           href="<s:url namespace="/do/Group" action="new" />"> <s:text
+           href="<s:url namespace="/do/Group" action="new" />" style="margin-bottom: -15px"> <s:text
                 name="title.groupManagement.groupNew" />
         </a>
     </div>
@@ -50,52 +50,50 @@
     <wpsa:subset source="#userGroup_list" count="10"
                  objectName="userGroups" advanced="true" offset="5">
         <s:set var="group" value="#userGroups" />
-        <div class="col-xs-12 no-padding">
-            <div class="mt-20">
-                <table class="table table-striped table-bordered table-hover no-mb">
-                    <thead>
+        <div class="mt-20">
+            <table class="table table-striped table-bordered table-hover no-mb">
+                <thead>
+                    <tr>
+                        <th><s:text name="label.name" /></th>
+                        <th><s:text name="label.code" /></th>
+                        <th><s:text name="label.actions" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <s:iterator var="groupVar">
                         <tr>
-                            <th><s:text name="label.name" /></th>
-                            <th><s:text name="label.code" /></th>
-                            <th><s:text name="label.actions" /></th>
+                            <td><s:property value="#groupVar.descr" /></td>
+                            <td><s:property value="#groupVar.name" /></td>
+                            <td class="table-view-pf-actions">
+                                <div class="dropdown dropdown-kebab-pf">
+                                    <button class="btn btn-menu-right dropdown-toggle"
+                                            type="button" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                        <span class="fa fa-ellipsis-v"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li><a
+                                                title="<s:text name="title.groupDetail" />: <s:property value="#groupVar.name" />"
+                                                href="<s:url action="detail"><s:param name="name" value="#groupVar.name"/></s:url>">
+                                                <span><s:text name="title.groupDetail" /></span>
+                                            </a></li>
+                                        <li><a
+                                                title="<s:text name="label.edit" />:&#32;<s:property value="#groupVar.name" />"
+                                                href="<s:url action="edit"><s:param name="name" value="#groupVar.name"/></s:url>">
+                                                <span><s:text name="label.edit" /></span>
+                                            </a></li>
+                                        <li><a
+                                                title="<s:text name="label.remove" />: <s:property value="#groupVar.name" />"
+                                                href="<s:url action="trash"><s:param name="name" value="#groupVar.name"/></s:url>">
+                                                <span><s:text name="label.remove" /></span>
+                                            </a></li>
+                                    </ul>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <s:iterator var="groupVar">
-                            <tr>
-                                <td><s:property value="#groupVar.descr" /></td>
-                                <td><s:property value="#groupVar.name" /></td>
-                                <td class="table-view-pf-actions">
-                                    <div class="dropdown dropdown-kebab-pf">
-                                        <button class="btn btn-menu-right dropdown-toggle"
-                                                type="button" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
-                                            <span class="fa fa-ellipsis-v"></span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-right">
-                                            <li><a
-                                                    title="<s:text name="title.groupDetail" />: <s:property value="#groupVar.name" />"
-                                                    href="<s:url action="detail"><s:param name="name" value="#groupVar.name"/></s:url>">
-                                                    <span><s:text name="title.groupDetail" /></span>
-                                                </a></li>
-                                            <li><a
-                                                    title="<s:text name="label.edit" />:&#32;<s:property value="#groupVar.name" />"
-                                                    href="<s:url action="edit"><s:param name="name" value="#groupVar.name"/></s:url>">
-                                                    <span><s:text name="label.edit" /></span>
-                                                </a></li>
-                                            <li><a
-                                                    title="<s:text name="label.remove" />: <s:property value="#groupVar.name" />"
-                                                    href="<s:url action="trash"><s:param name="name" value="#groupVar.name"/></s:url>">
-                                                    <span><s:text name="label.remove" /></span>
-                                                </a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                        </s:iterator>
-                    </tbody>
-                </table>
-            </div>
+                    </s:iterator>
+                </tbody>
+            </table>
         </div>
         <div class="content-view-pf-pagination clearfix">
             <div class="form-group">

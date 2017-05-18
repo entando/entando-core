@@ -24,10 +24,10 @@
 <br>
 <s:if test="hasActionErrors()">
     <div class="alert alert-danger alert-dismissable">
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-    <span class="pficon pficon-close"></span>
-  </button>
-     <span class="pficon pficon-error-circle-o"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <span class="pficon pficon-close"></span>
+        </button>
+        <span class="pficon pficon-error-circle-o"></span>
         <strong><s:text name="message.title.ActionErrors" />
         </strong>
         <ul class="margin-base-top">
@@ -39,11 +39,11 @@
 </s:if>
 <s:if test="hasFieldErrors()">
     <div class="alert alert-danger alert-dismissable">
-       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-           <span class="pficon pficon-close"></span>
-       </button>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <span class="pficon pficon-close"></span>
+        </button>
         <span class="pficon pficon-error-circle-o"></span>
-         <strong>
+        <strong>
             <s:text name="message.title.FieldErrors" />
         </strong>
         <ul class="margin-base-top">
@@ -56,9 +56,9 @@
     </div>
 </s:if>
 <s:if test="hasActionMessages()">
- <div class="alert alert-success">
-  <span class="pficon pficon-ok"></span>
-  <strong><s:text name="messages.confirm" /></strong>
+    <div class="alert alert-success">
+        <span class="pficon pficon-ok"></span>
+        <strong><s:text name="messages.confirm" /></strong>
         <s:iterator value="actionMessages">
             <li><s:property escapeHtml="false" /></li>
             </s:iterator>
@@ -76,7 +76,7 @@
     <div class="row form-group">
         <div class="col-sm-12">
             <a class="btn btn-primary pull-right"
-               href="<s:url namespace="/do/Admin/Database" action="backupIntro" />">
+               href="<s:url namespace="/do/Admin/Database" action="backupIntro" />" style="margin-bottom: -10px">
                 <s:text name="database.management.label.backup.create" />
             </a>
         </div>

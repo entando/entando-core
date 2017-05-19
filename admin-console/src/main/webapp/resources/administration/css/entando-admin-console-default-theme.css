@@ -333,6 +333,7 @@ a {
     overflow: hidden;
     margin: 2px 0 2px 4px;
 }
+
 .widget-grid .widget-icon{
     display: none;
 }
@@ -1775,4 +1776,9 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 }
 .margin-20-left-right{
     margin: 0 20px 0 20px;
+}
+.td-grid-ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap!important;
 }

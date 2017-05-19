@@ -11,7 +11,7 @@
 
 <h1 class="page-title-container"><s:text name="title.apiServiceManagement" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.api.resources.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -23,10 +23,13 @@
 
 <div id="main" role="main">
     <s:if test="hasActionErrors()">
-        <div class="alert alert-danger alert-dismissable fade in">
-            <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-            <h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
-            <ul class="margin-base-top">
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                <span class="pficon pficon-close"></span>
+            </button>
+            <span class="pficon pficon-error-circle-o"></span>
+            <strong><s:text name="message.title.ActionErrors" /></strong>
+            <ul>
                 <s:iterator value="actionErrors">
                     <li><s:property escapeHtml="false" /></li>
                     </s:iterator>
@@ -34,10 +37,13 @@
         </div>
     </s:if>
     <s:if test="hasFieldErrors()">
-        <div class="alert alert-danger alert-dismissable fade in">
-            <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-            <h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h2>
-            <ul class="margin-base-top">
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                <span class="pficon pficon-close"></span>
+            </button>
+            <span class="pficon pficon-error-circle-o"></span>
+            <strong><s:text name="message.title.FieldErrors" /></strong>
+            <ul>
                 <s:iterator value="fieldErrors">
                     <s:iterator value="value">
                         <li><s:property escapeHtml="false" /></li>
@@ -102,10 +108,7 @@
                         <s:text name="%{#serviceGroupVar}.name" />
                     </legend>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label"><s:text name="label.api.service.list"/>
-                        </label>
-
-                        <div class="col-sm-10">
+                        <div class="col-sm-12">
                             <table class="table table-striped table-bordered table-hover ">
                                 <tr>
                                     <th class="table-w-20"><s:text name="name.api.service" /></th>
@@ -119,7 +122,6 @@
                                         <td>
                                             <wpsf:hidden name="%{#service.key + '_checkField'}" value="true" />
                                             <a title="<s:text name="label.edit" />: <s:property value="#service.key" />" href="<s:url action="edit"><s:param name="serviceKey"><s:property value="#service.key" /></s:param></s:url>">
-                                                        <span class="icon fa fa-cog"></span>
                                                 <s:property value="#service.key" /></a>
                                         </td>
                                         <td>
@@ -164,7 +166,7 @@
         </s:iterator>
     </s:if>
     <s:else>
-        <div class="alert alert-info" style="margin-left: 20px; margin-right: 20px">
+        <div class="alert alert-info">
             <span class="pficon pficon-info"></span>
             <strong><s:text name="note.api.noServices" /></strong>
         </div>

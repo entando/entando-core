@@ -12,13 +12,17 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.integrations" /></li>
     <li><s:text name="title.apiManagement" /></li>
-    <li><s:text name="title.apiResourceManagement" /></li>
+    <li>
+        <a href='<s:url action="list" namespace="/do/Api/Resource" />'>
+            <span class="list-group-item-value"><s:text name="name.api.resource" /></span>
+        </a>
+    </li>
     <li class="page-title-container"><s:text name="title.apiResourceEdit" /></li>
 </ol>
 
 <h1 class="page-title-container"><s:text name="title.apiResourceEdit" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.api.resources.edit.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -27,7 +31,6 @@
     </div>
 </div>
 <br>
-
 
 <div id="main" role="main">
     <s:if test="hasActionMessages()">
@@ -112,7 +115,7 @@
                 </div>
                 <div class="col-sm-10">
                     <wpsf:checkbox name="active" value="true" id="all_active" cssClass="bootstrap-switch" />
-                </div>                 
+                </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-2 control-label">

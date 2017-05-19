@@ -12,16 +12,16 @@
 <s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
 
-<tr id="<s:if test="#currentRoot.isRoot()">home</s:if><s:else><s:property value="#node.code"/></s:else>" data-parent='#<s:property value="#currentRoot.parent.code"/>' class="treeRow pointer <s:if test="%{#currentRoot.code != 'home' && #isHidden}">collapsed childrenNodes</s:if>">
-    <td class="treegrid-node">
+    <tr id="<s:if test="#currentRoot.isRoot()">home</s:if><s:else><s:property value="#node.code"/></s:else>" data-parent='#<s:property value="#currentRoot.parent.code"/>' class="treeRow pointer <s:if test="%{#currentRoot.code != 'home' && #isHidden}">collapsed childrenNodes</s:if>">
+        <td class="treegrid-node">
 
-        <input type="radio" name="<s:property value="#inputFieldName" />"
+                    <input type="radio" name="<s:property value="#inputFieldName" />"
                id="fagianonode_<s:property value="#currentRoot.code" />"
                value="<s:property value="#currentRoot.code" />"
                class="subTreeToggler hidden <s:if test="#isSelected">active</s:if> <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
-                <s:if test="#isSelected"> checked="checked"</s:if> />
+               <s:if test="#isSelected"> checked="checked"</s:if> />
 
-        <span class='class="icon fa <s:property value="treeItemIconNameVar"/>'></span> &#32;
+               <span class='class="icon fa <s:property value="treeItemIconNameVar"/>'></span> &#32;
         <span for="fagianonode_<s:property value="#currentRoot.code" />">
             <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
@@ -30,7 +30,7 @@
         </span>
     </td>
     <s:if test="isPosition" >
-        <td class="text-center">
+        <td class="table-view-pf-actions">
             <div class="dropdown dropdown-kebab-pf">
                 <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight1"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -38,32 +38,32 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight1">
                     <li>
-                        <wpsf:submit type="button" name="entandoaction:detail" value="Submit"
-                                     title="%{getText('category.options.detail')}"
-                                     data-toggle="tooltip" cssClass="btn-block">
-                            <span> <s:text name="category.options.detail"/> </span>
-                        </wpsf:submit>
+                    <wpsf:submit type="button" name="entandoaction:detail" value="Submit"
+                                 title="%{getText('category.options.detail')}"
+                                 data-toggle="tooltip" cssClass="btn-block">
+                        <span> <s:text name="category.options.detail"/> </span>
+                    </wpsf:submit>
                     </li>
                     <li>
-                        <wpsf:submit type="button" name="entandoaction:new"
-                                     title="%{getText('category.options.add')}"
-                                     data-toggle="tooltip" cssClass="btn-block">
-                            <span> <s:text name="category.options.add"/> </span>
-                        </wpsf:submit>
+                    <wpsf:submit type="button" name="entandoaction:new"
+                                 title="%{getText('category.options.add')}"
+                                 data-toggle="tooltip" cssClass="btn-block">
+                        <span> <s:text name="category.options.add"/> </span>
+                    </wpsf:submit>
                     </li>
                     <li>
-                        <wpsf:submit type="button" name="entandoaction:edit" value="Submit"
-                                     title="%{getText('category.options.modify')}"
-                                     data-toggle="tooltip" cssClass="btn-block">
-                            <span> <s:text name="category.options.modify"/> </span>
-                        </wpsf:submit>
+                    <wpsf:submit type="button" name="entandoaction:edit" value="Submit"
+                                 title="%{getText('category.options.modify')}"
+                                 data-toggle="tooltip" cssClass="btn-block">
+                        <span> <s:text name="category.options.modify"/> </span>
+                    </wpsf:submit>
                     </li>
                     <li>
-                        <wpsf:submit type="button" name="entandoaction:trash" value="Submit"
-                                     title="%{getText('category.options.delete')}"
-                                     data-toggle="tooltip" cssClass="btn-block">
-                            <span> <s:text name="category.options.delete"/> </span>
-                        </wpsf:submit>
+                    <wpsf:submit type="button" name="entandoaction:trash" value="Submit"
+                                 title="%{getText('category.options.delete')}"
+                                 data-toggle="tooltip" cssClass="btn-block">
+                        <span> <s:text name="category.options.delete"/> </span>
+                    </wpsf:submit>
                     </li>
                 </ul>
             </div>

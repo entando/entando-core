@@ -36,10 +36,12 @@
     <div class="tab-content">
         <div id="pages" class="tab-pane fade in active">
             <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="name" />
                 <s:if test="null != references['PageManagerUtilizers']">
                     <wpsa:subset source="references['PageManagerUtilizers']" count="10"
                                  objectName="pageReferences" advanced="true" offset="5"
                                  pagerId="pageManagerReferences">
+                        <s:set var="group" value="#pageReferences" />
                         <div class="col-xs-12 no-padding">
                             <table class="table table-striped table-bordered table-hover no-mb"
                                    id="pageListTable">
@@ -119,7 +121,8 @@
             </s:form>
         </div>
         <div id="users" class="tab-pane fade">
-            <s:form cssClass="form-horizontal">
+            <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="name" />
                 <s:if test="null != references['AuthorizationManagerUtilizers']">
                     <wpsa:subset source="references['AuthorizationManagerUtilizers']"
                                  count="10" objectName="userReferences" advanced="true" offset="5"
@@ -256,7 +259,8 @@
             </s:form>
         </div>
         <div id="widget" class="tab-pane fade">
-            <s:form cssClass="form-horizontal">
+            <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="name" />
                 <s:if test="null != references['WidgetTypeManagerUtilizers']">
                     <wpsa:subset source="references['WidgetTypeManagerUtilizers']"
                                  count="10" objectName="widgetTypeReferencesVar" advanced="true"
@@ -308,7 +312,8 @@
             </s:form>
         </div>
         <div id="contents" class="tab-pane fade">
-            <s:form cssClass="form-horizontal">
+            <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="name" />
                 <s:if test="null != references['jacmsContentManagerUtilizers']">
                     <wpsa:subset source="references['jacmsContentManagerUtilizers']"
                                  count="10" objectName="contentReferences" advanced="true"
@@ -387,7 +392,8 @@
             </s:form>
         </div>
         <div id="resources" class="tab-pane fade">
-            <s:form action="action" cssClass="form-horizontal">
+            <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="name" />
                 <s:if test="null != references['jacmsResourceManagerUtilizers']">
                     <wpsa:subset source="references['jacmsResourceManagerUtilizers']"
                                  count="10" objectName="resourceReferences" advanced="true"
@@ -457,10 +463,6 @@
         </div>
     </div>
 </div>
-
-<p class="sr-only">
-<wpsf:hidden name="name" />
-</p>
 
 <script>
     $('#ref-tab a').click(function (e) {

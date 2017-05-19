@@ -124,12 +124,12 @@
                         <wpsf:hidden name="lastOrder"/>
                         </p>
                         <div class="col-xs-12 no-padding">
-                            <table class="table table-bordered table-hover table-treegrid" id="labelTable">
+                            <table class="table table-striped table-bordered table-hover no-mb" id="labelTable">
                                 <thead>
                                     <tr>
                                         <th><s:text name="label.code"/></th>
                                         <th><s:property value="#lang.descr"/><s:property value="thModifier"/></th>
-                                        <th class="text-center " style="width: 20px"><s:text name="label.actions"/></th>
+                                        <th class="text-center table-w-5"><s:text name="label.actions"/></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -139,7 +139,7 @@
                                         <tr class="dl-horizontal dl-striped panel padding-base-top padding-base-bottom">
                                             <s:set var="currentLabel" value="labels[#key]"/>
                                             <td class="col-md-5"><s:property value="#key"/></td>
-                                            <td class="col-md-6">
+                                            <td class="col-md-6 td-grid-ellipsis">
                                                 <s:if test="%{#currentLabel[#lang.code]==null || #currentLabel[#lang.code].length()==0}">
                                                     <abbr title="empty">&ndash;</abbr>
                                                 </s:if>
@@ -147,7 +147,7 @@
                                                     <s:property value="#currentLabel[#lang.code]"/>
                                                 </s:else>
                                             </td>
-                                            <td class="col-md-1 text-center">
+                                            <td class="table-view-pf-actions text-center">
                                                 <div class="dropdown dropdown-kebab-pf">
                                                     <p class="sr-only"><s:text name="label.actions"/></p>
                                                     <span class="btn btn-menu-right dropdown-toggle" type="button"

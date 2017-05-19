@@ -90,7 +90,7 @@
             </div>
             <s:iterator value="systemLangs">
                 <div class="form-group">
-                    <label for="lang_<s:property value="code"/>" class="col-sm-2 control-label"><span class="monospace">(<s:property value="code" />)</span>&#32;<s:text name="label.description" /> <i class="fa fa-asterisk required-icon"></i></label>
+                    <label for="lang_<s:property value="code"/>" class="col-sm-2 control-label"><span class="label label-info"><s:property value="code" /></span>&#32;<s:text name="label.description" /> <i class="fa fa-asterisk required-icon"></i></label>
                     <div class="col-sm-10">
                         <s:textarea cols="50" rows="3" id="%{'lang_'+code}" name="%{'lang_'+code}" value="%{descriptions[code]}" cssClass="form-control" />
                     </div>

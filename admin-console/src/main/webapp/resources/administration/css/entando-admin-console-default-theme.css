@@ -1766,3 +1766,13 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .text-left{
     text-align: left !important;
 }
+/*----- td custom on widget list----*/
+.td-line-height-custom{
+    line-height: 30px !important;
+}
+.table-nomargin-bottom{
+    margin-bottom: -21px;
+}
+.margin-20-left-right{
+    margin: 0 20px 0 20px;
+}

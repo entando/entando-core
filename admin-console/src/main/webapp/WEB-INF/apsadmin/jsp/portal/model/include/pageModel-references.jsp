@@ -9,9 +9,7 @@
         <wpsf:hidden name="code" />
     </p>
     <%-- referenced pages --%>
-
-
-    <div class="">
+    <div>
 
         <label class="col-sm-2 control-label"><s:text name="title.pageModel.referencedPages" /></label>
         <div class="col-sm-10">
@@ -20,52 +18,54 @@
             <s:if test="null != references['PageManagerUtilizers']">
                 <wpsa:subset source="references['PageManagerUtilizers']" count="10" objectName="pageReferences" advanced="true" offset="5" pagerId="pageManagerReferences">
                     <s:set var="group" value="#pageReferences" />
-                    <div class="text-center">
-                        <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-                        <%--<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />--%>
-                    </div>
-                    <table class="table table-striped table-bordered" id="pageListTable">
-                        <tr>
-                            <th><s:text name="label.page" /></th>
-                            <th class="text-center" style="width: 20px">
-                                <s:text name="label.actions" />
-                            </th>
-                        </tr>
-                        <s:iterator var="currentPageVar">
-                            <s:set var="canEditCurrentPage" value="%{false}" />
-                            <s:set var="currentPageGroup" value="#currentPageVar.group" scope="page" />
-                            <wp:ifauthorized groupName="${currentPageGroup}" permission="managePages"><s:set var="canEditCurrentPage" value="%{true}" /></wp:ifauthorized>
-                                <tr>
-                                    <td> <s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></td>
-                                <td class="text-center text-nowrap">
-                                    <div class="dropdown dropdown-kebab-pf">
-                                        <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="fa fa-ellipsis-v"></span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-right">								
-                                            <s:if test="#canEditCurrentPage">
-                                                <li>
-                                                    <a href="<s:url namespace="/do/Page" action="viewTree"><s:param name="selectedNode" value="#currentPageVar.code" /></s:url>"
-                                                       title="<s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />">
-                                                        <span class="sr-only"><s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span>
-                                                        <s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="<s:url namespace="/do/Page" action="configure"><s:param name="pageCode" value="#currentPageVar.code" /></s:url>"
-                                                       title="<s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />">
-                                                        <span class="sr-only"><s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span>
-                                                        <s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
-                                                    </a>
-                                                </li>
-                                            </s:if>
-                                        </ul>
-                                </td>
+                    <div class="col-xs-12 no-padding table-nomargin-bottom">
+                        <table class="table table-striped table-bordered" id="pageListTable">
+                            <tr>
+                                <th><s:text name="label.page" /></th>
+                                <th class="text-center" style="width: 20px">
+                                    <s:text name="label.actions" />
+                                </th>
                             </tr>
-                        </s:iterator>
-                    </table>
-                    <div class="text-center">
-                        <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
+                            <s:iterator var="currentPageVar">
+                                <s:set var="canEditCurrentPage" value="%{false}" />
+                                <s:set var="currentPageGroup" value="#currentPageVar.group" scope="page" />
+                                <wp:ifauthorized groupName="${currentPageGroup}" permission="managePages"><s:set var="canEditCurrentPage" value="%{true}" /></wp:ifauthorized>
+                                    <tr>
+                                        <td> <s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></td>
+                                    <td class="text-center text-nowrap">
+                                        <div class="dropdown dropdown-kebab-pf">
+                                            <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="fa fa-ellipsis-v"></span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-right">
+                                                <s:if test="#canEditCurrentPage">
+                                                    <li>
+                                                        <a href="<s:url namespace="/do/Page" action="viewTree"><s:param name="selectedNode" value="#currentPageVar.code" /></s:url>"
+                                                           title="<s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />">
+                                                            <span class="sr-only"><s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span>
+                                                            <s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="<s:url namespace="/do/Page" action="configure"><s:param name="pageCode" value="#currentPageVar.code" /></s:url>"
+                                                           title="<s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />">
+                                                            <span class="sr-only"><s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span>
+                                                            <s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
+                                                        </a>
+                                                    </li>
+                                                </s:if>
+                                            </ul>
+                                    </td>
+                                </tr>
+                            </s:iterator>
+                        </table>
+                    </div>
+                    <div class="content-view-pf-pagination clearfix">
+                        <div class="form-group">
+                            <span><s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                            <div class="mt-5"><s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                            </div>
+                        </div>
                     </div>
                 </wpsa:subset>
             </s:if>

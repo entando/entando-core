@@ -3,16 +3,34 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
-    <li class="page-title-container">
-        <s:text name="title.pageModelManagement" />
+    <li><a href="<s:url action="list" namespace="/do/PageModel"></s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageModelManagement" />">
+            <s:text name="title.pageModelManagement" /></a>
     </li>
+    <s:if test="getStrutsAction() == 1">
+        <li>
+            <s:text name="label.add" />
+        </li>
+    </s:if>
+    <s:elseif test="getStrutsAction() == 2">
+        <li>
+            <s:text name="label.edit" />
+        </li>
+    </s:elseif>
 </ol>
 
 <h1 class="page-title-container">
-    <s:text name="title.pageModelManagement" />
-    <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
-    </span>
+    <s:if test="getStrutsAction() == 1">
+        <s:text name="label.add" />
+        <span class="pull-right">
+            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageModelManagement.pagemodels" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        </span>
+    </s:if>
+    <s:elseif test="getStrutsAction() == 2">
+        <s:text name="label.edit" />
+        <span class="pull-right">
+            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageModelManagement.pagemodels" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        </span>
+    </s:elseif>
 </h1>
 
 <div class="text-right">
@@ -28,7 +46,7 @@
                     <span class="pficon pficon-close"></span>
                 </button>
                 <span class="pficon pficon-error-circle-o"></span>
-                <s:text name="message.title.ActionErrors" />
+                <strong><s:text name="message.title.ActionErrors" /></strong>
                 <ul class="margin-base-top">
                     <s:iterator value="actionErrors">
                         <li><s:property escapeHtml="false" /></li>
@@ -42,8 +60,8 @@
                     <span class="pficon pficon-close"></span>
                 </button>
                 <span class="pficon pficon-error-circle-o"></span>
-                <s:text name="message.title.FieldErrors" />
-                <ul class="margin-base-top">
+                <strong><s:text name="message.title.FieldErrors" /></strong>
+                <ul>
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
                             <li><s:property escapeHtml="false" /></li>
@@ -60,7 +78,12 @@
         </p>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="key"><s:text name="label.code" /></label>
+                <label class="col-sm-2 control-label" for="key"><s:text name="label.code" />
+                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageModel.code" />" data-placement="top" data-original-title="">
+                        <span class="fa fa-info-circle"></span>
+                    </a>
+
+                </label>
                 <div class="col-sm-10">
                     <wpsf:textfield name="code" id="code" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
                 </div>
@@ -68,7 +91,11 @@
         </div>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="description"><s:text name="label.name" /></label>
+                <label class="col-sm-2 control-label" for="description"><s:text name="label.name" />
+                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageModel.name" />" data-placement="top" data-original-title="">
+                        <span class="fa fa-info-circle"></span>
+                    </a>
+                </label>
                 <div class="col-sm-10">
                     <wpsf:textfield name="description" id="description" cssClass="form-control" />
                 </div>

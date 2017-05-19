@@ -1,19 +1,24 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url action="list" namespace="/do/PageModel"></s:url>" 
+    <li><s:text name="title.uxPatterns" /></li>
+    <li><a href="<s:url action="list" namespace="/do/PageModel"></s:url>"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageModelManagement" />">
             <s:text name="title.pageModelManagement" />
         </a></li>
-    <li><s:text name="title.pageModelManagement.pageModelTrash" /></li>
+    <li><s:text name="label.delete" /></li>
 </ol>
 
+<br>
 <div id="main" role="main">
 
-    <div class="message message_error">
-        <h2><s:text name="message.title.ActionErrors" /></h2>
-        <p><s:text name="message.note.resolveReferences" />:</p>
-
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <span class="pficon pficon-close"></span>
+        </button>
+        <span class="pficon pficon-error-circle-o"></span>
+        <strong><s:text name="message.title.ActionErrors" /></strong>
+        <p><s:text name="message.note.resolveReferences" /></p>
     </div>
 
     <s:include value="/WEB-INF/apsadmin/jsp/portal/model/include/pageModel-references.jsp" />

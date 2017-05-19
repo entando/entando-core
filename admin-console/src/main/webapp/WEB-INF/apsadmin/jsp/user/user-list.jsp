@@ -85,19 +85,19 @@
                     <div class="btn-group col-sm-10 spacer-form" data-toggle="buttons">
                         <label
                             class="btn btn-default <s:if test="%{withProfile==null}"> active </s:if>">
-                            <wpsf:radio id="" name="withProfile" value=""
-                                        checked="%{withProfile==null}" /> &#32;<s:text
-                                        name="label.userprofile.search.usersAllProfile" />
+                                <wpsf:radio id="" name="withProfile" value=""
+                                            checked="%{withProfile==null}" /> &#32;<s:text
+                                name="label.userprofile.search.usersAllProfile" />
                         </label> <label
                             class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('1')}"> active </s:if>">
-                            <wpsf:radio id="" name="withProfile" value="1"
-                                        checked="%{withProfile.toString().equalsIgnoreCase('1')}" />
-                            &#32;<s:text name="label.userprofile.search.usersWithProfile" />
+                                <wpsf:radio id="" name="withProfile" value="1"
+                                            checked="%{withProfile.toString().equalsIgnoreCase('1')}" />
+                                &#32;<s:text name="label.userprofile.search.usersWithProfile" />
                         </label> <label
                             class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('0')}"> active </s:if>">
-                            <wpsf:radio id="" name="withProfile" value="0"
-                                        checked="%{withProfile.toString().equalsIgnoreCase('0')}" />
-                            &#32;<s:text name="label.userprofile.search.usersWithoutProfile" />
+                                <wpsf:radio id="" name="withProfile" value="0"
+                                            checked="%{withProfile.toString().equalsIgnoreCase('0')}" />
+                                &#32;<s:text name="label.userprofile.search.usersWithoutProfile" />
                         </label>
                     </div>
                 </div>
@@ -223,26 +223,26 @@
                                                        for="<s:property value="%{#currentAttributeHtmlId+'_start'}" />"><s:property
                                                         value="#attribute.name" />&#32;<s:text
                                                         name="label.userprofile.from.value" /></label>
-                                                    <wpsf:textfield
-                                                        title="%{#attribute.name+' '+getText('label.userprofile.from.value')}"
-                                                        id="%{#currentAttributeHtmlId}_start"
-                                                        name="%{#numberStartInputFieldName}"
-                                                        value="%{getSearchFormFieldValue(#numberStartInputFieldName)}"
-                                                        cssClass="form-control"
-                                                        placeholder="%{getText('label.userprofile.from.value')}" />
+                                                <wpsf:textfield
+                                                    title="%{#attribute.name+' '+getText('label.userprofile.from.value')}"
+                                                    id="%{#currentAttributeHtmlId}_start"
+                                                    name="%{#numberStartInputFieldName}"
+                                                    value="%{getSearchFormFieldValue(#numberStartInputFieldName)}"
+                                                    cssClass="form-control"
+                                                    placeholder="%{getText('label.userprofile.from.value')}" />
                                             </div>
                                             <div class="col-lg-2">
                                                 <label class="sr-only"
                                                        for="<s:property value="%{#currentAttributeHtmlId+'_end'}" />"><s:property
                                                         value="#attribute.name" />&#32;<s:text
                                                         name="label.userprofile.to.value" /></label>
-                                                    <wpsf:textfield
-                                                        title="%{#attribute.name+' '+getText('label.userprofile.to.value')}"
-                                                        id="%{#currentAttributeHtmlId}_end"
-                                                        name="%{#numberEndInputFieldName}"
-                                                        value="%{getSearchFormFieldValue(#numberEndInputFieldName)}"
-                                                        cssClass="form-control"
-                                                        placeholder="%{getText('label.userprofile.to.value')}" />
+                                                <wpsf:textfield
+                                                    title="%{#attribute.name+' '+getText('label.userprofile.to.value')}"
+                                                    id="%{#currentAttributeHtmlId}_end"
+                                                    name="%{#numberEndInputFieldName}"
+                                                    value="%{getSearchFormFieldValue(#numberEndInputFieldName)}"
+                                                    cssClass="form-control"
+                                                    placeholder="%{getText('label.userprofile.to.value')}" />
                                             </div>
                                         </div>
                                     </s:elseif>
@@ -260,22 +260,22 @@
                                             <div class="btn-group col-xs-9" data-toggle="buttons">
                                                 <label
                                                     class="btn btn-default <s:if test="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}"> active </s:if>">
-                                                    <wpsf:radio id="none_%{#booleanInputFieldName}"
-                                                                name="%{#booleanInputFieldName}" value=""
-                                                                checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" />
-                                                    &#32;<s:text name="label.bothYesAndNo" />
+                                                        <wpsf:radio id="none_%{#booleanInputFieldName}"
+                                                                    name="%{#booleanInputFieldName}" value=""
+                                                                    checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" />
+                                                        &#32;<s:text name="label.bothYesAndNo" />
                                                 </label> <label
                                                     class="btn btn-default <s:if test="%{#booleanInputFieldValue == 'true'}"> active </s:if>">
-                                                    <wpsf:radio id="true_%{#booleanInputFieldName}"
-                                                                name="%{#booleanInputFieldName}" value="true"
-                                                                checked="%{#booleanInputFieldValue == 'true'}" /> &#32;<s:text
-                                                                name="label.yes" />
+                                                        <wpsf:radio id="true_%{#booleanInputFieldName}"
+                                                                    name="%{#booleanInputFieldName}" value="true"
+                                                                    checked="%{#booleanInputFieldValue == 'true'}" /> &#32;<s:text
+                                                        name="label.yes" />
                                                 </label> <label
                                                     class="btn btn-default <s:if test="%{#booleanInputFieldValue == 'false'}"> active </s:if>">
-                                                    <wpsf:radio id="false_%{#booleanInputFieldName}"
-                                                                name="%{#booleanInputFieldName}" value="false"
-                                                                checked="%{#booleanInputFieldValue == 'false'}" /> &#32;<s:text
-                                                                name="label.no" />
+                                                        <wpsf:radio id="false_%{#booleanInputFieldName}"
+                                                                    name="%{#booleanInputFieldName}" value="false"
+                                                                    checked="%{#booleanInputFieldValue == 'false'}" /> &#32;<s:text
+                                                        name="label.no" />
                                                 </label>
 
                                             </div>
@@ -323,11 +323,11 @@
                                             <div class="col-sm-8">
                                                 <s:set var="textInputFieldName">
                                                     <s:property value="#attributeRoleVar.name" />_textFieldName</s:set>
-                                                <wpsf:textfield id="%{#currentFieldIdVar}"
-                                                                name="%{#textInputFieldName}"
-                                                                value="%{getSearchFormFieldValue(#textInputFieldName)}"
-                                                                cssClass="form-control" />
-                                            </div>
+                                                    <wpsf:textfield id="%{#currentFieldIdVar}"
+                                                                    name="%{#textInputFieldName}"
+                                                                    value="%{getSearchFormFieldValue(#textInputFieldName)}"
+                                                                    cssClass="form-control" />
+                                                </div>
                                         </s:if>
                                     </div>
                                 </s:iterator>
@@ -340,7 +340,7 @@
                                 <s:iterator value="#hookPointElements_core_user_list_core_field"
                                             var="hookPointElement">
                                     <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                                </s:iterator>
+                                    </s:iterator>
                             </wpsa:hookPoint>
                         </div>
                     </div>
@@ -379,16 +379,16 @@
                             <th><s:text name="label.fullname" /></th>
                             <th><s:text name="label.email" /></th>
                                 <%-- hookpoint core.user-list.table.th --%>
-                                <wpsa:hookPoint key="core.user-list.table.th"
-                                                objectName="hookPointElements_core_user_list_table_th">
-                                    <s:iterator value="#hookPointElements_core_user_list_table_th"
-                                                var="hookPointElement">
-                                        <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                                    </s:iterator>
-                                </wpsa:hookPoint>
-                            <th class="text-center"><s:text name="label.state" /></th>
-                            <th><s:text name="label.actions" /></th>
-                        </tr>
+                    <wpsa:hookPoint key="core.user-list.table.th"
+                                    objectName="hookPointElements_core_user_list_table_th">
+                        <s:iterator value="#hookPointElements_core_user_list_table_th"
+                                    var="hookPointElement">
+                            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                            </s:iterator>
+                    </wpsa:hookPoint>
+                    <th class="text-center"><s:text name="label.state" /></th>
+                    <th><s:text name="label.actions" /></th>
+                    </tr>
                     </thead>
                     <tbody>
                         <s:iterator var="usernameVar">
@@ -478,85 +478,85 @@
                                     </s:else></td>
 
                                 <%-- td hookpoint --%>
-                                <wpsa:hookPoint key="core.user-list.table.td"
-                                                objectName="hookPointElements_core_user_list_table_td">
-                                    <s:iterator value="#hookPointElements_core_user_list_table_td"
-                                                var="hookPointElement">
-                                        <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                                    </s:iterator>
-                                </wpsa:hookPoint>
+                        <wpsa:hookPoint key="core.user-list.table.td"
+                                        objectName="hookPointElements_core_user_list_table_td">
+                            <s:iterator value="#hookPointElements_core_user_list_table_td"
+                                        var="hookPointElement">
+                                <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                                </s:iterator>
+                        </wpsa:hookPoint>
 
-                                <%-- status --%>
-                                <td class="text-center"><span
-                                        class="<s:property value="#statusIconClassVar" />"
-                                        title="<s:property value="#statusTextVar" />"> </span> <span
-                                        class="<s:property value="#statusTextClassVar" />"> <s:property
-                                            value="#statusTextVar" /></span></td>
-
-
-
-                                <td class=" table-view-pf-actions">
-                                    <div class="dropdown dropdown-kebab-pf">
-                                        <button class="btn btn-menu-right dropdown-toggle"
-                                                type="button" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
-                                            <span class="fa fa-ellipsis-v"></span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-right">
-                                            <li>
-                                                <%-- edit --%> <a
-                                                    title="<s:text name="label.edit" />:&#32;<s:property value="#usernameVar" />"
-                                                    href="<s:property value="#editUserActionVar" escapeHtml="false" />">
-                                                    <span><s:text name="label.edit" /></span>
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <%-- edit auth --%> <a
-                                                    href="<s:property value="#editUserAuthActionVar" escapeHtml="false" />"
-                                                    title="<s:text name="note.configureAuthorizationsFor" />: <s:property value="#usernameVar" />">
-
-                                                    <span><s:text name="note.configureAuthorizationsFor" />:&#32;<s:property
-                                                            value="#usernameVar" /></span>
-                                                </a>
-                                            </li>
-
-                                            <s:if test="#hasEditProfilePermission">
-                                                <li>
-                                                    <%-- edit profile --%> <a
-                                                        href="<s:property value="#editUserProfileActionVar" escapeHtml="false" />"
-                                                        title="<s:text name="label.editProfile" />:&#32;<s:property value="#usernameVar" />">
-
-                                                        <span><s:text name="label.editProfile" />:&#32;<s:property
-                                                                value="#usernameVar" /></span>
-                                                    </a>
-                                                </li>
-                                            </s:if>
-
-                                            <s:if test="null != #userProfileVar">
-                                                <li>
-                                                    <%-- view profile --%> <a
-                                                        href="<s:property value="#viewUserProfileActionVar" escapeHtml="false" />"
-                                                        title="<s:text name="label.viewProfile" />:&#32;<s:property value="#usernameVar" />">
-                                                        <span><s:text name="label.viewProfile" />:&#32;<s:property
-                                                                value="#usernameVar" /></span>
-                                                    </a>
-                                                </li>
-                                            </s:if>
+                        <%-- status --%>
+                        <td class="text-center"><span
+                                class="<s:property value="#statusIconClassVar" />"
+                                title="<s:property value="#statusTextVar" />"> </span> <span
+                                class="<s:property value="#statusTextClassVar" />"> <s:property
+                                    value="#statusTextVar" /></span></td>
 
 
-                                            <%-- remove --%>
-                                            <li><a
-                                                    href="<s:property value="#userTrashActionVar" escapeHtml="false" />"
-                                                    title="<s:text name="label.remove" />:&#32;<s:property value="#usernameVar" />">
-                                                    <span><s:text name="label.remove" /></span>
-                                                </a></li>
 
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                        </s:iterator>
+                        <td class="table-view-pf-actions">
+                            <div class="dropdown dropdown-kebab-pf">
+                                <button class="btn btn-menu-right dropdown-toggle"
+                                        type="button" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                    <span class="fa fa-ellipsis-v"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <%-- edit --%> <a
+                                            title="<s:text name="label.edit" />:&#32;<s:property value="#usernameVar" />"
+                                            href="<s:property value="#editUserActionVar" escapeHtml="false" />">
+                                            <span><s:text name="label.edit" /></span>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <%-- edit auth --%> <a
+                                            href="<s:property value="#editUserAuthActionVar" escapeHtml="false" />"
+                                            title="<s:text name="note.configureAuthorizationsFor" />: <s:property value="#usernameVar" />">
+
+                                            <span><s:text name="note.configureAuthorizationsFor" />:&#32;<s:property
+                                                    value="#usernameVar" /></span>
+                                        </a>
+                                    </li>
+
+                                    <s:if test="#hasEditProfilePermission">
+                                        <li>
+                                            <%-- edit profile --%> <a
+                                                href="<s:property value="#editUserProfileActionVar" escapeHtml="false" />"
+                                                title="<s:text name="label.editProfile" />:&#32;<s:property value="#usernameVar" />">
+
+                                                <span><s:text name="label.editProfile" />:&#32;<s:property
+                                                        value="#usernameVar" /></span>
+                                            </a>
+                                        </li>
+                                    </s:if>
+
+                                    <s:if test="null != #userProfileVar">
+                                        <li>
+                                            <%-- view profile --%> <a
+                                                href="<s:property value="#viewUserProfileActionVar" escapeHtml="false" />"
+                                                title="<s:text name="label.viewProfile" />:&#32;<s:property value="#usernameVar" />">
+                                                <span><s:text name="label.viewProfile" />:&#32;<s:property
+                                                        value="#usernameVar" /></span>
+                                            </a>
+                                        </li>
+                                    </s:if>
+
+
+                                    <%-- remove --%>
+                                    <li><a
+                                            href="<s:property value="#userTrashActionVar" escapeHtml="false" />"
+                                            title="<s:text name="label.remove" />:&#32;<s:property value="#usernameVar" />">
+                                            <span><s:text name="label.remove" /></span>
+                                        </a></li>
+
+                                </ul>
+                            </div>
+                        </td>
+                        </tr>
+                    </s:iterator>
                     </tbody>
                 </table>
             </div>

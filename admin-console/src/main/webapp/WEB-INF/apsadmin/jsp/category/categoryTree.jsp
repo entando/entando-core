@@ -96,21 +96,23 @@
 
             <div class="table-responsive overflow-visible">
                 <table id="categoryTree"
-                       class="table table-bordered table-hover table-treegrid">
+                       class="table table-bordered table-hover table-treegrid table-striped">
                     <thead>
                         <tr>
                             <th> <s:text name="title.categoryTree"/>
-                                <button type="button" class="btn-no-button expand-button"
-                                        id="expandAll">
-                                    <i class="fa fa-plus-square-o treeInteractionButtons"
-                                       aria-hidden="true"></i>&#32;<s:text name="label.category.expandAll"/>
-                                </button>
-                                <button type="button" class="btn-no-button" id="collapseAll">
-                                    <i class="fa fa-minus-square-o treeInteractionButtons"
-                                       aria-hidden="true"></i>&#32;<s:text name="label.category.collapseAll"/>
-                                </button>
+                                <s:if test="#categoryTreeStyleVar == 'classic'">
+                                    <button type="button" class="btn-no-button expand-button"
+                                            id="expandAll">
+                                        <i class="fa fa-plus-square-o treeInteractionButtons"
+                                           aria-hidden="true"></i>&#32;<s:text name="label.category.expandAll"/>
+                                    </button>
+                                    <button type="button" class="btn-no-button" id="collapseAll">
+                                        <i class="fa fa-minus-square-o treeInteractionButtons"
+                                           aria-hidden="true"></i>&#32;<s:text name="label.category.collapseAll"/>
+                                    </button>
+                                </s:if>
                             </th>
-                            <th class="col-sm-1 text-center"><s:text name="label.category.actions"/></th>
+                            <th class="text-center table-w-5"><s:text name="label.category.actions"/></th>
                         </tr>
                     </thead>
 
@@ -125,12 +127,18 @@
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
                         </s:if>
                         <s:elseif test="#categoryTreeStyleVar == 'request'">
-                            <s:set var="openTreeActionName" value="'openCloseCategoryTree'" />
-                            <s:set var="closeTreeActionName" value="'openCloseCategoryTree'" />
-                            <s:set var="currentRoot" value="showableTree" />
-                            <s:include
-                                value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
-                        </s:elseif>
+                        <style>
+                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                cursor: pointer;
+                                display: none;
+                            }
+                        </style>
+                        <s:set var="openTreeActionName" value="'openCloseCategoryTree'" />
+                        <s:set var="closeTreeActionName" value="'openCloseCategoryTree'" />
+                        <s:set var="currentRoot" value="showableTree" />
+                        <s:include
+                            value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
+                    </s:elseif>
                     </tbody>
                 </table>
             </div>

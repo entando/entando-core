@@ -51,8 +51,8 @@
     <s:set var="showletTypeApiMappingsVar" value="showletTypeApiMappings" />
     <s:iterator var="showletFlavour" value="#showletFlavours">
         <s:set var="firstType" value="%{#showletFlavour.get(0)}"></s:set>
-            <!------------Section legend----------->
-            <legend >
+		<!-- ----------Section legend--------- -->
+		<legend>
             <s:if test="%{#firstType.optgroup == 'stockShowletCode'}">
                 <s:text name="title.widgetManagement.widgets.stock" />
             </s:if>
@@ -73,7 +73,7 @@
             </s:else>
         </legend>
 
-        <!--HEADER table Start -->
+        <!-- HEADER table Start -->
         <div class="col-xs-12">
             <table class="table table-striped table-bordered table-hover" id="labelTable">
                 <thead>
@@ -102,7 +102,8 @@
                                 <td class="td-line-height-custom">
                                 <s:property value="#showletType.key" />
                             </td>
-                            <td class="text-center td-line-height-custom"><span title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />">
+                            <td class="text-center td-line-height-custom">
+								<span title="<s:text name="title.widgetManagement.howmanypages.long" />: <s:property value="#showletType.value" />">
                                     <s:property value="#showletUtilizers.size()" />
                                 </span>
                             </td>
@@ -173,7 +174,7 @@
 					<wpsa:hookPoint key="core.showletType.list.table.td" objectName="hookPointElements_core_showletType_list_table_td">
 						<s:iterator value="#hookPointElements_core_showletType_list_table_td" var="hookPointElement">
 							<wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-							</s:iterator>
+						</s:iterator>
 					</wpsa:hookPoint>
 					</td>
 					</tr>

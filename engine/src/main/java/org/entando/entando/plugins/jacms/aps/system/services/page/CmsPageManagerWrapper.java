@@ -32,36 +32,40 @@ import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
  * @author E.Santoboni
  */
 public class CmsPageManagerWrapper implements ContentUtilizer {
-	
-	private static final Logger _logger =  LoggerFactory.getLogger(CmsPageManagerWrapper.class);
-	
+
+	private static final Logger _logger = LoggerFactory.getLogger(CmsPageManagerWrapper.class);
+
 	@Override
 	public String getName() {
 		return "CmsPageManagerWrapper";
 	}
-	
+
 	@Override
-    public List getContentUtilizers(String contentId) throws ApsSystemException {
+	public List getContentUtilizers(String contentId) throws ApsSystemException {
 		List<IPage> pages = new ArrayList<IPage>();
 		try {
-			IPage root = this.getPageManager().getRoot();
+			IPage root = this.getPageManager().getOnlineRoot();
 			this.searchContentUtilizers(root, pages, contentId);
+
+			root = this.getPageManager().getDraftRoot();
+			this.searchContentUtilizers(root, pages, contentId);
+
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced pages", t);
-            throw new ApsSystemException("Error loading referenced pages with content " + contentId, t);
+			throw new ApsSystemException("Error loading referenced pages with content " + contentId, t);
 		}
-    	return pages;
+		return pages;
 	}
-	
+
 	public void searchContentUtilizers(IPage targetPage, List<IPage> pages, String contentId) throws ApsSystemException {
-		if (null == contentId) return;
+		if (null == contentId)
+			return;
 		try {
-			boolean found = this.findContentUtilizers(targetPage.getOnlineWidgets(), contentId) 
-					|| this.findContentUtilizers(targetPage.getDraftWidgets(), contentId);
+			boolean found = this.findContentUtilizers(targetPage.getWidgets(), contentId);
 			if (found) {
 				pages.add(targetPage);
 			}
-			IPage[] children = targetPage.getAllChildren();
+			IPage[] children = targetPage.getChildren();
 			if (null != children) {
 				for (IPage page : children) {
 					this.searchContentUtilizers(page, pages, contentId);
@@ -69,10 +73,10 @@ public class CmsPageManagerWrapper implements ContentUtilizer {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced pages", t);
-            throw new ApsSystemException("Error loading referenced pages with content " + contentId, t);
+			throw new ApsSystemException("Error loading referenced pages with content " + contentId, t);
 		}
 	}
-	
+
 	public boolean findContentUtilizers(Widget[] widgets, String contentId) throws ApsSystemException {
 		boolean found = false;
 		if (null != widgets) {
@@ -103,14 +107,15 @@ public class CmsPageManagerWrapper implements ContentUtilizer {
 		}
 		return found;
 	}
-	
+
 	protected IPageManager getPageManager() {
 		return _pageManager;
 	}
+
 	public void setPageManager(IPageManager pageManager) {
 		this._pageManager = pageManager;
 	}
-	
+
 	private IPageManager _pageManager;
-	
+
 }

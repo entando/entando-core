@@ -44,7 +44,7 @@ public class TestPageDAO extends BaseTestCase {
 			assertTrue(home.isOnline());
 			assertNotNull(home.getOnlineMetadata());
 			assertNotNull(home.getDraftMetadata());
-			
+
 			IPage draft = PageTestUtil.getPageByCode(pages, "pagina_draft");
 			assertNotNull(draft);
 			assertFalse(draft.isOnline());
@@ -71,7 +71,7 @@ public class TestPageDAO extends BaseTestCase {
 
 			IPage pageToUpdate = this.updatePageForTest(extractedPage, this._pageDao);
 			this._pageDao.updatePage(pageToUpdate);
-			IPage updatedPage = PageTestUtil.getPageByCode( this._pageDao.loadPages(), "temp");
+			IPage updatedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), "temp");
 
 			PageTestUtil.comparePagesFull(pageToUpdate, updatedPage, true);
 		} catch (Throwable t) {
@@ -92,7 +92,7 @@ public class TestPageDAO extends BaseTestCase {
 			PageTestUtil.comparePagesFull(newPageForTest, addedPage, false);
 
 			this._pageDao.updateWidgetPosition(pageCode, 2, 1);
-			IPage updatedPage = PageTestUtil.getPageByCode( this._pageDao.loadPages(), pageCode);
+			IPage updatedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
 			PageTestUtil.comparePages(addedPage, updatedPage, true);
 			PageTestUtil.comparePageMetadata(addedPage.getDraftMetadata(), updatedPage.getDraftMetadata(), 0);
 			PageTestUtil.comparePageMetadata(addedPage.getOnlineMetadata(), updatedPage.getOnlineMetadata(), 0);
@@ -123,8 +123,7 @@ public class TestPageDAO extends BaseTestCase {
 
 			Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", null, this._widgetTypeManager);
 			this._pageDao.joinWidget(addedPage, widgetToAdd, 3);
-			IPage updatedPage = PageTestUtil.getPageByCode(
-					this._pageDao.loadPages(), pageCode);
+			IPage updatedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
 			PageTestUtil.comparePages(addedPage, updatedPage, true);
 			PageTestUtil.comparePageMetadata(addedPage.getDraftMetadata(), updatedPage.getDraftMetadata(), 0);
 			PageTestUtil.comparePageMetadata(addedPage.getOnlineMetadata(), updatedPage.getOnlineMetadata(), 0);
@@ -146,7 +145,7 @@ public class TestPageDAO extends BaseTestCase {
 			PageTestUtil.comparePageMetadata(updatedPage.getDraftMetadata(), onlinePage.getDraftMetadata(), null);
 			PageTestUtil.comparePageMetadata(updatedPage.getOnlineMetadata(), onlinePage.getOnlineMetadata(), null);
 			PageTestUtil.compareWidgets(updatedPage.getDraftWidgets(), onlinePage.getDraftWidgets());
-			
+
 			previousWidgets = updatedPage.getOnlineWidgets();
 			newWidgets = onlinePage.getOnlineWidgets();
 			assertEquals(previousWidgets.length, newWidgets.length);
@@ -196,14 +195,13 @@ public class TestPageDAO extends BaseTestCase {
 			this._pageDao.addPage(newPageForTest);
 			addedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
 			PageTestUtil.comparePagesFull(newPageForTest, addedPage, false);
-			
+
 			IPage parent = this._pageManager.getPage("homepage");
 			assertNotNull(parent);
 			assertNotSame(parent.getCode(), addedPage.getParentCode());
 
 			this._pageDao.movePage(addedPage, parent);
-			IPage movedPage = addedPage = PageTestUtil.getPageByCode(
-					this._pageDao.loadPages(), pageCode);
+			IPage movedPage = addedPage = PageTestUtil.getPageByCode(this._pageDao.loadPages(), pageCode);
 			PageTestUtil.comparePages(addedPage, movedPage, false);
 			PageTestUtil.comparePageMetadata(addedPage.getDraftMetadata(), movedPage.getDraftMetadata(), 0);
 			PageTestUtil.comparePageMetadata(addedPage.getOnlineMetadata(), movedPage.getOnlineMetadata(), 0);
@@ -223,11 +221,11 @@ public class TestPageDAO extends BaseTestCase {
 		IPage parentPage = this._pageManager.getDraftPage("service");
 		page.setParent(parentPage);
 		page.setParentCode(parentPage.getCode());
-		page.setPosition(parentPage.getAllChildren().length + 1);
+		page.setPosition(parentPage.getChildren().length + 1);
 		page.setGroup("free");
 
-		PageMetadata metadata = PageTestUtil.createPageMetadata("service", true, "pagina temporanea", 
-				null, null, false, null, DateConverter.parseDate("19700101", "yyyyMMdd"));
+		PageMetadata metadata = PageTestUtil.createPageMetadata("service", true, "pagina temporanea", null, null, false, null, DateConverter
+				.parseDate("19700101", "yyyyMMdd"));
 		page.setOnlineMetadata(metadata);
 		page.setDraftMetadata(metadata);
 
@@ -240,8 +238,7 @@ public class TestPageDAO extends BaseTestCase {
 		return page;
 	}
 
-	private IPage updatePageForTest(IPage ipageToUpdate, PageDAO pageDAO)
-			throws Throwable {
+	private IPage updatePageForTest(IPage ipageToUpdate, PageDAO pageDAO) throws Throwable {
 		Page pageToUpdate = (Page) ipageToUpdate;
 
 		PageMetadata metadata = pageToUpdate.getDraftMetadata();
@@ -249,7 +246,7 @@ public class TestPageDAO extends BaseTestCase {
 		metadata.setTitle("en", "temporary page");
 		metadata.setShowable(false);
 		pageToUpdate.setOnlineMetadata(metadata);
-		
+
 		Widget[] modifiesWidgets = new Widget[4];
 		ApsProperties config = PageTestUtil.createProperties("temp1", "temp1", "contentId", "ART11");
 		modifiesWidgets[2] = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
@@ -257,7 +254,7 @@ public class TestPageDAO extends BaseTestCase {
 		pageToUpdate.setDraftWidgets(modifiesWidgets);
 		return pageToUpdate;
 	}
-	
+
 	private void init() throws Exception {
 		try {
 			DataSource dataSource = (DataSource) this.getApplicationContext().getBean("portDataSource");

@@ -4,22 +4,15 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.userSetting"/></li>
     <li><a href="<s:url namespace="/do/User" action="list" />"><s:text
-            name="title.userManagement"/></a></li>
+                name="title.userManagement"/></a></li>
     <li class="page-title-container"><s:text
             name="title.userManagement.userTrash"/></li>
 </ol>
 
 
 <h1 class="page-title-container">
-    <s:text name="title.userManagement.userTrash"/>
+    <s:text name="title.userManagement.userTrash"/>&#32;
     <s:property value="%{username}"/>
-    <span class="pull-right"> <a tabindex="0" role="button"
-                                 data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                                 data-content="text to be inserted" data-placement="left"
-                                 data-original-title=""> <i class="fa fa-question-circle-o"
-                                                            aria-hidden="true"></i>
-	</a>
-	</span>
 </h1>
 
 

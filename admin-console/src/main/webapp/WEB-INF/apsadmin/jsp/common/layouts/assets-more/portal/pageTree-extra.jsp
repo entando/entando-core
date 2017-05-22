@@ -13,8 +13,19 @@
         display: table;
      }
      .draggableClone td:not(:first-child) {display: none}
-     .ui-droppable-active {
-        background-color: #ccc!important;}
+     .ui-droppable-active td:not(:first-child) {display: none;}
+     .ui-droppable-active td {
+        width: 100%;
+        outline: 1px dashed #bbb;!important;
+        outline-offset: -4px;
+        padding: 10px!important;
+        background: #fafafa; 
+     }
+     .ui-droppable-active.ui-droppable-hover td {
+        transition: 200ms;
+        background: #e0e0e0;
+        padding-left: 20px!important;
+     }
 </style>
 
 <script>
@@ -58,6 +69,7 @@
         }
         buildTree();
 
+        setDroppable($pageTreeRow);
         setDraggable($pageTreeRow);
 
    /**
@@ -73,13 +85,18 @@
                     .addClass("draggableClone active")
                     .css({width:$(this).width()});
             },
-            containment: $("#pageTree"),
             start: function(event, ui) {
-            	setDroppable($(selector).not($(this)));
+            	$(this).find("td:not(:first-child)").css({'visibility':'hidden'});
+            	$("thead th:not(:first-child)").css({'visibility':'hidden'});
+            	expandNode("#pageTree .childrenNodes");
+            },
+            stop: function(event, ui) {
+            	$(this).find("td:not(:first-child)").css({'visibility':'visible'});
+            	$("thead th:not(:first-child)").css({'visibility':'visible'});
             }
         });
 
-    	setHandleIcon ();
+    	setHandleIcon();
     }
 
     /**
@@ -101,6 +118,7 @@
      function setDroppable(selector) {
     	 $(selector).droppable({
     		accept: '.treeRow',
+    		greedy: true,
     		over: function(event, ui){
 //     			expandNode($("[data-parent='#"+$(this).attr("id")+"']"));
     		},
@@ -108,30 +126,31 @@
 //                 console.log($(this));
             },
             drop: function( event, ui ) {
-            	console.log();
-            	console.log();
             	moveTree({
             		selectedNode: ui.draggable.attr("id"),
             		parentNode: $(this).attr("id")
             	});
             }
     	 });
-    	return;
     }
 
     /**
      * Change parentePage for the selectedNode
      */
     function moveTree(data) {
-    	 console.log(data);
         $.ajax(moveTreeURL, {
             dataType: 'json',
             data: data,
             success: function (response) {
-                if (alertService.showResponseAlerts(response)) {
-                    return;
+            	
+                if (response.actionErrors.length > 0) {
+                	alertService.showResponseAlerts({actionErrors: response.actionErrors});
+                } else {
+                    updateTree(data);
                 }
-                updateTree();
+                
+                $(".alert-dismissable").fadeOut(8000);
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
             }
         });
     }
@@ -145,9 +164,18 @@
     /**
      * Refresh treegrid PLACEHOLDER
      */
-    function updateTree() {
-    	console.log("tree refreshed");
-    	return;
+    function updateTree(treeNodes) {
+    	var previousParentId = $("#"+treeNodes.selectedNode).data("parent");
+    	$("#"+treeNodes.parentNode).after($("#"+treeNodes.selectedNode+", [data-parent='#"+treeNodes.selectedNode+"']"));
+    	$("#"+treeNodes.selectedNode).attr("data-parent","#"+treeNodes.parentNode);
+    	if($("[data-parent='"+previousParentId+"']").length == 0){
+            $(previousParentId).find(".expand-icon").remove();
+            $(previousParentId).find(".node-icon")
+              .removeClass("fa-folder")
+              .addClass("fa-folder-o");
+            
+        }
+    	alertService.addDismissableSuccess('OK');
     }
 
 });

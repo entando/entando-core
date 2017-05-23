@@ -121,11 +121,13 @@
                                 <div class="card-pf card-pf-utilization">
                                     <div class="card-pf-heading">
                                         <p class="card-pf-heading-details">
-                                            <s:url namespace="/do/Page" action="new" var="addPageURL" />
-                                            <a href="${addPageURL}" class="btn btn-default"
-											   title="<s:text name="dashboard.addPage" />"> 
-                                                <s:text name="dashboard.addPage" />
-                                            </a>
+											<wp:ifauthorized permission="managePages">
+												<s:url namespace="/do/Page" action="new" var="addPageURL" />
+												<a href="${addPageURL}" class="btn btn-default"
+												   title="<s:text name="dashboard.addPage" />"> 
+													<s:text name="dashboard.addPage" />
+												</a>
+											</wp:ifauthorized>
                                         <h2 class="card-pf-title">
                                             <s:text name="dashboard.pageList" />
                                         </h2>
@@ -243,12 +245,15 @@
 					</h2>
 					<div class="card-pf-body">
 						<ul class="pt-20 pb-20 pl-10">
+							<wp:ifauthorized permission="viewUsers" var="viewUsersPermVar" />
+							<wp:ifauthorized permission="editUsers" var="editUsersPermVar" />
+							<wp:ifauthorized permission="editUserProfile" var="editUserProfilePermVar" />
 							<li>
-                                <wp:ifauthorized permission="editUsers">
+                                <c:if test="${viewUsersPermVar || editUsersPermVar || editUserProfilePermVar}">
 									<a href='<s:url action="list" namespace="/do/User" />'>
 										<s:text name="dashboard.userList" />
 									</a>
-                                </wp:ifauthorized>
+                                </c:if>
 							</li>
 							<li>
                                 <wp:ifauthorized permission="manageCategories">
@@ -258,16 +263,18 @@
 								</wp:ifauthorized>
 							</li>
 							<li>
-                                <wp:ifauthorized permission="manageCategories">
+                                <wp:ifauthorized permission="superuser">
 									<a href='<s:url action="list" namespace="/do/Lang" />'>
 										<s:text name="dashboard.labels" /> &amp; <s:text name="dashboard.languages" />
 									</a>
 								</wp:ifauthorized>
 							</li>
 							<li>
-								<a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
-									<s:text name="dashboard.reloadConfig" />
-								</a>
+								<wp:ifauthorized permission="superuser">
+									<a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
+										<s:text name="dashboard.reloadConfig" />
+									</a>
+								</wp:ifauthorized>
 							</li>
 						</ul>
 					</div>

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -134,6 +135,19 @@ public class PageTestUtil {
 		return extractedPage;
 	}
 
+	public static IPage getPageByCode(Map<String, IPage> pages, String code) {
+		// IPage extractedPage = null;
+		return pages.get(code);
+		// for (int i = 0; i < pages.size(); i++) {
+		// IPage page = pages.get(i);
+		// if (page.getCode().equals(code)) {
+		// extractedPage = page;
+		// break;
+		// }
+		// }
+		// return extractedPage;
+	}
+
 	public static Page createPage(String code, IPage parentPage, String groupName, PageMetadata metadata, Widget[] widgets) {
 		Page page = new Page();
 		page.setCode(code);
@@ -208,6 +222,11 @@ public class PageTestUtil {
 			}
 		}
 		return widgetsInUse;
+	}
+
+	public static void deletePage(Page pageToDelete, PageDAO _pageDao) {
+		_pageDao.deletePage(pageToDelete);
+
 	}
 
 }

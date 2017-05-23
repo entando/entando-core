@@ -17,17 +17,6 @@ import java.util.Arrays;
 
 public class PageRecord {
 
-	public Page createPage() {
-		Page page = new Page();
-		page.setCode(this.getCode());
-		page.setParentCode(this.getParentCode());
-		page.setPosition(this.getPosition());
-		page.setGroup(this.getGroup());
-		page.setOnline(null != this.getMetadataOnline());
-		page.setChanged(this.isChanged());
-		return page;
-	}
-
 	public IPage createDraftPage() {
 		Page page = this.createPage();
 		page.setMetadata(this.getMetadataDraft());
@@ -41,6 +30,17 @@ public class PageRecord {
 		page.setMetadata(this.getMetadataOnline());
 		page.setWidgets(this.getWidgetsOnline());
 		page.setOnlineInstance(true);
+		return page;
+	}
+
+	protected Page createPage() {
+		Page page = new Page();
+		page.setCode(this.getCode());
+		page.setParentCode(this.getParentCode());
+		page.setPosition(this.getPosition());
+		page.setGroup(this.getGroup());
+		page.setOnline(null != this.getMetadataOnline());
+		page.setChanged(this.isChanged());
 		return page;
 	}
 

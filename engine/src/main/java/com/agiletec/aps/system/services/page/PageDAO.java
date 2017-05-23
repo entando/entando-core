@@ -697,10 +697,10 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			String query = "";
 			if (dest == WidgetConfigDest.ON_LINE) {
 				query = ADD_WIDGET_FOR_PAGE;
-				widgets = page.getOnlineWidgets();
+				widgets = page.getWidgets();
 			} else if (dest == WidgetConfigDest.DRAFT) {
 				query = ADD_WIDGET_FOR_PAGE_DRAFT;
-				widgets = page.getDraftWidgets();
+				widgets = page.getWidgets();
 			}
 			if (null == widgets)
 				return;

@@ -76,13 +76,16 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw new ApsSystemException("Error loading the list of pages", t);
 		}
 		try {
-			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageList.size());
+			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
 			Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
-
+			pageList = new ArrayList<>();
 			for (int i = 0; i < pageRecordList.size(); i++) {
 				PageRecord pageRecord = pageRecordList.get(i);
+
 				IPage pageD = pageRecord.createDraftPage();
 				IPage pageO = pageRecord.createOnlinePage();
+
+				pageList.add(pageD);// ???
 
 				newFullMap.put(pageD.getCode(), pageD);
 				if (pageD.getCode().equals(pageD.getParentCode())) {
@@ -579,8 +582,14 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			IPage root = this.getDraftRoot();
 			this.searchUtilizers(groupName, utilizers, root);
 
+			List<IPage> utilizersOnline = new ArrayList<IPage>();
 			root = this.getOnlineRoot();
-			this.searchUtilizers(groupName, utilizers, root);
+			this.searchUtilizers(groupName, utilizersOnline, root);
+			for (IPage page : utilizersOnline) {
+				if (!utilizers.contains(page)) {
+					utilizers.add(page);
+				}
+			}
 
 		} catch (Throwable t) {
 			String message = "Error during searching page utilizers of group " + groupName;
@@ -591,15 +600,11 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	}
 
 	private void searchUtilizers(String groupName, List<IPage> utilizers, IPage page) {
-		if (page.getGroup().equals(groupName)) {
+		if (page.getGroup().equals(groupName) && !page.isOnlineInstance()) {
 			utilizers.add(page);
 		} else {
 			Collection<String> extraGroups = page.getMetadata().getExtraGroups();
 			boolean inUse = extraGroups != null && extraGroups.contains(groupName);
-			if (!inUse) {
-				extraGroups = page.getMetadata() != null ? page.getMetadata().getExtraGroups() : null;
-				inUse = extraGroups != null && extraGroups.contains(groupName);
-			}
 			if (inUse) {
 				utilizers.add(page);
 			}

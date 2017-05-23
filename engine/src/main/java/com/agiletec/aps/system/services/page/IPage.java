@@ -131,19 +131,7 @@ public interface IPage extends ITreeNode {
 	@Override
 	public IPage getParent();
 
-	// // TODO javadoc
-	// public PageMetadata getOnlineMetadata();
-	//
-	// // TODO javadoc
-	// public PageMetadata getDraftMetadata();
-
 	public PageMetadata getMetadata();
-
-	// // TODO javadoc
-	// public Widget[] getOnlineWidgets();
-	//
-	// // TODO javadoc
-	// public Widget[] getDraftWidgets();
 
 	public boolean isOnline();
 
@@ -167,14 +155,6 @@ public interface IPage extends ITreeNode {
 	 * @return true if the page must use the extra titles, false otherwise.
 	 */
 	public boolean isUseExtraTitles();
-
-	/**
-	 * Return the widgets configured in this page.
-	 * 
-	 * @return all the widgets of the current page
-	 * @deprecated Use {@link #getWidgets()} instead
-	 */
-	public Widget[] getShowlets();
 
 	/**
 	 * Return the widgets configured in this page.

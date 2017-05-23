@@ -300,41 +300,6 @@ public class Page extends TreeNode implements IPage {
 	}
 
 	@Override
-	@Deprecated
-	// TODO Verify usage PLUGIN
-	public Widget[] getShowlets() {
-		return this.getWidgets();
-	}
-
-	/**
-	 * Return the widgets configured in this page.
-	 * 
-	 * @return all the widgets of the current page
-	 */
-	@Override
-	// TODO Verify usage PLUGIN
-	public Widget[] getWidgets() {
-		return this.getWidgets();
-	}
-
-	@Deprecated
-	// TODO Verify usage PLUGIN
-	public void setShowlets(Widget[] widgets) {
-		this.setWidgets(widgets);
-	}
-
-	/**
-	 * Assign a set of widgets to the current page.
-	 * 
-	 * @param widgets
-	 * the widgets to assign.
-	 */
-	// TODO Verify usage PLUGIN
-	public void setWidgets(Widget[] widgets) {
-		this.setWidgets(widgets);
-	}
-
-	@Override
 	// TODO Verify usage PLUGIN
 	public boolean isUseExtraTitles() {
 		PageMetadata metadata = this.getMetadata();
@@ -460,6 +425,14 @@ public class Page extends TreeNode implements IPage {
 		this.metadata = metadata;
 	}
 
+	public Widget[] getWidgets() {
+		return widgets;
+	}
+
+	public void setWidgets(Widget[] widgets) {
+		this.widgets = widgets;
+	}
+
 	/**
 	 * The code of the higher level page
 	 */
@@ -472,7 +445,7 @@ public class Page extends TreeNode implements IPage {
 
 	// private Widget[] _onlineWidgets;
 	//
-	// private Widget[] _draftWidgets;
+	private Widget[] widgets;
 
 	// private IPage[] _allChildren = new IPage[0];
 	private boolean online;

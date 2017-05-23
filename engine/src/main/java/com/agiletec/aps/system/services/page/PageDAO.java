@@ -234,10 +234,11 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			// }
 
 			PageMetadata draftMetadata = page.getMetadata();
-			if (draftMetadata != null) {
-				draftMetadata.setUpdatedAt(now);
-				this.addDraftPageMetadata(pageCode, draftMetadata, conn);
+			if (draftMetadata == null) {
+				draftMetadata = new PageMetadata();
 			}
+			draftMetadata.setUpdatedAt(now);
+			this.addDraftPageMetadata(pageCode, draftMetadata, conn);
 
 			this.addWidgetForPage(page, WidgetConfigDest.DRAFT, conn);
 			// if (onlineMetadata != null) {
@@ -512,27 +513,36 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 
-	@Override
-	public void publishPage(IPage page) {
-		Connection conn = null;
-		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			String pageCode = page.getCode();
-			this.deleteOnlineWidgets(pageCode, conn);
-			this.deleteOnlinePageMetadata(pageCode, conn);
-			this.updatePageRecord(page, conn);
-			this.addOnlinePageMetadata(pageCode, page.getMetadata(), conn);
-			this.addWidgetForPage(page, WidgetConfigDest.ON_LINE, conn);
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error while publishing the page", t);
-			throw new RuntimeException("Error while publishing the page", t);
-		} finally {
-			closeConnection(conn);
-		}
-	}
+	// @Override
+	// public void publishPage(IPage page) {
+	// Connection conn = null;
+	// try {
+	// conn = this.getConnection();
+	// conn.setAutoCommit(false);
+	// String pageCode = page.getCode();
+	// this.deleteDraftWidgets(pageCode, conn);
+	// this.deleteDraftPageMetadata(pageCode, conn);
+	//
+	// this.deleteOnlineWidgets(pageCode, conn);
+	// this.deleteOnlinePageMetadata(pageCode, conn);
+	//
+	// this.updatePageRecord(page, conn);
+	//
+	// this.addDraftPageMetadata(pageCode, page.getMetadata(), conn);
+	// this.addWidgetForPage(page, WidgetConfigDest.DRAFT, conn);
+	//
+	// this.addOnlinePageMetadata(pageCode, page.getMetadata(), conn);
+	// this.addWidgetForPage(page, WidgetConfigDest.ON_LINE, conn);
+	//
+	// conn.commit();
+	// } catch (Throwable t) {
+	// this.executeRollback(conn);
+	// _logger.error("Error while publishing the page", t);
+	// throw new RuntimeException("Error while publishing the page", t);
+	// } finally {
+	// closeConnection(conn);
+	// }
+	// }
 
 	protected void updatePageRecord(IPage page, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;

@@ -60,13 +60,13 @@ public interface IPageDAO {
 	 */
 	public void updatePage(IPage page);
 
-	/**
-	 * Publish
-	 * 
-	 * @param page
-	 * The page to update
-	 */
-	public void publishPage(IPage page);
+	// /**
+	// * Publish
+	// *
+	// * @param page
+	// * The page to update
+	// */
+	// public void publishPage(IPage page);
 
 	/**
 	 * Updates the position for the page movement

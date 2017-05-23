@@ -46,7 +46,7 @@ public interface IPageManager extends ITreeNodeManager {
 	public void addPage(IPage page) throws ApsSystemException;
 
 	/**
-	 * Update a page record in the database.
+	 * Update a page record in the database, in draft
 	 * 
 	 * @param page
 	 * The modified page.
@@ -54,6 +54,16 @@ public interface IPageManager extends ITreeNodeManager {
 	 * In case of database access error.
 	 */
 	public void updatePage(IPage page) throws ApsSystemException;
+
+	// /**
+	// * Update a page record in the database, draft and online
+	// *
+	// * @param page
+	// * The modified page.
+	// * @throws ApsSystemException
+	// * In case of database access error.
+	// */
+	// public void publishPage(IPage page) throws ApsSystemException;
 
 	/**
 	 * Update a page as online.

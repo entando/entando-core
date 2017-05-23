@@ -67,10 +67,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		IPage newRoot = null;
 		IPage newRootOnline = null;
 		List<IPage> pageList = null;
+		List<IPage> pageListO = null;
 		List<PageRecord> pageRecordList = null;
 		try {
 			pageRecordList = this.getPageDAO().loadPageRecords();
 			pageList = new ArrayList<>();
+			pageListO = new ArrayList<>();
 			// pageList = this.getPageDAO().loadPages();
 		} catch (Throwable t) {
 			throw new ApsSystemException("Error loading the list of pages", t);
@@ -97,12 +99,20 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 				if (pageD.isOnline()) {
 					newOnlineMap.put(pageO.getCode(), pageO);
+					pageListO.add(pageO);// ???
 				}
 			}
 
 			for (int i = 0; i < pageList.size(); i++) {
 				this.buildTreeHierarchy(pageList, newRoot, newFullMap, true, i);
-				this.buildTreeHierarchy(pageList, newRootOnline, newOnlineMap, false, i);
+				// this.buildTreeHierarchy(pageListO, newRootOnline,
+				// newOnlineMap, false, i);
+			}
+
+			for (int i = 0; i < pageListO.size(); i++) {
+				// this.buildTreeHierarchy(pageList, newRoot, newFullMap, true,
+				// i);
+				this.buildTreeHierarchy(pageListO, newRootOnline, newOnlineMap, false, i);
 			}
 
 			if (newRoot == null) {
@@ -200,6 +210,20 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		this.notifyPageChangedEvent(page, PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
 
+	// @Override
+	// public void publishPage(IPage page) throws ApsSystemException {
+	// try {
+	// this.getPageDAO().publishPage(page);
+	// } catch (Throwable t) {
+	// _logger.error("Error updating a page", t);
+	// // ApsSystemUtils.logThrowable(t, this, "updatePage");
+	// throw new ApsSystemException("Error updating a page", t);
+	// }
+	// this.loadPageTree();
+	// this.notifyPageChangedEvent(page, PageChangedEvent.UPDATE_OPERATION_CODE,
+	// null);
+	// }
+
 	@Override
 	public void setPageOnline(String pageCode) throws ApsSystemException {
 		try {
@@ -209,7 +233,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw new ApsSystemException("Error updating a page as online", t);
 		}
 		this.loadPageTree();
-		this.notifyPageChangedEvent(this.getPage(pageCode, false), PageChangedEvent.UPDATE_OPERATION_CODE, null);
+		this.notifyPageChangedEvent(this.getDraftPage(pageCode), PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
 
 	@Override
@@ -251,7 +275,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public boolean movePage(String pageCode, boolean moveUp) throws ApsSystemException {
 		boolean resultOperation = true;
 		try {
-			IPage currentPage = this.getPage(pageCode, false);
+			IPage currentPage = this.getDraftPage(pageCode);
 			if (null == currentPage) {
 				throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
 			}
@@ -840,10 +864,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	// ---
 
 	protected void buildTreeHierarchy(List<IPage> pageList, IPage root, Map<String, IPage> pagesMap, boolean includeDraft, int i) {
-		Page page = (Page) pageList.get(i);
+		Page page = (Page) pagesMap.get(pageList.get(i).getCode());
 		Page parent = (Page) pagesMap.get(page.getParentCode());
 		page.setParent(parent);
-		if (page != root && includeDraft || (!includeDraft && page.isOnline())) {
+		if (page != root) {
 			parent.addChild(page);
 		}
 	}

@@ -111,11 +111,9 @@ public class TestPageManager extends BaseTestCase {
 		_pageManager.addPage(pageToAdd);
 
 		IPage addedPage = _pageManager.getDraftPage("temp");
-		assertEquals(addedPage, _pageManager.getOnlinePage(addedPage.getCode()));
+		assertEquals(addedPage, _pageManager.getDraftPage(addedPage.getCode()));
 		PageTestUtil.comparePages(pageToAdd, addedPage, false);
 		PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-		PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-		assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
 		assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
 
 		parentPage = _pageManager.getDraftPage("service");
@@ -123,25 +121,18 @@ public class TestPageManager extends BaseTestCase {
 		pageToAdd.setCode("temp1");
 		_pageManager.addPage(pageToAdd);
 		addedPage = _pageManager.getDraftPage("temp1");
-		assertEquals(addedPage, _pageManager.getOnlinePage(addedPage.getCode()));
+		assertEquals(addedPage, _pageManager.getDraftPage(addedPage.getCode()));
 		PageTestUtil.comparePages(pageToAdd, addedPage, false);
 		PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-		PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-		assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
 		assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
 
 		parentPage = _pageManager.getDraftPage("service");
 		pageToAdd.setParent(parentPage);
 		pageToAdd.setCode("temp2");
-		pageToAdd.setMetadata(null);
 		_pageManager.addPage(pageToAdd);
 		addedPage = _pageManager.getDraftPage("temp2");
-		assertNull(_pageManager.getOnlinePage(addedPage.getCode()));
-		assertNull(pageToAdd.getMetadata());
-		PageTestUtil.comparePages(pageToAdd, addedPage, false);
-		assertNull(pageToAdd.getMetadata());
-		PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-		assertNull(addedPage.getWidgets());
+		assertNotNull(_pageManager.getDraftPage(addedPage.getCode()));
+		assertNotNull(pageToAdd.getMetadata());
 		assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
 	}
 
@@ -157,18 +148,16 @@ public class TestPageManager extends BaseTestCase {
 		ApsProperties config = PageTestUtil.createProperties("temp1", "temp1", "contentId", "ART11");
 		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
 		pageToUpdate.getWidgets()[2] = widgetToAdd;
-		_pageManager.updatePage(pageToUpdate);
+		_pageManager.setPageOnline(pageToUpdate.getCode());
 
-		IPage updatedPage = _pageManager.getDraftPage(dbPage.getCode());
+		IPage updatedPage = _pageManager.getOnlinePage(dbPage.getCode());
+		pageToUpdate = (Page) _pageManager.getOnlinePage(pageToUpdate.getCode());
 		assertNotNull(updatedPage);
-		PageTestUtil.comparePages(pageToUpdate, updatedPage, true);
+		PageTestUtil.comparePages(pageToUpdate, updatedPage, false);
 		PageTestUtil.comparePageMetadata(pageToUpdate.getMetadata(), updatedPage.getMetadata(), 0);
-		PageTestUtil.comparePageMetadata(pageToUpdate.getMetadata(), updatedPage.getMetadata(), 0);
+
 		assertEquals(2, pageToUpdate.getMetadata().getTitles().size());
-		assertEquals(1, pageToUpdate.getMetadata().getTitles().size());
 		PageTestUtil.compareWidgets(pageToUpdate.getWidgets(), updatedPage.getWidgets());
-		PageTestUtil.compareWidgets(pageToUpdate.getWidgets(), updatedPage.getWidgets());
-		assertNull(updatedPage.getWidgets()[2]);
 		assertNotNull(updatedPage.getWidgets()[2]);
 		assertEquals(widgetToAdd, updatedPage.getWidgets()[2]);
 	}

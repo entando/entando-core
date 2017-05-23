@@ -71,6 +71,7 @@ public class TestPageManagerNew extends BaseTestCase {
 		for (IPage child : childs) {
 			String code = child.getCode();
 			assertFalse(code.equalsIgnoreCase(onlyDraftPageCode));
+			assertTrue(child.isOnlineInstance());
 		}
 	}
 

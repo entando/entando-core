@@ -47,8 +47,14 @@ public class CmsPageManagerWrapper implements ContentUtilizer {
 			IPage root = this.getPageManager().getOnlineRoot();
 			this.searchContentUtilizers(root, pages, contentId);
 
+			List<IPage> pagesDraft = new ArrayList<IPage>();
 			root = this.getPageManager().getDraftRoot();
-			this.searchContentUtilizers(root, pages, contentId);
+			this.searchContentUtilizers(root, pagesDraft, contentId);
+			for (IPage pageDraft : pagesDraft) {
+				if (!pages.contains(pageDraft)) {
+					pages.add(pageDraft);
+				}
+			}
 
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced pages", t);

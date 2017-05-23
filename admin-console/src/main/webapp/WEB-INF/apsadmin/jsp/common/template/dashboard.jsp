@@ -168,6 +168,7 @@
                             <div class="col-xs-12">
                                 <div class="card-pf card-pf-utilization">
                                     <div class="card-pf-heading">
+										<wp:ifauthorized permission="editContents">
 										<span class="card-pf-heading-details">
 											<wpsa:entityTypes entityManagerName="jacmsContentManager" var="contentTypesVar" />
 											<span class="btn-group">
@@ -178,7 +179,7 @@
                                                 </button>
 												<ul class="dropdown-menu" role="menu">
 													<s:iterator var="contentTypeVar" value="#contentTypesVar">
-														<jacmswpsa:contentType
+														<jacmswpsa:contentType 
 															typeCode="%{#contentTypeVar.typeCode}"
 															property="isAuthToEdit" var="isAuthToEditVar" />
 														<s:if test="%{#isAuthToEditVar}">
@@ -196,6 +197,7 @@
 												</ul>
 											</span> 
 										</span>
+										</wp:ifauthorized>
 										<h2 class="card-pf-title">
                                             <s:text name="dashboard.contentList" />
                                         </h2>

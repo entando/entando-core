@@ -13,6 +13,8 @@
  */
 package com.agiletec.apsadmin.admin;
 
+import java.util.Map;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;

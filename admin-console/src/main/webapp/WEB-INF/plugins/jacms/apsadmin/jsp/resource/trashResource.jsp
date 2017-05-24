@@ -21,19 +21,12 @@
 <h1 class="page-title-container">
     <div>
         <s:text name="title.resourceManagement.resourceTrash"/>
-        <span class="pull-right">
-            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-               data-content="TO be inserted" data-placement="left" data-original-title="">
-                <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-            </a>
-        </span>
     </div>
 </h1>
 <div class="text-right">
     <div class="form-group-separator"></div>
 </div>
 <br>
-
 
 <div class="text-center">
     <s:form action="delete">
@@ -52,33 +45,21 @@
         </p>
 
         <i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
-        <p class="esclamation-underline"><s:text name="label.delete"/></p>
-        <p>
-            <s:text name="note.deleteResource.areYouSure"/>&#32;
-            <s:property value="%{loadResource(resourceId).descr}"/>&#63;
-
-        </p>
-        <%--<div class="btn btn-danger button-fixed-width">
-            <a class="btn-danger button-fixed-width"
-               href="<s:url action="list" namespace="/do/jacms/Resource"><s:param name="resourceTypeCode"><s:property value="resourceTypeCode" /></s:param></s:url>"
-               title="<s:text name="label.remove" />: <s:property value="key" />">
-                &#32;<s:text name="label.delete"/>
-            </a>
-        </div>--%>
-        <wpsf:submit type="button" cssClass="btn btn-danger button-fixed-width">
-            <s:text name="label.delete"/>
-        </wpsf:submit>
-
+        <p class="esclamation-underline"><s:text name="note.deleteResource.areYouSure"/></p>
+        <p class="esclamation-underline-text"><s:property value="%{loadResource(resourceId).descr}"/>&#63;</p>
 
         <div class="text-center margin-large-top">
             <a class="btn btn-default button-fixed-width" href="<s:url action="list" namespace="/do/jacms/Resource">
-                    <s:param name="resourceTypeCode">
-                        <s:property value="resourceTypeCode" />
-                    </s:param>
-                    </s:url>">
-                <s:text name="title.resourceManagement"/>
+                   <s:param name="resourceTypeCode">
+                       <s:property value="resourceTypeCode" />
+                   </s:param>
+               </s:url>">
+                <s:text name="label.back"/>
             </a>
-        </div>
 
+            <wpsf:submit type="button" cssClass="btn btn-danger button-fixed-width">
+                <s:text name="label.delete"/>
+            </wpsf:submit>
+        </div>
     </s:form>
 </div>

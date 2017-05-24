@@ -150,7 +150,7 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 	}
 
 	public IPage getCurrentPage() {
-		return this.getPageManager().getOnlinePage(this.getPageCode());
+		return this.getPageManager().getDraftPage(this.getPageCode());
 	}
 
 	public String getPageCode() {

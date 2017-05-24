@@ -46,16 +46,6 @@ public class CmsPageManagerWrapper implements ContentUtilizer {
 		try {
 			IPage root = this.getPageManager().getOnlineRoot();
 			this.searchContentUtilizers(root, pages, contentId);
-
-			List<IPage> pagesDraft = new ArrayList<IPage>();
-			root = this.getPageManager().getDraftRoot();
-			this.searchContentUtilizers(root, pagesDraft, contentId);
-			for (IPage pageDraft : pagesDraft) {
-				if (!pages.contains(pageDraft)) {
-					pages.add(pageDraft);
-				}
-			}
-
 		} catch (Throwable t) {
 			_logger.error("Error loading referenced pages", t);
 			throw new ApsSystemException("Error loading referenced pages with content " + contentId, t);
@@ -64,8 +54,9 @@ public class CmsPageManagerWrapper implements ContentUtilizer {
 	}
 
 	public void searchContentUtilizers(IPage targetPage, List<IPage> pages, String contentId) throws ApsSystemException {
-		if (null == contentId)
+		if (null == contentId) {
 			return;
+		}
 		try {
 			boolean found = this.findContentUtilizers(targetPage.getWidgets(), contentId);
 			if (found) {

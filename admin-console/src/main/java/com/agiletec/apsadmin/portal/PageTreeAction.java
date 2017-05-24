@@ -69,7 +69,7 @@ public class PageTreeAction extends AbstractTreeAction {
 				this.addActionError(this.getText("error.page.userNotAllowed"));
 				return SUCCESS;
 			}
-			if (this.getPageManager().getRoot().getCode().equals(currentPage.getCode())) {
+			if (this.getPageManager().getDraftRoot().getCode().equals(currentPage.getCode())) {
 				_logger.info("Root page cannot be moved");
 				this.addActionError(this.getText("error.page.move.rootNotAllowed"));
 				return SUCCESS;
@@ -95,7 +95,7 @@ public class PageTreeAction extends AbstractTreeAction {
 		String selectedNode = this.getSelectedNode();
 		String parentPageCode = this.getRequest().getParameter("parentPageCode");
 		if (StringUtils.isBlank(parentPageCode)) {
-			parentPageCode = this.getPageManager().getRoot().getCode();
+			parentPageCode = this.getPageManager().getDraftRoot().getCode();
 		}
 		try {
 			String check = this.checkMovePage(selectedNode, parentPageCode);
@@ -122,12 +122,12 @@ public class PageTreeAction extends AbstractTreeAction {
 			this.addActionError(this.getText("error.page.selectPage"));
 			return "pageTree";
 		}
-		if (currentPage.getCode().equals(this.getPageManager().getRoot().getCode())) {
+		if (currentPage.getCode().equals(this.getPageManager().getDraftRoot().getCode())) {
 			_logger.info("Root page cannot be moved");
 			this.addActionError(this.getText("error.page.move.rootNotAllowed"));
 			return "pageTree";
 		}
-		if ("".equals(parentPageCode) || null == this.getPageManager().getPage(parentPageCode)) {
+		if ("".equals(parentPageCode) || null == this.getPageManager().getDraftPage(parentPageCode)) {
 			_logger.info("Required a new parent node");
 			this.addActionError(this.getText("error.page.move.selectPageParent"));
 			return "pageTree";

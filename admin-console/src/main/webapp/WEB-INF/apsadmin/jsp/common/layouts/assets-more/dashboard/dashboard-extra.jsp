@@ -133,7 +133,7 @@
     function drawPageTable(jsonList) {
         
         for(var i=0; i < jsonList.length; i++){
-            var metadata = jsonList[i].draftMetadata;
+            var metadata = jsonList[i].metadata;
             var page = {
                 'descr': metadata.titles[currentLang],
                 'status': getPageStatus(jsonList[i]),

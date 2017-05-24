@@ -99,8 +99,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		pageJO.setChanged(page.isChanged());
 		pageJO.setParentCode(page.getParentCode());
 		pageJO.setGroup(page.getGroup());
-		pageJO.setDraftMetadata(page.getMetadata());
-		pageJO.setOnlineMetadata(page.getMetadata());
+		pageJO.setMetadata(page.getMetadata());
 		return pageJO;
 	}
 
@@ -143,7 +142,8 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	/**
 	 * Set the token to be searched among the pages
 	 *
-	 * @param pageCodeToken The token to be searched among the pages
+	 * @param pageCodeToken
+	 * The token to be searched among the pages
 	 */
 	public void setPageCodeToken(String pageCodeToken) {
 		this._pageCodeToken = pageCodeToken;
@@ -235,9 +235,12 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	/**
 	 * Valorizza un nodo in base alle informazioni specificate..
 	 *
-	 * @param nodeToValue Il nodo da valorizzare.
-	 * @param parent Il nodo parente.
-	 * @param realNode Il nodo dal quela estrarre le info.
+	 * @param nodeToValue
+	 * Il nodo da valorizzare.
+	 * @param parent
+	 * Il nodo parente.
+	 * @param realNode
+	 * Il nodo dal quela estrarre le info.
 	 */
 	private void fillTreeNode(TreeNode nodeToValue, TreeNode parent, ITreeNode realNode) {
 		nodeToValue.setCode(realNode.getCode());

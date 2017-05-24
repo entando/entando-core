@@ -805,8 +805,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			status.setDraft(status.getDraft() + 1);
 		}
 
-		if (null == status.getLastUpdate() || status.getLastUpdate().before(currentDate)) {
-			status.setLastUpdate(currentDate);
+		if (null != currentDate) {
+			if (null == status.getLastUpdate() || status.getLastUpdate().before(currentDate)) {
+				status.setLastUpdate(currentDate);
+			}
 		}
 	}
 

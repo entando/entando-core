@@ -433,6 +433,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			if (metadata == null) {
 				metadata = new PageMetadata();
 				page.setMetadata(metadata);
+
 			}
 			PageModel oldModel = metadata.getModel();
 			this.valueMetadataFromForm(metadata);

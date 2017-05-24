@@ -51,9 +51,7 @@
 <s:else>
     <ol class="breadcrumb page-tabs-header breadcrumb-position">
         <li>
-            <s:text name="breadcrumb.app" /></li>
-        <li>
-            <s:text name="breadcrumb.jacms"/>
+            <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
         </li>
         <li class="page-title-container">
             <s:text name="%{'title.' + entityManagerName + '.management'}"/>

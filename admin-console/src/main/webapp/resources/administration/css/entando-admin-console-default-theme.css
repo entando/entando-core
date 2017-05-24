@@ -1640,7 +1640,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 
 /* datepicker dropdown hack */
 .datepicker-dropdown:before,
-.datepicker-dropdown:after {display: none!important;}
+.datepicker-dropdown:after {display: none !important;}
 /* --------------- Dashboard --------------- */
 
 .page-title-container .date {

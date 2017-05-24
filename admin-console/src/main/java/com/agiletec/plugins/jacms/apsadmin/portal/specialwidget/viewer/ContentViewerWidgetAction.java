@@ -42,7 +42,7 @@ public class ContentViewerWidgetAction extends SimpleWidgetConfigAction {
 	@Override
 	public void validate() {
 		super.validate();
-		if (this.getFieldErrors().size() == 0) {
+		if (this.getFieldErrors().isEmpty()) {
 			try {
 				Content publishingContent = this.getContentManager().loadContent(this.getContentId(), true);
 				if (null == publishingContent) {

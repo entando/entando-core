@@ -37,7 +37,7 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 		this.init();
 	}
 
-	public void testInitConfigViewerwithNoShowletCode() throws Throwable {
+	public void testInitConfigViewerwithNoWidgetCode() throws Throwable {
 		String result = this.executeConfigViewer("admin", "homepage", "1", null);
 		assertEquals("pageTree", result);
 		assertEquals(1, this.getAction().getActionErrors().size());
@@ -65,13 +65,13 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 	}
 
 	private String executeConfigViewer(String userName,
-			String pageCode, String frame, String showletTypeCode) throws Throwable {
+			String pageCode, String frame, String widgetTypeCode) throws Throwable {
 		this.setUserOnSession(userName);
 		this.initAction("/do/Page/SpecialWidget", "viewerConfig");
 		this.addParameter("pageCode", pageCode);
 		this.addParameter("frame", frame);
-		if (null != showletTypeCode && showletTypeCode.trim().length() > 0) {
-			this.addParameter("widgetTypeCode", showletTypeCode);
+		if (null != widgetTypeCode && widgetTypeCode.trim().length() > 0) {
+			this.addParameter("widgetTypeCode", widgetTypeCode);
 		}
 		return this.executeAction();
 	}
@@ -113,36 +113,36 @@ public class TestContentViewerWidgetAction extends ApsAdminBaseTestCase {
 		String result = this.executeJoinContent("admin", "pagina_11", "1", "EVN24");//Contenuto Free
 		assertEquals(Action.SUCCESS, result);
 		ContentViewerWidgetAction action = (ContentViewerWidgetAction) this.getAction();
-		Widget newShowlet = action.getWidget();
-		assertNotNull(newShowlet);
-		assertEquals("EVN24", newShowlet.getConfig().getProperty("contentId"));
-		assertNull(newShowlet.getConfig().getProperty("modelId"));
+		Widget newWidget = action.getWidget();
+		assertNotNull(newWidget);
+		assertEquals("EVN24", newWidget.getConfig().getProperty("contentId"));
+		assertNull(newWidget.getConfig().getProperty("modelId"));
 
 		result = this.executeJoinContent("admin", "pagina_11", "1", "ART121");//Contenuto del gruppo "administrators" ma autorizzato ai free
 		assertEquals(Action.SUCCESS, result);
 		action = (ContentViewerWidgetAction) this.getAction();
-		newShowlet = action.getWidget();
-		assertNotNull(newShowlet);
-		assertEquals("ART121", newShowlet.getConfig().getProperty("contentId"));
-		assertNull(newShowlet.getConfig().getProperty("modelId"));
+		newWidget = action.getWidget();
+		assertNotNull(newWidget);
+		assertEquals("ART121", newWidget.getConfig().getProperty("contentId"));
+		assertNull(newWidget.getConfig().getProperty("modelId"));
 	}
 
 	public void testJoinContent_2() throws Throwable {
 		String result = this.executeJoinContent("admin", "customers_page", "1", "EVN191");//Contenuto Free su pagina non free
 		assertEquals(Action.SUCCESS, result);
 		ContentViewerWidgetAction action = (ContentViewerWidgetAction) this.getAction();
-		Widget newShowlet = action.getWidget();
-		assertNotNull(newShowlet);
-		assertEquals("EVN191", newShowlet.getConfig().getProperty("contentId"));
-		assertNull(newShowlet.getConfig().getProperty("modelId"));
+		Widget newWidget = action.getWidget();
+		assertNotNull(newWidget);
+		assertEquals("EVN191", newWidget.getConfig().getProperty("contentId"));
+		assertNull(newWidget.getConfig().getProperty("modelId"));
 
 		result = this.executeJoinContent("admin", "customers_page", "1", "EVN25");//Contenuto del gruppo "non free" su pagina di gruppo diverso ma autorizzato ai free
 		assertEquals(Action.SUCCESS, result);
 		action = (ContentViewerWidgetAction) this.getAction();
-		newShowlet = action.getWidget();
-		assertNotNull(newShowlet);
-		assertEquals("EVN25", newShowlet.getConfig().getProperty("contentId"));
-		assertNull(newShowlet.getConfig().getProperty("modelId"));
+		newWidget = action.getWidget();
+		assertNotNull(newWidget);
+		assertEquals("EVN25", newWidget.getConfig().getProperty("contentId"));
+		assertNull(newWidget.getConfig().getProperty("modelId"));
 	}
 
 	private String executeJoinContent(String currentUserName, String pageCode, String frame, String contentId) throws Throwable {

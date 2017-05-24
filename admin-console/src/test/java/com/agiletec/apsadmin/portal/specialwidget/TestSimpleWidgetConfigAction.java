@@ -27,6 +27,7 @@ import com.opensymphony.xwork2.Action;
  */
 public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
@@ -60,13 +61,13 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 	}
 
 	private String executeConfigSimpleParameter(String userName,
-			String pageCode, String frame, String showletTypeCode) throws Throwable {
+			String pageCode, String frame, String widgetTypeCode) throws Throwable {
 		this.setUserOnSession(userName);
 		this.initAction("/do/Page/SpecialWidget", "configSimpleParameter");
 		this.addParameter("pageCode", pageCode);
 		this.addParameter("frame", frame);
-		if (null != showletTypeCode && showletTypeCode.trim().length() > 0) {
-			this.addParameter("widgetTypeCode", showletTypeCode);
+		if (null != widgetTypeCode && widgetTypeCode.trim().length() > 0) {
+			this.addParameter("widgetTypeCode", widgetTypeCode);
 		}
 		return this.executeAction();
 	}

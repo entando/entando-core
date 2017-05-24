@@ -450,10 +450,12 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			assertEquals(Action.SUCCESS, result);
 			IPage addedPage = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(addedPage);
+			IPage addedPublicPage = this._pageManager.getOnlinePage(pageCode);
+			assertNull(addedPublicPage);
 			assertEquals("Pagina Test 1", addedPage.getMetadata().getTitles().getProperty("it"));
 			assertEquals("Test Page 1", addedPage.getMetadata().getTitles().getProperty("en"));
-			assertNull(addedPage.getMetadata());
-			PageMetadata addedMetadata = addedPage.getMetadata().clone();
+			PageMetadata addedMetadata = addedPage.getMetadata();
+			assertNotNull(addedMetadata);
 			PageMetadata expectedMetadata = copiedPage.getMetadata();
 			addedMetadata.setTitles(expectedMetadata.getTitles());
 			PageTestUtil.comparePageMetadata(expectedMetadata, addedMetadata, null);
@@ -556,11 +558,16 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		String pageCode = "temp";
 		try {
 			this.addPage(pageCode);
-			IPage page = _pageManager.getDraftPage(pageCode);
-			assertTrue(page.isOnline());
+			IPage page = this._pageManager.getDraftPage(pageCode);
+			assertFalse(page.isOnline());
 			assertFalse(page.isChanged());
 
 			this.checkActionOnPage("checkSetOffline", pageCode, "admin", Action.SUCCESS, null);
+			page = this._pageManager.getDraftPage(pageCode);
+			assertFalse(page.isOnline());
+			assertFalse(page.isChanged());
+
+			this.checkActionOnPage("doSetOnline", pageCode, "admin", Action.SUCCESS, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertTrue(page.isOnline());
 			assertFalse(page.isChanged());
@@ -568,11 +575,6 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			this.checkActionOnPage("doSetOffline", pageCode, "admin", Action.SUCCESS, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertFalse(page.isOnline());
-			assertFalse(page.isChanged());
-
-			this.checkActionOnPage("doSetOnline", pageCode, "admin", Action.SUCCESS, null);
-			page = _pageManager.getDraftPage(pageCode);
-			assertTrue(page.isOnline());
 			assertFalse(page.isChanged());
 		} catch (Throwable t) {
 			throw t;
@@ -586,7 +588,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		try {
 			this.addPage(pageCode);
 			IPage page = _pageManager.getDraftPage(pageCode);
-			assertTrue(page.isOnline());
+			assertFalse(page.isOnline());
 			assertFalse(page.isChanged());
 
 			this.checkActionOnPage("setOffline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
@@ -599,6 +601,12 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			this.checkPageResponse(pageCode, null);
 			page = _pageManager.getDraftPage(pageCode);
 			assertTrue(page.isOnline());
+			assertFalse(page.isChanged());
+
+			this.checkActionOnPage("setOffline", "/do/rs/Page", pageCode, "admin", Action.SUCCESS, null);
+			this.checkPageResponse(pageCode, null);
+			page = _pageManager.getDraftPage(pageCode);
+			assertFalse(page.isOnline());
 			assertFalse(page.isChanged());
 		} catch (Throwable t) {
 			throw t;
@@ -613,11 +621,9 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		PageMetadata metadata = PageTestUtil.createPageMetadata(
 				pageModel.getCode(), true, "pagina temporanea", null, null,
 				false, null, null);
-
 		ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART11");
 		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
 		Widget[] widgets = {widgetToAdd};
-
 		Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
 		this._pageManager.addPage(pageToAdd);
 	}
@@ -627,7 +633,6 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		this.initAction(namespace, actionName);
 		this.addParameter("pageCode", pageCode);
 		String actualResult = this.executeAction();
-
 		assertEquals(expectedResult, actualResult);
 		assertEquals(0, this.getAction().getFieldErrors().size());
 		if (errorLabel != null) {

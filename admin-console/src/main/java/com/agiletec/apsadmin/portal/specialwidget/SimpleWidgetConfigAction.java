@@ -48,14 +48,19 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 		}
 		Widget widget = this.getCurrentPage().getWidgets()[this.getFrame()];
 		if (null == widget) {
-			try {
-				widget = this.createNewShowlet();
+			widget = this.createNewWidget();
+			if (null == widget) {
+				this.addActionError(this.getText("error.page.nullWidgetOnFrame", this.getPageCode(), String.valueOf(this.getFrame())));
+				return "pageTree";
+			}
+			/*
 			} catch (Exception e) {
 				_logger.error("error in extractInitConfig", e);
 				//TODO METTI MESSAGGIO DI ERRORE NON PREVISTO... Vai in pageTree con messaggio di errore Azione non prevista o cosa del genere
 				this.addActionError(this.getText("Message.userNotAllowed"));
 				return "pageTree";
 			}
+			 */
 			_logger.info("Configurating new Widget {} - Page {} - Frame {}", this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
 		} else {
 			_logger.info("Edit Widget config {} - Page {} - Frame {}", this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
@@ -65,15 +70,22 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 		return SUCCESS;
 	}
 
-	protected Widget createNewShowlet() throws Exception {
+	protected Widget createNewWidget() {
 		if (this.getWidgetTypeCode() == null || this.getWidgetType(this.getWidgetTypeCode()) == null) {
-			throw new Exception("Widget Code missin or invalid : " + this.getWidgetTypeCode());
+			_logger.error("Widget Code missin or invalid : " + this.getWidgetTypeCode());
+			//throw new Exception("Widget Code missin or invalid : " + this.getWidgetTypeCode());
+			return null;
 		}
 		Widget widget = new Widget();
 		WidgetType type = this.getWidgetType(this.getWidgetTypeCode());
 		widget.setType(type);
 		widget.setConfig(new ApsProperties());
 		return widget;
+	}
+
+	@Deprecated
+	protected Widget createNewShowlet() throws Exception {
+		return this.createNewWidget();
 	}
 
 	protected Widget createCloneFrom(Widget widget) {

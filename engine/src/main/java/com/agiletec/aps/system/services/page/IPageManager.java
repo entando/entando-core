@@ -15,6 +15,7 @@ package com.agiletec.aps.system.services.page;
 
 import java.util.List;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
@@ -24,6 +25,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @author M.Diana
  */
 public interface IPageManager extends ITreeNodeManager {
+
+	@Deprecated
+	public ITreeNode getRoot();
 
 	/**
 	 * Delete a page and eventually the association with the showlets.
@@ -148,15 +152,15 @@ public interface IPageManager extends ITreeNodeManager {
 
 	public IPage getDraftRoot();
 
-	@Deprecated
-	public IPage getPage(String pageCode);
+	// @Deprecated
+	// public IPage getPage(String pageCode);
 
 	public IPage getOnlinePage(String pageCode);
 
 	public IPage getDraftPage(String pageCode);
 
-	@Deprecated
-	public IPage getPage(String pageCode, boolean onlyOnline);
+	// @Deprecated
+	// public IPage getPage(String pageCode, boolean onlyOnline);
 
 	/**
 	 * Search pages by a token of its code.

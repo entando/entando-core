@@ -501,7 +501,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Return the root of the pages tree.
-	 * 
+	 *
 	 * @return the root page
 	 */
 	@Override
@@ -519,17 +519,18 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		return this._root;
 	}
 
-	/**
-	 * Return the page given the name
-	 * 
-	 * @param pageCode
-	 * The code of the page.
-	 * @return the requested page.
-	 */
-	@Override
-	public IPage getPage(String pageCode) {
-		throw new UnsupportedOperationException("METODO NON SUPPORTATO: getPage(String pageCode) ");
-	}
+	// /**
+	// * Return the page given the name
+	// *
+	// * @param pageCode
+	// * The code of the page.
+	// * @return the requested page.
+	// */
+	// @Override
+	// public IPage getPage(String pageCode) {
+	// throw new UnsupportedOperationException("METODO NON SUPPORTATO:
+	// getPage(String pageCode) ");
+	// }
 
 	@Override
 	public IPage getOnlinePage(String pageCode) {
@@ -543,10 +544,11 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		return page;
 	}
 
-	@Deprecated
-	public IPage getPage(String pageCode, boolean onlyOnline) {
-		throw new UnsupportedOperationException("METODO NON SUPPORTATO: getPage(String pageCode, boolean onlyOnline) ");
-	}
+	// @Deprecated
+	// public IPage getPage(String pageCode, boolean onlyOnline) {
+	// throw new UnsupportedOperationException("METODO NON SUPPORTATO:
+	// getPage(String pageCode, boolean onlyOnline) ");
+	// }
 
 	@Override
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {

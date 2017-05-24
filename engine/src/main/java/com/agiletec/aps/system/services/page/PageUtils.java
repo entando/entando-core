@@ -16,7 +16,6 @@ package com.agiletec.aps.system.services.page;
 /**
  * Helper class for the page manager
  * 
- * @author S.Puddu
  */
 public class PageUtils {
 

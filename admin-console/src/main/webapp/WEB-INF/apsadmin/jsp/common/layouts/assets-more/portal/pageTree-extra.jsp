@@ -50,7 +50,9 @@
         * Set Draggable items 
         */
         function setDraggable(selector) {
-        	$(selector).draggable({
+        	// Set Handle icon for draggable items 
+    	    selector.find("td:first-child").prepend('<span class="fa fa-arrows dragIcon"></span>');
+        	selector.draggable({
                 opacity: 0.8,
                 axis: "y",
                 handle: ".dragIcon",
@@ -69,28 +71,13 @@
                 	$("thead th:not(:first-child), thead th:first-child button").removeClass("hidden");
                 }
             });
-    
-        	setHandleIcon();
-        }
-    
-        /**
-         * Set Handle icon for draggable items 
-         */
-        function setHandleIcon () {
-            $pageTreeRow.on("mouseover", function(){
-                $(this).find(".dragIcon").show();
-            });
-            $pageTreeRow.on("mouseleave", function(){
-                $(this).find(".dragIcon").hide();
-            });
-            $pageTreeRow.find("td:first-child").prepend('<span class="fa fa-arrows dragIcon"></span>');
         }
     
         /**
          * Set Droppable items 
          */
          function setDroppable(selector) {
-        	 $(selector).droppable({
+        	 selector.droppable({
         		accept: '.treeRow',
         		greedy: true,
                 drop: function( event, ui ) {

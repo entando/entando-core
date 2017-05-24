@@ -1673,6 +1673,9 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 
 
 /* --------------- TreeGrid with draggable rows--------------- */
+.table-treegrid tbody tr td:first-child > .dragIcon {display: none}
+.table-treegrid tbody tr:hover td:first-child > .dragIcon,
+.table-treegrid .draggableClone.ui-draggable-dragging .dragIcon {display: inline}
 .table-treegrid .dragIcon {display: none}
 .table-treegrid .draggableClone {display: table;}
 .table-treegrid .draggableClone td:not(:first-child) {display: none}

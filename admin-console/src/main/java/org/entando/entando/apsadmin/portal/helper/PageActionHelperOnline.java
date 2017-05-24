@@ -34,7 +34,7 @@ import com.agiletec.apsadmin.portal.helper.AbstractPageActionHelper;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
 /**
- * 
+ *
  */
 public class PageActionHelperOnline extends AbstractPageActionHelper {
 
@@ -47,16 +47,17 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
 
 	@Override
 	protected PageMetadata getPageMetadata(IPage page) {
-		return page.getOnlineMetadata();
+		return page.getMetadata();
 	}
-	
+
+	@Override
 	protected TreeNode createNodeInstance(IPage page) {
 		return new OnlinePageNode(page);
 	}
-	
+
 	@Override
 	protected boolean isPageAllowed(IPage page, Collection<String> groupCodes, boolean alsoFreeViewPages) {
-		return page!=null && page.isOnline() && super.isPageAllowed(page, groupCodes, alsoFreeViewPages);
+		return page != null && page.isOnline() && super.isPageAllowed(page, groupCodes, alsoFreeViewPages);
 	}
 
 	@Override
@@ -74,8 +75,7 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
 		this.addTreeWrapper(root, null, pageRoot, groupCodes, alsoFreeViewPages);
 		return root;
 	}
-	
-	
+
 	@Override
 	public TreeNodeWrapper getShowableTree(Set<String> treeNodesToOpen, ITreeNode fullTree, Collection<String> groupCodes) throws ApsSystemException {
 		if (null == treeNodesToOpen || treeNodesToOpen.isEmpty()) {
@@ -86,7 +86,7 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
 		try {
 			Set<String> checkNodes = new HashSet<String>();
 			this.buildCheckNodes(treeNodesToOpen, checkNodes, groupCodes);
-			root = new PageOnlineTreeNodeWrapper(((DraftPageNode)fullTree));
+			root = new PageOnlineTreeNodeWrapper(((DraftPageNode) fullTree));
 			root.setParent(root);
 			this.builShowableTree(root, null, fullTree, checkNodes);
 		} catch (Throwable t) {
@@ -97,7 +97,9 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
 	}
 
 	private void buildCheckNodes(Set<String> treeNodesToOpen, Set<String> checkNodes, Collection<String> groupCodes) {
-		if (null == treeNodesToOpen) return;
+		if (null == treeNodesToOpen) {
+			return;
+		}
 		Iterator<String> iter = treeNodesToOpen.iterator();
 		while (iter.hasNext()) {
 			String targetNode = (String) iter.next();
@@ -112,14 +114,14 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
 		if (checkNodes.contains(currentNode.getCode())) {
 			currentNode.setOpen(true);
 			ITreeNode[] children = currentTreeNode.getChildren();
-			for (int i=0; i<children.length; i++) {
+			for (int i = 0; i < children.length; i++) {
 				ITreeNode newCurrentTreeNode = children[i];
-				TreeNodeWrapper newNode = new PageOnlineTreeNodeWrapper(((DraftPageNode)newCurrentTreeNode));
+				TreeNodeWrapper newNode = new PageOnlineTreeNodeWrapper(((DraftPageNode) newCurrentTreeNode));
 				newNode.setParent(currentNode);
 				currentNode.addChild(newNode);
 				this.builShowableTree(newNode, currentNode, newCurrentTreeNode, checkNodes);
 			}
 		}
 	}
-	
+
 }

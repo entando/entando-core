@@ -32,10 +32,9 @@ import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.apsadmin.portal.helper.AbstractPageActionHelper;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
-
 /**
  * Classe Helper per la gestione draft.
- * 
+ *
  */
 public class PageActionHelperDraft extends AbstractPageActionHelper {
 
@@ -48,7 +47,7 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 
 	@Override
 	protected PageMetadata getPageMetadata(IPage page) {
-		return page.getDraftMetadata();
+		return page.getMetadata();
 	}
 
 	@Override
@@ -72,9 +71,6 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 		return root;
 	}
 
-
-
-
 	@Override
 	public TreeNodeWrapper getShowableTree(Set<String> treeNodesToOpen, ITreeNode fullTree, Collection<String> groupCodes) throws ApsSystemException {
 		if (null == treeNodesToOpen || treeNodesToOpen.isEmpty()) {
@@ -85,7 +81,7 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 		try {
 			Set<String> checkNodes = new HashSet<String>();
 			this.buildCheckNodes(treeNodesToOpen, checkNodes, groupCodes);
-			root = new PageDraftTreeNodeWrapper(((DraftPageNode)fullTree));
+			root = new PageDraftTreeNodeWrapper(((DraftPageNode) fullTree));
 			root.setParent(root);
 			this.builShowableTree(root, null, fullTree, checkNodes);
 		} catch (Throwable t) {
@@ -96,7 +92,9 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 	}
 
 	private void buildCheckNodes(Set<String> treeNodesToOpen, Set<String> checkNodes, Collection<String> groupCodes) {
-		if (null == treeNodesToOpen) return;
+		if (null == treeNodesToOpen) {
+			return;
+		}
 		Iterator<String> iter = treeNodesToOpen.iterator();
 		while (iter.hasNext()) {
 			String targetNode = (String) iter.next();
@@ -111,9 +109,9 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 		if (checkNodes.contains(currentNode.getCode())) {
 			currentNode.setOpen(true);
 			ITreeNode[] children = currentTreeNode.getChildren();
-			for (int i=0; i<children.length; i++) {
+			for (int i = 0; i < children.length; i++) {
 				ITreeNode newCurrentTreeNode = children[i];
-				TreeNodeWrapper newNode = new PageDraftTreeNodeWrapper(((DraftPageNode)newCurrentTreeNode));
+				TreeNodeWrapper newNode = new PageDraftTreeNodeWrapper(((DraftPageNode) newCurrentTreeNode));
 				newNode.setParent(currentNode);
 				currentNode.addChild(newNode);
 				this.builShowableTree(newNode, currentNode, newCurrentTreeNode, checkNodes);

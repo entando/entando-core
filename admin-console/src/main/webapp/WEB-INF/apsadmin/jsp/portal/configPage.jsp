@@ -29,7 +29,7 @@
 	<s:set var="showletTypeApiMappingsVar" value="showletTypeApiMappings" />
 	<s:iterator var="showlet" value="currentPage.draftWidgets" status="rowstatus">
 		<s:set var="showletType" value="#showlet.getType()" ></s:set>
-		<s:set var="metadata" value="currentPage.draftMetadata" ></s:set>
+		<s:set var="metadata" value="currentPage.metadata" ></s:set>
 
 		<li class="list-group-item padding-base-top padding-base-bottom" id="widget<s:property value="#rowstatus.count" />">
 			<h2 class="h5 list-group-item-heading">

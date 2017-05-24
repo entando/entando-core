@@ -32,10 +32,10 @@
 <s:set var="dataOriginalTitle" value="%{'Section Help'}" />
 <h1 class="page-title-container">
     <s:if test="getStrutsAction() == 1">
-        <s:text name="label.edit" />
+        <s:text name="label.add" />
     </s:if>
     <s:else>
-        <s:text name="label.add" />
+        <s:text name="label.edit" />
     </s:else>&#32;
     <s:text name="jacms.menu.contentAdmin" />
     <span class="pull-right">

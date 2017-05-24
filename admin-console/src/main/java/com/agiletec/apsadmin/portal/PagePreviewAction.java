@@ -137,29 +137,8 @@ public class PagePreviewAction extends AbstractPortalAction {
 
 	@Override
 	public IPage getPage(String pageCode) {
-		/*
-		Page page = null;
 		IPage currentPage = this.getPageManager().getDraftPage(pageCode);
-		if (null != currentPage) {
-			page = new Page();
-			page.setCode(currentPage.getCode());
-			page.setParent(currentPage.getParent());
-			page.setParentCode(currentPage.getParentCode());
-			page.setGroup(currentPage.getGroup());
-//			page.setPosition(currentPage.getPosition());
-			PageMetadata metadata = currentPage.getDraftMetadata();
-			page.setDraftMetadata(metadata);
-			page.setOnlineMetadata(metadata);
-			IPage[] children = currentPage.getAllChildren();
-			page.setChildren(children);
-			page.setAllChildren(children);
-			Widget[] widgets = currentPage.getDraftWidgets();
-			page.setDraftWidgets(widgets);
-			page.setOnlineWidgets(widgets);
-		}
-		return page;
-		 */
-		return super.getOnlinePage(pageCode);
+		return currentPage;
 	}
 
 	public ScreenSize getScreenSize() {

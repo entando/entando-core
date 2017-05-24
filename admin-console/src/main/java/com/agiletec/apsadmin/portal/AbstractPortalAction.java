@@ -81,15 +81,15 @@ public abstract class AbstractPortalAction extends BaseAction {
 			WidgetType type = types.get(i);
 			String pluginCode = type.getPluginCode();
 			if (null != pluginCode && pluginCode.trim().length() > 0) {
-				//is a plugin's widgets
+				// is a plugin's widgets
 				if (!pluginCodes.contains(pluginCode)) {
 					pluginCodes.add(pluginCode);
 				}
 				this.addFlavourWidgetType(pluginCode, type, mapping);
 			} else if (type.isUserType()) {
-				//is a user widgets
+				// is a user widgets
 				this.addFlavourWidgetType(USER_WIDGETS_CODE, type, mapping);
-			} else //is a core widgets
+			} else // is a core widgets
 			{
 				if (this.getStockWidgetCodes().contains(type.getCode())) {
 					this.addFlavourWidgetType(STOCK_WIDGETS_CODE, type, mapping);
@@ -130,8 +130,8 @@ public abstract class AbstractPortalAction extends BaseAction {
 	/**
 	 * Returns the 'bread crumbs' targets.
 	 *
-	 * @param pageCode The code of the page being represented in the bread
-	 * crumbs path.
+	 * @param pageCode
+	 * The code of the page being represented in the bread crumbs path.
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
@@ -155,7 +155,8 @@ public abstract class AbstractPortalAction extends BaseAction {
 	/**
 	 * Check if the current user can access the specified page.
 	 *
-	 * @param page The page to check against the current user.
+	 * @param page
+	 * The page to check against the current user.
 	 * @return True if the user has can access the given page, false otherwise.
 	 */
 	public boolean isUserAllowed(IPage page) {
@@ -190,7 +191,8 @@ public abstract class AbstractPortalAction extends BaseAction {
 	/**
 	 * Return the page given its code.
 	 *
-	 * @param pageCode The code of the requested page.
+	 * @param pageCode
+	 * The code of the requested page.
 	 * @return The page associated to the given code, null if the code is
 	 * unknown.
 	 */
@@ -253,7 +255,8 @@ public abstract class AbstractPortalAction extends BaseAction {
 	/**
 	 * Set a given node in the tree of pages.
 	 *
-	 * @param selectedNode The node selected in the tree of pages.
+	 * @param selectedNode
+	 * The node selected in the tree of pages.
 	 */
 	public void setSelectedNode(String selectedNode) {
 		this._selectedNode = selectedNode;

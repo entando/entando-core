@@ -229,7 +229,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 	}
 
 	public void testCopyForAdminUser() throws Throwable {
-		String pageToCopy = this._pageManager.getRoot().getCode();
+		String pageToCopy = this._pageManager.getDraftRoot().getCode();
 		this.executeCopyPage(pageToCopy, "admin");
 
 		String result = this.executeAction();
@@ -250,7 +250,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 	}
 
 	public void testCopyForCoachUser() throws Throwable {
-		String pageToCopy = this._pageManager.getRoot().getCode();
+		String pageToCopy = this._pageManager.getDraftRoot().getCode();
 		this.executeCopyPage(pageToCopy, "pageManagerCoach");
 		String result = this.executeAction();
 		assertEquals("pageTree", result);
@@ -321,7 +321,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		try {
 			Page testPage = new Page();
 			testPage.setCode(pageCode);
-			testPage.setParent(this._pageManager.getRoot());
+			testPage.setParent(this._pageManager.getDraftRoot());
 			testPage.setParentCode(root.getCode());
 			PageMetadata draft = new PageMetadata();
 			draft.setTitle("en", pageCode);

@@ -80,7 +80,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	}
 
 	public void testEditForCoachUser() throws Throwable {
-		String selectedPageCode = this._pageManager.getRoot().getCode();
+		String selectedPageCode = this._pageManager.getDraftRoot().getCode();
 		String result = this.executeActionOnPage(selectedPageCode, "pageManagerCoach", "edit");
 		assertEquals("pageTree", result);
 
@@ -160,7 +160,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	}
 
 	public void testDetailForCoachUser() throws Throwable {
-		String selectedPageCode = this._pageManager.getRoot().getCode();
+		String selectedPageCode = this._pageManager.getOnlineRoot().getCode();
 		String result = this.executeActionOnPage(selectedPageCode, "pageManagerCoach", "detail");
 		assertEquals("pageTree", result);
 
@@ -377,7 +377,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode, false);
+			IPage addedPage = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(addedPage);
 			assertEquals("Pagina Test 1", addedPage.getMetadata().getTitles().getProperty("it"));
 		} catch (Throwable t) {
@@ -403,7 +403,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode, false);
+			IPage addedPage = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(addedPage);
 			assertEquals("Pagina Test 2", addedPage.getMetadata().getTitles().getProperty("it"));
 			Widget[] showlets = addedPage.getWidgets();
@@ -448,7 +448,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			params.put("pageCode", pageCode);
 			String result = this.executeSave(params, "admin");
 			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getPage(pageCode, false);
+			IPage addedPage = this._pageManager.getDraftPage(pageCode);
 			assertNotNull(addedPage);
 			assertEquals("Pagina Test 1", addedPage.getMetadata().getTitles().getProperty("it"));
 			assertEquals("Test Page 1", addedPage.getMetadata().getTitles().getProperty("en"));
@@ -473,7 +473,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	}
 
 	public void testTrashPage() throws Throwable {
-		String result = this.executeTrashPage(this._pageManager.getRoot().getCode(), "admin");
+		String result = this.executeTrashPage(this._pageManager.getDraftRoot().getCode(), "admin");
 		assertEquals("pageTree", result);
 		ActionSupport action = this.getAction();
 		assertEquals(1, action.getActionErrors().size());

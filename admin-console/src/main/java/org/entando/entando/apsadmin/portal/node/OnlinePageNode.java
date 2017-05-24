@@ -22,8 +22,9 @@ public class OnlinePageNode extends DraftPageNode {
 		super(entity);
 	}
 
+	@Override
 	protected PageMetadata getPageMetadata() {
-		PageMetadata metadata = this.getEntity().getOnlineMetadata();
+		PageMetadata metadata = this.getEntity().getMetadata();
 		return metadata;
 	}
 

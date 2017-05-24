@@ -32,24 +32,25 @@ public class DraftPageNode extends TreeNode {
 		}
 		return null;
 	}
-	
+
 	protected PageMetadata getPageMetadata() {
-		PageMetadata metadata = this.getEntity().getDraftMetadata();
+		PageMetadata metadata = this.getEntity().getMetadata();
 		return metadata;
 	}
-	
+
 	@Override
 	public boolean isChildOf(String nodeCode) {
 		return this.getEntity().isChildOf(nodeCode);
 	}
-	
+
 	public IPage getEntity() {
 		return entity;
 	}
+
 	public void setEntity(IPage entity) {
 		this.entity = entity;
 	}
-	
+
 	private IPage entity;
-	
+
 }

@@ -43,51 +43,51 @@ import com.agiletec.apsadmin.portal.AbstractPortalAction;
 import com.agiletec.apsadmin.system.TreeNodeBaseActionHelper;
 
 /**
- * 
+ *
  */
-public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper implements IPageActionHelper {
+public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper implements IPageActionHelper {
 
-    private static final Logger _logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
-    
+	private static final Logger _logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
+
 	protected abstract IPage getPage(String pageCode);
-    
-    protected abstract PageMetadata getPageMetadata(IPage page);
-	
-	protected abstract TreeNode createNodeInstance(IPage page);
-    
-    @SuppressWarnings("rawtypes")
-	@Override
-    public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException {
-        Map<String, List> references = new HashMap<String, List>();
-        try {
-            String[] defNames = ApsWebApplicationUtils.getWebApplicationContext(request).getBeanNamesForType(PageUtilizer.class);
-            for (int i = 0; i < defNames.length; i++) {
-                Object service = null;
-                try {
-                    service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
-                } catch (Throwable t) {
-                    _logger.error("error in hasReferencingObjects", t);
-                    service = null;
-                }
-                if (service != null) {
-                    PageUtilizer pageUtilizer = (PageUtilizer) service;
-                    List utilizers = pageUtilizer.getPageUtilizers(page.getCode());
-                    if (utilizers != null && !utilizers.isEmpty()) {
-                        references.put(pageUtilizer.getName() + "Utilizers", utilizers);
-                    }
-                }
-            }
-        } catch (Throwable t) {
-            throw new ApsSystemException("Error extracting Referencing Objects", t);
-        }
-        return references;
-    }
 
-    @Override
-    public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes) throws ApsSystemException {
-        return this.getAllowedTreeRoot(groupCodes, false);
-    }
-	
+	protected abstract PageMetadata getPageMetadata(IPage page);
+
+	protected abstract TreeNode createNodeInstance(IPage page);
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException {
+		Map<String, List> references = new HashMap<String, List>();
+		try {
+			String[] defNames = ApsWebApplicationUtils.getWebApplicationContext(request).getBeanNamesForType(PageUtilizer.class);
+			for (int i = 0; i < defNames.length; i++) {
+				Object service = null;
+				try {
+					service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
+				} catch (Throwable t) {
+					_logger.error("error in hasReferencingObjects", t);
+					service = null;
+				}
+				if (service != null) {
+					PageUtilizer pageUtilizer = (PageUtilizer) service;
+					List utilizers = pageUtilizer.getPageUtilizers(page.getCode());
+					if (utilizers != null && !utilizers.isEmpty()) {
+						references.put(pageUtilizer.getName() + "Utilizers", utilizers);
+					}
+				}
+			}
+		} catch (Throwable t) {
+			throw new ApsSystemException("Error extracting Referencing Objects", t);
+		}
+		return references;
+	}
+
+	@Override
+	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes) throws ApsSystemException {
+		return this.getAllowedTreeRoot(groupCodes, false);
+	}
+
 //	@Override
 //	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException {
 //		TreeNode root = null;
@@ -103,9 +103,8 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
 //		this.addTreeWrapper(root, null, pageRoot, groupCodes, alsoFreeViewPages);
 //		return root;
 //	}
-
 	protected void addTreeWrapper(TreeNode currentNode, TreeNode parent, IPage currentTreeNode, Collection<String> groupCodes, boolean alsoFreeViewPages) {
-		IPage[] children = currentTreeNode.getAllChildren();
+		IPage[] children = currentTreeNode.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPage newCurrentTreeNode = children[i];
 			if (this.isPageAllowed(newCurrentTreeNode, groupCodes, alsoFreeViewPages)) {
@@ -118,7 +117,7 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
 			}
 		}
 	}
-	
+
 	@Override
 	protected void fillTreeNode(TreeNode nodeToValue, TreeNode parent, ITreeNode realNode) {
 		nodeToValue.setCode(realNode.getCode());
@@ -137,146 +136,144 @@ public  abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper
 //		}
 	}
 
-    /**
-	 * Metodo a servizio della costruzione dell'albero delle pagine. 
-	 * Nel caso che l'utente corrente non sia abilitato alla visualizzazione del nodo 
-	 * root, fornisce un nodo "virtuale" nel quale inserire gli eventuali nodi visibili.
+	/**
+	 * Metodo a servizio della costruzione dell'albero delle pagine. Nel caso
+	 * che l'utente corrente non sia abilitato alla visualizzazione del nodo
+	 * root, fornisce un nodo "virtuale" nel quale inserire gli eventuali nodi
+	 * visibili.
+	 *
 	 * @return Il nodo root virtuale.
 	 */
-    protected TreeNode getVirtualRoot() {
+	protected TreeNode getVirtualRoot() {
 		Page virtualRootPage = new Page();
 		PageMetadata metadata = new PageMetadata();
-		virtualRootPage.setDraftMetadata(metadata);
-		virtualRootPage.setOnlineMetadata(metadata);
-        List<Lang> langs = this.getLangManager().getLangs();
-        for (int i = 0; i < langs.size(); i++) {
-            Lang lang = langs.get(i);
-            metadata.setTitle(lang.getCode(), "ROOT");
-        }
+		virtualRootPage.setMetadata(metadata);
+		List<Lang> langs = this.getLangManager().getLangs();
+		for (int i = 0; i < langs.size(); i++) {
+			Lang lang = langs.get(i);
+			metadata.setTitle(lang.getCode(), "ROOT");
+		}
 		TreeNode virtualRoot = this.createNodeInstance(virtualRootPage);
-        virtualRoot.setCode(AbstractPortalAction.VIRTUAL_ROOT_CODE);
-        return virtualRoot;
-    }
-	
-    @Override
-    protected void buildCheckNodes(ITreeNode treeNode, Set<String> checkNodes, Collection<String> groupCodes) {
-        checkNodes.add(treeNode.getCode());
-        ITreeNode parent = treeNode.getParent();
-        if (parent == null) {
-            return;
-        }
-        IPage page = this.getPage(parent.getCode());
-        if (!this.isPageAllowed(page, groupCodes, false)) {
-            checkNodes.add(AbstractPortalAction.VIRTUAL_ROOT_CODE);
-            return;
-        }
-        if (parent.getParent() != null
-                && !parent.getCode().equals(treeNode.getCode())) {
-            this.buildCheckNodes(parent, checkNodes, groupCodes);
-        }
-    }
-	
-    protected boolean isPageAllowed(IPage page, Collection<String> groupCodes, boolean alsoFreeViewPages) {
-    	boolean isAuth = false;
-        if (page != null) {
-        	PageMetadata metadata = this.getPageMetadata(page);
-        	if (metadata != null) {
-    	        String pageGroup = page.getGroup();
-    	        Collection<String> extraGroups = metadata.getExtraGroups();
-    	        isAuth = (groupCodes.contains(pageGroup) || groupCodes.contains(Group.ADMINS_GROUP_NAME))
-    	        		|| (alsoFreeViewPages && null != extraGroups && extraGroups.contains(Group.FREE_GROUP_NAME));
-        	}
-        }
-        return isAuth;
-    }
+		virtualRoot.setCode(AbstractPortalAction.VIRTUAL_ROOT_CODE);
+		return virtualRoot;
+	}
 
-    @Override
-    protected boolean isNodeAllowed(String code, Collection<String> groupCodes) {
-        if (null != code && code.equals(AbstractPortalAction.VIRTUAL_ROOT_CODE)) {
-            return true;
-        }
-        IPage page = this.getPage(code);
-        return this.isPageAllowed(page, groupCodes, false);
-    }
+	@Override
+	protected void buildCheckNodes(ITreeNode treeNode, Set<String> checkNodes, Collection<String> groupCodes) {
+		checkNodes.add(treeNode.getCode());
+		ITreeNode parent = treeNode.getParent();
+		if (parent == null) {
+			return;
+		}
+		IPage page = this.getPage(parent.getCode());
+		if (!this.isPageAllowed(page, groupCodes, false)) {
+			checkNodes.add(AbstractPortalAction.VIRTUAL_ROOT_CODE);
+			return;
+		}
+		if (parent.getParent() != null
+				&& !parent.getCode().equals(treeNode.getCode())) {
+			this.buildCheckNodes(parent, checkNodes, groupCodes);
+		}
+	}
 
-    @Override
-    protected ITreeNode getTreeNode(String code) {
-        if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(code)) {
-            return this.getVirtualRoot();
-        }
-        return this.getPage(code);
-    }
+	protected boolean isPageAllowed(IPage page, Collection<String> groupCodes, boolean alsoFreeViewPages) {
+		boolean isAuth = false;
+		if (page != null) {
+			PageMetadata metadata = this.getPageMetadata(page);
+			if (metadata != null) {
+				String pageGroup = page.getGroup();
+				Collection<String> extraGroups = metadata.getExtraGroups();
+				isAuth = (groupCodes.contains(pageGroup) || groupCodes.contains(Group.ADMINS_GROUP_NAME))
+						|| (alsoFreeViewPages && null != extraGroups && extraGroups.contains(Group.FREE_GROUP_NAME));
+			}
+		}
+		return isAuth;
+	}
 
-    @Override
-    protected IPage getRoot() {
-        return this.getPageManager().getRoot();
-    }
+	@Override
+	protected boolean isNodeAllowed(String code, Collection<String> groupCodes) {
+		if (null != code && code.equals(AbstractPortalAction.VIRTUAL_ROOT_CODE)) {
+			return true;
+		}
+		IPage page = this.getPage(code);
+		return this.isPageAllowed(page, groupCodes, false);
+	}
 
-    @Override
-    public ActivityStreamInfo createActivityStreamInfo(IPage page,
-            int strutsAction, boolean addLink, String entryPageAction) {
-        ActivityStreamInfo asi = this.createBaseActivityStreamInfo(page, strutsAction, addLink);
-        if (addLink) {
-            asi.setLinkNamespace("/do/Page");
-            asi.setLinkActionName(entryPageAction);
-            asi.addLinkParameter("selectedNode", page.getCode());
-        }
-        return asi;
-    }
+	@Override
+	protected ITreeNode getTreeNode(String code) {
+		if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(code)) {
+			return this.getVirtualRoot();
+		}
+		return this.getPage(code);
+	}
 
-    @Override
-    public ActivityStreamInfo createConfigFrameActivityStreamInfo(IPage page,
-            int framePos, int strutsAction, boolean addLink) {
-        ActivityStreamInfo asi = this.createBaseActivityStreamInfo(page, strutsAction, addLink);
-        if (addLink) {
-            asi.setLinkNamespace("/do/Page");
-            asi.setLinkActionName("editFrame");
-            asi.addLinkParameter("pageCode", page.getCode());
-            asi.addLinkParameter("frame", String.valueOf(framePos));
-        }
-        return asi;
-    }
+	@Override
+	protected IPage getRoot() {
+		return this.getPageManager().getDraftRoot();
+	}
 
-    private ActivityStreamInfo createBaseActivityStreamInfo(IPage page, int strutsAction, boolean addLink) {
-    	// TODO Verify if DRAFT/ONLINE
-    	PageMetadata metadata = page.getDraftMetadata();
-        ActivityStreamInfo asi = new ActivityStreamInfo();
-        asi.setActionType(strutsAction);
-        asi.setObjectTitles(metadata.getTitles());
-        List<String> groupCodes = new ArrayList<String>();
-        groupCodes.add(page.getGroup());
-        if (null != metadata.getExtraGroups()) {
-            groupCodes.addAll(metadata.getExtraGroups());
-        }
-        asi.setGroups(groupCodes);
-        if (addLink) {
-            asi.setLinkAuthGroup(page.getGroup());
-            asi.setLinkAuthPermission(Permission.MANAGE_PAGES);
-        }
-        return asi;
-    }
+	@Override
+	public ActivityStreamInfo createActivityStreamInfo(IPage page,
+			int strutsAction, boolean addLink, String entryPageAction) {
+		ActivityStreamInfo asi = this.createBaseActivityStreamInfo(page, strutsAction, addLink);
+		if (addLink) {
+			asi.setLinkNamespace("/do/Page");
+			asi.setLinkActionName(entryPageAction);
+			asi.addLinkParameter("selectedNode", page.getCode());
+		}
+		return asi;
+	}
 
-   
-    //-----------------------
+	@Override
+	public ActivityStreamInfo createConfigFrameActivityStreamInfo(IPage page,
+			int framePos, int strutsAction, boolean addLink) {
+		ActivityStreamInfo asi = this.createBaseActivityStreamInfo(page, strutsAction, addLink);
+		if (addLink) {
+			asi.setLinkNamespace("/do/Page");
+			asi.setLinkActionName("editFrame");
+			asi.addLinkParameter("pageCode", page.getCode());
+			asi.addLinkParameter("frame", String.valueOf(framePos));
+		}
+		return asi;
+	}
 
-	
-    
-    
-    protected IPageManager getPageManager() {
-        return _pageManager;
-    }
-    public void setPageManager(IPageManager pageManager) {
-        this._pageManager = pageManager;
-    }
+	private ActivityStreamInfo createBaseActivityStreamInfo(IPage page, int strutsAction, boolean addLink) {
+		// TODO Verify if DRAFT/ONLINE
+		PageMetadata metadata = page.getMetadata();
+		ActivityStreamInfo asi = new ActivityStreamInfo();
+		asi.setActionType(strutsAction);
+		asi.setObjectTitles(metadata.getTitles());
+		List<String> groupCodes = new ArrayList<String>();
+		groupCodes.add(page.getGroup());
+		if (null != metadata.getExtraGroups()) {
+			groupCodes.addAll(metadata.getExtraGroups());
+		}
+		asi.setGroups(groupCodes);
+		if (addLink) {
+			asi.setLinkAuthGroup(page.getGroup());
+			asi.setLinkAuthPermission(Permission.MANAGE_PAGES);
+		}
+		return asi;
+	}
 
-    protected ConfigInterface getConfigService() {
-        return _configService;
-    }
-    public void setConfigService(ConfigInterface configService) {
-        this._configService = configService;
-    }
+	//-----------------------
+	protected IPageManager getPageManager() {
+		return _pageManager;
+	}
 
-    private IPageManager _pageManager;
-    private ConfigInterface _configService;
+	public void setPageManager(IPageManager pageManager) {
+		this._pageManager = pageManager;
+	}
+
+	protected ConfigInterface getConfigService() {
+		return _configService;
+	}
+
+	public void setConfigService(ConfigInterface configService) {
+		this._configService = configService;
+	}
+
+	private IPageManager _pageManager;
+	private ConfigInterface _configService;
 
 }

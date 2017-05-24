@@ -25,7 +25,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @Component
 @Qualifier(ISwapWidgetRequestValidator.BEAN_NAME)
 public class SwapWidgetRequestValidator implements ISwapWidgetRequestValidator {
-	
+
 	@Override
 	public void validateRequest(SwapWidgetRequest swapWidgetRequest, PageConfigAction pageConfigAction) {
 		if (null == swapWidgetRequest) {
@@ -36,26 +36,20 @@ public class SwapWidgetRequestValidator implements ISwapWidgetRequestValidator {
 			pageConfigAction.addActionError(pageConfigAction.getText("error.request.pageCode.blank"));
 			return;
 		}
-
 		IPage page = pageConfigAction.getPage(swapWidgetRequest.getPageCode());
-
 		if (null == page) {
 			pageConfigAction.addActionError(pageConfigAction.getText("error.request.page.notFound"));
-			return;
-		}
-
-		if (null != page) {
-			int framesCount = page.getDraftMetadata().getModel().getFrames().length;
+		} else {
+			int framesCount = page.getMetadata().getModel().getFrames().length;
 			validate(page, swapWidgetRequest, pageConfigAction, framesCount);
 		}
 	}
 
-	protected  void validate(IPage page, SwapWidgetRequest swapWidgetRequest, ActionSupport action, int framesCount) {
+	protected void validate(IPage page, SwapWidgetRequest swapWidgetRequest, ActionSupport action, int framesCount) {
 		if (swapWidgetRequest.getSrc() == swapWidgetRequest.getDest()) {
 			action.addActionError(action.getText("error.request.src.dest.equals"));
 			return;
 		}
-
 		//array min max
 		if (swapWidgetRequest.getSrc() < 0) {
 			action.addActionError(action.getText("error.request.src.invalid"));
@@ -65,23 +59,19 @@ public class SwapWidgetRequestValidator implements ISwapWidgetRequestValidator {
 			action.addActionError(action.getText("error.request.dest.invalid"));
 			return;
 		}
-
 		if (swapWidgetRequest.getSrc() > framesCount) {
 			action.addActionError(action.getText("error.request.src.invalid"));
 			return;
 		}
-
 		if (swapWidgetRequest.getDest() > framesCount) {
 			action.addActionError(action.getText("error.request.dest.invalid"));
 			return;
 		}
-
 		//src cannot be null
-		if (null == page.getDraftWidgets()[swapWidgetRequest.getSrc()]) {			
+		if (null == page.getWidgets()[swapWidgetRequest.getSrc()]) {
 			action.addActionError(action.getText("error.request.src.nullFrame"));
 			return;
 		}
-
 	}
 
 }

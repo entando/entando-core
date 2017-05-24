@@ -55,16 +55,6 @@ public interface IPageManager extends ITreeNodeManager {
 	 */
 	public void updatePage(IPage page) throws ApsSystemException;
 
-	// /**
-	// * Update a page record in the database, draft and online
-	// *
-	// * @param page
-	// * The modified page.
-	// * @throws ApsSystemException
-	// * In case of database access error.
-	// */
-	// public void publishPage(IPage page) throws ApsSystemException;
-
 	/**
 	 * Update a page as online.
 	 * 
@@ -153,9 +143,6 @@ public interface IPageManager extends ITreeNodeManager {
 	 * In case of error
 	 */
 	public void removeWidget(String pageCode, int pos) throws ApsSystemException;
-
-	// @Deprecated
-	// public IPage getRoot();
 
 	public IPage getOnlineRoot();
 

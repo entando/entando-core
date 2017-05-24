@@ -71,49 +71,12 @@ public class Page extends TreeNode implements IPage {
 		this._parentCode = parentCode;
 	}
 
-	// @Override
-	// public PageMetadata getOnlineMetadata() {
-	// return _onlineMetadata;
-	// }
-	//
-	// public void setOnlineMetadata(PageMetadata onlineMetadata) {
-	// this._onlineMetadata = onlineMetadata;
-	// }
-	//
-	// @Override
-	// public PageMetadata getDraftMetadata() {
-	// return _draftMetadata;
-	// }
-	//
-	// public void setDraftMetadata(PageMetadata draftMetadata) {
-	// this._draftMetadata = draftMetadata;
-	// }
-
-	// @Override
-	// public Widget[] getOnlineWidgets() {
-	// return _onlineWidgets;
-	// }
-	//
-	// public void setOnlineWidgets(Widget[] onlineWidgets) {
-	// this._onlineWidgets = onlineWidgets;
-	// }
-	//
-	// @Override
-	// public Widget[] getDraftWidgets() {
-	// return _draftWidgets;
-	// }
-	//
-	// public void setDraftWidgets(Widget[] draftWidgets) {
-	// this._draftWidgets = draftWidgets;
-	// }
-
 	/**
 	 * Return the related model of page
 	 * 
 	 * @return the page model
 	 */
 	@Override
-	// TODO Verify usage PLUGIN
 	public PageModel getModel() {
 		PageMetadata metadata = this.getMetadata();
 		return metadata == null ? null : metadata.getModel();
@@ -128,7 +91,6 @@ public class Page extends TreeNode implements IPage {
 	 * @deprecated Use getOnlineMetadata().setModel(pageModel)
 	 */
 	@Deprecated
-	// TODO Verify usage PLUGIN
 	public void setModel(PageModel pageModel) {
 		PageMetadata metadata = this.getMetadata();
 		if (metadata != null) {
@@ -138,14 +100,14 @@ public class Page extends TreeNode implements IPage {
 
 	@Override
 	@Deprecated
-	// TODO Verify usage PLUGIN
 	public void addExtraGroup(String groupName) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata != null) {
-			if (null == metadata.getExtraGroups())
-				metadata.setExtraGroups(new HashSet<String>());
-			metadata.getExtraGroups().add(groupName);
+		if (metadata == null) {
+			metadata = new PageMetadata();
 		}
+		metadata.setExtraGroups(new HashSet<String>());
+		metadata.getExtraGroups().add(groupName);
+
 	}
 
 	@Override
@@ -153,27 +115,33 @@ public class Page extends TreeNode implements IPage {
 	// TODO Verify usage PLUGIN
 	public void removeExtraGroup(String groupName) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata != null) {
-			if (null == metadata.getExtraGroups())
-				return;
-			metadata.getExtraGroups().remove(groupName);
+		if (metadata == null) {
+			metadata = new PageMetadata();
 		}
+		if (null == metadata.getExtraGroups()) {
+			return;
+		}
+		metadata.getExtraGroups().remove(groupName);
 	}
 
 	@Deprecated
 	// TODO Verify usage PLUGIN
 	public void setExtraGroups(Set<String> extraGroups) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata != null) {
-			metadata.setExtraGroups(extraGroups);
+		if (metadata == null) {
+			metadata = new PageMetadata();
 		}
+		metadata.setExtraGroups(extraGroups);
 	}
 
 	@Override
 	// TODO Verify usage PLUGIN
 	public Set<String> getExtraGroups() {
 		PageMetadata metadata = this.getMetadata();
-		return metadata == null ? null : metadata.getExtraGroups();
+		if (metadata == null) {
+			metadata = new PageMetadata();
+		}
+		return metadata.getExtraGroups();
 	}
 
 	@Override
@@ -184,15 +152,6 @@ public class Page extends TreeNode implements IPage {
 		}
 		return children;
 	}
-
-	// @Override
-	// public IPage[] getOnlineChildren() {
-	// IPage[] children = new IPage[super.getChildren().length];
-	// for (int i = 0; i < super.getChildren().length; i++) {
-	// children[i] = (IPage) super.getChildren()[i];
-	// }
-	// return children;
-	// }
 
 	/**
 	 * WARING: this method is reserved to the page manager service only. This
@@ -437,17 +396,8 @@ public class Page extends TreeNode implements IPage {
 	 * The code of the higher level page
 	 */
 	private String _parentCode;
-
-	// private PageMetadata _onlineMetadata;
-	//
-	// private PageMetadata _draftMetadata;
 	private PageMetadata metadata;
-
-	// private Widget[] _onlineWidgets;
-	//
 	private Widget[] widgets;
-
-	// private IPage[] _allChildren = new IPage[0];
 	private boolean online;
 	private boolean onlineInstance;
 	private boolean changed;

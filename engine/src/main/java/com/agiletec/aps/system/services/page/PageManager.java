@@ -14,6 +14,7 @@
 package com.agiletec.aps.system.services.page;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,7 +74,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			pageRecordList = this.getPageDAO().loadPageRecords();
 			pageList = new ArrayList<>();
 			pageListO = new ArrayList<>();
-			// pageList = this.getPageDAO().loadPages();
 		} catch (Throwable t) {
 			throw new ApsSystemException("Error loading the list of pages", t);
 		}
@@ -103,15 +103,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				}
 			}
 
+			// XXX refactor needed
 			for (int i = 0; i < pageList.size(); i++) {
 				this.buildTreeHierarchy(pageList, newRoot, newFullMap, true, i);
-				// this.buildTreeHierarchy(pageListO, newRootOnline,
-				// newOnlineMap, false, i);
 			}
 
 			for (int i = 0; i < pageListO.size(); i++) {
-				// this.buildTreeHierarchy(pageList, newRoot, newFullMap, true,
-				// i);
 				this.buildTreeHierarchy(pageListO, newRootOnline, newOnlineMap, false, i);
 			}
 
@@ -129,7 +126,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw e;
 		} catch (Throwable t) {
 			_logger.error("Error while building the tree of pages", t);
-			// ApsSystemUtils.logThrowable(t, this, "loadPageTree");
 			throw new ApsSystemException("Error while building the tree of pages", t);
 		}
 	}
@@ -140,8 +136,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			this.init();
 		} catch (Throwable t) {
 			_logger.error("Error on init method", t);
-			// ApsSystemUtils.logThrowable(t, this, "updateFromLangsChanged",
-			// "Error on init method");
 		}
 	}
 
@@ -182,7 +176,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			this.getPageDAO().addPage(page);
 		} catch (Throwable t) {
 			_logger.error("Error adding a page", t);
-			// ApsSystemUtils.logThrowable(t, this, "addPage");
 			throw new ApsSystemException("Error adding a page", t);
 		}
 		this.loadPageTree();
@@ -203,26 +196,11 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			this.getPageDAO().updatePage(page);
 		} catch (Throwable t) {
 			_logger.error("Error updating a page", t);
-			// ApsSystemUtils.logThrowable(t, this, "updatePage");
 			throw new ApsSystemException("Error updating a page", t);
 		}
 		this.loadPageTree();
 		this.notifyPageChangedEvent(page, PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
-
-	// @Override
-	// public void publishPage(IPage page) throws ApsSystemException {
-	// try {
-	// this.getPageDAO().publishPage(page);
-	// } catch (Throwable t) {
-	// _logger.error("Error updating a page", t);
-	// // ApsSystemUtils.logThrowable(t, this, "updatePage");
-	// throw new ApsSystemException("Error updating a page", t);
-	// }
-	// this.loadPageTree();
-	// this.notifyPageChangedEvent(page, PageChangedEvent.UPDATE_OPERATION_CODE,
-	// null);
-	// }
 
 	@Override
 	public void setPageOnline(String pageCode) throws ApsSystemException {
@@ -245,7 +223,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw new ApsSystemException("Error updating a page as offline", t);
 		}
 		this.loadPageTree();
-		this.notifyPageChangedEvent(this.getPage(pageCode, false), PageChangedEvent.UPDATE_OPERATION_CODE, null);
+		this.notifyPageChangedEvent(this.getDraftPage(pageCode), PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
 
 	private void notifyPageChangedEvent(IPage page, int operationCode, Integer framePos) {
@@ -299,7 +277,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while moving  page {}", pageCode, t);
-			// ApsSystemUtils.logThrowable(t, this, "movePage");
 			throw new ApsSystemException("Error while moving a page", t);
 		}
 		this.loadPageTree();
@@ -394,7 +371,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			this.getPageDAO().updatePosition(pageDown, pageUp);
 		} catch (Throwable t) {
 			_logger.error("Error while moving a page", t);
-			// ApsSystemUtils.logThrowable(t, this, "moveUpDown");
 			throw new ApsSystemException("Error while moving a page", t);
 		}
 	}
@@ -432,6 +408,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			IPage currentPage = this.getDraftPage(pageCode);
 			this.getPageDAO().removeWidget(currentPage, pos);
 			currentPage.getWidgets()[pos] = null;
+			if (currentPage.isOnline()) {
+				boolean widgetEquals = Arrays.deepEquals(currentPage.getWidgets(), this.getOnlinePage(pageCode).getWidgets());
+				((Page) currentPage).setChanged(!widgetEquals);
+			}
 			this.notifyPageChangedEvent(currentPage, PageChangedEvent.EDIT_FRAME_OPERATION_CODE, pos);
 		} catch (Throwable t) {
 			String message = "Error removing the widget from the page '" + pageCode + "' in the frame " + pos;
@@ -474,7 +454,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			IPage currentPage = this.getDraftPage(pageCode);
 			this.getPageDAO().joinWidget(currentPage, widget, pos);
 			currentPage.getWidgets()[pos] = widget;
-
+			if (currentPage.isOnline()) {
+				boolean widgetEquals = Arrays.deepEquals(currentPage.getWidgets(), this.getOnlinePage(pageCode).getWidgets());
+				((Page) currentPage).setChanged(!widgetEquals);
+			}
 			this.notifyPageChangedEvent(currentPage, PageChangedEvent.EDIT_FRAME_OPERATION_CODE, pos);
 		} catch (Throwable t) {
 			String message = "Error during the assignation of a widget to the frame " + pos + " in the page code " + pageCode;
@@ -639,34 +622,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		}
 	}
 
-	// @Override
-	// @Deprecated
-	// public List<IPage> getShowletUtilizers(String widgetTypeCode) throws
-	// ApsSystemException {
-	// return getWidgetUtilizers(widgetTypeCode);
-	// }
-
-	// @Override
-	// public List<IPage> getWidgetUtilizers(String widgetTypeCode) throws
-	// ApsSystemException {
-	// List<IPage> pages = new ArrayList<IPage>();
-	// try {
-	// if (null == this._pages || this._pages.isEmpty() || null ==
-	// widgetTypeCode) {
-	// return pages;
-	// }
-	// IPage root = this.getRoot();
-	// this.getWidgetUtilizers(root, widgetTypeCode, pages);
-	// } catch (Throwable t) {
-	// String message = "Error during searching page utilizers of widget with
-	// code " + widgetTypeCode;
-	// _logger.error("Error during searching page utilizers of widget with code
-	// {}", widgetTypeCode, t);
-	// throw new ApsSystemException(message, t);
-	// }
-	// return pages;
-	// }
-
+	// XXX TODO MERGIARE IN 1
 	@Override
 	public List<IPage> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
 		List<IPage> pages = new ArrayList<IPage>();
@@ -716,43 +672,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
 		}
 	}
-
-	// private void getOnlineWidgetUtilizers(IPage page, String widgetTypeCode,
-	// List<IPage> widgetUtilizers) {
-	// if (this.isWidgetInUse(page.getWidgets(), widgetTypeCode)) {
-	// widgetUtilizers.add(page);
-	// }
-	// if (page.getChildren() != null) {
-	// for (IPage child : page.getChildren()) {
-	// this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
-	// }
-	// }
-	// }
-	//
-	// private void getDraftWidgetUtilizers(IPage page, String widgetTypeCode,
-	// List<IPage> widgetUtilizers) {
-	// if (this.isWidgetInUse(page.getWidgets(), widgetTypeCode)) {
-	// widgetUtilizers.add(page);
-	// }
-	// if (page.getChildren() != null) {
-	// for (IPage child : page.getChildren()) {
-	// this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
-	// }
-	// }
-	// }
-
-	// private void getWidgetUtilizers(IPage page, String widgetTypeCode,
-	// List<IPage> widgetUtilizers) {
-	// if (this.isWidgetInUse(page.getOnlineWidgets(), widgetTypeCode) ||
-	// this.isWidgetInUse(page.getDraftWidgets(), widgetTypeCode)) {
-	// widgetUtilizers.add(page);
-	// }
-	// if (page.getChildren() != null) {
-	// for (IPage child : page.getChildren()) {
-	// this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
-	// }
-	// }
-	// }
 
 	private boolean isWidgetInUse(Widget[] widgets, String widgetTypeCode) {
 		boolean found = false;
@@ -850,7 +769,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				return pages;
 			}
 			for (String pageCode : paceCodes) {
-				IPage page = this.getPage(pageCode, false);
+				IPage page = this.getDraftPage(pageCode);
 				pages.add(page);
 			}
 

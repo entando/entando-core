@@ -696,10 +696,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			if (null == this._pages || this._pages.isEmpty() || null == pageModelCode) {
 				return pages;
 			}
-			IPage root = this.getDraftRoot();
-			this.getPageModelUtilizers(root, pageModelCode, pages);
+			// IPage root = this.getDraftRoot();
+			// this.getPageModelUtilizers(root, pageModelCode, pages);
 
-			root = this.getOnlineRoot();
+			IPage root = this.getOnlineRoot();
 			this.getPageModelUtilizers(root, pageModelCode, pages);
 
 		} catch (Throwable t) {

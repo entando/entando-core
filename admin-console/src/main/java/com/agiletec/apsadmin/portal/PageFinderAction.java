@@ -77,7 +77,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 				Iterator<IPage> it = pages.iterator();
 				while (it.hasNext()) {
 					IPage page = it.next();
-					PageJO pageJO = this.buildPageRespnseItem(page);
+					PageJO pageJO = this.buildLastUpdateResponseItem(page);
 					response.add(pageJO);
 				}
 
@@ -90,7 +90,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		return response;
 	}
 
-	protected PageJO buildPageRespnseItem(IPage page) {
+	protected PageJO buildLastUpdateResponseItem(IPage page) {
 		PageJO pageJO = new PageJO();
 		pageJO = new PageJO();
 		pageJO.setCode(page.getCode());
@@ -99,7 +99,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		pageJO.setChanged(page.isChanged());
 		pageJO.setParentCode(page.getParentCode());
 		pageJO.setGroup(page.getGroup());
-		pageJO.setMetadata(page.getMetadata());
+		pageJO.setDraftMetadata(page.getMetadata());
 		return pageJO;
 	}
 

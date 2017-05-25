@@ -28,8 +28,12 @@ public abstract class AbstractPageResponse {
 			copiedPage.setParentCode(draftPage.getParentCode());
 			copiedPage.setGroup(draftPage.getGroup());
 			copiedPage.setPosition(draftPage.getPosition());
-			copiedPage.setMetadata(draftPage.getMetadata());
-			copiedPage.setWidgets(draftPage.getWidgets());
+			copiedPage.setDraftMetadata(draftPage.getMetadata());
+			copiedPage.setDraftWidgets(draftPage.getWidgets());
+			if (draftPage.isOnline()) {
+				copiedPage.setOnlineMetadata(onlinePage.getMetadata());
+				copiedPage.setOnlineWidgets(onlinePage.getWidgets());
+			}
 		}
 		return copiedPage;
 	}

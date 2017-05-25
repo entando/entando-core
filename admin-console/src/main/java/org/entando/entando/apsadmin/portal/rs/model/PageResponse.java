@@ -22,52 +22,6 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class PageResponse extends AbstractPageResponse {
 
-	private Map<String, List<String>> fieldErrors;
-	private Collection<String> actionErrors;
-	private Collection<String> actionMessages;
-	private PageJO page;
-	private Map _references;
-
-	public Map<String, List<String>> getFieldErrors() {
-		return fieldErrors;
-	}
-
-	public void setFieldErrors(Map<String, List<String>> fieldErrors) {
-		this.fieldErrors = fieldErrors;
-	}
-
-	public Collection<String> getActionErrors() {
-		return actionErrors;
-	}
-
-	public void setActionErrors(Collection<String> actionErrors) {
-		this.actionErrors = actionErrors;
-	}
-
-	public Collection<String> getActionMessages() {
-		return actionMessages;
-	}
-
-	public void setActionMessages(Collection<String> actionMessages) {
-		this.actionMessages = actionMessages;
-	}
-
-	public Map getReferences() {
-		return _references;
-	}
-
-	public void setReferences(Map references) {
-		this._references = references;
-	}
-
-	public PageJO getPage() {
-		return page;
-	}
-
-	public void setPage(PageJO page) {
-		this.page = page;
-	}
-
 	public PageResponse() {
 		//
 	}
@@ -79,5 +33,51 @@ public class PageResponse extends AbstractPageResponse {
 		this.setActionMessages(actionSupport.getActionMessages());
 		this.setPage(this.copyPage(draftPage, onlinePage));
 	}
+
+	public Map<String, List<String>> getFieldErrors() {
+		return _fieldErrors;
+	}
+
+	public void setFieldErrors(Map<String, List<String>> fieldErrors) {
+		this._fieldErrors = fieldErrors;
+	}
+
+	public Collection<String> getActionErrors() {
+		return _actionErrors;
+	}
+
+	public void setActionErrors(Collection<String> actionErrors) {
+		this._actionErrors = actionErrors;
+	}
+
+	public Collection<String> getActionMessages() {
+		return _actionMessages;
+	}
+
+	public void setActionMessages(Collection<String> actionMessages) {
+		this._actionMessages = actionMessages;
+	}
+
+	public Map getReferences() {
+		return _references;
+	}
+
+	public void setReferences(Map references) {
+		this._references = references;
+	}
+
+	public PageJO getPage() {
+		return _page;
+	}
+
+	public void setPage(PageJO page) {
+		this._page = page;
+	}
+
+	private Map<String, List<String>> _fieldErrors;
+	private Collection<String> _actionErrors;
+	private Collection<String> _actionMessages;
+	private PageJO _page;
+	private Map _references;
 
 }

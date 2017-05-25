@@ -74,20 +74,32 @@ public class PageJO {
 		this._position = position;
 	}
 
-	public PageMetadata getMetadata() {
-		return _metadata;
+	public PageMetadata getOnlineMetadata() {
+		return _onlineMetadata;
 	}
-
-	public void setMetadata(PageMetadata metadata) {
-		this._metadata = metadata;
+	public void setOnlineMetadata(PageMetadata onlineMetadata) {
+		this._onlineMetadata = onlineMetadata;
 	}
-
-	public Widget[] getWidgets() {
-		return _widgets;
+	
+	public PageMetadata getDraftMetadata() {
+		return _draftMetadata;
 	}
-
-	public void setWidgets(Widget[] widgets) {
-		this._widgets = widgets;
+	public void setDraftMetadata(PageMetadata draftMetadata) {
+		this._draftMetadata = draftMetadata;
+	}
+	
+	public Widget[] getOnlineWidgets() {
+		return _onlineWidgets;
+	}
+	public void setOnlineWidgets(Widget[] onlineWidgets) {
+		this._onlineWidgets = onlineWidgets;
+	}
+	
+	public Widget[] getDraftWidgets() {
+		return _draftWidgets;
+	}
+	public void setDraftWidgets(Widget[] draftWidgets) {
+		this._draftWidgets = draftWidgets;
 	}
 
 	private String _code;
@@ -97,8 +109,10 @@ public class PageJO {
 	private String _parentCode;
 	private String _group;
 	private int _position = -1;
+	private PageMetadata _onlineMetadata;
+	private PageMetadata _draftMetadata;
+	private Widget[] _onlineWidgets;
+	private Widget[] _draftWidgets;
 
-	private PageMetadata _metadata;
-	private Widget[] _widgets;
 
 }

@@ -91,17 +91,12 @@ public class Page extends TreeNode implements IPage {
 	 */
 	public void setModel(PageModel pageModel) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata != null) {
-			metadata.setModel(pageModel);
-		}
+		metadata.setModel(pageModel);
 	}
 
 	@Override
 	public void addExtraGroup(String groupName) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		metadata.setExtraGroups(new HashSet<String>());
 		metadata.getExtraGroups().add(groupName);
 	}
@@ -109,9 +104,6 @@ public class Page extends TreeNode implements IPage {
 	@Override
 	public void removeExtraGroup(String groupName) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		if (null == metadata.getExtraGroups()) {
 			return;
 		}
@@ -120,18 +112,12 @@ public class Page extends TreeNode implements IPage {
 
 	public void setExtraGroups(Set<String> extraGroups) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		metadata.setExtraGroups(extraGroups);
 	}
 
 	@Override
 	public Set<String> getExtraGroups() {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		return metadata.getExtraGroups();
 	}
 
@@ -166,15 +152,13 @@ public class Page extends TreeNode implements IPage {
 	 */
 	public void setShowable(boolean showable) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata != null) {
-			metadata.setShowable(showable);
-		}
+		metadata.setShowable(showable);
 	}
 
 	@Override
 	public ApsProperties getTitles() {
 		PageMetadata metadata = this.getMetadata();
-		return metadata == null ? null : metadata.getTitles();
+		return metadata.getTitles();
 	}
 
 	@Override
@@ -194,18 +178,12 @@ public class Page extends TreeNode implements IPage {
 	 */
 	public void setTitle(Lang lang, String title) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		metadata.setTitle(lang.getCode(), title);
 	}
 
 	@Override
 	public void setTitles(ApsProperties titles) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		metadata.setTitles(titles);
 	}
 
@@ -222,6 +200,12 @@ public class Page extends TreeNode implements IPage {
 	}
 
 	@Override
+	public void setTitle(String langCode, String title) {
+		PageMetadata metadata = this.getMetadata();
+		metadata.setTitle(langCode, title);
+	}
+
+	@Override
 	public boolean isUseExtraTitles() {
 		PageMetadata metadata = this.getMetadata();
 		return metadata != null && metadata.isUseExtraTitles();
@@ -229,9 +213,6 @@ public class Page extends TreeNode implements IPage {
 
 	public void setUseExtraTitles(boolean useExtraTitles) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		metadata.setUseExtraTitles(useExtraTitles);
 	}
 
@@ -243,9 +224,6 @@ public class Page extends TreeNode implements IPage {
 
 	public void setCharset(String charset) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		metadata.setCharset(charset);
 	}
 
@@ -255,12 +233,8 @@ public class Page extends TreeNode implements IPage {
 		return metadata == null ? null : metadata.getMimeType();
 	}
 
-	@Deprecated
 	public void setMimeType(String mimeType) {
 		PageMetadata metadata = this.getMetadata();
-		if (metadata == null) {
-			metadata = new PageMetadata();
-		}
 		metadata.setMimeType(mimeType);
 	}
 
@@ -353,7 +327,7 @@ public class Page extends TreeNode implements IPage {
 	 * The code of the higher level page
 	 */
 	private String _parentCode;
-	private PageMetadata metadata;
+	private PageMetadata metadata = new PageMetadata();
 	private Widget[] widgets;
 	private boolean online;
 	private boolean onlineInstance;

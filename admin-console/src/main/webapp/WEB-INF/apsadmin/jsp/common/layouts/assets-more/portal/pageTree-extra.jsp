@@ -17,7 +17,7 @@
 
          // Objects
         var alertService = new EntandoAlert('.alert-container');
-        
+
         // jQuery selectors
         var $pageTreeRow = $('#pageTree tbody tr');
 
@@ -50,9 +50,9 @@
         * Set Draggable items 
         */
         function setDraggable(selector) {
-        	// Set Handle icon for draggable items 
-    	    selector.find("td:first-child").prepend('<span class="fa fa-arrows dragIcon"></span>');
-        	selector.draggable({
+            // Set Handle icon for draggable items 
+            selector.find("td:first-child").prepend('<span class="fa fa-arrows dragIcon"></span>');
+            selector.draggable({
                 opacity: 0.8,
                 axis: "y",
                 handle: ".dragIcon",
@@ -62,33 +62,33 @@
                         .css({width:$(this).width()});
                 },
                 start: function(event, ui) {
-                	$(this).find("td:not(:first-child)").addClass("hidden");
-                	$("thead th:not(:first-child), thead th:first-child button").addClass("hidden");
-                	expandNode("#pageTree .childrenNodes");
+                    $(this).find("td:not(:first-child)").addClass("hidden");
+                    $("thead th:not(:first-child), thead th:first-child button").addClass("hidden");
+                    expandNode("#pageTree .childrenNodes");
                 },
                 stop: function(event, ui) {
-                	$(this).find("td:not(:first-child)").removeClass("hidden");
-                	$("thead th:not(:first-child), thead th:first-child button").removeClass("hidden");
+                    $(this).find("td:not(:first-child)").removeClass("hidden");
+                    $("thead th:not(:first-child), thead th:first-child button").removeClass("hidden");
                 }
             });
         }
-    
+
         /**
          * Set Droppable items 
          */
          function setDroppable(selector) {
-        	 selector.droppable({
-        		accept: '.treeRow',
-        		greedy: true,
+            selector.droppable({
+                accept: '.treeRow',
+                greedy: true,
                 drop: function( event, ui ) {
-                	moveTree({
-                		selectedNode: ui.draggable.attr("id"),
-                		parentPageCode: $(this).attr("id")
-                	});
+                    moveTree({
+                        selectedNode: ui.draggable.attr("id"),
+                        parentPageCode: $(this).attr("id")
+                    });
                 }
-        	 });
+             });
         }
-    
+
         /**
          * Change parentePage for the selectedNode
          */
@@ -97,9 +97,9 @@
                 dataType: 'json',
                 data: data,
                 success: function (response) {
-                	
+                    
                     if (response.actionErrors.length > 0) {
-                    	alertService.showResponseAlerts({actionErrors: response.actionErrors});
+                        alertService.showResponseAlerts({actionErrors: response.actionErrors});
                     } else {
                         updateTree(data);
                         alertService.addDismissableSuccess(response.actionMessages);
@@ -110,57 +110,57 @@
                 }
             });
         }
-    
+
         function expandNode (selector) {
             $(selector).removeClass("hidden collapsed");
             $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right')
                 .addClass('fa-angle-down');
         }
-    
+
         /**
          * Refresh treegrid
          */
         function updateTree(treeNodes) {
-        	var previousParentId = $("#"+treeNodes.selectedNode).clone().data("parent");
-        	
-        	$("#"+treeNodes.parentPageCode).after($("#"+treeNodes.selectedNode)
-        		.attr("data-parent","#"+treeNodes.parentPageCode));
-    
-        	/* indent selectedNode */
+            var previousParentId = $("#"+treeNodes.selectedNode).clone().data("parent");
+            
+            $("#"+treeNodes.parentPageCode).after($("#"+treeNodes.selectedNode)
+                .attr("data-parent","#"+treeNodes.parentPageCode));
+
+            /* indent selectedNode */
             indentNode(treeNodes.selectedNode, treeNodes.parentPageCode);
             /* update selectedNode subTree */
             sortSubtree(treeNodes.selectedNode);
             
             /* update previous parentNode */
-        	if($("[data-parent='"+previousParentId+"']").length == 0) {
+            if($("[data-parent='"+previousParentId+"']").length == 0) {
                 $(previousParentId).find(".expand-icon").removeClass("fa-angle-down fa-angle-right");
                 $(previousParentId).find(".node-icon")
                   .removeClass("fa-folder")
                   .addClass("fa-folder-o");
             }
-        	/* update current parentNode */
-        	if($("[data-parent='#"+treeNodes.parentPageCode+"']").length > 0) {
+            /* update current parentNode */
+            if($("[data-parent='#"+treeNodes.parentPageCode+"']").length > 0) {
                 $("#"+treeNodes.parentPageCode).find(".expand-icon").addClass("fa-angle-down");
                 $("#"+treeNodes.parentPageCode).find(".node-icon")
                   .addClass("fa-folder")
                   .removeClass("fa-folder-o");
-        	}
+            }
         }
-    
+
         /**
          * Update the treeNode's subTree element position recursively
          */
         function sortSubtree(treeNode) {
-        	var children = $("[data-parent='#"+treeNode+"']");
+            var children = $("[data-parent='#"+treeNode+"']");
             if(children.length > 0) {
-            	for(var i=0; i < children.length; i++) {
+                for(var i=0; i < children.length; i++) {
                     $("#"+treeNode).after(children[i]);
                     indentNode($(children[i]).attr("id"),treeNode);
-            		sortSubtree($(children[i]).attr("id"));
-            	}
-        	}
+                    sortSubtree($(children[i]).attr("id"));
+                }
+            }
         }
-    
+
         /**
          * Update the treeNode's indentation
          */

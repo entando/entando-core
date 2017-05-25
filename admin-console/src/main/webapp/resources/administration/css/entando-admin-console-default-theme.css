@@ -1680,6 +1680,29 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     width: 100px
 }
 
+
+/* --------------- TreeGrid with draggable rows--------------- */
+.table-treegrid tbody tr td:first-child > .dragIcon {display: none}
+.table-treegrid tbody tr:hover td:first-child > .dragIcon,
+.table-treegrid .draggableClone.ui-draggable-dragging .dragIcon {display: inline}
+.table-treegrid .dragIcon {display: none}
+.table-treegrid .draggableClone {display: table;}
+.table-treegrid .draggableClone td:not(:first-child) {display: none}
+.table-treegrid .ui-droppable-active td:not(:first-child) {display: none;}
+.table-treegrid .ui-droppable-active td {
+    width: 100%;
+    outline: 1px dashed #bbb;!important;
+    outline-offset: -4px;
+    padding: 10px!important;
+    background: #fafafa; 
+ }
+.table-treegrid .ui-droppable-active.ui-droppable-hover td {
+    transition: 200ms;
+    background: #e0e0e0;
+    padding-left: 20px!important;
+ }
+ 
+ 
 @media (max-width: 991px) {
     .table-view-pf-toolbar label {display: none}
     .toolbar-pf-actions .selected-items {margin: 10px 0;}

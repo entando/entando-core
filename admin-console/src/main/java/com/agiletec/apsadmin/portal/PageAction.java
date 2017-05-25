@@ -310,13 +310,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				page = this.getUpdatedPage();
 				this.getPageManager().updatePage(page);
 				this.addActionMessage(this.getText("message.page.info.updated", new String[] { this.getTitle(page.getCode(), page
-						.getDraftTitles()) }));
+						.getTitles()) }));
 				_logger.debug("Updating page " + page.getCode());
 			} else {
 				page = this.buildNewPage();
 				this.getPageManager().addPage(page);
 				this.addActionMessage(this.getText("message.page.info.added", new String[] { this.getTitle(page.getCode(), page
-						.getDraftTitles()) }));
+						.getTitles()) }));
 				_logger.debug("Adding new page");
 			}
 			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
@@ -334,13 +334,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				page = this.getUpdatedPage();
 				this.getPageManager().updatePage(page);
 				this.addActionMessage(this.getText("message.page.info.updated", new String[] { this.getTitle(page.getCode(), page
-						.getDraftTitles()) }));
+						.getTitles()) }));
 				_logger.debug("Updating page " + page.getCode());
 			} else {
 				page = this.buildNewPage();
 				this.getPageManager().addPage(page);
 				this.addActionMessage(this.getText("message.page.info.added", new String[] { this.getTitle(page.getCode(), page
-						.getDraftTitles()) }));
+						.getTitles()) }));
 				_logger.debug("Adding new page");
 			}
 			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
@@ -531,7 +531,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			pageManager.setPageOffline(pageCode);
 			IPage page = this.getPage(pageCode);
 			this.addActionMessage(this.getText("message.page.set.offline", new String[] { this.getTitle(page.getCode(), page
-					.getDraftTitles()) }));
+					.getTitles()) }));
 			// TODO Define a new strutsAction to map "offline" operation
 			this.addActivityStreamInfo(page, PageActionConstants.UNPUBLISH, true);
 		} catch (Throwable t) {
@@ -578,7 +578,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			}
 			pageManager.setPageOnline(pageCode);
 			this.addActionMessage(this.getText("message.page.set.online", new String[] { this.getTitle(page.getCode(), page
-					.getDraftTitles()) }));
+					.getTitles()) }));
 			// TODO Define a new strutsAction to map "offline" operation
 			this.addActivityStreamInfo(page, PageActionConstants.PUBLISH, true);
 		} catch (Throwable t) {
@@ -651,7 +651,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
 		if (references.size() > 0) {
 			this.addActionError(this.getText("error.page.offline.references", new String[] { this.getTitle(currentPage.getCode(),
-					currentPage.getDraftTitles()) }));
+					currentPage.getTitles()) }));
 			this.setReferences(references);
 			return "references";
 		}

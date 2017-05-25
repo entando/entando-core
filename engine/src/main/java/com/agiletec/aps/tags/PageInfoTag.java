@@ -90,7 +90,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 	}
 
 	protected void extractPageTitle(IPage page, Lang currentLang) {
-		ApsProperties titles = page.getOnlineTitles();
+		ApsProperties titles = page.getTitles();
 		String value = null;
 		if ((this.getLangCode() == null) || (this.getLangCode().equals("")) || (currentLang.getCode().equalsIgnoreCase(this
 				.getLangCode()))) {

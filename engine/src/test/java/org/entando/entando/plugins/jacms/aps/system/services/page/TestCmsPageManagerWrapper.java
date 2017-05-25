@@ -20,7 +20,7 @@ import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.services.page.IPage;
 
 /**
- * @author E.santoboni - M.Diana
+ * @author E.Santoboni - M.Diana
  */
 public class TestCmsPageManagerWrapper extends BaseTestCase {
 
@@ -32,10 +32,11 @@ public class TestCmsPageManagerWrapper extends BaseTestCase {
 
 	public void testGetContentUtilizers() throws Throwable {
 		List<IPage> utilizers = this._pageManagerWrapper.getContentUtilizers("ART187");
-		assertEquals(6, utilizers.size());
+		assertEquals(3, utilizers.size());
 		List<String> codes = new ArrayList<String>();
 		for (int i = 0; i < utilizers.size(); i++) {
 			IPage page = utilizers.get(i);
+			assertTrue(page.isOnlineInstance());
 			codes.add(page.getCode());
 		}
 		assertTrue(codes.contains("coach_page"));
@@ -43,8 +44,9 @@ public class TestCmsPageManagerWrapper extends BaseTestCase {
 		assertTrue(codes.contains("pagina_2"));
 
 		utilizers = this._pageManagerWrapper.getContentUtilizers("ART111");
-		assertEquals(2, utilizers.size());
+		assertEquals(1, utilizers.size());
 		assertEquals("customers_page", utilizers.get(0).getCode());
+		assertTrue(utilizers.get(0).isOnlineInstance());
 	}
 
 	private void init() throws Exception {

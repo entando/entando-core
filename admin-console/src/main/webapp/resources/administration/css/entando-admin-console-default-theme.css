@@ -614,6 +614,11 @@ td{
     font-size: 10px !important;
     cursor: pointer;
 }
+/*badge celeste entando*/
+.badge {
+    background-color: #23a8e0 !important;
+}
+
 .well-auto-height{
     padding: 2em;
     overflow:hidden;
@@ -649,6 +654,10 @@ td{
 
 .pointer{
     cursor: pointer;
+}
+.choose_view{
+    margin: 0 12px 0px 0;
+    font-weight: bold;
 }
 
 /*-----ouline tolto-----*/
@@ -1216,7 +1225,7 @@ td{
     font-size:2em;
 }
 .esclamation-underline-text{
-    font-size:1.3em;
+    font-size:1.7em;
 }
 .spacer-form{
     padding: 0 0 10px 0
@@ -1631,7 +1640,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 
 /* datepicker dropdown hack */
 .datepicker-dropdown:before,
-.datepicker-dropdown:after {display: none!important;}
+.datepicker-dropdown:after {display: none !important;}
 /* --------------- Dashboard --------------- */
 
 .page-title-container .date {
@@ -1781,4 +1790,22 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap!important;
+}
+/*-----custom input-list margin left right 20px------*/
+.input-20px-leftRight{
+    padding: 0 20px 0 20px !important;
+}
+.text-right-required{
+    text-align: end;
+    float: right;
+    color: #aaabad;
+    font-size: 12px;
+    margin-top: 10px;
+}
+.padding-versioning{
+    padding: 0 0 0 0;
+}
+/*fix content model textArea*/
+.display-block .panel{
+    width:auto !important;
 }

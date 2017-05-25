@@ -77,10 +77,8 @@
         <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
 
-            <label class="control-label col-sm-2" for="guiFragment_code"><s:text name="label.code" />
-                <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="sysconfig.baseURL.contextName.help" />" data-placement="top" data-original-title="">
-                    <span class="fa fa-info-circle"></span>
-                </a>
+            <label class="control-label col-sm-2" for="guiFragment_code"><s:text name="label.code" />&nbsp;
+                <i class="fa fa-asterisk required-icon"></i>
             </label>
 
             <div class="col-sm-10">

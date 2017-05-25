@@ -78,7 +78,7 @@
         </p>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="key"><s:text name="label.code" />
+                <label class="col-sm-2 control-label" for="key"><s:text name="label.code" /> <i class="fa fa-asterisk required-icon"></i>
                     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageModel.code" />" data-placement="top" data-original-title="">
                         <span class="fa fa-info-circle"></span>
                     </a>
@@ -91,7 +91,7 @@
         </div>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="description"><s:text name="label.name" />
+                <label class="col-sm-2 control-label" for="description"><s:text name="label.name" /> <i class="fa fa-asterisk required-icon"></i>
                     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageModel.name" />" data-placement="top" data-original-title="">
                         <span class="fa fa-info-circle"></span>
                     </a>
@@ -113,7 +113,7 @@
         </s:if>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="xmlConfiguration">Xml Configuration</label>
+                <label class="col-sm-2 control-label" for="xmlConfiguration">Xml Configuration <i class="fa fa-asterisk required-icon"></i></label>
                 <div class="col-sm-10">
                     <wpsf:textarea name="xmlConfiguration" id="xmlConfiguration" cssClass="autotextarea form-control" rows="8" />
                     <textarea id="ace_xmlConfiguration" style="display: none;" ></textarea>
@@ -122,7 +122,7 @@
         </div>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="template">Template</label>
+                <label class="col-sm-2 control-label" for="template">Template <i class="fa fa-asterisk required-icon"></i></label> 
                 <div class="col-sm-10">
                     <wpsf:textarea name="template" id="template" cssClass="autotextarea form-control" rows="8" />
                     <textarea id="ace_template" style="display: none;" ></textarea>

@@ -41,12 +41,14 @@
     </span>
 </h1>
 
+
+<i class="fa fa-asterisk required-icon"></i>
 <div class="text-right">
-    <div class="form-group-separator"></div>
+    <div class="form-group-separator">
+        <s:text name="label.requiredFields" />
+    </div>
 </div>
-<br>
-
-
+<br />
 <s:form action="save" cssClass="form-horizontal">
     <s:if test="hasFieldErrors()">
         <div class="alert alert-danger alert-dismissable">
@@ -98,7 +100,12 @@
         class="form-group<s:property value="#controlGroupErrorClassVar" />">
         <div class="col-xs-12">
             <label class="control-label col-sm-2" for="description"><s:text
-                    name="label.name" /></label>
+                    name="label.name" />&nbsp; <i class="fa fa-asterisk required-icon"
+                          style="position: relative; top: -4px; right: 0px"></i> <a
+                          role="button" tabindex="0" data-toggle="popover" data-trigger="focus"
+                          data-html="true" title="" data-placement="top"
+                          data-content="<s:text name="help.role.name" /> "> <span
+                        class="fa fa-info-circle"></span></a></label>
             <div class="col-xs-10">
                 <wpsf:textfield name="description" id="description"
                                 cssClass="form-control" />
@@ -124,7 +131,12 @@
         class="form-group<s:property value="#controlGroupErrorClassVar" />">
         <div class="col-xs-12">
             <label class="control-label col-sm-2" for="name"><s:text
-                    name="label.code" /></label>
+                    name="label.code" />&nbsp; <i class="fa fa-asterisk required-icon"
+                          style="position: relative; top: -4px; right: 0px"></i> <a
+                          role="button" tabindex="0" data-toggle="popover" data-trigger="focus"
+                          data-html="true" title="" data-placement="top"
+                          data-content="<s:text name="help.role.code" /> "> <span
+                        class="fa fa-info-circle"></span></a></label>
             <div class="col-xs-10">
                 <wpsf:textfield name="name" id="name"
                                 disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
@@ -140,22 +152,23 @@
         </div>
     </div>
 
+    <legend><s:text name="name.permissions" /></legend>
     <div class="form-group">
         <div class="col-xs-12">
-            <label class="control-label col-sm-2"><s:text
-                    name="name.permissions" /></label>
-    <!--<span class="help-block"><s:text name="note.permissions.intro" /></span>-->
             <s:set var="permissionNamesVar" value="permissionNames" />
-            <div class="col-xs-10 col-10-checkbox-list">
+            <div class="col-sm-12 col-12-checkbox-list">
                 <s:iterator value="%{systemPermissions}" var="permissionVar">
                     <div class="col-xs-4">
-                        <label> <input type="checkbox" class="bootstrap-switch"
-                                       name="permissionNames"
-                                       value="<s:property value="%{#permissionVar.name}" />"
-                                       <s:if test="%{#permissionNamesVar.contains(#permissionVar.name)}"> checked="checked" </s:if> />
+                        <label class="control-label col-sm-8" for="<s:property value="%{#permissionVar.name}" />">
                             <s:property value="%{#permissionVar.description}" />
                         </label>
-                    </div>
+                        <div class="col-xs-1">
+                            <input type="checkbox" class="bootstrap-switch"
+                                   name="permissionNames" id="<s:property value="%{#permissionVar.name}" />"
+                                   value="<s:property value="%{#permissionVar.name}" />"
+                                   <s:if test="%{#permissionNamesVar.contains(#permissionVar.name)}"> checked="checked" </s:if> />
+                            </div>
+                        </div>
                 </s:iterator>
             </div>
         </div>

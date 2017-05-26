@@ -13,28 +13,29 @@
  */
 package org.entando.entando.apsadmin.portal.node;
 
-import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
-public class PageDraftTreeNodeWrapper extends TreeNodeWrapper {
+public class PageTreeNodeWrapper extends TreeNodeWrapper {
 
-	public PageDraftTreeNodeWrapper(ITreeNode node) {
-		super(node);
-		this._entity =  ((DraftPageNode)node).getEntity();
+	public PageTreeNodeWrapper(IPage page) {
+		super(page);
+		this._origin = page;
 	}
 
-	public PageDraftTreeNodeWrapper(ITreeNode tree, String currentLang) {
-		super(tree, currentLang);
-		this._entity =  ((DraftPageNode) tree).getEntity();
+	public PageTreeNodeWrapper(IPage page, String currentLang) {
+		super(page, currentLang);
+		this._origin = page;
 	}
 
-	public Object getEntity() {
-		return _entity;
-	}
-	public void setEntity(Object entity) {
-		this._entity = entity;
+	public IPage getOrigin() {
+		return _origin;
 	}
 
-	private Object _entity;
+	public void setOrigin(IPage origin) {
+		this._origin = origin;
+	}
+
+	private IPage _origin;
 
 }

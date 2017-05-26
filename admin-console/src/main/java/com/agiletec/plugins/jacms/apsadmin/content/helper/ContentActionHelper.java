@@ -118,7 +118,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 		} else {
 			int maxLength = 250;
 			if (descr.length() > maxLength) {
-				String[] args = {String.valueOf(maxLength)};
+				String[] args = { String.valueOf(maxLength) };
 				action.addFieldError("descr", action.getText("error.content.descr.wrongMaxLength", args));
 			}
 			if (!descr.matches("([^\"])+")) {
@@ -164,8 +164,10 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	 * Verifica che l'utente corrente possegga i diritti di accesso al contenuto
 	 * selezionato.
 	 *
-	 * @param content Il contenuto.
-	 * @param currentUser Il contenuto corrente.
+	 * @param content
+	 * Il contenuto.
+	 * @param currentUser
+	 * Il contenuto corrente.
 	 * @return True nel caso che l'utente corrente abbia i permessi di
 	 * lettura/scrittura sul contenuto, false in caso contrario.
 	 */
@@ -196,9 +198,12 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 	 * necessariamente associato (ed il perchè) per salvaguardare le precedenti
 	 * relazioni.
 	 *
-	 * @param content Il contenuto da analizzare.
-	 * @param action L'action da valorizzare con i messaggi di errore.
-	 * @throws ApsSystemException In caso di errore.
+	 * @param content
+	 * Il contenuto da analizzare.
+	 * @param action
+	 * L'action da valorizzare con i messaggi di errore.
+	 * @throws ApsSystemException
+	 * In caso di errore.
 	 */
 	@Override
 	public void scanReferences(Content content, ActionSupport action) throws ApsSystemException {
@@ -223,16 +228,19 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 						Lang lang = this.getLangManager().getDefaultLang();
 						for (int j = 0; j < utilizers.size(); j++) {
 							Object object = utilizers.get(j);
-							if (service instanceof IContentManager && object instanceof String) { //Content ID
+							if (service instanceof IContentManager && object instanceof String) { // Content
+																									// ID
 								Content refContent = this.getContentManager().loadContent(object.toString(), true);
-								if (!content.getMainGroup().equals(refContent.getMainGroup())
-										&& !content.getGroups().contains(refContent.getMainGroup())) {
-									String[] args = {this.getGroupManager().getGroup(refContent.getMainGroup()).getDescription(), object.toString() + " '" + refContent.getDescription() + "'"};
+								if (!content.getMainGroup().equals(refContent.getMainGroup()) && !content.getGroups().contains(refContent
+										.getMainGroup())) {
+									String[] args = { this.getGroupManager().getGroup(refContent.getMainGroup()).getDescription(), object
+											.toString() + " '" + refContent.getDescription() + "'" };
 									action.addFieldError("mainGroup", action.getText("error.content.referencedContent.wrongGroups", args));
 								}
-							} else if (object instanceof IPage) { //Content ID
+							} else if (object instanceof IPage) { // Content ID
 								IPage page = (IPage) object;
-								// Verifies the online version. On putting the page online, must be done the same check
+								// Verifies the online version. On putting the
+								// page online, must be done the same check
 								if (!CmsPageUtil.isContentPublishableOnPageOnline(content, page)) {
 									PageMetadata metadata = page.getMetadata();
 									List<String> pageGroups = new ArrayList<String>();
@@ -240,7 +248,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 									if (metadata != null && null != metadata.getExtraGroups()) {
 										pageGroups.addAll(metadata.getExtraGroups());
 									}
-									String[] args = {pageGroups.toString(), page.getDraftTitle(lang.getCode())};
+									String[] args = { pageGroups.toString(), page.getTitle(lang.getCode()) };
 									action.addFieldError("mainGroup", action.getText("error.content.referencedPage.wrongGroups", args));
 								}
 							}

@@ -84,7 +84,13 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		String result = this.executeActionOnPage(selectedPageCode, "pageManagerCoach", "edit");
 		assertEquals("pageTree", result);
 
-		IPage customers_page = this._pageManager.getDraftPage("customers_page"); 	// PAGINA NON PREDISPOSTA PER LA PUBBLICAZIONE VOLANTE...
+		IPage customers_page = this._pageManager.getDraftPage("customers_page"); // PAGINA
+																					// NON
+																					// PREDISPOSTA
+																					// PER
+																					// LA
+																					// PUBBLICAZIONE
+																					// VOLANTE...
 		result = this.executeActionOnPage(customers_page.getCode(), "pageManagerCustomers", "edit");
 		assertEquals(Action.SUCCESS, result);
 
@@ -137,7 +143,8 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	}
 
 	public void testDetailPageForAdmin() throws Throwable {
-		String selectedPageCode = "contentview"; // PAGINA PREDISPOSTA PER LA PUBBLICAZIONE VOLANTE
+		String selectedPageCode = "contentview"; // PAGINA PREDISPOSTA PER LA
+													// PUBBLICAZIONE VOLANTE
 		String result = this.executeActionOnPage(selectedPageCode, "admin", "detail");
 		assertEquals(Action.SUCCESS, result);
 
@@ -342,7 +349,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			assertNotNull(this._pageManager.getDraftPage("pagina_1"));
 			params.put("langen", "Test Page");
 			params.put("group", Group.FREE_GROUP_NAME);
-			params.put("pageCode", "pagina_1");//page already present
+			params.put("pageCode", "pagina_1");// page already present
 			result = this.executeSave(params, "admin");
 			assertEquals(Action.INPUT, result);
 			fieldErrors = this.getAction().getFieldErrors();
@@ -491,7 +498,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		assertEquals(0, action.getActionErrors().size());
 	}
 
-	//TODO Fare test di forzatura invocazione trash
+	// TODO Fare test di forzatura invocazione trash
 	private String executeTrashPage(String selectedPageCode, String username) throws Throwable {
 		this.setUserOnSession(username);
 		this.initAction("/do/Page", "trash");
@@ -618,17 +625,17 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 	private void addPage(String pageCode) throws ApsSystemException {
 		IPage parentPage = _pageManager.getOnlinePage("service");
 		PageModel pageModel = parentPage.getMetadata().getModel();
-		PageMetadata metadata = PageTestUtil.createPageMetadata(
-				pageModel.getCode(), true, "pagina temporanea", null, null,
-				false, null, null);
-		ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART11");
+		PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null,
+				null);
+		ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART1");
 		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
-		Widget[] widgets = {widgetToAdd};
+		Widget[] widgets = { widgetToAdd };
 		Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
 		this._pageManager.addPage(pageToAdd);
 	}
 
-	private void checkActionOnPage(String actionName, String namespace, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
+	private void checkActionOnPage(String actionName, String namespace, String pageCode, String username, String expectedResult,
+			String errorLabel) throws Throwable {
 		this.setUserOnSession(username);
 		this.initAction(namespace, actionName);
 		this.addParameter("pageCode", pageCode);
@@ -668,7 +675,8 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 		}
 	}
 
-	private void checkActionOnPage(String actionName, String pageCode, String username, String expectedResult, String errorLabel) throws Throwable {
+	private void checkActionOnPage(String actionName, String pageCode, String username, String expectedResult, String errorLabel)
+			throws Throwable {
 		this.checkActionOnPage(actionName, "/do/Page", pageCode, username, expectedResult, errorLabel);
 	}
 

@@ -27,30 +27,12 @@ import com.agiletec.aps.util.ApsProperties;
 public interface IPage extends ITreeNode {
 
 	/**
-	 * Returns a properties with the titles of the page, in online version,
-	 * where the keys are the codes of language.
-	 * 
-	 * @return The page titles, in online version.
-	 */
-	public ApsProperties getOnlineTitles();
-
-	/**
-	 * Returns the title, in online version, of the page in the specified
-	 * language.
-	 * 
-	 * @param langCode
-	 * The code of the language.
-	 * @return The title, in online version, of the page.
-	 */
-	public String getOnlineTitle(String langCode);
-
-	/**
 	 * Returns a properties with the titles of the page, in draft version, where
 	 * the keys are the codes of language.
 	 * 
 	 * @return The page titles, in draft version.
 	 */
-	public ApsProperties getDraftTitles();
+	public ApsProperties getTitles();
 
 	/**
 	 * Returns the title, in draft version, of the page in the specified
@@ -60,7 +42,7 @@ public interface IPage extends ITreeNode {
 	 * The code of the language.
 	 * @return The title, in draft version, of the page.
 	 */
-	public String getDraftTitle(String langCode);
+	public String getTitle(String langCode);
 
 	/**
 	 * Return the model of the associated page

@@ -77,15 +77,11 @@
                     <span class="pficon pficon-close"></span>
                 </button>
                 <span class="pficon pficon-error-circle-o"></span>
-                <strong
-                    <s:text name="message.title.FieldErrors" />
-                    <span class="icon fa fa-question-circle cursor-pointer" title="<s:text name="label.all" />" data-toggle="collapse" data-target="#content-error-messages"></span>
-                    <span class="sr-only"><s:text name="label.all" /></span>
-                </strong>
-                <ul class="unstyled collapse margin-small-top" id="content-error-messages">
+                <strong><s:text name="message.title.FieldErrors" /></strong>
+                <ul  id="content-error-messages">
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
-                            <li><%-- <s:property value="key" />&emsp;|--%><s:property escapeHtml="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
                             </s:iterator>
                         </s:iterator>
                 </ul>
@@ -118,7 +114,11 @@
                 <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                     <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['showletTypeCode']}" />
                     <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
-                    <label for="showletTypeCode" class="col-sm-2 control-label"><s:text name="label.code" />&#32;<i class="fa fa-asterisk required-icon"></i></label>
+                    <label for="showletTypeCode" class="col-sm-2 control-label"><s:text name="label.code" />&#32;
+                        <i class="fa fa-asterisk required-icon"></i>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="widget.widgetManagement.code.help" />" data-placement="right"><span class="fa fa-info-circle"></span></a>
+
+                    </label>
                     <div class="col-sm-10">
                         <wpsf:textfield id="showletTypeCode" name="showletTypeCode" cssClass="form-control" />
                         <s:if test="#pageCodeHasFieldErrorVar">
@@ -131,7 +131,9 @@
             <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                 <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['englishTitle']}" />
                 <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
-                <label for="englishTitle" class="col-sm-2 control-label"><code class="label label-info">en</code>&#32;<s:text name="label.title" />&#32;<i class="fa fa-asterisk required-icon"></i></label>
+                <label for="englishTitle" class="col-sm-2 control-label">
+                    <span class="label label-info">en</span>&#32;<s:text name="label.title" />&#32;<i class="fa fa-asterisk required-icon"></i>
+                </label>
                 <div class="col-sm-10">
                     <wpsf:textfield id="englishTitle" name="englishTitle" cssClass="form-control" />
                     <s:if test="#pageCodeHasFieldErrorVar">
@@ -242,10 +244,10 @@
                         <label class="control-label col-sm-2"></label>
                         <div class=" col-sm-10">
                             <ul class="nav nav-tabs">
-                                <li class="active"><a href="#widget-gui" data-toggle="tab">Custom <abbr title="User Interface">UI</abbr></a></li>
+                                <li class="active"><a href="#widget-gui" data-toggle="tab">Custom <span title="User Interface">UI</span></a></li>
                                     <s:if test="strutsAction == 2">
                                         <s:if test="%{null != #uniqueGuiFragmentVar}">
-                                        <li><a href="#widget-default-gui" data-toggle="tab">Default <abbr title="User Interface">UI</abbr></a></li>
+                                        <li><a href="#widget-default-gui" data-toggle="tab">Default <span title="User Interface">UI</span></a></li>
                                         </s:if>
                                     </s:if>
                             </ul>
@@ -279,7 +281,7 @@
                 <s:if test="%{null != #guiFragmentCodesVar && !#guiFragmentCodesVar.isEmpty()}">
 
                     <fieldset class="col-md-12 margin-large-bottom no-padding">
-                        <legend><abbr title="User Interfaces">UIs</abbr></legend>
+                        <legend><span title="User Interfaces">UIs</span></legend>
                         <div class="form-group">
                             <label class="control-label col-sm-2"></label>
                             <div class="panel-group col-sm-10" id="accordion">
@@ -297,8 +299,8 @@
                                             <div id="collapse-<s:property value="#status.count" />" class="panel-collapse collapse in">
                                                 <div class="panel-body" style="margin-left: 230px">
                                                     <ul class="nav nav-tabs">
-                                                        <li class="active"><a href="#widget-gui-<s:property value="#status.count" />" data-toggle="tab">Custom <abbr title="User Interface">UI</abbr></a></li>
-                                                        <li><a href="#widget-default-gui-<s:property value="#status.count" />" data-toggle="tab">Default <abbr title="User Interface">UI</abbr></a></li>
+                                                        <li class="active"><a href="#widget-gui-<s:property value="#status.count" />" data-toggle="tab">Custom <span title="User Interface">UI</span></a></li>
+                                                        <li><a href="#widget-default-gui-<s:property value="#status.count" />" data-toggle="tab">Default <span title="User Interface">UI</span></a></li>
                                                     </ul>
                                                     <div class="tab-content margin-large-bottom">
                                                         <div class="tab-pane fade in active" id="widget-gui-<s:property value="#status.count" />">

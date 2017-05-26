@@ -279,13 +279,13 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 			throws ApsSystemException {
 		if (null == treeNodesToOpen || treeNodesToOpen.isEmpty()) {
 			_logger.warn("No selected nodes");
-			return new PageTreeNodeWrapper((IPage) fullTree);
+			return new PageTreeNodeWrapper(((PageTreeNodeWrapper) fullTree).getOrigin());
 		}
 		TreeNodeWrapper root = null;
 		try {
 			Set<String> checkNodes = new HashSet<String>();
 			this.buildCheckNodes(treeNodesToOpen, checkNodes, groupCodes);
-			root = new PageTreeNodeWrapper((IPage) fullTree);
+			root = new PageTreeNodeWrapper(((PageTreeNodeWrapper) fullTree).getOrigin());
 			root.setParent(root);
 			this.builShowableTree(root, null, fullTree, checkNodes);
 		} catch (Throwable t) {
@@ -315,7 +315,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 			ITreeNode[] children = currentTreeNode.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				ITreeNode newCurrentTreeNode = children[i];
-				TreeNodeWrapper newNode = new PageTreeNodeWrapper((IPage) newCurrentTreeNode);
+				TreeNodeWrapper newNode = new PageTreeNodeWrapper(((PageTreeNodeWrapper) newCurrentTreeNode).getOrigin());
 				newNode.setParent(currentNode);
 				currentNode.addChild(newNode);
 				this.builShowableTree(newNode, currentNode, newCurrentTreeNode, checkNodes);

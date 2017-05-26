@@ -21,32 +21,32 @@ import com.agiletec.aps.util.ApsProperties;
 
 /**
  * This class describes a pages of the portal.
- * 
+ *
  * @author E.Santoboni
  */
 public interface IPage extends ITreeNode {
 
 	/**
-	 * Returns a properties with the titles of the page, in draft version, where
-	 * the keys are the codes of language.
-	 * 
-	 * @return The page titles, in draft version.
+	 * Returns a properties with the titles of the page, where the keys are the
+	 * codes of language.
+	 *
+	 * @return The page titles
 	 */
+	@Override
 	public ApsProperties getTitles();
 
 	/**
-	 * Returns the title, in draft version, of the page in the specified
-	 * language.
-	 * 
-	 * @param langCode
-	 * The code of the language.
-	 * @return The title, in draft version, of the page.
+	 * Returns the title, of the page in the specified language.
+	 *
+	 * @param langCode The code of the language.
+	 * @return The title, of the page.
 	 */
+	@Override
 	public String getTitle(String langCode);
 
 	/**
 	 * Return the model of the associated page
-	 * 
+	 *
 	 * @return The page model
 	 */
 	public PageModel getModel();
@@ -54,7 +54,7 @@ public interface IPage extends ITreeNode {
 	/**
 	 * Return the set of codes of the additional groups authorized to view the
 	 * page in the front-end.
-	 * 
+	 *
 	 * @return The set of codes belonging to the additional group authorized to
 	 * access the page in the front-end.
 	 */
@@ -62,9 +62,8 @@ public interface IPage extends ITreeNode {
 
 	/**
 	 * Add a group (code) authorized to view/access the page in the Front-end.
-	 * 
-	 * @param groupName
-	 * The group to add.
+	 *
+	 * @param groupName The group to add.
 	 */
 	@Deprecated
 	public void addExtraGroup(String groupName);
@@ -72,9 +71,8 @@ public interface IPage extends ITreeNode {
 	/**
 	 * Remove a group (code) authorized to view/access the page in the
 	 * Front-end.
-	 * 
-	 * @param groupName
-	 * The group to remove.
+	 *
+	 * @param groupName The group to remove.
 	 */
 	@Deprecated
 	public void removeExtraGroup(String groupName);
@@ -84,7 +82,7 @@ public interface IPage extends ITreeNode {
 	 * the code of the father of this page. This methods exists only to simplify
 	 * the loading of the pages structure, it cannot be used in any other
 	 * circumstance.
-	 * 
+	 *
 	 * @return the code of the higher level page
 	 */
 	public String getParentCode();
@@ -92,24 +90,12 @@ public interface IPage extends ITreeNode {
 	/**
 	 * Return the sorted group of the children of the current page, that is the
 	 * pages belonging to the lower level
-	 * 
+	 *
 	 * @return the sorted group of the children
 	 */
 	@Override
 	public IPage[] getChildren();
 
-	// XXX delete
-	// public IPage[] getOnlineChildren();
-
-	// @Deprecated
-	// public IPage[] getAllChildren();
-
-	/**
-	 * Return the parent of the current page. If the current page is the root,
-	 * the root page itself is returned
-	 * 
-	 * @return The father of the current page
-	 */
 	@Override
 	public IPage getParent();
 
@@ -124,7 +110,7 @@ public interface IPage extends ITreeNode {
 	/**
 	 * This returns a boolean values indicating whether the page is displayed in
 	 * the menus or similar.
-	 * 
+	 *
 	 * @return true if the page must be shown in the menu, false otherwise.
 	 */
 	public boolean isShowable();
@@ -133,28 +119,28 @@ public interface IPage extends ITreeNode {
 	 * This returns a boolean values indicating whether the page use the extra
 	 * titles extracted from Request Context parameter
 	 * EXTRAPAR_EXTRA_PAGE_TITLES.
-	 * 
+	 *
 	 * @return true if the page must use the extra titles, false otherwise.
 	 */
 	public boolean isUseExtraTitles();
 
 	/**
 	 * Return the widgets configured in this page.
-	 * 
+	 *
 	 * @return all the widgets of the current page
 	 */
 	public Widget[] getWidgets();
 
 	/**
 	 * Return the mimetype configured for this page.
-	 * 
+	 *
 	 * @return the mimetype configured for this page.
 	 */
 	public String getMimeType();
 
 	/**
 	 * Return the charset configured for this page.
-	 * 
+	 *
 	 * @return the charset configured for this page.
 	 */
 	public String getCharset();

@@ -203,7 +203,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		TreeNode root = null;
 		try {
 			if (null != this.getResultCodes() && this.getResultCodes().size() > 0) {
-				node = this.getPageManager().getRoot();
+				node = this.getPageManager().getDraftRoot();
 				root = new TreeNode();
 				this.fillTreeNode(root, root, node);
 				this.addTreeWrapper(root, root, node);
@@ -290,14 +290,6 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		this._treeNodeActionMarkerCode = _treeNodeActionMarkerCode;
 	}
 
-	public String getSelectedNode() {
-		return _selectedNode;
-	}
-
-	public void setSelectedNode(String _selectedNode) {
-		this._selectedNode = _selectedNode;
-	}
-
 	public String getCopyingPageCode() {
 		return _copyingPageCode;
 	}
@@ -336,7 +328,6 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	private Collection<String> _resultNodes;
 
 	private String _treeNodeActionMarkerCode;
-	private String _selectedNode;
 
 	private String _copyingPageCode;
 

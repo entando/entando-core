@@ -46,6 +46,7 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
 
@@ -576,6 +577,16 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				this.addActionError(this.getText("error.page.parentDraft"));
 				return "pageTree";
 			}
+
+			boolean success = this.getPageActionReferencesHelper().checkContentsForSetOnline(page, this);
+			if (!success) {
+				this.addActionError(this.getText("error.page.setOnline.scanContentRefs"));
+				return "pageTree";
+			}
+			if (this.hasErrors()) {
+				return "pageTree";
+			}
+
 			pageManager.setPageOnline(pageCode);
 			this.addActionMessage(this.getText("message.page.set.online", new String[] { this.getTitle(page.getCode(), page
 					.getTitles()) }));
@@ -945,6 +956,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		this._pageModelManager = pageModelManager;
 	}
 
+	protected PageActionReferencesHelper getPageActionReferencesHelper() {
+		return _pageActionReferencesHelper;
+	}
+
+	public void setPageActionReferencesHelper(PageActionReferencesHelper pageActionReferencesHelper) {
+		this._pageActionReferencesHelper = pageActionReferencesHelper;
+	}
+
 	private String _pageCode;
 	private String _parentPageCode;
 	private String _copyPageCode;
@@ -978,5 +997,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 
 	private IPageModelManager _pageModelManager;
 	private IPageActionHelper _pageActionHelper;
+	private PageActionReferencesHelper _pageActionReferencesHelper;
 
 }

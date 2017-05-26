@@ -34,7 +34,7 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.event.Content
 
 /**
  * Manager dei modelli di contenuto.
- * 
+ *
  * @author S.Didaci - C.Siddi - C.Sirigu
  */
 public class ContentModelManager extends AbstractService implements IContentModelManager {
@@ -49,7 +49,7 @@ public class ContentModelManager extends AbstractService implements IContentMode
 
 	/**
 	 * Caricamento dei modelli di pagina da db
-	 * 
+	 *
 	 * @throws ApsSystemException
 	 */
 	private void loadContentModels() throws ApsSystemException {
@@ -62,11 +62,9 @@ public class ContentModelManager extends AbstractService implements IContentMode
 
 	/**
 	 * Aggiunge un modello di contenuto nel sistema.
-	 * 
-	 * @param model
-	 * Il modello da aggiungere.
-	 * @throws ApsSystemException
-	 * In caso di errori in accesso al db.
+	 *
+	 * @param model Il modello da aggiungere.
+	 * @throws ApsSystemException In caso di errori in accesso al db.
 	 */
 	@Override
 	public void addContentModel(ContentModel model) throws ApsSystemException {
@@ -84,11 +82,9 @@ public class ContentModelManager extends AbstractService implements IContentMode
 
 	/**
 	 * Rimuove un modello di contenuto dal sistema.
-	 * 
-	 * @param model
-	 * Il modello di contenuto da rimuovere.
-	 * @throws ApsSystemException
-	 * In caso di errori in accesso al db.
+	 *
+	 * @param model Il modello di contenuto da rimuovere.
+	 * @throws ApsSystemException In caso di errori in accesso al db.
 	 */
 	@Override
 	public void removeContentModel(ContentModel model) throws ApsSystemException {
@@ -104,11 +100,9 @@ public class ContentModelManager extends AbstractService implements IContentMode
 
 	/**
 	 * Aggiorna un modello di contenuto.
-	 * 
-	 * @param model
-	 * Il modello di contenuto da aggiornare.
-	 * @throws ApsSystemException
-	 * In caso di errori in accesso al db.
+	 *
+	 * @param model Il modello di contenuto da aggiornare.
+	 * @throws ApsSystemException In caso di errori in accesso al db.
 	 */
 	@Override
 	public void updateContentModel(ContentModel model) throws ApsSystemException {
@@ -132,9 +126,8 @@ public class ContentModelManager extends AbstractService implements IContentMode
 
 	/**
 	 * Restituisce il modello relativo all'identificativo immesso.
-	 * 
-	 * @param contentModelId
-	 * L'identificativo del modello da estrarre.
+	 *
+	 * @param contentModelId L'identificativo del modello da estrarre.
 	 * @return Il modello cercato.
 	 */
 	@Override
@@ -144,7 +137,7 @@ public class ContentModelManager extends AbstractService implements IContentMode
 
 	/**
 	 * Restituisce la lista dei modelli di contenuto presenti nel sistema.
-	 * 
+	 *
 	 * @return La lista dei modelli di contenuto presenti nel sistema.
 	 */
 	@Override
@@ -157,9 +150,8 @@ public class ContentModelManager extends AbstractService implements IContentMode
 	/**
 	 * Restituisce la lista di modelli compatibili con il tipo di contenuto
 	 * specificato.
-	 * 
-	 * @param contentType
-	 * Il codice del tipo di contenuto.
+	 *
+	 * @param contentType Il codice del tipo di contenuto.
 	 * @return La lista di modelli compatibili con il tipo di contenuto
 	 * specificato.
 	 */
@@ -182,21 +174,17 @@ public class ContentModelManager extends AbstractService implements IContentMode
 	 * pubblicati tramite il modello specificato, ed il valore è rappresentato
 	 * dalla lista di pagine nel quale è pubblicato esplicitamente il contenuto
 	 * (traite il modello specificato).
-	 * 
-	 * @param modelId
-	 * Identificativo del modello di contenuto
+	 *
+	 * @param modelId Identificativo del modello di contenuto
 	 * @return La Mappa delle pagine referenziate.
 	 */
 	@Override
 	public Map<String, List<IPage>> getReferencingPages(long modelId) {
 		Map<String, List<IPage>> utilizers = new HashMap<String, List<IPage>>();
-
 		IPage root = this.getPageManager().getDraftRoot();
 		this.searchReferencingPages(modelId, root, utilizers);
-
 		root = this.getPageManager().getOnlineRoot();
 		this.searchReferencingPages(modelId, root, utilizers);
-
 		return utilizers;
 	}
 
@@ -205,13 +193,11 @@ public class ContentModelManager extends AbstractService implements IContentMode
 	 * e in caso affermativo aggiunge la pagina alla lista delle pagine che
 	 * utilizzano quel modello di contenuto. La ricerca viene estesa anche alle
 	 * pagine figlie di quella specificata.
-	 * 
-	 * @param modelId
-	 * Identificativo del modello di contenuto
-	 * @param page
-	 * La pagina nel qual cercare il modello di contenuto
-	 * @param utilizers
-	 * La lista delle pagine in cui è utilizzato il modello di contenuto
+	 *
+	 * @param modelId Identificativo del modello di contenuto
+	 * @param page La pagina nel qual cercare il modello di contenuto
+	 * @param utilizers La lista delle pagine in cui è utilizzato il modello di
+	 * contenuto
 	 */
 	private void searchReferencingPages(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
 		this.addReferencingPage(modelId, page, page.getWidgets(), utilizers);

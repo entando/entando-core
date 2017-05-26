@@ -44,9 +44,6 @@ public class PageTestUtil {
 			assertNull(actual);
 		} else {
 			assertEquals(expected.getCode(), actual.getCode());
-			// assertEquals(expected.isRoot(), actual.isRoot());
-			// assertEquals(expected.getParentCode(), actual.getParentCode());
-			// assertEquals(expected.getPosition(), actual.getPosition());
 			if (expected.getChildren() == null) {
 				assertNull(actual.getChildren());
 			} else {
@@ -59,10 +56,6 @@ public class PageTestUtil {
 			}
 			assertEquals(expected.getGroup(), actual.getGroup());
 			assertEquals(expected.getTitles(), actual.getTitles());
-			// assertEquals(expected.getPath(), actual.getPath());
-			// assertEquals(expected.getPath("|", true), actual.getPath("|",
-			// true));
-			// assertEquals(expected.getPathArray(), actual.getPathArray());
 			assertEquals(changed, actual.isChanged());
 			assertEquals(expected.isOnline(), actual.isOnline());
 			assertEquals(expected.isShowable(), actual.isShowable());
@@ -73,13 +66,10 @@ public class PageTestUtil {
 	}
 
 	/**
-	 * @param expected
-	 * The expected PageMetadata to check
-	 * @param actual
-	 * The actual PageMetadata to check
-	 * @param dateExpectation
-	 * The result of the comparison between the 2 updatedAt dates. 1 if expected
-	 * is greater, 0 if equals, -1 if lower
+	 * @param expected The expected PageMetadata to check
+	 * @param actual The actual PageMetadata to check
+	 * @param dateExpectation The result of the comparison between the 2
+	 * updatedAt dates. 1 if expected is greater, 0 if equals, -1 if lower
 	 */
 	public static void comparePageMetadata(PageMetadata expected, PageMetadata actual, Integer dateExpectation) {
 		if (expected == null) {
@@ -96,7 +86,6 @@ public class PageTestUtil {
 			assertEquals(expected.isUseExtraTitles(), actual.isUseExtraTitles());
 			assertEquals(expected.getMimeType(), actual.getMimeType());
 			assertEquals(expected.getCharset(), actual.getCharset());
-
 			if (dateExpectation != null) {
 				if (expected.getUpdatedAt() == null) {
 					if (dateExpectation < 0) {
@@ -136,16 +125,7 @@ public class PageTestUtil {
 	}
 
 	public static IPage getPageByCode(Map<String, IPage> pages, String code) {
-		// IPage extractedPage = null;
 		return pages.get(code);
-		// for (int i = 0; i < pages.size(); i++) {
-		// IPage page = pages.get(i);
-		// if (page.getCode().equals(code)) {
-		// extractedPage = page;
-		// break;
-		// }
-		// }
-		// return extractedPage;
 	}
 
 	public static Page createPage(String code, IPage parentPage, String groupName, PageMetadata metadata, Widget[] widgets) {
@@ -224,9 +204,8 @@ public class PageTestUtil {
 		return widgetsInUse;
 	}
 
-	public static void deletePage(Page pageToDelete, PageDAO _pageDao) {
-		_pageDao.deletePage(pageToDelete);
-
+	public static void deletePage(Page pageToDelete, PageDAO pageDao) {
+		pageDao.deletePage(pageToDelete);
 	}
 
 }

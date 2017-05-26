@@ -142,8 +142,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	/**
 	 * Set the token to be searched among the pages
 	 *
-	 * @param pageCodeToken
-	 * The token to be searched among the pages
+	 * @param pageCodeToken The token to be searched among the pages
 	 */
 	public void setPageCodeToken(String pageCodeToken) {
 		this._pageCodeToken = pageCodeToken;
@@ -172,9 +171,9 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		try {
 			String marker = this.getTreeNodeActionMarkerCode();
 			if (null != marker) {
-				if (null != marker && marker.equalsIgnoreCase(ACTION_MARKER_OPEN)) {
+				if (marker.equalsIgnoreCase(ACTION_MARKER_OPEN)) {
 					targets = this.getTreeHelper().checkTargetNodes(this.getTargetNode(), targets, this.getResultCodes());
-				} else if (null != marker && marker.equalsIgnoreCase(ACTION_MARKER_CLOSE)) {
+				} else if (marker.equalsIgnoreCase(ACTION_MARKER_CLOSE)) {
 					targets = this.getTreeHelper().checkTargetNodesOnClosing(this.getTargetNode(), targets, this.getResultCodes());
 				}
 			}
@@ -235,12 +234,9 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	/**
 	 * Valorizza un nodo in base alle informazioni specificate..
 	 *
-	 * @param nodeToValue
-	 * Il nodo da valorizzare.
-	 * @param parent
-	 * Il nodo parente.
-	 * @param realNode
-	 * Il nodo dal quela estrarre le info.
+	 * @param nodeToValue Il nodo da valorizzare.
+	 * @param parent Il nodo parente.
+	 * @param realNode Il nodo dal quela estrarre le info.
 	 */
 	private void fillTreeNode(TreeNode nodeToValue, TreeNode parent, ITreeNode realNode) {
 		nodeToValue.setCode(realNode.getCode());

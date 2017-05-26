@@ -24,16 +24,15 @@ import com.agiletec.aps.util.ApsProperties;
 
 /**
  * This is the representation of a portal page
- * 
+ *
  * @author M.Diana - E.Santoboni
  */
 public class Page extends TreeNode implements IPage {
 
 	/**
 	 * Set the position of the page with regard to its sisters
-	 * 
-	 * @param position
-	 * the position of the page.
+	 *
+	 * @param position the position of the page.
 	 */
 	@Override
 	protected void setPosition(int position) {
@@ -50,7 +49,7 @@ public class Page extends TreeNode implements IPage {
 	 * the code of the father of this page. This methods exists only to simplify
 	 * the loading of the pages structure, it cannot be used in any other
 	 * circumstance.
-	 * 
+	 *
 	 * @return the code of the higher level page
 	 */
 	@Override
@@ -63,9 +62,8 @@ public class Page extends TreeNode implements IPage {
 	 * code of the father of this page. This methods exists only to simplify the
 	 * loading of the pages structure, it cannot be used in any other
 	 * circumstance.
-	 * 
-	 * @param parentCode
-	 * the code of the higher level page
+	 *
+	 * @param parentCode the code of the higher level page
 	 */
 	public void setParentCode(String parentCode) {
 		this._parentCode = parentCode;
@@ -73,7 +71,7 @@ public class Page extends TreeNode implements IPage {
 
 	/**
 	 * Return the related model of page
-	 * 
+	 *
 	 * @return the page model
 	 */
 	@Override
@@ -85,9 +83,8 @@ public class Page extends TreeNode implements IPage {
 	/**
 	 * WARNING: This method is for the page manager service only exclusive use
 	 * Assign the given page model to the current object
-	 * 
-	 * @param pageModel
-	 * the model of the page to assign
+	 *
+	 * @param pageModel the model of the page to assign
 	 */
 	public void setModel(PageModel pageModel) {
 		PageMetadata metadata = this.getMetadata();
@@ -134,7 +131,7 @@ public class Page extends TreeNode implements IPage {
 	 * WARING: this method is reserved to the page manager service only. This
 	 * returns a boolean values indicating whether the page is displayed in the
 	 * menus or similar.
-	 * 
+	 *
 	 * @return true if the page must be shown in the menu, false otherwise.
 	 */
 	@Override
@@ -146,9 +143,9 @@ public class Page extends TreeNode implements IPage {
 	/**
 	 * WARING: this method is reserved to the page manager service only. Toggle
 	 * the visibility of the current page in the menu or similar.
-	 * 
-	 * @param showable
-	 * a boolean which toggles the visibility on when true, off otherwise.
+	 *
+	 * @param showable a boolean which toggles the visibility on when true, off
+	 * otherwise.
 	 */
 	public void setShowable(boolean showable) {
 		PageMetadata metadata = this.getMetadata();
@@ -170,11 +167,9 @@ public class Page extends TreeNode implements IPage {
 	/**
 	 * Metodo riservato al servizio di gestione pagine. Imposta un titolo alla
 	 * pagina
-	 * 
-	 * @param lang
-	 * La lingua del titolo
-	 * @param title
-	 * Il titolo da impostare
+	 *
+	 * @param lang La lingua del titolo
+	 * @param title Il titolo da impostare
 	 */
 	public void setTitle(Lang lang, String title) {
 		PageMetadata metadata = this.getMetadata();
@@ -189,12 +184,10 @@ public class Page extends TreeNode implements IPage {
 
 	/**
 	 * Restituisce il titolo della pagina nella lingua specificata
-	 * 
-	 * @param lang
-	 * La lingua
+	 *
+	 * @param lang La lingua
 	 * @return il titolo della pagina
 	 */
-
 	public String getTitle(Lang lang) {
 		return this.getTitle(lang.getCode());
 	}
@@ -282,21 +275,25 @@ public class Page extends TreeNode implements IPage {
 	@Override
 	protected String getFullTitle(String langCode, String separator, boolean shortTitle) {
 		String title = this.getTitles().getProperty(langCode);
-		if (null == title)
+		if (null == title) {
 			title = this.getCode();
-		if (this.isRoot())
+		}
+		if (this.isRoot()) {
 			return title;
+		}
 		ITreeNode parent = this.getParent();
 		while (parent != null && parent.getParent() != null) {
 			String parentTitle = "..";
 			if (!shortTitle) {
 				parentTitle = parent.getTitles().getProperty(langCode);
-				if (null == parentTitle)
+				if (null == parentTitle) {
 					parentTitle = parent.getCode();
+				}
 			}
 			title = parentTitle + separator + title;
-			if (parent.isRoot())
+			if (parent.isRoot()) {
 				return title;
+			}
 			parent = parent.getParent();
 		}
 		return title;

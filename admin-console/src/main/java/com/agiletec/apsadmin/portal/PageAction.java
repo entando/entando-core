@@ -69,14 +69,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		this.checkTitles();
 	}
 
-	// @Override
-	// // TODO Verificare
-	// public String execute() throws Exception {
-	// if (null != this.getSelectedNode()) {
-	// this.getTreeNodesToOpen().add(this.getSelectedNode());
-	// }
-	// return super.execute();
-	// }
 	protected String checkParentNode(String selectedNode) {
 		if (null == selectedNode || selectedNode.trim().length() == 0) {
 			this.addFieldError("parentPageCode", this.getText("error.parentPage.noSelection"));
@@ -105,7 +97,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			Lang lang = langsIter.next();
 			String title = (String) this.getTitles().get(lang.getCode());
 			if (null == title || title.trim().length() == 0) {
-				String[] args = { lang.getDescr() };
+				String[] args = {lang.getDescr()};
 				String titleKey = "lang" + lang.getCode();
 				this.addFieldError(titleKey, this.getText("error.page.insertTitle", args));
 			}
@@ -130,7 +122,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 				&& null != code && code.trim().length() > 0) {
 			String currectCode = BaseActionHelper.purgeString(code.trim());
 			if (currectCode.length() > 0 && null != this.getPage(currectCode)) {
-				String[] args = { currectCode };
+				String[] args = {currectCode};
 				this.addFieldError("pageCode", this.getText("error.page.duplicateCode", args));
 			}
 			this.setPageCode(currectCode);
@@ -162,7 +154,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	}
 
 	public String settingsPage() {
-		// stub method
 		return SUCCESS;
 	}
 
@@ -310,14 +301,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				page = this.getUpdatedPage();
 				this.getPageManager().updatePage(page);
-				this.addActionMessage(this.getText("message.page.info.updated", new String[] { this.getTitle(page.getCode(), page
-						.getTitles()) }));
+				this.addActionMessage(this.getText("message.page.info.updated", new String[]{this.getTitle(page.getCode(), page
+					.getTitles())}));
 				_logger.debug("Updating page " + page.getCode());
 			} else {
 				page = this.buildNewPage();
 				this.getPageManager().addPage(page);
-				this.addActionMessage(this.getText("message.page.info.added", new String[] { this.getTitle(page.getCode(), page
-						.getTitles()) }));
+				this.addActionMessage(this.getText("message.page.info.added", new String[]{this.getTitle(page.getCode(), page
+					.getTitles())}));
 				_logger.debug("Adding new page");
 			}
 			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
@@ -334,14 +325,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				page = this.getUpdatedPage();
 				this.getPageManager().updatePage(page);
-				this.addActionMessage(this.getText("message.page.info.updated", new String[] { this.getTitle(page.getCode(), page
-						.getTitles()) }));
+				this.addActionMessage(this.getText("message.page.info.updated", new String[]{this.getTitle(page.getCode(), page
+					.getTitles())}));
 				_logger.debug("Updating page " + page.getCode());
 			} else {
 				page = this.buildNewPage();
 				this.getPageManager().addPage(page);
-				this.addActionMessage(this.getText("message.page.info.added", new String[] { this.getTitle(page.getCode(), page
-						.getTitles()) }));
+				this.addActionMessage(this.getText("message.page.info.added", new String[]{this.getTitle(page.getCode(), page
+					.getTitles())}));
 				_logger.debug("Adding new page");
 			}
 			this.addActivityStreamInfo(page, this.getStrutsAction(), true);
@@ -531,8 +522,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			}
 			pageManager.setPageOffline(pageCode);
 			IPage page = this.getPage(pageCode);
-			this.addActionMessage(this.getText("message.page.set.offline", new String[] { this.getTitle(page.getCode(), page
-					.getTitles()) }));
+			this.addActionMessage(this.getText("message.page.set.offline", new String[]{this.getTitle(page.getCode(), page
+				.getTitles())}));
 			// TODO Define a new strutsAction to map "offline" operation
 			this.addActivityStreamInfo(page, PageActionConstants.UNPUBLISH, true);
 		} catch (Throwable t) {
@@ -588,8 +579,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			}
 
 			pageManager.setPageOnline(pageCode);
-			this.addActionMessage(this.getText("message.page.set.online", new String[] { this.getTitle(page.getCode(), page
-					.getTitles()) }));
+			this.addActionMessage(this.getText("message.page.set.online", new String[]{this.getTitle(page.getCode(), page
+				.getTitles())}));
 			// TODO Define a new strutsAction to map "offline" operation
 			this.addActivityStreamInfo(page, PageActionConstants.PUBLISH, true);
 		} catch (Throwable t) {
@@ -661,8 +652,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		}
 		Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
 		if (references.size() > 0) {
-			this.addActionError(this.getText("error.page.offline.references", new String[] { this.getTitle(currentPage.getCode(),
-					currentPage.getTitles()) }));
+			this.addActionError(this.getText("error.page.offline.references", new String[]{this.getTitle(currentPage.getCode(),
+				currentPage.getTitles())}));
 			this.setReferences(references);
 			return "references";
 		}

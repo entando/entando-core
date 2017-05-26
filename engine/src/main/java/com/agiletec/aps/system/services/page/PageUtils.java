@@ -15,7 +15,7 @@ package com.agiletec.aps.system.services.page;
 
 /**
  * Helper class for the page manager
- * 
+ *
  */
 public class PageUtils {
 
@@ -23,11 +23,9 @@ public class PageUtils {
 	 * Return the full path of the given page; the path is composed by the
 	 * concatenation of the code of the page starting from the root to the given
 	 * page.
-	 * 
-	 * @param page
-	 * The page whose path must be found.
-	 * @param separator
-	 * The separator of the page codes
+	 *
+	 * @param page The page whose path must be found.
+	 * @param separator The separator of the page codes
 	 * @return The full path of the page
 	 */
 	public static StringBuffer getFullPath(IPage page, String separator) {

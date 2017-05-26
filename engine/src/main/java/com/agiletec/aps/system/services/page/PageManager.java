@@ -43,7 +43,7 @@ import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedObserve
  * structure, to allow a hierarchical access, and stored in a map, to allow a
  * key-value type access. In the tree, the father points the son and vice versa;
  * the order between the pages in the same level is always kept.
- * 
+ *
  * @author M.Diana - E.Santoboni
  */
 public class PageManager extends AbstractService implements IPageManager, GroupUtilizer, LangsChangedObserver, PageModelUtilizer,
@@ -59,9 +59,8 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Load the page and organize them in a tree structure
-	 * 
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 *
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	private void loadPageTree() throws ApsSystemException {
 		PagesStatus status = new PagesStatus();
@@ -72,53 +71,37 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		List<PageRecord> pageRecordList = null;
 		try {
 			pageRecordList = this.getPageDAO().loadPageRecords();
-			pageList = new ArrayList<>();
-			pageListO = new ArrayList<>();
-		} catch (Throwable t) {
-			throw new ApsSystemException("Error loading the list of pages", t);
-		}
-		try {
 			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
 			Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
+			pageListO = new ArrayList<>();
 			pageList = new ArrayList<>();
 			for (int i = 0; i < pageRecordList.size(); i++) {
 				PageRecord pageRecord = pageRecordList.get(i);
-
 				IPage pageD = pageRecord.createDraftPage();
 				IPage pageO = pageRecord.createOnlinePage();
-
-				pageList.add(pageD);// ???
-
+				pageList.add(pageD);
 				newFullMap.put(pageD.getCode(), pageD);
 				if (pageD.getCode().equals(pageD.getParentCode())) {
 					newRoot = pageD;
 					newRootOnline = pageO;
 				}
-
 				this.buildPagesStatus(status, pageD);
-
 				if (pageD.isOnline()) {
 					newOnlineMap.put(pageO.getCode(), pageO);
-					pageListO.add(pageO);// ???
+					pageListO.add(pageO);
 				}
 			}
-
-			// XXX refactor needed
 			for (int i = 0; i < pageList.size(); i++) {
 				this.buildTreeHierarchy(pageList, newRoot, newFullMap, true, i);
 			}
-
 			for (int i = 0; i < pageListO.size(); i++) {
 				this.buildTreeHierarchy(pageListO, newRootOnline, newOnlineMap, false, i);
 			}
-
 			if (newRoot == null) {
 				throw new ApsSystemException("Error in the page tree: root page undefined");
 			}
-
 			this._root = newRoot;
 			this._onlineRoot = newRootOnline;
-
 			this._pages = newFullMap;
 			this._onlinePages = newOnlineMap;
 			this._pagesStatus = status;
@@ -141,11 +124,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Delete a page and eventually the association with the widgets.
-	 * 
-	 * @param pageCode
-	 * the code of the page to delete
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 *
+	 * @param pageCode the code of the page to delete
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public void deletePage(String pageCode) throws ApsSystemException {
@@ -164,11 +145,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Add a new page to the database.
-	 * 
-	 * @param page
-	 * The page to add
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 *
+	 * @param page The page to add
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public void addPage(IPage page) throws ApsSystemException {
@@ -184,11 +163,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Update a page record in the database.
-	 * 
-	 * @param page
-	 * The modified page.
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 *
+	 * @param page The modified page.
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public void updatePage(IPage page) throws ApsSystemException {
@@ -238,16 +215,13 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Move a page.
-	 * 
-	 * @param pageCode
-	 * The code of the page to move.
-	 * @param moveUp
-	 * When true the page is moved to a higher level of the tree, otherwise to a
-	 * lower level.
+	 *
+	 * @param pageCode The code of the page to move.
+	 * @param moveUp When true the page is moved to a higher level of the tree,
+	 * otherwise to a lower level.
 	 * @return The result of the operation: false if the move request could not
 	 * be satisfied, true otherwise.
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public boolean movePage(String pageCode, boolean moveUp) throws ApsSystemException {
@@ -264,14 +238,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				if (sisterPage.getCode().equals(pageCode)) {
 					if (!verifyRequiredMovement(i, moveUp, sisterPages.length)) {
 						return false;
+					} else if (moveUp) {
+						IPage pageDown = sisterPages[i - 1];
+						this.moveUpDown(pageDown, currentPage);
 					} else {
-						if (moveUp) {
-							IPage pageDown = sisterPages[i - 1];
-							this.moveUpDown(pageDown, currentPage);
-						} else {
-							IPage pageUp = sisterPages[i + 1];
-							this.moveUpDown(currentPage, pageUp);
-						}
+						IPage pageUp = sisterPages[i + 1];
+						this.moveUpDown(currentPage, pageUp);
 					}
 				}
 			}
@@ -333,14 +305,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Verify the possibility of the page to be moved elsewhere.
-	 * 
-	 * @param position
-	 * The position of the page to move
-	 * @param moveUp
-	 * When true the page is moved to a higher level of the tree, otherwise to a
-	 * lower level.
-	 * @param dimension
-	 * The number the number of the pages of the parent of the page to move.
+	 *
+	 * @param position The position of the page to move
+	 * @param moveUp When true the page is moved to a higher level of the tree,
+	 * otherwise to a lower level.
+	 * @param dimension The number the number of the pages of the parent of the
+	 * page to move.
 	 * @return if true then the requested movement is possible (but not
 	 * performed) false otherwise.
 	 */
@@ -350,21 +320,18 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			if (position == 0) {
 				result = false;
 			}
-		} else {
-			if (position == (dimension - 1)) {
-				result = false;
-			}
+		} else if (position == (dimension - 1)) {
+			result = false;
 		}
 		return result;
 	}
 
 	/**
 	 * Perform the movement of a page
-	 * 
+	 *
 	 * @param pageDown
 	 * @param pageUp
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	private void moveUpDown(IPage pageDown, IPage pageUp) throws ApsSystemException {
 		try {
@@ -377,29 +344,23 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Remove a widgets from the given page.
-	 * 
-	 * @param pageCode
-	 * the code of the page
-	 * @param pos
-	 * The position in the page to free
-	 * @throws ApsSystemException
-	 * In case of error
+	 *
+	 * @param pageCode the code of the page
+	 * @param pos The position in the page to free
+	 * @throws ApsSystemException In case of error
 	 * @deprecated Use {@link #removeWidget(String,int)} instead
 	 */
 	@Override
 	public void removeShowlet(String pageCode, int pos) throws ApsSystemException {
-		removeWidget(pageCode, pos);
+		this.removeWidget(pageCode, pos);
 	}
 
 	/**
 	 * Remove a widget from the given page.
-	 * 
-	 * @param pageCode
-	 * the code of the page
-	 * @param pos
-	 * The position in the page to free
-	 * @throws ApsSystemException
-	 * In case of error
+	 *
+	 * @param pageCode the code of the page
+	 * @param pos The position in the page to free
+	 * @throws ApsSystemException In case of error
 	 */
 	@Override
 	public void removeWidget(String pageCode, int pos) throws ApsSystemException {
@@ -421,28 +382,23 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	}
 
 	/**
-	 * @throws ApsSystemException
-	 * In case of error.
+	 * @throws ApsSystemException In case of error.
 	 * @deprecated Use {@link #joinWidget(String,Widget,int)} instead
 	 */
 	@Override
 	public void joinShowlet(String pageCode, Widget widget, int pos) throws ApsSystemException {
-		joinWidget(pageCode, widget, pos);
+		this.joinWidget(pageCode, widget, pos);
 	}
 
 	/**
 	 * Set the widget -including its configuration- in the given page in the
 	 * desired position. If the position is already occupied by another widget
 	 * this will be substituted with the new one.
-	 * 
-	 * @param pageCode
-	 * the code of the page where to set the widget
-	 * @param widget
-	 * The widget to set
-	 * @param pos
-	 * The position where to place the widget in
-	 * @throws ApsSystemException
-	 * In case of error.
+	 *
+	 * @param pageCode the code of the page where to set the widget
+	 * @param widget The widget to set
+	 * @param pos The position where to place the widget in
+	 * @throws ApsSystemException In case of error.
 	 */
 	@Override
 	public void joinWidget(String pageCode, Widget widget, int pos) throws ApsSystemException {
@@ -469,13 +425,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	/**
 	 * Utility method which perform checks on the parameters submitted when
 	 * editing the page.
-	 * 
-	 * @param pageCode
-	 * The code of the page
-	 * @param pos
-	 * The given position
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 *
+	 * @param pageCode The code of the page
+	 * @param pos The given position
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	private void checkPagePos(String pageCode, int pos) throws ApsSystemException {
 		IPage currentPage = this.getDraftPage(pageCode);
@@ -491,9 +444,8 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	/**
 	 * Set the root page.
-	 * 
-	 * @param root
-	 * the Page to be set as root
+	 *
+	 * @param root the Page to be set as root
 	 */
 	protected void setRoot(IPage root) {
 		this._root = root;
@@ -519,19 +471,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		return this._root;
 	}
 
-	// /**
-	// * Return the page given the name
-	// *
-	// * @param pageCode
-	// * The code of the page.
-	// * @return the requested page.
-	// */
-	// @Override
-	// public IPage getPage(String pageCode) {
-	// throw new UnsupportedOperationException("METODO NON SUPPORTATO:
-	// getPage(String pageCode) ");
-	// }
-
 	@Override
 	public IPage getOnlinePage(String pageCode) {
 		IPage page = this._onlinePages.get(pageCode);
@@ -543,12 +482,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		IPage page = this._pages.get(pageCode);
 		return page;
 	}
-
-	// @Deprecated
-	// public IPage getPage(String pageCode, boolean onlyOnline) {
-	// throw new UnsupportedOperationException("METODO NON SUPPORTATO:
-	// getPage(String pageCode, boolean onlyOnline) ");
-	// }
 
 	@Override
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
@@ -590,7 +523,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		try {
 			IPage root = this.getDraftRoot();
 			this.searchUtilizers(groupName, utilizers, root);
-
 			List<IPage> utilizersOnline = new ArrayList<IPage>();
 			root = this.getOnlineRoot();
 			this.searchUtilizers(groupName, utilizersOnline, root);
@@ -599,7 +531,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 					utilizers.add(page);
 				}
 			}
-
 		} catch (Throwable t) {
 			String message = "Error during searching page utilizers of group " + groupName;
 			_logger.error("Error during searching page utilizers of group {}", groupName, t);
@@ -624,7 +555,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		}
 	}
 
-	// XXX TODO MERGIARE IN 1
 	@Override
 	public List<IPage> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
 		List<IPage> pages = new ArrayList<IPage>();
@@ -673,19 +603,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			IPage child = children[i];
 			this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
 		}
-	}
-
-	private boolean isWidgetInUse(Widget[] widgets, String widgetTypeCode) {
-		boolean found = false;
-		if (widgets != null) {
-			for (Widget widget : widgets) {
-				if (null != widget && null != widget.getType() && widgetTypeCode.equals(widget.getType().getCode())) {
-					found = true;
-					break;
-				}
-			}
-		}
-		return found;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -781,8 +698,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		}
 		return pages;
 	}
-
-	// ---
 
 	protected void buildTreeHierarchy(List<IPage> pageList, IPage root, Map<String, IPage> pagesMap, boolean includeDraft, int i) {
 		Page page = (Page) pagesMap.get(pageList.get(i).getCode());

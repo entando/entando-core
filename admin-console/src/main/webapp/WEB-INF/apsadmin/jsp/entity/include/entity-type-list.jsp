@@ -30,16 +30,17 @@
             <div class="col-sm-6">
                 <ul class="nav nav-tabs nav-justified nav-tabs-pattern">
                     <li>
-                        <a href="<s:url action="list" namespace="/do/jpwebdynamicform/Message/Operator" />"><s:text
-                                name="jpwebdynamicform.menu.messages"/></a>
+                        <a href="<s:url action="list" namespace="/do/jpwebdynamicform/Message/Operator" />">
+                            <s:text name="jpwebdynamicform.menu.messages"/></a>
                     </li>
                     <li>
-                        <a href="<s:url namespace="/do/jpwebdynamicform/Message/Config" action="list" />"><s:text
-                                name="jpwebdynamicform.menu.config"/></a>
+                        <a href="<s:url namespace="/do/jpwebdynamicform/Message/Config" action="list" />">
+                            <s:text name="jpwebdynamicform.menu.config"/></a>
                     </li>
                     <li class="active">
-                        <a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName">jpwebdynamicformMessageManager</s:param></s:url>"><s:text
-                                name="%{'title.' + entityManagerName + '.management'}"/></a>
+                        <a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName">jpwebdynamicformMessageManager</s:param></s:url>">
+                            <s:text  name="%{'title.' + entityManagerName + '.management'}"/>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -52,9 +53,11 @@
         <li>
             <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
         </li>
-        <li class="page-title-container"><s:text name="%{'title.' + entityManagerName + '.management'}"/></li>
-    </ol>
 
+        <li class="page-title-container">
+            <s:text name="%{'title.' + entityManagerName + '.management'}"/>
+        </li>
+    </ol>
     <h1 class="page-title-container">
         <s:text name="%{'title.' + entityManagerName + '.management'}"/>
         <span class="pull-right"> <a tabindex="0" role="button"
@@ -62,9 +65,9 @@
                                      data-content="<s:text name="%{'page.' + entityManagerName + '.help'}"/>" data-placement="left"
                                      data-original-title=""><i class="fa fa-question-circle-o"
                                       aria-hidden="true"></i></a>
+
         </span>
     </h1>
-
     <div class="text-right">
         <div class="form-group-separator">
             <%--<s:text name="label.requiredFields" />--%>
@@ -73,15 +76,13 @@
     <br>
 </s:else>
 
-
 <s:if test="hasFieldErrors()">
     <div class="alert alert-danger alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert">
-            <span class="icon fa fa-times"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <span class="pficon pficon-close"></span>
         </button>
-        <p>
-            <s:text name="message.title.FieldErrors"/>
-        </p>
+        <span class="pficon pficon-error-circle-o"></span>
+        <strong><s:text name="message.title.FieldErrors"/></strong>
         <ul>
             <s:iterator value="fieldErrors">
                 <s:iterator value="value">
@@ -93,7 +94,7 @@
 </s:if>
 
 <a href="<s:url namespace="/do/Entity" action="initAddEntityType" ><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>"
-   class="btn btn-primary pull-right" style="margin-bottom: 5px">
+   class="btn btn-primary pull-right mb-5" >
     <s:text name="menu.entityAdmin.entityTypes.new"/>
 </a>
 
@@ -102,41 +103,40 @@
     <wpsa:subset source="#entity_list" count="10" objectName="entityGroup" advanced="true" offset="5">
         <s:set var="group" value="#entityGroup"/>
         <div class="mt-20">
-            <table class="table table-striped table-bordered table-hover no-mb"
-                   style="margin-top: 1em;">
+            <table class="table table-striped table-bordered table-hover no-mb">
                 <thead>
                     <tr>
                         <th><s:text name="label.name"/></th>
-                        <th class="text-center"><s:text name="label.code"/></th>
-                        <th class="text-center" style="width: 89px;"><s:text
-                                name="label.state"/></th>
-                        <th style="width: 59px;"><s:text name="label.actions"/></th>
+                        <th class="text-center table-w-10"><s:text name="label.code"/></th>
+                        <th class="text-center table-w-5"><s:text name="label.state"/></th>
+                        <th class="text-center table-w-5"><s:text name="label.actions"/></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <s:iterator var="entityType"
-                                status="counter">
+                    <s:iterator var="entityType" status="counter">
                         <s:set var="entityAnchor" value="%{'entityCounter'+#counter.count}"/>
                         <tr>
-                            <td class="td-grid-ellipsis"><s:property value="#entityType.typeDescr"/></td>
-                            <td class="text-center table-w-10">
+                            <td>
+                                <s:property value="#entityType.typeDescr"/>
+                            </td>
+                            <td class="text-center">
                                 <span>
                                     <s:property value="#entityType.typeCode"/>
                                 </span>
                             </td>
-                            <td class="text-center"><s:if
-                                    test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 1">
-                                    <span class="icon fa fa-spinner"
-                                          title="<s:text name="label.references.status.wip" />"> </span>
-                                </s:if> <s:elseif
-                                    test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 2">
-                                    <span class="icon fa fa-exclamation text-warning"
-                                          title="<s:text name="label.references.status.ko" />"> </span>
-                                </s:elseif> <s:elseif
-                                    test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 0">
-                                    <span class="icon fa fa-check text-success"
-                                          title="<s:text name="label.references.status.ok" />"> </span>
-                                </s:elseif></td>
+                            <td class="text-center">
+                                <s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 1">
+                                    <span class="icon fa fa-spinner" title="<s:text name="label.references.status.wip" />">
+                                    </span>
+                                </s:if>
+                                <s:elseif test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 2">
+                                    <span class="icon fa fa-exclamation text-warning" title="<s:text name="label.references.status.ko" />">
+                                    </span>
+                                </s:elseif>
+                                <s:elseif  test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 0">
+                                    <span class="icon fa fa-check text-success"  title="<s:text name="label.references.status.ok" />"> </span>
+                                </s:elseif>
+                            </td>
                             <td class="text-center text-nowrap">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button"
@@ -159,27 +159,26 @@
                                                         value="#entityType.typeDescr"/></span> <s:text name="label.edit"/>
                                             </a>
                                         </li>
-                                        <li><a
-                                                href="<s:url namespace="/do/Entity" action="reloadEntityTypeReferences" anchor="%{#entityAnchor}"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param><s:param name="entityTypeCode"><s:property value="#entityType.typeCode" /></s:param>
-                                                </s:url>"
-                                                title="<s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 2"><s:text name="label.references.status.ko" /></s:if><s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 0"><s:text name="label.references.status.ok" /></s:if>"
-                                                    class=""
-                                                <s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 1">disabled="true"</s:if>>
-                                                <s:text name="label.reload"/> <span class="sr-only"><s:text
-                                                        name="label.references.status.ko"/></span>
-                                            </a></li>
-                                            <%-- remove --%>
-                                        <li><a
-                                                href="
-                                                <s:url namespace="/do/Entity" action="trashEntityType">
-                                                    <s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param>
-                                                    <s:param name="entityTypeCode"><s:property value="#entityType.typeCode" /></s:param>
-                                                </s:url>
-                                                "
-                                                title="<s:text name="label.remove" />: <s:property value="#entityType.typeDescr" />"
-                                                class=""> <s:text name="label.delete"/> <span
-                                                    class="sr-only"><s:text name="label.alt.clear"/></span>
-                                            </a></li>
+                                        <li>
+                                            <a href="<s:url namespace="/do/Entity" action="reloadEntityTypeReferences" anchor="%{#entityAnchor}"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param><s:param name="entityTypeCode"><s:property value="#entityType.typeCode" /></s:param>
+                                               </s:url>" title="<s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 2"><s:text name="label.references.status.ko" />
+                                               </s:if>
+                                               <s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 0"><s:text name="label.references.status.ok" /></s:if>" class=""
+                                               <s:if test="getEntityManagerStatus(entityManagerName, #entityType.typeCode) == 1">disabled="true"</s:if>>
+                                                <s:text name="label.reload"/> <span class="sr-only">
+                                                    <s:text name="label.references.status.ko"/></span> </span>
+                                            </a>
+                                        </li>
+                                        <%-- remove --%>
+                                        <li>
+                                            <a href="<s:url namespace="/do/Entity" action="trashEntityType">
+                                                   <s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param>
+                                                   <s:param name="entityTypeCode"><s:property value="#entityType.typeCode" /></s:param>
+                                               </s:url>" title="<s:text name="label.remove" />: <s:property value="#entityType.typeDescr" />"  class="">
+                                                <s:text name="label.delete"/>
+                                                <span class="sr-only"><s:text name="label.alt.clear"/></span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>

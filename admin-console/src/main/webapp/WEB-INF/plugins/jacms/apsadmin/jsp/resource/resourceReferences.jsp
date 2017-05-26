@@ -9,6 +9,7 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app"/></li>
     <li><s:text name="breadcrumb.jacms"/></li>
+    <li><s:text name="breadcrumb.digitalAsset" /></li>
     <li>
         <a href="<s:url action="list" ><s:param name="resourceTypeCode" ><s:text name="%{resourceTypeCode}"></s:text></s:param></s:url>">
             <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
@@ -41,25 +42,26 @@
             <span class="pficon pficon-close"></span>
         </button>
         <span class="pficon pficon-error-circle-o"></span>
-        <strong><s:text name="message.title.ActionErrors" /></strong> <s:text name="message.note.resolveReferences" />
+        <strong><s:text name="message.title.ActionErrors" /></strong>
+        <p><s:text name="message.note.resolveReferences" /></p>
     </div>
 
     <s:form>
         <p class="sr-only">
-            <wpsf:hidden name="resourceId" />
-        </p>
+        <wpsf:hidden name="resourceId" />
+    </p>
 
-        <s:if test="references['jacmsContentManagerUtilizers']">
-            <s:set var="referencingContentsId" value="references['jacmsContentManagerUtilizers']" />
-            <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
-        </s:if>
+    <s:if test="references['jacmsContentManagerUtilizers']">
+        <s:set var="referencingContentsId" value="references['jacmsContentManagerUtilizers']" />
+        <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
+    </s:if>
 
-        <wpsa:hookPoint key="jacms.resourceReferences" objectName="hookPointElements_jacms_resourceReferences">
-            <s:iterator value="#hookPointElements_jacms_resourceReferences" var="hookPointElement">
-                <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-            </s:iterator>
-        </wpsa:hookPoint>
+    <wpsa:hookPoint key="jacms.resourceReferences" objectName="hookPointElements_jacms_resourceReferences">
+        <s:iterator value="#hookPointElements_jacms_resourceReferences" var="hookPointElement">
+            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+        </s:iterator>
+    </wpsa:hookPoint>
 
-    </s:form>
+</s:form>
 
 </div>

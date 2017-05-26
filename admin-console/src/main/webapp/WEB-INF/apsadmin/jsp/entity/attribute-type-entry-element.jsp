@@ -10,10 +10,7 @@
         </a>
     </li>
     <li><s:if test="null != entityType.typeCode && '' != entityType.typeCode">
-            <a href="<s:url action="initEditEntityType" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param><s:param name="entityTypeCode"><s:property value="entityType.typeCode" /></s:param></s:url>"
-               title="<s:text name="note.goToSomewhere" />: <s:text name="title.entityTypes.editType.edit" />">
-                <s:text name="title.entityTypes.editType.edit" />: <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
-            </a>
+            <s:text name="title.entityTypes.editType.edit" />: <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
         </s:if>
         <s:else>
             <s:text name="%{'title.' + entityManagerName + '.new'}" />

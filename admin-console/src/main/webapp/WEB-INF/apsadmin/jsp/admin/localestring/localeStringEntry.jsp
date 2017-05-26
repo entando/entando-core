@@ -30,18 +30,22 @@
         </span>
     </div>
 </h1>
+<i class="fa fa-asterisk required-icon"></i>
 <div class="text-right">
-    <div class="form-group-separator"></div>
+    <div class="form-group-separator">
+        <s:text name="label.requiredFields" />
+    </div>
 </div>
-<br>
-
+<br />
 <s:form action="save" namespace="/do/LocaleString" cssClass="form-horizontal">
     <s:if test="hasFieldErrors()">
-        <div class="alert alert-danger alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+        <div class="alert alert-danger alert-dismissable fade in">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
                 <span class="pficon pficon-close"></span>
             </button>
-            <strong><s:text name="message.title.FieldErrors" /></strong>
+            <span class="pficon pficon-error-circle-o"></span>
+            <s:text name="message.title.FieldErrors" />
         </div>
     </s:if>
     <p class="sr-only">

@@ -51,15 +51,19 @@ public class PageTreeMenuAction extends PageTreeAction {
 		if (StringUtils.isBlank(pageCode)) {
 			pageCode = this.getAllowedTreeRootNode().getCode();
 		}
-
 		this.setPageCode(pageCode);
 		this.setSelectedNode(pageCode);
-
 		String check = this.checkSelectedNode(pageCode);
 		if (null != check) {
 			return check;
 		}
 		return SUCCESS;
+	}
+	
+	@Override
+	public String buildTree() {
+		this.intro();
+		return super.buildTree();
 	}
 
 	public IPage getCurrentPage() {
@@ -110,13 +114,10 @@ public class PageTreeMenuAction extends PageTreeAction {
 			} else if (type.isUserType()) {
 				//is a user widgets
 				this.addFlavourWidgetType(USER_WIDGETS_CODE, type, mapping);
-			} else //is a core widgets
-			{
-				if (this.getStockWidgetCodes().contains(type.getCode())) {
-					this.addFlavourWidgetType(STOCK_WIDGETS_CODE, type, mapping);
-				} else {
-					this.addFlavourWidgetType(CUSTOM_WIDGETS_CODE, type, mapping);
-				}
+			} else if (this.getStockWidgetCodes().contains(type.getCode())) {
+				this.addFlavourWidgetType(STOCK_WIDGETS_CODE, type, mapping);
+			} else {
+				this.addFlavourWidgetType(CUSTOM_WIDGETS_CODE, type, mapping);
 			}
 		}
 		Collections.sort(pluginCodes);
@@ -179,6 +180,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 	 * @param page The page to check against the current user.
 	 * @return True if the user has can access the given page, false otherwise.
 	 */
+	@Override
 	public boolean isUserAllowed(IPage page) {
 		if (page == null) {
 			return false;
@@ -187,6 +189,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 		return this.isCurrentUserMemberOf(pageGroup);
 	}
 
+	@Override
 	protected String checkSelectedNode(String selectedNode) {
 		if (null == selectedNode || selectedNode.trim().length() == 0) {
 			this.addActionError(this.getText("error.page.noSelection"));
@@ -207,14 +210,8 @@ public class PageTreeMenuAction extends PageTreeAction {
 		}
 		return null;
 	}
-
-	/**
-	 * Return the page given its code.
-	 *
-	 * @param pageCode The code of the requested page.
-	 * @return The page associated to the given code, null if the code is
-	 * unknown.
-	 */
+	
+	@Override
 	public IPage getPage(String pageCode) {
 		return this.getPageManager().getDraftPage(pageCode);
 	}
@@ -257,25 +254,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 	public boolean isInternalServletWidget(String widgetTypeCode) {
 		return this.getInternalServletWidgetCode().equals(widgetTypeCode);
 	}
-
-	/**
-	 * Return the node selected in the tree of pages.
-	 *
-	 * @return The node selected in the tree of pages.
-	 */
-	public String getSelectedNode() {
-		return _selectedNode;
-	}
-
-	/**
-	 * Set a given node in the tree of pages.
-	 *
-	 * @param selectedNode The node selected in the tree of pages.
-	 */
-	public void setSelectedNode(String selectedNode) {
-		this._selectedNode = selectedNode;
-	}
-
+	
 	@Deprecated
 	protected String getStockShowletCodes() {
 		return this.getStockWidgetCodes();
@@ -325,9 +304,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 	public void setWidgetTypeManager(IWidgetTypeManager widgetTypeManager) {
 		this._widgetTypeManager = widgetTypeManager;
 	}
-
-	private String _selectedNode;
-
+	
 	private String _stockWidgetCodes;
 	private String _internalServletWidgetCode;
 

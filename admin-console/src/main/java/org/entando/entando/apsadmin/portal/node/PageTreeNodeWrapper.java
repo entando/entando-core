@@ -18,6 +18,10 @@ import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
 public class PageTreeNodeWrapper extends TreeNodeWrapper {
 
+	public PageTreeNodeWrapper() {
+		super();
+	}
+
 	public PageTreeNodeWrapper(IPage page) {
 		super(page);
 		this._origin = page;
@@ -26,6 +30,11 @@ public class PageTreeNodeWrapper extends TreeNodeWrapper {
 	public PageTreeNodeWrapper(IPage page, String currentLang) {
 		super(page, currentLang);
 		this._origin = page;
+	}
+
+	@Deprecated
+	public IPage getEntity() {
+		return this.getOrigin();
 	}
 
 	public IPage getOrigin() {

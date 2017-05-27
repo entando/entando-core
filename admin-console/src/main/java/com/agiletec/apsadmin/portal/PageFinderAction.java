@@ -206,7 +206,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 				node = this.getPageManager().getDraftRoot();
 				root = new TreeNode();
 				this.fillTreeNode(root, root, node);
-				this.addTreeWrapper(root, root, node);
+				this.addTreeWrapper(root, node);
 			}
 		} catch (Throwable t) {
 			_logger.error("error in getAllowedTreeRootNode", t);
@@ -214,7 +214,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		return root;
 	}
 
-	private void addTreeWrapper(TreeNode currentNode, TreeNode parent, ITreeNode currentTreeNode) {
+	private void addTreeWrapper(TreeNode parent, ITreeNode currentTreeNode) {
 		ITreeNode[] children = currentTreeNode.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			ITreeNode newCurrentTreeNode = children[i];
@@ -222,11 +222,11 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 				TreeNode newNode = new TreeNode();
 				this.fillTreeNode(newNode, parent, newCurrentTreeNode);
 				parent.addChild(newNode);
-				this.addTreeWrapper(newNode, newNode, newCurrentTreeNode);
+				this.addTreeWrapper(newNode, newCurrentTreeNode);
 			} else {
 				TreeNode newNode = new TreeNode();
 				this.fillTreeNode(newNode, parent, newCurrentTreeNode);
-				this.addTreeWrapper(newNode, parent, newCurrentTreeNode);
+				this.addTreeWrapper(parent, newCurrentTreeNode);
 			}
 		}
 	}

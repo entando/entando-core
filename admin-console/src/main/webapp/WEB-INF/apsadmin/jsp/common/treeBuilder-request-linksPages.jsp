@@ -63,12 +63,12 @@
     </td>
     <td>
         <span class="statusField">
-            <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
-            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
-            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
+            <s:if test="%{#currentRoot.getOrigin().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
+            <s:if test="%{#currentRoot.getOrigin().isOnline() && #currentRoot.getOrigin().isChanged()}">&#32;&ne;&#32;Draft</s:if>
+            <s:if test="%{!#currentRoot.getOrigin().isOnline() && !#currentRoot.getOrigin().isChanged()}">Draft</s:if>
         </span>
         </td>
-        <td class="text-center"><s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().getMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
+        <td class="text-center"><s:if test="%{#currentRoot.getOrigin().isOnline() && #currentRoot.getOrigin().getMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
         <td class=" table-view-pf-actions text-center">
             <div class="dropdown dropdown-kebab-pf">
                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -96,14 +96,14 @@
                         <span class="">Delete</span>
                     </wpsf:submit>
                 </li>
-                <s:if test="%{#currentRoot.getEntity().online}">
+                <s:if test="%{#currentRoot.getOrigin().online}">
                 <li>
                     <wpsf:submit action="checkSetOffline" type="button" title="%{getText('page.options.offline')}" cssClass="btn btn-warning" data-toggle="tooltip">
                         <span class=""><s:text name="page.options.offline" /></span>
                     </wpsf:submit>
                 </li>
                 </s:if>
-                <s:if test="%{!#currentRoot.getEntity().online || #currentRoot.getEntity().changed}">
+                <s:if test="%{!#currentRoot.getOrigin().online || #currentRoot.getOrigin().changed}">
                 <li>
                     <wpsf:submit action="checkSetOnline" type="button" title="%{getText('page.options.online')}" cssClass="btn btn-warning" data-toggle="tooltip">
                         <span class=""><s:text name="page.options.online" /></span>

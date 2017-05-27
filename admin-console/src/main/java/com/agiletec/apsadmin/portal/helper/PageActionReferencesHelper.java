@@ -32,11 +32,7 @@ public class PageActionReferencesHelper implements IPageActionReferencesHelper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageActionReferencesHelper.class);
 
-	/**
-	 * 
-	 * @param page
-	 * @param action
-	 */
+	@Override
 	public boolean checkContentsForSetOnline(IPage page, ActionSupport action) {
 		try {
 			for (Widget widget : page.getWidgets()) {

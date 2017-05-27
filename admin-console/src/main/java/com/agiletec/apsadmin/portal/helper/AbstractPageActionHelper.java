@@ -14,7 +14,6 @@
 package com.agiletec.apsadmin.portal.helper;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
@@ -88,35 +87,29 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 	}
 
 	@Override
-	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException {
-		ITreeNode root = null;
-		if (groupCodes.contains(Group.ADMINS_GROUP_NAME)) {
-			root = this.getRoot();
+	public ITreeNode getAllowedTreeRoot(Collection<String> userGroupCodes, boolean alsoFreeViewPages) throws ApsSystemException {
+		PageTreeNodeWrapper root = null;
+		IPage pageRoot = (IPage) this.getRoot();
+		if (userGroupCodes.contains(Group.FREE_GROUP_NAME) || userGroupCodes.contains(Group.ADMINS_GROUP_NAME)
+				|| (alsoFreeViewPages && null != pageRoot.getExtraGroups() && pageRoot.getExtraGroups().contains(Group.FREE_GROUP_NAME))) {
+			root = new PageTreeNodeWrapper(this.getRoot());
 		} else {
-			IPage pageRoot = (IPage) this.getRoot();
-			if (groupCodes.contains(Group.FREE_GROUP_NAME)
-					|| (alsoFreeViewPages && null != pageRoot.getExtraGroups() && pageRoot.getExtraGroups().contains(Group.FREE_GROUP_NAME))) {
-				root = new TreeNode();
-				this.fillTreeNode((TreeNode) root, null, this.getRoot());
-			} else {
-				root = this.getVirtualRoot();
-			}
-			this.addTreeWrapper((TreeNode) root, pageRoot, groupCodes, alsoFreeViewPages);
+			root = this.getVirtualRoot();
 		}
+		this.addTreeWrapper(root, pageRoot, userGroupCodes, alsoFreeViewPages);
 		return root;
 	}
 
-	private void addTreeWrapper(TreeNode currentNode, IPage currentTreeNode, Collection<String> groupCodes, boolean alsoFreeViewPages) {
+	private void addTreeWrapper(PageTreeNodeWrapper currentNode, IPage currentTreeNode, Collection<String> userGroupCodes, boolean alsoFreeViewPages) {
 		IPage[] children = currentTreeNode.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPage newCurrentTreeNode = children[i];
-			if (this.isPageAllowed(newCurrentTreeNode, groupCodes, alsoFreeViewPages)) {
-				TreeNode newNode = new TreeNode();
-				this.fillTreeNode(newNode, currentNode, newCurrentTreeNode);
+			if (this.isPageAllowed(newCurrentTreeNode, userGroupCodes, alsoFreeViewPages)) {
+				PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentTreeNode);
 				currentNode.addChild(newNode);
-				this.addTreeWrapper(newNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
+				this.addTreeWrapper(newNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);
 			} else {
-				this.addTreeWrapper(currentNode, newCurrentTreeNode, groupCodes, alsoFreeViewPages);
+				this.addTreeWrapper(currentNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);
 			}
 		}
 	}
@@ -129,8 +122,8 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 	 *
 	 * @return Il nodo root virtuale.
 	 */
-	private TreeNode getVirtualRoot() {
-		TreeNode virtualRoot = new TreeNode();
+	private PageTreeNodeWrapper getVirtualRoot() {
+		PageTreeNodeWrapper virtualRoot = new PageTreeNodeWrapper();
 		virtualRoot.setCode(AbstractPortalAction.VIRTUAL_ROOT_CODE);
 		List<Lang> langs = this.getLangManager().getLangs();
 		for (int i = 0; i < langs.size(); i++) {

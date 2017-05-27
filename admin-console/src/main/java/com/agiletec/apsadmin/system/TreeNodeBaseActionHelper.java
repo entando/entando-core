@@ -22,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.ApsProperties;
 
 /**
  * Classe base per gli helper che gestiscono le operazioni su oggetti alberi.
@@ -153,13 +151,13 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	public TreeNodeWrapper getShowableTree(Set<String> treeNodesToOpen, ITreeNode fullTree, Collection<String> groupCodes) throws ApsSystemException {
 		if (null == treeNodesToOpen || treeNodesToOpen.isEmpty()) {
 			_logger.warn("No selected nodes");
-			return this.buildWrapper(fullTree);//new TreeNodeWrapper(fullTree);
+			return this.buildWrapper(fullTree);
 		}
 		TreeNodeWrapper root = null;
 		try {
 			Set<String> nodesToShow = new HashSet<String>();
 			this.buildCheckNodes(treeNodesToOpen, nodesToShow, groupCodes);
-			root = this.buildWrapper(fullTree);//new TreeNodeWrapper(fullTree);
+			root = this.buildWrapper(fullTree);
 			root.setParent(root);
 			this.builShowableTree(root, fullTree, nodesToShow);
 		} catch (Throwable t) {
@@ -219,46 +217,21 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	@Override
 	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes) throws ApsSystemException {
 		ITreeNode currentRoot = this.getRoot();
-		TreeNode/*Wrapper*/ root = /*this.buildWrapper(currentRoot);//*/ new TreeNode();
-		this.fillTreeNode(root, root, currentRoot);
+		TreeNodeWrapper root = this.buildWrapper(currentRoot);
 		this.addTreeWrapper(root, currentRoot);
 		return root;
 	}
 
-	private void addTreeWrapper(TreeNode/*Wrapper*/ currentNode, ITreeNode currentTreeNode) {
+	private void addTreeWrapper(TreeNodeWrapper currentNode, ITreeNode currentTreeNode) {
 		ITreeNode[] children = currentTreeNode.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			ITreeNode newCurrentTreeNode = children[i];
-			TreeNode/*Wrapper*/ newNode = /*this.buildWrapper(newCurrentTreeNode);*/ new TreeNode();
-			this.fillTreeNode(newNode, currentNode, newCurrentTreeNode);
+			TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);
 			currentNode.addChild(newNode);
 			this.addTreeWrapper(newNode, newCurrentTreeNode);
 		}
 	}
-
-	/*
-	 * Valorizza un nodo in base alle informazioni specificate..
-	 * @param nodeToValue Il nodo da valorizzare.
-	 * @param parent Il nodo parente.
-	 * @param realNode Il nodo dal quela estrarre le info.
-	 */
-	protected void fillTreeNode(TreeNode nodeToValue, TreeNode parent, ITreeNode realNode) {
-		nodeToValue.setCode(realNode.getCode());
-		if (null == parent) {
-			nodeToValue.setParent(nodeToValue);
-		} else {
-			nodeToValue.setParent(parent);
-		}
-		ApsProperties titles = realNode.getTitles();
-		Set<Object> codes = titles.keySet();
-		Iterator<Object> iterKey = codes.iterator();
-		while (iterKey.hasNext()) {
-			String key = (String) iterKey.next();
-			String title = titles.getProperty(key);
-			nodeToValue.getTitles().put(key, title);
-		}
-	}
-
+	
 	protected TreeNodeWrapper buildWrapper(ITreeNode treeNode) {
 		return new TreeNodeWrapper(treeNode);
 	}

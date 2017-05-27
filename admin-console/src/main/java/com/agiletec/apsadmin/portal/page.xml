@@ -474,8 +474,7 @@
                 <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>
-
-
+		
         <action name="search" class="pageFinderAction">
             <result name="input" type="tiles">admin.Page.searchResult</result>
             <result type="tiles">admin.Page.searchResult</result>
@@ -483,10 +482,17 @@
                 <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>
+		
+		<action name="openCloseTreeResultNode" class="pageFinderAction" method="buildTree">
+            <result name="input" type="tiles">admin.Page.searchResult</result>
+            <result type="tiles">admin.Page.searchResult</result>
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="requestAuth.requiredPermission">managePages</param>
+            </interceptor-ref>
+        </action>
 
         <!-- ######### INIZIO OPERAZIONI CONFIGURAZIONE FRAME PAGINA ######### -->
-
-
+		
         <action name="editFrame" class="pageConfigAction" method="editFrame">
             <result name="configureSpecialWidget" type="chain">
                 <param name="namespace">/do/Page/SpecialWidget</param>

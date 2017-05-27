@@ -151,7 +151,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	public TreeNodeWrapper getShowableTree(Set<String> treeNodesToOpen, ITreeNode fullTree, Collection<String> groupCodes) throws ApsSystemException {
 		if (null == treeNodesToOpen || treeNodesToOpen.isEmpty()) {
 			_logger.warn("No selected nodes");
-			return this.buildWrapper(fullTree);
+			return this.buildWrapper(fullTree);//new TreeNodeWrapper(fullTree);
 		}
 		TreeNodeWrapper root = null;
 		try {
@@ -196,7 +196,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 			ITreeNode[] children = currentTreeNode.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				ITreeNode newCurrentTreeNode = children[i];
-				TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);//new TreeNodeWrapper(newCurrentTreeNode);
+				TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);
 				newNode.setParent(currentNode);
 				currentNode.addChild(newNode);
 				this.builShowableTree(newNode, newCurrentTreeNode, checkNodes);

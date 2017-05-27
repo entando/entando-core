@@ -28,15 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ITreeAction;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
+import org.entando.entando.apsadmin.portal.node.PageTreeNodeWrapper;
 
 /**
  * This action class contains all the elements currently use to perform searches
@@ -80,9 +79,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 					PageJO pageJO = this.buildLastUpdateResponseItem(page);
 					response.add(pageJO);
 				}
-
 			}
-
 		} catch (Throwable t) {
 			_logger.error("Error loading pagesStatus", t);
 			throw new RuntimeException("Error loading pagesStatus", t);
@@ -92,7 +89,6 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 
 	protected PageJO buildLastUpdateResponseItem(IPage page) {
 		PageJO pageJO = new PageJO();
-		pageJO = new PageJO();
 		pageJO.setCode(page.getCode());
 		pageJO.setRoot(page.isRoot());
 		pageJO.setOnline(page.isOnline());
@@ -103,7 +99,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		return pageJO;
 	}
 
-	public List<IPage> getPagesFound() {
+	public List<IPage> searchPages() {
 		List<IPage> result = null;
 		try {
 			List<String> allowedGroupCodes = this.getAllowedGroupCodes();
@@ -125,6 +121,11 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 			throw new RuntimeException("Error on searching pages", t);
 		}
 		return result;
+	}
+
+	@Deprecated
+	public List<IPage> getPagesFound() {
+		return this.searchPages();
 	}
 
 	private List<String> getAllowedGroupCodes() {
@@ -169,12 +170,13 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	public String buildTree() {
 		Set<String> targets = this.getTreeNodesToOpen();
 		try {
+			this.searchPages();
 			String marker = this.getTreeNodeActionMarkerCode();
 			if (null != marker) {
 				if (marker.equalsIgnoreCase(ACTION_MARKER_OPEN)) {
-					targets = this.getTreeHelper().checkTargetNodes(this.getTargetNode(), targets, this.getResultCodes());
+					targets = this.getTreeHelper().checkTargetNodes(this.getTargetNode(), targets, this.getActualAllowedGroupCodes());
 				} else if (marker.equalsIgnoreCase(ACTION_MARKER_CLOSE)) {
-					targets = this.getTreeHelper().checkTargetNodesOnClosing(this.getTargetNode(), targets, this.getResultCodes());
+					targets = this.getTreeHelper().checkTargetNodesOnClosing(this.getTargetNode(), targets, this.getActualAllowedGroupCodes());
 				}
 			}
 			this.setTreeNodesToOpen(targets);
@@ -189,8 +191,9 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	public ITreeNode getShowableTree() {
 		ITreeNode node = null;
 		try {
+			this.searchPages();
 			ITreeNode allowedTree = this.getAllowedTreeRootNode();
-			node = this.getTreeHelper().getShowableTree(this.getTreeNodesToOpen(), allowedTree, this.getResultCodes());
+			node = this.getTreeHelper().getShowableTree(this.getTreeNodesToOpen(), allowedTree, this.getActualAllowedGroupCodes());
 		} catch (Throwable t) {
 			_logger.error("error in getShowableTree", t);
 		}
@@ -199,13 +202,11 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 
 	@Override
 	public ITreeNode getAllowedTreeRootNode() {
-		ITreeNode node = null;
-		TreeNode root = null;
+		PageTreeNodeWrapper root = null;
 		try {
 			if (null != this.getResultCodes() && this.getResultCodes().size() > 0) {
-				node = this.getPageManager().getDraftRoot();
-				root = new TreeNode();
-				this.fillTreeNode(root, root, node);
+				IPage node = this.getPageManager().getDraftRoot();
+				root = new PageTreeNodeWrapper(node);
 				this.addTreeWrapper(root, node);
 			}
 		} catch (Throwable t) {
@@ -214,49 +215,19 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		return root;
 	}
 
-	private void addTreeWrapper(TreeNode parent, ITreeNode currentTreeNode) {
-		ITreeNode[] children = currentTreeNode.getChildren();
+	private void addTreeWrapper(PageTreeNodeWrapper parent, IPage currentTreeNode) {
+		IPage[] children = currentTreeNode.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			ITreeNode newCurrentTreeNode = children[i];
+			IPage newCurrentTreeNode = children[i];
+			PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentTreeNode);
 			if (this.getResultCodes().contains(newCurrentTreeNode.getCode())) {
-				TreeNode newNode = new TreeNode();
-				this.fillTreeNode(newNode, parent, newCurrentTreeNode);
 				parent.addChild(newNode);
 				this.addTreeWrapper(newNode, newCurrentTreeNode);
 			} else {
-				TreeNode newNode = new TreeNode();
-				this.fillTreeNode(newNode, parent, newCurrentTreeNode);
 				this.addTreeWrapper(parent, newCurrentTreeNode);
 			}
 		}
 	}
-
-	/**
-	 * Valorizza un nodo in base alle informazioni specificate..
-	 *
-	 * @param nodeToValue Il nodo da valorizzare.
-	 * @param parent Il nodo parente.
-	 * @param realNode Il nodo dal quela estrarre le info.
-	 */
-	private void fillTreeNode(TreeNode nodeToValue, TreeNode parent, ITreeNode realNode) {
-		nodeToValue.setCode(realNode.getCode());
-		if (null == parent) {
-			nodeToValue.setParent(nodeToValue);
-		} else {
-			nodeToValue.setParent(parent);
-		}
-		ApsProperties titles = realNode.getTitles();
-		Set<Object> codes = titles.keySet();
-		Iterator<Object> iterKey = codes.iterator();
-		while (iterKey.hasNext()) {
-			String key = (String) iterKey.next();
-			String title = titles.getProperty(key);
-			nodeToValue.getTitles().put(key, title);
-		}
-	}
-
-	private String _pageCodeToken;
-	private IPageActionHelper _pageActionHelper;
 
 	protected Collection<String> getResultCodes() {
 		return _resultNodes;
@@ -270,24 +241,24 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		return _targetNode;
 	}
 
-	public void setTargetNode(String _targetNode) {
-		this._targetNode = _targetNode;
+	public void setTargetNode(String targetNode) {
+		this._targetNode = targetNode;
 	}
 
 	public Set<String> getTreeNodesToOpen() {
 		return _treeNodesToOpen;
 	}
 
-	public void setTreeNodesToOpen(Set<String> _treeNodesToOpen) {
-		this._treeNodesToOpen = _treeNodesToOpen;
+	public void setTreeNodesToOpen(Set<String> treeNodesToOpen) {
+		this._treeNodesToOpen = treeNodesToOpen;
 	}
 
 	public String getTreeNodeActionMarkerCode() {
 		return _treeNodeActionMarkerCode;
 	}
 
-	public void setTreeNodeActionMarkerCode(String _treeNodeActionMarkerCode) {
-		this._treeNodeActionMarkerCode = _treeNodeActionMarkerCode;
+	public void setTreeNodeActionMarkerCode(String treeNodeActionMarkerCode) {
+		this._treeNodeActionMarkerCode = treeNodeActionMarkerCode;
 	}
 
 	public String getCopyingPageCode() {
@@ -298,20 +269,20 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		return _firstNode;
 	}
 
-	public void setFirstNode(ITreeNode _firstNode) {
-		this._firstNode = _firstNode;
+	public void setFirstNode(ITreeNode firstNode) {
+		this._firstNode = firstNode;
 	}
 
-	public void setCopyingPageCode(String _copyingPageCode) {
-		this._copyingPageCode = _copyingPageCode;
+	public void setCopyingPageCode(String copyingPageCode) {
+		this._copyingPageCode = copyingPageCode;
 	}
 
 	public ITreeNodeBaseActionHelper getTreeHelper() {
 		return _treeHelper;
 	}
 
-	public void setTreeHelper(ITreeNodeBaseActionHelper _treeHelper) {
-		this._treeHelper = _treeHelper;
+	public void setTreeHelper(ITreeNodeBaseActionHelper treeHelper) {
+		this._treeHelper = treeHelper;
 	}
 
 	public int getLastUpdateResponseSize() {
@@ -321,6 +292,9 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	public void setLastUpdateResponseSize(int lastUpdateResponseSize) {
 		this._lastUpdateResponseSize = lastUpdateResponseSize;
 	}
+
+	private String _pageCodeToken;
+	private IPageActionHelper _pageActionHelper;
 
 	private String _targetNode;
 	private ITreeNode _firstNode;

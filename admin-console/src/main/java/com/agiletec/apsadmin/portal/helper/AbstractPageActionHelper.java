@@ -227,7 +227,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 			return new PageTreeNodeWrapper((IPage) treeNode);
 		} else {
 			if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(treeNode.getCode())) {
-				return (PageTreeNodeWrapper) treeNode;
+				return this.getVirtualRoot();
 			}
 			IPage page = this.getPage(treeNode.getCode());
 			return new PageTreeNodeWrapper(page);

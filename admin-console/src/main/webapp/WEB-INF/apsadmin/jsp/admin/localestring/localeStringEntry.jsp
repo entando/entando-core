@@ -45,7 +45,7 @@
                 <span class="pficon pficon-close"></span>
             </button>
             <span class="pficon pficon-error-circle-o"></span>
-            <s:text name="message.title.FieldErrors" />
+            <strong><s:text name="message.title.FieldErrors" /></strong>
         </div>
     </s:if>
     <p class="sr-only">
@@ -79,7 +79,7 @@
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
             <label class="col-sm-2 control-label" for="lang<s:property value="#l.code"/>">
                 <%-- (<s:property value="#l.code" />)&#32;<s:text name="label.description" /> --%>
-                <span title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></span>&#32;<span lang="<s:property value="#l.code" />"><s:text name="label.name"/></span>*
+                <span title="<s:property value="#l.descr" />"><span class="label label-info" ><s:property value="#l.code" /></span></span>&#32;<span lang="<s:property value="#l.code" />"><s:text name="label.name"/></span>*
             </label>
             <div class="col-sm-10">
                 <s:textarea cols="50" rows="3" name="%{code}" id="%{'lang'+code}" value="%{labels[#l.code]}"

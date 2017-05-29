@@ -51,7 +51,7 @@
                 <span class="pficon pficon-close"></span>
             </button>
             <span class="pficon pficon-error-circle-o"></span>
-            <s:text name="message.title.FieldErrors"/>
+            <strong><s:text name="message.title.FieldErrors"/></strong>
             <ul>
                 <s:iterator value="fieldErrors">
                     <s:iterator value="value">
@@ -121,13 +121,7 @@
                 </div>
             </div>
         </fieldset>
-        <%--
-                hookpoint for meta-info and the like
-                allowed Plugins: jacms (but so far we have not a check on this)
-
-            Based on the Plugin Pattern, we can calculate a proper path for this inclusion
-            /WEB-INF/plugins/<plugin_code>/apsadmin/jsp/entity/include/entity-type-entry.jsp
-        --%>
+     
         <s:if test="null != #hookpoint_plugin_code">
             <s:include value="%{'/WEB-INF/plugins/' + #hookpoint_plugin_code + '/apsadmin/jsp/entity/include/entity-type-entry.jsp'}"/>
         </s:if>

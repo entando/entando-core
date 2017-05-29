@@ -36,9 +36,9 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 		try {
 			String marker = this.getTreeNodeActionMarkerCode();
 			if (null != marker) {
-				if (null != marker && marker.equalsIgnoreCase(ACTION_MARKER_OPEN)) {
+				if (marker.equalsIgnoreCase(ACTION_MARKER_OPEN)) {
 					targets = this.getTreeHelper().checkTargetNodes(this.getTargetNode(), targets, this.getNodeGroupCodes());
-				} else if (null != marker && marker.equalsIgnoreCase(ACTION_MARKER_CLOSE)) {
+				} else if (marker.equalsIgnoreCase(ACTION_MARKER_CLOSE)) {
 					targets = this.getTreeHelper().checkTargetNodesOnClosing(this.getTargetNode(), targets, this.getNodeGroupCodes());
 				}
 			}

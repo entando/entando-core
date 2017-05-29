@@ -10,7 +10,7 @@
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
-        <td class="treegrid-node pointer">
+	<td class="treegrid-node pointer word-wrap">
         <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
@@ -47,9 +47,9 @@
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;<span class="text-muted icon fa fa-lock"></span></s:if>
             </label>
 
-        </td>
-        <td>
-            <div class="moveButtons hidden">
+	</td>
+	<td class="moveButtons-right-container" style="width:40px">
+        <div class="moveButtons hidden">
             <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info" data-toggle="tooltip">
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </wpsf:submit>
@@ -60,7 +60,14 @@
                 <i class="fa fa-caret-down" aria-hidden="true"></i>
             </wpsf:submit>
         </div>
-
+	</td>
+    <td style="width:20px">
+        <span class="statusField">
+            <s:if test="%{!#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i></s:if>
+            <s:elseif test="%{#currentRoot.getEntity().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true" title="Online&#32;&ne;&#32;Draft"></i></s:elseif>
+            <s:else><i class="fa fa-circle green" aria-hidden="true" title="Online"></i></s:else>
+        </span>
+    </td>
     <td class=" table-view-pf-actions">
         <div class="dropdown dropdown-kebab-pf">
             <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -68,7 +75,7 @@
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                 <li>
                     <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
-                        <span class="">Edit </span>
+                        <span class="">Edit</span>
                     </wpsf:submit>
                 </li>
                 <li><wpsf:submit action="configure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
@@ -111,6 +118,6 @@
 <s:if test="#currentRoot.children.length > 0">
     <s:iterator value="#currentRoot.children" var="node">
         <s:set var="currentRoot" value="#node" />
-        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
+        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
     </s:iterator>
 </s:if>

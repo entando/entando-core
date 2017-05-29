@@ -48,12 +48,14 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecor
 public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageAction.class);
-	
+
 	@Override
 	public void validate() {
 		super.validate();
 		try {
-			if (this.getStrutsAction() != ApsAdminSystemConstants.EDIT) return;
+			if (this.getStrutsAction() != ApsAdminSystemConstants.EDIT) {
+				return;
+			}
 			IContentManager contentManager = (IContentManager) ApsWebApplicationUtils.getBean(JacmsSystemConstants.CONTENT_MANAGER, this.getRequest());
 			IPage page = this.createTempPage();
 			Collection<Content> contents = this.getPublishedContents(this.getPageCode());
@@ -64,7 +66,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 					if (null != content.getGroups()) {
 						contentGroups.addAll(content.getGroups());
 					}
-					this.addFieldError("extraGroups", this.getText("error.page.extraGoups.invalidGroupsForPublishedContent", 
+					this.addFieldError("extraGroups", this.getText("error.page.extraGoups.invalidGroupsForPublishedContent",
 							new String[]{contentGroups.toString(), content.getId(), content.getDescription()}));
 				}
 			}
@@ -74,7 +76,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 					String contentId = linkingContentsVo.get(i);
 					Content linkingContent = contentManager.loadContent(contentId, true);
 					if (null != linkingContent && !CmsPageUtil.isPageLinkableByContentDraft(page, linkingContent)) {
-						this.addFieldError("extraGroups", this.getText("error.page.extraGoups.pageHasToBeFree", 
+						this.addFieldError("extraGroups", this.getText("error.page.extraGoups.pageHasToBeFree",
 								new String[]{linkingContent.getId(), linkingContent.getDescription()}));
 					}
 				}
@@ -84,47 +86,46 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			throw new RuntimeException("Error on validate page", t);
 		}
 	}
-	
+
 	private IPage createTempPage() {
 		IPage pageOnEdit = (Page) this.getPage(this.getPageCode());
 		Page page = new Page();
 		page.setGroup(this.getGroup());
 		PageMetadata metadata = new PageMetadata();
 		metadata.setExtraGroups(this.getExtraGroups());
-		page.setOnlineMetadata(metadata);
-		page.setDraftMetadata(metadata);
-		page.setOnlineWidgets(pageOnEdit.getOnlineWidgets());
-		page.setDraftWidgets(pageOnEdit.getDraftWidgets());
+		page.setMetadata(metadata);
+		page.setWidgets(pageOnEdit.getWidgets());
 		page.setCode(this.getPageCode());
 		return page;
 	}
-	
+
 	/**
 	 * Check if a page che publish a single content.
+	 *
 	 * @param page The page to check
 	 * @return True if the page can publish a free content, else false.
 	 */
 	public boolean isFreeViewerPage(IPage page) {
 		return CmsPageUtil.isDraftFreeViewerPage(page, this.getViewerWidgetCode());
 	}
-	
+
 	@Override
 	protected IPage buildNewPage() throws ApsSystemException {
 		IPage page = super.buildNewPage();
 		this.checkViewerPage(page);
 		return page;
 	}
-	
+
 	@Override
 	protected IPage getUpdatedPage() throws ApsSystemException {
 		IPage page = super.getUpdatedPage();
 		this.checkViewerPage(page);
 		return page;
 	}
-	
+
 	protected void checkViewerPage(IPage page) {
-		int mainFrame = page.getDraftMetadata().getModel().getMainFrame();
-		if (this.isViewerPage() && mainFrame>-1) {
+		int mainFrame = page.getMetadata().getModel().getMainFrame();
+		if (this.isViewerPage() && mainFrame > -1) {
 			IWidgetTypeManager showletTypeManager = (IWidgetTypeManager) ApsWebApplicationUtils.getBean(SystemConstants.WIDGET_TYPE_MANAGER, this.getRequest());
 			Widget viewer = new Widget();
 			viewer.setConfig(new ApsProperties());
@@ -133,18 +134,19 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 				throw new RuntimeException("Widget 'Contenuto Singolo' assente o non valida : Codice " + this.getViewerWidgetCode());
 			}
 			viewer.setType(type);
-			Widget[] widgets = page.getDraftWidgets();
+			Widget[] widgets = page.getWidgets();
 			widgets[mainFrame] = viewer;
 		}
 	}
-	
+
 	public Collection<Content> getPublishedContents(String pageCode) {
 		Set<Content> contents = new HashSet<Content>();
 		try {
-			IPage page = this.getPage(pageCode);
-			if (null == page) return contents;
-			this.addPublishedContents(page.getOnlineWidgets(), contents);
-			this.addPublishedContents(page.getDraftWidgets(), contents);
+			IPage page = this.getOnlinePage(pageCode);
+			if (null == page) {
+				return contents;
+			}
+			this.addPublishedContents(page.getWidgets(), contents);
 		} catch (Throwable t) {
 			String msg = "Error extracting published contents on page '" + pageCode + "'";
 			_logger.error("Error extracting published contents on page '{}'", pageCode, t);
@@ -152,14 +154,13 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		}
 		return contents;
 	}
-	
+
 	public Collection<Content> getOnlinePublishedContents(String pageCode) {
 		Collection<Content> contents = new HashSet<Content>();
 		try {
-			IPage page = this.getPage(pageCode);
+			IPage page = this.getOnlinePage(pageCode);
 			if (page != null) {
-				this.addPublishedContents(page.getOnlineWidgets(), contents);
-				this.addPublishedContents(page.getDraftWidgets(), contents);
+				this.addPublishedContents(page.getWidgets(), contents);
 			}
 		} catch (Throwable t) {
 			String msg = "Error extracting published contents on page '" + pageCode + "'";
@@ -168,7 +169,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		}
 		return contents;
 	}
-	
+
 	protected void addPublishedContents(Widget[] widgets, Collection<Content> contents) {
 		try {
 			if (widgets != null) {
@@ -197,7 +198,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			throw new RuntimeException(msg, t);
 		}
 	}
-	
+
 	private void addContent(Collection<Content> contents, String contentId) {
 		try {
 			if (null != contentId) {
@@ -210,7 +211,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 			_logger.error("Error extracting published content '{}'", contentId, t);
 		}
 	}
-	
+
 	public List<ContentRecordVO> getReferencingContents(String pageCode) {
 		List<ContentRecordVO> referencingContents = null;
 		try {
@@ -219,7 +220,9 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 				referencingContents = new ArrayList<ContentRecordVO>();
 				for (int i = 0; i < referencingContentsId.size(); i++) {
 					ContentRecordVO contentVo = this.getContentManager().loadContentVO(referencingContentsId.get(i));
-					if (null != contentVo) referencingContents.add(contentVo);
+					if (null != contentVo) {
+						referencingContents.add(contentVo);
+					}
 				}
 			}
 		} catch (Throwable t) {
@@ -229,7 +232,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		}
 		return referencingContents;
 	}
-	
+
 	public List<String> getReferencingContentsId(String pageCode) {
 		List<String> referencingContentsId = null;
 		try {
@@ -241,40 +244,44 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 		}
 		return referencingContentsId;
 	}
-	
+
 	public boolean isViewerPage() {
 		return _viewerPage;
 	}
+
 	public void setViewerPage(boolean viewerPage) {
 		this._viewerPage = viewerPage;
 	}
-	
+
 	@Deprecated
 	protected String getViewerShowletCode() {
 		return this.getViewerWidgetCode();
 	}
+
 	@Deprecated
 	public void setViewerShowletCode(String viewerShowletCode) {
 		this.setViewerWidgetCode(viewerShowletCode);
 	}
-	
+
 	protected String getViewerWidgetCode() {
 		return _viewerWidgetCode;
 	}
+
 	public void setViewerWidgetCode(String viewerWidgetCode) {
 		this._viewerWidgetCode = viewerWidgetCode;
 	}
-	
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
+
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
 	private boolean _viewerPage;
 	private String _viewerWidgetCode;
-	
+
 	private IContentManager _contentManager;
-	
+
 }

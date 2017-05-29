@@ -29,12 +29,6 @@
             <li><s:text name="message.note.resolveReferences" />:</li>
         </ul>
     </div>
-    <!--    <div class="message message_error">
-            <h2><s:text name="message.title.ActionErrors" /></h2>
-            <p><s:text name="message.note.resolveReferences" />:</p>
-
-        </div>-->
-
     <s:include value="/WEB-INF/apsadmin/jsp/user/role/include/roleInfo-references.jsp" />
 
 </div>

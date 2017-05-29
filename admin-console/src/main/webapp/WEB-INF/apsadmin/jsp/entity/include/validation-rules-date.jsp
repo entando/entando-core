@@ -9,8 +9,6 @@
     <div class="form-group">
 
         <label class="col-sm-2 control-label" for="rangeStartDate_cal"><s:text name="note.range.from" />
-            <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="to be inserted   " data-original-title="">
-                <span class="fa fa-info-circle"></span></a>
         </label>
         <div class="col-sm-3">
             <s:date name="rangeStartDate" format="dd/MM/yyyy" var="rangeStartDateValue" />
@@ -22,10 +20,9 @@
     <s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
         <div class="form-group">
             <label class="col-sm-2 control-label" for="rangeStartDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.range.from.attribute" />:
-                <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="to be inserted   " data-original-title="">
             </label>
             <div class="col-sm-3">
-                <wpsf:select name="rangeStartDateAttribute" id="rangeStartDateAttribute" 
+                <wpsf:select name="rangeStartDateAttribute" id="rangeStartDateAttribute"
                              list="#sameAttributesList" headerKey="" headerValue="%{getText('label.none')}" listKey="name" listValue="name" cssClass=" form-control bootstrap-datepicker"/>
             </div>
         </div>
@@ -33,8 +30,6 @@
 
     <div class="form-group">
         <label class="col-sm-2 control-label" for="rangeEndDate_cal"><s:text name="note.range.to" />
-            <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="to be inserted   " data-original-title="">
-                <span class="fa fa-info-circle"></span></a>
         </label>
         <div class="col-sm-3">
             <s:date name="rangeEndDate" format="dd/MM/yyyy" var="rangeEndDateValue" />
@@ -45,7 +40,7 @@
     <s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
         <div class="form-group">
             <label for="rangeEndDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.range.to.attribute" />:</label>
-            <wpsf:select name="rangeEndDateAttribute" id="rangeEndDateAttribute" 
+            <wpsf:select name="rangeEndDateAttribute" id="rangeEndDateAttribute"
                          list="#sameAttributesList" headerKey="" headerValue="%{getText('label.none')}" listKey="name" listValue="name" cssClass=" form-control bootstrap-datepicker" />
         </div>
     </div>
@@ -53,8 +48,6 @@
 
 <div class="form-group">
     <label class="col-sm-2 control-label" for="equalDate_cal"><s:text name="note.equals.to" />
-        <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="to be inserted   " data-original-title="">
-            <span class="fa fa-info-circle"></span></a>
     </label>
     <div class="col-sm-3">
         <s:date name="equalDate" format="dd/MM/yyyy" var="equalDateValue" />
@@ -64,9 +57,9 @@
 </div>
 <s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
     <div class="form-group">
-        <label class="col-sm-2 control-label" for="equalDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.equals.to.attribute" />:</label>	
+        <label class="col-sm-2 control-label" for="equalDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.equals.to.attribute" />:</label>
         <div class="col-sm-3">
-            <wpsf:select name="equalDateAttribute" id="equalDateAttribute" 
+            <wpsf:select name="equalDateAttribute" id="equalDateAttribute"
                          list="#sameAttributesList" headerKey="" headerValue="%{getText('label.none')}" listKey="name" listValue="name" cssClass=" form-control bootstrap-datepicker" />
         </div>
     </div>

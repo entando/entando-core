@@ -2,37 +2,41 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li>
+        <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
+    </li>
     <li><a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.entityAdmin.manager" />&#32;<s:property value="entityManagerName" />">
             <s:text name="%{'title.' + entityManagerName + '.management'}" />
         </a>
     </li>
-
-    <li class="page-title-container">
-        <s:if test="strutsAction == 2">
-            <a href="<s:url action="initEditEntityType" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param><s:param name="entityTypeCode"><s:property value="entityType.typeCode" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.entityTypes.editType.edit" />">
-            </s:if>
-            <s:text name="title.entityTypes.editType.edit" />: 
-            <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
-            <s:if test="strutsAction == 2">
-            </a>
+    <li><s:if test="null != entityType.typeCode && '' != entityType.typeCode">
+            <s:text name="title.entityTypes.editType.edit" />: <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
         </s:if>
+        <s:else>
+            <s:text name="%{'title.' + entityManagerName + '.new'}" />
+        </s:else>
     </li>
+    <s:if test="null != listAttribute.name">
+        <li>
+            <a href="<s:url action="editAttribute" namespace="/do/Entity/Attribute"><s:param name="attributeName"><s:property value="listAttribute.name" /></s:param></s:url>">
+                <s:text name="title.entityTypes.editType.edit" />: Attribute - <s:property value="listAttribute.name" />
+            </a>
+        </li>
+    </s:if>
+    <s:else>
+        <li><s:text
+                name="title.attribute.new" /></li>
+        </s:else>
+    <li class="page-title-container"><s:property value="listAttribute.type" /></li>
 </ol>
 
 
 <h1 class="page-title-container">
-    <s:if test="strutsAction == 2">
-        <a href="<s:url action="initEditEntityType" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param><s:param name="entityTypeCode"><s:property value="entityType.typeCode" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.entityTypes.editType.edit" />">
-        </s:if>
-        <s:text name="title.entityTypes.editType.edit" />: 
-        <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
-        <s:if test="strutsAction == 2">
-        </a>
-    </s:if>
+    <s:text name="title.entityTypes.editType.edit" />: <s:property value="listAttribute.type" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="%{'page.' + entityManagerName + '.help'}"/>" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
-</h1>    
+</h1>
 
 <div class="text-right">
     <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
@@ -67,7 +71,7 @@
                         </s:iterator>
                 </ul>
             </div>
-        </s:if>	
+        </s:if>
 
         <p class="sr-only">
             <wpsf:hidden name="attributeName"/>
@@ -81,7 +85,7 @@
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="attributeTypeCode"><s:text name="label.type" />:</label>
-                   
+
                     <wpsf:textfield id="attributeTypeCode" name="attributeTypeCode" value="%{attributeTypeCode}" disabled="true" cssClass="form-control" />
                 </div>
 

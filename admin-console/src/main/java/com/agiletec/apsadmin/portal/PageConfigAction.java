@@ -39,6 +39,7 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 
 /**
  * Main action class for the pages configuration.
+ *
  * @author E.Santoboni
  */
 public class PageConfigAction extends AbstractPortalAction implements ServletResponseAware {
@@ -50,7 +51,9 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		this.setPageCode(pageCode);
 		this.setSelectedNode(pageCode);
 		String check = this.checkSelectedNode(pageCode);
-		if (null != check) return check;
+		if (null != check) {
+			return check;
+		}
 		return SUCCESS;
 	}
 
@@ -60,7 +63,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			if (null != result) {
 				return result;
 			}
-			Widget widget = this.getCurrentPage().getDraftWidgets()[this.getFrame()];// can be null
+			Widget widget = this.getCurrentPage().getWidgets()[this.getFrame()];// can be null
 			this.setWidget(widget);
 			if (widget != null) {
 				WidgetType widgetType = widget.getType();
@@ -87,12 +90,14 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String joinWidget() {
 		try {
 			String result = this.checkBaseParams();
-			if (null != result) return result;
+			if (null != result) {
+				return result;
+			}
 			if (null != this.getWidgetTypeCode() && this.getWidgetTypeCode().length() == 0) {
 				this.addActionError(this.getText("error.page.widgetTypeCodeUnknown"));
 				return INPUT;
 			}
-			_logger.debug("code={}, pageCode={}, frame={}" + this.getWidgetTypeCode(),this.getPageCode() ,this.getFrame());
+			_logger.debug("code={}, pageCode={}, frame={}" + this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
 			WidgetType widgetType = this.getShowletType(this.getWidgetTypeCode());
 			if (null == widgetType) {
 				this.addActionError(this.getText("error.page.widgetTypeCodeUnknown"));
@@ -117,19 +122,21 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String joinWidgetJson() {
 		try {
 			String result = this.checkBaseParams();
-			if (null != result) return result;
-			
+			if (null != result) {
+				return result;
+			}
+
 			IPage page = this.getPage(this.getPageCode());
-			if (null != page.getDraftWidgets()[this.getFrame()]) {
+			if (null != page.getWidgets()[this.getFrame()]) {
 				this.addActionError(this.getText("error.page.join.frameNotEmpty"));
 				return "pageTree";
 			}
-			
+
 			if (null != this.getWidgetTypeCode() && this.getWidgetTypeCode().length() == 0) {
 				this.addActionError(this.getText("error.page.widgetTypeCodeUnknown"));
 				return INPUT;
 			}
-			_logger.debug("code={}, pageCode={}, frame={}" + this.getWidgetTypeCode(),this.getPageCode() ,this.getFrame());
+			_logger.debug("code={}, pageCode={}, frame={}" + this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
 			WidgetType widgetType = this.getShowletType(this.getWidgetTypeCode());
 			if (null == widgetType) {
 				this.addActionError(this.getText("error.page.widgetTypeCodeUnknown"));
@@ -153,14 +160,16 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 
 	public JoinWidgetResponse getJoinWidgetResponse() {
 		IPage page = null;
+		IPage onlinePage = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
 			page = this.getPage(this.getPageCode());
+			onlinePage = this.getOnlinePage(this.getPageCode());
 		}
-		JoinWidgetResponse response = new JoinWidgetResponse(this, page);
+		JoinWidgetResponse response = new JoinWidgetResponse(this, page, onlinePage);
 		if (page != null && StringUtils.isNotBlank(this.getWidgetAction())) {
 			StringBuffer url = new StringBuffer("/do/Page/SpecialWidget/");
 			url.append(this.getWidgetAction()).append("?");
-			String[] params = new String[]{"pageCode="+ this.getPageCode(), "widgetTypeCode="+ this.getWidgetTypeCode(), "frame="+ this.getFrame()};
+			String[] params = new String[]{"pageCode=" + this.getPageCode(), "widgetTypeCode=" + this.getWidgetTypeCode(), "frame=" + this.getFrame()};
 			url.append(StringUtils.join(params, "&"));
 			response.setRedirectLocation(url.toString());
 		}
@@ -180,7 +189,9 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String trashWidget() {
 		try {
 			String result = this.checkBaseParams();
-			if (null != result) return result;
+			if (null != result) {
+				return result;
+			}
 		} catch (Exception e) {
 			_logger.error("error in trashWidget", e);
 			return FAILURE;
@@ -225,13 +236,15 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 
 	public DeleteWidgetResponse getDeleteWidgetResponse() {
 		IPage page = null;
+		IPage onlinePage = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
 			page = this.getPage(this.getPageCode());
+			onlinePage = this.getOnlinePage(this.getPageCode());
 		}
-		DeleteWidgetResponse response = new DeleteWidgetResponse(this, page);
-		return response;		
+		DeleteWidgetResponse response = new DeleteWidgetResponse(this, page, onlinePage);
+		return response;
 	}
-	
+
 	public String move() {
 		try {
 			SwapWidgetRequest ajaxRequest = this.getSwapWidgetRequest();
@@ -251,16 +264,17 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		this.setPageCode(swapWidgetRequest.getPageCode());
 		return SUCCESS;
 	}
-	
+
 	public SwapWidgetResponse getMoveWidgetResponse() {
 		IPage page = null;
+		IPage onlinePage = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
 			page = this.getPage(this.getPageCode());
+			onlinePage = this.getOnlinePage(this.getPageCode());
 		}
-		SwapWidgetResponse response = new SwapWidgetResponse(this, page);
+		SwapWidgetResponse response = new SwapWidgetResponse(this, page, onlinePage);
 		return response;
 	}
-
 
 	public String restoreOnlineConfig() {
 		try {
@@ -275,28 +289,32 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 				this.addActionError(this.getText("error.page.invalidPageCode"));
 				return "pageTree";
 			}
-			if (!page.isOnline()) {				
+			if (!page.isOnline()) {
 				this.addActionError(this.getText("error.page.restore.invalidStatus"));
 				return "pageTree";
 			}
-
-			((Page)page).setDraftMetadata(page.getOnlineMetadata());
-			((Page)page).setDraftWidgets(page.getOnlineWidgets());
-			this.getPageManager().updatePage(page);
-			this.addActivityStreamInfo(ApsAdminSystemConstants.EDIT, true);
+			IPage publicPage = this.getOnlinePage(this.getPageCode());
+			if (null != publicPage) {
+				((Page) page).setMetadata(publicPage.getMetadata());
+				((Page) page).setWidgets(publicPage.getWidgets());
+				this.getPageManager().updatePage(page);
+				this.addActivityStreamInfo(ApsAdminSystemConstants.EDIT, true);
+			}
 		} catch (Exception e) {
 			_logger.error("error in restoreOnlineConfig", e);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
-	
+
 	public PageResponse getRestoreOnlineConfigResponse() {
-		IPage page = null;
+		IPage draftPage = null;
+		IPage onlinePage = null;
 		if (StringUtils.isNotBlank(this.getPageCode())) {
-			page = this.getPage(this.getPageCode());
+			draftPage = this.getPage(this.getPageCode());
+			onlinePage = this.getOnlinePage(this.getPageCode());
 		}
-		PageResponse response = new PageResponse(this, page);
+		PageResponse response = new PageResponse(this, draftPage, onlinePage);
 		return response;
 	}
 
@@ -313,7 +331,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			this.addActionError(this.getText("error.page.invalidPageCode"));
 			return "pageTree";
 		}
-		if (this.getFrame() == -1 || this.getFrame() >= page.getDraftWidgets().length) {
+		if (this.getFrame() == -1 || this.getFrame() >= page.getWidgets().length) {
 			_logger.info("Mandatory frame id or invalid - '{}'", this.getFrame());
 			this.addActionError(this.getText("error.page.invalidPageFrame"));
 			return "pageTree";
@@ -339,6 +357,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String getPageCode() {
 		return _pageCode;
 	}
+
 	public void setPageCode(String pageCode) {
 		this._pageCode = pageCode;
 	}
@@ -346,6 +365,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public int getFrame() {
 		return _frame;
 	}
+
 	public void setFrame(int frame) {
 		this._frame = frame;
 	}
@@ -354,6 +374,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String getShowletAction() {
 		return this.getWidgetAction();
 	}
+
 	@Deprecated
 	public void setShowletAction(String showletAction) {
 		this.setWidgetAction(showletAction);
@@ -362,6 +383,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String getWidgetAction() {
 		return _widgetAction;
 	}
+
 	public void setWidgetAction(String widgetAction) {
 		this._widgetAction = widgetAction;
 	}
@@ -370,6 +392,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String getShowletTypeCode() {
 		return this.getWidgetTypeCode();
 	}
+
 	@Deprecated
 	public void setShowletTypeCode(String widgetTypeCode) {
 		this.setWidgetTypeCode(widgetTypeCode);
@@ -378,6 +401,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public String getWidgetTypeCode() {
 		return _widgetTypeCode;
 	}
+
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}
@@ -386,6 +410,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public Widget getShowlet() {
 		return this.getWidget();
 	}
+
 	@Deprecated
 	public void setShowlet(Widget widget) {
 		this.setWidget(widget);
@@ -394,10 +419,11 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public Widget getWidget() {
 		return _widget;
 	}
+
 	public void setWidget(Widget widget) {
 		this._widget = widget;
 	}
-	
+
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response = response;
@@ -406,6 +432,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	public SwapWidgetRequest getSwapWidgetRequest() {
 		return swapWidgetRequest;
 	}
+
 	public void setSwapWidgetRequest(SwapWidgetRequest swapWidgetRequest) {
 		this.swapWidgetRequest = swapWidgetRequest;
 	}
@@ -413,6 +440,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	protected IPageActionHelper getPageActionHelper() {
 		return _pageActionHelper;
 	}
+
 	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
 		this._pageActionHelper = pageActionHelper;
 	}
@@ -420,6 +448,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	protected ISwapWidgetRequestValidator getValidator() {
 		return validator;
 	}
+
 	@Autowired
 	@Qualifier(ISwapWidgetRequestValidator.BEAN_NAME)
 	public void setValidator(ISwapWidgetRequestValidator validator) {
@@ -429,12 +458,12 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 	private String _pageCode;
 	private int _frame = -1;
 	private String _widgetAction;
-	private String _widgetTypeCode;	
+	private String _widgetTypeCode;
 	private Widget _widget;
 	private SwapWidgetRequest swapWidgetRequest;
-	
+
 	private HttpServletResponse response;
 	private IPageActionHelper _pageActionHelper;
 	private ISwapWidgetRequestValidator validator;
-	
+
 }

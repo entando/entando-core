@@ -185,7 +185,7 @@ public class BaseAdminAction extends BaseAction {
 	 * @return the list of the free pages of the portal.
 	 */
 	public List<IPage> getFreePages() {
-		IPage root = this.getPageManager().getRoot();
+		IPage root = this.getPageManager().getOnlineRoot();
 		List<IPage> pages = new ArrayList<>();
 		this.addPages(root, pages);
 		return pages;

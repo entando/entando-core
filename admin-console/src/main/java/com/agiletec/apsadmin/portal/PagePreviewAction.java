@@ -20,9 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.page.PageMetadata;
-import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -36,12 +33,13 @@ public class PagePreviewAction extends AbstractPortalAction {
 	private String size;
 	private String token;
 
-	private IPageTokenManager pageTokenMager; 
+	private IPageTokenManager pageTokenMager;
 	private IUserManager userManager;
 
 	public String getPageCode() {
 		return pageCode;
 	}
+
 	public void setPageCode(String pageCode) {
 		this.pageCode = pageCode;
 	}
@@ -49,6 +47,7 @@ public class PagePreviewAction extends AbstractPortalAction {
 	public String getLang() {
 		return lang;
 	}
+
 	public void setLang(String lang) {
 		this.lang = lang;
 	}
@@ -56,6 +55,7 @@ public class PagePreviewAction extends AbstractPortalAction {
 	public String getSize() {
 		return size;
 	}
+
 	public void setSize(String size) {
 		this.size = size;
 	}
@@ -63,6 +63,7 @@ public class PagePreviewAction extends AbstractPortalAction {
 	public String getToken() {
 		return token;
 	}
+
 	public void setToken(String token) {
 		this.token = token;
 	}
@@ -70,6 +71,7 @@ public class PagePreviewAction extends AbstractPortalAction {
 	protected IPageTokenManager getPageTokenMager() {
 		return pageTokenMager;
 	}
+
 	public void setPageTokenMager(IPageTokenManager pageTokenMager) {
 		this.pageTokenMager = pageTokenMager;
 	}
@@ -77,6 +79,7 @@ public class PagePreviewAction extends AbstractPortalAction {
 	protected IUserManager getUserManager() {
 		return userManager;
 	}
+
 	public void setUserManager(IUserManager userManager) {
 		this.userManager = userManager;
 	}
@@ -132,27 +135,10 @@ public class PagePreviewAction extends AbstractPortalAction {
 		return SUCCESS;
 	}
 
+	@Override
 	public IPage getPage(String pageCode) {
-		Page page = null;
 		IPage currentPage = this.getPageManager().getDraftPage(pageCode);
-		if (null != currentPage) {
-			page = new Page();
-			page.setCode(currentPage.getCode());
-			page.setParent(currentPage.getParent());
-			page.setParentCode(currentPage.getParentCode());
-			page.setGroup(currentPage.getGroup());
-//			page.setPosition(currentPage.getPosition());
-			PageMetadata metadata = currentPage.getDraftMetadata();
-			page.setDraftMetadata(metadata);
-			page.setOnlineMetadata(metadata);
-			IPage[] children = currentPage.getAllChildren();
-			page.setChildren(children);
-			page.setAllChildren(children);
-			Widget[] widgets = currentPage.getDraftWidgets();
-			page.setDraftWidgets(widgets);
-			page.setOnlineWidgets(widgets);
-		}
-		return page;
+		return currentPage;
 	}
 
 	public ScreenSize getScreenSize() {

@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.entando.entando.aps.system.services.page.IPageTokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,47 +34,53 @@ import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 
 /**
- * Implementazione del un sottoservizio di controllo che
- * verifica la validità della richiesta del client.
- * Viene verificata la correttezza formale della richiesta tramite la
- * corrispondenza con una maschera. La richiesta deve essere nella forma:<br>
+ * Implementazione del un sottoservizio di controllo che verifica la validità
+ * della richiesta del client. Viene verificata la correttezza formale della
+ * richiesta tramite la corrispondenza con una maschera. La richiesta deve
+ * essere nella forma:<br>
  * <code>/lingua/pagina.wp</code> oppure <code>/lingua/path_pagina/</code><br>
- * dove lingua è un codice lingua configurato, pagina una pagina del portale e 
- * path_pagina il path (stile breadcrumbs) della pagina.
- * Se la richiesta è valida, l'oggetto lingua e l'oggetto pagina
- * corrispondenti alla richiesta sono inseriti nel contesto di richiesta
- * sotto forma di extra parametri, con i nomi "currentLang" e "currentPage",
- * ed il metodo service restituisce Controller.CONTINUE.
- * Se la richiesta non è valida, viene restituito lo stato di errore.
+ * dove lingua è un codice lingua configurato, pagina una pagina del portale e
+ * path_pagina il path (stile breadcrumbs) della pagina. Se la richiesta è
+ * valida, l'oggetto lingua e l'oggetto pagina corrispondenti alla richiesta
+ * sono inseriti nel contesto di richiesta sotto forma di extra parametri, con i
+ * nomi "currentLang" e "currentPage", ed il metodo service restituisce
+ * Controller.CONTINUE. Se la richiesta non è valida, viene restituito lo stato
+ * di errore.
+ * 
  * @author M.Diana - E.Santoboni
  */
 public class PreviewRequestValidator extends AbstractControlService {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PreviewRequestValidator.class);
-	
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		_logger.debug("{} ready", this.getClass().getName());
 	}
-	
+
 	/**
-	 * Esecuzione. Le operazioni sono descritte nella documentazione della classe.
-	 * @param reqCtx Il contesto di richiesta
-	 * @param status Lo stato di uscita del servizio precedente
+	 * Esecuzione. Le operazioni sono descritte nella documentazione della
+	 * classe.
+	 * 
+	 * @param reqCtx
+	 * Il contesto di richiesta
+	 * @param status
+	 * Lo stato di uscita del servizio precedente
 	 * @return Lo stato di uscita
 	 */
 	@Override
 	public int service(RequestContext reqCtx, int status) {
 		_logger.debug("{} invoked", this.getClass().getName());
 		int retStatus = ControllerManager.INVALID_STATUS;
-		// Se si è verificato un errore in un altro sottoservizio, termina subito
+		// Se si è verificato un errore in un altro sottoservizio, termina
+		// subito
 		if (status == ControllerManager.ERROR) {
 			return ControllerManager.SYS_ERROR;
 		}
 		try { // non devono essere rilanciate eccezioni
 			boolean ok = this.isRightPath(reqCtx);
-			if (!ok || null == reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE) 
-					|| null == reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG)) {
+			if (!ok || null == reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE) || null == reqCtx.getExtraParam(
+					SystemConstants.EXTRAPAR_CURRENT_LANG)) {
 				retStatus = ControllerManager.SYS_ERROR;
 			} else {
 				retStatus = ControllerManager.CONTINUE;
@@ -105,7 +110,8 @@ public class PreviewRequestValidator extends AbstractControlService {
 				page = this.getDesiredPage(sect2);
 			}
 		}
-		if (!ok) return false;
+		if (!ok)
+			return false;
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG, lang);
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, page);
 		return true;
@@ -120,23 +126,21 @@ public class PreviewRequestValidator extends AbstractControlService {
 			page.setParent(currentPage.getParent());
 			page.setParentCode(currentPage.getParentCode());
 			page.setGroup(currentPage.getGroup());
-//			page.setPosition(currentPage.getPosition());
-			PageMetadata metadata = currentPage.getDraftMetadata();
-			page.setDraftMetadata(metadata);
-			page.setOnlineMetadata(metadata);
-			IPage[] children = currentPage.getAllChildren();
+			PageMetadata metadata = currentPage.getMetadata();
+			page.setMetadata(metadata);
+			IPage[] children = currentPage.getChildren();
 			page.setChildren(children);
-			page.setAllChildren(children);
-			Widget[] widgets = currentPage.getDraftWidgets();
-			page.setDraftWidgets(widgets);
-			page.setOnlineWidgets(widgets);
+			Widget[] widgets = currentPage.getWidgets();
+			page.setWidgets(widgets);
 		}
 		return page;
 	}
 
 	/**
 	 * Recupera il ServletPath richiesto dal client.
-	 * @param reqCtx Il contesto di richiesta
+	 * 
+	 * @param reqCtx
+	 * Il contesto di richiesta
 	 * @return Il ServletPath
 	 */
 	protected String getResourcePath(RequestContext reqCtx) {
@@ -150,6 +154,7 @@ public class PreviewRequestValidator extends AbstractControlService {
 	protected ILangManager getLangManager() {
 		return _langManager;
 	}
+
 	public void setLangManager(ILangManager langManager) {
 		this._langManager = langManager;
 	}
@@ -157,6 +162,7 @@ public class PreviewRequestValidator extends AbstractControlService {
 	protected IPageManager getPageManager() {
 		return _pageManager;
 	}
+
 	public void setPageManager(IPageManager pageManager) {
 		this._pageManager = pageManager;
 	}

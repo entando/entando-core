@@ -145,20 +145,18 @@
                         <s:set var="treeItemIconName" value="'fa-folder'" />
                         <s:if test="#pageTreeStyleVar == 'classic'">
                             <s:set var="currentRoot" value="allowedTreeRootNode" />
-
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderPagesMenu.jsp" />
-
                         </s:if>
                         <s:else>
-                        <style>
-                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
-                                cursor: pointer;
-                                display: none;
-                            }
-                        </style>
-                        <s:set var="currentRoot" value="showableTree" />
-                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
-                    </s:else>
+							<style>
+								.table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+									cursor: pointer;
+									display: none;
+								}
+							</style>
+							<s:set var="currentRoot" value="showableTree" />
+							<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
+						</s:else>
                     </tbody>
                 </table>     
             </div>

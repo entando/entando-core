@@ -29,19 +29,19 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author E.Santoboni
  */
 public class TestPageAction extends ApsAdminBaseTestCase {
-	
+
 	@Override
 	protected void setUp() throws Exception {
-        super.setUp();
-        this.init();
-    }
-	
+		super.setUp();
+		this.init();
+	}
+
 	public void testSavePage() throws Throwable {
 		String pageCode = "customer_subpage_2";
 		IPage page = this._pageManager.getDraftPage(pageCode);
 		assertNotNull(page);
 		try {
-			PageMetadata metadata = page.getDraftMetadata();
+			PageMetadata metadata = page.getMetadata();
 			this.setUserOnSession("admin");
 			this.initAction("/do/Page", "save");
 			this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.EDIT));
@@ -70,15 +70,15 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			throw t;
 		}
 	}
-	
+
 	private void init() throws Exception {
-    	try {
-    		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-    	} catch (Throwable t) {
-            throw new Exception(t);
-        }
-    }
-    
-    private IPageManager _pageManager = null;
-	
+		try {
+			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+		} catch (Throwable t) {
+			throw new Exception(t);
+		}
+	}
+
+	private IPageManager _pageManager = null;
+
 }

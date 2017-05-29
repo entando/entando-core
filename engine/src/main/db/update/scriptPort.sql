@@ -37,6 +37,7 @@ insert into pages_metadata_online select code, modelcode, titles,showinmenu, ext
 
 
 
+
 ALTER TABLE pages  DROP COLUMN showinmenu;
 ALTER TABLE pages  DROP COLUMN extraconfig;
 ALTER TABLE pages  DROP COLUMN modelcode;
@@ -64,6 +65,19 @@ WITH (
 
 
 insert into widgetconfig_draft select * from widgetconfig;
+
+
+ALTER TABLE pages_metadata_draft
+  ADD CONSTRAINT pages_metadata_draft_modelcode_fk FOREIGN KEY (modelcode)
+      REFERENCES pagemodels (code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+
+ALTER TABLE pages_metadata_online
+  ADD CONSTRAINT pages_metadata_draft_modelcode_fk FOREIGN KEY (modelcode)
+      REFERENCES pagemodels (code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
 
 ##	------	------	------	------	------	porting script for pages end
 

@@ -11,7 +11,7 @@
                                         : <s:text name="title.entityTypes.editType.edit" />"><s:text name="title.entityTypes.editType.edit" />
             : <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
         </a>
-    </li>	
+    </li>
 </ol>
 
 <h1 class="page-title-container">
@@ -20,9 +20,9 @@
         : <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
     </a>
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="%{'page.' + entityManagerName + '.help'}"/>" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
-</h1>      
+</h1>
 
 <div class="text-right">
     <div class="form-group-separator"><s:text name="label.requiredFields" /></div>
@@ -112,7 +112,7 @@
                                 <td class="text-center">
                                     <s:if test="#attribute.required">
                                         <span class="icon fa fa-check-square-o" title="<s:text name="label.yes" />"></span>
-                                    </s:if> 
+                                    </s:if>
                                     <s:else>
                                         <span class="icon fa fa-square-o" title="<s:text name="label.no" />"></span>
                                     </s:else>

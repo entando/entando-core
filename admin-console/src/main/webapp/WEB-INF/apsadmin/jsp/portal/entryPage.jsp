@@ -91,7 +91,7 @@
         </p>
 
         <legend><s:text name="label.info" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
-
+      
         <s:iterator value="langs">
             <%-- lang --%>
             <s:set var="fieldErrorsVar" value="%{fieldErrors['lang'+code]}" />
@@ -216,11 +216,10 @@
                 <div class="col-sm-10">
                     <wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" disabled="%{groupSelectLock}" cssClass="combobox form-control"></wpsf:select>
                     <s:if test="#hasFieldErrorVar">
-                        <span class="help-block text-danger">
-                            <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                            </span>
-                    </s:if>
-                </div>
+                    <span class="help-block text-danger">
+                        <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
+                    </span>
+                </s:if>
             </div>
 
             <%-- extraGroups --%>

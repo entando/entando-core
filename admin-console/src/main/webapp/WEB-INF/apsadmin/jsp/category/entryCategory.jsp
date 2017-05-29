@@ -28,10 +28,13 @@
         </a>
     </span>
 </h1>
+<i class="fa fa-asterisk required-icon"></i>
 <div class="text-right">
-    <div class="form-group-separator"></div>
+    <div class="form-group-separator">
+        <s:text name="label.requiredFields" />
+    </div>
 </div>
-<br>
+<br />
 
 <div id="main" role="main">
     <s:form action="save" cssClass="form-horizontal">
@@ -79,7 +82,8 @@
             <div class="col-xs-2 control-label">
                 <label for="lang<s:property value="code" />"> <span
                         class="label label-info" title="<s:property value="descr" />"><s:property
-                            value="code" /></span>&#32; <s:text name="name.categoryTitle" />
+                            value="code" /></span>&#32; <s:text name="name.categoryTitle" />&nbsp;
+                    <i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
                 </label>
             </div>
             <div class="col-xs-10">

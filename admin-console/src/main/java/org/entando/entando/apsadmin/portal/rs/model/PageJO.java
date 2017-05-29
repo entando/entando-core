@@ -17,56 +17,63 @@ import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 
 public class PageJO {
-	
+
 	public String getCode() {
 		return _code;
 	}
+
 	public void setCode(String code) {
 		this._code = code;
 	}
-	
+
 	public Boolean getRoot() {
 		return _root;
 	}
+
 	public void setRoot(Boolean root) {
 		this._root = root;
 	}
-	
+
 	public Boolean getOnline() {
 		return _online;
 	}
+
 	public void setOnline(Boolean online) {
 		this._online = online;
 	}
-	
+
 	public Boolean getChanged() {
 		return _changed;
 	}
+
 	public void setChanged(Boolean changed) {
 		this._changed = changed;
 	}
-	
+
 	public String getParentCode() {
 		return _parentCode;
 	}
+
 	public void setParentCode(String parentCode) {
 		this._parentCode = parentCode;
 	}
-	
+
 	public String getGroup() {
 		return _group;
 	}
+
 	public void setGroup(String group) {
 		this._group = group;
 	}
-	
+
 	public int getPosition() {
 		return _position;
 	}
+
 	protected void setPosition(int position) {
 		this._position = position;
 	}
-	
+
 	public PageMetadata getOnlineMetadata() {
 		return _onlineMetadata;
 	}
@@ -94,7 +101,7 @@ public class PageJO {
 	public void setDraftWidgets(Widget[] draftWidgets) {
 		this._draftWidgets = draftWidgets;
 	}
-	
+
 	private String _code;
 	private Boolean _root;
 	private Boolean _online;
@@ -106,5 +113,6 @@ public class PageJO {
 	private PageMetadata _draftMetadata;
 	private Widget[] _onlineWidgets;
 	private Widget[] _draftWidgets;
+
 
 }

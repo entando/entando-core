@@ -13,6 +13,30 @@
  */
 package org.entando.entando.aps.system.services.controller.executor;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.guifragment.GuiFragment;
+import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
+
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -26,42 +50,17 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
 
 import freemarker.template.Template;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang.StringUtils;
-import org.entando.entando.aps.system.services.guifragment.GuiFragment;
-import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.web.context.WebApplicationContext;
-
 /**
  * @author E.Santoboni
  */
 public abstract class AbstractWidgetExecutorService {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(AbstractWidgetExecutorService.class);
-	
+
 	protected void buildWidgetsOutput(RequestContext reqCtx, IPage page, String[] widgetOutput) throws ApsSystemException {
 		try {
 			List<IFrameDecoratorContainer> decorators = this.extractDecorators(reqCtx);
-			Widget[] widgets = page.getOnlineWidgets();
+			Widget[] widgets = page.getWidgets();
 			for (int frame = 0; frame < widgets.length; frame++) {
 				reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME, new Integer(frame));
 				Widget widget = widgets[frame];
@@ -73,9 +72,9 @@ public abstract class AbstractWidgetExecutorService {
 			throw new ApsSystemException(msg, t);
 		}
 	}
-	
-	protected String buildWidgetOutput(RequestContext reqCtx, 
-			Widget widget, List<IFrameDecoratorContainer> decorators) throws ApsSystemException {
+
+	protected String buildWidgetOutput(RequestContext reqCtx, Widget widget, List<IFrameDecoratorContainer> decorators)
+			throws ApsSystemException {
 		StringBuilder buffer = new StringBuilder();
 		try {
 			if (null != widget && this.isUserAllowed(reqCtx, widget)) {
@@ -86,9 +85,9 @@ public abstract class AbstractWidgetExecutorService {
 			buffer.append(this.extractDecoratorsOutput(reqCtx, widget, decorators, false, true));
 			if (null != widget && this.isUserAllowed(reqCtx, widget)) {
 				String widgetOutput = extractWidgetOutput(reqCtx, widget.getType());
-				//String widgetJspPath = widget.getType().getJspPath();
+				// String widgetJspPath = widget.getType().getJspPath();
 				buffer.append(this.extractDecoratorsOutput(reqCtx, widget, decorators, true, true));
-				//buffer.append(this.extractJspOutput(reqCtx, widgetJspPath));
+				// buffer.append(this.extractJspOutput(reqCtx, widgetJspPath));
 				buffer.append(widgetOutput);
 				buffer.append(this.extractDecoratorsOutput(reqCtx, widget, decorators, true, false));
 			}
@@ -100,15 +99,15 @@ public abstract class AbstractWidgetExecutorService {
 		}
 		return buffer.toString();
 	}
-	
+
 	public static String extractWidgetOutput(RequestContext reqCtx, WidgetType type) throws ApsSystemException {
 		if (null == type) {
 			return "";
 		}
 		String widgetTypeCode = (type.isLogic()) ? type.getParentType().getCode() : type.getCode();
 		try {
-			IGuiFragmentManager guiFragmentManager = 
-					(IGuiFragmentManager) ApsWebApplicationUtils.getBean(SystemConstants.GUI_FRAGMENT_MANAGER, reqCtx.getRequest());
+			IGuiFragmentManager guiFragmentManager = (IGuiFragmentManager) ApsWebApplicationUtils.getBean(
+					SystemConstants.GUI_FRAGMENT_MANAGER, reqCtx.getRequest());
 			GuiFragment guiFragment = guiFragmentManager.getUniqueGuiFragmentByWidgetType(widgetTypeCode);
 			if (null != guiFragment) {
 				String fragmentOutput = extractFragmentOutput(guiFragment, reqCtx);
@@ -127,7 +126,7 @@ public abstract class AbstractWidgetExecutorService {
 			throw new ApsSystemException(msg, t);
 		}
 	}
-	
+
 	protected List<IFrameDecoratorContainer> extractDecorators(RequestContext reqCtx) throws ApsSystemException {
 		HttpServletRequest request = reqCtx.getRequest();
 		WebApplicationContext wac = ApsWebApplicationUtils.getWebApplicationContext(request);
@@ -146,19 +145,16 @@ public abstract class AbstractWidgetExecutorService {
 		}
 		return containters;
 	}
-	
-	protected String extractDecoratorsOutput(RequestContext reqCtx, Widget widget, 
-			List<IFrameDecoratorContainer> decorators, boolean isWidgetDecorator, boolean includeHeader) throws Throwable {
+
+	protected String extractDecoratorsOutput(RequestContext reqCtx, Widget widget, List<IFrameDecoratorContainer> decorators,
+			boolean isWidgetDecorator, boolean includeHeader) throws Throwable {
 		if (null == decorators || decorators.isEmpty()) {
 			return "";
 		}
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < decorators.size(); i++) {
-			IFrameDecoratorContainer decoratorContainer = (includeHeader)
-					? decorators.get(i)
-					: decorators.get(decorators.size() - i - 1);
-			if ((isWidgetDecorator != decoratorContainer.isWidgetDecorator()) 
-					|| !decoratorContainer.needsDecoration(widget, reqCtx)) {
+			IFrameDecoratorContainer decoratorContainer = (includeHeader) ? decorators.get(i) : decorators.get(decorators.size() - i - 1);
+			if ((isWidgetDecorator != decoratorContainer.isWidgetDecorator()) || !decoratorContainer.needsDecoration(widget, reqCtx)) {
 				continue;
 			}
 			String fragmentCode = (includeHeader) ? decoratorContainer.getHeaderFragmentCode() : decoratorContainer.getFooterFragmentCode();
@@ -175,17 +171,17 @@ public abstract class AbstractWidgetExecutorService {
 		}
 		return builder.toString();
 	}
-	
+
 	protected String extractFragmentOutput(String fragmentCode, RequestContext reqCtx) throws Throwable {
 		if (StringUtils.isBlank(fragmentCode)) {
 			return null;
 		}
-		IGuiFragmentManager guiFragmentManager = 
-					(IGuiFragmentManager) ApsWebApplicationUtils.getBean(SystemConstants.GUI_FRAGMENT_MANAGER, reqCtx.getRequest());
+		IGuiFragmentManager guiFragmentManager = (IGuiFragmentManager) ApsWebApplicationUtils.getBean(SystemConstants.GUI_FRAGMENT_MANAGER,
+				reqCtx.getRequest());
 		GuiFragment fragment = guiFragmentManager.getGuiFragment(fragmentCode);
 		return extractFragmentOutput(fragment, reqCtx);
 	}
-	
+
 	protected static String extractFragmentOutput(GuiFragment fragment, RequestContext reqCtx) throws Throwable {
 		if (null == fragment) {
 			return null;
@@ -215,7 +211,7 @@ public abstract class AbstractWidgetExecutorService {
 			throw new ApsSystemException(msg, t);
 		}
 	}
-	
+
 	protected boolean isUserAllowed(RequestContext reqCtx, Widget widget) {
 		if (null == widget) {
 			return false;
@@ -225,15 +221,17 @@ public abstract class AbstractWidgetExecutorService {
 			if (null == widgetTypeGroup || widgetTypeGroup.equals(Group.FREE_GROUP_NAME)) {
 				return true;
 			}
-			IAuthorizationManager authorizationManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHORIZATION_SERVICE, reqCtx.getRequest());
-			UserDetails currentUser = (UserDetails) reqCtx.getRequest().getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
+			IAuthorizationManager authorizationManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(
+					SystemConstants.AUTHORIZATION_SERVICE, reqCtx.getRequest());
+			UserDetails currentUser = (UserDetails) reqCtx.getRequest().getSession().getAttribute(
+					SystemConstants.SESSIONPARAM_CURRENT_USER);
 			return authorizationManager.isAuthOnGroup(currentUser, widgetTypeGroup);
 		} catch (Throwable t) {
 			_logger.error("Error checking user authorities", t);
 		}
 		return false;
 	}
-	
+
 	protected static String extractJspWidgetOutput(String widgetTypeCode, RequestContext reqCtx, String jspPath) throws Throwable {
 		try {
 			return extractJspOutput(reqCtx, jspPath);
@@ -245,7 +243,7 @@ public abstract class AbstractWidgetExecutorService {
 			throw t;
 		}
 	}
-	
+
 	protected static String extractJspOutput(RequestContext reqCtx, String jspPath) throws ServletException, IOException {
 		HttpServletRequest request = reqCtx.getRequest();
 		HttpServletResponse response = reqCtx.getResponse();
@@ -256,5 +254,5 @@ public abstract class AbstractWidgetExecutorService {
 		dispatcher.include(request, wrapper);
 		return wrapper.getOutput();
 	}
-	
+
 }

@@ -27,10 +27,11 @@ import com.opensymphony.xwork2.Action;
  */
 public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 
+	@Override
 	protected void setUp() throws Exception {
-        super.setUp();
-        this.init();
-    }
+		super.setUp();
+		this.init();
+	}
 
 	public void testInitConfigSimpleParameter_1() throws Throwable {
 		String result = this.executeConfigSimpleParameter("admin", "homepage", "1", "formAction");
@@ -46,7 +47,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 		assertEquals("pageTree", result);
 		assertEquals(1, this.getAction().getActionErrors().size());
 	}
-	
+
 	public void testInitConfigSimpleParameter_2() throws Throwable {
 		String result = this.executeConfigSimpleParameter("admin", "pagina_2", "2", null);
 		assertEquals(Action.SUCCESS, result);
@@ -60,13 +61,13 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 	}
 
 	private String executeConfigSimpleParameter(String userName,
-			String pageCode, String frame, String showletTypeCode) throws Throwable {
+			String pageCode, String frame, String widgetTypeCode) throws Throwable {
 		this.setUserOnSession(userName);
 		this.initAction("/do/Page/SpecialWidget", "configSimpleParameter");
 		this.addParameter("pageCode", pageCode);
 		this.addParameter("frame", frame);
-		if (null != showletTypeCode && showletTypeCode.trim().length()>0) {
-			this.addParameter("widgetTypeCode", showletTypeCode);
+		if (null != widgetTypeCode && widgetTypeCode.trim().length() > 0) {
+			this.addParameter("widgetTypeCode", widgetTypeCode);
 		}
 		return this.executeAction();
 	}
@@ -75,7 +76,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 		String pageCode = "pagina_2";
 		int frame = 3;
 		IPage page = this._pageManager.getDraftPage(pageCode);
-		Widget widget = page.getDraftWidgets()[frame];
+		Widget widget = page.getWidgets()[frame];
 		assertNull(widget);
 		try {
 			this.setUserOnSession("admin");
@@ -87,7 +88,7 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 			String result = this.executeAction();
 			assertEquals("configure", result);
 			page = this._pageManager.getDraftPage(pageCode);
-			widget = page.getDraftWidgets()[frame];
+			widget = page.getWidgets()[frame];
 			assertNotNull(widget);
 			assertEquals("formAction", widget.getType().getCode());
 			assertEquals(1, widget.getConfig().size());
@@ -96,19 +97,19 @@ public class TestSimpleWidgetConfigAction extends ApsAdminBaseTestCase {
 			throw t;
 		} finally {
 			page = this._pageManager.getDraftPage(pageCode);
-			page.getDraftWidgets()[frame] = null;
+			page.getWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
 	}
 
 	private void init() throws Exception {
-    	try {
-    		_pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-    	} catch (Throwable t) {
-            throw new Exception(t);
-        }
-    }
+		try {
+			_pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+		} catch (Throwable t) {
+			throw new Exception(t);
+		}
+	}
 
-    private IPageManager _pageManager = null;
+	private IPageManager _pageManager = null;
 
 }

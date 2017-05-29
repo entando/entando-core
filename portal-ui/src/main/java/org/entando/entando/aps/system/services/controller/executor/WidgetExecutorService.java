@@ -13,34 +13,34 @@
  */
 package org.entando.entando.aps.system.services.controller.executor;
 
-import com.agiletec.aps.system.RequestContext;
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.tags.util.HeadInfoContainer;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.agiletec.aps.system.RequestContext;
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.tags.util.HeadInfoContainer;
+
 /**
  * @author E.Santoboni
  */
 public class WidgetExecutorService extends AbstractWidgetExecutorService implements ExecutorServiceInterface {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(WidgetExecutorService.class);
-	
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		//nothing to do
+		// nothing to do
 	}
-	
+
 	@Override
 	public void service(RequestContext reqCtx) {
 		try {
 			reqCtx.addExtraParam(SystemConstants.EXTRAPAR_HEAD_INFO_CONTAINER, new HeadInfoContainer());
 			IPage page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
-			String[] widgetOutput = new String[page.getOnlineWidgets().length];
+			String[] widgetOutput = new String[page.getWidgets().length];
 			reqCtx.addExtraParam("ShowletOutput", widgetOutput);
 			this.buildWidgetsOutput(reqCtx, page, widgetOutput);
 			String redirect = (String) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_EXTERNAL_REDIRECT);
@@ -56,5 +56,5 @@ public class WidgetExecutorService extends AbstractWidgetExecutorService impleme
 		}
 		return;
 	}
-	
+
 }

@@ -33,9 +33,9 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModel
  * @author E.Santoboni
  */
 public class ContentTypeConfigAction extends EntityTypeConfigAction {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(ContentTypeConfigAction.class);
-	
+
 	@Override
 	protected IApsEntity updateEntityOnSession() {
 		Content contentType = (Content) super.updateEntityOnSession();
@@ -48,35 +48,39 @@ public class ContentTypeConfigAction extends EntityTypeConfigAction {
 		}
 		return contentType;
 	}
-	
+
 	/**
 	 * Return a plain list of the free viewer pages in the portal.
+	 *
 	 * @return the list of the free viewer pages of the portal.
 	 */
 	public List<IPage> getFreeViewerPages() {
-		IPage root = this.getPageManager().getRoot();
+		IPage root = this.getPageManager().getOnlineRoot();
 		List<IPage> pages = new ArrayList<IPage>();
 		this.addPages(root, pages);
 		return pages;
 	}
-	
+
 	private void addPages(IPage page, List<IPage> pages) {
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME) && CmsPageUtil.isOnlineFreeViewerPage(page, null)) {
 			pages.add(page);
 		}
-		IPage[] children = page.getOnlineChildren();
-		for (int i=0; i<children.length; i++) {
+		IPage[] children = page.getChildren();
+		for (int i = 0; i < children.length; i++) {
 			this.addPages(children[i], pages);
 		}
 	}
-	
+
 	/**
 	 * Return the list of contentmodel given the content type code.
+	 *
 	 * @param typeCode The content type code.
 	 * @return The Content Models found
 	 */
 	public List<ContentModel> getContentModels(String typeCode) {
-		if (null == typeCode) return new ArrayList<ContentModel>();
+		if (null == typeCode) {
+			return new ArrayList<ContentModel>();
+		}
 		List<ContentModel> models = null;
 		try {
 			models = this.getContentModelManager().getModelsForContentType(typeCode);
@@ -87,47 +91,52 @@ public class ContentTypeConfigAction extends EntityTypeConfigAction {
 		}
 		return models;
 	}
-	
+
 	public String getViewPageCode() {
 		return _viewPageCode;
 	}
+
 	public void setViewPageCode(String viewPageCode) {
 		this._viewPageCode = viewPageCode;
 	}
-	
+
 	public Integer getListModelId() {
 		return _listModelId;
 	}
+
 	public void setListModelId(Integer listModelId) {
 		this._listModelId = listModelId;
 	}
-	
+
 	public Integer getDefaultModelId() {
 		return _defaultModelId;
 	}
+
 	public void setDefaultModelId(Integer defaultModelId) {
 		this._defaultModelId = defaultModelId;
 	}
-	
+
 	protected IPageManager getPageManager() {
 		return _pageManager;
 	}
+
 	public void setPageManager(IPageManager pageManager) {
 		this._pageManager = pageManager;
 	}
-	
+
 	protected IContentModelManager getContentModelManager() {
 		return _contentModelManager;
 	}
+
 	public void setContentModelManager(IContentModelManager contentModelManager) {
 		this._contentModelManager = contentModelManager;
 	}
-	
+
 	private String _viewPageCode;
 	private Integer _listModelId;
 	private Integer _defaultModelId;
-	
+
 	private IPageManager _pageManager;
 	private IContentModelManager _contentModelManager;
-	
+
 }

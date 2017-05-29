@@ -37,10 +37,10 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
 public class PageWithWidgetTag extends TagSupport {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageWithWidgetTag.class);
-	
+
 	@Override
 	public int doStartTag() throws JspException {
-		IPageManager pageManager = (IPageManager) ApsWebApplicationUtils.getBean(SystemConstants.PAGE_MANAGER, this.pageContext); 
+		IPageManager pageManager = (IPageManager) ApsWebApplicationUtils.getBean(SystemConstants.PAGE_MANAGER, this.pageContext);
 		try {
 			List<IPage> pages = pageManager.getOnlineWidgetUtilizers(this.getWidgetTypeCode());
 			if (StringUtils.isNotBlank(this.getFilterParamName()) && StringUtils.isNotBlank(this.getFilterParamValue())) {
@@ -53,7 +53,7 @@ public class PageWithWidgetTag extends TagSupport {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error in doStartTag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
+			// ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error in doStartTag", t);
 		}
 		return super.doStartTag();
@@ -64,7 +64,7 @@ public class PageWithWidgetTag extends TagSupport {
 		Iterator<IPage> it = pages.iterator();
 		while (it.hasNext()) {
 			IPage currentPage = it.next();
-			Widget[] widgets = currentPage.getOnlineWidgets();
+			Widget[] widgets = currentPage.getWidgets();
 			if (widgets != null) {
 				for (Widget currentWidget : widgets) {
 					if (null != currentWidget && currentWidget.getType().getCode().equals(this.getWidgetTypeCode())) {
@@ -95,6 +95,7 @@ public class PageWithWidgetTag extends TagSupport {
 	public String getVar() {
 		return _var;
 	}
+
 	public void setVar(String var) {
 		this._var = var;
 	}
@@ -102,6 +103,7 @@ public class PageWithWidgetTag extends TagSupport {
 	public boolean isListResult() {
 		return _listResult;
 	}
+
 	public void setListResult(boolean listResult) {
 		this._listResult = listResult;
 	}
@@ -109,6 +111,7 @@ public class PageWithWidgetTag extends TagSupport {
 	public String getFilterParamName() {
 		return _filterParamName;
 	}
+
 	public void setFilterParamName(String filterParamName) {
 		this._filterParamName = filterParamName;
 	}
@@ -116,6 +119,7 @@ public class PageWithWidgetTag extends TagSupport {
 	public String getFilterParamValue() {
 		return _filterParamValue;
 	}
+
 	public void setFilterParamValue(String filterParamValue) {
 		this._filterParamValue = filterParamValue;
 	}
@@ -123,6 +127,7 @@ public class PageWithWidgetTag extends TagSupport {
 	public String getWidgetTypeCode() {
 		return _widgetTypeCode;
 	}
+
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}

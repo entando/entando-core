@@ -566,6 +566,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	private List<IPage> getWidgetUtilizers(String widgetTypeCode, boolean draft) throws ApsSystemException {
 		List<IPage> pages = new ArrayList<IPage>();
 		try {
+			if (null == widgetTypeCode) {
+				return pages;
+			}
 			IPage root = (draft) ? this.getDraftRoot() : this.getOnlineRoot();
 			this.getWidgetUtilizers(root, widgetTypeCode, pages);
 		} catch (Throwable t) {

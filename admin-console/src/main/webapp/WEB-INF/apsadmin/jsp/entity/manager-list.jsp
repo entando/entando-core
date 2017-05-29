@@ -66,11 +66,6 @@
                            " title="<s:text name="label.references.status.ok" />"><img src="<wp:resourceURL />administration/common/img/icons/generic-status-ok.png" alt="<s:text name="label.references.status.ok" />" /></a>
                         </s:elseif>
                 </td>
-
-                <%--
-                - -
-                <a href="<s:url action="search" namespace="/do/Entity" ><s:param name="entityManagerName" value="#entityManager" /></s:url>">**RICERCA ELEMENTI**</a>
-                --%>
             </tr>
         </s:iterator>
     </table>

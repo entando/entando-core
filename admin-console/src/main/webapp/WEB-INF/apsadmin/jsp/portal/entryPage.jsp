@@ -78,6 +78,9 @@
             <wpsf:hidden name="pageCode" />
             <wpsf:hidden name="group" />
         </s:if>
+		<s:if test="groupSelectLock">
+			<wpsf:hidden name="group" />
+		</s:if>
         <s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
         <s:if test="strutsAction == 3">
             <wpsf:hidden name="group" />
@@ -218,7 +221,7 @@
                     <s:if test="#hasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                        </span>
+                    </span>
                 </s:if>
             </div>
         </div>

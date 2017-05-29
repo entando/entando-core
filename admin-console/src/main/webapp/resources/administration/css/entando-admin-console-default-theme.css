@@ -1701,8 +1701,24 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     background: #e0e0e0;
     padding-left: 20px!important;
  }
- 
- 
+
+.topFrame .data-description:after,
+.topFrame .slot-name:after {
+    content: 'Top Frame';
+    background-color: #39a5dc;
+    display: inline;
+    padding: .2em .6em .3em;
+    margin-left: 10px;
+    vertical-align: baseline;
+    line-height: 1;
+    white-space: nowrap;
+    color: #fff;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+
 @media (max-width: 991px) {
     .table-view-pf-toolbar label {display: none}
     .toolbar-pf-actions .selected-items {margin: 10px 0;}

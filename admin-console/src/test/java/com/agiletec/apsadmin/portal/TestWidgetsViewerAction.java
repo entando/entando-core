@@ -26,21 +26,21 @@ import com.opensymphony.xwork2.Action;
  * @author E.Santoboni
  */
 public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
-	
+
 	public void testViewWidgets() throws Throwable {
 		String result = this.executeViewWidgets("admin");
 		assertEquals(Action.SUCCESS, result);
-		
+
 		result = this.executeViewWidgets("pageManagerCustomers");
 		assertEquals(Action.SUCCESS, result);
-		
+
 		result = this.executeViewWidgets("editorCustomers");
 		assertEquals("userNotAllowed", result);
-		
+
 		result = this.executeViewWidgets(null);
 		assertEquals("apslogin", result);
 	}
-	
+
 	public void testGetWidgetFlavours() throws Throwable {
 		String result = this.executeViewWidgets("admin");
 		assertEquals(Action.SUCCESS, result);
@@ -49,7 +49,7 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 		assertNotNull(widgetFlavours);
 		assertTrue(widgetFlavours.size() >= 3);
 		Lang currentLang = action.getCurrentLang();
-		
+
 		List<SelectItem> userWidgets = widgetFlavours.get(0);
 		assertEquals(2, userWidgets.size());
 		SelectItem userType = userWidgets.get(1);
@@ -61,7 +61,7 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 			assertEquals("logic_type", userType.getKey());
 			assertEquals("Logic type for test", userType.getValue());
 		}
-		
+
 		List<SelectItem> customWidgets = widgetFlavours.get(1);
 		assertEquals(1, customWidgets.size());
 		SelectItem customType = customWidgets.get(0);
@@ -73,7 +73,7 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 			assertEquals("leftmenu", customType.getKey());
 			assertEquals("Vertical Navigation Menu", customType.getValue());
 		}
-		
+
 		List<SelectItem> jacmsWidgets = widgetFlavours.get(2);
 		assertEquals(3, jacmsWidgets.size());
 		SelectItem jacmsWidgetTypes = jacmsWidgets.get(1);
@@ -82,8 +82,8 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 			assertEquals("content_viewer_list", jacmsWidgetTypes.getKey());
 			assertEquals("Contenuti - Pubblica una Lista di Contenuti", jacmsWidgetTypes.getValue());
 		}
-		
-		List<SelectItem> stockWidgets = widgetFlavours.get(widgetFlavours.size()-1);
+
+		List<SelectItem> stockWidgets = widgetFlavours.get(widgetFlavours.size() - 1);
 		assertEquals(4, stockWidgets.size());
 		SelectItem stockType = stockWidgets.get(3);
 		assertEquals(AbstractPortalAction.STOCK_WIDGETS_CODE, stockType.getOptgroup());
@@ -95,58 +95,75 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 			assertEquals("System Messages", stockType.getValue());
 		}
 	}
-	
+
 	public void testGetWidgetUtilizers_1() throws Throwable {
 		String result = this.executeViewWidgetUtilizers("admin", null);
 		assertEquals(Action.INPUT, result);
 		Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
 		assertEquals(1, fieldErrors.size());
 		assertEquals(1, fieldErrors.get("showletTypeCode").size());
-		
+
 		result = this.executeViewWidgetUtilizers("admin", "");
 		assertEquals(Action.INPUT, result);
 		fieldErrors = this.getAction().getFieldErrors();
 		assertEquals(1, fieldErrors.size());
 		assertEquals(1, fieldErrors.get("showletTypeCode").size());
-		
+
 		result = this.executeViewWidgetUtilizers("admin", "invalidShowletCode");
 		assertEquals(Action.INPUT, result);
 		fieldErrors = this.getAction().getFieldErrors();
 		assertEquals(1, fieldErrors.size());
 		assertEquals(1, fieldErrors.get("showletTypeCode").size());
 	}
-	
+
 	public void testGetWidgetUtilizers_2() throws Throwable {
 		String result = this.executeViewWidgetUtilizers("admin", "logic_type");
 		assertEquals(Action.SUCCESS, result);
 		WidgetsViewerAction action = (WidgetsViewerAction) this.getAction();
 		List<IPage> pageUtilizers = action.getWidgetUtilizers();
 		assertEquals(0, pageUtilizers.size());
-		
+
 		result = this.executeViewWidgetUtilizers("admin", "leftmenu");
 		assertEquals(Action.SUCCESS, result);
 		action = (WidgetsViewerAction) this.getAction();
 		pageUtilizers = action.getWidgetUtilizers();
-		assertEquals(3, pageUtilizers.size());
+		assertEquals(4, pageUtilizers.size());
+		this.checkUtilizers(pageUtilizers, 3, 1);
 		assertEquals("pagina_1", pageUtilizers.get(0).getCode());
-		
+
 		result = this.executeViewWidgetUtilizers("admin", "content_viewer");
 		assertEquals(Action.SUCCESS, result);
 		action = (WidgetsViewerAction) this.getAction();
 		pageUtilizers = action.getWidgetUtilizers();
-		assertEquals(7, pageUtilizers.size());
+		assertEquals(14, pageUtilizers.size());
+		this.checkUtilizers(pageUtilizers, 7, 7);
 		assertEquals("homepage", pageUtilizers.get(0).getCode());
 		assertEquals("pagina_2", pageUtilizers.get(3).getCode());
 		assertEquals("customer_subpage_2", pageUtilizers.get(6).getCode());
 	}
-	
+
+	private void checkUtilizers(List<IPage> pageUtilizers, int expectedDraft, int expectedOnline) {
+		int online = 0;
+		int draft = 0;
+		for (int i = 0; i < pageUtilizers.size(); i++) {
+			IPage page = pageUtilizers.get(i);
+			if (page.isOnlineInstance()) {
+				online++;
+			} else {
+				draft++;
+			}
+		}
+		assertEquals(expectedOnline, online);
+		assertEquals(expectedDraft, draft);
+	}
+
 	private String executeViewWidgets(String username) throws Throwable {
 		this.setUserOnSession(username);
 		this.initAction("/do/Portal/WidgetType", "viewWidgets");
 		String result = this.executeAction();
 		return result;
 	}
-	
+
 	private String executeViewWidgetUtilizers(String username, String widgetTypeCode) throws Throwable {
 		this.setUserOnSession(username);
 		this.initAction("/do/Portal/WidgetType", "viewWidgetUtilizers");
@@ -156,5 +173,5 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 		String result = this.executeAction();
 		return result;
 	}
-	
+
 }

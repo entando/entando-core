@@ -30,6 +30,7 @@ public class SwapWidgetResponse extends AbstractPageResponse {
 	public Map<String, List<String>> getFieldErrors() {
 		return fieldErrors;
 	}
+
 	public void setFieldErrors(Map<String, List<String>> fieldErrors) {
 		this.fieldErrors = fieldErrors;
 	}
@@ -37,6 +38,7 @@ public class SwapWidgetResponse extends AbstractPageResponse {
 	public Collection<String> getActionErrors() {
 		return actionErrors;
 	}
+
 	public void setActionErrors(Collection<String> actionErrors) {
 		this.actionErrors = actionErrors;
 	}
@@ -44,6 +46,7 @@ public class SwapWidgetResponse extends AbstractPageResponse {
 	public Collection<String> getActionMessages() {
 		return actionMessages;
 	}
+
 	public void setActionMessages(Collection<String> actionMessages) {
 		this.actionMessages = actionMessages;
 	}
@@ -51,6 +54,7 @@ public class SwapWidgetResponse extends AbstractPageResponse {
 	public PageJO getPage() {
 		return page;
 	}
+
 	public void setPage(PageJO page) {
 		this.page = page;
 	}
@@ -59,12 +63,12 @@ public class SwapWidgetResponse extends AbstractPageResponse {
 		//
 	}
 
-	public SwapWidgetResponse(ActionSupport actionSupport, IPage page) {
+	public SwapWidgetResponse(ActionSupport actionSupport, IPage draftPage, IPage onlinePage) {
 		super();
 		this.setFieldErrors(actionSupport.getFieldErrors());
 		this.setActionErrors(actionSupport.getActionErrors());
 		this.setActionMessages(actionSupport.getActionMessages());
-		this.setPage(this.copyPage(page));
+		this.setPage(this.copyPage(draftPage, onlinePage));
 	}
 
 }

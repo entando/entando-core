@@ -25,41 +25,30 @@ import com.j256.ormlite.field.DatabaseField;
  * @author E.Santoboni, E.Mezzano
  */
 public abstract class AbstractPageMetadata implements ExtendedColumnDefinition {
-	
-	public AbstractPageMetadata() {}
-	
-	@DatabaseField(columnName = "code", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false, id = true)
+
+	public AbstractPageMetadata() {
+	}
+
+	@DatabaseField(columnName = "code", dataType = DataType.STRING, width = 30, canBeNull = false, id = true)
 	protected String _code;
-	
-	@DatabaseField(columnName = "titles", 
-			dataType = DataType.LONG_STRING, 
-			canBeNull = false)
+
+	@DatabaseField(columnName = "titles", dataType = DataType.LONG_STRING, canBeNull = false)
 	protected String _titles;
-	
-	@DatabaseField(foreign = true, columnName = "modelcode", 
-			width = 40, 
-			canBeNull = false)
+
+	@DatabaseField(foreign = true, columnName = "modelcode", width = 40, canBeNull = false)
 	protected PageModel _model;
-	
-	@DatabaseField(columnName = "showinmenu", 
-			dataType = DataType.SHORT, 
-			canBeNull = false)
+
+	@DatabaseField(columnName = "showinmenu", dataType = DataType.SHORT, canBeNull = false)
 	protected short _showInMenu;
-	
-	@DatabaseField(columnName = "extraconfig", 
-			dataType = DataType.LONG_STRING)
+
+	@DatabaseField(columnName = "extraconfig", dataType = DataType.LONG_STRING)
 	protected String _extraConfig;
-	
-	@DatabaseField(columnName = "updatedat", 
-			dataType = DataType.DATE, 
-			canBeNull = true)
+
+	@DatabaseField(columnName = "updatedat", dataType = DataType.DATE, canBeNull = true)
 	protected Date _updatedAt;
-	
+
 	protected abstract String getTableName();
-	
+
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = this.getTableName();
@@ -68,24 +57,13 @@ public abstract class AbstractPageMetadata implements ExtendedColumnDefinition {
 			tableName = "`" + tableName + "`";
 			pageTableName = "`" + pageTableName + "`";
 		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + this.getTableName() + "_code_fk FOREIGN KEY (code) "
-				+ "REFERENCES " + pageTableName + " (code)"};
+		return new String[] {
+			// @formatter:off
+				"ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_code_fk FOREIGN KEY (code) "
+				+ "REFERENCES " + pageTableName + " (code)  " ,
+				"ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_modelcode_fk FOREIGN KEY (modelcode) " + 
+				"REFERENCES " + PageModel.TABLE_NAME + " (code)" };
+			// @formatter:on
 	}
-	
+
 }
-/*
-CREATE TABLE pages_metadata
-(
-  code character varying(30) NOT NULL,
-  modelcode character varying(40) NOT NULL,
-  titles text NOT NULL,
-  showinmenu smallint NOT NULL,
-  extraconfig text,
-  lastmodified timestamp without time zone,
-  CONSTRAINT pages_metadata_pkey PRIMARY KEY (code),
-  CONSTRAINT pages_metadata_code_fkey FOREIGN KEY (code)
-      REFERENCES pages (code) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
- */

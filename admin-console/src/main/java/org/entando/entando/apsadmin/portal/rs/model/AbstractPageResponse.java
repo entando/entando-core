@@ -17,21 +17,23 @@ import com.agiletec.aps.system.services.page.IPage;
 
 public abstract class AbstractPageResponse {
 
-	protected PageJO copyPage(IPage srcPage) {
+	protected PageJO copyPage(IPage draftPage, IPage onlinePage) {
 		PageJO copiedPage = null;
-		if (null != srcPage) {
+		if (null != draftPage) {
 			copiedPage = new PageJO();
-			copiedPage.setCode(srcPage.getCode());
-			copiedPage.setRoot(srcPage.isRoot());
-			copiedPage.setOnline(srcPage.isOnline());
-			copiedPage.setChanged(srcPage.isChanged());
-			copiedPage.setParentCode(srcPage.getParentCode());
-			copiedPage.setGroup(srcPage.getGroup());
-			copiedPage.setPosition(srcPage.getPosition());
-			copiedPage.setDraftMetadata(srcPage.getDraftMetadata());
-			copiedPage.setDraftWidgets(srcPage.getDraftWidgets());
-			copiedPage.setOnlineMetadata(srcPage.getOnlineMetadata());
-			copiedPage.setOnlineWidgets(srcPage.getOnlineWidgets());
+			copiedPage.setCode(draftPage.getCode());
+			copiedPage.setRoot(draftPage.isRoot());
+			copiedPage.setOnline(draftPage.isOnline());
+			copiedPage.setChanged(draftPage.isChanged());
+			copiedPage.setParentCode(draftPage.getParentCode());
+			copiedPage.setGroup(draftPage.getGroup());
+			copiedPage.setPosition(draftPage.getPosition());
+			copiedPage.setDraftMetadata(draftPage.getMetadata());
+			copiedPage.setDraftWidgets(draftPage.getWidgets());
+			if (draftPage.isOnline()) {
+				copiedPage.setOnlineMetadata(onlinePage.getMetadata());
+				copiedPage.setOnlineWidgets(onlinePage.getWidgets());
+			}
 		}
 		return copiedPage;
 	}

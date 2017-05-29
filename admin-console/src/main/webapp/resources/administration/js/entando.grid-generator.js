@@ -335,7 +335,7 @@
                     h = col.y2 - col.y1 + 1,
                     isLeaf = !col.rows;
 
-                var content;
+                var content, isMainFrame = this.options.frames[i].mainFrame;
                 if (isLeaf) {
                     content = '<span class="data-description">' + (_.escape(col.description) || '') + '</span>';
                 } else {
@@ -346,6 +346,9 @@
                     'col-xs-' + l,
                     (content && !col.rows? 'grid-slot' : 'empty-slot')
                 ];
+                if (isMainFrame) {
+                    classes.push('topFrame');
+                }
 
                 html += '<div class="' + classes.join(' ') + '"';
                 if (this.options.rowHeight) {

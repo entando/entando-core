@@ -38,13 +38,13 @@
 </div>
 <br>
 
-<div class="text-center">
+<div>
     <s:form action="updateSystemParams">
         <s:if test="hasActionMessages()">
-            <div class="alert alert-success alert-dismissable fade in">
-                <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-                <h2 class="h4 margin-none"><s:text name="messages.confirm" /></h2>
-                <ul class="margin-base-top">
+            <div class="alert alert-success">
+                <span class="pficon pficon-ok"></span>
+                <strong><s:text name="messages.confirm" /></strong>
+                <ul>
                     <s:iterator value="actionMessages">
                         <li><s:property escapeHtml="false" /></li>
                         </s:iterator>

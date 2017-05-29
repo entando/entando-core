@@ -11,13 +11,13 @@
 </style>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.userDesigner" /></li>
+    <li><s:text name="title.userSetting" /></li>
     <li class="page-title-container"><s:text name="title.userSettings" /></li>
 </ol>
 
 <h1 class="page-title-container"><s:text name="title.userSettings" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.userSettings.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -30,17 +30,15 @@
 <div id="main" role="main">
     <s:form action="updateSystemParams">
         <s:if test="hasActionMessages()">
-            <div class="alert alert-success alert-dismissable fade in">
-                <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-                <h2 class="h4 margin-none"><s:text name="messages.confirm" /></h2>
-                <ul class="margin-base-top">
-                    <s:iterator value="actionMessages">
-                        <li><s:property escapeHtml="false" /></li>
-                        </s:iterator>
-                </ul>
+            <div class="alert alert-success">
+                <span class="pficon pficon-ok"></span>
+                <strong><s:text name="messages.confirm" /></strong>
+                <s:iterator value="actionMessages">
+                    <li><s:property escapeHtml="false" /></li>
+                    </s:iterator>
             </div>
         </s:if>
-        
+
         <fieldset class="col-xs-12 margin-large-top">
             <legend><s:text name="sysconfig.legend.privacyModule" /></legend>
             <div class="form-group">
@@ -50,20 +48,20 @@
                     </div>
                     <div class="col-xs-4 text-left">
                         <s:set var="paramName" value="'extendedPrivacyModuleEnabled'" />
-                        <input type="hidden" 
+                        <input type="hidden"
                                value="<s:property value="systemParams[#paramName]" />"
-                               id="<s:property value="#paramName"/>" 
+                               id="<s:property value="#paramName"/>"
                                name="<s:property value="#paramName"/>" />
-                        <input 
-                            type="checkbox" 	
+                        <input
+                            type="checkbox"
                             value="<s:property value="systemParams[#paramName]" />"
-                            id="ch_<s:property value="#paramName"/>" 
-                            class="bootstrap-switch" 
+                            id="ch_<s:property value="#paramName"/>"
+                            class="bootstrap-switch"
                             <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                         </div>
                     </div>
-                </div>                
-                
+                </div>
+
                 <div class="form-group">
                     <div class="row">
                     <s:set var="paramName" value="'maxMonthsSinceLastAccess'" />
@@ -72,7 +70,7 @@
                     </div>
                     <div class="col-xs-4 text-left">
                         <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
-                        <div class="btn-group" data-toggle="buttons">                            
+                        <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
                                 <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
                                 <s:property value="systemParams[#paramName]"/>
@@ -84,15 +82,15 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">                
+
+                    <div class="row">
                     <s:set var="paramName" value="'maxMonthsSinceLastPasswordChange'" />
                     <div class="col-xs-4 col-label">
                         <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastPasswordChange" /></span>
                     </div>
                     <div class="col-xs-4 text-left">
                         <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
-                        <div class="btn-group" data-toggle="buttons">                            
+                        <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
                                 <input type="radio" class="" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
                                 <s:property value="systemParams[#paramName]"/>
@@ -103,41 +101,41 @@
                                 </label>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
                 <legend><s:text name="sysconfig.legend.misc" /></legend>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-xs-4 col-label">
-                            <span class="display-block"><s:text name="sysconfig.gravatarIntegrationEnabled" /></span>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-4 col-label">
+                        <span class="display-block"><s:text name="sysconfig.gravatarIntegrationEnabled" /></span>
                     </div>
                     <div class="col-xs-4 text-left">
                         <s:set var="paramName" value="'gravatarIntegrationEnabled'" />
-                        <input type="hidden" 
+                        <input type="hidden"
                                value="<s:property value="systemParams[#paramName]" />"
-                               id="<s:property value="#paramName"/>" 
+                               id="<s:property value="#paramName"/>"
                                name="<s:property value="#paramName"/>" />
-                        <input 
-                            type="checkbox" 	
+                        <input
+                            type="checkbox"
                             value="<s:property value="systemParams[#paramName]" />"
-                            id="ch_<s:property value="#paramName"/>" 
-                            class="bootstrap-switch" 
+                            id="ch_<s:property value="#paramName"/>"
+                            class="bootstrap-switch"
                             <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                         </div>
                     </div>
                 </div>
             </fieldset>
-            
+
             <div class="col-xs-12">
             <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
                 <!--                        <span class="icon fa fa-floppy-o"></span>&#32;-->
                 <s:text name="label.save" />
             </wpsf:submit>
         </div>
-        
+
     </s:form>
-    
+
 </div>
 
 <script type="application/javascript" >
@@ -151,14 +149,14 @@
 
 <script type="application/javascript" >
     function setCustomValue(idPar){
-        $('#admin-settings-area-'+idPar+'_input').show();
-        $('#admin-settings-area-'+idPar+'_value').hide();
-        $('#admin-settings-area-'+idPar+'_label').hide();
+    $('#admin-settings-area-'+idPar+'_input').show();
+    $('#admin-settings-area-'+idPar+'_value').hide();
+    $('#admin-settings-area-'+idPar+'_label').hide();
     }
     function hideCustomValue(idPar){
-        $('#admin-settings-area-'+idPar+'_input').hide();
-        $('#admin-settings-area-'+idPar+'_value').show();
-        $('#admin-settings-area-'+idPar+'_label').show();
-        $("#admin-settings-area-"+idPar+"_input").val("0");
+    $('#admin-settings-area-'+idPar+'_input').hide();
+    $('#admin-settings-area-'+idPar+'_value').show();
+    $('#admin-settings-area-'+idPar+'_label').show();
+    $("#admin-settings-area-"+idPar+"_input").val("0");
     }
 </script>

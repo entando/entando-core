@@ -42,12 +42,13 @@
         </span>
     </div>
 </h1>
+<i class="fa fa-asterisk required-icon"></i>
 <div class="text-right">
-    <div class="form-group-separator"></div>
+    <div class="form-group-separator">
+        <s:text name="label.requiredFields" />
+    </div>
 </div>
-<br>
-<br>
-
+<br />
 <s:form action="save" cssClass="form-horizontal">
     <s:if test="hasActionErrors()">
         <div class="alert alert-danger alert-dismissable fade in">
@@ -75,78 +76,77 @@
         </div>
     </s:if>
     <p class="sr-only">
-    <wpsf:hidden name="strutsAction" />
-    <s:if test="getStrutsAction() == 2">
-        <wpsf:hidden name="name" />
-    </s:if>
-</p>
-
-<%-- NAME --%>
-<s:set var="fieldErrorsVar" value="%{fieldErrors['description']}" />
-<s:set var="fieldHasFieldErrorVar"
-       value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
-<s:set var="controlGroupErrorClassVar"
-       value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-
-<div
-    class="form-group<s:property value="#controlGroupErrorClassVar" />">
-    <label class="col-sm-2 control-label" for="description"><s:text
-            name="label.name" />&nbsp;<a tabindex="0" role="button"
-                 data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                 data-content="<s:text name="note.group.name" />" data-placement="top" data-original-title=""><span
-                class="fa fa-info-circle"></span></a></label>
-    <div class="col-sm-10">
-        <wpsf:textfield name="description" id="description"
-                        cssClass="form-control" />
-        <s:if test="#fieldHasFieldErrorVar">
-            <span class="help-block text-danger"> <s:iterator
-                    value="#fieldErrorsVar">
-                    <s:property />
-                    &#32;
-                </s:iterator>
-            </span>
+        <wpsf:hidden name="strutsAction" />
+        <s:if test="getStrutsAction() == 2">
+            <wpsf:hidden name="name" />
         </s:if>
+    </p>
+
+    <%-- NAME --%>
+    <s:set var="fieldErrorsVar" value="%{fieldErrors['description']}" />
+    <s:set var="fieldHasFieldErrorVar"
+           value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClassVar"
+           value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+
+    <div
+        class="form-group<s:property value="#controlGroupErrorClassVar" />">
+        <label class="col-sm-2 control-label" for="description"><s:text name="label.name" />&nbsp;
+            <i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
+            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="note.group.name" />" data-placement="top" data-original-title="">
+                <span class="fa fa-info-circle"></span></a>
+        </label>
+        <div class="col-sm-10">
+            <wpsf:textfield name="description" id="description"
+                            cssClass="form-control" />
+            <s:if test="#fieldHasFieldErrorVar">
+                <span class="help-block text-danger"> <s:iterator
+                        value="#fieldErrorsVar">
+                        <s:property />
+                        &#32;
+                    </s:iterator>
+                </span>
+            </s:if>
+        </div>
     </div>
-</div>
 
 
 
-<%-- CODE --%>
-<s:set var="fieldErrorsVar" value="%{fieldErrors['name']}" />
-<s:set var="fieldHasFieldErrorVar"
-       value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
-<s:set var="controlGroupErrorClassVar"
-       value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+    <%-- CODE --%>
+    <s:set var="fieldErrorsVar" value="%{fieldErrors['name']}" />
+    <s:set var="fieldHasFieldErrorVar"
+           value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClassVar"
+           value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
 
-<div
-    class="form-group<s:property value="#controlGroupErrorClassVar" />">
-    <label class="col-sm-2 control-label" for="name"> <s:text
-            name="label.code" />&nbsp;<a tabindex="0" role="button"
-                 data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                 data-content="<s:text name="note.group.code" />" data-placement="top" data-original-title=""><span
-                class="fa fa-info-circle"></span></a>
-    </label>
-    <div class="col-sm-10">
-        <wpsf:textfield name="name" id="name"
-                        disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
-        <s:if test="#fieldHasFieldErrorVar">
-            <span class="help-block text-danger"> <s:iterator
-                    value="#fieldErrorsVar">
-                    <s:property />
-                    &#32;
-                </s:iterator>
-            </span>
-        </s:if>
+    <div
+        class="form-group<s:property value="#controlGroupErrorClassVar" />">
+        <label class="col-sm-2 control-label" for="name"> <s:text name="label.code" />&nbsp;
+            <i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
+            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="note.group.code" />" data-placement="top" data-original-title="">
+                <span class="fa fa-info-circle"></span></a>
+        </label>
+        <div class="col-sm-10">
+            <wpsf:textfield name="name" id="name"
+                            disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
+            <s:if test="#fieldHasFieldErrorVar">
+                <span class="help-block text-danger"> <s:iterator
+                        value="#fieldErrorsVar">
+                        <s:property />
+                        &#32;
+                    </s:iterator>
+                </span>
+            </s:if>
+        </div>
     </div>
-</div>
-<br>
+    <br>
 
-<%-- save --%>
-<div class="form-group">
-    <div class="col-sm-12">
-        <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
-            <s:text name="label.save" />
-        </wpsf:submit>
+    <%-- save --%>
+    <div class="form-group">
+        <div class="col-sm-12">
+            <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+                <s:text name="label.save" />
+            </wpsf:submit>
+        </div>
     </div>
-</div>
 </s:form>

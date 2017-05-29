@@ -1,23 +1,34 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<h1 class="panel panel-default title-page">
-	<span class="panel-body display-block">
-		<a href="<s:url action="list" namespace="/do/Group"></s:url>" 
-		title="<s:text name="note.goToSomewhere" />: <s:text name="title.roleManagement" />">
-		<s:text name="title.roleManagement" />
-		</a>
-		&#32;/&#32;
-		<s:text name="title.roleManagement.roleTrash" />
-	</span>
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="title.userSetting" /></a></li>
+    <li><a href="<s:url namespace="/do/Role" action="list" />">
+            <s:text name="title.roleManagement" />
+        </a></li>
+
+    <li class="page-title-container"><s:text name="title.roleManagement.roleTrash" /></li>
+</ol>
+
+<h1 class="page-title-container">
+    <s:text name="title.roleManagement.roleTrash" />
 </h1>
 
-<div id="main" role="main">
 
-<div class="message message_error">
-<h2><s:text name="message.title.ActionErrors" /></h2>
-<p><s:text name="message.note.resolveReferences" />:</p>
-
+<div class="text-right">
+    <div class="form-group-separator"></div>
 </div>
-
-<s:include value="/WEB-INF/apsadmin/jsp/user/role/include/roleInfo-references.jsp" />
+<br>
+<div id="main" role="main">
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert"
+                aria-hidden="true">
+            <span class="pficon pficon-close"></span>
+        </button>
+        <span class="pficon pficon-error-circle-o"></span>
+        <strong><s:text name="message.title.ActionErrors" /></strong>
+        <ul>
+            <li><s:text name="message.note.resolveReferences" />:</li>
+        </ul>
+    </div>
+    <s:include value="/WEB-INF/apsadmin/jsp/user/role/include/roleInfo-references.jsp" />
 
 </div>

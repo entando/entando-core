@@ -7,7 +7,7 @@
 
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url namespace="/do/BaseAdmin" action="settings" />"><s:text name="menu.configure" /></a></li>
+    <li><s:text name="title.userSetting" /></li>
     <li> <a href="<s:url namespace="/do/User" action="list" />"><s:text name="title.userManagement" /></a></li>
     <li class="page-title-container"> <s:text name="title.userManagement.userAuthorizations" /></li>
 </ol>
@@ -15,7 +15,7 @@
 <h1 class="page-title-container">
     <s:text name="title.userManagement.userAuthorizations" />&nbsp;<s:text name="label.for" />&nbsp;<s:property value="userAuthsFormBean.username" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="text to be inserted" data-placement="left" data-original-title="">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.userList.help" />" data-placement="left" data-original-title="">
             <i class="fa fa-question-circle-o" aria-hidden="true"></i>
         </a>
     </span>
@@ -23,7 +23,7 @@
 
 
 <div class="text-right">
-    <div class="form-group-separator"></div>               
+    <div class="form-group-separator"></div>
 </div>
 <br>
 
@@ -88,7 +88,7 @@
                                         <wpsa:actionSubParam name="index" value="%{#elementIndexVar}" />
                                     </wpsa:actionParam>
                                     <wpsf:submit action="%{#actionName}" type="button" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-menu-right">
-                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                        <i class="fa fa-trash-o fa-lg" aria-hidden="true" style="color: #23a8e0"></i>
                                     </wpsf:submit>
                                 </td>
                             </tr>
@@ -109,8 +109,8 @@
                 <div class="col-xs-12">
                     <label class="col-sm-2 control-label" for="userGroup"><s:text name="label.userGroup" /></label>
                     <div class="col-sm-8">
-                        <wpsf:select id="userGroup" name="groupName" list="groups" 
-                                     headerKey="" headerValue="%{getText('note.choose')}" 
+                        <wpsf:select id="userGroup" name="groupName" list="groups"
+                                     headerKey="" headerValue="%{getText('note.choose')}"
                                      listKey="name" listValue="description" cssClass="form-control" />
                     </div>
                 </div>
@@ -119,14 +119,14 @@
                 <div class="col-xs-12">
                     <label class="col-sm-2 control-label" for="userRole"><s:text name="label.userRole" /></label>
                     <div class="col-sm-8">
-                        <wpsf:select id="userRole" name="roleName" list="roles" 
-                                     headerKey="" headerValue="%{getText('note.choose')}" 
+                        <wpsf:select id="userRole" name="roleName" list="roles"
+                                     headerKey="" headerValue="%{getText('note.choose')}"
                                      listKey="name" listValue="description" cssClass="form-control" />
                     </div>
                 </div>
             </div>
 
-            <div class="form-group"> 
+            <div class="form-group">
                 <div class="col-xs-12">
                     <label class="col-sm-2"></label>
                     <div class="col-sm-8 button-position-on-save">
@@ -142,7 +142,7 @@
                 </div>
             </div>
             <hr>
-            <div class="form-group "> 
+            <div class="form-group ">
                 <div class="col-xs-12">
                     <label class="col-sm-2"></label>
                     <div class="col-sm-8 button-position-on-save">

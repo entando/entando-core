@@ -8,17 +8,12 @@
         <wpsf:hidden name="name" />
     </p>
     <%-- referenced users --%>
-    <!--<div class="panel panel-default">-->
-    <!--<div class="panel-heading">-->
-
-
+   
     <div class="form-group">
         <label class="control-label col-sm-2"><s:text
                 name="title.role.referencedUsers" /></label>
 
         <div class="col-sm-10">
-            <!--</div>-->
-            <!--<div class="panel-body">-->
             <s:if test="null != references && references.size() > 0">
                 <wpsa:subset source="references" count="10"
                              objectName="userReferences" advanced="true" offset="5"

@@ -213,7 +213,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 	public String removeExtraGroup() {
 		try {
 			this.updateTitles();
-			this.getExtraGroups().remove(super.getParameter("extraGroupName"));
+			this.getExtraGroups().remove(super.getParameter("extraGroupNameRemove"));
 		} catch (Throwable t) {
 			_logger.error("error in removeExtraGroup", t);
 			return FAILURE;

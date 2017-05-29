@@ -15,7 +15,7 @@
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
             <a class="treeOpenCloseJS"
-               href="<s:url action="%{#openTreeActionName}">
+               href="<s:url namespace="/do/Page/Console" action="%{#openTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
@@ -25,7 +25,7 @@
             </a>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
-            <a class="treeOpenCloseJS noborder" href="<s:url action="%{#closeTreeActionName}">
+            <a class="treeOpenCloseJS noborder" href="<s:url namespace="/do/Page/Console" action="%{#closeTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />

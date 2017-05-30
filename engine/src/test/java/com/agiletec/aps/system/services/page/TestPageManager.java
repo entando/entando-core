@@ -75,13 +75,9 @@ public class TestPageManager extends BaseTestCase {
 	public void testAddUpdateMoveDeletePage() throws Throwable {
 		try {
 			this.checkAddPage();
-
 			this.checkUpdatePage();
-
 			this.movePage();
-
 			this.checkPutOnlineOfflinePage();
-
 			this.deletePage();
 		} catch (Throwable t) {
 			throw t;
@@ -95,13 +91,11 @@ public class TestPageManager extends BaseTestCase {
 	public void checkAddPage() throws Throwable {
 		IPage parentPage = _pageManager.getDraftPage("service");
 		PageModel pageModel = parentPage.getMetadata().getModel();
-		PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null,
-				null);
-
+		PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
+				true, "pagina temporanea", null, null, false, null, null);
 		ApsProperties config = PageTestUtil.createProperties("temp", "tempValue", "contentId", "ART11");
 		Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
 		Widget[] widgets = {widgetToAdd};
-
 		Page pageToAdd = PageTestUtil.createPage("temp", parentPage, "free", metadata, widgets);
 		_pageManager.addPage(pageToAdd);
 
@@ -388,9 +382,6 @@ public class TestPageManager extends BaseTestCase {
 			}
 			pagesFound = this._pageManager.searchPages("", allowedGroupCodes);
 			assertNotNull(pagesFound);
-			System.out.println("-----------------------");
-			System.out.println(pagesFound);
-			System.out.println("-----------------------");
 			assertEquals(17, pagesFound.size());
 			pagesFound = this._pageManager.searchPages(null, allowedGroupCodes);
 			assertNotNull(pagesFound);

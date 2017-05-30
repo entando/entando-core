@@ -47,11 +47,11 @@ public class WidgetsViewerAction extends AbstractPortalAction {
 	public List<IPage> getWidgetUtilizers(String widgetTypeCode) {
 		List<IPage> utilizers = new ArrayList<>();
 		try {
-			List<IPage> draftUtilizers = this.getPageManager().getDraftWidgetUtilizers(this.getWidgetTypeCode());
+			List<IPage> draftUtilizers = this.getPageManager().getDraftWidgetUtilizers(widgetTypeCode);
 			if (null != draftUtilizers && draftUtilizers.size() > 0) {
 				utilizers.addAll(draftUtilizers);
 			}
-			List<IPage> onlineUtilizers = this.getPageManager().getOnlineWidgetUtilizers(this.getWidgetTypeCode());
+			List<IPage> onlineUtilizers = this.getPageManager().getOnlineWidgetUtilizers(widgetTypeCode);
 			if (null != onlineUtilizers && onlineUtilizers.size() > 0) {
 				utilizers.addAll(onlineUtilizers);
 			}

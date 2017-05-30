@@ -136,7 +136,6 @@
             </ul>
         </div>
     </td>
-
 </tr>
 
 <s:if test="#currentRoot.children.length > 0">

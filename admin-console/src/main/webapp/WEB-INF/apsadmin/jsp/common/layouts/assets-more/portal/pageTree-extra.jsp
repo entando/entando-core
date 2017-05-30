@@ -7,6 +7,7 @@
 <script src="<wp:resourceURL />administration/js/jquery-ui-dragndrop.min.js"></script>
 <script src="<wp:resourceURL />administration/js/jquery-confirm.min.js"></script>
 
+
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -51,7 +52,7 @@
         */
         function setDraggable(selector) {
             // Set Handle icon for draggable items 
-            selector.find("td:first-child").prepend('<span class="fa fa-arrows dragIcon"></span>');
+            selector.find("td:first-child").prepend('<span class="fa fa-arrows dragIcon btn-primary"></span>');
             selector.draggable({
                 opacity: 0.8,
                 axis: "y",
@@ -64,7 +65,7 @@
                 start: function(event, ui) {
                     $(this).find("td:not(:first-child)").addClass("hidden");
                     $("thead th:not(:first-child), thead th:first-child button").addClass("hidden");
-                    expandNode("#pageTree .childrenNodes");
+                    expandNode(".table-treegrid .childrenNodes");
                 },
                 stop: function(event, ui) {
                     $(this).find("td:not(:first-child)").removeClass("hidden");
@@ -104,16 +105,20 @@
                         updateTree(data);
                         alertService.addDismissableSuccess(response.actionMessages);
                     }
-                    
+
                     $(".alert-dismissable").fadeOut(8000);
                     $('html, body').animate({ scrollTop: 0 }, 'fast');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alertService.addDismissableError("<strong>"+textStatus+" "+
+                        jqXHR.status+"</strong> "+errorThrown);
                 }
             });
         }
 
         function expandNode (selector) {
-            $(selector).removeClass("hidden collapsed");
-            $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right')
+            $(selector).removeClass("hidden collapsed")
+                .find('.icon.fa-angle-right').removeClass('fa-angle-right')
                 .addClass('fa-angle-down');
         }
 

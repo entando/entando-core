@@ -57,13 +57,13 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label"><s:text name="label.search.by"/></label>
                 <div class="col-sm-9">
-                    <wpsf:textfield name="text" id="search_consumer_description" cssClass="form-control" placeholder="%{getText('label.consumer.description')}" title="%{getText('label.search.by')} %{getText('label.consumer.description')}" />
+                    <wpsf:textfield name="insertedDescription" id="search_consumer_description" cssClass="form-control" placeholder="%{getText('label.consumer.description')}" title="%{getText('label.search.by')} %{getText('label.consumer.description')}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-sm-2" for="search_consumer_key" ><s:text name="api.consumer.key"/></label>
                 <div class="col-sm-9">
-                    <wpsf:textfield name="insertedKey" id="search_consumer_key" cssClass="form-control"  />
+                    <wpsf:textfield name="insertedKey" id="search_consumer_key" placeholder="%{getText('api.consumer.key')}" cssClass="form-control"  />
                 </div>
             </div>
 
@@ -82,10 +82,6 @@
         <s:text name="label.add" />
     </a>
 
-    <p class="sr-only">
-        <wpsf:hidden name="insertedKey" />
-        <wpsf:hidden name="insertedDescription" />
-    </p>
     <wpsa:subset source="searchResult" count="10" objectName="groupSearchResult" advanced="true" offset="5">
         <s:set var="group" value="#groupSearchResult" />
         <s:set var="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />

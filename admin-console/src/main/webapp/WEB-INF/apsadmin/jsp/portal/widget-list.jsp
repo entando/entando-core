@@ -86,7 +86,7 @@
                 </thead>
                 <tbody>
                     <s:iterator var="showletType" value="#showletFlavour" >
-                        <s:set var="showletUtilizers" value="getShowletUtilizers(#showletType.key)" ></s:set>
+                        <s:set var="showletUtilizers" value="%{getShowletUtilizers(#showletType.key)}" ></s:set>
                         <s:set var="concreteShowletTypeVar" value="%{getShowletType(#showletType.key)}"></s:set>
                             <tr>
                                 <td>

@@ -274,7 +274,7 @@
                             <button type="button" class="btn btn-primary dropdown-toggle btn-block"
                                     data-toggle="dropdown">
                                 <s:text name="dashboard.addContent"/>&#32;
-                                <span class="caret pull-right mt-5"></span>
+                                <span class="caret dashboard-caret-right"></span>
                             </button>
                             <ul class="dropdown-menu w100perc" role="menu">
                                 <s:iterator var="contentTypeVar" value="#contentTypesVar">
@@ -301,7 +301,7 @@
                             <button type="button" class="btn btn-primary dropdown-toggle btn-block"
                                     data-toggle="dropdown">
                                 <s:text name="dashboard.addAsset"/>&#32;
-                                <span class="caret pull-right mt-5"></span>
+                                <span class="caret dashboard-caret-right"></span>
                             </button>
                             <ul class="dropdown-menu w100perc" role="menu">
                                 <li>

@@ -100,7 +100,7 @@
 
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="lang<s:property value="code" />">
-                <abbr title="<s:property value="descr" />"><code class="label label-info" ><s:property value="code" /></code></abbr>&#32;<s:text name="name.pageTitle" />
+                <span title="<s:property value="descr" />"><span class="label label-info" ><s:property value="code" /></span></span>&#32;<s:text name="name.pageTitle" />
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
             <div class="col-sm-10">

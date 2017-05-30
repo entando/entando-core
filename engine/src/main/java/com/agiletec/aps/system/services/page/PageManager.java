@@ -473,14 +473,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	@Override
 	public IPage getOnlinePage(String pageCode) {
-		IPage page = this._onlinePages.get(pageCode);
-		return page;
+		return this._onlinePages.get(pageCode);
 	}
 
 	@Override
 	public IPage getDraftPage(String pageCode) {
-		IPage page = this._pages.get(pageCode);
-		return page;
+		return this._pages.get(pageCode);
 	}
 
 	@Override
@@ -557,29 +555,21 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	@Override
 	public List<IPage> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
-		List<IPage> pages = new ArrayList<IPage>();
-		try {
-			if (null == this._onlinePages || this._onlinePages.isEmpty() || null == widgetTypeCode) {
-				return pages;
-			}
-			IPage root = this.getOnlineRoot();
-			this.getWidgetUtilizers(root, widgetTypeCode, pages);
-		} catch (Throwable t) {
-			String message = "Error during searching online page utilizers of widget with code " + widgetTypeCode;
-			_logger.error("Error during searching online page utilizers of widget with code {}", widgetTypeCode, t);
-			throw new ApsSystemException(message, t);
-		}
-		return pages;
+		return this.getWidgetUtilizers(widgetTypeCode, false);
 	}
 
 	@Override
 	public List<IPage> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
+		return this.getWidgetUtilizers(widgetTypeCode, true);
+	}
+
+	private List<IPage> getWidgetUtilizers(String widgetTypeCode, boolean draft) throws ApsSystemException {
 		List<IPage> pages = new ArrayList<IPage>();
 		try {
-			if (null == this._pages || this._pages.isEmpty() || null == widgetTypeCode) {
+			if (null == widgetTypeCode) {
 				return pages;
 			}
-			IPage root = this.getDraftRoot();
+			IPage root = (draft) ? this.getDraftRoot() : this.getOnlineRoot();
 			this.getWidgetUtilizers(root, widgetTypeCode, pages);
 		} catch (Throwable t) {
 			String message = "Error during searching draft page utilizers of widget with code " + widgetTypeCode;

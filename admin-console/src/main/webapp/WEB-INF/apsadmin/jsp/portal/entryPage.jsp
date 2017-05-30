@@ -91,7 +91,7 @@
         </p>
 
         <legend><s:text name="label.info" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
-      
+
         <s:iterator value="langs">
             <%-- lang --%>
             <s:set var="fieldErrorsVar" value="%{fieldErrors['lang'+code]}" />
@@ -100,7 +100,7 @@
 
             <div class="form-group<s:property value="#controlGroupErrorClass" />">
                 <label class="col-sm-2 control-label" for="lang<s:property value="code" />">
-                    <abbr title="<s:property value="descr" />"><code class="label label-info" ><s:property value="code" /></code></abbr>&#32;<s:text name="name.pageTitle" />
+                    <span title="<s:property value="descr" />"><span class="label label-info" ><s:property value="code" /></span></span>&#32;<s:text name="name.pageTitle" />
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
                 <div class="col-sm-10">
@@ -216,10 +216,11 @@
                 <div class="col-sm-10">
                     <wpsf:select name="group" id="group" list="allowedGroups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" disabled="%{groupSelectLock}" cssClass="combobox form-control"></wpsf:select>
                     <s:if test="#hasFieldErrorVar">
-                    <span class="help-block text-danger">
-                        <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                    </span>
-                </s:if>
+                        <span class="help-block text-danger">
+                            <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
+                            </span>
+                    </s:if>
+                </div>
             </div>
 
             <%-- extraGroups --%>

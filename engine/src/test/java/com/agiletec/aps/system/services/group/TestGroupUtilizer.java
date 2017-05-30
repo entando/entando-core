@@ -22,33 +22,33 @@ import com.agiletec.aps.system.SystemConstants;
  * @author E.Santoboni
  */
 public class TestGroupUtilizer extends BaseTestCase {
-	
+
 	public void testGetGroupsUtilizers_1() throws Throwable {
-    	String[] names = this.getApplicationContext().getBeanNamesForType(GroupUtilizer.class);
-    	assertTrue(names.length>=4);
-    	for (int i=0; i<names.length; i++) {
+		String[] names = this.getApplicationContext().getBeanNamesForType(GroupUtilizer.class);
+		assertTrue(names.length >= 4);
+		for (int i = 0; i < names.length; i++) {
 			GroupUtilizer service = (GroupUtilizer) this.getApplicationContext().getBean(names[i]);
 			List utilizers = service.getGroupUtilizers(Group.FREE_GROUP_NAME);
 			if (names[i].equals(SystemConstants.AUTHORIZATION_SERVICE)) {
 				assertEquals(0, utilizers.size());
 			} else {
-				assertTrue(utilizers.size()>0);
+				assertTrue(utilizers.size() > 0);
 			}
 		}
-    }
-	
+	}
+
 	public void testGetGroupsUtilizers_2() throws Throwable {
-    	String[] names = this.getApplicationContext().getBeanNamesForType(GroupUtilizer.class);
-    	assertTrue(names.length>=4);
-    	for (int i=0; i<names.length; i++) {
+		String[] names = this.getApplicationContext().getBeanNamesForType(GroupUtilizer.class);
+		assertTrue(names.length >= 4);
+		for (int i = 0; i < names.length; i++) {
 			GroupUtilizer service = (GroupUtilizer) this.getApplicationContext().getBean(names[i]);
 			List utilizers = service.getGroupUtilizers("coach");
 			if (names[i].equals(SystemConstants.USER_MANAGER)) {
 				assertEquals(3, utilizers.size());
 			} else if (names[i].equals(SystemConstants.PAGE_MANAGER)) {
 				assertEquals(2, utilizers.size());
-			} 
+			}
 		}
-    }
-	
+	}
+
 }

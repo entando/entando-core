@@ -5,13 +5,10 @@
  */
 package org.entando.entando.apsadmin.portal.guifragment;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
-import com.agiletec.apsadmin.admin.BaseAdminAction;
-import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
-import static com.opensymphony.xwork2.Action.SUCCESS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.agiletec.apsadmin.admin.BaseAdminAction;
 
 /**
  *
@@ -20,25 +17,15 @@ import org.slf4j.LoggerFactory;
 public class GuiFragmentSettingAction extends BaseAdminAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(GuiFragmentSettingAction.class);
-	
-    /**
+
+	/**
 	 * Update the system params.
+	 * 
 	 * @return the result code.
 	 */
+	@Override
 	public String updateSystemParams() {
-        try {
-            this.initLocalMap();
-            this.updateLocalParams(true);
-            String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
-            this.extractExtraParameters();
-            String newXmlParams = SystemParamsUtils.getNewXmlParams(xmlParams, this.getSystemParams());
-            this.getConfigManager().updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);
-            this.addActionMessage(this.getText("message.configSystemParams.ok"));
-        } catch (Throwable t) {
-        	_logger.error("error in updateSystemParams", t);
-            return FAILURE;
-        }
-        return SUCCESS;
-    }
-	
+		return this.updateSystemParams(true);
+	}
+
 }

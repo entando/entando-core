@@ -22,57 +22,62 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class PageResponse extends AbstractPageResponse {
 
-	private Map<String, List<String>> fieldErrors;
-	private Collection<String> actionErrors;
-	private Collection<String> actionMessages;
-	private PageJO page;
-	private Map _references;
+	public PageResponse() {
+		//
+	}
+
+	public PageResponse(ActionSupport actionSupport, IPage draftPage, IPage onlinePage) {
+		super();
+		this.setFieldErrors(actionSupport.getFieldErrors());
+		this.setActionErrors(actionSupport.getActionErrors());
+		this.setActionMessages(actionSupport.getActionMessages());
+		this.setPage(this.copyPage(draftPage, onlinePage));
+	}
 
 	public Map<String, List<String>> getFieldErrors() {
-		return fieldErrors;
+		return _fieldErrors;
 	}
+
 	public void setFieldErrors(Map<String, List<String>> fieldErrors) {
-		this.fieldErrors = fieldErrors;
+		this._fieldErrors = fieldErrors;
 	}
 
 	public Collection<String> getActionErrors() {
-		return actionErrors;
+		return _actionErrors;
 	}
+
 	public void setActionErrors(Collection<String> actionErrors) {
-		this.actionErrors = actionErrors;
+		this._actionErrors = actionErrors;
 	}
 
 	public Collection<String> getActionMessages() {
-		return actionMessages;
+		return _actionMessages;
 	}
+
 	public void setActionMessages(Collection<String> actionMessages) {
-		this.actionMessages = actionMessages;
+		this._actionMessages = actionMessages;
 	}
-	
+
 	public Map getReferences() {
 		return _references;
 	}
+
 	public void setReferences(Map references) {
 		this._references = references;
 	}
 
 	public PageJO getPage() {
-		return page;
+		return _page;
 	}
+
 	public void setPage(PageJO page) {
-		this.page = page;
+		this._page = page;
 	}
 
-	public PageResponse() {
-		//
-	}
+	private Map<String, List<String>> _fieldErrors;
+	private Collection<String> _actionErrors;
+	private Collection<String> _actionMessages;
+	private PageJO _page;
+	private Map _references;
 
-	public PageResponse(ActionSupport actionSupport, IPage page) {
-		super();
-		this.setFieldErrors(actionSupport.getFieldErrors());
-		this.setActionErrors(actionSupport.getActionErrors());
-		this.setActionMessages(actionSupport.getActionMessages());
-		this.setPage(this.copyPage(page));
-	}
-	
 }

@@ -30,17 +30,21 @@
         </span>
     </div>
 </h1>
+<i class="fa fa-asterisk required-icon"></i>
 <div class="text-right">
-    <div class="form-group-separator"></div>
+    <div class="form-group-separator">
+        <s:text name="label.requiredFields" />
+    </div>
 </div>
-<br>
-
+<br />
 <s:form action="save" namespace="/do/LocaleString" cssClass="form-horizontal">
     <s:if test="hasFieldErrors()">
-        <div class="alert alert-danger alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+        <div class="alert alert-danger alert-dismissable fade in">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
                 <span class="pficon pficon-close"></span>
             </button>
+            <span class="pficon pficon-error-circle-o"></span>
             <strong><s:text name="message.title.FieldErrors" /></strong>
         </div>
     </s:if>
@@ -75,7 +79,7 @@
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
             <label class="col-sm-2 control-label" for="lang<s:property value="#l.code"/>">
                 <%-- (<s:property value="#l.code" />)&#32;<s:text name="label.description" /> --%>
-                <span title="<s:property value="#l.descr" />"><code class="label label-info" ><s:property value="#l.code" /></code></span>&#32;<span lang="<s:property value="#l.code" />"><s:text name="label.name"/></span>*
+                <span title="<s:property value="#l.descr" />"><span class="label label-info" ><s:property value="#l.code" /></span></span>&#32;<span lang="<s:property value="#l.code" />"><s:text name="label.name"/></span>*
             </label>
             <div class="col-sm-10">
                 <s:textarea cols="50" rows="3" name="%{code}" id="%{'lang'+code}" value="%{labels[#l.code]}"

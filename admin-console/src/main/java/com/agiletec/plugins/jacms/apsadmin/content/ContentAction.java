@@ -38,21 +38,23 @@ import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
 
 /**
  * Action principale per la redazione contenuti.
+ * 
  * @author E.Santoboni
  */
 public class ContentAction extends AbstractContentAction {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(ContentAction.class);
-	
+
 	@Override
 	public void validate() {
 		Content content = this.updateContentOnSession(true);
 		super.validate();
 		this.getContentActionHelper().scanEntity(content, this);
 	}
-	
+
 	/**
 	 * Esegue l'azione di edit di un contenuto.
+	 * 
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String edit() {
@@ -77,14 +79,15 @@ public class ContentAction extends AbstractContentAction {
 
 	/**
 	 * Esegue l'azione di copia/incolla di un contenuto.
+	 * 
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String copyPaste() {
 		try {
 			Content content = this.getContentManager().loadContent(this.getContentId(), this.isCopyPublicVersion());
 			if (null == content) {
-				throw new ApsSystemException("Contenuto in copyPaste '"
-						+ this.getContentId() + "' nullo ; copia di contenuto pubblico " + this.isCopyPublicVersion());
+				throw new ApsSystemException("Contenuto in copyPaste '" + this.getContentId() + "' nullo ; copia di contenuto pubblico "
+						+ this.isCopyPublicVersion());
 			}
 			if (!this.isUserAllowed(content)) {
 				_logger.info("Utente non abilitato all'accesso del contenuto {}", content.getId());
@@ -103,7 +106,7 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String forwardToEntryContent() {
 		return SUCCESS;
 	}
@@ -111,7 +114,7 @@ public class ContentAction extends AbstractContentAction {
 	public String configureMainGroup() {
 		Content content = this.updateContentOnSession();
 		try {
-			if (/*null == content.getId() && */null == content.getMainGroup()) {
+			if (/* null == content.getId() && */null == content.getMainGroup()) {
 				String mainGroup = this.getRequest().getParameter("mainGroup");
 				if (mainGroup != null && null != this.getGroupManager().getGroup(mainGroup)) {
 					content.setMainGroup(mainGroup);
@@ -123,10 +126,11 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
-	 * Esegue l'azione di associazione di un
-	 * gruppo al contenuto in fase di redazione.
+	 * Esegue l'azione di associazione di un gruppo al contenuto in fase di
+	 * redazione.
+	 * 
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String joinGroup() {
@@ -143,10 +147,11 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
-	 * Esegue l'azione di rimozione di un
-	 * gruppo dal contenuto in fase di redazione.
+	 * Esegue l'azione di rimozione di un gruppo dal contenuto in fase di
+	 * redazione.
+	 * 
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String removeGroup() {
@@ -163,7 +168,7 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String saveAndContinue() {
 		try {
 			Content currentContent = this.updateContentOnSession();
@@ -184,17 +189,20 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Esegue l'azione di salvataggio del contenuto in fase di redazione.
+	 * 
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String saveContent() {
 		return this.saveContent(false);
 	}
-	
+
 	/**
-	 * Esegue l'azione di salvataggio e pubblicazione del contenuto in fase di redazione.
+	 * Esegue l'azione di salvataggio e pubblicazione del contenuto in fase di
+	 * redazione.
+	 * 
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String saveAndApprove() {
@@ -220,9 +228,11 @@ public class ContentAction extends AbstractContentAction {
 					this.getContentManager().saveContent(currentContent);
 				}
 				this.addActivityStreamInfo(currentContent, strutsAction, true);
-				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + super.getContentOnSessionMarker());
+				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX
+						+ super.getContentOnSessionMarker());
 				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP);
-				_logger.info("Saving content {} - Description: '{}' - User: {}",   currentContent.getId(), currentContent.getDescription(), this.getCurrentUser().getUsername());
+				_logger.info("Saving content {} - Description: '{}' - User: {}", currentContent.getId(), currentContent.getDescription(),
+						this.getCurrentUser().getUsername());
 			} else {
 				_logger.error("Save/approve NULL content - User: {}", this.getCurrentUser().getUsername());
 			}
@@ -232,10 +242,11 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
-	 * Esegue l'azione di rimozione del contenuto pubblico
-	 * e salvataggio del contenuto in fase di redazione.
+	 * Esegue l'azione di rimozione del contenuto pubblico e salvataggio del
+	 * contenuto in fase di redazione.
+	 * 
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String suspend() {
@@ -247,14 +258,16 @@ public class ContentAction extends AbstractContentAction {
 					return USER_NOT_ALLOWED;
 				}
 				Map references = this.getContentActionHelper().getReferencingObjects(currentContent, this.getRequest());
-				if (references.size()>0) {
+				if (references.size() > 0) {
 					this.setReferences(references);
 					return "references";
 				}
 				this.getContentManager().removeOnLineContent(currentContent);
 				this.addActivityStreamInfo(currentContent, (ApsAdminSystemConstants.DELETE + 10), true);
-				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + super.getContentOnSessionMarker());
-				_logger.info("Content {} suspended - Description: '{}' - Utente: {}", currentContent.getId(), currentContent.getDescription(), this.getCurrentUser().getUsername());
+				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX
+						+ super.getContentOnSessionMarker());
+				_logger.info("Content {} suspended - Description: '{}' - Utente: {}", currentContent.getId(), currentContent
+						.getDescription(), this.getCurrentUser().getUsername());
 			}
 		} catch (Throwable t) {
 			_logger.error("error in suspend", t);
@@ -262,11 +275,11 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public int[] getLinkDestinations() {
 		return SymbolicLink.getDestinationTypes();
 	}
-	
+
 	public IPage getPage(String pageCode) {
 		return this.getPageManager().getOnlinePage(pageCode);
 	}
@@ -274,9 +287,10 @@ public class ContentAction extends AbstractContentAction {
 	public String getHtmlEditorCode() {
 		return this.getConfigManager().getParam("hypertextEditor");
 	}
-	
+
 	/**
 	 * Return the list of the showing pages of the current content on edit
+	 * 
 	 * @return The list of the showing pages.
 	 */
 	public List<SelectItem> getShowingPageSelectItems() {
@@ -288,13 +302,15 @@ public class ContentAction extends AbstractContentAction {
 				if (null != defaultViewerPage && CmsPageUtil.isOnlineFreeViewerPage(defaultViewerPage, null)) {
 					pageItems.add(new SelectItem("", this.getText("label.default")));
 				}
-				if (null == content.getId()) return pageItems;
-				ContentUtilizer pageManagerWrapper = (ContentUtilizer) ApsWebApplicationUtils.getBean(JacmsSystemConstants.PAGE_MANAGER_WRAPPER, this.getRequest());
+				if (null == content.getId())
+					return pageItems;
+				ContentUtilizer pageManagerWrapper = (ContentUtilizer) ApsWebApplicationUtils.getBean(
+						JacmsSystemConstants.PAGE_MANAGER_WRAPPER, this.getRequest());
 				List<IPage> pages = pageManagerWrapper.getContentUtilizers(content.getId());
 				for (int i = 0; i < pages.size(); i++) {
 					IPage page = pages.get(i);
 					String pageCode = page.getCode();
-					pageItems.add(new SelectItem(pageCode, super.getTitle(pageCode, page.getDraftTitles())));
+					pageItems.add(new SelectItem(pageCode, super.getTitle(pageCode, page.getTitles())));
 				}
 			}
 		} catch (Throwable t) {
@@ -303,7 +319,7 @@ public class ContentAction extends AbstractContentAction {
 		}
 		return pageItems;
 	}
-	
+
 	public String getIconFile(String fileName) {
 		return this.getResourceIconUtil().getIconByFilename(fileName);
 	}
@@ -311,6 +327,7 @@ public class ContentAction extends AbstractContentAction {
 	public Map getReferences() {
 		return _references;
 	}
+
 	protected void setReferences(Map references) {
 		this._references = references;
 	}
@@ -318,6 +335,7 @@ public class ContentAction extends AbstractContentAction {
 	protected IPageManager getPageManager() {
 		return _pageManager;
 	}
+
 	public void setPageManager(IPageManager pageManager) {
 		this._pageManager = pageManager;
 	}
@@ -325,6 +343,7 @@ public class ContentAction extends AbstractContentAction {
 	protected ConfigInterface getConfigManager() {
 		return _configManager;
 	}
+
 	public void setConfigManager(ConfigInterface configManager) {
 		this._configManager = configManager;
 	}
@@ -332,6 +351,7 @@ public class ContentAction extends AbstractContentAction {
 	public String getContentId() {
 		return _contentId;
 	}
+
 	public void setContentId(String contentId) {
 		this._contentId = contentId;
 	}
@@ -339,6 +359,7 @@ public class ContentAction extends AbstractContentAction {
 	public String getExtraGroupName() {
 		return _extraGroupName;
 	}
+
 	public void setExtraGroupName(String extraGroupName) {
 		this._extraGroupName = extraGroupName;
 	}
@@ -346,6 +367,7 @@ public class ContentAction extends AbstractContentAction {
 	public boolean isCopyPublicVersion() {
 		return _copyPublicVersion;
 	}
+
 	public void setCopyPublicVersion(boolean copyPublicVersion) {
 		this._copyPublicVersion = copyPublicVersion;
 	}
@@ -353,6 +375,7 @@ public class ContentAction extends AbstractContentAction {
 	protected ResourceIconUtil getResourceIconUtil() {
 		return _resourceIconUtil;
 	}
+
 	public void setResourceIconUtil(ResourceIconUtil resourceIconUtil) {
 		this._resourceIconUtil = resourceIconUtil;
 	}

@@ -30,7 +30,7 @@
         </span>
     </td>
     <s:if test="isPosition" >
-        <td class="table-view-pf-actions">
+        <td class="table-view-pf-actions text-center">
             <div class="dropdown dropdown-kebab-pf">
                 <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight1"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

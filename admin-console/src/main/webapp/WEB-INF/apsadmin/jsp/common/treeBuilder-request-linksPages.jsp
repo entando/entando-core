@@ -76,7 +76,7 @@
 			<s:else><i class="fa fa-circle green" aria-hidden="true" title="Online"></i></s:else>
 		</span>
         </td>
-        <td class="text-center"><s:if test="%{#currentRoot.getOrigin().isOnline() && #currentRoot.getOrigin().getOnlineMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
+        <td class="text-center"><s:if test="%{#currentRoot.getOrigin().isOnline() && #currentRoot.getOrigin().getMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
         <td class=" table-view-pf-actions text-center">
             <div class="dropdown dropdown-kebab-pf">
                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

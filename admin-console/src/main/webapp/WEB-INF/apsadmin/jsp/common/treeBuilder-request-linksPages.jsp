@@ -11,14 +11,21 @@
 </s:else>
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
         <td class="treegrid-node pointer">
-        <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
+		<s:set var="pageCodeTokenVar" value="%{#parameters['pageCodeToken'][0]}" />
+		<s:set var="pageCodeTokenCheckVar" value="%{null != #pageCodeTokenVar && #pageCodeTokenVar.trim().length() > 0}" />
+		<s:if test="#pageCodeTokenCheckVar">
+			<s:set var="openTreeActionName" value="'openCloseTreeResultNode'" /><s:set var="closeTreeActionName" value="'openCloseTreeResultNode'" />
+		</s:if>
+		<s:else><s:set var="openTreeActionName" value="'openCloseTreeNode'" /><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:else>
+		<s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
-        <s:if test="!#currentRoot.open && !#currentRoot.empty">
+		<s:if test="!#currentRoot.open && !#currentRoot.empty">
             <a class="treeOpenCloseJS"
                href="<s:url action="%{#openTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
+                   <s:param name="pageCodeToken" value="%{#pageCodeTokenCheckVar?#pageCodeTokenVar:''}" />
                    <s:param name="treeNodeActionMarkerCode" value="'open'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open" /></span>
@@ -29,6 +36,7 @@
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
+                   <s:param name="pageCodeToken" value="%{#pageCodeTokenCheckVar?#pageCodeTokenVar:''}" />
                    <s:param name="treeNodeActionMarkerCode" value="'close'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="treeOpenCloseJS icon fa fa-minus" title="<s:text name="label.close" />"></span>
                 <span class="sr-only"><s:text name="label.close" /></span>
@@ -61,14 +69,14 @@
             </wpsf:submit>
         </div>
     </td>
-    <td>
-        <span class="statusField">
-            <s:if test="%{#currentRoot.getEntity().isOnline()}">Online <!--<i class="fa fa-check-circle-o green" aria-hidden="true"></i>--></s:if>
-            <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().isChanged()}">&#32;&ne;&#32;Draft</s:if>
-            <s:if test="%{!#currentRoot.getEntity().isOnline() && !#currentRoot.getEntity().isChanged()}">Draft</s:if>
-        </span>
+    <td class="text-center" style="width:20px">
+		<span class="statusField">
+			<s:if test="%{!#currentRoot.getOrigin().isOnline()}"><i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i></s:if>
+			<s:elseif test="%{#currentRoot.getOrigin().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true" title="Online&#32;&ne;&#32;Draft"></i></s:elseif>
+			<s:else><i class="fa fa-circle green" aria-hidden="true" title="Online"></i></s:else>
+		</span>
         </td>
-        <td class="text-center"><s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().getOnlineMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
+        <td class="text-center"><s:if test="%{#currentRoot.getOrigin().isOnline() && #currentRoot.getOrigin().getOnlineMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
         <td class=" table-view-pf-actions text-center">
             <div class="dropdown dropdown-kebab-pf">
                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -76,7 +84,7 @@
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                     <li>
                     <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
-                        <span class="">Edit </span>
+                        <span class="">Edit</span>
                     </wpsf:submit>
                 </li>
                 <li><wpsf:submit action="doConfigure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
@@ -96,14 +104,14 @@
                         <span class="">Delete</span>
                     </wpsf:submit>
                 </li>
-                <s:if test="%{#currentRoot.getEntity().online}">
+                <s:if test="%{#currentRoot.getOrigin().online}">
                 <li>
                     <wpsf:submit action="checkSetOffline" type="button" title="%{getText('page.options.offline')}" cssClass="btn btn-warning" data-toggle="tooltip">
                         <span class=""><s:text name="page.options.offline" /></span>
                     </wpsf:submit>
                 </li>
                 </s:if>
-                <s:if test="%{!#currentRoot.getEntity().online || #currentRoot.getEntity().changed}">
+                <s:if test="%{!#currentRoot.getOrigin().online || #currentRoot.getOrigin().changed}">
                 <li>
                     <wpsf:submit action="checkSetOnline" type="button" title="%{getText('page.options.online')}" cssClass="btn btn-warning" data-toggle="tooltip">
                         <span class=""><s:text name="page.options.online" /></span>

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -31,38 +32,30 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 
 public class PageTestUtil {
-	
+
 	public static void comparePagesFull(IPage expected, IPage actual, boolean changed) {
 		comparePages(expected, actual, changed);
-		comparePageMetadata(expected.getDraftMetadata(), actual.getDraftMetadata(), 0);
-		comparePageMetadata(expected.getOnlineMetadata(), actual.getOnlineMetadata(), 0);
-		compareWidgets(expected.getDraftWidgets(), actual.getDraftWidgets());
-		compareWidgets(expected.getOnlineWidgets(), actual.getOnlineWidgets());
+		comparePageMetadata(expected.getMetadata(), actual.getMetadata(), 0);
+		compareWidgets(expected.getWidgets(), actual.getWidgets());
 	}
-	
+
 	public static void comparePages(IPage expected, IPage actual, boolean changed) {
 		if (expected == null) {
 			assertNull(actual);
 		} else {
 			assertEquals(expected.getCode(), actual.getCode());
-//			assertEquals(expected.isRoot(), actual.isRoot());
-//			assertEquals(expected.getParentCode(), actual.getParentCode());
-//			assertEquals(expected.getPosition(), actual.getPosition());
-			if (expected.getOnlineChildren() == null) {
-				assertNull(actual.getOnlineChildren());
+			if (expected.getChildren() == null) {
+				assertNull(actual.getChildren());
 			} else {
-				assertEquals(expected.getOnlineChildren().length, actual.getOnlineChildren().length);
+				assertEquals(expected.getChildren().length, actual.getChildren().length);
 			}
-			if (expected.getAllChildren() == null) {
-				assertNull(actual.getAllChildren());
+			if (expected.getChildren() == null) {
+				assertNull(actual.getChildren());
 			} else {
-				assertEquals(expected.getAllChildren().length, actual.getAllChildren().length);
+				assertEquals(expected.getChildren().length, actual.getChildren().length);
 			}
 			assertEquals(expected.getGroup(), actual.getGroup());
 			assertEquals(expected.getTitles(), actual.getTitles());
-//			assertEquals(expected.getPath(), actual.getPath());
-//			assertEquals(expected.getPath("|", true), actual.getPath("|", true));
-//			assertEquals(expected.getPathArray(), actual.getPathArray());
 			assertEquals(changed, actual.isChanged());
 			assertEquals(expected.isOnline(), actual.isOnline());
 			assertEquals(expected.isShowable(), actual.isShowable());
@@ -71,11 +64,12 @@ public class PageTestUtil {
 			assertEquals(expected.getCharset(), actual.getCharset());
 		}
 	}
-	
+
 	/**
 	 * @param expected The expected PageMetadata to check
 	 * @param actual The actual PageMetadata to check
-	 * @param dateExpectation The result of the comparison between the 2 updatedAt dates. 1 if expected is greater, 0 if equals, -1 if lower
+	 * @param dateExpectation The result of the comparison between the 2
+	 * updatedAt dates. 1 if expected is greater, 0 if equals, -1 if lower
 	 */
 	public static void comparePageMetadata(PageMetadata expected, PageMetadata actual, Integer dateExpectation) {
 		if (expected == null) {
@@ -92,7 +86,6 @@ public class PageTestUtil {
 			assertEquals(expected.isUseExtraTitles(), actual.isUseExtraTitles());
 			assertEquals(expected.getMimeType(), actual.getMimeType());
 			assertEquals(expected.getCharset(), actual.getCharset());
-			
 			if (dateExpectation != null) {
 				if (expected.getUpdatedAt() == null) {
 					if (dateExpectation < 0) {
@@ -101,13 +94,13 @@ public class PageTestUtil {
 						assertNull(actual.getUpdatedAt());
 					}
 				} else {
-					assertEquals(dateExpectation.intValue(), DateUtils.truncate(expected.getUpdatedAt(), Calendar.MILLISECOND)
-							.compareTo(DateUtils.truncate(actual.getUpdatedAt(), Calendar.MILLISECOND)));
+					assertEquals(dateExpectation.intValue(), DateUtils.truncate(expected.getUpdatedAt(), Calendar.MILLISECOND).compareTo(
+							DateUtils.truncate(actual.getUpdatedAt(), Calendar.MILLISECOND)));
 				}
 			}
 		}
 	}
-	
+
 	public static void compareWidgets(Widget[] expected, Widget[] actual) {
 		if (expected == null) {
 			assertNull(actual);
@@ -118,10 +111,10 @@ public class PageTestUtil {
 			}
 		}
 	}
-	
+
 	public static IPage getPageByCode(List<IPage> pages, String code) {
 		IPage extractedPage = null;
-	    for (int i=0; i<pages.size(); i++) {
+		for (int i = 0; i < pages.size(); i++) {
 			IPage page = pages.get(i);
 			if (page.getCode().equals(code)) {
 				extractedPage = page;
@@ -130,29 +123,30 @@ public class PageTestUtil {
 		}
 		return extractedPage;
 	}
-	
-	public static Page createPage(String code, IPage parentPage, String groupName, PageMetadata onlineMetadata, 
-			PageMetadata draftMetadata, Widget[] onlineWidgets, Widget[] draftWidgets) {
+
+	public static IPage getPageByCode(Map<String, IPage> pages, String code) {
+		return pages.get(code);
+	}
+
+	public static Page createPage(String code, IPage parentPage, String groupName, PageMetadata metadata, Widget[] widgets) {
 		Page page = new Page();
-    	page.setCode(code);
-    	page.setParent(parentPage);
-    	page.setParentCode(parentPage.getCode());
-    	page.setPosition(parentPage.getAllChildren().length + 1);
-    	page.setOnlineMetadata(onlineMetadata);
-    	page.setDraftMetadata(draftMetadata);
-    	page.setGroup(groupName);
-    	page.setOnlineWidgets(onlineWidgets);
-    	page.setDraftWidgets(draftWidgets);
+		page.setCode(code);
+		page.setParent(parentPage);
+		page.setParentCode(parentPage.getCode());
+		page.setPosition(parentPage.getChildren().length + 1);
+		page.setMetadata(metadata);
+		page.setGroup(groupName);
+		page.setWidgets(widgets);
 		return page;
 	}
-	
-	public static PageMetadata createPageMetadata(String pageModelCode, boolean showable, String defaultTitle, 
-			String mimeType, String charset, boolean useExtraTitles, Set<String> extraGroups, Date updatedAt) {
+
+	public static PageMetadata createPageMetadata(String pageModelCode, boolean showable, String defaultTitle, String mimeType,
+			String charset, boolean useExtraTitles, Set<String> extraGroups, Date updatedAt) {
 		PageMetadata metadata = new PageMetadata();
 		PageModel pageModel = new PageModel();
 		pageModel.setCode(pageModelCode);
 		metadata.setModel(pageModel);
-		
+
 		metadata.setShowable(showable);
 		metadata.setTitle("it", defaultTitle);
 		if (extraGroups != null) {
@@ -165,7 +159,7 @@ public class PageTestUtil {
 		metadata.setUpdatedAt(updatedAt);
 		return metadata;
 	}
-	
+
 	public static <T> T[] copyArray(T[] arrayToCopy) {
 		T[] copiedArray = null;
 		if (arrayToCopy != null) {
@@ -173,14 +167,14 @@ public class PageTestUtil {
 		}
 		return copiedArray;
 	}
-	
+
 	public static ApsProperties createProperties(String p1Key, String p1Value, String p2Key, String p2Value) {
 		ApsProperties properties = new ApsProperties();
 		properties.setProperty(p1Key, p1Value);
 		properties.setProperty(p2Key, p2Value);
 		return properties;
 	}
-	
+
 	public static Widget createWidget(String widgetCode, ApsProperties config, IWidgetTypeManager widgetTypeManager) {
 		Widget widget = new Widget();
 		widget.setConfig(config);
@@ -188,7 +182,7 @@ public class PageTestUtil {
 		widget.setType(widgetType);
 		return widget;
 	}
-	
+
 	public static Widget[] getValuedWidgets(Widget[] widgets) {
 		int inUse = 0;
 		Widget[] widgetsInUse = {};
@@ -209,15 +203,9 @@ public class PageTestUtil {
 		}
 		return widgetsInUse;
 	}
-	
-	public static void deletePage(IPage page, PageDAO pageDAO) throws Throwable {
-		try {
-        	pageDAO.deletePage(page);
-        } catch (Throwable e) {
-        	throw e;
-        }
-        IPage currentPage = PageTestUtil.getPageByCode(pageDAO.loadPages(), "temp");
-		assertNull(currentPage);        
+
+	public static void deletePage(Page pageToDelete, PageDAO pageDao) {
+		pageDao.deletePage(pageToDelete);
 	}
-	
+
 }

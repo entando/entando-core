@@ -3,7 +3,12 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li>
-        <s:text name="%{'title.' + entityManagerName + '.management'}"/>
+        <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
+    </li>
+    <li>
+        <a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName"><s:text name="%{entityManagerName}" /></s:param></s:url>">
+            <s:text name="%{'title.' + entityManagerName + '.management'}"/>
+        </a>
     </li>
     <li class="page-title-container">
         <s:text name="title.entityTypes.editType.remove"/>
@@ -12,11 +17,6 @@
 <h1 class="page-title-container">
     <s:text name="title.entityTypes.editType.remove"/>&#32;<s:text
         name="%{'title.' + entityManagerName + '.management'}"/>
-    <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-           data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o"
-                                                                                         aria-hidden="true"></i></a>
-    </span>
 </h1>
 <div class="text-right">
     <div class="form-group-separator"></div>
@@ -37,7 +37,7 @@
         </p>
         <p class="esclamation-underline-text">
             <s:text name="note.entityTypes.deleteType.areYouSure"/>:&#32;
-            <s:property value="entityTypeCode"/>
+            <s:property value="entityTypeCode"/>&#32;-&#32;
             <s:property value="%{getEntityPrototype(entityTypeCode).typeDescr}"/>?
         </p>
 

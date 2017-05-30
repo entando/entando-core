@@ -11,10 +11,9 @@
     var contentStatusAction = '<s:url namespace="/do/jacms/rs/Content" action="status" />';
     var contentTableAction = '<s:url namespace="/do/jacms/rs/Content" action="lastUpdated" />';
     var currentLang = '<s:property value="currentLang.code"/>';
-    var pageStatusMap = {'online':'<s:text name="dashboard.status.online"/>',
-    		'onlineNotDraft':'<s:text name="dashboard.status.online"/>&#32;&ne;&#32;'+
-    		'<s:text name="dashboard.status.draft"/>',
-    		'draft':'<s:text name="dashboard.status.draft"/>'
+    var pageStatusMap = {'online': '<span class="fa fa-circle green"></span>',
+        'onlineNotDraft': '<span class="fa fa-circle yellow"></span>',
+        'draft': '<span class="fa fa-circle gray"></span>'
     	}
     var contentStatusMap = {'online':'<s:text name="dashboard.status.approved"/>',
             'onlineWithChanges':'<s:text name="dashboard.status.approvedWithChanges"/>',

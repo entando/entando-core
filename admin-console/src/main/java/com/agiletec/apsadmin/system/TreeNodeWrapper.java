@@ -24,6 +24,8 @@ import com.agiletec.aps.system.common.tree.TreeNode;
  */
 public class TreeNodeWrapper extends TreeNode {
 	
+	protected TreeNodeWrapper() {}
+	
 	public TreeNodeWrapper(ITreeNode node) {
 		this.setCode(node.getCode());
 		Set<Object> codes = node.getTitles().keySet();

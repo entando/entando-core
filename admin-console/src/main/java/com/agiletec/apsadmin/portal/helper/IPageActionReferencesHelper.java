@@ -11,20 +11,25 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.apsadmin.portal.node;
+package com.agiletec.apsadmin.portal.helper;
 
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.PageMetadata;
+import com.opensymphony.xwork2.ActionSupport;
 
-public class OnlinePageNode extends DraftPageNode {
+public interface IPageActionReferencesHelper {
 
-	public OnlinePageNode(IPage entity) {
-		super(entity);
-	}
-
-	protected PageMetadata getPageMetadata() {
-		PageMetadata metadata = this.getEntity().getOnlineMetadata();
-		return metadata;
-	}
+	/**
+	 * Check if the page contains valid contents.
+	 * <p>
+	 * For each invalid content found, adds an actionErrot to the action
+	 * 
+	 * @param page
+	 * the page to scan
+	 * @param action
+	 * current action
+	 * @return true if the scan is performed without exceptions, even when
+	 * invalid contents are found
+	 */
+	boolean checkContentsForSetOnline(IPage page, ActionSupport action);
 
 }

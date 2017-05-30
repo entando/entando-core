@@ -38,12 +38,12 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModel
 public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RowContentListViewerWidgetAction.class);
-	
+
 	@Override
 	public void validate() {
 		super.validate();
 		try {
-			if (this.getActionErrors().size()>0 || this.getFieldErrors().size()>0) {
+			if (this.getActionErrors().size() > 0 || this.getFieldErrors().size() > 0) {
 				this.setShowlet(super.createNewShowlet());
 				return;
 			}
@@ -67,7 +67,7 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			}
 		}
 	}
-	
+
 	protected void validateLink() {
 		String pageLink = this.getWidget().getConfig().getProperty(IContentListWidgetHelper.WIDGET_PARAM_PAGE_LINK);
 		boolean existsPageLink = pageLink != null && this.getPage(pageLink) != null;
@@ -85,24 +85,30 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			}
 		}
 	}
-	
+
 	private boolean isMultilanguageParamValued(String prefix) {
 		ApsProperties config = this.getWidget().getConfig();
-		if (null == config) return false;
+		if (null == config) {
+			return false;
+		}
 		for (int i = 0; i < this.getLangs().size(); i++) {
 			Lang lang = this.getLangs().get(i);
-			String paramValue = config.getProperty(prefix+lang.getCode());
-			if (null != paramValue && paramValue.trim().length() > 0) return true;
+			String paramValue = config.getProperty(prefix + lang.getCode());
+			if (null != paramValue && paramValue.trim().length() > 0) {
+				return true;
+			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String init() {
 		try {
 			super.init();
 			ApsProperties config = this.getWidget().getConfig();
-			if (null == config) return SUCCESS;
+			if (null == config) {
+				return SUCCESS;
+			}
 			this.extractContentProperties(config);
 		} catch (Throwable t) {
 			_logger.error("error in init", t);
@@ -110,39 +116,43 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	private void extractContentProperties(ApsProperties config) {
-		if (null == config) return;
+		if (null == config) {
+			return;
+		}
 		String contents = config.getProperty("contents");
 		List<Properties> properties = RowContentListHelper.fromParameterToContents(contents);
 		this.setContentsProperties(properties);
 	}
-	
+
 	public String moveContent() {
 		return this.moveRemoveContent(true);
 	}
-	
+
 	public String removeContent() {
 		return this.moveRemoveContent(false);
 	}
-	
+
 	protected String moveRemoveContent(boolean move) {
 		try {
 			this.createValuedShowlet();
 			ApsProperties config = this.getWidget().getConfig();
-			if (null == config) return SUCCESS;
+			if (null == config) {
+				return SUCCESS;
+			}
 			this.extractContentProperties(config);
 			List<Properties> contentProperties = this.getContentsProperties();
 			int filterIndex = this.getElementIndex();
 			if (move) {
 				Properties element = contentProperties.get(filterIndex);
-				if (this.getMovement().equalsIgnoreCase(MOVEMENT_UP_CODE)){
+				if (this.getMovement().equalsIgnoreCase(MOVEMENT_UP_CODE)) {
 					if (filterIndex > 0) {
 						contentProperties.remove(filterIndex);
-						contentProperties.add(filterIndex -1, element);
+						contentProperties.add(filterIndex - 1, element);
 					}
 				} else if (this.getMovement().equalsIgnoreCase(MOVEMENT_DOWN_CODE)) {
-					if (filterIndex < contentProperties.size() -1) {
+					if (filterIndex < contentProperties.size() - 1) {
 						contentProperties.remove(filterIndex);
 						contentProperties.add(filterIndex + 1, element);
 					}
@@ -159,7 +169,7 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String joinContent() {
 		try {
 			this.createValuedShowlet();
@@ -184,11 +194,11 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public List<IPage> getPages() {
 		if (this._pages == null) {
 			this._pages = new ArrayList<IPage>();
-			IPage root = this.getPageManager().getRoot();
+			IPage root = this.getPageManager().getOnlineRoot();
 			this.addPages(root, this._pages);
 		}
 		return this._pages;
@@ -196,12 +206,12 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	protected void addPages(IPage page, List<IPage> pages) {
 		pages.add(page);
-		IPage[] children = page.getOnlineChildren();
-		for (int i=0; i<children.length; i++) {
+		IPage[] children = page.getChildren();
+		for (int i = 0; i < children.length; i++) {
 			this.addPages(children[i], pages);
 		}
 	}
-	
+
 	public ContentRecordVO getContentVo(String contentId) {
 		ContentRecordVO contentVo = null;
 		try {
@@ -212,7 +222,7 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return contentVo;
 	}
-	
+
 	public ContentModel getContentModel(String modelId) {
 		ContentModel contentModel = null;
 		try {
@@ -224,84 +234,94 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return contentModel;
 	}
-	
+
 	public List<ContentModel> getModelsForContent(String contentId) {
-		if (null == contentId) return new ArrayList<ContentModel>();
+		if (null == contentId) {
+			return new ArrayList<ContentModel>();
+		}
 		String typeCode = contentId.substring(0, 3);
 		return this.getContentModelManager().getModelsForContentType(typeCode);
 	}
-	
+
 	public List<Properties> getContentsProperties() {
 		return _contentsProperties;
 	}
+
 	public void setContentsProperties(List<Properties> contentsProperties) {
 		this._contentsProperties = contentsProperties;
 	}
-	
+
 	public String getMaxElemForItem() {
 		return _maxElemForItem;
 	}
+
 	public void setMaxElemForItem(String maxElemForItem) {
 		this._maxElemForItem = maxElemForItem;
 	}
-	
+
 	public int getElementIndex() {
 		return _elementIndex;
 	}
+
 	public void setElementIndex(int elementIndex) {
 		this._elementIndex = elementIndex;
 	}
-	
+
 	public String getMovement() {
 		return _movement;
 	}
+
 	public void setMovement(String movement) {
 		this._movement = movement;
 	}
-	
+
 	public String getContentId() {
 		return _contentId;
 	}
+
 	public void setContentId(String contentId) {
 		this._contentId = contentId;
 	}
-	
+
 	public String getModelId() {
 		return _modelId;
 	}
+
 	public void setModelId(String modelId) {
 		this._modelId = modelId;
 	}
-	
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
+
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
 	protected IContentModelManager getContentModelManager() {
 		return _contentModelManager;
 	}
+
 	public void setContentModelManager(IContentModelManager contentModelManager) {
 		this._contentModelManager = contentModelManager;
 	}
-	
+
 	private List<Properties> _contentsProperties = new ArrayList<Properties>();
-	
+
 	private String _maxElemForItem;
-	
+
 	private int _elementIndex;
 	private String _movement;
-	
+
 	private String _contentId;
 	private String _modelId;
-	
+
 	private List<IPage> _pages;
-	
+
 	private IContentManager _contentManager;
 	private IContentModelManager _contentModelManager;
-	
+
 	public static final String MOVEMENT_UP_CODE = "UP";
 	public static final String MOVEMENT_DOWN_CODE = "DOWN";
 

@@ -1277,8 +1277,7 @@ td{
     font-size: 15px;
     margin-top: 6px;
 }
-.table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{
-}
+.table-view-pf-actions .btn, .table-view-pf-actions .dropdown-toggle{background: transparent;}
 .fa-question-circle-o{
     color:#72767b !important;
 }
@@ -1855,4 +1854,9 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 /*fix content model textArea*/
 .display-block .panel{
     width:auto !important;
+}
+.dashboard-caret-right{
+    position: absolute;
+    right: 5px;
+    top: 6px;
 }

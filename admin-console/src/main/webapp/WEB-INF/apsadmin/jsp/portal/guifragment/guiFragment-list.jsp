@@ -130,7 +130,7 @@
                     <div class="col-xs-12 no-padding">
                         <table class="table table-striped table-bordered table-hover no-mb">
                             <tr>
-                                <th><s:text name="label.code" /></th>
+
                                 <th class="table-w-15"><s:text name="label.widgetType" /></th>
                                 <th class="table-w-15"><s:text name="label.plugin" /></th>
                                 <th class="table-w-5 text-center"><s:text name="label.actions" /></th>

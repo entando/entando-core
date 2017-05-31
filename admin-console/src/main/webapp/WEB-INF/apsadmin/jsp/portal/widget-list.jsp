@@ -67,8 +67,10 @@
                     <span class="sr-only"><s:text name="title.widgetManagement.widgets.plugin" /></span>&#32;
                 </s:if>
                 <s:set var="pluginTitleCheck" value="'true'" ></s:set>
-                <wpsa:set var="pluginPropertyName" value="%{getText(#firstType.optgroup + '.name')}" />
-                <wpsa:set var="pluginPropertyCode" value="%{getText(#firstType.optgroup + '.code')}" />
+
+                    <wpsa:set var="pluginPropertyName" value="%{getText(#firstType.optgroup + '.name')}" />
+                    <wpsa:set var="pluginPropertyCode" value="%{getText(#firstType.optgroup + '.code')}" />
+
                 <s:property value="%{#pluginPropertyName}" />
             </s:else>
         </legend>
@@ -107,6 +109,7 @@
                                     <s:property value="#showletUtilizers.size()" />
                                 </span>
                             </td>
+
                             <td class="text-center table-view-pf-actions">
                                 <wp:ifauthorized permission="superuser">
                                     <s:if test="#concreteShowletTypeVar.isLogic()">
@@ -178,7 +181,7 @@
                                 </wpsa:hookPoint>
                             </td>
                         </tr>
-                    </s:iterator>
+                    </s:iterator>                          
                 </tbody>
             </table>
         </div>

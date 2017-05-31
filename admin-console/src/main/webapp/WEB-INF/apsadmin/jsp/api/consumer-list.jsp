@@ -93,7 +93,7 @@
                         <th class="table-w-20"><s:text name="label.key" /></th>
                         <th><s:text name="label.description" /></th>
                         <th class="table-w-10"><s:text name="label.tokens.full" /></th>
-                        <th><s:text name="label.actions" /></th>
+                        <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                     </tr>
                 </thead>
                 <tbody>

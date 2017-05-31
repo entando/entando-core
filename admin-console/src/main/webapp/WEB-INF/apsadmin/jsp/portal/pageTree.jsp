@@ -58,8 +58,8 @@
                                     </button>
                                 </s:if>
                             </th>
-                            <th class="text-center table-w-10"><s:text name="label.add|move" /></th>
-                            <th class="text-center table-w-10"><s:text name="label.state" /></th>
+                            <th class="text-center table-w-5"><s:text name="label.add|move" /></th>
+                            <th class="text-center table-w-5"><s:text name="label.state" /></th>
                             <th class="text-center table-w-10"><s:text name="label.pageInMenu" /></th>
                             <th class="text-center table-w-5"><s:text name="label.actions" /></th>
                         </tr>

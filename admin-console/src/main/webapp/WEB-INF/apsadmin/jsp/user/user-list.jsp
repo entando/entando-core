@@ -385,8 +385,8 @@
                                     <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
                                 </s:iterator>
                             </wpsa:hookPoint>
-                        <th class="text-center"><s:text name="label.state" /></th>
-                        <th><s:text name="label.actions" /></th>
+                        <th class="text-center table-w-10"><s:text name="label.state" /></th>
+                        <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                     </tr>
                 </thead>
                 <tbody>

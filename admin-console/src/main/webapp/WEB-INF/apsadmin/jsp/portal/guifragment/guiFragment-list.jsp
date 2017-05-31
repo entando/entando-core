@@ -134,7 +134,7 @@
                                 <th><s:text name="label.code" /></th>
                                 <th><s:text name="label.widgetType" /></th>
                                 <th><s:text name="label.plugin" /></th>
-                                <th style="width: 20px"><s:text name="label.actions" /></th>
+                                <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                             </tr>
                             <s:iterator var="codeVar">
                                 <s:set var="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />

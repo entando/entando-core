@@ -768,7 +768,7 @@ a {
     margin:0 auto;
 }
 .moveButtons{
-    font-size: 16px;
+    font-size: 14px;
 }
 .page-tabs-header{
     border-bottom: 1px solid #D5D5D5;
@@ -907,6 +907,7 @@ a {
     margin-right: 1px !important;
 }
 .table-treegrid span.indent {
+    padding: 5px;
 }
 .moveButtons-right{
     font-size: 12px;
@@ -1282,7 +1283,8 @@ td{
     color:#72767b !important;
 }
 .dropdown-menu.dropdown-menu-right {
-    right: 4px !important;
+    right: 13px !important;
+    margin-top: 6px !important;
 }
 .page-title-container{
     font-weight: bold;
@@ -1696,7 +1698,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
 .table-treegrid .ui-droppable-active td:not(:first-child) {display: none;}
 .table-treegrid .ui-droppable-active td {
     width: 100%;
-    outline: 1px dashed #bbb;!important;
+    outline: 1px dashed #bbb;
     outline-offset: -4px;
     padding: 10px!important;
     background: #fafafa;
@@ -1859,4 +1861,14 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     position: absolute;
     right: 5px;
     top: 6px;
+}
+label .fa-folder-o, .fa-folder-o {
+    color: #23a8e0;
+    font-weight: bold;
+}
+label .fa-folder, .fa-folder {
+    color: #23a8e0;
+}
+#activity-stream{
+    margin: 0 0 3em 0;
 }

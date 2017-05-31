@@ -4,9 +4,12 @@
 
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.userSetting" /></li>
-    <li class="page-title-container"><s:text
-            name="title.roleManagement" /></li>
+    <li>
+        <s:text name="title.userSetting" />
+    </li>
+    <li class="page-title-container">
+        <s:text name="title.roleManagement" />
+    </li>
 </ol>
 
 <h1 class="page-title-container">
@@ -53,16 +56,16 @@
         <table class="table table-striped table-bordered table-hover no-mb">
             <thead>
                 <tr>
-                    <th><s:text name="label.code" /></th>
                     <th><s:text name="label.name" /></th>
-                    <th class="text-designer"><s:text name="label.actions" /></th>
+                    <th class="table-w-15 text-center"><s:text name="label.code" /></th>
+                    <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                 </tr>
             </thead>
             <tbody>
                 <s:iterator var="role">
                     <tr>
-                        <td><s:property value="#role.name" /></td>
                         <td><s:property value="#role.description" /></td>
+                        <td><s:property value="#role.name" /></td>
                         <td class=" table-view-pf-actions">
 
                             <div class="dropdown dropdown-kebab-pf">

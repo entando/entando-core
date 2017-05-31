@@ -14,7 +14,7 @@
     <li class="page-title-container"><s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" /></li>
 </ol>
 
-<h1 class="page-title-container"><s:text name="title.widgetManagement.pages" /> <s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" />
+<h1 class="page-title-container"><s:text name="title.widgetManagement.pages" />&nbsp;<s:property value="getTitle(#showletTypeVar.code, #showletTypeVar.titles)" />
     <span class="pull-right">
         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="widget.widgetManagement.help" />" data-placement="left" data-original-title="">
             <i class="fa fa-question-circle-o" aria-hidden="true"></i>

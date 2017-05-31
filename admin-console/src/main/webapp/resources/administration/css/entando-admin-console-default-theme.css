@@ -1869,3 +1869,6 @@ label .fa-folder-o, .fa-folder-o {
 label .fa-folder, .fa-folder {
     color: #23a8e0;
 }
+#activity-stream{
+    margin: 0 0 3em 0;
+}

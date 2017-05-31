@@ -27,7 +27,7 @@
                 <span class="pficon pficon-close"></span>
             </button>
             <span class="pficon pficon-error-circle-o"></span>
-            <s:text name="message.title.ActionErrors" />
+            <strong><s:text name="message.title.ActionErrors" /></strong>
             <ul>
                 <s:iterator value="actionErrors">
                     <li><s:property escapeHtml="false" /></li>
@@ -40,7 +40,7 @@
         <a href="<s:url namespace="/do/Page" action="new" />" class="btn btn-primary pull-right" title="<s:text name="label.new" />" style="margin-bottom: 5px">
             <s:text name="label.add" />
         </a>
-        <s:form cssClass="form-horizontal">           
+        <s:form cssClass="form-horizontal">
 
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
@@ -85,7 +85,7 @@
                         <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
                     </s:else>
                     </tbody>
-                </table>     
+                </table>
             </div>
             <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
         </s:form>

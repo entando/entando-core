@@ -53,7 +53,7 @@
                     <tr>
                         <th><s:text name="label.code" /></th>
                         <th><s:text name="label.name" /></th>
-                        <th class="text-center " style="width: 20px"><s:text name="label.actions" /></th>
+                        <th class="text-center table-w-5 "><s:text name="label.actions" /></th>
                     </tr>
                     <s:iterator var="pageModelVar">
                         <tr>

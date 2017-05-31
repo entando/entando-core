@@ -100,7 +100,7 @@
 
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="lang<s:property value="code" />">
-                <span title="<s:property value="descr" />"><span class="label label-info" ><s:property value="code" /></span></span>&#32;<s:text name="name.pageTitle" />
+                <abbr title="<s:property value="descr" />"><code class="label label-info" ><s:property value="code" /></code></abbr>&#32;<s:text name="name.pageTitle" />
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
             <div class="col-sm-10">
@@ -289,26 +289,6 @@
                         <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
                         </span>
                 </s:if>
-            </div>
-        </div>
-
-        <div class="form-group form-checkbox">
-            <div class="col-sm-2 control-label">
-                <label class="display-block" for="defaultShowlet"><s:text name="name.hasDefaultWidgets" />
-                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.defaultwidget" />" data-placement="right"><span class="fa fa-info-circle"></span></a>
-                </label>
-            </div>
-            <div class="col-sm-3">
-                <wpsf:checkbox name="defaultShowlet" id="defaultShowlet" cssClass="bootstrap-switch" />
-            </div>
-
-            <div class="col-sm-3 control-label">
-                <label class="display-block" for="viewerPage"><s:text name="name.isViewerPage" />
-                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.ontheflypublishing" />" data-placement="left"><span class="fa fa-info-circle"></span></a>
-                </label>
-            </div>
-            <div class="col-sm-4">
-                <wpsf:checkbox name="viewerPage" id="viewerPage" cssClass="bootstrap-switch" />
             </div>
         </div>
 

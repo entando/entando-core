@@ -136,7 +136,7 @@
                                         <div class="card-pf-body">
                                             <div class="card-pf-heading-kebab">
                                                 <div class="dropdown pull-right dropdown-kebab-pf">
-                                                    <button class="btn btn-link dropdown-toggle" type="button"
+                                                    <button class="btn btn-menu-right dropdown-toggle" type="button"
                                                             id="dropdownKebabRight3"
                                                             data-toggle="dropdown" aria-haspopup="true"
                                                             aria-expanded="true">
@@ -154,10 +154,10 @@
                                                 </div>
                                             </div>
                                             <div class="card-pf-top-element">
-                                                <span class="fa fa-file-text fa-2x"/>
+                                                <span class="fa fa-file-text "/>
                                                 <s:if test="!#resource.categories.empty">
                                                     <s:iterator var="category_resource" value="#resource.categories">
-                                                        <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
+                                                        <span class="badge">
                                                             <span class="icon fa fa-tag"></span>&#32;
                                                             <s:property value="%{#category_resource.getTitle(currentLang.code)}"/>
                                                         </span>
@@ -175,7 +175,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <s:iterator var="category_resource" value="#resource.categories">
-                                                            <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
+                                                            <span class="badge">
                                                                 <span class="icon fa fa-tag"></span>&#32;
                                                                 <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
                                                             </s:iterator>
@@ -231,7 +231,7 @@
                                         <div class="card-pf-body">
                                             <div class="card-pf-heading-kebab">
                                                 <div class="dropdown pull-right dropdown-kebab-pf">
-                                                    <button class="btn btn-link dropdown-toggle" type="button"
+                                                    <button class="btn btn-menu-right dropdown-toggle" type="button"
                                                             id="dropdownKebabRight3"
                                                             data-toggle="dropdown" aria-haspopup="true"
                                                             aria-expanded="true">
@@ -262,10 +262,10 @@
                                                 </div>
                                             </div>
                                             <div class="card-pf-top-element">
-                                                <span class="fa fa-file-text fa-2x"/>
+                                                <span class="fa fa-file-text "/>
                                                 <s:if test="!#resource.categories.empty">
                                                     <s:iterator var="category_resource" value="#resource.categories">
-                                                        <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
+                                                        <span class="badge">
                                                             <span class="icon fa fa-tag"></span>&#32;
                                                             <s:property value="%{#category_resource.getTitle(currentLang.code)}"/>
                                                         </span>
@@ -346,7 +346,7 @@
                                 <div class="list-group-item">
                                     <div class="list-view-pf-actions">
                                         <div class="dropdown pull-right dropdown-kebab-pf">
-                                            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight15" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <button class="btn btn-menu-right dropdown-toggle" type="button" id="dropdownKebabRight15" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                 <span class="fa fa-ellipsis-v"></span>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight15">
@@ -360,7 +360,7 @@
                                     </div>
                                     <div class="list-view-pf-main-info">
                                         <div class="list-view-pf-left">
-                                            <span class="fa fa-file-text fa-2x"></span>
+                                            <span class="fa fa-file-text "></span>
                                         </div>
                                         <div class="list-view-pf-body">
                                             <div class="list-view-pf-additional-info">
@@ -369,8 +369,8 @@
                                                     <div class="row">
                                                         <div class="col-lg-12">
                                                             <s:iterator var="category_resource" value="#resource.categories">
-                                                                <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
-                                                                    <span class="icon fa fa-tag"></span>&#32;
+                                                                <span class="badge">
+                                                                    <span class="icon fa fa-tag fa-1x"></span>&#32;
                                                                     <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
                                                                 </s:iterator>
                                                         </div>
@@ -417,7 +417,7 @@
                                     <div class="list-view-pf-actions">
                                         <p class="sr-only"><s:text name="label.actions"/></p>
                                         <div class="dropdown pull-right dropdown-kebab-pf">
-                                            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight4"
+                                            <button class="btn btn-menu-right dropdown-toggle" type="button" id="dropdownKebabRight4"
                                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                 <span class="fa fa-ellipsis-v"></span>
                                             </button>
@@ -447,11 +447,11 @@
                                     </div>
                                     <div class="list-view-pf-main-info">
                                         <div class="list-view-pf-left col-o">
-                                            <span class="fa fa-file-text fa-2x"/>
+                                            <span class="fa fa-file-text "/>
                                             <s:if test="!#resource.categories.empty">
                                                 <s:iterator var="category_resource" value="#resource.categories">
-                                                    <span class="label label-default label-sm pull-left padding-small-top padding-small-bottom margin-small-right margin-small-bottom">
-                                                        <span class="icon fa fa-tag"></span>&#32;
+                                                    <span class="badge">
+                                                        <span class="icon fa fa-tag fa-1x"></span>&#32;
                                                         <s:property value="%{#category_resource.getTitle(currentLang.code)}"/>
                                                     </span>
                                                 </s:iterator>

@@ -137,7 +137,7 @@
                                     <span class="icon fa fa-check text-success"  title="<s:text name="label.references.status.ok" />"> </span>
                                 </s:elseif>
                             </td>
-                            <td class="text-center text-nowrap">
+                            <td class=" text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

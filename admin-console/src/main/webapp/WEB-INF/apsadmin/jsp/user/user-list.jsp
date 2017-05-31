@@ -385,8 +385,8 @@
                                     <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
                                 </s:iterator>
                             </wpsa:hookPoint>
-                        <th class="text-center"><s:text name="label.state" /></th>
-                        <th><s:text name="label.actions" /></th>
+                        <th class="text-center table-w-10"><s:text name="label.state" /></th>
+                        <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -494,7 +494,7 @@
 
 
 
-                            <td class="table-view-pf-actions">
+                            <td class="text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle"
                                             type="button" data-toggle="dropdown" aria-haspopup="true"

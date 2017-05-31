@@ -64,11 +64,11 @@
                                             <td>
                                                 <s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
                                             </td>
-                                            <td class="text-center">
+                                            <td class=" text-center table-view-pf-actions">
                                                 <s:if
                                                     test="#canEditCurrentPage">
                                                     <div class="dropdown dropdown-kebab-pf">
-                                                        <button class="btn btn-link dropdown-toggle"
+                                                        <button class="btn btn-menu-right dropdown-toggle"
                                                                 type="button" data-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                             <span class="fa fa-ellipsis-v"></span>
@@ -336,39 +336,39 @@
                                 </thead>
                                 <tbody>
                                     <s:iterator var="currentContentIdVar">
-                                    <jacmswpsa:content contentId="%{#currentContentIdVar}"
-                                                       var="currentContentRecordVar" record="true" />
-                                    <jacmswpsa:content contentId="%{#currentContentRecordVar.id}"
-                                                       var="currentContentVar" authToEditVar="isAuthToEditVar"
-                                                       workVersion="true" />
-                                    <tr>
-                                        <td>
-                                            <s:if test="#isAuthToEditVar">
-                                                <a href="<s:url action="edit" namespace="/do/jacms/Content"><s:param name="contentId" value="#currentContentVar.id" /></s:url>"
-                                                   title="<s:text name="label.edit" />:&#32;<s:property value="#currentContentVar.descr"/>">
+                                        <jacmswpsa:content contentId="%{#currentContentIdVar}"
+                                                           var="currentContentRecordVar" record="true" />
+                                        <jacmswpsa:content contentId="%{#currentContentRecordVar.id}"
+                                                           var="currentContentVar" authToEditVar="isAuthToEditVar"
+                                                           workVersion="true" />
+                                        <tr>
+                                            <td>
+                                                <s:if test="#isAuthToEditVar">
+                                                    <a href="<s:url action="edit" namespace="/do/jacms/Content"><s:param name="contentId" value="#currentContentVar.id" /></s:url>"
+                                                       title="<s:text name="label.edit" />:&#32;<s:property value="#currentContentVar.descr"/>">
+                                                        <s:property value="#currentContentVar.descr" />
+                                                    </a>
+                                                </s:if>
+                                                <s:else>
                                                     <s:property value="#currentContentVar.descr" />
-                                                </a>
-                                            </s:if>
-                                            <s:else>
-                                                <s:property value="#currentContentVar.descr" />
-                                            </s:else>
-                                        </td>
-                                        <td class="text-center">
-                                            <code>
-                                                <s:property value="#currentContentVar.id" />
-                                            </code>
-                                        </td>
-                                        <td class="text-center">
-                                            <s:property value="#currentContentVar.typeDescr" />
-                                        </td>
-                                        <td class="icon text-center">
-                                            <code>
-                                                <s:date name="#currentContentRecordVar.modify"
-                                                        format="dd/MM/yyyy" />
-                                            </code>
-                                        </td>
-                                    </tr>
-                                </s:iterator>
+                                                </s:else>
+                                            </td>
+                                            <td class="text-center">
+                                                <code>
+                                                    <s:property value="#currentContentVar.id" />
+                                                </code>
+                                            </td>
+                                            <td class="text-center">
+                                                <s:property value="#currentContentVar.typeDescr" />
+                                            </td>
+                                            <td class="icon text-center">
+                                                <code>
+                                                    <s:date name="#currentContentRecordVar.modify"
+                                                            format="dd/MM/yyyy" />
+                                                </code>
+                                            </td>
+                                        </tr>
+                                    </s:iterator>
                                 </tbody>
                             </table>
                         </div>
@@ -410,34 +410,34 @@
                                 </thead>
                                 <tbody>
                                     <s:iterator var="currentResourceIdVar">
-                                    <jacmswpsa:resource resourceId="%{#currentResourceIdVar}"
-                                                        var="currentResourceVar" />
-                                    <tr>
-                                        <s:set var="canEditCurrentResource" value="%{false}" />
-                                        <c:set var="currentResourceGroup">
-                                            <s:property value="#currentResourceVar.mainGroup"
-                                                        escapeHtml="false" />
-                                        </c:set>
-                                        <td>
-                                            <wp:ifauthorized groupName="${currentResourceGroup}"
-                                                             permission="manageResources">
-                                                <s:set var="canEditCurrentResource" value="%{true}" />
-                                            </wp:ifauthorized>
-                                            <s:if test="#canEditCurrentResource">
-                                                <a href="<s:url action="edit" namespace="/do/jacms/Resource"><s:param name="resourceId" value="#currentResourceVar.id" /></s:url>"
-                                                   title="<s:text name="label.edit" />:&#32;<s:property value="#currentResourceVar.descr"/>">
+                                        <jacmswpsa:resource resourceId="%{#currentResourceIdVar}"
+                                                            var="currentResourceVar" />
+                                        <tr>
+                                            <s:set var="canEditCurrentResource" value="%{false}" />
+                                            <c:set var="currentResourceGroup">
+                                                <s:property value="#currentResourceVar.mainGroup"
+                                                            escapeHtml="false" />
+                                            </c:set>
+                                            <td>
+                                                <wp:ifauthorized groupName="${currentResourceGroup}"
+                                                                 permission="manageResources">
+                                                    <s:set var="canEditCurrentResource" value="%{true}" />
+                                                </wp:ifauthorized>
+                                                <s:if test="#canEditCurrentResource">
+                                                    <a href="<s:url action="edit" namespace="/do/jacms/Resource"><s:param name="resourceId" value="#currentResourceVar.id" /></s:url>"
+                                                       title="<s:text name="label.edit" />:&#32;<s:property value="#currentResourceVar.descr"/>">
+                                                        <s:property value="#currentResourceVar.descr" />
+                                                    </a>
+                                                </s:if>
+                                                <s:else>
                                                     <s:property value="#currentResourceVar.descr" />
-                                                </a>
-                                            </s:if>
-                                            <s:else>
-                                                <s:property value="#currentResourceVar.descr" />
-                                            </s:else>
-                                        </td>
-                                        <td>
-                                            <s:property value="#currentResourceVar.type" />
-                                        </td>
-                                    </tr>
-                                </s:iterator>
+                                                </s:else>
+                                            </td>
+                                            <td>
+                                                <s:property value="#currentResourceVar.type" />
+                                            </td>
+                                        </tr>
+                                    </s:iterator>
                                 </tbody>
                             </table>
                         </div>

@@ -38,7 +38,7 @@
         <ul class="margin-base-top">
             <s:iterator value="actionErrors">
                 <li><s:property escapeHtml="false" /></li>
-                </s:iterator>
+				</s:iterator>
         </ul>
     </div>
 </s:if>
@@ -65,6 +65,7 @@
                 <s:iterator var="role">
                     <tr>
                         <td><s:property value="#role.description" /></td>
+                        <td class="text-center"><s:property value="#role.name" /></td>
                         <td class="text-center table-view-pf-actions">
                             <div class="dropdown dropdown-kebab-pf">
                                 <button class="btn btn-menu-right dropdown-toggle"
@@ -74,31 +75,29 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li>
-                                    <a
-                                            href="<s:url action="detail"><s:param name="name" value="#role.name"/></s:url>"
-                                            title="<s:text name="note.detailsFor" />: <s:property value="#role.name" />">
+										<a href="<s:url action="detail"><s:param name="name" value="#role.name"/></s:url>"
+										   title="<s:text name="note.detailsFor" />: <s:property value="#role.name" />">
                                             <s:text name="note.detailsFor" />: <s:property
                                                 value="#role.name" /> <span class="sr-only"><s:text
                                                     name="note.detailsFor" />: <s:property value="#role.name" /></span>
                                         </a>
-                                        </li>
+									</li>
                                     <li>
-                                    <a title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />"
-                                            href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
+										<a title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />"
+										   href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
                                             <s:text name="label.edit" />:&#32;<s:property
                                                 value="#role.name" /> <span class="sr-only"><s:text
                                                     name="label.edit" />:&#32;<s:property value="#role.name" /></span>
                                         </a>
-                                        </li>
+									</li>
                                     <li>
-                                    <a
-                                            title="<s:text name="label.remove" />: <s:property value="#role.name" />"
-                                            href="<s:url action="trash"><s:param name="name" value="#role.name"/></s:url>">
+										<a title="<s:text name="label.remove" />: <s:property value="#role.name" />"
+										   href="<s:url action="trash"><s:param name="name" value="#role.name"/></s:url>">
                                             <s:text name="label.remove" />: <s:property
                                                 value="#role.name" /> <span class="sr-only"><s:text
                                                     name="label.remove" />: <s:property value="#role.name" /></span>
                                         </a>
-                                        </li>
+									</li>
                                 </ul>
                             </div>
                         </td>
@@ -109,11 +108,9 @@
     </div>
     <div class="content-view-pf-pagination clearfix">
         <div class="form-group">
-            <span><s:include
-                    value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+            <span><s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
             <div class="mt-5">
-                <s:include
-                    value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
             </div>
         </div>
     </div>

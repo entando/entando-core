@@ -335,7 +335,7 @@
                     h = col.y2 - col.y1 + 1,
                     isLeaf = !col.rows;
 
-                var content, isMainFrame = this.options.frames[i].mainFrame;
+                var content, isMainFrame = this.options.frames[col.pos].mainFrame;
                 if (isLeaf) {
                     content = '<span class="data-description">' + (_.escape(col.description) || '') + '</span>';
                 } else {

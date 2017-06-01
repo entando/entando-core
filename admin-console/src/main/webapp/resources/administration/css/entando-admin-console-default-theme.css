@@ -1872,3 +1872,6 @@ label .fa-folder, .fa-folder {
 #activity-stream{
     margin: 0 0 3em 0;
 }
+.disabled{
+    pointer-events: none !important;
+}

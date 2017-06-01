@@ -9,10 +9,11 @@
             <s:text name="%{'title.' + entityManagerName + '.management'}"/>
         </a>
     </li>
-    <li class="page-title-container"><s:text
-            name="title.entityTypes.editType.remove" />: <s:property
-            value="entityTypeCode" /> - <s:property
-            value="%{getEntityPrototype(entityTypeCode).typeDescr}" /></li>
+    <li class="page-title-container">
+        <s:text name="title.entityTypes.editType.remove" />:
+        <s:property  value="entityTypeCode" /> -
+        <s:property value="%{getEntityPrototype(entityTypeCode).typeDescr}" />
+    </li>
 </ol>
 <h1 class="page-title-container">
     <div>

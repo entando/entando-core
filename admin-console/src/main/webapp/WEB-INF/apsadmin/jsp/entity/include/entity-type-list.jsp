@@ -6,7 +6,9 @@
 <%--se arrivo dal plugin webdynamicform visualizzo solo la parte sotto --%>
 <s:if test="%{'jpwebdynamicformMessageManager' == entityManagerName}">
     <ol class="breadcrumb page-tabs-header breadcrumb-position">
-        <li><s:text name="jpwebdynamicform.menu.integration"/></li>
+        <li>
+            <s:text name="jpwebdynamicform.menu.integration"/>
+        </li>
         <li>
             <s:text name="jpwebdynamicform.menu.uxcomponents"/>
         </li>
@@ -50,9 +52,8 @@
 </s:if>
 <s:else>
     <ol class="breadcrumb page-tabs-header breadcrumb-position">
-        <li>
-            <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
-        </li>
+
+        <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
 
         <li class="page-title-container">
             <s:text name="%{'title.' + entityManagerName + '.management'}"/>
@@ -60,11 +61,13 @@
     </ol>
     <h1 class="page-title-container">
         <s:text name="%{'title.' + entityManagerName + '.management'}"/>
-        <span class="pull-right"> <a tabindex="0" role="button"
-                                     data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                                     data-content="<s:text name="%{'page.' + entityManagerName + '.help'}"/>" data-placement="left"
-                                     data-original-title=""><i class="fa fa-question-circle-o"
-                                      aria-hidden="true"></i></a>
+        <span class="pull-right">
+            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+               data-content="<s:text name="%{'page.' + entityManagerName + '.help'}"/>" data-placement="left"
+               data-original-title="">
+                <i class="fa fa-question-circle-o" aria-hidden="true">
+                </i>
+            </a>
 
         </span>
     </h1>

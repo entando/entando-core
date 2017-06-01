@@ -2,9 +2,9 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li>
-        <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
-    </li>
+
+    <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
+
     <li>
         <a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName"><s:text name="%{entityManagerName}" /></s:param></s:url>">
             <s:text name="%{'title.' + entityManagerName + '.management'}"/>

@@ -80,27 +80,29 @@
     <s:if test="%{lockGroupSelect}">
         <wpsf:hidden name="mainGroup" />
     </s:if>
-</p>
 
-<%-- descr --%>
-<s:set var="fieldErrorsVar" value="%{fieldErrors['descr']}" />
-<s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
-<s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+    </p>
 
-<div class="form-group<s:property value="#controlGroupErrorClass" />">
-    <label class="col-sm-2 control-label" for="descr">
-        <s:text name="label.description" />
-        <i class="fa fa-asterisk required-icon"></i>
-    </label>
-    <div class="col-sm-10">
-        <wpsf:textfield name="descr" id="descr" cssClass="form-control" />
-        <s:if test="#hasFieldErrorVar">
-            <span class="help-block text-danger">
-                <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                </span>
-        </s:if>
+    <%-- descr --%>
+    <s:set var="fieldErrorsVar" value="%{fieldErrors['descr']}" />
+    <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+        <label class="col-sm-2 control-label" for="descr">
+            <s:text name="label.description" />
+            <i class="fa fa-asterisk required-icon"></i>
+        </label>
+        <div class="col-sm-10">
+            <wpsf:textfield name="descr" id="descr" cssClass="form-control" />
+            <s:if test="#hasFieldErrorVar">
+                <span class="help-block text-danger">
+                    <s:iterator value="%{#fieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
+                    </span>
+            </s:if>
+        </div>
     </div>
-</div>
+
 
 <%-- mainGroup --%>
 <s:set var="fieldErrorsVar" value="%{fieldErrors['mainGroup']}" />
@@ -115,45 +117,50 @@
     <div class="col-sm-10">
         <wpsf:select name="mainGroup" id="mainGroup" list="allowedGroups" listKey="name" listValue="description" disabled="%{lockGroupSelect}" cssClass="combobox form-control"></wpsf:select>
             <s:if test="#hasFieldErrorVar">
-            <span class="help-block text-danger">
-                <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                </span>
-        </s:if>
+
+                <span class="help-block text-danger">
+                    <s:iterator value="%{#fieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
+                    </span>
+            </s:if>
+        </div>
     </div>
 </div>
 
-<%-- upload --%>
-<s:set var="uploadFieldErrorsVar" value="%{fieldErrors['upload']}" />
-<s:set var="fileNameFieldErrorsVar" value="%{fieldErrors['fileName']}" />
-<s:set var="hasFieldErrorVar" value="(#uploadFieldErrorsVar != null && !#uploadFieldErrorsVar.isEmpty()) || (#fileNameFieldErrorsVar != null && !#fileNameFieldErrorsVar.isEmpty())" />
-<s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 
-<div class="form-group<s:property value="#controlGroupErrorClass" />">
-    <label class="col-sm-2 control-label" for="upload">
-        <s:text name="label.file" />
-        <i class="fa fa-asterisk" style="font-size: 8px; top: -4px; position: relative;"></i>
-        <s:if test="%!{resourceTypeCode == 'Attach'}">
-            <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="title.resourceManagement.help" />" data-original-title="" style="position: absolute; right: 8px;">
-                <span class="fa fa-info-circle"></span>
-            </a>
-        </s:if>
-        <s:elseif test="%{resourceTypeCode == 'Attach'}">
-            <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="title.resourceAttach.help" />" data-original-title="" style="position: absolute; right: 8px;">
-                <span class="fa fa-info-circle"></span>
-            </a>
-        </s:elseif>
+    <%-- upload --%>
+    <s:set var="uploadFieldErrorsVar" value="%{fieldErrors['upload']}" />
+    <s:set var="fileNameFieldErrorsVar" value="%{fieldErrors['fileName']}" />
+    <s:set var="hasFieldErrorVar" value="(#uploadFieldErrorsVar != null && !#uploadFieldErrorsVar.isEmpty()) || (#fileNameFieldErrorsVar != null && !#fileNameFieldErrorsVar.isEmpty())" />
+    <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 
-    </label>
-    <div class="col-sm-10">
-        <s:file name="upload" id="upload" label="label.file" />
-        <s:if test="#hasFieldErrorVar">
-            <span class="help-block text-danger">
-                <s:iterator value="%{#uploadFieldErrorsVar}"><s:property />&#32;</s:iterator>
-                <s:iterator value="%{#fileNameFieldErrorsVar}"><s:property />&#32;</s:iterator>
-                </span>
-        </s:if>
+    <div class="form-group<s:property value="#controlGroupErrorClass" />">
+        <label class="col-sm-2 control-label" for="upload">
+            <s:text name="label.file" />
+            <i class="fa fa-asterisk" style="font-size: 8px; top: -4px; position: relative;"></i>&nbsp;
+	             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="help.tooltip.image.upload" />" data-placement="top" data-original-title="">
+                <span class="fa fa-info-circle" aria-hidden="true"></span>
+               </a>
+            <s:if test="%!{resourceTypeCode == 'Attach'}">
+                <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="title.resourceManagement.help" />" data-original-title="" style="position: absolute; right: 8px;">
+                    <span class="fa fa-info-circle"></span>
+                </a>
+            </s:if>
+            <s:elseif test="%{resourceTypeCode == 'Attach'}">
+                <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="title.resourceAttach.help" />" data-original-title="" style="position: absolute; right: 8px;">
+                    <span class="fa fa-info-circle"></span>
+                </a>
+            </s:elseif>
+        </label>
+        <div class="col-sm-10">
+             <s:file name="upload" id="upload" label="label.file" />
+			       <s:if test="#hasFieldErrorVar">
+			    	   <span class="help-block text-danger">
+				     	   <s:iterator value="%{#uploadFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
+					       <s:iterator value="%{#fileNameFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
+					    </span>
+			      </s:if>
+        </div>
     </div>
-</div>
 
 <fieldset class="margin-base-vertical" id="category-content-block">
 

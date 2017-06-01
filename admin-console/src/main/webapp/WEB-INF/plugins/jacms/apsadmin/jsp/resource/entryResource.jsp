@@ -131,7 +131,10 @@
     <div class="form-group<s:property value="#controlGroupErrorClass" />">
         <label class="col-sm-2 control-label" for="upload">
             <s:text name="label.file" />
-            <i class="fa fa-asterisk" style="font-size: 8px; top: -4px; position: relative;"></i>
+            <i class="fa fa-asterisk" style="font-size: 8px; top: -4px; position: relative;"></i>&nbsp;
+	     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="help.tooltip.image.upload" />" data-placement="top" data-original-title="">
+                <span class="fa fa-info-circle" aria-hidden="true"></span>
+            </a>
             <s:if test="%!{resourceTypeCode == 'Attach'}">
                 <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="<s:text name="title.resourceManagement.help" />" data-original-title="" style="position: absolute; right: 8px;">
                     <span class="fa fa-info-circle"></span>
@@ -146,10 +149,6 @@
         </label>
         <div class="col-sm-10">
             <s:file name="upload" id="upload" label="label.file" />
-			<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="help.tooltip.image.upload" />" data-placement="left" data-original-title="">
-				<span class="fa fa-question-circle-o" aria-hidden="true"></span>
-			</a>
-
 			<s:if test="#hasFieldErrorVar">
 				<span class="help-block text-danger">
 					<s:iterator value="%{#uploadFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>

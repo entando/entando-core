@@ -79,7 +79,7 @@
                                 <th class="table-w-5 text-center">
                                     <s:text name="contentModel.id" />
                                 </th>
-                                <th class="table-w-5">
+                                <th class="text-center table-w-5">
                                     <s:text name="label.actions" />
                                 </th>
                             </tr>
@@ -96,7 +96,7 @@
                                     <td class="text-center">
                                         <s:property value="#model.id" />
                                     </td>
-                                    <td class="table-view-pf-actions">
+                                    <td class="text-center table-view-pf-actions">
                                         <div class="dropdown dropdown-kebab-pf">
                                             <button class="btn btn-menu-right dropdown-toggle"
                                                     type="button" data-toggle="dropdown" aria-haspopup="true"

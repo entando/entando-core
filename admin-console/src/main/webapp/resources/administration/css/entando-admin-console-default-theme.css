@@ -9,7 +9,7 @@
 .left{
     float: left;
 }
-.no-padding{
+.no-pagdding{
     padding: 0;
 }
 .overflow-visible{
@@ -1283,8 +1283,9 @@ td{
     color:#72767b !important;
 }
 .dropdown-menu.dropdown-menu-right {
-    right: 13px !important;
-    margin-top: 6px !important;
+    right: -9px !important;
+    margin-top: 0px !important;
+
 }
 .page-title-container{
     font-weight: bold;
@@ -1872,6 +1873,24 @@ label .fa-folder, .fa-folder {
 #activity-stream{
     margin: 0 0 3em 0;
 }
+
 .disabled{
     pointer-events: none !important;
 }
+
+.table-view-pf-actions .dropdown, .table-view-pf-actions .table-view-pf-btn {
+    height: 100%;
+    display: inline-table;
+}
+.content-list .dropdown-menu.dropdown-menu-right {
+    right: -10px !important;
+    margin-top: 0px !important;
+}
+.dropdown-menu.dropdown-menu-right.clone{
+    right: 21px !important;
+    margin-top: 0px !important;
+}
+.fa-1x{
+    font-size: 12px !important;
+}
+

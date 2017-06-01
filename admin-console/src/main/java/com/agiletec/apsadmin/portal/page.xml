@@ -200,7 +200,7 @@
                 <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>
-        
+
     </package>
 
     <package name="core_do/ABSTRACT/Page" extends="entando-default" abstract="true">
@@ -362,6 +362,30 @@
             </interceptor-ref>
         </action>
 
+        <action name="setDefaultWidgets" class="pageAction" method="setDefaultWidgets">
+            <result type="tiles">admin.Page.viewTreeMenu</result>
+            <result type="redirectAction">
+                <param name="actionName">configure</param>
+                <param name="pageCode">${pageCode}</param>
+            </result>
+            <interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="requestAuth.requiredPermission">managePages</param>
+            </interceptor-ref>
+        </action>
+
+        <action name="setViewerPage" class="pageAction" method="setViewerPageAPI">
+            <result type="tiles">admin.Page.viewTreeMenu</result>
+            <result type="redirectAction">
+                <param name="actionName">configure</param>
+                <param name="pageCode">${pageCode}</param>
+            </result>
+            <interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoDefaultStack">
+                <param name="requestAuth.requiredPermission">managePages</param>
+            </interceptor-ref>
+        </action>
+
     </package>
 
     <package name="core_do/Page/Console" namespace="/do/Page/Console" extends="core_do/ABSTRACT/Page">
@@ -384,14 +408,14 @@
                 <param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
             </interceptor-ref>
         </action>
-		
-		<action name="openCloseTreeNode" class="pageTreeMenuAction" method="buildTree">
+
+        <action name="openCloseTreeNode" class="pageTreeMenuAction" method="buildTree">
             <result type="tiles">admin.Page.viewTreeMenu</result>
             <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>
-		
+
         <action name="configure" class="pageTreeMenuAction" method="intro">
             <result type="tiles">admin.Page.viewTreeMenu</result>
             <interceptor-ref name="entandoDefaultStack">
@@ -479,7 +503,7 @@
                 <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>
-		
+
         <action name="search" class="pageFinderAction">
             <result name="input" type="tiles">admin.Page.searchResult</result>
             <result type="tiles">admin.Page.searchResult</result>
@@ -487,8 +511,8 @@
                 <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>
-		
-		<action name="openCloseTreeResultNode" class="pageFinderAction" method="buildTree">
+
+        <action name="openCloseTreeResultNode" class="pageFinderAction" method="buildTree">
             <result name="input" type="tiles">admin.Page.searchResult</result>
             <result type="tiles">admin.Page.searchResult</result>
             <interceptor-ref name="entandoDefaultStack">
@@ -497,7 +521,7 @@
         </action>
 
         <!-- ######### INIZIO OPERAZIONI CONFIGURAZIONE FRAME PAGINA ######### -->
-		
+
         <action name="editFrame" class="pageConfigAction" method="editFrame">
             <result name="configureSpecialWidget" type="chain">
                 <param name="namespace">/do/Page/SpecialWidget</param>

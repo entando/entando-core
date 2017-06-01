@@ -8,8 +8,9 @@
 <s:else>
 	<s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
-<li class="<s:property value="#liClassName" /> tree_node_flag">
-	<span class="icon fa fa-li <s:property value="#treeItemIconNameVar" />"></span>&#32;
+<tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}" class="treeRow tree_node_flag ${liClassName}" >
+    <td class="treegrid-node">
+<%-- <li class="<s:property value="#liClassName" /> tree_node_flag"> --%>
 
 	<s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
 	<s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
@@ -41,9 +42,11 @@
 		name="<s:property value="#inputFieldName" />"
 		id="fagianonode_<s:property value="#currentRoot.code" />"
 		value="<s:property value="#currentRoot.code" />"
-		<s:if test="#currentRoot.children.length > 0"> class="subTreeToggler tree_<s:property value="#currentRoot.code" /> " </s:if>
+		class="subTreeToggler ${(isSelected)?'active':''} hidden 
+		<s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
 		<s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked" </s:if> />
 	<label for="fagianonode_<s:property value="#currentRoot.code" />">
+		<span class="icon node-icon fa ${treeItemIconNameVar}"></span>
 		<s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
                 <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;<span class="text-muted icon fa fa-lock"></span></s:if>
 	</label>
@@ -55,4 +58,5 @@
 			</s:iterator>
 		</ul>
 	</s:if>
-</li>
+</td>
+</tr>

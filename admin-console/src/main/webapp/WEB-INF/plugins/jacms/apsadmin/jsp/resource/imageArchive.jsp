@@ -159,7 +159,7 @@
                                     <div class="card-pf-body">
                                         <div class="card-pf-heading-kebab">
                                             <div class="dropdown pull-right dropdown-kebab-pf">
-                                                <button class="btn btn-link dropdown-toggle" type="button"
+                                                <button class="btn btn-menu-right dropdown-toggle" type="button"
                                                         id="dropdownKebabRight1"
                                                         data-toggle="dropdown" aria-haspopup="true"
                                                         aria-expanded="true">
@@ -264,7 +264,7 @@
                             <div class="list-group-item">
                                 <div class="list-view-pf-actions">
                                     <div class="dropdown pull-right dropdown-kebab-pf">
-                                        <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight2"
+                                        <button class="btn btn-menu-right dropdown-toggle" type="button" id="dropdownKebabRight2"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                             <span class="fa fa-ellipsis-v"></span>
                                         </button>

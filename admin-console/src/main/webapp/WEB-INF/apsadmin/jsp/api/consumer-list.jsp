@@ -114,7 +114,7 @@
                                 <s:else><s:property value="#tokenOccurrencesVar[#consumerKeyVar]" /></s:else>
                                 <span class="sr-only"><s:text name="label.tokens.full" /></span>
                             </td>
-                            <td class=" table-view-pf-actions">
+                            <td class="text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
                                     <ul class="dropdown-menu dropdown-menu-right">

@@ -494,7 +494,7 @@
 
 
 
-                            <td class="table-view-pf-actions">
+                            <td class="text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle"
                                             type="button" data-toggle="dropdown" aria-haspopup="true"

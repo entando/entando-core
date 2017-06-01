@@ -31,7 +31,7 @@
                                 <s:iterator var="currentGuiFragmentVar">
                                     <tr class="dl-horizontal dl-striped panel padding-base-top padding-base-bottom">
                                         <td><s:property value="#currentGuiFragmentVar.code" /></td>
-                                        <td class=" table-view-pf-actions">
+                                        <td class="text-center table-view-pf-actions">
                                             <div class="dropdown dropdown-kebab-pf">
                                                 <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <span class="fa fa-ellipsis-v"></span>

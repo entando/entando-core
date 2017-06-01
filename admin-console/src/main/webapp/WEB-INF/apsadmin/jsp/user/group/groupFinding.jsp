@@ -56,7 +56,7 @@
                     <tr>
                         <th><s:text name="label.name" /></th>
                         <th><s:text name="label.code" /></th>
-                        <th><s:text name="label.actions" /></th>
+                        <th class="text-center table-w-5"><s:text name="label.actions" /></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,7 +64,7 @@
                         <tr>
                             <td><s:property value="#groupVar.descr" /></td>
                             <td><s:property value="#groupVar.name" /></td>
-                            <td class="table-view-pf-actions">
+                            <td class="text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle"
                                             type="button" data-toggle="dropdown" aria-haspopup="true"

@@ -4,9 +4,12 @@
 
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.userSetting" /></li>
-    <li class="page-title-container"><s:text
-            name="title.roleManagement" /></li>
+    <li>
+        <s:text name="title.userSetting" />
+    </li>
+    <li class="page-title-container">
+        <s:text name="title.roleManagement" />
+    </li>
 </ol>
 
 <h1 class="page-title-container">
@@ -53,18 +56,16 @@
         <table class="table table-striped table-bordered table-hover no-mb">
             <thead>
                 <tr>
-                    <th><s:text name="label.code" /></th>
                     <th><s:text name="label.name" /></th>
-                    <th class="text-designer"><s:text name="label.actions" /></th>
+                    <th class="table-w-15 text-center"><s:text name="label.code" /></th>
+                    <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                 </tr>
             </thead>
             <tbody>
                 <s:iterator var="role">
                     <tr>
-                        <td><s:property value="#role.name" /></td>
                         <td><s:property value="#role.description" /></td>
-                        <td class=" table-view-pf-actions">
-
+                        <td class="text-center table-view-pf-actions">
                             <div class="dropdown dropdown-kebab-pf">
                                 <button class="btn btn-menu-right dropdown-toggle"
                                         type="button" data-toggle="dropdown" aria-haspopup="true"
@@ -72,27 +73,32 @@
                                     <span class="fa fa-ellipsis-v"></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right">
-                                    <li><a
+                                    <li>
+                                    <a
                                             href="<s:url action="detail"><s:param name="name" value="#role.name"/></s:url>"
                                             title="<s:text name="note.detailsFor" />: <s:property value="#role.name" />">
                                             <s:text name="note.detailsFor" />: <s:property
                                                 value="#role.name" /> <span class="sr-only"><s:text
                                                     name="note.detailsFor" />: <s:property value="#role.name" /></span>
-                                        </a></li>
-                                    <li><a
-                                            title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />"
+                                        </a>
+                                        </li>
+                                    <li>
+                                    <a title="<s:text name="label.edit" />:&#32;<s:property value="#role.name" />"
                                             href="<s:url action="edit"><s:param name="name" value="#role.name"/></s:url>">
                                             <s:text name="label.edit" />:&#32;<s:property
                                                 value="#role.name" /> <span class="sr-only"><s:text
                                                     name="label.edit" />:&#32;<s:property value="#role.name" /></span>
-                                        </a></li>
-                                    <li><a
+                                        </a>
+                                        </li>
+                                    <li>
+                                    <a
                                             title="<s:text name="label.remove" />: <s:property value="#role.name" />"
                                             href="<s:url action="trash"><s:param name="name" value="#role.name"/></s:url>">
                                             <s:text name="label.remove" />: <s:property
                                                 value="#role.name" /> <span class="sr-only"><s:text
                                                     name="label.remove" />: <s:property value="#role.name" /></span>
-                                        </a></li>
+                                        </a>
+                                        </li>
                                 </ul>
                             </div>
                         </td>

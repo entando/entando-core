@@ -14,11 +14,11 @@
     class="treeRow tree_node_flag ${liClassName}" >
     <td class="treegrid-node pointer">
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
-    <wpsa:actionParam action="%{#openTreeActionName}" var="openTreeAction" >
-        <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
-        <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
-        <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="open" />
-    </wpsa:actionParam>
+            <wpsa:actionParam action="%{#openTreeActionName}" var="openTreeAction" >
+                <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
+                <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
+                <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="open" />
+            </wpsa:actionParam>
     <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#openTreeAction}"
                  type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
         <span class="icon fa fa-plus" title="<s:text name="label.open" />"></span>
@@ -55,7 +55,7 @@
 <s:if test="isPosition" >
     <td class="table-view-pf-actions">
         <div class="dropdown dropdown-kebab-pf">
-            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight1"
+            <button class="btn btn-menu-right dropdown-toggle" type="button" id="dropdownKebabRight1"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span class="fa fa-ellipsis-v"></span>
             </button>

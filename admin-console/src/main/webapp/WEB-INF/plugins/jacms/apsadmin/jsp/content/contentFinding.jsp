@@ -615,7 +615,7 @@
                                             <td ><s:property value="%{getGroup(#content.mainGroupCode).descr}" /></td>
                                             <td class="table-w-10"><s:date name="#content.create" format="dd/MM/yyyy HH:mm" /></td>
                                             <td class="table-w-10"><s:date name="#content.modify" format="dd/MM/yyyy HH:mm" /></td>
-                                            <td class="table-view-pf-actions">
+                                            <td class="table-view-pf-actions text-center">
                                                 <div class="dropdown dropdown-kebab-pf">
                                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown">
                                                         <span class="fa fa-ellipsis-v"></span>

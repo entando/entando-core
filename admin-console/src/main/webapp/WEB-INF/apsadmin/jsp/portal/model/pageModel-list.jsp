@@ -38,8 +38,8 @@
         </div>
     </s:if>
     <p>
-        <a class="btn btn-primary pull-right"
-           href="<s:url namespace="/do/PageModel" action="new" />" style="margin-bottom: 5px">
+        <a class="btn btn-primary pull-right mb-5"
+           href="<s:url namespace="/do/PageModel" action="new" />">
             <s:text name="label.add" />
             </span>
         </a>
@@ -60,8 +60,7 @@
                             <td><s:property value="#pageModelVar.code" /></td>
                             <td><s:property value="#pageModelVar.description" /></td>
 
-                            <td class="text-center text-nowrap">
-
+                            <td class=" text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
                                     <ul class="dropdown-menu dropdown-menu-right">

@@ -8,34 +8,34 @@
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
+<s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
+
 <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
 <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
 <tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}"
     class="treeRow tree_node_flag ${liClassName}" >
     <td class="treegrid-node pointer">
-        <s:if test="!#currentRoot.open && !#currentRoot.empty">
-            <wpsa:actionParam action="%{#openTreeActionName}" var="openTreeAction" >
-                <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
-                <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
-                <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="open" />
-            </wpsa:actionParam>
-    <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#openTreeAction}"
-                 type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
-        <span class="icon fa fa-plus" title="<s:text name="label.open" />"></span>
-        <span class="sr-only"><s:text name="label.open" /></span>
-    </wpsf:submit>
+<s:if test="!#currentRoot.open && !#currentRoot.empty">
+	<a href="<s:url action="%{#openTreeActionName}">
+		<wpsa:paramMap map="#treeNodeExtraParamsMap" />
+		<s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
+		<s:param name="treeNodeActionMarkerCode" value="'open'" />
+		<s:param name="targetNode" value="#currentRoot.code" />
+		<s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
+		<span class="icon fa fa-plus" title="<s:text name="label.open" />"></span>
+		<span class="sr-only"><s:text name="label.open" /></span>
+	</a>
 </s:if>
 <s:elseif test="#currentRoot.open && !#currentRoot.empty">
-    <wpsa:actionParam action="%{#closeTreeActionName}" var="closeTreeAction" >
-        <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
-        <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
-        <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="close" />
-    </wpsa:actionParam>
-    <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#closeTreeAction}"
-                 type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">
-        <span class="icon fa fa-minus" title="<s:text name="label.close" />"></span>
-        <span class="sr-only"><s:text name="label.close" /></span>
-    </wpsf:submit>
+	<a href="<s:url action="%{#closeTreeActionName}">
+		<wpsa:paramMap map="#treeNodeExtraParamsMap" />
+		<s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
+		<s:param name="treeNodeActionMarkerCode" value="'close'" />
+		<s:param name="targetNode" value="#currentRoot.code" />
+		<s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
+		<span class="icon fa fa-minus" title="<s:text name="label.close" />"></span>
+		<span class="sr-only"><s:text name="label.close" /></span>
+	</a>
 </s:elseif>
 
 <input type="radio" name="${inputFieldName}"
@@ -52,46 +52,47 @@
     </s:if>
 </label>
 </td>
-<s:if test="isPosition" >
+    <s:if test="isPosition" >
     <td class="table-view-pf-actions">
         <div class="dropdown dropdown-kebab-pf">
             <button class="btn btn-menu-right dropdown-toggle" type="button" id="dropdownKebabRight1"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span class="fa fa-ellipsis-v"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight1">
-                <li>
-                <wpsf:submit type="button" name="entandoaction:detail" value="Submit"
-                             title="%{getText('category.options.detail')}"
-                             data-toggle="tooltip" cssClass="btn-block">
-                    <span> <s:text name="category.options.detail"/> </span>
-                </wpsf:submit>
-                </li>
-                <li>
-                <wpsf:submit type="button" name="entandoaction:new"
-                             title="%{getText('category.options.add')}"
-                             data-toggle="tooltip" cssClass="btn-block">
-                    <span> <s:text name="category.options.add"/> </span>
-                </wpsf:submit>
-                </li>
-                <li>
-                <wpsf:submit type="button" name="entandoaction:edit" value="Submit"
-                             title="%{getText('category.options.modify')}"
-                             data-toggle="tooltip" cssClass="btn-block">
-                    <span> <s:text name="category.options.modify"/> </span>
-                </wpsf:submit>
-                </li>
-                <li>
-                <wpsf:submit type="button" name="entandoaction:trash" value="Submit"
-                             title="%{getText('category.options.delete')}"
-                             data-toggle="tooltip" cssClass="btn-block">
-                    <span> <s:text name="category.options.delete"/> </span>
-                </wpsf:submit>
-                </li>
-            </ul>
-        </div>
-    </td>
-</s:if>
+                    <span class="fa fa-ellipsis-v"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight1">
+                    <li>
+					<a href="<s:url action="detail">
+						   <s:param name="selectedNode" value="%{#currentRoot.code}" /></s:url>" 
+						   title="<s:text name="category.options.detail" />" class="btn-block">
+						<s:text name="category.options.detail"/>
+					</a>
+                    </li>
+                    <li>
+					<a href="<s:url action="new">
+						   <s:param name="selectedNode" value="%{#currentRoot.code}" />
+						   <s:param name="parentCategoryCode" value="%{#currentRoot.code}" /></s:url>" 
+						   title="<s:text name="category.options.add" />" class="btn-block">
+						<s:text name="category.options.add"/>
+					</a>
+                    </li>
+                    <li>
+					<a href="<s:url action="edit">
+						   <s:param name="selectedNode" value="%{#currentRoot.code}" /></s:url>" 
+						   title="<s:text name="category.options.modify" />" class="btn-block">
+						<s:text name="category.options.modify"/>
+					</a>
+                    </li>
+                    <li>
+					<a href="<s:url action="trash">
+						   <s:param name="selectedNode" value="%{#currentRoot.code}" /></s:url>" 
+						   title="<s:text name="category.options.delete" />" class="btn-block">
+						<s:text name="category.options.delete"/>
+					</a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </s:if>
 </tr>
 <s:if test="#currentRoot.children.length > 0">
     <ul class="treeToggler fa-ul"  id="tree_<s:property value="#currentRoot.code" />">

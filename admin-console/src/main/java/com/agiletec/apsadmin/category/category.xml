@@ -25,6 +25,11 @@
             <result type="tiles">admin.Category.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
         </action>
+		
+		<action name="openCloseCategoryTreeInEntry" class="categoryAction" method="buildTree">
+            <result type="tiles">admin.Category.entry</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+        </action>
 
         <action name="edit" class="categoryAction" method="edit">
             <result name="categoryTree" type="chain">viewTree</result>

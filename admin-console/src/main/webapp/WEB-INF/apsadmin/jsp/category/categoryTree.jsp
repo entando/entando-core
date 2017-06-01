@@ -71,7 +71,6 @@
                         <span><s:property escapeHtml="false" /></span>
                     </s:iterator>
                 </div>
-
             </s:if>
 
             <s:if test="serviceStatus != 0">
@@ -121,7 +120,7 @@
                         <s:set var="selectedTreeNode" value="%{selectedNode}" />
                         <s:set var="selectedPage" value="%{getCategory(selectedNode)}" />
                         <s:set var="isPosition" value="true" />
-
+                        <s:set var="treeItemIconName" value="'fa-folder'" />
                         <s:if test="#categoryTreeStyleVar == 'classic'">
                             <s:set var="currentRoot" value="treeRootNode" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
@@ -136,9 +135,8 @@
                         <s:set var="openTreeActionName" value="'openCloseCategoryTree'" />
                         <s:set var="closeTreeActionName" value="'openCloseCategoryTree'" />
                         <s:set var="currentRoot" value="showableTree" />
-                        <s:include
-                            value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
-                    </s:elseif>
+                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
+					</s:elseif>
                     </tbody>
                 </table>
             </div>

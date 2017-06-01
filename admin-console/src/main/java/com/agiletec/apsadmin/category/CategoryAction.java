@@ -273,20 +273,14 @@ public class CategoryAction extends AbstractTreeAction {
 	}
 
 	public String save() {
-		String parentCategoryCode;
 		try {
-			if (this.getParentCategoryCode().contains(",") && !StringUtils.endsWith(this.getParentCategoryCode(), ",")) {
-				parentCategoryCode = StringUtils.trim(this.getParentCategoryCode().split(",")[1]);
-			} else {
-				parentCategoryCode = this.getParentCategoryCode();
-			}
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
 				Category category = this.getCategory(this.getCategoryCode());
 				category.setTitles(this.getTitles());
-				//category.setParentCode(parentCategoryCode);
 				this.getCategoryManager().updateCategory(category);
 				_logger.debug("Updated category {}", category.getCode());
-			} else if (!StringUtils.isEmpty(this.getParentCategoryCode())) {
+			} else if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
+				String parentCategoryCode = this.getParentCategoryCode();
 				Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), parentCategoryCode, this.getTitles());
 				this.getCategoryManager().addCategory(category);
 				_logger.debug("Added new category {}", this.getCategoryCode());

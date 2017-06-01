@@ -56,16 +56,13 @@
         </s:if>
         <p class="sr-only">
 			<wpsf:hidden name="strutsAction" />
-			<wpsf:hidden name="parentCategoryCode" />
 			<s:if test="getStrutsAction() == 2">
 				<wpsf:hidden name="categoryCode" />
 			</s:if>
 			<s:elseif test="getStrutsAction() == 1">
-				<%--
-				<s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
-					<wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"></wpsf:hidden>
-				</s:iterator>
-				--%>
+			<s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
+				<wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"></wpsf:hidden>
+			</s:iterator>
 			</s:elseif>
 		</p>
 		<%-- languages --%>
@@ -87,7 +84,7 @@
 					<s:if test="#currentFieldHasFieldErrorVar">
 						<p class="help help-block">
 							<s:iterator value="#currentFieldFieldErrorsVar">
-								<s:property />&#32;
+								<s:property escapeHtml="false" />&#32;
 							</s:iterator>
 						</p>
 					</s:if>
@@ -114,7 +111,7 @@
 				<s:if test="#currentFieldHasFieldErrorVar">
 					<p class="help help-block">
 						<s:iterator value="#currentFieldFieldErrorsVar">
-							<s:property />&#32;
+							<s:property escapeHtml="false" />&#32;
 						</s:iterator>
 					</p>
 				</s:if>
@@ -122,11 +119,11 @@
 		</div>
 		<!-- tree position -->
 		<s:if test="strutsAction != 2">
-		<div
-			class="form-group<s:property value="controlGroupErrorClassVar" />">
+		<div class="form-group<s:property value="controlGroupErrorClassVar" />">
 			<div class="col-xs-2 control-label">
 				<label><s:text name="name.tree.position" /></label>
 			</div>
+			<s:set var="categoryTreeStyleVar"><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
 			<div class="col-xs-10">
 				<script src="<wp:resourceURL />administration/js/entando-typeahead-tree.js"></script>
 				<s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp" />
@@ -134,12 +131,10 @@
 					   class="table table-bordered table-hover table-treegrid">
 					<thead>
 						<tr>
-							<!-- 						class="col-sm-10" -->
 							<th>
 								<s:text name="title.categoryTree" />
 								<s:if test="#categoryTreeStyleVar == 'classic'">
-								<button type="button" class="btn-no-button expand-button"
-										id="expandAll">
+								<button type="button" class="btn-no-button expand-button" id="expandAll">
 									<i class="fa fa-plus-square-o treeInteractionButtons"
 									   aria-hidden="true"></i>&#32;
 									<s:text name="label.category.expandAll" />
@@ -153,7 +148,6 @@
 							</th>
 						</tr>
 					</thead>
-					<s:set var="categoryTreeStyleVar"><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
 					<tbody>
 						<s:set var="inputFieldName" value="%{'parentCategoryCode'}" />
 						<s:set var="selectedTreeNode" value="%{parentCategoryCode}" />
@@ -168,8 +162,7 @@
 							<s:set var="openTreeActionName" value="'openCloseCategoryTreeInEntry'" />
 							<s:set var="closeTreeActionName" value="'openCloseCategoryTreeInEntry'" />
 							<s:set var="currentRoot" value="showableTree" />
-							<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
-							<%-- <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" /> --%>
+							<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
 						</s:elseif>
 					</tbody>
 				</table>

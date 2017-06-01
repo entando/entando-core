@@ -21,8 +21,10 @@
                     <div class="col-xs-12 no-padding table-nomargin-bottom">
                         <table class="table table-striped table-bordered" id="pageListTable">
                             <tr>
-                                <th><s:text name="label.page" /></th>
-                                <th class="text-center" style="width: 20px">
+                                <th>
+                                    <s:text name="label.page" />
+                                </th>
+                                <th class="text-center table-w-5">
                                     <s:text name="label.actions" />
                                 </th>
                             </tr>
@@ -32,7 +34,7 @@
                                 <wp:ifauthorized groupName="${currentPageGroup}" permission="managePages"><s:set var="canEditCurrentPage" value="%{true}" /></wp:ifauthorized>
                                     <tr>
                                         <td> <s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></td>
-                                    <td class="text-center text-nowrap">
+                                    <td class=" text-center table-view-pf-actions">
                                         <div class="dropdown dropdown-kebab-pf">
                                             <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="fa fa-ellipsis-v"></span>

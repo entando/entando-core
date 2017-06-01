@@ -6,7 +6,6 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
     <li class="page-title-container"><s:text name="title.guiFragmentManagement" /></li>
-
 </ol>
 
 <div class="page-tabs-header">
@@ -131,16 +130,18 @@
                     <div class="col-xs-12 no-padding">
                         <table class="table table-striped table-bordered table-hover no-mb">
                             <tr>
-                                <th><s:text name="label.code" /></th>
-                                <th><s:text name="label.widgetType" /></th>
-                                <th><s:text name="label.plugin" /></th>
+
+                                <th class="table-w-15"><s:text name="label.widgetType" /></th>
+                                <th class="table-w-15"><s:text name="label.plugin" /></th>
                                 <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                             </tr>
                             <s:iterator var="codeVar">
                                 <s:set var="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />
                                 <s:url action="edit" var="editGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
                                     <tr>
-                                        <td><s:property value="#codeVar"/></td>
+                                        <td>
+                                        <s:property value="#codeVar"/>
+                                    </td>
                                     <td>
                                         <s:set value="%{getWidgetType(#guiFragmentVar.widgetTypeCode)}" var="widgetTypeVar" />
                                         <s:property value="getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)" />
@@ -149,14 +150,15 @@
                                         <s:if test="null != #guiFragmentVar.pluginCode">
                                             <s:text name="%{#guiFragmentVar.pluginCode+'.name'}" />&nbsp;<s:property value="#guiFragmentVar.pluginCode"/>
                                         </s:if>
-                                        <s:else>&ndash;</s:else>
-                                        </td>
-                                        <td class="text-center text-nowrap">
-
-                                            <div class="dropdown dropdown-kebab-pf">
-                                                <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
-                                                <ul class="dropdown-menu dropdown-menu-right">
-                                                    <li>
+                                        <s:else>
+                                            &ndash;
+                                        </s:else>
+                                    </td>
+                                    <td class=" text-center table-view-pf-actions">
+                                        <div class="dropdown dropdown-kebab-pf">
+                                            <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
+                                            <ul class="dropdown-menu dropdown-menu-right">
+                                                <li>
                                                     <%-- edit --%>
                                                     <a  title="<s:text name="label.edit" />&#32;<s:property value="#codeVar" />" href="<s:property value="#editGuiFragmentActionVar" escapeHtml="false" />">
                                                         <span class="sr-only"><s:text name="label.edit" />&#32;<s:property value="#codeVar" /></span>

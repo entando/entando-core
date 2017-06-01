@@ -41,7 +41,7 @@
                 <s:property value="#labelTitle"/>
             </h2>
             <p>
-                <s:text name="note.bulk.content.offline.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
+                <s:text name="note.bulk.content.online.doYouConfirm" ><s:param name="items" value="%{selectedIds.size()}" /></s:text>
                 </p>
 
                 <div class="blank-slate-pf-main-action">

@@ -295,14 +295,14 @@
                         <jacmswpsa:contentType typeCode="%{#contentTypeVar.typeCode}"
                                                property="isAuthToEdit" var="isAuthToEditVar" />
                         <s:if test="%{#isAuthToEditVar}">
-                            <li><a
-                                    href="<s:url action="createNew" namespace="/do/jacms/Content" >
-                                        <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
-                                    </s:url>"><s:text
-                                        name="label.new" />&#32;<s:property
-                                        value="%{#contentTypeVar.typeDescr}" /></a></li>
-                                </s:if>
-                            </s:iterator>
+                            <li>
+                                <a href="<s:url action="createNew" namespace="/do/jacms/Content" >
+                                       <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" /></s:url>">
+                                   <s:property  value="%{#contentTypeVar.typeDescr}" />
+                                </a>
+                            </li>
+                        </s:if>
+                    </s:iterator>
                 </ul>
             </div>
         </div>
@@ -532,8 +532,10 @@
                                                </s:url>">
                                                 <s:text name="label.description" /></a>
                                         </th>
-                                        <th class="table-w-10"><s:text name="label.author"/></th>
-                                        <th class="table-w-10">
+                                        <th class="text-center cell-w100">
+                                            <s:text name="label.author"/>
+                                        </th>
+                                        <th class="text-center cell-w100">
                                             <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
                                                    <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                                                    <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
@@ -543,17 +545,26 @@
                                             </a>
                                         </th>
                                         <th><s:text name="label.type" /></th>
-                                        <th class="text-center cell-w100"><s:text name="label.state" /></th>
-                                        <th class="text-center cell-w100"><s:text name="label.visible"/></th>
-                                        <th><s:text name="label.group" /></th>
-                                        <th><a  href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
-                                                    <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                                                    <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
-                                                    <s:param name="groupBy">created</s:param>
-                                                    <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                                                </s:url>"><s:text name="label.creationDate" /></a>
+                                        <th class="text-center cell-w100">
+                                            <s:text name="label.state" />
                                         </th>
-                                        <th><a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+                                        <th class="text-center cell-w100">
+                                            <s:text name="label.visible"/>
+                                        </th>
+                                        <th>
+                                            <s:text name="label.group" />
+                                        </th>
+                                        <th>
+                                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+                                                   <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                                                   <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
+                                                   <s:param name="groupBy">created</s:param>
+                                                   <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                                               </s:url>"><s:text name="label.creationDate" />
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
                                                    <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                                                    <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
                                                    <s:param name="groupBy">lastModified</s:param>
@@ -561,7 +572,9 @@
                                                </s:url>"><s:text name="label.lastEdit" />
                                             </a>
                                         </th>
-                                        <th class="text-center table-w-5"><s:text name="label.actions" /></th>
+                                        <th class="text-center table-w-5">
+                                            <s:text name="label.actions" />
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -573,7 +586,7 @@
                                                        value="<s:property value="#content.id" />" />
                                             </td>
                                             <td>
-                                                <s:property value="#content.descr" />&#32;
+                                                <span title="<s:property value="#content.descr" />"><s:property value="#content.descr" />&#32;</span>
                                             </td>
                                             <td>
                                                 <s:if test="%{#content.lastEditor != null && #content.lastEditor != ''}">
@@ -644,15 +657,16 @@
                                                         <li>
                                                             <a  title="<s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.description" />"
                                                                 href="<s:url action="edit" namespace="/do/jacms/Content"><s:param name="contentId" value="#content.id" /></s:url>">
-                                                                <s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.description" /><span class="sr-only">
-                                                                    <s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.description" /></span>
+                                                                <s:text name="label.edit" /> <s:property value="#content.description" /><span class="sr-only">
+                                                                    <s:text name="label.edit" /> <s:property value="#content.description" /></span>
                                                             </a>
                                                         </li>
                                                         <wpsa:hookPoint key="jacms.contentFinding.contentRow.actions" objectName="hookpoint_contentFinding_contentRow">
                                                             <s:iterator value="#hookpoint_contentFinding_contentRow" var="hookPointElement">
                                                                 <li>
-                                                                    <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                                                                    </li>
+                                                                    <wpsa:include value="%{#hookPointElement.filePath}">
+                                                                    </wpsa:include>
+                                                                </li>
                                                             </s:iterator>
                                                         </wpsa:hookPoint>
                                                     </ul>

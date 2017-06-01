@@ -47,7 +47,16 @@
             <button class="btn btn-warning restore-online-btn"><s:text name="pageActions.restore" /></button>
             <button class="btn btn-default unpublish-btn"><s:text name="pageActions.unpublish" /></button>
             <button class="btn btn-success publish-btn"><s:text name="pageActions.publish" /></button>
-
+            <s:url action="setDefaultWidgets" var="setDefaultWidgetsUrl">
+                <s:param name="pageCode" value="pageCode" />
+            </s:url>
+            <a href="<s:property value="#setDefaultWidgetsUrl" escapeXml="false" escapeHtml="false" />">
+                <button class="btn btn-success defwidgets-btn"><s:text name="pageActions.defwidgets" /></button></a>
+                <s:url action="setViewerPage" var="setViewerPageUrl">
+                    <s:param name="pageCode" value="pageCode" />
+                </s:url>
+            <a href="<s:property value="#setViewerPageUrl" escapeXml="false" escapeHtml="false" />">
+                <button class="btn btn-success onfly-btn"><s:text name="pageActions.onfly" /></button></a>
         </div>
 
     </div>
@@ -112,7 +121,7 @@
 
 <div id="sidebar-page-tree" class="drawer-pf hide drawer-pf-notifications-non-clickable">
     <div class="drawer-pf-title drawer-pf-title-right-menu">
-        <a id="toggle-expand" class="drawer-pf-toggle-expand"></a>        
+        <a id="toggle-expand" class="drawer-pf-toggle-expand"></a>
         <span class="right-bar-title-pages"><s:text name="title.pages" /></span>
         <span id="close-page-tree-sidebar" class=" close-button-menu-right pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
     </div>
@@ -138,7 +147,7 @@
                 <table id="pageTree" class="table table-tree-sidebar table-hover table-treegrid table-tree-right" style="overflow:  scroll; margin-bottom: 6em;">
                     <thead>
                     </thead>
-                    <tbody>  
+                    <tbody>
                         <s:set var="inputFieldName" value="%{'selectedNode'}" />
                         <s:set var="selectedTreeNode" value="%{selectedNode}" />
                         <s:set var="liClassName" value="'page'" />
@@ -148,17 +157,17 @@
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderPagesMenu.jsp" />
                         </s:if>
                         <s:else>
-							<style>
-								.table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
-									cursor: pointer;
-									display: none;
-								}
-							</style>
-							<s:set var="currentRoot" value="showableTree" />
-							<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
-						</s:else>
+                        <style>
+                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                cursor: pointer;
+                                display: none;
+                            }
+                        </style>
+                        <s:set var="currentRoot" value="showableTree" />
+                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPagesMenu.jsp" />
+                    </s:else>
                     </tbody>
-                </table>     
+                </table>
             </div>
             <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
         </s:form>

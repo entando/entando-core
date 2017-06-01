@@ -26,7 +26,7 @@
     <span class="pull-right">
         <a tabindex="0" role="button"
            data-toggle="popover" data-trigger="focus" data-html="true"
-           data-content="${dataContent}" data-placement="left"
+           data-content="<s:text name="name.widget.help" />" data-placement="left"
            data-original-title="">
             <span class="fa fa-question-circle-o" aria-hidden="true"></span>
         </a>

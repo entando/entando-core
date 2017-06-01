@@ -66,7 +66,7 @@
             </wpsf:submit>
         </div>
     </td>
-    <td class="text-center table-w-20">
+    <td class="text-center">
         <span class="statusField">
             <s:if test="%{!#currentRoot.getOrigin().isOnline()}">
                 <i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i>

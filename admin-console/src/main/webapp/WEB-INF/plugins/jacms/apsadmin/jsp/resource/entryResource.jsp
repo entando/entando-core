@@ -96,7 +96,7 @@
             <wpsf:textfield name="descr" id="descr" cssClass="form-control" />
             <s:if test="#hasFieldErrorVar">
                 <span class="help-block text-danger">
-                    <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
+                    <s:iterator value="%{#fieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
                     </span>
             </s:if>
         </div>
@@ -116,7 +116,7 @@
             <wpsf:select name="mainGroup" id="mainGroup" list="allowedGroups" listKey="name" listValue="description" disabled="%{lockGroupSelect}" cssClass="combobox form-control"></wpsf:select>
             <s:if test="#hasFieldErrorVar">
                 <span class="help-block text-danger">
-                    <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
+                    <s:iterator value="%{#fieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
                     </span>
             </s:if>
         </div>
@@ -146,12 +146,17 @@
         </label>
         <div class="col-sm-10">
             <s:file name="upload" id="upload" label="label.file" />
-            <s:if test="#hasFieldErrorVar">
-                <span class="help-block text-danger">
-                    <s:iterator value="%{#uploadFieldErrorsVar}"><s:property />&#32;</s:iterator>
-                    <s:iterator value="%{#fileNameFieldErrorsVar}"><s:property />&#32;</s:iterator>
-                    </span>
-            </s:if>
+			<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="help.tooltip.image.upload" />" data-placement="left" data-original-title="">
+				<span class="fa fa-question-circle-o" aria-hidden="true"></span>
+			</a>
+
+			<s:if test="#hasFieldErrorVar">
+				<span class="help-block text-danger">
+					<s:iterator value="%{#uploadFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
+					<s:iterator value="%{#fileNameFieldErrorsVar}"><s:property escapeHtml="false" />&#32;</s:iterator>
+					</span>
+			</s:if>
+
         </div>
     </div>
 

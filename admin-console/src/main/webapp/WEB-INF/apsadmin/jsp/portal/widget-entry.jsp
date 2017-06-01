@@ -26,7 +26,7 @@
 </ol>
 
 <h1 class="page-title-container">
-    <s:if test="strutsAction == 1">
+    <s:if test="strutsAction == 2">
         <span class="page-title-big"><s:text name="title.widgetManagement.edit" /></span>
     </s:if>
     <s:else>

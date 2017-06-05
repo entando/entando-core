@@ -46,7 +46,7 @@
     </s:elseif>
     <span class="pull-right">
         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-           data-original-title="<s:property value="%{getText('help.' + resourceTypeCode + '.' + strutsAction + '.title')}" escapeXml="true" />"
+           data-original-title=""
            data-content="<s:property value="%{getText('help.' + resourceTypeCode + '.' + strutsAction + '.info')}" escapeXml="true" />"
            data-placement="left" ><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>

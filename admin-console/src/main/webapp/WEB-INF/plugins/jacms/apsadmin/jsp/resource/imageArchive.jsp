@@ -45,15 +45,7 @@
                 <s:else>
                     <s:text name="title.imageManagement"/>
                 </s:else>
-                <s:if test="!onEditContent">
-                    <span class="pull-right">
-                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                           data-content="<s:text name="label.digitalAsset.help"/>" data-placement="left" data-original-title="">
-                            <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                        </a>
-                    </span>
-                </s:if>
-            </h1>
+			</h1>
         </div>
         <div class="col-sm-12 col-md-6">
             <ul class="nav nav-tabs nav-justified nav-tabs-pattern">

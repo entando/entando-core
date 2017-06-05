@@ -22,8 +22,6 @@
         <s:else>
             <s:text name="label.edit" />
         </s:else>
-
-        <s:text name="jacms.menu.contentAdmin" />
     </li>
 </ol>
 
@@ -37,7 +35,6 @@
     <s:else>
         <s:text name="label.edit" />
     </s:else>&#32;
-    <s:text name="jacms.menu.contentAdmin" />
     <span class="pull-right">
         <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
            data-content="<s:text name="label.contents.section.help" />" data-placement="left" data-original-title="">
@@ -342,33 +339,36 @@
                         </wpsa:actionParam>
                         <hr />
                         <div class="form-group">
-                            <div class="col-xs-12">
-                                <div class="col-sm-10 col-sm-offset-2 no-padding">
-
-                                    <s:if test="!#showingPageSelectItems.isEmpty()">
-                                        <div class="input-group input-group-lg">
-                                            <s:set var="previewActionPageCodeLabelId">jacmsPreviewActionPageCode_<s:property value="#lang.code" /></s:set>
-                                            <label class="sr-only" for="<s:property value="#previewActionPageCodeLabelId" />">
-                                                <s:text name="name.preview.page" />
-                                            </label>
-                                            <wpsf:select name="%{'jacmsPreviewActionPageCode_' + #lang.code}" id="%{#previewActionPageCodeLabelId}" list="#showingPageSelectItems"
-                                                         headerKey="" headerValue="%{getText('note.choose')}"
-                                                         listKey="key"
-                                                         listValue="%{getText('name.preview.page') + ': ' +value}"
-                                                         cssClass="form-control"
-                                                         data-autosave="ignore" />
-                                            <span class="input-group-btn">
-                                                <wpsf:submit type="button" cssClass="btn btn-info" action="%{#previewActionName}" title="%{getText('note.button.previewContent')}" >
-                                                    <span class="icon fa fa-eye"></span>&#32;<s:text name="label.preview" />
-                                                </wpsf:submit>
-                                            </span>
-                                        </div>
-                                    </s:if>
-                                    <s:else>
-                                        <p class="static-control text-center text-info"><s:text name="label.preview.noPreviewPages" /></p>
-                                    </s:else>
-                                </div>
+                            <div class="col-sm-2">
                             </div>
+                            <div class="col-sm-10">
+                                <s:if test="!#showingPageSelectItems.isEmpty()">
+                                    <div class="input-group">
+                                        <s:set var="previewActionPageCodeLabelId">jacmsPreviewActionPageCode_<s:property value="#lang.code" />
+                                        </s:set>
+                                        <label class="sr-only" for="<s:property value="#previewActionPageCodeLabelId" />">
+                                            <s:text name="name.preview.page" />
+                                        </label>
+                                        <wpsf:select name="%{'jacmsPreviewActionPageCode_' + #lang.code}" id="%{#previewActionPageCodeLabelId}" list="#showingPageSelectItems"
+                                                     headerKey="" headerValue="%{getText('note.choose')}"
+                                                     listKey="key"
+                                                     listValue="%{getText('name.preview.page') + ': ' +value}"
+                                                     cssClass="form-control"
+                                                     data-autosave="ignore" />
+                                        <span class="input-group-btn">
+                                            <wpsf:submit type="button" cssClass="btn btn-primary" action="%{#previewActionName}" title="%{getText('note.button.previewContent')}" >
+                                                <s:text name="label.preview" />
+                                            </wpsf:submit>
+                                        </span>
+                                    </div>
+                                </s:if>
+                                <s:else>
+                                    <p class="static-control text-center text-info">
+                                        <s:text name="label.preview.noPreviewPages" />
+                                    </p>
+                                </s:else>
+                            </div>
+
                         </div>
                     </s:if>
                 </div><%-- tab --%>

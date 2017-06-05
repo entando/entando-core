@@ -3,9 +3,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li>
-        <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
-    </li>
+    <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
     <li>
         <a href="<s:url namespace="/do/Entity" action="initViewEntityTypes"><s:param name="entityManagerName"><s:text name="%{entityManagerName}" /></s:param></s:url>">
             <s:text name="%{'title.' + entityManagerName + '.management'}"/>
@@ -70,16 +68,17 @@
             </p>
         </s:if>
         <fieldset class="col-xs-12">
+            <!--Info-->
             <legend>
                 <s:text name="label.info"/>
             </legend>
             <div class="form-group">
                 <s:if test="operationId == 1">
                     <label class="col-sm-2 control-label" for="entityTypeCode">
-                        <s:text name="label.code"/>&nbsp; <i class="fa fa-asterisk required-icon"
-                                  style="position: relative; top: -4px; right: 0px"></i>
-                        <a role="button" tabindex="0"
-                           data-toggle="popover" data-trigger="focus" data-html="true"
+                        <s:text name="label.code"/>&nbsp;
+                        <i class="fa fa-asterisk required-icon">
+                        </i>
+                        <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
                            title="" data-placement="top" data-content="<s:text name="%{'note.' + entityManagerName + '.code'}"/>"
                            data-original-title="">
                             <span class="fa fa-info-circle"></span>
@@ -90,9 +89,10 @@
                     </div>
                 </s:if>
                 <s:else>
-                    <label class="col-sm-2 control-label" for="entityTypeCode"><s:text
-                            name="label.code"/>&nbsp; <i class="fa fa-asterisk required-icon"
-                                  style="position: relative; top: -4px; right: 0px"></i>
+                    <label class="col-sm-2 control-label" for="entityTypeCode">
+                        <s:text name="label.code"/>&nbsp;
+                        <i class="fa fa-asterisk required-icon">
+                        </i>
                         <a role="button" tabindex="0"
                            data-toggle="popover" data-trigger="focus" data-html="true"
                            title="" data-placement="top" data-content="<s:text name="%{'note.' + entityManagerName + '.code'}"/>"
@@ -107,10 +107,10 @@
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">
-                    <s:text name="label.name"/>&nbsp; <i class="fa fa-asterisk required-icon"
-                              style="position: relative; top: -4px; right: 0px"></i>
-                    <a role="button" tabindex="0"
-                       data-toggle="popover" data-trigger="focus" data-html="true"
+                    <s:text name="label.name"/>&nbsp;
+                    <i class="fa fa-asterisk required-icon">
+                    </i>
+                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
                        title="" data-placement="top" data-content="<s:text name="%{'note.' + entityManagerName + '.name'}"/>"
                        data-original-title="">
                         <span class="fa fa-info-circle"></span>
@@ -121,7 +121,7 @@
                 </div>
             </div>
         </fieldset>
-     
+
         <s:if test="null != #hookpoint_plugin_code">
             <s:include value="%{'/WEB-INF/plugins/' + #hookpoint_plugin_code + '/apsadmin/jsp/entity/include/entity-type-entry.jsp'}"/>
         </s:if>

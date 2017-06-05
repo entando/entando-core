@@ -43,7 +43,7 @@
                     <ul class="margin-base-top">
                         <s:iterator value="actionErrors">
                             <li><s:property escapeHtml="false" /></li>
-                            </s:iterator>
+                        </s:iterator>
                     </ul>
                 </div>
             </s:if>
@@ -130,7 +130,7 @@
                     <div class="col-xs-12 no-padding">
                         <table class="table table-striped table-bordered table-hover no-mb">
                             <tr>
-
+                                <th class="table-w-15"><s:text name="label.code" /></th>
                                 <th class="table-w-15"><s:text name="label.widgetType" /></th>
                                 <th class="table-w-15"><s:text name="label.plugin" /></th>
                                 <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
@@ -139,15 +139,15 @@
                                 <s:set var="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />
                                 <s:url action="edit" var="editGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
                                     <tr>
-                                        <td>
+                                    <td>
                                         <s:property value="#codeVar"/>
                                     </td>
                                     <td>
                                         <s:set value="%{getWidgetType(#guiFragmentVar.widgetTypeCode)}" var="widgetTypeVar" />
-                                        <s:property value="getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)" />
+                                        <s:property value="%{getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)}" />
                                     </td>
                                     <td>
-                                        <s:if test="null != #guiFragmentVar.pluginCode">
+                                        <s:if test="%{null != #guiFragmentVar.pluginCode}">
                                             <s:text name="%{#guiFragmentVar.pluginCode+'.name'}" />&nbsp;<s:property value="#guiFragmentVar.pluginCode"/>
                                         </s:if>
                                         <s:else>
@@ -167,8 +167,7 @@
                                                 </li>
                                                 <li>
                                                     <%-- detail --%>
-                                                    <a
-                                                        href="<s:url action="detail"><s:param name="code" value="#codeVar"/></s:url>"
+                                                    <a href="<s:url action="detail"><s:param name="code" value="#codeVar"/></s:url>"
                                                         title="<s:text name="note.detailsFor" />: <s:property value="#codeVar" />">
                                                         <s:text name="note.detailsFor" />: <s:property value="#codeVar" />
                                                         <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#codeVar" /></span>

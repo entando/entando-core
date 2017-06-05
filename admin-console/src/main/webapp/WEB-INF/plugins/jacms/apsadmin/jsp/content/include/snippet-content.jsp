@@ -76,11 +76,12 @@
         </a>
     </label>
     <div class="col-sm-10">
-        <input class="form-control" type="text" name="descr"
-               value="${content.descr}"
-               placeholder="<s:text name="note.description.placeholder" />" id="contentDescription"/>
+        <input class="form-control" type="text" name="descr" value="${content.descr}"  placeholder="<s:text name="note.description.placeholder" />" id="contentDescription"/>
         <s:if test="#attributeHasFieldErrorVar">
-            <p class="text-danger no-mb"><s:iterator value="#attributeFieldErrorsVar"><s:property /> </s:iterator></p>
+            <p class="text-danger no-mb"><s:iterator value="#attributeFieldErrorsVar">
+                    <s:property />
+                </s:iterator>
+            </p>
         </s:if>
     </div>
 </div>

@@ -1873,6 +1873,11 @@ label .fa-folder, .fa-folder {
 #activity-stream{
     margin: 0 0 3em 0;
 }
+
+.disabled{
+    pointer-events: none !important;
+}
+
 .table-view-pf-actions .dropdown, .table-view-pf-actions .table-view-pf-btn {
     height: 100%;
     display: inline-table;

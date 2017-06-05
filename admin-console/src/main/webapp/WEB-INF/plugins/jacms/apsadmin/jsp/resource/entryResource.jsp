@@ -65,6 +65,7 @@
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/inc_fullErrors.jsp" />
 
     <p class="sr-only">
+
 	<wpsf:hidden name="strutsAction" />
 	<wpsf:hidden name="resourceTypeCode" />
 	<wpsf:hidden name="contentOnSessionMarker" />
@@ -102,12 +103,15 @@
 	</div>
 </div>
 
+
 <%-- mainGroup --%>
 <s:set var="fieldErrorsVar" value="%{fieldErrors['mainGroup']}" />
 <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
 <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 
 <div class="form-group<s:property value="#controlGroupErrorClass" />">
+           <s:set var="resourceCategory" value="%{getCategory(#categoryCode)}"></s:set>
+
 	<label class="col-sm-2 control-label" for="mainGroup">
 		<s:text name="label.group" />
 		<i class="fa fa-asterisk required-icon"></i>
@@ -222,6 +226,7 @@
                         <div class="label label-default label-tag label-sm">
                             <span class="icon fa fa-tag"></span>&#32;
                             <span title="<s:property value="#resourceCategory.getFullTitle(currentLang.code)"/>">
+
 							<s:property value="#resourceCategory.getShortFullTitle(currentLang.code)"/>
 						</span>&#32;
 						<wpsf:submit type="button" action="%{#actionName}" title="%{getText('label.remove') + ' ' + #resourceCategory.defaultFullTitle}" cssClass="btn btn-tag btn-link">

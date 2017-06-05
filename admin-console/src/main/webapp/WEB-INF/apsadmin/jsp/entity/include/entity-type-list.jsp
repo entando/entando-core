@@ -3,13 +3,14 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 
+
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li>
         <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
-    </li>
-    <li class="page-title-container"><s:text
-            name="%{'title.' + entityManagerName + '.management'}"/></li>
-</ol>
+        <li class="page-title-container">
+            <s:text name="%{'title.' + entityManagerName + '.management'}"/>
+        </li>
+    </ol>
+
 
 <h1 class="page-title-container">
     <s:text name="%{'title.' + entityManagerName + '.management'}"/>

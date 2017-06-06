@@ -43,7 +43,7 @@
                     <ul class="margin-base-top">
                         <s:iterator value="actionErrors">
                             <li><s:property escapeHtml="false" /></li>
-                        </s:iterator>
+							</s:iterator>
                     </ul>
                 </div>
             </s:if>
@@ -69,26 +69,26 @@
                             <option value=""><s:text name="label.all" /></option>
                             <s:iterator var="widgetFlavourVar" value="widgetFlavours">
                                 <wpsa:set var="tmpShowletType">tmpShowletTypeValue</wpsa:set>
-                                <s:iterator var="widgetTypeVar" value="#widgetFlavourVar" >
-                                    <s:if test="#widgetTypeVar.optgroup != #tmpShowletType">
-                                        <s:if test="#widgetTypeVar.optgroup == 'stockShowletCode'">
+									<s:iterator var="widgetTypeVar" value="#widgetFlavourVar" >
+										<s:if test="#widgetTypeVar.optgroup != #tmpShowletType">
+											<s:if test="#widgetTypeVar.optgroup == 'stockShowletCode'">
                                             <wpsa:set var="optgroupLabel"><s:text name="title.widgetManagement.widgets.stock" /></wpsa:set>
-                                        </s:if>
-                                        <s:elseif test="#widgetTypeVar.optgroup == 'customShowletCode'">
+											</s:if>
+											<s:elseif test="#widgetTypeVar.optgroup == 'customShowletCode'">
                                             <wpsa:set var="optgroupLabel"><s:text name="title.widgetManagement.widgets.custom" /></wpsa:set>
-                                        </s:elseif>
-                                        <s:elseif test="#widgetTypeVar.optgroup == 'userShowletCode'">
+											</s:elseif>
+											<s:elseif test="#widgetTypeVar.optgroup == 'userShowletCode'">
                                             <wpsa:set var="optgroupLabel"><s:text name="title.widgetManagement.widgets.user" /></wpsa:set>
-                                        </s:elseif>
-                                        <s:else>
+											</s:elseif>
+											<s:else>
                                             <wpsa:set var="pluginPropertyName" value="%{getText(#widgetTypeVar.optgroup + '.name')}" />
                                             <wpsa:set var="pluginPropertyCode" value="%{getText(#widgetTypeVar.optgroup + '.code')}" />
                                             <wpsa:set var="optgroupLabel"><s:text name="%{#pluginPropertyName}" /></wpsa:set>
-                                        </s:else>
+											</s:else>
                                         <optgroup label="<s:property value="#optgroupLabel" />">
                                         </s:if>
                                         <option <s:if test="%{#widgetTypeVar.key.equals(widgetTypeCode)}"> selected="selected" </s:if> value="<s:property value="#widgetTypeVar.key" />"><s:property value="#widgetTypeVar.value" /></option>
-                                        <wpsa:set var="tmpShowletType"><s:property value="#widgetTypeVar.optgroup" /></wpsa:set>
+									<wpsa:set var="tmpShowletType"><s:property value="#widgetTypeVar.optgroup" /></wpsa:set>
                                     </s:iterator>
                                 </optgroup>
                             </s:iterator>
@@ -119,9 +119,9 @@
         </a>
         <s:form action="search">
             <p class="sr-only">
-                <wpsf:hidden name="code" />
-                <wpsf:hidden name="widgetTypeCode" />
-                <wpsf:hidden name="pluginCode" />
+			<wpsf:hidden name="code" />
+			<wpsf:hidden name="widgetTypeCode" />
+			<wpsf:hidden name="pluginCode" />
             </p>
             <s:set var="guiFragmentsCodes_list" value="guiFragmentsCodes" />
             <s:if test="#guiFragmentsCodes_list.size > 0">
@@ -130,16 +130,16 @@
                     <div class="col-xs-12 no-padding">
                         <table class="table table-striped table-bordered table-hover no-mb">
                             <tr>
-                                <th class="table-w-15"><s:text name="label.code" /></th>
-                                <th class="table-w-15"><s:text name="label.widgetType" /></th>
-                                <th class="table-w-15"><s:text name="label.plugin" /></th>
-                                <th class="table-w-15 text-center"><s:text name="label.actions" /></th>
+                                <th><s:text name="label.code" /></th>
+                                <th><s:text name="label.widgetType" /></th>
+                                <th><s:text name="label.plugin" /></th>
+                                <th class="text-center table-w-5"><s:text name="label.actions" /></th>
                             </tr>
                             <s:iterator var="codeVar">
                                 <s:set var="guiFragmentVar" value="%{getGuiFragment(#codeVar)}" />
                                 <s:url action="edit" var="editGuiFragmentActionVar"><s:param name="code" value="#codeVar"/></s:url>
                                     <tr>
-                                    <td>
+										<td>
                                         <s:property value="#codeVar"/>
                                     </td>
                                     <td>
@@ -168,7 +168,7 @@
                                                 <li>
                                                     <%-- detail --%>
                                                     <a href="<s:url action="detail"><s:param name="code" value="#codeVar"/></s:url>"
-                                                        title="<s:text name="note.detailsFor" />: <s:property value="#codeVar" />">
+													   title="<s:text name="note.detailsFor" />: <s:property value="#codeVar" />">
                                                         <s:text name="note.detailsFor" />: <s:property value="#codeVar" />
                                                         <span class="sr-only"><s:text name="note.detailsFor" />: <s:property value="#codeVar" /></span>
                                                     </a>

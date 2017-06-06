@@ -72,8 +72,18 @@
     width: calc(100% - 323px);
 }
 
+.button-bar {
+	margin-top: 5px;
+}
+
 .button-bar .restore-online-btn {
     margin-left: 10px;
+}
+
+.button-bar .defwidgets-btn {
+	color: #23a8e0;
+	border-color: #23a8e0;
+	font-weight: normal;
 }
 
 
@@ -90,5 +100,21 @@
 
 .grid-container[data-online="true"] .grid-slot.diff-slot .widget-icon {
     color: #f0ab00;
+}
+
+.on-the-fly-dropdown-wrapper {
+	display: inline-block;
+	margin-left: 5px;
+}
+
+.defwidgets-label .text {
+	color: #c1c1c1;
+}
+
+.defwidgets-label .glyphicon {
+	color: #3a9c2f;
+    font-size: 20px;
+    margin-left: 5px;
+    vertical-align: text-bottom;
 }
 

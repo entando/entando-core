@@ -35,7 +35,6 @@
         <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-default">
             <span><s:text name="page.treeInfo" /></span>
         </button>
-
         <div class="pull-right">
             <s:url action="preview" var="previewURL">
                 <s:param name="pageCode" value="pageCode" />

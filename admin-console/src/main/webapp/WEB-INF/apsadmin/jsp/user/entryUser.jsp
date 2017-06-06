@@ -5,14 +5,18 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.userSetting" /></li>
-    <li><a href="<s:url namespace="/do/User" action="list" />"><s:text
-                name="title.userManagement" /></a></li>
-    <li class="page-title-container"><s:if
-            test="getStrutsAction() == 1">
+    <li>
+        <a href="<s:url namespace="/do/User" action="list" />">
+            <s:text name="title.userManagement" /></a>
+    </li>
+    <li class="page-title-container">
+        <s:if test="getStrutsAction() == 1">
             <s:text name="title.userManagement.userNew" />
-        </s:if> <s:elseif test="getStrutsAction() == 2">
+        </s:if>
+        <s:elseif test="getStrutsAction() == 2">
             <s:text name="title.userManagement.userEdit" />
-        </s:elseif></li>
+        </s:elseif>
+    </li>
 </ol>
 
 <h1 class="page-title-container">
@@ -22,11 +26,13 @@
     <s:elseif test="getStrutsAction() == 2">
         <s:text name="title.userManagement.userEdit" />
     </s:elseif>
-    <span class="pull-right"> <a tabindex="0" role="button"
-                                 data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                                 data-content="<s:text name="help.user.page" />" data-placement="left"
-                                 data-original-title=""><i class="fa fa-question-circle-o"
-                                  aria-hidden="true"></i></a>
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+           data-content="<s:text name="help.user.page" />" data-placement="left"
+           data-original-title="">
+            <i class="fa fa-question-circle-o" aria-hidden="true">
+            </i>
+        </a>
     </span>
 </h1>
 
@@ -37,8 +43,8 @@
     </div>
 </div>
 <br />
-<s:form action="save" cssClass="form-horizontal">
 
+<s:form action="save" cssClass="form-horizontal">
     <s:if test="hasActionErrors()">
         <div class="alert alert-danger alert-dismissable">
             <button type="button" class="close" data-dismiss="alert"
@@ -229,7 +235,7 @@
             <div
                 class="form-group<s:property value="#controlGroupErrorClassVar" />">
                 <label class="col-sm-2 control-label" for="profileType"><s:text
-                        name="label.active" /></label>
+                        name="label.reset.User" /></label>
                 <div class="col-sm-10">
                     <wpsf:checkbox name="reset" cssClass="bootstrap-switch" />
                     <%--<s:text name="note.userStatus.reset" />--%>
@@ -310,9 +316,7 @@
                 </div>
             </s:if>
             <div class="btn-group">
-                <wpsf:submit type="button" action="save"
-                             cssClass="btn btn-primary btn-block">
-
+                <wpsf:submit type="button" action="save" cssClass="btn btn-primary btn-block">
                     <s:text name="label.save" />
                 </wpsf:submit>
             </div>

@@ -663,9 +663,6 @@ td{
 /*-----ouline tolto-----*/
 button:focus {outline:0 !important;}
 
-.ux_brand{
-    font-size: 24px;
-}
 .nav-pf-vertical .fixed-bottom {
     position: fixed;
     left: 0;
@@ -679,10 +676,7 @@ button:focus {outline:0 !important;}
     position: absolute;
     top: 18px;
 }
-.logo-entando-login {
-    height: 35px;
 
-}
 .navbar-pf-vertical {
     background-color: #212121;
     border-top: 2px solid #23a8e0;
@@ -707,9 +701,7 @@ a {
 .help-block-entando{
     color: red!important;
 }
-.control-label-entando{
-    color:#fff!important;
-}
+
 .alert-danger ul {
     list-style-type: none;
     margin-left:-40px;
@@ -727,13 +719,15 @@ a {
     min-width: 70px;
 }
 .entando-installed{
-    margin: 0 0 0 -19px;
+    margin: 0px 0 0 -13px;
+    font-family: LatoWebLight;
 }
 .entando-installed-right-side{
     margin: 0 0;
 }
 .welcome-back{
     margin: -13px 0 0;
+    font-family: LatoWebBold;
 }
 .plugin-list{
     color: #fff;
@@ -1894,3 +1888,202 @@ label .fa-folder, .fa-folder {
     font-size: 12px !important;
 }
 
+/*-----------login----------*/
+
+/* Webfont: Lato-Bold */@font-face {
+    font-family: 'LatoWebBold';
+    src: url('../font/Lato-Bold.eot'); /* IE9 Compat Modes */
+    src: url('../font/Lato-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+        url('../font/Lato-Bold.woff2') format('woff2'), /* Modern Browsers */
+        url('../font/Lato-Bold.woff') format('woff'), /* Modern Browsers */
+        url('../font/Lato-Bold.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+
+/* Webfont: Lato-Light */@font-face {
+    font-family: 'LatoWebLight';
+    src: url('../font/Lato-Light.eot'); /* IE9 Compat Modes */
+    src: url('../font/Lato-Light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+        url('../font/Lato-Light.woff2') format('woff2'), /* Modern Browsers */
+        url('../font/Lato-Light.woff') format('woff'), /* Modern Browsers */
+        url('../font/Lato-Light.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+
+/* Webfont: Lato-Regular */@font-face {
+    font-family: 'LatoWeb';
+    src: url('../font/Lato-Regular.eot'); /* IE9 Compat Modes */
+    src: url('../font/Lato-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+        url('../font/Lato-Regular.woff2') format('woff2'), /* Modern Browsers */
+        url('../font/Lato-Regular.woff') format('woff'), /* Modern Browsers */
+        url('../font/Lato-Regular.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+
+#background-full {
+    background: url("../img/bg-login.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+}
+.center1 {
+    margin: auto;
+    width: 60%;
+    color:#fff;
+}
+.center2 {
+    margin: auto;
+    width: 76%;
+    color:#fff;
+}
+.ux_brand{
+    font-size: 36px;
+    font-family: LatoWebBold;
+}
+.ux_brand_subtitle{
+    font-size: 36px;
+    margin: -23px 0 25px 0;
+    font-weight: 100;
+    font-family: LatoWebLight;
+}
+.spacer-login{
+    height: 13px;
+    background: #00B9F7;
+    width: 84px;
+    margin: 0 0 35px 0;
+}
+.logo-entando-login {
+    height: 24px;
+    margin: 0 0 24px 0;
+
+}
+.control-label-entando{
+    color: #fff!important;
+    font-size: 18px;
+    font-weight: 300;
+    margin: 0 0 9px;
+    font-family: 'LatoWeb';
+}
+.entando-input{
+    width: 434px;
+    border-radius:3px;
+    height:48px;
+    font-size:18px;
+    border: none;
+    color: #000;
+    font-family: 'LatoWeb';
+}
+.login-buttons{margin: 49px 0 0 0;width: 434px;}
+.btn-custom-login{
+    height:35px !important;
+    width:83px;
+    font-size: 11px;
+    text-transform: uppercase;
+    line-height: 22px;
+    border-radius:3px;
+    font-family: LatoWebBold;
+}
+.login-buttons .btn-login{
+    height:35px;
+    width:207px;
+    background: #00B9F7;
+    border-color: #00B9F7;
+    border-radius:3px;
+    color:#fff;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-left: 227px;
+    margin-top: -35px;
+}
+.login-buttons .btn-login:hover{
+    color: #00B9F7;
+    background: #fff;
+}
+
+.login-buttons .active {
+    background-color: #fff !important ;
+    color: #203753!important ;
+    border-color: #fff!important ;
+}
+.login-buttons .btn-custom-login {
+    background-color: #213857 ;
+    color: #fff;
+    border-color: #fff;
+}
+.copyright-entando{
+    font-size: 11px;
+    /* font-weight: bold; */
+    font-family: LatoWebBold;
+}
+.entando-sm-write{
+    color: #00b9f7;
+}
+.entando-intro{
+    font-size: 14px;
+    margin: 0 0 26px 0;
+    font-family: LatoWebLight;
+}
+.v-align{
+    margin: auto 0;
+}
+.center2 .alert{
+    width:434px;
+}
+@media (min-width: 768px){
+    .display-table{
+        display: inline-flex;
+        height: 100vh;
+    }
+    .display-cell{
+        display: inline-flex;
+    }
+    .center1 {
+        margin: auto;
+        width: 91%;
+        color: #fff;
+    }
+}
+@media (min-width: 1200px){
+    .center1 {
+        margin: auto;
+        width: 70%;
+        color: #fff;
+    }
+    .center1 {
+        margin: auto;
+        width: 70%;
+        color: #fff;
+    }
+}
+
+@media (min-width: 1200px){
+    .center1 {
+        margin: auto;
+        width: 70%;
+        color: #fff;
+    }
+    .center2 {
+        margin: auto;
+        width: 70%;
+        color: #fff;
+    }
+}
+@media (min-width: 1440px){
+    .center1 {
+        margin: auto;
+        width: 60%;
+        color: #fff;
+    }
+    .center2 {
+        margin: auto;
+        width: 60%;
+        color: #fff;
+    }
+}

@@ -35,27 +35,57 @@
         <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-default">
             <span><s:text name="page.treeInfo" /></span>
         </button>
-        <div class="pull-right">
-            <s:url action="preview" var="previewURL">
-                <s:param name="pageCode" value="pageCode" />
-                <s:param name="token" value="previewToken" />
-            </s:url>
-            <a href="<s:property value="#previewURL" escapeXml="false" escapeHtml="false" />" target="_blank">
-                <button class="btn btn-primary"><s:text name="pageActions.preview" /></button></a>
+        
+        <s:url action="preview" var="previewURL">
+            <s:param name="pageCode" value="pageCode" />
+            <s:param name="token" value="previewToken" />
+        </s:url>
+        <a href="<s:property value="#previewURL" escapeXml="false" escapeHtml="false" />" target="_blank">
+            <button class="btn btn-primary"><s:text name="pageActions.preview" /></button>
+        </a>
 
+        <div class="pull-right">
             <button class="btn btn-warning restore-online-btn"><s:text name="pageActions.restore" /></button>
             <button class="btn btn-default unpublish-btn"><s:text name="pageActions.unpublish" /></button>
             <button class="btn btn-success publish-btn"><s:text name="pageActions.publish" /></button>
-            <s:url action="setDefaultWidgets" var="setDefaultWidgetsUrl">
+        </div>
+
+    </div>
+    
+    <div class="button-bar">
+        <s:url action="setDefaultWidgets" var="setDefaultWidgetsUrl">
+                <s:param name="pageCode" value="pageCode" />
+        </s:url>
+        <a class="defwidgets-btn-wrapper" href="<s:property value="#setDefaultWidgetsUrl" escapeXml="false" escapeHtml="false" />">
+        	<button class="btn btn-default defwidgets-btn"><s:text name="pageActions.defwidgets" /></button>
+       	</a>
+       	<span class="defwidgets-label">
+        	<span class="text"><s:text name="pageActions.defWidgetsApplied" /></span> <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+       	</span>
+        <div class="pull-right">
+            <s:url action="setViewerPage" var="setViewerPageUrl">
                 <s:param name="pageCode" value="pageCode" />
             </s:url>
-            <a href="<s:property value="#setDefaultWidgetsUrl" escapeXml="false" escapeHtml="false" />">
-                <button class="btn btn-success defwidgets-btn"><s:text name="pageActions.defwidgets" /></button></a>
-                <s:url action="setViewerPage" var="setViewerPageUrl">
-                    <s:param name="pageCode" value="pageCode" />
-                </s:url>
-            <a href="<s:property value="#setViewerPageUrl" escapeXml="false" escapeHtml="false" />">
-                <button class="btn btn-success onfly-btn"><s:text name="pageActions.onfly" /></button></a>
+            
+	        <label><s:text name="pageActions.onfly" /></label>
+	        <div class="dropdown on-the-fly-dropdown-wrapper">
+				<button class="btn btn-default dropdown-toggle" type="button" id="on-the-fly-dropdown" data-toggle="dropdown">
+					<span class="on-the-fly-dropdown-text">...</span>
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="on-the-fly-dropdown">
+					<li role="presentation">
+						<a href="<s:property value="#setViewerPageUrl" escapeXml="false" escapeHtml="false" />">
+                			<s:text name="label.yes" />
+            			</a>
+					</li>
+					<li role="presentation">
+						<a href="#" class="unset-on-the-fly-btn">
+                			<s:text name="label.no" />
+            			</a>
+					</li>
+				</ul>
+			</div>
         </div>
 
     </div>

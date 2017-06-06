@@ -9,6 +9,14 @@
     <li><s:text name="label.delete" /></li>
 </ol>
 
+
+<h1 class="page-title-container">
+    <s:text name="label.delete" />
+</h1>
+
+<div class="text-right">
+    <div class="form-group-separator"></div>
+</div>
 <br>
 <div id="main" role="main">
 

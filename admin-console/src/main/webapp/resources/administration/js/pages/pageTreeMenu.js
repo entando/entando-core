@@ -54,6 +54,8 @@ $(function () {
                     return;
                 }
                 updatePageStatus(data.page);
+                updateOnTheFlyDropdown();
+                updateDefaultWidgetBtn();
                 initPage();
             }
         });
@@ -75,6 +77,8 @@ $(function () {
                     return;
                 }
                 updatePageStatus(data.page);
+                updateOnTheFlyDropdown();
+                updateDefaultWidgetBtn();
             }
         });
     }
@@ -203,6 +207,43 @@ $(function () {
         }
         return _.find(pageData.draftWidgets, {type: {code: widgetCode}});
     }
+    
+    /**
+     * Returns the frame element given the position
+     * @param {number} framePos the frame position
+     * @returns the frame element given the position
+     */
+    function getFrameElement(framePos) {
+    	return $('[data-pos="' + framePos + '"]');
+    }
+    
+    /**
+     * Deletes a widget from the grid
+     * @param {number} pos the frame position
+     */
+    function deleteWidget(framePos) {
+        // delete the widget
+        $.ajax(deleteWidgetUrl, {
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                pageCode: PROPERTY.code,
+                frame: framePos
+            }),
+            success: function (data) {
+                if (alertService.showResponseAlerts(data)) {
+                    return;
+                }
+                setEmptySlot(getFrameElement(framePos));
+
+                // update local draft status
+                pageData.draftWidgets[framePos] = null;
+                updatePageStatus(data.page);
+                updateOnTheFlyDropdown();
+                updateDefaultWidgetBtn();
+            }
+        });
+    }
 
     /**
      * Creates a grid widget element
@@ -289,25 +330,7 @@ $(function () {
                         text: labels.deleteWidget.confirmButton,
                         btnClass: 'btn-red',
                         action: function () {
-                            // delete the widget
-                            $.ajax(deleteWidgetUrl, {
-                                method: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify({
-                                    pageCode: PROPERTY.code,
-                                    frame: framePos
-                                }),
-                                success: function (data) {
-                                    if (alertService.showResponseAlerts(data)) {
-                                        return;
-                                    }
-                                    setEmptySlot($elem.parent());
-
-                                    // update local draft status
-                                    pageData.draftWidgets[framePos] = null;
-                                    updatePageStatus(data.page);
-                                }
-                            });
+                            deleteWidget(framePos);
                         }
                     },
                     cancel: {
@@ -460,6 +483,8 @@ $(function () {
                                 if (alertService.showResponseAlerts(data)) {
                                     updatePageStatus(data.page);
                                     updateGridPreview(pageData);
+                                    updateOnTheFlyDropdown();
+                                    updateDefaultWidgetBtn();
                                     return;
                                 }
                                 // widget needs configuration
@@ -472,6 +497,8 @@ $(function () {
                                 populateSlot($curSlot, $curWidget);
 
                                 updatePageStatus(data.page);
+                                updateOnTheFlyDropdown();
+                                updateDefaultWidgetBtn();
                             }
                         });
                     } else {
@@ -493,6 +520,8 @@ $(function () {
                                 if (alertService.showResponseAlerts(data)) {
                                     updatePageStatus(data.page);
                                     updateGridPreview(pageData);
+                                    updateOnTheFlyDropdown();
+                                    updateDefaultWidgetBtn();
 
                                     return;
                                 }
@@ -510,6 +539,8 @@ $(function () {
                                 populateSlot($curSlot, $newCurWidget);
 
                                 updatePageStatus(data.page);
+                                updateOnTheFlyDropdown();
+                                updateDefaultWidgetBtn();
                             }
                         });
                     }
@@ -641,6 +672,8 @@ $(function () {
                     updatePageDetail(pageData);
                     updateGridPreview(pageFrames);
                     updatePageStatus(pageData);
+                    updateOnTheFlyDropdown();
+                    updateDefaultWidgetBtn();
                 }, handleApiError);
             }, handleApiError);
         }, handleApiError);
@@ -652,6 +685,58 @@ $(function () {
             title = pageData.draftMetadata.titles[PROPERTY.defaultLang];
         }
         return title;
+    }
+    
+    /**
+     * Returns true if the page allows on-the-fly publishing.
+     * Needs pageData and pageFrames to be populated
+     * @returns true if the page allows on-the-fly publishing
+     */
+    function isOnTheFly() {
+    	var mainIndex = _.findIndex(pageFrames, { mainFrame: true });
+    	if (mainIndex !== -1) {
+    		var mainWidget = pageData.draftWidgets[mainIndex];
+    		return (mainWidget && mainWidget.type.code === 'content_viewer' && !mainWidget.type.config);
+    	}
+		return false;
+    }
+    
+    /**
+     * Updates the on the fly dropdown text
+     */
+    function updateOnTheFlyDropdown() {
+    	var text = isOnTheFly() ? TEXT['label.yes'] : TEXT['label.no'];
+    	$('.on-the-fly-dropdown-text').text(text);
+    }
+    
+    /**
+     * Returns true if the page has the default widgets applied.
+     * Needs pageData and pageFrames to be populated
+     * @returns true if the page has the default widgets applied
+     */
+    function isDefaultWidgetApplied() {
+    	var draftWidgets = pageData.draftWidgets;
+    	for (var i=0; i<draftWidgets.length; ++i) {
+    		var defCode = _.get(pageFrames[i], 'defaultWidget.type.code');
+    		var curCode = _.get(draftWidgets[i], 'type.code');
+    		if (defCode !== curCode) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    /**
+     * Updates the "apply default widget" button
+     */
+    function updateDefaultWidgetBtn() {
+    	if (isDefaultWidgetApplied()) {
+    		$('.defwidgets-btn-wrapper').hide();
+    		$('.defwidgets-label').show();
+    	} else {
+    		$('.defwidgets-btn-wrapper').show();
+    		$('.defwidgets-label').hide();
+    	}
     }
 
     function setLabels()
@@ -697,6 +782,16 @@ $(function () {
         $('.unpublish-btn').click(function () {
             setPageOnlineStatus(false);
         });
+        
+        $('.unset-on-the-fly-btn').click(function () {
+            if (isOnTheFly()) {
+            	var mainIndex = _.findIndex(pageFrames, { mainFrame: true });
+            	if (mainIndex !== -1) {
+            		deleteWidget(mainIndex);
+            	}
+            }
+        });
+        
     } else {
         $('#page-info, [data-target="#page-info"]').remove();
         $('.restore-online-btn').remove();

@@ -33,7 +33,9 @@
             'widgetActions.settings': '<s:text name="widgetActions.settings"/>',
             'widgetActions.api': '<s:text name="widgetActions.api"/>',
             'widgetActions.newWidget': '<s:text name="widgetActions.newWidget"/>',
-            'widgetActions.delete': '<s:text name="widgetActions.delete"/>'
+            'widgetActions.delete': '<s:text name="widgetActions.delete"/>',
+            'label.yes': '<s:text name="label.yes"/>',
+            'label.no': '<s:text name="label.no"/>'
         };
 
 </script>

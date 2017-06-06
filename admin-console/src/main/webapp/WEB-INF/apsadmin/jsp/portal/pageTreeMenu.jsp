@@ -35,8 +35,6 @@
         <button type="button" data-toggle="collapse" data-target="#page-info" class="btn btn-default">
             <span><s:text name="page.treeInfo" /></span>
         </button>
-        <wp:info key="systemParam" paramName="widgets.viewer" />
-        <s:property value="%{#selectedPage.getWidgets()[#selectedPage.getMetadata().getModel().getMainFrame()].type.getCode()}"/>
         <div class="pull-right">
             <s:url action="preview" var="previewURL">
                 <s:param name="pageCode" value="pageCode" />

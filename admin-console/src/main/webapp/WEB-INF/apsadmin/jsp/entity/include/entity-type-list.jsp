@@ -22,6 +22,6 @@
     </span>
 </h1>
 <div class="text-right">
-    <div class="form-group-separator"/>
+    <div class="form-group-separator"></div>
 </div>
 <s:include value="/WEB-INF/apsadmin/jsp/entity/include/entity-type-list-body.jsp"/>

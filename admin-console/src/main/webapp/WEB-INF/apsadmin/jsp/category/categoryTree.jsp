@@ -95,7 +95,7 @@
 
             <div class="table-responsive overflow-visible">
                 <table id="categoryTree"
-                       class="table table-bordered table-hover table-treegrid table-striped">
+                       class="table table-bordered table-hover table-treegrid">
                     <thead>
                         <tr>
                             <th> <s:text name="title.categoryTree"/>
@@ -126,24 +126,21 @@
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
                         </s:if>
                         <s:elseif test="#categoryTreeStyleVar == 'request'">
-                        <style>
-                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
-                                cursor: pointer;
-                                display: none;
-                            }
-                        </style>
-                        <s:set var="openTreeActionName" value="'openCloseCategoryTree'" />
-                        <s:set var="closeTreeActionName" value="'openCloseCategoryTree'" />
-                        <s:set var="currentRoot" value="showableTree" />
-                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
-					</s:elseif>
+                            <style>
+                                .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                    cursor: pointer;
+                                    display: none;
+                                }
+                            </style>
+                            <s:set var="openTreeActionName" value="'openCloseCategoryTree'" />
+                            <s:set var="closeTreeActionName" value="'openCloseCategoryTree'" />
+                            <s:set var="currentRoot" value="showableTree" />
+                            <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
+                        </s:elseif>
                     </tbody>
                 </table>
             </div>
 
-            <script>
-$('.table-treegrid').treegrid();
-            </script>
         </s:form>
     </div>
 </div>

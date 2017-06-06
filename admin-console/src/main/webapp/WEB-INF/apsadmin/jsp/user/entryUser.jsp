@@ -235,7 +235,7 @@
             <div
                 class="form-group<s:property value="#controlGroupErrorClassVar" />">
                 <label class="col-sm-2 control-label" for="profileType"><s:text
-                        name="label.active" /></label>
+                        name="label.reset.User" /></label>
                 <div class="col-sm-10">
                     <wpsf:checkbox name="reset" cssClass="bootstrap-switch" />
                     <%--<s:text name="note.userStatus.reset" />--%>

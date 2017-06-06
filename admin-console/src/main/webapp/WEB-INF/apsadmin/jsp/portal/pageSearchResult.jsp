@@ -10,7 +10,7 @@
 
 <h1 class="page-title-container"><s:text name="title.pageTree" />
     <span class="pull-right">
-        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="TO be inserted" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageTree.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
     </span>
 </h1>
 
@@ -21,43 +21,48 @@
 <br>
 
 <div id="main" role="main">
-    
+
     <p><s:text name="note.pageTree.intro" /></p>
-    
+
     <s:if test="hasFieldErrors()">
         <div class="alert alert-danger alert-dismissable">
-            <button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-            <h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h2>
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                <span class="pficon pficon-close"></span>
+            </button>
+            <span class="pficon pficon-error-circle-o"></span>
+            <strong><s:text name="message.title.FieldErrors" /></strong>
             <ul>
                 <s:iterator value="fieldErrors">
-                    <li><s:property escapeHtml="false" /></li>
+                    <s:iterator value="value">
+                        <li><s:property escapeHtml="false" /></li>
+                        </s:iterator>
                     </s:iterator>
             </ul>
         </div>
     </s:if>
     <div role="search">
-        
-        <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
-        
-        <hr />
-        
-        
+
+        <s:if test="!hasFieldErrors()"><s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" /></s:if>
+
+            <hr />
+
+
         <s:form action="search" cssClass="action-form">
-            
+
             <p class="sr-only">
                 <wpsf:hidden name="pageCodeToken" />
             </p>
-            
+
             <s:set var="pagesFound" value="pagesFound" />
-            
+
             <s:if test="%{#pagesFound != null && #pagesFound.isEmpty() == false}">
                 <a href="<s:url namespace="/do/Page" action="new" />" class="btn btn-primary pull-right" title="<s:text name="label.new" />" style="margin-bottom: 5px">
                     <s:text name="label.add" />
                 </a>
-                <s:form cssClass="form-horizontal" namespace="/do/Page">           
-                        
+                <s:form cssClass="form-horizontal" namespace="/do/Page">
+
                     <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
-                        
+
                         <div class="table-responsive overflow-visible">
                             <table id="pageTree" class="table table-bordered table-hover table-treegrid">
                                 <thead>
@@ -99,50 +104,54 @@
                                 <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
                             </s:else>
                             </tbody>
-                        </table>     
+                        </table>
                     </div>
                     <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
-                    
-                </s:form>                                       
-                
+
+                </s:form>
+
             </s:if>
             <s:else>
-                <p class="alert alert-info">
-                    <s:text name="noPages.found" />
-                </p>
+                <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        <span class="pficon pficon-close"></span>
+                    </button>
+                    <span class="pficon pficon-error-circle-o"></span>
+                    <strong><s:text name="noPages.found" /></strong>
+                </div>
             </s:else>
-            
+
         </s:form>
     </div>
-    
+
 </div>
-    
+
 <script>
-    $(document).ready(function() {
-        $("#expandAll").click(function() {
+    $(document).ready(function () {
+        $("#expandAll").click(function () {
             $("#pageTree .childrenNodes").removeClass("hidden");
-            $("#pageTree .childrenNodes").removeClass("collapsed");                
+            $("#pageTree .childrenNodes").removeClass("collapsed");
             $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
         });
-        $("#collapseAll").click(function() {
+        $("#collapseAll").click(function () {
             $(".childrenNodes").addClass("hidden");
             $(".childrenNodes").addClass("collapsed");
             $('#pageTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
-                    
+
         });
-                
-        $(".treeRow ").on("click", function(event) {
+
+        $(".treeRow ").on("click", function (event) {
             $(".treeRow").removeClass("active");
             $(".moveButtons").addClass("hidden");
             $(this).find('.subTreeToggler').prop("checked", true);
             $(this).addClass("active");
             $(this).find(".moveButtons").removeClass("hidden");
         });
-                
-                function buildTree(){
+
+        function buildTree() {
             var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
             $('.table-treegrid').treegrid(null, isTreeOnRequest);
-        }     
+        }
         buildTree();
     });
 </script>

@@ -179,8 +179,8 @@
                                                                         <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
                                                                     </s:url>
                                                                     <a href="${addContentURL}"
-                                                                       title="<s:text name="label.new" />&#32;<s:property value="%{#contentTypeVar.typeDescr}" />">
-                                                                        <s:text name="label.new" />&#32;<s:property value="%{#contentTypeVar.typeDescr}" />
+                                                                       title="<s:property value="%{#contentTypeVar.typeDescr}" />">
+                                                                        <s:property value="%{#contentTypeVar.typeDescr}" />
                                                                     </a>
                                                                 </li>
                                                             </s:if>

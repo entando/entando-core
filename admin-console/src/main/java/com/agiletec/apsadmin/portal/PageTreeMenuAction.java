@@ -29,6 +29,7 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.lang.Lang;
@@ -49,7 +50,18 @@ public class PageTreeMenuAction extends PageTreeAction {
 	public String intro() {
 		String pageCode = (this.getSelectedNode() != null ? this.getSelectedNode() : this.getPageCode());
 		if (StringUtils.isBlank(pageCode)) {
-			pageCode = this.getAllowedTreeRootNode().getCode();
+			ITreeNode rootNode = this.getAllowedTreeRootNode();
+			pageCode = rootNode.getCode();
+
+			if (VIRTUAL_ROOT_CODE.equals(pageCode)) {
+				if (null != rootNode.getChildren() && rootNode.getChildren().length > 0) {
+					pageCode = rootNode.getChildren()[0].getCode();
+				} else {
+					this.addActionError(this.getText("error.page.virtualRootSelected"));
+					return "noRoot";
+				}
+			}
+
 		}
 		this.setPageCode(pageCode);
 		this.setSelectedNode(pageCode);
@@ -59,7 +71,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	@Override
 	public String buildTree() {
 		this.intro();
@@ -152,8 +164,8 @@ public class PageTreeMenuAction extends PageTreeAction {
 	/**
 	 * Returns the 'bread crumbs' targets.
 	 *
-	 * @param pageCode The code of the page being represented in the bread
-	 * crumbs path.
+	 * @param pageCode
+	 * The code of the page being represented in the bread crumbs path.
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
@@ -177,7 +189,8 @@ public class PageTreeMenuAction extends PageTreeAction {
 	/**
 	 * Check if the current user can access the specified page.
 	 *
-	 * @param page The page to check against the current user.
+	 * @param page
+	 * The page to check against the current user.
 	 * @return True if the user has can access the given page, false otherwise.
 	 */
 	@Override
@@ -210,7 +223,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IPage getPage(String pageCode) {
 		return this.getPageManager().getDraftPage(pageCode);
@@ -254,7 +267,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 	public boolean isInternalServletWidget(String widgetTypeCode) {
 		return this.getInternalServletWidgetCode().equals(widgetTypeCode);
 	}
-	
+
 	@Deprecated
 	protected String getStockShowletCodes() {
 		return this.getStockWidgetCodes();
@@ -304,7 +317,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 	public void setWidgetTypeManager(IWidgetTypeManager widgetTypeManager) {
 		this._widgetTypeManager = widgetTypeManager;
 	}
-	
+
 	private String _stockWidgetCodes;
 	private String _internalServletWidgetCode;
 

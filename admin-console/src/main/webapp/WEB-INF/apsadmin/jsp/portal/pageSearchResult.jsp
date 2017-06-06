@@ -19,7 +19,9 @@
     </div>
 </div>
 <br>
+<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
 
+<hr />
 <div id="main" role="main">
 
     <p><s:text name="note.pageTree.intro" /></p>
@@ -42,20 +44,16 @@
     </s:if>
     <div role="search">
 
-        <s:if test="!hasFieldErrors()"><s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" /></s:if>
-
-            <hr />
-
-
         <s:form action="search" cssClass="action-form">
 
             <p class="sr-only">
-                <wpsf:hidden name="pageCodeToken" />
+            <wpsf:hidden name="pageCodeToken" />
             </p>
 
             <s:set var="pagesFound" value="pagesFound" />
 
             <s:if test="%{#pagesFound != null && #pagesFound.isEmpty() == false}">
+
                 <a href="<s:url namespace="/do/Page" action="new" />" class="btn btn-primary pull-right" title="<s:text name="label.new" />" style="margin-bottom: 5px">
                     <s:text name="label.add" />
                 </a>

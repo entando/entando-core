@@ -39,6 +39,12 @@
     <div class="row">
         <div class="col-sm-12 col-md-6">
             <h1 class="page-title-container">
+				<span class="pull-right">
+                    <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                       data-content="<s:text name="label.digitalAsset.help"/>" data-placement="left" data-original-title="">
+                        <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                    </a>
+                </span>
                 <s:if test="!onEditContent">
                     <s:text name="breadcrumb.digitalAsset"/>
                 </s:if>

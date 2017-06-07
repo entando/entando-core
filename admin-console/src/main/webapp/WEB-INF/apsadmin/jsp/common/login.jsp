@@ -37,8 +37,10 @@
                     <p class="ux_brand_subtitle"> FOR UX CONVERGENCE</p>
                     <div class="spacer-login"></div>
                     <div class="entando-intro">
-                        The lightest open source, enterprise ready Digital Experience Platform (DXP) for user experience convergence to build next generation applications.
-                        Entando unifies user experience across different applications, people, devices while reducing technical complexity, time-to-market and project development costs.
+                        Entando is the lightest, open source Digital Experience Platform (DXP) for
+                        modern applications. Entando harmonizes customer experience across the
+                        omnichannel applying the techniques of modern software practices to
+                        enterprise applications. Learn quickly, develop easily, deploy rapidly.
                     </div>
                     <div class="copyright-entando">Copyright 2017 <span class="entando-sm-write">Entando</span></div>
                 </div>

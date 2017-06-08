@@ -64,10 +64,8 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		contentVo.setDescription(res.getString(3));
 		contentVo.setStatus(res.getString(4));
 		String xmlWork = res.getString(5);
-		contentVo.setCreate(
-				DateConverter.parseDate(res.getString(6), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
-		contentVo.setModify(
-				DateConverter.parseDate(res.getString(7), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+		contentVo.setCreate(DateConverter.parseDate(res.getString(6), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+		contentVo.setModify(DateConverter.parseDate(res.getString(7), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
 		String xmlOnLine = res.getString(8);
 		contentVo.setOnLine(null != xmlOnLine && xmlOnLine.length() > 0);
 		contentVo.setSync(xmlWork.equals(xmlOnLine));
@@ -100,8 +98,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		stat.setString(3, content.getDescription());
 		stat.setString(4, content.getStatus());
 		stat.setString(5, content.getXML());
-		String currentDate = DateConverter.getFormattedDate(new Date(),
-				JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
+		String currentDate = DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
 		stat.setString(6, currentDate);
 		stat.setString(7, currentDate);
 		stat.setString(8, content.getMainGroup());
@@ -171,8 +168,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		this.buildUpdateEntityStatement(entity, true, stat);
 	}
 
-	protected void buildUpdateEntityStatement(IApsEntity entity, boolean updateDate, PreparedStatement stat)
-			throws Throwable {
+	protected void buildUpdateEntityStatement(IApsEntity entity, boolean updateDate, PreparedStatement stat) throws Throwable {
 		Content content = (Content) entity;
 		int index = 1;
 		stat.setString(index++, content.getTypeCode());
@@ -180,8 +176,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		stat.setString(index++, content.getStatus());
 		stat.setString(index++, content.getXML());
 		if (updateDate) {
-			stat.setString(index++,
-					DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+			stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
 		}
 		stat.setString(index++, content.getMainGroup());
 		stat.setString(index++, content.getVersion());
@@ -193,7 +188,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * This publishes a content.
 	 * 
 	 * @param content
-	 *            the content to publish.
+	 * the content to publish.
 	 */
 	@Override
 	public void insertOnLineContent(Content content) {
@@ -237,8 +232,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		super.deleteRecordsByEntityId(id, DELETE_CONTENT_SEARCH_RECORD, conn);
 	}
 
-	protected void addPublicContentSearchRecord(String id, IApsEntity entity, Connection conn)
-			throws ApsSystemException {
+	protected void addPublicContentSearchRecord(String id, IApsEntity entity, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_CONTENT_SEARCH_RECORD);
@@ -255,8 +249,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		this.updateContentRecordForInsertOnLine(content, true, conn);
 	}
 
-	protected void updateContentRecordForInsertOnLine(Content content, boolean updateDate, Connection conn)
-			throws ApsSystemException {
+	protected void updateContentRecordForInsertOnLine(Content content, boolean updateDate, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			int index = 1;
@@ -271,8 +264,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			String xml = content.getXML();
 			stat.setString(index++, xml);
 			if (updateDate) {
-				stat.setString(index++,
-						DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+				stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
 			}
 			stat.setString(index++, xml);
 			stat.setString(index++, content.getMainGroup());
@@ -292,7 +284,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * Updates the references of a published content
 	 * 
 	 * @param content
-	 *            the published content
+	 * the published content
 	 */
 	@Override
 	public void reloadPublicContentReferences(Content content) {
@@ -326,7 +318,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * Updates the references of a content
 	 * 
 	 * @param content
-	 *            the content
+	 * the content
 	 */
 	@Override
 	public void reloadWorkContentReferences(Content content) {
@@ -359,7 +351,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * Obviously the content itslef is not deleted.
 	 * 
 	 * @param content
-	 *            the content to unpublish.
+	 * the content to unpublish.
 	 */
 	@Override
 	public void removeOnLineContent(Content content) {
@@ -387,10 +379,10 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * Obviously the content itslef is not deleted.
 	 * 
 	 * @param content
-	 *            the content to unpublish.
+	 * the content to unpublish.
 	 * @param updateDate
 	 * @param conn
-	 *            the connection to the DB.
+	 * the connection to the DB.
 	 */
 	protected void executeRemoveOnLineContent(Content content, boolean updateDate, Connection conn) {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
@@ -408,8 +400,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			stat.setString(index++, content.getStatus());
 			stat.setString(index++, content.getXML());
 			if (updateDate) {
-				stat.setString(index++,
-						DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+				stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
 			}
 			stat.setString(index++, content.getVersion());
 			stat.setString(index++, content.getLastEditor());
@@ -437,8 +428,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		super.executeDeleteEntity(entityId, conn);
 	}
 
-	private void addCategoryRelationsRecord(Content content, boolean isPublicRelations, PreparedStatement stat)
-			throws ApsSystemException {
+	private void addCategoryRelationsRecord(Content content, boolean isPublicRelations, PreparedStatement stat) throws ApsSystemException {
 		if (content.getCategories().size() > 0) {
 			try {
 				Set<String> codes = new HashSet<String>();
@@ -465,10 +455,8 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 					stat.clearParameters();
 				}
 			} catch (SQLException e) {
-				_logger.error("Error saving content relation record for content {}", content.getId(),
-						e.getNextException());
-				throw new RuntimeException("Error saving content relation record for content " + content.getId(),
-						e.getNextException());
+				_logger.error("Error saving content relation record for content {}", content.getId(), e.getNextException());
+				throw new RuntimeException("Error saving content relation record for content " + content.getId(), e.getNextException());
 			}
 		}
 	}
@@ -507,11 +495,11 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * other content, role and category associated to the given content).
 	 * 
 	 * @param content
-	 *            The current content.
+	 * The current content.
 	 * @param conn
-	 *            The connection to the database.
+	 * The connection to the database.
 	 * @throws ApsSystemException
-	 *             when connection error are detected.
+	 * when connection error are detected.
 	 */
 	protected void addContentRelationsRecord(Content content, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
@@ -541,8 +529,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			stat.executeBatch();
 		} catch (BatchUpdateException e) {
 			_logger.error("Error saving record into contentrelations {}", content.getId(), e.getNextException());
-			throw new RuntimeException("Error saving record into contentrelations " + content.getId(),
-					e.getNextException());
+			throw new RuntimeException("Error saving record into contentrelations " + content.getId(), e.getNextException());
 		} catch (Throwable t) {
 			_logger.error("Error saving record into contentrelations {}", content.getId(), t);
 			throw new RuntimeException("Error saving record into contentrelations " + content.getId(), t);
@@ -568,8 +555,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void addContentAttributeRoleRecord(String id, IApsEntity entity, String query, Connection conn)
-			throws ApsSystemException {
+	protected void addContentAttributeRoleRecord(String id, IApsEntity entity, String query, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(query);
@@ -701,8 +687,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 				count = res.getInt(1);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading contents status", t);
-			throw new RuntimeException("Error loading contents status", t);
+			_logger.error("Error loading contents status. If you are runing Entando backed by Apache Derby it's a known issue");
 		} finally {
 			closeDaoResources(res, stat);
 		}
@@ -771,8 +756,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	private final String DELETE_WORK_CONTENT_SEARCH_RECORD = "DELETE FROM workcontentsearch WHERE contentid = ? ";
 
 	private final String ADD_CONTENT_REL_RECORD = "INSERT INTO contentrelations "
-			+ "(contentid, refpage, refcontent, refresource, refcategory, refgroup) "
-			+ "VALUES ( ? , ? , ? , ? , ? , ? )";
+			+ "(contentid, refpage, refcontent, refresource, refcategory, refgroup) " + "VALUES ( ? , ? , ? , ? , ? , ? )";
 
 	private final String ADD_WORK_CONTENT_REL_RECORD = "INSERT INTO workcontentrelations (contentid, refcategory) VALUES ( ? , ? )";
 
@@ -813,8 +797,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			+ "WHERE contentid = ? ";
 
 	private final String INSERT_ONLINE_CONTENT_WITHOUT_DATE = "UPDATE contents SET contenttype = ? , descr = ? , status = ? , "
-			+ "workxml = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? "
-			+ "WHERE contentid = ? ";
+			+ "workxml = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
 
 	private final String REMOVE_ONLINE_CONTENT = "UPDATE contents SET onlinexml = ? , status = ? , "
 			+ "workxml = ? , lastmodified = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
@@ -823,8 +806,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			+ "workxml = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
 
 	private final String UPDATE_CONTENT = "UPDATE contents SET contenttype = ? , descr = ? , status = ? , "
-			+ "workxml = ? , lastmodified = ? , maingroup = ? , currentversion = ? , lasteditor = ? "
-			+ "WHERE contentid = ? ";
+			+ "workxml = ? , lastmodified = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
 
 	private final String UPDATE_CONTENT_WITHOUT_DATE = "UPDATE contents SET contenttype = ? , descr = ? , status = ? , "
 			+ "workxml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
@@ -839,8 +821,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 
 	private final String DELETE_WORK_ATTRIBUTE_ROLE_RECORD = "DELETE FROM workcontentattributeroles WHERE contentid = ? ";
 
-	private static final String COUNT_OFFLINE_CONTENTS = "SELECT count(contentid) FROM contents "
-			+ "WHERE onlinexml IS NULL";
+	private static final String COUNT_OFFLINE_CONTENTS = "SELECT count(contentid) FROM contents " + "WHERE onlinexml IS NULL";
 
 	private static final String COUNT_ONLINE_CONTENTS = "SELECT count(contentid) FROM contents "
 			+ "WHERE onlinexml IS NOT NULL AND onlinexml = workxml";

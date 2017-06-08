@@ -27,11 +27,6 @@
 			<name>Eugenio Santoboni</name>
 			<email>eugenio.santoboni@gmail.com</email>
 		</developer>
-		<developer>
-			<id>w.ghelfi</id>
-			<name>William Ghelfi</name>
-			<email>william@williamghelfi.com</email>
-		</developer>
 	</developers>
 	<organization>
 		<name>Entando Inc.</name>
@@ -94,20 +89,6 @@
 					<execution>
 						<goals>
 							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
 						</goals>
 					</execution>
 				</executions>

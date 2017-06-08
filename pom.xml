@@ -15,22 +15,33 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:entando/entando-core.git</connection>
+		<developerConnection>scm:git:git@github.com:entando/entando-core.git</developerConnection>
+		<url>https://github.com/entando/entando-core</url>
+		<tag>v4.3.0</tag>
+	</scm>
 	<developers>
 		<developer>
 			<id>e.santoboni</id>
 			<name>Eugenio Santoboni</name>
 			<email>eugenio.santoboni@gmail.com</email>
 		</developer>
-		<developer>
-			<id>w.ghelfi</id>
-			<name>William Ghelfi</name>
-			<email>william@williamghelfi.com</email>
-		</developer>
 	</developers>
 	<organization>
 		<name>Entando Inc.</name>
 		<url>http://www.entando.com/</url>
 	</organization>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshot</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 	<profiles>
             <profile>
                 <id>java8</id>
@@ -76,6 +87,30 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.1</version>
+					<configuration>
+						<tagNameFormat>v@{project.version}</tagNameFormat>
+						<pushChanges>false</pushChanges>
+						<localCheckout>true</localCheckout>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.sonatype.plugins</groupId>
+					<artifactId>nexus-staging-maven-plugin</artifactId>
+					<version>1.6.5</version>
+					<extensions>true</extensions>
+					<configuration>
+						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+						<autoReleaseAfterClose>false</autoReleaseAfterClose>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

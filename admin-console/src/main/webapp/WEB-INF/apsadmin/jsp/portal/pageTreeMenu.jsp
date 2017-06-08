@@ -172,7 +172,7 @@
                     </button>
                 </div>
             </s:if>
-            <div class="table-responsive overflow-visible table-menu-left-postion" >
+            <div class="overflow-visible table-menu-left-postion" >
                 <table id="pageTree" class="table table-tree-sidebar table-hover table-treegrid table-tree-right" style="overflow:  scroll; margin-bottom: 6em;">
                     <thead>
                     </thead>

@@ -10,7 +10,7 @@
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
-        <td class="treegrid-node pointer word-wrap">
+        <td class="treegrid-node pointer word-wrap text-overflow">
         <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
@@ -50,9 +50,6 @@
         </td>
         <td class="moveButtons-right-container" style="width:40px">
             <div class="moveButtons hidden">
-            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info" data-toggle="tooltip">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-            </wpsf:submit>
             <wpsf:submit action="moveUp" type="button" title="%{getText('page.options.moveUp')}" cssClass="btn btn-info" data-toggle="tooltip">
                 <i class="fa fa-caret-up" aria-hidden="true"></i>
             </wpsf:submit>
@@ -73,6 +70,11 @@
                 <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="fa fa-ellipsis-v"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                    <li>
+                        <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
+                            <span><s:text name="title.addPage" /></span>
+                        </wpsf:submit>
+                    </li>
                     <li>
                     <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
                         <span class="">Edit</span>

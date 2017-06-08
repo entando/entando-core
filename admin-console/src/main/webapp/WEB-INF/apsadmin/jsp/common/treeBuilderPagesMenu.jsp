@@ -13,20 +13,22 @@
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
 
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage' && #isHidden}">collapsed childrenNodes</s:if>" >
-    <td class="treegrid-node pointer word-wrap">
+    <td class="treegrid-node pointer word-wrap text-overflow">
             <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 
                class="subTreeToggler <s:if test="#isSelected">active </s:if> hidden <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
                <s:if test="#isSelected"> checked="checked"</s:if> />
-        &#32;<span class="word-wrap" for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span><span class="tree-item-page-title"><s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" /></span><s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
+        &#32;<span class="word-wrap" for="fagianonode_<s:property value="#currentRoot.code" />"><span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+            <span class="tree-item-page-title" data-toggle="tooltip" 
+                data-html="true" title="<s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>">
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+            </span>
+            <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
                 <span class="text-muted icon fa fa-lock"></span>
             </s:if>
         </span>
     </td>
     <td class="moveButtons-right-container" style="width:40px">
         <div class="moveButtons-right<s:if test="!#isSelected" > hidden</s:if>">
-            <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-            </wpsf:submit>
             <wpsf:submit action="moveUp" type="button" title="%{getText('page.options.moveUp')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-caret-up" aria-hidden="true"></i>
             </wpsf:submit>
@@ -52,6 +54,11 @@
                 <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="fa fa-ellipsis-v"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                    <li>
+                        <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
+                            <span><s:text name="title.addPage" /></span>
+                        </wpsf:submit>
+                    </li>
                     <li>
                     <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
                         <span class="">Edit </span>

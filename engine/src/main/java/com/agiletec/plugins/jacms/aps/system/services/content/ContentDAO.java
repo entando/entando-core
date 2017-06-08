@@ -688,7 +688,6 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			}
 		} catch (Throwable t) {
 			_logger.error("Error loading contents status. If you are runing Entando backed by Apache Derby it's a known issue");
-			//throw new RuntimeException("Error loading contents status", t);
 		} finally {
 			closeDaoResources(res, stat);
 		}

@@ -44,8 +44,9 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 			List<String> allowedGroups = this.getContentGroupCodes();
 			result = this.getContentManager().loadPublicContentsId(null, this.getFilters(), allowedGroups);
 			/*
-			 * Non propriamente corretto; deve estrarre i contenuti che sono visualizzabili (singolarmente)
-			 * da tutti i gruppi a cui appartiene la pagina.
+			 * Non propriamente corretto; deve estrarre i contenuti che sono
+			 * visualizzabili (singolarmente) da tutti i gruppi a cui appartiene
+			 * la pagina.
 			 */
 		} catch (Throwable t) {
 			_logger.error("Error searching contents ", t);
@@ -82,7 +83,8 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 	/**
 	 * Check if the current user can access the specified page.
 	 *
-	 * @param page The page to check against the current user.
+	 * @param page
+	 * The page to check against the current user.
 	 * @return True if the user has can access the given page, false otherwise.
 	 */
 	public boolean isUserAllowed(IPage page) {
@@ -96,8 +98,8 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 	/**
 	 * Returns the 'bread crumbs' targets.
 	 *
-	 * @param pageCode The code of the page being represented in the bread
-	 * crumbs path.
+	 * @param pageCode
+	 * The code of the page being represented in the bread crumbs path.
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
@@ -128,7 +130,7 @@ public class ContentFinderViewerAction extends ContentFinderAction {
 	}
 
 	public IPage getCurrentPage() {
-		return this.getPageManager().getOnlinePage(this.getPageCode());
+		return this.getPageManager().getDraftPage(this.getPageCode());
 	}
 
 	public String getPageCode() {

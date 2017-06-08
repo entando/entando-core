@@ -1591,6 +1591,14 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {background: #fff}
     display: none;
 }
 
+/* --------------- Text --------------- */
+
+.text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap !important;
+}
+
 /* --------------- Pager --------------- */
 
 .pagination-pf-page.page-selector {width: 50px;}

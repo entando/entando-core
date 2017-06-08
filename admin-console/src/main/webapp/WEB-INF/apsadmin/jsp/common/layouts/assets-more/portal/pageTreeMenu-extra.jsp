@@ -122,5 +122,8 @@
                 $(this).find(".moveButtons-right").removeClass("hidden");
                 $(this).find(".table-view-pf-actions").removeClass("hidden");
             });
+            
+            // Page title tooltip
+            $('[data-toggle="tooltip"]').tooltip();
         });
 </script>

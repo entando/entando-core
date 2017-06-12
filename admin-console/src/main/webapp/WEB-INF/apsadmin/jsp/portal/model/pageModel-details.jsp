@@ -1,5 +1,11 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<c:set var="carriageReturnChar" value="\r"/>
+<c:set var="tabChar" value="\t"/>
+
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
     <li><a href="<s:url action="list" namespace="/do/PageModel"></s:url>"
@@ -21,7 +27,6 @@
 </div>
 <br>
 
-
 <div id="main">
 
     <table class="table table-bordered">
@@ -35,21 +40,28 @@
         </tr>
         <tr>
             <th class="td-pagetree-width"><s:text name="label.pluginCode" /></th>
-            <td><s:property value="pluginCode" /></td>
+            <td>
+            <s:property value="pluginCode" />
+            </td>
         </tr>
-
+        <tr>
+                <th class="td-pagetree-width"><s:text name="label.configuration" /></th>
+                <td>
+                <c:set var="xmlConfigurationVar"><s:property value="xmlConfiguration" /></c:set>
+                <c:set var="ESCAPED_STRING" value="${fn:replace(fn:replace(xmlConfigurationVar, tabChar, '&emsp;'),carriageReturnChar, '')}" />
+                <pre><code><c:out value="${ESCAPED_STRING}" escapeXml="true" /></code></pre>
+                </td>
+        </tr>
         <tr>
             <th class="td-pagetree-width"><s:text name="label.template" /></th>
             <td>
-                <s:set var="template"><s:property value="template" /></s:set>
-                    <pre>
-                    <s:property value="#template.replaceAll('\t', '&emsp;').replaceAll('\r', '').replaceAll('\n', '<br />')"
-                                escapeCsv="false" escapeHtml="false" escapeJavaScript="false" escapeXml="false" />
-                </pre>
+                <c:set var="templateVar"><s:property value="template" /></c:set>
+                <c:set var="ESCAPED_STRING" value="${fn:replace(fn:replace(templateVar, tabChar, '&emsp;'),carriageReturnChar, '')}" />
+                <pre><code><c:out value="${ESCAPED_STRING}" escapeXml="true" /></code></pre>
             </td>
         </tr>
     </table>
-
+    
     <p class="text-right">
         <a
             class="btn btn-primary"
@@ -67,7 +79,4 @@
             <wpsa:include value="%{#hookPointElementvar.filePath}"></wpsa:include>
         </s:iterator>
     </wpsa:hookPoint>
-
-
-
 </div>

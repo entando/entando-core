@@ -159,6 +159,12 @@
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
                         </s:if>
                         <s:elseif test="#categoryTreeStyleVar == 'request'">
+                            <style>
+                                .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                    cursor: pointer;
+                                    display: none;
+                                }
+                            </style>
 							<s:set var="openTreeActionName" value="'openCloseCategoryTreeInEntry'" />
 							<s:set var="closeTreeActionName" value="'openCloseCategoryTreeInEntry'" />
 							<s:set var="currentRoot" value="showableTree" />
@@ -166,9 +172,6 @@
 						</s:elseif>
 					</tbody>
 				</table>
-				<script>
-					$('.table-treegrid').treegrid();
-				</script>
 			</div>
 		</div>
 		</s:if>

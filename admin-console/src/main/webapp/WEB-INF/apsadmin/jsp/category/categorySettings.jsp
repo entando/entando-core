@@ -52,27 +52,29 @@
             </div>
         </s:if>
 
-        <div class="form-group">
-            <div class="row">
-                <label class="col-sm-3 control-label">
-                    <s:text name="label.chooseYourCategoriesTreeStyle" />
-                </label>
-                <div class="col-sm-4">
-                    <s:set var="paramName" value="'treeStyle_category'" />
-                    <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-default <s:if test="systemParams[#paramName] == 'classic'"> active</s:if>">
-                                <wpsf:radio id="classic" name="%{#paramName}" value="classic" checked="%{systemParams[#paramName].equals('classic')}" />
-                            <s:text name="treeStyle.classic" />
-                        </label>
-                        <label class="btn btn-default <s:if test="systemParams[#paramName] == 'request'"> active</s:if>">
-                                <wpsf:radio id="request" name="%{#paramName}" value="request" checked="%{systemParams[#paramName].equals('request')}" />
-                            <s:text name="treeStyle.request" />
-                        </label>
+        <fieldset class="col-xs-12 settings-form">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-2 ">
+                        <span for="admin-settings-area-notFoundPageCode"><s:text name="label.chooseYourCategoriesTreeStyle" /></span>
+                    </div>
+                    <div class="col-xs-10 text-left">
+                        <s:set var="paramName" value="'treeStyle_category'" />
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 'classic'"> active</s:if>">
+                                    <wpsf:radio id="classic" name="%{#paramName}" value="classic" checked="%{systemParams[#paramName].equals('classic')}" />
+                                <s:text name="treeStyle.classic" />
+                            </label>
+                            <label class="btn btn-default <s:if test="systemParams[#paramName] == 'request'"> active</s:if>">
+                                    <wpsf:radio id="request" name="%{#paramName}" value="request" checked="%{systemParams[#paramName].equals('request')}" />
+                                <s:text name="treeStyle.request" />
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </fieldset>
+        
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <wpsf:submit type="button" cssClass="btn btn-primary pull-right">

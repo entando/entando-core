@@ -156,6 +156,10 @@
 		<put-attribute name="title" value="title.resourceManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/trashResource.jsp" />
 	</definition>
+	<definition extends="layout.default" name="admin.jacms.resource.detail">
+		<put-attribute name="title" value="title.resourceManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/detailResource.jsp" />
+	</definition>
 
 	<definition extends="layout.default" name="admin.jacms.resource.porting22.intro">
 		<put-attribute name="title" value="title.resourceManagement" />

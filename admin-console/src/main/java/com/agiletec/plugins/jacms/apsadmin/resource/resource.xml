@@ -89,6 +89,12 @@
             <result type="chain">list</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
+        
+        <action name="detail" class="jacmsResourceAction" method="detail">
+            <result type="tiles">admin.jacms.resource.detail</result>
+            <result name="input" type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
+        </action>
     	
         <!-- ######### FINE OPERAZIONI DI CANCELLAZIONE RISORSE ######### -->
     	

@@ -10,6 +10,10 @@
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
+<s:if test="%{null == #actionName}">
+    <s:set var="actionName" value="'joinCategory'"/>
+</s:if>
+
 <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
 <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
 
@@ -58,7 +62,7 @@
 		</label>
     </td>
 	<td class="text-center">
-		<wpsf:submit action="joinCategory" type="button" 
+		<wpsf:submit action="%{#actionName}" type="button" 
 		   title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
 		   <span class="icon fa fa-plus"></span>
 		</wpsf:submit>

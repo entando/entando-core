@@ -9,6 +9,10 @@
     <s:set var="treeItemIconNameVar" value="'fa-folder'" />
 </s:else>
 
+<s:if test="%{null == #actionName}">
+    <s:set var="actionName" value="'joinCategory'"/>
+</s:if>
+
 <s:set var="isHidden" value="%{#selectedTreeNode == null || (#selectedTreeNode != #currentRoot.code)}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
 
@@ -29,7 +33,7 @@
 			</label>
         </td>
 	    <td class="text-center">
-	        <wpsf:submit action="joinCategory" type="button" 
+	        <wpsf:submit action="%{#actionName}" type="button" 
 	           title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
 	           <span class="icon fa fa-plus"></span>
 	        </wpsf:submit>

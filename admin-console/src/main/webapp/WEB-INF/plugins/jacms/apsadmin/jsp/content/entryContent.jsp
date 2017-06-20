@@ -242,6 +242,11 @@
                                         <s:include value="/WEB-INF/apsadmin/jsp/entity/modules/include/attributeInfo.jsp" />
                                     </label>
                                 </s:elseif>
+                                <wpsa:hookPoint key="jacms.entryContent.attributeExtra" objectName="hookPointElements_jacms_entryContent_attributeExtra">
+                                    <s:iterator value="#hookPointElements_jacms_entryContent_attributeExtra" var="hookPointElement">
+                                        <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                                    </s:iterator>
+                                </wpsa:hookPoint>
                                 <div class="col-sm-10">
                                     <s:if test="#attribute.type == 'Attach'">
                                         <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/attachAttribute.jsp" />
@@ -297,11 +302,7 @@
                                     <s:elseif test="#attribute.type == 'Monolist'">
                                         <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/monolistAttribute.jsp" />
                                     </s:elseif>
-                                    <wpsa:hookPoint key="jacms.entryContent.attributeExtra" objectName="hookPointElements_jacms_entryContent_attributeExtra">
-                                        <s:iterator value="#hookPointElements_jacms_entryContent_attributeExtra" var="hookPointElement">
-                                            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                                        </s:iterator>
-                                    </wpsa:hookPoint>
+
 
 
                                     <s:if test="#attributeHasErrorVar">

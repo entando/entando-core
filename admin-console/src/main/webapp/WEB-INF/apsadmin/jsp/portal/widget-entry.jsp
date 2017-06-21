@@ -2,6 +2,11 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<c:set var="carriageReturnChar" value="\r"/>
+<c:set var="tabChar" value="\t"/>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
@@ -310,7 +315,9 @@
                                                         <div class="tab-pane fade" id="widget-default-gui-<s:property value="#status.count" />">
                                                             <div class="panel panel-default">
                                                                 <div class="panel-body">
-                                                                    <pre><s:property value="#guiFragmentVar.defaultGui" /></pre>
+                                                                    <c:set var="xmlConfigurationVar"><s:property value="#guiFragmentVar.defaultGui" /></c:set>
+                                                                    <c:set var="ESCAPED_STRING" value="${fn:replace(fn:replace(xmlConfigurationVar, tabChar, '&emsp;'),carriageReturnChar, '')}" />
+                                                                    <pre><c:out value="${ESCAPED_STRING}" escapeXml="true" /></pre>
                                                                 </div>
                                                             </div>
                                                         </div>

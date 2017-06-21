@@ -35,8 +35,10 @@
             <strong><s:text name="message.title.ActionErrors" /></strong>
             <ul>
                 <s:iterator value="actionErrors">
-                    <li><s:property escapeHtml="false" /></li>
-                    </s:iterator>
+                    <li>
+                        <s:property escapeHtml="false" />
+                    </li>
+                </s:iterator>
             </ul>
         </div>
     </s:if>
@@ -51,13 +53,14 @@
             <ul>
                 <s:iterator value="fieldErrors">
                     <s:iterator value="value">
-                        <li><s:property escapeHtml="false" /></li>
-                        </s:iterator>
+                        <li>
+                            <s:property escapeHtml="false" />
+                        </li>
                     </s:iterator>
+                </s:iterator>
             </ul>
         </div>
     </s:if>
-
 
     <div class="searchPanel form-group">
         <div class="well col-md-offset-3 col-md-6  ">
@@ -67,7 +70,8 @@
 
             <div class="form-group">
                 <label class="col-sm-2 control-label"><s:text
-                        name="label.username" /></label>
+                        name="label.username" />
+                </label>
                 <div class="col-sm-9">
                     <wpsf:textfield name="username" id="search-username" cssClass="form-control " title="%{getText('label.search.by')+' '+getText('label.username')}" placeholder="%{getText('label.username')}" />
                 </div>
@@ -77,26 +81,22 @@
                    value="%{#searchableAttributesVar}" scope="page" />
             <!--users section-->
             <div class="form-group">
-                <label class="control-label col-sm-2"> <s:text
-                        name="label.users" />
+                <label class="control-label col-sm-2"> 
+                    <s:text name="label.users" />
                 </label>
                 <!--button role-->
                 <div class="col-sm-10">
                     <div class="btn-group col-sm-10 spacer-form" data-toggle="buttons">
-                        <label
-                            class="btn btn-default <s:if test="%{withProfile==null}"> active </s:if>">
-                            <wpsf:radio id="" name="withProfile" value=""
-                                        checked="%{withProfile==null}" /> &#32;<s:text
-                                        name="label.userprofile.search.usersAllProfile" />
-                        </label> <label
-                            class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('1')}"> active </s:if>">
-                            <wpsf:radio id="" name="withProfile" value="1"
-                                        checked="%{withProfile.toString().equalsIgnoreCase('1')}" />
-                            &#32;<s:text name="label.userprofile.search.usersWithProfile" />
-                        </label> <label
-                            class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('0')}"> active </s:if>">
-                            <wpsf:radio id="" name="withProfile" value="0"
-                                        checked="%{withProfile.toString().equalsIgnoreCase('0')}" />
+                        <label class="btn btn-default <s:if test="%{withProfile==null}"> active </s:if>">
+                            <wpsf:radio id="" name="withProfile" value="" checked="%{withProfile==null}" /> &#32;
+                            <s:text name="label.userprofile.search.usersAllProfile" />
+                        </label> 
+                        <label class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('1')}"> active </s:if>">
+                            <wpsf:radio id="" name="withProfile" value="1"  checked="%{withProfile.toString().equalsIgnoreCase('1')}" />&#32;
+                            <s:text name="label.userprofile.search.usersWithProfile" />
+                        </label> 
+                        <label class="btn btn-default <s:if test="%{withProfile.toString().equalsIgnoreCase('0')}"> active </s:if>">
+                            <wpsf:radio id="" name="withProfile" value="0" checked="%{withProfile.toString().equalsIgnoreCase('0')}" />
                             &#32;<s:text name="label.userprofile.search.usersWithoutProfile" />
                         </label>
                     </div>
@@ -108,7 +108,8 @@
                 <div class="panel panel-default">
                     <div class="panel-heading" style="padding: 0 0 10px;">
                         <p class="panel-title" style="text-align: end">
-                            <a data-toggle="collapse" data-parent="#accordion-markup" href="#collapseOne"> <s:text name="label.search.advanced" />
+                            <a data-toggle="collapse" data-parent="#accordion-markup" href="#collapseOne">
+                                <s:text name="label.search.advanced" />
                             </a>
                         </p>
                     </div>
@@ -125,10 +126,9 @@
                             <!--users section end-->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"
-                                       for="userprofile_src_entityPrototypes"> <s:text
-                                        name="note.userprofile.search.profileType" />
+                                       for="userprofile_src_entityPrototypes"> 
+                                    <s:text name="note.userprofile.search.profileType" />
                                 </label>
-
                                 <div class="col-sm-8 input-group" style="padding: 0 20px 0 20px">
                                     <wpsf:select id="userprofile_src_entityPrototypes"
                                                  list="entityPrototypes" name="entityTypeCode" headerKey=""
@@ -143,8 +143,7 @@
                                 </div>
                             </div>
 
-                            <s:if
-                                test="null != #searchableAttributesVar && #searchableAttributesVar.size() > 0">
+                            <s:if test="null != #searchableAttributesVar && #searchableAttributesVar.size() > 0">
                                 <s:iterator value="#searchableAttributesVar" var="attribute">
                                     <%-- Text Attribute --%>
                                     <s:if test="#attribute.textAttribute">
@@ -154,8 +153,9 @@
                                                value="%{#attribute.name+'_textFieldName'}" />
                                         <div class="form-group">
                                             <label class="control-label col-sm-3" style="text-align: end"
-                                                   for="<s:property value="#currentAttributeHtmlId" />"><s:property
-                                                    value="#attribute.name" /></label>
+                                                   for="<s:property value="#currentAttributeHtmlId" />">
+                                                <s:property value="#attribute.name" />
+                                            </label>
                                             <div class="col-sm-8">
                                                 <wpsf:textfield id="%{#currentAttributeHtmlId}"
                                                                 ame="%{#textInputFieldName}"
@@ -166,18 +166,15 @@
                                     </s:if>
                                     <%-- Date Attribute --%>
                                     <s:elseif test="#attribute.type == 'Date'">
-                                        <s:set var="currentAttributeHtmlId"
-                                               value="%{'userprofile_src_'+#attribute.name}" />
-                                        <s:set var="dateStartInputFieldName"
-                                               value="%{#attribute.name+'_dateStartFieldName'}" />
-                                        <s:set var="dateEndInputFieldName"
-                                               value="%{#attribute.name+'_dateEndFieldName'}" />
+                                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
+                                        <s:set var="dateStartInputFieldName" value="%{#attribute.name+'_dateStartFieldName'}" />
+                                        <s:set var="dateEndInputFieldName" value="%{#attribute.name+'_dateEndFieldName'}" />
                                         <div class="form-group">
-                                            <label class="control-label col-sm-3" style="text-align: end"><s:property
-                                                    value="#attribute.name" /></label>
+                                            <label class="control-label col-sm-3" style="text-align: end">
+                                                <s:property value="#attribute.name" />
+                                            </label>
                                             <div class="col-sm-8">
-                                                <label class="sr-only"
-                                                       for="<s:property value="%{#currentAttributeHtmlId+'_dateStartFieldName_cal'}" />">
+                                                <label class="sr-only" for="<s:property value="%{#currentAttributeHtmlId+'_dateStartFieldName_cal'}" />">
                                                     <s:property value="#attribute.name" />&#32;<s:text
                                                         name="label.userprofile.from.date" />
                                                 </label>
@@ -191,8 +188,8 @@
                                             <div class="col-lg-3">
                                                 <label class="sr-only"
                                                        for="<s:property value="%{#currentAttributeHtmlId+'_dateEndFieldName_cal'}" />">
-                                                    <s:property value="#attribute.name" />&#32;<s:text
-                                                        name="label.userprofile.to.date" />
+                                                    <s:property value="#attribute.name" />&#32;
+                                                    <s:text name="label.userprofile.to.date" />
                                                 </label>
                                                 <wpsf:textfield cssClass="form-control"
                                                                 placeholder="%{getText('label.userprofile.to.date')}"
@@ -202,22 +199,20 @@
                                                                 value="%{getSearchFormFieldValue(#dateEndInputFieldName)}" />
                                             </div>
                                             <div class="col-xs-12">
-                                                <span class="help-block"><s:text
-                                                        name="label.userprofile.date.pattern" /></span>
+                                                <span class="help-block">
+                                                    <s:text name="label.userprofile.date.pattern" /></span>
                                             </div>
                                         </div>
                                     </s:elseif>
                                     <%-- Number Attribute --%>
                                     <s:elseif test="#attribute.type == 'Number'">
-                                        <s:set var="currentAttributeHtmlId"
-                                               value="%{'userprofile_src_'+#attribute.name}" />
-                                        <s:set var="numberStartInputFieldName"
-                                               value="%{#attribute.name+'_numberStartFieldName'}" />
-                                        <s:set var="numberEndInputFieldName"
-                                               value="%{#attribute.name+'_numberEndFieldName'}" />
+                                        <s:set var="currentAttributeHtmlId" value="%{'userprofile_src_'+#attribute.name}" />
+                                        <s:set var="numberStartInputFieldName" value="%{#attribute.name+'_numberStartFieldName'}" />
+                                        <s:set var="numberEndInputFieldName" value="%{#attribute.name+'_numberEndFieldName'}" />
                                         <div class="form-group">
-                                            <label class="control-label col-sm-3" style="text-align: end"><s:property
-                                                    value="#attribute.name" /></label>
+                                            <label class="control-label col-sm-3" style="text-align: end">
+                                                <s:property value="#attribute.name" />
+                                            </label>
                                             <div class="col-lg-2">
                                                 <label class="sr-only"
                                                        for="<s:property value="%{#currentAttributeHtmlId+'_start'}" />"><s:property
@@ -333,15 +328,16 @@
                                 </s:iterator>
                             </s:if>
                             <%-- //search by role --%>
-
-                            <%-- hookpoint core.user-list.core-field --%>
-                            <wpsa:hookPoint key="core.user-list.form-field"
-                                            objectName="hookPointElements_core_user_list_core_field">
-                                <s:iterator value="#hookPointElements_core_user_list_core_field"
-                                            var="hookPointElement">
-                                    <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-                                </s:iterator>
-                            </wpsa:hookPoint>
+                            <div class="form-group">
+                                <%-- hookpoint core.user-list.core-field --%>
+                                <wpsa:hookPoint key="core.user-list.form-field"
+                                                objectName="hookPointElements_core_user_list_core_field">
+                                    <s:iterator value="#hookPointElements_core_user_list_core_field"
+                                                var="hookPointElement">
+                                        <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                                    </s:iterator>
+                                </wpsa:hookPoint>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -374,9 +370,9 @@
             <table class="table table-striped table-bordered table-hover no-mb">
                 <thead>
                     <tr>
-                        <th><s:text name="label.username" /></th>
-                        <th><s:text name="label.fullname" /></th>
-                        <th><s:text name="label.email" /></th>
+                        <th class="table-w-10"><s:text name="label.username" /></th>
+                        <th class="table-w-10"><s:text name="label.fullname" /></th>
+                        <th class="table-w-15"><s:text name="label.email" /></th>
                             <%-- hookpoint core.user-list.table.th --%>
                             <wpsa:hookPoint key="core.user-list.table.th"
                                             objectName="hookPointElements_core_user_list_table_th">
@@ -385,7 +381,7 @@
                                     <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
                                 </s:iterator>
                             </wpsa:hookPoint>
-                        <th class="text-center table-w-10"><s:text name="label.state" /></th>
+                        <th class="text-center table-w-20"><s:text name="label.state" /></th>
                         <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
                     </tr>
                 </thead>
@@ -449,51 +445,49 @@
                         </s:elseif>
 
                         <tr>
-
                             <%-- username --%>
-                            <td><s:property value="#usernameVar" /></td>
-
-                            <!----------Fullname-------->
-                            <td><s:property value="%{#userProfileVar.getDisplayName()}" />
+                            <td>
+                                <s:property value="#usernameVar" />
                             </td>
-
+                            <!----------Fullname-------->
+                            <td>
+                                <s:property value="%{#userProfileVar.getDisplayName()}" />
+                            </td>
                             <%-- email --%>
-                            <td><s:if test="null != #userProfileVar">
-                                    <s:set var="mailVar"
-                                           value="#userProfileVar.getValue(#userProfileVar.mailAttributeName)" />
+                            <td>
+                                <s:if test="null != #userProfileVar">
+                                    <s:set var="mailVar" value="#userProfileVar.getValue(#userProfileVar.mailAttributeName)" />
                                     <s:if test="#mailVar.length()>25">
-                                        <abbr title="<s:property value="#mailVar" />"> <s:set
+                                        <span title="<s:property value="#mailVar" />"> <s:set
                                                 var="chunks" value="%{#mailVar.split('@')}" /> <s:property
                                                 value="%{#chunks[0].length() > 8 ? #chunks[0].substring(0,8)+'...' : #chunks[0]}" />@<s:property
                                                 value="%{#chunks[1].length() > 8 ? '...'+#chunks[1].substring(#chunks[1].length()-8) : #chunks[1]}" />
-                                            <%-- <s:property value="%{#mailVar.substring(0,8) + '...' + #mailVar.substring(#mailVar.length()-8)}" /> --%>
-                                        </abbr>
+                                        </span>
                                     </s:if>
                                     <s:else>
                                         <s:property value="#mailVar" />
                                     </s:else>
                                 </s:if> <s:else>
-                                    <abbr title="<s:text name="label.noProfile" />">&ndash;</abbr>
-                                </s:else></td>
+                                    <span title="<s:text name="label.noProfile" />">&ndash;</span>
+                                </s:else>
+                            </td>
 
                             <%-- td hookpoint --%>
-                            <wpsa:hookPoint key="core.user-list.table.td"
-                                            objectName="hookPointElements_core_user_list_table_td">
-                                <s:iterator value="#hookPointElements_core_user_list_table_td"
-                                            var="hookPointElement">
+                            <wpsa:hookPoint key="core.user-list.table.td" objectName="hookPointElements_core_user_list_table_td">
+                                <s:iterator value="#hookPointElements_core_user_list_table_td" var="hookPointElement">
                                     <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
                                 </s:iterator>
                             </wpsa:hookPoint>
 
                             <%-- status --%>
-                            <td class="text-center"><span
-                                    class="<s:property value="#statusIconClassVar" />"
-                                    title="<s:property value="#statusTextVar" />"> </span> <span
-                                    class="<s:property value="#statusTextClassVar" />"> <s:property
-                                        value="#statusTextVar" /></span></td>
-
-
-
+                            <td class="text-center">
+                                <span class="<s:property value="#statusIconClassVar" />" title="<s:property value="#statusTextVar" />"> 
+                                </span> 
+                                <span class="<s:property value="#statusTextClassVar" />"> 
+                                    <s:property value="#statusTextVar" />
+                                </span>
+                            </td>
+                            <%-- actions --%>
                             <td class="text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
                                     <button class="btn btn-menu-right dropdown-toggle"
@@ -509,7 +503,6 @@
                                                 <span><s:text name="label.edit" /></span>
                                             </a>
                                         </li>
-
                                         <li>
                                             <%-- edit auth --%> <a
                                                 href="<s:property value="#editUserAuthActionVar" escapeHtml="false" />"
@@ -519,7 +512,6 @@
                                                         value="#usernameVar" /></span>
                                             </a>
                                         </li>
-
                                         <s:if test="#hasEditProfilePermission">
                                             <li>
                                                 <%-- edit profile --%> <a
@@ -531,7 +523,6 @@
                                                 </a>
                                             </li>
                                         </s:if>
-
                                         <s:if test="null != #userProfileVar">
                                             <li>
                                                 <%-- view profile --%> <a
@@ -542,15 +533,13 @@
                                                 </a>
                                             </li>
                                         </s:if>
-
-
                                         <%-- remove --%>
                                         <li><a
                                                 href="<s:property value="#userTrashActionVar" escapeHtml="false" />"
                                                 title="<s:text name="label.remove" />:&#32;<s:property value="#usernameVar" />">
                                                 <span><s:text name="label.remove" /></span>
-                                            </a></li>
-
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>

@@ -242,44 +242,55 @@
         </s:if>
 
         <s:if test="strutsAction != 3 && strutsAction != 5">
-            <s:if test="%{null == #widgetTypeVar || (!#widgetTypeVar.logic && !isInternalServletWidget(#widgetTypeVar.code))}">
-                <s:set var="uniqueGuiFragmentVar" value="%{extractUniqueGuiFragment(widgetTypeCode)}" />
-                <s:if test="%{strutsAction == 1 || isEditEmptyFragment() || (null != #uniqueGuiFragmentVar && (null != #uniqueGuiFragmentVar.gui || null != #uniqueGuiFragmentVar.defaultGui))}">
-                    <div class="form-group">
-                        <label class="control-label col-sm-2"></label>
-                        <div class=" col-sm-10">
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a href="#widget-gui" data-toggle="tab">Custom <span title="User Interface">UI</span></a></li>
-                                    <s:if test="strutsAction == 2">
-                                        <s:if test="%{null != #uniqueGuiFragmentVar}">
-                                        <li><a href="#widget-default-gui" data-toggle="tab">Default <span title="User Interface">UI</span></a></li>
-                                        </s:if>
-                                    </s:if>
-                            </ul>
-                            <div class="tab-content margin-large-bottom ">
-                                <div class="tab-pane fade in active" id="widget-gui">
-                                    <wpsf:textarea name="gui" id="widget_gui" cssClass="form-control" rows="8" cols="50" />
-                                </div>
-                                <div class="tab-pane fade" id="widget-default-gui">
-                                    <s:if test="strutsAction == 2">
-                                        <s:set var="uniqueGuiFragmentVar" value="%{extractUniqueGuiFragment(widgetTypeCode)}" />
-                                        <s:if test="%{null != #uniqueGuiFragmentVar && null != #uniqueGuiFragmentVar.defaultGui}">
-                                            <div class="panel panel-default">
-                                                <div class="panel-body">
-                                                    <pre><s:property value="#uniqueGuiFragmentVar.defaultGui" /></pre>
-                                                </div>
-                                            </div>
-                                        </s:if>
-                                        <s:else>
-                                            <div class="margin-none alert alert-info"><s:text name="label.notAvailable" /></div>
-                                        </s:else>
-                                    </s:if>
+            <fieldset class="col-xs-12 col-md-12 no-padding">
+                <s:if test="%{null == #widgetTypeVar || (!#widgetTypeVar.logic && !isInternalServletWidget(#widgetTypeVar.code))}">
+                    <s:set var="uniqueGuiFragmentVar" value="%{extractUniqueGuiFragment(widgetTypeCode)}" />
+                    <s:if test="%{strutsAction == 1 || isEditEmptyFragment() || (null != #uniqueGuiFragmentVar && (null != #uniqueGuiFragmentVar.gui || null != #uniqueGuiFragmentVar.defaultGui))}">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2"></label>
+                                <div class=" col-sm-10">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a href="#widget-gui" data-toggle="tab">Custom <span title="User Interface">UI</span></a></li>
+                                            <s:if test="strutsAction == 2">
+                                                <s:if test="%{null != #uniqueGuiFragmentVar}">
+                                                <li><a href="#widget-default-gui" data-toggle="tab">Default <span title="User Interface">UI</span></a></li>
+                                                </s:if>
+                                            </s:if>
+                                    </ul>
+                                    <div class="tab-content margin-large-bottom ">
+                                        <div class="tab-pane fade in active" id="widget-gui">
+                                            <wpsf:textarea name="gui" id="widget_gui" cssClass="form-control" rows="8" cols="50" />
+                                        </div>
+                                        <div class="tab-pane fade" id="widget-default-gui">
+                                            <s:if test="strutsAction == 2">
+                                                <s:set var="uniqueGuiFragmentVar" value="%{extractUniqueGuiFragment(widgetTypeCode)}" />
+                                                <s:if test="%{null != #uniqueGuiFragmentVar && null != #uniqueGuiFragmentVar.defaultGui}">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-body">
+                                                            <pre><s:property value="#uniqueGuiFragmentVar.defaultGui" /></pre>
+                                                        </div>
+                                                    </div>
+                                                </s:if>
+                                                <s:else>
+                                                    <div class="margin-none alert alert-info"><s:text name="label.notAvailable" /></div>
+                                                </s:else>
+                                            </s:if>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </s:if>
-                <s:else><div class="margin-none alert alert-info"><s:text name="label.widgetType.fragmentEditingNotAvailable" /></div></s:else>
+                    </s:if>
+                    <s:else>
+                        <div class="mt-20">
+                            <div class="alert alert-warning">
+                                <span class="pficon pficon-warning-triangle-o"></span>
+                                <strong><s:text name="label.widgetType.fragmentEditingNotAvailable" /></strong>
+                            </div>
+                        </div>
+                    </s:else>
+                </fieldset>
             </s:if>
             <s:elseif test="%{null != #widgetTypeVar && #widgetTypeVar.logic}"> <%-- excluded clause <<&& isInternalServletWidget(#widgetTypeVar.parentType.code)>> --%>
                 <s:set var="guiFragmentCodesVar" value="%{extractGuiFragmentCodes(#widgetTypeVar.code)}" />
@@ -326,17 +337,21 @@
                                             </div>
                                         </div>
                                     </s:if>
-                                    <s:else><div class="margin-none alert alert-info"><s:text name="label.widgetType.fragmentEditingNotAvailable" /></div></s:else>
+                                    <s:else>
+                                        <div class="mt-20">
+                                            <div class="alert alert-warning">
+                                                <span class="pficon pficon-warning-triangle-o"></span>
+                                                <strong><s:text name="label.widgetType.fragmentEditingNotAvailable" /></strong>
+                                            </div>
+                                        </div>
+                                    </s:else>
                                 </s:iterator>
                             </div>
                         </div>
                     </fieldset>
-
                 </s:if>
             </s:elseif>
         </s:if>
-
-
         <wpsa:hookPoint key="core.widgetType.entry" objectName="hookPointElements_core_widget_entry">
             <s:iterator value="#hookPointElements_core_widget_entry" var="hookPointElement">
                 <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>

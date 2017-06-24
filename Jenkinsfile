@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        withMaven(maven: '${M5}') {
+        withMaven(maven: '${Maven-3.3.9}') {
           sh 'mvn install -DskipTests'
         }
         
@@ -11,21 +11,21 @@ pipeline {
     }
     stage('Test') {
       steps {
-        withMaven(maven: '${M5}') {
+        withMaven(maven: '${Maven-3.3.9}') {
         sh 'mvn test'
         }
       }
     }
     stage('Code Coverage') {
       steps {
-        withMaven(maven: '${M5}') {
+        withMaven(maven: '${Maven-3.3.9}') {
         sh 'mvn cobertura:coverage'
         } 
       }
     }
     stage('Static Analysis') {
       steps {
-        withMaven(maven: '${M5}') {
+        withMaven(maven: '${Maven-3.3.9}') {
         sh 'mvn findbugs:findbugs'
         }
       }

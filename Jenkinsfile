@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        withMaven() {
+        withMaven(maven: M3) {
           sh 'mvn install -DskipTests'
         }
       }

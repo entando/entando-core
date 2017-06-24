@@ -3,14 +3,16 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        withMaven(maven: M5) {
+        withMaven(maven: '${M5}') {
           sh 'mvn install -DskipTests'
         }
+        
       }
     }
     stage('Test') {
       steps {
-        sh 'mvn clean test'
+        withMaven(maven: '${M5}')
+        sh 'mvn test'
       }
     }
     stage('Code Coverage') {

@@ -3,8 +3,9 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'mvn install -DskipTests'
-        withMaven()
+        withMaven() {
+          sh 'mvn install -DskipTests'
+        }
       }
     }
     stage('Test') {

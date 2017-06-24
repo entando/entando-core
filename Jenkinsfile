@@ -9,5 +9,13 @@ pipeline {
         
       }
     }
+    stage('Test') {
+      steps {
+        withMaven(maven: 'Maven-3.3.9') {
+          sh 'mvn clean test'
+        }
+        
+      }
+    }
   }
 }

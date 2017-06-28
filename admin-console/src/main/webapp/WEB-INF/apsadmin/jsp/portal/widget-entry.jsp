@@ -10,9 +10,11 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
-    <li><a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />"
+    <li>
+        <a href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.widgetManagement" />">
-            <s:text name="title.widgetManagement" /></a>
+            <s:text name="title.widgetManagement" />
+        </a>
     </li>
     <s:if test="strutsAction == 2">
         <li>
@@ -44,7 +46,7 @@
 </h1>
 <hr/>
 
-<div id="main" role="main">
+<div class="mb-20">
     <p>
         <s:elseif test="strutsAction != 2">
             <s:text name="title.newWidgetType.from" />:&#32;
@@ -251,12 +253,16 @@
                                 <label class="control-label col-sm-2"></label>
                                 <div class=" col-sm-10">
                                     <ul class="nav nav-tabs">
-                                        <li class="active"><a href="#widget-gui" data-toggle="tab">Custom <span title="User Interface">UI</span></a></li>
-                                            <s:if test="strutsAction == 2">
-                                                <s:if test="%{null != #uniqueGuiFragmentVar}">
-                                                <li><a href="#widget-default-gui" data-toggle="tab">Default <span title="User Interface">UI</span></a></li>
-                                                </s:if>
+                                        <li class="active">
+                                            <a href="#widget-gui" data-toggle="tab">Custom <span title="User Interface">UI</span></a>
+                                        </li>
+                                        <s:if test="strutsAction == 2">
+                                            <s:if test="%{null != #uniqueGuiFragmentVar}">
+                                                <li>
+                                                    <a href="#widget-default-gui" data-toggle="tab">Default <span title="User Interface">UI</span></a>
+                                                </li>
                                             </s:if>
+                                        </s:if>
                                     </ul>
                                     <div class="tab-content margin-large-bottom ">
                                         <div class="tab-pane fade in active" id="widget-gui">
@@ -268,7 +274,9 @@
                                                 <s:if test="%{null != #uniqueGuiFragmentVar && null != #uniqueGuiFragmentVar.defaultGui}">
                                                     <div class="panel panel-default">
                                                         <div class="panel-body">
-                                                            <pre><s:property value="#uniqueGuiFragmentVar.defaultGui" /></pre>
+                                                            <c:set var="xmlConfigurationVar"><s:property value="#uniqueGuiFragmentVar.defaultGui" /></c:set>
+                                                            <c:set var="ESCAPED_STRING_DEFAULT" value="${fn:replace(fn:replace(xmlConfigurationVar, tabChar, '&emsp;'),carriageReturnChar, '')}" />
+                                                            <pre><c:out value="${ESCAPED_STRING_DEFAULT}" escapeXml="true" /></pre>
                                                         </div>
                                                     </div>
                                                 </s:if>
@@ -313,7 +321,7 @@
                                                 </h4>
                                             </div>
                                             <div id="collapse-<s:property value="#status.count" />" class="panel-collapse collapse in">
-                                                <div class="panel-body" style="margin-left: 230px">
+                                                <div class="panel-body">
                                                     <ul class="nav nav-tabs">
                                                         <li class="active"><a href="#widget-gui-<s:property value="#status.count" />" data-toggle="tab">Custom <span title="User Interface">UI</span></a></li>
                                                         <li><a href="#widget-default-gui-<s:property value="#status.count" />" data-toggle="tab">Default <span title="User Interface">UI</span></a></li>

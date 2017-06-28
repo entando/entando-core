@@ -2130,6 +2130,7 @@ label .fa-folder, .fa-folder {
     margin:auto;
     top:0; left:0; bottom:0; right:0;
 }
+
 .login-buttons-lp .btn-login {
     height: 35px;
     width: 207px;
@@ -2143,7 +2144,7 @@ label .fa-folder, .fa-folder {
     transition: all 0.4s ease;
 }
 #social-link{
-    margin: 48px 0 0 0;
+    margin: 48px 0 65px 0;
 }
 #social-link a{
     margin:6px;

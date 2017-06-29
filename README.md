@@ -4,7 +4,7 @@ entando-core
 ```entando-core``` is the heart of the **Entando Platform**. 
 It provides the basic structure, tools, and functionality to build an instance of the Entando application.
 
-**Entando** is a powerful and extensible Open Source, component-based, web application platform, written in Java. It’s used to develop and manage dynamic websites, community and enterprise portals, capable of building and running modern application services, to address issues in several sectors. Developers can rapidly deliver personalized multi-channel modern websites, to create web apps, intranets and extranets with personalized dashboards based on widgets, vertical web applications.	
+**Entando** is the lightest, open source Digital Experience Platform (DXP) for Modern Applications. Entando harmonizes customer experience across the omnichannel (UX convergence) applying the techniques of modern software practices to enterprise applications (modern applications). Entando can be used to modernize UI/UX layers on top of existing applications or to build new generation applications aligned to UI/UX best practices, across different industries and use cases.
 
 ```entando-core```is composed of the three following main core components:
 
@@ -33,7 +33,7 @@ You can request bug fixes and new features on the [issues](https://github.com/en
 
 For latest updated news, please visit the company website: http://www.entando.com.
 
-Entando Core is released under version 2.1 of the [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-2.1.txt).
+Entando Core is released under [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-2.1.txt) v2.1 
 
 For any support request, please use [Twitter](https://twitter.com/Entando).
 

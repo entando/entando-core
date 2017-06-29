@@ -25,7 +25,7 @@ See the [WIKI](https://github.com/entando/entando-core/wiki) pages for more info
 * [Getting Started](https://github.com/entando/entando-core/wiki/Getting-Started) page describes step-by-step instructions for preparing your system for installation, and for installing a single Entando instance.
 * [How It Works](https://github.com/entando/entando-core/wiki/How-iT-Works) page provides contents and architectural design to understand the Entando platform and its components.
 * [How To Use](https://github.com/entando/entando-core/wiki/How-To-Use) page provides contents to start basic implementation.
-* [FAQ] (https://github.com/entando/entando-core/wiki/Faq) page provides all the answers to general questions.
+* [FAQ](https://github.com/entando/entando-core/wiki/Faq) page provides all the answers to general questions.
 
 You can contribute to our Open Source project, please read [GitHub guidelines](https://guides.github.com/activities/contributing-to-open-source/#contributing).
 
@@ -33,7 +33,7 @@ You can request bug fixes and new features on the [issues](https://github.com/en
 
 For latest updated news, please visit the company website: http://www.entando.com.
 
-Entando Core is released under version 2.1 of the [GNU Lesser General Public License][https://www.gnu.org/licenses/lgpl-2.1.txt].
+Entando Core is released under version 2.1 of the [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-2.1.txt).
 
 For any support request, please use [Twitter](https://twitter.com/Entando).
 

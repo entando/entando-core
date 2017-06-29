@@ -146,12 +146,11 @@
 
                             <%-- comment text --%>
                             <span class="media-text avatar-utente-comment">
-                                <c:set var="STRING_TO_ESCAPE"><s:property value="#activityStreamCommentVar.commentText" /></c:set>
+                                <c:set var="STRING_TO_ESCAPE"><s:property value="#activityStreamCommentVar.commentText" escapeHtml="true"/></c:set>
                                 <c:set var="ESCAPED_STRING" value="${fn:replace(fn:replace(fn:replace(fn:trim(STRING_TO_ESCAPE), carriageReturn, ' ') , newLine, '<br />'), tabChar, '&emsp;')}" />
                                 <c:set var="ESCAPED_STRING" value="${fn:replace(ESCAPED_STRING,'<br /><br /><br />','<br />')}" />
                                 <c:out value="${ESCAPED_STRING}" escapeXml="false" />
                             </span>
-
 
                             <p class="time-notifications">
                                 <time datetime="<s:date name="#activityStreamCommentVar.commentDate" format="yyyy-MM-dd HH:mm" />" title="<s:date name="#activityStreamCommentVar.commentDate" format="yyyy-MM-dd HH:mm" />">
@@ -170,28 +169,24 @@
                 </a>
             </div>
 
-
             <div class="collapse comment-box-panel" id="openComment<s:property value="#actionLogRecordVar.id" />">
 
                 <div class="comment-box ">
                     <div class="insert-comment media <s:if test="#ajax"> hide hidden </s:if>">
                             <span class="pull-left" >
-                                <img class="img-circle avatar-utente-comment-img"  src="<s:url action="avatarStream" namespace="/do/user/avatar">
+                                <img class="img-circle avatar-utente-comment-img" src="<s:url action="avatarStream" namespace="/do/user/avatar">
                                      <s:param name="gravatarSize">26</s:param>
                                      <s:param name="username" value="#currentUsernameVar" />
                                  </s:url>" />
                         </span>
                         <div class="media-body">
                             <%-- insert comment --%>
-                            <form action="<s:url action="addComment" namespace="/do/ActivityStream" />" class="">
+                            <form action="<s:url action="addComment" namespace="/do/ActivityStream" />">
                                 <wpsf:hidden name="streamRecordId" value="%{#actionLogRecordIdVar}" />
-                                <!--<label for="textarea-stream-<s:property value="#actionLogRecordIdVar" />" class="sr-only"><s:text name="activity.stream.comment.insert.tip" /></label>-->
-
-
                                 <textarea  id="textarea-stream-<s:property value="#actionLogRecordIdVar" />" 
                                            class="form-control" cols="38" rows="1" placeholder="<s:property value="%{getText('activity.stream.comment.insert.tip')}" />" title="<s:property value="%{getText('activity.stream.comment.insert.tip')}" />"
-                                           name="commentText"></textarea>
-
+                                           name="commentText" maxlength="200">
+                                </textarea>
                                 <wpsf:submit type="button" data-entando="add-comment-button" data-loading-text="%{getText('activity.stream.note.loading')}" value="%{getText('activity.stream.button.submit.comment')}"
                                              cssClass="btn btn-primary btn-sm pull-right btn-submit-spacer">
                                     <s:text name="activity.stream.button.submit.comment" />
@@ -200,7 +195,6 @@
                         </div>
                     </div>
                 </div>   
-                <!--</div>-->
             </div>
     </li>
 </s:iterator>

@@ -2168,3 +2168,47 @@ label .fa-folder, .fa-folder {
     width: 84px;
     margin: 26px 0 26px 0;
 }
+.login-buttons .btn-login-cas{
+    height:35px;
+    width:207px;
+    background: #169a51;
+    border-color: #169a51;
+    border-radius:3px;
+    color:#fff;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-left: 227px;
+    margin-top: 7px;
+    transition: all 0.4s ease;
+    line-height: 23px;
+}
+.login-buttons .btn-login-cas:hover {
+    color: #169a51;
+    background: #fff;
+}
+.btn-custom-login-cas {
+    height: 35px !important;
+    width: 83px;
+    font-size: 11px;
+    text-transform: uppercase;
+    line-height: 35px;
+    border-radius: 3px;
+    font-family: LatoWebBold;
+    transition: all 0.4s ease;
+}
+
+.login-buttons .btn-custom-login-cas {
+    background-color: #213857 ;
+    color: #fff;
+    border-color: #fff;
+}
+.btn-custom-login-cas {
+    height: 35px !important;
+    width: 83px;
+    font-size: 11px;
+    text-transform: uppercase;
+    line-height: 31px;
+    border-radius: 3px;
+    font-family: LatoWebBold;
+    transition: all 0.4s ease;
+}

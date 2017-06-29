@@ -657,7 +657,7 @@
                                                         <li>
                                                             <a  title="<s:text name="label.edit" />: <s:property value="#content.id" /> - <s:property value="#content.description" />"
                                                                 href="<s:url action="edit" namespace="/do/jacms/Content"><s:param name="contentId" value="#content.id" /></s:url>">
-                                                                <s:text name="label.edit" /> <s:property value="#content.description" /><span class="sr-only">
+                                                                <s:text name="label.edit" />&nbsp;<s:property value="#content.description" /><span class="sr-only">
                                                                     <s:text name="label.edit" />&nbsp;<s:property value="#content.description" /></span>
                                                             </a>
                                                         </li>

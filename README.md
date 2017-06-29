@@ -20,22 +20,22 @@ The Entando platform (actual version **v4.3.1**) project includes also the follo
 
 * **entando-ux-packages**: https://github.com/entando/entando-ux-packages. Entando ux-packages are modules capable to implement a range of specific customizations.
 
-See the [WIKI] (https://github.com/entando/entando-core/wiki) pages for more information and operational details of the project. At the moment, the wiki pages are:
+See the [WIKI](https://github.com/entando/entando-core/wiki) pages for more information and operational details of the project. At the moment, the wiki pages are:
 
-* [Getting Started] (https://github.com/entando/entando-core/wiki/Getting-Started) page describes step-by-step instructions for preparing your system for installation, and for installing a single Entando instance.
-* [How It Works] (https://github.com/entando/entando-core/wiki/How-iT-Works) page provides contents and architectural design to understand the Entando platform and its components.
-* [How To Use] (https://github.com/entando/entando-core/wiki/How-To-Use) page provides contents to start basic implementation.
+* [Getting Started](https://github.com/entando/entando-core/wiki/Getting-Started) page describes step-by-step instructions for preparing your system for installation, and for installing a single Entando instance.
+* [How It Works](https://github.com/entando/entando-core/wiki/How-iT-Works) page provides contents and architectural design to understand the Entando platform and its components.
+* [How To Use](https://github.com/entando/entando-core/wiki/How-To-Use) page provides contents to start basic implementation.
 * [FAQ] (https://github.com/entando/entando-core/wiki/Faq) page provides all the answers to general questions.
 
-You can contribute to our Open Source project, please read [GitHub guidelines] (https://guides.github.com/activities/contributing-to-open-source/#contributing).
+You can contribute to our Open Source project, please read [GitHub guidelines](https://guides.github.com/activities/contributing-to-open-source/#contributing).
 
-You can request bug fixes and new features on the [issues] (https://github.com/entando/entando-core/issues) page.
+You can request bug fixes and new features on the [issues](https://github.com/entando/entando-core/issues) page.
 
 For latest updated news, please visit the company website: http://www.entando.com.
 
 Entando Core is released under version 2.1 of the [GNU Lesser General Public License][https://www.gnu.org/licenses/lgpl-2.1.txt].
 
-For any support request, please use [Twitter] (https://twitter.com/Entando).
+For any support request, please use [Twitter](https://twitter.com/Entando).
 
 Enjoy!
 

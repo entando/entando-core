@@ -274,9 +274,9 @@
                                                 <s:if test="%{null != #uniqueGuiFragmentVar && null != #uniqueGuiFragmentVar.defaultGui}">
                                                     <div class="panel panel-default">
                                                         <div class="panel-body">
-                                                            <c:set var="xmlConfigurationVar"><s:property value="#uniqueGuiFragmentVar.defaultGui" /></c:set>
+                                                            <c:set var="xmlConfigurationVar"><s:property value="#uniqueGuiFragmentVar.defaultGui" escapeHtml="true" /></c:set>
                                                             <c:set var="ESCAPED_STRING_DEFAULT" value="${fn:replace(fn:replace(xmlConfigurationVar, tabChar, '&emsp;'),carriageReturnChar, '')}" />
-                                                            <pre><c:out value="${ESCAPED_STRING_DEFAULT}" escapeXml="true" /></pre>
+                                                            <pre><c:out value="${ESCAPED_STRING_DEFAULT}" escapeXml="false" /></pre>
                                                         </div>
                                                     </div>
                                                 </s:if>
@@ -334,9 +334,9 @@
                                                         <div class="tab-pane fade" id="widget-default-gui-<s:property value="#status.count" />">
                                                             <div class="panel panel-default">
                                                                 <div class="panel-body">
-                                                                    <c:set var="xmlConfigurationVar"><s:property value="#guiFragmentVar.defaultGui" /></c:set>
+                                                                    <c:set var="xmlConfigurationVar"><s:property value="#guiFragmentVar.defaultGui" escapeHtml="true" /></c:set>
                                                                     <c:set var="ESCAPED_STRING" value="${fn:replace(fn:replace(xmlConfigurationVar, tabChar, '&emsp;'),carriageReturnChar, '')}" />
-                                                                    <pre><c:out value="${ESCAPED_STRING}" escapeXml="true" /></pre>
+                                                                    <pre><c:out value="${ESCAPED_STRING}" escapeXml="false" /></pre>
                                                                 </div>
                                                             </div>
                                                         </div>

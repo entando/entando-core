@@ -32,10 +32,7 @@
         <span class="entando-development"><s:text name="note.administration.console" /></span>    </a>
 </div>
 <nav class="collapse navbar-collapse">
-
     <ul class="nav navbar-nav navbar-right navbar-iconic">
-
-
         <li id="preview-portal" class="drawer-pf-trigger2 notifications dropdown">
             <a class="nav-item-iconic" target="#" href="<s:url value="/" />" title="<s:text name="note.goToPortal" /> ( <s:text name="note.sameWindow" /> )">
                 <span class="icon fa fa-globe fa-fw"></span>&#32;
@@ -43,15 +40,12 @@
             </a>
         </li>
 
-
         <li id="notification-ico" class="drawer-pf-trigger2 notifications dropdown">
             <a class="nav-item-iconic drawer-pf-trigger-icon">
                 <span class="fa fa-bell" title="Notifications"></span>
 
             </a>
         </li>
-
-
 
         <li class="dropdown">
             <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

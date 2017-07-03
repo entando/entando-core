@@ -12,15 +12,15 @@ It provides the basic structure, tools, and functionality to build an instance o
 2. **admin-console**, includes tools to manage administrative core features and WCMS functionality
 3. **portal-ui**, provides tools to create interactive web portal UI/UX
 
-The Entando platform (actual version **v4.3.1**) project includes also the following Github projects:
+The Entando platform **v4.3.1** project includes also the following Github projects:
 
-* **entando-components**: https://github.com/entando/entando-components. Entando platform relies on a number of components or extensions that add functionality not included with the standard Entando platform. There are various types of components. These could extend the functionality of Entando engine, admin-console and portal-ui (apps components), or extend the functionality of the Entando engine, and admin-console (plugins components), or extend the functionality of portal-ui (bundles components).
+* **entando-components**: https://github.com/entando/entando-components. Entando platform relies on a number of components or extensions that add functionality not included with the standard Entando platform. There are two types of components: Plugins and Bundles. Plugins extend the functionality of Entando engine, admin-console and portal-ui; Bundles extend the functionality of portal-ui.
 
-* **entando-archetypes**: https://github.com/entando/entando-archetypes. Entando archetypes project provides samples to kickstart your standard/basic Entando portal development and components.
+* **entando-archetypes**: https://github.com/entando/entando-archetypes. Entando archetypes project provides samples to kickstart your basic Entando application development and components.
 
 * **entando-ux-packages**: https://github.com/entando/entando-ux-packages. Entando ux-packages are modules capable to implement a range of specific customizations.
 
-See the [WIKI](https://github.com/entando/entando-core/wiki) pages for more information and operational details of the project. At the moment, the wiki pages are:
+See the [WIKI](https://github.com/entando/entando-core/wiki) pages for more project's information details. At the moment, the wiki pages are:
 
 * [Getting Started](https://github.com/entando/entando-core/wiki/Getting-Started) page describes step-by-step instructions for preparing your system for installation, and for installing a single Entando instance.
 * [How It Works](https://github.com/entando/entando-core/wiki/How-iT-Works) page provides contents and architectural design to understand the Entando platform and its components.

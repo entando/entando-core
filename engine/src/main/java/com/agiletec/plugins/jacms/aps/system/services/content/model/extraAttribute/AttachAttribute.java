@@ -26,14 +26,16 @@ import org.slf4j.Logger;
 /**
  * Rappresenta un attributo di entità di tipo attachment. L'attachment e il
  * testo associato possono essere diversi per ciascun lingua.
+ *
  * @author M.Diana - S.Didaci - E.Santoboni
  */
 public class AttachAttribute extends AbstractResourceAttribute {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(AttachAttribute.class);
-	
+
 	/**
 	 * Restituisce il path URL dell'attachment.
+	 *
 	 * @return Il path dell'attachment.
 	 */
 	public String getAttachPath() {
@@ -50,7 +52,7 @@ public class AttachAttribute extends AbstractResourceAttribute {
 	protected String getDefaultPath() {
 		return this.getAttachPath();
 	}
-	
+
 	@Override
 	public String getIndexeableFieldValue() {
 		StringBuilder buffer = new StringBuilder();
@@ -63,7 +65,7 @@ public class AttachAttribute extends AbstractResourceAttribute {
 			InputStream is = ((AttachResource) resource).getResourceStream();
 			if (null != is) {
 				AutoDetectParser parser = new AutoDetectParser();
-				BodyContentHandler handler = new BodyContentHandler();
+				BodyContentHandler handler = new BodyContentHandler(-1);
 				Metadata metadata = new Metadata();
 				try {
 					parser.parse(is, handler, metadata);

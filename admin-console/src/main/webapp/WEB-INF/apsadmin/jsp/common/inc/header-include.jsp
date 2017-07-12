@@ -23,5 +23,5 @@ TO_DO : Download last FontAwesome
 <script src="<wp:resourceURL />administration/js/pages/settingsPage.js"></script>
 <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
 <script src="<wp:resourceURL />administration/js/bootstrap-switch.min.js"></script>
-<script src="<wp:resourceURL />administration\js\bootstrap-datepicker\bootstrap-datepicker.js"></script>
+<script src="<wp:resourceURL />administration/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 

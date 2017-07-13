@@ -2,6 +2,11 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
+    <li>
+        <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: 
+           <s:text name="title.entityAdmin.manager" />&#32;<s:property value="entityManagerName" />">
+    </li>
     <li>
         <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.entityAdmin.manager" />&#32;<s:property value="entityManagerName" />">
             <s:text name="%{'title.' + entityManagerName + '.management'}" />
@@ -30,12 +35,13 @@
 </div>
 <br>
 
-<div>
+<div class="mb-20">
 
     <s:set var="listAttribute" value="listAttribute" />
     <s:set var="compositeAttribute" value="compositeAttributeOnEdit" />
 
-    <div class="alert alert-info">
+    <div class="alert alert-success">
+        <span class="pficon pficon-info"></span>
         <s:text name="note.workingOnAttribute" />:&#32;
         <s:if test="null != #listAttribute">
             <span><s:property value="#compositeAttribute.type" /></span>,&#32;
@@ -75,29 +81,61 @@
             <wpsf:hidden name="attributeTypeCode" />
             <wpsf:hidden name="strutsAction" />
         </p>
-        <fieldset class="col-xs-12"><legend><s:text name="label.info" /></legend>
+        <fieldset class="col-xs-12">
+            <legend><s:text name="label.info" />
+            </legend>
             <div class="form-group">
-                <label for="attributeType"><s:text name="label.type" /></label>
-                <wpsf:textfield  cssClass="form-control" id="attributeType" name="attributeType" value="%{attributeTypeCode}" disabled="true" />
+                <div class="col-xs-2 control-label ">
+                    <label for="attributeType"><s:text name="label.type" /></label>
+                </div>
+                <div class="col-xs-10 ">
+                    <wpsf:textfield  cssClass="form-control" id="attributeType" name="attributeType" value="%{attributeTypeCode}" disabled="true" />
+                </div>
             </div>
             <div class="form-group">
-                <label for="attributeName"><s:text name="label.code" /></label>
-                <wpsf:textfield name="attributeName" id="attributeName" cssClass="form-control"/>
+                <div class="col-xs-2 control-label ">
+                    <label for="attributeName">
+                        <s:text name="label.code" />
+                    </label>
+                </div>
+                <div class="col-xs-10 ">
+                    <wpsf:textfield name="attributeName" id="attributeName" cssClass="form-control"/>
+                </div>
             </div>
             <div class="form-group">
-                <label for="attributeDescription"><s:text name="label.description" /></label>
-                <wpsf:textfield name="attributeDescription" id="attributeDescription" cssClass="form-control"/>
+                <div class="col-xs-2 control-label ">
+                    <label for="attributeDescription"><s:text name="label.description" /></label>
+                </div>
+                <div class="col-xs-10 ">
+                    <wpsf:textfield name="attributeDescription" id="attributeDescription" cssClass="form-control"/>
+                </div>
             </div>
-            <ul>
-                <li class="checkbox">
-                    <label for="required"><s:text name="Entity.attribute.flag.mandatory.full" /><wpsf:checkbox name="required" id="required"/></label>
-                </li>
-                <s:if test="isEntityManagerSearchEngineUser() && isIndexableOptionSupported(attributeTypeCode)">
-                    <li class="checkbox">
-                        <label for="indexable"><s:text name="Entity.attribute.flag.indexed.full" /><wpsf:checkbox name="indexable" id="indexable"/></label>
-                    </li>
-                </s:if>
-            </ul>
+
+            <div class="form-group">
+                <div class="col-xs-2 control-label ">
+
+                    <label for="required">
+                        <s:text name="Entity.attribute.flag.mandatory.full" />
+                    </label>
+                </div>
+                <div class="col-xs-10">
+                    <wpsf:checkbox name="required" id="required" cssClass="bootstrap-switch"/>
+                </div>
+            </div>
+            <s:if test="isEntityManagerSearchEngineUser() && isIndexableOptionSupported(attributeTypeCode)">
+                <div class="form-group">
+                    <div class="col-xs-2 control-label ">
+
+                        <label for="indexable">
+                            <s:text name="Entity.attribute.flag.indexed.full" />
+                        </label>
+                    </div>
+                    <div class="col-xs-10">
+                        <wpsf:checkbox name="indexable" id="indexable" cssClass="bootstrap-switch"/>
+                    </div>
+                </div>
+            </s:if>
+
         </fieldset>
 
         <s:if test="#attribute.textAttribute">
@@ -114,12 +152,10 @@
 
         <s:include value="/WEB-INF/apsadmin/jsp/entity/include/validation-rules-ognl.jsp" />
 
-        <div class="form-group">
-            <div class="col-xs-12">
-                <wpsf:submit type="button" cssClass="btn btn-primary btn-block" >
-                    <s:text name="label.save" />
-                </wpsf:submit>
-            </div>
+        <div class="col-xs-12">
+            <wpsf:submit type="button" cssClass="btn btn-primary pull-right" >
+                <s:text name="label.save" />
+            </wpsf:submit>
         </div>
     </s:form>
 </div>

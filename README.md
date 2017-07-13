@@ -23,8 +23,8 @@ The Entando platform **v4.3.1** project includes also the following Github proje
 See the [WIKI](https://github.com/entando/entando-core/wiki) pages for more project's information details. At the moment, the wiki pages are:
 
 * [Getting Started](https://github.com/entando/entando-core/wiki/Getting-Started) page describes step-by-step instructions for preparing your system for installation, and for installing a single Entando instance.
-* [How It Works](https://github.com/entando/entando-core/wiki/How-iT-Works) page provides contents and architectural design to understand the Entando platform and its components.
-* [How To Use](https://github.com/entando/entando-core/wiki/How-To-Use) page provides contents to start basic implementation.
+* [How the Core works](https://github.com/entando/entando-core/wiki/How-the-Core-Works) page provides contents and architectural design to understand the Entando platform and its components.
+* [How to use the Core](https://github.com/entando/entando-core/wiki/How-to-use-the-Core) page provides contents to start basic implementation.
 * [FAQ](https://github.com/entando/entando-core/wiki/Faq) page provides all the answers to general questions.
 
 You can contribute to our Open Source project, please read [GitHub guidelines](https://guides.github.com/activities/contributing-to-open-source/#contributing).

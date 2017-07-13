@@ -66,28 +66,27 @@
                             <td><s:property value="#groupVar.name" /></td>
                             <td class="text-center table-view-pf-actions">
                                 <div class="dropdown dropdown-kebab-pf">
-                                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <button class="btn btn-menu-right dropdown-toggle"
+                                            type="button" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
                                         <span class="fa fa-ellipsis-v"></span>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
-                                        <li>
-                                            <a title="<s:text name="title.groupDetail" />: <s:property value="#groupVar.name" />"
-                                               href="<s:url action="detail"><s:param name="name" value="#groupVar.name"/></s:url>">
+                                        <li><a
+                                                title="<s:text name="title.groupDetail" />: <s:property value="#groupVar.name" />"
+                                                href="<s:url action="detail"><s:param name="name" value="#groupVar.name"/></s:url>">
                                                 <span><s:text name="title.groupDetail" /></span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a title="<s:text name="label.edit" />:&#32;<s:property value="#groupVar.name" />"
-                                               href="<s:url action="edit"><s:param name="name" value="#groupVar.name"/></s:url>">
+                                            </a></li>
+                                        <li><a
+                                                title="<s:text name="label.edit" />:&#32;<s:property value="#groupVar.name" />"
+                                                href="<s:url action="edit"><s:param name="name" value="#groupVar.name"/></s:url>">
                                                 <span><s:text name="label.edit" /></span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a title="<s:text name="label.remove" />: <s:property value="#groupVar.name" />"
-                                               href="<s:url action="trash"><s:param name="name" value="#groupVar.name"/></s:url>">
+                                            </a></li>
+                                        <li><a
+                                                title="<s:text name="label.remove" />: <s:property value="#groupVar.name" />"
+                                                href="<s:url action="trash"><s:param name="name" value="#groupVar.name"/></s:url>">
                                                 <span><s:text name="label.remove" /></span>
-                                            </a>
-                                        </li>
+                                            </a></li>
                                     </ul>
                                 </div>
                             </td>

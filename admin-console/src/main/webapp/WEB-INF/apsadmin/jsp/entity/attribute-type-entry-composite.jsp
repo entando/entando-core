@@ -4,11 +4,16 @@
 
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />: <s:text name="title.entityAdmin.manager" />&#32;<s:property value="entityManagerName" />"></li>
+    <s:text name="%{'title.' + entityManagerName + '.menu'}"/>
+    <li><a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />:
+           <s:text name="title.entityAdmin.manager" />&#32;<s:property value="entityManagerName" />">
+    </li>
     <li><s:text name="%{'title.' + entityManagerName + '.management'}" /></a>
-
-    <li class="page-title-container"><a href="<s:url action="initEditEntityType" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param><s:param name="entityTypeCode"><s:property value="entityType.typeCode" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />
-                                        : <s:text name="title.entityTypes.editType.edit" />"><s:text name="title.entityTypes.editType.edit" />
+    <li class="page-title-container">
+        <a href="<s:url action="initEditEntityType" namespace="/do/Entity"><s:param name="entityManagerName"><s:property value="entityManagerName" />
+               </s:param><s:param name="entityTypeCode"><s:property value="entityType.typeCode" /></s:param></s:url>" title="<s:text name="note.goToSomewhere" />
+           : <s:text name="title.entityTypes.editType.edit" />">
+            <s:text name="title.entityTypes.editType.edit" />
             : <s:property value="entityType.typeCode" /> - <s:property value="entityType.typeDescr" />
         </a>
     </li>
@@ -53,7 +58,7 @@
         <s:set var="listAttribute" value="listAttribute" />
         <s:set var="compositeAttribute" value="compositeAttributeOnEdit" />
 
-        <div class="alert alert-info">
+        <div class="alert alert-success">
             <span class="pficon pficon-info"></span>
             <s:text name="note.workingOnAttribute" />:&#32;
             <s:if test="null != #listAttribute">
@@ -63,7 +68,7 @@
                 ( <s:property value="#listAttribute.type" />)
             </s:if>
             <s:else>
-                <code><s:property value="#compositeAttribute.name" /></code>
+                <s:property value="#compositeAttribute.name" />
             </s:else>
         </div>
 
@@ -85,45 +90,52 @@
                     <div class="input-group">
                         <wpsf:select list="allowedAttributeElementTypes" headerKey="" headerValue="%{getText('note.choose')}" id="attributeTypeCode" name="attributeTypeCode" listKey="type" listValue="type" cssClass="form-control"/>
                         <span class="input-group-btn">
-                            <wpsf:submit type="button" value="%{getText('label.add')}" action="addAttributeElement" cssClass="btn btn-default" />
+                            <wpsf:submit type="button" value="%{getText('label.add')}" action="addAttributeElement" cssClass="btn btn-primary" />
                         </span>
                     </div>
                 </div>
             </div>
 
             <s:if test="#compositeAttribute.attributes.size > 0">
-                <div class="table-responsive margin-base-vertical">
-                    <table class="table table-bordered" id="fagiano_compositeTypesList">
-                        <tr>
-                            <th class="text-center padding-large-left padding-large-right col-xs-4 col-sm-3 col-md-2 col-lg-2"><abbr title="<s:text name="label.actions" />">&ndash;</abbr></th>
-                            <th><s:text name="label.code" /></th>
-                            <th><s:text name="label.type" /></th>
-                            <th class="text-center text-nowrap" class="text-center text-nowrap"><abbr title="<s:text name="Entity.attribute.flag.mandatory.full" />"><s:text name="Entity.attribute.flag.mandatory.short" /></abbr></th>
-                        </tr>
+                <table class="table table-striped table-bordered table-hover no-mb">
+                    <tr>
+                        <th class="table-w-20 "><s:text name="label.code" /></th>
+                        <th class="table-w-20 "><s:text name="label.type" /></th>
+                        <th class="text-center table-w-5 "><s:text name="Entity.attribute.flag.mandatory.full" /></th>
+                        <th class="text-center table-w-5"><s:text name="label.actions" /></th>
+                    </tr>
 
-                        <s:iterator value="#compositeAttribute.attributes" var="attribute" status="elementStatus">
-                            <tr>
-                                <td>
-                                    <s:set var="elementIndex" value="#elementStatus.index" />
-                                    <s:include value="/WEB-INF/apsadmin/jsp/entity/include/attribute-operations-misc-composite.jsp" />
-                                </td>
-                                <td><code><s:property value="#attribute.name" /></code></td>
-                                <td><s:property value="#attribute.type" /></td>
-                                <td class="text-center">
-                                    <s:if test="#attribute.required">
-                                        <span class="icon fa fa-check-square-o" title="<s:text name="label.yes" />"></span>
-                                    </s:if>
-                                    <s:else>
-                                        <span class="icon fa fa-square-o" title="<s:text name="label.no" />"></span>
-                                    </s:else>
-                                </td>
-                            </tr>
-                        </s:iterator>
-                    </table>
-                </s:if>
+                    <s:iterator value="#compositeAttribute.attributes" var="attribute" status="elementStatus">
+                        <tr>
+                            <td><s:property value="#attribute.name" /></td>
+                            <td><s:property value="#attribute.type" /></td>
+                            <td class="text-center">
+                                <s:if test="#attribute.required">
+                                    <span class="icon fa fa-check-square-o" title="<s:text name="label.yes" />"></span>
+                                </s:if>
+                                <s:else>
+                                    <span class="icon fa fa-square-o" title="<s:text name="label.no" />"></span>
+                                </s:else>
+                            </td>
+                            <td class="text-center table-view-pf-actions">
+                                <div class="dropdown dropdown-kebab-pf">
+                                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="fa fa-ellipsis-v"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <s:set var="elementIndex" value="#elementStatus.index" />
+                                        <s:include value="/WEB-INF/apsadmin/jsp/entity/include/attribute-operations-misc-composite.jsp" />
+                                        <li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </s:iterator>
+                </table>
+            </s:if>
         </fieldset>
 
-        <div class="col-xs-12">
+        <div class="col-xs-12 mt-20">
             <div class="form-group">
                 <wpsf:submit type="button" cssClass="btn btn-primary pull-right" action="saveCompositeAttribute" >
                     <s:text name="label.save" />

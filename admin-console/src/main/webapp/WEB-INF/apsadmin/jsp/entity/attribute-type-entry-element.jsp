@@ -84,14 +84,18 @@
                 <legend><s:text name="label.info" /></legend>
 
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="attributeTypeCode"><s:text name="label.type" />:</label>
-
-                    <wpsf:textfield id="attributeTypeCode" name="attributeTypeCode" value="%{attributeTypeCode}" disabled="true" cssClass="form-control" />
+                    <label class="col-sm-2 control-label" class="col-sm-2 control-label" for="attributeTypeCode"><s:text name="label.type" />:</label>
+                    <div class="col-xs-10">
+                        <wpsf:textfield id="attributeTypeCode" name="attributeTypeCode" value="%{attributeTypeCode}" disabled="true" cssClass="form-control" />
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <wpsf:checkbox name="indexable" id="indexable" />
-                    <label for="indexable"><s:text name="Entity.attribute.flag.indexed.full" /></label>
+
+                    <label class="col-sm-2 control-label" for="indexable"><s:text name="Entity.attribute.flag.indexed.full" /></label>
+                    <div class="col-xs-10">
+                        <wpsf:checkbox name="indexable" id="indexable" cssClass="bootstrap-switch" />
+                    </div>
                 </div>
 
             </fieldset>

@@ -48,16 +48,9 @@
                     </div>
                     <div class="col-xs-4 text-left">
                         <s:set var="paramName" value="'extendedPrivacyModuleEnabled'" />
-                        <input type="hidden"
-                               value="<s:property value="systemParams[#paramName]" />"
-                               id="<s:property value="#paramName"/>"
-                               name="<s:property value="#paramName"/>" />
-                        <input
-                            type="checkbox"
-                            value="<s:property value="systemParams[#paramName]" />"
-                            id="ch_<s:property value="#paramName"/>"
-                            class="bootstrap-switch"
-                            <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
+                        <input type="hidden" value="<s:property value="systemParams[#paramName]" />" id="<s:property value="#paramName"/>" name="<s:property value="#paramName"/>" />
+                        <input type="checkbox" value="<s:property value="systemParams[#paramName]" />"  id="ch_<s:property value="#paramName"/>" class="bootstrap-switch"
+                               <s:if test="systemParams[#paramName] == 'true'">checked="checked"</s:if> >
                         </div>
                     </div>
                 </div>
@@ -66,45 +59,48 @@
                     <div class="row">
                     <s:set var="paramName" value="'maxMonthsSinceLastAccess'" />
                     <div class="col-xs-4 col-label">
-                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastAccess" /></span>
+                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastAccess" /></span>  <s:property value="systemParams[#paramName]"/>
                     </div>
                     <div class="col-xs-4 text-left">
                         <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
                         <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
                                 <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
-                                <s:property value="systemParams[#paramName]"/>
+                                <s:text name="sysconfig.months" />
+                                <%--<s:property value="systemParams[#paramName]"/>--%>
                             </label>
                             <label class="btn btn-default <s:if test="systemParams[#paramName] == 0"> active</s:if>" onclick="hideCustomValue('<s:property value="#paramName"/>')">
                                 <input type="radio" class="radiocheck" id="admin-settings-area-<s:property value="#paramName"/>_false" name="<s:property value="#paramName"/>" value="0" <s:if test="systemParams[#paramName] == 0">checked="checked"</s:if> />
-                                    false
-                                </label>
-                            </div>
+                                <s:text name="sysconfig.disable" />
+                            </label>
                         </div>
                     </div>
+                </div>
 
-                    <div class="row">
+                <div class="row">
                     <s:set var="paramName" value="'maxMonthsSinceLastPasswordChange'" />
                     <div class="col-xs-4 col-label">
-                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastPasswordChange" /></span>
+                        <span class="display-block"><s:text name="sysconfig.maxMonthsSinceLastPasswordChange" /></span> <span class=""><s:property value="systemParams[#paramName]"/></span>
                     </div>
                     <div class="col-xs-4 text-left">
                         <input type="text" id="admin-settings-area-<s:property value="#paramName"/>_input" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" style="display: none"/>
                         <div class="btn-group" data-toggle="buttons">
                             <label class="btn btn-default <s:if test="systemParams[#paramName] != 0"> active</s:if>" onclick="setCustomValue('<s:property value="#paramName"/>')" id="admin-settings-area-<s:property value="#paramName"/>_label">
                                 <input type="radio" class="" id="admin-settings-area-<s:property value="#paramName"/>_value" name="<s:property value="#paramName"/>" value="<s:property value="systemParams[#paramName]"/>" <s:if test="systemParams[#paramName] != 0">checked="checked"</s:if> />
-                                <s:property value="systemParams[#paramName]"/>
+                                <s:text name="sysconfig.months" />
+                                <%--<s:property value="systemParams[#paramName]"/>--%>
                             </label>
                             <label class="btn btn-default <s:if test="systemParams[#paramName] == 0"> active</s:if>" onclick="hideCustomValue('<s:property value="#paramName"/>')">
                                 <input type="radio" class="" id="admin-settings-area-<s:property value="#paramName"/>_false" name="<s:property value="#paramName"/>" value="0" <s:if test="systemParams[#paramName] == 0">checked="checked"</s:if> />
-                                    false
-                                </label>
-                            </div>
+                                <s:text name="sysconfig.disable" />
+                            </label>
                         </div>
 
                     </div>
+
                 </div>
-                <legend><s:text name="sysconfig.legend.misc" /></legend>
+            </div>
+            <legend><s:text name="sysconfig.legend.misc" /></legend>
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-4 col-label">

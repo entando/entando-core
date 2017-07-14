@@ -345,7 +345,8 @@
 
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="listNestedType"><s:text
-                        name="Entity.attribute.setting.listType" /></label>
+                        name="Entity.attribute.setting.listType" />&nbsp;<i class="fa fa-asterisk required-icon"
+                             style="position: relative; top: -4px; right: 0px"></i></label>
                 <div class="col-sm-10">
                     <wpsf:select list="getAllowedNestedTypes(#attribute)"
                                  name="listNestedType" id="listNestedType" listKey="type"

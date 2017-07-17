@@ -1,0 +1,25 @@
+.grid-preview {
+    padding: 0 20px;
+    border: 1px solid #bbb;
+    border-radius: 1px;
+}
+.empty-slot  {
+    background: lightgray;
+}
+.grid-slot {
+    border: 1px dashed #bbb;
+    background: #fafafa;
+    padding: 2px;
+    color: #bbb;
+}
+
+.grid-slot.ui-droppable-disabled {
+    padding: 0;
+    margin: 0;
+    border: none;
+    position: relative;
+}
+
+.grid-slot .data-description {
+    margin: 5px 10px;
+}

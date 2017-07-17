@@ -1,0 +1,73 @@
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.settings-form .form-group > .row > * {
+    text-align: right;
+}
+.settings-form .form-group select {
+    height: 30px;
+    line-height: 30px;
+}
+
+
+.bottom-row .btn-primary {
+    background: #39a5dc!important;
+    border-color: #00659c!important;
+    height: 30px;
+    width: 150px;
+}
+.bottom-row .row > div {
+    background: #d1d1d1;
+}
+
+.form-group-label {
+    margin-top: 8px;
+    margin-right: 20px;
+}
+
+.form-group-separator {
+    border-bottom: 1px solid #979797;
+    color: #aaabad;
+    font-size: 12px;
+}
+
+.col-label {
+    min-height: 30px;
+    line-height: 30px;
+}
+.col-label > span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.fa.help-icon {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    font-size: 16px;
+    line-height: 30px;
+}
+.fa.required-icon {
+    position: absolute;
+    top: -4px;
+    right: 9px;
+    font-size: 8px;
+    line-height: 30px;
+    color: #4e4e4e;
+}
+
+.nav-tabs-pattern > li > a {
+    background: #f5f5f5;
+    border: 1px solid #ccc !important;
+    margin-bottom: 0 !important;
+    line-height: 59px;
+    padding:0;
+}
+
+.no-decorations {
+    text-decoration: none;
+}

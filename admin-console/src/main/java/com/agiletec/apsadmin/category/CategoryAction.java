@@ -39,7 +39,8 @@ import com.agiletec.apsadmin.system.BaseActionHelper;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
 /**
- * Action class which handles categories. 
+ * Action class which handles categories.
+ *
  * @author E.Santoboni - G.Cocco
  */
 public class CategoryAction extends AbstractTreeAction {
@@ -49,8 +50,12 @@ public class CategoryAction extends AbstractTreeAction {
 	@Override
 	public void validate() {
 		super.validate();
+		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD
+				|| this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
+			this.checkParentNode(this.getParentCategoryCode());
+		}
 		this.checkCode();
-		this.checkTitles();
+		this.checkTitles(true);
 	}
 
 	public Integer getServiceStatus() {
@@ -61,10 +66,9 @@ public class CategoryAction extends AbstractTreeAction {
 		return this.getCategoryManager().getReloadStatus();
 	}
 
-	public List<TreeNodeWrapper> getAvailableNodesForMoveTreeAjax() {	
+	public List<TreeNodeWrapper> getAvailableNodesForMoveTreeAjax() {
 		List<TreeNodeWrapper> result = new ArrayList<TreeNodeWrapper>();
 		try {
-			System.out.println("ENTRATO getAvailableNodesForMoveTreeAjax");
 			String startCategoryCode = this.getSelectedNode();
 			if (StringUtils.isBlank(startCategoryCode)) {
 				_logger.warn("required parameter 'selectedNode' missing");
@@ -75,22 +79,23 @@ public class CategoryAction extends AbstractTreeAction {
 				_logger.warn("category {} is null", startCategoryCode);
 				return result;
 			}
-			
-			List<String> allowedGroupCodes = new ArrayList<String>();
-			allowedGroupCodes.add(nodeToMove.getGroup());
-			
+
 			//XXX FIX JS
 			this.setCategoryCodeToken(super.getParameter("categoryCodeToken"));
 
 			List<Category> searchResult = this.getCategoryManager().searchCategories(this.getCategoryCodeToken());
-			if (null == searchResult || searchResult.isEmpty()) return result;
+			if (null == searchResult || searchResult.isEmpty()) {
+				return result;
+			}
 
 			BeanComparator comparator = new BeanComparator("code");
 			Collections.sort(result, comparator);
 
 			int maxIndex = 30;
 			String maxParam = super.getParameter("max");
-			if (StringUtils.isNotBlank(maxParam) && StringUtils.isNumeric(maxParam)) maxIndex = new Integer(maxParam).intValue();
+			if (StringUtils.isNotBlank(maxParam) && StringUtils.isNumeric(maxParam)) {
+				maxIndex = new Integer(maxParam).intValue();
+			}
 
 			Iterator<Category> it = searchResult.iterator();
 			while (result.size() < maxIndex && it.hasNext()) {
@@ -106,44 +111,50 @@ public class CategoryAction extends AbstractTreeAction {
 		return result;
 	}
 
-	private void checkTitles() {
+	private void checkTitles(boolean checkErrors) {
 		Iterator<Lang> langsIter = this.getLangManager().getLangs().iterator();
 		while (langsIter.hasNext()) {
 			Lang lang = (Lang) langsIter.next();
-			String titleKey = "lang"+lang.getCode();
+			String titleKey = "lang" + lang.getCode();
 			String title = this.getRequest().getParameter(titleKey);
 			if (null != title) {
 				this.getTitles().put(lang.getCode(), title.trim());
 			}
-			if (null == title || title.trim().length() == 0) {
-				String[] args = {lang.getDescr()};
-				this.addFieldError(titleKey, this.getText("error.category.insertTitle", args));
+			if (checkErrors) {
+				if (null == title || title.trim().length() == 0) {
+					String[] args = {lang.getDescr()};
+					this.addFieldError(titleKey, this.getText("error.category.insertTitle", args));
+				}
 			}
 		}
 	}
 
 	private void checkCode() {
 		String code = this.getCategoryCode();
-		if ((this.getStrutsAction() == ApsAdminSystemConstants.ADD || 
-				this.getStrutsAction() == ApsAdminSystemConstants.PASTE) 
+		if ((this.getStrutsAction() == ApsAdminSystemConstants.ADD
+				|| this.getStrutsAction() == ApsAdminSystemConstants.PASTE)
 				&& null != code && code.trim().length() > 0) {
 			String currectCode = BaseActionHelper.purgeString(code.trim());
 			if (currectCode.length() > 0 && null != this.getCategoryManager().getCategory(currectCode)) {
 				String[] args = {currectCode};
 				this.addFieldError("categoryCode", this.getText("error.category.duplicateCode", args));
 			}
+
 			this.setCategoryCode(currectCode);
 		}
 	}
-	
+
+	protected String checkParentNode(String selectedNode) {
+		if (null == selectedNode || selectedNode.trim().length() == 0) {
+			this.addFieldError("parentCategoryCode", this.getText("error.category.noParentSelected"));
+			return "categoryTree";
+		}
+		return null;
+	}
+
 	public String add() {
 		String selectedNode = this.getSelectedNode();
 		try {
-			Category category = this.getCategory(selectedNode);
-			if (null == category) {
-				this.addActionError(this.getText("error.category.selectCategory"));
-				return "categoryTree";
-			}
 			this.setStrutsAction(ApsAdminSystemConstants.ADD);
 			this.setParentCategoryCode(selectedNode);
 		} catch (Throwable t) {
@@ -152,15 +163,17 @@ public class CategoryAction extends AbstractTreeAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String edit() {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		return this.extractCategoryFormValues();
 	}
-	
+
 	public String showDetail() {
 		String result = this.extractCategoryFormValues();
-		if (!result.equals(SUCCESS)) return result;
+		if (!result.equals(SUCCESS)) {
+			return result;
+		}
 		this.extractReferencingObjects(this.getSelectedNode());
 		return result;
 	}
@@ -182,23 +195,27 @@ public class CategoryAction extends AbstractTreeAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String trash() {
 		try {
-			String check = this.chechDelete();
-			if (null != check) return check;
+			String check = this.checkDelete();
+			if (null != check) {
+				return check;
+			}
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
-	
+
 	public String delete() {
 		String selectedNode = this.getSelectedNode();
 		try {
-			String check = this.chechDelete();
-			if (null != check) return check;
+			String check = this.checkDelete();
+			if (null != check) {
+				return check;
+			}
 			Category currentCategory = this.getCategory(selectedNode);
 			this.getCategoryManager().deleteCategory(selectedNode);
 			this.setSelectedNode(currentCategory.getParent().getCode());
@@ -210,11 +227,14 @@ public class CategoryAction extends AbstractTreeAction {
 	}
 
 	/**
-	 * Perform all the needed checks before deleting a category.
-	 * When errors are detected a new actionMessaged, containing the appropriate error code and messaged, is created.
-	 * @return null if the deletion operation is successful, otherwise the error code
+	 * Perform all the needed checks before deleting a category. When errors are
+	 * detected a new actionMessaged, containing the appropriate error code and
+	 * messaged, is created.
+	 *
+	 * @return null if the deletion operation is successful, otherwise the error
+	 * code
 	 */
-	protected String chechDelete() {
+	protected String checkDelete() {
 		Category currentCategory = this.getCategory(this.getSelectedNode());
 		if (null == currentCategory) {
 			_logger.info("Required a selected node");
@@ -251,7 +271,7 @@ public class CategoryAction extends AbstractTreeAction {
 			_logger.error("Error extracting referenced objects by category {}", categoryCode, t);
 		}
 	}
-	
+
 	public String save() {
 		try {
 			if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
@@ -259,10 +279,15 @@ public class CategoryAction extends AbstractTreeAction {
 				category.setTitles(this.getTitles());
 				this.getCategoryManager().updateCategory(category);
 				_logger.debug("Updated category {}", category.getCode());
-			} else {
-				Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), this.getParentCategoryCode(), this.getTitles());
+			} else if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
+				String parentCategoryCode = this.getParentCategoryCode();
+				Category category = this.getHelper().buildNewCategory(this.getCategoryCode(), parentCategoryCode, this.getTitles());
 				this.getCategoryManager().addCategory(category);
 				_logger.debug("Added new category {}", this.getCategoryCode());
+			} else {
+				_logger.error("Select a position");
+				this.addFieldError("categoryCode", this.getText("error.category.noParentSelected"));
+				return FAILURE;
 			}
 		} catch (Exception e) {
 			_logger.error("error in save", e);
@@ -275,7 +300,7 @@ public class CategoryAction extends AbstractTreeAction {
 		String selectedNode = this.getSelectedNode();
 		String parentCategoryCode = this.getRequest().getParameter("parentCategoryCode");
 		try {
-			String check = this.checkMoveCategory(selectedNode, parentCategoryCode); 
+			String check = this.checkMoveCategory(selectedNode, parentCategoryCode);
 			if (null != check) {
 				return check;
 			}
@@ -297,8 +322,10 @@ public class CategoryAction extends AbstractTreeAction {
 		String selectedNode = this.getSelectedNode();
 		String parentCategoryCode = this.getRequest().getParameter("parentCategoryCode");
 		try {
-			String check = this.checkMoveCategory(selectedNode, parentCategoryCode); 
-			if (null != check) return check;
+			String check = this.checkMoveCategory(selectedNode, parentCategoryCode);
+			if (null != check) {
+				return check;
+			}
 			Category currentCategory = this.getCategory(this.getSelectedNode());
 			Category parent = this.getCategory(parentCategoryCode);
 			this.getCategoryManager().moveCategory(currentCategory, parent);
@@ -309,10 +336,10 @@ public class CategoryAction extends AbstractTreeAction {
 		return SUCCESS;
 	}
 
-	protected String checkMoveCategory(String selectedNode,	String parentCategoryCode) {
+	protected String checkMoveCategory(String selectedNode, String parentCategoryCode) {
 		if (this.getCategoryManager().getMoveTreeStatus() != CategoryManager.STATUS_READY) {
 			this.addActionError(this.getText("error.category.move.updateReferencesRunning"));
-			return "categoryTree";				
+			return "categoryTree";
 		}
 		Category currentCategory = this.getCategory(this.getSelectedNode());
 		if (null == currentCategory) {
@@ -348,7 +375,7 @@ public class CategoryAction extends AbstractTreeAction {
 		}
 		return null;
 	}
-	
+
 	protected void extractReferencingObjectsForMove(String categoryCode) {
 		try {
 			Category category = this.getCategoryManager().getCategory(categoryCode);
@@ -362,9 +389,10 @@ public class CategoryAction extends AbstractTreeAction {
 			_logger.error("Error extracting referenced objects for move by category {}", categoryCode, t);
 		}
 	}
-	
+
 	/**
 	 * provide the result for the progress bar
+	 *
 	 * @return
 	 */
 	public Map<String, Integer> getUpdateReferencesStatus() {
@@ -390,12 +418,12 @@ public class CategoryAction extends AbstractTreeAction {
 	public Category getCategory(String categoryCode) {
 		return this.getCategoryManager().getCategory(categoryCode);
 	}
-	
+
 	@Deprecated
 	public Category getRoot() {
 		return this.getCategoryManager().getRoot();
 	}
-	
+
 	public ITreeNode getTreeRootNode() {
 		ITreeNode node = null;
 		try {
@@ -406,13 +434,21 @@ public class CategoryAction extends AbstractTreeAction {
 		return node;
 	}
 
+	@Override
+	public String buildTree() {
+		this.checkTitles(false);
+		return super.buildTree();
+	}
+
 	public List<Lang> getLangs() {
 		return this.getLangManager().getLangs();
 	}
 
 	public List<Category> getBreadCrumbsTargets(String categoryCode) {
 		Category category = this.getCategoryManager().getCategory(categoryCode);
-		if (null == category) return null;
+		if (null == category) {
+			return null;
+		}
 		List<Category> categories = new ArrayList<Category>();
 		this.getSubBreadCrumbsTargets(categories, category);
 		return categories;
@@ -429,6 +465,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public int getStrutsAction() {
 		return _strutsAction;
 	}
+
 	public void setStrutsAction(int strutsAction) {
 		this._strutsAction = strutsAction;
 	}
@@ -436,6 +473,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public String getCategoryCode() {
 		return _categoryCode;
 	}
+
 	public void setCategoryCode(String categoryCode) {
 		this._categoryCode = categoryCode;
 	}
@@ -443,6 +481,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public String getParentCategoryCode() {
 		return _parentCategoryCode;
 	}
+
 	public void setParentCategoryCode(String parentCategoryCode) {
 		this._parentCategoryCode = parentCategoryCode;
 	}
@@ -450,6 +489,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public ApsProperties getTitles() {
 		return _titles;
 	}
+
 	public void setTitles(ApsProperties titles) {
 		this._titles = titles;
 	}
@@ -469,6 +509,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public Map getReferences() {
 		return _references;
 	}
+
 	protected void setReferences(Map references) {
 		this._references = references;
 	}
@@ -476,6 +517,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public String getSelectedNode() {
 		return _selectedNode;
 	}
+
 	public void setSelectedNode(String selectedNode) {
 		super.getTreeNodesToOpen().add(selectedNode);
 		this._selectedNode = selectedNode;
@@ -484,6 +526,7 @@ public class CategoryAction extends AbstractTreeAction {
 	public String getCategoryCodeToken() {
 		return _categoryCodeToken;
 	}
+
 	public void setCategoryCodeToken(String categoryCodeToken) {
 		this._categoryCodeToken = categoryCodeToken;
 	}

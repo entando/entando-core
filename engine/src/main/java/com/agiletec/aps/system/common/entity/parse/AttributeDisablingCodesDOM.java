@@ -40,7 +40,7 @@ public class AttributeDisablingCodesDOM extends AbstractAttributeSupportObjectDO
 	}
 	
 	private Map<String, String> extractDisablingCodes(Document document) {
-		Map<String, String> roles = new HashMap<String, String>();
+		Map<String, String> roles = new HashMap<>();
 		List<Element> roleElements = document.getRootElement().getChildren("disablingcode");
 		for (int i=0; i<roleElements.size(); i++) {
 			Element roleElement = roleElements.get(i);

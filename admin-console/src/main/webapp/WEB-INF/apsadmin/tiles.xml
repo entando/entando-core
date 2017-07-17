@@ -8,27 +8,31 @@
     <definition name="layout.default" template="/WEB-INF/apsadmin/jsp/common/layouts/default.jsp">
         <put-attribute name="title" value="document.title.main" />
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-common.jsp" />
-        <put-attribute name="shortcuts-quickbar" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/shortcuts-quickbar.jsp" />
+        <!-- <put-attribute name="shortcuts-quickbar" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/shortcuts-quickbar.jsp" /> -->
+        <put-attribute name="header" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/header.jsp" />
         <put-attribute name="menu" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/menu.jsp" />
-        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/mainBody.jsp" />
-        <put-attribute name="footer" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/footer.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/dashboard.jsp" />
+        <!-- <put-attribute name="footer" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/footer.jsp" /> -->
     </definition>
 	
     <definition extends="layout.default" name="layout.settings">
         <put-attribute name="title" value="document.title.main" />
-        <put-attribute name="cssSpecial" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/settings.jsp" />
+        <!-- <put-attribute name="cssSpecial" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/settings.jsp" /> -->
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-common.jsp" />
-        <put-attribute name="shortcuts-quickbar" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/shortcuts-quickbar.jsp" />
+        <!-- <put-attribute name="shortcuts-quickbar" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/shortcuts-quickbar.jsp" /> -->
+        <put-attribute name="header" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/header.jsp" />
         <put-attribute name="menu" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/menu.jsp" />
-        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/mainBody.jsp" />
-        <put-attribute name="footer" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/footer.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/dashboard.jsp" />
+        <!-- <put-attribute name="footer" value="/WEB-INF/apsadmin/jsp/common/tiles-inserts/footer.jsp" /> -->
     </definition>
 
 	<!-- temporary addition -->
 	<definition extends="layout.default" name="main.layout" />
 
     <definition extends="layout.default" name="admin.intro">
-        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/startPage.jsp" />
+        <put-attribute name="title" value="title.dashboard" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/template/dashboard.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/dashboard/dashboard-extra.jsp" />
     </definition>
 
     <definition extends="layout.default" name="admin.Common.Password.entry">
@@ -46,7 +50,7 @@
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/profile-entry.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userProfile-entry.jsp" />
     </definition>
-	
+
     <!-- ********* User management - START ********* -->
 	
     <definition extends="layout.settings" name="admin.User.list">
@@ -81,7 +85,11 @@
         <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/profile-entry.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/profile-entry.jsp" />
     </definition>
-	
+    <definition extends="layout.default" name="admin.User.settings">
+        <put-attribute name="title" value="title.userManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/user/userSettings.jsp" />
+        <!--<put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/settingsPage-extra.jsp" />-->
+    </definition>
     <!-- ********* User management - END ********* -->
 	
     <!-- ********* User Role management - START ********* -->
@@ -187,16 +195,37 @@
 
     <definition extends="layout.default" name="admin.Page.viewTree">
         <put-attribute name="title" value="title.pageManagement" />
-        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageTree.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/portal/pageTree-extra.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageTree.jsp" />
     </definition>
+    <definition extends="layout.default" name="admin.Page.settings">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/settingsPage.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/settingsPage-extra.jsp" />
+    </definition>
+    <!-- Menu albero pagine right -->
+    <definition extends="layout.default" name="admin.Page.viewTreeMenu">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/portal/pageTreeMenu-extra.jsp" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageTreeMenu.jsp" />
+    </definition>
+    
     <definition extends="layout.default" name="admin.Page.entry">
         <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/portal/page-extra.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/entryPage.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Page.trash">
         <put-attribute name="title" value="title.pageManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/trashPage.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.offline">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/putPageOffline.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Page.online">
+        <put-attribute name="title" value="title.pageManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/putPageOnline.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Page.references">
         <put-attribute name="title" value="title.pageManagement" />
@@ -208,13 +237,14 @@
     </definition>
     <definition extends="layout.default" name="admin.Page.searchResult">
         <put-attribute name="title" value="title.pageManagement" />
-        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/pageSearchResult.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/portal/pageSearch-extra.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/pageSearchResult.jsp" />
     </definition>
 
     <definition extends="layout.default" name="admin.Page.configure">
         <put-attribute name="title" value="title.pageManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/configPage.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/portal/configPage-extra.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Page.showlet.trash">
         <put-attribute name="title" value="title.pageManagement" />
@@ -293,7 +323,12 @@
 		<put-attribute name="title" value="title.guiFragmentManagement" />
 		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-references.jsp" />
 	</definition>
-	
+        
+    <definition extends="layout.default" name="admin.Portal.GuiFragment.settings">
+        <put-attribute name="title" value="title.guiFragmentManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/guifragment/guiFragment-setting.jsp" />
+    </definition>
+    	
     <definition extends="layout.default" name="admin.PageModel.list">
         <put-attribute name="title" value="title.pageModelManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-list.jsp" />
@@ -302,6 +337,7 @@
     <definition extends="layout.default" name="admin.PageModel.entry">
         <put-attribute name="title" value="title.pageModelManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/portal/model/pageModel-entry.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/portal/pageModel-entry-extra.jsp" />
     </definition>
 	
     <definition extends="layout.default" name="admin.PageModel.details">
@@ -325,16 +361,17 @@
 
     <definition extends="layout.default" name="admin.Category.viewTree">
         <put-attribute name="title" value="title.categoryManagement" />
-        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/categoryTree.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryTree.jsp" />
     </definition>
 	<definition extends="layout.default" name="admin.Category.searchResult">
         <put-attribute name="title" value="title.categoryManagement" />
-        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/categoryTree.jsp" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categorySearchResult.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Category.entry">
         <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/category-extra.jsp" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/entryCategory.jsp" />
     </definition>
     <definition extends="layout.default" name="admin.Category.references">
@@ -349,10 +386,13 @@
         <put-attribute name="title" value="title.categoryManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryDetails.jsp" />
     </definition>
-	
     <definition extends="layout.default" name="admin.Category.moveReferences">
         <put-attribute name="title" value="title.categoryManagement" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categoryMoveReferences.jsp" />
+    </definition>
+    <definition extends="layout.default" name="admin.Category.settings">
+        <put-attribute name="title" value="title.categoryManagement" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/category/categorySettings.jsp" />
     </definition>
 
     <!-- ********* FINE Area Gestione Categorie ********* -->
@@ -365,6 +405,10 @@
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/settings.jsp" />
     </definition>
 
+    <definition extends="layout.settings" name="admin.BaseAdmin.reloadConfigChoose">
+        <put-attribute name="title" value="menu.reload.config" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/reloadChoose.jsp" />
+    </definition>
     <definition extends="layout.settings" name="admin.BaseAdmin.reloadConfigResult">
         <put-attribute name="title" value="menu.reload.config" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/reloadConfig.jsp" />
@@ -427,6 +471,10 @@
     <definition extends="layout.settings" name="admin.LocaleString.entry">
         <put-attribute name="title" value="title.languageAdmin.labels" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringEntry.jsp" />
+    </definition>
+    <definition extends="layout.settings" name="admin.LocaleString.trash">
+        <put-attribute name="title" value="title.languageAdmin.labels" />
+        <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/admin/localestring/localeStringTrash.jsp" />
     </definition>
 
     <!-- ********* FINE Area Gestione Etichette ********* -->
@@ -512,9 +560,7 @@
 	    <put-attribute name="title" value="title.fileManagement" />
 	    <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/filebrowser/filebrowser-newdir.jsp" />
 	</definition>
-	
-	<!-- ********* END Filebrowser ********* -->
-	
+
     <definition extends="layout.default" name="admin.userNotAllowedMessage">
         <put-attribute name="title" value="document.title.main" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userNotAllowedMessage.jsp" />

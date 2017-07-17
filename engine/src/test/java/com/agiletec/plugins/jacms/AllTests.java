@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.entando.entando.plugins.jacms.aps.system.services.cache.TestCacheInfoManager;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.TestContentBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.page.TestCmsPageManagerWrapper;
 
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
@@ -41,6 +42,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceDAO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.TestResourceDOM;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
+
 import org.entando.entando.plugins.jacms.aps.system.services.api.TestApiContentInterface;
 
 public class AllTests {
@@ -52,6 +54,7 @@ public class AllTests {
 		
 		// 
 		suite.addTestSuite(TestContentAuthorization.class);
+		suite.addTestSuite(TestContentBulkCommand.class);
 		suite.addTestSuite(TestContentEntityManager.class);
 		suite.addTestSuite(TestContentDOM.class);
 		suite.addTestSuite(TestContentListHelper.class);

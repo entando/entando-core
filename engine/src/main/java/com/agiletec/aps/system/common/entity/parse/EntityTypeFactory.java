@@ -63,6 +63,7 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 	 * @return The map of the Entity Types Prototypes, indexed by code. 
 	 * @throws ApsSystemException If errors occurs during the parsing process of the XML. 
 	 */
+	@Override
 	public Map<String, IApsEntity> getEntityTypes(Class entityClass, String configItemName, 
 			IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
 		Map<String, IApsEntity> entityTypes = null;

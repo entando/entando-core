@@ -7,6 +7,7 @@
 	
 	<!-- ### jACMS ### -->
 	<include file="com/agiletec/plugins/jacms/apsadmin/content/content.xml"/>
+	<include file="org/entando/entando/plugins/jacms/apsadmin/content/bulk/bulk-actions.xml"/>
     <include file="com/agiletec/plugins/jacms/apsadmin/resource/resource.xml"/>
     <include file="com/agiletec/plugins/jacms/apsadmin/content/attribute/action/contentAttribute.xml"/>
     <include file="com/agiletec/plugins/jacms/apsadmin/content/model/contentModel.xml"/>
@@ -15,5 +16,7 @@
     <include file="com/agiletec/plugins/jacms/apsadmin/system/entity.xml" />
 	
 	<include file="org/entando/entando/plugins/jacms/apsadmin/portal/specialwidget/specialWidget.xml" />
+
+    <include file="org/entando/entando/plugins/jacms/apsadmin/integration/integration.xml"/>
     
 </struts>

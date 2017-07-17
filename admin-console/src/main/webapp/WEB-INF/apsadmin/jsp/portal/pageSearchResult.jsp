@@ -3,114 +3,153 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 
-<h1 class="panel panel-default title-page"><span class="panel-body display-block"><a href="<s:url action="viewTree" namespace="/do/Page" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.pageManagement" />"><s:text name="title.pageManagement" /></a></span></h1>
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="title.pageDesigner" /></li>
+    <li class="page-title-container"><s:text name="title.pageTree" /></li>
+</ol>
 
+<h1 class="page-title-container"><s:text name="title.pageTree" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.pageTree.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
+</h1>
+
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
+</div>
+<br>
+<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
+
+<hr />
 <div id="main" role="main">
 
-<p><s:text name="note.pageTree.intro" /></p>
+    <p><s:text name="note.pageTree.intro" /></p>
 
-<s:if test="hasFieldErrors()">
-<div class="alert alert-danger alert-dismissable">
-	<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-	<h2 class="h4 margin-none"><s:text name="message.title.FieldErrors" /></h2>
-	<ul>
-	<s:iterator value="fieldErrors">
-		<li><s:property escapeHtml="false" /></li>
-	</s:iterator>
-	</ul>
-</div>
-</s:if>
-<div role="search">
+    <s:if test="hasFieldErrors()">
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                <span class="pficon pficon-close"></span>
+            </button>
+            <span class="pficon pficon-error-circle-o"></span>
+            <strong><s:text name="message.title.FieldErrors" /></strong>
+            <ul>
+                <s:iterator value="fieldErrors">
+                    <s:iterator value="value">
+                        <li><s:property escapeHtml="false" /></li>
+                        </s:iterator>
+                    </s:iterator>
+            </ul>
+        </div>
+    </s:if>
+    <div role="search">
 
-	<s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageSearchForm.jsp" />
+        <s:form action="search" cssClass="action-form">
 
-	<hr />
+            <p class="sr-only">
+            <wpsf:hidden name="pageCodeToken" />
+            </p>
 
-	<%--
-	<h2 class="margin-base-vertical"><s:text name="title.pageManagement.pages" /></h2>
-	--%>
+            <s:set var="pagesFound" value="pagesFound" />
 
-	<s:form action="search" cssClass="action-form">
+            <s:if test="%{#pagesFound != null && #pagesFound.isEmpty() == false}">
 
-	<p class="sr-only">
-		<wpsf:hidden name="pageCodeToken" />
-	</p>
+                <a href="<s:url namespace="/do/Page" action="new" />" class="btn btn-primary pull-right" title="<s:text name="label.new" />" style="margin-bottom: 5px">
+                    <s:text name="label.add" />
+                </a>
+                <s:form cssClass="form-horizontal" namespace="/do/Page">
 
-	<s:set var="pagesFound" value="pagesFound" />
+                    <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
-	<s:if test="%{#pagesFound != null && #pagesFound.isEmpty() == false}">
+                        <div class="table-responsive overflow-visible">
+                            <table id="pageTree" class="table table-bordered table-hover table-treegrid">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 68%;">Tree Pages
+                                        <s:if test="#pageTreeStyleVar == 'classic'">
+                                            <button type="button" class="btn-no-button expand-button" id="expandAll">
+                                                <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Expand All
+                                            </button>
+                                            <button type="button" class="btn-no-button" id="collapseAll">
+                                                <i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Collapse All
+                                            </button>
+                                        </s:if>
+                                    </th>
+                                    <th class="text-center" style="width: 8%;"><s:text name="label.add|move" /></th>
+                                    <th class="text-center" style="width: 8%;"><s:text name="label.state" /></th>
+                                    <th class="text-center" style="width: 8%;"><s:text name="label.pageInMenu" /></th>
+                                    <th class="text-center" style="width: 5%;"><s:text name="label.actions" /></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <s:set var="inputFieldName" value="%{'selectedNode'}" />
+                                <s:set var="selectedTreeNode" value="%{selectedNode}" />
+                                <s:set var="selectedPage" value="%{getPage(selectedNode)}" />
+                                <s:set var="liClassName" value="'page'" />
+                                <s:set var="treeItemIconName" value="'fa-folder'" />
+                                <s:if test="#pageTreeStyleVar == 'classic'">
+                                    <s:set var="currentRoot" value="allowedTreeRootNode" />
+                                    <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderPages.jsp" />
+                                </s:if>
+                                <s:else>
+                                <style>
+                                    .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                        cursor: pointer;
+                                        display: none;
+                                    }
+                                </style>
+                                <s:set var="currentRoot" value="showableTree" />
+                                <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
+                            </s:else>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
 
-		<wpsa:subset source="#pagesFound" count="10" objectName="groupPage" advanced="true" offset="5">
-		<s:set var="group" value="#groupPage" />
+                </s:form>
 
-		<div class="text-center">
-			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-		</div>
+            </s:if>
+            <s:else>
+                <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        <span class="pficon pficon-close"></span>
+                    </button>
+                    <span class="pficon pficon-error-circle-o"></span>
+                    <strong><s:text name="noPages.found" /></strong>
+                </div>
+            </s:else>
 
-		<div class="well">
-			<ul id="pageTree" class="fa-ul list-unstyled">
-			<s:iterator var="singlePage">
-
-				<s:set var="pageFullPath">
-					<s:set value="%{getBreadCrumbsTargets(#singlePage.code)}" name="breadCrumbsTargets" ></s:set>
-					<s:iterator value="#breadCrumbsTargets" var="target" status="rowstatus">
-						<s:if test="%{#rowstatus.index != 0}"> | </s:if>
-						<s:property value="#target.titles[currentLang.code]" />
-					</s:iterator>
-				</s:set>
-				<li class="page tree_node_flag"><span class="icon fa fa-li fa-folder"></span>&#32;<wpsf:radio name="selectedNode" id="page_%{#singlePage.code}" value="%{#singlePage.code}" /><label for="page_<s:property value="%{#singlePage.code}" />" title="<s:property value="#pageFullPath" />"><s:property value="%{#singlePage.code}" /></label></li>
-				<%-- <s:property value="%{#singlePage.titles[currentLang.code]}" /> --%>
-			</s:iterator>
-			</ul>
-		</div>
-
-		<div class="text-center">
-			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-		</div>
-		</wpsa:subset>
-
-	<p class="sr-only">
-		<wpsf:hidden name="copyingPageCode" />
-	</p>
-
-	<fieldset data-toggle="tree-toolbar"><legend><s:text name="title.pageActions" /></legend>
-	<p class="sr-only"><s:text name="title.pageActionsIntro" /></p>
-
-	<div class="btn-toolbar" data-toggle="tree-toolbar-actions">
-		<div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
-			<wpsf:submit action="configure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
-				<span class="icon fa fa-cog"></span>
-			</wpsf:submit>
-			<wpsf:submit action="detail" type="button" title="%{getText('page.options.detail')}" cssClass="btn btn-info" data-toggle="tooltip">
-				<span class="icon fa fa-info"></span>
-			</wpsf:submit>
-		</div>
-		<div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
-			<wpsf:submit action="copy" type="button" title="%{getText('page.options.copy')}" cssClass="btn btn-info" data-toggle="tooltip">
-				<span class="icon fa fa-files-o"></span>
-			</wpsf:submit>
-		</div>
-		<div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
-			<wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
-				<span class="icon fa fa-pencil-square-o"></span>
-			</wpsf:submit>
-		</div>
-		<div class="btn-group btn-group-sm margin-small-top margin-small-bottom">
-			<wpsf:submit action="trash" type="button" title="%{getText('page.options.delete')}" cssClass="btn btn-warning" data-toggle="tooltip">
-				<span class="icon fa fa-times-circle"></span>
-			</wpsf:submit>
-		</div>
-	</div>
-	</fieldset>
-	</s:if>
-	<s:else>
-		<p class="alert alert-info">
-			<s:text name="noPages.found" />
-		</p>
-	</s:else>
-
-	</s:form>
-</div>
+        </s:form>
+    </div>
 
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#expandAll").click(function () {
+            $("#pageTree .childrenNodes").removeClass("hidden");
+            $("#pageTree .childrenNodes").removeClass("collapsed");
+            $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
+        });
+        $("#collapseAll").click(function () {
+            $(".childrenNodes").addClass("hidden");
+            $(".childrenNodes").addClass("collapsed");
+            $('#pageTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
+
+        });
+
+        $(".treeRow ").on("click", function (event) {
+            $(".treeRow").removeClass("active");
+            $(".moveButtons").addClass("hidden");
+            $(this).find('.subTreeToggler').prop("checked", true);
+            $(this).addClass("active");
+            $(this).find(".moveButtons").removeClass("hidden");
+        });
+
+        function buildTree() {
+            var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
+            $('.table-treegrid').treegrid(null, isTreeOnRequest);
+        }
+        buildTree();
+    });
+</script>

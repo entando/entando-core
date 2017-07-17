@@ -8,8 +8,8 @@
 
 <div id="main" role="main">
 
-<div class="intro user">
-<s:text name="note.user.intro.html" />	
-</div>
+    <div class="intro user">
+        <s:text name="note.user.intro.html" />
+    </div>
 
 </div>

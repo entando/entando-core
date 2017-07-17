@@ -25,6 +25,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
  */
 public class MonoTextAttributeHandler extends AbstractAttributeHandler {
 	
+	@Override
 	public void startAttribute(Attributes attributes, String qName) throws SAXException {
 		if (qName.equals("monotext")) {
 			this.startMonoText(attributes, qName);
@@ -35,6 +36,7 @@ public class MonoTextAttributeHandler extends AbstractAttributeHandler {
 		//Nothing to do;
 	}
 	
+	@Override
 	public void endAttribute(String qName, StringBuffer textBuffer) {
 		if (qName.equals("monotext")) {
 			this.endMonoText(textBuffer);

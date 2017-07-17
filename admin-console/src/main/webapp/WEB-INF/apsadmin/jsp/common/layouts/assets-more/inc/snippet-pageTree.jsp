@@ -1,25 +1,29 @@
-<%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
-<s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
-<s:if test="#pageTreeStyleVar == 'classic'">
-jQuery("#pageTree").EntandoWoodMenu({
-	menuToggler: "subTreeToggler",
-	menuRetriever: function(toggler) {
-		return $(toggler).parent().children("ul");
-	},
-	openClass: "node_open",
-	closedClass: "node_closed",
-	showTools: true,
-	onStart: function() {
-		this.collapseAll();
-	},
-	expandAllLabel: "<s:text name="label.expandAll" />",
-	collapseAllLabel: "<s:text name="label.collapseAll" />",
-<s:if test="%{selectedNode != null && !(selectedNode.equalsIgnoreCase(''))}">
-	startIndex: "fagianonode_<s:property value="selectedNode" />",
-</s:if>
-	toolTextIntro: "<s:text name="label.introExpandAll" />",
-	toolexpandAllLabelTitle: "<s:text name="label.expandAllTitle" />",
-	toolcollapseLabelTitle: "<s:text name="label.collapseAllTitle" />"
-});
-</s:if>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+<script type="text/javascript">
+    jQuery(function(){
+		<s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
+		<s:if test="#pageTreeStyleVar == 'classic'">
+		    $('.table-treegrid').treegrid(null, false);
+		    $(".treeRow ").on("click", function () {
+		        $(".treeRow").removeClass("active");
+		        $(this).addClass("active").find('.subTreeToggler').prop("checked", true);
+		    });
+		    
+		    $("#expandAll").on("click", function() {
+		        $('#pageTree .treeRow').removeClass("hidden collapsed");
+		        $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
+		    });
+		    
+		    $("#collapseAll").on("click", function() {
+		        $('#pageTree .treeRow:not(:first-child)').addClass('hidden');
+		        $('#pageTree .treeRow').addClass('collapsed');
+		        $('#pageTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
+		    });
+		    
+		    $(".table-treegrid .subTreeToggler:checked").closest(".treeRow")
+		      .addClass("active").removeClass("hidden").addClass("collapsed");
+		</s:if>
+    });
+</script>

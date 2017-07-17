@@ -1,96 +1,124 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
-    "http://struts.apache.org/dtds/struts-2.5.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
-	
-    <package name="core_do/Category" namespace="/do/Category" extends="entando-default">
-    	
-    	<action name="viewTree" class="categoryAction">
-    		<result type="tiles">admin.Category.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack">
-        		<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
-        		<param name="requestAuth.requiredPermission">manageCategories</param>
-        	</interceptor-ref>
-        </action>
-        
-        <action name="openCloseCategoryTree" class="categoryAction" method="buildTree">
-    		<result type="tiles">admin.Category.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="new" class="categoryAction" method="add">
-        	<result name="categoryTree" type="chain">viewTree</result>
-        	<result type="tiles">admin.Category.entry</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="edit" class="categoryAction" method="edit">
-        	<result name="categoryTree" type="chain">viewTree</result>
-        	<result type="tiles">admin.Category.entry</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="detail" class="categoryAction" method="showDetail">
-        	<result name="categoryTree" type="chain">viewTree</result>
-        	<result type="tiles">admin.Category.detail</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="trash" class="categoryAction" method="trash">
-        	<result name="categoryTree" type="chain">viewTree</result>
-        	<result name="references" type="tiles">admin.Category.references</result>
-            <result type="tiles">admin.Category.trash</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="delete" class="categoryAction" method="delete">
-        	<result name="categoryTree" type="chain">viewTree</result>
-        	<result name="references" type="tiles">admin.Category.references</result>
-        	<result type="tiles">admin.Category.viewTree</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="save" class="categoryAction" method="save">
-        	<result name="input" type="tiles">admin.Category.entry</result>
-            <result type="tiles">admin.Category.viewTree</result>
-        	<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-		
-        <action name="search" class="categoryAction" method="search">
-        	<result name="input" type="tiles">admin.Category.searchResult</result>
-        	<result type="tiles">admin.Category.searchResult</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="searchParentsForMove" class="categoryAction">
-            <result type="json">
-                <param name="root">availableNodesForMoveTreeAjax</param>
-            </result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="displayUpdatingReferencesStatus" class="categoryAction" >
-            <result type="json">
-                <param name="root">updateReferencesStatus</param>
-            </result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-        <action name="moveTree" class="categoryAction" method="moveTree">
-            <result type="chain">viewTree</result>
-            <result name="categoryTree" type="chain">viewTree</result>
-            <result name="moveReferences" type="tiles">admin.Category.moveReferences</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
 
-        <action name="executeMoveTree" class="categoryAction" method="executeMoveTree">
-            <result type="redirectAction">viewTree</result>
-            <result name="categoryTree" type="chain">viewTree</result>
-            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
-        </action>
-        
-    </package>
-    
+	<package name="core_do/Category" namespace="/do/Category" extends="entando-default">
+		
+		<action name="viewTree" class="categoryAction">
+			<result type="tiles">admin.Category.viewTree</result>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
+				<param name="requestAuth.requiredPermission">manageCategories</param>
+			</interceptor-ref>
+		</action>
+
+		<action name="openCloseCategoryTree" class="categoryAction" method="buildTree">
+			<result type="tiles">admin.Category.viewTree</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="new" class="categoryAction" method="add">
+			<result name="categoryTree" type="chain">viewTree</result>
+			<result type="tiles">admin.Category.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+		
+		<action name="openCloseCategoryTreeInEntry*" class="categoryAction" method="buildTree">
+			<result type="tiles">admin.Category.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="edit" class="categoryAction" method="edit">
+			<result name="categoryTree" type="chain">viewTree</result>
+			<result type="tiles">admin.Category.entry</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="detail" class="categoryAction" method="showDetail">
+			<result name="categoryTree" type="chain">viewTree</result>
+			<result type="tiles">admin.Category.detail</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="trash" class="categoryAction" method="trash">
+			<result name="categoryTree" type="chain">viewTree</result>
+			<result name="references" type="tiles">admin.Category.references</result>
+			<result type="tiles">admin.Category.trash</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="delete" class="categoryAction" method="delete">
+			<result name="categoryTree" type="chain">viewTree</result>
+			<result name="references" type="tiles">admin.Category.references</result>
+			<result type="tiles">admin.Category.viewTree</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="save" class="categoryAction" method="save">
+			<result name="input" type="tiles">admin.Category.entry</result>
+			<result type="redirectAction">
+				<param name="actionName">viewTree</param>
+				<param name="selectedNode">${categoryCode}</param>
+			</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="search" class="categoryAction" method="search">
+			<result name="input" type="tiles">admin.Category.searchResult</result>
+			<result type="tiles">admin.Category.searchResult</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="searchParentsForMove" class="categoryAction">
+			<result type="json">
+				<param name="root">availableNodesForMoveTreeAjax</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="displayUpdatingReferencesStatus" class="categoryAction" >
+			<result type="json">
+				<param name="root">updateReferencesStatus</param>
+			</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="moveTree" class="categoryAction" method="moveTree">
+			<result type="chain">viewTree</result>
+			<result name="categoryTree" type="chain">viewTree</result>
+			<result name="moveReferences" type="tiles">admin.Category.moveReferences</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="executeMoveTree" class="categoryAction" method="executeMoveTree">
+			<result type="redirectAction">viewTree</result>
+			<result name="categoryTree" type="chain">viewTree</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="moveUp" class="categoryAction" method="moveUp">
+			<result type="tiles">admin.Category.viewTree</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+		<action name="moveDown" class="categoryAction" method="moveDown">
+			<result type="tiles">admin.Category.viewTree</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+		
+		<action name="configSystemParams" class="categorySettingsAction" method="configSystemParams">
+			<result type="tiles">admin.Category.settings</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+		
+		<action name="updateSystemParams" class="categorySettingsAction" method="updateSystemParams">
+			<result type="tiles">admin.Category.settings</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageCategories</param></interceptor-ref>
+		</action>
+
+	</package>
+
 </struts>

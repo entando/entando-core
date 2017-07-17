@@ -221,6 +221,82 @@ public class WidgetType implements Serializable {
 		return jspPath.toString();
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_action == null) ? 0 : _action.hashCode());
+		result = prime * result + ((_code == null) ? 0 : _code.hashCode());
+		result = prime * result + ((_config == null) ? 0 : _config.hashCode());
+		result = prime * result + (_locked ? 1231 : 1237);
+		result = prime * result + ((_mainGroup == null) ? 0 : _mainGroup.hashCode());
+		result = prime * result + ((_parameters == null) ? 0 : _parameters.hashCode());
+		result = prime * result + ((_parentType == null) ? 0 : _parentType.hashCode());
+		result = prime * result + ((_parentTypeCode == null) ? 0 : _parentTypeCode.hashCode());
+		result = prime * result + ((_pluginCode == null) ? 0 : _pluginCode.hashCode());
+		result = prime * result + ((_titles == null) ? 0 : _titles.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WidgetType other = (WidgetType) obj;
+		if (_action == null) {
+			if (other._action != null)
+				return false;
+		} else if (!_action.equals(other._action))
+			return false;
+		if (_code == null) {
+			if (other._code != null)
+				return false;
+		} else if (!_code.equals(other._code))
+			return false;
+		if (_config == null) {
+			if (other._config != null)
+				return false;
+		} else if (!_config.equals(other._config))
+			return false;
+		if (_locked != other._locked)
+			return false;
+		if (_mainGroup == null) {
+			if (other._mainGroup != null)
+				return false;
+		} else if (!_mainGroup.equals(other._mainGroup))
+			return false;
+		if (_parameters == null) {
+			if (other._parameters != null)
+				return false;
+		} else if (!_parameters.equals(other._parameters))
+			return false;
+		if (_parentType == null) {
+			if (other._parentType != null)
+				return false;
+		} else if (!_parentType.equals(other._parentType))
+			return false;
+		if (_parentTypeCode == null) {
+			if (other._parentTypeCode != null)
+				return false;
+		} else if (!_parentTypeCode.equals(other._parentTypeCode))
+			return false;
+		if (_pluginCode == null) {
+			if (other._pluginCode != null)
+				return false;
+		} else if (!_pluginCode.equals(other._pluginCode))
+			return false;
+		if (_titles == null) {
+			if (other._titles != null)
+				return false;
+		} else if (!_titles.equals(other._titles))
+			return false;
+		return true;
+	}
+
 	/**
 	 * Il codice del tipo di widget.
 	 */

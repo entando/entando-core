@@ -47,7 +47,7 @@ public class PageLinkAction extends PageTreeAction {
 	public void validate() {
 		super.validate();
 		if (this.getFieldErrors().isEmpty()) {
-			IPage linkedPage = this.getPageManager().getPage(this.getSelectedNode());
+			IPage linkedPage = this.getPageManager().getOnlinePage(this.getSelectedNode());
 			if (null == linkedPage) {
 				this.addFieldError("selectedNode", this.getText("error.content.link.pageNotExist"));
 			}

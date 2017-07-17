@@ -5,60 +5,81 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:form cssClass="form-horizontal">
-	<p class="sr-only">
-		<wpsf:hidden name="code" />
-	</p>
-	<%-- referenced pages --%>
-	<div class="panel panel-default">
-		<div class="panel-heading"><h3 class="margin-none"><s:text name="title.pageModel.referencedPages" /></h3></div>
-		<div class="panel-body">
-			<s:if test="null != references['PageManagerUtilizers']">
-				<wpsa:subset source="references['PageManagerUtilizers']" count="10" objectName="pageReferences" advanced="true" offset="5" pagerId="pageManagerReferences">
-					<s:set var="group" value="#pageReferences" />
-					<div class="text-center">
-						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-					</div>
-						<table class="table table-bordered" id="pageListTable">
-							<tr>
-								<!-- <th class="text-center text-nowrap col-xs-6 col-sm-3 col-md-3 col-lg-3"> -->
-								<th class="text-center col-xs-5 col-sm-3 col-md-2 col-lg-2">
-									<abbr title="<s:text name="label.actions" />">&ndash;</abbr>
-								</th>
-								<th><s:text name="label.page" /></th>
-							</tr>
-							<s:iterator var="currentPageVar">
-								<s:set var="canEditCurrentPage" value="%{false}" />
-								<s:set var="currentPageGroup" value="#currentPageVar.group" scope="page" />
-								<wp:ifauthorized groupName="${currentPageGroup}" permission="managePages"><s:set var="canEditCurrentPage" value="%{true}" /></wp:ifauthorized>
-								<tr>
-									<td class="text-center text-nowrap"><s:if test="#canEditCurrentPage"><div class="btn-group btn-group-xs"><a
-													class="btn btn-default" 
-													href="<s:url namespace="/do/Page" action="viewTree"><s:param name="selectedNode" value="#currentPageVar.code" /></s:url>"
-													title="<s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />"><span class="icon fa fa-folder"></span><span class="sr-only"><s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span></a><a
-													class="btn btn-default" 
-													href="<s:url namespace="/do/Page" action="configure"><s:param name="pageCode" value="#currentPageVar.code" /></s:url>"
-													title="<s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />"><span class="icon fa fa-cog"></span><span class="sr-only"><s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span></a></div></s:if></td>
-									<td>
-										<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
-									</td>
-								</tr>
-							</s:iterator>
-						</table>
-					<div class="text-center">
-						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-					</div>
-				</wpsa:subset>
-			</s:if>
-			<s:else>
-				<p class="margin-none"><s:text name="note.pageModel.referencedPages.empty" /></p>
-			</s:else>
-		</div>
-	</div>
-	<%-- hoookpoint core.groupReferences --%>
-	<wpsa:hookPoint key="core.pageModelReferences" objectName="hookPointElements_core_pageModelReferences">
-		<s:iterator value="#hookPointElements_core_pageModelReferences" var="hookPointElement">
-			<wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-		</s:iterator>
-	</wpsa:hookPoint>
+    <p class="sr-only">
+        <wpsf:hidden name="code" />
+    </p>
+    <%-- referenced pages --%>
+    <div>
+
+        <label class="col-sm-2 control-label"><s:text name="title.pageModel.referencedPages" /></label>
+        <div class="col-sm-10">
+
+
+            <s:if test="null != references['PageManagerUtilizers']">
+                <wpsa:subset source="references['PageManagerUtilizers']" count="10" objectName="pageReferences" advanced="true" offset="5" pagerId="pageManagerReferences">
+                    <s:set var="group" value="#pageReferences" />
+                    <div class="col-xs-12 no-padding table-nomargin-bottom">
+                        <table class="table table-striped table-bordered" id="pageListTable">
+                            <tr>
+                                <th>
+                                    <s:text name="label.page" />
+                                </th>
+                                <th class="text-center table-w-5">
+                                    <s:text name="label.actions" />
+                                </th>
+                            </tr>
+                            <s:iterator var="currentPageVar">
+                                <s:set var="canEditCurrentPage" value="%{false}" />
+                                <s:set var="currentPageGroup" value="#currentPageVar.group" scope="page" />
+                                <wp:ifauthorized groupName="${currentPageGroup}" permission="managePages"><s:set var="canEditCurrentPage" value="%{true}" /></wp:ifauthorized>
+                                    <tr>
+                                        <td> <s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></td>
+                                    <td class=" text-center table-view-pf-actions">
+                                        <div class="dropdown dropdown-kebab-pf">
+                                            <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="fa fa-ellipsis-v"></span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-right">
+                                                <s:if test="#canEditCurrentPage">
+                                                    <li>
+                                                        <a href="<s:url namespace="/do/Page" action="viewTree"><s:param name="selectedNode" value="#currentPageVar.code" /></s:url>"
+                                                           title="<s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />">
+                                                            <span class="sr-only"><s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span>
+                                                            <s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="<s:url namespace="/do/Page" action="configure"><s:param name="pageCode" value="#currentPageVar.code" /></s:url>"
+                                                           title="<s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />">
+                                                            <span class="sr-only"><s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" /></span>
+                                                            <s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
+                                                        </a>
+                                                    </li>
+                                                </s:if>
+                                            </ul>
+                                    </td>
+                                </tr>
+                            </s:iterator>
+                        </table>
+                    </div>
+                    <div class="content-view-pf-pagination clearfix">
+                        <div class="form-group">
+                            <span><s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                            <div class="mt-5"><s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                            </div>
+                        </div>
+                    </div>
+                </wpsa:subset>
+            </s:if>
+            <s:else>
+                <p class="margin-none"><s:text name="note.pageModel.referencedPages.empty" /></p>
+            </s:else>
+        </div>
+    </div>
+    <%-- hoookpoint core.groupReferences --%>
+    <wpsa:hookPoint key="core.pageModelReferences" objectName="hookPointElements_core_pageModelReferences">
+        <s:iterator value="#hookPointElements_core_pageModelReferences" var="hookPointElement">
+            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+        </s:iterator>
+    </wpsa:hookPoint>
 </s:form>

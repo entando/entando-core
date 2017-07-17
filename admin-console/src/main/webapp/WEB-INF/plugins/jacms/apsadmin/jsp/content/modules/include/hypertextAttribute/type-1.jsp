@@ -1,29 +1,25 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-<h4><s:text name="note.URLLinkTo" /></h4>
-
-<form id="form_externalUrl">
-	<div class="col-xs-12">
-		<div class="form-group">
-			<%--
-			<label class="display-block" for="txtName">
-				<s:text name="label.url" />
-			</label>
-			--%>
-			<input type="hidden" name="contentOnSessionMarker" value="<s:property value="contentOnSessionMarker" />" />
-			<wpsf:textfield id="txtName" name="txtName" maxlength="255" cssClass="form-control" />
-			<span class="help help-block">
-				<s:text name="note.typeValidURL" />
-			</span>
-		</div>
-	</div>
-	<div class="form-group">
-		<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-			<button type="submit" id="button_externalURL" name="button_externalURL" class="btn btn-primary btn-block">
-				<span class="icon fa fa-floppy-o"></span>&#32;
-				<s:text name="label.confirm" />
-			</button>
-		</div>
-	</div>
-</form>
+<s:form cssClass="action-form form-horizontal" id="form_externalUrl">
+    <p class="sr-only"><wpsf:hidden name="contentOnSessionMarker" /></p>
+    
+    <div class="form-group<s:property value="#controlGroupErrorClassVar" /> mt-20">
+        <div class="col-xs-12">
+            <label class="col-sm-2 text-right" for="url"><s:text name="label.url" /></label>
+            <div class="col-sm-10">
+                <wpsf:textfield id="txtName" name="txtName" cssClass="form-control" />
+                <span class="help help-block"><s:text name="note.typeValidURL" /></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-12">
+            <div class="col-sm-10 col-sm-offset-2 text-right">
+                <button type="submit" id="button_externalURL" name="button_externalURL" class="btn btn-primary">
+                    <s:text name="label.save" />
+                </button>
+            </div>
+        </div>
+    </div>
+</s:form>

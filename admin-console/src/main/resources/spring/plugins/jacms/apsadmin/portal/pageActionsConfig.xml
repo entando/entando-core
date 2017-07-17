@@ -19,7 +19,8 @@
 			class="com.agiletec.plugins.jacms.apsadmin.portal.PageAction" parent="abstractPortalAction">
 		<property name="pageModelManager" ref="PageModelManager" />
 		<property name="contentManager" ref="jacmsContentManager" />
-		<property name="helper" ref="pageActionHelper" />
+		<property name="pageActionHelper" ref="pageActionHelperDraft" />
+		<property name="pageActionReferencesHelper"  ref="pageActionReferencesHelper" />
 		<property name="viewerWidgetCode"><value>${widgets.viewer}</value></property>
 		<property name="allowedMimeTypesCSV"><value>${page.mimeType.allowedValues}</value></property>
 		<property name="allowedCharsetsCSV"><value>${page.charset.allowedValues}</value></property>

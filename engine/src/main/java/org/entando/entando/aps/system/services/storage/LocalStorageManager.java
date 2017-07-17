@@ -13,20 +13,19 @@
  */
 package org.entando.entando.aps.system.services.storage;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.CharEncoding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author E.Santoboni
@@ -40,9 +39,10 @@ public class LocalStorageManager implements IStorageManager {
 	}
 	
 	@Override
-	public void saveFile(String subPath, boolean isProtectedResource, InputStream is) throws ApsSystemException {
+	public void saveFile(String subPath, boolean isProtectedResource, InputStream is) throws ApsSystemException, IOException {
 		subPath = (null == subPath)? "" : subPath;
 		String fullPath = this.createFullPath(subPath, isProtectedResource);
+		FileOutputStream outStream = null;
 		try {
 			File dir = new File(fullPath).getParentFile();
 			if (!dir.exists()) {
@@ -50,16 +50,21 @@ public class LocalStorageManager implements IStorageManager {
 			}
 			byte[] buffer = new byte[1024];
 			int length = -1;
-			FileOutputStream outStream = new FileOutputStream(fullPath);
+			outStream = new FileOutputStream(fullPath);
 			while ((length = is.read(buffer)) != -1) {
 				outStream.write(buffer, 0, length);
 				outStream.flush();
 			}
-			outStream.close();
-			is.close();
 		} catch (Throwable t) {
 			_logger.error("Error on saving file", t);
 			throw new ApsSystemException("Error on saving file", t);
+		} finally {
+			if (null != outStream) {
+				outStream.close();
+			}
+			if (null != is) {
+				is.close();
+			}
 		}
 	}
 	

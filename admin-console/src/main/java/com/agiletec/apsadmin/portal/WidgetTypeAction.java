@@ -13,6 +13,20 @@
  */
 package com.agiletec.apsadmin.portal;
 
+import java.io.File;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.guifragment.GuiFragment;
+import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
@@ -21,23 +35,9 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-
-import java.io.File;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
-
-import org.entando.entando.aps.system.services.guifragment.GuiFragment;
-import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
-import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import java.util.ArrayList;
 
 /**
  * @author E.Santoboni
@@ -45,7 +45,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 public class WidgetTypeAction extends AbstractPortalAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeAction.class);
-	
+
 	@Override
 	public void validate() {
 		super.validate();
@@ -75,7 +75,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 			throw new RuntimeException(t);
 		}
 	}
-	
+
 	private boolean checkGui() throws Throwable {
 		if (this.getStrutsAction() == NEW_USER_WIDGET || this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
 			return true;
@@ -113,9 +113,10 @@ public class WidgetTypeAction extends AbstractPortalAction {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Create of new widget.
+	 *
 	 * @return The result code.
 	 */
 	public String newWidget() {
@@ -128,9 +129,10 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Create of new user widget.
+	 *
 	 * @return The result code.
 	 * @deprecated use newUserWidget()
 	 */
@@ -140,12 +142,15 @@ public class WidgetTypeAction extends AbstractPortalAction {
 
 	/**
 	 * Create of new user widget.
+	 *
 	 * @return The result code.
 	 */
 	public String newUserWidget() {
 		try {
 			String check = this.checkNewUserWidget();
-			if (null != check) return check;
+			if (null != check) {
+				return check;
+			}
 			this.setStrutsAction(NEW_USER_WIDGET);
 			this.setMainGroup(Group.FREE_GROUP_NAME);
 		} catch (Throwable t) {
@@ -154,16 +159,19 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
-	 * Copy an existing widget (physic and with parameters) and value the form 
+	 * Copy an existing widget (physic and with parameters) and value the form
 	 * of creation of new user widget.
+	 *
 	 * @return The result code.
 	 */
 	public String copy() {
 		try {
 			String check = this.checkWidgetToCopy();
-			if (null != check) return check;
+			if (null != check) {
+				return check;
+			}
 			this.setStrutsAction(ApsAdminSystemConstants.PASTE);
 			this.setMainGroup(Group.FREE_GROUP_NAME);
 		} catch (Throwable t) {
@@ -172,9 +180,10 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Save a widget type.
+	 *
 	 * @return The result code.
 	 */
 	public String save() {
@@ -191,7 +200,9 @@ public class WidgetTypeAction extends AbstractPortalAction {
 				type.setCode(this.getWidgetTypeCode());
 			} else {
 				String check = this.checkWidgetType();
-				if (null != check) return check;
+				if (null != check) {
+					return check;
+				}
 				type = this.getWidgetTypeManager().getWidgetType(this.getWidgetTypeCode());
 			}
 			ApsProperties titles = new ApsProperties();
@@ -224,14 +235,12 @@ public class WidgetTypeAction extends AbstractPortalAction {
 						guiFragment.setGui(this.getGui());
 						this.getGuiFragmentManager().updateGuiFragment(guiFragment);
 					}
-				} else {
-					if (null != guiFragment) {
-						if (StringUtils.isNotBlank(guiFragment.getDefaultGui())) {
-							guiFragment.setGui(null);
-							this.getGuiFragmentManager().updateGuiFragment(guiFragment);
-						} else {
-							this.getGuiFragmentManager().deleteGuiFragment(guiFragment.getCode());
-						}
+				} else if (null != guiFragment) {
+					if (StringUtils.isNotBlank(guiFragment.getDefaultGui())) {
+						guiFragment.setGui(null);
+						this.getGuiFragmentManager().updateGuiFragment(guiFragment);
+					} else {
+						this.getGuiFragmentManager().deleteGuiFragment(guiFragment.getCode());
 					}
 				}
 			} else if (type.isLogic()/* && super.isInternalServletWidget(type.getParentType().getCode())*/) {
@@ -242,8 +251,8 @@ public class WidgetTypeAction extends AbstractPortalAction {
 					GuiFragment guiFragment = this.getGuiFragment(guiFragmentCode);
 					String fieldName = type.getCode() + "_" + guiFragmentCode;
 					String value = this.getGuis().getProperty(fieldName);
-					if ((null == value && null != guiFragment.getGui()) || 
-							(null != value && (StringUtils.isBlank(guiFragment.getGui()) || !value.equals(guiFragment.getGui())))) {
+					if ((null == value && null != guiFragment.getGui())
+							|| (null != value && (StringUtils.isBlank(guiFragment.getGui()) || !value.equals(guiFragment.getGui())))) {
 						guiFragment.setGui(value);
 						this.getGuiFragmentManager().updateGuiFragment(guiFragment);
 					}
@@ -255,7 +264,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	protected String extractUniqueGuiFragmentCode(String widgetTypeCode) throws ApsSystemException {
 		String uniqueCode = widgetTypeCode;
 		if (null != this.getGuiFragmentManager().getGuiFragment(uniqueCode)) {
@@ -269,17 +278,19 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return uniqueCode;
 	}
-	
+
 	@Deprecated
 	protected String saveUserShowlet() {
 		return this.saveUserWidget();
 	}
-	
+
 	protected String saveUserWidget() {
 		try {
 			boolean isCopy = (null != this.getPageCode() && this.getPageCode().trim().length() > 0);
 			String check = (isCopy) ? this.checkWidgetToCopy() : this.checkNewUserWidget();
-			if (null != check) return check;
+			if (null != check) {
+				return check;
+			}
 			WidgetType newType = null;
 			Widget widgetToCopy = this.extractWidgetToCopy();
 			if (null == widgetToCopy) {
@@ -292,16 +303,16 @@ public class WidgetTypeAction extends AbstractPortalAction {
 			} else {
 				newType = this.createCopiedWidget(widgetToCopy);
 			}
-			
+
 			//TODO CHECK MainGroup
 			newType.setMainGroup(this.getMainGroup());
-			
+
 			this.getWidgetTypeManager().addWidgetType(newType);
 			if (this.isReplaceOnPage()) {
 				WidgetType type = this.getWidgetType(this.getWidgetTypeCode());
 				Widget widget = new Widget();
 				widget.setType(type);
-				IPage page = this.getPageManager().getPage(this.getPageCode());
+				IPage page = this.getPageManager().getDraftPage(this.getPageCode());
 				page.getWidgets()[this.getFramePos()] = widget;
 				this.getPageManager().updatePage(page);
 				return "replaceOnPage";
@@ -312,14 +323,16 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	private Widget extractWidgetToCopy() throws Throwable {
-		IPage page = this.getPageManager().getPage(this.getPageCode());
-		if (null == page) return null;
+		IPage page = this.getPageManager().getDraftPage(this.getPageCode());
+		if (null == page) {
+			return null;
+		}
 		Widget[] widgets = page.getWidgets();
 		return widgets[this.getFramePos()];
 	}
-	
+
 	private String checkNewUserWidget() throws Throwable {
 		WidgetType parentType = this.getWidgetTypeManager().getWidgetType(this.getParentWidgetTypeCode());
 		if (null == parentType) {
@@ -332,36 +345,36 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return null;
 	}
-	
+
 	private String checkWidgetToCopy() throws Throwable {
-		IPage page = this.getPageManager().getPage(this.getPageCode());
+		IPage page = this.getPageManager().getDraftPage(this.getPageCode());
 		if (null == page) {
-			this.addActionError(this.getText("error.page.invalidPageCode.adv", 
+			this.addActionError(this.getText("error.page.invalidPageCode.adv",
 					new String[]{this.getPageCode()}));
 			return "inputWidgetTypes";
 		}
 		if (!this.getAuthorizationManager().isAuth(this.getCurrentUser(), page)) {
-			this.addActionError(this.getText("error.page.userNotAllowed.adv", 
+			this.addActionError(this.getText("error.page.userNotAllowed.adv",
 					new String[]{this.getPageCode()}));
 			return "inputWidgetTypes";
 		}
 		Widget[] widgets = page.getWidgets();
 		if (null == this.getFramePos() || widgets.length <= this.getFramePos()) {
 			String framePos = (null != this.getFramePos()) ? this.getFramePos().toString() : null;
-			this.addActionError(this.getText("error.page.invalidPageFrame.adv", 
+			this.addActionError(this.getText("error.page.invalidPageFrame.adv",
 					new String[]{this.getPageCode(), framePos}));
 			return "inputWidgetTypes";
 		}
 		Widget widget = widgets[this.getFramePos()];
 		if (null == widget) {
-			this.addActionError(this.getText("error.page.nullWidgetOnFrame", 
+			this.addActionError(this.getText("error.page.nullWidgetOnFrame",
 					new String[]{this.getPageCode(), this.getFramePos().toString()}));
 			return "inputWidgetTypes";
 		}
 		this.setWidgetToCopy(widget);
 		return null;
 	}
-	
+
 	private WidgetType createNewWidgetType() {
 		WidgetType type = new WidgetType();
 		type.setCode(this.getWidgetTypeCode());
@@ -372,7 +385,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		type.setLocked(false);
 		return type;
 	}
-	
+
 	private WidgetType createCopiedWidget(Widget widgetToCopy) {
 		WidgetType type = this.createNewWidgetType();
 		WidgetType parentType = widgetToCopy.getType();
@@ -380,28 +393,31 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		type.setConfig(widgetToCopy.getConfig());
 		return type;
 	}
-	
+
 	private ApsProperties extractWidgetTypeConfig(List<WidgetTypeParameter> parameters) throws Exception {
 		ApsProperties config = new ApsProperties();
-		for (int i=0; i<parameters.size(); i++) {
+		for (int i = 0; i < parameters.size(); i++) {
 			WidgetTypeParameter param = parameters.get(i);
 			String paramName = param.getName();
 			String value = this.getRequest().getParameter(paramName);
-			if (value != null && value.trim().length()>0) {
+			if (value != null && value.trim().length() > 0) {
 				config.setProperty(paramName, value);
 			}
 		}
 		return config;
 	}
-	
+
 	/**
 	 * Edit an exist widget type.
+	 *
 	 * @return The result code.
 	 */
 	public String edit() {
 		try {
 			String check = this.checkWidgetType();
-			if (null != check) return check;
+			if (null != check) {
+				return check;
+			}
 			this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 			WidgetType type = this.getWidgetTypeManager().getWidgetType(this.getWidgetTypeCode());
 			ApsProperties titles = type.getTitles();
@@ -415,7 +431,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 					String guiFragmentCode = guiFragmentCodes.get(i);
 					GuiFragment guiFragment = this.getGuiFragment(guiFragmentCode);
 					if (StringUtils.isNotEmpty(guiFragment.getGui())) {
-						String fieldName = type.getCode()+"_"+guiFragmentCode;
+						String fieldName = type.getCode() + "_" + guiFragmentCode;
 						this.getGuis().setProperty(fieldName, guiFragment.getGui());
 					}
 				}
@@ -431,7 +447,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public List<String> extractGuiFragmentCodes(String widgetTypeCode) {
 		List<String> ids = null;
 		try {
@@ -442,7 +458,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return ids;
 	}
-	
+
 	public GuiFragment extractUniqueGuiFragment(String widgetTypeCode) {
 		GuiFragment fragment = null;
 		try {
@@ -453,7 +469,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return fragment;
 	}
-	
+
 	public GuiFragment getGuiFragment(String guiFragmentCode) {
 		try {
 			return this.getGuiFragmentManager().getGuiFragment(guiFragmentCode);
@@ -462,7 +478,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 			throw new RuntimeException("error extracting gui fragment - code " + guiFragmentCode, t);
 		}
 	}
-	
+
 	private String checkWidgetType() {
 		WidgetType type = this.getWidgetTypeManager().getWidgetType(this.getWidgetTypeCode());
 		if (null == type) {
@@ -471,30 +487,36 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Start the deletion operations for the given widget type.
+	 *
 	 * @return The result code.
 	 */
 	public String trash() {
 		try {
 			String check = this.checkDeleteWidgetType();
-			if (null != check) return check;
+			if (null != check) {
+				return check;
+			}
 		} catch (Throwable t) {
 			_logger.error("error in trash", t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Delete a widget type from the system.
+	 *
 	 * @return The result code.
 	 */
 	public String delete() {
 		try {
 			String check = this.checkDeleteWidgetType();
-			if (null != check) return check;
+			if (null != check) {
+				return check;
+			}
 			this.getWidgetTypeManager().deleteWidgetType(this.getWidgetTypeCode());
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
@@ -502,37 +524,47 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	private String checkDeleteWidgetType() {
 		try {
+			List<IPage> utilizers = new ArrayList<>();
 			String check = this.checkWidgetType();
-			if (null != check) return check;
+			if (null != check) {
+				return check;
+			}
 			WidgetType type = this.getWidgetTypeManager().getWidgetType(this.getWidgetTypeCode());
 			if (type.isLocked()) {
 				this.addActionError(this.getText("error.widgetType.locked.undeletable", new String[]{this.getWidgetTypeCode()}));
 				return "inputWidgetTypes";
 			}
-			List<IPage> utilizers = this.getPageManager().getWidgetUtilizers(this.getWidgetTypeCode());
-			if (null != utilizers && utilizers.size() > 0) {
+			List<IPage> draftUtilizers = this.getPageManager().getDraftWidgetUtilizers(this.getWidgetTypeCode());
+			if (null != draftUtilizers && draftUtilizers.size() > 0) {
+				utilizers.addAll(draftUtilizers);
+			}
+			List<IPage> onlineUtilizers = this.getPageManager().getOnlineWidgetUtilizers(this.getWidgetTypeCode());
+			if (null != onlineUtilizers && onlineUtilizers.size() > 0) {
+				utilizers.addAll(onlineUtilizers);
+			}
+			if (utilizers.size() > 0) {
 				this.addActionError(this.getText("error.widgetType.used.undeletable", new String[]{this.getWidgetTypeCode()}));
 				return "inputWidgetTypes";
 			}
 		} catch (Throwable t) {
-			_logger.error("Error on checking delete operatione : widget type code {}",this.getWidgetTypeCode(), t);
+			_logger.error("Error on checking delete operatione : widget type code {}", this.getWidgetTypeCode(), t);
 			throw new RuntimeException("Error on checking delete operatione : widget type code " + this.getWidgetTypeCode(), t);
 		}
 		return null;
 	}
-	
+
 	@Deprecated
 	public WidgetType getShowletType(String code) {
 		return this.getWidgetType(code);
 	}
-	
+
 	public WidgetType getWidgetType(String code) {
 		return this.getWidgetTypeManager().getWidgetType(code);
 	}
-	
+
 	public Group getGroup(String groupCode) {
 		Group group = super.getGroupManager().getGroup(groupCode);
 		if (null == group) {
@@ -540,13 +572,13 @@ public class WidgetTypeAction extends AbstractPortalAction {
 		}
 		return group;
 	}
-	
+
 	protected void buildGuisFromForm(WidgetType type) throws Throwable {
 		if (type.isLogic()) {
 			List<String> guiFragmentCodes = this.extractGuiFragmentCodes(type.getCode());
 			for (int i = 0; i < guiFragmentCodes.size(); i++) {
 				String guiFragmentCode = guiFragmentCodes.get(i);
-				String fieldName = type.getCode()+"_"+guiFragmentCode;
+				String fieldName = type.getCode() + "_" + guiFragmentCode;
 				String value = this.getRequest().getParameter(fieldName);
 				if (StringUtils.isNotBlank(value)) {
 					this.getGuis().setProperty(fieldName, value);
@@ -554,7 +586,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
 			}
 		}
 	}
-	
+
 	public boolean isEditEmptyFragment() {
 		String paramValue = this.getConfigManager().getParam(SystemConstants.CONFIG_PARAM_EDIT_EMPTY_FRAGMENT_ENABLED);
 		try {
@@ -563,159 +595,185 @@ public class WidgetTypeAction extends AbstractPortalAction {
 			return false;
 		}
 	}
-	
+
 	public List<Group> getGroups() {
 		return this.getGroupManager().getGroups();
 	}
-	
+
 	public int getStrutsAction() {
 		return _strutsAction;
 	}
+
 	public void setStrutsAction(int strutsAction) {
 		this._strutsAction = strutsAction;
 	}
-	
+
 	@Deprecated
 	public String getShowletTypeCode() {
 		return this.getWidgetTypeCode();
 	}
+
 	@Deprecated
 	public void setShowletTypeCode(String widgetTypeCode) {
 		this.setWidgetTypeCode(widgetTypeCode);
 	}
-	
+
 	public String getEnglishTitle() {
 		return _englishTitle;
 	}
+
 	public void setEnglishTitle(String englishTitle) {
 		this._englishTitle = englishTitle;
 	}
-	
+
 	public String getItalianTitle() {
 		return _italianTitle;
 	}
+
 	public void setItalianTitle(String italianTitle) {
 		this._italianTitle = italianTitle;
 	}
-	
+
 	public String getMainGroup() {
 		return _mainGroup;
 	}
+
 	public void setMainGroup(String mainGroup) {
 		this._mainGroup = mainGroup;
 	}
-	
+
 	@Deprecated
 	public String getParentShowletTypeCode() {
 		return this.getParentWidgetTypeCode();
 	}
+
 	@Deprecated
 	public void setParentShowletTypeCode(String parentWidgetTypeCode) {
 		this.setParentWidgetTypeCode(parentWidgetTypeCode);
 	}
-	
+
 	public String getParentWidgetTypeCode() {
 		return _parentWidgetTypeCode;
 	}
+
 	public void setParentWidgetTypeCode(String parentWidgetTypeCode) {
 		this._parentWidgetTypeCode = parentWidgetTypeCode;
 	}
-	
+
 	public String getGui() {
 		return _gui;
 	}
+
 	public void setGui(String gui) {
 		this._gui = gui;
 	}
-	
+
 	public Properties getGuis() {
 		return _guis;
 	}
+
 	public void setGuis(Properties guis) {
 		this._guis = guis;
 	}
-	
+
 	public String getPageCode() {
 		return _pageCode;
 	}
+
 	public void setPageCode(String pageCode) {
 		this._pageCode = pageCode;
 	}
-	
+
 	public Integer getFramePos() {
 		return _framePos;
 	}
+
 	public void setFramePos(Integer framePos) {
 		this._framePos = framePos;
 	}
-	
+
 	@Deprecated
 	public Widget getShowletToCopy() {
 		return this.getWidgetToCopy();
 	}
+
 	@Deprecated
 	public void setShowletToCopy(Widget showletToCopy) {
 		this.setWidgetToCopy(showletToCopy);
 	}
-	
+
 	public Widget getWidgetToCopy() {
 		return _widgetToCopy;
 	}
+
 	public void setWidgetToCopy(Widget widgetToCopy) {
 		this._widgetToCopy = widgetToCopy;
 	}
-	
+
 	public boolean isReplaceOnPage() {
 		return _replaceOnPage;
 	}
+
 	public void setReplaceOnPage(boolean replaceOnPage) {
 		this._replaceOnPage = replaceOnPage;
 	}
-	
+
 	public String getWidgetTypeCode() {
 		return _widgetTypeCode;
 	}
+
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}
-	
+
 	protected IGuiFragmentManager getGuiFragmentManager() {
 		return _guiFragmentManager;
 	}
+
 	public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
 		this._guiFragmentManager = guiFragmentManager;
 	}
-	
+
 	protected ConfigInterface getConfigManager() {
 		return _configManager;
 	}
+
 	public void setConfigManager(ConfigInterface configManager) {
 		this._configManager = configManager;
 	}
-	
+
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
+
 	private int _strutsAction;
-	
+
 	private String _widgetTypeCode;
-	
+
 	private String _englishTitle;
 	private String _italianTitle;
-	
+
 	private String _mainGroup;
-	
+
 	private String _parentWidgetTypeCode;
-	
+
 	private String _gui;
 	private Properties _guis = new Properties();
-	
+
 	private String _pageCode;
 	private Integer _framePos;
 	private Widget _widgetToCopy;
-	
+
 	private boolean _replaceOnPage;
-	
+
 	private IGuiFragmentManager _guiFragmentManager;
 	private ConfigInterface _configManager;
-	
+
 	public final static int NEW_USER_WIDGET = 5;
-	
+	private IPageActionHelper _pageActionHelper;
+
 }

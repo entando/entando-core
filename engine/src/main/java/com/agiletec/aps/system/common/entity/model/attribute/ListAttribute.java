@@ -41,7 +41,7 @@ public class ListAttribute extends AbstractListAttribute {
      * Initialize the data structure.
      */
     public ListAttribute() {
-        this._listMap = new HashMap<String, List<AttributeInterface>>();
+        this._listMap = new HashMap<>();
     }
 	
     /**
@@ -66,7 +66,7 @@ public class ListAttribute extends AbstractListAttribute {
     public List<AttributeInterface> getAttributeList(String langCode) {
         List<AttributeInterface> attrList = (List<AttributeInterface>) this._listMap.get(langCode);
         if (attrList == null) {
-            attrList = new ArrayList<AttributeInterface>();
+            attrList = new ArrayList<>();
             this._listMap.put(langCode, attrList);
         }
         return attrList;
@@ -142,7 +142,7 @@ public class ListAttribute extends AbstractListAttribute {
 	
     @Override
     public List<AttributeInterface> getAttributes() {
-        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
+        List<AttributeInterface> attributes = new ArrayList<>();
         Iterator<List<AttributeInterface>> values = this.getAttributeListMap().values().iterator();
         while (values.hasNext()) {
             attributes.addAll(values.next());

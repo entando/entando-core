@@ -51,6 +51,9 @@ import com.agiletec.aps.system.common.entity.parse.IEntityTypeFactory;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.util.DateConverter;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  * This abstract service must be extended in all those services that make use of ApsEntities.
@@ -94,7 +97,7 @@ public abstract class ApsEntityManager extends AbstractService
 		//codes not loaded yet
 		AttributeDisablingCodesLoader loader = new AttributeDisablingCodesLoader();
 		this._attributeDisablingCodes = loader.extractDisablingCodes(this.getAttributeDisablingCodesFileName(), super.getBeanFactory(), this);
-		Map<String, String> clone = new HashMap<String, String>();
+		Map<String, String> clone = new HashMap<>();
 		clone.putAll(this._attributeDisablingCodes);
 		return clone;
 	}
@@ -111,13 +114,13 @@ public abstract class ApsEntityManager extends AbstractService
 	}
 	
 	protected void initAttributeRoles() {
-		this._attributeRoles = new HashMap<String, AttributeRole>();
+		this._attributeRoles = new HashMap<>();
 		AttributeRolesLoader loader = new AttributeRolesLoader();
 		this._attributeRoles = loader.extractAttributeRoles(this.getAttributeRolesFileName(), super.getBeanFactory(), this);
 	}
 	
 	private List<AttributeRole> getOrderedAttributeRoles() {
-		List<AttributeRole> roles = new ArrayList<AttributeRole>(this._attributeRoles.size());
+		List<AttributeRole> roles = new ArrayList<>(this._attributeRoles.size());
 		Iterator<AttributeRole> iter = this._attributeRoles.values().iterator();
 		while (iter.hasNext()) {
 			AttributeRole role = iter.next();
@@ -157,7 +160,7 @@ public abstract class ApsEntityManager extends AbstractService
 			handler.initHandler(entityPrototype, this.getXmlAttributeRootElementName(), this.getCategoryManager());
 			parser.parse(is, handler);
 			return entityPrototype;
-		} catch (Throwable t) {
+		} catch (ParserConfigurationException | SAXException | IOException t) {
 			_logger.error("Error detected while creating the entity. typecode: {} - xml: {}", entityTypeCode, xml, t);
 			throw new ApsSystemException("Error detected while creating the entity", t);
 		}
@@ -196,7 +199,7 @@ public abstract class ApsEntityManager extends AbstractService
 	@Override
 	public Map<String, IApsEntity> getEntityPrototypes() {
 		Collection<IApsEntity> entityTypes = this._entityTypes.values();
-		Map<String, IApsEntity> entityTypesMap = new HashMap<String, IApsEntity>(entityTypes.size());
+		Map<String, IApsEntity> entityTypesMap = new HashMap<>(entityTypes.size());
 		Iterator<IApsEntity> iter = entityTypes.iterator();
 		while (iter.hasNext()) {
 			IApsEntity entityType = iter.next();
@@ -216,7 +219,7 @@ public abstract class ApsEntityManager extends AbstractService
 		if (null == entityType) {
 			throw new ApsSystemException("Invalid entity type to add");
 		}
-		Map<String, IApsEntity> newEntityTypes = new HashMap<String, IApsEntity>(this._entityTypes);
+		Map<String, IApsEntity> newEntityTypes = new HashMap<>(this._entityTypes);
 		newEntityTypes.put(entityType.getTypeCode(), entityType);
 		this.updateEntityPrototypes(newEntityTypes);
 		this.notifyEntityTypesChanging(null, entityType, EntityTypesChangingEvent.INSERT_OPERATION_CODE);
@@ -236,7 +239,7 @@ public abstract class ApsEntityManager extends AbstractService
 		if (null == oldEntityType) {
 			throw new ApsSystemException("No entity type to update with code '" + entityType.getTypeCode() + "' where found");
 		}
-		Map<String, IApsEntity> newEntityTypes = new HashMap<String, IApsEntity>(this._entityTypes);
+		Map<String, IApsEntity> newEntityTypes = new HashMap<>(this._entityTypes);
 		newEntityTypes.put(entityType.getTypeCode(), entityType);
 		this.updateEntityPrototypes(newEntityTypes);
 		this.verifyReloadingNeeded(oldEntityType, entityType);
@@ -287,7 +290,7 @@ public abstract class ApsEntityManager extends AbstractService
 		if (null == entityTypeToRemove) {
 			throw new ApsSystemException("No entity type to remove with code '" + entityTypeCode + "' were found");
 		}
-		Map<String, IApsEntity> newEntityTypes = new HashMap<String, IApsEntity>(this._entityTypes);
+		Map<String, IApsEntity> newEntityTypes = new HashMap<>(this._entityTypes);
 		newEntityTypes.remove(entityTypeCode);
 		this.updateEntityPrototypes(newEntityTypes);
 		this.notifyEntityTypesChanging(entityTypeToRemove, null, EntityTypesChangingEvent.REMOVE_OPERATION_CODE);
@@ -328,7 +331,7 @@ public abstract class ApsEntityManager extends AbstractService
 	@Override
 	public Map<String, AttributeInterface> getEntityAttributePrototypes() {
 		Collection<AttributeInterface> attributes = this.getEntityTypeDom().getAttributeTypes().values();
-		Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>(attributes.size());
+		Map<String, AttributeInterface> attributeMap = new HashMap<>(attributes.size());
 		Iterator<AttributeInterface> iter = attributes.iterator();
 		while (iter.hasNext()) {
 			AttributeInterface attributeInterface = iter.next();
@@ -605,7 +608,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 * @deprecated From jAPS 2.0 version 2.0.9, use {@link IEntitySearcherDAO} searchId(EntitySearchFilter[]) method 
 	 */
 	protected List<String> getAllEntityId() throws ApsSystemException {
-		List<String> entitiesId = new ArrayList<String>();
+		List<String> entitiesId = new ArrayList<>();
 		try {
 			entitiesId = this.getEntityDao().getAllEntityId();
 		} catch (Throwable t) {
@@ -617,7 +620,7 @@ public abstract class ApsEntityManager extends AbstractService
 	
 	@Override
 	public List<SmallEntityType> getSmallEntityTypes() {
-		List<SmallEntityType> types = new ArrayList<SmallEntityType>();
+		List<SmallEntityType> types = new ArrayList<>();
 		Iterator<IApsEntity> iter = this._entityTypes.values().iterator();
 		while (iter.hasNext()) {
 			IApsEntity apsEntity = iter.next();
@@ -690,7 +693,7 @@ public abstract class ApsEntityManager extends AbstractService
 	}
 
 	protected List<String> getEntityTypeCodes() {
-		return new ArrayList<String>(this._entityTypes.keySet());
+		return new ArrayList<>(this._entityTypes.keySet());
 	}
 	
 	/**
@@ -737,7 +740,7 @@ public abstract class ApsEntityManager extends AbstractService
 	
 	private ICategoryManager _categoryManager;
 	
-	private Map<String, Integer> _typesStatus = new HashMap<String, Integer>();
+	private Map<String, Integer> _typesStatus = new HashMap<>();
 	
 	private Map<String, AttributeRole> _attributeRoles = null;
 	

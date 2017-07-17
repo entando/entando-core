@@ -1,0 +1,68 @@
+.widget-list {
+    height: 80px;
+    border: 1px solid #ddd;
+    border-radius: 1px;
+}
+.widget-square {
+    height: 70px;
+    min-width: 70px;
+    margin: 5px 0 0 5px;
+    background: #23a8e0;
+    color: #fff;
+    border: 3px solid #00659c;
+    border-radius: 3px;
+    position: relative;
+    text-align: center;
+    cursor: move;
+    display: inline-block;
+    padding: 5px;
+}
+.widget-square .fa {
+    font-size: 20px;
+    height: 50%;
+    line-height: 200%;
+}
+.drag-helper {
+    transform-origin: left;
+    transform: rotate(3deg);
+    z-index: 200;
+}
+
+.grid-widget {
+    min-width: 70px;
+    background: #23a8e0;
+    color: #fff;
+    border: 3px solid #00659c;
+    border-radius: 3px;
+    text-align: center;
+    cursor: move;
+    display: inline-block;
+    padding: 5px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.grid-widget .remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.grid-widget .slot-name {
+    position: absolute;
+    left: 10px;
+}
+
+.grid-widget .widget-icon {
+    font-size: 20px;
+    line-height: 35px;
+}
+
+

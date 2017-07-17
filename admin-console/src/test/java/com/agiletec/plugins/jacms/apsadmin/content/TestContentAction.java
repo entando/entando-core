@@ -63,13 +63,13 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 		try {
 			String contentSessionMarker = AbstractContentAction.buildContentOnSessionMarker(content, ApsAdminSystemConstants.EDIT);
 			Content currentContent = this.getContentOnEdit(contentSessionMarker);
-    		assertEquals(content.getId(), currentContent.getId());
-    		assertEquals(content.getTypeCode(), currentContent.getTypeCode());
-    		assertEquals(content.getDescr(), currentContent.getDescr());
-    		assertEquals(content.getMainGroup(), currentContent.getMainGroup());
-    	} catch (Throwable t) {
-            throw t;
-        }
+			assertEquals(content.getId(), currentContent.getId());
+			assertEquals(content.getTypeCode(), currentContent.getTypeCode());
+			assertEquals(content.getDescription(), currentContent.getDescription());
+			assertEquals(content.getMainGroup(), currentContent.getMainGroup());
+		} catch (Throwable t) {
+			throw t;
+		}
 	}
 
 	private void testFailureEdit(String contentId, String currentUserName) throws Throwable {
@@ -88,7 +88,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 			assertEquals(Action.SUCCESS, result);
 			Content contentOnSession = this.getContentOnEdit(contentOnSessionMarker);
 			assertNotNull(contentOnSession);
-			assertEquals(insertedDescr, contentOnSession.getDescr());
+			assertEquals(insertedDescr, contentOnSession.getDescription());
 
 			this.initContentAction("/do/jacms/Content", "save", contentOnSessionMarker);
 			result = this.executeAction();
@@ -135,7 +135,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 			Content contentForTest = this.getContentManager().loadContent("EVN191", true);
 			String contentOnSessionMarker = AbstractContentAction.buildContentOnSessionMarker(contentForTest, ApsAdminSystemConstants.EDIT);
 			contentForTest.setId(null);
-			contentForTest.setDescr(insertedDescr);
+			contentForTest.setDescription(insertedDescr);
 			contentForTest.setMainGroup("coach");//Valorizzo il gruppo proprietario
 
 			contentForTest.getGroups().add("customers");
@@ -271,8 +271,8 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 		String contentOnSessionMarker = this.extractSessionMarker(contentTypeCode, ApsAdminSystemConstants.ADD);
 		String insertedDescr = "XXX Prova Validazione XXX";
 		String shortTitle = "short";
-		String longTitle = "Titolo che supera la lunghezza massima di cento caratteri; " +
-			"Ripeto, Titolo che supera la lunghezza massima di cento caratteri";
+		String longTitle = "Titolo che supera la lunghezza massima di cento caratteri; "
+				+ "Ripeto, Titolo che supera la lunghezza massima di cento caratteri";
 		try {
 			String result = this.executeCreateNewVoid(contentTypeCode, "descr",
 					Content.STATUS_DRAFT, Group.FREE_GROUP_NAME, "admin");
@@ -353,7 +353,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 
 			this.initContentAction("/do/jacms/Content", "removeGroup", contentOnSessionMarker);
 			this.addParameter("extraGroupName", "customers");
-			this.addParameter("descr", contentOnEdit.getDescr());
+			this.addParameter("descr", contentOnEdit.getDescription());
 			result = this.executeAction();
 			assertEquals(Action.SUCCESS, result);
 			contentOnEdit = (Content) this.getRequest().getSession().getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentOnSessionMarker);
@@ -364,7 +364,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 		Content mainContent = this.getContentManager().loadContent(contentId, true);
 		try {
 			this.initContentAction("/do/jacms/Content", "save", contentOnSessionMarker);
-			this.addParameter("descr", mainContent.getDescr());
+			this.addParameter("descr", mainContent.getDescription());
 			String result = this.executeAction();
 			assertEquals(Action.INPUT, result);
 			ActionSupport action = this.getAction();
@@ -526,9 +526,9 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 			assertFalse(contentOnSession.getGroups().contains(groupToRemove));
 
 			this.initContentAction("/do/jacms/Content", "save", contentOnSessionMarker);
-			this.addParameter("descr", master.getDescr());
+			this.addParameter("descr", master.getDescription());
 			this.addParameter("mainGroup", master.getMainGroup());
-			this.addParameter("descr", master.getDescr());
+			this.addParameter("descr", master.getDescription());
 			result = this.executeAction();
 			assertEquals(Action.INPUT, result);
 
@@ -571,10 +571,11 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 			ContentAction action = (ContentAction) this.getAction();
 			List contentUtilizers = (List) action.getReferences().get("jacmsContentManagerUtilizers");
 			assertEquals(2, contentUtilizers.size());
-			List pegeUtilizers = (List) action.getReferences().get("CmsPageManagerWrapperUtilizers");
-			assertEquals(1, pegeUtilizers.size());
-			IPage pageUtilizer = (IPage) pegeUtilizers.get(0);
-			assertEquals("homepage", pageUtilizer.getCode());
+			List pageUtilizers = (List) action.getReferences().get("CmsPageManagerWrapperUtilizers");
+			assertEquals(1, pageUtilizers.size());
+			IPage publicPageUtilizer = (IPage) pageUtilizers.get(0);
+			assertEquals("homepage", publicPageUtilizer.getCode());
+			assertTrue(publicPageUtilizer.isOnlineInstance());
 		} catch (Throwable t) {
 			this.getContentManager().insertOnLineContent(master);
 			throw t;
@@ -626,9 +627,9 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 		assertEquals(Action.SUCCESS, result);
 		Content onEdit = this.getContentOnEdit(contentOnSessionMarker);
 		assertNull(onEdit.getId());
-    	assertEquals(content.getTypeCode(), onEdit.getTypeCode());
-    	assertEquals(content.getMainGroup(), onEdit.getMainGroup());
-    	assertTrue(onEdit.getDescr().indexOf(content.getDescr())>-1);
+		assertEquals(content.getTypeCode(), onEdit.getTypeCode());
+		assertEquals(content.getMainGroup(), onEdit.getMainGroup());
+		assertTrue(onEdit.getDescr().indexOf(content.getDescr()) > -1);
 	}
 
 	protected String executeCopyPaste(String contentId, boolean copyPublicVersion, String currentUserName) throws Throwable {

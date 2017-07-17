@@ -153,7 +153,7 @@ public abstract class AbstractListAttribute extends AbstractComplexAttribute
 	}
 	
 	protected List<AbstractJAXBAttribute> extractJAXBListAttributes(List<AttributeInterface> attributes, String langCode) {
-        List<AbstractJAXBAttribute> jaxbAttributes = new ArrayList<AbstractJAXBAttribute>();
+        List<AbstractJAXBAttribute> jaxbAttributes = new ArrayList<>();
         for (int i = 0; i < attributes.size(); i++) {
             AttributeInterface attribute = attributes.get(i);
             jaxbAttributes.add(attribute.getJAXBAttribute(langCode));

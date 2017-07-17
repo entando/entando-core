@@ -37,7 +37,7 @@ jQuery(function($){
 		$("input[data-isdate=true]").datepicker({
       			changeMonth: true,
       			changeYear: true,
-      			dateFormat: "yy-mm-dd"
+      			dateFormat: "yyyy-mm-dd"
     		});
 	}
 });

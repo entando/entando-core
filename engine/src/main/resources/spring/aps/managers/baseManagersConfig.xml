@@ -7,12 +7,14 @@
 		xmlns:cache="http://www.springframework.org/schema/cache"
         xmlns:p="http://www.springframework.org/schema/p" 
 		xmlns:aop="http://www.springframework.org/schema/aop" 
+		xmlns:task="http://www.springframework.org/schema/task"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
 			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
 			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd 
 			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd 
-			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 	
 	<cache:annotation-driven cache-manager="springCacheManager" />
 	<aop:aspectj-autoproxy proxy-target-class="true" />
@@ -238,5 +240,18 @@
 		<property name="cleanOldActivities"><value>true</value></property>
 		<property name="maxActivitySizeByGroup"><value>10</value></property>
 	</bean>
+
+	<bean id="PageTokenManager" class="org.entando.entando.aps.system.services.page.PageTokenManager" parent="abstractService" >
+		<property name="configManager" ref="BaseConfigManager" />
+	</bean>
+
+	<bean id="BulkCommandManager" class="org.entando.entando.aps.system.services.command.BulkCommandManager" parent="abstractService" />
+
+
+	<task:scheduler id="entandoScheduler" pool-size="10"/>
+
+    <task:scheduled-tasks scheduler="entandoScheduler">
+        <task:scheduled ref="BulkCommandManager" method="cleanCache" fixed-delay="3600000"  />
+    </task:scheduled-tasks>
 	
 </beans>

@@ -13,6 +13,7 @@
  */
 package org.entando.entando.apsadmin.portal.model;
 
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelDOM;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
@@ -27,7 +28,7 @@ import java.util.Map;
  * @author E.Santoboni
  */
 public class TestPageModelAction extends AbstractTestPageModelAction {
-	
+
 	public void testEditPageModels() throws Throwable {
 		String testPageModelCode = "test_pagemodel";
 		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
@@ -45,7 +46,7 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
 		}
 	}
-	
+
 	public void testValidate_1() throws Throwable {
 		String testPageModelCode = "test_pagemodel";
 		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
@@ -67,7 +68,7 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 			throw e;
 		}
 	}
-	
+
 	public void testValidate_2() throws Throwable {
 		String testPageModelCode = "internal";
 		PageModel model = this._pageModelManager.getPageModel(testPageModelCode);
@@ -90,7 +91,7 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 			throw e;
 		}
 	}
-	
+
 	public void testSave() throws Throwable {
 		String testPageModelCode = "test_pagemodel";
 		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
@@ -114,7 +115,7 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
 		}
 	}
-	
+
 	public void testTrashPageModels_1() throws Throwable {
 		String result = this.executeAction("admin", "trash", null);
 		assertEquals("pageModelList", result);
@@ -126,9 +127,11 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 		Map<String, List<Object>> references = pageModelAction.getReferences();
 		assertFalse(references.isEmpty());
 		assertEquals(1, references.size());
-		assertEquals(11, references.get("PageManagerUtilizers").size());
+		List<Object> referendedPages = references.get("PageManagerUtilizers");
+		assertEquals(23, referendedPages.size());
+		this.checkUtilizers(referendedPages, 12, 11);
 	}
-	
+
 	public void testTrashPageModels_2() throws Throwable {
 		String testPageModelCode = "test_pagemodel";
 		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
@@ -147,7 +150,7 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
 		}
 	}
-	
+
 	public void testDeletePageModels_1() throws Throwable {
 		String result = this.executeAction("admin", "delete", null);
 		assertEquals("pageModelList", result);
@@ -159,9 +162,26 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 		Map<String, List<Object>> references = pageModelAction.getReferences();
 		assertFalse(references.isEmpty());
 		assertEquals(1, references.size());
-		assertEquals(11, references.get("PageManagerUtilizers").size());
+		List<Object> referendedPages = references.get("PageManagerUtilizers");
+		assertEquals(23, referendedPages.size());
+		this.checkUtilizers(referendedPages, 12, 11);
 	}
-	
+
+	private void checkUtilizers(List<Object> pageUtilizers, int expectedDraft, int expectedOnline) {
+		int online = 0;
+		int draft = 0;
+		for (int i = 0; i < pageUtilizers.size(); i++) {
+			IPage page = (IPage) pageUtilizers.get(i);
+			if (page.isOnlineInstance()) {
+				online++;
+			} else {
+				draft++;
+			}
+		}
+		assertEquals(expectedOnline, online);
+		assertEquals(expectedDraft, draft);
+	}
+
 	public void testDeletePageModels_2() throws Throwable {
 		String testPageModelCode = "test_pagemodel";
 		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
@@ -180,12 +200,12 @@ public class TestPageModelAction extends AbstractTestPageModelAction {
 			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
 		}
 	}
-	
+
 	private String executeAction(String currentUser, String actionName, String modelCode) throws Throwable {
 		this.setUserOnSession(currentUser);
 		this.initAction("/do/PageModel", actionName);
 		super.addParameter("code", modelCode);
 		return this.executeAction();
 	}
-	
+
 }

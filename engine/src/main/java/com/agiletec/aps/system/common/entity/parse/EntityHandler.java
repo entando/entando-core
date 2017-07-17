@@ -58,7 +58,7 @@ public class EntityHandler extends DefaultHandler {
         try {
             Class handlerClass = Class.forName(this.getClass().getName());
             handler = (EntityHandler) handlerClass.newInstance();
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Error while cloning the entity handler: class " + this.getClass().getName(), e);
         }
         return handler;
@@ -180,7 +180,7 @@ public class EntityHandler extends DefaultHandler {
      * on the structure of the Entity Type.
      */
     private void endEntity() {
-        return; // nothing to do
+        // nothing to do
     }
 
     /**
@@ -208,7 +208,7 @@ public class EntityHandler extends DefaultHandler {
     }
     
     private void startDescr(Attributes attributes, String qName) throws SAXException {
-        return; // nothing to do
+        // nothing to do
     }
     
     private void endDescr() {
@@ -223,7 +223,7 @@ public class EntityHandler extends DefaultHandler {
     }
     
     private void endGroups() {
-        return; // nothing to do
+        // nothing to do
     }
     
     private void startGroup(Attributes attributes, String qName) throws SAXException {
@@ -232,15 +232,15 @@ public class EntityHandler extends DefaultHandler {
     }
 
     private void endGroup() {
-        return; // nothing to do
+        // nothing to do
     }
     
     private void startCategories(Attributes attributes, String qName) throws SAXException {
-        return; // nothing to do
+        // nothing to do
     }
     
     private void endCategories() {
-        return; // nothing to do
+        // nothing to do
     }
     
     private void startCategory(Attributes attributes, String qName) throws SAXException {
@@ -254,7 +254,7 @@ public class EntityHandler extends DefaultHandler {
     }
     
     private void endCategory() {
-        return; // nothing to do
+        // nothing to do
     }
     
     private void startAttribute(Attributes attributes, String qName) throws SAXException {

@@ -15,13 +15,15 @@ package com.agiletec.aps.system.services.page;
 
 /**
  * Helper class for the page manager
- * @author S.Puddu
+ *
  */
 public class PageUtils {
-	
+
 	/**
-	 * Return the full path of the given page; the path is composed by the concatenation of the
-	 * code of the page starting from the root to the given page.
+	 * Return the full path of the given page; the path is composed by the
+	 * concatenation of the code of the page starting from the root to the given
+	 * page.
+	 *
 	 * @param page The page whose path must be found.
 	 * @param separator The separator of the page codes
 	 * @return The full path of the page
@@ -35,11 +37,11 @@ public class PageUtils {
 		buffer.insert(0, temp.getCode());
 		while (!temp.getCode().equals(temp.getParentCode())) {
 			temp = temp.getParent();
-			if (temp.isShowable()) {
+			if (temp.getMetadata().isShowable()) {
 				buffer.insert(0, temp.getCode() + separator);
 			}
 		}
 		return buffer;
 	}
-	
+
 }

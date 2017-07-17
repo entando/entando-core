@@ -28,7 +28,8 @@
 			<interceptor name="apsParams" class="org.entando.entando.apsadmin.system.ApsParametersInterceptor" />
 			<interceptor name="chain" class="com.agiletec.apsadmin.system.ChainingInterceptor" />
 			<interceptor name="apsFileUpload" class="com.agiletec.apsadmin.system.ApsFileUploadInterceptor" />
-			<interceptor name="entandoActionLogger" class="org.entando.entando.apsadmin.system.ActionLoggerInterceptor" />
+			<interceptor name="entandoActionLogger" class="org.entando.entando.apsadmin.system.ActionLoggerInterceptor" />	
+			<interceptor name="redirectMessage" class="org.entando.entando.apsadmin.system.RedirectMessageInterceptor" />
 			
 			<interceptor-stack name="entandoFreeStack">
 				<interceptor-ref name="exception"/>
@@ -219,5 +220,5 @@
 	
 	<include file="org/entando/entando/aps/internalservlet/api/api.xml" />
 	<include file="org/entando/entando/aps/internalservlet/user/currentUserProfile.xml"/>
-    
+
 </struts>

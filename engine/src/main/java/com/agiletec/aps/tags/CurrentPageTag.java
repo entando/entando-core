@@ -29,15 +29,17 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 
 /**
- * Returns the requested information held by the current page bean.
- * It is possible to ask for the title in the current language (param value: "title") or the code 
- * (param: "code"). The title in the current language is returned if "param" is not specified
+ * Returns the requested information held by the current page bean. It is
+ * possible to ask for the title in the current language (param value: "title")
+ * or the code (param: "code"). The title in the current language is returned if
+ * "param" is not specified
+ * 
  * @author E.Santoboni
  */
 public class CurrentPageTag extends PageInfoTag {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CurrentPageTag.class);
-	
+
 	@Override
 	public int doEndTag() throws JspException {
 		ServletRequest request = this.pageContext.getRequest();
@@ -60,12 +62,12 @@ public class CurrentPageTag extends PageInfoTag {
 			this.evalValue();
 		} catch (Throwable t) {
 			_logger.error("error in doStartTag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
+			// ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error during tag initialization ", t);
 		}
 		return EVAL_PAGE;
 	}
-	
+
 	protected void extractPageTitle(IPage page, Lang currentLang, RequestContext reqCtx) {
 		if (!page.isUseExtraTitles()) {
 			super.extractPageTitle(page, currentLang);
@@ -92,18 +94,17 @@ public class CurrentPageTag extends PageInfoTag {
 			super.extractPageTitle(page, currentLang);
 		}
 	}
-	
+
 	private void extractPageTitleFromExtraTitles(IPage page, Lang currentLang, Map extraTitlesMap) {
 		Object value = null;
-		if ((this.getLangCode() == null) || (this.getLangCode().equals(""))
-				|| (currentLang.getCode().equalsIgnoreCase(this.getLangCode()))) {
+		if ((this.getLangCode() == null) || (this.getLangCode().equals("")) || (currentLang.getCode().equalsIgnoreCase(this
+				.getLangCode()))) {
 			value = extraTitlesMap.get(currentLang.getCode());
 		} else {
 			value = extraTitlesMap.get(this.getLangCode());
 		}
 		if (value == null || value.toString().trim().equals("")) {
-			ILangManager langManager = 
-				(ILangManager) ApsWebApplicationUtils.getBean(SystemConstants.LANGUAGE_MANAGER, this.pageContext);
+			ILangManager langManager = (ILangManager) ApsWebApplicationUtils.getBean(SystemConstants.LANGUAGE_MANAGER, this.pageContext);
 			value = extraTitlesMap.get(langManager.getDefaultLang().getCode());
 		}
 		if (null != value && value.toString().trim().length() > 0) {
@@ -114,8 +115,9 @@ public class CurrentPageTag extends PageInfoTag {
 	protected String getParam() {
 		return super.getInfo();
 	}
+
 	public void setParam(String param) {
 		super.setInfo(param);
 	}
-	
+
 }

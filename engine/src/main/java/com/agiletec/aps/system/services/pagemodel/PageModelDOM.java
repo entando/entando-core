@@ -22,6 +22,7 @@ import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
@@ -69,6 +70,12 @@ public class PageModelDOM {
 			Element descrElement = new Element(TAB_DESCR);
 			descrElement.setText(frame.getDescription());
 			frameElement.addContent(descrElement);
+			
+			Element sketchElement = this.buildSketchXML(frame);
+			if (null != sketchElement) {
+				frameElement.addContent(sketchElement);
+			}
+			
 			Widget defaultWidget = frame.getDefaultWidget();
 			if (null != defaultWidget) {
 				Element defaultWidgetElement = new Element(TAB_DEFAULT_WIDGET);
@@ -86,6 +93,19 @@ public class PageModelDOM {
 		}
 	}
 	
+	private Element buildSketchXML(Frame frame) {
+		FrameSketch sketch = frame.getSketch();
+		if (null != sketch) {
+			Element sketchElement = new Element(TAB_SKETCH);
+			sketchElement.setAttribute(ATTRIBUTE_X1, String.valueOf(sketch.getX1()));
+			sketchElement.setAttribute(ATTRIBUTE_Y1, String.valueOf(sketch.getY1()));
+			sketchElement.setAttribute(ATTRIBUTE_X2, String.valueOf(sketch.getX2()));
+			sketchElement.setAttribute(ATTRIBUTE_Y2, String.valueOf(sketch.getY2()));
+			return sketchElement;
+		}
+		return null;
+	}
+
 	private void decodeDOM(String xmlText) throws ApsSystemException {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setValidation(false);
@@ -148,6 +168,13 @@ public class PageModelDOM {
 				if (null != defaultWidgetElement) {
 					this.buildDefaultWidget(frame, defaultWidgetElement, pos, widgetTypeManager);
 				}
+				FrameSketch frameSketch = this.buildFrameSketch(frameElement);
+				if (null != frameSketch) {
+					frame.setSketch(frameSketch);
+				} else {
+					this.applyDefaultFrameSketch(frame);
+				}
+				
 				this._configuration[pos] = frame;
 			}
 		} else {
@@ -155,6 +182,38 @@ public class PageModelDOM {
 		}
 	}
 	
+	
+	/**
+	 * the framework behavior when, reading from db, no sketch info is found.
+	 * this implementations do nothing
+	 * @param frame
+	 */
+	protected void applyDefaultFrameSketch(Frame frame) {
+		// do nothing
+	}
+
+	private FrameSketch buildFrameSketch(Element frameElement) {
+		Element frameSketchElement = frameElement.getChild(TAB_SKETCH);
+		if (null == frameSketchElement) {
+			return null;
+		}
+		
+		String x1Val = frameSketchElement.getAttributeValue(ATTRIBUTE_X1);
+		String y1Val = frameSketchElement.getAttributeValue(ATTRIBUTE_Y1);
+		String x2Val = frameSketchElement.getAttributeValue(ATTRIBUTE_X2);
+		String y2Val = frameSketchElement.getAttributeValue(ATTRIBUTE_Y2);
+		
+		int x1 = StringUtils.isNumeric(x1Val) ? new Integer(x1Val) : 0;
+		int y1 = StringUtils.isNumeric(x1Val) ? new Integer(y1Val) : 0;
+		int x2 = StringUtils.isNumeric(x1Val) ? new Integer(x2Val) : 0;
+		int y2 = StringUtils.isNumeric(x1Val) ? new Integer(y2Val) : 0;
+
+		
+		FrameSketch frameSketch = new FrameSketch();
+		frameSketch.setCoords(x1, y1, x2, y2);
+		return frameSketch;
+	}
+
 	private void buildDefaultWidget(Frame frame, Element defaultWidgetElement, int pos, IWidgetTypeManager widgetTypeManager) {
 		Widget widget = new Widget();
 		String widgetCode = defaultWidgetElement.getAttributeValue(ATTRIBUTE_CODE);
@@ -250,6 +309,14 @@ public class PageModelDOM {
 	private final String TAB_PROPERTIES = "properties";
 	private final String TAB_PROPERTY = "property";
 	private final String ATTRIBUTE_KEY = "key";
+	
+	private final String TAB_SKETCH = "sketch";
+	private final String ATTRIBUTE_X1 = "x1";
+	private final String ATTRIBUTE_Y1 = "y1";
+	private final String ATTRIBUTE_X2 = "x2";
+	private final String ATTRIBUTE_Y2 = "y2";
+	
+	
 	private boolean _existMainFrame;
 	private int _mainFrame;
 	//private String[] _frames;

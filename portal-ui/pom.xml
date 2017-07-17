@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>entando-core</artifactId>
 		<groupId>org.entando.entando</groupId>
-		<version>4.2.1-SNAPSHOT</version>
+		<version>4.3.1</version>
 	</parent>
 	<groupId>org.entando.entando</groupId>
 	<artifactId>entando-portal-ui</artifactId>
-	<version>4.2.1-SNAPSHOT</version>
+	<version>4.3.1</version>
 	<packaging>war</packaging>
 	<name>Entando Core: Portal UI</name>
 	<description>Entando Portal UI: an agile, modern and user-centric open source Portal platform.</description>
@@ -126,15 +126,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<target>1.6</target>
-					<source>1.6</source>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.5</version>
 				<executions>
@@ -246,12 +237,12 @@
 		<dependency>
 			<groupId>org.entando.entando</groupId>
 			<artifactId>entando-engine</artifactId>
-			<version>4.2.1-SNAPSHOT</version>
+			<version>4.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.entando.entando</groupId>
 			<artifactId>entando-engine</artifactId>
-			<version>4.2.1-SNAPSHOT</version>
+			<version>4.3.1</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -261,18 +252,18 @@
 		<dependency>
 			<groupId>org.entando.entando</groupId>
 			<artifactId>entando-admin-console</artifactId>
-			<version>4.2.1-SNAPSHOT</version>
+			<version>4.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.entando.entando</groupId>
 			<artifactId>entando-admin-console</artifactId>
-			<version>4.2.1-SNAPSHOT</version>
+			<version>4.3.1</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>org.entando.entando</groupId>
 			<artifactId>entando-admin-console</artifactId>
-			<version>4.2.1-SNAPSHOT</version>
+			<version>4.3.1</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>

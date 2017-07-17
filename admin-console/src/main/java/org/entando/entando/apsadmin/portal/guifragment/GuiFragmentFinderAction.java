@@ -20,6 +20,8 @@ import org.apache.commons.lang.StringUtils;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import org.apache.commons.beanutils.BeanComparator;
@@ -140,11 +142,20 @@ public class GuiFragmentFinderAction extends AbstractPortalAction {
 		this._guiFragmentManager = guiFragmentManager;
 	}
 	
+	protected IPageActionHelper getPageActionHelper() {
+		return _pageActionHelper;
+	}
+	public void setPageActionHelper(IPageActionHelper pageActionHelper) {
+		this._pageActionHelper = pageActionHelper;
+	}
+	
 	private String _code;
 	private String _widgetTypeCode;
 	private String _pluginCode;
 	private String _gui;
 	
 	private IGuiFragmentManager _guiFragmentManager;
+	private IPageActionHelper _pageActionHelper;
+	
 	
 }

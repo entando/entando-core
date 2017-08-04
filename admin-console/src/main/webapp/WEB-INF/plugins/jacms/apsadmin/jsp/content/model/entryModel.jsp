@@ -139,9 +139,18 @@
                    value="#contentShapeFieldErrorsVar != null && !#contentShapeFieldErrorsVar.isEmpty()" />
             <label class="col-sm-2 control-label" for="contentShape">
                 <s:text  name="contentModel.label.shape" /> <i class="fa fa-asterisk required-icon"></i>
+
+
             </label>
 
             <div class="col-sm-10">
+
+                <div class="mb-10">
+                    <a href="#" class="btn btn-success" data-toggle="popover" data-html="true" title="<s:text name="INLINE.EDITING.ASSIST" />" data-content="<s:text name="inline.edit.assist.help" />">
+                        <s:text name="INLINE.EDITING.ASSIST" />
+                    </a>
+                </div>
+
                 <div class="display-block">
                     <s:textarea name="contentShape" id="contentShape"  cssClass="form-control" />
 
@@ -154,19 +163,20 @@
                     </s:if>
                     <span class="text text-success">
                         <span class="icon fa fa-info-circle"></span>&#32;
-                        <s:if  test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">(<s:text
-                                name="note.contentModel.help" />)&#32;</s:if> <s:text
-                            name="note.contentModel.contentAssist" />:&#32; <em
-                            class="important"> <s:text name="label.on" /></em>.&#32; <s:if
-                            test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">[<s:text
-                                name="note.contentModel.attributeHelp" />:&#32;<em
-                                class="important"><s:text name="label.on" /></em>]</s:if> <s:else>[<s:text
-                                name="note.contentModel.attributeHelp" />:&#32;
+                        <s:if  test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">
+                            (<s:text name="note.contentModel.help" />)&#32;</s:if> 
+                        <s:text name="note.contentModel.contentAssist" />:&#32; 
+                        <em class="important"> <s:text name="label.on" /></em>.&#32;
+                        <s:if test="strutsAction == 2 || (strutsAction == 1 && null != contentType)">
+                            [<s:text name="note.contentModel.attributeHelp" />:&#32;
+                            <em class="important"><s:text name="label.on" /></em>]
+                        </s:if>
+                        <s:else>
+                            [<s:text name="note.contentModel.attributeHelp" />:&#32;
                             <em class="important"><s:text name="label.off" /></em>]
                         </s:else>
                     </span>
                 </div>
-
             </div>
         </div>
         <div class="form-group">
@@ -186,4 +196,10 @@
             </div>
         </div>
     </s:form>
+
 </div>
+<style>
+    .popover {
+        max-width: 600px;
+    }
+</style>

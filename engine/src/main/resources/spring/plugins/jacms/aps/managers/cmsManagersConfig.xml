@@ -166,7 +166,7 @@
         <property name="contentDispenser" ref="jacmsBaseContentDispenser" />
         <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
-    
+
     <bean id="jacmsApiContentTypeInterface" class="org.entando.entando.plugins.jacms.aps.system.services.api.ApiContentTypeInterface" >
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="contentModelManager" ref="jacmsContentModelManager" />

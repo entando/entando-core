@@ -216,6 +216,9 @@
 		<property name="langManager" ref="LangManager"/>
     </bean>
     
+    <bean id="InlineApiI18nLabelInterface" class="org.entando.entando.aps.system.services.i18n.inlinediting.ApiI18nLabelInterface" 
+		  parent="ApiI18nLabelInterface" />
+
 	<bean id="KeyGeneratorManager" class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorManager" 
 			parent="abstractService" >
 		<property name="keyGeneratorDAO" >

@@ -62,123 +62,123 @@
             </div>
         </s:if>
         <p class="sr-only">
-            <wpsf:hidden name="strutsAction" />
-            <s:if test="getStrutsAction() == 2">
-                <wpsf:hidden name="code" />
-                <wpsf:hidden name="widgetTypeCode" />
-                <wpsf:hidden name="pluginCode" />
-                <wpsf:hidden name="defaultGui" />
+        <wpsf:hidden name="strutsAction" />
+        <s:if test="getStrutsAction() == 2">
+            <wpsf:hidden name="code" />
+            <wpsf:hidden name="widgetTypeCode" />
+            <wpsf:hidden name="pluginCode" />
+            <wpsf:hidden name="defaultGui" />
+        </s:if>
+    </p>
+
+    <%-- code --%>
+    <s:set var="fieldFieldErrorsVar" value="%{fieldErrors['code']}" />
+    <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+    <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+    <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+
+        <label class="control-label col-sm-2" for="guiFragment_code"><s:text name="label.code" />&nbsp;
+            <i class="fa fa-asterisk required-icon"></i>
+        </label>
+
+        <div class="col-sm-10">
+            <wpsf:textfield disabled="%{getStrutsAction() == 2}" name="code" id="guiFragment_code" cssClass="form-control" />
+            <s:if test="#fieldHasFieldErrorVar">
+                <p class="text-danger"><s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator></p>
             </s:if>
-        </p>
+        </div>
+    </div>
 
-        <%-- code --%>
-        <s:set var="fieldFieldErrorsVar" value="%{fieldErrors['code']}" />
-        <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-        <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+    <%-- widgetTypeCode --%>
+    <s:if test="%{widgetTypeCode!=null}">
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-
-            <label class="control-label col-sm-2" for="guiFragment_code"><s:text name="label.code" />&nbsp;
-                <i class="fa fa-asterisk required-icon"></i>
-            </label>
-
+            <label class="control-label col-sm-2" for="guiFragment_widgetTypeCode"><s:text name="label.widgetType" /></label>
             <div class="col-sm-10">
-                <wpsf:textfield disabled="%{getStrutsAction() == 2}" name="code" id="guiFragment_code" cssClass="form-control" />
-                <s:if test="#fieldHasFieldErrorVar">
-                    <p class="text-danger"><s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator></p>
-                </s:if>
+                <s:set value="%{getWidgetType(widgetTypeCode)}" var="widgetTypeVar" />
+                <s:property value="getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)" />
+
             </div>
         </div>
+    </s:if>
 
-        <%-- widgetTypeCode --%>
-        <s:if test="%{widgetTypeCode!=null}">
-            <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-                <label class="control-label col-sm-2" for="guiFragment_widgetTypeCode"><s:text name="label.widgetType" /></label>
-                <div class="col-sm-10">
-                    <s:set value="%{getWidgetType(widgetTypeCode)}" var="widgetTypeVar" />
-                    <s:property value="getTitle(#widgetTypeVar.code, #widgetTypeVar.titles)" />
-
-                </div>
-            </div>
-        </s:if>
-
-        <%-- pluginCode --%>
-        <s:if test="%{pluginCode != null}">
-            <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-                <label class="control-label col-sm-2" for="guiFragment_pluginCode"><s:text name="label.plugin" /></label>
-                <div class="col-sm-10">
-                    <s:text name="%{pluginCode+'.name'}" />
-                </div>
-            </div>
-        </s:if>
-        <hr>
-        <!-- Nav tabs -->
+    <%-- pluginCode --%>
+    <s:if test="%{pluginCode != null}">
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-            <label class="control-label col-sm-2"></label>
-            <div class=" col-sm-10">
-                <ul id="gui-tab" class="nav nav-tabs">
-                    <li class="active"><a href="#gui-edit" data-toggle="tab">Gui Code</a></li>
-                    <li><a href="#gui-default" data-toggle="tab">Default Gui Code</a></li>
-                </ul>
+            <label class="control-label col-sm-2" for="guiFragment_pluginCode"><s:text name="label.plugin" /></label>
+            <div class="col-sm-10">
+                <s:text name="%{pluginCode+'.name'}" />
+            </div>
+        </div>
+    </s:if>
+    <hr>
+    <!-- Nav tabs -->
+    <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+        <label class="control-label col-sm-2"></label>
+        <div class=" col-sm-10">
+            <ul id="gui-tab" class="nav nav-tabs">
+                <li class="active"><a href="#gui-edit" data-toggle="tab">Gui Code</a></li>
+                <li><a href="#gui-default" data-toggle="tab">Default Gui Code</a></li>
+            </ul>
 
-                <!-- Tab panes -->
-                <div class="tab-content margin-large-bottom">
-                    <div class="tab-pane active" id="gui-edit">
-                        <%-- gui --%>
-                        <s:set var="fieldFieldErrorsVar" value="%{fieldErrors['gui']}" />
-                        <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
-                        <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-                        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-                            <div class="col-xs-12">
-                                <label for="guiFragment_gui" class="sr-only"><s:text name="label.gui" /></label>
-                                <wpsf:textarea name="gui" id="guiFragment_gui" cssClass="form-control" rows="8" cols="50" />
-                                <s:if test="#fieldHasFieldErrorVar">
-                                    <p class="text-danger padding-small-vertical"><s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator></p>
-                                </s:if>
-                            </div>
+            <!-- Tab panes -->
+            <div class="tab-content margin-large-bottom">
+                <div class="tab-pane active" id="gui-edit">
+                    <%-- gui --%>
+                    <s:set var="fieldFieldErrorsVar" value="%{fieldErrors['gui']}" />
+                    <s:set var="fieldHasFieldErrorVar" value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
+                    <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
+                    <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+                        <div class="col-xs-12">
+                            <label for="guiFragment_gui" class="sr-only"><s:text name="label.gui" /></label>
+                            <wpsf:textarea name="gui" id="guiFragment_gui" cssClass="form-control" rows="8" cols="50" />
+                            <s:if test="#fieldHasFieldErrorVar">
+                                <p class="text-danger padding-small-vertical"><s:iterator value="%{#fieldFieldErrorsVar}"><s:property />&#32;</s:iterator></p>
+                            </s:if>
                         </div>
                     </div>
-                    <div class="tab-pane" id="gui-default">
-                        <%-- defaultGui --%>
-                        <s:if test="null != defaultGui">
-                            <%-- setup replace --%>
-                            <% pageContext.setAttribute("tabChar", "\t"); %>
-                            <% pageContext.setAttribute("carriageReturnChar", "\r"); %>
-                            <% pageContext.setAttribute("newLineChar", "\n");%>
-                            <c:set var="brChar"><br /></c:set>
+                </div>
+                <div class="tab-pane" id="gui-default">
+                    <%-- defaultGui --%>
+                    <s:if test="null != defaultGui">
+                        <%-- setup replace --%>
+                        <% pageContext.setAttribute("tabChar", "\t"); %>
+                        <% pageContext.setAttribute("carriageReturnChar", "\r"); %>
+                        <% pageContext.setAttribute("newLineChar", "\n");%>
+                        <c:set var="brChar"><br /></c:set>
                             <%-- set the string --%>
-                            <c:set var="defguiVar"><s:property value="defaultGui" /></c:set>
-                            <c:set var="ESCAPED_STRING" value="${
+                        <c:set var="defguiVar"><s:property value="defaultGui" escapeXml="true" /></c:set>
+                        <c:set var="ESCAPED_STRING" value="${
+                               fn:replace(
                                    fn:replace(
-                                       fn:replace(
-                                       fn:replace(
-                                       defguiVar, tabChar, '&emsp;'),
-                                       carriageReturnChar, ''
-                                       ),
-                                       newLineChar, brChar
-                                       )
-                                   }" />
-                            <%-- output --%>
-                            <pre><code><c:out value="${ESCAPED_STRING}" escapeXml="false" /></pre></code>
-                        </s:if>
-                        <s:else>
-                            <div class="margin-none alert alert-info">
-                                Not available.
-                            </div>
-                        </s:else>
-                    </div>
+                                   fn:replace(
+                                   defguiVar, tabChar, '&emsp;'),
+                                   carriageReturnChar, ''
+                                   ),
+                                   newLineChar, brChar
+                                   )
+                               }" />
+                        <%-- output --%>
+                        <pre><code><c:out value="${ESCAPED_STRING}" escapeXml="false" /></pre></code>
+                    </s:if>
+                    <s:else>
+                        <div class="margin-none alert alert-info">
+                            Not available.
+                        </div>
+                    </s:else>
                 </div>
             </div>
         </div>
-        <%-- save button --%>
-        <div class="form-group">
-            <div class="col-xs-12">
-                <s:submit type="button" action="save" cssClass="btn btn-primary pull-right">
+    </div>
+    <%-- save button --%>
+    <div class="form-group">
+        <div class="col-xs-12">
+            <s:submit type="button" action="save" cssClass="btn btn-primary pull-right">
 
-                    <s:text name="label.save" />
-                </s:submit>
-            </div>
+                <s:text name="label.save" />
+            </s:submit>
         </div>
-    </s:form>
+    </div>
+</s:form>
 </div>
 
 <script>

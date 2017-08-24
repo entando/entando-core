@@ -58,7 +58,7 @@
         <s:text name="contentModels.label.add" />
     </a>
 
-    <s:form action="search">
+    <s:form action="search" role="list" namespace="/do/jacms/ContentModel">
         <p class="sr-only">
             <wpsf:hidden name="contentType" />
         </p>

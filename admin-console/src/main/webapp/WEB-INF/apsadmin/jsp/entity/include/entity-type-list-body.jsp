@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 <%@ taglib uri="/aps-core" prefix="wp" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
@@ -6,15 +7,20 @@
 <div id="main">
 
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/messages.jsp" />
-
-    <a href="<s:url namespace="/do/Entity" action="initAddEntityType" ><s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>"
+    <s:form action="initViewEntityTypes" role="search" namespace="do/Entity">
+        <p class="sr-only">
+        <wpsf:hidden name="entityManagerName"/>
+    </p>
+    <a href="<s:url namespace="/do/Entity" action="initAddEntityType" > <s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>"
        class="btn btn-primary pull-right mb-5">
         <s:text name="menu.entityAdmin.entityTypes.new"/>
     </a>
 
     <s:set var="entity_list" value="entityPrototypes"/>
+    <s:property value="%{#entity_list.size}" />
+
     <s:if test="%{#entity_list.size > 0}">
-        <wpsa:subset source="#entity_list" count="10" objectName="entityGroup" advanced="true" offset="5">
+        <wpsa:subset source="#entity_list" count="2" objectName="entityGroup" advanced="true" offset="5">
             <s:set var="group" value="#entityGroup"/>
             <div class="mt-20">
                 <table class="table table-striped table-bordered table-hover no-mb">
@@ -121,4 +127,5 @@
     <br>
 
     <s:include value="/WEB-INF/apsadmin/jsp/entity/include/entity-type-references-operations-reload.jsp"/>
+</s:form>
 </div>

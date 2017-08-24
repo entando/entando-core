@@ -2,7 +2,7 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 
-<ol class="breadcrumb page-tabs-header breadcrumb-position">1111
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="title.uxPatterns" /></li>
     <li class="page-title-container"><s:text name="title.pageModelManagement" /></li>
 </ol>
@@ -46,7 +46,7 @@
         </p>
         <s:set var="pageModels_list" value="pageModels" />
         <s:if test="%{#pageModels_list.size > 0}">
-            <wpsa:subset source="#pageModels_list" count="1" objectName="pageModelGroups" advanced="true" offset="5">
+            <wpsa:subset source="#pageModels_list" count="10" objectName="pageModelGroups" advanced="true" offset="5">
                 <s:set var="group" value="#pageModelGroups" />
                 <div class="col-xs-12 no-padding">
                     <table class="table table-striped table-bordered table-hover no-mb">

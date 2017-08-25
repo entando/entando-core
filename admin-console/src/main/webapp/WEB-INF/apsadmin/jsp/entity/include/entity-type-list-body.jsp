@@ -8,7 +8,7 @@
 
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/messages.jsp" />
     <s:form action="initViewEntityTypes" role="search" namespace="do/Entity">
-        <p class="sr-only">
+        <p>
         <wpsf:hidden name="entityManagerName"/>
     </p>
     <a href="<s:url namespace="/do/Entity" action="initAddEntityType" > <s:param name="entityManagerName"><s:property value="entityManagerName" /></s:param></s:url>"
@@ -17,7 +17,7 @@
     </a>
 
     <s:set var="entity_list" value="entityPrototypes"/>
-    <s:property value="%{#entity_list.size}" />
+
 
     <s:if test="%{#entity_list.size > 0}">
         <wpsa:subset source="#entity_list" count="10" objectName="entityGroup" advanced="true" offset="5">

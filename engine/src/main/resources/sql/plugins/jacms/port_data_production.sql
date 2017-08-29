@@ -243,9 +243,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		</@wp.freemarkerTemplateParameter>
 	</@wp.pager>
 <#else>
-	<#if (userFilterOptionsVar?size > 0)>
 		<p class="alert alert-info"><@wp.i18n key="LIST_VIEWER_EMPTY" /></p>
-	</#if>
 </#if>
 <#if (pageLinkVar??) && (pageLinkDescriptionVar??)>
 	<p class="text-right"><a class="btn btn-primary" href="<@wp.url page="${pageLinkVar}"/>">${pageLinkDescriptionVar}</a></p>

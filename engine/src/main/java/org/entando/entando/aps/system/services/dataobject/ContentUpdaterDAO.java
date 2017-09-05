@@ -22,7 +22,7 @@ import java.sql.Connection;
  *
  * @author E.Santoboni
  */
-public class ContentUpdaterDAO extends ContentDAO implements IContentUpdaterDAO {
+public class ContentUpdaterDAO extends DataObjectDAO implements IContentUpdaterDAO {
 
 	@Override
 	public void reloadWorkContentCategoryReferences(DataObject content) {

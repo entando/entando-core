@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import com.agiletec.aps.system.common.entity.model.ApsEntity;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.parse.IApsEntityDOM;
-import org.entando.entando.aps.system.services.dataobject.parse.ContentDOM;
+import org.entando.entando.aps.system.services.dataobject.parse.DataObjectDOM;
 
 public class DataObject extends ApsEntity {
 
@@ -69,7 +69,7 @@ public class DataObject extends ApsEntity {
 
 	@Override
 	protected IApsEntityDOM getBuildJDOM() {
-		ContentDOM contentDOM = (ContentDOM) super.getBuildJDOM();
+		DataObjectDOM contentDOM = (DataObjectDOM) super.getBuildJDOM();
 		contentDOM.setStatus(this.getStatus());
 		contentDOM.setVersion(this.getVersion());
 		contentDOM.setFirstEditor(this.getFirstEditor());

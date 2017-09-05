@@ -29,9 +29,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.dataobject.ContentUtilizer;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
-public class ContentHelper implements IContentHelper, ApplicationContextAware {
+public class DataObjectHelper implements IContentHelper, ApplicationContextAware {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentHelper.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataObjectHelper.class);
 
 	@Override
 	public Map<String, List<?>> getReferencingObjects(DataObject content) throws ApsSystemException {

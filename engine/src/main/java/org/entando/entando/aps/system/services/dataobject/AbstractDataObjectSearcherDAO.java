@@ -35,9 +35,9 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecord
  *
  * @author E.Santoboni
  */
-public abstract class AbstractContentSearcherDAO extends AbstractEntitySearcherDAO {
+public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearcherDAO {
 
-	private static final Logger _logger = LoggerFactory.getLogger(AbstractContentSearcherDAO.class);
+	private static final Logger _logger = LoggerFactory.getLogger(AbstractDataObjectSearcherDAO.class);
 
 	@Override
 	protected String getTableFieldName(String metadataFieldKey) {

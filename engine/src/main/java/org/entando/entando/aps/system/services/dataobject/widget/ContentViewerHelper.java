@@ -26,12 +26,12 @@ import com.agiletec.aps.tags.util.HeadInfoContainer;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.dataobject.IContentManager;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentAuthorizationHelper;
 import org.entando.entando.aps.system.services.dataobject.helper.PublicContentAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.ContentRenderizationInfo;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.IContentDispenser;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataAuthorizationHelper;
 
 /**
  * Classe helper per i Widget di erogazione contenuti singoli.
@@ -272,11 +272,11 @@ public class ContentViewerHelper implements IContentViewerHelper {
 		this._contentDispenser = contentDispenser;
 	}
 
-	protected IContentAuthorizationHelper getContentAuthorizationHelper() {
+	protected IDataAuthorizationHelper getContentAuthorizationHelper() {
 		return _contentAuthorizationHelper;
 	}
 
-	public void setContentAuthorizationHelper(IContentAuthorizationHelper contentAuthorizationHelper) {
+	public void setContentAuthorizationHelper(IDataAuthorizationHelper contentAuthorizationHelper) {
 		this._contentAuthorizationHelper = contentAuthorizationHelper;
 	}
 
@@ -284,6 +284,6 @@ public class ContentViewerHelper implements IContentViewerHelper {
 	private IContentManager _contentManager;
 	private IContentDispenser _contentDispenser;
 
-	private IContentAuthorizationHelper _contentAuthorizationHelper;
+	private IDataAuthorizationHelper _contentAuthorizationHelper;
 
 }

@@ -31,9 +31,9 @@ import com.agiletec.aps.system.services.group.Group;
 /**
  * @author E.Santoboni
  */
-public class PublicContentSearcherDAO extends AbstractContentSearcherDAO implements IPublicContentSearcherDAO {
+public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO implements IPublicContentSearcherDAO {
 
-	private static final Logger _logger = LoggerFactory.getLogger(PublicContentSearcherDAO.class);
+	private static final Logger _logger = LoggerFactory.getLogger(PublicDataObjectSearcherDAO.class);
 
 	@Override
 	public List<String> loadPublicContentsId(String contentType, String[] categories, EntitySearchFilter[] filters, Collection<String> userGroupCodes) {

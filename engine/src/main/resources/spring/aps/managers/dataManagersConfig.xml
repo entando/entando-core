@@ -15,43 +15,39 @@
             </bean>
         </property>
         <property name="pageManager" ref="PageManager" />
-        <!-- <property name="contentManager" ref="jacmsContentManager" /> -->
+        <property name="contentManager" ref="DataObjectManager" />
     </bean>
-    <!--
-    <bean id="jacmsContentManager" class="com.agiletec.plugins.jacms.aps.system.services.content.ContentManager" 
+    
+    <bean id="DataObjectManager" class="org.entando.entando.aps.system.services.dataobject.DataObjectManager" 
           parent="abstractEntityManager" >
-        <property name="entityClassName" value="com.agiletec.plugins.jacms.aps.system.services.content.model.Content"/>
-        <property name="entityTypeDom" ref="jacmsEntityTypeDom" />
+        <property name="entityClassName" value="org.entando.entando.aps.system.services.dataobject.model.DataObject"/>
+        <property name="entityTypeDom" ref="DataTypeDOM" />
         <property name="xmlAttributeRootElementName" value="content" />
         <property name="entityHandler">
-            <bean class="com.agiletec.plugins.jacms.aps.system.services.content.parse.ContentHandler" />
+            <bean class="org.entando.entando.aps.system.services.dataobject.parse.DataObjectHandler" />
         </property>
         <property name="entityDom">
-            <bean class="com.agiletec.plugins.jacms.aps.system.services.content.parse.ContentDOM" />
+            <bean class="org.entando.entando.aps.system.services.dataobject.parse.DataObjectDOM" />
         </property>
-        <property name="contentDAO" >
-            <bean class="com.agiletec.plugins.jacms.aps.system.services.content.ContentDAO" parent="abstractEntityDAO">
-                <property name="dataSource" ref="portDataSource" />
+        <property name="dataObjectDAO" >
+            <bean class="org.entando.entando.aps.system.services.dataobject.DataObjectDAO" parent="abstractEntityDAO">
+                <property name="dataSource" ref="servDataSource" />
             </bean>
         </property>
-        <property name="publicContentSearcherDAO" ref="jacmsPublicContentSearcherDAO" />
-        <property name="workContentSearcherDAO" ref="jacmsWorkContentSearcherDAO" />
+        <property name="publicDataObjectSearcherDAO" ref="PublicDataObjectSearcherDAO" />
+        <property name="workDataObjectSearcherDAO" ref="WorkDataObjectSearcherDAO" />
     </bean>
     
-    <bean id="jacmsPublicContentSearcherDAO" class="com.agiletec.plugins.jacms.aps.system.services.content.PublicContentSearcherDAO">
-        <property name="dataSource" ref="portDataSource" />
-        <property name="forceCaseInsensitiveLikeSearch">
-            <value>${jacms.publicContentSearcher.forceCaseInsensitiveLikeSearch}</value>
-        </property>
+    <bean id="PublicDataObjectSearcherDAO" class="org.entando.entando.aps.system.services.dataobject.PublicDataObjectSearcherDAO">
+        <property name="dataSource" ref="servDataSource" />
+        <property name="forceCaseInsensitiveLikeSearch"><value>false</value></property>
     </bean>
     
-    <bean id="jacmsWorkContentSearcherDAO"  class="com.agiletec.plugins.jacms.aps.system.services.content.WorkContentSearcherDAO">
-        <property name="dataSource" ref="portDataSource" />
-        <property name="forceCaseInsensitiveLikeSearch">
-            <value>${jacms.workContentSearcher.forceCaseInsensitiveLikeSearch}</value>
-        </property>
+    <bean id="WorkDataObjectSearcherDAO"  class="org.entando.entando.aps.system.services.dataobject.WorkDataObjectSearcherDAO">
+        <property name="dataSource" ref="servDataSource" />
+        <property name="forceCaseInsensitiveLikeSearch"><value>false</value></property>
     </bean>
-    
+    <!--
     <bean id="jacmsContentAuthorizationHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.ContentAuthorizationHelper" >
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="authorizationManager" ref="AuthorizationManager" />
@@ -214,16 +210,10 @@
 		<property name="attributeManagerClassName" 
 			value="com.agiletec.plugins.jacms.apsadmin.content.attribute.manager.ResourceAttributeManager" />
 	</bean>
+	-->
 	
-	<bean id="jacmsEntityTypeDom" class="com.agiletec.plugins.jacms.aps.system.services.content.parse.ContentTypeDOM" parent="baseEntityTypeDom" scope="prototype">
-		<property name="attributeTypes">
-		<map merge="true">
-			<entry key="Hypertext"><ref bean="jacmsHypertextAttribute" /></entry>
-			<entry key="Link"><ref bean="jacmsLinkAttribute" /></entry>
-			<entry key="Image"><ref bean="jacmsImageAttribute" /></entry>
-			<entry key="Attach"><ref bean="jacmsAttachAttribute" /></entry>
-		</map>
-		</property>
+	<bean id="DataTypeDOM" class="org.entando.entando.aps.system.services.dataobject.parse.DataTypeDOM" 
+		  parent="baseEntityTypeDom" scope="prototype">
 	</bean>
-    -->
+    
 </beans>

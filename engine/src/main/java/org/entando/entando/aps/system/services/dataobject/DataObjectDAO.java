@@ -45,9 +45,9 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecord
  *
  * @author M.Diana - E.Santoboni - S.Didaci
  */
-public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
+public class DataObjectDAO extends AbstractEntityDAO implements IContentDAO {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentDAO.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataObjectDAO.class);
 
 	@Override
 	protected String getLoadEntityRecordQuery() {

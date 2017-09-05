@@ -640,11 +640,6 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 					<attribute name="List3Stat" attributetype="ThreeState" />
 				</nestedtype>
 			</list>
-			<list name="MonoLAtta" attributetype="Monolist">
-				<nestedtype>
-					<attribute name="MonoLAtta" attributetype="Attach" />
-				</nestedtype>
-			</list>
 			<list name="MonoLBool" attributetype="Monolist">
 				<nestedtype>
 					<attribute name="MonoLBool" attributetype="Boolean" />

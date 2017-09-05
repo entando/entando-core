@@ -22,7 +22,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  *
  * @author E.Santoboni
  */
-public interface IContentAuthorizationHelper {
+public interface IDataAuthorizationHelper {
 
 	/**
 	 * Return true if the given user can view the given content.

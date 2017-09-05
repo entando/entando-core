@@ -30,9 +30,9 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  * dell'XML che rappresenta un contenuto.
  * @author M.Diana - E.Santoboni
  */
-public class ContentHandler extends EntityHandler {
+public class DataObjectHandler extends EntityHandler {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataObjectHandler.class);
 	
 	@Override
 	protected void startEntityElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

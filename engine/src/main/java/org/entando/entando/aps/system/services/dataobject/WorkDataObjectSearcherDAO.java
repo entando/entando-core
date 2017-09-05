@@ -28,9 +28,9 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 /**
  * @author E.Santoboni
  */
-public class WorkContentSearcherDAO extends AbstractContentSearcherDAO implements IWorkContentSearcherDAO {
+public class WorkDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO implements IWorkContentSearcherDAO {
 
-	private static final Logger _logger = LoggerFactory.getLogger(WorkContentSearcherDAO.class);
+	private static final Logger _logger = LoggerFactory.getLogger(WorkDataObjectSearcherDAO.class);
 
 	@Override
 	public List<String> loadContentsId(EntitySearchFilter[] filters, Collection<String> userGroupCodes) {

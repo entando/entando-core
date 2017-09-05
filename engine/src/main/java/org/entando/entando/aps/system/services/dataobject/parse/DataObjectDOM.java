@@ -25,7 +25,7 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
  * Classe JDOM per la scrittura di un oggetto tipo Content in xml.
  * @author M.Morini - S.Didaci - E.Santoboni
  */
-public class ContentDOM extends ApsEntityDOM {
+public class DataObjectDOM extends ApsEntityDOM {
 	
 	/**
 	 * Setta lo stato del contenuto.

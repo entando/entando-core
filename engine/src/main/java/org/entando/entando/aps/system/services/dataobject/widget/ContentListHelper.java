@@ -42,7 +42,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
-import org.entando.entando.aps.system.services.dataobject.helper.BaseContentListHelper;
+import org.entando.entando.aps.system.services.dataobject.helper.BaseDataListHelper;
 import org.entando.entando.aps.system.services.dataobject.helper.IContentListFilterBean;
 import org.entando.entando.aps.system.services.dataobject.widget.util.FilterUtils;
 
@@ -50,7 +50,7 @@ import org.entando.entando.aps.system.services.dataobject.widget.util.FilterUtil
  * Classe helper per la widget di erogazione contenuti in lista.
  * @author E.Santoboni
  */
-public class ContentListHelper extends BaseContentListHelper implements IContentListWidgetHelper {
+public class ContentListHelper extends BaseDataListHelper implements IContentListWidgetHelper {
 
     private static final Logger _logger = LoggerFactory.getLogger(ContentListHelper.class);
 

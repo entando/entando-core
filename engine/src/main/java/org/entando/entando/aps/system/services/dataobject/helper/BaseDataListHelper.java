@@ -42,9 +42,9 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 /**
  * @author E.Santoboni
  */
-public class BaseContentListHelper implements IContentListHelper {
+public class BaseDataListHelper implements IContentListHelper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(BaseContentListHelper.class);
+	private static final Logger _logger = LoggerFactory.getLogger(BaseDataListHelper.class);
 
 	@Override
 	public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, String langCode) {

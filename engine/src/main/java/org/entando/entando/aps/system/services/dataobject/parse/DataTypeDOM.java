@@ -29,7 +29,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  * occorre molta attenzione nell'interpretazione dei nomi di variabili e metodi privati.
  * @author M.Diana - E.Santoboni
  */
-public class ContentTypeDOM extends EntityTypeDOM {
+public class DataTypeDOM extends EntityTypeDOM {
 	
 	@Override
 	protected IApsEntity createEntityType(Element contentElem, Class entityClass) throws ApsSystemException {

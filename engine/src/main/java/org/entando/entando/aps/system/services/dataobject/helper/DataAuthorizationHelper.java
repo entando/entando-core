@@ -36,9 +36,9 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  *
  * @author E.Santoboni
  */
-public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
+public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentAuthorizationHelper.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataAuthorizationHelper.class);
 
 	@Override
 	public boolean isAuth(UserDetails user, DataObject content) throws ApsSystemException {

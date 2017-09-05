@@ -28,10 +28,10 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.datatype.IContentManager;
 import org.entando.entando.aps.system.services.datatype.helper.IContentAuthorizationHelper;
 import org.entando.entando.aps.system.services.datatype.helper.PublicContentAuthorizationInfo;
-import org.entando.entando.aps.system.services.datatypemodel.ContentModel;
-import org.entando.entando.aps.system.services.datatypemodel.IContentModelManager;
+import org.entando.entando.aps.system.services.datatypemodel.DataModel;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.ContentRenderizationInfo;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.IContentDispenser;
+import org.entando.entando.aps.system.services.datatypemodel.IDataModelManager;
 
 /**
  * Classe helper per i Widget di erogazione contenuti singoli.
@@ -236,7 +236,7 @@ public class ContentViewerHelper implements IContentViewerHelper {
 	}
 
 	protected void setStylesheet(long modelId, RequestContext reqCtx) {
-		ContentModel model = this.getContentModelManager().getContentModel(modelId);
+		DataModel model = this.getContentModelManager().getContentModel(modelId);
 		if (model != null) {
 			String stylesheet = model.getStylesheet();
 			if (null != stylesheet && stylesheet.trim().length() > 0) {
@@ -248,11 +248,11 @@ public class ContentViewerHelper implements IContentViewerHelper {
 		}
 	}
 
-	protected IContentModelManager getContentModelManager() {
+	protected IDataModelManager getContentModelManager() {
 		return _contentModelManager;
 	}
 
-	public void setContentModelManager(IContentModelManager contentModelManager) {
+	public void setContentModelManager(IDataModelManager contentModelManager) {
 		this._contentModelManager = contentModelManager;
 	}
 
@@ -280,7 +280,7 @@ public class ContentViewerHelper implements IContentViewerHelper {
 		this._contentAuthorizationHelper = contentAuthorizationHelper;
 	}
 
-	private IContentModelManager _contentModelManager;
+	private IDataModelManager _contentModelManager;
 	private IContentManager _contentManager;
 	private IContentDispenser _contentDispenser;
 

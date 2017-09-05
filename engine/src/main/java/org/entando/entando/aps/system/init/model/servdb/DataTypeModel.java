@@ -31,11 +31,11 @@ public class DataTypeModel {
 			canBeNull = false, id = true)
 	private int _modelId;
 
-	@DatabaseField(columnName = "contenttype",
+	@DatabaseField(columnName = "datatype",
 			dataType = DataType.STRING,
 			width = 30,
 			canBeNull = false)
-	private String _contentType;
+	private String _dataType;
 
 	@DatabaseField(columnName = "descr",
 			dataType = DataType.STRING,

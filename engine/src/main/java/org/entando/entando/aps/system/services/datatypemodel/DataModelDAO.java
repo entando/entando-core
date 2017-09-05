@@ -27,35 +27,34 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.AbstractDAO;
 
 /**
- * Data Access Object per gli oggetti modello contenuto (ContentModel).
+ * Data Access Object per gli oggetti datatype.
  *
  * @author M.Diana - C.Siddi - C.Sirigu
  */
-public class ContentModelDAO extends AbstractDAO implements IContentModelDAO {
+public class DataModelDAO extends AbstractDAO implements IDataModelDAO {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentModelDAO.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataModelDAO.class);
 
 	@Override
-	public Map<Long, ContentModel> loadContentModels() {
+	public Map<Long, DataModel> loadDataModels() {
 		Connection conn = null;
 		Statement stat = null;
 		ResultSet res = null;
-		Map<Long, ContentModel> models = new HashMap<Long, ContentModel>();
+		Map<Long, DataModel> models = new HashMap<Long, DataModel>();
 		String query = ALL_CONTENTMODEL;
 		try {
 			conn = this.getConnection();
 			stat = conn.createStatement();
 			res = stat.executeQuery(query);
 			while (res.next()) {
-				ContentModel contentModel = loadContentModel(res);
+				DataModel contentModel = loadContentModel(res);
 				//Hash map che contiene come chiave l'id e come valore l'oggetto stesso
 				Long wrapLongId = new Long(contentModel.getId());
 				models.put(wrapLongId, contentModel);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading content models", t);
-			throw new RuntimeException("Error loading content models", t);
-			//processDaoException(t, "Errore in caricamento modelli pagina", "loadContentModels");
+			_logger.error("Error loading datatype models", t);
+			throw new RuntimeException("Error loading datatype models", t);
 		} finally {
 			closeDaoResources(res, stat, conn);
 		}
@@ -63,7 +62,7 @@ public class ContentModelDAO extends AbstractDAO implements IContentModelDAO {
 	}
 
 	@Override
-	public void addContentModel(ContentModel model) {
+	public void addDataModel(DataModel model) {
 		Connection conn = null;
 		PreparedStatement stat = null;
 		try {
@@ -79,16 +78,15 @@ public class ContentModelDAO extends AbstractDAO implements IContentModelDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error adding content model {}", model.getId(), t);
-			throw new RuntimeException("Error adding content model " + model.getId(), t);
-			//processDaoException(t, "Errore in aggiunta modello di contenuto " + model.getId(), "addContentModel");
+			_logger.error("Error adding datatype model {}", model.getId(), t);
+			throw new RuntimeException("Error adding datatype model " + model.getId(), t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
 
 	@Override
-	public void deleteContentModel(ContentModel model) {
+	public void deleteDataModel(DataModel model) {
 		Connection conn = null;
 		PreparedStatement stat = null;
 		try {
@@ -100,16 +98,15 @@ public class ContentModelDAO extends AbstractDAO implements IContentModelDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error deleting content model {} ", model.getId(), t);
-			throw new RuntimeException("Error deleting content model " + model.getId(), t);
-			//processDaoException(t, "Errore in cancellazione modello di contenuto " + model.getId(), "deleteContentModel");
+			_logger.error("Error deleting datatype model {} ", model.getId(), t);
+			throw new RuntimeException("Error deleting datatype model " + model.getId(), t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
 
 	@Override
-	public void updateContentModel(ContentModel model) {
+	public void updateDataModel(DataModel model) {
 		Connection conn = null;
 		PreparedStatement stat = null;
 		try {
@@ -125,24 +122,15 @@ public class ContentModelDAO extends AbstractDAO implements IContentModelDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error updating content model {} ", model.getId(), t);
-			throw new RuntimeException("Error updating content model " + model.getId(), t);
-			//processDaoException(t, "Errore in modifica modello di contenuto " + model.getId(), "updateContentModel");
+			_logger.error("Error updating datatype model {} ", model.getId(), t);
+			throw new RuntimeException("Error updating datatype model " + model.getId(), t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
 
-	/**
-	 * Costruisce e restituisce un modello di contenuto leggendo una riga di
-	 * recordset.
-	 *
-	 * @param res Il resultset da leggere
-	 * @return Il modello di contenuto generato
-	 * @throws SQLException
-	 */
-	private ContentModel loadContentModel(ResultSet res) throws SQLException {
-		ContentModel contentModel = new ContentModel();
+	private DataModel loadContentModel(ResultSet res) throws SQLException {
+		DataModel contentModel = new DataModel();
 		contentModel.setId(res.getLong(1));
 		contentModel.setContentType(res.getString(2));
 		contentModel.setDescription(res.getString(3));
@@ -152,15 +140,15 @@ public class ContentModelDAO extends AbstractDAO implements IContentModelDAO {
 	}
 
 	private final String ALL_CONTENTMODEL
-			= "SELECT modelid, contenttype, descr, model, stylesheet FROM contentmodels";
+			= "SELECT modelid, datatype, descr, model, stylesheet FROM datatypemodels";
 
 	private final String ADD_CONTENT_MODEL
-			= "INSERT INTO contentmodels (modelid, contenttype, descr, model, stylesheet ) VALUES ( ? , ? , ? , ? , ? )";
+			= "INSERT INTO datatypemodels (modelid, datatype, descr, model, stylesheet ) VALUES ( ? , ? , ? , ? , ? )";
 
 	private static final String DELETE_CONTENT_MODEL
-			= "DELETE FROM contentmodels WHERE modelid = ? ";
+			= "DELETE FROM datatypemodels WHERE modelid = ? ";
 
 	private final String UPDATE_CONTENT_MODEL
-			= "UPDATE contentmodels SET contenttype = ? , descr = ? , model = ? , stylesheet = ? WHERE modelid = ? ";
+			= "UPDATE datatypemodels SET datatype = ? , descr = ? , model = ? , stylesheet = ? WHERE modelid = ? ";
 
 }

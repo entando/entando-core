@@ -11,24 +11,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.datatypemodel.event;
+package org.entando.entando.aps.system.services.datatypemodel;
 
-import com.agiletec.aps.system.common.notify.ObserverService;
+import java.util.Map;
 
 /**
- * Interfaccia base per l'implementazione dei servizi destinatari della
- * notificazione di eventi di modifica di un modello di contenuto.
- *
- * @author C.Siddi - E.Santoboni
+ * Interfaccia base per i Data Access Object degli oggetti modello datatype
  */
-public interface ContentModelChangedObserver extends ObserverService {
+public interface IDataModelDAO {
 
-	/**
-	 * Aggiorna il servizio di conseguenza alla notifica di un evento di
-	 * modifica modello di contenuto.
-	 *
-	 * @param event L'evento notificato.
-	 */
-	public void updateFromContentModelChanged(ContentModelChangedEvent event);
+	public Map<Long, DataModel> loadDataModels();
+
+	public void addDataModel(DataModel model);
+
+	public void deleteDataModel(DataModel model);
+
+	public void updateDataModel(DataModel model);
 
 }

@@ -30,137 +30,93 @@ import com.agiletec.aps.system.services.page.Widget;
 import org.entando.entando.aps.system.services.datatype.IContentManager;
 import org.entando.entando.aps.system.services.datatype.model.Content;
 import org.entando.entando.aps.system.services.datatype.model.SmallContentType;
-import org.entando.entando.aps.system.services.datatypemodel.event.ContentModelChangedEvent;
+import org.entando.entando.aps.system.services.datatypemodel.event.DataModelChangedEvent;
 
 /**
- * Manager dei modelli di contenuto.
+ * Manager dei modelli di datatype.
  *
  * @author S.Didaci - C.Siddi - C.Sirigu
  */
-public class ContentModelManager extends AbstractService implements IContentModelManager {
+public class DataModelManager extends AbstractService implements IDataModelManager {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentModelManager.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataModelManager.class);
 
 	@Override
 	public void init() throws Exception {
 		this.loadContentModels();
-		_logger.debug("{} ready. Initialized {} content models", this.getClass().getName(), _contentModels.size());
+		_logger.debug("{} ready. Initialized {} content models", this.getClass().getName(), _dataModels.size());
 	}
 
-	/**
-	 * Caricamento dei modelli di pagina da db
-	 *
-	 * @throws ApsSystemException
-	 */
 	private void loadContentModels() throws ApsSystemException {
 		try {
-			this._contentModels = this.getContentModelDAO().loadContentModels();
+			this._dataModels = this.getDataModelDAO().loadDataModels();
 		} catch (Throwable t) {
 			throw new ApsSystemException("Errore in caricamento modelli", t);
 		}
 	}
 
-	/**
-	 * Aggiunge un modello di contenuto nel sistema.
-	 *
-	 * @param model Il modello da aggiungere.
-	 * @throws ApsSystemException In caso di errori in accesso al db.
-	 */
 	@Override
-	public void addContentModel(ContentModel model) throws ApsSystemException {
+	public void addContentModel(DataModel model) throws ApsSystemException {
 		try {
-			this.getContentModelDAO().addContentModel(model);
+			this.getDataModelDAO().addDataModel(model);
 			Long wrapLongId = new Long(model.getId());
-			_contentModels.put(wrapLongId, model);
-			this.notifyContentModelChanging(model, ContentModelChangedEvent.INSERT_OPERATION_CODE);
+			_dataModels.put(wrapLongId, model);
+			this.notifyDataModelChanging(model, DataModelChangedEvent.INSERT_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error saving a contentModel", t);
-			// ApsSystemUtils.logThrowable(t, this, "addContentModel");
 			throw new ApsSystemException("Error saving a contentModel", t);
 		}
 	}
 
-	/**
-	 * Rimuove un modello di contenuto dal sistema.
-	 *
-	 * @param model Il modello di contenuto da rimuovere.
-	 * @throws ApsSystemException In caso di errori in accesso al db.
-	 */
 	@Override
-	public void removeContentModel(ContentModel model) throws ApsSystemException {
+	public void removeContentModel(DataModel model) throws ApsSystemException {
 		try {
-			this.getContentModelDAO().deleteContentModel(model);
-			_contentModels.remove(new Long(model.getId()));
-			this.notifyContentModelChanging(model, ContentModelChangedEvent.REMOVE_OPERATION_CODE);
+			this.getDataModelDAO().deleteDataModel(model);
+			_dataModels.remove(new Long(model.getId()));
+			this.notifyDataModelChanging(model, DataModelChangedEvent.REMOVE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error deleting a content model", t);
 			throw new ApsSystemException("Error deleting a content model", t);
 		}
 	}
 
-	/**
-	 * Aggiorna un modello di contenuto.
-	 *
-	 * @param model Il modello di contenuto da aggiornare.
-	 * @throws ApsSystemException In caso di errori in accesso al db.
-	 */
 	@Override
-	public void updateContentModel(ContentModel model) throws ApsSystemException {
+	public void updateContentModel(DataModel model) throws ApsSystemException {
 		try {
-			this.getContentModelDAO().updateContentModel(model);
-			this._contentModels.put(new Long(model.getId()), model);
-			this.notifyContentModelChanging(model, ContentModelChangedEvent.UPDATE_OPERATION_CODE);
+			this.getDataModelDAO().updateDataModel(model);
+			this._dataModels.put(new Long(model.getId()), model);
+			this.notifyDataModelChanging(model, DataModelChangedEvent.UPDATE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error updating a content model", t);
-			// ApsSystemUtils.logThrowable(t, this, "updateContentModel");
 			throw new ApsSystemException("Error updating a content model", t);
 		}
 	}
 
-	private void notifyContentModelChanging(ContentModel contentModel, int operationCode) throws ApsSystemException {
-		ContentModelChangedEvent event = new ContentModelChangedEvent();
+	private void notifyDataModelChanging(DataModel contentModel, int operationCode) throws ApsSystemException {
+		DataModelChangedEvent event = new DataModelChangedEvent();
 		event.setContentModel(contentModel);
 		event.setOperationCode(operationCode);
 		this.notifyEvent(event);
 	}
 
-	/**
-	 * Restituisce il modello relativo all'identificativo immesso.
-	 *
-	 * @param contentModelId L'identificativo del modello da estrarre.
-	 * @return Il modello cercato.
-	 */
 	@Override
-	public ContentModel getContentModel(long contentModelId) {
-		return (ContentModel) _contentModels.get(new Long(contentModelId));
+	public DataModel getContentModel(long contentModelId) {
+		return (DataModel) _dataModels.get(new Long(contentModelId));
 	}
 
-	/**
-	 * Restituisce la lista dei modelli di contenuto presenti nel sistema.
-	 *
-	 * @return La lista dei modelli di contenuto presenti nel sistema.
-	 */
 	@Override
-	public List<ContentModel> getContentModels() {
-		List<ContentModel> models = new ArrayList<ContentModel>(this._contentModels.values());
+	public List<DataModel> getContentModels() {
+		List<DataModel> models = new ArrayList<DataModel>(this._dataModels.values());
 		Collections.sort(models);
 		return models;
 	}
 
-	/**
-	 * Restituisce la lista di modelli compatibili con il tipo di contenuto
-	 * specificato.
-	 *
-	 * @param contentType Il codice del tipo di contenuto.
-	 * @return La lista di modelli compatibili con il tipo di contenuto
-	 * specificato.
-	 */
 	@Override
-	public List<ContentModel> getModelsForContentType(String contentType) {
-		List<ContentModel> models = new ArrayList<ContentModel>();
-		Object[] allModels = this._contentModels.values().toArray();
+	public List<DataModel> getModelsForContentType(String contentType) {
+		List<DataModel> models = new ArrayList<DataModel>();
+		Object[] allModels = this._dataModels.values().toArray();
 		for (int i = 0; i < allModels.length; i++) {
-			ContentModel contentModel = (ContentModel) allModels[i];
+			DataModel contentModel = (DataModel) allModels[i];
 			if (null == contentType || contentModel.getContentType().equals(contentType)) {
 				models.add(contentModel);
 			}
@@ -168,16 +124,6 @@ public class ContentModelManager extends AbstractService implements IContentMode
 		return models;
 	}
 
-	/**
-	 * Restituisce la mappa delle pagine referenziate dal modello di contenuto
-	 * specificato. La mappa è indicizzata in base ai codici dei contenuti
-	 * pubblicati tramite il modello specificato, ed il valore è rappresentato
-	 * dalla lista di pagine nel quale è pubblicato esplicitamente il contenuto
-	 * (traite il modello specificato).
-	 *
-	 * @param modelId Identificativo del modello di contenuto
-	 * @return La Mappa delle pagine referenziate.
-	 */
 	@Override
 	public Map<String, List<IPage>> getReferencingPages(long modelId) {
 		Map<String, List<IPage>> utilizers = new HashMap<String, List<IPage>>();
@@ -188,17 +134,6 @@ public class ContentModelManager extends AbstractService implements IContentMode
 		return utilizers;
 	}
 
-	/**
-	 * Verifica se il modello di contenuto è utilizzato nella pagina specificata
-	 * e in caso affermativo aggiunge la pagina alla lista delle pagine che
-	 * utilizzano quel modello di contenuto. La ricerca viene estesa anche alle
-	 * pagine figlie di quella specificata.
-	 *
-	 * @param modelId Identificativo del modello di contenuto
-	 * @param page La pagina nel qual cercare il modello di contenuto
-	 * @param utilizers La lista delle pagine in cui è utilizzato il modello di
-	 * contenuto
-	 */
 	private void searchReferencingPages(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
 		this.addReferencingPage(modelId, page, page.getWidgets(), utilizers);
 		IPage[] children = page.getChildren();
@@ -247,12 +182,12 @@ public class ContentModelManager extends AbstractService implements IContentMode
 		return null;
 	}
 
-	protected IContentModelDAO getContentModelDAO() {
-		return _contentModelDao;
+	public IDataModelDAO getDataModelDAO() {
+		return _dataModelDAO;
 	}
 
-	public void setContentModelDAO(IContentModelDAO contentModelDao) {
-		this._contentModelDao = contentModelDao;
+	public void setDataModelDAO(IDataModelDAO dataModelDAO) {
+		this._dataModelDAO = dataModelDAO;
 	}
 
 	protected IPageManager getPageManager() {
@@ -271,12 +206,9 @@ public class ContentModelManager extends AbstractService implements IContentMode
 		this._contentManager = contentManager;
 	}
 
-	/**
-	 * Mappa dei modelli di contenuto configurati nel sistema.
-	 */
-	private Map<Long, ContentModel> _contentModels;
+	private Map<Long, DataModel> _dataModels;
 
-	private IContentModelDAO _contentModelDao;
+	private IDataModelDAO _dataModelDAO;
 
 	private IPageManager _pageManager;
 	private IContentManager _contentManager;

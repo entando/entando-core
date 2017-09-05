@@ -145,3 +145,53 @@ INSERT INTO authuserprofileattrroles (username, attrname, rolename) VALUES ('edi
 INSERT INTO authuserprofileattrroles (username, attrname, rolename) VALUES ('mainEditor', 'email', 'userprofile:email');
 INSERT INTO authuserprofileattrroles (username, attrname, rolename) VALUES ('pageManagerCoach', 'email', 'userprofile:email');
 
+
+INSERT INTO datatypemodels (modelid, datatype, descr, model, stylesheet) VALUES (2, 'ART', 'per test rendering
+', '$content.id;
+#foreach ($autore in $content.Autori)
+$autore.text;
+#end
+$content.Titolo.getText();
+$content.VediAnche.text,$content.VediAnche.destination;
+$content.Foto.text,$content.Foto.imagePath("1");
+$content.Data.mediumDate;
+
+', NULL);
+INSERT INTO datatypemodels (modelid, datatype, descr, model, stylesheet) VALUES (3, 'ART', 'scheda di un articolo', '------ RENDERING CONTENUTO: id = $content.id; ---------
+ATTRIBUTI:
+  - AUTORI (Monolist-Monotext):
+#foreach ($autore in $content.Autori)
+         testo=$autore.text;
+#end
+  - TITOLO (Text): testo=$content.Titolo.getText();
+  - VEDI ANCHE (Link): testo=$content.VediAnche.text, dest=$content.VediAnche.destination;
+  - FOTO (Image): testo=$content.Foto.text, src(1)=$content.Foto.imagePath("1");
+  - DATA (Date): data_media = $content.Data.mediumDate;
+------ END ------
+
+', NULL);
+INSERT INTO datatypemodels (modelid, datatype, descr, model, stylesheet) VALUES (1, 'ART', 'Main Model', '#if ($content.Titolo.text != "")<h1 class="titolo">$content.Titolo.text</h1>#end
+#if ($content.Data.longDate != "")<p>Data: $content.Data.longDate</p>#end
+$content.CorpoTesto.getTextBeforeImage(0)
+#if ( $content.Foto.imagePath("2") != "" )
+<img class="left" src="$content.Foto.imagePath("2")" alt="$content.Foto.text" />
+#end
+$content.CorpoTesto.getTextAfterImage(0)
+#if ($content.Numero.number)<p>Numero: $content.Numero.number</p>#end
+#if ($content.Autori && $content.Autori.size() > 0)
+<h2 class="titolo">Autori:</h2>
+<ul title="Authors">
+#foreach ($author in $content.Autori)
+	<li>$author.text;</li>
+#end
+</ul>
+#end
+#if ($content.VediAnche.text != "")
+<h2 class="titolo">Link:</h2>
+<p>
+<li><a href="$content.VediAnche.destination">$content.VediAnche.text</a></li>
+</p>
+#end', NULL);
+INSERT INTO datatypemodels (modelid, datatype, descr, model, stylesheet) VALUES (11, 'ART', 'List Model', '#if ($content.Titolo.text != "")<h1 class="titolo">$content.Titolo.text</h1>#end
+<a href="$content.contentLink">Details...</a>', NULL);
+

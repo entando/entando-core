@@ -72,24 +72,10 @@ public class WorkDataObjectSearch implements ExtendedColumnDefinition {
 			contentTableName = "`" + DataObject.TABLE_NAME + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
+			+ "ADD CONSTRAINT workdataobjsear_contid_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
 	public static final String TABLE_NAME = "workdatatypesearch";
 
 }
-/*
-CREATE TABLE workcontentsearch
-(
-  contentid character varying(16),
-  attrname character varying(30) NOT NULL,
-  textvalue character varying(255),
-  datevalue date,
-  numvalue integer,
-  langcode character varying(2),
-  CONSTRAINT workcontentsearch_contentid_fkey FOREIGN KEY (contentid)
-      REFERENCES contents (contentid) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
- */

@@ -55,7 +55,7 @@ public class WorkDataObjectAttributeRole implements ExtendedColumnDefinition {
 			contentTableName = "`" + DataObject.TABLE_NAME + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT workcontentattrroles_id_fkey FOREIGN KEY (contentid) "
+			+ "ADD CONSTRAINT workdatobjattrroles_id_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 

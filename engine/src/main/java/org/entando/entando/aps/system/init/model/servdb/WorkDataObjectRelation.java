@@ -47,7 +47,7 @@ public class WorkDataObjectRelation implements ExtendedColumnDefinition {
 			contentTableName = "`" + contentTableName + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT " + TABLE_NAME + "_id_fkey FOREIGN KEY (contentid) "
+			+ "ADD CONSTRAINT workdataobjrels_id_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 

@@ -51,8 +51,8 @@ import junit.framework.TestSuite;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
 import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
-import org.entando.entando.aps.system.services.datatypemodel.TestDataModelDAO;
-import org.entando.entando.aps.system.services.datatypemodel.TestDataModelManager;
+import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
+import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
@@ -134,8 +134,8 @@ public class AllTests {
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
 		suite.addTestSuite(TestApiI18nLabelInterface.class);
 		//
-		suite.addTestSuite(TestDataModelDAO.class);
-		suite.addTestSuite(TestDataModelManager.class);
+		suite.addTestSuite(TestDataObjectModelDAO.class);
+		suite.addTestSuite(TestDataObjectModelManager.class);
 
 		suite.addTestSuite(TestQueryExtractor.class);
 

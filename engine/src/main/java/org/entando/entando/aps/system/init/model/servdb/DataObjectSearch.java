@@ -79,17 +79,3 @@ public class DataObjectSearch implements ExtendedColumnDefinition {
 	public static final String TABLE_NAME = "datatypesearch";
 
 }
-/*
-CREATE TABLE contentsearch
-(
-  contentid character varying(16) NOT NULL,
-  attrname character varying(30) NOT NULL,
-  textvalue character varying(255),
-  datevalue date,
-  numvalue integer,
-  langcode character varying(2),
-  CONSTRAINT contentsearch_contentid_fkey FOREIGN KEY (contentid)
-      REFERENCES contents (contentid) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
- */

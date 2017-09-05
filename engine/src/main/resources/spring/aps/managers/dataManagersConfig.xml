@@ -7,10 +7,10 @@
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
 			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd">
     
-    <bean id="DataModelManager" class="org.entando.entando.aps.system.services.datatypemodel.DataModelManager" 
+    <bean id="DataObjectModelManager" class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManager" 
           parent="abstractService" >
         <property name="dataModelDAO" >
-            <bean class="org.entando.entando.aps.system.services.datatypemodel.DataModelDAO">
+            <bean class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelDAO">
                 <property name="dataSource" ref="servDataSource" />
             </bean>
         </property>

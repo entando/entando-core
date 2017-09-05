@@ -98,21 +98,3 @@ public class DataObject {
 	public static final String TABLE_NAME = "dataobjects";
 
 }
-/*
-CREATE TABLE contents
-(
-  contentid character varying(16) NOT NULL,
-  contenttype character varying(30) NOT NULL,
-  descr character varying(260) NOT NULL,
-  status character varying(12) NOT NULL,
-  workxml character varying NOT NULL,
-  created character varying(20),
-  lastmodified character varying(20),
-  onlinexml character varying,
-  maingroup character varying(20) NOT NULL,
-  currentversion character varying(7) NOT NULL,
-  firsteditor character varying(40),
-  lasteditor character varying(40),
-  CONSTRAINT contents_pkey PRIMARY KEY (contentid )
-)
- */

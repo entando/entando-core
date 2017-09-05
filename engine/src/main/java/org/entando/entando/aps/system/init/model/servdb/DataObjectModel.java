@@ -52,17 +52,6 @@ public class DataObjectModel {
 			width = 50)
 	private String _styleSheet;
 
-	public static final String TABLE_NAME = "datatypemodels";
+	public static final String TABLE_NAME = "dataobjectmodels";
 
 }
-/*
-CREATE TABLE contentmodels
-(
-  modelid integer NOT NULL,
-  contenttype character varying(30) NOT NULL,
-  descr character varying(50) NOT NULL,
-  model character varying,
-  stylesheet character varying(50),
-  CONSTRAINT contentmodels_pkey PRIMARY KEY (modelid )
-)
- */

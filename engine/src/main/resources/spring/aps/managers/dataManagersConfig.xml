@@ -15,7 +15,7 @@
             </bean>
         </property>
         <property name="pageManager" ref="PageManager" />
-        <property name="contentManager" ref="DataObjectManager" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
     </bean>
     
     <bean id="DataObjectManager" class="org.entando.entando.aps.system.services.dataobject.DataObjectManager" 

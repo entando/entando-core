@@ -170,10 +170,10 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	@Override
 	public SmallDataType getDefaultUtilizer(long modelId) {
 		String modelIdString = String.valueOf(modelId);
-		List<SmallDataType> smallContentTypes = this.getContentManager().getSmallContentTypes();
+		List<SmallDataType> smallContentTypes = this.getDataObjectManager().getSmallContentTypes();
 		for (int i = 0; i < smallContentTypes.size(); i++) {
 			SmallDataType smallContentType = (SmallDataType) smallContentTypes.get(i);
-			DataObject prototype = this.getContentManager().createContentType(smallContentType.getCode());
+			DataObject prototype = this.getDataObjectManager().createContentType(smallContentType.getCode());
 			if ((null != prototype.getListModel() && prototype.getListModel().equals(modelIdString)) || (null != prototype.getDefaultModel()
 					&& prototype.getDefaultModel().equals(modelIdString))) {
 				return smallContentType;
@@ -198,12 +198,12 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 		this._pageManager = pageManager;
 	}
 
-	protected IContentManager getContentManager() {
-		return _contentManager;
+	protected IContentManager getDataObjectManager() {
+		return _dataObjectManager;
 	}
 
-	public void setContentManager(IContentManager contentManager) {
-		this._contentManager = contentManager;
+	public void setDataObjectManager(IContentManager dataObjectManager) {
+		this._dataObjectManager = dataObjectManager;
 	}
 
 	private Map<Long, DataObjectModel> _dataModels;
@@ -211,6 +211,6 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	private IDataObjectModelDAO _dataModelDAO;
 
 	private IPageManager _pageManager;
-	private IContentManager _contentManager;
+	private IContentManager _dataObjectManager;
 
 }

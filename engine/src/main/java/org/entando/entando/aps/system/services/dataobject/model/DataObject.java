@@ -111,7 +111,7 @@ public class DataObject extends ApsEntity {
 		Pattern pattern = Pattern.compile("\\d+\\.\\d+");
 		Matcher matcher = pattern.matcher(version);
 		if (!matcher.matches()) {
-			throw new RuntimeException("Invalid content version");
+			throw new RuntimeException("Invalid data object version");
 		}
 		this._version = version;
 	}

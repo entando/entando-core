@@ -534,8 +534,8 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'userProfil
 	</profiletype>
 </profiletypes>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDefinitions', 'Definition of the Data Types', '<?xml version="1.0" encoding="UTF-8"?>
-<contenttypes>
-	<contenttype typecode="ALL" typedescr="Content type with all attribute types" viewpage="announcements_read" listmodel="**NULL**" defaultmodel="**NULL**">
+<datatypes>
+	<datatype typecode="ALL" typedescr="Content type with all attribute types" viewpage="announcements_read" listmodel="**NULL**" defaultmodel="**NULL**">
 		<attributes>
 			<attribute name="Boolean" attributetype="Boolean" />
 			<attribute name="CheckBox" attributetype="CheckBox" />
@@ -734,8 +734,8 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 				</validations>
 			</attribute>
 		</attributes>
-	</contenttype>
-	<contenttype typecode="ART" typedescr="Articolo rassegna stampa" viewpage="contentview" listmodel="11" defaultmodel="1">
+	</datatype>
+	<datatype typecode="ART" typedescr="Articolo rassegna stampa" viewpage="contentview" listmodel="11" defaultmodel="1">
 		<attributes>
 			<attribute name="Titolo" attributetype="Text" indexingtype="TEXT">
 				<validations>
@@ -754,8 +754,8 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			<attribute name="Data" attributetype="Date" searchable="true" />
 			<attribute name="Numero" attributetype="Number" searchable="true" />
 		</attributes>
-	</contenttype>
-	<contenttype typecode="EVN" typedescr="Evento" viewpage="contentview" listmodel="51" defaultmodel="5">
+	</datatype>
+	<datatype typecode="EVN" typedescr="Evento" viewpage="contentview" listmodel="51" defaultmodel="5">
 		<attributes>
 			<attribute name="Titolo" attributetype="Text" searchable="true" indexingtype="TEXT">
 				<validations />
@@ -767,8 +767,8 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			<attribute name="DataInizio" attributetype="Date" searchable="true" />
 			<attribute name="DataFine" attributetype="Date" searchable="true" />
 		</attributes>
-	</contenttype>
-	<contenttype typecode="RAH" typedescr="Tipo_Semplice" viewpage="contentview" listmodel="126" defaultmodel="457">
+	</datatype>
+	<datatype typecode="RAH" typedescr="Tipo_Semplice" viewpage="contentview" listmodel="126" defaultmodel="457">
 		<attributes>
 			<attribute name="Titolo" attributetype="Text" indexingtype="text">
 				<validations>
@@ -785,8 +785,8 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			<attribute name="Numero" attributetype="Number" />
 			<attribute name="Checkbox" attributetype="CheckBox" />
 		</attributes>
-	</contenttype>
-</contenttypes>
+	</datatype>
+</datatypes>
 ');
 
 

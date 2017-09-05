@@ -20,17 +20,8 @@ import com.agiletec.aps.system.common.entity.parse.EntityTypeDOM;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
-/**
- * Classe delegata al caricamento dei tipi di contenuto dalla configurazione. 
- * Il risultato è una mappa dei "prototipi" dei contenuti.
- * La classe deve essere utilizzata per un parsing e poi abbandonata.
- * Nota sul codice sorgente: purtroppo il conflitto di nomenclatura tra "Attribute"
- * dei contenuti e "Attribute" dei tag XML rende difficoltosa la lettura del codice;
- * occorre molta attenzione nell'interpretazione dei nomi di variabili e metodi privati.
- * @author M.Diana - E.Santoboni
- */
 public class DataTypeDOM extends EntityTypeDOM {
-	
+
 	@Override
 	protected IApsEntity createEntityType(Element contentElem, Class entityClass) throws ApsSystemException {
 		DataObject content = (DataObject) super.createEntityType(contentElem, entityClass);
@@ -50,7 +41,7 @@ public class DataTypeDOM extends EntityTypeDOM {
 		content.setStatus(DataObject.STATUS_NEW);
 		return content;
 	}
-	
+
 	@Override
 	protected Element createRootTypeElement(IApsEntity currentEntityType) {
 		Element typeElement = super.createRootTypeElement(currentEntityType);
@@ -60,7 +51,7 @@ public class DataTypeDOM extends EntityTypeDOM {
 		this.setXmlAttribute(typeElement, "defaultmodel", content.getDefaultModel());
 		return typeElement;
 	}
-	
+
 	private void setXmlAttribute(Element element, String name, String value) {
 		String valueToSet = value;
 		if (null == value || value.trim().length() == 0) {
@@ -68,17 +59,17 @@ public class DataTypeDOM extends EntityTypeDOM {
 		}
 		element.setAttribute(name, valueToSet);
 	}
-	
+
 	@Override
 	protected String getEntityTypeRootElementName() {
-		return "contenttype";
+		return "datatype";
 	}
-	
+
 	@Override
 	protected String getEntityTypesRootElementName() {
-		return "contenttypes";
+		return "datatypes";
 	}
-	
+
 	private static final String NULL_VALUE = "**NULL**";
-	
+
 }

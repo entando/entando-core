@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
-import org.entando.entando.plugins.jacms.aps.system.init.portdb.*;
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
 import org.entando.entando.aps.system.init.model.portdb.Category;
@@ -42,7 +41,7 @@ public class WorkDataTypeRelation implements ExtendedColumnDefinition {
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
-		String contentTableName = Content.TABLE_NAME;
+		String contentTableName = DataTypeTable.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
 			contentTableName = "`" + contentTableName + "`";

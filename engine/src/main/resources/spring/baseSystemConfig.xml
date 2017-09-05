@@ -69,6 +69,16 @@
         <value>org.entando.entando.aps.system.init.model.servdb.UserProfileAttributeRole</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecord</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecordRelation</value>
+		
+		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeModel</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeTable</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeRelation</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeSearch</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeAttributeRole</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataTypeRelation</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataTypeSearch</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataTypeAttributeRole</value>
+		
     </util:list>
     
     <bean id="StorageManager" class="org.entando.entando.aps.system.services.storage.LocalStorageManager" 

@@ -25,10 +25,10 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = DataTypeContentSearch.TABLE_NAME)
-public class DataTypeContentSearch implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = DataTypeSearch.TABLE_NAME)
+public class DataTypeSearch implements ExtendedColumnDefinition {
 
-	public DataTypeContentSearch() {
+	public DataTypeSearch() {
 	}
 
 	@DatabaseField(foreign = true, columnName = "contentid",

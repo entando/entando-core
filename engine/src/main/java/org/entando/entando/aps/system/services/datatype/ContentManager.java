@@ -37,7 +37,6 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.datatype.event.PublicContentChangedEvent;
 import org.entando.entando.aps.system.services.datatype.model.Content;
 import org.entando.entando.aps.system.services.datatype.model.ContentRecordVO;
@@ -62,7 +61,7 @@ public class ContentManager extends ApsEntityManager implements IContentManager 
 
 	@Override
 	protected String getConfigItemName() {
-		return JacmsSystemConstants.CONFIG_ITEM_CONTENT_TYPES;
+		return "dataTypeDefinitions";
 	}
 
 	private void createSmallContentTypes() {

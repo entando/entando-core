@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.init.model.servdb;
 
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
-import org.entando.entando.aps.system.init.model.portdb.Category;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -35,29 +34,29 @@ public class DataTypeRelation implements ExtendedColumnDefinition {
 			canBeNull = false, index = true)
 	private DataTypeTable _content;
 
-	@DatabaseField(foreign = true, columnName = "refcategory",
-			width = 30, index = true)
-	private Category _category;
-
-	@DatabaseField(columnName = "refgroup",
+	@DatabaseField(columnName = "refcategory",
 			dataType = DataType.STRING,
+			width = 30, index = true)
+	private String _category;
+
+	@DatabaseField(foreign = true, columnName = "refgroup",
 			width = 20, index = true)
-	private String _group;
+	private Group _group;
 
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
-		String categoryTableName = Category.TABLE_NAME;
+		String groupTableName = Group.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + TABLE_NAME + "`";
-			categoryTableName = "`" + categoryTableName + "`";
+			groupTableName = "`" + groupTableName + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT " + TABLE_NAME + "_refcat_fkey FOREIGN KEY (refcategory) "
-			+ "REFERENCES " + categoryTableName + " (catcode)"};
+			+ "ADD CONSTRAINT " + TABLE_NAME + "_refgroup_fkey FOREIGN KEY (refgroup) "
+			+ "REFERENCES " + groupTableName + " (groupname)"};
 	}
 
-	public static final String TABLE_NAME = "contentrelations";
+	public static final String TABLE_NAME = "datatyperelations";
 
 }
 /*

@@ -29,7 +29,7 @@ import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.datatype.IContentManager;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * Return informations of content authorization
@@ -41,11 +41,11 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 	private static final Logger _logger = LoggerFactory.getLogger(ContentAuthorizationHelper.class);
 
 	@Override
-	public boolean isAuth(UserDetails user, Content content) throws ApsSystemException {
+	public boolean isAuth(UserDetails user, DataObject content) throws ApsSystemException {
 		if (null == content) {
 			_logger.error("Null content");
 			return false;
-		} else if (Content.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
+		} else if (DataObject.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
 			return true;
 		}
 		return this.getAuthorizationManager().isAuth(user, content);
@@ -63,7 +63,7 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 			PublicContentAuthorizationInfo authorizationInfo = this.getAuthorizationInfo(contentId);
 			return this.isAuth(user, authorizationInfo);
 		}
-		Content content = this.getContentManager().loadContent(contentId, publicVersion);
+		DataObject content = this.getContentManager().loadContent(contentId, publicVersion);
 		return this.isAuth(user, content);
 	}
 
@@ -76,11 +76,11 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 	}
 
 	@Override
-	public boolean isAuthToEdit(UserDetails user, Content content) throws ApsSystemException {
+	public boolean isAuthToEdit(UserDetails user, DataObject content) throws ApsSystemException {
 		if (null == content) {
 			_logger.error("Null content");
 			return false;
-		} else if (Content.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
+		} else if (DataObject.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
 			return true;
 		}
 		String mainGroupName = content.getMainGroup();
@@ -104,7 +104,7 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 
 	@Override
 	public boolean isAuthToEdit(UserDetails user, String contentId, boolean publicVersion) throws ApsSystemException {
-		Content content = this.getContentManager().loadContent(contentId, publicVersion);
+		DataObject content = this.getContentManager().loadContent(contentId, publicVersion);
 		return this.isAuth(user, content);
 	}
 
@@ -115,7 +115,7 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId) {
 		PublicContentAuthorizationInfo authInfo = null;
 		try {
-			Content content = this.getContentManager().loadContent(contentId, true);
+			DataObject content = this.getContentManager().loadContent(contentId, true);
 			if (null == content) {
 				_logger.debug("public content {} doesn't exist", contentId);
 				return null;
@@ -134,7 +134,7 @@ public class ContentAuthorizationHelper implements IContentAuthorizationHelper {
 	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId, boolean cacheable) {
 		PublicContentAuthorizationInfo authInfo = null;
 		try {
-			Content content = this.getContentManager().loadContent(contentId, true, cacheable);
+			DataObject content = this.getContentManager().loadContent(contentId, true, cacheable);
 			if (null == content) {
 				_logger.debug("public content {} doesn't exist", contentId);
 				return null;

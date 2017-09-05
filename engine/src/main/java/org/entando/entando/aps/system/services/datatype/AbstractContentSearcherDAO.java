@@ -28,7 +28,7 @@ import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.util.DateConverter;
-import org.entando.entando.aps.system.services.datatype.model.ContentRecordVO;
+import org.entando.entando.aps.system.services.datatype.model.DataObjectRecordVO;
 
 /**
  * Abstract Data access object used to search contents.
@@ -195,9 +195,9 @@ public abstract class AbstractContentSearcherDAO extends AbstractEntitySearcherD
 
 	@Override
 	protected ApsEntityRecord createRecord(ResultSet result) throws Throwable {
-		ContentRecordVO contentVo = new ContentRecordVO();
+		DataObjectRecordVO contentVo = new DataObjectRecordVO();
 		contentVo.setId(result.getString("contentid"));
-		contentVo.setTypeCode(result.getString("contenttype"));
+		contentVo.setTypeCode(result.getString("datatype"));
 		contentVo.setDescription(result.getString("descr"));
 		contentVo.setStatus(result.getString("status"));
 		String xmlWork = result.getString("workxml");
@@ -227,7 +227,7 @@ public abstract class AbstractContentSearcherDAO extends AbstractEntitySearcherD
 
 	@Override
 	protected String getEntityMasterTableIdTypeFieldName() {
-		return "contenttype";
+		return "datatype";
 	}
 
 	protected abstract String getContentRelationsTableName();

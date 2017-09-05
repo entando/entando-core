@@ -13,8 +13,6 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
-import java.util.Date;
-
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
 
@@ -25,16 +23,16 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = WorkDataTypeSearch.TABLE_NAME)
-public class WorkDataTypeSearch implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = WorkDataObjectAttributeRole.TABLE_NAME)
+public class WorkDataObjectAttributeRole implements ExtendedColumnDefinition {
 
-	public WorkDataTypeSearch() {
+	public WorkDataObjectAttributeRole() {
 	}
 
 	@DatabaseField(foreign = true, columnName = "contentid",
 			width = 16,
 			canBeNull = false, index = true)
-	private DataTypeTable _contentId;
+	private DataObject _contentId;
 
 	@DatabaseField(columnName = "attrname",
 			dataType = DataType.STRING,
@@ -42,54 +40,25 @@ public class WorkDataTypeSearch implements ExtendedColumnDefinition {
 			canBeNull = false, index = true)
 	private String _attributeName;
 
-	@DatabaseField(columnName = "textvalue",
+	@DatabaseField(columnName = "rolename",
 			dataType = DataType.STRING,
-			canBeNull = true)
-	private String _textValue;
-
-	@DatabaseField(columnName = "datevalue",
-			dataType = DataType.DATE,
-			canBeNull = true)
-	private Date _dateValue;
-
-	@DatabaseField(columnName = "numvalue",
-			dataType = DataType.INTEGER,
-			canBeNull = true)
-	private int _numberValue;
-
-	@DatabaseField(columnName = "langcode",
-			dataType = DataType.STRING,
-			width = 3,
-			canBeNull = true)
-	private String _langCode;
+			width = 50,
+			canBeNull = false, index = true)
+	private String _roleName;
 
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
-		String contentTableName = DataTypeTable.TABLE_NAME;
+		String contentTableName = DataObject.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
-			contentTableName = "`" + DataTypeTable.TABLE_NAME + "`";
+			contentTableName = "`" + DataObject.TABLE_NAME + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
+			+ "ADD CONSTRAINT workcontentattrroles_id_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "workdatatypesearch";
+	public static final String TABLE_NAME = "workdatatypeattributeroles";
 
 }
-/*
-CREATE TABLE workcontentsearch
-(
-  contentid character varying(16),
-  attrname character varying(30) NOT NULL,
-  textvalue character varying(255),
-  datevalue date,
-  numvalue integer,
-  langcode character varying(2),
-  CONSTRAINT workcontentsearch_contentid_fkey FOREIGN KEY (contentid)
-      REFERENCES contents (contentid) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
- */

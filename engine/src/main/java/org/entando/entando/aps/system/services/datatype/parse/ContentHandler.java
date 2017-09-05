@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
 import com.agiletec.aps.system.common.entity.parse.EntityHandler;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * Classe "handler" di supporto all'interpretazione 
@@ -108,28 +108,28 @@ public class ContentHandler extends EntityHandler {
 	private void endStatus() {
 		StringBuffer textBuffer = this.getTextBuffer();
 		if (null != textBuffer) {
-			((Content) this.getCurrentEntity()).setStatus(textBuffer.toString());
+			((DataObject) this.getCurrentEntity()).setStatus(textBuffer.toString());
 		}
 	}
 	
 	private void endVersion() {
 		StringBuffer textBuffer = this.getTextBuffer();
 		if (null != textBuffer) {
-			((Content) this.getCurrentEntity()).setVersion(textBuffer.toString());
+			((DataObject) this.getCurrentEntity()).setVersion(textBuffer.toString());
 		}
 	}
 	
 	private void endFirstEditor() {
 		StringBuffer textBuffer = this.getTextBuffer();
 		if (null != textBuffer) {
-			((Content) this.getCurrentEntity()).setFirstEditor(textBuffer.toString());
+			((DataObject) this.getCurrentEntity()).setFirstEditor(textBuffer.toString());
 		}
 	}
 	
 	private void endLastEditor() {
 		StringBuffer textBuffer = this.getTextBuffer();
 		if (null != textBuffer) {
-			((Content) this.getCurrentEntity()).setLastEditor(textBuffer.toString());
+			((DataObject) this.getCurrentEntity()).setLastEditor(textBuffer.toString());
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class ContentHandler extends EntityHandler {
 		StringBuffer textBuffer = this.getTextBuffer();
 		if (null != textBuffer) {
 			Date date = DateConverter.parseDate(textBuffer.toString(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
-			((Content) this.getCurrentEntity()).setCreated(date);
+			((DataObject) this.getCurrentEntity()).setCreated(date);
 		}
 	}
 	
@@ -145,7 +145,7 @@ public class ContentHandler extends EntityHandler {
 		StringBuffer textBuffer = this.getTextBuffer();
 		if (null != textBuffer) {
 			Date date = DateConverter.parseDate(textBuffer.toString(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
-			((Content) this.getCurrentEntity()).setLastModified(date);
+			((DataObject) this.getCurrentEntity()).setLastModified(date);
 		}
 	}
 	

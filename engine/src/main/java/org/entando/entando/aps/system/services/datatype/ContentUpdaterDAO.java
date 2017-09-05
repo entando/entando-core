@@ -14,7 +14,7 @@
 package org.entando.entando.aps.system.services.datatype;
 
 import com.agiletec.aps.system.ApsSystemUtils;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 import java.sql.Connection;
 
@@ -25,7 +25,7 @@ import java.sql.Connection;
 public class ContentUpdaterDAO extends ContentDAO implements IContentUpdaterDAO {
 
 	@Override
-	public void reloadWorkContentCategoryReferences(Content content) {
+	public void reloadWorkContentCategoryReferences(DataObject content) {
 		ApsSystemUtils.getLogger().debug("reload WORK references for content " + content.getId());
 		Connection conn = null;
 		try {
@@ -43,7 +43,7 @@ public class ContentUpdaterDAO extends ContentDAO implements IContentUpdaterDAO 
 	}
 
 	@Override
-	public void reloadPublicContentCategoryReferences(Content content) {
+	public void reloadPublicContentCategoryReferences(DataObject content) {
 		ApsSystemUtils.getLogger().debug("reload PUBLIC references for content " + content.getId());
 		if (content.isOnLine()) {
 			Connection conn = null;

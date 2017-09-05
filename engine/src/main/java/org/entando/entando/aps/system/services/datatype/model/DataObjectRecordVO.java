@@ -20,7 +20,7 @@ import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 /**
  * @author E.Santoboni
  */
-public class ContentRecordVO extends ApsEntityRecord {
+public class DataObjectRecordVO extends ApsEntityRecord {
 	
 	public String getDescription() {
 		return _description;

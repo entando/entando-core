@@ -15,80 +15,43 @@ package org.entando.entando.aps.system.services.datatype.event;
 
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.notify.ApsEvent;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
-/**
- * Evento specifico da rilanciare in corrispondenza di approvazione o
- * disapprovazione di un contenuto.
- *
- * @author E.Santoboni - M.Diana
- */
-public class PublicContentChangedEvent extends ApsEvent {
+public class PublicDataChangedEvent extends ApsEvent {
 
 	@Override
 	public void notify(IManager srv) {
-		((PublicContentChangedObserver) srv).updateFromPublicContentChanged(this);
+		((PublicDataChangedObserver) srv).updateFromPublicContentChanged(this);
 	}
 
 	public Class getObserverInterface() {
-		return PublicContentChangedObserver.class;
+		return PublicDataChangedObserver.class;
 	}
 
-	/**
-	 * Restituisce il contenuto modificato, approvato o disapprovato.
-	 *
-	 * @return Il contenuto modificato.
-	 */
-	public Content getContent() {
+	public DataObject getContent() {
 		return _content;
 	}
 
-	/**
-	 * Setta il contenuto modificato, approvato o disapprovato.
-	 *
-	 * @param content Il contenuto modificato.
-	 */
-	public void setContent(Content content) {
+	public void setContent(DataObject content) {
 		this._content = content;
 	}
 
-	/**
-	 * Restituisce il codice dell'operazione che si stà eseguendo sul contenuto
-	 * pubblico.
-	 *
-	 * @return Il codice dell'operazione.
-	 */
 	public int getOperationCode() {
 		return _operationCode;
 	}
 
-	/**
-	 * Setta il codice dell'operazione che si stà eseguendo sul contenuto
-	 * pubblico.
-	 *
-	 * @param operationCode Il codice dell'operazione.
-	 */
 	public void setOperationCode(int operationCode) {
 		this._operationCode = operationCode;
 	}
 
-	private Content _content;
+	private DataObject _content;
 
 	private int _operationCode;
 
-	/**
-	 * Codice dell'operazione di inserimento del contenuto onLine.
-	 */
 	public static final int INSERT_OPERATION_CODE = 1;
 
-	/**
-	 * Codice dell'operazione di rimozione del contenuto onLine.
-	 */
 	public static final int REMOVE_OPERATION_CODE = 2;
 
-	/**
-	 * Codice dell'operazione di aggiornamento del contenuto onLine.
-	 */
 	public static final int UPDATE_OPERATION_CODE = 3;
 
 }

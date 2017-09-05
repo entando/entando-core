@@ -18,7 +18,7 @@ import org.jdom.Element;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.parse.EntityTypeDOM;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * Classe delegata al caricamento dei tipi di contenuto dalla configurazione. 
@@ -33,7 +33,7 @@ public class ContentTypeDOM extends EntityTypeDOM {
 	
 	@Override
 	protected IApsEntity createEntityType(Element contentElem, Class entityClass) throws ApsSystemException {
-		Content content = (Content) super.createEntityType(contentElem, entityClass);
+		DataObject content = (DataObject) super.createEntityType(contentElem, entityClass);
 		content.setId(null);
 		String viewPage = this.extractXmlAttribute(contentElem, "viewpage", true);
 		if (!viewPage.equals(NULL_VALUE)) {
@@ -47,14 +47,14 @@ public class ContentTypeDOM extends EntityTypeDOM {
 		if (!defaultModel.equals(NULL_VALUE)) {
 			content.setDefaultModel(defaultModel);
 		}
-		content.setStatus(Content.STATUS_NEW);
+		content.setStatus(DataObject.STATUS_NEW);
 		return content;
 	}
 	
 	@Override
 	protected Element createRootTypeElement(IApsEntity currentEntityType) {
 		Element typeElement = super.createRootTypeElement(currentEntityType);
-		Content content = (Content) currentEntityType;
+		DataObject content = (DataObject) currentEntityType;
 		this.setXmlAttribute(typeElement, "viewpage", content.getViewPage());
 		this.setXmlAttribute(typeElement, "listmodel", content.getListModel());
 		this.setXmlAttribute(typeElement, "defaultmodel", content.getDefaultModel());

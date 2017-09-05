@@ -60,7 +60,6 @@ public class WorkContentSearcherDAO extends AbstractContentSearcherDAO implement
 		} catch (Throwable t) {
 			_logger.error("Error loading contents id list", t);
 			throw new RuntimeException("Error loading contents id list", t);
-			//processDaoException(t, "Errore in caricamento lista id contenuti", "loadContentsId");
 		} finally {
 			closeDaoResources(result, stat, conn);
 		}

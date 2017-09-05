@@ -21,7 +21,7 @@ import com.agiletec.aps.system.common.notify.ObserverService;
  *
  * @author E.Santoboni - M.Diana
  */
-public interface PublicContentChangedObserver extends ObserverService {
+public interface PublicDataChangedObserver extends ObserverService {
 
 	/**
 	 * Aggiorna il servizio di conseguenza alla notifica di un evento di
@@ -29,6 +29,6 @@ public interface PublicContentChangedObserver extends ObserverService {
 	 *
 	 * @param event L'evento notificato.
 	 */
-	public void updateFromPublicContentChanged(PublicContentChangedEvent event);
+	public void updateFromPublicContentChanged(PublicDataChangedEvent event);
 
 }

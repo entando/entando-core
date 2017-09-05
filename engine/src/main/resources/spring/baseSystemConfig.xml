@@ -70,14 +70,14 @@
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecord</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecordRelation</value>
 		
-		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeModel</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeTable</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeRelation</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeSearch</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.DataTypeAttributeRole</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataTypeRelation</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataTypeSearch</value>
-		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataTypeAttributeRole</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataObjectModel</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataObject</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataObjectRelation</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataObjectSearch</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.DataObjectAttributeRole</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataObjectRelation</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataObjectSearch</value>
+		<value>org.entando.entando.aps.system.init.model.servdb.WorkDataObjectAttributeRole</value>
 		
     </util:list>
     

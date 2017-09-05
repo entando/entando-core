@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.datatype;
 
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * @author eu
@@ -21,8 +21,8 @@ import org.entando.entando.aps.system.services.datatype.model.Content;
  */
 public interface IContentUpdaterDAO {
 	
-	public void reloadWorkContentCategoryReferences(Content content);
+	public void reloadWorkContentCategoryReferences(DataObject content);
 	
-	public void reloadPublicContentCategoryReferences(Content content);
+	public void reloadPublicContentCategoryReferences(DataObject content);
 	
 }

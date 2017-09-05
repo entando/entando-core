@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.datatype.helper;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * Return informations of content authorization
@@ -32,7 +32,7 @@ public interface IContentAuthorizationHelper {
 	 * @return True if the given user can view the content.
 	 * @throws ApsSystemException In case of error
 	 */
-	public boolean isAuth(UserDetails user, Content content) throws ApsSystemException;
+	public boolean isAuth(UserDetails user, DataObject content) throws ApsSystemException;
 
 	/**
 	 * Return true if the given user can view the given content.
@@ -64,7 +64,7 @@ public interface IContentAuthorizationHelper {
 	 * @return True if the given user can edit the content.
 	 * @throws ApsSystemException In case of error
 	 */
-	public boolean isAuthToEdit(UserDetails user, Content content) throws ApsSystemException;
+	public boolean isAuthToEdit(UserDetails user, DataObject content) throws ApsSystemException;
 
 	/**
 	 * Return true if the given user can edit the given content.

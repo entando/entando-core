@@ -32,7 +32,7 @@ import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * Manages the operations on the contents in case of events on categories. 
@@ -104,11 +104,11 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 			String cacheKey = JacmsSystemConstants.CONTENT_CACHE_PREFIX + entityId;
 			this.getCacheInfoManager().flushEntry(cacheKey);
 			ApsSystemUtils.getLogger().debug("removing_from_cache " + cacheKey);
-			Content content = this.getContentManager().loadContent(entityId, true);
+			DataObject content = this.getContentManager().loadContent(entityId, true);
 			if (content != null) {
 				this.getContentUpdaterDAO().reloadPublicContentCategoryReferences(content);
 			}
-			Content workcontent = this.getContentManager().loadContent(entityId, false);
+			DataObject workcontent = this.getContentManager().loadContent(entityId, false);
 			if (workcontent != null) {
 				this.getContentUpdaterDAO().reloadWorkContentCategoryReferences(workcontent);
 			}

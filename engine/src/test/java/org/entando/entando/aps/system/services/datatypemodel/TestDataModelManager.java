@@ -18,7 +18,7 @@ import java.util.Map;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.services.page.IPage;
-import org.entando.entando.aps.system.services.datatype.model.SmallContentType;
+import org.entando.entando.aps.system.services.datatype.model.SmallDataType;
 
 public class TestDataModelManager extends BaseTestCase {
 
@@ -111,7 +111,7 @@ public class TestDataModelManager extends BaseTestCase {
 	}
 
 	public void testGetTypeUtilizer() throws Throwable {
-		SmallContentType utilizer = this._dataModelManager.getDefaultUtilizer(1);
+		SmallDataType utilizer = this._dataModelManager.getDefaultUtilizer(1);
 		assertNotNull(utilizer);
 		assertEquals("ART", utilizer.getCode());
 

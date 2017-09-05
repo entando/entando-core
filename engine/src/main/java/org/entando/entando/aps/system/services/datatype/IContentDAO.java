@@ -14,7 +14,7 @@
 package org.entando.entando.aps.system.services.datatype;
 
 import com.agiletec.aps.system.common.entity.IEntityDAO;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * Basic interface for the Data Access Objects for the 'content' objects.
@@ -28,21 +28,21 @@ public interface IContentDAO extends IEntityDAO {
 	 *
 	 * @param content The content to publish.
 	 */
-	public void insertOnLineContent(Content content);
+	public void insertOnLineContent(DataObject content);
 
 	/**
 	 * Reload the references of a published content.
 	 *
 	 * @param content The published content.
 	 */
-	public void reloadPublicContentReferences(Content content);
+	public void reloadPublicContentReferences(DataObject content);
 
 	/**
 	 * Reload the references of a content.
 	 *
 	 * @param content The content.
 	 */
-	public void reloadWorkContentReferences(Content content);
+	public void reloadWorkContentReferences(DataObject content);
 
 	/**
 	 * Unpublish a content, preventing it from being displayed in the portal.
@@ -50,9 +50,9 @@ public interface IContentDAO extends IEntityDAO {
 	 *
 	 * @param content the content to unpublish.
 	 */
-	public void removeOnLineContent(Content content);
+	public void removeOnLineContent(DataObject content);
 
-	public void updateContent(Content content, boolean updateDate);
+	public void updateContent(DataObject content, boolean updateDate);
 
 	public ContentsStatus loadContentStatus();
 

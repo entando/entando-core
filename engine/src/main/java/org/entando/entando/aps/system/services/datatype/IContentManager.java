@@ -21,9 +21,9 @@ import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.PagesStatus;
-import org.entando.entando.aps.system.services.datatype.model.Content;
-import org.entando.entando.aps.system.services.datatype.model.ContentRecordVO;
-import org.entando.entando.aps.system.services.datatype.model.SmallContentType;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
+import org.entando.entando.aps.system.services.datatype.model.DataObjectRecordVO;
+import org.entando.entando.aps.system.services.datatype.model.SmallDataType;
 import com.sun.tools.xjc.model.CPluginCustomization;
 
 /**
@@ -38,7 +38,7 @@ public interface IContentManager extends IEntityManager {
      * @param typeCode Il codice del tipo di contenuto richiesto, come definito in configurazione.
      * @return Il contenuto istanziato (vuoto).
      */
-    public Content createContentType(String typeCode);
+    public DataObject createContentType(String typeCode);
     
     /**
      * Return a list of the of the content types in a 'small form'. 'Small form' mans that
@@ -46,7 +46,7 @@ public interface IContentManager extends IEntityManager {
      * @return The list of the types in a (small form).
      * @deprecated From Entando 4.1.2, use getSmallEntityTypes() method
      */
-    public List<SmallContentType> getSmallContentTypes();
+    public List<SmallDataType> getSmallContentTypes();
     
     /**
      * Restituisce la mappa dei prototipi dei tipi di contenuti
@@ -54,7 +54,7 @@ public interface IContentManager extends IEntityManager {
      * @return La mappa dei prototipi dei tipi di contenuti
      * il oggetti SmallContentType.
      */
-    public Map<String, SmallContentType> getSmallContentTypesMap();
+    public Map<String, SmallDataType> getSmallContentTypesMap();
     
     /**
      * Restituisce il codice della pagina di default per la visualizzazione
@@ -89,9 +89,9 @@ public interface IContentManager extends IEntityManager {
      * @return Il contenuto OnLine.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
-    public Content loadContent(String id, boolean onLine) throws ApsSystemException;
+    public DataObject loadContent(String id, boolean onLine) throws ApsSystemException;
 	
-	public Content loadContent(String id, boolean onLine, boolean cacheable) throws ApsSystemException;
+	public DataObject loadContent(String id, boolean onLine, boolean cacheable) throws ApsSystemException;
     
     /**
      * Restituisce un VO contenente le informazioni del record su db
@@ -100,7 +100,7 @@ public interface IContentManager extends IEntityManager {
      * @return L'oggetto VO corrispondente al contenuto cercato.
      * @throws ApsSystemException In caso di errore in accesso al db.
      */
-    public ContentRecordVO loadContentVO(String id) throws ApsSystemException;
+    public DataObjectRecordVO loadContentVO(String id) throws ApsSystemException;
     
     /**
      * Salva un contenuto sul DB.
@@ -110,23 +110,23 @@ public interface IContentManager extends IEntityManager {
      * @param content Il contenuto da aggiungere o modificare.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
-    public void saveContent(Content content) throws ApsSystemException;
+    public void saveContent(DataObject content) throws ApsSystemException;
     
-    public void saveContentAndContinue(Content content) throws ApsSystemException;
+    public void saveContentAndContinue(DataObject content) throws ApsSystemException;
     
     /**
      * Save a content in the DB.
      * @param content The content to add.
      * @throws ApsSystemException in case of error.
      */
-    public void addContent(Content content) throws ApsSystemException;
+    public void addContent(DataObject content) throws ApsSystemException;
     
     /**
      * Inserisce il contenuto OnLine.
      * @param content Il contenuto da rendere visibile online.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
-    public void insertOnLineContent(Content content) throws ApsSystemException;
+    public void insertOnLineContent(DataObject content) throws ApsSystemException;
     
     /**
      * Rimuove un contenuto OnLine. L'operazione non cancella il contenuto ma ne
@@ -135,14 +135,14 @@ public interface IContentManager extends IEntityManager {
      * @param content Il contenuto da rimuovere.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
-    public void removeOnLineContent(Content content) throws ApsSystemException;
+    public void removeOnLineContent(DataObject content) throws ApsSystemException;
     
     /**
      * Cancella un contenuto dal db.
      * @param content Il contenuto da cancellare.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
-    public void deleteContent(Content content) throws ApsSystemException;
+    public void deleteContent(DataObject content) throws ApsSystemException;
     
     /**
      * Carica una lista di identificativi di contenuti publici in base ai parametri immessi.

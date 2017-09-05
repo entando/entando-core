@@ -25,16 +25,16 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = DataTypeSearch.TABLE_NAME)
-public class DataTypeSearch implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = WorkDataObjectSearch.TABLE_NAME)
+public class WorkDataObjectSearch implements ExtendedColumnDefinition {
 
-	public DataTypeSearch() {
+	public WorkDataObjectSearch() {
 	}
 
 	@DatabaseField(foreign = true, columnName = "contentid",
 			width = 16,
 			canBeNull = false, index = true)
-	private DataTypeTable _contentId;
+	private DataObject _contentId;
 
 	@DatabaseField(columnName = "attrname",
 			dataType = DataType.STRING,
@@ -66,29 +66,29 @@ public class DataTypeSearch implements ExtendedColumnDefinition {
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
-		String contentTableName = DataTypeTable.TABLE_NAME;
+		String contentTableName = DataObject.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
-			contentTableName = "`" + contentTableName + "`";
+			contentTableName = "`" + DataObject.TABLE_NAME + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
 			+ "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "datatypesearch";
+	public static final String TABLE_NAME = "workdatatypesearch";
 
 }
 /*
-CREATE TABLE contentsearch
+CREATE TABLE workcontentsearch
 (
-  contentid character varying(16) NOT NULL,
+  contentid character varying(16),
   attrname character varying(30) NOT NULL,
   textvalue character varying(255),
   datevalue date,
   numvalue integer,
   langcode character varying(2),
-  CONSTRAINT contentsearch_contentid_fkey FOREIGN KEY (contentid)
+  CONSTRAINT workcontentsearch_contentid_fkey FOREIGN KEY (contentid)
       REFERENCES contents (contentid) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )

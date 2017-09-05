@@ -122,9 +122,9 @@ public class PublicContentSearcherDAO extends AbstractContentSearcherDAO impleme
 			if (i != 0) {
 				query.append("OR ");
 			}
-			query.append("datatypes.maingroup = ? ");
+			query.append("dataobjects.maingroup = ? ");
 		}
-		query.append(" OR datatypes.contentid IN ( SELECT contentid FROM ")
+		query.append(" OR dataobjects.contentid IN ( SELECT contentid FROM ")
 				.append(this.getContentRelationsTableName()).append(" WHERE ");
 		for (int i = 0; i < size; i++) {
 			if (i != 0) {

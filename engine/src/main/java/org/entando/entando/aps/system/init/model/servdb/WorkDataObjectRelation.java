@@ -15,50 +15,52 @@ package org.entando.entando.aps.system.init.model.servdb;
 
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
+import org.entando.entando.aps.system.init.model.portdb.Category;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = DataTypeAttributeRole.TABLE_NAME)
-public class DataTypeAttributeRole implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = WorkDataObjectRelation.TABLE_NAME)
+public class WorkDataObjectRelation implements ExtendedColumnDefinition {
 
-	public DataTypeAttributeRole() {
+	public WorkDataObjectRelation() {
 	}
 
 	@DatabaseField(foreign = true, columnName = "contentid",
 			width = 16,
 			canBeNull = false, index = true)
-	private DataTypeTable _contentId;
+	private DataObject _content;
 
-	@DatabaseField(columnName = "attrname",
-			dataType = DataType.STRING,
-			width = 30,
-			canBeNull = false, index = true)
-	private String _attributeName;
-
-	@DatabaseField(columnName = "rolename",
-			dataType = DataType.STRING,
-			width = 50,
-			canBeNull = false, index = true)
-	private String _roleName;
+	@DatabaseField(foreign = true, columnName = "refcategory",
+			width = 30, index = true)
+	private Category _category;
 
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
-		String contentTableName = DataTypeTable.TABLE_NAME;
+		String contentTableName = DataObject.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
-			contentTableName = "`" + DataTypeTable.TABLE_NAME + "`";
+			contentTableName = "`" + contentTableName + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT contentattrroles_contid_fkey FOREIGN KEY (contentid) "
+			+ "ADD CONSTRAINT " + TABLE_NAME + "_id_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "datatypeattributeroles";
+	public static final String TABLE_NAME = "workdatatyperelations";
 
 }
+/*
+CREATE TABLE workcontentrelations
+(
+  contentid character varying(16) NOT NULL,
+  refcategory character varying(30),
+  CONSTRAINT workcontentrelations_contentid_fkey FOREIGN KEY (contentid)
+      REFERENCES contents (contentid) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+ */

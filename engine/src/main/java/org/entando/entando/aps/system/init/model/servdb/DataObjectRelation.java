@@ -23,16 +23,16 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = DataTypeRelation.TABLE_NAME)
-public class DataTypeRelation implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = DataObjectRelation.TABLE_NAME)
+public class DataObjectRelation implements ExtendedColumnDefinition {
 
-	public DataTypeRelation() {
+	public DataObjectRelation() {
 	}
 
 	@DatabaseField(foreign = true, columnName = "contentid",
 			width = 16,
 			canBeNull = false, index = true)
-	private DataTypeTable _content;
+	private DataObject _content;
 
 	@DatabaseField(columnName = "refcategory",
 			dataType = DataType.STRING,

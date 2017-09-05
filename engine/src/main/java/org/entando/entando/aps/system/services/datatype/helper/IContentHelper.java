@@ -19,15 +19,15 @@ import java.util.Map;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.datatype.ContentUtilizer;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 public interface IContentHelper {
 
 	public static String BEAN_NAME = "jacmsContentHelper";
 
-	public Map<String, List<?>> getReferencingObjects(Content content) throws ApsSystemException;
+	public Map<String, List<?>> getReferencingObjects(DataObject content) throws ApsSystemException;
 
-	public Map<String, List<?>> getReferencingObjects(Content content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException;
+	public Map<String, List<?>> getReferencingObjects(DataObject content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException;
 
 	public List<ContentUtilizer> getContentUtilizers();
 

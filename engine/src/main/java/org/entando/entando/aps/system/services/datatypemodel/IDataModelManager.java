@@ -18,7 +18,7 @@ import java.util.Map;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
-import org.entando.entando.aps.system.services.datatype.model.SmallContentType;
+import org.entando.entando.aps.system.services.datatype.model.SmallDataType;
 
 /**
  * Interfaccia base per i Manager dei modelli di datatype.
@@ -41,6 +41,6 @@ public interface IDataModelManager {
 
 	public Map<String, List<IPage>> getReferencingPages(long modelId);
 
-	public SmallContentType getDefaultUtilizer(long modelId);
+	public SmallDataType getDefaultUtilizer(long modelId);
 
 }

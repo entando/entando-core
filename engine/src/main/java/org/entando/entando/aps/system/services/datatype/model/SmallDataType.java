@@ -13,30 +13,21 @@
  */
 package org.entando.entando.aps.system.services.datatype.model;
 
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
+
+import java.io.Serializable;
+
 /**
- * Rappresentazione delle referenze interne di un'attributo specifico per il cms.
  * @author E.Santoboni
+ * @deprecated  From Entando 4.1.2, use {@link SmallEntityType} class 
  */
-public class CmsAttributeReference {
+public class SmallDataType extends SmallEntityType implements Serializable {
 	
-	public CmsAttributeReference(String page, String content, String resource) {
-		this._refPage = page;
-		this._refContent = content;
-		this._refResource = resource;
+	public String getDescr() {
+		return super.getDescription();
 	}
-	
-	public String getRefContent() {
-		return _refContent;
+	public void setDescr(String descr) {
+		super.setDescription(descr);
 	}
-	public String getRefPage() {
-		return _refPage;
-	}
-	public String getRefResource() {
-		return _refResource;
-	}
-	
-	private String _refPage;
-	private String _refContent;
-	private String _refResource;
 	
 }

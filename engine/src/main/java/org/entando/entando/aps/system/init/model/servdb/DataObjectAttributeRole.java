@@ -23,16 +23,16 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = WorkDataTypeAttributeRole.TABLE_NAME)
-public class WorkDataTypeAttributeRole implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = DataObjectAttributeRole.TABLE_NAME)
+public class DataObjectAttributeRole implements ExtendedColumnDefinition {
 
-	public WorkDataTypeAttributeRole() {
+	public DataObjectAttributeRole() {
 	}
 
 	@DatabaseField(foreign = true, columnName = "contentid",
 			width = 16,
 			canBeNull = false, index = true)
-	private DataTypeTable _contentId;
+	private DataObject _contentId;
 
 	@DatabaseField(columnName = "attrname",
 			dataType = DataType.STRING,
@@ -49,16 +49,16 @@ public class WorkDataTypeAttributeRole implements ExtendedColumnDefinition {
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
-		String contentTableName = DataTypeTable.TABLE_NAME;
+		String contentTableName = DataObject.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
-			contentTableName = "`" + DataTypeTable.TABLE_NAME + "`";
+			contentTableName = "`" + DataObject.TABLE_NAME + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT workcontentattrroles_id_fkey FOREIGN KEY (contentid) "
+			+ "ADD CONSTRAINT contentattrroles_contid_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "workdatatypeattributeroles";
+	public static final String TABLE_NAME = "datatypeattributeroles";
 
 }

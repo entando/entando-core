@@ -13,53 +13,82 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
+import java.util.Date;
+
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
-import org.entando.entando.aps.system.init.model.portdb.Category;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = WorkDataTypeRelation.TABLE_NAME)
-public class WorkDataTypeRelation implements ExtendedColumnDefinition {
+@DatabaseTable(tableName = DataObjectSearch.TABLE_NAME)
+public class DataObjectSearch implements ExtendedColumnDefinition {
 
-	public WorkDataTypeRelation() {
+	public DataObjectSearch() {
 	}
 
 	@DatabaseField(foreign = true, columnName = "contentid",
 			width = 16,
 			canBeNull = false, index = true)
-	private DataTypeTable _content;
+	private DataObject _contentId;
 
-	@DatabaseField(foreign = true, columnName = "refcategory",
-			width = 30, index = true)
-	private Category _category;
+	@DatabaseField(columnName = "attrname",
+			dataType = DataType.STRING,
+			width = 30,
+			canBeNull = false, index = true)
+	private String _attributeName;
+
+	@DatabaseField(columnName = "textvalue",
+			dataType = DataType.STRING,
+			canBeNull = true)
+	private String _textValue;
+
+	@DatabaseField(columnName = "datevalue",
+			dataType = DataType.DATE,
+			canBeNull = true)
+	private Date _dateValue;
+
+	@DatabaseField(columnName = "numvalue",
+			dataType = DataType.INTEGER,
+			canBeNull = true)
+	private int _numberValue;
+
+	@DatabaseField(columnName = "langcode",
+			dataType = DataType.STRING,
+			width = 3,
+			canBeNull = true)
+	private String _langCode;
 
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
-		String contentTableName = DataTypeTable.TABLE_NAME;
+		String contentTableName = DataObject.TABLE_NAME;
 		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
 			tableName = "`" + tableName + "`";
 			contentTableName = "`" + contentTableName + "`";
 		}
 		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT " + TABLE_NAME + "_id_fkey FOREIGN KEY (contentid) "
+			+ "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "workdatatyperelations";
+	public static final String TABLE_NAME = "datatypesearch";
 
 }
 /*
-CREATE TABLE workcontentrelations
+CREATE TABLE contentsearch
 (
   contentid character varying(16) NOT NULL,
-  refcategory character varying(30),
-  CONSTRAINT workcontentrelations_contentid_fkey FOREIGN KEY (contentid)
+  attrname character varying(30) NOT NULL,
+  textvalue character varying(255),
+  datevalue date,
+  numvalue integer,
+  langcode character varying(2),
+  CONSTRAINT contentsearch_contentid_fkey FOREIGN KEY (contentid)
       REFERENCES contents (contentid) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )

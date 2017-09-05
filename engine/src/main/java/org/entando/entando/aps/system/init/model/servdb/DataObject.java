@@ -20,10 +20,10 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = DataTypeTable.TABLE_NAME)
-public class DataTypeTable {
+@DatabaseTable(tableName = DataObject.TABLE_NAME)
+public class DataObject {
 
-	public DataTypeTable() {
+	public DataObject() {
 	}
 
 	@DatabaseField(columnName = "contentid",
@@ -32,11 +32,11 @@ public class DataTypeTable {
 			canBeNull = false, id = true)
 	private String _contentId;
 
-	@DatabaseField(columnName = "contenttype",
+	@DatabaseField(columnName = "datatype",
 			dataType = DataType.STRING,
 			width = 30,
 			canBeNull = false, index = true)
-	private String _contentType;
+	private String _dataType;
 
 	@DatabaseField(columnName = "descr",
 			dataType = DataType.STRING,
@@ -95,7 +95,7 @@ public class DataTypeTable {
 			canBeNull = true)
 	private String _firstEditor;
 
-	public static final String TABLE_NAME = "datatypes";
+	public static final String TABLE_NAME = "dataobjects";
 
 }
 /*

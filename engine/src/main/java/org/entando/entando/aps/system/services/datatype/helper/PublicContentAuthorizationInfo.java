@@ -24,7 +24,7 @@ import java.util.Set;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.Lang;
 
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * Represents the authorization information of a content. The enhanced object is
@@ -37,11 +37,11 @@ public class PublicContentAuthorizationInfo implements Serializable {
 	private static final long serialVersionUID = -5241592759371755368L;
 
 	@Deprecated
-	public PublicContentAuthorizationInfo(Content content) {
+	public PublicContentAuthorizationInfo(DataObject content) {
 		this(content, null);
 	}
 
-	public PublicContentAuthorizationInfo(Content content, List<Lang> langs) {
+	public PublicContentAuthorizationInfo(DataObject content, List<Lang> langs) {
 		this._contentId = content.getId();
 		this._contentType = content.getTypeCode();
 		this._mainGroup = content.getMainGroup();

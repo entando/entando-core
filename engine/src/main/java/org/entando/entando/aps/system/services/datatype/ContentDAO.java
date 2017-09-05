@@ -37,8 +37,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import org.entando.entando.aps.system.services.datatype.model.Content;
-import org.entando.entando.aps.system.services.datatype.model.ContentRecordVO;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
+import org.entando.entando.aps.system.services.datatype.model.DataObjectRecordVO;
 
 /**
  * DAO class for objects of type content.
@@ -56,7 +56,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 
 	@Override
 	protected ApsEntityRecord createEntityRecord(ResultSet res) throws Throwable {
-		ContentRecordVO contentVo = new ContentRecordVO();
+		DataObjectRecordVO contentVo = new DataObjectRecordVO();
 		contentVo.setId(res.getString(1));
 		contentVo.setTypeCode(res.getString(2));
 		contentVo.setDescription(res.getString(3));
@@ -80,7 +80,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	@Override
 	protected void executeAddEntity(IApsEntity entity, Connection conn) throws Throwable {
 		super.executeAddEntity(entity, conn);
-		this.addWorkContentRelationsRecord((Content) entity, conn);
+		this.addWorkContentRelationsRecord((DataObject) entity, conn);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 
 	@Override
 	protected void buildAddEntityStatement(IApsEntity entity, PreparedStatement stat) throws Throwable {
-		Content content = (Content) entity;
+		DataObject content = (DataObject) entity;
 		stat.setString(1, content.getId());
 		stat.setString(2, content.getTypeCode());
 		stat.setString(3, content.getDescription());
@@ -106,7 +106,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	}
 
 	@Override
-	public void updateContent(Content content, boolean updateDate) {
+	public void updateContent(DataObject content, boolean updateDate) {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -122,7 +122,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void executeUpdateContent(Content content, boolean updateDate, Connection conn) throws Throwable {
+	protected void executeUpdateContent(DataObject content, boolean updateDate, Connection conn) throws Throwable {
 		PreparedStatement stat = null;
 		try {
 			this.deleteRecordsByEntityId(content.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
@@ -149,7 +149,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	protected void executeUpdateEntity(IApsEntity entity, Connection conn) throws Throwable {
 		this.deleteRecordsByEntityId(entity.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.executeUpdateEntity(entity, conn);
-		this.addWorkContentRelationsRecord((Content) entity, conn);
+		this.addWorkContentRelationsRecord((DataObject) entity, conn);
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	}
 
 	protected void buildUpdateEntityStatement(IApsEntity entity, boolean updateDate, PreparedStatement stat) throws Throwable {
-		Content content = (Content) entity;
+		DataObject content = (DataObject) entity;
 		int index = 1;
 		stat.setString(index++, content.getTypeCode());
 		stat.setString(index++, content.getDescription());
@@ -188,7 +188,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * @param content the content to publish.
 	 */
 	@Override
-	public void insertOnLineContent(Content content) {
+	public void insertOnLineContent(DataObject content) {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -204,11 +204,11 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void executeInsertOnLineContent(Content content, Connection conn) throws Throwable {
+	protected void executeInsertOnLineContent(DataObject content, Connection conn) throws Throwable {
 		this.executeInsertOnLineContent(content, true, conn);
 	}
 
-	protected void executeInsertOnLineContent(Content content, boolean updateDate, Connection conn) throws Throwable {
+	protected void executeInsertOnLineContent(DataObject content, boolean updateDate, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_ATTRIBUTE_ROLE_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
@@ -242,11 +242,11 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void updateContentRecordForInsertOnLine(Content content, Connection conn) throws ApsSystemException {
+	protected void updateContentRecordForInsertOnLine(DataObject content, Connection conn) throws ApsSystemException {
 		this.updateContentRecordForInsertOnLine(content, true, conn);
 	}
 
-	protected void updateContentRecordForInsertOnLine(Content content, boolean updateDate, Connection conn) throws ApsSystemException {
+	protected void updateContentRecordForInsertOnLine(DataObject content, boolean updateDate, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			int index = 1;
@@ -283,7 +283,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * @param content the published content
 	 */
 	@Override
-	public void reloadPublicContentReferences(Content content) {
+	public void reloadPublicContentReferences(DataObject content) {
 		if (content.isOnLine()) {
 			Connection conn = null;
 			try {
@@ -301,7 +301,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void executeReloadPublicContentReferences(Content content, Connection conn) throws Throwable {
+	protected void executeReloadPublicContentReferences(DataObject content, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_ATTRIBUTE_ROLE_RECORD, conn);
@@ -316,7 +316,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * @param content the content
 	 */
 	@Override
-	public void reloadWorkContentReferences(Content content) {
+	public void reloadWorkContentReferences(DataObject content) {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -332,7 +332,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void executeReloadWorkContentReferences(Content content, Connection conn) throws Throwable {
+	protected void executeReloadWorkContentReferences(DataObject content, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_ATTRIBUTE_ROLE_RECORD, conn);
 		super.deleteEntitySearchRecord(content.getId(), conn);
@@ -348,7 +348,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * @param content the content to unpublish.
 	 */
 	@Override
-	public void removeOnLineContent(Content content) {
+	public void removeOnLineContent(DataObject content) {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -364,7 +364,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void executeRemoveOnLineContent(Content content, Connection conn) {
+	protected void executeRemoveOnLineContent(DataObject content, Connection conn) {
 		this.executeRemoveOnLineContent(content, true, conn);
 	}
 
@@ -376,7 +376,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * @param updateDate
 	 * @param conn the connection to the DB.
 	 */
-	protected void executeRemoveOnLineContent(Content content, boolean updateDate, Connection conn) {
+	protected void executeRemoveOnLineContent(DataObject content, boolean updateDate, Connection conn) {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_ATTRIBUTE_ROLE_RECORD, conn);
@@ -420,7 +420,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		super.executeDeleteEntity(entityId, conn);
 	}
 
-	private void addCategoryRelationsRecord(Content content, boolean isPublicRelations, PreparedStatement stat) throws ApsSystemException {
+	private void addCategoryRelationsRecord(DataObject content, boolean isPublicRelations, PreparedStatement stat) throws ApsSystemException {
 		if (content.getCategories().size() > 0) {
 			try {
 				Set<String> codes = new HashSet<String>();
@@ -461,7 +461,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	private void addGroupRelationsRecord(Content content, PreparedStatement stat) throws ApsSystemException {
+	private void addGroupRelationsRecord(DataObject content, PreparedStatement stat) throws ApsSystemException {
 		try {
 			content.addGroup(content.getMainGroup());
 			Iterator<String> groupIter = content.getGroups().iterator();
@@ -490,7 +490,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	 * @param conn The connection to the database.
 	 * @throws ApsSystemException when connection error are detected.
 	 */
-	protected void addContentRelationsRecord(Content content, Connection conn) throws ApsSystemException {
+	protected void addContentRelationsRecord(DataObject content, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_CONTENT_REL_RECORD);
@@ -512,7 +512,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 	}
 
-	protected void addWorkContentRelationsRecord(Content content, Connection conn) throws ApsSystemException {
+	protected void addWorkContentRelationsRecord(DataObject content, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_WORK_CONTENT_REL_RECORD);
@@ -653,7 +653,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		return LOAD_ALL_CONTENTS_ID;
 	}
 
-	private final String DELETE_CONTENT = "DELETE FROM datatypes WHERE contentid = ? ";
+	private final String DELETE_CONTENT = "DELETE FROM dataobjects WHERE contentid = ? ";
 
 	private final String DELETE_CONTENT_REL_RECORD = "DELETE FROM datatyperelations WHERE contentid = ? ";
 
@@ -670,42 +670,40 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 	private final String DELETE_WORK_CONTENT_SEARCH_RECORD = "DELETE FROM workdatatypesearch WHERE contentid = ? ";
 
 	private final String ADD_CONTENT_REL_RECORD = "INSERT INTO datatyperelations "
-			+ "(contentid, refpage, refcontent, refresource, refcategory, refgroup) " + "VALUES ( ? , ? , ? , ? , ? , ? )";
+			+ "(contentid, refpage, refcontent, refresource, refcategory, refgroup) VALUES ( ? , ? , ? , ? , ? , ? )";
 
 	private final String ADD_WORK_CONTENT_REL_RECORD = "INSERT INTO workdatatyperelations (contentid, refcategory) VALUES ( ? , ? )";
 
-	private final String LOAD_CONTENTS_ID_MAIN_BLOCK = "SELECT DISTINCT datatypes.contentid FROM contents ";
+	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = "SELECT dataobjects.contentid, dataobjects.datatype, dataobjects.descr, dataobjects.status, "
+			+ "dataobjects.workxml, dataobjects.created, dataobjects.lastmodified, dataobjects.onlinexml, dataobjects.maingroup, "
+			+ "dataobjects.currentversion, dataobjects.firsteditor, dataobjects.lasteditor FROM dataobjects ";
 
-	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = "SELECT datatypes.contentid, datatypes.contenttype, datatypes.descr, datatypes.status, "
-			+ "datatypes.workxml, datatypes.created, datatypes.lastmodified, datatypes.onlinexml, datatypes.maingroup, "
-			+ "datatypes.currentversion, datatypes.firsteditor, datatypes.lasteditor " + "FROM datatypes ";
+	private final String LOAD_CONTENT_VO = LOAD_CONTENTS_VO_MAIN_BLOCK + " WHERE dataobjects.contentid = ? ";
 
-	private final String LOAD_CONTENT_VO = LOAD_CONTENTS_VO_MAIN_BLOCK + " WHERE datatypes.contentid = ? ";
-
-	private final String ADD_CONTENT = "INSERT INTO datatypes (contentid, contenttype, descr, status, workxml, "
+	private final String ADD_CONTENT = "INSERT INTO dataobjects (contentid, datatype, descr, status, workxml, "
 			+ "created, lastmodified, maingroup, currentversion, firsteditor, lasteditor) "
 			+ "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
 
-	private final String INSERT_ONLINE_CONTENT = "UPDATE datatypes SET contenttype = ? , descr = ? , status = ? , "
+	private final String INSERT_ONLINE_CONTENT = "UPDATE dataobjects SET datatype = ? , descr = ? , status = ? , "
 			+ "workxml = ? , lastmodified = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? "
 			+ "WHERE contentid = ? ";
 
-	private final String INSERT_ONLINE_CONTENT_WITHOUT_DATE = "UPDATE datatypes SET contenttype = ? , descr = ? , status = ? , "
+	private final String INSERT_ONLINE_CONTENT_WITHOUT_DATE = "UPDATE dataobjects SET datatype = ? , descr = ? , status = ? , "
 			+ "workxml = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
 
-	private final String REMOVE_ONLINE_CONTENT = "UPDATE datatypes SET onlinexml = ? , status = ? , "
+	private final String REMOVE_ONLINE_CONTENT = "UPDATE dataobjects SET onlinexml = ? , status = ? , "
 			+ "workxml = ? , lastmodified = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
 
-	private final String REMOVE_ONLINE_CONTENT_WITHOUT_DATE = "UPDATE datatypes SET onlinexml = ? , status = ? , "
+	private final String REMOVE_ONLINE_CONTENT_WITHOUT_DATE = "UPDATE dataobjects SET onlinexml = ? , status = ? , "
 			+ "workxml = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
 
-	private final String UPDATE_CONTENT = "UPDATE datatypes SET contenttype = ? , descr = ? , status = ? , "
+	private final String UPDATE_CONTENT = "UPDATE dataobjects SET datatype = ? , descr = ? , status = ? , "
 			+ "workxml = ? , lastmodified = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
 
-	private final String UPDATE_CONTENT_WITHOUT_DATE = "UPDATE datatypes SET contenttype = ? , descr = ? , status = ? , "
+	private final String UPDATE_CONTENT_WITHOUT_DATE = "UPDATE dataobjects SET datatype = ? , descr = ? , status = ? , "
 			+ "workxml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
 
-	private final String LOAD_ALL_CONTENTS_ID = "SELECT contentid FROM datatypes";
+	private final String LOAD_ALL_CONTENTS_ID = "SELECT contentid FROM dataobjects";
 
 	private final String ADD_ATTRIBUTE_ROLE_RECORD = "INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
 
@@ -715,14 +713,14 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 
 	private final String DELETE_WORK_ATTRIBUTE_ROLE_RECORD = "DELETE FROM workdatatypeattributeroles WHERE contentid = ? ";
 
-	private static final String COUNT_OFFLINE_CONTENTS = "SELECT count(contentid) FROM datatypes WHERE onlinexml IS NULL";
+	private static final String COUNT_OFFLINE_CONTENTS = "SELECT count(contentid) FROM dataobjects WHERE onlinexml IS NULL";
 
-	private static final String COUNT_ONLINE_CONTENTS = "SELECT count(contentid) FROM datatypes "
+	private static final String COUNT_ONLINE_CONTENTS = "SELECT count(contentid) FROM dataobjects "
 			+ "WHERE onlinexml IS NOT NULL AND onlinexml = workxml";
 
-	private static final String COUNT_ONLINE_CONTENTS_WITH_DIFFS = "SELECT count(contentid) FROM datatypes "
+	private static final String COUNT_ONLINE_CONTENTS_WITH_DIFFS = "SELECT count(contentid) FROM dataobjects "
 			+ "WHERE onlinexml IS NOT NULL AND onlinexml <> workxml";
 
-	private final String LOAD_LAST_MODIFIED = LOAD_CONTENTS_VO_MAIN_BLOCK + "order by datatypes.lastmodified desc";
+	private final String LOAD_LAST_MODIFIED = LOAD_CONTENTS_VO_MAIN_BLOCK + "order by dataobjects.lastmodified desc";
 
 }

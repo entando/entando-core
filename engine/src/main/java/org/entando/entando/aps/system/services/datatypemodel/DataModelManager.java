@@ -28,8 +28,8 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
 import org.entando.entando.aps.system.services.datatype.IContentManager;
-import org.entando.entando.aps.system.services.datatype.model.Content;
-import org.entando.entando.aps.system.services.datatype.model.SmallContentType;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
+import org.entando.entando.aps.system.services.datatype.model.SmallDataType;
 import org.entando.entando.aps.system.services.datatypemodel.event.DataModelChangedEvent;
 
 /**
@@ -168,12 +168,12 @@ public class DataModelManager extends AbstractService implements IDataModelManag
 	}
 
 	@Override
-	public SmallContentType getDefaultUtilizer(long modelId) {
+	public SmallDataType getDefaultUtilizer(long modelId) {
 		String modelIdString = String.valueOf(modelId);
-		List<SmallContentType> smallContentTypes = this.getContentManager().getSmallContentTypes();
+		List<SmallDataType> smallContentTypes = this.getContentManager().getSmallContentTypes();
 		for (int i = 0; i < smallContentTypes.size(); i++) {
-			SmallContentType smallContentType = (SmallContentType) smallContentTypes.get(i);
-			Content prototype = this.getContentManager().createContentType(smallContentType.getCode());
+			SmallDataType smallContentType = (SmallDataType) smallContentTypes.get(i);
+			DataObject prototype = this.getContentManager().createContentType(smallContentType.getCode());
 			if ((null != prototype.getListModel() && prototype.getListModel().equals(modelIdString)) || (null != prototype.getDefaultModel()
 					&& prototype.getDefaultModel().equals(modelIdString))) {
 				return smallContentType;

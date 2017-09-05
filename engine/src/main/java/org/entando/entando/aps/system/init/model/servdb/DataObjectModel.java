@@ -20,10 +20,10 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * @author E.Santoboni
  */
-@DatabaseTable(tableName = DataTypeModel.TABLE_NAME)
-public class DataTypeModel {
+@DatabaseTable(tableName = DataObjectModel.TABLE_NAME)
+public class DataObjectModel {
 
-	public DataTypeModel() {
+	public DataObjectModel() {
 	}
 
 	@DatabaseField(columnName = "modelid",

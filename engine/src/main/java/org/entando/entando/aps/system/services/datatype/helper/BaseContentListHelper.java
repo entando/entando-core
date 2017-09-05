@@ -37,7 +37,7 @@ import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.datatype.IContentManager;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 /**
  * @author E.Santoboni
@@ -48,7 +48,7 @@ public class BaseContentListHelper implements IContentListHelper {
 
 	@Override
 	public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, String langCode) {
-		Content contentPrototype = this.getContentManager().createContentType(contentType);
+		DataObject contentPrototype = this.getContentManager().createContentType(contentType);
 		if (null == filtersShowletParam || filtersShowletParam.trim().length() == 0 || null == contentPrototype) {
 			return null;
 		}
@@ -68,7 +68,7 @@ public class BaseContentListHelper implements IContentListHelper {
 	@Override
 	public EntitySearchFilter getFilter(String contentType, IEntityFilterBean bean, String langCode) {
 		BaseFilterUtils dom = new BaseFilterUtils();
-		Content contentPrototype = this.getContentManager().createContentType(contentType);
+		DataObject contentPrototype = this.getContentManager().createContentType(contentType);
 		if (null == contentPrototype) {
 			return null;
 		}

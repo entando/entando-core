@@ -27,21 +27,21 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.datatype.ContentUtilizer;
-import org.entando.entando.aps.system.services.datatype.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.DataObject;
 
 public class ContentHelper implements IContentHelper, ApplicationContextAware {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentHelper.class);
 
 	@Override
-	public Map<String, List<?>> getReferencingObjects(Content content) throws ApsSystemException {
+	public Map<String, List<?>> getReferencingObjects(DataObject content) throws ApsSystemException {
 		Collection<ContentUtilizer> contentUtilizers = this.getContentUtilizers();
 		Map<String, List<?>> references = this.getReferencingObjects(content, contentUtilizers);
 		return references;
 	}
 
 	@Override
-	public Map<String, List<?>> getReferencingObjects(Content content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException {
+	public Map<String, List<?>> getReferencingObjects(DataObject content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException {
 		Map<String, List<?>> references = new HashMap<String, List<?>>();
 		try {
 			for (ContentUtilizer contentUtilizer : contentUtilizers) {

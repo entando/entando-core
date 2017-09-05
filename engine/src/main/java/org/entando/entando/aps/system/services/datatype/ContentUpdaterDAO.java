@@ -11,14 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.plugins.jacms.aps.system.services.content;
+package org.entando.entando.aps.system.services.datatype;
 
 import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.services.datatype.model.Content;
 
 import java.sql.Connection;
 
 /**
+ *
  * @author E.Santoboni
  */
 public class ContentUpdaterDAO extends ContentDAO implements IContentUpdaterDAO {
@@ -34,7 +35,7 @@ public class ContentUpdaterDAO extends ContentDAO implements IContentUpdaterDAO 
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			ApsSystemUtils.logThrowable(t, this, "reloadWorkContentCategoryReferences");
+			ApsSystemUtils.logThrowable(t, this, "reloadWorkContentReferences");
 			throw new RuntimeException("Error reloading references - Content " + content.getId(), t);
 		} finally {
 			this.closeConnection(conn);
@@ -53,7 +54,7 @@ public class ContentUpdaterDAO extends ContentDAO implements IContentUpdaterDAO 
 				conn.commit();
 			} catch (Throwable t) {
 				this.executeRollback(conn);
-				ApsSystemUtils.logThrowable(t, this, "reloadPublicContentCategoryReferences");
+				ApsSystemUtils.logThrowable(t, this, "reloadPublicContentReferences");
 				throw new RuntimeException("Error reloading references - Content " + content.getId(), t);
 			} finally {
 				this.closeConnection(conn);

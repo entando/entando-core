@@ -1,0 +1,7 @@
+<roles>
+	<role>
+		<name>jacms:title</name>
+		<description>The main title of a Content</description>
+		<allowedTypes>Text,Monotext,Longtext,Hypertext</allowedTypes>
+	</role>
+</roles>

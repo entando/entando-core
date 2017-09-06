@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps;
 
+import com.agiletec.aps.system.services.group.TestGroupManager;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
@@ -29,6 +30,7 @@ import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjec
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
 import org.entando.entando.aps.system.services.userprofile.TestUserProfileManager;
+import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 
 /**
  * @author W.Ambu

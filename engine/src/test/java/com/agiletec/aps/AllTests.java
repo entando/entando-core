@@ -13,9 +13,43 @@
  */
 package com.agiletec.aps;
 
+import com.agiletec.aps.system.common.entity.TestEntityManager;
+import com.agiletec.aps.system.services.authorization.TestAuthorityManager;
+import com.agiletec.aps.system.services.authorization.TestAuthorizationManager;
+import com.agiletec.aps.system.services.baseconfig.TestBaseConfigService;
+import com.agiletec.aps.system.services.baseconfig.TestConfigItemDAO;
+import com.agiletec.aps.system.services.cache.TestCacheManager;
+import com.agiletec.aps.system.services.category.TestCategoryManager;
 import com.agiletec.aps.system.services.group.TestGroupManager;
+import com.agiletec.aps.system.services.i18n.TestI18nManager;
+import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorDAO;
+import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorManager;
+import com.agiletec.aps.system.services.lang.TestLangManager;
+import com.agiletec.aps.system.services.page.TestPageManager;
+import com.agiletec.aps.system.services.page.widget.TestNavigatorExpression;
+import com.agiletec.aps.system.services.page.widget.TestNavigatorParser;
+import com.agiletec.aps.system.services.pagemodel.TestJaxbPageModel;
+import com.agiletec.aps.system.services.pagemodel.TestPageModelDAO;
+import com.agiletec.aps.system.services.pagemodel.TestPageModelDOM;
+import com.agiletec.aps.system.services.pagemodel.TestPageModelManager;
+import com.agiletec.aps.system.services.role.TestPermissionDAO;
+import com.agiletec.aps.system.services.role.TestRoleDAO;
+import com.agiletec.aps.system.services.role.TestRoleManager;
+import com.agiletec.aps.system.services.url.TestURLManager;
+import com.agiletec.aps.system.services.user.TestAuthenticationProviderManager;
+import com.agiletec.aps.system.services.user.TestUserDAO;
+import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDAO;
+import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDOM;
+import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
+import com.agiletec.aps.util.TestHtmlHandler;
+import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
+import com.agiletec.plugins.jacms.aps.system.services.content.TestGroupUtilizer;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.system.init.util.TestQueryExtractor;
+import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
+import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
+import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.TestPublicDataObjectSearcherDAO;
@@ -29,6 +63,10 @@ import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectV
 import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
+import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
+import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
+import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
+import org.entando.entando.aps.system.services.userprofile.TestUserManager;
 import org.entando.entando.aps.system.services.userprofile.TestUserProfileManager;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 

@@ -1843,7 +1843,7 @@ INSERT INTO sysconfig (version, item, descr, config) values ('production', 'user
 		</attributes>
 	</profiletype>
 </profiletypes>');
-INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'dataTypeDefinitions', 'Definition of the Type Types', '<contenttypes />');
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'dataTypeDefinitions', 'Definition of the Type Types', '<datatypes />');
 
 
 INSERT INTO uniquekeys (id, keyvalue) VALUES (1, 1);

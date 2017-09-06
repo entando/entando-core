@@ -550,7 +550,11 @@
 	</Lang>
 	<Lang>
 		<code>zh</code>
-		<descr>Chinese</descr>
+		<descr>Chinese - Traditional</descr>
+	</Lang>
+	<Lang>
+		<code>zhs</code>
+		<descr>Chinese - Simplified</descr>
 	</Lang>
 	<Lang>
 		<code>zu</code>

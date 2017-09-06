@@ -44,13 +44,16 @@ import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
 import com.agiletec.aps.util.TestHtmlHandler;
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestGroupUtilizer;
-import org.entando.entando.aps.system.init.util.TestQueryExtractor;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
 import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
+import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
+import org.entando.entando.aps.system.services.dataobject.TestDataObjectManager;
+import org.entando.entando.aps.system.services.dataobject.TestPublicDataObjectSearcherDAO;
+import org.entando.entando.aps.system.services.dataobject.TestValidateDataObject;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
@@ -134,10 +137,16 @@ public class AllTests {
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
 		suite.addTestSuite(TestApiI18nLabelInterface.class);
 		//
+		suite.addTestSuite(TestQueryExtractor.class);
+
+		// DATA OBJECT
 		suite.addTestSuite(TestDataObjectModelDAO.class);
 		suite.addTestSuite(TestDataObjectModelManager.class);
 
-		suite.addTestSuite(TestQueryExtractor.class);
+		suite.addTestSuite(TestDataObjectDAO.class);
+		suite.addTestSuite(TestDataObjectManager.class);
+		suite.addTestSuite(TestPublicDataObjectSearcherDAO.class);
+		suite.addTestSuite(TestValidateDataObject.class);
 
 		return suite;
 	}

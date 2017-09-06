@@ -16,13 +16,13 @@ package org.entando.entando.aps.system.services.dataobject.widget;
 import java.util.List;
 
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentListBean;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListBean;
 
 /**
  * Il bean detentore dei parametri di ricerca di liste di contenuti.
  * @author E.Santoboni
  */
-public interface IContentListTagBean extends IContentListBean {
+public interface IContentListTagBean extends IDataTypeListBean {
 	
 	/**
 	 * Setta il codice dei tipi di contenuto da cercare.

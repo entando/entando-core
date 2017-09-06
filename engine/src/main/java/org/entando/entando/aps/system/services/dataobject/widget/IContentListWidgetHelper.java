@@ -20,7 +20,7 @@ import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.dataobject.IContentManager;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentListFilterBean;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
 
 /**
  * Interfaccia base per l'implementazione del bean helper della showlet di
@@ -29,7 +29,7 @@ import org.entando.entando.aps.system.services.dataobject.helper.IContentListFil
  *
  * @author E.Santoboni
  */
-public interface IContentListWidgetHelper extends org.entando.entando.aps.system.services.dataobject.helper.IContentListHelper {
+public interface IContentListWidgetHelper extends org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListHelper {
 
 	/**
 	 * Restituisce la lista di identificativi di contenuto in base ai parametri
@@ -73,7 +73,7 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	 * @deprecated From Entando 3.0 version 3.0.1. Use getFilter(String,
 	 * IEntityFilterBean, RequestContext) method
 	 */
-	public EntitySearchFilter getFilter(String contentType, IContentListFilterBean bean, RequestContext reqCtx);
+	public EntitySearchFilter getFilter(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx);
 
 	public EntitySearchFilter getFilter(String contentType, IEntityFilterBean bean, RequestContext reqCtx);
 
@@ -81,7 +81,7 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	 * @deprecated From Entando 3.0 version 3.0.1. Use
 	 * getUserFilterOption(String, IEntityFilterBean, RequestContext) method
 	 */
-	public UserFilterOptionBean getUserFilterOption(String contentType, IContentListFilterBean bean, RequestContext reqCtx);
+	public UserFilterOptionBean getUserFilterOption(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx);
 
 	public UserFilterOptionBean getUserFilterOption(String contentType, IEntityFilterBean bean, RequestContext reqCtx);
 

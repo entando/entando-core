@@ -24,31 +24,31 @@ public class DataTypeDOM extends EntityTypeDOM {
 
 	@Override
 	protected IApsEntity createEntityType(Element contentElem, Class entityClass) throws ApsSystemException {
-		DataObject content = (DataObject) super.createEntityType(contentElem, entityClass);
-		content.setId(null);
+		DataObject dataObject = (DataObject) super.createEntityType(contentElem, entityClass);
+		dataObject.setId(null);
 		String viewPage = this.extractXmlAttribute(contentElem, "viewpage", true);
 		if (!viewPage.equals(NULL_VALUE)) {
-			content.setViewPage(viewPage);
+			dataObject.setViewPage(viewPage);
 		}
 		String listModel = this.extractXmlAttribute(contentElem, "listmodel", true);
 		if (!listModel.equals(NULL_VALUE)) {
-			content.setListModel(listModel);
+			dataObject.setListModel(listModel);
 		}
 		String defaultModel = this.extractXmlAttribute(contentElem, "defaultmodel", true);
 		if (!defaultModel.equals(NULL_VALUE)) {
-			content.setDefaultModel(defaultModel);
+			dataObject.setDefaultModel(defaultModel);
 		}
-		content.setStatus(DataObject.STATUS_NEW);
-		return content;
+		dataObject.setStatus(DataObject.STATUS_NEW);
+		return dataObject;
 	}
 
 	@Override
 	protected Element createRootTypeElement(IApsEntity currentEntityType) {
 		Element typeElement = super.createRootTypeElement(currentEntityType);
-		DataObject content = (DataObject) currentEntityType;
-		this.setXmlAttribute(typeElement, "viewpage", content.getViewPage());
-		this.setXmlAttribute(typeElement, "listmodel", content.getListModel());
-		this.setXmlAttribute(typeElement, "defaultmodel", content.getDefaultModel());
+		DataObject dataObject = (DataObject) currentEntityType;
+		this.setXmlAttribute(typeElement, "viewpage", dataObject.getViewPage());
+		this.setXmlAttribute(typeElement, "listmodel", dataObject.getListModel());
+		this.setXmlAttribute(typeElement, "defaultmodel", dataObject.getDefaultModel());
 		return typeElement;
 	}
 

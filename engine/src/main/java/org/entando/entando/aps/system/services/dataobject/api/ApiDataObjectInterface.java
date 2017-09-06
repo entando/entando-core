@@ -43,12 +43,12 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.dataobject.api.model.ApiDataObjectListBean;
 import org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObject;
 import org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObjectAttribute;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentListHelper;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataAuthorizationHelper;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobjectdispenser.ContentRenderizationInfo;
 import org.entando.entando.aps.system.services.dataobjectdispenser.IContentDispenser;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListHelper;
 
 /**
  * @author E.Santoboni
@@ -66,7 +66,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 		try {
 			ApiDataObjectListBean bean = this.buildSearchBean(properties);
 			UserDetails user = (UserDetails) properties.get(SystemConstants.API_USER_PARAMETER);
-			contentsId = this.getDataObjectListHelper().getContentsId(bean, user);
+			contentsId = this.getDataObjectListHelper().getDataTypesId(bean, user);
 		} catch (ApiException ae) {
 			throw ae;
 		} catch (Throwable t) {
@@ -89,7 +89,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 			String[] categoryCodes = null;
 			String categoriesParam = properties.getProperty("categories");
 			if (null != categoriesParam && categoriesParam.trim().length() > 0) {
-				categoryCodes = categoriesParam.split(IContentListHelper.CATEGORIES_SEPARATOR);
+				categoryCodes = categoriesParam.split(IDataTypeListHelper.CATEGORIES_SEPARATOR);
 			}
 			bean = new ApiDataObjectListBean(dataType, filters, categoryCodes);
 		} catch (ApiException ae) {
@@ -471,11 +471,11 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 		this._pageManager = pageManager;
 	}
 
-	public IContentListHelper getDataObjectListHelper() {
+	public IDataTypeListHelper getDataObjectListHelper() {
 		return _dataObjectListHelper;
 	}
 
-	public void setDataObjectListHelper(IContentListHelper dataObjectListHelper) {
+	public void setDataObjectListHelper(IDataTypeListHelper dataObjectListHelper) {
 		this._dataObjectListHelper = dataObjectListHelper;
 	}
 
@@ -527,7 +527,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 		this._itemsEndElement = itemsEndElement;
 	}
 
-	private IContentListHelper _dataObjectListHelper;
+	private IDataTypeListHelper _dataObjectListHelper;
 	private IUserManager _userManager;
 	private ICategoryManager _categoryManager;
 	private IGroupManager _groupManager;

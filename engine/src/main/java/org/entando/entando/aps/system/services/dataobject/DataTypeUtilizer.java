@@ -18,23 +18,27 @@ import java.util.List;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
- * Basic interface for the services whose handled elements may have references to contents. 
+ * Basic interface for the services whose handled elements may have references
+ * to DataTypes.
+ *
  * @author E.Santoboni
  */
-public interface ContentUtilizer {
-	
+public interface DataTypeUtilizer {
+
 	/**
 	 * Return the ID of the utilizer service.
-	 * @return the ID of the utilizer service. 
+	 *
+	 * @return the ID of the utilizer service.
 	 */
 	public String getName();
-	
+
 	/**
-	 * Return the list of the objects which reference the given content.
-	 * @param contentId The code of the content to inspect.
-	 * @return the list of the objects which reference the content. 
+	 * Return the list of the objects which reference the given DataType.
+	 *
+	 * @param dataTypeId The code of the DataType to inspect.
+	 * @return the list of the objects which reference the DataType.
 	 * @throws ApsSystemException in case of error.
 	 */
-	public List getContentUtilizers(String contentId) throws ApsSystemException;
-	
+	public List getDataTypeUtilizers(String dataTypeId) throws ApsSystemException;
+
 }

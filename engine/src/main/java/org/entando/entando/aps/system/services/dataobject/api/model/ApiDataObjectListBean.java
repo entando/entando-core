@@ -19,22 +19,22 @@ import java.util.List;
 
 import com.agiletec.aps.system.common.entity.helper.BaseFilterUtils;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentListBean;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListBean;
 
 /**
  * @author E.Santoboni
  */
-public class ApiDataObjectListBean implements IContentListBean {
+public class ApiDataObjectListBean implements IDataTypeListBean {
 
-	public ApiDataObjectListBean(String contentType, EntitySearchFilter[] filters, String[] categories) {
-		this.setContentType(contentType);
+	public ApiDataObjectListBean(String dataType, EntitySearchFilter[] filters, String[] categories) {
+		this.setDataType(dataType);
 		this.setCategories(categories);
 		this.setFilters(filters);
 	}
 
 	public String getListName() {
 		StringBuffer buffer = new StringBuffer("listName_api");
-		buffer.append("-TYPE:" + this.getContentType());
+		buffer.append("-TYPE:" + this.getDataType());
 		buffer.append("_FILTERS:");
 		if (null != this.getFilters() && this.getFilters().length > 0) {
 			BaseFilterUtils filterUtils = new BaseFilterUtils();
@@ -58,14 +58,16 @@ public class ApiDataObjectListBean implements IContentListBean {
 		return buffer.toString();
 	}
 
-	public String getContentType() {
-		return _contentType;
+	@Override
+	public String getDataType() {
+		return _dataType;
 	}
 
-	protected void setContentType(String contentType) {
-		this._contentType = contentType;
+	public void setDataType(String dataType) {
+		this._dataType = dataType;
 	}
 
+	@Override
 	public String[] getCategories() {
 		return this._categories;
 	}
@@ -74,6 +76,7 @@ public class ApiDataObjectListBean implements IContentListBean {
 		this._categories = categories;
 	}
 
+	@Override
 	public EntitySearchFilter[] getFilters() {
 		return this._filters;
 	}
@@ -82,11 +85,12 @@ public class ApiDataObjectListBean implements IContentListBean {
 		this._filters = filters;
 	}
 
+	@Override
 	public boolean isCacheable() {
 		return true;
 	}
 
-	private String _contentType;
+	private String _dataType;
 	private EntitySearchFilter[] _filters;
 	private String[] _categories;
 

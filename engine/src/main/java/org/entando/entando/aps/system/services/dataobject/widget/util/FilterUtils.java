@@ -30,19 +30,21 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.lang.Lang;
 import org.entando.entando.aps.system.services.dataobject.IContentManager;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentListFilterBean;
 import org.entando.entando.aps.system.services.dataobject.widget.UserFilterOptionBean;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
 
 /**
  * Provides utility methods for content filters for showlet.
+ *
  * @author E.Santoboni
  */
 public class FilterUtils extends BaseFilterUtils {
 
 	private static final Logger _logger = LoggerFactory.getLogger(FilterUtils.class);
-	
+
 	/**
 	 * Return the showlet parameters in the form of property list
+	 *
 	 * @param filtersShowletParam The string to convert into a property list
 	 * @return The property list.
 	 */
@@ -52,24 +54,22 @@ public class FilterUtils extends BaseFilterUtils {
 		}
 		String[] filterStrings = filtersShowletParam.split("\\+");
 		List<Properties> properties = new ArrayList<Properties>(filterStrings.length);
-		for (int i=0; i<filterStrings.length; i++) {
+		for (int i = 0; i < filterStrings.length; i++) {
 			String fullFilterString = filterStrings[i];
-			String filterString = fullFilterString.substring(1, fullFilterString.length()-1);
+			String filterString = fullFilterString.substring(1, fullFilterString.length() - 1);
 			Properties props = getProperties(filterString, DEFAULT_FILTER_PARAM_SEPARATOR);
 			properties.add(props);
 		}
 		return properties;
 	}
-	
-	/**
-	 * @deprecated From Entando 3.0 version 3.2.0. Use getUserFilters(String, Integer, Lang, IApsEntity, String, HttpServletRequest) method
-	 */
-	public static List<UserFilterOptionBean> getUserFilters(String userFiltersParam, 
+
+	@Deprecated
+	public static List<UserFilterOptionBean> getUserFilters(String userFiltersParam,
 			Integer currentFrame, Lang currentLang, IApsEntity prototype, HttpServletRequest request) {
 		return getUserFilters(userFiltersParam, currentFrame, currentLang, prototype, "dd/MM/yyyy", request);
 	}
-	
-	public static List<UserFilterOptionBean> getUserFilters(String userFiltersParam, 
+
+	public static List<UserFilterOptionBean> getUserFilters(String userFiltersParam,
 			Integer currentFrame, Lang currentLang, IApsEntity prototype, String dateFormat, HttpServletRequest request) {
 		if (null == userFiltersParam) {
 			return new ArrayList<UserFilterOptionBean>();
@@ -79,39 +79,41 @@ public class FilterUtils extends BaseFilterUtils {
 		for (int i = 0; i < filterStrings.length; i++) {
 			String fullFilterString = filterStrings[i];
 			try {
-				String toStringFilter = fullFilterString.substring(1, fullFilterString.length()-1);
+				String toStringFilter = fullFilterString.substring(1, fullFilterString.length() - 1);
 				Properties properties = getProperties(toStringFilter, DEFAULT_FILTER_PARAM_SEPARATOR);
 				UserFilterOptionBean filterBean = new UserFilterOptionBean(properties, prototype, currentFrame, currentLang, dateFormat, request);
 				list.add(filterBean);
 			} catch (Throwable t) {
 				_logger.error("Error extracting user filter by string '{}' for type '{}'", fullFilterString, prototype.getTypeCode(), t);
-				//ApsSystemUtils.logThrowable(t, FilterUtils.class, "getUserFilters", "Error extracting user filter by string '" + fullFilterString + "' for type '" + prototype.getTypeCode() + "'");
 			}
 		}
 		return list;
 	}
-	
+
 	/**
-	 * @deprecated From Entando 3.0 version 3.0.1. Use getUserFilter(String, IEntityFilterBean, IContentManager, RequestContext) method
+	 * @deprecated From Entando 3.0 version 3.0.1. Use getUserFilter(String,
+	 * IEntityFilterBean, IContentManager, RequestContext) method
 	 */
-	public UserFilterOptionBean getUserFilter(String contentType, 
-			IContentListFilterBean bean, IContentManager contentManager, RequestContext reqCtx) {
+	public UserFilterOptionBean getUserFilter(String contentType,
+			IDataTypeListFilterBean bean, IContentManager contentManager, RequestContext reqCtx) {
 		return this.getUserFilter(contentType, (IEntityFilterBean) bean, contentManager, "dd/MM/yyyy", reqCtx);
 	}
-	
+
 	/**
-	 * @deprecated From Entando 3.0 version 3.2.0. Use getUserFilter(String contentType, IEntityFilterBean, IContentManager, String, RequestContext) method
+	 * @deprecated From Entando 3.0 version 3.2.0. Use getUserFilter(String
+	 * contentType, IEntityFilterBean, IContentManager, String, RequestContext)
+	 * method
 	 */
-	public UserFilterOptionBean getUserFilter(String contentType, 
-			IEntityFilterBean bean, IContentManager contentManager, RequestContext reqCtx) {
-		return getUserFilter(contentType, bean, contentManager, "dd/MM/yyyy", reqCtx);
+	public UserFilterOptionBean getUserFilter(String dataObjectType,
+			IEntityFilterBean bean, IContentManager dataObjectManager, RequestContext reqCtx) {
+		return getUserFilter(dataObjectType, bean, dataObjectManager, "dd/MM/yyyy", reqCtx);
 	}
-	
-	public UserFilterOptionBean getUserFilter(String contentType, 
-			IEntityFilterBean bean, IContentManager contentManager, String dateFormat, RequestContext reqCtx) {
+
+	public UserFilterOptionBean getUserFilter(String dataObjectType,
+			IEntityFilterBean bean, IContentManager dataObjectManager, String dateFormat, RequestContext reqCtx) {
 		UserFilterOptionBean filter = null;
 		try {
-			IApsEntity prototype = contentManager.createContentType(contentType);
+			IApsEntity prototype = dataObjectManager.createContentType(dataObjectType);
 			Properties props = new Properties();
 			props.setProperty(UserFilterOptionBean.PARAM_KEY, bean.getKey());
 			props.setProperty(UserFilterOptionBean.PARAM_IS_ATTRIBUTE_FILTER, String.valueOf(bean.isAttributeFilter()));
@@ -124,10 +126,12 @@ public class FilterUtils extends BaseFilterUtils {
 		}
 		return filter;
 	}
-	
+
 	/**
-	 * Crea il parametro di configurazione della showlet, caratteristico per la rappresentazione dei filtri.
-	 * Il parametro viene ricavato in base alla lista di filtri specificati.
+	 * Crea il parametro di configurazione della showlet, caratteristico per la
+	 * rappresentazione dei filtri. Il parametro viene ricavato in base alla
+	 * lista di filtri specificati.
+	 *
 	 * @param filters I filtri applicati.
 	 * @return Il parametro di configurazione della showlet.
 	 * @deprecated use getFilterParam(EntitySearchFilter)
@@ -135,19 +139,21 @@ public class FilterUtils extends BaseFilterUtils {
 	public String getShowletParam(EntitySearchFilter[] filters) {
 		return super.getFilterParam(filters);
 	}
-	
+
 	/**
-	 * Crea il parametro di configurazione della showlet, caratteristico per la rappresentazione dei filtri.
-	 * Il parametro viene ricavato in base alla lista di properties specificata.
+	 * Crea il parametro di configurazione della showlet, caratteristico per la
+	 * rappresentazione dei filtri. Il parametro viene ricavato in base alla
+	 * lista di properties specificata.
+	 *
 	 * @param properties Le properties rappresentanti ciascuna un filtro.
 	 * @return Il parametro di configurazione della showlet.
 	 */
 	public static String getShowletParam(List<Properties> properties) {
 		return getShowletParam(properties, DEFAULT_FILTER_PARAM_SEPARATOR);
 	}
-	
+
 	public static String getShowletParam(List<Properties> properties, String separator) {
 		return getToStringFilterParam(properties, separator);
 	}
-	
+
 }

@@ -18,17 +18,19 @@ import java.util.Properties;
 
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import org.entando.entando.aps.system.services.dataobject.IContentManager;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentListFilterBean;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
 
 /**
- * Provides utility methods for content filters.
+ * Provides utility methods for dataObject filters.
+ *
  * @author E.Santoboni
  * @deprecated From Entando 2.0 version 2.4.1. Use {@link FilterUtils} methods
  */
 public class EntitySearchFilterDOM {
-	
+
 	/**
 	 * Return the showlet parameters in the form of property list
+	 *
 	 * @param showletParam The string to convert into a property list
 	 * @return The property list.
 	 * @deprecated Use {@link FilterUtils}
@@ -36,28 +38,28 @@ public class EntitySearchFilterDOM {
 	public static List<Properties> getPropertiesFilters(String showletParam) {
 		return FilterUtils.getFiltersProperties(showletParam);
 	}
-	
+
 	@Deprecated
-	public EntitySearchFilter[] getFilters(String contentType, String showletParam, IContentManager contentManager, String langCode) {
+	public EntitySearchFilter[] getFilters(String dataObjectType, String showletParam, IContentManager dataObjectManager, String langCode) {
 		FilterUtils filterUtils = new FilterUtils();
-		return filterUtils.getFilters(contentManager.getEntityPrototype(contentType), showletParam, langCode);
+		return filterUtils.getFilters(dataObjectManager.getEntityPrototype(dataObjectType), showletParam, langCode);
 	}
-	
+
 	@Deprecated
-	public EntitySearchFilter getFilter(String contentType, IContentListFilterBean bean, IContentManager contentManager, String langCode) {
+	public EntitySearchFilter getFilter(String dataObjectType, IDataTypeListFilterBean bean, IContentManager contentManager, String langCode) {
 		FilterUtils filterUtils = new FilterUtils();
-		return filterUtils.getFilter(contentManager.getEntityPrototype(contentType), bean, langCode);
+		return filterUtils.getFilter(contentManager.getEntityPrototype(dataObjectType), bean, langCode);
 	}
-	
+
 	@Deprecated
 	public String getShowletParam(EntitySearchFilter[] filters) {
 		FilterUtils filterUtils = new FilterUtils();
 		return filterUtils.getFilterParam(filters);
 	}
-	
+
 	@Deprecated
 	public static String getShowletParam(List<Properties> properties) {
 		return FilterUtils.getShowletParam(properties);
 	}
-	
+
 }

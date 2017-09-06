@@ -58,25 +58,25 @@ public class DataObject extends ApsEntity {
 
 	@Override
 	public IApsEntity getEntityPrototype() {
-		DataObject content = (DataObject) super.getEntityPrototype();
-		content.setStatus(STATUS_NEW);
-		content.setVersion(INIT_VERSION);
-		content.setViewPage(this.getViewPage());
-		content.setListModel(this.getListModel());
-		content.setDefaultModel(this.getDefaultModel());
-		return content;
+		DataObject dataObject = (DataObject) super.getEntityPrototype();
+		dataObject.setStatus(STATUS_NEW);
+		dataObject.setVersion(INIT_VERSION);
+		dataObject.setViewPage(this.getViewPage());
+		dataObject.setListModel(this.getListModel());
+		dataObject.setDefaultModel(this.getDefaultModel());
+		return dataObject;
 	}
 
 	@Override
 	protected IApsEntityDOM getBuildJDOM() {
-		DataObjectDOM contentDOM = (DataObjectDOM) super.getBuildJDOM();
-		contentDOM.setStatus(this.getStatus());
-		contentDOM.setVersion(this.getVersion());
-		contentDOM.setFirstEditor(this.getFirstEditor());
-		contentDOM.setLastEditor(this.getLastEditor());
-		contentDOM.setCreationDate(this.getCreated());
-		contentDOM.setModifyDate(this.getLastModified());
-		return contentDOM;
+		DataObjectDOM dataObjectDOM = (DataObjectDOM) super.getBuildJDOM();
+		dataObjectDOM.setStatus(this.getStatus());
+		dataObjectDOM.setVersion(this.getVersion());
+		dataObjectDOM.setFirstEditor(this.getFirstEditor());
+		dataObjectDOM.setLastEditor(this.getLastEditor());
+		dataObjectDOM.setCreationDate(this.getCreated());
+		dataObjectDOM.setModifyDate(this.getLastModified());
+		return dataObjectDOM;
 	}
 
 	public boolean isOnLine() {

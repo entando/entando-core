@@ -18,17 +18,17 @@ import java.util.List;
 import java.util.Map;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.dataobject.ContentUtilizer;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.DataTypeUtilizer;
 
-public interface IContentHelper {
+public interface IDataTypeHelper {
 
-	public static String BEAN_NAME = "jacmsContentHelper";
+	public static String BEAN_NAME = "DataTypeHelper";
 
-	public Map<String, List<?>> getReferencingObjects(DataObject content) throws ApsSystemException;
+	public Map<String, List<?>> getReferencingObjects(DataObject dataType) throws ApsSystemException;
 
-	public Map<String, List<?>> getReferencingObjects(DataObject content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException;
+	public Map<String, List<?>> getReferencingObjects(DataObject dataType, Collection<DataTypeUtilizer> dataTypeUtilizers) throws ApsSystemException;
 
-	public List<ContentUtilizer> getContentUtilizers();
+	public List<DataTypeUtilizer> getDataTypeUtilizers();
 
 }

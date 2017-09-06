@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.dataobject.widget;
 
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.dataobject.helper.PublicContentAuthorizationInfo;
+import org.entando.entando.aps.system.services.dataobject.helper.PublicDataTypeAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobjectdispenser.ContentRenderizationInfo;
 
 /**
@@ -38,6 +38,6 @@ public interface IContentViewerHelper {
 	
 	public ContentRenderizationInfo getRenderizationInfo(String contentId, String modelId, boolean publishExtraTitle, RequestContext reqCtx) throws ApsSystemException;
 	
-	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId, RequestContext reqCtx) throws ApsSystemException;
+	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String contentId, RequestContext reqCtx) throws ApsSystemException;
 	
 }

@@ -20,6 +20,6 @@ import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
  * @deprecated From Entando 2.0 version 2.4.1. Use
  * com.agiletec.aps.system.common.entity.helper.IEntityFilterBean
  */
-public interface IContentListFilterBean extends IEntityFilterBean {
+public interface IDataTypeListFilterBean extends IEntityFilterBean {
 
 }

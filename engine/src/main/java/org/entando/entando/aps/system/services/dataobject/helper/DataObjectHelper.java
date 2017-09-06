@@ -26,27 +26,27 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.dataobject.ContentUtilizer;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.DataTypeUtilizer;
 
-public class DataObjectHelper implements IContentHelper, ApplicationContextAware {
+public class DataObjectHelper implements IDataTypeHelper, ApplicationContextAware {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectHelper.class);
 
 	@Override
 	public Map<String, List<?>> getReferencingObjects(DataObject content) throws ApsSystemException {
-		Collection<ContentUtilizer> contentUtilizers = this.getContentUtilizers();
+		Collection<DataTypeUtilizer> contentUtilizers = this.getDataTypeUtilizers();
 		Map<String, List<?>> references = this.getReferencingObjects(content, contentUtilizers);
 		return references;
 	}
 
 	@Override
-	public Map<String, List<?>> getReferencingObjects(DataObject content, Collection<ContentUtilizer> contentUtilizers) throws ApsSystemException {
+	public Map<String, List<?>> getReferencingObjects(DataObject content, Collection<DataTypeUtilizer> contentUtilizers) throws ApsSystemException {
 		Map<String, List<?>> references = new HashMap<String, List<?>>();
 		try {
-			for (ContentUtilizer contentUtilizer : contentUtilizers) {
+			for (DataTypeUtilizer contentUtilizer : contentUtilizers) {
 				if (contentUtilizer != null) {
-					List<?> utilizers = contentUtilizer.getContentUtilizers(content.getId());
+					List<?> utilizers = contentUtilizer.getDataTypeUtilizers(content.getId());
 					if (utilizers != null && !utilizers.isEmpty()) {
 						references.put(contentUtilizer.getName() + "Utilizers", utilizers);
 					}
@@ -60,16 +60,16 @@ public class DataObjectHelper implements IContentHelper, ApplicationContextAware
 	}
 
 	@Override
-	public List<ContentUtilizer> getContentUtilizers() {
+	public List<DataTypeUtilizer> getDataTypeUtilizers() {
 		ApplicationContext applicationContext = this.getApplicationContext();
-		String[] defNames = applicationContext.getBeanNamesForType(ContentUtilizer.class);
-		List<ContentUtilizer> contentUtilizers = new ArrayList<ContentUtilizer>(defNames.length);
+		String[] defNames = applicationContext.getBeanNamesForType(DataTypeUtilizer.class);
+		List<DataTypeUtilizer> contentUtilizers = new ArrayList<DataTypeUtilizer>(defNames.length);
 		for (String defName : defNames) {
 			Object service = null;
 			try {
 				service = applicationContext.getBean(defName);
 				if (service != null) {
-					ContentUtilizer contentUtilizer = (ContentUtilizer) service;
+					DataTypeUtilizer contentUtilizer = (DataTypeUtilizer) service;
 					contentUtilizers.add(contentUtilizer);
 				}
 			} catch (Throwable t) {

@@ -38,7 +38,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 /**
  * @author E.Santoboni
  */
-public class BaseDataListHelper implements IContentListHelper {
+public class BaseDataListHelper implements IDataTypeListHelper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(BaseDataListHelper.class);
 
@@ -53,7 +53,7 @@ public class BaseDataListHelper implements IContentListHelper {
 	}
 
 	/**
-	 * @param contentType
+	 * @param dataTypeType
 	 * @param bean
 	 * @param langCode
 	 * @return
@@ -61,14 +61,14 @@ public class BaseDataListHelper implements IContentListHelper {
 	 * contentType, IEntityFilterBean, String) method
 	 */
 	@Override
-	public EntitySearchFilter getFilter(String contentType, IContentListFilterBean bean, String langCode) {
-		return this.getFilter(contentType, (IEntityFilterBean) bean, langCode);
+	public EntitySearchFilter getFilter(String dataTypeType, IDataTypeListFilterBean bean, String langCode) {
+		return this.getFilter(dataTypeType, (IEntityFilterBean) bean, langCode);
 	}
 
 	@Override
-	public EntitySearchFilter getFilter(String contentType, IEntityFilterBean bean, String langCode) {
+	public EntitySearchFilter getFilter(String dataTypeType, IEntityFilterBean bean, String langCode) {
 		BaseFilterUtils dom = new BaseFilterUtils();
-		DataObject contentPrototype = this.getContentManager().createContentType(contentType);
+		DataObject contentPrototype = this.getContentManager().createContentType(dataTypeType);
 		if (null == contentPrototype) {
 			return null;
 		}
@@ -89,14 +89,14 @@ public class BaseDataListHelper implements IContentListHelper {
 	//		beforeInvocation = true,
 	//		condition = "T(org.entando.entando.aps.system.services.cache.CacheInfoManager).isExpired(T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user))")
 	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENTS_ID_CACHE_GROUP_PREFIX.concat(#bean.contentType)", expiresInMinute = 30)
-	public List<String> getContentsId(IContentListBean bean, UserDetails user) throws Throwable {
+	public List<String> getDataTypesId(IDataTypeListBean bean, UserDetails user) throws Throwable {
 		List<String> contentsId = null;
 		try {
-			if (null == bean.getContentType()) {
+			if (null == bean.getDataType()) {
 				throw new ApsSystemException("DataObject type not defined");
 			}
 			Collection<String> userGroupCodes = getAllowedGroupCodes(user); //this.getAllowedGroups(user);
-			contentsId = this.getContentManager().loadPublicContentsId(bean.getContentType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
+			contentsId = this.getContentManager().loadPublicContentsId(bean.getDataType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error extracting DataObjects id", t);
 			throw new ApsSystemException("Error extracting DataObjects id", t);
@@ -132,18 +132,18 @@ public class BaseDataListHelper implements IContentListHelper {
 		return codes;
 	}
 
-	public static String buildCacheKey(IContentListBean bean, UserDetails user) {
+	public static String buildCacheKey(IDataTypeListBean bean, UserDetails user) {
 		Collection<String> userGroupCodes = getAllowedGroupCodes(user);
 		return buildCacheKey(bean, userGroupCodes);
 	}
 
-	protected static String buildCacheKey(IContentListBean bean, Collection<String> userGroupCodes) {
+	protected static String buildCacheKey(IDataTypeListBean bean, Collection<String> userGroupCodes) {
 		StringBuilder cacheKey = new StringBuilder();
 		if (null != bean.getListName()) {
 			cacheKey.append("LISTNAME_").append(bean.getListName());
 		}
-		if (null != bean.getContentType()) {
-			cacheKey.append("TYPE_").append(bean.getContentType());
+		if (null != bean.getDataType()) {
+			cacheKey.append("TYPE_").append(bean.getDataType());
 		}
 		List<String> groupCodes = new ArrayList<String>(userGroupCodes);
 		if (!groupCodes.contains(Group.FREE_GROUP_NAME)) {

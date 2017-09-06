@@ -20,7 +20,7 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
  *
  * @author E.Santoboni
  */
-public interface IContentListBean {
+public interface IDataTypeListBean {
 
 	/**
 	 * Restituisce il nome identificativo della lista.
@@ -34,7 +34,7 @@ public interface IContentListBean {
 	 *
 	 * @return Il codice dei tipi di DataObject da cercare.
 	 */
-	public String getContentType();
+	public String getDataType();
 
 	/**
 	 * Restituisce le categorie dei DataObject da cercare.

@@ -33,7 +33,7 @@ public class MockDataObjectListTagBean implements IContentListTagBean {
 	}
 
 	@Override
-	public String getContentType() {
+	public String getDataType() {
 		return _contentType;
 	}
 

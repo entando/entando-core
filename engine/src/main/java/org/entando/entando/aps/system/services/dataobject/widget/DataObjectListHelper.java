@@ -39,8 +39,8 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.services.dataobject.helper.BaseDataListHelper;
-import org.entando.entando.aps.system.services.dataobject.helper.IContentListFilterBean;
 import org.entando.entando.aps.system.services.dataobject.widget.util.FilterUtils;
+import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
 
 /**
  * Classe helper per la widget di erogazione contenuti in lista.
@@ -62,7 +62,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	 * IEntityFilterBean, RequestContext) method
 	 */
 	@Override
-	public EntitySearchFilter getFilter(String contentType, IContentListFilterBean bean, RequestContext reqCtx) {
+	public EntitySearchFilter getFilter(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx) {
 		return this.getFilter(contentType, (IEntityFilterBean) bean, reqCtx);
 	}
 
@@ -77,7 +77,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	 * getUserFilterOption(String, IEntityFilterBean, RequestContext) method
 	 */
 	@Override
-	public UserFilterOptionBean getUserFilterOption(String contentType, IContentListFilterBean bean, RequestContext reqCtx) {
+	public UserFilterOptionBean getUserFilterOption(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx) {
 		return this.getUserFilterOption(contentType, (IEntityFilterBean) bean, reqCtx);
 	}
 
@@ -133,10 +133,10 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 			List<UserFilterOptionBean> userFilters = bean.getUserFilterOptions();
 			Widget widget = (Widget) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET);
 			ApsProperties config = (null != widget) ? widget.getConfig() : null;
-			if (null == bean.getContentType() && null != config) {
+			if (null == bean.getDataType() && null != config) {
 				bean.setContentType(config.getProperty(WIDGET_PARAM_CONTENT_TYPE));
 			}
-			if (null == bean.getContentType()) {
+			if (null == bean.getDataType()) {
 				throw new ApsSystemException("Tipo contenuto non definito");
 			}
 			if (null == bean.getCategory() && null != config && null != config.getProperty(SHOWLET_PARAM_CATEGORY)) {
@@ -155,7 +155,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 			String[] categories = this.getCategories(bean.getCategories(), config, userFilters);
 			Collection<String> userGroupCodes = this.getAllowedGroups(reqCtx);
 			boolean orCategoryFilterClause = this.extractOrCategoryFilterClause(config);
-			contentsId = this.getContentManager().loadPublicContentsId(bean.getContentType(),
+			contentsId = this.getContentManager().loadPublicContentsId(bean.getDataType(),
 					categories, orCategoryFilterClause, bean.getFilters(), userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error extracting contents id", t);
@@ -266,7 +266,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 			return;
 		}
 		String widgetFilters = widgetParams.getProperty(widgetParamName);
-		EntitySearchFilter[] filters = this.getFilters(bean.getContentType(), widgetFilters, reqCtx);
+		EntitySearchFilter[] filters = this.getFilters(bean.getDataType(), widgetFilters, reqCtx);
 		if (null == filters) {
 			return;
 		}

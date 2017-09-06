@@ -26,7 +26,7 @@ import com.agiletec.aps.tags.util.HeadInfoContainer;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.dataobject.IContentManager;
-import org.entando.entando.aps.system.services.dataobject.helper.PublicContentAuthorizationInfo;
+import org.entando.entando.aps.system.services.dataobject.helper.PublicDataTypeAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectdispenser.ContentRenderizationInfo;
 import org.entando.entando.aps.system.services.dataobjectdispenser.IContentDispenser;
@@ -102,8 +102,8 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 	}
 
 	@Override
-	public PublicContentAuthorizationInfo getAuthorizationInfo(String dataobjectId, RequestContext reqCtx) throws ApsSystemException {
-		PublicContentAuthorizationInfo authInfo = null;
+	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String dataobjectId, RequestContext reqCtx) throws ApsSystemException {
+		PublicDataTypeAuthorizationInfo authInfo = null;
 		try {
 			Widget widget = (Widget) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET);
 			dataobjectId = this.extractContentId(dataobjectId, widget.getConfig(), reqCtx);

@@ -22,29 +22,30 @@ import com.agiletec.aps.system.services.user.UserDetails;
 /**
  * @author E.Santoboni
  */
-public interface IContentListHelper {
+public interface IDataTypeListHelper {
 
 	/**
-	 * Restituisce la lista di identificativi di contenuto in base ai parametri
+	 * Restituisce la lista di identificativi di DataType in base ai parametri
 	 * di ricerca.
 	 *
 	 * @param bean Il contenitore delle informazioni base sulla interrogazione
 	 * da eseguire.
-	 * @return La lista di identificativi di contenuto in base ai parametri di
+	 * @param user
+	 * @return La lista di identificativi di DataType in base ai parametri di
 	 * ricerca.
 	 * @throws Throwable In caso di errore.
 	 */
-	public List<String> getContentsId(IContentListBean bean, UserDetails user) throws Throwable;
+	public List<String> getDataTypesId(IDataTypeListBean bean, UserDetails user) throws Throwable;
 
-	public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, String langCode);
+	public EntitySearchFilter[] getFilters(String dataType, String filtersShowletParam, String langCode);
 
 	/**
 	 * @deprecated From Entando 2.0 version 2.4.1. Use getFilter(String
-	 * contentType, IEntityFilterBean, String) method
+	 * dataType, IEntityFilterBean, String) method
 	 */
-	public EntitySearchFilter getFilter(String contentType, IContentListFilterBean bean, String langCode);
+	public EntitySearchFilter getFilter(String dataType, IDataTypeListFilterBean bean, String langCode);
 
-	public EntitySearchFilter getFilter(String contentType, IEntityFilterBean bean, String langCode);
+	public EntitySearchFilter getFilter(String dataType, IEntityFilterBean bean, String langCode);
 
 	public String getFilterParam(EntitySearchFilter[] filters);
 

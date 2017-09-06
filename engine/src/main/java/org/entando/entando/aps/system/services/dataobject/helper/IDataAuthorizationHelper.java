@@ -54,7 +54,7 @@ public interface IDataAuthorizationHelper {
 	 * @return True if the given user can view the content.
 	 * @throws ApsSystemException In case of error
 	 */
-	public boolean isAuth(UserDetails user, PublicContentAuthorizationInfo info) throws ApsSystemException;
+	public boolean isAuth(UserDetails user, PublicDataTypeAuthorizationInfo info) throws ApsSystemException;
 
 	/**
 	 * Return true if the given user can edit the given content.
@@ -86,7 +86,7 @@ public interface IDataAuthorizationHelper {
 	 * @return True if the given user can edit the content.
 	 * @throws ApsSystemException In case of error
 	 */
-	public boolean isAuthToEdit(UserDetails user, PublicContentAuthorizationInfo info) throws ApsSystemException;
+	public boolean isAuthToEdit(UserDetails user, PublicDataTypeAuthorizationInfo info) throws ApsSystemException;
 
 	/**
 	 * Return the object that contains the authorization info of the content.
@@ -94,8 +94,8 @@ public interface IDataAuthorizationHelper {
 	 * @param contentId The content that extract the info.
 	 * @return The authorization info.
 	 */
-	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId);
+	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String contentId);
 
-	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId, boolean cacheable);
+	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String contentId, boolean cacheable);
 
 }

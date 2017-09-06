@@ -29,7 +29,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataAuthorizationHelper;
-import org.entando.entando.aps.system.services.dataobject.helper.PublicContentAuthorizationInfo;
+import org.entando.entando.aps.system.services.dataobject.helper.PublicDataTypeAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobjectrenderer.IDataObjectRenderer;
 
@@ -56,7 +56,7 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 	//		key = "T(com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser).getRenderizationInfoCacheKey(#contentId, #modelId, #langCode, #reqCtx)")
 	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser).getRenderizationInfoCacheGroupsCsv(#contentId, #modelId)")
 	public ContentRenderizationInfo getRenderizationInfo(String dataObjectId, long modelId, String langCode, RequestContext reqCtx) {
-		PublicContentAuthorizationInfo authInfo = this.getDataAuthorizationHelper().getAuthorizationInfo(dataObjectId, true);
+		PublicDataTypeAuthorizationInfo authInfo = this.getDataAuthorizationHelper().getAuthorizationInfo(dataObjectId, true);
 		if (null == authInfo) {
 			return null;
 		}
@@ -69,19 +69,19 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser).getRenderizationInfoCacheGroupsCsv(#contentId, #modelId)")
 	public ContentRenderizationInfo getRenderizationInfo(String dataObjectId,
 			long modelId, String langCode, RequestContext reqCtx, boolean cacheable) {
-		PublicContentAuthorizationInfo authInfo = this.getDataAuthorizationHelper().getAuthorizationInfo(dataObjectId, cacheable);
+		PublicDataTypeAuthorizationInfo authInfo = this.getDataAuthorizationHelper().getAuthorizationInfo(dataObjectId, cacheable);
 		if (null == authInfo) {
 			return null;
 		}
 		return this.getRenderizationInfo(authInfo, dataObjectId, modelId, langCode, reqCtx, cacheable);
 	}
 
-	protected ContentRenderizationInfo getRenderizationInfo(PublicContentAuthorizationInfo authInfo,
+	protected ContentRenderizationInfo getRenderizationInfo(PublicDataTypeAuthorizationInfo authInfo,
 			String dataObjectId, long modelId, String langCode, RequestContext reqCtx) {
 		return this.getRenderizationInfo(authInfo, dataObjectId, modelId, langCode, reqCtx, true);
 	}
 
-	protected ContentRenderizationInfo getRenderizationInfo(PublicContentAuthorizationInfo authInfo,
+	protected ContentRenderizationInfo getRenderizationInfo(PublicDataTypeAuthorizationInfo authInfo,
 			String dataObjectId, long modelId, String langCode, RequestContext reqCtx, boolean cacheable) {
 		ContentRenderizationInfo renderInfo = null;
 		try {
@@ -106,12 +106,12 @@ public class BaseContentDispenser extends AbstractService implements IContentDis
 		return renderInfo;
 	}
 
-	public ContentRenderizationInfo getBaseRenderizationInfo(PublicContentAuthorizationInfo authInfo,
+	public ContentRenderizationInfo getBaseRenderizationInfo(PublicDataTypeAuthorizationInfo authInfo,
 			String dataObjectId, long modelId, String langCode, UserDetails currentUser, RequestContext reqCtx) {
 		return this.getBaseRenderizationInfo(authInfo, dataObjectId, modelId, langCode, currentUser, reqCtx, true);
 	}
 
-	public ContentRenderizationInfo getBaseRenderizationInfo(PublicContentAuthorizationInfo authInfo,
+	public ContentRenderizationInfo getBaseRenderizationInfo(PublicDataTypeAuthorizationInfo authInfo,
 			String dataObjectId, long modelId, String langCode, UserDetails currentUser, RequestContext reqCtx, boolean cacheable) {
 		ContentRenderizationInfo renderInfo = null;
 		try {

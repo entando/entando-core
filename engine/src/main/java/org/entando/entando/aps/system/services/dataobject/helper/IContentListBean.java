@@ -16,7 +16,7 @@ package org.entando.entando.aps.system.services.dataobject.helper;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 
 /**
- * Il bean detentore dei parametri di ricerca di liste di contenuti.
+ * Il bean detentore dei parametri di ricerca di liste di DataObject.
  *
  * @author E.Santoboni
  */
@@ -30,16 +30,16 @@ public interface IContentListBean {
 	public String getListName();
 
 	/**
-	 * Restituisce il codice dei tipi di contenuto da cercare.
+	 * Restituisce il codice dei tipi di DataObject da cercare.
 	 *
-	 * @return Il codice dei tipi di contenuto da cercare.
+	 * @return Il codice dei tipi di DataObject da cercare.
 	 */
 	public String getContentType();
 
 	/**
-	 * Restituisce le categorie dei contenuti da cercare.
+	 * Restituisce le categorie dei DataObject da cercare.
 	 *
-	 * @return La categorie dei contenuti da cercare.
+	 * @return La categorie dei DataObject da cercare.
 	 */
 	public String[] getCategories();
 
@@ -54,8 +54,8 @@ public interface IContentListBean {
 	 * Indica se nel recupero della lista deve essere utilizzata la cache di
 	 * sistema.
 	 *
-	 * @return True se deve essere utilizzata la chache di sistema, false in
-	 * caso contrario.
+	 * @return True se deve essere utilizzata la cache di sistema, false in caso
+	 * contrario.
 	 */
 	public boolean isCacheable();
 

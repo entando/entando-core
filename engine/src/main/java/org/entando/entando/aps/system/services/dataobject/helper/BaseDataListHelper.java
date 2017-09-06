@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,18 +88,18 @@ public class BaseDataListHelper implements IContentListHelper {
 	//		key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)",
 	//		beforeInvocation = true,
 	//		condition = "T(org.entando.entando.aps.system.services.cache.CacheInfoManager).isExpired(T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user))")
-	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENTS_ID_CACHE_GROUP_PREFIX.concat(#bean.contentType)", expiresInMinute = 30)
+	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENTS_ID_CACHE_GROUP_PREFIX.concat(#bean.contentType)", expiresInMinute = 30)
 	public List<String> getContentsId(IContentListBean bean, UserDetails user) throws Throwable {
 		List<String> contentsId = null;
 		try {
 			if (null == bean.getContentType()) {
-				throw new ApsSystemException("Content type not defined");
+				throw new ApsSystemException("DataObject type not defined");
 			}
 			Collection<String> userGroupCodes = getAllowedGroupCodes(user); //this.getAllowedGroups(user);
 			contentsId = this.getContentManager().loadPublicContentsId(bean.getContentType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
 		} catch (Throwable t) {
-			_logger.error("Error extracting contents id", t);
-			throw new ApsSystemException("Error extracting contents id", t);
+			_logger.error("Error extracting DataObjects id", t);
+			throw new ApsSystemException("Error extracting DataObjects id", t);
 		}
 		return contentsId;
 	}

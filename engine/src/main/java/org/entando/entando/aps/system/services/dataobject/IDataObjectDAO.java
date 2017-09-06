@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.dataobject;
 
 import com.agiletec.aps.system.common.entity.IEntityDAO;
+import java.util.List;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
@@ -21,7 +22,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  *
  * @author M.Diana - E.Santoboni - S.Didaci
  */
-public interface IContentDAO extends IEntityDAO {
+public interface IDataObjectDAO extends IEntityDAO {
 
 	/**
 	 * Publish a content.
@@ -55,5 +56,9 @@ public interface IContentDAO extends IEntityDAO {
 	public void updateContent(DataObject content, boolean updateDate);
 
 	public ContentsStatus loadContentStatus();
+
+	public List<String> getCategoryUtilizers(String categoryCode);
+
+	public List<String> getGroupUtilizers(String groupName);
 
 }

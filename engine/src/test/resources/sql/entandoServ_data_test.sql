@@ -472,28 +472,28 @@ INSERT INTO datatypesearch (contentid, attrname, textvalue, datevalue, numvalue,
 
 
 
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART122', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART121', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART120', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART111', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART102', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART180', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART112', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART104', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART1', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART187', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN193', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN194', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN191', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN25', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN21', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN41', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN24', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN23', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN103', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN192', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN20', 'Titolo', 'jacms:title');
-INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ALL4', 'Text', 'jacms:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART122', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART121', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART120', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART111', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART102', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART180', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART112', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART104', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART1', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ART187', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN193', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN194', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN191', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN25', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN21', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN41', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN24', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN23', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN103', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN192', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN20', 'Titolo', 'dataObject:title');
+INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ('ALL4', 'Text', 'dataObject:title');
 
 
 
@@ -585,27 +585,27 @@ INSERT INTO workdatatypesearch (contentid, attrname, textvalue, datevalue, numva
 
 
 
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART122', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART121', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART120', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART111', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART102', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART180', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART112', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART104', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART1', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART179', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART187', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN193', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN194', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN191', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN25', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN21', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN41', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN24', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN23', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN103', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN192', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN20', 'Titolo', 'jacms:title');
-INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ALL4', 'Text', 'jacms:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART122', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART121', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART120', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART111', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART102', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART180', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART112', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART104', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART1', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART179', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ART187', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN193', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN194', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN191', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN25', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN21', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN41', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN24', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN23', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN103', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN192', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('EVN20', 'Titolo', 'dataObject:title');
+INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ('ALL4', 'Text', 'dataObject:title');
 

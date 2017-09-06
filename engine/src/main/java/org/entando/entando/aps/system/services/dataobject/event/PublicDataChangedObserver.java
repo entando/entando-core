@@ -15,20 +15,8 @@ package org.entando.entando.aps.system.services.dataobject.event;
 
 import com.agiletec.aps.system.common.notify.ObserverService;
 
-/**
- * Interfaccia base per l'implementazione dei servizi destinatari della
- * notificazione di eventi di approvazione o disapprovazione di un contenuto.
- *
- * @author E.Santoboni - M.Diana
- */
 public interface PublicDataChangedObserver extends ObserverService {
 
-	/**
-	 * Aggiorna il servizio di conseguenza alla notifica di un evento di
-	 * modifica contenuto.
-	 *
-	 * @param event L'evento notificato.
-	 */
 	public void updateFromPublicContentChanged(PublicDataChangedEvent event);
 
 }

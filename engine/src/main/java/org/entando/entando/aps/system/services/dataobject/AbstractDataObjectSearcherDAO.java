@@ -157,7 +157,7 @@ public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearch
 			if (i != 0) {
 				query.append("OR ");
 			}
-			query.append("contents.maingroup = ? ");
+			query.append("dataobjects.maingroup = ? ");
 		}
 		query.append(") ");
 	}
@@ -173,7 +173,7 @@ public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearch
 						query.append(" OR ");
 					}
 				}
-				query.append(" contents.contentid IN (SELECT contentid FROM ")
+				query.append(" dataobjects.contentid IN (SELECT contentid FROM ")
 						.append(this.getContentRelationsTableName()).append(" WHERE ")
 						.append(this.getContentRelationsTableName()).append(".refcategory = ? ) ");
 			}
@@ -217,7 +217,7 @@ public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearch
 
 	@Override
 	protected String getEntityMasterTableName() {
-		return "contents";
+		return "dataobjects";
 	}
 
 	@Override

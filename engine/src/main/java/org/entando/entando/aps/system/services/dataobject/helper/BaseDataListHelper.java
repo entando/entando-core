@@ -23,11 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.entando.entando.aps.system.services.cache.CacheableInfo;
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.common.entity.helper.BaseFilterUtils;
 import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
@@ -47,16 +44,20 @@ public class BaseDataListHelper implements IContentListHelper {
 	private static final Logger _logger = LoggerFactory.getLogger(BaseDataListHelper.class);
 
 	@Override
-	public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, String langCode) {
-		DataObject contentPrototype = this.getContentManager().createContentType(contentType);
-		if (null == filtersShowletParam || filtersShowletParam.trim().length() == 0 || null == contentPrototype) {
+	public EntitySearchFilter[] getFilters(String dataType, String filtersShowletParam, String langCode) {
+		DataObject prototype = this.getContentManager().createContentType(dataType);
+		if (null == filtersShowletParam || filtersShowletParam.trim().length() == 0 || null == prototype) {
 			return null;
 		}
 		BaseFilterUtils dom = new BaseFilterUtils();
-		return dom.getFilters(contentPrototype, filtersShowletParam, langCode);
+		return dom.getFilters(prototype, filtersShowletParam, langCode);
 	}
 
 	/**
+	 * @param contentType
+	 * @param bean
+	 * @param langCode
+	 * @return
 	 * @deprecated From Entando 2.0 version 2.4.1. Use getFilter(String
 	 * contentType, IEntityFilterBean, String) method
 	 */
@@ -82,12 +83,12 @@ public class BaseDataListHelper implements IContentListHelper {
 	}
 
 	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-			key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)", condition = "#bean.cacheable")
-	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-			key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)",
-			beforeInvocation = true,
-			condition = "T(org.entando.entando.aps.system.services.cache.CacheInfoManager).isExpired(T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user))")
+	//@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+	//		key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)", condition = "#bean.cacheable")
+	//@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+	//		key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)",
+	//		beforeInvocation = true,
+	//		condition = "T(org.entando.entando.aps.system.services.cache.CacheInfoManager).isExpired(T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user))")
 	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENTS_ID_CACHE_GROUP_PREFIX.concat(#bean.contentType)", expiresInMinute = 30)
 	public List<String> getContentsId(IContentListBean bean, UserDetails user) throws Throwable {
 		List<String> contentsId = null;
@@ -105,12 +106,12 @@ public class BaseDataListHelper implements IContentListHelper {
 	}
 
 	/**
-	 * Return the groups to witch execute the filter to contents. The User
+	 * Return the groups to witch execute the filter to dataobject. The User
 	 * object is non null, extract the groups from the user, else return a
 	 * collection with only the "free" group.
 	 *
 	 * @param user The user. Can be null.
-	 * @return The groups to witch execute the filter to contents.
+	 * @return The groups to witch execute the filter to dataobjects.
 	 * @deprecated
 	 */
 	protected Collection<String> getAllowedGroups(UserDetails user) {
@@ -208,14 +209,6 @@ public class BaseDataListHelper implements IContentListHelper {
 		return values;
 	}
 
-	/*
-    protected ICacheManager getCacheManager() {
-        return _cacheManager;
-    }
-    public void setCacheManager(ICacheManager cacheManager) {
-        this._cacheManager = cacheManager;
-    }
-	 */
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
@@ -223,16 +216,7 @@ public class BaseDataListHelper implements IContentListHelper {
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	/*
-    protected IAuthorizationManager getAuthorizationManager() {
-        return _authorizationManager;
-    }
-    public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
-        this._authorizationManager = authorizationManager;
-    }
-	 */
-	//private ICacheManager _cacheManager;
+
 	private IContentManager _contentManager;
-	//private IAuthorizationManager _authorizationManager;
 
 }

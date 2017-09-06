@@ -24,16 +24,17 @@ public class PublicDataChangedEvent extends ApsEvent {
 		((PublicDataChangedObserver) srv).updateFromPublicContentChanged(this);
 	}
 
+	@Override
 	public Class getObserverInterface() {
 		return PublicDataChangedObserver.class;
 	}
 
-	public DataObject getContent() {
-		return _content;
+	public DataObject getDataObject() {
+		return _dataObject;
 	}
 
-	public void setContent(DataObject content) {
-		this._content = content;
+	public void setDataObject(DataObject content) {
+		this._dataObject = content;
 	}
 
 	public int getOperationCode() {
@@ -44,7 +45,7 @@ public class PublicDataChangedEvent extends ApsEvent {
 		this._operationCode = operationCode;
 	}
 
-	private DataObject _content;
+	private DataObject _dataObject;
 
 	private int _operationCode;
 

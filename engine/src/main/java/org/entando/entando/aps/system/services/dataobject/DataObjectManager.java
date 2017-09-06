@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.dataobject;
 
+import com.agiletec.aps.system.ApsSystemUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +32,10 @@ import com.agiletec.aps.system.common.entity.IEntitySearcherDAO;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.CategoryUtilizer;
+import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
+import java.util.Set;
 import org.entando.entando.aps.system.services.dataobject.event.PublicDataChangedEvent;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
@@ -43,7 +47,7 @@ import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
  *
  * @author M.Diana - E.Santoboni
  */
-public class DataObjectManager extends ApsEntityManager implements IContentManager {
+public class DataObjectManager extends ApsEntityManager implements IContentManager, GroupUtilizer, CategoryUtilizer {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectManager.class);
 
@@ -418,7 +422,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 */
 	private void notifyPublicContentChanging(DataObject content, int operationCode) throws ApsSystemException {
 		PublicDataChangedEvent event = new PublicDataChangedEvent();
-		event.setContent(content);
+		event.setDataObject(content);
 		event.setOperationCode(operationCode);
 		this.notifyEvent(event);
 	}
@@ -529,6 +533,51 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	}
 
 	@Override
+	public List getCategoryUtilizers(String resourceId) throws ApsSystemException {
+		List<String> contentIds = null;
+		try {
+			contentIds = this.getDataObjectDAO().getCategoryUtilizers(resourceId);
+		} catch (Throwable t) {
+			throw new ApsSystemException("Error while loading referenced contents : category " + resourceId, t);
+		}
+		return contentIds;
+	}
+
+	@Override
+	public void reloadCategoryReferences(String categoryCode) {
+		try {
+			this.getContentUpdaterService().reloadCategoryReferences(categoryCode);
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "reloadCategoryReferences");
+		}
+	}
+
+	@Override
+	public List getCategoryUtilizersForReloadReferences(String categoryCode) {
+		List<String> contentIdToReload = new ArrayList<String>();
+		try {
+			Set<String> contents = this.getContentUpdaterService().getContentsId(categoryCode);
+			if (null != contents) {
+				contentIdToReload.addAll(contents);
+			}
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "getCategoryUtilizersForReloadReferences");
+		}
+		return contentIdToReload;
+	}
+
+	@Override
+	public List getGroupUtilizers(String groupName) throws ApsSystemException {
+		List<String> contentIds = null;
+		try {
+			contentIds = this.getDataObjectDAO().getGroupUtilizers(groupName);
+		} catch (Throwable t) {
+			throw new ApsSystemException("Error while loading referenced contents : group " + groupName, t);
+		}
+		return contentIds;
+	}
+
+	@Override
 	public boolean isSearchEngineUser() {
 		return true;
 	}
@@ -549,11 +598,11 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 *
 	 * @return The DAO managing the contents.
 	 */
-	protected IContentDAO getDataObjectDAO() {
+	protected IDataObjectDAO getDataObjectDAO() {
 		return _dataObjectDao;
 	}
 
-	public void setDataObjectDAO(IContentDAO dao) {
+	public void setDataObjectDAO(IDataObjectDAO dao) {
 		this._dataObjectDao = dao;
 	}
 
@@ -610,7 +659,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 */
 	private Map<String, SmallDataType> _smallContentTypes;
 
-	private IContentDAO _dataObjectDao;
+	private IDataObjectDAO _dataObjectDao;
 
 	private IWorkContentSearcherDAO _workDataObjectSearcherDAO;
 

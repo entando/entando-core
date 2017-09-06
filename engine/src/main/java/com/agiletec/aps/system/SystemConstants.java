@@ -379,4 +379,6 @@ public interface SystemConstants {
 
 	public static final String DATA_TYPE_METADATA_DATE_FORMAT = "yyyyMMddHHmmss";
 
+	public static final String DATA_TYPE_ATTRIBUTE_ROLE_TITLE = "dataObject:title";
+
 }

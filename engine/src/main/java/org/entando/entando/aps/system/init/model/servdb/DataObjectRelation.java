@@ -13,9 +13,6 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
-import org.entando.entando.aps.system.init.IDatabaseManager;
-import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
-
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -24,7 +21,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author E.Santoboni
  */
 @DatabaseTable(tableName = DataObjectRelation.TABLE_NAME)
-public class DataObjectRelation implements ExtendedColumnDefinition {
+public class DataObjectRelation /*implements ExtendedColumnDefinition*/ {
 
 	public DataObjectRelation() {
 	}
@@ -39,10 +36,11 @@ public class DataObjectRelation implements ExtendedColumnDefinition {
 			width = 30, index = true)
 	private String _category;
 
-	@DatabaseField(foreign = true, columnName = "refgroup",
+	@DatabaseField(columnName = "refgroup",
+			dataType = DataType.STRING,
 			width = 20, index = true)
-	private Group _group;
-
+	private String _group;
+	/*
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
@@ -55,7 +53,7 @@ public class DataObjectRelation implements ExtendedColumnDefinition {
 			+ "ADD CONSTRAINT " + TABLE_NAME + "_refgroup_fkey FOREIGN KEY (refgroup) "
 			+ "REFERENCES " + groupTableName + " (groupname)"};
 	}
-
+	 */
 	public static final String TABLE_NAME = "datatyperelations";
 
 }

@@ -45,7 +45,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecord
  *
  * @author M.Diana - E.Santoboni - S.Didaci
  */
-public class DataObjectDAO extends AbstractEntityDAO implements IContentDAO {
+public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectDAO.class);
 
@@ -434,11 +434,13 @@ public class DataObjectDAO extends AbstractEntityDAO implements IContentDAO {
 					String code = codeIter.next();
 					int i = 1;
 					stat.setString(i++, content.getId());
+					/*
 					if (isPublicRelations) {
 						stat.setString(i++, null);
 						stat.setString(i++, null);
 						stat.setBigDecimal(i++, null);
 					}
+					 */
 					stat.setString(i++, code);
 					if (isPublicRelations) {
 						stat.setString(i++, null);
@@ -468,11 +470,13 @@ public class DataObjectDAO extends AbstractEntityDAO implements IContentDAO {
 			while (groupIter.hasNext()) {
 				String groupName = groupIter.next();
 				stat.setString(1, content.getId());
+				/*
 				stat.setString(2, null);
 				stat.setString(3, null);
 				stat.setBigDecimal(4, null);
-				stat.setString(5, null);
-				stat.setString(6, groupName);
+				 */
+				stat.setString(2, null);
+				stat.setString(3, groupName);
 				stat.addBatch();
 				stat.clearParameters();
 			}
@@ -670,9 +674,19 @@ public class DataObjectDAO extends AbstractEntityDAO implements IContentDAO {
 	private final String DELETE_WORK_CONTENT_SEARCH_RECORD = "DELETE FROM workdatatypesearch WHERE contentid = ? ";
 
 	private final String ADD_CONTENT_REL_RECORD = "INSERT INTO datatyperelations "
-			+ "(contentid, refpage, refcontent, refresource, refcategory, refgroup) VALUES ( ? , ? , ? , ? , ? , ? )";
+			+ "(contentid, refcategory, refgroup) VALUES ( ? , ? , ? )";
 
 	private final String ADD_WORK_CONTENT_REL_RECORD = "INSERT INTO workdatatyperelations (contentid, refcategory) VALUES ( ? , ? )";
+
+	private final String LOAD_CONTENTS_ID_MAIN_BLOCK = "SELECT DISTINCT dataobjects.contentid FROM dataobjects ";
+
+	private final String LOAD_REFERENCED_CONTENTS_FOR_GROUP = LOAD_CONTENTS_ID_MAIN_BLOCK
+			+ " RIGHT JOIN datatyperelations ON dataobjects.contentid = datatyperelations.contentid WHERE datatyperelations.refgroup = ? "
+			+ "ORDER BY dataobjects.contentid";
+
+	private final String LOAD_REFERENCED_CONTENTS_FOR_CATEGORY = LOAD_CONTENTS_ID_MAIN_BLOCK
+			+ " RIGHT JOIN datatyperelations ON dataobjects.contentid = datatyperelations.contentid WHERE datatyperelations.refcategory = ? "
+			+ "ORDER BY dataobjects.contentid";
 
 	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = "SELECT dataobjects.contentid, dataobjects.datatype, dataobjects.descr, dataobjects.status, "
 			+ "dataobjects.workxml, dataobjects.created, dataobjects.lastmodified, dataobjects.onlinexml, dataobjects.maingroup, "
@@ -722,5 +736,29 @@ public class DataObjectDAO extends AbstractEntityDAO implements IContentDAO {
 			+ "WHERE onlinexml IS NOT NULL AND onlinexml <> workxml";
 
 	private final String LOAD_LAST_MODIFIED = LOAD_CONTENTS_VO_MAIN_BLOCK + "order by dataobjects.lastmodified desc";
+
+	@Override
+	public List<String> getGroupUtilizers(String groupName) {
+		List<String> contentIds = null;
+		try {
+			contentIds = this.getUtilizers(groupName, LOAD_REFERENCED_CONTENTS_FOR_GROUP);
+		} catch (Throwable t) {
+			_logger.error("Error loading referenced datatypes for group {}", groupName, t);
+			throw new RuntimeException("Error loading referenced datatypes for group " + groupName, t);
+		}
+		return contentIds;
+	}
+
+	@Override
+	public List<String> getCategoryUtilizers(String categoryCode) {
+		List<String> contentIds = null;
+		try {
+			contentIds = this.getUtilizers(categoryCode, LOAD_REFERENCED_CONTENTS_FOR_CATEGORY);
+		} catch (Throwable t) {
+			_logger.error("Error loading referenced datatypes for category {}", categoryCode, t);
+			throw new RuntimeException("Error loading referenced datatypes for category " + categoryCode, t);
+		}
+		return contentIds;
+	}
 
 }

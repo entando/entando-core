@@ -16,11 +16,8 @@ package org.entando.entando.aps.system.services.dataobject.helper;
 import java.util.List;
 import java.util.Set;
 
-import org.entando.entando.aps.system.services.cache.CacheableInfo;
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
@@ -32,7 +29,7 @@ import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
- * Return informations of content authorization
+ * Return informations of dataobject authorization
  *
  * @author E.Santoboni
  */
@@ -41,14 +38,14 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 	private static final Logger _logger = LoggerFactory.getLogger(DataAuthorizationHelper.class);
 
 	@Override
-	public boolean isAuth(UserDetails user, DataObject content) throws ApsSystemException {
-		if (null == content) {
+	public boolean isAuth(UserDetails user, DataObject dataObject) throws ApsSystemException {
+		if (null == dataObject) {
 			_logger.error("Null content");
 			return false;
-		} else if (DataObject.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
+		} else if (DataObject.STATUS_NEW.equals(dataObject.getStatus()) && null == dataObject.getMainGroup()) {
 			return true;
 		}
-		return this.getAuthorizationManager().isAuth(user, content);
+		return this.getAuthorizationManager().isAuth(user, dataObject);
 	}
 
 	@Override
@@ -58,12 +55,12 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 	}
 
 	@Override
-	public boolean isAuth(UserDetails user, String contentId, boolean publicVersion) throws ApsSystemException {
+	public boolean isAuth(UserDetails user, String dataObjectId, boolean publicVersion) throws ApsSystemException {
 		if (publicVersion) {
-			PublicContentAuthorizationInfo authorizationInfo = this.getAuthorizationInfo(contentId);
+			PublicContentAuthorizationInfo authorizationInfo = this.getAuthorizationInfo(dataObjectId);
 			return this.isAuth(user, authorizationInfo);
 		}
-		DataObject content = this.getContentManager().loadContent(contentId, publicVersion);
+		DataObject content = this.getDataObjectManager().loadContent(dataObjectId, publicVersion);
 		return this.isAuth(user, content);
 	}
 
@@ -76,14 +73,14 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 	}
 
 	@Override
-	public boolean isAuthToEdit(UserDetails user, DataObject content) throws ApsSystemException {
-		if (null == content) {
+	public boolean isAuthToEdit(UserDetails user, DataObject dataObject) throws ApsSystemException {
+		if (null == dataObject) {
 			_logger.error("Null content");
 			return false;
-		} else if (DataObject.STATUS_NEW.equals(content.getStatus()) && null == content.getMainGroup()) {
+		} else if (DataObject.STATUS_NEW.equals(dataObject.getStatus()) && null == dataObject.getMainGroup()) {
 			return true;
 		}
-		String mainGroupName = content.getMainGroup();
+		String mainGroupName = dataObject.getMainGroup();
 		return this.isAuthToEdit(user, mainGroupName);
 	}
 
@@ -103,55 +100,55 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 	}
 
 	@Override
-	public boolean isAuthToEdit(UserDetails user, String contentId, boolean publicVersion) throws ApsSystemException {
-		DataObject content = this.getContentManager().loadContent(contentId, publicVersion);
+	public boolean isAuthToEdit(UserDetails user, String dataObjectId, boolean publicVersion) throws ApsSystemException {
+		DataObject content = this.getDataObjectManager().loadContent(dataObjectId, publicVersion);
 		return this.isAuth(user, content);
 	}
 
 	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-			key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_AUTH_INFO_CACHE_PREFIX.concat(#contentId)")
-	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#contentId)")
-	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId) {
+	//@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_AUTH_INFO_CACHE_PREFIX.concat(#contentId)")
+	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#contentId)")
+	public PublicContentAuthorizationInfo getAuthorizationInfo(String dataObjectId) {
 		PublicContentAuthorizationInfo authInfo = null;
 		try {
-			DataObject content = this.getContentManager().loadContent(contentId, true);
-			if (null == content) {
-				_logger.debug("public content {} doesn't exist", contentId);
+			DataObject dataObject = this.getDataObjectManager().loadContent(dataObjectId, true);
+			if (null == dataObject) {
+				_logger.debug("public content {} doesn't exist", dataObjectId);
 				return null;
 			}
-			authInfo = new PublicContentAuthorizationInfo(content, this.getLangManager().getLangs());
+			authInfo = new PublicContentAuthorizationInfo(dataObject, this.getLangManager().getLangs());
 		} catch (Throwable t) {
-			_logger.error("error in getAuthorizationInfo for content {}", contentId, t);
+			_logger.error("error in getAuthorizationInfo for dataObject {}", dataObjectId, t);
 		}
 		return authInfo;
 	}
 
 	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, condition = "#cacheable",
-			key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_AUTH_INFO_CACHE_PREFIX.concat(#contentId)")
-	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#contentId)")
-	public PublicContentAuthorizationInfo getAuthorizationInfo(String contentId, boolean cacheable) {
+	//@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, condition = "#cacheable",
+	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_AUTH_INFO_CACHE_PREFIX.concat(#contentId)")
+	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#contentId)")
+	public PublicContentAuthorizationInfo getAuthorizationInfo(String dataObjectId, boolean cacheable) {
 		PublicContentAuthorizationInfo authInfo = null;
 		try {
-			DataObject content = this.getContentManager().loadContent(contentId, true, cacheable);
-			if (null == content) {
-				_logger.debug("public content {} doesn't exist", contentId);
+			DataObject dataObject = this.getDataObjectManager().loadContent(dataObjectId, true, cacheable);
+			if (null == dataObject) {
+				_logger.debug("public dataObject {} doesn't exist", dataObjectId);
 				return null;
 			}
-			authInfo = new PublicContentAuthorizationInfo(content, this.getLangManager().getLangs());
+			authInfo = new PublicContentAuthorizationInfo(dataObject, this.getLangManager().getLangs());
 		} catch (Throwable t) {
-			_logger.error("error in getAuthorizationInfo for content {}", contentId, t);
+			_logger.error("error in getAuthorizationInfo for dataObject {}", dataObjectId, t);
 		}
 		return authInfo;
 	}
 
-	protected IContentManager getContentManager() {
-		return _contentManager;
+	public IContentManager getDataObjectManager() {
+		return _dataObjectManager;
 	}
 
-	public void setContentManager(IContentManager contentManager) {
-		this._contentManager = contentManager;
+	public void setDataObjectManager(IContentManager dataObjectManager) {
+		this._dataObjectManager = dataObjectManager;
 	}
 
 	protected ILangManager getLangManager() {
@@ -170,7 +167,7 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 		this._authorizationManager = authorizationManager;
 	}
 
-	private IContentManager _contentManager;
+	private IContentManager _dataObjectManager;
 	private ILangManager _langManager;
 	private IAuthorizationManager _authorizationManager;
 

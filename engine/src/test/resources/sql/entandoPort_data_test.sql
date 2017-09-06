@@ -567,7 +567,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			</attribute>
 			<attribute name="Text" attributetype="Text">
 				<roles>
-					<role>jacms:title</role>
+					<role>dataObject:title</role>
 				</roles>
 			</attribute>
 			<attribute name="Text2" attributetype="Text">
@@ -742,7 +742,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 					<required>true</required>
 				</validations>
 				<roles>
-					<role>jacms:title</role>
+					<role>dataObject:title</role>
 				</roles>
 			</attribute>
 			<list name="Autori" attributetype="Monolist">
@@ -760,7 +760,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			<attribute name="Titolo" attributetype="Text" searchable="true" indexingtype="TEXT">
 				<validations />
 				<roles>
-					<role>jacms:title</role>
+					<role>dataObject:title</role>
 				</roles>
 			</attribute>
 			<attribute name="CorpoTesto" attributetype="Hypertext" indexingtype="text" />

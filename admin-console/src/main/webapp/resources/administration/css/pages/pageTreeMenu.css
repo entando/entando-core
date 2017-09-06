@@ -118,3 +118,7 @@
     vertical-align: text-bottom;
 }
 
+.ui-droppable-hover {
+    border: 1px solid #f0ab00;
+    background: #F0F0F0;
+}

@@ -23,11 +23,9 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 
-/**
- * @author W.Ambu
- */
-public class TestContentViewerHelper extends BaseTestCase {
+public class TestDataObjectViewerHelper extends BaseTestCase {
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
@@ -38,7 +36,6 @@ public class TestContentViewerHelper extends BaseTestCase {
 			String contentId = "ART1";
 			String modelId = "3";
 			String renderedContent = _helper.getRenderedContent(contentId, modelId, _requestContext);
-
 			String expected = "------ RENDERING CONTENUTO: id = ART1; ---------\n"
 					+ "ATTRIBUTI:\n"
 					+ "  - AUTORI (Monolist-Monotext):\n"
@@ -46,8 +43,6 @@ public class TestContentViewerHelper extends BaseTestCase {
 					+ "         testo=Paperino;\n"
 					+ "         testo=Pluto;\n"
 					+ "  - TITOLO (Text): testo=Il titolo;\n"
-					+ "  - VEDI ANCHE (Link): testo=Spiderman, dest=http://www.spiderman.org;\n"
-					+ "  - FOTO (Image): testo=Image description, src(1)=/Entando/resources/cms/images/lvback_d1.jpg;\n"
 					+ "  - DATA (Date): data_media = 10-mar-2004;\n"
 					+ "------ END ------";
 			assertEquals(replaceNewLine(expected.trim()), replaceNewLine(renderedContent.trim()));
@@ -93,7 +88,6 @@ public class TestContentViewerHelper extends BaseTestCase {
 			lang.setCode("it");
 			lang.setDescr("italiano");
 			_requestContext.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG, lang);
-
 			Widget widget = new Widget();
 			IWidgetTypeManager showletTypeMan
 					= (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
@@ -101,8 +95,7 @@ public class TestContentViewerHelper extends BaseTestCase {
 			widget.setType(showletType);
 			widget.setConfig(new ApsProperties());
 			_requestContext.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET, widget);
-
-			this._helper = (IContentViewerHelper) this.getApplicationContext().getBean("jacmsContentViewerHelper");
+			this._helper = (IContentViewerHelper) this.getApplicationContext().getBean("DataObjectViewerHelper");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}

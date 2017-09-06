@@ -24,14 +24,13 @@ import com.agiletec.aps.system.services.role.RoleManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.MockUser;
 import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.services.dataobject.IContentManager;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
  * @author E.Santoboni
  */
-public class TestContentAuthorization extends BaseTestCase {
+public class TestDataObjectAuthorization extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
@@ -45,8 +44,8 @@ public class TestContentAuthorization extends BaseTestCase {
 		assertEquals("admin", adminUser.getPassword());
 		assertEquals(1, adminUser.getAuthorizations().size());
 
-		IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
-		Content content = contentManager.loadContent("ART111", true);
+		IContentManager contentManager = (IContentManager) this.getService("DataObjectManager");
+		DataObject content = contentManager.loadContent("ART111", true);
 		boolean check = this._authorizationManager.isAuth(adminUser, content);
 		assertTrue(check);
 		content = contentManager.loadContent("EVN25", true);
@@ -63,8 +62,8 @@ public class TestContentAuthorization extends BaseTestCase {
 		assertEquals("pageManagerCustomers", extractedUser.getPassword());
 		assertEquals(1, extractedUser.getAuthorizations().size());
 
-		IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
-		Content content = contentManager.loadContent("ART111", true);
+		IContentManager contentManager = (IContentManager) this.getService("DataObjectManager");
+		DataObject content = contentManager.loadContent("ART111", true);
 		boolean checkContent = this._authorizationManager.isAuth(extractedUser, content);
 		assertTrue(checkContent);
 		content = contentManager.loadContent("EVN25", true);
@@ -105,8 +104,8 @@ public class TestContentAuthorization extends BaseTestCase {
 			checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, "editContents");
 			assertTrue(checkPermission);
 
-			IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
-			Content content = contentManager.loadContent("ART111", true);
+			IContentManager contentManager = (IContentManager) this.getService("DataObjectManager");
+			DataObject content = contentManager.loadContent("ART111", true);
 			boolean checkContent = this._authorizationManager.isAuth(extractedUser, content);
 			assertFalse(checkContent);
 			content = contentManager.loadContent("EVN25", true);

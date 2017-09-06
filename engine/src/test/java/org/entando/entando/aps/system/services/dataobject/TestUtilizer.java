@@ -16,10 +16,10 @@ package org.entando.entando.aps.system.services.dataobject;
 import java.util.List;
 
 import com.agiletec.aps.BaseTestCase;
+import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 
-public class TestGroupUtilizer extends BaseTestCase {
+public class TestUtilizer extends BaseTestCase {
 
 	public void testGetGroupsUtilizers() throws Throwable {
 		String[] names = this.getApplicationContext().getBeanNamesForType(GroupUtilizer.class);
@@ -27,11 +27,22 @@ public class TestGroupUtilizer extends BaseTestCase {
 		for (int i = 0; i < names.length; i++) {
 			GroupUtilizer service = (GroupUtilizer) this.getApplicationContext().getBean(names[i]);
 			List utilizers = service.getGroupUtilizers("coach");
-			if (names[i].equals(JacmsSystemConstants.CONTENT_MANAGER)) {
+			if (names[i].equals("DataTypeManager")) {
 				assertEquals(6, utilizers.size());
-			} else if (names[i].equals(JacmsSystemConstants.RESOURCE_MANAGER)) {
-				assertEquals(0, utilizers.size());
 			}
 		}
 	}
+
+	public void testGetCategoryUtilizers() throws Throwable {
+		String[] names = this.getApplicationContext().getBeanNamesForType(CategoryUtilizer.class);
+		assertTrue(names.length >= 2);
+		for (int i = 0; i < names.length; i++) {
+			CategoryUtilizer service = (CategoryUtilizer) this.getApplicationContext().getBean(names[i]);
+			List utilizers = service.getCategoryUtilizers("evento");
+			if (names[i].equals("DataTypeManager")) {
+				assertTrue(utilizers.size() == 2);
+			}
+		}
+	}
+
 }

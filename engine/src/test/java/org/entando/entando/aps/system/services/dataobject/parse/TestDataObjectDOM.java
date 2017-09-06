@@ -15,38 +15,34 @@ package org.entando.entando.aps.system.services.dataobject.parse;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.services.dataobject.IContentManager;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
-/**
- * @version 1.0
- * @author M. Morini
- */
-public class TestContentDOM extends BaseTestCase {
+public class TestDataObjectDOM extends BaseTestCase {
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
 	}
 
 	public void testGetXMLDocument() throws ApsSystemException {
-		Content contentTest = this._contentManager.createContentType("ART");
-		assertNotNull(contentTest);
-		contentTest.addGroup("tempGroupName");
-		String xml = contentTest.getXML();
+		DataObject dataObjectTest = this._dataObjectManager.createContentType("ART");
+		assertNotNull(dataObjectTest);
+		dataObjectTest.addGroup("tempGroupName");
+		String xml = dataObjectTest.getXML();
 		int index = xml.indexOf("tempGroupName");
 		assertTrue((index != -1));
 	}
 
 	private void init() throws Exception {
 		try {
-			_contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
+			_dataObjectManager = (IContentManager) this.getService("DataObjectManager");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
 	}
 
-	private IContentManager _contentManager = null;
+	private IContentManager _dataObjectManager = null;
 
 }

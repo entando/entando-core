@@ -28,12 +28,11 @@ import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.DateConverter;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 
 /**
  * @author E.Santoboni
  */
-public class TestContentListHelper extends BaseTestCase {
+public class TestDataObjectListHelper extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
@@ -140,7 +139,7 @@ public class TestContentListHelper extends BaseTestCase {
 		try {
 			this.setUserOnSession("guest");
 			RequestContext reqCtx = this.valueRequestContext(pageCode, frame);
-			MockContentListTagBean bean = new MockContentListTagBean();
+			MockDataObjectListTagBean bean = new MockDataObjectListTagBean();
 			bean.setContentType("EVN");
 			EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true);
 			filter.setOrder(EntitySearchFilter.DESC_ORDER);
@@ -164,7 +163,7 @@ public class TestContentListHelper extends BaseTestCase {
 		try {
 			this.setUserOnSession("admin");
 			RequestContext reqCtx = this.valueRequestContext(pageCode, frame);
-			MockContentListTagBean bean = new MockContentListTagBean();
+			MockDataObjectListTagBean bean = new MockDataObjectListTagBean();
 			bean.setContentType("EVN");
 			bean.addCategory("evento");
 			EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true);
@@ -222,7 +221,7 @@ public class TestContentListHelper extends BaseTestCase {
 		try {
 			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
 			this._showletTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
-			this._helper = (IContentListWidgetHelper) this.getApplicationContext().getBean(JacmsSystemConstants.CONTENT_LIST_HELPER);
+			this._helper = (IContentListWidgetHelper) this.getApplicationContext().getBean("DataObjectListHelper");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}

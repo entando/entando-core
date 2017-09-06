@@ -46,6 +46,7 @@ import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestGroupUtilizer;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.cxf.test.TestUtilities;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
@@ -54,6 +55,12 @@ import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.TestPublicDataObjectSearcherDAO;
 import org.entando.entando.aps.system.services.dataobject.TestValidateDataObject;
+import org.entando.entando.aps.system.services.dataobject.authorization.TestDataObjectAuthorization;
+import org.entando.entando.aps.system.services.dataobject.entity.TestDataObjectEntityManager;
+import org.entando.entando.aps.system.services.dataobject.parse.TestDataObjectDOM;
+import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectListHelper;
+import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectViewerHelper;
+import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
@@ -143,10 +150,19 @@ public class AllTests {
 		suite.addTestSuite(TestDataObjectModelDAO.class);
 		suite.addTestSuite(TestDataObjectModelManager.class);
 
+		suite.addTestSuite(TestDataObjectAuthorization.class);
+		suite.addTestSuite(TestDataObjectEntityManager.class);
+		suite.addTestSuite(TestDataObjectDOM.class);
+
+		suite.addTestSuite(TestDataObjectListHelper.class);
+		suite.addTestSuite(TestDataObjectViewerHelper.class);
+
 		suite.addTestSuite(TestDataObjectDAO.class);
 		suite.addTestSuite(TestDataObjectManager.class);
 		suite.addTestSuite(TestPublicDataObjectSearcherDAO.class);
 		suite.addTestSuite(TestValidateDataObject.class);
+		suite.addTestSuite(TestUtilities.class);
+		suite.addTestSuite(TestDataObjectDispenser.class);
 
 		return suite;
 	}

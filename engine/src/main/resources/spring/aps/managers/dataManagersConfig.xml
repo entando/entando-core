@@ -58,32 +58,21 @@
           parent="BaseEntityRenderer" >
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>
-    <!--
-    <bean id="jacmsContentPageMapperManager" class="com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManager" 
-          parent="abstractService" >
+    
+    <bean id="DataObjectPageMapperManager" class="org.entando.entando.aps.system.services.dataobjectmapper.DataObjectPageMapperManager" 
+		  parent="abstractService" >
         <property name="pageManager" ref="PageManager" />
     </bean>
     
-    <bean id="jacmsLinkResolverManager" class="com.agiletec.plugins.jacms.aps.system.services.linkresolver.LinkResolverManager" 
+    <bean id="DataObjectDispenserManager" class="org.entando.entando.aps.system.services.dataobjectdispenser.BaseContentDispenser" 
           parent="abstractService" >
-        <property name="contentManager" ref="jacmsContentManager" />
-        <property name="resourceManager" ref="jacmsResourceManager" />
-        <property name="contentPageMapperManager" ref="jacmsContentPageMapperManager" />
-        <property name="pageManager" ref="PageManager" />
-        <property name="urlManager" ref="URLManager" />
-        <property name="userManager" ref="UserManager" />
+        <property name="dataObjectRenderer" ref="BaseDataObjectRenderer" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
         <property name="authorizationManager" ref="AuthorizationManager" />
     </bean>
     
-    <bean id="jacmsBaseContentDispenser" class="com.agiletec.plugins.jacms.aps.system.services.dispenser.BaseContentDispenser" 
-          parent="abstractService" >
-        <property name="contentRenderer" ref="jacmsBaseContentRenderer" />
-        <property name="contentManager" ref="jacmsContentManager" />
-        <property name="contentAuthorizationHelper" ref="jacmsContentAuthorizationHelper" />
-        <property name="linkResolver" ref="jacmsLinkResolverManager" />
-        <property name="authorizationManager" ref="AuthorizationManager" />
-    </bean>
-    
+	<!--
     <bean id="jacmsSearchEngineManager" class="com.agiletec.plugins.jacms.aps.system.services.searchengine.SearchEngineManager" 
               parent="abstractService" >
         <property name="factory">
@@ -110,22 +99,22 @@
     <bean id="jacmsBaseContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper" >
         <property name="contentManager" ref="jacmsContentManager" />
     </bean>
-    
-    <bean id="jacmsContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper" >
-        <property name="contentManager" ref="jacmsContentManager" />
-        <property name="searchEngineManager" ref="jacmsSearchEngineManager" />
+    -->
+    <bean id="DataObjectListHelper" class="org.entando.entando.aps.system.services.dataobject.widget.DataObjectListHelper" >
+        <property name="contentManager" ref="DataObjectManager" />
+        <!-- <property name="searchEngineManager" ref="jacmsSearchEngineManager" /> -->
         <property name="userFilterDateFormat">
             <value>${jacms.frontend.userfilter.dateFormat}</value>
         </property>
     </bean>
     
-    <bean id="jacmsContentViewerHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentViewerHelper" >
-        <property name="contentDispenser" ref="jacmsBaseContentDispenser" />
-        <property name="contentManager" ref="jacmsContentManager" />
-        <property name="contentModelManager" ref="jacmsContentModelManager" />
-        <property name="contentAuthorizationHelper" ref="jacmsContentAuthorizationHelper" />
+    <bean id="DataObjectViewerHelper" class="org.entando.entando.aps.system.services.dataobject.widget.DataObjectViewerHelper" >
+        <property name="contentDispenser" ref="DataObjectDispenserManager" />
+        <property name="contentManager" ref="DataObjectManager" />
+        <property name="contentModelManager" ref="DataObjectModelManager" />
+        <property name="contentAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
     </bean>
-    
+    <!--
     <bean id="jacmsCacheWrapperManager" class="com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager" 
           parent="abstractService" >
         <property name="cacheInfoManager" ref="CacheInfoManager" />

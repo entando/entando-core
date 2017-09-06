@@ -16,7 +16,7 @@ package org.entando.entando.aps.system.services.dataobject.widget;
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.dataobject.helper.PublicContentAuthorizationInfo;
-import com.agiletec.plugins.jacms.aps.system.services.dispenser.ContentRenderizationInfo;
+import org.entando.entando.aps.system.services.dataobjectdispenser.ContentRenderizationInfo;
 
 /**
  * Interfaccia base per le classi helper per le showlet erogatori contenuti.

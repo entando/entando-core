@@ -28,10 +28,10 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.helper.PublicDataTypeAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
-import org.entando.entando.aps.system.services.dataobjectdispenser.ContentRenderizationInfo;
-import org.entando.entando.aps.system.services.dataobjectdispenser.IContentDispenser;
+import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRenderizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataAuthorizationHelper;
+import org.entando.entando.aps.system.services.dataobjectdispenser.IDataObjectDispenser;
 
 /**
  * Classe helper per i Widget di erogazione dataobject singoli.
@@ -48,20 +48,20 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 	}
 
 	/**
-	 * Restituisce il contenuto da visualizzare nel widget.
+	 * Restituisce il dataObject da visualizzare nel widget.
 	 *
-	 * @param dataobjectId L'identificativo del contenuto ricavato dal tag.
-	 * @param modelId Il modello del contenuto ricavato dal tag.
+	 * @param dataobjectId L'identificativo del dataObject ricavato dal tag.
+	 * @param modelId Il modello del dataObject ricavato dal tag.
 	 * @param publishExtraTitle
 	 * @param reqCtx Il contesto della richiesta.
-	 * @return Il contenuto da visualizzare nella widget.
+	 * @return Il dataObject da visualizzare nella widget.
 	 * @throws ApsSystemException In caso di errore.
 	 */
 	@Override
 	public String getRenderedContent(String dataobjectId, String modelId, boolean publishExtraTitle, RequestContext reqCtx)
 			throws ApsSystemException {
 		String renderedDataObject = null;
-		ContentRenderizationInfo renderInfo = this.getRenderizationInfo(dataobjectId, modelId, publishExtraTitle, reqCtx);
+		DataObjectRenderizationInfo renderInfo = this.getRenderizationInfo(dataobjectId, modelId, publishExtraTitle, reqCtx);
 		if (null != renderInfo) {
 			renderedDataObject = renderInfo.getRenderedDataobject();
 		}
@@ -72,9 +72,9 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 	}
 
 	@Override
-	public ContentRenderizationInfo getRenderizationInfo(String dataobjectId, String modelId, boolean publishExtraTitle, RequestContext reqCtx)
+	public DataObjectRenderizationInfo getRenderizationInfo(String dataobjectId, String modelId, boolean publishExtraTitle, RequestContext reqCtx)
 			throws ApsSystemException {
-		ContentRenderizationInfo renderizationInfo = null;
+		DataObjectRenderizationInfo renderizationInfo = null;
 		try {
 			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
 			String langCode = currentLang.getCode();
@@ -122,7 +122,7 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 		return authInfo;
 	}
 
-	protected void manageAttributeValues(ContentRenderizationInfo renderInfo, boolean publishExtraTitle, RequestContext reqCtx) {
+	protected void manageAttributeValues(DataObjectRenderizationInfo renderInfo, boolean publishExtraTitle, RequestContext reqCtx) {
 		if (!publishExtraTitle) {
 			return;
 		}
@@ -252,11 +252,11 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 		this._contentManager = contentManager;
 	}
 
-	protected IContentDispenser getContentDispenser() {
+	protected IDataObjectDispenser getContentDispenser() {
 		return _contentDispenser;
 	}
 
-	public void setContentDispenser(IContentDispenser contentDispenser) {
+	public void setContentDispenser(IDataObjectDispenser contentDispenser) {
 		this._contentDispenser = contentDispenser;
 	}
 
@@ -270,7 +270,7 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 
 	private IDataObjectModelManager _contentModelManager;
 	private IContentManager _contentManager;
-	private IContentDispenser _contentDispenser;
+	private IDataObjectDispenser _contentDispenser;
 
 	private IDataAuthorizationHelper _contentAuthorizationHelper;
 

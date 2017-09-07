@@ -21,7 +21,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  *
  * @author W.Ambu
  */
-public interface IContentPageMapperManager {
+public interface IDataObjectPageMapperManager {
 
 	/**
 	 * Effettua il caricamento della mappa dataobject pubblicati / pagine

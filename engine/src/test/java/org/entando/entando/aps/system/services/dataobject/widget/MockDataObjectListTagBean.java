@@ -21,7 +21,7 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 /**
  * @author E.Santoboni
  */
-public class MockDataObjectListTagBean implements IContentListTagBean {
+public class MockDataObjectListTagBean implements IDataObjectListTagBean {
 
 	@Override
 	public String getListName() {

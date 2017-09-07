@@ -16,26 +16,26 @@ package org.entando.entando.aps.system.services.dataobjectdispenser;
 import com.agiletec.aps.system.RequestContext;
 
 /**
- * Basic interface for service providers formatted content. Implementations may
- * or may not use the caching engine.
+ * Basic interface for service providers formatted dataObject. Implementations
+ * may or may not use the caching engine.
  *
  * @author M.Diana - E.Santoboni
  */
-public interface IContentDispenser {
+public interface IDataObjectDispenser {
 
 	/**
-	 * Return the object that contains the renderization info of the content.
+	 * Return the object that contains the renderization info of the dataObject.
 	 *
-	 * @param contentId The content id.
+	 * @param dataObjectId The dataObject id.
 	 * @param modelId The velocity model id.
 	 * @param langCode The code of the current lang.
 	 * @param reqCtx The request context.
-	 * @return The formatted content.
+	 * @return The formatted dataObject.
 	 */
-	public ContentRenderizationInfo getRenderizationInfo(String contentId,
+	public DataObjectRenderizationInfo getRenderizationInfo(String dataObjectId,
 			long modelId, String langCode, RequestContext reqCtx);
 
-	public ContentRenderizationInfo getRenderizationInfo(String contentId,
+	public DataObjectRenderizationInfo getRenderizationInfo(String dataObjectId,
 			long modelId, String langCode, RequestContext reqCtx, boolean useCache);
 
 }

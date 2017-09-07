@@ -45,10 +45,10 @@ import org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObje
 import org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObjectAttribute;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataAuthorizationHelper;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
-import org.entando.entando.aps.system.services.dataobjectdispenser.ContentRenderizationInfo;
-import org.entando.entando.aps.system.services.dataobjectdispenser.IContentDispenser;
+import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRenderizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListHelper;
+import org.entando.entando.aps.system.services.dataobjectdispenser.IDataObjectDispenser;
 
 /**
  * @author E.Santoboni
@@ -187,7 +187,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 
 	protected String getRenderedDataObject(String id, int modelId, String langCode) {
 		String renderedContent = null;
-		ContentRenderizationInfo renderizationInfo = this.getDataObjectDispenser().getRenderizationInfo(id, modelId, langCode, null, true);
+		DataObjectRenderizationInfo renderizationInfo = this.getDataObjectDispenser().getRenderizationInfo(id, modelId, langCode, null, true);
 		if (null != renderizationInfo) {
 			renderedContent = renderizationInfo.getRenderedDataobject();
 		}
@@ -487,11 +487,11 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 		this._dataObjectAuthorizationHelper = dataObjectAuthorizationHelper;
 	}
 
-	public IContentDispenser getDataObjectDispenser() {
+	public IDataObjectDispenser getDataObjectDispenser() {
 		return _dataObjectDispenser;
 	}
 
-	public void setDataObjectDispenser(IContentDispenser dataObjectDispenser) {
+	public void setDataObjectDispenser(IDataObjectDispenser dataObjectDispenser) {
 		this._dataObjectDispenser = dataObjectDispenser;
 	}
 
@@ -533,7 +533,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 	private IGroupManager _groupManager;
 	private IPageManager _pageManager;
 	private IDataAuthorizationHelper _dataObjectAuthorizationHelper;
-	private IContentDispenser _dataObjectDispenser;
+	private IDataObjectDispenser _dataObjectDispenser;
 	private String _itemsStartElement = "<ul>";
 	private String _itemStartElement = "<li>";
 	private String _itemEndElement = "</li>";

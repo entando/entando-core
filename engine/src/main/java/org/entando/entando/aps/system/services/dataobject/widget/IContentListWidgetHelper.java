@@ -45,7 +45,7 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	 * ricerca.
 	 * @throws Throwable In caso di errore.
 	 */
-	public List<String> getContentsId(IContentListTagBean bean, RequestContext reqCtx) throws Throwable;
+	public List<String> getContentsId(IDataObjectListTagBean bean, RequestContext reqCtx) throws Throwable;
 
 	/**
 	 * Restituisce l'insieme dei filtri in base al parametro di configurazione
@@ -106,7 +106,7 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	 * @return The list of the filter options.
 	 * @throws ApsSystemException in case of error.
 	 */
-	public List<UserFilterOptionBean> getConfiguredUserFilters(IContentListTagBean bean, RequestContext reqCtx) throws ApsSystemException;
+	public List<UserFilterOptionBean> getConfiguredUserFilters(IDataObjectListTagBean bean, RequestContext reqCtx) throws ApsSystemException;
 
 	public static final String[] allowedMetadataFilterKeys
 			= {IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, IContentManager.CONTENT_DESCR_FILTER_KEY, IContentManager.CONTENT_STATUS_FILTER_KEY,

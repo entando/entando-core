@@ -29,14 +29,14 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  *
  * @author E.Santoboni
  */
-public class ContentRenderizationInfo implements Serializable {
+public class DataObjectRenderizationInfo implements Serializable {
 
 	private static final long serialVersionUID = 2514275355950411866L;
 
-	protected ContentRenderizationInfo() {
+	protected DataObjectRenderizationInfo() {
 	}
 
-	public ContentRenderizationInfo(DataObject dataObject,
+	public DataObjectRenderizationInfo(DataObject dataObject,
 			String cachedRenderedDataobject, long modelId, String renderingLang, List<AttributeRole> roles) {
 		if (null != dataObject) {
 			this._dataObjectId = dataObject.getId();
@@ -58,10 +58,10 @@ public class ContentRenderizationInfo implements Serializable {
 	}
 
 	@Override
-	public ContentRenderizationInfo clone() {
-		ContentRenderizationInfo clone = new ContentRenderizationInfo();
-		clone.setContentId(this.getContentId());
-		clone.setContentType(this.getContentType());
+	public DataObjectRenderizationInfo clone() {
+		DataObjectRenderizationInfo clone = new DataObjectRenderizationInfo();
+		clone.setDataObjectId(this.getDataObjectId());
+		clone.setDataType(this.getDataType());
 		clone.setModelId(this.getModelId());
 		clone.setRenderedDataobject(this.getRenderedDataobject());
 		clone.setRenderingLang(this.getRenderingLang());
@@ -69,19 +69,19 @@ public class ContentRenderizationInfo implements Serializable {
 		return clone;
 	}
 
-	public String getContentId() {
+	public String getDataObjectId() {
 		return _dataObjectId;
 	}
 
-	protected void setContentId(String contentId) {
-		this._dataObjectId = contentId;
+	protected void setDataObjectId(String dataObjectId) {
+		this._dataObjectId = dataObjectId;
 	}
 
-	public String getContentType() {
+	public String getDataType() {
 		return _dataType;
 	}
 
-	protected void setContentType(String contentType) {
+	protected void setDataType(String contentType) {
 		this._dataType = contentType;
 	}
 

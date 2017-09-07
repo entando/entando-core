@@ -19,49 +19,57 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListBean;
 
 /**
- * Il bean detentore dei parametri di ricerca di liste di contenuti.
+ * Il bean detentore dei parametri di ricerca di liste di dataObject.
+ *
  * @author E.Santoboni
  */
-public interface IContentListTagBean extends IDataTypeListBean {
-	
-	/**
-	 * Setta il codice dei tipi di contenuto da cercare.
-	 * @param contentType Il codice dei tipi di contenuto da cercare.
-	 */
-	public void setContentType(String contentType);
+public interface IDataObjectListTagBean extends IDataTypeListBean {
 
 	/**
-	 * Restituisce la categoria dei contenuto da cercare.
-	 * @return La categoria dei contenuto da cercare.
+	 * Setta il codice dei tipi di dataObject da cercare.
+	 *
+	 * @param dataObjectType Il codice dei tipi di dataObject da cercare.
+	 */
+	public void setContentType(String dataObjectType);
+
+	/**
+	 * Restituisce la categoria dei dataObject da cercare.
+	 *
+	 * @return La categoria dei dataObject da cercare.
 	 * @deprecated use getCategories
 	 */
 	public String getCategory();
-	
+
 	/**
-	 * Setta la categoria dei contenuto da cercare.
-	 * @param category La categoria dei contenuto da cercare.
+	 * Setta la categoria dei dataObject da cercare.
+	 *
+	 * @param category La categoria dei dataObject da cercare.
 	 * @deprecated use addCategory
 	 */
 	public void setCategory(String category);
-	
+
 	public void addCategory(String category);
-	
+
 	/**
 	 * Aggiunge un filtro in coda alla lista di filtri definita nel bean.
+	 *
 	 * @param filter Il filtro da aggiungere.
 	 */
 	public void addFilter(EntitySearchFilter filter);
-	
+
 	/**
-	 * Aggiunge una opzione filtro utente in coda alla lista di filtri definita nel bean.
+	 * Aggiunge una opzione filtro utente in coda alla lista di filtri definita
+	 * nel bean.
+	 *
 	 * @param filter L'opzione filtro utente da aggiungere.
 	 */
 	public void addUserFilterOption(UserFilterOptionBean filter);
-	
+
 	/**
 	 * Restituisce la lista di opzioni filtro utente definita.
+	 *
 	 * @return La lista di opzioni filtro utente definita nel bean.
 	 */
 	public List<UserFilterOptionBean> getUserFilterOptions();
-	
+
 }

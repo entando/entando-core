@@ -34,7 +34,7 @@ import org.entando.entando.aps.system.services.dataobject.widget.UserFilterOptio
 import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
 
 /**
- * Provides utility methods for content filters for showlet.
+ * Provides utility methods for dataObject filters for widget.
  *
  * @author E.Santoboni
  */
@@ -94,9 +94,9 @@ public class FilterUtils extends BaseFilterUtils {
 	 * @deprecated From Entando 3.0 version 3.0.1. Use getUserFilter(String,
 	 * IEntityFilterBean, IContentManager, RequestContext) method
 	 */
-	public UserFilterOptionBean getUserFilter(String contentType,
-			IDataTypeListFilterBean bean, IContentManager contentManager, RequestContext reqCtx) {
-		return this.getUserFilter(contentType, (IEntityFilterBean) bean, contentManager, "dd/MM/yyyy", reqCtx);
+	public UserFilterOptionBean getUserFilter(String dataObjectType,
+			IDataTypeListFilterBean bean, IContentManager dataObjectManager, RequestContext reqCtx) {
+		return this.getUserFilter(dataObjectType, (IEntityFilterBean) bean, dataObjectManager, "dd/MM/yyyy", reqCtx);
 	}
 
 	/**

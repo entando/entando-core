@@ -13,8 +13,7 @@
  */
 package org.entando.entando.aps.system.services.dataobjectdispender;
 
-import org.entando.entando.aps.system.services.dataobjectdispenser.ContentRenderizationInfo;
-import org.entando.entando.aps.system.services.dataobjectdispenser.IContentDispenser;
+import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRenderizationInfo;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.RequestContext;
@@ -22,6 +21,7 @@ import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
+import org.entando.entando.aps.system.services.dataobjectdispenser.IDataObjectDispenser;
 
 /**
  * @author E.Santoboni
@@ -37,7 +37,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 	public void testGetRenderedContent_1() throws Throwable {
 		RequestContext reqCtx = this.getRequestContext();
 
-		ContentRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo("ART1", 2, "en", reqCtx);
+		DataObjectRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo("ART1", 2, "en", reqCtx);
 		assertEquals(this.replaceNewLine(_attendedEnART1_cached.trim()), this.replaceNewLine(outputInfo.getRenderedDataobject().trim()));
 
 		this.setUserOnSession("admin");
@@ -60,7 +60,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 		RequestContext reqCtx = this.getRequestContext();
 		this.setUserOnSession("admin");
 
-		ContentRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo("ART120", 2, "it", reqCtx);
+		DataObjectRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo("ART120", 2, "it", reqCtx);
 		assertEquals(this.replaceNewLine(_attendedItART120_cached.trim()), this.replaceNewLine(outputInfo.getRenderedDataobject().trim()));
 
 		outputInfo = this._contentDispenser.getRenderizationInfo("ART120", 2, "en", reqCtx);
@@ -83,7 +83,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 			RequestContext reqCtx = this.getRequestContext();
 			this.setUserOnSession("admin");
 			this._contentManager.insertOnLineContent(content);
-			ContentRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo(content.getId(), 2, "it", reqCtx);
+			DataObjectRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo(content.getId(), 2, "it", reqCtx);
 			assertNotNull(outputInfo);
 
 			//assertNotNull(this._cacheInfoManager.getFromCache(JacmsSystemConstants.CONTENT_CACHE_PREFIX+content.getId()));
@@ -110,7 +110,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 			this.addNewDataObjectModel(modelId, contentShapeModel, "ART");
 			RequestContext reqCtx = this.getRequestContext();
 			this.setUserOnSession("admin");
-			ContentRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo(contentId, modelId, "en", reqCtx);
+			DataObjectRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo(contentId, modelId, "en", reqCtx);
 			assertEquals("title (Text): testo=Title of Administrator's Content", outputInfo.getRenderedDataobject());
 
 			DataObjectModel model = this._contentModelManager.getContentModel(modelId);
@@ -143,7 +143,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 	public void testGetUnauthorizedContent() throws Throwable {
 		RequestContext reqCtx = this.getRequestContext();
 
-		ContentRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo("ART104", 2, "it", reqCtx);
+		DataObjectRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo("ART104", 2, "it", reqCtx);
 		assertEquals("Current user 'guest' can't view this DataObject", outputInfo.getRenderedDataobject().trim());
 
 		this.setUserOnSession("editorCustomers");
@@ -163,7 +163,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 
 	private void init() throws Exception {
 		try {
-			this._contentDispenser = (IContentDispenser) this.getService("DataObjectDispenserManager");
+			this._contentDispenser = (IDataObjectDispenser) this.getService("DataObjectDispenserManager");
 			this._contentManager = (IContentManager) this.getService("DataObjectManager");
 			this._contentModelManager = (IDataObjectModelManager) this.getService("DataObjectModelManager");
 			//this._cacheInfoManager = (CacheInfoManager) this.getService(SystemConstants.CACHE_INFO_MANAGER);
@@ -172,7 +172,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 		}
 	}
 
-	private IContentDispenser _contentDispenser = null;
+	private IDataObjectDispenser _contentDispenser = null;
 	private IContentManager _contentManager = null;
 	private IDataObjectModelManager _contentModelManager = null;
 	//private CacheInfoManager _cacheInfoManager;

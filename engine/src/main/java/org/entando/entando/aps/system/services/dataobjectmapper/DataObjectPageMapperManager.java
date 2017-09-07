@@ -33,7 +33,7 @@ import com.agiletec.aps.util.ApsProperties;
  *
  * @author W.Ambu
  */
-public class DataObjectPageMapperManager extends AbstractService implements IContentPageMapperManager, PageChangedObserver {
+public class DataObjectPageMapperManager extends AbstractService implements IDataObjectPageMapperManager, PageChangedObserver {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectPageMapperManager.class);
 

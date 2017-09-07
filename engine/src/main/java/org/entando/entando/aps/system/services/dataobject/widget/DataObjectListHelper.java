@@ -52,9 +52,9 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectListHelper.class);
 
 	@Override
-	public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, RequestContext reqCtx) {
+	public EntitySearchFilter[] getFilters(String dataObjectType, String filtersShowletParam, RequestContext reqCtx) {
 		Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-		return super.getFilters(contentType, filtersShowletParam, currentLang.getCode());
+		return super.getFilters(dataObjectType, filtersShowletParam, currentLang.getCode());
 	}
 
 	/**
@@ -62,14 +62,14 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	 * IEntityFilterBean, RequestContext) method
 	 */
 	@Override
-	public EntitySearchFilter getFilter(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx) {
-		return this.getFilter(contentType, (IEntityFilterBean) bean, reqCtx);
+	public EntitySearchFilter getFilter(String dataObjectType, IDataTypeListFilterBean bean, RequestContext reqCtx) {
+		return this.getFilter(dataObjectType, (IEntityFilterBean) bean, reqCtx);
 	}
 
 	@Override
-	public EntitySearchFilter getFilter(String contentType, IEntityFilterBean bean, RequestContext reqCtx) {
+	public EntitySearchFilter getFilter(String dataObjectType, IEntityFilterBean bean, RequestContext reqCtx) {
 		Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-		return super.getFilter(contentType, bean, currentLang.getCode());
+		return super.getFilter(dataObjectType, bean, currentLang.getCode());
 	}
 
 	/**
@@ -77,14 +77,14 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	 * getUserFilterOption(String, IEntityFilterBean, RequestContext) method
 	 */
 	@Override
-	public UserFilterOptionBean getUserFilterOption(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx) {
-		return this.getUserFilterOption(contentType, (IEntityFilterBean) bean, reqCtx);
+	public UserFilterOptionBean getUserFilterOption(String dataObjectType, IDataTypeListFilterBean bean, RequestContext reqCtx) {
+		return this.getUserFilterOption(dataObjectType, (IEntityFilterBean) bean, reqCtx);
 	}
 
 	@Override
-	public UserFilterOptionBean getUserFilterOption(String contentType, IEntityFilterBean bean, RequestContext reqCtx) {
+	public UserFilterOptionBean getUserFilterOption(String dataObjectType, IEntityFilterBean bean, RequestContext reqCtx) {
 		FilterUtils filterUtils = new FilterUtils();
-		return filterUtils.getUserFilter(contentType, bean, this.getContentManager(), this.getUserFilterDateFormat(), reqCtx);
+		return filterUtils.getUserFilter(dataObjectType, bean, this.getContentManager(), this.getUserFilterDateFormat(), reqCtx);
 	}
 
 	@Override
@@ -102,19 +102,19 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	//        beforeInvocation = true,
 	//        condition = "T(org.entando.entando.aps.system.services.cache.CacheInfoManager).isExpired(T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).buildCacheKey(#bean, #reqCtx))")
 	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentListCacheGroupsCsv(#bean, #reqCtx)", expiresInMinute = 30)
-	public List<String> getContentsId(IContentListTagBean bean, RequestContext reqCtx) throws Throwable {
-		List<String> contentsId = null;
+	public List<String> getContentsId(IDataObjectListTagBean bean, RequestContext reqCtx) throws Throwable {
+		List<String> dataObjectsId = null;
 		try {
-			contentsId = this.extractContentsId(bean, reqCtx);
-			contentsId = this.executeFullTextSearch(bean, contentsId, reqCtx);
+			dataObjectsId = this.extractContentsId(bean, reqCtx);
+			dataObjectsId = this.executeFullTextSearch(bean, dataObjectsId, reqCtx);
 		} catch (Throwable t) {
-			_logger.error("Error extracting contents id", t);
-			throw new ApsSystemException("Error extracting contents id", t);
+			_logger.error("Error extracting dataObjects id", t);
+			throw new ApsSystemException("Error extracting dataObjects id", t);
 		}
-		return contentsId;
+		return dataObjectsId;
 	}
 
-	public static boolean isUserFilterExecuted(IContentListTagBean bean) {
+	public static boolean isUserFilterExecuted(IDataObjectListTagBean bean) {
 		if (null == bean || null == bean.getUserFilterOptions() || bean.getUserFilterOptions().isEmpty()) {
 			return false;
 		}
@@ -127,7 +127,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 		return false;
 	}
 
-	protected List<String> extractContentsId(IContentListTagBean bean, RequestContext reqCtx) throws ApsSystemException {
+	protected List<String> extractContentsId(IDataObjectListTagBean bean, RequestContext reqCtx) throws ApsSystemException {
 		List<String> contentsId = null;
 		try {
 			List<UserFilterOptionBean> userFilters = bean.getUserFilterOptions();
@@ -175,7 +175,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 		return Boolean.parseBoolean(param);
 	}
 
-	protected List<String> executeFullTextSearch(IContentListTagBean bean,
+	protected List<String> executeFullTextSearch(IDataObjectListTagBean bean,
 			List<String> masterContentsId, RequestContext reqCtx) throws ApsSystemException {
 		UserFilterOptionBean fullTextUserFilter = null;
 		List<UserFilterOptionBean> userFilterOptions = bean.getUserFilterOptions();
@@ -257,11 +257,11 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	}
 
 	@Deprecated
-	protected void addShowletFilters(IContentListTagBean bean, ApsProperties showletParams, String showletParamName, RequestContext reqCtx) {
+	protected void addShowletFilters(IDataObjectListTagBean bean, ApsProperties showletParams, String showletParamName, RequestContext reqCtx) {
 		this.addWidgetFilters(bean, showletParams, showletParamName, reqCtx);
 	}
 
-	protected void addWidgetFilters(IContentListTagBean bean, ApsProperties widgetParams, String widgetParamName, RequestContext reqCtx) {
+	protected void addWidgetFilters(IDataObjectListTagBean bean, ApsProperties widgetParams, String widgetParamName, RequestContext reqCtx) {
 		if (null == widgetParams) {
 			return;
 		}
@@ -276,7 +276,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	}
 
 	@Deprecated
-	protected List<String> getContentsId(IContentListTagBean bean, String[] categories, RequestContext reqCtx) throws Throwable {
+	protected List<String> getContentsId(IDataObjectListTagBean bean, String[] categories, RequestContext reqCtx) throws Throwable {
 		return this.getContentsId(bean, reqCtx);
 	}
 
@@ -285,7 +285,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 		return getAllowedGroupCodes(currentUser);
 	}
 
-	public static String buildCacheKey(IContentListTagBean bean, RequestContext reqCtx) {
+	public static String buildCacheKey(IDataObjectListTagBean bean, RequestContext reqCtx) {
 		UserDetails currentUser = (UserDetails) reqCtx.getRequest().getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
 		Collection<String> userGroupCodes = getAllowedGroupCodes(currentUser);
 		return buildCacheKey(bean.getListName(), userGroupCodes, reqCtx);
@@ -337,7 +337,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 	}
 
 	@Override
-	public List<UserFilterOptionBean> getConfiguredUserFilters(IContentListTagBean bean, RequestContext reqCtx) throws ApsSystemException {
+	public List<UserFilterOptionBean> getConfiguredUserFilters(IDataObjectListTagBean bean, RequestContext reqCtx) throws ApsSystemException {
 		List<UserFilterOptionBean> userEntityFilters = null;
 		try {
 			Widget widget = (Widget) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET);
@@ -345,10 +345,10 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 			if (null == config || null == config.getProperty(WIDGET_PARAM_CONTENT_TYPE)) {
 				return null;
 			}
-			String contentTypeCode = config.getProperty(WIDGET_PARAM_CONTENT_TYPE);
-			IApsEntity prototype = this.getContentManager().getEntityPrototype(contentTypeCode);
+			String dataObjectTypeCode = config.getProperty(WIDGET_PARAM_CONTENT_TYPE);
+			IApsEntity prototype = this.getContentManager().getEntityPrototype(dataObjectTypeCode);
 			if (null == prototype) {
-				_logger.error("Null content type by code '{}'", contentTypeCode);
+				_logger.error("Null dataObject type by code '{}'", dataObjectTypeCode);
 				return null;
 			}
 			Integer currentFrame = (Integer) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME);

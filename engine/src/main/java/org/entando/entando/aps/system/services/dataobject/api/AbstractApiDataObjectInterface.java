@@ -13,8 +13,8 @@
  */
 package org.entando.entando.aps.system.services.dataobject.api;
 
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * @author E.Santoboni
@@ -29,15 +29,15 @@ public abstract class AbstractApiDataObjectInterface {
 		this._dataObjectModelManager = dataObjectModelManager;
 	}
 
-	public IContentManager getDataObjectManager() {
+	public IDataObjectManager getDataObjectManager() {
 		return _dataObjectManager;
 	}
 
-	public void setDataObjectManager(IContentManager _dataObjectManager) {
+	public void setDataObjectManager(IDataObjectManager _dataObjectManager) {
 		this._dataObjectManager = _dataObjectManager;
 	}
 
-	private IContentManager _dataObjectManager;
+	private IDataObjectManager _dataObjectManager;
 	private IDataObjectModelManager _dataObjectModelManager;
 
 }

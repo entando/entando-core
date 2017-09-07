@@ -25,8 +25,8 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * Return informations of dataobject authorization
@@ -60,7 +60,7 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 			PublicDataTypeAuthorizationInfo authorizationInfo = this.getAuthorizationInfo(dataObjectId);
 			return this.isAuth(user, authorizationInfo);
 		}
-		DataObject content = this.getDataObjectManager().loadContent(dataObjectId, publicVersion);
+		DataObject content = this.getDataObjectManager().loadDataObject(dataObjectId, publicVersion);
 		return this.isAuth(user, content);
 	}
 
@@ -101,7 +101,7 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 
 	@Override
 	public boolean isAuthToEdit(UserDetails user, String dataObjectId, boolean publicVersion) throws ApsSystemException {
-		DataObject content = this.getDataObjectManager().loadContent(dataObjectId, publicVersion);
+		DataObject content = this.getDataObjectManager().loadDataObject(dataObjectId, publicVersion);
 		return this.isAuth(user, content);
 	}
 
@@ -112,7 +112,7 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String dataObjectId) {
 		PublicDataTypeAuthorizationInfo authInfo = null;
 		try {
-			DataObject dataObject = this.getDataObjectManager().loadContent(dataObjectId, true);
+			DataObject dataObject = this.getDataObjectManager().loadDataObject(dataObjectId, true);
 			if (null == dataObject) {
 				_logger.debug("public content {} doesn't exist", dataObjectId);
 				return null;
@@ -131,7 +131,7 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String dataObjectId, boolean cacheable) {
 		PublicDataTypeAuthorizationInfo authInfo = null;
 		try {
-			DataObject dataObject = this.getDataObjectManager().loadContent(dataObjectId, true, cacheable);
+			DataObject dataObject = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
 			if (null == dataObject) {
 				_logger.debug("public dataObject {} doesn't exist", dataObjectId);
 				return null;
@@ -143,11 +143,11 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 		return authInfo;
 	}
 
-	public IContentManager getDataObjectManager() {
+	public IDataObjectManager getDataObjectManager() {
 		return _dataObjectManager;
 	}
 
-	public void setDataObjectManager(IContentManager dataObjectManager) {
+	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
 		this._dataObjectManager = dataObjectManager;
 	}
 
@@ -167,7 +167,7 @@ public class DataAuthorizationHelper implements IDataAuthorizationHelper {
 		this._authorizationManager = authorizationManager;
 	}
 
-	private IContentManager _dataObjectManager;
+	private IDataObjectManager _dataObjectManager;
 	private ILangManager _langManager;
 	private IAuthorizationManager _authorizationManager;
 

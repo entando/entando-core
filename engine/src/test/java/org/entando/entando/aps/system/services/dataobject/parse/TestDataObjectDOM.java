@@ -15,8 +15,8 @@ package org.entando.entando.aps.system.services.dataobject.parse;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 public class TestDataObjectDOM extends BaseTestCase {
 
@@ -27,7 +27,7 @@ public class TestDataObjectDOM extends BaseTestCase {
 	}
 
 	public void testGetXMLDocument() throws ApsSystemException {
-		DataObject dataObjectTest = this._dataObjectManager.createContentType("ART");
+		DataObject dataObjectTest = this._dataObjectManager.createDataObject("ART");
 		assertNotNull(dataObjectTest);
 		dataObjectTest.addGroup("tempGroupName");
 		String xml = dataObjectTest.getXML();
@@ -37,12 +37,12 @@ public class TestDataObjectDOM extends BaseTestCase {
 
 	private void init() throws Exception {
 		try {
-			_dataObjectManager = (IContentManager) this.getService("DataObjectManager");
+			_dataObjectManager = (IDataObjectManager) this.getService("DataObjectManager");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
 	}
 
-	private IContentManager _dataObjectManager = null;
+	private IDataObjectManager _dataObjectManager = null;
 
 }

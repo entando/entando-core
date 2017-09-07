@@ -569,18 +569,18 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
 	}
 
 	@Override
-	public ContentsStatus loadContentStatus() {
+	public DataObjectsStatus loadContentStatus() {
 		Connection conn = null;
 		PreparedStatement stat = null;
 		ResultSet res = null;
-		ContentsStatus status = null;
+		DataObjectsStatus status = null;
 		try {
 			conn = this.getConnection();
 			int online = this.loadContentStatus(conn, COUNT_ONLINE_CONTENTS);
 			int offline = this.loadContentStatus(conn, COUNT_OFFLINE_CONTENTS);
 			int withDiffs = this.loadContentStatus(conn, COUNT_ONLINE_CONTENTS_WITH_DIFFS);
 			Date lastModified = this.loadContentStatusLastModified(conn, LOAD_LAST_MODIFIED);
-			status = new ContentsStatus();
+			status = new DataObjectsStatus();
 			status.setDraft(offline);
 			status.setOnline(online);
 			status.setOnlineWithChanges(withDiffs);

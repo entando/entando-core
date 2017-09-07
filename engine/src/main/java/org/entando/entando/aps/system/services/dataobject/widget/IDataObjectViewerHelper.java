@@ -23,7 +23,7 @@ import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRen
  *
  * @author E.Santoboni
  */
-public interface IContentViewerHelper {
+public interface IDataObjectViewerHelper {
 
 	/**
 	 * Restituisce il dataObject da visualizzare nella showlet.

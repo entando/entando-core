@@ -55,7 +55,7 @@ public interface IDataObjectDAO extends IEntityDAO {
 
 	public void updateContent(DataObject content, boolean updateDate);
 
-	public ContentsStatus loadContentStatus();
+	public DataObjectsStatus loadContentStatus();
 
 	public List<String> getCategoryUtilizers(String categoryCode);
 

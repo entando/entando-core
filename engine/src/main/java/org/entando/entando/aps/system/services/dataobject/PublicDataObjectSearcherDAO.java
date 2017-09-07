@@ -44,7 +44,7 @@ public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO i
 	public List<String> loadPublicContentsId(String contentType, String[] categories, boolean orClauseCategoryFilter,
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
 		if (contentType != null && contentType.trim().length() > 0) {
-			EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, contentType, false);
+			EntitySearchFilter typeFilter = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, contentType, false);
 			filters = this.addFilter(filters, typeFilter);
 		}
 		return this.loadPublicContentsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
@@ -64,7 +64,7 @@ public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO i
 			groupCodes.addAll(userGroupCodes);
 		}
 		groupCodes.add(Group.FREE_GROUP_NAME);
-		EntitySearchFilter onLineFilter = new EntitySearchFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, false);
+		EntitySearchFilter onLineFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_ONLINE_FILTER_KEY, false);
 		filters = this.addFilter(filters, onLineFilter);
 		List<String> contentsId = new ArrayList<String>();
 		Connection conn = null;

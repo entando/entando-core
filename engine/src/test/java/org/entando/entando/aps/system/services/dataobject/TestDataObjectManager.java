@@ -61,9 +61,9 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertNotNull(contentIds);
 		assertEquals(25, contentIds.size());
 
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true);
+		EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true);
 		EntitySearchFilter[] filters1 = {creationOrder, descrFilter};
 		contentIds = this._contentManager.searchId(filters1);
 		assertNotNull(contentIds);
@@ -71,14 +71,14 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertEquals(expected1.length, contentIds.size());
 		this.verifyOrder(contentIds, expected1);
 
-		EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "admin", true);
+		EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "admin", true);
 		EntitySearchFilter[] filters2 = {creationOrder, descrFilter, lastEditorFilter};
 		contentIds = this._contentManager.searchId(filters2);
 		assertNotNull(contentIds);
 		assertEquals(expected1.length, contentIds.size());
 		this.verifyOrder(contentIds, expected1);
 
-		descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true, FieldSearchFilter.LikeOptionType.RIGHT);
+		descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true, FieldSearchFilter.LikeOptionType.RIGHT);
 		EntitySearchFilter[] filters3 = {creationOrder, descrFilter};
 		contentIds = this._contentManager.searchId(filters3);
 		System.out.println(contentIds);
@@ -87,13 +87,13 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertEquals(expected3.length, contentIds.size());
 		this.verifyOrder(contentIds, expected3);
 
-		descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true, FieldSearchFilter.LikeOptionType.LEFT);
+		descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true, FieldSearchFilter.LikeOptionType.LEFT);
 		EntitySearchFilter[] filters4 = {creationOrder, descrFilter};
 		contentIds = this._contentManager.searchId(filters4);
 		assertNotNull(contentIds);
 		assertTrue(contentIds.isEmpty());
 
-		descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "1", true, FieldSearchFilter.LikeOptionType.LEFT);
+		descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "1", true, FieldSearchFilter.LikeOptionType.LEFT);
 		EntitySearchFilter[] filters5 = {creationOrder, descrFilter};
 		contentIds = this._contentManager.searchId(filters5);
 		assertNotNull(contentIds);
@@ -104,7 +104,7 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testSearchContents_1_2() throws Throwable {
-		EntitySearchFilter versionFilter = new EntitySearchFilter(IContentManager.CONTENT_CURRENT_VERSION_FILTER_KEY, false, "0.", true);
+		EntitySearchFilter versionFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_CURRENT_VERSION_FILTER_KEY, false, "0.", true);
 		EntitySearchFilter[] filters3 = {versionFilter};
 		List<String> contentIds = this._contentManager.searchId(filters3);
 		assertNotNull(contentIds);
@@ -112,7 +112,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertEquals(expected2.length, contentIds.size());
 		this.verifyOrder(contentIds, expected2);
 
-		versionFilter = new EntitySearchFilter(IContentManager.CONTENT_CURRENT_VERSION_FILTER_KEY, false, ".0", true);
+		versionFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_CURRENT_VERSION_FILTER_KEY, false, ".0", true);
 		EntitySearchFilter[] filters4 = {versionFilter};
 		contentIds = this._contentManager.searchId(filters4);
 		assertNotNull(contentIds);
@@ -123,16 +123,16 @@ public class TestDataObjectManager extends BaseTestCase {
 	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
 	 */
 	public void testSearchContents_1_3() throws Throwable {
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter descrFilter_b = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "cont", true);
+		EntitySearchFilter descrFilter_b = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "cont", true);
 		EntitySearchFilter[] filters1_b = {creationOrder, descrFilter_b};
 		List<String> contentIds = this._contentManager.searchId(filters1_b);
 		assertNotNull(contentIds);
 		assertEquals(0, contentIds.size());
 
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true);
-		EntitySearchFilter lastEditorFilter_b = new EntitySearchFilter(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
+		EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true);
+		EntitySearchFilter lastEditorFilter_b = new EntitySearchFilter(IDataObjectManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
 		EntitySearchFilter[] filters2_b = {creationOrder, descrFilter, lastEditorFilter_b};
 		contentIds = this._contentManager.searchId(filters2_b);
 		assertNotNull(contentIds);
@@ -148,9 +148,9 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertNotNull(contentIds);
 		assertEquals(25, contentIds.size());
 
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "CoNt", true);
+		EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "CoNt", true);
 		EntitySearchFilter[] filters1 = {creationOrder, descrFilter};
 		contentIds = this._contentManager.searchId(filters1);
 		assertNotNull(contentIds);
@@ -158,7 +158,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertEquals(expected1.length, contentIds.size());
 		this.verifyOrder(contentIds, expected1);
 
-		EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
+		EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
 		EntitySearchFilter[] filters2 = {creationOrder, descrFilter, lastEditorFilter};
 		contentIds = this._contentManager.searchId(filters2);
 		assertNotNull(contentIds);
@@ -171,9 +171,9 @@ public class TestDataObjectManager extends BaseTestCase {
 		WorkDataObjectSearcherDAO searcherDao = (WorkDataObjectSearcherDAO) this.getApplicationContext().getBean("WorkDataObjectSearcherDAO");
 		searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "co", true, FieldSearchFilter.LikeOptionType.COMPLETE);
+		EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "co", true, FieldSearchFilter.LikeOptionType.COMPLETE);
 		EntitySearchFilter[] filters1 = {creationOrder, descrFilter};
 		List<String> contentIds = this._contentManager.searchId(filters1);
 		assertNotNull(contentIds);
@@ -181,7 +181,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertEquals(expected1.length, contentIds.size());
 		this.verifyOrder(contentIds, expected1);
 
-		descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "co", true, FieldSearchFilter.LikeOptionType.RIGHT);
+		descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "co", true, FieldSearchFilter.LikeOptionType.RIGHT);
 		EntitySearchFilter[] filters2 = {creationOrder, descrFilter};
 		contentIds = this._contentManager.searchId(filters2);
 		assertNotNull(contentIds);
@@ -189,7 +189,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertEquals(expected2.length, contentIds.size());
 		this.verifyOrder(contentIds, expected2);
 
-		EntitySearchFilter idFilter = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false, "1", true, FieldSearchFilter.LikeOptionType.LEFT);
+		EntitySearchFilter idFilter = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false, "1", true, FieldSearchFilter.LikeOptionType.LEFT);
 		EntitySearchFilter[] filters3 = {creationOrder, descrFilter, idFilter};
 		contentIds = this._contentManager.searchId(filters3);
 		assertNotNull(contentIds);
@@ -197,7 +197,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertEquals(expected3.length, contentIds.size());
 		this.verifyOrder(contentIds, expected3);
 
-		descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "co", true, FieldSearchFilter.LikeOptionType.LEFT);
+		descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "co", true, FieldSearchFilter.LikeOptionType.LEFT);
 		EntitySearchFilter[] filters4 = {creationOrder, descrFilter};
 		contentIds = this._contentManager.searchId(filters4);
 		assertNotNull(contentIds);
@@ -210,14 +210,14 @@ public class TestDataObjectManager extends BaseTestCase {
 		WorkDataObjectSearcherDAO searcherDao = (WorkDataObjectSearcherDAO) this.getApplicationContext().getBean("WorkDataObjectSearcherDAO");
 		searcherDao.setForceCaseSensitiveLikeSearch(true);
 
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "CoNt", true);
+		EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "CoNt", true);
 		EntitySearchFilter[] filters1 = {creationOrder, descrFilter};
 		List<String> contentIds = this._contentManager.searchId(filters1);
 		assertEquals(0, contentIds.size());
 
-		EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
+		EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
 		EntitySearchFilter[] filters2 = {creationOrder, descrFilter, lastEditorFilter};
 		contentIds = this._contentManager.searchId(filters2);
 		assertNotNull(contentIds);
@@ -225,9 +225,9 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testSearchContents_2() throws Throwable {
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter groupFilter = new EntitySearchFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY, false, "coach", false);
+		EntitySearchFilter groupFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_MAIN_GROUP_FILTER_KEY, false, "coach", false);
 		EntitySearchFilter[] filters = {creationOrder, groupFilter};
 		List<String> contentIds = this._contentManager.searchId(filters);
 		assertNotNull(contentIds);
@@ -237,9 +237,9 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testSearchContents_3() throws Throwable {
-		EntitySearchFilter modifyOrder = new EntitySearchFilter(IContentManager.CONTENT_MODIFY_DATE_FILTER_KEY, false);
+		EntitySearchFilter modifyOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_MODIFY_DATE_FILTER_KEY, false);
 		modifyOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter onlineFilter = new EntitySearchFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, false, "encoding=", true);
+		EntitySearchFilter onlineFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_ONLINE_FILTER_KEY, false, "encoding=", true);
 		EntitySearchFilter[] filters = {modifyOrder, onlineFilter};
 		List<String> contentIds = this._contentManager.searchId(filters);
 		assertNotNull(contentIds);
@@ -251,56 +251,56 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testSearchWorkContents() throws Throwable {
-		List<String> contents = this._contentManager.loadWorkContentsId(null, null);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(null, null);
 		assertNotNull(contents);
 		assertEquals(0, contents.size());
 
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
-		EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
+		EntitySearchFilter typeFilter = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
 		EntitySearchFilter[] filters1 = {creationOrder, typeFilter};
-		contents = this._contentManager.loadWorkContentsId(filters1, null);
+		contents = this._contentManager.loadWorkDataObjectsId(filters1, null);
 		assertEquals(0, contents.size());
 
 		List<String> groupCodes = new ArrayList<String>();
 		groupCodes.add("customers");
-		contents = this._contentManager.loadWorkContentsId(filters1, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(filters1, groupCodes);
 		String[] order1 = {"ART102"};
 		assertEquals(order1.length, contents.size());
 		this.verifyOrder(contents, order1);
 
 		groupCodes.add(Group.FREE_GROUP_NAME);
-		EntitySearchFilter statusFilter = new EntitySearchFilter(IContentManager.CONTENT_STATUS_FILTER_KEY, false, DataObject.STATUS_DRAFT, false);
+		EntitySearchFilter statusFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_STATUS_FILTER_KEY, false, DataObject.STATUS_DRAFT, false);
 		EntitySearchFilter[] filters2 = {creationOrder, typeFilter, statusFilter};
-		contents = this._contentManager.loadWorkContentsId(filters2, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(filters2, groupCodes);
 		String[] order2 = {"ART102", "ART187", "ART179", "ART1"};
 		assertEquals(order2.length, contents.size());
 		this.verifyOrder(contents, order2);
 
-		EntitySearchFilter onlineFilter = new EntitySearchFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, false);
+		EntitySearchFilter onlineFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_ONLINE_FILTER_KEY, false);
 		EntitySearchFilter[] filters3 = {creationOrder, typeFilter, onlineFilter};
-		contents = this._contentManager.loadWorkContentsId(filters3, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(filters3, groupCodes);
 		String[] order3 = {"ART102", "ART187", "ART180", "ART1"};
 		assertEquals(order3.length, contents.size());
 		this.verifyOrder(contents, order3);
 
 		onlineFilter.setNullOption(true);
-		contents = this._contentManager.loadWorkContentsId(filters3, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(filters3, groupCodes);
 		String[] order4 = {"ART179"};
 		assertEquals(order4.length, contents.size());
 		this.verifyOrder(contents, order4);
 
 		onlineFilter.setNullOption(false);
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "scr", true);
+		EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "scr", true);
 		EntitySearchFilter[] filters5 = {creationOrder, typeFilter, onlineFilter, descrFilter};
-		contents = this._contentManager.loadWorkContentsId(filters5, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(filters5, groupCodes);
 		String[] order5 = {"ART187", "ART180"};
 		assertEquals(order5.length, contents.size());
 		this.verifyOrder(contents, order5);
 
 		groupCodes.clear();
 		groupCodes.add(Group.ADMINS_GROUP_NAME);
-		contents = this._contentManager.loadWorkContentsId(null, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(null, groupCodes);
 		assertNotNull(contents);
 		assertEquals(25, contents.size());
 	}
@@ -312,17 +312,17 @@ public class TestDataObjectManager extends BaseTestCase {
 		List<String> groupCodes = new ArrayList<String>();
 		groupCodes.add("customers");
 		groupCodes.add(Group.FREE_GROUP_NAME);
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
 
-		EntitySearchFilter descrFilter_1 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "eScR", true);
+		EntitySearchFilter descrFilter_1 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "eScR", true);
 		EntitySearchFilter[] filters_1 = {creationOrder, descrFilter_1};
-		List<String> contents = this._contentManager.loadWorkContentsId(filters_1, groupCodes);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(filters_1, groupCodes);
 		assertEquals(0, contents.size());
 
-		EntitySearchFilter descrFilter_2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "escr", true);
+		EntitySearchFilter descrFilter_2 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "escr", true);
 		EntitySearchFilter[] filters_2 = {creationOrder, descrFilter_2};
-		contents = this._contentManager.loadWorkContentsId(filters_2, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(filters_2, groupCodes);
 		String[] order = {"ALL4", "ART187", "ART180", "ART179"};
 		assertEquals(order.length, contents.size());
 		this.verifyOrder(contents, order);
@@ -336,12 +336,12 @@ public class TestDataObjectManager extends BaseTestCase {
 		List<String> groupCodes = new ArrayList<String>();
 		groupCodes.add("customers");
 		groupCodes.add(Group.FREE_GROUP_NAME);
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
 
-		EntitySearchFilter descrFilter_1 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "eScR", true);
+		EntitySearchFilter descrFilter_1 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "eScR", true);
 		EntitySearchFilter[] filters_1 = {creationOrder, descrFilter_1};
-		List<String> contents = this._contentManager.loadWorkContentsId(filters_1, groupCodes);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(filters_1, groupCodes);
 		String[] order = {"ALL4", "ART187", "ART180", "ART179"};
 		assertEquals(order.length, contents.size());
 		this.verifyOrder(contents, order);
@@ -350,42 +350,42 @@ public class TestDataObjectManager extends BaseTestCase {
 	public void testSearchWorkContents_3() throws Throwable {
 		List<String> groupCodes = new ArrayList<String>();
 		groupCodes.add(Group.ADMINS_GROUP_NAME);
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {creationOrder};
 		String[] categories_1 = {"general_cat2"};
-		List<String> contents = this._contentManager.loadWorkContentsId(categories_1, filters, groupCodes);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(categories_1, filters, groupCodes);
 		String[] order_a = {"ART120", "ART112", "ART111", "EVN193", "ART179"};
 		assertEquals(order_a.length, contents.size());
 		this.verifyOrder(contents, order_a);
 
 		String[] categories_2 = {"general_cat1", "general_cat2"};
-		contents = this._contentManager.loadWorkContentsId(categories_2, filters, groupCodes);
+		contents = this._contentManager.loadWorkDataObjectsId(categories_2, filters, groupCodes);
 		String[] order_b = {"ART111", "ART179"};
 		assertEquals(order_b.length, contents.size());
 		assertEquals(order_b[0], contents.get(0));
 
-		DataObject newContent = this._contentManager.loadContent("EVN193", false);
+		DataObject newContent = this._contentManager.loadDataObject("EVN193", false);
 		newContent.setId(null);
 		try {
-			this._contentManager.saveContent(newContent);
-			contents = this._contentManager.loadWorkContentsId(categories_1, filters, groupCodes);
+			this._contentManager.saveDataObject(newContent);
+			contents = this._contentManager.loadWorkDataObjectsId(categories_1, filters, groupCodes);
 			String[] order_c = {newContent.getId(), "ART120", "ART112", "ART111", "EVN193", "ART179"};
 			assertEquals(order_c.length, contents.size());
 			this.verifyOrder(contents, order_c);
 
 			ICategoryManager categoryManager = (ICategoryManager) this.getService(SystemConstants.CATEGORY_MANAGER);
 			newContent.addCategory(categoryManager.getCategory("general_cat1"));
-			this._contentManager.saveContent(newContent);
-			contents = this._contentManager.loadWorkContentsId(categories_2, filters, groupCodes);
+			this._contentManager.saveDataObject(newContent);
+			contents = this._contentManager.loadWorkDataObjectsId(categories_2, filters, groupCodes);
 			String[] order_d = {newContent.getId(), "ART111", "ART179"};
 			assertEquals(order_d.length, contents.size());
 			this.verifyOrder(contents, order_d);
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			this._contentManager.deleteContent(newContent);
-			assertNull(this._contentManager.loadContent(newContent.getId(), false));
+			this._contentManager.deleteDataObject(newContent);
+			assertNull(this._contentManager.loadDataObject(newContent.getId(), false));
 		}
 	}
 
@@ -396,7 +396,7 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadContent() throws Throwable {
-		DataObject content = this._contentManager.loadContent("ART111", false);
+		DataObject content = this._contentManager.loadDataObject("ART111", false);
 		assertEquals(DataObject.STATUS_PUBLIC, content.getStatus());
 		assertEquals("coach", content.getMainGroup());
 		assertEquals(2, content.getGroups().size());
@@ -422,7 +422,7 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadFullContent() throws Throwable {
-		DataObject content = this._contentManager.loadContent("ALL4", false);
+		DataObject content = this._contentManager.loadDataObject("ALL4", false);
 		assertEquals(DataObject.STATUS_PUBLIC, content.getStatus());
 		assertEquals(Group.FREE_GROUP_NAME, content.getMainGroup());
 		assertEquals(0, content.getGroups().size());
@@ -538,29 +538,29 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testGetContentTypes() {
-		Map<String, SmallDataType> smallDataTypes = _contentManager.getSmallContentTypesMap();
+		Map<String, SmallDataType> smallDataTypes = _contentManager.getSmallDataTypesMap();
 		assertEquals(4, smallDataTypes.size());
 	}
 
 	public void testCreateContent() {
-		DataObject contentType = _contentManager.createContentType("ART");
+		DataObject contentType = _contentManager.createDataObject("ART");
 		assertNotNull(contentType);
 	}
 
 	public void testCreateContentWithViewPage() {
-		DataObject content = _contentManager.createContentType("ART");
+		DataObject content = _contentManager.createDataObject("ART");
 		String viewPage = content.getViewPage();
 		assertEquals(viewPage, "contentview");
 	}
 
 	public void testCreateContentWithDefaultModel() {
-		DataObject content = _contentManager.createContentType("ART");
+		DataObject content = _contentManager.createDataObject("ART");
 		String defaultModel = content.getDefaultModel();
 		assertEquals(defaultModel, "1");
 	}
 
 	public void testGetXML() throws Throwable {
-		DataObject content = this._contentManager.createContentType("ART");
+		DataObject content = this._contentManager.createDataObject("ART");
 		content.setId("ART1");
 		content.setTypeCode("Articolo");
 		content.setTypeDescription("Articolo");
@@ -583,12 +583,12 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadPublicContents() throws ApsSystemException {
-		List<String> contents = _contentManager.loadPublicContentsId(null, null, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId(null, null, null);
 		assertEquals(15, contents.size());
 	}
 
 	public void testLoadPublicEvents_1() throws ApsSystemException {
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, null, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, null, null);
 		String[] expectedFreeContentsId = {"EVN194", "EVN193",
 			"EVN24", "EVN23", "EVN25", "EVN20", "EVN21", "EVN192", "EVN191"};
 		assertEquals(expectedFreeContentsId.length, contents.size());
@@ -599,7 +599,7 @@ public class TestDataObjectManager extends BaseTestCase {
 
 		List<String> groups = new ArrayList<String>();
 		groups.add("coach");
-		contents = _contentManager.loadPublicContentsId("EVN", null, null, groups);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, null, groups);
 		assertEquals(expectedFreeContentsId.length + 2, contents.size());
 		for (int i = 0; i < expectedFreeContentsId.length; i++) {
 			assertTrue(contents.contains(expectedFreeContentsId[i]));
@@ -615,20 +615,20 @@ public class TestDataObjectManager extends BaseTestCase {
 		Date start = DateConverter.parseDate("1997-06-10", "yyyy-MM-dd");
 		Date end = DateConverter.parseDate("2020-09-19", "yyyy-MM-dd");
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, start, end);
-		EntitySearchFilter filter2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Even", true);
+		EntitySearchFilter filter2 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "Even", true);
 		filter2.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter, filter2};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		assertEquals(2, contents.size());
 		assertEquals("EVN193", contents.get(0));
 		assertEquals("EVN192", contents.get(1));
 
-		filter2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false);
+		filter2 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false);
 		filter2.setOrder(EntitySearchFilter.DESC_ORDER);
 
 		EntitySearchFilter[] filters2 = {filter, filter2};
-		contents = _contentManager.loadPublicContentsId("EVN", null, filters2, groups);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters2, groups);
 
 		String[] expectedOrderedContentsId = {"EVN25", "EVN21", "EVN20", "EVN41", "EVN193",
 			"EVN192", "EVN103", "EVN23", "EVN24"};
@@ -637,7 +637,7 @@ public class TestDataObjectManager extends BaseTestCase {
 			assertEquals(expectedOrderedContentsId[i], contents.get(i));
 		}
 
-		contents = _contentManager.loadPublicContentsId("EVN", null, filters2, null);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters2, null);
 		String[] expectedFreeOrderedContentsId = {"EVN25", "EVN21", "EVN20", "EVN193",
 			"EVN192", "EVN23", "EVN24"};
 		assertEquals(expectedFreeOrderedContentsId.length, contents.size());
@@ -657,11 +657,11 @@ public class TestDataObjectManager extends BaseTestCase {
 		Date start = DateConverter.parseDate("1997-06-10", "yyyy-MM-dd");
 		Date end = DateConverter.parseDate("2020-09-19", "yyyy-MM-dd");
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, start, end);
-		EntitySearchFilter filter2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "even", true);
+		EntitySearchFilter filter2 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "even", true);
 		filter2.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter, filter2};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		assertEquals(2, contents.size());
 		assertEquals("EVN193", contents.get(0));
 		assertEquals("EVN192", contents.get(1));
@@ -678,18 +678,18 @@ public class TestDataObjectManager extends BaseTestCase {
 		Date start = DateConverter.parseDate("1997-06-10", "yyyy-MM-dd");
 		Date end = DateConverter.parseDate("2020-09-19", "yyyy-MM-dd");
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, start, end);
-		EntitySearchFilter filter_x1 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "even", true);
+		EntitySearchFilter filter_x1 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "even", true);
 		filter_x1.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters_1 = {filter, filter_x1};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters_1, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters_1, groups);
 		assertEquals(0, contents.size());
 
-		EntitySearchFilter filter_x2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Even", true);
+		EntitySearchFilter filter_x2 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "Even", true);
 		filter_x2.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters_2 = {filter, filter_x2};
 
-		contents = _contentManager.loadPublicContentsId("EVN", null, filters_2, groups);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters_2, groups);
 		assertEquals(2, contents.size());
 		assertEquals("EVN193", contents.get(0));
 		assertEquals("EVN192", contents.get(1));
@@ -702,7 +702,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, value, false);
 		EntitySearchFilter[] filters = {filter};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		assertEquals(1, contents.size());
 		assertEquals("EVN192", contents.get(0));
 	}
@@ -721,7 +721,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter1.setLangCode("it");
 		filter1.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters1 = {filter1};
-		List<String> contents = this._contentManager.loadPublicContentsId("EVN", null, filters1, groups);
+		List<String> contents = this._contentManager.loadPublicDataObjectsId("EVN", null, filters1, groups);
 		String[] expectedOrderedContentsId = {"EVN25", "EVN41", "EVN20", "EVN21", "EVN23"};
 		assertEquals(expectedOrderedContentsId.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId.length; i++) {
@@ -731,7 +731,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter1.setLangCode("it");
 		filter1.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters2 = {filter1};
-		contents = this._contentManager.loadPublicContentsId("EVN", null, filters2, groups);
+		contents = this._contentManager.loadPublicDataObjectsId("EVN", null, filters2, groups);
 		String[] expectedOrderedContentsId2 = {"EVN25", "EVN41", "EVN20", "EVN21", "EVN23", "EVN24"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -748,7 +748,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, allowedDates, false);
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId2 = {"EVN23", "EVN192"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -773,7 +773,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter.setLangCode("it");
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId2 = {"EVN20", "EVN21", "EVN23"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -799,7 +799,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		EntitySearchFilter filter2 = new EntitySearchFilter("DataInizio", true);
 		filter2.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter1, filter2};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId2 = {"EVN192", "EVN20"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -824,7 +824,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter.setLangCode("it");
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId2 = {"EVN24"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -849,7 +849,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter.setLangCode("it");
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId2 = {"EVN21", "EVN23"};//not EVN25
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -874,7 +874,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter.setLangCode("it");
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = this._contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = this._contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId2 = {"EVN25", "EVN21", "EVN23"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -899,7 +899,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter.setLangCode("it");
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = this._contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = this._contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId2 = {"EVN25"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -917,11 +917,11 @@ public class TestDataObjectManager extends BaseTestCase {
 		allowedDescription.add("descrizione");//"ART179" "ART180" "ART187"
 		allowedDescription.add("on line");//"ART179"
 		allowedDescription.add("customers");//"ART102" "RAH101" ...but not included because the standard search is case sensitive
-		EntitySearchFilter filter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, allowedDescription, true);
-		EntitySearchFilter filter2 = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false);
+		EntitySearchFilter filter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, allowedDescription, true);
+		EntitySearchFilter filter2 = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false);
 		filter2.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter, filter2};
-		List<String> contents = _contentManager.loadWorkContentsId(filters, groups);
+		List<String> contents = _contentManager.loadWorkDataObjectsId(filters, groups);
 		String[] expectedOrderedContentsId2 = {"ART179", "ART180", "ART187"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -940,11 +940,11 @@ public class TestDataObjectManager extends BaseTestCase {
 		allowedDescription.add("descrizione");//"ART179" "ART180" "ART187"
 		allowedDescription.add("on line");//"ART179"
 		allowedDescription.add("customers");//"ART102" "RAH101"
-		EntitySearchFilter filter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, allowedDescription, true);
-		EntitySearchFilter filter2 = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false);
+		EntitySearchFilter filter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, allowedDescription, true);
+		EntitySearchFilter filter2 = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false);
 		filter2.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter, filter2};
-		List<String> contents = _contentManager.loadWorkContentsId(filters, groups);
+		List<String> contents = _contentManager.loadWorkDataObjectsId(filters, groups);
 		String[] expectedOrderedContentsId2 = {"ART102", "ART179", "ART180", "ART187", "RAH101"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
@@ -953,10 +953,10 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadOrderedPublicEvents_1() throws ApsSystemException {
-		EntitySearchFilter filterForDescr = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false);
+		EntitySearchFilter filterForDescr = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false);
 		filterForDescr.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filterForDescr};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 
 		String[] expectedFreeContentsId = {"EVN24", "EVN23", "EVN191",
 			"EVN192", "EVN193", "EVN194", "EVN20", "EVN21", "EVN25"};
@@ -966,7 +966,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		}
 
 		filterForDescr.setOrder(EntitySearchFilter.DESC_ORDER);
-		contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 
 		assertEquals(expectedFreeContentsId.length, contents.size());
 		for (int i = 0; i < expectedFreeContentsId.length; i++) {
@@ -975,11 +975,11 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadOrderedPublicEvents_2() throws ApsSystemException {
-		EntitySearchFilter filterForCreation = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter filterForCreation = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		filterForCreation.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filterForCreation};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 		String[] expectedFreeOrderedContentsId = {"EVN191", "EVN192", "EVN193", "EVN194",
 			"EVN20", "EVN23", "EVN24", "EVN25", "EVN21"};
 		assertEquals(expectedFreeOrderedContentsId.length, contents.size());
@@ -988,7 +988,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		}
 
 		filterForCreation.setOrder(EntitySearchFilter.DESC_ORDER);
-		contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 		assertEquals(expectedFreeOrderedContentsId.length, contents.size());
 		for (int i = 0; i < expectedFreeOrderedContentsId.length; i++) {
 			assertEquals(expectedFreeOrderedContentsId[expectedFreeOrderedContentsId.length - i - 1], contents.get(i));
@@ -996,13 +996,13 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadOrderedPublicEvents_3() throws ApsSystemException {
-		EntitySearchFilter filterForCreation = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter filterForCreation = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		filterForCreation.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter filterForDate = new EntitySearchFilter("DataInizio", true);
 		filterForDate.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filterForCreation, filterForDate};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 		String[] expectedFreeOrderedContentsId = {"EVN21", "EVN25", "EVN24", "EVN23",
 			"EVN20", "EVN194", "EVN193", "EVN192", "EVN191"};
 		assertEquals(expectedFreeOrderedContentsId.length, contents.size());
@@ -1012,7 +1012,7 @@ public class TestDataObjectManager extends BaseTestCase {
 
 		EntitySearchFilter[] filters2 = {filterForDate, filterForCreation};
 
-		List<String> contents2 = _contentManager.loadPublicContentsId("EVN", null, filters2, null);
+		List<String> contents2 = _contentManager.loadPublicDataObjectsId("EVN", null, filters2, null);
 		String[] expectedFreeOrderedContentsId2 = {"EVN194", "EVN193", "EVN24",
 			"EVN23", "EVN25", "EVN20", "EVN21", "EVN192", "EVN191"};
 		assertEquals(expectedFreeOrderedContentsId2.length, contents2.size());
@@ -1022,20 +1022,20 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadOrderedPublicEvents_4() throws Throwable {
-		DataObject masterContent = this._contentManager.loadContent("EVN193", true);
+		DataObject masterContent = this._contentManager.loadDataObject("EVN193", true);
 		masterContent.setId(null);
 		DateAttribute dateAttribute = (DateAttribute) masterContent.getAttribute("DataInizio");
 		dateAttribute.setDate(DateConverter.parseDate("17/06/2019", "dd/MM/yyyy"));
 		try {
-			this._contentManager.saveContent(masterContent);
-			this._contentManager.insertOnLineContent(masterContent);
+			this._contentManager.saveDataObject(masterContent);
+			this._contentManager.insertOnLineDataObject(masterContent);
 			this.waitNotifyingThread();
 
 			EntitySearchFilter filterForDate = new EntitySearchFilter("DataInizio", true);
 			filterForDate.setOrder(EntitySearchFilter.DESC_ORDER);
 			EntitySearchFilter[] filters = {filterForDate};
 
-			List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+			List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 			String[] expectedFreeOrderedContentsId = {"EVN194", masterContent.getId(), "EVN193", "EVN24",
 				"EVN23", "EVN25", "EVN20", "EVN21", "EVN192", "EVN191"};
 			assertEquals(expectedFreeOrderedContentsId.length, contents.size());
@@ -1046,8 +1046,8 @@ public class TestDataObjectManager extends BaseTestCase {
 			throw t;
 		} finally {
 			if (null != masterContent.getId() && !"EVN193".equals(masterContent.getId())) {
-				this._contentManager.removeOnLineContent(masterContent);
-				this._contentManager.deleteContent(masterContent);
+				this._contentManager.removeOnLineDataObject(masterContent);
+				this._contentManager.deleteDataObject(masterContent);
 			}
 		}
 	}
@@ -1057,7 +1057,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, today, null);
 		filter.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 		String[] expectedOrderedContentsId = {"EVN21", "EVN20", "EVN25", "EVN23",
 			"EVN24", "EVN193", "EVN194"};
 		assertEquals(expectedOrderedContentsId.length, contents.size());
@@ -1071,7 +1071,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, today, null);
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 		String[] expectedOrderedContentsId = {"EVN194", "EVN193", "EVN24",
 			"EVN23", "EVN25", "EVN20", "EVN21"};
 		assertEquals(expectedOrderedContentsId.length, contents.size());
@@ -1087,7 +1087,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, today, null);
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId = {"EVN194", "EVN193", "EVN24",
 			"EVN23", "EVN41", "EVN25", "EVN20", "EVN21"};
 		assertEquals(expectedOrderedContentsId.length, contents.size());
@@ -1103,7 +1103,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 		String[] expectedOrderedContentsId = {"EVN191", "EVN192",
 			"EVN21", "EVN20", "EVN25", "EVN23"};
 		assertEquals(expectedOrderedContentsId.length, contents.size());
@@ -1119,7 +1119,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, null);
 		String[] expectedOrderedContentsId = {"EVN23", "EVN25",
 			"EVN20", "EVN21", "EVN192", "EVN191"};
 		assertEquals(expectedOrderedContentsId.length, contents.size());
@@ -1136,7 +1136,7 @@ public class TestDataObjectManager extends BaseTestCase {
 
 		List<String> groups = new ArrayList<String>();
 		groups.add("coach");
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, filters, groups);
 		String[] expectedOrderedContentsId = {"EVN191", "EVN192", "EVN103",
 			"EVN21", "EVN20", "EVN25", "EVN41", "EVN23"};
 		assertEquals(expectedOrderedContentsId.length, contents.size());
@@ -1149,7 +1149,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 		String[] categories1 = {"general_cat1"};
-		List<String> contents = this._contentManager.loadWorkContentsId(categories1, null, groups);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(categories1, null, groups);
 		assertEquals(5, contents.size());
 		assertTrue(contents.contains("ART179"));
 		assertTrue(contents.contains("ART180"));
@@ -1159,7 +1159,7 @@ public class TestDataObjectManager extends BaseTestCase {
 
 		String[] categories2 = {"general_cat1", "general_cat2"};
 
-		contents = this._contentManager.loadWorkContentsId(categories2, null, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories2, null, groups);
 		assertEquals(2, contents.size());
 		assertTrue(contents.contains("ART111"));
 		assertTrue(contents.contains("ART179"));
@@ -1169,9 +1169,9 @@ public class TestDataObjectManager extends BaseTestCase {
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 		String[] categories1 = {"general_cat1"};
-		EntitySearchFilter filter1 = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
+		EntitySearchFilter filter1 = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
 		EntitySearchFilter[] filters = {filter1};
-		List<String> contents = this._contentManager.loadWorkContentsId(categories1, filters, groups);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(categories1, filters, groups);
 		assertEquals(4, contents.size());
 		assertTrue(contents.contains("ART102"));
 		assertTrue(contents.contains("ART111"));
@@ -1179,7 +1179,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertTrue(contents.contains("ART179"));
 
 		String[] categories2 = {"general_cat2"};
-		contents = this._contentManager.loadWorkContentsId(categories2, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories2, filters, groups);
 		assertEquals(4, contents.size());
 		assertTrue(contents.contains("ART111"));
 		assertTrue(contents.contains("ART112"));
@@ -1187,11 +1187,11 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertTrue(contents.contains("ART179"));
 
 		String[] categories12 = {"general_cat1", "general_cat2"};
-		contents = this._contentManager.loadWorkContentsId(categories12, false, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories12, false, filters, groups);
 		assertEquals(2, contents.size());
 		assertTrue(contents.contains("ART111"));
 		assertTrue(contents.contains("ART179"));
-		contents = this._contentManager.loadWorkContentsId(categories12, true, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories12, true, filters, groups);
 		assertEquals(6, contents.size());
 		assertTrue(contents.contains("ART102"));
 		assertTrue(contents.contains("ART111"));
@@ -1201,17 +1201,17 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertTrue(contents.contains("ART179"));
 
 		String[] categories3 = {"general_cat3"};
-		contents = this._contentManager.loadWorkContentsId(categories3, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories3, filters, groups);
 		assertEquals(3, contents.size());
 		assertTrue(contents.contains("ART120"));
 		assertTrue(contents.contains("ART121"));
 		assertTrue(contents.contains("ART122"));
 
 		String[] categories23 = {"general_cat2", "general_cat3"};
-		contents = this._contentManager.loadWorkContentsId(categories23, false, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories23, false, filters, groups);
 		assertEquals(1, contents.size());
 		assertTrue(contents.contains("ART120"));
-		contents = this._contentManager.loadWorkContentsId(categories23, true, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories23, true, filters, groups);
 		assertEquals(6, contents.size());
 		assertTrue(contents.contains("ART111"));
 		assertTrue(contents.contains("ART112"));
@@ -1221,9 +1221,9 @@ public class TestDataObjectManager extends BaseTestCase {
 		assertTrue(contents.contains("ART122"));
 
 		String[] categories123 = {"general_cat1", "general_cat2", "general_cat3"};
-		contents = this._contentManager.loadWorkContentsId(categories123, false, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories123, false, filters, groups);
 		assertEquals(0, contents.size());
-		contents = this._contentManager.loadWorkContentsId(categories123, true, filters, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(categories123, true, filters, groups);
 		assertEquals(8, contents.size());
 		assertTrue(contents.contains("ART102"));
 		assertTrue(contents.contains("ART111"));
@@ -1237,20 +1237,20 @@ public class TestDataObjectManager extends BaseTestCase {
 
 	public void testLoadPublicContentsForCategory() throws ApsSystemException {
 		String[] categories1 = {"evento"};
-		List<String> contents = _contentManager.loadPublicContentsId(categories1, null, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId(categories1, null, null);
 		assertEquals(2, contents.size());
 		assertTrue(contents.contains("EVN192"));
 		assertTrue(contents.contains("EVN193"));
 
 		String[] categories2 = {"cat1"};
-		contents = _contentManager.loadPublicContentsId(categories2, null, null);
+		contents = _contentManager.loadPublicDataObjectsId(categories2, null, null);
 		assertEquals(1, contents.size());
 		assertTrue(contents.contains("ART180"));
 	}
 
 	public void testLoadPublicEventsForCategory_1() throws ApsSystemException {
 		String[] categories = {"evento"};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", categories, null, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", categories, null, null);
 		assertEquals(2, contents.size());
 		assertTrue(contents.contains("EVN192"));
 		assertTrue(contents.contains("EVN193"));
@@ -1259,7 +1259,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, null, today);
 		filter.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter};
-		contents = _contentManager.loadPublicContentsId("EVN", categories, filters, null);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", categories, filters, null);
 		assertEquals(1, contents.size());
 		assertTrue(contents.contains("EVN192"));
 	}
@@ -1268,49 +1268,49 @@ public class TestDataObjectManager extends BaseTestCase {
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 		String[] categories1 = {"general_cat1"};
-		EntitySearchFilter filter1 = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
+		EntitySearchFilter filter1 = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
 		EntitySearchFilter[] filters = {filter1};
-		List<String> contents = this._contentManager.loadPublicContentsId(categories1, filters, groups);
+		List<String> contents = this._contentManager.loadPublicDataObjectsId(categories1, filters, groups);
 		assertEquals(2, contents.size());
 		assertTrue(contents.contains("ART102"));
 		assertTrue(contents.contains("ART111"));
 
 		String[] categories2 = {"general_cat2"};
-		contents = this._contentManager.loadPublicContentsId(categories2, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories2, filters, groups);
 		assertEquals(2, contents.size());
 		assertTrue(contents.contains("ART111"));
 		assertTrue(contents.contains("ART120"));
 
 		String[] categories12 = {"general_cat1", "general_cat2"};
-		contents = this._contentManager.loadPublicContentsId(categories12, false, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories12, false, filters, groups);
 		assertEquals(1, contents.size());
 		assertTrue(contents.contains("ART111"));
-		contents = this._contentManager.loadPublicContentsId(categories12, true, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories12, true, filters, groups);
 		assertEquals(3, contents.size());
 		assertTrue(contents.contains("ART102"));
 		assertTrue(contents.contains("ART111"));
 		assertTrue(contents.contains("ART120"));
 
 		String[] categories3 = {"general_cat3"};
-		contents = this._contentManager.loadPublicContentsId(categories3, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories3, filters, groups);
 		assertEquals(2, contents.size());
 		assertTrue(contents.contains("ART120"));
 		assertTrue(contents.contains("ART122"));
 
 		String[] categories23 = {"general_cat2", "general_cat3"};
-		contents = this._contentManager.loadPublicContentsId(categories23, false, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories23, false, filters, groups);
 		assertEquals(1, contents.size());
 		assertTrue(contents.contains("ART120"));
-		contents = this._contentManager.loadPublicContentsId(categories23, true, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories23, true, filters, groups);
 		assertEquals(3, contents.size());
 		assertTrue(contents.contains("ART111"));
 		assertTrue(contents.contains("ART120"));
 		assertTrue(contents.contains("ART122"));
 
 		String[] categories123 = {"general_cat1", "general_cat2", "general_cat3"};
-		contents = this._contentManager.loadPublicContentsId(categories123, false, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories123, false, filters, groups);
 		assertEquals(0, contents.size());
-		contents = this._contentManager.loadPublicContentsId(categories123, true, filters, groups);
+		contents = this._contentManager.loadPublicDataObjectsId(categories123, true, filters, groups);
 		assertEquals(4, contents.size());
 		assertTrue(contents.contains("ART102"));
 		assertTrue(contents.contains("ART111"));
@@ -1319,7 +1319,7 @@ public class TestDataObjectManager extends BaseTestCase {
 	}
 
 	public void testLoadEventsForGroup() throws ApsSystemException {
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, null, null);
+		List<String> contents = _contentManager.loadPublicDataObjectsId("EVN", null, null, null);
 		String[] expectedFreeContentsId = {"EVN191", "EVN192", "EVN193", "EVN194",
 			"EVN20", "EVN23", "EVN21", "EVN24", "EVN25"};
 		assertEquals(expectedFreeContentsId.length, contents.size());
@@ -1332,7 +1332,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		allowedGroup.add(Group.FREE_GROUP_NAME);
 		allowedGroup.add("customers");
 
-		contents = _contentManager.loadPublicContentsId("EVN", null, null, allowedGroup);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, null, allowedGroup);
 		assertEquals(expectedFreeContentsId.length, contents.size());
 		for (int i = 0; i < expectedFreeContentsId.length; i++) {
 			assertTrue(contents.contains(expectedFreeContentsId[i]));
@@ -1343,7 +1343,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		allowedGroup.remove(Group.FREE_GROUP_NAME);
 		allowedGroup.add(Group.ADMINS_GROUP_NAME);
 
-		contents = _contentManager.loadPublicContentsId("EVN", null, null, allowedGroup);
+		contents = _contentManager.loadPublicDataObjectsId("EVN", null, null, allowedGroup);
 		assertEquals(11, contents.size());
 		for (int i = 0; i < expectedFreeContentsId.length; i++) {
 			assertTrue(contents.contains(expectedFreeContentsId[i]));
@@ -1356,15 +1356,15 @@ public class TestDataObjectManager extends BaseTestCase {
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 
-		EntitySearchFilter filter0 = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false);
+		EntitySearchFilter filter0 = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false);
 		filter0.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter filter1 = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", true);
+		EntitySearchFilter filter1 = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", true);
 		EntitySearchFilter filter2 = new EntitySearchFilter("Numero", true);
 		filter2.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter0, filter1, filter2};
 		String[] expectedContentsId = {"ART120", "ART121"};
 
-		List<String> contents = this._contentManager.loadWorkContentsId(filters, groups);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(filters, groups);
 		assertEquals(expectedContentsId.length, contents.size());
 		for (int i = 0; i < expectedContentsId.length; i++) {
 			assertEquals(expectedContentsId[i], contents.get(i));
@@ -1375,7 +1375,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		String[] expectedContentsId2 = {"ART1", "ART102", "ART104",
 			"ART111", "ART112", "ART122", "ART179", "ART180", "ART187"};
 
-		contents = this._contentManager.loadWorkContentsId(filters2, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(filters2, groups);
 		assertEquals(expectedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedContentsId2.length; i++) {
 			assertEquals(expectedContentsId2[i], contents.get(i));
@@ -1385,16 +1385,16 @@ public class TestDataObjectManager extends BaseTestCase {
 	public void testLoadWorkContentsByAttribute_2() throws ApsSystemException {
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
-		EntitySearchFilter filter0 = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false);
+		EntitySearchFilter filter0 = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false);
 		filter0.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter filter1 = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "EVN", true);
+		EntitySearchFilter filter1 = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "EVN", true);
 		EntitySearchFilter filter2 = new EntitySearchFilter("Titolo", true);
 		filter2.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filter0, filter1, filter2};
 		String[] expectedContentsId = {"EVN103", "EVN191", "EVN192",
 			"EVN193", "EVN194", "EVN20", "EVN21", "EVN23", "EVN24", "EVN25", "EVN41"};
 
-		List<String> contents = this._contentManager.loadWorkContentsId(filters, groups);
+		List<String> contents = this._contentManager.loadWorkDataObjectsId(filters, groups);
 		assertEquals(expectedContentsId.length, contents.size());
 		for (int i = 0; i < expectedContentsId.length; i++) {
 			assertEquals(expectedContentsId[i], contents.get(i));
@@ -1403,12 +1403,12 @@ public class TestDataObjectManager extends BaseTestCase {
 		filter2.setNullOption(true);
 		EntitySearchFilter[] filters2 = {filter0, filter1, filter2};
 
-		contents = this._contentManager.loadWorkContentsId(filters2, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(filters2, groups);
 		assertEquals(0, contents.size());
 
 		filter2.setLangCode("it");
 		EntitySearchFilter[] filters3 = {filter0, filter1, filter2};
-		contents = this._contentManager.loadWorkContentsId(filters3, groups);
+		contents = this._contentManager.loadWorkDataObjectsId(filters3, groups);
 		assertEquals(0, contents.size());
 	}
 
@@ -1419,26 +1419,26 @@ public class TestDataObjectManager extends BaseTestCase {
 		try {
 			newContentIds = this.addDraftContentsForTest(masterContentIds, false);
 			for (int i = 0; i < newContentIds.length; i++) {
-				DataObject content = this._contentManager.loadContent(newContentIds[i], false);
+				DataObject content = this._contentManager.loadDataObject(newContentIds[i], false);
 				TextAttribute titleAttribute = (TextAttribute) content.getAttribute("Titolo");
 				if (i % 2 == 1 && i < 4) {
 					titleAttribute.setText(null, "en");
 				}
 				titleAttribute.setText(null, "it");
-				this._contentManager.saveContent(content);
+				this._contentManager.saveDataObject(content);
 			}
 			groups.add(Group.ADMINS_GROUP_NAME);
-			EntitySearchFilter filter0 = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+			EntitySearchFilter filter0 = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 			filter0.setOrder(EntitySearchFilter.ASC_ORDER);
-			EntitySearchFilter filter1 = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "EVN", false);
-			EntitySearchFilter filter2 = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false);
+			EntitySearchFilter filter1 = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "EVN", false);
+			EntitySearchFilter filter2 = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false);
 			filter2.setOrder(EntitySearchFilter.ASC_ORDER);
 			EntitySearchFilter[] filters = {filter0, filter1, filter2};
 			String[] expectedContentsId = {"EVN191", "EVN192", "EVN193", "EVN194",
 				"EVN103", "EVN20", "EVN23", "EVN24", "EVN25", "EVN41", "EVN21",
 				newContentIds[0], newContentIds[1], newContentIds[2], newContentIds[3], newContentIds[4], newContentIds[5]};
 
-			List<String> contents = this._contentManager.loadWorkContentsId(filters, groups);
+			List<String> contents = this._contentManager.loadWorkDataObjectsId(filters, groups);
 			assertEquals(expectedContentsId.length, contents.size());
 			for (int i = 0; i < expectedContentsId.length; i++) {
 				assertEquals(expectedContentsId[i], contents.get(i));
@@ -1452,7 +1452,7 @@ public class TestDataObjectManager extends BaseTestCase {
 				"EVN103", "EVN20", "EVN23", "EVN24", "EVN25", "EVN41", "EVN21",
 				newContentIds[0], newContentIds[2]};
 
-			contents = this._contentManager.loadWorkContentsId(filters1, groups);
+			contents = this._contentManager.loadWorkDataObjectsId(filters1, groups);
 			assertEquals(expectedContentsId1.length, contents.size());
 			for (int i = 0; i < expectedContentsId1.length; i++) {
 				assertEquals(expectedContentsId1[i], contents.get(i));
@@ -1464,7 +1464,7 @@ public class TestDataObjectManager extends BaseTestCase {
 			String[] expectedContentsId2 = {newContentIds[0], newContentIds[1],
 				newContentIds[2], newContentIds[3], newContentIds[4], newContentIds[5]};
 
-			contents = this._contentManager.loadWorkContentsId(filters2, groups);
+			contents = this._contentManager.loadWorkDataObjectsId(filters2, groups);
 			assertEquals(expectedContentsId2.length, contents.size());
 			for (int i = 0; i < expectedContentsId2.length; i++) {
 				assertEquals(expectedContentsId2[i], contents.get(i));
@@ -1475,7 +1475,7 @@ public class TestDataObjectManager extends BaseTestCase {
 			EntitySearchFilter[] filters3 = {filter0, filter1, filter2, filter3};
 			String[] expectedContentsId3 = {newContentIds[1], newContentIds[3], newContentIds[4], newContentIds[5]};
 
-			contents = this._contentManager.loadWorkContentsId(filters3, groups);
+			contents = this._contentManager.loadWorkDataObjectsId(filters3, groups);
 			assertEquals(expectedContentsId3.length, contents.size());
 			for (int i = 0; i < expectedContentsId3.length; i++) {
 				assertEquals(expectedContentsId3[i], contents.get(i));
@@ -1484,7 +1484,7 @@ public class TestDataObjectManager extends BaseTestCase {
 			filter2.setNullOption(true);
 			EntitySearchFilter[] filters4 = {filter0, filter1, filter2};
 
-			contents = this._contentManager.loadWorkContentsId(filters4, groups);
+			contents = this._contentManager.loadWorkDataObjectsId(filters4, groups);
 			assertEquals(0, contents.size());
 
 		} catch (Throwable t) {
@@ -1497,16 +1497,16 @@ public class TestDataObjectManager extends BaseTestCase {
 	protected String[] addDraftContentsForTest(String[] masterContentIds, boolean publish) throws Throwable {
 		String[] newContentIds = new String[masterContentIds.length];
 		for (int i = 0; i < masterContentIds.length; i++) {
-			DataObject content = this._contentManager.loadContent(masterContentIds[i], false);
+			DataObject content = this._contentManager.loadDataObject(masterContentIds[i], false);
 			content.setId(null);
-			this._contentManager.saveContent(content);
+			this._contentManager.saveDataObject(content);
 			newContentIds[i] = content.getId();
 			if (publish) {
-				this._contentManager.insertOnLineContent(content);
+				this._contentManager.insertOnLineDataObject(content);
 			}
 		}
 		for (int i = 0; i < newContentIds.length; i++) {
-			DataObject content = this._contentManager.loadContent(newContentIds[i], false);
+			DataObject content = this._contentManager.loadDataObject(newContentIds[i], false);
 			assertNotNull(content);
 		}
 		return newContentIds;
@@ -1514,22 +1514,22 @@ public class TestDataObjectManager extends BaseTestCase {
 
 	private void deleteContents(String[] contentIds) throws Throwable {
 		for (int i = 0; i < contentIds.length; i++) {
-			DataObject content = this._contentManager.loadContent(contentIds[i], false);
+			DataObject content = this._contentManager.loadDataObject(contentIds[i], false);
 			if (null != content) {
-				this._contentManager.removeOnLineContent(content);
-				this._contentManager.deleteContent(content);
+				this._contentManager.removeOnLineDataObject(content);
+				this._contentManager.deleteDataObject(content);
 			}
 		}
 	}
 
 	private void init() throws Exception {
 		try {
-			this._contentManager = (IContentManager) this.getService("DataObjectManager");
+			this._contentManager = (IDataObjectManager) this.getService("DataObjectManager");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
 	}
 
-	private IContentManager _contentManager = null;
+	private IDataObjectManager _contentManager = null;
 
 }

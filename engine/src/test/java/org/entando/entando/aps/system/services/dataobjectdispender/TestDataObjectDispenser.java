@@ -17,11 +17,11 @@ import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRen
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.RequestContext;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.aps.system.services.dataobjectdispenser.IDataObjectDispenser;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * @author E.Santoboni
@@ -77,18 +77,18 @@ public class TestDataObjectDispenser extends BaseTestCase {
 	}
 
 	public void testGetRenderedContent_3() throws Throwable {
-		DataObject content = this._contentManager.loadContent("ART120", true);
+		DataObject content = this._contentManager.loadDataObject("ART120", true);
 		content.setId(null);
 		try {
 			RequestContext reqCtx = this.getRequestContext();
 			this.setUserOnSession("admin");
-			this._contentManager.insertOnLineContent(content);
+			this._contentManager.insertOnLineDataObject(content);
 			DataObjectRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo(content.getId(), 2, "it", reqCtx);
 			assertNotNull(outputInfo);
 
 			//assertNotNull(this._cacheInfoManager.getFromCache(JacmsSystemConstants.CONTENT_CACHE_PREFIX+content.getId()));
 			//assertNotNull(this._cacheInfoManager.getFromCache(JacmsSystemConstants.CONTENT_AUTH_INFO_CACHE_PREFIX+content.getId()));
-			this._contentManager.insertOnLineContent(content);
+			this._contentManager.insertOnLineDataObject(content);
 			this.waitNotifyingThread();
 
 			//assertNull(this._cacheInfoManager.getFromCache(JacmsSystemConstants.CONTENT_CACHE_PREFIX+content.getId()));
@@ -97,7 +97,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 			throw t;
 		} finally {
 			if (null != content.getId()) {
-				this._contentManager.deleteContent(content);
+				this._contentManager.deleteDataObject(content);
 			}
 		}
 	}
@@ -164,7 +164,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 	private void init() throws Exception {
 		try {
 			this._contentDispenser = (IDataObjectDispenser) this.getService("DataObjectDispenserManager");
-			this._contentManager = (IContentManager) this.getService("DataObjectManager");
+			this._contentManager = (IDataObjectManager) this.getService("DataObjectManager");
 			this._contentModelManager = (IDataObjectModelManager) this.getService("DataObjectModelManager");
 			//this._cacheInfoManager = (CacheInfoManager) this.getService(SystemConstants.CACHE_INFO_MANAGER);
 		} catch (Throwable t) {
@@ -173,7 +173,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 	}
 
 	private IDataObjectDispenser _contentDispenser = null;
-	private IContentManager _contentManager = null;
+	private IDataObjectManager _contentManager = null;
 	private IDataObjectModelManager _contentModelManager = null;
 	//private CacheInfoManager _cacheInfoManager;
 

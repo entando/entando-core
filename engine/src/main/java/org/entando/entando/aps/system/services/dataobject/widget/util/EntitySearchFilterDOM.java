@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Properties;
 
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * Provides utility methods for dataObject filters.
@@ -40,13 +40,13 @@ public class EntitySearchFilterDOM {
 	}
 
 	@Deprecated
-	public EntitySearchFilter[] getFilters(String dataObjectType, String showletParam, IContentManager dataObjectManager, String langCode) {
+	public EntitySearchFilter[] getFilters(String dataObjectType, String showletParam, IDataObjectManager dataObjectManager, String langCode) {
 		FilterUtils filterUtils = new FilterUtils();
 		return filterUtils.getFilters(dataObjectManager.getEntityPrototype(dataObjectType), showletParam, langCode);
 	}
 
 	@Deprecated
-	public EntitySearchFilter getFilter(String dataObjectType, IDataTypeListFilterBean bean, IContentManager contentManager, String langCode) {
+	public EntitySearchFilter getFilter(String dataObjectType, IDataTypeListFilterBean bean, IDataObjectManager contentManager, String langCode) {
 		FilterUtils filterUtils = new FilterUtils();
 		return filterUtils.getFilter(contentManager.getEntityPrototype(dataObjectType), bean, langCode);
 	}

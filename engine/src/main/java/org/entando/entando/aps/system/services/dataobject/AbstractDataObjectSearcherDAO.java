@@ -31,7 +31,7 @@ import com.agiletec.aps.util.DateConverter;
 import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
 
 /**
- * Abstract Data access object used to search contents.
+ * Abstract Data access object used to search dataObjects.
  *
  * @author E.Santoboni
  */
@@ -41,27 +41,27 @@ public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearch
 
 	@Override
 	protected String getTableFieldName(String metadataFieldKey) {
-		if (metadataFieldKey.equals(IContentManager.ENTITY_ID_FILTER_KEY)) {
+		if (metadataFieldKey.equals(IDataObjectManager.ENTITY_ID_FILTER_KEY)) {
 			return this.getEntityMasterTableIdFieldName();
-		} else if (metadataFieldKey.equals(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY)) {
 			return this.getEntityMasterTableIdTypeFieldName();
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_DESCR_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_DESCR_FILTER_KEY)) {
 			return "descr";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_STATUS_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_STATUS_FILTER_KEY)) {
 			return "status";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY)) {
 			return "created";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_MODIFY_DATE_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_MODIFY_DATE_FILTER_KEY)) {
 			return "lastmodified";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_ONLINE_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_ONLINE_FILTER_KEY)) {
 			return "onlinexml";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_MAIN_GROUP_FILTER_KEY)) {
 			return "maingroup";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_CURRENT_VERSION_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_CURRENT_VERSION_FILTER_KEY)) {
 			return "currentversion";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_FIRST_EDITOR_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_FIRST_EDITOR_FILTER_KEY)) {
 			return "firsteditor";
-		} else if (metadataFieldKey.equals(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_LAST_EDITOR_FILTER_KEY)) {
 			return "lasteditor";
 		} else {
 			throw new RuntimeException("Chiave di ricerca '" + metadataFieldKey + "' non riconosciuta");
@@ -99,7 +99,6 @@ public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearch
 		} catch (Throwable t) {
 			_logger.error("Errore in fase di creazione statement", t);
 			throw new RuntimeException("Errore in fase di creazione statement", t);
-			//processDaoException(t, "Errore in fase di creazione statement", "buildStatement");
 		}
 		return stat;
 	}

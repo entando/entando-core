@@ -27,10 +27,10 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
 import org.entando.entando.aps.system.services.dataobjectmodel.event.DataObjectModelChangedEvent;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * Manager dei modelli di datatype.
@@ -170,10 +170,10 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	@Override
 	public SmallDataType getDefaultUtilizer(long modelId) {
 		String modelIdString = String.valueOf(modelId);
-		List<SmallDataType> smallContentTypes = this.getDataObjectManager().getSmallContentTypes();
+		List<SmallDataType> smallContentTypes = this.getDataObjectManager().getSmallDataTypes();
 		for (int i = 0; i < smallContentTypes.size(); i++) {
 			SmallDataType smallContentType = (SmallDataType) smallContentTypes.get(i);
-			DataObject prototype = this.getDataObjectManager().createContentType(smallContentType.getCode());
+			DataObject prototype = this.getDataObjectManager().createDataObject(smallContentType.getCode());
 			if ((null != prototype.getListModel() && prototype.getListModel().equals(modelIdString)) || (null != prototype.getDefaultModel()
 					&& prototype.getDefaultModel().equals(modelIdString))) {
 				return smallContentType;
@@ -198,11 +198,11 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 		this._pageManager = pageManager;
 	}
 
-	protected IContentManager getDataObjectManager() {
+	protected IDataObjectManager getDataObjectManager() {
 		return _dataObjectManager;
 	}
 
-	public void setDataObjectManager(IContentManager dataObjectManager) {
+	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
 		this._dataObjectManager = dataObjectManager;
 	}
 
@@ -211,6 +211,6 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	private IDataObjectModelDAO _dataModelDAO;
 
 	private IPageManager _pageManager;
-	private IContentManager _dataObjectManager;
+	private IDataObjectManager _dataObjectManager;
 
 }

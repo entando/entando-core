@@ -22,11 +22,11 @@ import java.sql.Connection;
  *
  * @author E.Santoboni
  */
-public class ContentUpdaterDAO extends DataObjectDAO implements IContentUpdaterDAO {
+public class DataObjectUpdaterDAO extends DataObjectDAO implements IDataObjectUpdaterDAO {
 
 	@Override
-	public void reloadWorkContentCategoryReferences(DataObject content) {
-		ApsSystemUtils.getLogger().debug("reload WORK references for content " + content.getId());
+	public void reloadWorkDataObjectCategoryReferences(DataObject content) {
+		ApsSystemUtils.getLogger().debug("reload WORK references for dataObject " + content.getId());
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -35,15 +35,15 @@ public class ContentUpdaterDAO extends DataObjectDAO implements IContentUpdaterD
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			ApsSystemUtils.logThrowable(t, this, "reloadWorkContentReferences");
-			throw new RuntimeException("Error reloading references - Content " + content.getId(), t);
+			ApsSystemUtils.logThrowable(t, this, "reloadWorkdataObjectReferences");
+			throw new RuntimeException("Error reloading references - dataObject " + content.getId(), t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
 
 	@Override
-	public void reloadPublicContentCategoryReferences(DataObject content) {
+	public void reloadPublicDataObjectCategoryReferences(DataObject content) {
 		ApsSystemUtils.getLogger().debug("reload PUBLIC references for content " + content.getId());
 		if (content.isOnLine()) {
 			Connection conn = null;

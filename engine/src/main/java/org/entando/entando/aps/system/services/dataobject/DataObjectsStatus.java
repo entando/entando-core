@@ -15,34 +15,37 @@ package org.entando.entando.aps.system.services.dataobject;
 
 import java.util.Date;
 
-public class ContentsStatus {
+public class DataObjectsStatus {
 
 	public int getTotal() {
 		return this.getOnline() + this.getOnlineWithChanges() + this.getDraft();
 	}
-	
+
 	@Override
 	public String toString() {
-		return "ContentsStatus [online=" + _online + ", onlineWithChanges=" + _onlineWithChanges + ", draft=" + _draft + "]";
+		return "DataObjectsStatus [online=" + _online + ", onlineWithChanges=" + _onlineWithChanges + ", draft=" + _draft + "]";
 	}
-	
+
 	public int getOnline() {
 		return _online;
 	}
+
 	public void setOnline(int online) {
 		this._online = online;
 	}
-	
+
 	public int getOnlineWithChanges() {
 		return _onlineWithChanges;
 	}
+
 	public void setOnlineWithChanges(int onlineWithChanges) {
 		this._onlineWithChanges = onlineWithChanges;
 	}
-	
+
 	public int getDraft() {
 		return _draft;
 	}
+
 	public void setDraft(int draft) {
 		this._draft = draft;
 	}
@@ -50,10 +53,11 @@ public class ContentsStatus {
 	public Date getLastUpdate() {
 		return _lastUpdate;
 	}
+
 	public void setLastUpdate(Date lastUpdate) {
 		this._lastUpdate = lastUpdate;
 	}
-	
+
 	private int _online;
 	private int _onlineWithChanges;
 	private int _draft;

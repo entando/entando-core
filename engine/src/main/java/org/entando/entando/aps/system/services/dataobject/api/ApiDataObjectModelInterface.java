@@ -42,7 +42,7 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 			List<DataObjectModel> models = null;
 			String dataTypeParam = properties.getProperty("dataType");
 			String dataType = (null != dataTypeParam && dataTypeParam.trim().length() > 0) ? dataTypeParam.trim() : null;
-			if (null != dataType && null == this.getDataObjectManager().getSmallContentTypesMap().get(dataType)) {
+			if (null != dataType && null == this.getDataObjectManager().getSmallDataTypesMap().get(dataType)) {
 				ApiError error = new ApiError(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "Content Type " + dataType + " does not exist", Response.Status.CONFLICT);
 				response.addError(error);
 				dataType = null;
@@ -86,7 +86,7 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 		if (null != this.getDataObjectModelManager().getContentModel(model.getId())) {
 			throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Model with id " + model.getId() + " already exists", Response.Status.CONFLICT);
 		}
-		if (null == this.getDataObjectManager().getSmallContentTypesMap().get(model.getDataType())) {
+		if (null == this.getDataObjectManager().getSmallDataTypesMap().get(model.getDataType())) {
 			throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "Content Type " + model.getDataType() + " does not exist", Response.Status.CONFLICT);
 		}
 		try {

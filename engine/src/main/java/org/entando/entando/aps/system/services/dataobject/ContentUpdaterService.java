@@ -40,7 +40,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  * EVOLUZIONE DEL CORE - AGGIUNTA FIRST EDITOR e funzioni aggiornamento referenze
  *
  */
-public class ContentUpdaterService extends AbstractService implements IContentUpdaterService {
+public class ContentUpdaterService extends AbstractService implements IDataObjectUpdaterService {
 
 	@Override
 	public void init() throws Exception {
@@ -50,7 +50,7 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 	@Override
 	public void reloadCategoryReferences(String categoryCode) {
 		try {
-			Set<String> contents = this.getContentsId(categoryCode);
+			Set<String> contents = this.getDataObjectsId(categoryCode);
 			ApsSystemUtils.getLogger().debug("start reload category references for " + contents.size() + " contents");
 			ReloadingCategoryReferencesThread th = null;
 			Thread currentThread = Thread.currentThread();
@@ -70,7 +70,7 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 	}
 	
 	@Override
-	public Set<String> getContentsId(String categoryCode) throws ApsSystemException {
+	public Set<String> getDataObjectsId(String categoryCode) throws ApsSystemException {
 		Set<String> allContents = new HashSet<String>();
 		try {
 			//Ricerca contenuti per
@@ -83,10 +83,10 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 			//associati alla categoria che è stata spostata...
 			String[] categories = new String[]{categoryCode};
 			
-			List<String> publicContents = this.getContentManager().loadPublicContentsId(categories, orCategoryFilter,  filters, userGroupCodes);
+			List<String> publicContents = this.getContentManager().loadPublicDataObjectsId(categories, orCategoryFilter,  filters, userGroupCodes);
 			ApsSystemUtils.getLogger().debug("public contents: " + publicContents.size());
 			
-			List<String> workContents = this.getContentManager().loadWorkContentsId(categories, filters, userGroupCodes);
+			List<String> workContents = this.getContentManager().loadWorkDataObjectsId(categories, filters, userGroupCodes);
 			ApsSystemUtils.getLogger().debug("work contents: " + workContents.size());
 			
 			allContents.addAll(publicContents);
@@ -104,13 +104,13 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 			String cacheKey = JacmsSystemConstants.CONTENT_CACHE_PREFIX + entityId;
 			this.getCacheInfoManager().flushEntry(cacheKey);
 			ApsSystemUtils.getLogger().debug("removing_from_cache " + cacheKey);
-			DataObject content = this.getContentManager().loadContent(entityId, true);
+			DataObject content = this.getContentManager().loadDataObject(entityId, true);
 			if (content != null) {
-				this.getContentUpdaterDAO().reloadPublicContentCategoryReferences(content);
+				this.getContentUpdaterDAO().reloadPublicDataObjectCategoryReferences(content);
 			}
-			DataObject workcontent = this.getContentManager().loadContent(entityId, false);
+			DataObject workcontent = this.getContentManager().loadDataObject(entityId, false);
 			if (workcontent != null) {
-				this.getContentUpdaterDAO().reloadWorkContentCategoryReferences(workcontent);
+				this.getContentUpdaterDAO().reloadWorkDataObjectCategoryReferences(workcontent);
 			}
 			ApsSystemUtils.getLogger().debug("Reload content references for content " + entityId + "- DONE");
 		} catch (Throwable t) {
@@ -118,10 +118,10 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 		}
 	}
 	
-	protected IContentManager getContentManager() {
+	protected IDataObjectManager getContentManager() {
 		return _contentManager;
 	}
-	public void setContentManager(IContentManager contentManager) {
+	public void setContentManager(IDataObjectManager contentManager) {
 		this._contentManager = contentManager;
 	}
 	
@@ -132,10 +132,10 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 		this._categoryManager = categoryManager;
 	}
 
-	protected IContentUpdaterDAO getContentUpdaterDAO() {
+	protected IDataObjectUpdaterDAO getContentUpdaterDAO() {
 		return _contentUpdaterDAO;
 	}
-	public void setContentUpdaterDAO(IContentUpdaterDAO contentUpdaterDAO) {
+	public void setContentUpdaterDAO(IDataObjectUpdaterDAO contentUpdaterDAO) {
 		this._contentUpdaterDAO = contentUpdaterDAO;
 	}
 
@@ -146,9 +146,9 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 		this._cacheInfoManager = cacheInfoManager;
 	}
 	
-	private IContentManager _contentManager;
+	private IDataObjectManager _contentManager;
 	private ICategoryManager _categoryManager;
-	private IContentUpdaterDAO _contentUpdaterDAO;
+	private IDataObjectUpdaterDAO _contentUpdaterDAO;
 	private ICacheInfoManager _cacheInfoManager;
 	
 }

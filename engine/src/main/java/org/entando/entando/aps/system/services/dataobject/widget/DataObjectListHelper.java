@@ -47,7 +47,7 @@ import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFi
  *
  * @author E.Santoboni
  */
-public class DataObjectListHelper extends BaseDataListHelper implements IContentListWidgetHelper {
+public class DataObjectListHelper extends BaseDataListHelper implements IDataObjectListWidgetHelper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectListHelper.class);
 
@@ -155,7 +155,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IContent
 			String[] categories = this.getCategories(bean.getCategories(), config, userFilters);
 			Collection<String> userGroupCodes = this.getAllowedGroups(reqCtx);
 			boolean orCategoryFilterClause = this.extractOrCategoryFilterClause(config);
-			contentsId = this.getContentManager().loadPublicContentsId(bean.getDataType(),
+			contentsId = this.getContentManager().loadPublicDataObjectsId(bean.getDataType(),
 					categories, orCategoryFilterClause, bean.getFilters(), userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error extracting contents id", t);

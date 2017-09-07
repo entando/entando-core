@@ -32,8 +32,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * @author E.Santoboni
@@ -44,7 +44,7 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 
 	@Override
 	public EntitySearchFilter[] getFilters(String dataType, String filtersShowletParam, String langCode) {
-		DataObject prototype = this.getContentManager().createContentType(dataType);
+		DataObject prototype = this.getContentManager().createDataObject(dataType);
 		if (null == filtersShowletParam || filtersShowletParam.trim().length() == 0 || null == prototype) {
 			return null;
 		}
@@ -68,7 +68,7 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 	@Override
 	public EntitySearchFilter getFilter(String dataTypeType, IEntityFilterBean bean, String langCode) {
 		BaseFilterUtils dom = new BaseFilterUtils();
-		DataObject contentPrototype = this.getContentManager().createContentType(dataTypeType);
+		DataObject contentPrototype = this.getContentManager().createDataObject(dataTypeType);
 		if (null == contentPrototype) {
 			return null;
 		}
@@ -96,7 +96,7 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 				throw new ApsSystemException("DataObject type not defined");
 			}
 			Collection<String> userGroupCodes = getAllowedGroupCodes(user); //this.getAllowedGroups(user);
-			contentsId = this.getContentManager().loadPublicContentsId(bean.getDataType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
+			contentsId = this.getContentManager().loadPublicDataObjectsId(bean.getDataType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error extracting DataObjects id", t);
 			throw new ApsSystemException("Error extracting DataObjects id", t);
@@ -208,14 +208,14 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 		return values;
 	}
 
-	protected IContentManager getContentManager() {
+	protected IDataObjectManager getContentManager() {
 		return _contentManager;
 	}
 
-	public void setContentManager(IContentManager contentManager) {
+	public void setContentManager(IDataObjectManager contentManager) {
 		this._contentManager = contentManager;
 	}
 
-	private IContentManager _contentManager;
+	private IDataObjectManager _contentManager;
 
 }

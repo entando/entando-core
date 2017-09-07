@@ -120,7 +120,7 @@ public class TestValidateDataObject extends BaseTestCase {
 	}
 
 	private DataObject createNewVoid(String contentType, String insertedDescr, String status, String mainGroup, String lastEditor) {
-		DataObject content = this._contentManager.createContentType(contentType);
+		DataObject content = this._contentManager.createDataObject(contentType);
 		content.setDescription(insertedDescr);
 		content.setStatus(status);
 		content.setMainGroup(mainGroup);
@@ -130,14 +130,14 @@ public class TestValidateDataObject extends BaseTestCase {
 
 	private void init() throws Exception {
 		try {
-			this._contentManager = (IContentManager) this.getService("DataObjectManager");
+			this._contentManager = (IDataObjectManager) this.getService("DataObjectManager");
 			this._groupManager = (IGroupManager) this.getService(SystemConstants.GROUP_MANAGER);
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
 	}
 
-	private IContentManager _contentManager = null;
+	private IDataObjectManager _contentManager = null;
 	private IGroupManager _groupManager = null;
 
 }

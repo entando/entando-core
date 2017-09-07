@@ -29,9 +29,9 @@ import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.lang.Lang;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.widget.UserFilterOptionBean;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * Provides utility methods for dataObject filters for widget.
@@ -95,7 +95,7 @@ public class FilterUtils extends BaseFilterUtils {
 	 * IEntityFilterBean, IContentManager, RequestContext) method
 	 */
 	public UserFilterOptionBean getUserFilter(String dataObjectType,
-			IDataTypeListFilterBean bean, IContentManager dataObjectManager, RequestContext reqCtx) {
+			IDataTypeListFilterBean bean, IDataObjectManager dataObjectManager, RequestContext reqCtx) {
 		return this.getUserFilter(dataObjectType, (IEntityFilterBean) bean, dataObjectManager, "dd/MM/yyyy", reqCtx);
 	}
 
@@ -105,15 +105,15 @@ public class FilterUtils extends BaseFilterUtils {
 	 * method
 	 */
 	public UserFilterOptionBean getUserFilter(String dataObjectType,
-			IEntityFilterBean bean, IContentManager dataObjectManager, RequestContext reqCtx) {
+			IEntityFilterBean bean, IDataObjectManager dataObjectManager, RequestContext reqCtx) {
 		return getUserFilter(dataObjectType, bean, dataObjectManager, "dd/MM/yyyy", reqCtx);
 	}
 
 	public UserFilterOptionBean getUserFilter(String dataObjectType,
-			IEntityFilterBean bean, IContentManager dataObjectManager, String dateFormat, RequestContext reqCtx) {
+			IEntityFilterBean bean, IDataObjectManager dataObjectManager, String dateFormat, RequestContext reqCtx) {
 		UserFilterOptionBean filter = null;
 		try {
-			IApsEntity prototype = dataObjectManager.createContentType(dataObjectType);
+			IApsEntity prototype = dataObjectManager.createDataObject(dataObjectType);
 			Properties props = new Properties();
 			props.setProperty(UserFilterOptionBean.PARAM_KEY, bean.getKey());
 			props.setProperty(UserFilterOptionBean.PARAM_IS_ATTRIBUTE_FILTER, String.valueOf(bean.isAttributeFilter()));

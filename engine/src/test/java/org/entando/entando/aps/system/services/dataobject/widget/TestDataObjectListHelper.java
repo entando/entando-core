@@ -221,7 +221,7 @@ public class TestDataObjectListHelper extends BaseTestCase {
 		try {
 			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
 			this._showletTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
-			this._helper = (IContentListWidgetHelper) this.getApplicationContext().getBean("DataObjectListHelper");
+			this._helper = (IDataObjectListWidgetHelper) this.getApplicationContext().getBean("DataObjectListHelper");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
@@ -229,6 +229,6 @@ public class TestDataObjectListHelper extends BaseTestCase {
 
 	private IPageManager _pageManager = null;
 	private IWidgetTypeManager _showletTypeManager;
-	private IContentListWidgetHelper _helper;
+	private IDataObjectListWidgetHelper _helper;
 
 }

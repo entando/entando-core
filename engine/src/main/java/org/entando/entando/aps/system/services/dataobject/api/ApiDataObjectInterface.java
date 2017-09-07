@@ -80,7 +80,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 		ApiDataObjectListBean bean = null;
 		try {
 			String dataType = properties.getProperty("dataType");
-			if (null == this.getDataObjectManager().getSmallContentTypesMap().get(dataType)) {
+			if (null == this.getDataObjectManager().getSmallDataTypesMap().get(dataType)) {
 				throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "DataObject Type '" + dataType + "' does not exist", Response.Status.CONFLICT);
 			}
 			String langCode = properties.getProperty(SystemConstants.API_LANG_CODE_PARAMETER);
@@ -197,7 +197,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 	protected DataObject getPublicDataObject(String id) throws ApiException, Throwable {
 		DataObject dataObject = null;
 		try {
-			dataObject = this.getDataObjectManager().loadContent(id, true);
+			dataObject = this.getDataObjectManager().loadDataObject(id, true);
 			if (null == dataObject) {
 				throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "Null DataObject by id '" + id + "'", Response.Status.CONFLICT);
 			}
@@ -290,7 +290,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "DataObject type with code '" + typeCode + "' does not exist", Response.Status.CONFLICT);
 			}
 			DataObject content = (DataObject) jaxbDataObject.buildEntity(prototype, this.getCategoryManager());
-			DataObject masterContent = this.getDataObjectManager().loadContent(content.getId(), false);
+			DataObject masterContent = this.getDataObjectManager().loadDataObject(content.getId(), false);
 			if (null == masterContent) {
 				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "DataObject with code '" + content.getId() + "' does not exist", Response.Status.CONFLICT);
 			} else if (!masterContent.getMainGroup().equals(content.getMainGroup())) {
@@ -330,9 +330,9 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 			String insertOnLineString = properties.getProperty("insertOnLine");
 			boolean insertOnLine = (null != insertOnLineString) ? Boolean.parseBoolean(insertOnLineString) : false;
 			if (!insertOnLine) {
-				this.getDataObjectManager().saveContent(dataObject);
+				this.getDataObjectManager().saveDataObject(dataObject);
 			} else {
-				this.getDataObjectManager().insertOnLineContent(dataObject);
+				this.getDataObjectManager().insertOnLineDataObject(dataObject);
 			}
 			response.setResult(IResponseBuilder.SUCCESS, null);
 		} catch (ApiException ae) {
@@ -374,7 +374,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 		StringApiResponse response = new StringApiResponse();
 		try {
 			String id = properties.getProperty("id");
-			DataObject masterDataObject = this.getDataObjectManager().loadContent(id, false);
+			DataObject masterDataObject = this.getDataObjectManager().loadDataObject(id, false);
 			if (null == masterDataObject) {
 				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "DataObject with code '" + id + "' does not exist", Response.Status.CONFLICT);
 			}
@@ -388,12 +388,12 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 						Response.Status.FORBIDDEN);
 			}
 			if (masterDataObject.isOnLine()) {
-				this.getDataObjectManager().removeOnLineContent(masterDataObject);
+				this.getDataObjectManager().removeOnLineDataObject(masterDataObject);
 			}
 			String removeWorkVersionString = properties.getProperty("removeWorkVersion");
 			boolean removeWorkVersion = (null != removeWorkVersionString) ? Boolean.parseBoolean(removeWorkVersionString) : false;
 			if (removeWorkVersion) {
-				this.getDataObjectManager().deleteContent(masterDataObject);
+				this.getDataObjectManager().deleteDataObject(masterDataObject);
 			}
 			response.setResult(IResponseBuilder.SUCCESS, null);
 		} catch (ApiException ae) {
@@ -409,7 +409,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 	public void updateDataObjectText(JAXBDataObjectAttribute jaxbDataObjectAttribute, Properties properties) throws ApiException, Throwable {
 		try {
 			String contentId = jaxbDataObjectAttribute.getContentId();
-			DataObject masterDataObject = this.getDataObjectManager().loadContent(jaxbDataObjectAttribute.getContentId(), true);
+			DataObject masterDataObject = this.getDataObjectManager().loadDataObject(jaxbDataObjectAttribute.getContentId(), true);
 			if (null == masterDataObject) {
 				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "DataObject with code '" + contentId + "' does not exist", Response.Status.CONFLICT);
 			}
@@ -430,7 +430,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "LangCode or value is Empty", Response.Status.CONFLICT);
 			}
 			((ITextAttribute) attribute).setText(value, langCode);
-			this.getDataObjectManager().insertOnLineContent(masterDataObject);
+			this.getDataObjectManager().insertOnLineDataObject(masterDataObject);
 		} catch (ApiException ae) {
 			throw ae;
 		} catch (Throwable t) {

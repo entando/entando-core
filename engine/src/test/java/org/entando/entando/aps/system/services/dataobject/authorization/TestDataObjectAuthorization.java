@@ -24,8 +24,8 @@ import com.agiletec.aps.system.services.role.RoleManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.MockUser;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * @author E.Santoboni
@@ -44,14 +44,14 @@ public class TestDataObjectAuthorization extends BaseTestCase {
 		assertEquals("admin", adminUser.getPassword());
 		assertEquals(1, adminUser.getAuthorizations().size());
 
-		IContentManager contentManager = (IContentManager) this.getService("DataObjectManager");
-		DataObject content = contentManager.loadContent("ART111", true);
+		IDataObjectManager contentManager = (IDataObjectManager) this.getService("DataObjectManager");
+		DataObject content = contentManager.loadDataObject("ART111", true);
 		boolean check = this._authorizationManager.isAuth(adminUser, content);
 		assertTrue(check);
-		content = contentManager.loadContent("EVN25", true);
+		content = contentManager.loadDataObject("EVN25", true);
 		check = this._authorizationManager.isAuth(adminUser, content);
 		assertTrue(check);
-		content = contentManager.loadContent("EVN41", true);
+		content = contentManager.loadDataObject("EVN41", true);
 		check = this._authorizationManager.isAuth(adminUser, content);
 		assertTrue(check);
 	}
@@ -62,14 +62,14 @@ public class TestDataObjectAuthorization extends BaseTestCase {
 		assertEquals("pageManagerCustomers", extractedUser.getPassword());
 		assertEquals(1, extractedUser.getAuthorizations().size());
 
-		IContentManager contentManager = (IContentManager) this.getService("DataObjectManager");
-		DataObject content = contentManager.loadContent("ART111", true);
+		IDataObjectManager contentManager = (IDataObjectManager) this.getService("DataObjectManager");
+		DataObject content = contentManager.loadDataObject("ART111", true);
 		boolean checkContent = this._authorizationManager.isAuth(extractedUser, content);
 		assertTrue(checkContent);
-		content = contentManager.loadContent("EVN25", true);
+		content = contentManager.loadDataObject("EVN25", true);
 		checkContent = this._authorizationManager.isAuth(extractedUser, content);
 		assertTrue(checkContent);
-		content = contentManager.loadContent("EVN41", true);
+		content = contentManager.loadDataObject("EVN41", true);
 		checkContent = this._authorizationManager.isAuth(extractedUser, content);
 		assertFalse(checkContent);
 	}
@@ -104,14 +104,14 @@ public class TestDataObjectAuthorization extends BaseTestCase {
 			checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, "editContents");
 			assertTrue(checkPermission);
 
-			IContentManager contentManager = (IContentManager) this.getService("DataObjectManager");
-			DataObject content = contentManager.loadContent("ART111", true);
+			IDataObjectManager contentManager = (IDataObjectManager) this.getService("DataObjectManager");
+			DataObject content = contentManager.loadDataObject("ART111", true);
 			boolean checkContent = this._authorizationManager.isAuth(extractedUser, content);
 			assertFalse(checkContent);
-			content = contentManager.loadContent("EVN25", true);
+			content = contentManager.loadDataObject("EVN25", true);
 			checkContent = this._authorizationManager.isAuth(extractedUser, content);
 			assertTrue(checkContent);
-			content = contentManager.loadContent("EVN41", true);
+			content = contentManager.loadDataObject("EVN41", true);
 			checkContent = this._authorizationManager.isAuth(extractedUser, content);
 			assertFalse(checkContent);
 		} catch (Throwable t) {

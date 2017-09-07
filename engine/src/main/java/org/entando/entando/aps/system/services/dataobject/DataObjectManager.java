@@ -42,12 +42,12 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecord
 import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
 
 /**
- * Contents manager. This implements all the methods needed to create and manage
- * the contents.
+ * DataObjects manager. This implements all the methods needed to create and
+ * manage the DataObjects.
  *
  * @author M.Diana - E.Santoboni
  */
-public class DataObjectManager extends ApsEntityManager implements IContentManager, GroupUtilizer, CategoryUtilizer {
+public class DataObjectManager extends ApsEntityManager implements IDataObjectManager, GroupUtilizer, CategoryUtilizer {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectManager.class);
 
@@ -55,7 +55,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	public void init() throws Exception {
 		super.init();
 		this.createSmallContentTypes();
-		_logger.debug("{} ready. Initialized {} content types", this.getClass().getName(), super.getEntityTypes().size());
+		_logger.debug("{} ready. Initialized {} DataObject types", this.getClass().getName(), super.getEntityTypes().size());
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 * @return The new content.
 	 */
 	@Override
-	public DataObject createContentType(String typeCode) {
+	public DataObject createDataObject(String typeCode) {
 		DataObject content = (DataObject) super.getEntityPrototype(typeCode);
 		return content;
 	}
@@ -104,7 +104,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 * @deprecated From Entando 4.1.2, use getSmallEntityTypes() method
 	 */
 	@Override
-	public List<SmallDataType> getSmallContentTypes() {
+	public List<SmallDataType> getSmallDataTypes() {
 		List<SmallDataType> smallContentTypes = new ArrayList<SmallDataType>();
 		smallContentTypes.addAll(this._smallContentTypes.values());
 		Collections.sort(smallContentTypes);
@@ -120,7 +120,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 * 'SmallContentType' objects.
 	 */
 	@Override
-	public Map<String, SmallDataType> getSmallContentTypesMap() {
+	public Map<String, SmallDataType> getSmallDataTypesMap() {
 		return this._smallContentTypes;
 	}
 
@@ -181,18 +181,18 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	//@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
 	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine")
 	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
-	public DataObject loadContent(String id, boolean onLine) throws ApsSystemException {
-		return this.loadContent(id, onLine, false);
+	public DataObject loadDataObject(String id, boolean onLine) throws ApsSystemException {
+		return this.loadDataObject(id, onLine, false);
 	}
 
 	@Override
 	//@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
 	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine and #cacheable")
 	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
-	public DataObject loadContent(String id, boolean onLine, boolean cacheable) throws ApsSystemException {
+	public DataObject loadDataObject(String id, boolean onLine, boolean cacheable) throws ApsSystemException {
 		DataObject content = null;
 		try {
-			DataObjectRecordVO contentVo = this.loadContentVO(id);
+			DataObjectRecordVO contentVo = this.loadDataObjectVO(id);
 			content = this.createContent(contentVo, onLine);
 		} catch (ApsSystemException e) {
 			_logger.error("Error while loading content : id {}", id, e);
@@ -254,7 +254,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 * @throws ApsSystemException in case of error.
 	 */
 	@Override
-	public DataObjectRecordVO loadContentVO(String id) throws ApsSystemException {
+	public DataObjectRecordVO loadDataObjectVO(String id) throws ApsSystemException {
 		DataObjectRecordVO contentVo = null;
 		try {
 			contentVo = (DataObjectRecordVO) this.getDataObjectDAO().loadEntityRecord(id);
@@ -272,12 +272,12 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 * @throws ApsSystemException in case of error.
 	 */
 	@Override
-	public void saveContent(DataObject content) throws ApsSystemException {
+	public void saveDataObject(DataObject content) throws ApsSystemException {
 		this.addContent(content);
 	}
 
 	@Override
-	public void saveContentAndContinue(DataObject content) throws ApsSystemException {
+	public void saveDataObjectAndContinue(DataObject content) throws ApsSystemException {
 		this.addUpdateContent(content, false);
 	}
 
@@ -332,12 +332,12 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#content.id)", condition = "#content.id != null")
 	//@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
 	//		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsToEvictCsv(#content.id, #content.typeCode)")
-	public void insertOnLineContent(DataObject content) throws ApsSystemException {
+	public void insertOnLineDataObject(DataObject content) throws ApsSystemException {
 		try {
 			content.setLastModified(new Date());
 			if (null == content.getId()) {
 				content.setCreated(new Date());
-				this.saveContent(content);
+				this.saveDataObject(content);
 			}
 			content.incrementVersion(true);
 			content.setStatus(DataObject.STATUS_PUBLIC);
@@ -364,14 +364,14 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 * searchId(EntitySearchFilter[]) method
 	 */
 	@Override
-	public List<String> getAllContentsId() throws ApsSystemException {
+	public List<String> getAllDataObjectsId() throws ApsSystemException {
 		return super.getAllEntityId();
 	}
 
 	@Override
 	public void reloadEntityReferences(String entityId) {
 		try {
-			DataObjectRecordVO contentVo = this.loadContentVO(entityId);
+			DataObjectRecordVO contentVo = this.loadDataObjectVO(entityId);
 			DataObject content = this.createContent(contentVo, true);
 			if (content != null) {
 				this.getDataObjectDAO().reloadPublicContentReferences(content);
@@ -398,7 +398,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#content.id)", condition = "#content.id != null")
 	//@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
 	//		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsToEvictCsv(#content.id, #content.typeCode)")
-	public void removeOnLineContent(DataObject content) throws ApsSystemException {
+	public void removeOnLineDataObject(DataObject content) throws ApsSystemException {
 		try {
 			content.setLastModified(new Date());
 			content.incrementVersion(false);
@@ -452,7 +452,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#content.id)", condition = "#content.id != null")
 	//@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
 	//		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsToEvictCsv(#content.id, #content.typeCode)")
-	public void deleteContent(DataObject content) throws ApsSystemException {
+	public void deleteDataObject(DataObject content) throws ApsSystemException {
 		try {
 			this.getDataObjectDAO().deleteEntity(content.getId());
 		} catch (Throwable t) {
@@ -462,13 +462,13 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	}
 
 	@Override
-	public List<String> loadPublicContentsId(String contentType, String[] categories, EntitySearchFilter[] filters,
+	public List<String> loadPublicDataObjectsId(String contentType, String[] categories, EntitySearchFilter[] filters,
 			Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadPublicContentsId(contentType, categories, false, filters, userGroupCodes);
+		return this.loadPublicDataObjectsId(contentType, categories, false, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadPublicContentsId(String contentType, String[] categories, boolean orClauseCategoryFilter,
+	public List<String> loadPublicDataObjectsId(String contentType, String[] categories, boolean orClauseCategoryFilter,
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
 		List<String> contentsId = null;
 		try {
@@ -481,13 +481,13 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	}
 
 	@Override
-	public List<String> loadPublicContentsId(String[] categories,
+	public List<String> loadPublicDataObjectsId(String[] categories,
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadPublicContentsId(categories, false, filters, userGroupCodes);
+		return this.loadPublicDataObjectsId(categories, false, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadPublicContentsId(String[] categories, boolean orClauseCategoryFilter,
+	public List<String> loadPublicDataObjectsId(String[] categories, boolean orClauseCategoryFilter,
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
 		List<String> contentsId = null;
 		try {
@@ -504,23 +504,23 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	 * loadPublicContentsId
 	 */
 	@Override
-	public List<String> loadContentsId(String[] categories, EntitySearchFilter[] filters,
+	public List<String> loadDataObjectsId(String[] categories, EntitySearchFilter[] filters,
 			Collection<String> userGroupCodes, boolean onlyOwner) throws ApsSystemException {
 		throw new ApsSystemException("'loadContentsId' method deprecated From jAPS 2.0 version 2.0.9. Use loadWorkContentsId or loadPublicContentsId");
 	}
 
 	@Override
-	public List<String> loadWorkContentsId(EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadWorkContentsId(null, false, filters, userGroupCodes);
+	public List<String> loadWorkDataObjectsId(EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
+		return this.loadWorkDataObjectsId(null, false, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadWorkContentsId(String[] categories, EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadWorkContentsId(categories, false, filters, userGroupCodes);
+	public List<String> loadWorkDataObjectsId(String[] categories, EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
+		return this.loadWorkDataObjectsId(categories, false, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadWorkContentsId(String[] categories, boolean orClauseCategoryFilter,
+	public List<String> loadWorkDataObjectsId(String[] categories, boolean orClauseCategoryFilter,
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
 		List<String> contentsId = null;
 		try {
@@ -556,7 +556,7 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	public List getCategoryUtilizersForReloadReferences(String categoryCode) {
 		List<String> contentIdToReload = new ArrayList<String>();
 		try {
-			Set<String> contents = this.getContentUpdaterService().getContentsId(categoryCode);
+			Set<String> contents = this.getContentUpdaterService().getDataObjectsId(categoryCode);
 			if (null != contents) {
 				contentIdToReload.addAll(contents);
 			}
@@ -583,8 +583,8 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 	}
 
 	@Override
-	public ContentsStatus getContentsStatus() {
-		ContentsStatus status = null;
+	public DataObjectsStatus getDataObjectsStatus() {
+		DataObjectsStatus status = null;
 		try {
 			status = this.getDataObjectDAO().loadContentStatus();
 		} catch (Throwable t) {
@@ -632,17 +632,17 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 		this._publicDataObjectSearcherDAO = publicDataObjectSearcherDAO;
 	}
 
-	protected IContentUpdaterService getContentUpdaterService() {
+	protected IDataObjectUpdaterService getContentUpdaterService() {
 		return _contentUpdaterService;
 	}
 
-	public void setContentUpdaterService(IContentUpdaterService contentUpdaterService) {
+	public void setContentUpdaterService(IDataObjectUpdaterService contentUpdaterService) {
 		this._contentUpdaterService = contentUpdaterService;
 	}
 
 	@Override
 	public IApsEntity getEntity(String entityId) throws ApsSystemException {
-		return this.loadContent(entityId, false);
+		return this.loadDataObject(entityId, false);
 	}
 
 	/**
@@ -665,6 +665,6 @@ public class DataObjectManager extends ApsEntityManager implements IContentManag
 
 	private IPublicContentSearcherDAO _publicDataObjectSearcherDAO;
 
-	private IContentUpdaterService _contentUpdaterService;
+	private IDataObjectUpdaterService _contentUpdaterService;
 
 }

@@ -139,7 +139,7 @@ public class TestDataObjectDAO extends BaseTestCase {
 	}
 
 	private DataObject getMockDataObject() {
-		DataObject content = this._contentManager.createContentType("ART");
+		DataObject content = this._contentManager.createDataObject("ART");
 
 		content.setId("temp");
 		content.setMainGroup(Group.FREE_GROUP_NAME);
@@ -178,7 +178,7 @@ public class TestDataObjectDAO extends BaseTestCase {
 	private void init() throws Exception {
 		this._dataObjectDao = new DataObjectDAO();
 		try {
-			this._contentManager = (IContentManager) this.getService("DataObjectManager");
+			this._contentManager = (IDataObjectManager) this.getService("DataObjectManager");
 			DataObject mockContent = this.getMockDataObject();
 			DataSource dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
 			this._dataObjectDao.setDataSource(dataSource);
@@ -192,6 +192,6 @@ public class TestDataObjectDAO extends BaseTestCase {
 
 	private DataObjectDAO _dataObjectDao;
 
-	private IContentManager _contentManager;
+	private IDataObjectManager _contentManager;
 
 }

@@ -27,11 +27,11 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataAuthorizationHelper;
 import org.entando.entando.aps.system.services.dataobject.helper.PublicDataTypeAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobjectrenderer.IDataObjectRenderer;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * Fornisce i DataObject formattati. Il compito del servizio, in fase di
@@ -94,7 +94,7 @@ public class BaseContentDispenser extends AbstractService implements IDataObject
 				}
 			} else {
 				String renderedDataObject = "Current user '" + currentUser.getUsername() + "' can't view this DataObject";
-				DataObject contentToRender = this.getDataObjectManager().loadContent(dataObjectId, true, cacheable);
+				DataObject contentToRender = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
 				renderInfo = new DataObjectRenderizationInfo(contentToRender, renderedDataObject, modelId, langCode, null);
 				renderInfo.setRenderedDataobject(renderedDataObject);
 				return renderInfo;
@@ -117,7 +117,7 @@ public class BaseContentDispenser extends AbstractService implements IDataObject
 		try {
 			List<Group> userGroups = (null != currentUser) ? this.getAuthorizationManager().getUserGroups(currentUser) : new ArrayList<Group>();
 			if (authInfo.isUserAllowed(userGroups)) {
-				DataObject contentToRender = this.getDataObjectManager().loadContent(dataObjectId, true, cacheable);
+				DataObject contentToRender = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
 				String renderedContent = this.buildRenderedDataObject(contentToRender, modelId, langCode, reqCtx);
 				if (null != renderedContent && renderedContent.trim().length() > 0) {
 					List<AttributeRole> roles = this.getDataObjectManager().getAttributeRoles();
@@ -208,11 +208,11 @@ public class BaseContentDispenser extends AbstractService implements IDataObject
 		this._dataAuthorizationHelper = dataAuthorizationHelper;
 	}
 
-	public IContentManager getDataObjectManager() {
+	public IDataObjectManager getDataObjectManager() {
 		return _dataObjectManager;
 	}
 
-	public void setDataObjectManager(IContentManager dataObjectManager) {
+	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
 		this._dataObjectManager = dataObjectManager;
 	}
 
@@ -235,7 +235,7 @@ public class BaseContentDispenser extends AbstractService implements IDataObject
 	private IDataAuthorizationHelper _dataAuthorizationHelper;
 
 	private IDataObjectRenderer _dataObjectRenderer;
-	private IContentManager _dataObjectManager;
+	private IDataObjectManager _dataObjectManager;
 	private IAuthorizationManager _authorizationManager;
 
 }

@@ -21,8 +21,8 @@ import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.util.DateConverter;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * @author E.Santoboni
@@ -40,12 +40,12 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 		assertNotNull(contents);
 		assertEquals(25, contents.size());
 
-		EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
+		EntitySearchFilter typeFilter = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ART", false);
 		EntitySearchFilter[] filters1 = {typeFilter};
 		contents = this._dataObjectManager.searchRecords(filters1);
 		assertEquals(11, contents.size());
 
-		EntitySearchFilter creationOrderFilter = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter creationOrderFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrderFilter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters2 = {typeFilter, creationOrderFilter};
 		String[] order2 = {"ART122", "ART121", "ART120", "ART112", "ART111", "ART104", "ART102", "ART187", "ART180", "ART179", "ART1"};
@@ -54,21 +54,21 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 		assertEquals(order2.length, contents.size());
 		this.verifyOrder(contents, order2);
 
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "descriz", true);
+		EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "descriz", true);
 		EntitySearchFilter[] filters3 = {typeFilter, creationOrderFilter, descrFilter};
 		String[] order3 = {"ART187", "ART180", "ART179"};
 		contents = this._dataObjectManager.searchRecords(filters3);
 		assertEquals(order3.length, contents.size());
 		this.verifyOrder(contents, order3);
 
-		EntitySearchFilter statusFilter = new EntitySearchFilter(IContentManager.CONTENT_STATUS_FILTER_KEY, false, "AF", true);
+		EntitySearchFilter statusFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_STATUS_FILTER_KEY, false, "AF", true);
 		EntitySearchFilter[] filters4 = {typeFilter, creationOrderFilter, descrFilter, statusFilter};
 		String[] order4 = {"ART187", "ART179"};
 		contents = this._dataObjectManager.searchRecords(filters4);
 		assertEquals(order4.length, contents.size());
 		this.verifyOrder(contents, order4);
 
-		EntitySearchFilter onLineFilter = new EntitySearchFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, false);
+		EntitySearchFilter onLineFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_ONLINE_FILTER_KEY, false);
 		EntitySearchFilter[] filters5 = {typeFilter, creationOrderFilter, descrFilter, statusFilter, onLineFilter};
 		String[] order5 = {"ART187"};
 		contents = this._dataObjectManager.searchRecords(filters5);
@@ -157,7 +157,7 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 	}
 
 	public void testLoadOrderedEvents_1() throws ApsSystemException {
-		EntitySearchFilter filterForDescr = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false);
+		EntitySearchFilter filterForDescr = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false);
 		filterForDescr.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filterForDescr};
 		List<String> contents = _dataObjectManager.searchId("EVN", filters);
@@ -179,7 +179,7 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 	}
 
 	public void testLoadOrderedEvents_2() throws ApsSystemException {
-		EntitySearchFilter filterForCreation = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+		EntitySearchFilter filterForCreation = new EntitySearchFilter(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		filterForCreation.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter[] filters = {filterForCreation};
 
@@ -203,7 +203,7 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 		Date start = DateConverter.parseDate("1997-06-10", "yyyy-MM-dd");
 		Date end = DateConverter.parseDate("2020-09-19", "yyyy-MM-dd");
 		EntitySearchFilter filter = new EntitySearchFilter("DataInizio", true, start, end);
-		EntitySearchFilter filter2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Even", true);
+		EntitySearchFilter filter2 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false, "Even", true);
 		filter2.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter, filter2};
 
@@ -212,7 +212,7 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 		assertEquals("EVN193", contents.get(0));
 		assertEquals("EVN192", contents.get(1));
 
-		EntitySearchFilter filter3 = new EntitySearchFilter(IContentManager.CONTENT_STATUS_FILTER_KEY, false, "pronto", true);
+		EntitySearchFilter filter3 = new EntitySearchFilter(IDataObjectManager.CONTENT_STATUS_FILTER_KEY, false, "pronto", true);
 		EntitySearchFilter[] filters2 = {filter, filter3, filter2};
 		contents = _dataObjectManager.searchId("EVN", filters2);
 		assertEquals(0, contents.size());
@@ -221,7 +221,7 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 		contents = _dataObjectManager.searchId("EVN", filters2_bis);
 		assertEquals(0, contents.size());
 
-		filter2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false);
+		filter2 = new EntitySearchFilter(IDataObjectManager.CONTENT_DESCR_FILTER_KEY, false);
 		filter2.setOrder(EntitySearchFilter.DESC_ORDER);
 
 		EntitySearchFilter[] filters3 = {filter, filter2};
@@ -389,12 +389,12 @@ public class TestDataObjectEntityManager extends BaseTestCase {
 
 	private void init() throws Exception {
 		try {
-			this._dataObjectManager = (IContentManager) this.getService("DataObjectManager");
+			this._dataObjectManager = (IDataObjectManager) this.getService("DataObjectManager");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
 	}
 
-	private IContentManager _dataObjectManager = null;
+	private IDataObjectManager _dataObjectManager = null;
 
 }

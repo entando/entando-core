@@ -25,20 +25,20 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.tags.util.HeadInfoContainer;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.helper.PublicDataTypeAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRenderizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataAuthorizationHelper;
 import org.entando.entando.aps.system.services.dataobjectdispenser.IDataObjectDispenser;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * Classe helper per i Widget di erogazione dataobject singoli.
  *
  * @author E.Santoboni
  */
-public class DataObjectViewerHelper implements IContentViewerHelper {
+public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DataObjectViewerHelper.class);
 
@@ -244,11 +244,11 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 		this._contentModelManager = contentModelManager;
 	}
 
-	protected IContentManager getContentManager() {
+	protected IDataObjectManager getContentManager() {
 		return _contentManager;
 	}
 
-	public void setContentManager(IContentManager contentManager) {
+	public void setContentManager(IDataObjectManager contentManager) {
 		this._contentManager = contentManager;
 	}
 
@@ -269,7 +269,7 @@ public class DataObjectViewerHelper implements IContentViewerHelper {
 	}
 
 	private IDataObjectModelManager _contentModelManager;
-	private IContentManager _contentManager;
+	private IDataObjectManager _contentManager;
 	private IDataObjectDispenser _contentDispenser;
 
 	private IDataAuthorizationHelper _contentAuthorizationHelper;

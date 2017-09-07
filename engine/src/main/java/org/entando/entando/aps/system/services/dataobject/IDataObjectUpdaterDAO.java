@@ -15,14 +15,10 @@ package org.entando.entando.aps.system.services.dataobject;
 
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
-/**
- * @author eu
- * EVOLUZIONE DEL CORE - AGGIUNTA FIRST EDITOR e funzioni aggiornamento referenze
- */
-public interface IContentUpdaterDAO {
-	
-	public void reloadWorkContentCategoryReferences(DataObject content);
-	
-	public void reloadPublicContentCategoryReferences(DataObject content);
-	
+public interface IDataObjectUpdaterDAO {
+
+	public void reloadWorkDataObjectCategoryReferences(DataObject dataObject);
+
+	public void reloadPublicDataObjectCategoryReferences(DataObject dataObject);
+
 }

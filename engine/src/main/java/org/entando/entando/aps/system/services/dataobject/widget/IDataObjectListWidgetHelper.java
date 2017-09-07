@@ -19,20 +19,20 @@ import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.dataobject.IContentManager;
 import org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListFilterBean;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 
 /**
  * Interfaccia base per l'implementazione del bean helper della showlet di
- * erogatore lista contenuti. La classe è a servizio sia delle funzioni
+ * erogatore lista dataObject. La classe è a servizio sia delle funzioni
  * dell'area di amministrazione che di front-end.
  *
  * @author E.Santoboni
  */
-public interface IContentListWidgetHelper extends org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListHelper {
+public interface IDataObjectListWidgetHelper extends org.entando.entando.aps.system.services.dataobject.helper.IDataTypeListHelper {
 
 	/**
-	 * Restituisce la lista di identificativi di contenuto in base ai parametri
+	 * Restituisce la lista di identificativi di dataObject in base ai parametri
 	 * di ricerca. I parametri utilizzati per la ricerca, per ciascuno di essi
 	 * vengono estratti con questo ordine di importanza: hanno la precedenza i
 	 * parametri specificati all'intrno del tag jsp, nel caso uno di essi sia
@@ -41,7 +41,7 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	 * @param bean Il contenitore delle informazioni base sulla interrogazione
 	 * da eseguire.
 	 * @param reqCtx Il contesto della richiesta.
-	 * @return La lista di identificativi di contenuto in base ai parametri di
+	 * @return La lista di identificativi di dataObject in base ai parametri di
 	 * ricerca.
 	 * @throws Throwable In caso di errore.
 	 */
@@ -52,20 +52,20 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	 * della showlet detentore dei filtri. Il parametro è nella forma di:
 	 * (key=KEY;value=VALUE;attributeFilter=TRUE|FALSE;start=START;end=END;like=TRUE|FALSE)+..<OTHER_FILTERS>
 	 *
-	 * @param contentType Il tipo di contenuto al quale i filtri vanno
-	 * applicati.
+	 * @param dataType Il tipo di dataObject al quale i filtri vanno applicati.
 	 * @param filtersShowletParam Il parametro della showlet nella forma
 	 * corretta detentore dei filtri.
 	 * @param reqCtx Il contesto della richiesta.
 	 * @return L'insieme dei filtri dato dall'interpretazione del parametro.
 	 */
-	public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, RequestContext reqCtx);
+	public EntitySearchFilter[] getFilters(String dataType, String filtersShowletParam, RequestContext reqCtx);
 
 	/**
 	 * Costruisce e restituisce un filtro in base ai parametri specificati. Il
-	 * metodo è a servizio del sottoTag ContentListFilterTag di ContentListTag.
+	 * metodo è a servizio del sottoTag DataObjectListFilterTag di
+	 * DataObjectListTag.
 	 *
-	 * @param contentType Il Tipo di Contenuto corrispondente al filtro da
+	 * @param dataObjectType Il Tipo di dataObject corrispondente al filtro da
 	 * costruire.
 	 * @param bean Il contenitore delle informazioni sul filtro da costruire.
 	 * @param reqCtx Il contesto della richiesta corrente.
@@ -73,17 +73,17 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	 * @deprecated From Entando 3.0 version 3.0.1. Use getFilter(String,
 	 * IEntityFilterBean, RequestContext) method
 	 */
-	public EntitySearchFilter getFilter(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx);
+	public EntitySearchFilter getFilter(String dataObjectType, IDataTypeListFilterBean bean, RequestContext reqCtx);
 
-	public EntitySearchFilter getFilter(String contentType, IEntityFilterBean bean, RequestContext reqCtx);
+	public EntitySearchFilter getFilter(String dataObjectType, IEntityFilterBean bean, RequestContext reqCtx);
 
 	/**
 	 * @deprecated From Entando 3.0 version 3.0.1. Use
 	 * getUserFilterOption(String, IEntityFilterBean, RequestContext) method
 	 */
-	public UserFilterOptionBean getUserFilterOption(String contentType, IDataTypeListFilterBean bean, RequestContext reqCtx);
+	public UserFilterOptionBean getUserFilterOption(String dataObjectType, IDataTypeListFilterBean bean, RequestContext reqCtx);
 
-	public UserFilterOptionBean getUserFilterOption(String contentType, IEntityFilterBean bean, RequestContext reqCtx);
+	public UserFilterOptionBean getUserFilterOption(String dataObjectType, IEntityFilterBean bean, RequestContext reqCtx);
 
 	/**
 	 * Restituisce il parametro da inserire nella configurazione della showlet.
@@ -109,8 +109,8 @@ public interface IContentListWidgetHelper extends org.entando.entando.aps.system
 	public List<UserFilterOptionBean> getConfiguredUserFilters(IDataObjectListTagBean bean, RequestContext reqCtx) throws ApsSystemException;
 
 	public static final String[] allowedMetadataFilterKeys
-			= {IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, IContentManager.CONTENT_DESCR_FILTER_KEY, IContentManager.CONTENT_STATUS_FILTER_KEY,
-				IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, IContentManager.CONTENT_MODIFY_DATE_FILTER_KEY, IContentManager.CONTENT_ONLINE_FILTER_KEY};
+			= {IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, IDataObjectManager.CONTENT_DESCR_FILTER_KEY, IDataObjectManager.CONTENT_STATUS_FILTER_KEY,
+				IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, IDataObjectManager.CONTENT_MODIFY_DATE_FILTER_KEY, IDataObjectManager.CONTENT_ONLINE_FILTER_KEY};
 
 	public static final String[] allowedMetadataUserFilterOptionKeys
 			= {UserFilterOptionBean.KEY_CATEGORY, UserFilterOptionBean.KEY_FULLTEXT};

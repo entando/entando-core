@@ -95,13 +95,13 @@ public class TestDataObjectViewerHelper extends BaseTestCase {
 			widget.setType(showletType);
 			widget.setConfig(new ApsProperties());
 			_requestContext.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET, widget);
-			this._helper = (IContentViewerHelper) this.getApplicationContext().getBean("DataObjectViewerHelper");
+			this._helper = (IDataObjectViewerHelper) this.getApplicationContext().getBean("DataObjectViewerHelper");
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
 	}
 
 	private RequestContext _requestContext;
-	private IContentViewerHelper _helper;
+	private IDataObjectViewerHelper _helper;
 
 }

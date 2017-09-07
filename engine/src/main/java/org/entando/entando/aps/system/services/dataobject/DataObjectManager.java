@@ -491,7 +491,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
 		List<String> contentsId = null;
 		try {
-			contentsId = this.getPublicDataObjectSearcherDAO().loadPublicContentsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
+			contentsId = this.getPublicDataObjectSearcherDAO().loadPublicDataObjectsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error while loading contents", t);
 			throw new ApsSystemException("Error while loading contents", t);
@@ -524,7 +524,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
 		List<String> contentsId = null;
 		try {
-			contentsId = this.getWorkDataObjectSearcherDAO().loadContentsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
+			contentsId = this.getWorkDataObjectSearcherDAO().loadDataObjectsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error while loading work contents", t);
 			throw new ApsSystemException("Error while loading work contents", t);
@@ -616,19 +616,19 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
 		return this.getDataObjectDAO();
 	}
 
-	protected IWorkContentSearcherDAO getWorkDataObjectSearcherDAO() {
+	protected IWorkDataObjectSearcherDAO getWorkDataObjectSearcherDAO() {
 		return _workDataObjectSearcherDAO;
 	}
 
-	public void setWorkDataObjectSearcherDAO(IWorkContentSearcherDAO workDataObjectSearcherDAO) {
+	public void setWorkDataObjectSearcherDAO(IWorkDataObjectSearcherDAO workDataObjectSearcherDAO) {
 		this._workDataObjectSearcherDAO = workDataObjectSearcherDAO;
 	}
 
-	public IPublicContentSearcherDAO getPublicDataObjectSearcherDAO() {
+	public IPublicDataObjectSearcherDAO getPublicDataObjectSearcherDAO() {
 		return _publicDataObjectSearcherDAO;
 	}
 
-	public void setPublicDataObjectSearcherDAO(IPublicContentSearcherDAO publicDataObjectSearcherDAO) {
+	public void setPublicDataObjectSearcherDAO(IPublicDataObjectSearcherDAO publicDataObjectSearcherDAO) {
 		this._publicDataObjectSearcherDAO = publicDataObjectSearcherDAO;
 	}
 
@@ -661,9 +661,9 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
 
 	private IDataObjectDAO _dataObjectDao;
 
-	private IWorkContentSearcherDAO _workDataObjectSearcherDAO;
+	private IWorkDataObjectSearcherDAO _workDataObjectSearcherDAO;
 
-	private IPublicContentSearcherDAO _publicDataObjectSearcherDAO;
+	private IPublicDataObjectSearcherDAO _publicDataObjectSearcherDAO;
 
 	private IDataObjectUpdaterService _contentUpdaterService;
 

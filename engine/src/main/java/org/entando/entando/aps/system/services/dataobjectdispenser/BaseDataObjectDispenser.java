@@ -42,9 +42,9 @@ import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
  *
  * @author M.Diana - E.Santoboni
  */
-public class BaseContentDispenser extends AbstractService implements IDataObjectDispenser {
+public class BaseDataObjectDispenser extends AbstractService implements IDataObjectDispenser {
 
-	private static final Logger _logger = LoggerFactory.getLogger(BaseContentDispenser.class);
+	private static final Logger _logger = LoggerFactory.getLogger(BaseDataObjectDispenser.class);
 
 	@Override
 	public void init() throws Exception {

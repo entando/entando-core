@@ -68,7 +68,7 @@
         <property name="pageManager" ref="PageManager" />
     </bean>
     
-    <bean id="DataObjectDispenserManager" class="org.entando.entando.aps.system.services.dataobjectdispenser.BaseContentDispenser" 
+    <bean id="DataObjectDispenserManager" class="org.entando.entando.aps.system.services.dataobjectdispenser.BaseDataObjectDispenser" 
           parent="abstractService" >
         <property name="dataObjectRenderer" ref="BaseDataObjectRenderer" />
         <property name="dataObjectManager" ref="DataObjectManager" />

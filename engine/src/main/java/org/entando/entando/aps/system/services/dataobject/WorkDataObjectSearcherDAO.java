@@ -28,22 +28,22 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 /**
  * @author E.Santoboni
  */
-public class WorkDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO implements IWorkContentSearcherDAO {
+public class WorkDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO implements IWorkDataObjectSearcherDAO {
 
 	private static final Logger _logger = LoggerFactory.getLogger(WorkDataObjectSearcherDAO.class);
 
 	@Override
-	public List<String> loadContentsId(EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
-		return this.loadContentsId(null, false, filters, userGroupCodes);
+	public List<String> loadDataObjectsId(EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
+		return this.loadDataObjectsId(null, false, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadContentsId(String[] categories, EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
-		return this.loadContentsId(categories, false, filters, userGroupCodes);
+	public List<String> loadDataObjectsId(String[] categories, EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
+		return this.loadDataObjectsId(categories, false, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadContentsId(String[] categories, boolean orClauseCategoryFilter,
+	public List<String> loadDataObjectsId(String[] categories, boolean orClauseCategoryFilter,
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
 		List<String> contentsId = new ArrayList<String>();
 		if (userGroupCodes == null || userGroupCodes.isEmpty()) {

@@ -31,7 +31,7 @@ import com.agiletec.aps.system.services.group.Group;
 /**
  * @author E.Santoboni
  */
-public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO implements IPublicContentSearcherDAO {
+public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO implements IPublicDataObjectSearcherDAO {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PublicDataObjectSearcherDAO.class);
 
@@ -47,17 +47,17 @@ public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO i
 			EntitySearchFilter typeFilter = new EntitySearchFilter(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, false, contentType, false);
 			filters = this.addFilter(filters, typeFilter);
 		}
-		return this.loadPublicContentsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
+		return this.loadPublicDataObjectsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadPublicContentsId(String[] categories,
+	public List<String> loadPublicDataObjectsId(String[] categories,
 			EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
-		return this.loadPublicContentsId(categories, false, filters, userGroupCodes);
+		return this.loadPublicDataObjectsId(categories, false, filters, userGroupCodes);
 	}
 
 	@Override
-	public List<String> loadPublicContentsId(String[] categories,
+	public List<String> loadPublicDataObjectsId(String[] categories,
 			boolean orClauseCategoryFilter, EntitySearchFilter[] filters, Collection<String> userGroupCodes) {
 		Set<String> groupCodes = new HashSet<String>();
 		if (null != userGroupCodes) {

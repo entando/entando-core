@@ -40,7 +40,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  * EVOLUZIONE DEL CORE - AGGIUNTA FIRST EDITOR e funzioni aggiornamento referenze
  *
  */
-public class ContentUpdaterService extends AbstractService implements IDataObjectUpdaterService {
+public class DataObjectUpdaterService extends AbstractService implements IDataObjectUpdaterService {
 
 	@Override
 	public void init() throws Exception {

@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.dataobject.api.response;
+package org.entando.entando.aps.system.services.dataobjectmodel.api;
 
 import javax.xml.bind.annotation.XmlElement;
 

@@ -142,7 +142,7 @@
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>
     
-    <bean id="ApiDataObjectModelInterface" class="org.entando.entando.aps.system.services.dataobject.api.ApiDataObjectModelInterface" >
+    <bean id="ApiDataObjectModelInterface" class="org.entando.entando.aps.system.services.dataobjectmodel.api.ApiDataObjectModelInterface" >
         <property name="dataObjectManager" ref="DataObjectManager" />
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>

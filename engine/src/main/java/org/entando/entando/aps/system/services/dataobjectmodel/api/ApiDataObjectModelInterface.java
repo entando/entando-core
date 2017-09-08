@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.dataobject.api;
+package org.entando.entando.aps.system.services.dataobjectmodel.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import org.entando.entando.aps.system.services.dataobject.api.AbstractApiDataObjectInterface;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 
 /**

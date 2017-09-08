@@ -381,4 +381,6 @@ public interface SystemConstants {
 
 	public static final String DATA_TYPE_ATTRIBUTE_ROLE_TITLE = "dataObject:title";
 
+	public static final String CONFIG_ITEM_DATA_OBJECT_INDEX_SUB_DIR = "dataobjectsubdir";
+
 }

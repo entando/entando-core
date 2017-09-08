@@ -44,7 +44,7 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 
 	@Override
 	public EntitySearchFilter[] getFilters(String dataType, String filtersShowletParam, String langCode) {
-		DataObject prototype = this.getContentManager().createDataObject(dataType);
+		DataObject prototype = this.getDataObjectManager().createDataObject(dataType);
 		if (null == filtersShowletParam || filtersShowletParam.trim().length() == 0 || null == prototype) {
 			return null;
 		}
@@ -68,7 +68,7 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 	@Override
 	public EntitySearchFilter getFilter(String dataTypeType, IEntityFilterBean bean, String langCode) {
 		BaseFilterUtils dom = new BaseFilterUtils();
-		DataObject contentPrototype = this.getContentManager().createDataObject(dataTypeType);
+		DataObject contentPrototype = this.getDataObjectManager().createDataObject(dataTypeType);
 		if (null == contentPrototype) {
 			return null;
 		}
@@ -96,7 +96,7 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 				throw new ApsSystemException("DataObject type not defined");
 			}
 			Collection<String> userGroupCodes = getAllowedGroupCodes(user); //this.getAllowedGroups(user);
-			contentsId = this.getContentManager().loadPublicDataObjectsId(bean.getDataType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
+			contentsId = this.getDataObjectManager().loadPublicDataObjectsId(bean.getDataType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error extracting DataObjects id", t);
 			throw new ApsSystemException("Error extracting DataObjects id", t);
@@ -208,14 +208,14 @@ public class BaseDataListHelper implements IDataTypeListHelper {
 		return values;
 	}
 
-	protected IDataObjectManager getContentManager() {
-		return _contentManager;
+	protected IDataObjectManager getDataObjectManager() {
+		return _dataObjectManager;
 	}
 
-	public void setContentManager(IDataObjectManager contentManager) {
-		this._contentManager = contentManager;
+	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+		this._dataObjectManager = dataObjectManager;
 	}
 
-	private IDataObjectManager _contentManager;
+	private IDataObjectManager _dataObjectManager;
 
 }

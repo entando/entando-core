@@ -85,7 +85,7 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 			if (dataobjectId != null && modelId != null) {
 				long longModelId = new Long(modelId).longValue();
 				this.setStylesheet(longModelId, reqCtx);
-				renderizationInfo = this.getContentDispenser().getRenderizationInfo(dataobjectId, longModelId, langCode, reqCtx, true);
+				renderizationInfo = this.getDataObjectDispenser().getRenderizationInfo(dataobjectId, longModelId, langCode, reqCtx, true);
 				if (null == renderizationInfo) {
 					_logger.info("Null Renderization informations: dataobject={}", dataobjectId);
 					return null;
@@ -111,7 +111,7 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 				_logger.info("Null dataobjectId");
 				return null;
 			}
-			authInfo = this.getContentAuthorizationHelper().getAuthorizationInfo(dataobjectId, true);
+			authInfo = this.getDataAuthorizationHelper().getAuthorizationInfo(dataobjectId, true);
 			if (null == authInfo) {
 				_logger.info("Null authorization info by dataobject '" + dataobjectId + "'");
 			}
@@ -195,7 +195,7 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 			modelId = reqCtx.getRequest().getParameter("modelId");
 		}
 		if (null == modelId && null != dataobjectId) {
-			modelId = this.getContentManager().getDefaultModel(dataobjectId);
+			modelId = this.getDataObjectManager().getDefaultModel(dataobjectId);
 		}
 		return modelId;
 	}
@@ -203,7 +203,7 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 	protected String extractModelId(String dataobjectId, String modelId, ApsProperties widgetConfig) {
 		modelId = this.extractConfiguredModelId(dataobjectId, modelId, widgetConfig);
 		if (null == modelId && null != dataobjectId) {
-			modelId = this.getContentManager().getDefaultModel(dataobjectId);
+			modelId = this.getDataObjectManager().getDefaultModel(dataobjectId);
 		}
 		return modelId;
 	}
@@ -211,10 +211,10 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 	private String extractConfiguredModelId(String dataobjectId, String modelId, ApsProperties widgetConfig) {
 		if (null != modelId && null != dataobjectId) {
 			if (modelId.equals("list")) {
-				modelId = this.getContentManager().getListModel(dataobjectId);
+				modelId = this.getDataObjectManager().getListModel(dataobjectId);
 			}
 			if (null != modelId && modelId.equals("default")) {
-				modelId = this.getContentManager().getDefaultModel(dataobjectId);
+				modelId = this.getDataObjectManager().getDefaultModel(dataobjectId);
 			}
 		}
 		if (null == modelId && null != widgetConfig) {
@@ -224,7 +224,7 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 	}
 
 	protected void setStylesheet(long modelId, RequestContext reqCtx) {
-		DataObjectModel model = this.getContentModelManager().getContentModel(modelId);
+		DataObjectModel model = this.getDataObjectModelManager().getContentModel(modelId);
 		if (model != null) {
 			String stylesheet = model.getStylesheet();
 			if (null != stylesheet && stylesheet.trim().length() > 0) {
@@ -236,42 +236,42 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 		}
 	}
 
-	protected IDataObjectModelManager getContentModelManager() {
-		return _contentModelManager;
+	public IDataObjectModelManager getDataObjectModelManager() {
+		return _dataObjectModelManager;
 	}
 
-	public void setContentModelManager(IDataObjectModelManager contentModelManager) {
-		this._contentModelManager = contentModelManager;
+	public void setDataObjectModelManager(IDataObjectModelManager dataObjectModelManager) {
+		this._dataObjectModelManager = dataObjectModelManager;
 	}
 
-	protected IDataObjectManager getContentManager() {
-		return _contentManager;
+	public IDataObjectManager getDataObjectManager() {
+		return _dataObjectManager;
 	}
 
-	public void setContentManager(IDataObjectManager contentManager) {
-		this._contentManager = contentManager;
+	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+		this._dataObjectManager = dataObjectManager;
 	}
 
-	protected IDataObjectDispenser getContentDispenser() {
-		return _contentDispenser;
+	public IDataObjectDispenser getDataObjectDispenser() {
+		return _dataObjectDispenser;
 	}
 
-	public void setContentDispenser(IDataObjectDispenser contentDispenser) {
-		this._contentDispenser = contentDispenser;
+	public void setDataObjectDispenser(IDataObjectDispenser dataObjectDispenser) {
+		this._dataObjectDispenser = dataObjectDispenser;
 	}
 
-	protected IDataAuthorizationHelper getContentAuthorizationHelper() {
-		return _contentAuthorizationHelper;
+	public IDataAuthorizationHelper getDataAuthorizationHelper() {
+		return _dataAuthorizationHelper;
 	}
 
-	public void setContentAuthorizationHelper(IDataAuthorizationHelper contentAuthorizationHelper) {
-		this._contentAuthorizationHelper = contentAuthorizationHelper;
+	public void setDataAuthorizationHelper(IDataAuthorizationHelper dataAuthorizationHelper) {
+		this._dataAuthorizationHelper = dataAuthorizationHelper;
 	}
 
-	private IDataObjectModelManager _contentModelManager;
-	private IDataObjectManager _contentManager;
-	private IDataObjectDispenser _contentDispenser;
+	private IDataObjectModelManager _dataObjectModelManager;
+	private IDataObjectManager _dataObjectManager;
+	private IDataObjectDispenser _dataObjectDispenser;
 
-	private IDataAuthorizationHelper _contentAuthorizationHelper;
+	private IDataAuthorizationHelper _dataAuthorizationHelper;
 
 }

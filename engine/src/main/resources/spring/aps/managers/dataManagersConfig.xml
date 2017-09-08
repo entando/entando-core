@@ -22,7 +22,7 @@
           parent="abstractEntityManager" >
         <property name="entityClassName" value="org.entando.entando.aps.system.services.dataobject.model.DataObject"/>
         <property name="entityTypeDom" ref="DataTypeDOM" />
-        <property name="xmlAttributeRootElementName" value="content" />
+        <property name="xmlAttributeRootElementName" value="dataObject" />
         <property name="entityHandler">
             <bean class="org.entando.entando.aps.system.services.dataobject.parse.DataObjectHandler" />
         </property>
@@ -76,11 +76,10 @@
         <property name="authorizationManager" ref="AuthorizationManager" />
     </bean>
     
-	<!--
-    <bean id="jacmsSearchEngineManager" class="com.agiletec.plugins.jacms.aps.system.services.searchengine.SearchEngineManager" 
+    <bean id="DataObjectSearchEngineManager" class="org.entando.entando.aps.system.services.dataobjectsearchengine.SearchEngineManager" 
               parent="abstractService" >
         <property name="factory">
-            <bean class="com.agiletec.plugins.jacms.aps.system.services.searchengine.SearchEngineDAOFactory" 
+            <bean class="org.entando.entando.aps.system.services.dataobjectsearchengine.SearchEngineDAOFactory" 
                               init-method="init">
                 <property name="indexDiskRootFolder">
                     <jee:jndi-lookup jndi-name="java:comp/env/indexDiskRootFolder" />
@@ -88,35 +87,35 @@
                 <property name="configManager" ref="BaseConfigManager"/>
                 <property name="langManager" ref="LangManager" />
                 <property name="indexerClassName">
-                    <value>com.agiletec.plugins.jacms.aps.system.services.searchengine.IndexerDAO</value>
+                    <value>org.entando.entando.aps.system.services.dataobjectsearchengine.IndexerDAO</value>
                 </property>
                 <property name="searcherClassName">
-                    <value>com.agiletec.plugins.jacms.aps.system.services.searchengine.SearcherDAO</value>
+                    <value>org.entando.entando.aps.system.services.dataobjectsearchengine.SearcherDAO</value>
                 </property>
             </bean>
         </property>
-        <property name="contentManager" ref="jacmsContentManager" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
     </bean>
-    -->
+    
     <bean id="DataObjectHelper" class="org.entando.entando.aps.system.services.dataobject.helper.DataObjectHelper" />
 	
     <bean id="BaseDataObjectListHelper" class="org.entando.entando.aps.system.services.dataobject.helper.BaseDataListHelper" >
-        <property name="contentManager" ref="DataObjectManager" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
     </bean>
     
     <bean id="DataObjectListHelper" class="org.entando.entando.aps.system.services.dataobject.widget.DataObjectListHelper" >
-        <property name="contentManager" ref="DataObjectManager" />
-        <!-- <property name="searchEngineManager" ref="jacmsSearchEngineManager" /> -->
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="searchEngineManager" ref="DataObjectSearchEngineManager" />
         <property name="userFilterDateFormat">
             <value>${jacms.frontend.userfilter.dateFormat}</value>
         </property>
     </bean>
     
     <bean id="DataObjectViewerHelper" class="org.entando.entando.aps.system.services.dataobject.widget.DataObjectViewerHelper" >
-        <property name="contentDispenser" ref="DataObjectDispenserManager" />
-        <property name="contentManager" ref="DataObjectManager" />
-        <property name="contentModelManager" ref="DataObjectModelManager" />
-        <property name="contentAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
+        <property name="dataObjectDispenser" ref="DataObjectDispenserManager" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+        <property name="dataAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
     </bean>
     <!--
     <bean id="jacmsCacheWrapperManager" class="com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager" 

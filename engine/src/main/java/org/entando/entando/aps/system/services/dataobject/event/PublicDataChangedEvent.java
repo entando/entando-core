@@ -21,7 +21,7 @@ public class PublicDataChangedEvent extends ApsEvent {
 
 	@Override
 	public void notify(IManager srv) {
-		((PublicDataChangedObserver) srv).updateFromPublicContentChanged(this);
+		((PublicDataChangedObserver) srv).updateFromPublicDataObjectChanged(this);
 	}
 
 	@Override

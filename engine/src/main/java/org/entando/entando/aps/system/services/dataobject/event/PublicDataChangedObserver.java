@@ -17,6 +17,6 @@ import com.agiletec.aps.system.common.notify.ObserverService;
 
 public interface PublicDataChangedObserver extends ObserverService {
 
-	public void updateFromPublicContentChanged(PublicDataChangedEvent event);
+	public void updateFromPublicDataObjectChanged(PublicDataChangedEvent event);
 
 }

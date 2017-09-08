@@ -575,7 +575,7 @@ public class TestDataObjectManager extends BaseTestCase {
 		content.addCategory(cat19);
 		String xml = content.getXML();
 		assertNotNull(xml);
-		assertTrue(xml.indexOf("<content id=\"ART1\" typecode=\"Articolo\" typedescr=\"Articolo\">") != -1);
+		assertTrue(xml.indexOf("<dataObject id=\"ART1\" typecode=\"Articolo\" typedescr=\"Articolo\">") != -1);
 		assertTrue(xml.indexOf("<descr>descrizione</descr>") != -1);
 		assertTrue(xml.indexOf("<status>" + DataObject.STATUS_DRAFT + "</status>") != -1);
 		assertTrue(xml.indexOf("<category id=\"13\" />") != -1);

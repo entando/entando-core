@@ -788,6 +788,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 	</datatype>
 </datatypes>
 ');
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataobjectsubdir', 'Name of the sub-directory containing dataobject indexing files', 'index');
 
 
 

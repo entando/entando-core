@@ -11,8 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.plugins.jacms.aps.system.services.searchengine;
+package org.entando.entando.aps.system.services.dataobjectsearchengine;
 
+import com.agiletec.aps.system.SystemConstants;
 import java.io.File;
 
 import org.slf4j.Logger;
@@ -81,7 +82,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 
 	@Override
 	public void updateSubDir(String newSubDirectory) throws ApsSystemException {
-		this.getConfigManager().updateConfigItem(JacmsSystemConstants.CONFIG_ITEM_CONTENT_INDEX_SUB_DIR, newSubDirectory);
+		this.getConfigManager().updateConfigItem(SystemConstants.CONFIG_ITEM_DATA_OBJECT_INDEX_SUB_DIR, newSubDirectory);
 		String oldDir = _subDirectory;
 		this._subDirectory = newSubDirectory;
 		this.deleteSubDirectory(oldDir);
@@ -92,7 +93,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 		if (!dirName.endsWith("/")) {
 			dirName += "/";
 		}
-		dirName += "cmscontents/" + subDirectory;
+		dirName += "dataobjects/" + subDirectory;
 		_logger.debug("Index Directory: {}", dirName);
 		File dir = new File(dirName);
 		if (!dir.exists() || !dir.isDirectory()) {

@@ -63,6 +63,7 @@ import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectV
 import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
+import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
@@ -163,6 +164,8 @@ public class AllTests {
 		suite.addTestSuite(TestValidateDataObject.class);
 		suite.addTestSuite(TestUtilizer.class);
 		suite.addTestSuite(TestDataObjectDispenser.class);
+
+		suite.addTestSuite(TestSearchEngineManager.class);
 
 		return suite;
 	}

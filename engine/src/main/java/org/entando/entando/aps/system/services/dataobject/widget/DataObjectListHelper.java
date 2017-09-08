@@ -84,7 +84,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IDataObj
 	@Override
 	public UserFilterOptionBean getUserFilterOption(String dataObjectType, IEntityFilterBean bean, RequestContext reqCtx) {
 		FilterUtils filterUtils = new FilterUtils();
-		return filterUtils.getUserFilter(dataObjectType, bean, this.getContentManager(), this.getUserFilterDateFormat(), reqCtx);
+		return filterUtils.getUserFilter(dataObjectType, bean, this.getDataObjectManager(), this.getUserFilterDateFormat(), reqCtx);
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IDataObj
 			String[] categories = this.getCategories(bean.getCategories(), config, userFilters);
 			Collection<String> userGroupCodes = this.getAllowedGroups(reqCtx);
 			boolean orCategoryFilterClause = this.extractOrCategoryFilterClause(config);
-			contentsId = this.getContentManager().loadPublicDataObjectsId(bean.getDataType(),
+			contentsId = this.getDataObjectManager().loadPublicDataObjectsId(bean.getDataType(),
 					categories, orCategoryFilterClause, bean.getFilters(), userGroupCodes);
 		} catch (Throwable t) {
 			_logger.error("Error extracting contents id", t);
@@ -346,7 +346,7 @@ public class DataObjectListHelper extends BaseDataListHelper implements IDataObj
 				return null;
 			}
 			String dataObjectTypeCode = config.getProperty(WIDGET_PARAM_CONTENT_TYPE);
-			IApsEntity prototype = this.getContentManager().getEntityPrototype(dataObjectTypeCode);
+			IApsEntity prototype = this.getDataObjectManager().getEntityPrototype(dataObjectTypeCode);
 			if (null == prototype) {
 				_logger.error("Null dataObject type by code '{}'", dataObjectTypeCode);
 				return null;

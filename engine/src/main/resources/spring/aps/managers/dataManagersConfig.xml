@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd">
+    
+    <bean id="DataObjectModelManager" class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManager" 
+          parent="abstractService" >
+        <property name="dataModelDAO" >
+            <bean class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelDAO">
+                <property name="dataSource" ref="servDataSource" />
+            </bean>
+        </property>
+        <property name="pageManager" ref="PageManager" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
+    </bean>
+    
+    <bean id="DataObjectManager" class="org.entando.entando.aps.system.services.dataobject.DataObjectManager" 
+          parent="abstractEntityManager" >
+        <property name="entityClassName" value="org.entando.entando.aps.system.services.dataobject.model.DataObject"/>
+        <property name="entityTypeDom" ref="DataTypeDOM" />
+        <property name="xmlAttributeRootElementName" value="dataObject" />
+        <property name="entityHandler">
+            <bean class="org.entando.entando.aps.system.services.dataobject.parse.DataObjectHandler" />
+        </property>
+        <property name="entityDom">
+            <bean class="org.entando.entando.aps.system.services.dataobject.parse.DataObjectDOM" />
+        </property>
+        <property name="dataObjectDAO" >
+            <bean class="org.entando.entando.aps.system.services.dataobject.DataObjectDAO" parent="abstractEntityDAO">
+                <property name="dataSource" ref="servDataSource" />
+            </bean>
+        </property>
+        <property name="publicDataObjectSearcherDAO" ref="PublicDataObjectSearcherDAO" />
+        <property name="workDataObjectSearcherDAO" ref="WorkDataObjectSearcherDAO" />
+    </bean>
+    
+	<bean id="DataTypeDOM" class="org.entando.entando.aps.system.services.dataobject.parse.DataTypeDOM" 
+		  parent="baseEntityTypeDom" scope="prototype">
+	</bean>
+    
+    <bean id="PublicDataObjectSearcherDAO" class="org.entando.entando.aps.system.services.dataobject.PublicDataObjectSearcherDAO">
+        <property name="dataSource" ref="servDataSource" />
+        <property name="forceCaseInsensitiveLikeSearch"><value>false</value></property>
+    </bean>
+    
+    <bean id="WorkDataObjectSearcherDAO" class="org.entando.entando.aps.system.services.dataobject.WorkDataObjectSearcherDAO">
+        <property name="dataSource" ref="servDataSource" />
+        <property name="forceCaseInsensitiveLikeSearch"><value>false</value></property>
+    </bean>
+    
+    <bean id="DataObjectAuthorizationHelper" class="org.entando.entando.aps.system.services.dataobject.helper.DataAuthorizationHelper" >
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="authorizationManager" ref="AuthorizationManager" />
+        <property name="langManager" ref="LangManager" />
+    </bean>
+    
+    <bean id="BaseDataObjectRenderer" class="org.entando.entando.aps.system.services.dataobjectrenderer.BaseDataObjectRenderer" 
+          parent="BaseEntityRenderer" >
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+    </bean>
+    
+    <bean id="DataObjectPageMapperManager" class="org.entando.entando.aps.system.services.dataobjectmapper.DataObjectPageMapperManager" 
+		  parent="abstractService" >
+        <property name="pageManager" ref="PageManager" />
+    </bean>
+    
+    <bean id="DataObjectDispenserManager" class="org.entando.entando.aps.system.services.dataobjectdispenser.BaseDataObjectDispenser" 
+          parent="abstractService" >
+        <property name="dataObjectRenderer" ref="BaseDataObjectRenderer" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
+        <property name="authorizationManager" ref="AuthorizationManager" />
+    </bean>
+    
+    <bean id="DataObjectSearchEngineManager" class="org.entando.entando.aps.system.services.dataobjectsearchengine.SearchEngineManager" 
+              parent="abstractService" >
+        <property name="factory">
+            <bean class="org.entando.entando.aps.system.services.dataobjectsearchengine.SearchEngineDAOFactory" 
+                              init-method="init">
+                <property name="indexDiskRootFolder">
+                    <jee:jndi-lookup jndi-name="java:comp/env/indexDiskRootFolder" />
+                </property>
+                <property name="configManager" ref="BaseConfigManager"/>
+                <property name="langManager" ref="LangManager" />
+                <property name="indexerClassName">
+                    <value>org.entando.entando.aps.system.services.dataobjectsearchengine.IndexerDAO</value>
+                </property>
+                <property name="searcherClassName">
+                    <value>org.entando.entando.aps.system.services.dataobjectsearchengine.SearcherDAO</value>
+                </property>
+            </bean>
+        </property>
+        <property name="dataObjectManager" ref="DataObjectManager" />
+    </bean>
+    
+    <bean id="DataObjectHelper" class="org.entando.entando.aps.system.services.dataobject.helper.DataObjectHelper" />
+	
+    <bean id="BaseDataObjectListHelper" class="org.entando.entando.aps.system.services.dataobject.helper.BaseDataListHelper" >
+        <property name="dataObjectManager" ref="DataObjectManager" />
+    </bean>
+    
+    <bean id="DataObjectListHelper" class="org.entando.entando.aps.system.services.dataobject.widget.DataObjectListHelper" >
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="searchEngineManager" ref="DataObjectSearchEngineManager" />
+        <property name="userFilterDateFormat">
+            <value>${jacms.frontend.userfilter.dateFormat}</value>
+        </property>
+    </bean>
+    
+    <bean id="DataObjectViewerHelper" class="org.entando.entando.aps.system.services.dataobject.widget.DataObjectViewerHelper" >
+        <property name="dataObjectDispenser" ref="DataObjectDispenserManager" />
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+        <property name="dataAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
+    </bean>
+    <!--
+    <bean id="jacmsCacheWrapperManager" class="com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager" 
+          parent="abstractService" >
+        <property name="cacheInfoManager" ref="CacheInfoManager" />
+        <property name="contentManager" ref="jacmsContentManager" />
+    </bean>
+    -->
+    <!-- APIs -->
+    <bean id="ApiDataObjectInterface" class="org.entando.entando.aps.system.services.dataobject.api.ApiDataObjectInterface" >
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataObjectAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
+        <property name="userManager" ref="UserManager" />
+        <property name="pageManager" ref="PageManager" />
+        <property name="groupManager" ref="GroupManager" />
+        <property name="categoryManager" ref="CategoryManager" />
+        <property name="dataObjectListHelper" ref="BaseDataObjectListHelper" />
+        <property name="dataObjectDispenser" ref="DataObjectDispenserManager" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+    </bean>
+
+    <bean id="ApiDataObjectTypeInterface" class="org.entando.entando.aps.system.services.dataobject.api.ApiDataObjectTypeInterface" >
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+    </bean>
+    
+    <bean id="ApiDataObjectModelInterface" class="org.entando.entando.aps.system.services.dataobjectmodel.api.ApiDataObjectModelInterface" >
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+    </bean>
+	
+</beans>

@@ -59,6 +59,6 @@ public class DataObjectAttributeRole implements ExtendedColumnDefinition {
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "datatypeattributeroles";
+	public static final String TABLE_NAME = "dataobjectattributeroles";
 
 }

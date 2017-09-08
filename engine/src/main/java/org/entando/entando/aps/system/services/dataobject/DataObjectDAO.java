@@ -659,33 +659,33 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
 
 	private final String DELETE_CONTENT = "DELETE FROM dataobjects WHERE contentid = ? ";
 
-	private final String DELETE_CONTENT_REL_RECORD = "DELETE FROM datatyperelations WHERE contentid = ? ";
+	private final String DELETE_CONTENT_REL_RECORD = "DELETE FROM dataobjectrelations WHERE contentid = ? ";
 
-	private final String DELETE_WORK_CONTENT_REL_RECORD = "DELETE FROM workdatatyperelations WHERE contentid = ? ";
+	private final String DELETE_WORK_CONTENT_REL_RECORD = "DELETE FROM workdataobjectrelations WHERE contentid = ? ";
 
-	private final String ADD_CONTENT_SEARCH_RECORD = "INSERT INTO datatypesearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) "
+	private final String ADD_CONTENT_SEARCH_RECORD = "INSERT INTO dataobjectsearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) "
 			+ "VALUES ( ? , ? , ? , ? , ? , ? )";
 
-	private final String DELETE_CONTENT_SEARCH_RECORD = "DELETE FROM datatypesearch WHERE contentid = ? ";
+	private final String DELETE_CONTENT_SEARCH_RECORD = "DELETE FROM dataobjectsearch WHERE contentid = ? ";
 
-	private final String ADD_WORK_CONTENT_SEARCH_RECORD = "INSERT INTO workdatatypesearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) "
+	private final String ADD_WORK_CONTENT_SEARCH_RECORD = "INSERT INTO workdataobjectsearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) "
 			+ "VALUES ( ? , ? , ? , ? , ? , ? )";
 
-	private final String DELETE_WORK_CONTENT_SEARCH_RECORD = "DELETE FROM workdatatypesearch WHERE contentid = ? ";
+	private final String DELETE_WORK_CONTENT_SEARCH_RECORD = "DELETE FROM workdataobjectsearch WHERE contentid = ? ";
 
-	private final String ADD_CONTENT_REL_RECORD = "INSERT INTO datatyperelations "
+	private final String ADD_CONTENT_REL_RECORD = "INSERT INTO dataobjectrelations "
 			+ "(contentid, refcategory, refgroup) VALUES ( ? , ? , ? )";
 
-	private final String ADD_WORK_CONTENT_REL_RECORD = "INSERT INTO workdatatyperelations (contentid, refcategory) VALUES ( ? , ? )";
+	private final String ADD_WORK_CONTENT_REL_RECORD = "INSERT INTO workdataobjectrelations (contentid, refcategory) VALUES ( ? , ? )";
 
 	private final String LOAD_CONTENTS_ID_MAIN_BLOCK = "SELECT DISTINCT dataobjects.contentid FROM dataobjects ";
 
 	private final String LOAD_REFERENCED_CONTENTS_FOR_GROUP = LOAD_CONTENTS_ID_MAIN_BLOCK
-			+ " RIGHT JOIN datatyperelations ON dataobjects.contentid = datatyperelations.contentid WHERE datatyperelations.refgroup = ? "
+			+ " RIGHT JOIN dataobjectrelations ON dataobjects.contentid = dataobjectrelations.contentid WHERE dataobjectrelations.refgroup = ? "
 			+ "ORDER BY dataobjects.contentid";
 
 	private final String LOAD_REFERENCED_CONTENTS_FOR_CATEGORY = LOAD_CONTENTS_ID_MAIN_BLOCK
-			+ " RIGHT JOIN datatyperelations ON dataobjects.contentid = datatyperelations.contentid WHERE datatyperelations.refcategory = ? "
+			+ " RIGHT JOIN dataobjectrelations ON dataobjects.contentid = dataobjectrelations.contentid WHERE dataobjectrelations.refcategory = ? "
 			+ "ORDER BY dataobjects.contentid";
 
 	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = "SELECT dataobjects.contentid, dataobjects.datatype, dataobjects.descr, dataobjects.status, "
@@ -719,13 +719,13 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
 
 	private final String LOAD_ALL_CONTENTS_ID = "SELECT contentid FROM dataobjects";
 
-	private final String ADD_ATTRIBUTE_ROLE_RECORD = "INSERT INTO datatypeattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
+	private final String ADD_ATTRIBUTE_ROLE_RECORD = "INSERT INTO dataobjectattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
 
-	private final String DELETE_ATTRIBUTE_ROLE_RECORD = "DELETE FROM datatypeattributeroles WHERE contentid = ? ";
+	private final String DELETE_ATTRIBUTE_ROLE_RECORD = "DELETE FROM dataobjectattributeroles WHERE contentid = ? ";
 
-	private final String ADD_WORK_ATTRIBUTE_ROLE_RECORD = "INSERT INTO workdatatypeattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
+	private final String ADD_WORK_ATTRIBUTE_ROLE_RECORD = "INSERT INTO workdataobjectattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
 
-	private final String DELETE_WORK_ATTRIBUTE_ROLE_RECORD = "DELETE FROM workdatatypeattributeroles WHERE contentid = ? ";
+	private final String DELETE_WORK_ATTRIBUTE_ROLE_RECORD = "DELETE FROM workdataobjectattributeroles WHERE contentid = ? ";
 
 	private static final String COUNT_OFFLINE_CONTENTS = "SELECT count(contentid) FROM dataobjects WHERE onlinexml IS NULL";
 

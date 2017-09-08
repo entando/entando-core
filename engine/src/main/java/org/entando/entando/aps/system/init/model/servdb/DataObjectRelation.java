@@ -54,6 +54,6 @@ public class DataObjectRelation /*implements ExtendedColumnDefinition*/ {
 			+ "REFERENCES " + groupTableName + " (groupname)"};
 	}
 	 */
-	public static final String TABLE_NAME = "datatyperelations";
+	public static final String TABLE_NAME = "dataobjectrelations";
 
 }

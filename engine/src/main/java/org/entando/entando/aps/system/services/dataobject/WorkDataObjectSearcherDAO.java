@@ -68,7 +68,7 @@ public class WorkDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO imp
 
 	@Override
 	protected String getEntitySearchTableName() {
-		return "workdatatypesearch";
+		return "workdataobjectsearch";
 	}
 
 	@Override
@@ -78,12 +78,12 @@ public class WorkDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO imp
 
 	@Override
 	protected String getContentRelationsTableName() {
-		return "workdatatyperelations";
+		return "workdataobjectrelations";
 	}
 
 	@Override
 	protected String getEntityAttributeRoleTableName() {
-		return "workdatatypeattributeroles";
+		return "workdataobjectattributeroles";
 	}
 
 	@Override

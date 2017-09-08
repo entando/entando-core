@@ -152,7 +152,7 @@ public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO i
 
 	@Override
 	protected String getEntitySearchTableName() {
-		return "datatypesearch";
+		return "dataobjectsearch";
 	}
 
 	@Override
@@ -162,12 +162,12 @@ public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO i
 
 	@Override
 	protected String getContentRelationsTableName() {
-		return "datatyperelations";
+		return "dataobjectrelations";
 	}
 
 	@Override
 	protected String getEntityAttributeRoleTableName() {
-		return "datatypeattributeroles";
+		return "dataobjectattributeroles";
 	}
 
 	@Override

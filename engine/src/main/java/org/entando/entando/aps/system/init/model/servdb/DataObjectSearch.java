@@ -76,6 +76,6 @@ public class DataObjectSearch implements ExtendedColumnDefinition {
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "datatypesearch";
+	public static final String TABLE_NAME = "dataobjectsearch";
 
 }

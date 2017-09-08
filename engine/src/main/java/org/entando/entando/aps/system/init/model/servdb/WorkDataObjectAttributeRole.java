@@ -59,6 +59,6 @@ public class WorkDataObjectAttributeRole implements ExtendedColumnDefinition {
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "workdatatypeattributeroles";
+	public static final String TABLE_NAME = "workdataobjectattributeroles";
 
 }

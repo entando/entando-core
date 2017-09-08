@@ -76,6 +76,6 @@ public class WorkDataObjectSearch implements ExtendedColumnDefinition {
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "workdatatypesearch";
+	public static final String TABLE_NAME = "workdataobjectsearch";
 
 }

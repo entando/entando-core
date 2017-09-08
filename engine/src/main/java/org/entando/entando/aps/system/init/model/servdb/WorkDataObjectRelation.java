@@ -51,7 +51,7 @@ public class WorkDataObjectRelation implements ExtendedColumnDefinition {
 			+ "REFERENCES " + contentTableName + " (contentid)"};
 	}
 
-	public static final String TABLE_NAME = "workdatatyperelations";
+	public static final String TABLE_NAME = "workdataobjectrelations";
 
 }
 /*

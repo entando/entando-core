@@ -17,13 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.apsadmin.dataobject.DataObjectActionConstants;
+import org.entando.entando.apsadmin.dataobject.helper.IDataObjectActionHelper;
 
 /**
  * Classi action base delegata alla gestione delle operazione sugli attributi di
- * contenuto tipo lista.
+ * DataObject tipo lista.
  *
  * @author E.Santoboni
  */
@@ -66,18 +66,17 @@ public class ListAttributeAction extends com.agiletec.apsadmin.system.entity.att
 	 */
 	@Override
 	protected IApsEntity getCurrentApsEntity() {
-		Content content = this.updateContentOnSession();
-		return content;
+		return this.updateContentOnSession();
 	}
 
-	public Content getContent() {
-		return (Content) this.getRequest().getSession()
-				.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
+	public DataObject getContent() {
+		return (DataObject) this.getRequest().getSession()
+				.getAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + this.getContentOnSessionMarker());
 	}
 
-	protected Content updateContentOnSession() {
-		Content content = this.getContent();
-		this.getContentActionHelper().updateEntity(content, this.getRequest());
+	protected DataObject updateContentOnSession() {
+		DataObject content = this.getContent();
+		this.getDataObjectActionHelper().updateEntity(content, this.getRequest());
 		return content;
 	}
 
@@ -86,42 +85,23 @@ public class ListAttributeAction extends com.agiletec.apsadmin.system.entity.att
 	}
 
 	public String getContentOnSessionMarker() {
-		return _contentOnSessionMarker;
+		return _dataObjectOnSessionMarker;
 	}
 
-	public void setContentOnSessionMarker(String contentOnSessionMarker) {
-		this._contentOnSessionMarker = contentOnSessionMarker;
+	public void setContentOnSessionMarker(String dataObjectOnSessionMarker) {
+		this._dataObjectOnSessionMarker = dataObjectOnSessionMarker;
 	}
 
-	public String getResourceTypeCode() {
-		return _resourceTypeCode;
+	public IDataObjectActionHelper getDataObjectActionHelper() {
+		return _dataObjectActionHelper;
 	}
 
-	protected void setResourceTypeCode(String resourceTypeCode) {
-		this._resourceTypeCode = resourceTypeCode;
+	public void setDataObjectActionHelper(IDataObjectActionHelper dataObjectActionHelper) {
+		this._dataObjectActionHelper = dataObjectActionHelper;
 	}
 
-	/**
-	 * Restituisce la classe helper della gestione contenuti.
-	 *
-	 * @return La classe helper della gestione contenuti.
-	 */
-	protected IContentActionHelper getContentActionHelper() {
-		return _contentActionHelper;
-	}
+	private String _dataObjectOnSessionMarker;
 
-	/**
-	 * Setta la classe helper della gestione contenuti.
-	 *
-	 * @param contentActionHelper La classe helper della gestione contenuti.
-	 */
-	public void setContentActionHelper(IContentActionHelper contentActionHelper) {
-		this._contentActionHelper = contentActionHelper;
-	}
-
-	private String _contentOnSessionMarker;
-	private String _resourceTypeCode;
-
-	private IContentActionHelper _contentActionHelper;
+	private IDataObjectActionHelper _dataObjectActionHelper;
 
 }

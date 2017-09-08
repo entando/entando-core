@@ -259,30 +259,22 @@ public interface IDataObjectManager extends IEntityManager {
 	 */
 	public static final int ID_STATE_READY = STATUS_READY;
 
-	/**
-	 * Identificativo stato servizio: stato ricaricamento referenze in progress.
-	 *
-	 * @deprecated From jAPS 2.0 version 2.0.9, use {@link IEntityManager}
-	 * constants
-	 */
-	public static final int ID_RELOAD_REFERENCES_IN_PROGRESS = STATUS_RELOADING_REFERENCES_IN_PROGRESS;
+	public static final String DATA_OBJECT_DESCR_FILTER_KEY = "descr";
 
-	public static final String CONTENT_DESCR_FILTER_KEY = "descr";
+	public static final String DATA_OBJECT_STATUS_FILTER_KEY = "status";
 
-	public static final String CONTENT_STATUS_FILTER_KEY = "status";
+	public static final String DATA_OBJECT_CREATION_DATE_FILTER_KEY = "created";
 
-	public static final String CONTENT_CREATION_DATE_FILTER_KEY = "created";
+	public static final String DATA_OBJECT_MODIFY_DATE_FILTER_KEY = "modified";
 
-	public static final String CONTENT_MODIFY_DATE_FILTER_KEY = "modified";
+	public static final String DATA_OBJECT_ONLINE_FILTER_KEY = "online";
 
-	public static final String CONTENT_ONLINE_FILTER_KEY = "online";
+	public static final String DATA_OBJECT_MAIN_GROUP_FILTER_KEY = "maingroup";
 
-	public static final String CONTENT_MAIN_GROUP_FILTER_KEY = "maingroup";
+	public static final String DATA_OBJECT_CURRENT_VERSION_FILTER_KEY = "currentversion";
 
-	public static final String CONTENT_CURRENT_VERSION_FILTER_KEY = "currentversion";
+	public static final String DATA_OBJECT_FIRST_EDITOR_FILTER_KEY = "firsteditor";
 
-	public static final String CONTENT_FIRST_EDITOR_FILTER_KEY = "firsteditor";
-
-	public static final String CONTENT_LAST_EDITOR_FILTER_KEY = "lasteditor";
+	public static final String DATA_OBJECT_LAST_EDITOR_FILTER_KEY = "lasteditor";
 
 }

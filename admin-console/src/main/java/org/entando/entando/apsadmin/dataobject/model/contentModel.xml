@@ -7,11 +7,6 @@
 	
 	<package name="core_do/dataobject/model" namespace="/do/dataobject/model" extends="entando-default">
 		
-		<action name="intro" class="jacmsContentModelAction">
-            <result type="tiles">admin.jacms.contentModel.intro</result>
-        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
-        </action>		
-		
     	<action name="list" class="jacmsContentModelFinderAction">
             <result type="tiles">admin.jacms.contentModel.list</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>

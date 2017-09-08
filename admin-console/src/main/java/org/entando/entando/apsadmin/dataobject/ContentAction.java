@@ -69,7 +69,7 @@ public class ContentAction extends AbstractContentAction {
 			}
 			String marker = buildContentOnSessionMarker(content, ApsAdminSystemConstants.EDIT);
 			super.setContentOnSessionMarker(marker);
-			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, content);
+			this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + marker, content);
 		} catch (Throwable t) {
 			_logger.error("error in edit", t);
 			return FAILURE;
@@ -99,7 +99,7 @@ public class ContentAction extends AbstractContentAction {
 			content.setDescription(this.getText("label.copyOf") + " " + content.getDescription());
 			content.setFirstEditor(this.getCurrentUser().getUsername());
 			super.setContentOnSessionMarker(marker);
-			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, content);
+			this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + marker, content);
 		} catch (Throwable t) {
 			_logger.error("error in copyPaste", t);
 			return FAILURE;
@@ -228,9 +228,9 @@ public class ContentAction extends AbstractContentAction {
 					this.getContentManager().saveContent(currentContent);
 				}
 				this.addActivityStreamInfo(currentContent, strutsAction, true);
-				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX
+				this.getRequest().getSession().removeAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX
 						+ super.getContentOnSessionMarker());
-				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP);
+				this.getRequest().getSession().removeAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_GROUP);
 				_logger.info("Saving content {} - Description: '{}' - User: {}", currentContent.getId(), currentContent.getDescription(),
 						this.getCurrentUser().getUsername());
 			} else {
@@ -264,7 +264,7 @@ public class ContentAction extends AbstractContentAction {
 				}
 				this.getContentManager().removeOnLineContent(currentContent);
 				this.addActivityStreamInfo(currentContent, (ApsAdminSystemConstants.DELETE + 10), true);
-				this.getRequest().getSession().removeAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX
+				this.getRequest().getSession().removeAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX
 						+ super.getContentOnSessionMarker());
 				_logger.info("Content {} suspended - Description: '{}' - Utente: {}", currentContent.getId(), currentContent
 						.getDescription(), this.getCurrentUser().getUsername());

@@ -6,24 +6,23 @@
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 	
 	<bean id="DataObjectActionHelper" parent="entityActionHelper" 
-			class="org.entando.entando.apsadmin.dataobject.helper.ContentActionHelper" >
-		<property name="contentManager" ref="jacmsContentManager" />
-		<!-- <property name="pageManager" ref="PageManager" /> -->
-		<property name="contentHelper" ref="jacmsContentHelper" />
-		<property name="contentAuthorizationHelper" ref="jacmsContentAuthorizationHelper" />
+			class="org.entando.entando.apsadmin.dataobject.helper.DataObjectActionHelper" >
+		<property name="dataObjectManager" ref="DataObjectManager" />
+		<property name="dataObjectHelper" ref="DataObjectHelper" />
+		<property name="dataObjectAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
 	</bean>
 	
 	<bean id="AbstractDataObjectAction" abstract="true" 
 			class="org.entando.entando.apsadmin.dataobject.AbstractContentAction" parent="abstractBaseAction" >
 		<property name="contentManager" ref="jacmsContentManager"/>
 		<property name="groupManager" ref="GroupManager"/>
-		<property name="contentActionHelper" ref="jacmsContentActionHelper"/>
+		<property name="contentActionHelper" ref="DataObjectActionHelper"/>
 	</bean>
 	
 	<bean id="DataObjectFinderAction" scope="prototype" 
 			class="org.entando.entando.apsadmin.dataobject.ContentFinderAction" 
 			parent="abstractBaseAction">
-		<property name="entityActionHelper" ref="jacmsContentActionHelper" />
+		<property name="entityActionHelper" ref="DataObjectActionHelper" />
 		<property name="contentManager" ref="jacmsContentManager"/>
 		<property name="groupManager" ref="GroupManager"/>
 		<property name="categoryManager" ref="CategoryManager"/>
@@ -33,7 +32,7 @@
 			class="org.entando.entando.apsadmin.dataobject.ContentCategoryAction" 
 			parent="abstractBaseAction">
 		<property name="categoryManager" ref="CategoryManager"/>
-		<property name="contentActionHelper" ref="jacmsContentActionHelper"/>
+		<property name="contentActionHelper" ref="DataObjectActionHelper"/>
 		<property name="treeHelper" ref="categoryActionHelper"/>
 	</bean>
 	
@@ -100,7 +99,7 @@
 	<bean id="DataObjectListAttributeAction" scope="prototype" 
 			class="org.entando.entando.apsadmin.dataobject.attribute.action.list.ListAttributeAction" 
 			parent="abstractBaseAction" >
-		<property name="contentActionHelper" ref="jacmsContentActionHelper"/>
+		<property name="contentActionHelper" ref="DataObjectActionHelper"/>
 	</bean>
 	
 </beans>

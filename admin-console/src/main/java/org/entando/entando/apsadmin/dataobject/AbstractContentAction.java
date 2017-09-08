@@ -84,7 +84,7 @@ public abstract class AbstractContentAction extends BaseAction {
 	 * @return Il contenuto in sesione.
 	 */
 	public Content getContent() {
-		return (Content) this.getRequest().getSession().getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
+		return (Content) this.getRequest().getSession().getAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + this.getContentOnSessionMarker());
 	}
 
 	protected Content updateContentOnSession() {

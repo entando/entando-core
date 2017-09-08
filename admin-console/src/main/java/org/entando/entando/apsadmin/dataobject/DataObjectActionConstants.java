@@ -14,13 +14,14 @@
 package org.entando.entando.apsadmin.dataobject;
 
 /**
- * Interfaccia con le principali costanti della redazione contenuti.
+ * Interfaccia con le principali costanti della redazione DataObject.
+ *
  * @author E.Santoboni
  */
-public interface ContentActionConstants {
-	
-	public static final String SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX = "contentOnSession_";
-	
-	public static final String SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP = "contentGroupOnSession";
-	
+public interface DataObjectActionConstants {
+
+	public static final String SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX = "contentOnSession_";
+
+	public static final String SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_GROUP = "contentGroupOnSession";
+
 }

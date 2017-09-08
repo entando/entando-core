@@ -84,11 +84,11 @@ public class IntroNewContentAction extends AbstractContentAction {
 	
 	protected void fillSessionAttribute(Content prototype) {
 		if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.FREE_GROUP_NAME)) {
-			this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP, Group.FREE_GROUP_NAME);
+			this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_GROUP, Group.FREE_GROUP_NAME);
 		}
 		String marker = buildContentOnSessionMarker(prototype, ApsAdminSystemConstants.ADD);
 		super.setContentOnSessionMarker(marker);
-		this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + marker, prototype);
+		this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + marker, prototype);
 		_logger.debug("Created ed inserted on session content prototype of type {}", prototype.getTypeCode());
 	}
 	

@@ -146,7 +146,7 @@
             <div class="col-sm-10">
 
                 <div class="mb-10">
-                    <a href="#" class="btn btn-success" data-toggle="popover" data-html="true" title="<s:text name="INLINE.EDITING.ASSIST" />" data-content="<s:text name="inline.edit.assist.help" />">
+                    <a href="#" id="popover-inline-editing-assist" class="btn btn-success" data-placement="right" data-trigger="focus" data-toggle="popover" data-html="true" title="<s:text name="INLINE.EDITING.ASSIST" />" data-content="<s:text name="inline.edit.assist.help" />">
                         <s:text name="INLINE.EDITING.ASSIST" />
                     </a>
                 </div>

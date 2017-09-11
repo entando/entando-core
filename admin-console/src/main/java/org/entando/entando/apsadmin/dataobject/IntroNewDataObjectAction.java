@@ -19,19 +19,22 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
- * Action gestore delle operazioni di creazione nuovo contenuto.
+ * Action gestore delle operazioni di creazione nuovo DataObject.
+ *
  * @author E.Santoboni
  */
-public class IntroNewContentAction extends AbstractContentAction {
+public class IntroNewDataObjectAction extends AbstractDataObjectAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(IntroNewContentAction.class);
-	
+	private static final Logger _logger = LoggerFactory.getLogger(IntroNewDataObjectAction.class);
+
 	/**
-	 * Punto di ingresso della redazione nuovo contenuto.
-	 * Apre l'interfaccia per la scelta del tipo di contenuto 
-	 * da gestire con gli altri campi standard di Descrizione e Stato
+	 * Punto di ingresso della redazione nuovo contenuto. Apre l'interfaccia per
+	 * la scelta del tipo di contenuto da gestire con gli altri campi standard
+	 * di Descrizione e Stato
+	 *
 	 * @return Il risultato dell'azione.
 	 */
 	public String openNew() {
@@ -46,14 +49,15 @@ public class IntroNewContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Crea e mette in sessione un nuovo contenuto del tipo richiesto.
+	 *
 	 * @return Il risultato dell'azione.
 	 */
 	public String createNewVoid() {
 		try {
-			Content prototype = this.getContentManager().createContentType(this.getContentTypeCode());
+			DataObject prototype = this.getDataObjectManager().createDataObject(this.getContentTypeCode());
 			prototype.setDescription(this.getContentDescription());
 			prototype.setStatus(this.getContentStatus());
 			prototype.setMainGroup(this.getContentMainGroup());
@@ -65,10 +69,10 @@ public class IntroNewContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String createNew() {
 		try {
-			Content prototype = this.getContentManager().createContentType(this.getContentTypeCode());
+			DataObject prototype = this.getDataObjectManager().createDataObject(this.getContentTypeCode());
 			if (null == prototype) {
 				this.addFieldError("contentTypeCode", this.getText("error.content.type.invalid"));
 				return INPUT;
@@ -81,76 +85,82 @@ public class IntroNewContentAction extends AbstractContentAction {
 		}
 		return SUCCESS;
 	}
-	
-	protected void fillSessionAttribute(Content prototype) {
+
+	protected void fillSessionAttribute(DataObject prototype) {
 		if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.FREE_GROUP_NAME)) {
 			this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_GROUP, Group.FREE_GROUP_NAME);
 		}
-		String marker = buildContentOnSessionMarker(prototype, ApsAdminSystemConstants.ADD);
+		String marker = buildDataObjectOnSessionMarker(prototype, ApsAdminSystemConstants.ADD);
 		super.setContentOnSessionMarker(marker);
 		this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + marker, prototype);
 		_logger.debug("Created ed inserted on session content prototype of type {}", prototype.getTypeCode());
 	}
-	
+
 	/**
 	 * Restituisce il tipo (codice) del contenuto.
+	 *
 	 * @return Il tipo (codice) del contenuto.
 	 */
 	public String getContentTypeCode() {
 		return _contentTypeCode;
 	}
-	
+
 	/**
 	 * Setta il tipo (codice) del contenuto.
+	 *
 	 * @param contentTypeCode Il tipo (codice) del contenuto.
 	 */
 	public void setContentTypeCode(String contentTypeCode) {
 		this._contentTypeCode = contentTypeCode;
 	}
-	
+
 	/**
 	 * Restituisce la descrizione del contenuto.
+	 *
 	 * @return La descrizione del contenuto.
 	 */
 	public String getContentDescription() {
 		return _contentDescription;
 	}
-	
+
 	/**
 	 * Setta la descrizione del contenuto.
+	 *
 	 * @param contentDescription La descrizione del contenuto.
 	 */
 	public void setContentDescription(String contentDescription) {
 		this._contentDescription = contentDescription;
 	}
-	
+
 	public String getContentMainGroup() {
 		return _contentMainGroup;
 	}
-	
+
 	public void setContentMainGroup(String contentMainGroup) {
 		this._contentMainGroup = contentMainGroup;
 	}
-	
+
 	/**
 	 * Restituisce lo stato del contenuto.
+	 *
 	 * @return Lo stato del contenuto.
 	 */
 	public String getContentStatus() {
 		return _contentStatus;
 	}
-	
+
 	/**
 	 * Setta lo stato del contenuto.
+	 *
 	 * @param contentStatus Lo stato del contenuto.
 	 */
 	public void setContentStatus(String contentStatus) {
 		this._contentStatus = contentStatus;
 	}
-	
+
 	private String _contentTypeCode;
 	private String _contentDescription;
 	private String _contentMainGroup;
 	private String _contentStatus;
-	
+
 }

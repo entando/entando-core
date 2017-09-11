@@ -23,8 +23,6 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-import org.entando.entando.plugins.jacms.apsadmin.content.rs.model.ContentJO;
-import org.entando.entando.plugins.jacms.apsadmin.content.rs.model.ContentsStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,31 +40,33 @@ import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.entity.AbstractApsEntityFinderAction;
 import com.agiletec.apsadmin.tags.util.AdminPagerTagHelper;
-import com.agiletec.plugins.jacms.aps.system.services.content.ContentsStatus;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
-import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
+import org.entando.entando.aps.system.services.dataobject.DataObjectsStatus;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
+import org.entando.entando.apsadmin.dataobject.helper.IDataObjectActionHelper;
+import org.entando.entando.apsadmin.dataobject.rs.model.DataObjectJO;
+import org.entando.entando.apsadmin.dataobject.rs.model.DataObjectsStatusResponse;
 
 /**
  * Action per la ricerca contenuti.
- * 
+ *
  * @author E.Santoboni
  */
-public class ContentFinderAction extends AbstractApsEntityFinderAction {
+public class DataObjectFinderAction extends AbstractApsEntityFinderAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentFinderAction.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataObjectFinderAction.class);
 
 	private static final int DEFAULT_LASTUPDATE_RESPONSE_SIZE = 5;
 
-	public ContentsStatusResponse getContentsStatusResponse() {
-		ContentsStatusResponse response = null;
+	public DataObjectsStatusResponse getContentsStatusResponse() {
+		DataObjectsStatusResponse response = null;
 		try {
-			ContentsStatus pagesStatus = this.getContentManager().getContentsStatus();
-			response = new ContentsStatusResponse(pagesStatus);
+			DataObjectsStatus pagesStatus = this.getDataObjectManager().getDataObjectsStatus();
+			response = new DataObjectsStatusResponse(pagesStatus);
 		} catch (Throwable t) {
-			_logger.error("Error loading contents status", t);
-			throw new RuntimeException("Error loading contents status", t);
+			_logger.error("Error loading tDataObject status", t);
+			throw new RuntimeException("Error loading DataObject status", t);
 		}
 		return response;
 	}
@@ -79,33 +79,33 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public List<ContentJO> getLastUpdateContentResponse() {
-		List<ContentJO> response = null;
+	public List<DataObjectJO> getLastUpdateContentResponse() {
+		List<DataObjectJO> response = null;
 		try {
-
-			EntitySearchFilter modifyOrder = new EntitySearchFilter(IContentManager.CONTENT_MODIFY_DATE_FILTER_KEY,
+			EntitySearchFilter modifyOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_MODIFY_DATE_FILTER_KEY,
 					false);
 			modifyOrder.setOrder(EntitySearchFilter.DESC_ORDER);
 
-			List<String> ids = this.getContentManager().searchId(new EntitySearchFilter[] { modifyOrder });
+			List<String> ids = this.getDataObjectManager().searchId(new EntitySearchFilter[]{modifyOrder});
 			if (null != ids && !ids.isEmpty()) {
-				if (this.getLastUpdateResponseSize() > ids.size() - 1)
+				if (this.getLastUpdateResponseSize() > ids.size() - 1) {
 					this.setLastUpdateResponseSize(ids.size() - 1);
+				}
 				List<String> subList = ids.subList(0, this.getLastUpdateResponseSize());
-				response = new ArrayList<ContentJO>();
+				response = new ArrayList<DataObjectJO>();
 				Iterator<String> sublist = subList.iterator();
 				while (sublist.hasNext()) {
 					String contentId = sublist.next();
-					Content content = this.getContentManager().loadContent(contentId, false);
-					ContentRecordVO vo = this.getContentManager().loadContentVO(contentId);
-					ContentJO contentJO = new ContentJO(content, vo);
+					DataObject content = this.getDataObjectManager().loadDataObject(contentId, false);
+					DataObjectRecordVO vo = this.getDataObjectManager().loadDataObjectVO(contentId);
+					DataObjectJO contentJO = new DataObjectJO(content, vo);
 					response.add(contentJO);
 				}
 			}
 
 		} catch (Throwable t) {
-			_logger.error("Error loading last updated content response", t);
-			throw new RuntimeException("Error loading last updated content response", t);
+			_logger.error("Error loading last updated DataObject response", t);
+			throw new RuntimeException("Error loading last updated DataObject response", t);
 		}
 		return response;
 	}
@@ -113,10 +113,10 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	@Override
 	public String execute() {
 		try {
-			ContentFinderSearchInfo searchInfo = this.getContentSearchInfo();
+			DataObjectFinderSearchInfo searchInfo = this.getContentSearchInfo();
 			if (null == searchInfo) {
-				searchInfo = new ContentFinderSearchInfo();
-				this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME, searchInfo);
+				searchInfo = new DataObjectFinderSearchInfo();
+				this.getRequest().getSession().setAttribute(DataObjectFinderSearchInfo.SESSION_NAME, searchInfo);
 			}
 			this.createFilters();
 		} catch (Throwable t) {
@@ -128,8 +128,8 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	public String list() {
 		try {
-			this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME,
-					new ContentFinderSearchInfo());
+			this.getRequest().getSession().setAttribute(DataObjectFinderSearchInfo.SESSION_NAME,
+					new DataObjectFinderSearchInfo());
 			this.createFilters();
 		} catch (Throwable t) {
 			_logger.error("error in execute", t);
@@ -140,17 +140,16 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	public String results() {
 		try {
-			ContentFinderSearchInfo searchInfo = this.getContentSearchInfo();
+			DataObjectFinderSearchInfo searchInfo = this.getContentSearchInfo();
 			if (null == searchInfo) {
-				searchInfo = new ContentFinderSearchInfo();
-				this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME, searchInfo);
+				searchInfo = new DataObjectFinderSearchInfo();
+				this.getRequest().getSession().setAttribute(DataObjectFinderSearchInfo.SESSION_NAME, searchInfo);
 			}
 			this.restoreCommonSearchState(searchInfo);
 			this.restoreCategorySearchState(searchInfo);
 			this.restoreEntitySearchState(searchInfo);
 			this.restorePagerSearchState(searchInfo);
-
-			this.addFilter(searchInfo.getFilter(ContentFinderSearchInfo.ORDER_FILTER));
+			this.addFilter(searchInfo.getFilter(DataObjectFinderSearchInfo.ORDER_FILTER));
 		} catch (Throwable t) {
 			_logger.error("error in results", t);
 			return FAILURE;
@@ -159,31 +158,31 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	}
 
 	/**
-	 * Restituisce la lista identificativi di contenuti che deve essere erogata
-	 * dall'interfaccia di visualizzazione dei contenuti. La lista deve essere
+	 * Restituisce la lista identificativi di DataObject che deve essere erogata
+	 * dall'interfaccia di visualizzazione dei DataObject. La lista deve essere
 	 * filtrata secondo i parametri di ricerca impostati.
-	 * 
-	 * @return La lista di contenuti che deve essere erogata dall'interfaccia di
-	 *         visualizzazione dei contenuti.
+	 *
+	 * @return La lista di DataObject che deve essere erogata dall'interfaccia
+	 * di visualizzazione dei DataObject.
 	 */
-	public List<String> getContents() {
+	public List<String> getDataObjects() {
 		List<String> result = null;
 		try {
-			ContentFinderSearchInfo searchInfo = getContentSearchInfo();
+			DataObjectFinderSearchInfo searchInfo = getContentSearchInfo();
 			List<String> allowedGroups = this.getContentGroupCodes();
 			String[] categories = null;
 			Category category = this.getCategoryManager().getCategory(this.getCategoryCode());
 			if (null != category && !category.isRoot()) {
 				String catCode = this.getCategoryCode().trim();
-				categories = new String[] { catCode };
+				categories = new String[]{catCode};
 				searchInfo.setCategoryCode(catCode);
 			} else {
 				searchInfo.setCategoryCode(null);
 			}
-			result = this.getContentManager().loadWorkContentsId(categories, this.getFilters(), allowedGroups);
+			result = this.getDataObjectManager().loadWorkDataObjectsId(categories, this.getFilters(), allowedGroups);
 		} catch (Throwable t) {
-			_logger.error("error in getContents", t);
-			throw new RuntimeException("error in getContents", t);
+			_logger.error("error in getDataObjects", t);
+			throw new RuntimeException("error in getDataObjects", t);
 		}
 		return result;
 	}
@@ -192,7 +191,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	 * Restituisce la lista di gruppi (codici) dei contenuti che devono essere
 	 * visualizzati in lista. La lista viene ricavata in base alle
 	 * autorizzazioni dall'utente corrente.
-	 * 
+	 *
 	 * @return La lista di gruppi cercata.
 	 */
 	protected List<String> getContentGroupCodes() {
@@ -202,64 +201,64 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	/**
 	 * Restitusce i filtri per la selezione e l'ordinamento dei contenuti
 	 * erogati nell'interfaccia.
-	 * 
+	 *
 	 * @return Il filtri di selezione ed ordinamento dei contenuti.
 	 */
 	@SuppressWarnings("rawtypes")
 	protected EntitySearchFilter[] createFilters() {
-		ContentFinderSearchInfo searchInfo = getContentSearchInfo();
+		DataObjectFinderSearchInfo searchInfo = getContentSearchInfo();
 		this.createBaseFilters();
 
 		if (null != this.getState() && this.getState().trim().length() > 0) {
-			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_STATUS_FILTER_KEY, false,
+			EntitySearchFilter filterToAdd = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_STATUS_FILTER_KEY, false,
 					this.getState(), false);
 			this.addFilter(filterToAdd);
-			searchInfo.addFilter(IContentManager.CONTENT_STATUS_FILTER_KEY, filterToAdd);
+			searchInfo.addFilter(IDataObjectManager.DATA_OBJECT_STATUS_FILTER_KEY, filterToAdd);
 		} else {
-			searchInfo.removeFilter(IContentManager.CONTENT_STATUS_FILTER_KEY);
+			searchInfo.removeFilter(IDataObjectManager.DATA_OBJECT_STATUS_FILTER_KEY);
 		}
 
 		if (null != this.getText() && this.getText().trim().length() > 0) {
-			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false,
+			EntitySearchFilter filterToAdd = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false,
 					this.getText(), true);
 			this.addFilter(filterToAdd);
-			searchInfo.addFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, filterToAdd);
+			searchInfo.addFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, filterToAdd);
 		} else {
-			searchInfo.removeFilter(IContentManager.CONTENT_DESCR_FILTER_KEY);
+			searchInfo.removeFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY);
 		}
 
 		if (null != this.getOwnerGroupName() && this.getOwnerGroupName().trim().length() > 0) {
-			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY,
+			EntitySearchFilter filterToAdd = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_MAIN_GROUP_FILTER_KEY,
 					false, this.getOwnerGroupName(), false);
 			this.addFilter(filterToAdd);
-			searchInfo.addFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY, filterToAdd);
+			searchInfo.addFilter(IDataObjectManager.DATA_OBJECT_MAIN_GROUP_FILTER_KEY, filterToAdd);
 		} else {
-			searchInfo.removeFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY);
+			searchInfo.removeFilter(IDataObjectManager.DATA_OBJECT_MAIN_GROUP_FILTER_KEY);
 		}
 
 		if (null != this.getOnLineState() && this.getOnLineState().trim().length() > 0) {
-			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, false);
+			EntitySearchFilter filterToAdd = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY, false);
 			filterToAdd.setNullOption(this.getOnLineState().trim().equals("no"));
 			this.addFilter(filterToAdd);
-			searchInfo.addFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY, filterToAdd);
+			searchInfo.addFilter(IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY, filterToAdd);
 		} else {
-			searchInfo.removeFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY);
+			searchInfo.removeFilter(IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY);
 		}
 
 		if (null != this.getContentIdToken() && this.getContentIdToken().trim().length() > 0) {
-			EntitySearchFilter filterToAdd = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false,
+			EntitySearchFilter filterToAdd = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false,
 					this.getContentIdToken(), true);
 			this.addFilter(filterToAdd);
-			searchInfo.addFilter(IContentManager.ENTITY_ID_FILTER_KEY, filterToAdd);
+			searchInfo.addFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, filterToAdd);
 		} else {
-			searchInfo.removeFilter(IContentManager.ENTITY_ID_FILTER_KEY);
+			searchInfo.removeFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY);
 		}
 
 		this.savePagerSearchState(searchInfo);
-		EntitySearchFilter orderFilter = this.getContentActionHelper().getOrderFilter(this.getLastGroupBy(),
+		EntitySearchFilter orderFilter = this.getDataObjectActionHelper().getOrderFilter(this.getLastGroupBy(),
 				this.getLastOrder());
 		super.addFilter(orderFilter);
-		searchInfo.addFilter(ContentFinderSearchInfo.ORDER_FILTER, orderFilter);
+		searchInfo.addFilter(DataObjectFinderSearchInfo.ORDER_FILTER, orderFilter);
 
 		return this.getFilters();
 	}
@@ -268,13 +267,13 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	protected void createBaseFilters() {
 		try {
 			int initSize = this.getFilters().length;
-			ContentFinderSearchInfo searchInfo = getContentSearchInfo();
+			DataObjectFinderSearchInfo searchInfo = getContentSearchInfo();
 
 			EntitySearchFilter[] roleFilters = this.getEntityActionHelper().getRoleFilters(this);
 			this.addFilters(roleFilters);
 			IApsEntity prototype = this.getEntityPrototype();
 			searchInfo.removeFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY);
-			searchInfo.removeFilterByPrefix(ContentFinderSearchInfo.ATTRIBUTE_FILTER);
+			searchInfo.removeFilterByPrefix(DataObjectFinderSearchInfo.ATTRIBUTE_FILTER);
 			if (null != prototype) {
 				EntitySearchFilter filterToAdd = new EntitySearchFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY,
 						false, prototype.getTypeCode(), false);
@@ -292,16 +291,17 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 	}
 
-	private ContentFinderSearchInfo getContentSearchInfo() {
-		ContentFinderSearchInfo searchInfo = (ContentFinderSearchInfo) this.getRequest().getSession()
-				.getAttribute(ContentFinderSearchInfo.SESSION_NAME);
+	private DataObjectFinderSearchInfo getContentSearchInfo() {
+		DataObjectFinderSearchInfo searchInfo = (DataObjectFinderSearchInfo) this.getRequest().getSession()
+				.getAttribute(DataObjectFinderSearchInfo.SESSION_NAME);
 		return searchInfo;
 	}
 
 	public String changeOrder() {
 		try {
-			if (null == this.getGroupBy())
+			if (null == this.getGroupBy()) {
 				return SUCCESS;
+			}
 			if (this.getGroupBy().equals(this.getLastGroupBy())) {
 				boolean condition = (null == this.getLastOrder()
 						|| this.getLastOrder().equals(EntitySearchFilter.ASC_ORDER));
@@ -318,12 +318,6 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		return this.execute();
 	}
 
-	/**
-	 * Esegue la publicazione di un singolo contenuto direttamente
-	 * dall'interfaccia di visualizzazione dei contenuti in lista.
-	 * 
-	 * @return Il codice del risultato dell'azione.
-	 */
 	public String insertOnLine() {
 		try {
 			if (null == this.getContentIds()) {
@@ -331,10 +325,10 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 				return INPUT;
 			}
 			Iterator<String> iter = this.getContentIds().iterator();
-			List<Content> publishedContents = new ArrayList<Content>();
+			List<DataObject> publishedContents = new ArrayList<DataObject>();
 			while (iter.hasNext()) {
 				String contentId = (String) iter.next();
-				Content contentToPublish = this.getContentManager().loadContent(contentId, false);
+				DataObject contentToPublish = this.getDataObjectManager().loadDataObject(contentId, false);
 				String[] msgArg = new String[1];
 				if (null == contentToPublish) {
 					msgArg[0] = contentId;
@@ -346,13 +340,13 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 					this.addActionError(this.getText("error.content.userNotAllowedToPublishContent", msgArg));
 					continue;
 				}
-				this.getContentActionHelper().scanEntity(contentToPublish, this);
+				this.getDataObjectActionHelper().scanEntity(contentToPublish, this);
 				if (this.getFieldErrors().size() > 0) {
 					this.addActionError(this.getText("error.content.publishingContentWithErrors", msgArg));
 					continue;
 				}
-				this.getContentManager().insertOnLineContent(contentToPublish);
-				_logger.info("Published content {} by user {}", contentToPublish.getId(),
+				this.getDataObjectManager().insertOnLineDataObject(contentToPublish);
+				_logger.info("Published dataObject {} by user {}", contentToPublish.getId(),
 						this.getCurrentUser().getUsername());
 				publishedContents.add(contentToPublish);
 				this.addActivityStreamInfo(contentToPublish, (ApsAdminSystemConstants.ADD + 10), true);
@@ -369,7 +363,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	/**
 	 * Esegue la rimozione dall'area pubblica di un singolo contenuto
 	 * direttamente dall'interfaccia di visualizzazione dei contenuti in lista.
-	 * 
+	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String removeOnLine() {
@@ -379,10 +373,10 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 				return INPUT;
 			}
 			Iterator<String> contentsIdsItr = this.getContentIds().iterator();
-			List<Content> removedContents = new ArrayList<Content>();
+			List<DataObject> removedContents = new ArrayList<DataObject>();
 			while (contentsIdsItr.hasNext()) {
 				String contentId = (String) contentsIdsItr.next();
-				Content contentToSuspend = this.getContentManager().loadContent(contentId, false);
+				DataObject contentToSuspend = this.getDataObjectManager().loadDataObject(contentId, false);
 				String[] msgArg = new String[1];
 				if (null == contentToSuspend) {
 					msgArg[0] = contentId;
@@ -394,14 +388,13 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 					this.addActionError(this.getText("error.content.userNotAllowedToSuspendContent", msgArg));
 					continue;
 				}
-				Map references = this.getContentActionHelper().getReferencingObjects(contentToSuspend,
-						this.getRequest());
+				Map references = this.getDataObjectActionHelper().getReferencingObjects(contentToSuspend, this.getRequest());
 				if (references.size() > 0) {
 					this.addActionError(this.getText("error.content.suspendingContentWithReferences", msgArg));
 					continue;
 				}
-				this.getContentManager().removeOnLineContent(contentToSuspend);
-				_logger.info("Suspended Content '{}' by user {}", contentToSuspend.getId(),
+				this.getDataObjectManager().removeOnLineDataObject(contentToSuspend);
+				_logger.info("Suspended DataObject '{}' by user {}", contentToSuspend.getId(),
 						this.getCurrentUser().getUsername());
 				removedContents.add(contentToSuspend);
 				this.addActivityStreamInfo(contentToSuspend, (ApsAdminSystemConstants.DELETE + 10), true);
@@ -419,9 +412,9 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	 * We've moved to deletion check here in the 'trash' action so to have
 	 * errors notified immediately. Be design we share all the messages with the
 	 * 'delete' action.
-	 * 
+	 *
 	 * @return the result code of the action: "success" if all the contents can
-	 *         be deleted, "cannotProceed" if blocking errors are detected
+	 * be deleted, "cannotProceed" if blocking errors are detected
 	 */
 	public String trash() {
 		if (null == this.getContentIds()) {
@@ -433,7 +426,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			while (itr.hasNext()) {
 				String currentContentId = itr.next();
 				String msgArg[] = new String[1];
-				Content contentToTrash = this.getContentManager().loadContent(currentContentId, false);
+				DataObject contentToTrash = this.getDataObjectManager().loadDataObject(currentContentId, false);
 				if (null == contentToTrash) {
 					msgArg[0] = currentContentId;
 					this.addActionError(this.getText("error.content.contentToDeleteNull", msgArg));
@@ -453,14 +446,15 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			_logger.error("Error on deleting contents - trash", t);
 			throw new RuntimeException("Error on deleting contents", t);
 		}
-		if (this.getActionErrors().isEmpty())
+		if (this.getActionErrors().isEmpty()) {
 			return SUCCESS;
+		}
 		return "cannotProceed";
 	}
 
 	/**
 	 * Esegue l'operazione di cancellazione contenuto o gruppo contenuti.
-	 * 
+	 *
 	 * @return Il codice del risultato.
 	 */
 	public String delete() {
@@ -470,10 +464,10 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 				return INPUT;
 			}
 			Iterator<String> iter = this.getContentIds().iterator();
-			List<Content> deletedContents = new ArrayList<Content>();
+			List<DataObject> deletedContents = new ArrayList<DataObject>();
 			while (iter.hasNext()) {
 				String contentId = (String) iter.next();
-				Content contentToDelete = this.getContentManager().loadContent(contentId, false);
+				DataObject contentToDelete = this.getDataObjectManager().loadDataObject(contentId, false);
 				String[] msgArg = new String[1];
 				if (null == contentToDelete) {
 					msgArg[0] = contentId;
@@ -489,8 +483,8 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 					this.addActionError(this.getText("error.content.notAllowedToDeleteOnlineContent", msgArg));
 					continue;
 				}
-				this.getContentManager().deleteContent(contentToDelete);
-				_logger.info("Deleted Content '{}' by user {}", contentToDelete.getId(),
+				this.getDataObjectManager().deleteDataObject(contentToDelete);
+				_logger.info("Deleted DataObject '{}' by user {}", contentToDelete.getId(),
 						this.getCurrentUser().getUsername());
 				deletedContents.add(contentToDelete);
 				this.addActivityStreamInfo(contentToDelete, ApsAdminSystemConstants.DELETE, false);
@@ -499,66 +493,65 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 			this.addConfirmMessage("message.content.deletedContents", deletedContents);
 		} catch (Throwable t) {
 			_logger.error("Error deleting contentd - delete", t);
-			throw new RuntimeException("Errore in cancellazione contenuti", t);
+			throw new RuntimeException("Errore in cancellazione DataObjects", t);
 		}
 		return SUCCESS;
 	}
 
-	protected boolean isUserAllowed(Content content) {
-		return this.getContentActionHelper().isUserAllowed(content, this.getCurrentUser());
+	protected boolean isUserAllowed(DataObject dataObject) {
+		return this.getDataObjectActionHelper().isUserAllowed(dataObject, this.getCurrentUser());
 	}
 
-	protected void addConfirmMessage(String key, List<Content> contents) {
+	protected void addConfirmMessage(String key, List<DataObject> contents) {
 		if (contents.size() > 0) {
 			// RIVISITARE LOGICA DI COSTRUZIONE MESSAGGIO
 			String confirm = this.getText(key);
 			for (int i = 0; i < contents.size(); i++) {
-				Content content = contents.get(i);
+				DataObject dataObject = contents.get(i);
 				if (i > 0) {
 					confirm += " - ";
 				}
-				confirm += " '" + content.getDescription() + "'";
+				confirm += " '" + dataObject.getDescription() + "'";
 			}
 			this.addActionMessage(confirm);
 		}
 	}
 
 	/**
-	 * Restituisce il contenuto vo in base all'identificativo.
-	 * 
-	 * @param contentId
-	 *            L'identificativo del contenuto.
-	 * @return Il contenuto vo cercato.
+	 * Restituisce il DataObject vo in base all'identificativo.
+	 *
+	 * @param dataObjectId L'identificativo del DataObject.
+	 * @return Il DataObject vo cercato.
 	 */
-	public ContentRecordVO getContentVo(String contentId) {
-		ContentRecordVO contentVo = null;
+	public DataObjectRecordVO getDataObjectVo(String dataObjectId) {
+		DataObjectRecordVO dataObjectVo = null;
 		try {
-			contentVo = this.getContentManager().loadContentVO(contentId);
+			dataObjectVo = this.getDataObjectManager().loadDataObjectVO(dataObjectId);
 		} catch (Throwable t) {
-			_logger.error("error in getContentVo for content {}", contentId, t);
-			throw new RuntimeException("Errore in caricamento contenuto vo", t);
+			_logger.error("error in getDataObjectVo for DataObject {}", dataObjectId, t);
+			throw new RuntimeException("Errore in caricamento DataObject vo", t);
 		}
-		return contentVo;
+		return dataObjectVo;
 	}
 
 	public List<SmallEntityType> getContentTypes() {
-		return this.getContentManager().getSmallEntityTypes();
+		return this.getDataObjectManager().getSmallEntityTypes();
 	}
 
-	public SmallEntityType getSmallContentType(String code) {
-		return this.getContentManager().getSmallContentTypesMap().get(code);
+	public SmallEntityType getSmallDataObjectType(String code) {
+		return this.getDataObjectManager().getSmallDataTypesMap().get(code);
 	}
 
 	/**
-	 * Restituisce la lista di stati di contenuto definiti nel sistema, come
+	 * Restituisce la lista di stati di DataObject definiti nel sistema, come
 	 * insieme di chiave e valore Il metodo è a servizio delle jsp che
 	 * richiedono questo dato per fornire una corretta visualizzazione della
 	 * pagina.
-	 * 
-	 * @return La lista di stati di contenuto definiti nel sistema.
+	 *
+	 * @return La lista di stati di DataObject definiti nel sistema.
 	 */
 	public List<SelectItem> getAvalaibleStatus() {
-		String[] status = Content.AVAILABLE_STATUS;
+		String[] status = DataObject.AVAILABLE_STATUS;
 		List<SelectItem> items = new ArrayList<SelectItem>(status.length);
 		for (int i = 0; i < status.length; i++) {
 			SelectItem item = new SelectItem(status[i], "name.contentStatus." + status[i]);
@@ -567,12 +560,12 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		return items;
 	}
 
-	protected void addActivityStreamInfo(Content content, int strutsAction, boolean addLink) {
-		ActivityStreamInfo asi = this.getContentActionHelper().createActivityStreamInfo(content, strutsAction, addLink);
+	protected void addActivityStreamInfo(DataObject dataObject, int strutsAction, boolean addLink) {
+		ActivityStreamInfo asi = this.getDataObjectActionHelper().createActivityStreamInfo(dataObject, strutsAction, addLink);
 		super.addActivityStreamInfo(asi);
 	}
 
-	protected void savePagerSearchState(ContentFinderSearchInfo searchInfo) {
+	protected void savePagerSearchState(DataObjectFinderSearchInfo searchInfo) {
 		boolean found = searchInfo.setPagerFromParameters(this.getRequest().getParameterNames());
 		if (!found) {
 			String pagerName = this.getPagerName();
@@ -584,7 +577,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 	}
 
-	protected void restorePagerSearchState(ContentFinderSearchInfo searchInfo) {
+	protected void restorePagerSearchState(DataObjectFinderSearchInfo searchInfo) {
 		String pageName = searchInfo.getPageName();
 		if (StringUtils.isNotBlank(pageName)) {
 			this.getRequest().setAttribute(pageName, searchInfo.getPagePos());
@@ -592,13 +585,13 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected void restoreEntitySearchState(ContentFinderSearchInfo searchInfo) {
+	protected void restoreEntitySearchState(DataObjectFinderSearchInfo searchInfo) {
 		if (null != searchInfo.getFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY)) {
 			EntitySearchFilter filter = searchInfo.getFilter(IEntityManager.ENTITY_TYPE_CODE_FILTER_KEY);
 			this.addFilter(filter);
 			this.setEntityTypeCode((String) filter.getValue());
 
-			EntitySearchFilter[] filters = searchInfo.getFiltersByKeyPrefix(ContentFinderSearchInfo.ATTRIBUTE_FILTER);
+			EntitySearchFilter[] filters = searchInfo.getFiltersByKeyPrefix(DataObjectFinderSearchInfo.ATTRIBUTE_FILTER);
 			if (null != filters && filters.length > 0) {
 				for (EntitySearchFilter entitySearchFilter : filters) {
 					this.addFilter(entitySearchFilter);
@@ -628,7 +621,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		}
 	}
 
-	private void restoreCategorySearchState(ContentFinderSearchInfo searchInfo) {
+	private void restoreCategorySearchState(DataObjectFinderSearchInfo searchInfo) {
 		String catCode = searchInfo.getCategoryCode();
 		if (StringUtils.isNotBlank(catCode)) {
 			Category category = this.getCategoryManager().getCategory(catCode);
@@ -639,33 +632,31 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected void restoreCommonSearchState(ContentFinderSearchInfo searchInfo) {
-		if (null != searchInfo.getFilter(IContentManager.CONTENT_STATUS_FILTER_KEY)) {
-			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_STATUS_FILTER_KEY);
+	protected void restoreCommonSearchState(DataObjectFinderSearchInfo searchInfo) {
+		if (null != searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_STATUS_FILTER_KEY)) {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_STATUS_FILTER_KEY);
 			this.addFilter(filterToAdd);
 			this.setState((String) filterToAdd.getValue());
 		}
 
-		if (null != searchInfo.getFilter(IContentManager.CONTENT_DESCR_FILTER_KEY)) {
-			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_DESCR_FILTER_KEY);
+		if (null != searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY)) {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY);
 			this.addFilter(filterToAdd);
 			this.setText((String) filterToAdd.getValue());
 		}
 
-		if (null != searchInfo.getFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY)) {
-			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_MAIN_GROUP_FILTER_KEY);
+		if (null != searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_MAIN_GROUP_FILTER_KEY)) {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_MAIN_GROUP_FILTER_KEY);
 			this.addFilter(filterToAdd);
 			this.setOwnerGroupName((String) filterToAdd.getValue());
 		}
-
-		if (null != searchInfo.getFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY)) {
-			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.CONTENT_ONLINE_FILTER_KEY);
+		if (null != searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY)) {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY);
 			this.addFilter(filterToAdd);
 			this.setOnLineState(filterToAdd.isNullOption() ? "no" : "yes");
 		}
-
-		if (null != searchInfo.getFilter(IContentManager.ENTITY_ID_FILTER_KEY)) {
-			EntitySearchFilter filterToAdd = searchInfo.getFilter(IContentManager.ENTITY_ID_FILTER_KEY);
+		if (null != searchInfo.getFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY)) {
+			EntitySearchFilter filterToAdd = searchInfo.getFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY);
 			this.addFilter(filterToAdd);
 			this.setContentIdToken((String) filterToAdd.getValue());
 		}
@@ -675,10 +666,10 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		try {
 			Set<String> contentIds = null;
 			if (this.isAllContentsSelected()) {
-				this.getRequest().getSession().setAttribute(ContentFinderSearchInfo.SESSION_NAME,
-						new ContentFinderSearchInfo());
+				this.getRequest().getSession().setAttribute(DataObjectFinderSearchInfo.SESSION_NAME,
+						new DataObjectFinderSearchInfo());
 				this.createFilters();
-				List<String> allContentIds = this.getContents();
+				List<String> allContentIds = this.getDataObjects();
 				if (allContentIds != null) {
 					contentIds = new TreeSet<String>(allContentIds);
 				}
@@ -699,9 +690,8 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	/**
 	 * Restituisce un gruppo in base al nome.
-	 * 
-	 * @param groupName
-	 *            Il nome del gruppo da restituire.
+	 *
+	 * @param groupName Il nome del gruppo da restituire.
 	 * @return Il gruppo cercato.
 	 */
 	public Group getGroup(String groupName) {
@@ -714,7 +704,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	/**
 	 * Restituisce la lista ordinata dei gruppi presenti nel sistema.
-	 * 
+	 *
 	 * @return La lista dei gruppi presenti nel sistema.
 	 */
 	public List<Group> getGroups() {
@@ -725,8 +715,8 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		return (Category) this.getCategoryManager().getRoot();
 	}
 
-	protected IContentActionHelper getContentActionHelper() {
-		return (IContentActionHelper) super.getEntityActionHelper();
+	protected IDataObjectActionHelper getDataObjectActionHelper() {
+		return (IDataObjectActionHelper) super.getEntityActionHelper();
 	}
 
 	@Override
@@ -736,7 +726,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	@Override
 	protected IEntityManager getEntityManager() {
-		return this.getContentManager();
+		return this.getDataObjectManager();
 	}
 
 	public String getContentType() {
@@ -907,12 +897,12 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 		this._strutsAction = strutsAction;
 	}
 
-	protected IContentManager getContentManager() {
-		return _contentManager;
+	public IDataObjectManager getDataObjectManager() {
+		return _dataObjectManager;
 	}
 
-	public void setContentManager(IContentManager contentManager) {
-		this._contentManager = contentManager;
+	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+		this._dataObjectManager = dataObjectManager;
 	}
 
 	protected IGroupManager getGroupManager() {
@@ -967,7 +957,7 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
 
 	private String pagerName = AdminPagerTagHelper.DEFAULT_PAGER_NAME;
 
-	private IContentManager _contentManager;
+	private IDataObjectManager _dataObjectManager;
 	private IGroupManager _groupManager;
 	private ICategoryManager _categoryManager;
 

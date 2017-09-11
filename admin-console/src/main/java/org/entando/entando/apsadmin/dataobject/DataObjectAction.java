@@ -27,47 +27,42 @@ import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
-import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
- * Action principale per la redazione contenuti.
+ * Action principale per la redazione DataObject.
  *
  * @author E.Santoboni
  */
-public class ContentAction extends AbstractContentAction {
+public class DataObjectAction extends AbstractDataObjectAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentAction.class);
+	private static final Logger _logger = LoggerFactory.getLogger(DataObjectAction.class);
 
 	@Override
 	public void validate() {
-		Content content = this.updateContentOnSession(true);
+		DataObject content = this.updateDataObjectOnSession(true);
 		super.validate();
-		this.getContentActionHelper().scanEntity(content, this);
+		this.getDataObjectActionHelper().scanEntity(content, this);
 	}
 
 	/**
-	 * Esegue l'azione di edit di un contenuto.
+	 * Esegue l'azione di edit di un DataObject.
 	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String edit() {
 		try {
-			Content content = this.getContentManager().loadContent(this.getContentId(), false);
+			DataObject content = this.getDataObjectManager().loadDataObject(this.getContentId(), false);
 			if (null == content) {
-				throw new ApsSystemException("Contenuto in edit '" + this.getContentId() + "' nullo!");
+				throw new ApsSystemException("DataObject in edit '" + this.getContentId() + "' nullo!");
 			}
 			if (!this.isUserAllowed(content)) {
-				_logger.info("Utente non abilitato all'editazione del contenuto {}", content.getId());
+				_logger.info("Utente non abilitato all'editazione del DataObject {}", content.getId());
 				return USER_NOT_ALLOWED;
 			}
-			String marker = buildContentOnSessionMarker(content, ApsAdminSystemConstants.EDIT);
+			String marker = buildDataObjectOnSessionMarker(content, ApsAdminSystemConstants.EDIT);
 			super.setContentOnSessionMarker(marker);
 			this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + marker, content);
 		} catch (Throwable t) {
@@ -78,28 +73,28 @@ public class ContentAction extends AbstractContentAction {
 	}
 
 	/**
-	 * Esegue l'azione di copia/incolla di un contenuto.
+	 * Esegue l'azione di copia/incolla di un DataObject.
 	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String copyPaste() {
 		try {
-			Content content = this.getContentManager().loadContent(this.getContentId(), this.isCopyPublicVersion());
-			if (null == content) {
-				throw new ApsSystemException("Contenuto in copyPaste '" + this.getContentId() + "' nullo ; copia di contenuto pubblico "
+			DataObject dataObject = this.getDataObjectManager().loadDataObject(this.getContentId(), this.isCopyPublicVersion());
+			if (null == dataObject) {
+				throw new ApsSystemException("DataObject in copyPaste '" + this.getContentId() + "' nullo ; copia di DataObject pubblico "
 						+ this.isCopyPublicVersion());
 			}
-			if (!this.isUserAllowed(content)) {
-				_logger.info("Utente non abilitato all'accesso del contenuto {}", content.getId());
+			if (!this.isUserAllowed(dataObject)) {
+				_logger.info("Utente non abilitato all'accesso del DataObject {}", dataObject.getId());
 				return USER_NOT_ALLOWED;
 			}
-			String marker = buildContentOnSessionMarker(content, ApsAdminSystemConstants.PASTE);
-			content.setId(null);
-			content.setVersion(Content.INIT_VERSION);
-			content.setDescription(this.getText("label.copyOf") + " " + content.getDescription());
-			content.setFirstEditor(this.getCurrentUser().getUsername());
+			String marker = buildDataObjectOnSessionMarker(dataObject, ApsAdminSystemConstants.PASTE);
+			dataObject.setId(null);
+			dataObject.setVersion(DataObject.INIT_VERSION);
+			dataObject.setDescription(this.getText("label.copyOf") + " " + dataObject.getDescription());
+			dataObject.setFirstEditor(this.getCurrentUser().getUsername());
 			super.setContentOnSessionMarker(marker);
-			this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + marker, content);
+			this.getRequest().getSession().setAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + marker, dataObject);
 		} catch (Throwable t) {
 			_logger.error("error in copyPaste", t);
 			return FAILURE;
@@ -112,7 +107,7 @@ public class ContentAction extends AbstractContentAction {
 	}
 
 	public String configureMainGroup() {
-		Content content = this.updateContentOnSession();
+		DataObject content = this.updateDataObjectOnSession();
 		try {
 			if (/* null == content.getId() && */null == content.getMainGroup()) {
 				String mainGroup = this.getRequest().getParameter("mainGroup");
@@ -128,13 +123,13 @@ public class ContentAction extends AbstractContentAction {
 	}
 
 	/**
-	 * Esegue l'azione di associazione di un gruppo al contenuto in fase di
+	 * Esegue l'azione di associazione di un gruppo al DataObject in fase di
 	 * redazione.
 	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String joinGroup() {
-		this.updateContentOnSession();
+		this.updateDataObjectOnSession();
 		try {
 			String extraGroupName = this.getExtraGroupName();
 			Group group = this.getGroupManager().getGroup(extraGroupName);
@@ -149,13 +144,13 @@ public class ContentAction extends AbstractContentAction {
 	}
 
 	/**
-	 * Esegue l'azione di rimozione di un gruppo dal contenuto in fase di
+	 * Esegue l'azione di rimozione di un gruppo dal DataObject in fase di
 	 * redazione.
 	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String removeGroup() {
-		this.updateContentOnSession();
+		this.updateDataObjectOnSession();
 		try {
 			String extraGroupName = this.getExtraGroupName();
 			Group group = this.getGroupManager().getGroup(extraGroupName);
@@ -171,16 +166,16 @@ public class ContentAction extends AbstractContentAction {
 
 	public String saveAndContinue() {
 		try {
-			Content currentContent = this.updateContentOnSession();
-			if (null != currentContent) {
-				String descr = currentContent.getDescription();
+			DataObject currentDataObject = this.updateDataObjectOnSession();
+			if (null != currentDataObject) {
+				String descr = currentDataObject.getDescription();
 				if (StringUtils.isEmpty(descr)) {
 					this.addFieldError("descr", this.getText("error.content.descr.required"));
-				} else if (StringUtils.isEmpty(currentContent.getMainGroup())) {
+				} else if (StringUtils.isEmpty(currentDataObject.getMainGroup())) {
 					this.addFieldError("mainGroup", this.getText("error.content.mainGroup.required"));
 				} else {
-					currentContent.setLastEditor(this.getCurrentUser().getUsername());
-					this.getContentManager().saveContent(currentContent);
+					currentDataObject.setLastEditor(this.getCurrentUser().getUsername());
+					this.getDataObjectManager().saveDataObject(currentDataObject);
 				}
 			}
 		} catch (Throwable t) {
@@ -191,12 +186,12 @@ public class ContentAction extends AbstractContentAction {
 	}
 
 	/**
-	 * Esegue l'azione di salvataggio del contenuto in fase di redazione.
+	 * Esegue l'azione di salvataggio del DataObject in fase di redazione.
 	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
-	public String saveContent() {
-		return this.saveContent(false);
+	public String saveDataObject() {
+		return this.saveDataObject(false);
 	}
 
 	/**
@@ -206,26 +201,26 @@ public class ContentAction extends AbstractContentAction {
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String saveAndApprove() {
-		return this.saveContent(true);
+		return this.saveDataObject(true);
 	}
 
-	protected String saveContent(boolean approve) {
+	protected String saveDataObject(boolean approve) {
 		try {
-			Content currentContent = this.getContent();
+			DataObject currentContent = this.getContent();
 			if (null != currentContent) {
 				int strutsAction = (null == currentContent.getId()) ? ApsAdminSystemConstants.ADD : ApsAdminSystemConstants.EDIT;
 				if (approve) {
 					strutsAction += 10;
 				}
-				if (!this.getContentActionHelper().isUserAllowed(currentContent, this.getCurrentUser())) {
-					_logger.info("User not allowed to save content {}", currentContent.getId());
+				if (!this.getDataObjectActionHelper().isUserAllowed(currentContent, this.getCurrentUser())) {
+					_logger.info("User not allowed to save DataObject {}", currentContent.getId());
 					return USER_NOT_ALLOWED;
 				}
 				currentContent.setLastEditor(this.getCurrentUser().getUsername());
 				if (approve) {
-					this.getContentManager().insertOnLineContent(currentContent);
+					this.getDataObjectManager().insertOnLineDataObject(currentContent);
 				} else {
-					this.getContentManager().saveContent(currentContent);
+					this.getDataObjectManager().saveDataObject(currentContent);
 				}
 				this.addActivityStreamInfo(currentContent, strutsAction, true);
 				this.getRequest().getSession().removeAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX
@@ -251,18 +246,18 @@ public class ContentAction extends AbstractContentAction {
 	 */
 	public String suspend() {
 		try {
-			Content currentContent = this.updateContentOnSession();
+			DataObject currentContent = this.updateDataObjectOnSession();
 			if (null != currentContent) {
-				if (!this.getContentActionHelper().isUserAllowed(currentContent, this.getCurrentUser())) {
-					_logger.info("User not allowed to unpublish content {}", currentContent.getId());
+				if (!this.getDataObjectActionHelper().isUserAllowed(currentContent, this.getCurrentUser())) {
+					_logger.info("User not allowed to unpublish DataObject {}", currentContent.getId());
 					return USER_NOT_ALLOWED;
 				}
-				Map references = this.getContentActionHelper().getReferencingObjects(currentContent, this.getRequest());
+				Map references = this.getDataObjectActionHelper().getReferencingObjects(currentContent, this.getRequest());
 				if (references.size() > 0) {
 					this.setReferences(references);
 					return "references";
 				}
-				this.getContentManager().removeOnLineContent(currentContent);
+				this.getDataObjectManager().removeOnLineDataObject(currentContent);
 				this.addActivityStreamInfo(currentContent, (ApsAdminSystemConstants.DELETE + 10), true);
 				this.getRequest().getSession().removeAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX
 						+ super.getContentOnSessionMarker());
@@ -274,10 +269,6 @@ public class ContentAction extends AbstractContentAction {
 			return FAILURE;
 		}
 		return SUCCESS;
-	}
-
-	public int[] getLinkDestinations() {
-		return SymbolicLink.getDestinationTypes();
 	}
 
 	public IPage getPage(String pageCode) {
@@ -296,7 +287,7 @@ public class ContentAction extends AbstractContentAction {
 	public List<SelectItem> getShowingPageSelectItems() {
 		List<SelectItem> pageItems = new ArrayList<SelectItem>();
 		try {
-			Content content = this.getContent();
+			DataObject content = this.getContent();
 			if (null != content) {
 				IPage defaultViewerPage = this.getPageManager().getOnlinePage(content.getViewPage());
 				if (null != defaultViewerPage && CmsPageUtil.isOnlineFreeViewerPage(defaultViewerPage, null)) {
@@ -305,7 +296,8 @@ public class ContentAction extends AbstractContentAction {
 				if (null == content.getId()) {
 					return pageItems;
 				}
-				ContentUtilizer pageManagerWrapper = (ContentUtilizer) ApsWebApplicationUtils.getBean(
+				/*
+				DataTypeUtilizer pageManagerWrapper = (DataTypeUtilizer) ApsWebApplicationUtils.getBean(
 						JacmsSystemConstants.PAGE_MANAGER_WRAPPER, this.getRequest());
 				List<IPage> pages = pageManagerWrapper.getContentUtilizers(content.getId());
 				for (int i = 0; i < pages.size(); i++) {
@@ -313,16 +305,13 @@ public class ContentAction extends AbstractContentAction {
 					String pageCode = page.getCode();
 					pageItems.add(new SelectItem(pageCode, super.getTitle(pageCode, page.getTitles())));
 				}
+				 */
 			}
 		} catch (Throwable t) {
 			_logger.error("Error on extracting showing pages", t);
 			throw new RuntimeException("Error on extracting showing pages", t);
 		}
 		return pageItems;
-	}
-
-	public String getIconFile(String fileName) {
-		return this.getResourceIconUtil().getIconByFilename(fileName);
 	}
 
 	public Map getReferences() {
@@ -373,14 +362,6 @@ public class ContentAction extends AbstractContentAction {
 		this._copyPublicVersion = copyPublicVersion;
 	}
 
-	protected ResourceIconUtil getResourceIconUtil() {
-		return _resourceIconUtil;
-	}
-
-	public void setResourceIconUtil(ResourceIconUtil resourceIconUtil) {
-		this._resourceIconUtil = resourceIconUtil;
-	}
-
 	private IPageManager _pageManager;
 	private ConfigInterface _configManager;
 
@@ -391,7 +372,5 @@ public class ContentAction extends AbstractContentAction {
 	private String _extraGroupName;
 
 	private boolean _copyPublicVersion;
-
-	private ResourceIconUtil _resourceIconUtil;
 
 }

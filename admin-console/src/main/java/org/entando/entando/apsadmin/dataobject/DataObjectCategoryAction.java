@@ -21,23 +21,27 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
 import com.opensymphony.xwork2.Action;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.apsadmin.dataobject.helper.IDataObjectActionHelper;
 
 /**
- * Action class that manages the category tree operation on content finding GUI interface and the relationships between content and categories.
+ * Action class that manages the category tree operation on DataObject finding
+ * GUI interface and the relationships between DataObject and categories.
+ *
  * @author E.Santoboni
  */
-public class ContentCategoryAction extends AbstractTreeAction {
+public class DataObjectCategoryAction extends AbstractTreeAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ContentCategoryAction.class);
-	
+	private static final Logger _logger = LoggerFactory.getLogger(DataObjectCategoryAction.class);
+
 	@Override
 	public String buildTree() {
 		try {
 			String result = super.buildTree();
-			if (!result.equals(Action.SUCCESS)) return result;
+			if (!result.equals(Action.SUCCESS)) {
+				return result;
+			}
 			Set<String> targets = this.getTreeNodesToOpen();
 			String marker = this.getTreeNodeActionMarkerCode();
 			if (null == marker && null != this.getCategoryCode() && !targets.contains(this.getCategoryCode())) {
@@ -49,19 +53,20 @@ public class ContentCategoryAction extends AbstractTreeAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
-	 * Performs the action of adding of a category to the content.
+	 * Performs the action of adding of a category to the DataObject.
+	 *
 	 * @return The result code.
 	 */
 	public String joinCategory() {
-		this.updateContentOnSession();
+		this.updateDataObjectOnSession();
 		try {
 			String categoryCode = this.getCategoryCode();
 			Category category = this.getCategoryManager().getCategory(categoryCode);
-			if (null != category && !category.getCode().equals(category.getParentCode()) 
-					&& !this.getContent().getCategories().contains(category)) { 
-				this.getContent().addCategory(category);
+			if (null != category && !category.getCode().equals(category.getParentCode())
+					&& !this.getDataObject().getCategories().contains(category)) {
+				this.getDataObject().addCategory(category);
 			}
 		} catch (Throwable t) {
 			_logger.error("error in joinCategory", t);
@@ -69,18 +74,19 @@ public class ContentCategoryAction extends AbstractTreeAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
-	 * Performs the action of removing a category from the content.
+	 * Performs the action of removing a category from the DataObject.
+	 *
 	 * @return The result code.
 	 */
 	public String removeCategory() {
-		this.updateContentOnSession();
+		this.updateDataObjectOnSession();
 		try {
 			String categoryCode = this.getCategoryCode();
 			Category category = this.getCategoryManager().getCategory(categoryCode);
 			if (null != category) {
-				this.getContent().removeCategory(category);
+				this.getDataObject().removeCategory(category);
 			}
 		} catch (Throwable t) {
 			_logger.error("error in removeCategory", t);
@@ -88,55 +94,59 @@ public class ContentCategoryAction extends AbstractTreeAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public Category getCategoryRoot() {
 		return (Category) this.getCategoryManager().getRoot();
 	}
-	
-	public Content getContent() {
-		return (Content) this.getRequest().getSession()
+
+	public DataObject getDataObject() {
+		return (DataObject) this.getRequest().getSession()
 				.getAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + this.getContentOnSessionMarker());
 	}
-	
-	protected Content updateContentOnSession() {
-		Content content = this.getContent();
-		this.getContentActionHelper().updateEntity(content, this.getRequest());
+
+	protected DataObject updateDataObjectOnSession() {
+		DataObject content = this.getDataObject();
+		this.getDataObjectActionHelper().updateEntity(content, this.getRequest());
 		return content;
 	}
-	
+
 	public String getContentOnSessionMarker() {
 		return _contentOnSessionMarker;
 	}
+
 	public void setContentOnSessionMarker(String contentOnSessionMarker) {
 		this._contentOnSessionMarker = contentOnSessionMarker;
 	}
-	
+
 	public String getCategoryCode() {
 		return _categoryCode;
 	}
+
 	public void setCategoryCode(String categoryCode) {
 		this._categoryCode = categoryCode;
 	}
-	
+
 	protected ICategoryManager getCategoryManager() {
 		return _categoryManager;
 	}
+
 	public void setCategoryManager(ICategoryManager categoryManager) {
 		this._categoryManager = categoryManager;
 	}
-	
-	protected IContentActionHelper getContentActionHelper() {
-		return _contentActionHelper;
+
+	public IDataObjectActionHelper getDataObjectActionHelper() {
+		return _dataObjectActionHelper;
 	}
-	public void setContentActionHelper(IContentActionHelper contentActionHelper) {
-		this._contentActionHelper = contentActionHelper;
+
+	public void setDataObjectActionHelper(IDataObjectActionHelper dataObjectActionHelper) {
+		this._dataObjectActionHelper = dataObjectActionHelper;
 	}
-	
+
 	private String _contentOnSessionMarker;
-	
+
 	private String _categoryCode;
 	private ICategoryManager _categoryManager;
-	
-	private IContentActionHelper _contentActionHelper;
-	
+
+	private IDataObjectActionHelper _dataObjectActionHelper;
+
 }

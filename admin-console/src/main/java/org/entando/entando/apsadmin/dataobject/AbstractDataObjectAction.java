@@ -27,110 +27,110 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.SelectItem;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
-import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
 import java.util.Collections;
 import org.apache.commons.beanutils.BeanComparator;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
+import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
+import org.entando.entando.apsadmin.dataobject.helper.IDataObjectActionHelper;
 
 /**
- * Action Astratta Base per la gestione contenuti.
+ * Action Astratta Base per la gestione DataObject.
  *
  * @author E.Santoboni
  */
-public abstract class AbstractContentAction extends BaseAction {
+public abstract class AbstractDataObjectAction extends BaseAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(AbstractContentAction.class);
+	private static final Logger _logger = LoggerFactory.getLogger(AbstractDataObjectAction.class);
 
-	protected void addActivityStreamInfo(Content content, int strutsAction, boolean addLink) {
-		ActivityStreamInfo asi = this.getContentActionHelper().createActivityStreamInfo(content, strutsAction, addLink);
+	protected void addActivityStreamInfo(DataObject dataObject, int strutsAction, boolean addLink) {
+		ActivityStreamInfo asi = this.getDataObjectActionHelper().createActivityStreamInfo(dataObject, strutsAction, addLink);
 		super.addActivityStreamInfo(asi);
 	}
 
 	/**
-	 * Restituisce il contenuto vo in base all'identificativo.
+	 * Restituisce il DataObject vo in base all'identificativo.
 	 *
-	 * @param contentId L'identificativo del contenuto.
-	 * @return Il contenuto vo cercato.
+	 * @param contentId L'identificativo del DataObject.
+	 * @return Il DataObject vo cercato.
 	 */
-	public ContentRecordVO getContentVo(String contentId) {
-		ContentRecordVO contentVo = null;
+	public DataObjectRecordVO getContentVo(String contentId) {
+		DataObjectRecordVO dataObjectVo = null;
 		try {
-			contentVo = this.getContentManager().loadContentVO(contentId);
+			dataObjectVo = this.getDataObjectManager().loadDataObjectVO(contentId);
 		} catch (Throwable t) {
-			_logger.error("error loading contentVo {}", contentId, t);
-			throw new RuntimeException("error loading contentVo", t);
+			_logger.error("error loading DataObjectVo {}", contentId, t);
+			throw new RuntimeException("error loading DataObjectVo", t);
 		}
-		return contentVo;
+		return dataObjectVo;
 	}
 
 	/**
-	 * Verifica se l'utente corrente è abilitato all'accesso del contenuto
+	 * Verifica se l'utente corrente è abilitato all'accesso del DataObject
 	 * specificato.
 	 *
-	 * @param content Il contenuto su cui verificare il permesso di accesso.
-	 * @return True se l'utente corrente è abilitato all'eccesso al contenuto,
+	 * @param dataObject Il DataObject su cui verificare il permesso di accesso.
+	 * @return True se l'utente corrente è abilitato all'eccesso al DataObject,
 	 * false in caso contrario.
 	 */
-	protected boolean isUserAllowed(Content content) {
-		return this.getContentActionHelper().isUserAllowed(content, this.getCurrentUser());
+	protected boolean isUserAllowed(DataObject dataObject) {
+		return this.getDataObjectActionHelper().isUserAllowed(dataObject, this.getCurrentUser());
 	}
 
 	/**
-	 * Restituisce il contenuto in sesione.
+	 * Restituisce il DataObject in sesione.
 	 *
-	 * @return Il contenuto in sesione.
+	 * @return Il DataObject in sesione.
 	 */
-	public Content getContent() {
-		return (Content) this.getRequest().getSession().getAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + this.getContentOnSessionMarker());
+	public DataObject getContent() {
+		return (DataObject) this.getRequest().getSession().getAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + this.getContentOnSessionMarker());
 	}
 
-	protected Content updateContentOnSession() {
-		return this.updateContentOnSession(false);
+	protected DataObject updateDataObjectOnSession() {
+		return this.updateDataObjectOnSession(false);
 	}
 
-	protected Content updateContentOnSession(boolean updateMainGroup) {
-		Content content = this.getContent();
-		this.getContentActionHelper().updateContent(content, updateMainGroup, this.getRequest());
+	protected DataObject updateDataObjectOnSession(boolean updateMainGroup) {
+		DataObject content = this.getContent();
+		this.getDataObjectActionHelper().updateDataObject(content, updateMainGroup, this.getRequest());
 		return content;
 	}
 
 	/**
-	 * Restituisce la lista di contenuti (in forma small) definiti nel sistema.
+	 * Restituisce la lista di DataObject (in forma small) definiti nel sistema.
 	 * Il metodo è a servizio delle jsp che richiedono questo dato per fornire
 	 * una corretta visualizzazione della pagina.
 	 *
-	 * @return La lista di tipi di contenuto (in forma small) definiti nel
+	 * @return La lista di tipi di DataObject (in forma small) definiti nel
 	 * sistema.
 	 */
-	public List<SmallContentType> getContentTypes() {
-		return this.getContentManager().getSmallContentTypes();
+	public List<SmallDataType> getContentTypes() {
+		return this.getDataObjectManager().getSmallDataTypes();
 	}
 
 	/**
-	 * Restituisce la lista di stati di contenuto definiti nel sistema. Il
+	 * Restituisce la lista di stati di DataObject definiti nel sistema. Il
 	 * metodo è a servizio delle jsp che richiedono questo dato per fornire una
 	 * corretta visualizzazione della pagina.
 	 *
-	 * @return La lista di stati di contenuto definiti nel sistema.
+	 * @return La lista di stati di DataObject definiti nel sistema.
 	 * @deprecated use getAvalaibleStatus()
 	 */
 	public String[] getStatesList() {
-		return Content.AVAILABLE_STATUS;
+		return DataObject.AVAILABLE_STATUS;
 	}
 
 	/**
-	 * Restituisce la lista di stati di contenuto definiti nel sistema, come
+	 * Restituisce la lista di stati di DataObject definiti nel sistema, come
 	 * insieme di chiave e valore Il metodo è a servizio delle jsp che
 	 * richiedono questo dato per fornire una corretta visualizzazione della
 	 * pagina.
 	 *
-	 * @return La lista di stati di contenuto definiti nel sistema.
+	 * @return La lista di stati di DataObject definiti nel sistema.
 	 */
 	public List<SelectItem> getAvalaibleStatus() {
-		String[] status = Content.AVAILABLE_STATUS;
+		String[] status = DataObject.AVAILABLE_STATUS;
 		List<SelectItem> items = new ArrayList<SelectItem>(status.length);
 		for (int i = 0; i < status.length; i++) {
 			SelectItem item = new SelectItem(status[i], "name.contentStatus." + status[i]);
@@ -150,17 +150,17 @@ public abstract class AbstractContentAction extends BaseAction {
 		return this.getLangManager().getLangs();
 	}
 
-	public static String buildContentOnSessionMarker(Content content, int operation) {
+	public static String buildDataObjectOnSessionMarker(DataObject dataObject, int operation) {
 		String marker = null;
 		switch (operation) {
 			case ApsAdminSystemConstants.ADD:
-				marker = content.getTypeCode() + "_newContent";
+				marker = dataObject.getTypeCode() + "_newContent";
 				break;
 			case ApsAdminSystemConstants.EDIT:
-				marker = content.getTypeCode() + "_editContent_" + content.getId();
+				marker = dataObject.getTypeCode() + "_editContent_" + dataObject.getId();
 				break;
 			case ApsAdminSystemConstants.PASTE:
-				marker = content.getTypeCode() + "_pasteContent_" + content.getId();
+				marker = dataObject.getTypeCode() + "_pasteContent_" + dataObject.getId();
 				break;
 			default:
 				throw new RuntimeException("Unrecognized operation : " + operation);
@@ -176,40 +176,20 @@ public abstract class AbstractContentAction extends BaseAction {
 		this._contentOnSessionMarker = contentOnSessionMarker;
 	}
 
-	/**
-	 * Restituisce il manager gestore delle operazioni sui contenuti.
-	 *
-	 * @return Il manager gestore delle operazioni sui contenuti.
-	 */
-	protected IContentManager getContentManager() {
-		return _contentManager;
+	public IDataObjectManager getDataObjectManager() {
+		return _dataObjectManager;
 	}
 
-	/**
-	 * Setta il manager gestore delle operazioni sui contenuti.
-	 *
-	 * @param contentManager Il manager gestore delle operazioni sui contenuti.
-	 */
-	public void setContentManager(IContentManager contentManager) {
-		this._contentManager = contentManager;
+	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+		this._dataObjectManager = dataObjectManager;
 	}
 
-	/**
-	 * Restituisce la classe helper della gestione contenuti.
-	 *
-	 * @return La classe helper della gestione contenuti.
-	 */
-	protected IContentActionHelper getContentActionHelper() {
-		return _contentActionHelper;
+	public IDataObjectActionHelper getDataObjectActionHelper() {
+		return _dataObjectActionHelper;
 	}
 
-	/**
-	 * Setta la classe helper della gestione contenuti.
-	 *
-	 * @param contentActionHelper La classe helper della gestione contenuti.
-	 */
-	public void setContentActionHelper(IContentActionHelper contentActionHelper) {
-		this._contentActionHelper = contentActionHelper;
+	public void setDataObjectActionHelper(IDataObjectActionHelper dataObjectActionHelper) {
+		this._dataObjectActionHelper = dataObjectActionHelper;
 	}
 
 	/**
@@ -234,14 +214,14 @@ public abstract class AbstractContentAction extends BaseAction {
 	}
 
 	/**
-	 * Restituisce un tipo di contenuto in forma small.
+	 * Restituisce un tipo di DataType in forma small.
 	 *
-	 * @param typeCode Il codice del tipo di contenuto.
-	 * @return Il tipo di contenuto (in forma small) cercato.
+	 * @param typeCode Il codice del tipo di DataType.
+	 * @return Il tipo di DataType (in forma small) cercato.
 	 */
-	public SmallContentType getSmallContentType(String typeCode) {
-		Map<String, SmallContentType> smallContentTypes = this.getContentManager().getSmallContentTypesMap();
-		return (SmallContentType) smallContentTypes.get(typeCode);
+	public SmallDataType getSmallContentType(String typeCode) {
+		Map<String, SmallDataType> smallContentTypes = this.getDataObjectManager().getSmallDataTypesMap();
+		return (SmallDataType) smallContentTypes.get(typeCode);
 	}
 
 	public List<Group> getAllowedGroups() {
@@ -280,8 +260,8 @@ public abstract class AbstractContentAction extends BaseAction {
 
 	private String _contentOnSessionMarker;
 
-	private IContentManager _contentManager;
-	private IContentActionHelper _contentActionHelper;
+	private IDataObjectManager _dataObjectManager;
+	private IDataObjectActionHelper _dataObjectActionHelper;
 
 	private IGroupManager _groupManager;
 

@@ -26,39 +26,45 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = DataObjectAttributeRole.TABLE_NAME)
 public class DataObjectAttributeRole implements ExtendedColumnDefinition {
 
-	public DataObjectAttributeRole() {
-	}
+    public DataObjectAttributeRole() {
+    }
 
-	@DatabaseField(foreign = true, columnName = "contentid",
-			width = 16,
-			canBeNull = false, index = true)
-	private DataObject _contentId;
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
 
-	@DatabaseField(columnName = "attrname",
-			dataType = DataType.STRING,
-			width = 30,
-			canBeNull = false, index = true)
-	private String _attributeName;
+    @DatabaseField(foreign = true, columnName = "contentid",
+            width = 16,
+            canBeNull = false, index = true)
+    private DataObject _contentId;
 
-	@DatabaseField(columnName = "rolename",
-			dataType = DataType.STRING,
-			width = 50,
-			canBeNull = false, index = true)
-	private String _roleName;
+    @DatabaseField(columnName = "attrname",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, index = true)
+    private String _attributeName;
 
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String contentTableName = DataObject.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			contentTableName = "`" + DataObject.TABLE_NAME + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT contentattrroles_contid_fkey FOREIGN KEY (contentid) "
-			+ "REFERENCES " + contentTableName + " (contentid)"};
-	}
+    @DatabaseField(columnName = "rolename",
+            dataType = DataType.STRING,
+            width = 50,
+            canBeNull = false, index = true)
+    private String _roleName;
 
-	public static final String TABLE_NAME = "dataobjectattributeroles";
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String contentTableName = DataObject.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            contentTableName = "`" + DataObject.TABLE_NAME + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT contentattrroles_contid_fkey FOREIGN KEY (contentid) "
+            + "REFERENCES " + contentTableName + " (contentid)"};
+    }
+
+    public static final String TABLE_NAME = "dataobjectattributeroles";
 
 }

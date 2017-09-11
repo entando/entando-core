@@ -28,54 +28,60 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = WorkDataObjectSearch.TABLE_NAME)
 public class WorkDataObjectSearch implements ExtendedColumnDefinition {
 
-	public WorkDataObjectSearch() {
-	}
+    public WorkDataObjectSearch() {
+    }
 
-	@DatabaseField(foreign = true, columnName = "contentid",
-			width = 16,
-			canBeNull = false, index = true)
-	private DataObject _contentId;
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
 
-	@DatabaseField(columnName = "attrname",
-			dataType = DataType.STRING,
-			width = 30,
-			canBeNull = false, index = true)
-	private String _attributeName;
+    @DatabaseField(foreign = true, columnName = "contentid",
+            width = 16,
+            canBeNull = false, index = true)
+    private DataObject _contentId;
 
-	@DatabaseField(columnName = "textvalue",
-			dataType = DataType.STRING,
-			canBeNull = true)
-	private String _textValue;
+    @DatabaseField(columnName = "attrname",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, index = true)
+    private String _attributeName;
 
-	@DatabaseField(columnName = "datevalue",
-			dataType = DataType.DATE,
-			canBeNull = true)
-	private Date _dateValue;
+    @DatabaseField(columnName = "textvalue",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _textValue;
 
-	@DatabaseField(columnName = "numvalue",
-			dataType = DataType.INTEGER,
-			canBeNull = true)
-	private int _numberValue;
+    @DatabaseField(columnName = "datevalue",
+            dataType = DataType.DATE,
+            canBeNull = true)
+    private Date _dateValue;
 
-	@DatabaseField(columnName = "langcode",
-			dataType = DataType.STRING,
-			width = 3,
-			canBeNull = true)
-	private String _langCode;
+    @DatabaseField(columnName = "numvalue",
+            dataType = DataType.INTEGER,
+            canBeNull = true)
+    private int _numberValue;
 
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String contentTableName = DataObject.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			contentTableName = "`" + DataObject.TABLE_NAME + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT workdataobjsear_contid_fkey FOREIGN KEY (contentid) "
-			+ "REFERENCES " + contentTableName + " (contentid)"};
-	}
+    @DatabaseField(columnName = "langcode",
+            dataType = DataType.STRING,
+            width = 3,
+            canBeNull = true)
+    private String _langCode;
 
-	public static final String TABLE_NAME = "workdataobjectsearch";
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String contentTableName = DataObject.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            contentTableName = "`" + DataObject.TABLE_NAME + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT workdataobjsear_contid_fkey FOREIGN KEY (contentid) "
+            + "REFERENCES " + contentTableName + " (contentid)"};
+    }
+
+    public static final String TABLE_NAME = "workdataobjectsearch";
 
 }

@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
+import com.j256.ormlite.field.DataType;
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
 import org.entando.entando.aps.system.init.model.portdb.Category;
@@ -26,32 +27,38 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = WorkDataObjectRelation.TABLE_NAME)
 public class WorkDataObjectRelation implements ExtendedColumnDefinition {
 
-	public WorkDataObjectRelation() {
-	}
+    public WorkDataObjectRelation() {
+    }
 
-	@DatabaseField(foreign = true, columnName = "contentid",
-			width = 16,
-			canBeNull = false, index = true)
-	private DataObject _content;
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
 
-	@DatabaseField(foreign = true, columnName = "refcategory",
-			width = 30, index = true)
-	private Category _category;
+    @DatabaseField(foreign = true, columnName = "contentid",
+            width = 16,
+            canBeNull = false, index = true)
+    private DataObject _content;
 
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String contentTableName = DataObject.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			contentTableName = "`" + contentTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " "
-			+ "ADD CONSTRAINT workdataobjrels_id_fkey FOREIGN KEY (contentid) "
-			+ "REFERENCES " + contentTableName + " (contentid)"};
-	}
+    @DatabaseField(foreign = true, columnName = "refcategory",
+            width = 30, index = true)
+    private Category _category;
 
-	public static final String TABLE_NAME = "workdataobjectrelations";
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String contentTableName = DataObject.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            contentTableName = "`" + contentTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT workdataobjrels_id_fkey FOREIGN KEY (contentid) "
+            + "REFERENCES " + contentTableName + " (contentid)"};
+    }
+
+    public static final String TABLE_NAME = "workdataobjectrelations";
 
 }
 /*

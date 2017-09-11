@@ -27,52 +27,59 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = UserProfileSearch.TABLE_NAME)
 public class UserProfileSearch implements ExtendedColumnDefinition {
-	
-	public UserProfileSearch() {}
-	
-	@DatabaseField(foreign = true, columnName = "username", 
-			width = 40, 
-			canBeNull = false, index = true)
-	private UserProfile _username;
-	
-	@DatabaseField(columnName = "attrname", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false, index = true)
-	private String _attributeName;
-	
-	@DatabaseField(columnName = "textvalue", 
-			dataType = DataType.STRING)
-	private String _textValue;
-	
-	@DatabaseField(columnName = "datevalue", 
-			dataType = DataType.DATE)
-	private Date _dateValue;
-	
-	@DatabaseField(columnName = "numvalue", 
-			dataType = DataType.INTEGER)
-	private int _numberValue;
-	
-	@DatabaseField(columnName = "langcode", 
-			dataType = DataType.STRING, 
-			width = 3)
-	private String _langCode;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String profileTableName = UserProfile.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			profileTableName = "`" + profileTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_fkey FOREIGN KEY (username) "
-				+ "REFERENCES " + profileTableName + " (username)"};
-	}
-	
-	public static final String TABLE_NAME = "authuserprofilesearch";
-	
+
+    public UserProfileSearch() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(foreign = true, columnName = "username",
+            width = 40,
+            canBeNull = false, index = true)
+    private UserProfile _username;
+
+    @DatabaseField(columnName = "attrname",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, index = true)
+    private String _attributeName;
+
+    @DatabaseField(columnName = "textvalue",
+            dataType = DataType.STRING)
+    private String _textValue;
+
+    @DatabaseField(columnName = "datevalue",
+            dataType = DataType.DATE)
+    private Date _dateValue;
+
+    @DatabaseField(columnName = "numvalue",
+            dataType = DataType.INTEGER)
+    private int _numberValue;
+
+    @DatabaseField(columnName = "langcode",
+            dataType = DataType.STRING,
+            width = 3)
+    private String _langCode;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String profileTableName = UserProfile.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            profileTableName = "`" + profileTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_fkey FOREIGN KEY (username) "
+            + "REFERENCES " + profileTableName + " (username)"};
+    }
+
+    public static final String TABLE_NAME = "authuserprofilesearch";
+
 }
 /*
 CREATE TABLE userprofile_profilesearch

@@ -27,56 +27,63 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = ContentSearch.TABLE_NAME)
 public class ContentSearch implements ExtendedColumnDefinition {
-	
-	public ContentSearch() {}
-	
-	@DatabaseField(foreign = true, columnName = "contentid", 
-			width = 16, 
-			canBeNull = false, index = true)
-	private Content _contentId;
-	
-	@DatabaseField(columnName = "attrname", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false, index = true)
-	private String _attributeName;
-	
-	@DatabaseField(columnName = "textvalue", 
-			dataType = DataType.STRING, 
-			canBeNull = true)
-	private String _textValue;
-	
-	@DatabaseField(columnName = "datevalue", 
-			dataType = DataType.DATE, 
-			canBeNull = true)
-	private Date _dateValue;
-	
-	@DatabaseField(columnName = "numvalue", 
-			dataType = DataType.INTEGER, 
-			canBeNull = true)
-	private int _numberValue;
-	
-	@DatabaseField(columnName = "langcode", 
-			dataType = DataType.STRING, 
-			width = 3, 
-			canBeNull = true)
-	private String _langCode;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String contentTableName = Content.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			contentTableName = "`" + contentTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
-				+ "REFERENCES " + contentTableName + " (contentid)"};
-	}
-	
-	public static final String TABLE_NAME = "contentsearch";
-	
+
+    public ContentSearch() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(foreign = true, columnName = "contentid",
+            width = 16,
+            canBeNull = false, index = true)
+    private Content _contentId;
+
+    @DatabaseField(columnName = "attrname",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, index = true)
+    private String _attributeName;
+
+    @DatabaseField(columnName = "textvalue",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _textValue;
+
+    @DatabaseField(columnName = "datevalue",
+            dataType = DataType.DATE,
+            canBeNull = true)
+    private Date _dateValue;
+
+    @DatabaseField(columnName = "numvalue",
+            dataType = DataType.INTEGER,
+            canBeNull = true)
+    private int _numberValue;
+
+    @DatabaseField(columnName = "langcode",
+            dataType = DataType.STRING,
+            width = 3,
+            canBeNull = true)
+    private String _langCode;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String contentTableName = Content.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            contentTableName = "`" + contentTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
+            + "REFERENCES " + contentTableName + " (contentid)"};
+    }
+
+    public static final String TABLE_NAME = "contentsearch";
+
 }
 /*
 CREATE TABLE contentsearch

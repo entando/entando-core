@@ -23,24 +23,30 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = DataObjectRelation.TABLE_NAME)
 public class DataObjectRelation /*implements ExtendedColumnDefinition*/ {
 
-	public DataObjectRelation() {
-	}
+    public DataObjectRelation() {
+    }
 
-	@DatabaseField(foreign = true, columnName = "contentid",
-			width = 16,
-			canBeNull = false, index = true)
-	private DataObject _content;
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
 
-	@DatabaseField(columnName = "refcategory",
-			dataType = DataType.STRING,
-			width = 30, index = true)
-	private String _category;
+    @DatabaseField(foreign = true, columnName = "contentid",
+            width = 16,
+            canBeNull = false, index = true)
+    private DataObject _content;
 
-	@DatabaseField(columnName = "refgroup",
-			dataType = DataType.STRING,
-			width = 20, index = true)
-	private String _group;
-	/*
+    @DatabaseField(columnName = "refcategory",
+            dataType = DataType.STRING,
+            width = 30, index = true)
+    private String _category;
+
+    @DatabaseField(columnName = "refgroup",
+            dataType = DataType.STRING,
+            width = 20, index = true)
+    private String _group;
+    /*
 	@Override
 	public String[] extensions(IDatabaseManager.DatabaseType type) {
 		String tableName = TABLE_NAME;
@@ -53,7 +59,7 @@ public class DataObjectRelation /*implements ExtendedColumnDefinition*/ {
 			+ "ADD CONSTRAINT " + TABLE_NAME + "_refgroup_fkey FOREIGN KEY (refgroup) "
 			+ "REFERENCES " + groupTableName + " (groupname)"};
 	}
-	 */
-	public static final String TABLE_NAME = "dataobjectrelations";
+     */
+    public static final String TABLE_NAME = "dataobjectrelations";
 
 }

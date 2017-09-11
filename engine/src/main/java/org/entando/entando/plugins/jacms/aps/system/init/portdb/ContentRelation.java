@@ -27,68 +27,75 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = ContentRelation.TABLE_NAME)
 public class ContentRelation implements ExtendedColumnDefinition {
-	
-	public ContentRelation() {}
-	
-	@DatabaseField(foreign = true, columnName = "contentid", 
-			width = 16, 
-			canBeNull = false, index = true)
-	private Content _content;
-	
-	@DatabaseField(foreign = true, columnName = "refpage", 
-			width = 30)
-	private Page _page;
-	
-	@DatabaseField(foreign = true, columnName = "refcontent", 
-			width = 16)
-	private Content _refContent;
-	
-	@DatabaseField(foreign = true, columnName = "refresource", 
-			width = 16)
-	private Resource _resource;
-	
-	@DatabaseField(foreign = true, columnName = "refcategory", 
-			width = 30, index = true)
-	private Category _category;
-	
-	@DatabaseField(columnName = "refgroup", 
-			dataType = DataType.STRING, 
-			width = 20, index = true)
-	private String _group;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String contentTableName = Content.TABLE_NAME;
-		String pageTableName = Page.TABLE_NAME;
-		String resourceTableName = Resource.TABLE_NAME;
-		String categoryTableName = Category.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + TABLE_NAME + "`";
-			contentTableName = "`" + contentTableName + "`";
-			pageTableName = "`" + pageTableName + "`";
-			resourceTableName = "`" + resourceTableName + "`";
-			categoryTableName = "`" + categoryTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
-				+ "REFERENCES " + contentTableName + " (contentid)",
-				"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_refcat_fkey FOREIGN KEY (refcategory) "
-				+ "REFERENCES " + categoryTableName + " (catcode)",
-				"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_refcont_fkey FOREIGN KEY (refcontent) "
-				+ "REFERENCES " + contentTableName + " (contentid)",
-				"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_refpage_fkey FOREIGN KEY (refpage) "
-				+ "REFERENCES " + pageTableName + " (code)",
-				"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_refres_fkey FOREIGN KEY (refresource) "
-				+ "REFERENCES " + resourceTableName + " (resid)"};
-	}
-	
-	public static final String TABLE_NAME = "contentrelations";
-	
+
+    public ContentRelation() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(foreign = true, columnName = "contentid",
+            width = 16,
+            canBeNull = false, index = true)
+    private Content _content;
+
+    @DatabaseField(foreign = true, columnName = "refpage",
+            width = 30)
+    private Page _page;
+
+    @DatabaseField(foreign = true, columnName = "refcontent",
+            width = 16)
+    private Content _refContent;
+
+    @DatabaseField(foreign = true, columnName = "refresource",
+            width = 16)
+    private Resource _resource;
+
+    @DatabaseField(foreign = true, columnName = "refcategory",
+            width = 30, index = true)
+    private Category _category;
+
+    @DatabaseField(columnName = "refgroup",
+            dataType = DataType.STRING,
+            width = 20, index = true)
+    private String _group;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String contentTableName = Content.TABLE_NAME;
+        String pageTableName = Page.TABLE_NAME;
+        String resourceTableName = Resource.TABLE_NAME;
+        String categoryTableName = Category.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + TABLE_NAME + "`";
+            contentTableName = "`" + contentTableName + "`";
+            pageTableName = "`" + pageTableName + "`";
+            resourceTableName = "`" + resourceTableName + "`";
+            categoryTableName = "`" + categoryTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_contid_fkey FOREIGN KEY (contentid) "
+            + "REFERENCES " + contentTableName + " (contentid)",
+            "ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_refcat_fkey FOREIGN KEY (refcategory) "
+            + "REFERENCES " + categoryTableName + " (catcode)",
+            "ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_refcont_fkey FOREIGN KEY (refcontent) "
+            + "REFERENCES " + contentTableName + " (contentid)",
+            "ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_refpage_fkey FOREIGN KEY (refpage) "
+            + "REFERENCES " + pageTableName + " (code)",
+            "ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_refres_fkey FOREIGN KEY (refresource) "
+            + "REFERENCES " + resourceTableName + " (resid)"};
+    }
+
+    public static final String TABLE_NAME = "contentrelations";
+
 }
 /*
 CREATE TABLE contentrelations

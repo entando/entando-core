@@ -25,47 +25,54 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = UserGroupRoleReference.TABLE_NAME)
 public class UserGroupRoleReference implements ExtendedColumnDefinition {
-	
-	public UserGroupRoleReference() {}
-	
-	@DatabaseField(columnName = "username", 
-			dataType = DataType.STRING, 
-			width = 40, 
-			canBeNull = false)
-	private String _username;
-	
-	@DatabaseField(columnName = "groupname", 
-			foreign = true,
-			width = 20, 
-			canBeNull = true)
-	private Group _group;
-	
-	@DatabaseField(columnName = "rolename", 
-			foreign = true,
-			width = 20, 
-			canBeNull = true)
-	private Role _role;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String groupTableName = Group.TABLE_NAME;
-		String roleTableName = Role.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			groupTableName = "`" + groupTableName + "`";
-			roleTableName = "`" + roleTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_grn_fkey FOREIGN KEY (groupname) "
-				+ "REFERENCES " + groupTableName + " (groupname)", 
-			"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_rln_fkey FOREIGN KEY (rolename) "
-				+ "REFERENCES " + roleTableName + " (rolename)"};
-	}
-	
-	public static final String TABLE_NAME = "authusergrouprole";
-	
+
+    public UserGroupRoleReference() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(columnName = "username",
+            dataType = DataType.STRING,
+            width = 40,
+            canBeNull = false)
+    private String _username;
+
+    @DatabaseField(columnName = "groupname",
+            foreign = true,
+            width = 20,
+            canBeNull = true)
+    private Group _group;
+
+    @DatabaseField(columnName = "rolename",
+            foreign = true,
+            width = 20,
+            canBeNull = true)
+    private Role _role;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String groupTableName = Group.TABLE_NAME;
+        String roleTableName = Role.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            groupTableName = "`" + groupTableName + "`";
+            roleTableName = "`" + roleTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_grn_fkey FOREIGN KEY (groupname) "
+            + "REFERENCES " + groupTableName + " (groupname)",
+            "ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_rln_fkey FOREIGN KEY (rolename) "
+            + "REFERENCES " + roleTableName + " (rolename)"};
+    }
+
+    public static final String TABLE_NAME = "authusergrouprole";
+
 }
 /*
 CREATE TABLE authusergrouprole

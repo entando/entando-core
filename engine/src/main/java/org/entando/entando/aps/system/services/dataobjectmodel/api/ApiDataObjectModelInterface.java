@@ -49,9 +49,9 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 				dataType = null;
 			}
 			if (null != dataType) {
-				models = this.getDataObjectModelManager().getModelsForContentType(dataType);
+				models = this.getDataObjectModelManager().getModelsForDataObjectType(dataType);
 			} else {
-				models = this.getDataObjectModelManager().getContentModels();
+				models = this.getDataObjectModelManager().getDataObjectModels();
 			}
 			List<String> list = new ArrayList<String>();
 			if (null != models) {
@@ -76,7 +76,7 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 		} catch (NumberFormatException e) {
 			throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "Invalid number format for 'id' parameter - '" + idString + "'", Response.Status.CONFLICT);
 		}
-		DataObjectModel model = this.getDataObjectModelManager().getContentModel(id);
+		DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(id);
 		if (null == model) {
 			throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Model with id '" + idString + "' does not exist", Response.Status.CONFLICT);
 		}
@@ -84,14 +84,14 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 	}
 
 	public void addModel(DataObjectModel model) throws ApiException, Throwable {
-		if (null != this.getDataObjectModelManager().getContentModel(model.getId())) {
+		if (null != this.getDataObjectModelManager().getDataObjectModel(model.getId())) {
 			throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Model with id " + model.getId() + " already exists", Response.Status.CONFLICT);
 		}
 		if (null == this.getDataObjectManager().getSmallDataTypesMap().get(model.getDataType())) {
 			throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "Content Type " + model.getDataType() + " does not exist", Response.Status.CONFLICT);
 		}
 		try {
-			this.getDataObjectModelManager().addContentModel(model);
+			this.getDataObjectModelManager().addDataObjectModel(model);
 		} catch (Throwable t) {
 			_logger.error("Error adding model", t);
 			throw new ApsSystemException("Error adding model", t);
@@ -99,7 +99,7 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 	}
 
 	public void updateModel(DataObjectModel model) throws ApiException, Throwable {
-		DataObjectModel oldModel = this.getDataObjectModelManager().getContentModel(model.getId());
+		DataObjectModel oldModel = this.getDataObjectModelManager().getDataObjectModel(model.getId());
 		if (null == oldModel) {
 			throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Model with id " + model.getId() + " does not exist", Response.Status.CONFLICT);
 		}
@@ -108,7 +108,7 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 					"DataObject Type code can't be changed - it has to be '" + oldModel.getDataType() + "'", Response.Status.CONFLICT);
 		}
 		try {
-			this.getDataObjectModelManager().updateContentModel(model);
+			this.getDataObjectModelManager().updateDataObjectModel(model);
 		} catch (Throwable t) {
 			_logger.error("Error updating model", t);
 			throw new ApsSystemException("Error updating model", t);
@@ -123,12 +123,12 @@ public class ApiDataObjectModelInterface extends AbstractApiDataObjectInterface 
 		} catch (NumberFormatException e) {
 			throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "Invalid number format for 'id' parameter - '" + idString + "'", Response.Status.CONFLICT);
 		}
-		DataObjectModel model = this.getDataObjectModelManager().getContentModel(id);
+		DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(id);
 		if (null == model) {
 			throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Model with id '" + idString + "' does not exist", Response.Status.CONFLICT);
 		}
 		try {
-			this.getDataObjectModelManager().removeContentModel(model);
+			this.getDataObjectModelManager().removeDataObjectModel(model);
 		} catch (Throwable t) {
 			_logger.error("Error deleting model", t);
 			throw new ApsSystemException("Error deleting model", t);

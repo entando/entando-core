@@ -30,24 +30,24 @@ public class TestDataObjectModelManager extends BaseTestCase {
 	}
 
 	public void testGetContentModel() {
-		DataObjectModel model = this._dataModelManager.getContentModel(1);
+		DataObjectModel model = this._dataModelManager.getDataObjectModel(1);
 		assertNotNull(model);
 	}
 
 	public void testGetContentModels() {
-		List<DataObjectModel> models = this._dataModelManager.getContentModels();
+		List<DataObjectModel> models = this._dataModelManager.getDataObjectModels();
 		assertNotNull(models);
 		assertEquals(4, models.size());
 	}
 
 	public void testGetModelsForContentType() {
-		List<DataObjectModel> models = this._dataModelManager.getModelsForContentType("ART");
+		List<DataObjectModel> models = this._dataModelManager.getModelsForDataObjectType("ART");
 		assertNotNull(models);
 		assertEquals(4, models.size());
 	}
 
 	public void testAddDeleteContentModel() throws Throwable {
-		List<DataObjectModel> contentModels = this._dataModelManager.getContentModels();
+		List<DataObjectModel> contentModels = this._dataModelManager.getDataObjectModels();
 		int size = contentModels.size();
 		DataObjectModel dataModel = new DataObjectModel();
 		dataModel.setId(99);
@@ -55,24 +55,24 @@ public class TestDataObjectModelManager extends BaseTestCase {
 		dataModel.setDescription("Descr_Prova");
 		dataModel.setShape("<h2></h2>");
 		try {
-			assertNull(this._dataModelManager.getContentModel(99));
-			this._dataModelManager.addContentModel(dataModel);
-			contentModels = this._dataModelManager.getContentModels();
+			assertNull(this._dataModelManager.getDataObjectModel(99));
+			this._dataModelManager.addDataObjectModel(dataModel);
+			contentModels = this._dataModelManager.getDataObjectModels();
 			assertEquals((size + 1), contentModels.size());
-			assertNotNull(this._dataModelManager.getContentModel(3));
-			this._dataModelManager.removeContentModel(dataModel);
-			contentModels = this._dataModelManager.getContentModels();
+			assertNotNull(this._dataModelManager.getDataObjectModel(3));
+			this._dataModelManager.removeDataObjectModel(dataModel);
+			contentModels = this._dataModelManager.getDataObjectModels();
 			assertEquals(size, contentModels.size());
-			assertNull(this._dataModelManager.getContentModel(99));
+			assertNull(this._dataModelManager.getDataObjectModel(99));
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			this._dataModelManager.removeContentModel(dataModel);
+			this._dataModelManager.removeDataObjectModel(dataModel);
 		}
 	}
 
 	public void testUpdateContentModel() throws Throwable {
-		List<DataObjectModel> contentModels = _dataModelManager.getContentModels();
+		List<DataObjectModel> contentModels = _dataModelManager.getDataObjectModels();
 		int size = contentModels.size();
 		DataObjectModel dataModel = new DataObjectModel();
 		dataModel.setId(99);
@@ -80,9 +80,9 @@ public class TestDataObjectModelManager extends BaseTestCase {
 		dataModel.setDescription("Descr_Prova");
 		dataModel.setShape("<h2></h2>");
 		try {
-			assertNull(this._dataModelManager.getContentModel(99));
-			this._dataModelManager.addContentModel(dataModel);
-			contentModels = this._dataModelManager.getContentModels();
+			assertNull(this._dataModelManager.getDataObjectModel(99));
+			this._dataModelManager.addDataObjectModel(dataModel);
+			contentModels = this._dataModelManager.getDataObjectModels();
 			assertEquals((size + 1), contentModels.size());
 
 			DataObjectModel contentModelNew = new DataObjectModel();
@@ -90,18 +90,18 @@ public class TestDataObjectModelManager extends BaseTestCase {
 			contentModelNew.setDataType("RAH");
 			contentModelNew.setDescription("Descr_Prova");
 			contentModelNew.setShape("<h1></h1>");
-			this._dataModelManager.updateContentModel(contentModelNew);
-			DataObjectModel extracted = this._dataModelManager.getContentModel(99);
+			this._dataModelManager.updateDataObjectModel(contentModelNew);
+			DataObjectModel extracted = this._dataModelManager.getDataObjectModel(99);
 			assertEquals(dataModel.getDescription(), extracted.getDescription());
 
-			this._dataModelManager.removeContentModel(dataModel);
-			contentModels = this._dataModelManager.getContentModels();
+			this._dataModelManager.removeDataObjectModel(dataModel);
+			contentModels = this._dataModelManager.getDataObjectModels();
 			assertEquals(size, contentModels.size());
-			assertNull(this._dataModelManager.getContentModel(99));
+			assertNull(this._dataModelManager.getDataObjectModel(99));
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			this._dataModelManager.removeContentModel(dataModel);
+			this._dataModelManager.removeDataObjectModel(dataModel);
 		}
 	}
 

@@ -103,7 +103,7 @@ public class ApiDataObjectTypeInterface extends ApiEntityTypeInterface {
 		if (null == modelId) {
 			return true;
 		}
-		DataObjectModel contentModel = this.getDataObjectModelManager().getContentModel(modelId);
+		DataObjectModel contentModel = this.getDataObjectModelManager().getDataObjectModel(modelId);
 		if (null == contentModel) {
 			ApiError error = new ApiError(IApiErrorCodes.API_VALIDATION_ERROR,
 					"DataObject model with id '" + modelId + "' does not exist", Response.Status.ACCEPTED);

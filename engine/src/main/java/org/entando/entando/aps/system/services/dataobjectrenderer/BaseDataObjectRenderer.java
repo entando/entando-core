@@ -82,7 +82,7 @@ public class BaseDataObjectRenderer extends BaseEntityRenderer implements IDataO
 	}
 
 	protected String getModelShape(long modelId) {
-		DataObjectModel model = this.getDataObjectModelManager().getContentModel(modelId);
+		DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(modelId);
 		String shape = null;
 		if (model != null) {
 			shape = model.getShape();

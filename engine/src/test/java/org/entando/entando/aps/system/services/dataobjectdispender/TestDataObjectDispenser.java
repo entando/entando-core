@@ -113,10 +113,10 @@ public class TestDataObjectDispenser extends BaseTestCase {
 			DataObjectRenderizationInfo outputInfo = this._contentDispenser.getRenderizationInfo(contentId, modelId, "en", reqCtx);
 			assertEquals("title (Text): testo=Title of Administrator's Content", outputInfo.getRenderedDataobject());
 
-			DataObjectModel model = this._contentModelManager.getContentModel(modelId);
+			DataObjectModel model = this._contentModelManager.getDataObjectModel(modelId);
 			String newContentShapeModel = "title: testo=$content.Titolo.getText()";
 			model.setShape(newContentShapeModel);
-			this._contentModelManager.updateContentModel(model);
+			this._contentModelManager.updateDataObjectModel(model);
 			this.waitNotifyingThread();
 
 			outputInfo = this._contentDispenser.getRenderizationInfo(contentId, modelId, "en", reqCtx);
@@ -124,9 +124,9 @@ public class TestDataObjectDispenser extends BaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			DataObjectModel model = this._contentModelManager.getContentModel(modelId);
+			DataObjectModel model = this._contentModelManager.getDataObjectModel(modelId);
 			if (null != model) {
-				this._contentModelManager.removeContentModel(model);
+				this._contentModelManager.removeDataObjectModel(model);
 			}
 		}
 	}
@@ -137,7 +137,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 		model.setDescription("test");
 		model.setId(id);
 		model.setShape(shape);
-		this._contentModelManager.addContentModel(model);
+		this._contentModelManager.addDataObjectModel(model);
 	}
 
 	public void testGetUnauthorizedContent() throws Throwable {

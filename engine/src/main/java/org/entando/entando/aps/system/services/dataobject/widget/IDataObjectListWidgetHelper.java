@@ -109,8 +109,8 @@ public interface IDataObjectListWidgetHelper extends org.entando.entando.aps.sys
 	public List<UserFilterOptionBean> getConfiguredUserFilters(IDataObjectListTagBean bean, RequestContext reqCtx) throws ApsSystemException;
 
 	public static final String[] allowedMetadataFilterKeys
-			= {IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, IDataObjectManager.CONTENT_DESCR_FILTER_KEY, IDataObjectManager.CONTENT_STATUS_FILTER_KEY,
-				IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY, IDataObjectManager.CONTENT_MODIFY_DATE_FILTER_KEY, IDataObjectManager.CONTENT_ONLINE_FILTER_KEY};
+			= {IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY, IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, IDataObjectManager.DATA_OBJECT_STATUS_FILTER_KEY,
+				IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, IDataObjectManager.DATA_OBJECT_MODIFY_DATE_FILTER_KEY, IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY};
 
 	public static final String[] allowedMetadataUserFilterOptionKeys
 			= {UserFilterOptionBean.KEY_CATEGORY, UserFilterOptionBean.KEY_FULLTEXT};

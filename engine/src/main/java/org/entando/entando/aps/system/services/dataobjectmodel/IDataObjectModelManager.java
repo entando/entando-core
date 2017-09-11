@@ -21,23 +21,23 @@ import com.agiletec.aps.system.services.page.IPage;
 import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
 
 /**
- * Interfaccia base per i Manager dei modelli di datatype.
+ * Interfaccia base per i Manager dei modelli di DataObject.
  *
  * @author E.Santoboni
  */
 public interface IDataObjectModelManager {
 
-	public void addContentModel(DataObjectModel model) throws ApsSystemException;
+	public void addDataObjectModel(DataObjectModel model) throws ApsSystemException;
 
-	public void removeContentModel(DataObjectModel model) throws ApsSystemException;
+	public void removeDataObjectModel(DataObjectModel model) throws ApsSystemException;
 
-	public void updateContentModel(DataObjectModel model) throws ApsSystemException;
+	public void updateDataObjectModel(DataObjectModel model) throws ApsSystemException;
 
-	public DataObjectModel getContentModel(long contentModelId);
+	public DataObjectModel getDataObjectModel(long dataObjectModelId);
 
-	public List<DataObjectModel> getContentModels();
+	public List<DataObjectModel> getDataObjectModels();
 
-	public List<DataObjectModel> getModelsForContentType(String contentType);
+	public List<DataObjectModel> getModelsForDataObjectType(String contentType);
 
 	public Map<String, List<IPage>> getReferencingPages(long modelId);
 

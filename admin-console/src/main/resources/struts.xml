@@ -220,5 +220,7 @@
 	
 	<include file="org/entando/entando/aps/internalservlet/api/api.xml" />
 	<include file="org/entando/entando/aps/internalservlet/user/currentUserProfile.xml"/>
-
+	
+	<include file="org/entando/entando/apsadmin/dataobject/model/dataObjectModel.xml" />
+	
 </struts>

@@ -56,7 +56,7 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	}
 
 	@Override
-	public void addContentModel(DataObjectModel model) throws ApsSystemException {
+	public void addDataObjectModel(DataObjectModel model) throws ApsSystemException {
 		try {
 			this.getDataModelDAO().addDataModel(model);
 			Long wrapLongId = new Long(model.getId());
@@ -69,7 +69,7 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	}
 
 	@Override
-	public void removeContentModel(DataObjectModel model) throws ApsSystemException {
+	public void removeDataObjectModel(DataObjectModel model) throws ApsSystemException {
 		try {
 			this.getDataModelDAO().deleteDataModel(model);
 			_dataModels.remove(new Long(model.getId()));
@@ -81,7 +81,7 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	}
 
 	@Override
-	public void updateContentModel(DataObjectModel model) throws ApsSystemException {
+	public void updateDataObjectModel(DataObjectModel model) throws ApsSystemException {
 		try {
 			this.getDataModelDAO().updateDataModel(model);
 			this._dataModels.put(new Long(model.getId()), model);
@@ -100,19 +100,19 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	}
 
 	@Override
-	public DataObjectModel getContentModel(long contentModelId) {
+	public DataObjectModel getDataObjectModel(long contentModelId) {
 		return (DataObjectModel) _dataModels.get(new Long(contentModelId));
 	}
 
 	@Override
-	public List<DataObjectModel> getContentModels() {
+	public List<DataObjectModel> getDataObjectModels() {
 		List<DataObjectModel> models = new ArrayList<DataObjectModel>(this._dataModels.values());
 		Collections.sort(models);
 		return models;
 	}
 
 	@Override
-	public List<DataObjectModel> getModelsForContentType(String contentType) {
+	public List<DataObjectModel> getModelsForDataObjectType(String contentType) {
 		List<DataObjectModel> models = new ArrayList<DataObjectModel>();
 		Object[] allModels = this._dataModels.values().toArray();
 		for (int i = 0; i < allModels.length; i++) {

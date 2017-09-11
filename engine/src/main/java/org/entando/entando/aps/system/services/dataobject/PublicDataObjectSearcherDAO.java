@@ -64,7 +64,7 @@ public class PublicDataObjectSearcherDAO extends AbstractDataObjectSearcherDAO i
 			groupCodes.addAll(userGroupCodes);
 		}
 		groupCodes.add(Group.FREE_GROUP_NAME);
-		EntitySearchFilter onLineFilter = new EntitySearchFilter(IDataObjectManager.CONTENT_ONLINE_FILTER_KEY, false);
+		EntitySearchFilter onLineFilter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY, false);
 		filters = this.addFilter(filters, onLineFilter);
 		List<String> contentsId = new ArrayList<String>();
 		Connection conn = null;

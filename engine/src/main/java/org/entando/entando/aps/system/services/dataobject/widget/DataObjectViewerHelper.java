@@ -224,7 +224,7 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
 	}
 
 	protected void setStylesheet(long modelId, RequestContext reqCtx) {
-		DataObjectModel model = this.getDataObjectModelManager().getContentModel(modelId);
+		DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(modelId);
 		if (model != null) {
 			String stylesheet = model.getStylesheet();
 			if (null != stylesheet && stylesheet.trim().length() > 0) {

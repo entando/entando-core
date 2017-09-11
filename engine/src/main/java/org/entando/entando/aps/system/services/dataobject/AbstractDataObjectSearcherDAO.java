@@ -45,23 +45,23 @@ public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearch
 			return this.getEntityMasterTableIdFieldName();
 		} else if (metadataFieldKey.equals(IDataObjectManager.ENTITY_TYPE_CODE_FILTER_KEY)) {
 			return this.getEntityMasterTableIdTypeFieldName();
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_DESCR_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY)) {
 			return "descr";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_STATUS_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_STATUS_FILTER_KEY)) {
 			return "status";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_CREATION_DATE_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY)) {
 			return "created";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_MODIFY_DATE_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_MODIFY_DATE_FILTER_KEY)) {
 			return "lastmodified";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_ONLINE_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_ONLINE_FILTER_KEY)) {
 			return "onlinexml";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_MAIN_GROUP_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_MAIN_GROUP_FILTER_KEY)) {
 			return "maingroup";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_CURRENT_VERSION_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_CURRENT_VERSION_FILTER_KEY)) {
 			return "currentversion";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_FIRST_EDITOR_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_FIRST_EDITOR_FILTER_KEY)) {
 			return "firsteditor";
-		} else if (metadataFieldKey.equals(IDataObjectManager.CONTENT_LAST_EDITOR_FILTER_KEY)) {
+		} else if (metadataFieldKey.equals(IDataObjectManager.DATA_OBJECT_LAST_EDITOR_FILTER_KEY)) {
 			return "lasteditor";
 		} else {
 			throw new RuntimeException("Chiave di ricerca '" + metadataFieldKey + "' non riconosciuta");

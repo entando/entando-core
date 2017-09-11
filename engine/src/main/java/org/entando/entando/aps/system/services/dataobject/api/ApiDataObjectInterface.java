@@ -239,7 +239,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
 							Response.Status.ACCEPTED);
 				}
 			}
-			DataObjectModel model = this.getDataObjectModelManager().getContentModel(modelIdInteger);
+			DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(modelIdInteger);
 			if (model == null) {
 				throw new ApiException(IApiErrorCodes.API_PARAMETER_VALIDATION_ERROR, "The DataObject model with id '" + modelId + "' does not exist", Response.Status.ACCEPTED);
 			} else if (!dataObject.getTypeCode().equals(model.getDataType())) {

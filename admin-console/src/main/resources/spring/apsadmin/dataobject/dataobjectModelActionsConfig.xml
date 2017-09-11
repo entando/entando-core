@@ -8,17 +8,17 @@
 			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
 	
 	<bean id="DataObjectModelFinderAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.model.ContentModelFinderAction" parent="abstractBaseAction" >
-		<property name="contentModelManager" ref="jacmsContentModelManager" />
-		<property name="contentManager" ref="jacmsContentManager" />
+			class="org.entando.entando.apsadmin.dataobject.model.DataObjectModelFinderAction" parent="abstractBaseAction" >
+		<property name="dataObjectModelManager" ref="DataObjectModelManager" />
+		<property name="dataObjectManager" ref="DataObjectManager" />
 	</bean>
 	
 	<bean id="DataObjectModelAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.model.ContentModelAction" parent="abstractBaseAction" >
-		<property name="contentManager" ref="jacmsContentManager" />
-		<property name="contentModelManager" ref="jacmsContentModelManager" />
-		<property name="allowedPublicContentMethods" ref="jacmsAllowedPublicContentMethods" />
-		<property name="allowedPublicAttributeMethods" ref="jacmsAllowedPublicAttributeMethods" />
+			class="org.entando.entando.apsadmin.dataobject.model.DataObjectModelAction" parent="abstractBaseAction" >
+		<property name="dataObjectModelManager" ref="DataObjectModelManager" />
+		<property name="dataObjectManager" ref="DataObjectManager" />
+		<property name="allowedPublicContentMethods" ref="DataObjectAllowedMethods" />
+		<property name="allowedPublicAttributeMethods" ref="DataObjectAllowedAttributeMethods" />
 	</bean>
 	
 	<util:list id="DataObjectAllowedMethods">

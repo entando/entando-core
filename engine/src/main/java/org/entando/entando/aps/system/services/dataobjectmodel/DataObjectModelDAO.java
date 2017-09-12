@@ -41,7 +41,7 @@ public class DataObjectModelDAO extends AbstractDAO implements IDataObjectModelD
 		Statement stat = null;
 		ResultSet res = null;
 		Map<Long, DataObjectModel> models = new HashMap<Long, DataObjectModel>();
-		String query = ALL_CONTENTMODEL;
+		String query = ALL_DATA_UX;
 		try {
 			conn = this.getConnection();
 			stat = conn.createStatement();
@@ -68,7 +68,10 @@ public class DataObjectModelDAO extends AbstractDAO implements IDataObjectModelD
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(ADD_CONTENT_MODEL);
+			if (0 == model.getId()) {
+				model.setId(this.extractNextId(conn));
+			}
+			stat = conn.prepareStatement(ADD_DATA_UX);
 			stat.setLong(1, model.getId());
 			stat.setString(2, model.getDataType());
 			stat.setString(3, model.getDescription());
@@ -78,8 +81,8 @@ public class DataObjectModelDAO extends AbstractDAO implements IDataObjectModelD
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error adding datatype model {}", model.getId(), t);
-			throw new RuntimeException("Error adding datatype model " + model.getId(), t);
+			_logger.error("Error adding datatype ux {}", model.getId(), t);
+			throw new RuntimeException("Error adding datatype ux " + model.getId(), t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
@@ -92,7 +95,7 @@ public class DataObjectModelDAO extends AbstractDAO implements IDataObjectModelD
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(DELETE_CONTENT_MODEL);
+			stat = conn.prepareStatement(DELETE_DATA_UX);
 			stat.setLong(1, model.getId());
 			stat.executeUpdate();
 			conn.commit();
@@ -112,7 +115,7 @@ public class DataObjectModelDAO extends AbstractDAO implements IDataObjectModelD
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(UPDATE_CONTENT_MODEL);
+			stat = conn.prepareStatement(UPDATE_DATA_UX);
 			stat.setString(1, model.getDataType());
 			stat.setString(2, model.getDescription());
 			stat.setString(3, model.getShape());
@@ -139,16 +142,37 @@ public class DataObjectModelDAO extends AbstractDAO implements IDataObjectModelD
 		return contentModel;
 	}
 
-	private final String ALL_CONTENTMODEL
+	protected long extractNextId(Connection conn) {
+		long id = 0;
+		Statement stat = null;
+		ResultSet res = null;
+		try {
+			stat = conn.createStatement();
+			res = stat.executeQuery(EXTRACT_NEXT_ID);
+			res.next();
+			id = res.getLong(1) + 1; // N.B.: funziona anche per il primo record
+		} catch (Throwable t) {
+			_logger.error("Error extracting next id", t);
+			throw new RuntimeException("Error extracting next id", t);
+		} finally {
+			closeDaoResources(res, stat);
+		}
+		return id;
+	}
+
+	private final String ALL_DATA_UX
 			= "SELECT modelid, datatype, descr, model, stylesheet FROM dataobjectmodels";
 
-	private final String ADD_CONTENT_MODEL
+	private final String ADD_DATA_UX
 			= "INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet ) VALUES ( ? , ? , ? , ? , ? )";
 
-	private static final String DELETE_CONTENT_MODEL
+	private static final String DELETE_DATA_UX
 			= "DELETE FROM dataobjectmodels WHERE modelid = ? ";
 
-	private final String UPDATE_CONTENT_MODEL
+	private final String UPDATE_DATA_UX
 			= "UPDATE dataobjectmodels SET datatype = ? , descr = ? , model = ? , stylesheet = ? WHERE modelid = ? ";
+
+	private final String EXTRACT_NEXT_ID
+			= "SELECT MAX(modelid) FROM dataobjectmodels ";
 
 }

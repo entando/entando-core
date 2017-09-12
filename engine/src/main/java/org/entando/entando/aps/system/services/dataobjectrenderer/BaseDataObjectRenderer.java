@@ -96,7 +96,7 @@ public class BaseDataObjectRenderer extends BaseEntityRenderer implements IDataO
 
 	@Override
 	protected String getEntityWrapperContextName() {
-		return "content";
+		return "data";
 	}
 
 	protected IDataObjectModelManager getDataObjectModelManager() {

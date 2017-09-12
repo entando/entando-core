@@ -147,40 +147,40 @@ INSERT INTO authuserprofileattrroles (username, attrname, rolename) VALUES ('pag
 
 
 INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet) VALUES (2, 'ART', 'per test rendering
-', '$content.id;
-#foreach ($autore in $content.Autori)
+', '$data.id;
+#foreach ($autore in $data.Autori)
 $autore.text;
 #end
-$content.Titolo.getText();
-$content.Data.mediumDate;
+$data.Titolo.getText();
+$data.Data.mediumDate;
 
 ', NULL);
-INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet) VALUES (3, 'ART', 'scheda di un articolo', '------ RENDERING CONTENUTO: id = $content.id; ---------
+INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet) VALUES (3, 'ART', 'scheda di un articolo', '------ RENDERING CONTENUTO: id = $data.id; ---------
 ATTRIBUTI:
   - AUTORI (Monolist-Monotext):
-#foreach ($autore in $content.Autori)
+#foreach ($autore in $data.Autori)
          testo=$autore.text;
 #end
-  - TITOLO (Text): testo=$content.Titolo.getText();
-  - DATA (Date): data_media = $content.Data.mediumDate;
+  - TITOLO (Text): testo=$data.Titolo.getText();
+  - DATA (Date): data_media = $data.Data.mediumDate;
 ------ END ------
 
 ', NULL);
-INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet) VALUES (1, 'ART', 'Main Model', '#if ($content.Titolo.text != "")<h1 class="titolo">$content.Titolo.text</h1>#end
-#if ($content.Data.longDate != "")<p>Data: $content.Data.longDate</p>#end
-$content.CorpoTesto.getTextBeforeImage(0)
-$content.CorpoTesto.getTextAfterImage(0)
-#if ($content.Numero.number)<p>Numero: $content.Numero.number</p>#end
-#if ($content.Autori && $content.Autori.size() > 0)
+INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet) VALUES (1, 'ART', 'Main Model', '#if ($data.Titolo.text != "")<h1 class="titolo">$data.Titolo.text</h1>#end
+#if ($data.Data.longDate != "")<p>Data: $data.Data.longDate</p>#end
+$data.CorpoTesto.getTextBeforeImage(0)
+$data.CorpoTesto.getTextAfterImage(0)
+#if ($data.Numero.number)<p>Numero: $data.Numero.number</p>#end
+#if ($data.Autori && $data.Autori.size() > 0)
 <h2 class="titolo">Autori:</h2>
 <ul title="Authors">
-#foreach ($author in $content.Autori)
+#foreach ($author in $data.Autori)
 	<li>$author.text;</li>
 #end
 </ul>
 #end', NULL);
-INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet) VALUES (11, 'ART', 'List Model', '#if ($content.Titolo.text != "")<h1 class="titolo">$content.Titolo.text</h1>#end
-<a href="$content.contentLink">Details...</a>', NULL);
+INSERT INTO dataobjectmodels (modelid, datatype, descr, model, stylesheet) VALUES (11, 'ART', 'List Model', '#if ($data.Titolo.text != "")<h1 class="titolo">$data.Titolo.text</h1>#end
+<a href="$data.contentLink">Details...</a>', NULL);
 
 
 INSERT INTO dataobjects (contentid, datatype, descr, status, workxml, created, lastmodified, onlinexml, maingroup, currentversion, lasteditor) VALUES ('ART187', 'ART', 'una descrizione particolare', 'DRAFT', '<?xml version="1.0" encoding="UTF-8"?>

@@ -104,7 +104,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 
 	public void testGetRenderedContent_4() throws Throwable {
 		String contentId = "ART120";
-		String contentShapeModel = "title (Text): testo=$content.Titolo.getText()";
+		String contentShapeModel = "title (Text): testo=$data.Titolo.getText()";
 		int modelId = 1972;
 		try {
 			this.addNewDataObjectModel(modelId, contentShapeModel, "ART");
@@ -114,7 +114,7 @@ public class TestDataObjectDispenser extends BaseTestCase {
 			assertEquals("title (Text): testo=Title of Administrator's Content", outputInfo.getRenderedDataobject());
 
 			DataObjectModel model = this._contentModelManager.getDataObjectModel(modelId);
-			String newContentShapeModel = "title: testo=$content.Titolo.getText()";
+			String newContentShapeModel = "title: testo=$data.Titolo.getText()";
 			model.setShape(newContentShapeModel);
 			this._contentModelManager.updateDataObjectModel(model);
 			this.waitNotifyingThread();

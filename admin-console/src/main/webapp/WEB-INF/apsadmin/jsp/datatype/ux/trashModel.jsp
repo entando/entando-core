@@ -4,17 +4,17 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app" /></li>
-    <li><s:text name="breadcrumb.jacms" /></li>
+    <li><s:text name="breadcrumb.datatype" /></li>
     <li>
-        <a href="<s:url action="list" namespace="/do/dataobject/model" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.contentModels" />">
-            <s:text  name="title.contentModels" />
+        <a href="<s:url action="list" namespace="/do/dataobject/model" />" title="<s:text name="note.goToSomewhere" />: <s:text name="title.dataObjectUx" />">
+            <s:text  name="title.dataObjectUx" />
         </a>
     </li>
     <li class="page-title-container"><s:text
-            name="title.contentModels.remove" /></li>
+            name="title.dataObjectUx.remove" /></li>
 </ol>
 <h1 class="page-title-container">
-    <s:text name="title.contentModels.remove" />
+    <s:text name="title.dataObjectUx.remove" />
 
 </h1>
 <div class="text-right">

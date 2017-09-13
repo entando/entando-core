@@ -4,19 +4,19 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app" /></li>
-    <li><s:text name="breadcrumb.jacms" /></li>
+    <li><s:text name="breadcrumb.datatype" /></li>
     <li>
         <a href="<s:url action="list" namespace="/do/dataobject/model" />">
-            <s:text name="title.contentModels" />
+            <s:text name="title.dataObjectUx" />
         </a>
     </li>
     <li class="page-title-container">
-        <s:text name="title.contentModels.remove" />
+        <s:text name="title.dataObjectUx.remove" />
     </li>
 </ol>
 
 <h1 class="page-title-container">
-    <s:text name="title.contentModels.remove" />
+    <s:text name="title.dataObjectUx.remove" />
 </h1>
 <div class="text-right">
     <div class="form-group-separator"></div>
@@ -40,7 +40,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="margin-none">
-                <s:text name="title.contentModels.references" />
+                <s:text name="title.dataObjectUx.references" />
             </h3>
         </div>
         <div class="panel-body">

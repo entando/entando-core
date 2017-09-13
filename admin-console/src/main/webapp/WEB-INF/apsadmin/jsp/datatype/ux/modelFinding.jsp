@@ -5,14 +5,14 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app" /></li>
-    <li><s:text name="breadcrumb.jacms" /></li>
+    <li><s:text name="breadcrumb.datatype" /></li>
     <li class="page-title-container">
-        <s:text name="title.contentModels" />
+        <s:text name="title.dataObjectUx" />
     </li>
 </ol>
 <h1 class="page-title-container">
     <div>
-        <s:text name="title.contentModels" />
+        <s:text name="title.dataObjectUx" />
         <span class="pull-right">
             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                data-content="<s:text name="title.contentManagement.help" />" data-placement="left" accesskey="" data-original-title="">
@@ -33,12 +33,11 @@
             </p>
             <s:form action="search" cssClass="form-horizontal" role="search">
                 <div class="form-group">
-
                     <label class="col-sm-2 control-label">
                         <s:text name="label.type" />
                     </label>
                     <div class="col-sm-9">
-                        <wpsf:select name="contentType" id="contentType" cssClass="form-control input-lg" list="smallContentTypes" listKey="code" listValue="descr" headerKey=""  headerValue="%{getText('label.all')}" />
+                        <wpsf:select name="contentType" id="contentType" cssClass="form-control input-lg" list="smallContentTypes" listKey="code" listValue="description" headerKey=""  headerValue="%{getText('label.all')}" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -91,7 +90,7 @@
                                         <s:property value="#model.description" />
                                     </td>
                                     <td>
-                                        <s:property  value="%{getSmallContentType(#model.contentType).descr}" />
+                                        <s:property  value="%{getSmallContentType(#model.dataType).descr}" />
                                     </td>
                                     <td class="text-center">
                                         <s:property value="#model.id" />

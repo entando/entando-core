@@ -19,7 +19,7 @@ This converter shall always return a json object like this:
 		};
 */%>
 <s:set var="contentPrototype" value="contentPrototype" />
-	"data": {
+	"$data": {
 	<s:iterator value="allowedPublicContentMethods" var="contentMethod" status="contentMethodStatus">
 		"<s:property value="#contentMethod" escapeJavaScript="false" escapeHtml="false" />": null<s:if test="(!#contentMethodStatus.last || (#contentPrototype != null && #contentPrototype.attributeList.size>0))">,</s:if>
 	</s:iterator>

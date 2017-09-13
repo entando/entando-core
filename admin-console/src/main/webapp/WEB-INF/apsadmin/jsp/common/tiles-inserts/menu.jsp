@@ -290,63 +290,6 @@
                         </div>
                     </li>
                 </c:if>
-					
-					
-					
-				
-                <c:if test="${isSuperUser}">
-                    <li class="list-group-item tertiary-nav-item-pf" data-target="apps-datatype-tertiary">
-                        <a>
-                            <span class="list-group-item-value"><s:text name="menu.APPS.DATATYPE" /></span>
-                        </a>
-                        <div id="apps-cms-tertiary" class="nav-pf-tertiary-nav">
-                            <div class="nav-item-pf-header">
-                                <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-                                <span><s:text name="menu.APPS.DATATYPE" /></span>
-                            </div>
-                            <ul class="list-group">
-								<%--
-                                <c:if test="${isEditContents}">
-                                    <li class="list-group-item">
-                                        <a href="<s:url action="list" namespace="/do/jacms/Content" />">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.contents" /></span>
-                                        </a>
-                                    </li>
-                                </c:if>
-                                <c:if test="${isManageResources}">
-                                    <li class="list-group-item">
-                                        <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Image</s:param></s:url>">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.digitalAssets" /></span>
-										</a>
-									</li>
-                                </c:if>
-								--%>
-                                <c:if test="${isSuperUser}">
-									<%--
-                                    <li class="list-group-item">
-                                        <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentTypes" /></span>
-										</a>
-									</li>
-									--%>
-									<li class="list-group-item">
-										<a href="<s:url action="list" namespace="/do/dataobject/model" />">
-											<span class="list-group-item-value"><s:text name="menu.APPS.DATATYPE.UX" /></span>
-                                        </a>
-                                    </li>
-									<%--
-                                    <li class="list-group-item">
-                                        <a href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentSettings" /></span>
-                                        </a>
-                                    </li>
-									--%>
-                                </c:if>
-                            </ul>
-                        </div>
-                    </li>
-                </c:if>
-				
                 <li class="list-group-item disabled">
                     <a>
                         <span class="ml-5"><s:text name="menu.APPS.IoT" /></span>
@@ -355,7 +298,37 @@
             </ul>
         </div>
     </li>
-
+	
+	
+	
+    <!-- DATA TYPE -->
+    <c:if test="${isSuperUser}">
+        <li class="list-group-item secondary-nav-item-pf" data-target="#datatype-secondary">
+            <a>
+                <span class="fa fa-object-ungroup" data-toggle="tooltip" title="<s:text name="menu.DataType" />"></span>
+                <span class="list-group-item-value"><s:text name="menu.DataType" /></span>
+            </a>
+            <div id="datatype-secondary" class="nav-pf-secondary-nav">
+                <div class="nav-item-pf-header">
+                    <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                    <span><s:text name="menu.DataType" /></span>
+                </div>
+                <!-- DataType Secondary -->
+                <ul class="list-group">
+                    <c:if test="${isSuperUser}">
+						<li class="list-group-item">
+							<a href="<s:url action="list" namespace="/do/dataobject/model" />">
+								<span class="list-group-item-value"><s:text name="menu.DataType.UX" /></span>
+							</a>
+						</li>
+                    </c:if>
+                </ul>
+                <!--Fine DATA TYPE Secondary-->
+            </div>
+        </li>
+    </c:if>
+	
+	
 </ul>
 
 <wp:ifauthorized permission="manageCategories" var="isCategories" />

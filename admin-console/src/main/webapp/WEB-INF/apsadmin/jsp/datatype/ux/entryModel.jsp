@@ -4,28 +4,28 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app" /></li>
-    <li><s:text name="breadcrumb.jacms" /></li>
+    <li><s:text name="breadcrumb.datatype" /></li>
     <li>
         <a href="<s:url action="list" namespace="/do/dataobject/model" />"
-           title="<s:text name="note.goToSomewhere" />: <s:text name="title.contentModels" />">
-            <s:text name="title.contentModels" />
+           title="<s:text name="note.goToSomewhere" />: <s:text name="title.dataObjectUx" />">
+            <s:text name="title.dataObjectUx" />
         </a>
     </li>
     <li class="page-title-container">
         <s:if test="strutsAction == 1">
-            <s:text name="title.contentModels.new" />
+            <s:text name="title.dataObjectUx.new" />
         </s:if> <s:if test="strutsAction == 2">
-            <s:text name="title.contentModels.edit" />
+            <s:text name="title.dataObjectUx.edit" />
         </s:if>
     </li>
 </ol>
 <h1 class="page-title-container">
     <div>
         <s:if test="strutsAction == 1">
-            <s:text name="title.contentModels.new" />
+            <s:text name="title.dataObjectUx.new" />
         </s:if>
         <s:if test="strutsAction == 2">
-            <s:text name="title.contentModels.edit" />
+            <s:text name="title.dataObjectUx.edit" />
         </s:if>
         <span class="pull-right">
             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.contentManagement.help" />"
@@ -64,7 +64,7 @@
             </label>
             <div class="col-sm-10">
                 <div class="input-group">
-                    <wpsf:select id="contentType" list="smallContentTypes" name="contentType" listKey="code" listValue="descr" cssClass="form-control" headerKey="" headerValue="%{getText('note.choose')}" />
+                    <wpsf:select id="contentType" list="smallContentTypes" name="contentType" listKey="code" listValue="description" cssClass="form-control" headerKey="" headerValue="%{getText('note.choose')}" />
                     <span class="input-group-btn">
                         <s:if test="strutsAction == 1 && null == contentType">
                             <wpsf:submit type="button" action="lockContentType" cssClass="btn btn-primary" value="%{getText('label.set')}" />

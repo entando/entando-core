@@ -576,15 +576,15 @@
     <definition extends="layout.default" name="admin.dataobject.ux.entry">
 		<put-attribute name="title" value="title.dataObjectUx" />
 		<put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/datatype_entryModel.jsp" />
-		<put-attribute name="body" value="/WEB-INF/jsp/datatype/ux/entryModel.jsp" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/datatype/ux/entryModel.jsp" />
 	</definition>
     <definition extends="layout.default" name="admin.dataobject.ux.reference">
 		<put-attribute name="title" value="title.dataObjectUx" />
-		<put-attribute name="body" value="/WEB-INF/jsp/datatype/ux/modelReferences.jsp" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/datatype/ux/modelReferences.jsp" />
 	</definition>
     <definition extends="layout.default" name="admin.dataobject.ux.trash">
 		<put-attribute name="title" value="title.dataObjectUx" />
-		<put-attribute name="body" value="/WEB-INF/jsp/datatype/ux/trashModel.jsp" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/datatype/ux/trashModel.jsp" />
 	</definition>
     <!-- ********* FINE Area Gestione DATA UX ********* -->
 

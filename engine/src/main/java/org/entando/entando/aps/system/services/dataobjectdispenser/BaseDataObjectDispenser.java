@@ -14,7 +14,6 @@
 package org.entando.entando.aps.system.services.dataobjectdispenser;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -94,8 +93,8 @@ public class BaseDataObjectDispenser extends AbstractService implements IDataObj
 				}
 			} else {
 				String renderedDataObject = "Current user '" + currentUser.getUsername() + "' can't view this DataObject";
-				DataObject contentToRender = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
-				renderInfo = new DataObjectRenderizationInfo(contentToRender, renderedDataObject, modelId, langCode, null);
+				DataObject dataObjectToRender = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
+				renderInfo = new DataObjectRenderizationInfo(dataObjectToRender, renderedDataObject, modelId, langCode, null);
 				renderInfo.setRenderedDataobject(renderedDataObject);
 				return renderInfo;
 			}
@@ -117,15 +116,28 @@ public class BaseDataObjectDispenser extends AbstractService implements IDataObj
 		try {
 			List<Group> userGroups = (null != currentUser) ? this.getAuthorizationManager().getUserGroups(currentUser) : new ArrayList<Group>();
 			if (authInfo.isUserAllowed(userGroups)) {
-				DataObject contentToRender = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
-				String renderedContent = this.buildRenderedDataObject(contentToRender, modelId, langCode, reqCtx);
-				if (null != renderedContent && renderedContent.trim().length() > 0) {
-					List<AttributeRole> roles = this.getDataObjectManager().getAttributeRoles();
-					renderInfo = new DataObjectRenderizationInfo(contentToRender, renderedContent, modelId, langCode, roles);
-				}
+				DataObject dataObjectToRender = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
+				renderInfo = this.getBaseRenderizationInfo(dataObjectToRender, modelId, langCode, reqCtx);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while rendering DataObject {}", dataObjectId, t);
+			return null;
+		}
+		return renderInfo;
+	}
+
+	@Override
+	public DataObjectRenderizationInfo getBaseRenderizationInfo(DataObject contentToRender,
+			long modelId, String langCode, RequestContext reqCtx) {
+		DataObjectRenderizationInfo renderInfo = null;
+		try {
+			String renderedDataObject = this.buildRenderedDataObject(contentToRender, modelId, langCode, reqCtx);
+			if (null != renderedDataObject && renderedDataObject.trim().length() > 0) {
+				List<AttributeRole> roles = this.getDataObjectManager().getAttributeRoles();
+				renderInfo = new DataObjectRenderizationInfo(contentToRender, renderedDataObject, modelId, langCode, roles);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error while rendering DataObject", t);
 			return null;
 		}
 		return renderInfo;
@@ -179,6 +191,7 @@ public class BaseDataObjectDispenser extends AbstractService implements IDataObj
 		return key.toString();
 	}
 	 */
+ /*
 	private static void appendAuthCodes(List<String> codes, StringBuffer key) {
 		Collections.sort(codes);
 		for (int i = 0; i < codes.size(); i++) {
@@ -188,8 +201,8 @@ public class BaseDataObjectDispenser extends AbstractService implements IDataObj
 			key.append(codes.get(i));
 		}
 	}
-
-	/*
+	 */
+ /*
 	public static String getRenderizationInfoCacheGroupsCsv(String contentId, long modelId) {
 		StringBuilder builder = new StringBuilder();
 		String typeCode = contentId.substring(0, 3);

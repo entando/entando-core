@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.dataobjectdispenser;
 
 import com.agiletec.aps.system.RequestContext;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
  * Basic interface for service providers formatted dataObject. Implementations
@@ -37,5 +38,8 @@ public interface IDataObjectDispenser {
 
 	public DataObjectRenderizationInfo getRenderizationInfo(String dataObjectId,
 			long modelId, String langCode, RequestContext reqCtx, boolean useCache);
+
+	public DataObjectRenderizationInfo getBaseRenderizationInfo(DataObject contentToRender,
+			long modelId, String langCode, RequestContext reqCtx);
 
 }

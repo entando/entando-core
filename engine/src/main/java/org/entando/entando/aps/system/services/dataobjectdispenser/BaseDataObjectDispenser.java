@@ -118,14 +118,27 @@ public class BaseDataObjectDispenser extends AbstractService implements IDataObj
 			List<Group> userGroups = (null != currentUser) ? this.getAuthorizationManager().getUserGroups(currentUser) : new ArrayList<Group>();
 			if (authInfo.isUserAllowed(userGroups)) {
 				DataObject contentToRender = this.getDataObjectManager().loadDataObject(dataObjectId, true, cacheable);
-				String renderedContent = this.buildRenderedDataObject(contentToRender, modelId, langCode, reqCtx);
-				if (null != renderedContent && renderedContent.trim().length() > 0) {
-					List<AttributeRole> roles = this.getDataObjectManager().getAttributeRoles();
-					renderInfo = new DataObjectRenderizationInfo(contentToRender, renderedContent, modelId, langCode, roles);
-				}
+				renderInfo = this.getBaseRenderizationInfo(contentToRender, modelId, langCode, reqCtx);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error while rendering DataObject {}", dataObjectId, t);
+			return null;
+		}
+		return renderInfo;
+	}
+
+	@Override
+	public DataObjectRenderizationInfo getBaseRenderizationInfo(DataObject contentToRender,
+			long modelId, String langCode, RequestContext reqCtx) {
+		DataObjectRenderizationInfo renderInfo = null;
+		try {
+			String renderedContent = this.buildRenderedDataObject(contentToRender, modelId, langCode, reqCtx);
+			if (null != renderedContent && renderedContent.trim().length() > 0) {
+				List<AttributeRole> roles = this.getDataObjectManager().getAttributeRoles();
+				renderInfo = new DataObjectRenderizationInfo(contentToRender, renderedContent, modelId, langCode, roles);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error while rendering DataObject", t);
 			return null;
 		}
 		return renderInfo;

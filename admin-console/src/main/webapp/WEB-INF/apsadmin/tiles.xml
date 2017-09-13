@@ -565,5 +565,27 @@
         <put-attribute name="title" value="document.title.main" />
         <put-attribute name="body" value="/WEB-INF/apsadmin/jsp/common/userNotAllowedMessage.jsp" />
     </definition>
+	
+	<!-- ************************* DATA TYPE ************************* -->
+	
+	<!-- ********* INIZIO Area Gestione DATA UX ********* -->
+    <definition extends="layout.default" name="admin.dataobject.ux.list">
+		<put-attribute name="title" value="title.dataObjectUx" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/datatype/ux/modelFinding.jsp" />
+	</definition>
+    <definition extends="layout.default" name="admin.dataobject.ux.entry">
+		<put-attribute name="title" value="title.dataObjectUx" />
+		<put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/datatype_entryModel.jsp" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/datatype/ux/entryModel.jsp" />
+	</definition>
+    <definition extends="layout.default" name="admin.dataobject.ux.reference">
+		<put-attribute name="title" value="title.dataObjectUx" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/datatype/ux/modelReferences.jsp" />
+	</definition>
+    <definition extends="layout.default" name="admin.dataobject.ux.trash">
+		<put-attribute name="title" value="title.dataObjectUx" />
+		<put-attribute name="body" value="/WEB-INF/apsadmin/jsp/datatype/ux/trashModel.jsp" />
+	</definition>
+    <!-- ********* FINE Area Gestione DATA UX ********* -->
 
 </tiles-definitions>

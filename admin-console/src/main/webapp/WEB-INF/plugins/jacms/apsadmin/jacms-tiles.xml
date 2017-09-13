@@ -128,8 +128,7 @@
 		<put-attribute name="title" value="title.contentModels" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/model/trashModel.jsp" />
 	</definition>
-
-    <!-- ********* INIZIO Area Gestione Modelli di Contenuto ********* -->
+    <!-- ********* FINE Area Gestione Modelli di Contenuto ********* -->
 
     <!-- ********* INIZIO Area Gestione Risorse ********* -->
 

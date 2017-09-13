@@ -575,7 +575,7 @@
 	</definition>
     <definition extends="layout.default" name="admin.dataobject.ux.entry">
 		<put-attribute name="title" value="title.dataObjectUx" />
-		<put-attribute name="extraResources" value="/WEB-INF/jsp/common/layouts/assets-more/datatype_entryModel.jsp" />
+		<put-attribute name="extraResources" value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/datatype_entryModel.jsp" />
 		<put-attribute name="body" value="/WEB-INF/jsp/datatype/ux/entryModel.jsp" />
 	</definition>
     <definition extends="layout.default" name="admin.dataobject.ux.reference">

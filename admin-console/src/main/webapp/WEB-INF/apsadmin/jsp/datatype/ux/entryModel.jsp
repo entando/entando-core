@@ -3,21 +3,22 @@
 <%@ taglib prefix="jacms" uri="/jacms-apsadmin-core"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="breadcrumb.app" /></li>
-    <li><s:text name="breadcrumb.datatype" /></li>
     <li>
-        <a href="<s:url action="list" namespace="/do/dataobject/model" />"
-           title="<s:text name="note.goToSomewhere" />: <s:text name="title.dataObjectUx" />">
-            <s:text name="title.dataObjectUx" />
-        </a>
-    </li>
-    <li class="page-title-container">
-        <s:if test="strutsAction == 1">
-            <s:text name="title.dataObjectUx.new" />
-        </s:if> <s:if test="strutsAction == 2">
-            <s:text name="title.dataObjectUx.edit" />
-        </s:if>
-    </li>
+    <s:text name="breadcrumb.datatype" />
+</li>
+<li>
+    <a href="<s:url action="list" namespace="/do/dataobject/model" />"
+       title="<s:text name="note.goToSomewhere" />: <s:text name="title.dataObjectUx" />">
+        <s:text name="title.dataObjectUx" />
+    </a>
+</li>
+<li class="page-title-container">
+<s:if test="strutsAction == 1">
+    <s:text name="title.dataObjectUx.new" />
+</s:if> <s:if test="strutsAction == 2">
+    <s:text name="title.dataObjectUx.edit" />
+</s:if>
+</li>
 </ol>
 <h1 class="page-title-container">
     <div>
@@ -28,9 +29,9 @@
             <s:text name="title.dataObjectUx.edit" />
         </s:if>
         <span class="pull-right">
-            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.contentManagement.help" />"
+            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.dataux.help" />"
                data-placement="left" data-original-title="">
-                <i class="fa fa-question-circle-o" accesskey="" aria-hidden="true"></i>
+               <i class="fa fa-question-circle-o" accesskey="" aria-hidden="true"></i>
             </a>
         </span>
     </div>
@@ -52,14 +53,14 @@
             </div>
         </s:if>
         <p class="sr-only">
-            <wpsf:hidden name="strutsAction" />
-            <s:if test="strutsAction == 2">
-                <wpsf:hidden name="modelId" />
-            </s:if>
+        <wpsf:hidden name="strutsAction" />
+        <s:if test="strutsAction == 2">
+            <wpsf:hidden name="modelId" />
+        </s:if>
         </p>
 
         <div class="form-group<s:if test="strutsAction == 1 && null == contentType"> has-warning</s:if>">
-                <label for="contentType" class="col-sm-2 control-label">
+            <label for="contentType" class="col-sm-2 control-label">
                 <s:text name="contentModel.type" />
             </label>
             <div class="col-sm-10">
@@ -85,7 +86,7 @@
 
 
         <div class="form-group<s:property value="controlGroupErrorClassVar" />">
-            <s:set var="modelIdFieldErrorsVar" value="%{fieldErrors['modelId']}" />
+             <s:set var="modelIdFieldErrorsVar" value="%{fieldErrors['modelId']}" />
             <s:set var="modelIdHasFieldErrorVar" value="#modelIdFieldErrorsVar!= null && !#modelIdFieldErrorsVar.isEmpty()" />
             <s:set var="controlGroupErrorClassVar" value="%{#modelIdHasFieldErrorVar ? ' has-error' : ''}" />
 
@@ -93,7 +94,7 @@
                 <s:text name="contentModel.code" /> <i class="fa fa-asterisk required-icon"></i>
                 <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                    data-placement="top" data-content="<s:text name="title.contentModel.code.help" />" data-original-title="">
-                    <span class="fa fa-info-circle"></span>
+                   <span class="fa fa-info-circle"></span>
                 </a>
             </label>
 
@@ -101,15 +102,15 @@
                 <wpsf:textfield name="modelId" id="modelId" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
                 <s:if test="#modelIdHasFieldErrorVar">
                     <p class="text-danger padding-small-vertical">
-                        <s:iterator value="#modelIdFieldErrorsVar">
-                            <s:property />
-                        </s:iterator>
+                    <s:iterator value="#modelIdFieldErrorsVar">
+                        <s:property />
+                    </s:iterator>
                     </p>
                 </s:if>
             </div>
         </div>
         <div class="form-group<s:property value="controlGroupErrorClassVar" />">
-            <s:set var="descriptionFieldErrorsVar" value="%{fieldErrors['description']}" />
+             <s:set var="descriptionFieldErrorsVar" value="%{fieldErrors['description']}" />
             <s:set var="descriptionHasFieldErrors"
                    value="#descriptionFieldErrorsVar!= null && !#descriptionFieldErrorsVar.isEmpty()" />
             <s:set var="controlGroupErrorClassVar"
@@ -118,23 +119,23 @@
                 <s:text name="label.description" /> <i class="fa fa-asterisk required-icon"></i>
                 <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                    data-placement="top" data-content="<s:text name="title.contentModel.name.help" />" data-original-title="">
-                    <span class="fa fa-info-circle"></span>
+                   <span class="fa fa-info-circle"></span>
                 </a>
             </label>
             <div class="col-sm-10">
                 <wpsf:textfield name="description" id="description" cssClass="form-control" />
                 <s:if test="#descriptionHasFieldErrors">
                     <p class="text-danger padding-small-vertical">
-                        <s:iterator value="#descriptionFieldErrorsVar">
-                            <s:property />
-                        </s:iterator>
+                    <s:iterator value="#descriptionFieldErrorsVar">
+                        <s:property />
+                    </s:iterator>
                     </p>
                 </s:if>
             </div>
         </div>
         <div class="form-group<s:property value="controlGroupErrorClassVar" />">
-            <s:set var="contentShapeFieldErrorsVar"
-                   value="%{fieldErrors['contentShape']}" />
+             <s:set var="contentShapeFieldErrorsVar"
+               value="%{fieldErrors['contentShape']}" />
             <s:set var="contentShapeHasFieldErrorVar"
                    value="#contentShapeFieldErrorsVar != null && !#contentShapeFieldErrorsVar.isEmpty()" />
             <label class="col-sm-2 control-label" for="contentShape">
@@ -156,9 +157,9 @@
 
                     <s:if test="#contentShapeHasFieldErrorVar">
                         <p class="text-danger padding-small-vertical">
-                            <s:iterator value="#contentShapeFieldErrorsVar">
-                                <s:property />
-                            </s:iterator>
+                        <s:iterator value="#contentShapeFieldErrorsVar">
+                            <s:property />
+                        </s:iterator>
                         </p>
                     </s:if>
                     <span class="text text-success">

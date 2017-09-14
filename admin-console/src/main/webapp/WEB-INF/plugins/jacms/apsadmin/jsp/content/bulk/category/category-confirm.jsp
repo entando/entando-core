@@ -1,6 +1,7 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+<%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 
 <s:if test="strutsAction == 1">
     <s:set var="labelTitle" value="%{getText('title.bulk.content.category.join')}"/>

@@ -25,6 +25,32 @@
                             <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}" />
                         </s:iterator>
                      </p>
+
+                     <script type="text/javascript">
+                         jQuery(function(){
+
+                             $('.table-treegrid').treegrid(null, false);
+                             $(".treeRow ").on("click", function () {
+                                 $(".treeRow").removeClass("active");
+                                 $(this).addClass("active").find('.subTreeToggler').prop("checked", true);
+                             });
+
+                             $("#expandAll").on("click", function() {
+                                 $('#pageTree .treeRow').removeClass("hidden collapsed");
+                                 $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
+                             });
+
+                             $("#collapseAll").on("click", function() {
+                                 $('#pageTree .treeRow:not(:first-child)').addClass('hidden');
+                                 $('#pageTree .treeRow').addClass('collapsed');
+                                 $('#pageTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
+                             });
+
+                             $(".table-treegrid .subTreeToggler:checked").closest(".treeRow")
+                                 .addClass("active").removeClass("hidden").addClass("collapsed");
+
+                         });
+                     </script>
                  </s:if>
 
                  <div class="table-responsive">
@@ -61,7 +87,14 @@
                                  <s:set var="treeNodeActionMarkerCode" value="treeNodeActionMarkerCode" />
                                  <s:set var="targetNode" value="%{parentPageCode}" />
                                  <s:set var="treeNodesToOpen" value="treeNodesToOpen" />
-                                 <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submit.jsp" />
+                                 <s:set var="currentRoot" value="showableTree"/>
+                                 <style>
+                                     .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                         cursor: pointer;
+                                         display: none;
+                                     }
+                                 </style>
+                                 <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
                              </s:elseif>
                          </tbody>
                      </table>

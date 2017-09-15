@@ -4,19 +4,18 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="breadcrumb.app" /></li>
     <li><s:text name="breadcrumb.datatype" /></li>
-    <li class="page-title-container">
-        <s:text name="title.dataObjectUx" />
-    </li>
+<li class="page-title-container">
+<s:text name="title.dataObjectUx" />
+</li>
 </ol>
 <h1 class="page-title-container">
     <div>
         <s:text name="title.dataObjectUx" />
         <span class="pull-right">
             <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-               data-content="<s:text name="title.contentManagement.help" />" data-placement="left" accesskey="" data-original-title="">
-                <i class="fa fa-question-circle-o"  aria-hidden="true"></i>
+               data-content="<s:text name="title.dataux.help" />" data-placement="left" accesskey="" data-original-title="">
+               <i class="fa fa-question-circle-o"  aria-hidden="true"></i>
             </a>
         </span>
     </div>
@@ -29,7 +28,7 @@
     <div class="col-xs-12">
         <div class="well col-md-offset-3 col-md-6">
             <p class="search-label">
-                <s:text name="label.search" />
+            <s:text name="label.search" />
             </p>
             <s:form action="search" cssClass="form-horizontal" role="search">
                 <div class="form-group">
@@ -54,12 +53,12 @@
     </div>
 
     <a href="<s:url action="new" namespace="/do/dataobject/model"/>" class="btn btn-primary pull-right mb-5">
-        <s:text name="contentModels.label.add" />
+       <s:text name="contentModels.label.add" />
     </a>
 
     <s:form action="search" role="list" namespace="/do/dataobject/model">
         <p class="sr-only">
-            <wpsf:hidden name="contentType" />
+        <wpsf:hidden name="contentType" />
         </p>
         <s:if test="%{contentModels.size > 0}">
             <wpsa:subset source="contentModels" count="10"
@@ -70,56 +69,56 @@
                         <thead>
                             <tr>
                                 <th>
-                                    <s:text name="label.description" />
-                                </th>
-                                <th class="table-w-25">
-                                    <s:text name="contentModel.type" />
-                                </th>
-                                <th class="table-w-5 text-center">
-                                    <s:text name="contentModel.id" />
-                                </th>
-                                <th class="text-center table-w-5">
-                                    <s:text name="label.actions" />
-                                </th>
-                            </tr>
+                        <s:text name="label.description" />
+                        </th>
+                        <th class="table-w-25">
+                        <s:text name="contentModel.type" />
+                        </th>
+                        <th class="table-w-5 text-center">
+                        <s:text name="contentModel.id" />
+                        </th>
+                        <th class="text-center table-w-5">
+                        <s:text name="label.actions" />
+                        </th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <s:iterator var="model">
-                                <tr>
-                                    <td>
-                                        <s:property value="#model.description" />
-                                    </td>
-                                    <td>
-                                        <s:property  value="%{getSmallContentType(#model.dataType).descr}" />
-                                    </td>
-                                    <td class="text-center">
-                                        <s:property value="#model.id" />
-                                    </td>
-                                    <td class="text-center table-view-pf-actions">
-                                        <div class="dropdown dropdown-kebab-pf">
-                                            <button class="btn btn-menu-right dropdown-toggle"
-                                                    type="button" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                <span class="fa fa-ellipsis-v"></span>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li>
-                                                    <a href="<s:url action="edit" namespace="/do/dataobject/model" />?modelId=<s:property value="#model.id" />"
-                                                       title="<s:text name="label.edit" />: <s:property value="#model.description" />">
-                                                        <span><s:text name="label.edit" /></span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="<s:url action="trash" namespace="/do/dataobject/model" />?modelId=<s:property value="#model.id" />"
-                                                       title="<s:text name="label.delete" />: <s:property value="#model.description" />">
-                                                        <span><s:text name="label.delete" /></span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </s:iterator>
+                        <s:iterator var="model">
+                            <tr>
+                                <td>
+                            <s:property value="#model.description" />
+                            </td>
+                            <td>
+                            <s:property  value="%{getSmallContentType(#model.dataType).descr}" />
+                            </td>
+                            <td class="text-center">
+                            <s:property value="#model.id" />
+                            </td>
+                            <td class="text-center table-view-pf-actions">
+                                <div class="dropdown dropdown-kebab-pf">
+                                    <button class="btn btn-menu-right dropdown-toggle"
+                                            type="button" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                        <span class="fa fa-ellipsis-v"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li>
+                                            <a href="<s:url action="edit" namespace="/do/dataobject/model" />?modelId=<s:property value="#model.id" />"
+                                                title="<s:text name="label.edit" />: <s:property value="#model.description" />">
+                                                <span><s:text name="label.edit" /></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<s:url action="trash" namespace="/do/dataobject/model" />?modelId=<s:property value="#model.id" />"
+                                                title="<s:text name="label.delete" />: <s:property value="#model.description" />">
+                                                <span><s:text name="label.delete" /></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                            </tr>
+                        </s:iterator>
                         </tbody>
                     </table>
                 </div>
@@ -135,7 +134,7 @@
         </s:if>
         <s:else>
             <p>
-                <s:text name="contentModel.noModels" />
+            <s:text name="contentModel.noModels" />
             </p>
         </s:else>
     </s:form>

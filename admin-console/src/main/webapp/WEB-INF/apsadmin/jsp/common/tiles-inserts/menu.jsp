@@ -5,17 +5,17 @@
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 
 <script>
-	$(document).ready(function () {
-		// matchHeight the contents of each .card-pf and then the .card-pf itself
-		$(".row-cards-pf > [class*='col'] > .card-pf .card-pf-title").matchHeight();
-		$(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-body").matchHeight();
-		$(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-footer").matchHeight();
-		$(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
-		// Initialize the vertical navigation
-		$().setupVerticalNavigation(true);
-		$('[data-toggle=popover]').popovers();
+    $(document).ready(function () {
+        // matchHeight the contents of each .card-pf and then the .card-pf itself
+        $(".row-cards-pf > [class*='col'] > .card-pf .card-pf-title").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-body").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-footer").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
+        // Initialize the vertical navigation
+        $().setupVerticalNavigation(true);
+        $('[data-toggle=popover]').popovers();
 //        $(".bootstrap-switch").bootstrapSwitch();
-});
+    });
 </script>
 
 <wp:ifauthorized permission="superuser" var="isSuperUser" />
@@ -123,21 +123,21 @@
                     <a>
                         <span class="list-group-item-value"><s:text name="menu.integrations.components" /></span>
                     </a>
-					<wpsa:pluginsSubMenu objectName="pluginsSubMenusVar" />
-					<s:if test="#pluginsSubMenusVar.size > 0">
-						<div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
-							<div class="nav-item-pf-header">
-								<a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
-								<span><s:text name="menu.integrations.components" /></span>
-							</div>
-							<ul class="list-group">
+                <wpsa:pluginsSubMenu objectName="pluginsSubMenusVar" />
+                <s:if test="#pluginsSubMenusVar.size > 0">
+                    <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
+                        <div class="nav-item-pf-header">
+                            <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                            <span><s:text name="menu.integrations.components" /></span>
+                        </div>
+                        <ul class="list-group">
 
-								<s:iterator value="#pluginsSubMenusVar" var="pluginSubMenuVar">
-									<s:include value="%{#pluginSubMenuVar.subMenuFilePath}" />
-								</s:iterator>
-							</ul>
-						</div>
-					</s:if>
+                            <s:iterator value="#pluginsSubMenusVar" var="pluginSubMenuVar">
+                                <s:include value="%{#pluginSubMenuVar.subMenuFilePath}" />
+                            </s:iterator>
+                        </ul>
+                    </div>
+                </s:if>
                 </li>
                 <c:if test="${isSuperUser}">
                     <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-api-tertiary">
@@ -203,9 +203,9 @@
                     <c:if test="${isSuperUser}">
                         <li class="list-group-item">
                             <a href='<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>'>
-								<span class="list-group-item-value"><s:text name="menu.usersSettings.profileTypes" /></span>
-							</a>
-						</li>
+                                <span class="list-group-item-value"><s:text name="menu.usersSettings.profileTypes" /></span>
+                            </a>
+                        </li>
 
                         <c:if test="${isSuperUser}">
                             <li class="list-group-item">
@@ -258,31 +258,31 @@
                                 <c:if test="${isEditContents}">
                                     <li class="list-group-item">
                                         <a href="<s:url action="list" namespace="/do/jacms/Content" />">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.contents" /></span>
+                                           <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contents" /></span>
                                         </a>
                                     </li>
                                 </c:if>
                                 <c:if test="${isManageResources}">
                                     <li class="list-group-item">
                                         <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Image</s:param></s:url>">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.digitalAssets" /></span>
-										</a>
-									</li>
+                                            <span class="list-group-item-value"><s:text name="menu.APPS.CMS.digitalAssets" /></span>
+                                        </a>
+                                    </li>
                                 </c:if>
                                 <c:if test="${isSuperUser}">
                                     <li class="list-group-item">
                                         <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentTypes" /></span>
-										</a>
-									</li>
-									<li class="list-group-item">
-										<a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentModels" /></span>
+                                            <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentTypes" /></span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
+                                           <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentModels" /></span>
                                         </a>
                                     </li>
                                     <li class="list-group-item">
                                         <a href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />">
-											<span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentSettings" /></span>
+                                           <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentSettings" /></span>
                                         </a>
                                     </li>
                                 </c:if>
@@ -298,14 +298,14 @@
             </ul>
         </div>
     </li>
-	
-	
-	
+
+
+
     <!-- DATA TYPE -->
     <c:if test="${isSuperUser}">
         <li class="list-group-item secondary-nav-item-pf" data-target="#datatype-secondary">
             <a>
-                <span class="fa fa-object-ungroup" data-toggle="tooltip" title="<s:text name="menu.DataType" />"></span>
+                <span class="fa fa-file-text-o" data-toggle="tooltip" title="<s:text name="menu.DataType" />"></span>
                 <span class="list-group-item-value"><s:text name="menu.DataType" /></span>
             </a>
             <div id="datatype-secondary" class="nav-pf-secondary-nav">
@@ -316,19 +316,24 @@
                 <!-- DataType Secondary -->
                 <ul class="list-group">
                     <c:if test="${isSuperUser}">
-						<li class="list-group-item">
-							<a href="<s:url action="list" namespace="/do/dataobject/model" />">
-								<span class="list-group-item-value"><s:text name="menu.DataType.UX" /></span>
-							</a>
-						</li>
+                        <li class="list-group-item">
+                            <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">DataObjectManager</s:param></s:url>">
+                                <span class="list-group-item-value"><s:text name="menu.DataType.Model" /></span>
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="<s:url action="list" namespace="/do/dataobject/model" />">
+                               <span class="list-group-item-value"><s:text name="menu.DataType.UX" /></span>
+                            </a>
+                        </li>
                     </c:if>
                 </ul>
                 <!--Fine DATA TYPE Secondary-->
             </div>
         </li>
     </c:if>
-	
-	
+
+
 </ul>
 
 <wp:ifauthorized permission="manageCategories" var="isCategories" />

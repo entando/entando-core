@@ -11,10 +11,10 @@
     </li>
     <s:if test="operationId == 1">
         <li class="page-title-container"><s:text name="title.entityTypes.editType.new"/></li>
-        </s:if>
-        <s:else>
+    </s:if>
+    <s:else>
         <li class="page-title-container"><s:text name="title.entityTypes.editType.edit"/></li>
-        </s:else>
+    </s:else>
 </ol>
 
 <h1 class="page-title-container">
@@ -29,7 +29,7 @@
            data-toggle="popover" data-trigger="focus" data-html="true" title=""
            data-content="<s:text name="%{'page.' + entityManagerName + '.help'}"/>" data-placement="left"
            data-original-title="">
-            <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+           <i class="fa fa-question-circle-o" aria-hidden="true"></i>
         </a>
     </span>
 </h1>
@@ -40,7 +40,7 @@
     </div>
 </div>
 
-<div id="main" role="main">
+<div class="mb-20" >
 
     <s:if test="hasFieldErrors()">
         <br/>
@@ -54,8 +54,8 @@
                 <s:iterator value="fieldErrors">
                     <s:iterator value="value">
                         <li><s:property escapeHtml="false"/></li>
-                        </s:iterator>
                     </s:iterator>
+                </s:iterator>
             </ul>
         </div>
     </s:if>
@@ -64,7 +64,7 @@
         <s:set var="entityType" value="entityType"/>
         <s:if test="operationId != 1">
             <p class="sr-only">
-                <wpsf:hidden name="entityTypeCode" value="%{#entityType.typeCode}"/>
+            <wpsf:hidden name="entityTypeCode" value="%{#entityType.typeCode}"/>
             </p>
         </s:if>
         <fieldset class="col-xs-12">
@@ -81,7 +81,7 @@
                         <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
                            title="" data-placement="top" data-content="<s:text name="%{'note.' + entityManagerName + '.code'}"/>"
                            data-original-title="">
-                            <span class="fa fa-info-circle"></span>
+                           <span class="fa fa-info-circle"></span>
                         </a>
                     </label>
                     <div class="col-sm-10">
@@ -97,7 +97,7 @@
                            data-toggle="popover" data-trigger="focus" data-html="true"
                            title="" data-placement="top" data-content="<s:text name="%{'note.' + entityManagerName + '.code'}"/>"
                            data-original-title="">
-                            <span class="fa fa-info-circle"></span>
+                           <span class="fa fa-info-circle"></span>
                         </a>
                     </label>
                     <div class="col-sm-10">
@@ -113,7 +113,7 @@
                     <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
                        title="" data-placement="top" data-content="<s:text name="%{'note.' + entityManagerName + '.name'}"/>"
                        data-original-title="">
-                        <span class="fa fa-info-circle"></span>
+                       <span class="fa fa-info-circle"></span>
                     </a>
                 </label>
                 <div class="col-sm-10">

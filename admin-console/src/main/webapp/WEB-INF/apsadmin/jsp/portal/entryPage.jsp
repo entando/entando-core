@@ -73,6 +73,7 @@
         <wpsf:hidden name="strutsAction" />
         <wpsf:hidden name="copyPageCode" />
         <wpsf:hidden name="groupSelectLock" />
+        <wpsf:hidden name="group" />
         <s:if test="strutsAction == 2">
             <wpsf:hidden name="parentPageCode" />
             <wpsf:hidden name="pageCode" />

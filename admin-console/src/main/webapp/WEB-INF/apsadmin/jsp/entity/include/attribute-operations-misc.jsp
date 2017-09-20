@@ -9,7 +9,7 @@
         <wpsa:actionSubParam name="movement" value="UP" />
     </wpsa:actionParam>
     <wpsf:submit  action="%{#actionName}" type="button" value="%{getText('label.moveUp')}" title="%{getText('label.moveInPositionNumber')}: %{#elementIndex}" cssClass="btn-no-button">
-        Move down
+        Move up
     </wpsf:submit>
 </li>
 <li><wpsa:actionParam action="moveAttribute" var="actionName" >
@@ -17,7 +17,7 @@
         <wpsa:actionSubParam name="movement" value="DOWN" />
     </wpsa:actionParam>
     <wpsf:submit  action="%{#actionName}" type="button" value="%{getText('label.moveDown')}" title="%{getText('label.moveInPositionNumber')}: %{#elementIndex+2}" cssClass="btn-no-button">
-        Move up
+        Move down
     </wpsf:submit>
 </li>
 

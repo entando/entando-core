@@ -23,78 +23,78 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = DataObject.TABLE_NAME)
 public class DataObject {
 
-	public DataObject() {
-	}
+    public DataObject() {
+    }
 
-	@DatabaseField(columnName = "contentid",
-			dataType = DataType.STRING,
-			width = 16,
-			canBeNull = false, id = true)
-	private String _contentId;
+    @DatabaseField(columnName = "dataid",
+            dataType = DataType.STRING,
+            width = 16,
+            canBeNull = false, id = true)
+    private String _dataId;
 
-	@DatabaseField(columnName = "datatype",
-			dataType = DataType.STRING,
-			width = 30,
-			canBeNull = false, index = true)
-	private String _dataType;
+    @DatabaseField(columnName = "datatype",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, index = true)
+    private String _dataType;
 
-	@DatabaseField(columnName = "descr",
-			dataType = DataType.STRING,
-			canBeNull = false)
-	private String _description;
+    @DatabaseField(columnName = "descr",
+            dataType = DataType.STRING,
+            canBeNull = false)
+    private String _description;
 
-	@DatabaseField(columnName = "status",
-			dataType = DataType.STRING,
-			width = 12,
-			canBeNull = false, index = true)
-	private String _status;
+    @DatabaseField(columnName = "status",
+            dataType = DataType.STRING,
+            width = 12,
+            canBeNull = false, index = true)
+    private String _status;
 
-	@DatabaseField(columnName = "workxml",
-			dataType = DataType.LONG_STRING,
-			canBeNull = false)
-	private String _workXml;
+    @DatabaseField(columnName = "workxml",
+            dataType = DataType.LONG_STRING,
+            canBeNull = false)
+    private String _workXml;
 
-	@DatabaseField(columnName = "created",
-			dataType = DataType.STRING,
-			width = 20,
-			canBeNull = true)
-	private String _created;
+    @DatabaseField(columnName = "created",
+            dataType = DataType.STRING,
+            width = 20,
+            canBeNull = true)
+    private String _created;
 
-	@DatabaseField(columnName = "lastmodified",
-			dataType = DataType.STRING,
-			width = 20,
-			canBeNull = true, index = true)
-	private String _lastModified;
+    @DatabaseField(columnName = "lastmodified",
+            dataType = DataType.STRING,
+            width = 20,
+            canBeNull = true, index = true)
+    private String _lastModified;
 
-	@DatabaseField(columnName = "onlinexml",
-			dataType = DataType.LONG_STRING,
-			canBeNull = true)
-	private String _onlineXml;
+    @DatabaseField(columnName = "onlinexml",
+            dataType = DataType.LONG_STRING,
+            canBeNull = true)
+    private String _onlineXml;
 
-	@DatabaseField(columnName = "maingroup",
-			dataType = DataType.STRING,
-			width = 20,
-			canBeNull = false, index = true)
-	private String _mainGroup;
+    @DatabaseField(columnName = "maingroup",
+            dataType = DataType.STRING,
+            width = 20,
+            canBeNull = false, index = true)
+    private String _mainGroup;
 
-	@DatabaseField(columnName = "currentversion",
-			dataType = DataType.STRING,
-			width = 7,
-			canBeNull = false)
-	private String _currentVersion;
+    @DatabaseField(columnName = "currentversion",
+            dataType = DataType.STRING,
+            width = 7,
+            canBeNull = false)
+    private String _currentVersion;
 
-	@DatabaseField(columnName = "lasteditor",
-			dataType = DataType.STRING,
-			width = 40,
-			canBeNull = true)
-	private String _lastEditor;
+    @DatabaseField(columnName = "lasteditor",
+            dataType = DataType.STRING,
+            width = 40,
+            canBeNull = true)
+    private String _lastEditor;
 
-	@DatabaseField(columnName = "firsteditor",
-			dataType = DataType.STRING,
-			width = 40,
-			canBeNull = true)
-	private String _firstEditor;
+    @DatabaseField(columnName = "firsteditor",
+            dataType = DataType.STRING,
+            width = 40,
+            canBeNull = true)
+    private String _firstEditor;
 
-	public static final String TABLE_NAME = "dataobjects";
+    public static final String TABLE_NAME = "dataobjects";
 
 }

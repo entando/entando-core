@@ -18,47 +18,24 @@ import java.util.List;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
- * Basic interface for the Data Access Objects for the 'content' objects.
+ * Basic interface for the Data Access Objects for the 'data' objects.
  *
  * @author M.Diana - E.Santoboni - S.Didaci
  */
 public interface IDataObjectDAO extends IEntityDAO {
 
-	/**
-	 * Publish a content.
-	 *
-	 * @param content The content to publish.
-	 */
-	public void insertOnLineContent(DataObject content);
+    public void insertDataObject(DataObject data);
 
-	/**
-	 * Reload the references of a published content.
-	 *
-	 * @param content The published content.
-	 */
-	public void reloadPublicContentReferences(DataObject content);
+    public void reloadDataObjectReferences(DataObject data);
 
-	/**
-	 * Reload the references of a content.
-	 *
-	 * @param content The content.
-	 */
-	public void reloadWorkContentReferences(DataObject content);
+    public void removeDataObject(DataObject data);
 
-	/**
-	 * Unpublish a content, preventing it from being displayed in the portal.
-	 * Obviously the content itself is not deleted.
-	 *
-	 * @param content the content to unpublish.
-	 */
-	public void removeOnLineContent(DataObject content);
+    public void updateDataObject(DataObject data, boolean updateDate);
 
-	public void updateContent(DataObject content, boolean updateDate);
+    public DataObjectsStatus loadDataObjectsStatus();
 
-	public DataObjectsStatus loadContentStatus();
+    public List<String> getCategoryUtilizers(String categoryCode);
 
-	public List<String> getCategoryUtilizers(String categoryCode);
-
-	public List<String> getGroupUtilizers(String groupName);
+    public List<String> getGroupUtilizers(String groupName);
 
 }

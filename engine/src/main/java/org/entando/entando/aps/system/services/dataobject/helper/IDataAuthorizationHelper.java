@@ -24,78 +24,78 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  */
 public interface IDataAuthorizationHelper {
 
-	/**
-	 * Return true if the given user can view the given content.
-	 *
-	 * @param user The user
-	 * @param content The content.
-	 * @return True if the given user can view the content.
-	 * @throws ApsSystemException In case of error
-	 */
-	public boolean isAuth(UserDetails user, DataObject content) throws ApsSystemException;
+    /**
+     * Return true if the given user can view the given content.
+     *
+     * @param user The user
+     * @param content The content.
+     * @return True if the given user can view the content.
+     * @throws ApsSystemException In case of error
+     */
+    public boolean isAuth(UserDetails user, DataObject content) throws ApsSystemException;
 
-	/**
-	 * Return true if the given user can view the given content.
-	 *
-	 * @param user The user
-	 * @param contentId The content id.
-	 * @param publicVersion true if the control should be carried out in the
-	 * public version
-	 * @return True if the given user can view the content.
-	 * @throws ApsSystemException In case of error
-	 */
-	public boolean isAuth(UserDetails user, String contentId, boolean publicVersion) throws ApsSystemException;
+    /**
+     * Return true if the given user can view the given content.
+     *
+     * @param user The user
+     * @param dataId The content id.
+     * @param publicVersion true if the control should be carried out in the
+     * public version
+     * @return True if the given user can view the content.
+     * @throws ApsSystemException In case of error
+     */
+    public boolean isAuth(UserDetails user, String dataId, boolean publicVersion) throws ApsSystemException;
 
-	/**
-	 * Return true if the given user can view the given content.
-	 *
-	 * @param user The user
-	 * @param info The content authorization info.
-	 * @return True if the given user can view the content.
-	 * @throws ApsSystemException In case of error
-	 */
-	public boolean isAuth(UserDetails user, PublicDataTypeAuthorizationInfo info) throws ApsSystemException;
+    /**
+     * Return true if the given user can view the given content.
+     *
+     * @param user The user
+     * @param info The content authorization info.
+     * @return True if the given user can view the content.
+     * @throws ApsSystemException In case of error
+     */
+    public boolean isAuth(UserDetails user, PublicDataTypeAuthorizationInfo info) throws ApsSystemException;
 
-	/**
-	 * Return true if the given user can edit the given content.
-	 *
-	 * @param user The user
-	 * @param content The content.
-	 * @return True if the given user can edit the content.
-	 * @throws ApsSystemException In case of error
-	 */
-	public boolean isAuthToEdit(UserDetails user, DataObject content) throws ApsSystemException;
+    /**
+     * Return true if the given user can edit the given content.
+     *
+     * @param user The user
+     * @param content The content.
+     * @return True if the given user can edit the content.
+     * @throws ApsSystemException In case of error
+     */
+    public boolean isAuthToEdit(UserDetails user, DataObject content) throws ApsSystemException;
 
-	/**
-	 * Return true if the given user can edit the given content.
-	 *
-	 * @param user The user
-	 * @param contentId The content id.
-	 * @param publicVersion true if the control should be carried out in the
-	 * public version
-	 * @return True if the given user can edit the content.
-	 * @throws ApsSystemException In case of error
-	 */
-	public boolean isAuthToEdit(UserDetails user, String contentId, boolean publicVersion) throws ApsSystemException;
+    /**
+     * Return true if the given user can edit the given content.
+     *
+     * @param user The user
+     * @param dataId The content id.
+     * @param publicVersion true if the control should be carried out in the
+     * public version
+     * @return True if the given user can edit the content.
+     * @throws ApsSystemException In case of error
+     */
+    public boolean isAuthToEdit(UserDetails user, String dataId, boolean publicVersion) throws ApsSystemException;
 
-	/**
-	 * Return true if the given user can edit the given content.
-	 *
-	 * @param user The user
-	 * @param info The content authorization info.
-	 * @return True if the given user can edit the content.
-	 * @throws ApsSystemException In case of error
-	 */
-	public boolean isAuthToEdit(UserDetails user, PublicDataTypeAuthorizationInfo info) throws ApsSystemException;
+    /**
+     * Return true if the given user can edit the given content.
+     *
+     * @param user The user
+     * @param info The content authorization info.
+     * @return True if the given user can edit the content.
+     * @throws ApsSystemException In case of error
+     */
+    public boolean isAuthToEdit(UserDetails user, PublicDataTypeAuthorizationInfo info) throws ApsSystemException;
 
-	/**
-	 * Return the object that contains the authorization info of the content.
-	 *
-	 * @param contentId The content that extract the info.
-	 * @return The authorization info.
-	 */
-	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String contentId);
+    /**
+     * Return the object that contains the authorization info of the content.
+     *
+     * @param dataId The content that extract the info.
+     * @return The authorization info.
+     */
+    public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String dataId);
 
-	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String contentId, boolean cacheable);
+    public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String dataId, boolean cacheable);
 
 }

@@ -29,50 +29,50 @@ import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelM
  */
 public class DataObjectModelFinderAction extends BaseAction {
 
-	public List<DataObjectModel> getContentModels() {
-		List<DataObjectModel> contentModels = null;
-		if (null != this.getContentType() && this.getContentType().trim().length() > 0) {
-			contentModels = this.getDataObjectModelManager().getModelsForDataObjectType(getContentType());
-		} else {
-			contentModels = this.getDataObjectModelManager().getDataObjectModels();
-		}
-		return contentModels;
-	}
+    public List<DataObjectModel> getDataObjectModels() {
+        List<DataObjectModel> contentModels = null;
+        if (null != this.getDataType() && this.getDataType().trim().length() > 0) {
+            contentModels = this.getDataObjectModelManager().getModelsForDataObjectType(getDataType());
+        } else {
+            contentModels = this.getDataObjectModelManager().getDataObjectModels();
+        }
+        return contentModels;
+    }
 
-	public List<SmallEntityType> getSmallContentTypes() {
-		return this.getDataObjectManager().getSmallEntityTypes();
-	}
+    public List<SmallEntityType> getSmallDataTypes() {
+        return this.getDataObjectManager().getSmallEntityTypes();
+    }
 
-	public SmallEntityType getSmallContentType(String typeCode) {
-		return this.getDataObjectManager().getSmallDataTypesMap().get(typeCode);
-	}
+    public SmallEntityType getSmallDataType(String typeCode) {
+        return this.getDataObjectManager().getSmallDataTypesMap().get(typeCode);
+    }
 
-	public String getContentType() {
-		return _dataType;
-	}
+    public String getDataType() {
+        return _dataType;
+    }
 
-	public void setContentType(String contentType) {
-		this._dataType = contentType;
-	}
+    public void setDataType(String dataType) {
+        this._dataType = dataType;
+    }
 
-	protected IDataObjectModelManager getDataObjectModelManager() {
-		return _dataObjectModelManager;
-	}
+    protected IDataObjectModelManager getDataObjectModelManager() {
+        return _dataObjectModelManager;
+    }
 
-	public void setDataObjectModelManager(IDataObjectModelManager dataObjectModelManager) {
-		this._dataObjectModelManager = dataObjectModelManager;
-	}
+    public void setDataObjectModelManager(IDataObjectModelManager dataObjectModelManager) {
+        this._dataObjectModelManager = dataObjectModelManager;
+    }
 
-	protected IDataObjectManager getDataObjectManager() {
-		return _dataObjectManager;
-	}
+    protected IDataObjectManager getDataObjectManager() {
+        return _dataObjectManager;
+    }
 
-	public void setDataObjectManager(IDataObjectManager dataObjectManager) {
-		this._dataObjectManager = dataObjectManager;
-	}
+    public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+        this._dataObjectManager = dataObjectManager;
+    }
 
-	private IDataObjectModelManager _dataObjectModelManager;
-	private IDataObjectManager _dataObjectManager;
-	private String _dataType = "";
+    private IDataObjectModelManager _dataObjectModelManager;
+    private IDataObjectManager _dataObjectManager;
+    private String _dataType = "";
 
 }

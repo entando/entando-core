@@ -35,106 +35,106 @@ import com.agiletec.aps.util.ApsProperties;
  */
 public class DataObjectPageMapperManager extends AbstractService implements IDataObjectPageMapperManager, PageChangedObserver {
 
-	private static final Logger _logger = LoggerFactory.getLogger(DataObjectPageMapperManager.class);
+    private static final Logger _logger = LoggerFactory.getLogger(DataObjectPageMapperManager.class);
 
-	@Override
-	public void init() throws Exception {
-		this.createDataObjectPageMapper();
-		_logger.debug("{} ready.", this.getClass().getName());
-	}
+    @Override
+    public void init() throws Exception {
+        this.createDataObjectPageMapper();
+        _logger.debug("{} ready.", this.getClass().getName());
+    }
 
-	/**
-	 * Effettua il caricamento della mappa contenuti pubblicati / pagine
-	 *
-	 * @throws ApsSystemException
-	 */
-	@Override
-	public void reloadContentPageMapper() throws ApsSystemException {
-		this.createDataObjectPageMapper();
-	}
+    /**
+     * Effettua il caricamento della mappa contenuti pubblicati / pagine
+     *
+     * @throws ApsSystemException
+     */
+    @Override
+    public void reloadDataObjectPageMapper() throws ApsSystemException {
+        this.createDataObjectPageMapper();
+    }
 
-	@Override
-	public String getPageCode(String contentId) {
-		return this.getDataObjectPageMapper().getPageCode(contentId);
-	}
+    @Override
+    public String getPageCode(String dataId) {
+        return this.getDataObjectPageMapper().getPageCode(dataId);
+    }
 
-	/**
-	 * Crea la mappa dei DataObject pubblicati nelle pagine.
-	 *
-	 * @throws ApsSystemException
-	 */
-	private void createDataObjectPageMapper() throws ApsSystemException {
-		this._dataObjectPageMapper = new DataObjectPageMapper();
-		try {
-			IPage root = this.getPageManager().getOnlineRoot();
-			this.searchPublishedDataObjects(root);
-		} catch (Throwable t) {
-			_logger.error("Error loading ContentPageMapper", t);
-			throw new ApsSystemException("Errore loading ContentPageMapper", t);
-		}
-	}
+    /**
+     * Crea la mappa dei DataObject pubblicati nelle pagine.
+     *
+     * @throws ApsSystemException
+     */
+    private void createDataObjectPageMapper() throws ApsSystemException {
+        this._dataObjectPageMapper = new DataObjectPageMapper();
+        try {
+            IPage root = this.getPageManager().getOnlineRoot();
+            this.searchPublishedDataObjects(root);
+        } catch (Throwable t) {
+            _logger.error("Error loading DataObjectPageMapper", t);
+            throw new ApsSystemException("Errore loading DataObjectPageMapper", t);
+        }
+    }
 
-	/**
-	 * Cerca i DataObject pubblicati e li aggiunge al mapper. Nella ricerca
-	 * vengono considerati solamente i DataObject pubblicati nel mainFrame e la
-	 * ricerca viene estesa anche alle pagine figlie di quella specificate.
-	 *
-	 * @param page La pagina nel qual cercare i DataObject pubblicati.
-	 */
-	private void searchPublishedDataObjects(IPage page) {
-		PageModel pageModel = page.getModel();
-		if (pageModel != null) {
-			int mainFrame = pageModel.getMainFrame();
-			Widget[] widgets = page.getWidgets();
-			Widget widget = null;
-			if (null != widgets && mainFrame != -1) {
-				widget = widgets[mainFrame];
-			}
-			ApsProperties config = (null != widget) ? widget.getConfig() : null;
-			String contentId = (null != config) ? config.getProperty("contentId") : null;
-			if (null != contentId) {
-				this.getDataObjectPageMapper().add(contentId, page.getCode());
-			}
-			IPage[] children = page.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				this.searchPublishedDataObjects(children[i]);
-			}
-		}
-	}
+    /**
+     * Cerca i DataObject pubblicati e li aggiunge al mapper. Nella ricerca
+     * vengono considerati solamente i DataObject pubblicati nel mainFrame e la
+     * ricerca viene estesa anche alle pagine figlie di quella specificate.
+     *
+     * @param page La pagina nel qual cercare i DataObject pubblicati.
+     */
+    private void searchPublishedDataObjects(IPage page) {
+        PageModel pageModel = page.getModel();
+        if (pageModel != null) {
+            int mainFrame = pageModel.getMainFrame();
+            Widget[] widgets = page.getWidgets();
+            Widget widget = null;
+            if (null != widgets && mainFrame != -1) {
+                widget = widgets[mainFrame];
+            }
+            ApsProperties config = (null != widget) ? widget.getConfig() : null;
+            String dataId = (null != config) ? config.getProperty("dataId") : null;
+            if (null != dataId) {
+                this.getDataObjectPageMapper().add(dataId, page.getCode());
+            }
+            IPage[] children = page.getChildren();
+            for (int i = 0; i < children.length; i++) {
+                this.searchPublishedDataObjects(children[i]);
+            }
+        }
+    }
 
-	@Override
-	public void updateFromPageChanged(PageChangedEvent event) {
-		try {
-			this.reloadContentPageMapper();
-			String pagecode = (null != event.getPage()) ? event.getPage().getCode() : "*undefined*";
-			_logger.debug("Notified page change event for page '{}'", pagecode);
-		} catch (Throwable t) {
-			_logger.error("Error notifying event", t);
-		}
-	}
+    @Override
+    public void updateFromPageChanged(PageChangedEvent event) {
+        try {
+            this.reloadDataObjectPageMapper();
+            String pagecode = (null != event.getPage()) ? event.getPage().getCode() : "*undefined*";
+            _logger.debug("Notified page change event for page '{}'", pagecode);
+        } catch (Throwable t) {
+            _logger.error("Error notifying event", t);
+        }
+    }
 
-	/**
-	 * Restituisce la mappa dei DataObject pubblicati nelle pagine.
-	 *
-	 * @return La mappa dei DataObject pubblicati nelle pagine.
-	 */
-	protected DataObjectPageMapper getDataObjectPageMapper() {
-		return _dataObjectPageMapper;
-	}
+    /**
+     * Restituisce la mappa dei DataObject pubblicati nelle pagine.
+     *
+     * @return La mappa dei DataObject pubblicati nelle pagine.
+     */
+    protected DataObjectPageMapper getDataObjectPageMapper() {
+        return _dataObjectPageMapper;
+    }
 
-	protected IPageManager getPageManager() {
-		return _pageManager;
-	}
+    protected IPageManager getPageManager() {
+        return _pageManager;
+    }
 
-	public void setPageManager(IPageManager pageManager) {
-		this._pageManager = pageManager;
-	}
+    public void setPageManager(IPageManager pageManager) {
+        this._pageManager = pageManager;
+    }
 
-	private IPageManager _pageManager;
+    private IPageManager _pageManager;
 
-	/**
-	 * La mappa dei DataObject pubblicati nelle pagine.
-	 */
-	private DataObjectPageMapper _dataObjectPageMapper;
+    /**
+     * La mappa dei DataObject pubblicati nelle pagine.
+     */
+    private DataObjectPageMapper _dataObjectPageMapper;
 
 }

@@ -23,12 +23,12 @@ import com.agiletec.aps.system.common.notify.ObserverService;
  */
 public interface DataObjectModelChangedObserver extends ObserverService {
 
-	/**
-	 * Aggiorna il servizio di conseguenza alla notifica di un evento di
-	 * modifica modello di datatype.
-	 *
-	 * @param event L'evento notificato.
-	 */
-	public void updateFromContentModelChanged(DataObjectModelChangedEvent event);
+    /**
+     * Aggiorna il servizio di conseguenza alla notifica di un evento di
+     * modifica modello di datatype.
+     *
+     * @param event L'evento notificato.
+     */
+    public void updateFromDataObjectModelChanged(DataObjectModelChangedEvent event);
 
 }

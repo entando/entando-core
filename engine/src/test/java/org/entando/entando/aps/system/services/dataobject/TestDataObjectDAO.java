@@ -34,164 +34,164 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecord
  */
 public class TestDataObjectDAO extends BaseTestCase {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		this.init();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+    }
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		this.dispose();
-	}
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        this.dispose();
+    }
 
-	public void testDeleteAddDataObject() throws Throwable {
-		try {
-			DataObject mockDataObject = this.getMockDataObject();
-			this.deleteDataObject(mockDataObject);
-			this.addDataObject(mockDataObject);
-		} catch (Throwable e) {
-			throw e;
-		}
-	}
+    public void testDeleteAddDataObject() throws Throwable {
+        try {
+            DataObject mockDataObject = this.getMockDataObject();
+            this.deleteDataObject(mockDataObject);
+            this.addDataObject(mockDataObject);
+        } catch (Throwable e) {
+            throw e;
+        }
+    }
 
-	private void deleteDataObject(DataObject dataObject) throws ApsSystemException {
-		this._dataObjectDao.deleteEntity(dataObject.getId());
-		DataObjectRecordVO dataObjectRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(dataObject.getId());
-		assertNull(dataObjectRecord);
-	}
+    private void deleteDataObject(DataObject dataObject) throws ApsSystemException {
+        this._dataObjectDao.deleteEntity(dataObject.getId());
+        DataObjectRecordVO dataObjectRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(dataObject.getId());
+        assertNull(dataObjectRecord);
+    }
 
-	private void addDataObject(DataObject mockDataObject) throws ApsSystemException {
-		_dataObjectDao.addEntity(mockDataObject);
-		DataObjectRecordVO contentRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(mockDataObject.getId());
-		assertEquals(mockDataObject.getDescription(), contentRecord.getDescription());
-		assertEquals(mockDataObject.getStatus(), contentRecord.getStatus());
-		assertFalse(contentRecord.isOnLine());
-	}
+    private void addDataObject(DataObject mockDataObject) throws ApsSystemException {
+        _dataObjectDao.addEntity(mockDataObject);
+        DataObjectRecordVO dataObjectRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(mockDataObject.getId());
+        assertEquals(mockDataObject.getDescription(), dataObjectRecord.getDescription());
+        assertEquals(mockDataObject.getStatus(), dataObjectRecord.getStatus());
+        assertTrue(dataObjectRecord.isOnLine());
+    }
 
-	public void testGetAllDataObjectIds() throws Throwable {
-		List<String> dataObjectIds1 = this._dataObjectDao.getAllEntityId();
-		List<String> dataObjectIds2 = this._contentManager.searchId(null);
-		assertEquals(dataObjectIds1.size(), dataObjectIds2.size());
-		for (int i = 0; i < dataObjectIds1.size(); i++) {
-			String contentId = dataObjectIds1.get(i);
-			assertTrue(dataObjectIds2.contains(contentId));
-		}
-	}
+    public void testGetAllDataObjectIds() throws Throwable {
+        List<String> dataObjectIds1 = this._dataObjectDao.getAllEntityId();
+        List<String> dataObjectIds2 = this._dataObjectManager.searchId(null);
+        assertEquals(dataObjectIds1.size(), dataObjectIds2.size());
+        for (int i = 0; i < dataObjectIds1.size(); i++) {
+            String dataObjectId = dataObjectIds1.get(i);
+            assertTrue(dataObjectIds2.contains(dataObjectId));
+        }
+    }
 
-	public void testInsertRemoveOnlineDataObject() throws Throwable {
-		try {
-			DataObject mockDataObject = this.getMockDataObject();
-			this.insertOnLineDataObject(mockDataObject);
-			this.getAllDataObjectsOnLine(mockDataObject);
-			this.removeOnLineDataObject(mockDataObject);
-		} catch (Throwable e) {
-			throw e;
-		}
-	}
+    public void testInsertRemoveOnlineDataObject() throws Throwable {
+        try {
+            DataObject mockDataObject = this.getMockDataObject();
+            this.insertOnLineDataObject(mockDataObject);
+            this.getAllDataObjectsOnLine(mockDataObject);
+            this.removeOnLineDataObject(mockDataObject);
+        } catch (Throwable e) {
+            throw e;
+        }
+    }
 
-	private void insertOnLineDataObject(DataObject mockContent) throws ApsSystemException {
-		this._dataObjectDao.insertOnLineContent(mockContent);
-		DataObjectRecordVO contentRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(mockContent.getId());
-		assertTrue(contentRecord.isOnLine());
-	}
+    private void insertOnLineDataObject(DataObject mockDataObject) throws ApsSystemException {
+        this._dataObjectDao.insertDataObject(mockDataObject);
+        DataObjectRecordVO dataObjectRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(mockDataObject.getId());
+        assertTrue(dataObjectRecord.isOnLine());
+    }
 
-	private void getAllDataObjectsOnLine(DataObject mockContent) throws ApsSystemException {
-		List<String> list = this._dataObjectDao.getAllEntityId();
-		assertTrue(list.contains(mockContent.getId()));
-	}
+    private void getAllDataObjectsOnLine(DataObject mockDataObject) throws ApsSystemException {
+        List<String> list = this._dataObjectDao.getAllEntityId();
+        assertTrue(list.contains(mockDataObject.getId()));
+    }
 
-	private void removeOnLineDataObject(DataObject content) throws ApsSystemException {
-		this._dataObjectDao.removeOnLineContent(content);
-		DataObjectRecordVO contentRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(content.getId());
-		assertFalse(contentRecord.isOnLine());
-	}
+    private void removeOnLineDataObject(DataObject dataObject) throws ApsSystemException {
+        this._dataObjectDao.removeDataObject(dataObject);
+        DataObjectRecordVO dataObjectRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(dataObject.getId());
+        assertFalse(dataObjectRecord.isOnLine());
+    }
 
-	public void testUpdateContent() throws Throwable {
-		try {
-			DataObject mockContent = this.getMockDataObject();
-			mockContent.setDescription("New Description");
-			mockContent.setStatus(DataObject.STATUS_READY);
-			this.updateContent(mockContent);
-		} catch (Throwable t) {
-			throw t;
-		}
-	}
+    public void testUpdateDataObject() throws Throwable {
+        try {
+            DataObject mockDataObject = this.getMockDataObject();
+            mockDataObject.setDescription("New Description");
+            mockDataObject.setStatus(DataObject.STATUS_READY);
+            this.updateDataObject(mockDataObject);
+        } catch (Throwable t) {
+            throw t;
+        }
+    }
 
-	public void testGetGroupUtilizers() throws Throwable {
-		List<String> contentIds = _dataObjectDao.getGroupUtilizers("customers");
-		assertNotNull(contentIds);
-		assertEquals(5, contentIds.size());
-		assertTrue(contentIds.contains("ART102"));
-		assertTrue(contentIds.contains("ART111"));
-		assertTrue(contentIds.contains("ART122"));
-		assertTrue(contentIds.contains("RAH101"));
-		assertTrue(contentIds.contains("ART112"));
-	}
+    public void testGetGroupUtilizers() throws Throwable {
+        List<String> dataObjectIds = _dataObjectDao.getGroupUtilizers("customers");
+        assertNotNull(dataObjectIds);
+        assertEquals(5, dataObjectIds.size());
+        assertTrue(dataObjectIds.contains("ART102"));
+        assertTrue(dataObjectIds.contains("ART111"));
+        assertTrue(dataObjectIds.contains("ART122"));
+        assertTrue(dataObjectIds.contains("RAH101"));
+        assertTrue(dataObjectIds.contains("ART112"));
+    }
 
-	private void updateContent(DataObject mockContent) throws ApsSystemException {
-		this._dataObjectDao.updateEntity(mockContent);
-		DataObjectRecordVO contentRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(mockContent.getId());
-		assertEquals(mockContent.getDescription(), contentRecord.getDescription());
-		assertEquals(mockContent.getStatus(), contentRecord.getStatus());
-		assertFalse(contentRecord.isOnLine());
-	}
+    private void updateDataObject(DataObject mockDataObject) throws ApsSystemException {
+        this._dataObjectDao.updateEntity(mockDataObject);
+        DataObjectRecordVO dataObjectRecord = (DataObjectRecordVO) this._dataObjectDao.loadEntityRecord(mockDataObject.getId());
+        assertEquals(mockDataObject.getDescription(), dataObjectRecord.getDescription());
+        assertEquals(mockDataObject.getStatus(), dataObjectRecord.getStatus());
+        assertTrue(dataObjectRecord.isOnLine());
+    }
 
-	private DataObject getMockDataObject() {
-		DataObject content = this._contentManager.createDataObject("ART");
+    private DataObject getMockDataObject() {
+        DataObject dataObject = this._dataObjectManager.createDataObject("ART");
 
-		content.setId("temp");
-		content.setMainGroup(Group.FREE_GROUP_NAME);
+        dataObject.setId("temp");
+        dataObject.setMainGroup(Group.FREE_GROUP_NAME);
 
-		content.addGroup("firstGroup");
-		content.addGroup("secondGroup");
-		content.addGroup("thirdGroup");
+        dataObject.addGroup("firstGroup");
+        dataObject.addGroup("secondGroup");
+        dataObject.addGroup("thirdGroup");
 
-		AttributeInterface attribute = new MonoTextAttribute();
-		attribute.setName("temp");
-		attribute.setDefaultLangCode("it");
-		attribute.setRenderingLang("it");
-		attribute.setSearchable(true);
-		attribute.setType("Monotext");
-		content.addAttribute(attribute);
-		content.setDefaultLang("it");
-		content.setDefaultModel("content_viewer");
-		content.setDescription("temp");
-		content.setListModel("Monolist");
-		content.setRenderingLang("it");
-		content.setStatus("Bozza");
-		content.setTypeCode("ART");
-		content.setTypeDescription("Articolo rassegna stampa");
-		return content;
-	}
+        AttributeInterface attribute = new MonoTextAttribute();
+        attribute.setName("temp");
+        attribute.setDefaultLangCode("it");
+        attribute.setRenderingLang("it");
+        attribute.setSearchable(true);
+        attribute.setType("Monotext");
+        dataObject.addAttribute(attribute);
+        dataObject.setDefaultLang("it");
+        dataObject.setDefaultModel("dataObject_viewer");
+        dataObject.setDescription("temp");
+        dataObject.setListModel("Monolist");
+        dataObject.setRenderingLang("it");
+        dataObject.setStatus("Bozza");
+        dataObject.setTypeCode("ART");
+        dataObject.setTypeDescription("Articolo rassegna stampa");
+        return dataObject;
+    }
 
-	private void dispose() throws Exception {
-		DataObject mockContent = this.getMockDataObject();
-		try {
-			this._dataObjectDao.deleteEntity(mockContent.getId());
-		} catch (Throwable e) {
-			throw new Exception(e);
-		}
-	}
+    private void dispose() throws Exception {
+        DataObject mockDataObject = this.getMockDataObject();
+        try {
+            this._dataObjectDao.deleteEntity(mockDataObject.getId());
+        } catch (Throwable e) {
+            throw new Exception(e);
+        }
+    }
 
-	private void init() throws Exception {
-		this._dataObjectDao = new DataObjectDAO();
-		try {
-			this._contentManager = (IDataObjectManager) this.getService("DataObjectManager");
-			DataObject mockContent = this.getMockDataObject();
-			DataSource dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
-			this._dataObjectDao.setDataSource(dataSource);
-			ILangManager langManager = (ILangManager) this.getService(SystemConstants.LANGUAGE_MANAGER);
-			this._dataObjectDao.setLangManager(langManager);
-			this._dataObjectDao.addEntity(mockContent);
-		} catch (Throwable e) {
-			throw new Exception(e);
-		}
-	}
+    private void init() throws Exception {
+        this._dataObjectDao = new DataObjectDAO();
+        try {
+            this._dataObjectManager = (IDataObjectManager) this.getService("DataObjectManager");
+            DataObject mockDataObject = this.getMockDataObject();
+            DataSource dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
+            this._dataObjectDao.setDataSource(dataSource);
+            ILangManager langManager = (ILangManager) this.getService(SystemConstants.LANGUAGE_MANAGER);
+            this._dataObjectDao.setLangManager(langManager);
+            this._dataObjectDao.addEntity(mockDataObject);
+        } catch (Throwable e) {
+            throw new Exception(e);
+        }
+    }
 
-	private DataObjectDAO _dataObjectDao;
+    private DataObjectDAO _dataObjectDao;
 
-	private IDataObjectManager _contentManager;
+    private IDataObjectManager _dataObjectManager;
 
 }

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
-import org.entando.entando.apsadmin.dataobject.DataObjectActionConstants;
 import org.entando.entando.apsadmin.dataobject.helper.IDataObjectActionHelper;
 
 /**
@@ -29,14 +28,14 @@ import org.entando.entando.apsadmin.dataobject.helper.IDataObjectActionHelper;
  */
 public class ListAttributeAction extends com.agiletec.apsadmin.system.entity.attribute.action.list.ListAttributeAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ListAttributeAction.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ListAttributeAction.class);
 
-	/*
+    /*
 	@Override
 	public String addListElement() {
 		try {
 			super.addListElement();
-			Content content = this.getContent();
+			Data content = this.getData();
 			int index = -1;
 			ListAttributeInterface currentAttribute = (ListAttributeInterface) content.getAttribute(this.getAttributeName());
 			String nestedType = currentAttribute.getNestedAttributeTypeCode();
@@ -63,45 +62,45 @@ public class ListAttributeAction extends com.agiletec.apsadmin.system.entity.att
 			return FAILURE;
 		}
 	}
-	 */
-	@Override
-	protected IApsEntity getCurrentApsEntity() {
-		return this.updateContentOnSession();
-	}
+     */
+    @Override
+    protected IApsEntity getCurrentApsEntity() {
+        return this.updateDataOnSession();
+    }
 
-	public DataObject getContent() {
-		return (DataObject) this.getRequest().getSession()
-				.getAttribute(DataObjectActionConstants.SESSION_PARAM_NAME_CURRENT_DATA_OBJECT_PREXIX + this.getContentOnSessionMarker());
-	}
+    public DataObject getData() {
+        return (DataObject) this.getRequest().getSession()
+                .getAttribute("dataObjectOnSession" + this.getDataOnSessionMarker());
+    }
 
-	protected DataObject updateContentOnSession() {
-		DataObject content = this.getContent();
-		this.getDataObjectActionHelper().updateEntity(content, this.getRequest());
-		return content;
-	}
+    protected DataObject updateDataOnSession() {
+        DataObject content = this.getData();
+        this.getDataObjectActionHelper().updateEntity(content, this.getRequest());
+        return content;
+    }
 
-	public String getEntryContentAnchorDest() {
-		return "contentedit_" + this.getListLangCode() + "_" + this.getAttributeName();
-	}
+    public String getEntryDataAnchorDest() {
+        return "dataObjectedit_" + this.getListLangCode() + "_" + this.getAttributeName();
+    }
 
-	public String getContentOnSessionMarker() {
-		return _dataObjectOnSessionMarker;
-	}
+    public String getDataOnSessionMarker() {
+        return _dataObjectOnSessionMarker;
+    }
 
-	public void setContentOnSessionMarker(String dataObjectOnSessionMarker) {
-		this._dataObjectOnSessionMarker = dataObjectOnSessionMarker;
-	}
+    public void setDataOnSessionMarker(String dataObjectOnSessionMarker) {
+        this._dataObjectOnSessionMarker = dataObjectOnSessionMarker;
+    }
 
-	public IDataObjectActionHelper getDataObjectActionHelper() {
-		return _dataObjectActionHelper;
-	}
+    public IDataObjectActionHelper getDataObjectActionHelper() {
+        return _dataObjectActionHelper;
+    }
 
-	public void setDataObjectActionHelper(IDataObjectActionHelper dataObjectActionHelper) {
-		this._dataObjectActionHelper = dataObjectActionHelper;
-	}
+    public void setDataObjectActionHelper(IDataObjectActionHelper dataObjectActionHelper) {
+        this._dataObjectActionHelper = dataObjectActionHelper;
+    }
 
-	private String _dataObjectOnSessionMarker;
+    private String _dataObjectOnSessionMarker;
 
-	private IDataObjectActionHelper _dataObjectActionHelper;
+    private IDataObjectActionHelper _dataObjectActionHelper;
 
 }

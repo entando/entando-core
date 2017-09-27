@@ -160,6 +160,7 @@ INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_12', 'pagin
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_11', 'pagina_1', 1, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_1', 'customers_page', 1, 'customers');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_1', 'homepage', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('dataObjectview', 'service', 4, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('contentview', 'service', 4, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_2', 'homepage', 3, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_draft', 'homepage', 7, 'free');
@@ -240,6 +241,16 @@ INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extracon
 <properties>
 <property key="en">Page 1</property>
 <property key="it">Pagina 1</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('dataObjectview', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">DataObject Publishing</property>
+<property key="it">Publicazione DataObject</property>
 </properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
 <config>
   <useextratitles>false</useextratitles>
@@ -349,6 +360,16 @@ INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconf
 </config>
 
 ', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('dataObjectview', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">DataObject Publishing</property>
+<property key="it">Publicazione DataObject</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
 INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('contentview', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Content Publishing</property>
@@ -427,6 +448,7 @@ INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagin
 </properties>
 
 ');
+INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('dataObjectview', 1, 'login_form', NULL);
 INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('contentview', 1, 'login_form', NULL);
 INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -442,6 +464,7 @@ INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES (
 </properties>
 
 ');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('dataObjectview', 1, 'login_form', NULL);
 INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('contentview', 1, 'login_form', NULL);
 INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 0, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -535,7 +558,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'userProfil
 </profiletypes>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDefinitions', 'Definition of the Data Types', '<?xml version="1.0" encoding="UTF-8"?>
 <datatypes>
-	<datatype typecode="ALL" typedescr="Content type with all attribute types" viewpage="announcements_read" listmodel="**NULL**" defaultmodel="**NULL**">
+	<datatype typecode="ALL" typedescr="DataObject type with all attribute types" viewpage="announcements_read" listmodel="**NULL**" defaultmodel="**NULL**">
 		<attributes>
 			<attribute name="Boolean" attributetype="Boolean" />
 			<attribute name="CheckBox" attributetype="CheckBox" />
@@ -735,7 +758,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			</attribute>
 		</attributes>
 	</datatype>
-	<datatype typecode="ART" typedescr="Articolo rassegna stampa" viewpage="contentview" listmodel="11" defaultmodel="1">
+	<datatype typecode="ART" typedescr="Articolo rassegna stampa" viewpage="dataObjectview" listmodel="11" defaultmodel="1">
 		<attributes>
 			<attribute name="Titolo" attributetype="Text" indexingtype="TEXT">
 				<validations>
@@ -755,7 +778,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			<attribute name="Numero" attributetype="Number" searchable="true" />
 		</attributes>
 	</datatype>
-	<datatype typecode="EVN" typedescr="Evento" viewpage="contentview" listmodel="51" defaultmodel="5">
+	<datatype typecode="EVN" typedescr="Evento" viewpage="dataObjectview" listmodel="51" defaultmodel="5">
 		<attributes>
 			<attribute name="Titolo" attributetype="Text" searchable="true" indexingtype="TEXT">
 				<validations />
@@ -768,7 +791,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 			<attribute name="DataFine" attributetype="Date" searchable="true" />
 		</attributes>
 	</datatype>
-	<datatype typecode="RAH" typedescr="Tipo_Semplice" viewpage="contentview" listmodel="126" defaultmodel="457">
+	<datatype typecode="RAH" typedescr="Tipo_Semplice" viewpage="dataObjectview" listmodel="126" defaultmodel="457">
 		<attributes>
 			<attribute name="Titolo" attributetype="Text" indexingtype="text">
 				<validations>

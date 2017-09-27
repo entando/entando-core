@@ -32,7 +32,7 @@ public class DataObjectRelation /*implements ExtendedColumnDefinition*/ {
             generatedId = true)
     private int _id;
 
-    @DatabaseField(foreign = true, columnName = "contentid",
+    @DatabaseField(foreign = true, columnName = "dataid",
             width = 16,
             canBeNull = false, index = true)
     private DataObject _content;

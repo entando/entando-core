@@ -25,40 +25,40 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
  */
 public class DataObjectModelChangedEvent extends ApsEvent {
 
-	@Override
-	public void notify(IManager srv) {
-		((DataObjectModelChangedObserver) srv).updateFromContentModelChanged(this);
-	}
+    @Override
+    public void notify(IManager srv) {
+        ((DataObjectModelChangedObserver) srv).updateFromDataObjectModelChanged(this);
+    }
 
-	@Override
-	public Class getObserverInterface() {
-		return DataObjectModelChangedObserver.class;
-	}
+    @Override
+    public Class getObserverInterface() {
+        return DataObjectModelChangedObserver.class;
+    }
 
-	public DataObjectModel getContentModel() {
-		return _contentModel;
-	}
+    public DataObjectModel getDataObjectModel() {
+        return _dataObjectModel;
+    }
 
-	public void setContentModel(DataObjectModel contentModel) {
-		this._contentModel = contentModel;
-	}
+    public void setDataObjectModel(DataObjectModel dataObjectModel) {
+        this._dataObjectModel = dataObjectModel;
+    }
 
-	public int getOperationCode() {
-		return _operationCode;
-	}
+    public int getOperationCode() {
+        return _operationCode;
+    }
 
-	public void setOperationCode(int operationCode) {
-		this._operationCode = operationCode;
-	}
+    public void setOperationCode(int operationCode) {
+        this._operationCode = operationCode;
+    }
 
-	private DataObjectModel _contentModel;
+    private DataObjectModel _dataObjectModel;
 
-	private int _operationCode;
+    private int _operationCode;
 
-	public static final int INSERT_OPERATION_CODE = 1;
+    public static final int INSERT_OPERATION_CODE = 1;
 
-	public static final int REMOVE_OPERATION_CODE = 2;
+    public static final int REMOVE_OPERATION_CODE = 2;
 
-	public static final int UPDATE_OPERATION_CODE = 3;
+    public static final int UPDATE_OPERATION_CODE = 3;
 
 }

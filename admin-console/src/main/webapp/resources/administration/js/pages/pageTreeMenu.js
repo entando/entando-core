@@ -427,7 +427,12 @@ $(function () {
 
             // init original html map (empty slot)
             $('.grid-slot').each(function (index, el) {
-                var pos = $(el).attr('data-pos');
+                if ($(el).attr('data-pos') !== 'undefined' ){
+                    var pos = $(el).attr('data-pos');
+                }
+                else {
+                    el.classList.remove('grid-slot');
+                }
                 gridSlots[pos] = $(el).html();
             });
 

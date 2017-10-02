@@ -2,9 +2,10 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+
 <s:set var="contentDescriptionVar" value="%{content.descr}" />
 <s:set var="attributeFieldErrorsVar" value="%{fieldErrors['descr']}" />
-<s:set var="attributeHasFieldErrorVar" value="#attributeFieldErrorsVar != null && !#attributeFieldErrorsVar.isEmpty()" />
+<s:set var="attributeHasFieldErrorVar" value="%{#attributeFieldErrorsVar != null && !#attributeFieldErrorsVar.isEmpty()}" />
 <s:set var="controlGroupErrorClassVar" value="' panel-default'" />
 <s:set var="inputErrorClassVar" value="''" />
 <s:if test="#attributeHasFieldErrorVar">
@@ -19,9 +20,9 @@
         <div class=" col-sm-10">
             <s:if test="!#myNameIsJack">
                 <a href="<s:url action="backToEntryContent" ><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>" title="<s:text name="note.content.backToEdit" />" >
-                </s:if>
+            </s:if>
                 <s:property value="content.descrDisablingTemporarily" />
-                <s:if test="!#myNameIsJack">
+            <s:if test="!#myNameIsJack">
                 </a>
             </s:if>
 
@@ -29,6 +30,7 @@
             <s:text name="name.create" /> -
             &#32;
             <s:text name="note.firstEditor" />&#32;
+			
             <span data-autosave="firstEditor">
                 <s:set var="firstEditorVar" value="content.firstEditor" scope="page" />
                 <wp:ifauthorized permission="superuser" var="authorizedSuperUserVar" />
@@ -47,7 +49,7 @@
                     </a>
                 </c:if>
             </span>
-
+				
             &#32;
             <s:text name="note.lastEditor" />&#32;
             <span data-autosave="lastEditor">
@@ -74,7 +76,7 @@
             <input type="text" id="contentType" readonly="readonly" class="form-control" value="${content.typeDescr}"/>
         </div>
     </div>
-    <div class="form-group  ${(attributeHasFieldErrorVar)?'has-error':''}">
+			<div class="form-group  <s:property value="%{(#attributeHasFieldErrorVar)?'has-error':''}" />" >
         <label class="col-sm-2 control-label" for="contentType">
             <s:text name="label.contentDescription"/>
             <a tabindex="0" role="button" data-toggle="popover"

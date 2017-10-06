@@ -14,10 +14,9 @@
 
 <script>
     var PROPERTY = {};
-    PROPERTY.code = '<s:property value="pageCode"/>' || '<s:property value="selectedNode"/>';
-    PROPERTY.pagemodel = '<s:property value="%{getCurrentPage().getMetadata().getModel().getCode()}"/>';
+    PROPERTY.code = '<s:property value="code" />';
+    PROPERTY.pagemodel = '<s:property value="code" />';
     PROPERTY.baseUrl = '<wp:info key="systemParam" paramName="applicationBaseURL" />';
-    
 
     var TEXT = {};
     TEXT['error.grid.overlappingFrames'] = '<s:text name="error.grid.overlappingFrames"/>';
@@ -31,7 +30,7 @@
             widgetType: '<s:property value="%{#curr_widget.getType().getCode()}" />'
         },
     </s:iterator>
-        ];
+    ];
 </script>
 <script src="<wp:resourceURL />administration/js/pages/configPage.js"></script>
 

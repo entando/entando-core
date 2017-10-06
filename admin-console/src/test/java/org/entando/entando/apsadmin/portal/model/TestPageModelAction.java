@@ -29,183 +29,183 @@ import java.util.Map;
  */
 public class TestPageModelAction extends AbstractTestPageModelAction {
 
-	public void testEditPageModels() throws Throwable {
-		String testPageModelCode = "test_pagemodel";
-		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		try {
-			String result = this.executeAction("admin", "edit", testPageModelCode);
-			assertEquals("pageModelList", result);
-			PageModel mockModel = this.createMockPageModel(testPageModelCode);
-			this._pageModelManager.addPageModel(mockModel);
-			result = this.executeAction("admin", "edit", testPageModelCode);
-			assertEquals(Action.SUCCESS, result);
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			this._pageModelManager.deletePageModel(testPageModelCode);
-			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		}
-	}
+    public void testEditPageModels() throws Throwable {
+        String testPageModelCode = "test_pagemodel";
+        assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        try {
+            String result = this.executeAction("admin", "edit", testPageModelCode);
+            assertEquals("pageModelList", result);
+            PageModel mockModel = this.createMockPageModel(testPageModelCode);
+            this._pageModelManager.addPageModel(mockModel);
+            result = this.executeAction("admin", "edit", testPageModelCode);
+            assertEquals(Action.SUCCESS, result);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this._pageModelManager.deletePageModel(testPageModelCode);
+            assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        }
+    }
 
-	public void testValidate_1() throws Throwable {
-		String testPageModelCode = "test_pagemodel";
-		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		try {
-			this.setUserOnSession("admin");
-			this.initAction("/do/PageModel", "save");
-			super.addParameter("code", testPageModelCode);
-			super.addParameter("strutsAction", ApsAdminSystemConstants.ADD);
-			String result = this.executeAction();
-			ActionSupport action = super.getAction();
-			assertEquals(Action.INPUT, result);
-			assertEquals(3, action.getFieldErrors().size());
-			assertNotNull(action.getFieldErrors().get("description"));
-			assertNotNull(action.getFieldErrors().get("template"));
-			assertNotNull(action.getFieldErrors().get("xmlConfiguration"));
-		} catch (Exception e) {
-			this._pageModelManager.deletePageModel(testPageModelCode);
-			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-			throw e;
-		}
-	}
+    public void testValidate_1() throws Throwable {
+        String testPageModelCode = "test_pagemodel";
+        assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        try {
+            this.setUserOnSession("admin");
+            this.initAction("/do/PageModel", "save");
+            super.addParameter("code", testPageModelCode);
+            super.addParameter("strutsAction", ApsAdminSystemConstants.ADD);
+            String result = this.executeAction();
+            ActionSupport action = super.getAction();
+            assertEquals(Action.INPUT, result);
+            assertEquals(3, action.getFieldErrors().size());
+            assertNotNull(action.getFieldErrors().get("description"));
+            assertNotNull(action.getFieldErrors().get("template"));
+            assertNotNull(action.getFieldErrors().get("xmlConfiguration"));
+        } catch (Exception e) {
+            this._pageModelManager.deletePageModel(testPageModelCode);
+            assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+            throw e;
+        }
+    }
 
-	public void testValidate_2() throws Throwable {
-		String testPageModelCode = "internal";
-		PageModel model = this._pageModelManager.getPageModel(testPageModelCode);
-		assertNotNull(model);
-		try {
-			this.setUserOnSession("admin");
-			this.initAction("/do/PageModel", "save");
-			super.addParameter("code", testPageModelCode);
-			super.addParameter("description", "Description");
-			super.addParameter("strutsAction", ApsAdminSystemConstants.ADD);
-			String result = this.executeAction();
-			ActionSupport action = super.getAction();
-			assertEquals(Action.INPUT, result);
-			assertEquals(3, action.getFieldErrors().size());
-			assertNotNull(action.getFieldErrors().get("code"));
-			assertNotNull(action.getFieldErrors().get("template"));
-			assertNotNull(action.getFieldErrors().get("xmlConfiguration"));
-		} catch (Exception e) {
-			this._pageModelManager.updatePageModel(model);
-			throw e;
-		}
-	}
+    public void testValidate_2() throws Throwable {
+        String testPageModelCode = "internal";
+        PageModel model = this._pageModelManager.getPageModel(testPageModelCode);
+        assertNotNull(model);
+        try {
+            this.setUserOnSession("admin");
+            this.initAction("/do/PageModel", "save");
+            super.addParameter("code", testPageModelCode);
+            super.addParameter("description", "Description");
+            super.addParameter("strutsAction", ApsAdminSystemConstants.ADD);
+            String result = this.executeAction();
+            ActionSupport action = super.getAction();
+            assertEquals(Action.INPUT, result);
+            assertEquals(3, action.getFieldErrors().size());
+            assertNotNull(action.getFieldErrors().get("code"));
+            assertNotNull(action.getFieldErrors().get("template"));
+            assertNotNull(action.getFieldErrors().get("xmlConfiguration"));
+        } catch (Exception e) {
+            this._pageModelManager.updatePageModel(model);
+            throw e;
+        }
+    }
 
-	public void testSave() throws Throwable {
-		String testPageModelCode = "test_pagemodel";
-		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		try {
-			PageModel mockModel = this.createMockPageModel(testPageModelCode);
-			this.setUserOnSession("admin");
-			this.initAction("/do/PageModel", "save");
-			super.addParameter("code", mockModel.getCode());
-			super.addParameter("description", mockModel.getDescription());
-			super.addParameter("template", mockModel.getTemplate());
-			PageModelDOM dom = new PageModelDOM(mockModel);
-			super.addParameter("xmlConfiguration", dom.getXMLDocument());
-			super.addParameter("strutsAction", ApsAdminSystemConstants.ADD);
-			String result = this.executeAction();
-			assertEquals(Action.SUCCESS, result);
-			assertNotNull(this._pageModelManager.getPageModel(testPageModelCode));
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			this._pageModelManager.deletePageModel(testPageModelCode);
-			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		}
-	}
+    public void testSave() throws Throwable {
+        String testPageModelCode = "test_pagemodel";
+        assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        try {
+            PageModel mockModel = this.createMockPageModel(testPageModelCode);
+            this.setUserOnSession("admin");
+            this.initAction("/do/PageModel", "save");
+            super.addParameter("code", mockModel.getCode());
+            super.addParameter("description", mockModel.getDescription());
+            super.addParameter("template", mockModel.getTemplate());
+            PageModelDOM dom = new PageModelDOM(mockModel);
+            super.addParameter("xmlConfiguration", dom.getXMLDocument());
+            super.addParameter("strutsAction", ApsAdminSystemConstants.ADD);
+            String result = this.executeAction();
+            assertEquals(Action.SUCCESS, result);
+            assertNotNull(this._pageModelManager.getPageModel(testPageModelCode));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this._pageModelManager.deletePageModel(testPageModelCode);
+            assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        }
+    }
 
-	public void testTrashPageModels_1() throws Throwable {
-		String result = this.executeAction("admin", "trash", null);
-		assertEquals("pageModelList", result);
-		result = this.executeAction("admin", "trash", "invalidCode");
-		assertEquals("pageModelList", result);
-		result = this.executeAction("admin", "trash", "home");
-		assertEquals("references", result);
-		PageModelAction pageModelAction = (PageModelAction) this.getAction();
-		Map<String, List<Object>> references = pageModelAction.getReferences();
-		assertFalse(references.isEmpty());
-		assertEquals(1, references.size());
-		List<Object> referendedPages = references.get("PageManagerUtilizers");
-		assertEquals(23, referendedPages.size());
-		this.checkUtilizers(referendedPages, 12, 11);
-	}
+    public void testTrashPageModels_1() throws Throwable {
+        String result = this.executeAction("admin", "trash", null);
+        assertEquals("pageModelList", result);
+        result = this.executeAction("admin", "trash", "invalidCode");
+        assertEquals("pageModelList", result);
+        result = this.executeAction("admin", "trash", "home");
+        assertEquals("references", result);
+        PageModelAction pageModelAction = (PageModelAction) this.getAction();
+        Map<String, List<Object>> references = pageModelAction.getReferences();
+        assertFalse(references.isEmpty());
+        assertEquals(1, references.size());
+        List<Object> referendedPages = references.get("PageManagerUtilizers");
+        assertEquals(25, referendedPages.size());
+        this.checkUtilizers(referendedPages, 13, 12);
+    }
 
-	public void testTrashPageModels_2() throws Throwable {
-		String testPageModelCode = "test_pagemodel";
-		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		try {
-			PageModel mockModel = this.createMockPageModel(testPageModelCode);
-			this._pageModelManager.addPageModel(mockModel);
-			String result = this.executeAction("admin", "trash", testPageModelCode);
-			assertEquals(Action.SUCCESS, result);
-			PageModelAction pageModelAction = (PageModelAction) this.getAction();
-			Map<String, List<Object>> references = pageModelAction.getReferences();
-			assertTrue(null == references || references.isEmpty());
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			this._pageModelManager.deletePageModel(testPageModelCode);
-			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		}
-	}
+    public void testTrashPageModels_2() throws Throwable {
+        String testPageModelCode = "test_pagemodel";
+        assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        try {
+            PageModel mockModel = this.createMockPageModel(testPageModelCode);
+            this._pageModelManager.addPageModel(mockModel);
+            String result = this.executeAction("admin", "trash", testPageModelCode);
+            assertEquals(Action.SUCCESS, result);
+            PageModelAction pageModelAction = (PageModelAction) this.getAction();
+            Map<String, List<Object>> references = pageModelAction.getReferences();
+            assertTrue(null == references || references.isEmpty());
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this._pageModelManager.deletePageModel(testPageModelCode);
+            assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        }
+    }
 
-	public void testDeletePageModels_1() throws Throwable {
-		String result = this.executeAction("admin", "delete", null);
-		assertEquals("pageModelList", result);
-		result = this.executeAction("admin", "delete", "invalidCode");
-		assertEquals("pageModelList", result);
-		result = this.executeAction("admin", "delete", "home");
-		assertEquals("references", result);
-		PageModelAction pageModelAction = (PageModelAction) this.getAction();
-		Map<String, List<Object>> references = pageModelAction.getReferences();
-		assertFalse(references.isEmpty());
-		assertEquals(1, references.size());
-		List<Object> referendedPages = references.get("PageManagerUtilizers");
-		assertEquals(23, referendedPages.size());
-		this.checkUtilizers(referendedPages, 12, 11);
-	}
+    public void testDeletePageModels_1() throws Throwable {
+        String result = this.executeAction("admin", "delete", null);
+        assertEquals("pageModelList", result);
+        result = this.executeAction("admin", "delete", "invalidCode");
+        assertEquals("pageModelList", result);
+        result = this.executeAction("admin", "delete", "home");
+        assertEquals("references", result);
+        PageModelAction pageModelAction = (PageModelAction) this.getAction();
+        Map<String, List<Object>> references = pageModelAction.getReferences();
+        assertFalse(references.isEmpty());
+        assertEquals(1, references.size());
+        List<Object> referendedPages = references.get("PageManagerUtilizers");
+        assertEquals(25, referendedPages.size());
+        this.checkUtilizers(referendedPages, 13, 12);
+    }
 
-	private void checkUtilizers(List<Object> pageUtilizers, int expectedDraft, int expectedOnline) {
-		int online = 0;
-		int draft = 0;
-		for (int i = 0; i < pageUtilizers.size(); i++) {
-			IPage page = (IPage) pageUtilizers.get(i);
-			if (page.isOnlineInstance()) {
-				online++;
-			} else {
-				draft++;
-			}
-		}
-		assertEquals(expectedOnline, online);
-		assertEquals(expectedDraft, draft);
-	}
+    private void checkUtilizers(List<Object> pageUtilizers, int expectedDraft, int expectedOnline) {
+        int online = 0;
+        int draft = 0;
+        for (int i = 0; i < pageUtilizers.size(); i++) {
+            IPage page = (IPage) pageUtilizers.get(i);
+            if (page.isOnlineInstance()) {
+                online++;
+            } else {
+                draft++;
+            }
+        }
+        assertEquals(expectedOnline, online);
+        assertEquals(expectedDraft, draft);
+    }
 
-	public void testDeletePageModels_2() throws Throwable {
-		String testPageModelCode = "test_pagemodel";
-		assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		try {
-			PageModel mockModel = this.createMockPageModel(testPageModelCode);
-			this._pageModelManager.addPageModel(mockModel);
-			String result = this.executeAction("admin", "delete", testPageModelCode);
-			assertEquals(Action.SUCCESS, result);
-			PageModelAction pageModelAction = (PageModelAction) this.getAction();
-			Map<String, List<Object>> references = pageModelAction.getReferences();
-			assertTrue(null == references || references.isEmpty());
-		} catch (Exception e) {
-			this._pageModelManager.deletePageModel(testPageModelCode);
-			throw e;
-		} finally {
-			assertNull(this._pageModelManager.getPageModel(testPageModelCode));
-		}
-	}
+    public void testDeletePageModels_2() throws Throwable {
+        String testPageModelCode = "test_pagemodel";
+        assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        try {
+            PageModel mockModel = this.createMockPageModel(testPageModelCode);
+            this._pageModelManager.addPageModel(mockModel);
+            String result = this.executeAction("admin", "delete", testPageModelCode);
+            assertEquals(Action.SUCCESS, result);
+            PageModelAction pageModelAction = (PageModelAction) this.getAction();
+            Map<String, List<Object>> references = pageModelAction.getReferences();
+            assertTrue(null == references || references.isEmpty());
+        } catch (Exception e) {
+            this._pageModelManager.deletePageModel(testPageModelCode);
+            throw e;
+        } finally {
+            assertNull(this._pageModelManager.getPageModel(testPageModelCode));
+        }
+    }
 
-	private String executeAction(String currentUser, String actionName, String modelCode) throws Throwable {
-		this.setUserOnSession(currentUser);
-		this.initAction("/do/PageModel", actionName);
-		super.addParameter("code", modelCode);
-		return this.executeAction();
-	}
+    private String executeAction(String currentUser, String actionName, String modelCode) throws Throwable {
+        this.setUserOnSession(currentUser);
+        this.initAction("/do/PageModel", actionName);
+        super.addParameter("code", modelCode);
+        return this.executeAction();
+    }
 
 }

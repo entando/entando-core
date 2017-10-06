@@ -23,22 +23,22 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public interface IDataObjectPageMapperManager {
 
-	/**
-	 * Effettua il caricamento della mappa dataobject pubblicati / pagine
-	 *
-	 * @throws ApsSystemException
-	 */
-	public void reloadContentPageMapper() throws ApsSystemException;
+    /**
+     * Effettua il caricamento della mappa dataobject pubblicati / pagine
+     *
+     * @throws ApsSystemException
+     */
+    public void reloadDataObjectPageMapper() throws ApsSystemException;
 
-	/**
-	 * Restituisce il codice pagina nel quale è stato publicato il dataobject
-	 * specificato. Restituisce null nel caso in cui l'id del datatype non sia
-	 * presente nella mappa.
-	 *
-	 * @param dataobjectId L'id del datatype.
-	 * @return Il codice pagina nel quale è stato publicato il datatype
-	 * specificato.
-	 */
-	public String getPageCode(String dataobjectId);
+    /**
+     * Restituisce il codice pagina nel quale è stato publicato il dataobject
+     * specificato. Restituisce null nel caso in cui l'id del datatype non sia
+     * presente nella mappa.
+     *
+     * @param dataobjectId L'id del datatype.
+     * @return Il codice pagina nel quale è stato publicato il datatype
+     * specificato.
+     */
+    public String getPageCode(String dataobjectId);
 
 }

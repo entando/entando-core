@@ -49,622 +49,586 @@ import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
  */
 public class DataObjectManager extends ApsEntityManager implements IDataObjectManager, GroupUtilizer, CategoryUtilizer {
 
-	private static final Logger _logger = LoggerFactory.getLogger(DataObjectManager.class);
+    private static final Logger _logger = LoggerFactory.getLogger(DataObjectManager.class);
 
-	@Override
-	public void init() throws Exception {
-		super.init();
-		this.createSmallContentTypes();
-		_logger.debug("{} ready. Initialized {} DataObject types", this.getClass().getName(), super.getEntityTypes().size());
-	}
+    @Override
+    public void init() throws Exception {
+        super.init();
+        this.createSmallDataObjectTypes();
+        _logger.debug("{} ready. Initialized {} DataObject types", this.getClass().getName(), super.getEntityTypes().size());
+    }
 
-	@Override
-	protected String getConfigItemName() {
-		return "dataTypeDefinitions";
-	}
+    @Override
+    protected String getConfigItemName() {
+        return "dataTypeDefinitions";
+    }
 
-	private void createSmallContentTypes() {
-		this._smallContentTypes = new HashMap<String, SmallDataType>(this.getEntityTypes().size());
-		List<IApsEntity> types = new ArrayList<IApsEntity>(this.getEntityTypes().values());
-		for (int i = 0; i < types.size(); i++) {
-			DataObject contentPrototype = (DataObject) types.get(i);
-			SmallDataType smallContentType = new SmallDataType();
-			smallContentType.setCode(contentPrototype.getTypeCode());
-			smallContentType.setDescription(contentPrototype.getTypeDescription());
-			this._smallContentTypes.put(smallContentType.getCode(), smallContentType);
-		}
-	}
+    private void createSmallDataObjectTypes() {
+        this._smallDataObjectTypes = new HashMap<String, SmallDataType>(this.getEntityTypes().size());
+        List<IApsEntity> types = new ArrayList<IApsEntity>(this.getEntityTypes().values());
+        for (int i = 0; i < types.size(); i++) {
+            DataObject dataobjectPrototype = (DataObject) types.get(i);
+            SmallDataType smallDataObjectType = new SmallDataType();
+            smallDataObjectType.setCode(dataobjectPrototype.getTypeCode());
+            smallDataObjectType.setDescription(dataobjectPrototype.getTypeDescription());
+            this._smallDataObjectTypes.put(smallDataObjectType.getCode(), smallDataObjectType);
+        }
+    }
 
-	@Override
-	public void updateEntityPrototype(IApsEntity entityType) throws ApsSystemException {
-		super.updateEntityPrototype(entityType);
-		this.createSmallContentTypes();
-	}
+    @Override
+    public void updateEntityPrototype(IApsEntity entityType) throws ApsSystemException {
+        super.updateEntityPrototype(entityType);
+        this.createSmallDataObjectTypes();
+    }
 
-	/**
-	 * Create a new instance of the requested content. The new content is forked
-	 * (or cloned) from the corresponding prototype, and it's returned empty.
-	 *
-	 * @param typeCode The code of the requested (proto)type, as declared in the
-	 * configuration.
-	 * @return The new content.
-	 */
-	@Override
-	public DataObject createDataObject(String typeCode) {
-		DataObject content = (DataObject) super.getEntityPrototype(typeCode);
-		return content;
-	}
+    /**
+     * Create a new instance of the requested dataobject. The new dataobject is
+     * forked (or cloned) from the corresponding prototype, and it's returned
+     * empty.
+     *
+     * @param typeCode The code of the requested (proto)type, as declared in the
+     * configuration.
+     * @return The new dataobject.
+     */
+    @Override
+    public DataObject createDataObject(String typeCode) {
+        DataObject dataobject = (DataObject) super.getEntityPrototype(typeCode);
+        return dataobject;
+    }
 
-	/**
-	 * Return a list of the of the content types in a 'small form'. 'Small form'
-	 * mans that the contents returned are purged from all unnecessary
-	 * information (eg. attributes).
-	 *
-	 * @return The list of the types in a (small form).
-	 * @deprecated From Entando 4.1.2, use getSmallEntityTypes() method
-	 */
-	@Override
-	public List<SmallDataType> getSmallDataTypes() {
-		List<SmallDataType> smallContentTypes = new ArrayList<SmallDataType>();
-		smallContentTypes.addAll(this._smallContentTypes.values());
-		Collections.sort(smallContentTypes);
-		return smallContentTypes;
-	}
+    /**
+     * Return a list of the of the dataobject types in a 'small form'. 'Small
+     * form' mans that the dataobjects returned are purged from all unnecessary
+     * information (eg. attributes).
+     *
+     * @return The list of the types in a (small form).
+     * @deprecated From Entando 4.1.2, use getSmallEntityTypes() method
+     */
+    @Override
+    public List<SmallDataType> getSmallDataTypes() {
+        List<SmallDataType> smallDataObjectTypes = new ArrayList<SmallDataType>();
+        smallDataObjectTypes.addAll(this._smallDataObjectTypes.values());
+        Collections.sort(smallDataObjectTypes);
+        return smallDataObjectTypes;
+    }
 
-	/**
-	 * Return the map of the prototypes of the contents types. Return a map,
-	 * index by the code of the type, of the prototypes of the available content
-	 * types.
-	 *
-	 * @return The map of the prototypes of the content types in a
-	 * 'SmallContentType' objects.
-	 */
-	@Override
-	public Map<String, SmallDataType> getSmallDataTypesMap() {
-		return this._smallContentTypes;
-	}
+    /**
+     * Return the map of the prototypes of the dataobjects types. Return a map,
+     * index by the code of the type, of the prototypes of the available
+     * dataobject types.
+     *
+     * @return The map of the prototypes of the dataobject types in a
+     * 'SmallDataObjectType' objects.
+     */
+    @Override
+    public Map<String, SmallDataType> getSmallDataTypesMap() {
+        return this._smallDataObjectTypes;
+    }
 
-	/**
-	 * Return the code of the default page used to display the given content.
-	 * The default page is defined at content type level; the type is
-	 * extrapolated from the code built following the conventions.
-	 *
-	 * @param contentId The content ID
-	 * @return The page code.
-	 */
-	@Override
-	public String getViewPage(String contentId) {
-		DataObject type = this.getTypeById(contentId);
-		String pageCode = type.getViewPage();
-		return pageCode;
-	}
+    /**
+     * Return the code of the default page used to display the given dataobject.
+     * The default page is defined at dataobject type level; the type is
+     * extrapolated from the code built following the conventions.
+     *
+     * @param dataId The dataobject ID
+     * @return The page code.
+     */
+    @Override
+    public String getViewPage(String dataId) {
+        DataObject type = this.getTypeById(dataId);
+        String pageCode = type.getViewPage();
+        return pageCode;
+    }
 
-	/**
-	 * Return the code of the default model of content.
-	 *
-	 * @param contentId The content code
-	 * @return Il requested model code
-	 */
-	@Override
-	public String getDefaultModel(String contentId) {
-		DataObject type = this.getTypeById(contentId);
-		String defaultModel = type.getDefaultModel();
-		return defaultModel;
-	}
+    /**
+     * Return the code of the default model of dataobject.
+     *
+     * @param dataId The dataobject code
+     * @return Il requested model code
+     */
+    @Override
+    public String getDefaultModel(String dataId) {
+        DataObject type = this.getTypeById(dataId);
+        String defaultModel = type.getDefaultModel();
+        return defaultModel;
+    }
 
-	/**
-	 * Return the code of the model to be used when the content is rendered in
-	 * list
-	 *
-	 * @param contentId The code of the content
-	 * @return The code of the model
-	 */
-	@Override
-	public String getListModel(String contentId) {
-		DataObject type = this.getTypeById(contentId);
-		String defaultListModel = type.getListModel();
-		return defaultListModel;
-	}
+    /**
+     * Return the code of the model to be used when the dataobject is rendered
+     * in list
+     *
+     * @param dataId The code of the dataobject
+     * @return The code of the model
+     */
+    @Override
+    public String getListModel(String dataId) {
+        DataObject type = this.getTypeById(dataId);
+        String defaultListModel = type.getListModel();
+        return defaultListModel;
+    }
 
-	/**
-	 * Return a complete content given its ID; it is possible to choose to
-	 * return the published -unmodifiable!- content or the working copy. It also
-	 * returns the data in the form of XML.
-	 *
-	 * @param id The ID of the content
-	 * @param onLine Specifies the type of the content to return: 'true'
-	 * references the published content, 'false' the freely modifiable one.
-	 * @return The requested content.
-	 * @throws ApsSystemException In case of error.
-	 */
-	@Override
-	//@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine")
-	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
-	public DataObject loadDataObject(String id, boolean onLine) throws ApsSystemException {
-		return this.loadDataObject(id, onLine, false);
-	}
+    /**
+     * Return a complete dataobject given its ID; it is possible to choose to
+     * return the published -unmodifiable!- dataobject or the working copy. It
+     * also returns the data in the form of XML.
+     *
+     * @param id The ID of the dataobject
+     * @param onLine Specifies the type of the dataobject to return: 'true'
+     * references the published dataobject, 'false' the freely modifiable one.
+     * @return The requested dataobject.
+     * @throws ApsSystemException In case of error.
+     */
+    @Override
+    //@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine")
+    //@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsCsv(#id)")
+    public DataObject loadDataObject(String id, boolean onLine) throws ApsSystemException {
+        return this.loadDataObject(id, onLine, false);
+    }
 
-	@Override
-	//@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine and #cacheable")
-	//@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
-	public DataObject loadDataObject(String id, boolean onLine, boolean cacheable) throws ApsSystemException {
-		DataObject content = null;
-		try {
-			DataObjectRecordVO contentVo = this.loadDataObjectVO(id);
-			content = this.createContent(contentVo, onLine);
-		} catch (ApsSystemException e) {
-			_logger.error("Error while loading content : id {}", id, e);
-			throw new ApsSystemException("Error while loading content : id " + id, e);
-		}
-		return content;
-	}
+    @Override
+    //@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine and #cacheable")
+    //@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsCsv(#id)")
+    public DataObject loadDataObject(String id, boolean onLine, boolean cacheable) throws ApsSystemException {
+        DataObject dataobject = null;
+        try {
+            DataObjectRecordVO dataobjectVo = this.loadDataObjectVO(id);
+            dataobject = this.createDataObject(dataobjectVo, onLine);
+        } catch (ApsSystemException e) {
+            _logger.error("Error while loading dataobject : id {}", id, e);
+            throw new ApsSystemException("Error while loading dataobject : id " + id, e);
+        }
+        return dataobject;
+    }
 
-	protected DataObject createContent(DataObjectRecordVO contentVo, boolean onLine) throws ApsSystemException {
-		DataObject content = null;
-		try {
-			if (contentVo != null) {
-				String xmlData;
-				if (onLine) {
-					xmlData = contentVo.getXmlOnLine();
-				} else {
-					xmlData = contentVo.getXmlWork();
-				}
-				if (xmlData != null) {
-					content = (DataObject) this.createEntityFromXml(contentVo.getTypeCode(), xmlData);
-					content.setId(contentVo.getId());
-					content.setTypeCode(contentVo.getTypeCode());
-					content.setDescription(contentVo.getDescription());
-					content.setOnLine(contentVo.isOnLine());
-					content.setMainGroup(contentVo.getMainGroupCode());
-					if (null == content.getVersion()) {
-						content.setVersion(contentVo.getVersion());
-					}
-					if (null == content.getFirstEditor()) {
-						content.setFirstEditor(contentVo.getFirstEditor());
-					}
-					if (null == content.getLastEditor()) {
-						content.setLastEditor(contentVo.getLastEditor());
-					}
-					if (null == content.getCreated()) {
-						content.setCreated(contentVo.getCreate());
-					}
-					if (null == content.getLastModified()) {
-						content.setLastModified(contentVo.getModify());
-					}
-					if (null == content.getStatus()) {
-						content.setStatus(contentVo.getStatus());
-					}
-				}
-			}
-		} catch (ApsSystemException e) {
-			_logger.error("Error while creating content by vo", e);
-			throw new ApsSystemException("Error while creating content by vo", e);
-		}
-		return content;
-	}
+    protected DataObject createDataObject(DataObjectRecordVO dataobjectVo, boolean onLine) throws ApsSystemException {
+        DataObject dataobject = null;
+        try {
+            if (dataobjectVo != null) {
+                String xmlData;
+                if (onLine) {
+                    xmlData = dataobjectVo.getXmlOnLine();
+                } else {
+                    xmlData = dataobjectVo.getXmlWork();
+                }
+                if (xmlData != null) {
+                    dataobject = (DataObject) this.createEntityFromXml(dataobjectVo.getTypeCode(), xmlData);
+                    dataobject.setId(dataobjectVo.getId());
+                    dataobject.setTypeCode(dataobjectVo.getTypeCode());
+                    dataobject.setDescription(dataobjectVo.getDescription());
+                    dataobject.setOnLine(dataobjectVo.isOnLine());
+                    dataobject.setMainGroup(dataobjectVo.getMainGroupCode());
+                    if (null == dataobject.getVersion()) {
+                        dataobject.setVersion(dataobjectVo.getVersion());
+                    }
+                    if (null == dataobject.getFirstEditor()) {
+                        dataobject.setFirstEditor(dataobjectVo.getFirstEditor());
+                    }
+                    if (null == dataobject.getLastEditor()) {
+                        dataobject.setLastEditor(dataobjectVo.getLastEditor());
+                    }
+                    if (null == dataobject.getCreated()) {
+                        dataobject.setCreated(dataobjectVo.getCreate());
+                    }
+                    if (null == dataobject.getLastModified()) {
+                        dataobject.setLastModified(dataobjectVo.getModify());
+                    }
+                    if (null == dataobject.getStatus()) {
+                        dataobject.setStatus(dataobjectVo.getStatus());
+                    }
+                }
+            }
+        } catch (ApsSystemException e) {
+            _logger.error("Error while creating dataobject by vo", e);
+            throw new ApsSystemException("Error while creating dataobject by vo", e);
+        }
+        return dataobject;
+    }
 
-	/**
-	 * Return a {@link DataObjectRecordVO} (shortly: VO) containing the all
-	 * content informations stored in the DB.
-	 *
-	 * @param id The id of the requested content.
-	 * @return The VO object corresponding to the wanted content.
-	 * @throws ApsSystemException in case of error.
-	 */
-	@Override
-	public DataObjectRecordVO loadDataObjectVO(String id) throws ApsSystemException {
-		DataObjectRecordVO contentVo = null;
-		try {
-			contentVo = (DataObjectRecordVO) this.getDataObjectDAO().loadEntityRecord(id);
-		} catch (Throwable t) {
-			_logger.error("Error while loading content vo : id {}", id, t);
-			throw new ApsSystemException("Error while loading content vo : id " + id, t);
-		}
-		return contentVo;
-	}
+    /**
+     * Return a {@link DataObjectRecordVO} (shortly: VO) containing the all
+     * dataobject informations stored in the DB.
+     *
+     * @param id The id of the requested dataobject.
+     * @return The VO object corresponding to the wanted dataobject.
+     * @throws ApsSystemException in case of error.
+     */
+    @Override
+    public DataObjectRecordVO loadDataObjectVO(String id) throws ApsSystemException {
+        DataObjectRecordVO dataobjectVo = null;
+        try {
+            dataobjectVo = (DataObjectRecordVO) this.getDataObjectDAO().loadEntityRecord(id);
+        } catch (Throwable t) {
+            _logger.error("Error while loading dataobject vo : id {}", id, t);
+            throw new ApsSystemException("Error while loading dataobject vo : id " + id, t);
+        }
+        return dataobjectVo;
+    }
 
-	/**
-	 * Save a content in the DB.
-	 *
-	 * @param content The content to add.
-	 * @throws ApsSystemException in case of error.
-	 */
-	@Override
-	public void saveDataObject(DataObject content) throws ApsSystemException {
-		this.addContent(content);
-	}
+    /**
+     * Save a dataobject in the DB.
+     *
+     * @param dataobject The dataobject to add.
+     * @throws ApsSystemException in case of error.
+     */
+    @Override
+    public void saveDataObject(DataObject dataobject) throws ApsSystemException {
+        this.addDataObject(dataobject);
+    }
 
-	@Override
-	public void saveDataObjectAndContinue(DataObject content) throws ApsSystemException {
-		this.addUpdateContent(content, false);
-	}
+    @Override
+    public void saveDataObjectAndContinue(DataObject dataobject) throws ApsSystemException {
+        this.addUpdateDataObject(dataobject, false);
+    }
 
-	/**
-	 * Save a content in the DB. Hopefully this method has no annotation
-	 * attached
-	 *
-	 * @param content
-	 * @throws ApsSystemException
-	 */
-	@Override
-	public void addContent(DataObject content) throws ApsSystemException {
-		this.addUpdateContent(content, true);
-	}
+    /**
+     * Save a dataobject in the DB. Hopefully this method has no annotation
+     * attached
+     *
+     * @param dataobject
+     * @throws ApsSystemException
+     */
+    @Override
+    public void addDataObject(DataObject dataobject) throws ApsSystemException {
+        this.addUpdateDataObject(dataobject, true);
+    }
 
-	private void addUpdateContent(DataObject content, boolean updateDate) throws ApsSystemException {
-		try {
-			content.setLastModified(new Date());
-			if (updateDate) {
-				content.incrementVersion(false);
-			}
-			String status = content.getStatus();
-			if (null == status) {
-				content.setStatus(DataObject.STATUS_DRAFT);
-			} else if (status.equals(DataObject.STATUS_PUBLIC)) {
-				content.setStatus(DataObject.STATUS_READY);
-			}
-			if (null == content.getId()) {
-				IKeyGeneratorManager keyGenerator = (IKeyGeneratorManager) this.getService(SystemConstants.KEY_GENERATOR_MANAGER);
-				int key = keyGenerator.getUniqueKeyCurrentValue();
-				String id = content.getTypeCode() + key;
-				content.setId(id);
-				this.getDataObjectDAO().addEntity(content);
-			} else {
-				this.getDataObjectDAO().updateContent(content, updateDate);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error while saving content", t);
-			throw new ApsSystemException("Error while saving content", t);
-		}
-	}
+    private void addUpdateDataObject(DataObject dataobject, boolean updateDate) throws ApsSystemException {
+        try {
+            dataobject.setLastModified(new Date());
+            if (updateDate) {
+                dataobject.incrementVersion(false);
+            }
+            String status = dataobject.getStatus();
+            if (null == status) {
+                dataobject.setStatus(DataObject.STATUS_DRAFT);
+            } else if (status.equals(DataObject.STATUS_PUBLIC)) {
+                dataobject.setStatus(DataObject.STATUS_READY);
+            }
+            if (null == dataobject.getId()) {
+                IKeyGeneratorManager keyGenerator = (IKeyGeneratorManager) this.getService(SystemConstants.KEY_GENERATOR_MANAGER);
+                int key = keyGenerator.getUniqueKeyCurrentValue();
+                String id = dataobject.getTypeCode() + key;
+                dataobject.setId(id);
+                this.getDataObjectDAO().addEntity(dataobject);
+            } else {
+                this.getDataObjectDAO().updateDataObject(dataobject, updateDate);
+            }
+        } catch (Throwable t) {
+            _logger.error("Error while saving dataobject", t);
+            throw new ApsSystemException("Error while saving dataobject", t);
+        }
+    }
 
-	/**
-	 * Publish a content.
-	 *
-	 * @param content The ID associated to the content to be displayed in the
-	 * portal.
-	 * @throws ApsSystemException in case of error.
-	 */
-	@Override
-	//@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#content.id)", condition = "#content.id != null")
-	//@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsToEvictCsv(#content.id, #content.typeCode)")
-	public void insertOnLineDataObject(DataObject content) throws ApsSystemException {
-		try {
-			content.setLastModified(new Date());
-			if (null == content.getId()) {
-				content.setCreated(new Date());
-				this.saveDataObject(content);
-			}
-			content.incrementVersion(true);
-			content.setStatus(DataObject.STATUS_PUBLIC);
-			this.getDataObjectDAO().insertOnLineContent(content);
-			int operationEventCode = -1;
-			if (content.isOnLine()) {
-				operationEventCode = PublicDataChangedEvent.UPDATE_OPERATION_CODE;
-			} else {
-				operationEventCode = PublicDataChangedEvent.INSERT_OPERATION_CODE;
-			}
-			this.notifyPublicContentChanging(content, operationEventCode);
-		} catch (Throwable t) {
-			_logger.error("Error while inserting content on line", t);
-			throw new ApsSystemException("Error while inserting content on line", t);
-		}
-	}
+    /**
+     * Publish a dataobject.
+     *
+     * @param dataobject The ID associated to the dataobject to be displayed in
+     * the portal.
+     * @throws ApsSystemException in case of error.
+     */
+    @Override
+    //@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#dataobject.id)", condition = "#dataobject.id != null")
+    //@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsToEvictCsv(#dataobject.id, #dataobject.typeCode)")
+    public void insertDataObject(DataObject dataobject) throws ApsSystemException {
+        try {
+            dataobject.setLastModified(new Date());
+            if (null == dataobject.getId()) {
+                dataobject.setCreated(new Date());
+                this.saveDataObject(dataobject);
+            }
+            dataobject.incrementVersion(true);
+            dataobject.setStatus(DataObject.STATUS_PUBLIC);
+            this.getDataObjectDAO().insertDataObject(dataobject);
+            int operationEventCode = -1;
+            if (dataobject.isOnLine()) {
+                operationEventCode = PublicDataChangedEvent.UPDATE_OPERATION_CODE;
+            } else {
+                operationEventCode = PublicDataChangedEvent.INSERT_OPERATION_CODE;
+            }
+            this.notifyPublicDataObjectChanging(dataobject, operationEventCode);
+        } catch (Throwable t) {
+            _logger.error("Error while inserting dataobject on line", t);
+            throw new ApsSystemException("Error while inserting dataobject on line", t);
+        }
+    }
 
-	/**
-	 * Return the list of all the content IDs.
-	 *
-	 * @return The list of all the content IDs.
-	 * @throws ApsSystemException In case of error
-	 * @deprecated Since Entando 2.0 version 2.0.9, use
-	 * searchId(EntitySearchFilter[]) method
-	 */
-	@Override
-	public List<String> getAllDataObjectsId() throws ApsSystemException {
-		return super.getAllEntityId();
-	}
+    /**
+     * Return the list of all the dataobject IDs.
+     *
+     * @return The list of all the dataobject IDs.
+     * @throws ApsSystemException In case of error
+     * @deprecated Since Entando 2.0 version 2.0.9, use
+     * searchId(EntitySearchFilter[]) method
+     */
+    @Override
+    public List<String> getAllDataObjectsId() throws ApsSystemException {
+        return super.getAllEntityId();
+    }
 
-	@Override
-	public void reloadEntityReferences(String entityId) {
-		try {
-			DataObjectRecordVO contentVo = this.loadDataObjectVO(entityId);
-			DataObject content = this.createContent(contentVo, true);
-			if (content != null) {
-				this.getDataObjectDAO().reloadPublicContentReferences(content);
-			}
-			DataObject workcontent = this.createContent(contentVo, false);
-			if (workcontent != null) {
-				this.getDataObjectDAO().reloadWorkContentReferences(workcontent);
-			}
-			_logger.debug("Reloaded content references for content {}", entityId);
-		} catch (Throwable t) {
-			_logger.error("Error while reloading content references for content {}", entityId, t);
-		}
-	}
+    @Override
+    public void reloadEntityReferences(String entityId) {
+        try {
+            DataObjectRecordVO dataobjectVo = this.loadDataObjectVO(entityId);
+            DataObject dataobject = this.createDataObject(dataobjectVo, true);
+            if (dataobject != null) {
+                this.getDataObjectDAO().reloadDataObjectReferences(dataobject);
+            }
+            _logger.debug("Reloaded dataobject references for dataobject {}", entityId);
+        } catch (Throwable t) {
+            _logger.error("Error while reloading dataobject references for dataobject {}", entityId, t);
+        }
+    }
 
-	/**
-	 * Unpublish a content, preventing it from being displayed in the portal.
-	 * Obviously the content itself is not deleted.
-	 *
-	 * @param content the content to unpublish.
-	 * @throws ApsSystemException in case of error
-	 */
-	@Override
-	//@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#content.id)", condition = "#content.id != null")
-	//@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsToEvictCsv(#content.id, #content.typeCode)")
-	public void removeOnLineDataObject(DataObject content) throws ApsSystemException {
-		try {
-			content.setLastModified(new Date());
-			content.incrementVersion(false);
-			if (null != content.getStatus() && content.getStatus().equals(DataObject.STATUS_PUBLIC)) {
-				content.setStatus(DataObject.STATUS_READY);
-			}
-			this.getDataObjectDAO().removeOnLineContent(content);
-			this.notifyPublicContentChanging(content, PublicDataChangedEvent.REMOVE_OPERATION_CODE);
-		} catch (Throwable t) {
-			_logger.error("Error while removing onLine content", t);
-			throw new ApsSystemException("Error while removing onLine content", t);
-		}
-	}
+    /**
+     * Unpublish a dataobject, preventing it from being displayed in the portal.
+     * Obviously the dataobject itself is not deleted.
+     *
+     * @param dataobject the dataobject to unpublish.
+     * @throws ApsSystemException in case of error
+     */
+    @Override
+    //@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#dataobject.id)", condition = "#dataobject.id != null")
+    //@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsToEvictCsv(#dataobject.id, #dataobject.typeCode)")
+    public void removeDataObject(DataObject dataobject) throws ApsSystemException {
+        try {
+            dataobject.setLastModified(new Date());
+            dataobject.incrementVersion(false);
+            if (null != dataobject.getStatus() && dataobject.getStatus().equals(DataObject.STATUS_PUBLIC)) {
+                dataobject.setStatus(DataObject.STATUS_READY);
+            }
+            this.getDataObjectDAO().removeDataObject(dataobject);
+            this.notifyPublicDataObjectChanging(dataobject, PublicDataChangedEvent.REMOVE_OPERATION_CODE);
+        } catch (Throwable t) {
+            _logger.error("Error while removing onLine dataobject", t);
+            throw new ApsSystemException("Error while removing onLine dataobject", t);
+        }
+    }
 
-	/**
-	 * Notify the modification of a published content.
-	 *
-	 * @param content The modified content.
-	 * @param operationCode the operation code to notify.
-	 * @exception ApsSystemException in caso of error.
-	 */
-	private void notifyPublicContentChanging(DataObject content, int operationCode) throws ApsSystemException {
-		PublicDataChangedEvent event = new PublicDataChangedEvent();
-		event.setDataObject(content);
-		event.setOperationCode(operationCode);
-		this.notifyEvent(event);
-	}
+    /**
+     * Notify the modification of a published dataobject.
+     *
+     * @param dataobject The modified dataobject.
+     * @param operationCode the operation code to notify.
+     * @exception ApsSystemException in caso of error.
+     */
+    private void notifyPublicDataObjectChanging(DataObject dataobject, int operationCode) throws ApsSystemException {
+        PublicDataChangedEvent event = new PublicDataChangedEvent();
+        event.setDataObject(dataobject);
+        event.setOperationCode(operationCode);
+        this.notifyEvent(event);
+    }
 
-	/**
-	 * Return the content type from the given ID code. The code is extracted
-	 * following the coding conventions: the first three characters are the type
-	 * of the code.
-	 *
-	 * @param contentId the content ID whose content type is extracted.
-	 * @return The content type requested
-	 */
-	private DataObject getTypeById(String contentId) {
-		String typeCode = contentId.substring(0, 3);
-		DataObject type = (DataObject) super.getEntityTypes().get(typeCode);
-		return type;
-	}
+    /**
+     * Return the dataobject type from the given ID code. The code is extracted
+     * following the coding conventions: the first three characters are the type
+     * of the code.
+     *
+     * @param dataId the dataobject ID whose dataobject type is extracted.
+     * @return The dataobject type requested
+     */
+    private DataObject getTypeById(String dataId) {
+        String typeCode = dataId.substring(0, 3);
+        DataObject type = (DataObject) super.getEntityTypes().get(typeCode);
+        return type;
+    }
 
-	/**
-	 * Deletes a content from the DB.
-	 *
-	 * @param content The content to delete.
-	 * @throws ApsSystemException in case of error.
-	 */
-	@Override
-	//@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#content.id)", condition = "#content.id != null")
-	//@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-	//		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsToEvictCsv(#content.id, #content.typeCode)")
-	public void deleteDataObject(DataObject content) throws ApsSystemException {
-		try {
-			this.getDataObjectDAO().deleteEntity(content.getId());
-		} catch (Throwable t) {
-			_logger.error("Error while deleting content {}", content.getId(), t);
-			throw new ApsSystemException("Error while deleting content " + content.getId(), t);
-		}
-	}
+    /**
+     * Deletes a dataobject from the DB.
+     *
+     * @param dataobject The dataobject to delete.
+     * @throws ApsSystemException in case of error.
+     */
+    @Override
+    //@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#dataobject.id)", condition = "#dataobject.id != null")
+    //@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    //		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsToEvictCsv(#dataobject.id, #dataobject.typeCode)")
+    public void deleteDataObject(DataObject dataobject) throws ApsSystemException {
+        try {
+            this.getDataObjectDAO().deleteEntity(dataobject.getId());
+        } catch (Throwable t) {
+            _logger.error("Error while deleting dataobject {}", dataobject.getId(), t);
+            throw new ApsSystemException("Error while deleting dataobject " + dataobject.getId(), t);
+        }
+    }
 
-	@Override
-	public List<String> loadPublicDataObjectsId(String contentType, String[] categories, EntitySearchFilter[] filters,
-			Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadPublicDataObjectsId(contentType, categories, false, filters, userGroupCodes);
-	}
+    @Override
+    public List<String> loadDataObjectsId(String dataobjectType, String[] categories, EntitySearchFilter[] filters,
+            Collection<String> userGroupCodes) throws ApsSystemException {
+        return this.loadDataObjectsId(dataobjectType, categories, false, filters, userGroupCodes);
+    }
 
-	@Override
-	public List<String> loadPublicDataObjectsId(String contentType, String[] categories, boolean orClauseCategoryFilter,
-			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		List<String> contentsId = null;
-		try {
-			contentsId = this.getPublicDataObjectSearcherDAO().loadPublicContentsId(contentType, categories, orClauseCategoryFilter, filters, userGroupCodes);
-		} catch (Throwable t) {
-			_logger.error("Error while loading contents", t);
-			throw new ApsSystemException("Error while loading contents", t);
-		}
-		return contentsId;
-	}
+    @Override
+    public List<String> loadDataObjectsId(String dataobjectType, String[] categories, boolean orClauseCategoryFilter,
+            EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
+        List<String> dataobjectsId = null;
+        try {
+            dataobjectsId = this.getDataObjectSearcherDAO().loadDataObjectsId(dataobjectType, categories, orClauseCategoryFilter, filters, userGroupCodes);
+        } catch (Throwable t) {
+            _logger.error("Error while loading dataobjects", t);
+            throw new ApsSystemException("Error while loading dataobjects", t);
+        }
+        return dataobjectsId;
+    }
 
-	@Override
-	public List<String> loadPublicDataObjectsId(String[] categories,
-			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadPublicDataObjectsId(categories, false, filters, userGroupCodes);
-	}
+    @Override
+    public List<String> loadDataObjectsId(String[] categories,
+            EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
+        return this.loadDataObjectsId(categories, false, filters, userGroupCodes);
+    }
 
-	@Override
-	public List<String> loadPublicDataObjectsId(String[] categories, boolean orClauseCategoryFilter,
-			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		List<String> contentsId = null;
-		try {
-			contentsId = this.getPublicDataObjectSearcherDAO().loadPublicDataObjectsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
-		} catch (Throwable t) {
-			_logger.error("Error while loading contents", t);
-			throw new ApsSystemException("Error while loading contents", t);
-		}
-		return contentsId;
-	}
+    @Override
+    public List<String> loadDataObjectsId(String[] categories, boolean orClauseCategoryFilter,
+            EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
+        List<String> dataobjectsId = null;
+        try {
+            dataobjectsId = this.getDataObjectSearcherDAO().loadDataObjectsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
+        } catch (Throwable t) {
+            _logger.error("Error while loading dataobjects", t);
+            throw new ApsSystemException("Error while loading dataobjects", t);
+        }
+        return dataobjectsId;
+    }
 
-	/**
-	 * @deprecated From jAPS 2.0 version 2.0.9. Use loadWorkContentsId or
-	 * loadPublicContentsId
-	 */
-	@Override
-	public List<String> loadDataObjectsId(String[] categories, EntitySearchFilter[] filters,
-			Collection<String> userGroupCodes, boolean onlyOwner) throws ApsSystemException {
-		throw new ApsSystemException("'loadContentsId' method deprecated From jAPS 2.0 version 2.0.9. Use loadWorkContentsId or loadPublicContentsId");
-	}
+    /**
+     * @deprecated From jAPS 2.0 version 2.0.9. Use loadWorkDataObjectsId or
+     * loadPublicDataObjectsId
+     */
+    @Override
+    public List<String> loadDataObjectsId(String[] categories, EntitySearchFilter[] filters,
+            Collection<String> userGroupCodes, boolean onlyOwner) throws ApsSystemException {
+        throw new ApsSystemException("'loadDataObjectsId' method deprecated From jAPS 2.0 version 2.0.9. Use loadWorkDataObjectsId or loadPublicDataObjectsId");
+    }
 
-	@Override
-	public List<String> loadWorkDataObjectsId(EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadWorkDataObjectsId(null, false, filters, userGroupCodes);
-	}
+    @Override
+    public List getCategoryUtilizers(String resourceId) throws ApsSystemException {
+        List<String> dataIds = null;
+        try {
+            dataIds = this.getDataObjectDAO().getCategoryUtilizers(resourceId);
+        } catch (Throwable t) {
+            throw new ApsSystemException("Error while loading referenced dataobjects : category " + resourceId, t);
+        }
+        return dataIds;
+    }
 
-	@Override
-	public List<String> loadWorkDataObjectsId(String[] categories, EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		return this.loadWorkDataObjectsId(categories, false, filters, userGroupCodes);
-	}
+    @Override
+    public void reloadCategoryReferences(String categoryCode) {
+        try {
+            this.getDataObjectUpdaterService().reloadCategoryReferences(categoryCode);
+        } catch (Throwable t) {
+            ApsSystemUtils.logThrowable(t, this, "reloadCategoryReferences");
+        }
+    }
 
-	@Override
-	public List<String> loadWorkDataObjectsId(String[] categories, boolean orClauseCategoryFilter,
-			EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException {
-		List<String> contentsId = null;
-		try {
-			contentsId = this.getWorkDataObjectSearcherDAO().loadDataObjectsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
-		} catch (Throwable t) {
-			_logger.error("Error while loading work contents", t);
-			throw new ApsSystemException("Error while loading work contents", t);
-		}
-		return contentsId;
-	}
+    @Override
+    public List getCategoryUtilizersForReloadReferences(String categoryCode) {
+        List<String> dataIdToReload = new ArrayList<String>();
+        try {
+            Set<String> dataobjects = this.getDataObjectUpdaterService().getDataObjectsId(categoryCode);
+            if (null != dataobjects) {
+                dataIdToReload.addAll(dataobjects);
+            }
+        } catch (Throwable t) {
+            ApsSystemUtils.logThrowable(t, this, "getCategoryUtilizersForReloadReferences");
+        }
+        return dataIdToReload;
+    }
 
-	@Override
-	public List getCategoryUtilizers(String resourceId) throws ApsSystemException {
-		List<String> contentIds = null;
-		try {
-			contentIds = this.getDataObjectDAO().getCategoryUtilizers(resourceId);
-		} catch (Throwable t) {
-			throw new ApsSystemException("Error while loading referenced contents : category " + resourceId, t);
-		}
-		return contentIds;
-	}
+    @Override
+    public List getGroupUtilizers(String groupName) throws ApsSystemException {
+        List<String> dataIds = null;
+        try {
+            dataIds = this.getDataObjectDAO().getGroupUtilizers(groupName);
+        } catch (Throwable t) {
+            throw new ApsSystemException("Error while loading referenced dataobjects : group " + groupName, t);
+        }
+        return dataIds;
+    }
 
-	@Override
-	public void reloadCategoryReferences(String categoryCode) {
-		try {
-			this.getContentUpdaterService().reloadCategoryReferences(categoryCode);
-		} catch (Throwable t) {
-			ApsSystemUtils.logThrowable(t, this, "reloadCategoryReferences");
-		}
-	}
+    @Override
+    public boolean isSearchEngineUser() {
+        return true;
+    }
 
-	@Override
-	public List getCategoryUtilizersForReloadReferences(String categoryCode) {
-		List<String> contentIdToReload = new ArrayList<String>();
-		try {
-			Set<String> contents = this.getContentUpdaterService().getDataObjectsId(categoryCode);
-			if (null != contents) {
-				contentIdToReload.addAll(contents);
-			}
-		} catch (Throwable t) {
-			ApsSystemUtils.logThrowable(t, this, "getCategoryUtilizersForReloadReferences");
-		}
-		return contentIdToReload;
-	}
+    @Override
+    public DataObjectsStatus getDataObjectsStatus() {
+        DataObjectsStatus status = null;
+        try {
+            status = this.getDataObjectDAO().loadDataObjectsStatus();
+        } catch (Throwable t) {
+            _logger.error("error in getDataObjectsStatus");
+        }
+        return status;
+    }
 
-	@Override
-	public List getGroupUtilizers(String groupName) throws ApsSystemException {
-		List<String> contentIds = null;
-		try {
-			contentIds = this.getDataObjectDAO().getGroupUtilizers(groupName);
-		} catch (Throwable t) {
-			throw new ApsSystemException("Error while loading referenced contents : group " + groupName, t);
-		}
-		return contentIds;
-	}
+    /**
+     * Return the DAO which handles all the operations on the dataobjects.
+     *
+     * @return The DAO managing the dataobjects.
+     */
+    protected IDataObjectDAO getDataObjectDAO() {
+        return _dataObjectDao;
+    }
 
-	@Override
-	public boolean isSearchEngineUser() {
-		return true;
-	}
+    public void setDataObjectDAO(IDataObjectDAO dao) {
+        this._dataObjectDao = dao;
+    }
 
-	@Override
-	public DataObjectsStatus getDataObjectsStatus() {
-		DataObjectsStatus status = null;
-		try {
-			status = this.getDataObjectDAO().loadContentStatus();
-		} catch (Throwable t) {
-			_logger.error("error in getContentsStatus");
-		}
-		return status;
-	}
+    @Override
+    protected IEntitySearcherDAO getEntitySearcherDao() {
+        return this.getDataObjectSearcherDAO();
+    }
 
-	/**
-	 * Return the DAO which handles all the operations on the contents.
-	 *
-	 * @return The DAO managing the contents.
-	 */
-	protected IDataObjectDAO getDataObjectDAO() {
-		return _dataObjectDao;
-	}
+    @Override
+    protected IEntityDAO getEntityDao() {
+        return this.getDataObjectDAO();
+    }
 
-	public void setDataObjectDAO(IDataObjectDAO dao) {
-		this._dataObjectDao = dao;
-	}
+    public IDataObjectSearcherDAO getDataObjectSearcherDAO() {
+        return _dataObjectSearcherDAO;
+    }
 
-	@Override
-	protected IEntitySearcherDAO getEntitySearcherDao() {
-		return this.getWorkDataObjectSearcherDAO();
-	}
+    public void setDataObjectSearcherDAO(IDataObjectSearcherDAO dataObjectSearcherDAO) {
+        this._dataObjectSearcherDAO = dataObjectSearcherDAO;
+    }
 
-	@Override
-	protected IEntityDAO getEntityDao() {
-		return this.getDataObjectDAO();
-	}
+    protected IDataObjectUpdaterService getDataObjectUpdaterService() {
+        return _dataobjectUpdaterService;
+    }
 
-	protected IWorkDataObjectSearcherDAO getWorkDataObjectSearcherDAO() {
-		return _workDataObjectSearcherDAO;
-	}
+    public void setDataObjectUpdaterService(IDataObjectUpdaterService dataobjectUpdaterService) {
+        this._dataobjectUpdaterService = dataobjectUpdaterService;
+    }
 
-	public void setWorkDataObjectSearcherDAO(IWorkDataObjectSearcherDAO workDataObjectSearcherDAO) {
-		this._workDataObjectSearcherDAO = workDataObjectSearcherDAO;
-	}
+    @Override
+    public IApsEntity getEntity(String entityId) throws ApsSystemException {
+        return this.loadDataObject(entityId, false);
+    }
 
-	public IPublicDataObjectSearcherDAO getPublicDataObjectSearcherDAO() {
-		return _publicDataObjectSearcherDAO;
-	}
+    /**
+     * @deprecated From jAPS 2.0 version 2.0.9, use getStatus()
+     */
+    @Override
+    public int getState() {
+        return super.getStatus();
+    }
 
-	public void setPublicDataObjectSearcherDAO(IPublicDataObjectSearcherDAO publicDataObjectSearcherDAO) {
-		this._publicDataObjectSearcherDAO = publicDataObjectSearcherDAO;
-	}
+    /**
+     * Map of the prototypes of the dataobject types in the so called 'small
+     * form', indexed by the type code.
+     */
+    private Map<String, SmallDataType> _smallDataObjectTypes;
 
-	protected IDataObjectUpdaterService getContentUpdaterService() {
-		return _contentUpdaterService;
-	}
+    private IDataObjectDAO _dataObjectDao;
 
-	public void setContentUpdaterService(IDataObjectUpdaterService contentUpdaterService) {
-		this._contentUpdaterService = contentUpdaterService;
-	}
+    private IDataObjectSearcherDAO _dataObjectSearcherDAO;
 
-	@Override
-	public IApsEntity getEntity(String entityId) throws ApsSystemException {
-		return this.loadDataObject(entityId, false);
-	}
-
-	/**
-	 * @deprecated From jAPS 2.0 version 2.0.9, use getStatus()
-	 */
-	@Override
-	public int getState() {
-		return super.getStatus();
-	}
-
-	/**
-	 * Map of the prototypes of the content types in the so called 'small form',
-	 * indexed by the type code.
-	 */
-	private Map<String, SmallDataType> _smallContentTypes;
-
-	private IDataObjectDAO _dataObjectDao;
-
-	private IWorkDataObjectSearcherDAO _workDataObjectSearcherDAO;
-
-	private IPublicDataObjectSearcherDAO _publicDataObjectSearcherDAO;
-
-	private IDataObjectUpdaterService _contentUpdaterService;
+    private IDataObjectUpdaterService _dataobjectUpdaterService;
 
 }

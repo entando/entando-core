@@ -32,7 +32,7 @@
         <span class="pficon pficon-error-circle-o"></span>
         <strong><s:text name="message.title.ActionErrors" /> </strong>
         <ul class="margin-base-vertical">
-            <li><s:text name="contentModel.tip" />
+            <li><s:text name="dataObjectModel.tip" />
             </li>
         </ul>
     </div>
@@ -50,14 +50,14 @@
                         <s:text name="label.page" />
                     </th>
                     <th>
-                        <s:text name="label.content"/>
+                        <s:text name="label.dataObject"/>
                     </th>
                     <th class="table-w-5 text-center">
                         <s:text name="label.actions" />
                     </th>
                 </tr>
-                <s:iterator var="contentId" value="referencedContentsOnPages">
-                    <s:iterator var="page" value="referencingPages[#contentId]">
+                <s:iterator var="dataId" value="referencedContentsOnPages">
+                    <s:iterator var="page" value="referencingPages[#dataId]">
                         <tr>
                             <s:set var="pageGroup" value="#page.group">
                             </s:set>
@@ -65,10 +65,10 @@
                                 <s:property value="#page.titles[currentLang.code]" />
                             </td>
                             <td>
-                                <s:set var="content" value="%{getContentVo(#contentId)}">
+                                <s:set var="dataObject" value="%{getContentVo(#dataId)}">
                                 </s:set>
-                                <s:property value="#content.id" />
-                                <s:property value="#content.descr" />
+                                <s:property value="#dataObject.id" />
+                                <s:property value="#dataObject.descr" />
                             </td>
                             <wp:ifauthorized groupName="${pageGroup}">
                                 <td class=" text-center table-view-pf-actions">

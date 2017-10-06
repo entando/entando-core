@@ -22,65 +22,65 @@ import java.util.Map;
  */
 public class DataObjectPageMapper {
 
-	/**
-	 * Inizializza la mappa.
-	 */
-	public DataObjectPageMapper() {
-		this._dataTypePageMapper = new HashMap<String, String>();
-	}
+    /**
+     * Inizializza la mappa.
+     */
+    public DataObjectPageMapper() {
+        this._dataTypePageMapper = new HashMap<String, String>();
+    }
 
-	/**
-	 * Aggiunge un datatype nella mappa dei datatypes publicati.
-	 *
-	 * @param contentId L'id del datatype.
-	 * @param pageCode Il codice della pagina nel quale è publicato il datatype.
-	 */
-	protected void add(String contentId, String pageCode) {
-		this._dataTypePageMapper.put(contentId, pageCode);
-	}
+    /**
+     * Aggiunge un datatype nella mappa dei datatypes publicati.
+     *
+     * @param dataId L'id del datatype.
+     * @param pageCode Il codice della pagina nel quale è publicato il datatype.
+     */
+    protected void add(String dataId, String pageCode) {
+        this._dataTypePageMapper.put(dataId, pageCode);
+    }
 
-	/**
-	 * Restituisce la mappa dei datatypes pubblicati.
-	 *
-	 * @return La mappa dei datatypes pubblicati.
-	 */
-	protected Map<String, String> getContentPageMapper() {
-		return _dataTypePageMapper;
-	}
+    /**
+     * Restituisce la mappa dei datatypes pubblicati.
+     *
+     * @return La mappa dei datatypes pubblicati.
+     */
+    protected Map<String, String> getDataObjectPageMapper() {
+        return _dataTypePageMapper;
+    }
 
-	/**
-	 * Restituisce il codice pagina nel quale è stato publicato il datatype
-	 * specificato. Restituisce null nel caso in cui l'id del datatype non sia
-	 * presente nella mappa.
-	 *
-	 * @param contentId L'id del datatype.
-	 * @return Il codice pagina nel quale è stato publicato il datatype
-	 * specificato.
-	 */
-	protected String getPageCode(String contentId) {
-		return (String) _dataTypePageMapper.get(contentId);
-	}
+    /**
+     * Restituisce il codice pagina nel quale è stato publicato il datatype
+     * specificato. Restituisce null nel caso in cui l'id del datatype non sia
+     * presente nella mappa.
+     *
+     * @param dataId L'id del datatype.
+     * @return Il codice pagina nel quale è stato publicato il datatype
+     * specificato.
+     */
+    protected String getPageCode(String dataId) {
+        return (String) _dataTypePageMapper.get(dataId);
+    }
 
-	/**
-	 * Rimuove un'elemento dalla mappa in base all'id del datatype.
-	 *
-	 * @param contentId L'id del datatype.
-	 */
-	protected void removeContentPageMapping(String contentId) {
-		this._dataTypePageMapper.remove(contentId);
-	}
+    /**
+     * Rimuove un'elemento dalla mappa in base all'id del datatype.
+     *
+     * @param dataId L'id del datatype.
+     */
+    protected void removeDataObjectPageMapping(String dataId) {
+        this._dataTypePageMapper.remove(dataId);
+    }
 
-	/**
-	 * Verifica se un datatype è stato pubblicato esplicitamente in una pagina.
-	 *
-	 * @param contentId L'id del datatype.
-	 * @return true se un datatype è stato pubblicato esplicitamente in una
-	 * pagina, false in caso contrario.
-	 */
-	protected boolean containContent(String contentId) {
-		return this._dataTypePageMapper.containsKey(contentId);
-	}
+    /**
+     * Verifica se un datatype è stato pubblicato esplicitamente in una pagina.
+     *
+     * @param dataId L'id del datatype.
+     * @return true se un datatype è stato pubblicato esplicitamente in una
+     * pagina, false in caso contrario.
+     */
+    protected boolean containDataObject(String dataId) {
+        return this._dataTypePageMapper.containsKey(dataId);
+    }
 
-	private Map<String, String> _dataTypePageMapper;
+    private Map<String, String> _dataTypePageMapper;
 
 }

@@ -27,7 +27,9 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -134,38 +136,21 @@ public class TableDataUtils {
             int columnCount = metaData.getColumnCount();
             int[] types = new int[columnCount];
             for (int i = 0; i < columnCount; i++) {
-                if (metaData.isAutoIncrement(1)) {
-                    if (i == 0) {
-                        continue;
-                    }
-                    if (i > 1) {
-                        scriptPrefix.append(", ");
-                    }
-                } else {
-                    if (i > 0) {
-                        scriptPrefix.append(", ");
-                    }
-                }
                 int indexColumn = i + 1;
+                if (metaData.isAutoIncrement(indexColumn)) {
+                    continue;
+                }
+                scriptPrefix.append(metaData.getColumnName(indexColumn).toLowerCase()).append(",");
                 types[i] = metaData.getColumnType(indexColumn);
-                scriptPrefix.append(metaData.getColumnName(indexColumn).toLowerCase());
             }
+            scriptPrefix.deleteCharAt(scriptPrefix.lastIndexOf(","));
             scriptPrefix.append(") VALUES (");
             int rows = 0;
             while (res.next()) {
                 StringBuilder newRecord = new StringBuilder(scriptPrefix);
                 for (int i = 0; i < columnCount; i++) {
-                    if (metaData.isAutoIncrement(1)) {
-                        if (i == 0) {
-                            continue;
-                        }
-                        if (i > 1) {
-                            newRecord.append(", ");
-                        }
-                    } else {
-                        if (i > 0) {
-                            newRecord.append(", ");
-                        }
+                    if (metaData.isAutoIncrement(i + 1)) {
+                        continue;
                     }
                     Object value = getColumnValue(res, i, types);
                     if (value == null) {
@@ -179,7 +164,9 @@ public class TableDataUtils {
                             newRecord.append(outputValue);
                         }
                     }
+                    newRecord.append(",");
                 }
+                newRecord.deleteCharAt(newRecord.lastIndexOf(","));
                 newRecord.append(");\n");
                 br.write(newRecord.toString());
                 rows++;

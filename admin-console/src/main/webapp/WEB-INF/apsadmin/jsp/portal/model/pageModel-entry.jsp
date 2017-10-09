@@ -38,7 +38,7 @@
 </div>
 <br>
 
-<div id="main">
+<div class="mb-20">
     <s:form action="save" cssClass="form-horizontal">
         <s:if test="hasActionErrors()">
             <div class="alert alert-danger alert-dismissable">
@@ -122,7 +122,7 @@
         </div>
         <div class="form-group">
             <div class="col-xs-12">
-                <label class="col-sm-2 control-label" for="template">Template <i class="fa fa-asterisk required-icon"></i></label> 
+                <label class="col-sm-2 control-label" for="template">Template <i class="fa fa-asterisk required-icon"></i></label>
                 <div class="col-sm-10">
                     <wpsf:textarea name="template" id="template" cssClass="autotextarea form-control" rows="8" />
                     <textarea id="ace_template" style="display: none;" ></textarea>

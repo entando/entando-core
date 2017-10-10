@@ -3,9 +3,7 @@
 <%@ taglib prefix="jacms" uri="/jacms-apsadmin-core"%>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li>
-        <s:text name="breadcrumb.datatype" />
-    </li>
+    <li><s:text name="breadcrumb.datatype" /></li>
     <li>
         <a href="<s:url action="list" namespace="/do/dataobject/model" />"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.dataObjectUx" />">
@@ -61,7 +59,7 @@
 
     <div class="form-group<s:if test="strutsAction == 1 && null == dataType"> has-warning</s:if>">
             <label for="dataType" class="col-sm-2 control-label">
-            <s:text name="dataObjectModel.type" />
+            <s:text name="contentModel.type" />
         </label>
         <div class="col-sm-10">
             <div class="input-group">
@@ -91,7 +89,7 @@
         <s:set var="controlGroupErrorClassVar" value="%{#modelIdHasFieldErrorVar ? ' has-error' : ''}" />
 
         <label class="col-sm-2 control-label" for="modelId">
-            <s:text name="dataObjectModel.code" /> <i class="fa fa-asterisk required-icon"></i>
+            <s:text name="contentModel.code" /> <i class="fa fa-asterisk required-icon"></i>
             <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                data-placement="top" data-content="<s:text name="title.dataObjectModel.code.help" />" data-original-title="">
                 <span class="fa fa-info-circle"></span>
@@ -139,7 +137,7 @@
         <s:set var="dataObjectShapeHasFieldErrorVar"
                value="#dataObjectShapeFieldErrorsVar != null && !#dataObjectShapeFieldErrorsVar.isEmpty()" />
         <label class="col-sm-2 control-label" for="dataObjectShape">
-            <s:text  name="dataObjectModel.label.shape" /> <i class="fa fa-asterisk required-icon"></i>
+            <s:text  name="contentModel.label.shape" /> <i class="fa fa-asterisk required-icon"></i>
 
 
         </label>
@@ -165,15 +163,15 @@
                 <span class="text text-success">
                     <span class="icon fa fa-info-circle"></span>&#32;
                     <s:if  test="strutsAction == 2 || (strutsAction == 1 && null != dataType)">
-                        (<s:text name="note.dataObjectModel.help" />)&#32;</s:if>
-                    <s:text name="note.dataObjectModel.dataObjectAssist" />:&#32;
+                        (<s:text name="note.contentModel.help" />)&#32;</s:if>
+                    <s:text name="note.contentModel.contentAssist" />:&#32;
                     <em class="important"> <s:text name="label.on" /></em>.&#32;
                     <s:if test="strutsAction == 2 || (strutsAction == 1 && null != dataType)">
-                        [<s:text name="note.dataObjectModel.attributeHelp" />:&#32;
+                        [<s:text name="note.contentModel.attributeHelp" />:&#32;
                         <em class="important"><s:text name="label.on" /></em>]
                     </s:if>
                     <s:else>
-                        [<s:text name="note.dataObjectModel.attributeHelp" />:&#32;
+                        [<s:text name="note.contentModel.attributeHelp" />:&#32;
                         <em class="important"><s:text name="label.off" /></em>]
                     </s:else>
                 </span>
@@ -182,7 +180,7 @@
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label" for="newModel_stylesheet">
-            <s:text name="dataObjectModel.label.stylesheet" />
+            <s:text name="contentModel.label.stylesheet" />
         </label>
         <div class="col-sm-10">
             <wpsf:textfield name="stylesheet" id="newModel_stylesheet"  cssClass="form-control" />

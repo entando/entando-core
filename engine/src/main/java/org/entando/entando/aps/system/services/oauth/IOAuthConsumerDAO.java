@@ -13,29 +13,24 @@
  */
 package org.entando.entando.aps.system.services.oauth;
 
-import java.util.List;
-
-import net.oauth.OAuthConsumer;
-
-import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
-
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import java.util.List;
+import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
 
 /**
  * @author E.Santoboni
  */
 public interface IOAuthConsumerDAO {
-    
-    public List<String> getConsumerKeys(FieldSearchFilter[] filters);
-    
-    public ConsumerRecordVO getConsumerRecord(String consumerKey);
-    
-    public void addConsumer(ConsumerRecordVO consumer);
-    
-    public void updateConsumer(ConsumerRecordVO consumer);
-    
-    public void deleteConsumer(String consumerKey);
-    
-    public OAuthConsumer getConsumer(String consumerKey);
-    
+
+	public List<String> getConsumerKeys(FieldSearchFilter[] filters);
+
+	public ConsumerRecordVO getConsumerRecord(String consumerKey);
+
+	public void addConsumer(ConsumerRecordVO consumer);
+
+	public void updateConsumer(ConsumerRecordVO consumer);
+
+	public void deleteConsumer(String consumerKey);
+
+	//public OAuthConsumer getConsumer(String consumerKey);
 }

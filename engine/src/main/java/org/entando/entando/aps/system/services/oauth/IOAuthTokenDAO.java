@@ -13,26 +13,19 @@
  */
 package org.entando.entando.aps.system.services.oauth;
 
-import java.util.Map;
-
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthConsumer;
-
-import org.entando.entando.aps.system.services.oauth.model.EntandoOAuthAccessor;
-
 /**
  * @author E.Santoboni
  */
 public interface IOAuthTokenDAO {
-    
+	/*
     public void addAccessToken(OAuthAccessor accessor);
-    
+
     public void refreshAccessTokens(String tokenToUpdate, int tokenTimeValidity);
-    
+
     public EntandoOAuthAccessor getAccessor(String accessToken, OAuthConsumer consumer);
-    
+
     public void deleteAccessToken(String username, String accessToken, String consumerKey);
-    
+
     public Map<String, Integer> getOccurrencesByConsumer();
-    
+	 */
 }

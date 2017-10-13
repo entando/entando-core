@@ -14,45 +14,35 @@
 package org.entando.entando.aps.servlet;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.oauth.OAuth;
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthMessage;
-import net.oauth.OAuthProblemException;
-import net.oauth.server.OAuthServlet;
-
-import org.entando.entando.aps.system.services.oauth.IOAuthConsumerManager;
-
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-
 /**
- * Access Token request handler
- * Special thanks to Praveen Alavilli and OAuth examples.
+ * Access Token request handler Special thanks to Praveen Alavilli and OAuth
+ * examples.
  * http://oauth.googlecode.com/svn/code/java/example/oauth-provider/src/net/oauth/example/provider/servlets/AccessTokenServlet.java
+ *
  * @author Praveen Alavilli - E.Santoboni
  */
 public class AccessTokenOAuthServlet extends HttpServlet {
-    
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        this.processRequest(request, response);
-    }
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        this.processRequest(request, response);
-    }
-    
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        IOAuthConsumerManager consumerManager = 
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		this.processRequest(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		this.processRequest(request, response);
+	}
+
+	public void processRequest(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		/*
+        IOAuthConsumerManager consumerManager =
                 (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
         try {
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
@@ -65,12 +55,13 @@ public class AccessTokenOAuthServlet extends HttpServlet {
             consumerManager.generateAccessToken(accessor);
             response.setContentType("text/plain");
             OutputStream out = response.getOutputStream();
-            OAuth.formEncode(OAuth.newList("oauth_token", accessor.accessToken, 
+            OAuth.formEncode(OAuth.newList("oauth_token", accessor.accessToken,
                     "oauth_token_secret", accessor.tokenSecret), out);
             out.close();
         } catch (Exception e) {
             consumerManager.handleException(e, request, response, true);
         }
-    }
-    
+		 */
+	}
+
 }

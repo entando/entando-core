@@ -14,36 +14,25 @@
 package org.entando.entando.aps.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.oauth.OAuth;
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthMessage;
-import net.oauth.server.OAuthServlet;
-
-import org.entando.entando.aps.system.services.oauth.IOAuthConsumerManager;
-
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
-import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-
 /**
- * Authorization request handler.
- * Special thanks to Praveen Alavilli and OAuth examples.
+ * Authorization request handler. Special thanks to Praveen Alavilli and OAuth
+ * examples.
  * http://oauth.googlecode.com/svn/code/java/example/oauth-provider/src/net/oauth/example/provider/servlets/AuthorizationServlet.java
+ *
  * @author Praveen Alavilli - E.Santoboni
  */
 public class AuthorizationOAuthServlet extends HttpServlet {
-    
-    public void doGet(HttpServletRequest request, 
-            HttpServletResponse response) throws IOException, ServletException {
-        IOAuthConsumerManager consumerManager = 
+
+	public void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws IOException, ServletException {
+		/*
+        IOAuthConsumerManager consumerManager =
                 (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
         try{
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
@@ -56,13 +45,15 @@ public class AuthorizationOAuthServlet extends HttpServlet {
         } catch (Exception e){
             consumerManager.handleException(e, request, response, true);
         }
-    }
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException, ServletException {
-        IOAuthConsumerManager consumerManager = 
+		 */
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		/*
+        IOAuthConsumerManager consumerManager =
                 (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
-        IAuthenticationProviderManager authenticationProvider = 
+        IAuthenticationProviderManager authenticationProvider =
                 (IAuthenticationProviderManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER, request);
         try {
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
@@ -88,9 +79,10 @@ public class AuthorizationOAuthServlet extends HttpServlet {
         } catch (Exception e) {
             consumerManager.handleException(e, request, response, true);
         }
-    }
-    
-    private void sendToAuthorizePage(HttpServletRequest request, 
+		 */
+	}
+	/*
+    private void sendToAuthorizePage(HttpServletRequest request,
             HttpServletResponse response, OAuthAccessor accessor) throws IOException, ServletException {
         String callback = request.getParameter("oauth_callback");
         if (callback == null || callback.length() <= 0) {
@@ -102,20 +94,20 @@ public class AuthorizationOAuthServlet extends HttpServlet {
         request.setAttribute("oauthParam_REQUEST_TOKEN", accessor.requestToken);
         request.getRequestDispatcher("/WEB-INF/oauth/authorize.jsp").forward(request, response);
     }
-    
-    private void returnToConsumer(HttpServletRequest request, 
+
+    private void returnToConsumer(HttpServletRequest request,
             HttpServletResponse response, OAuthAccessor accessor) throws IOException, ServletException {
         String callback = request.getParameter("oauth_callback");
-        if ("none".equals(callback) 
-                && accessor.consumer.callbackURL != null 
+        if ("none".equals(callback)
+                && accessor.consumer.callbackURL != null
                 && accessor.consumer.callbackURL.length() > 0) {
             callback = accessor.consumer.callbackURL;
         }
         if( "none".equals(callback) || "oob".equals(callback) ) {
             response.setContentType("text/plain");
             PrintWriter out = response.getWriter();
-            out.println("You have successfully authorized '" 
-                    + accessor.consumer.getProperty("description") 
+            out.println("You have successfully authorized '"
+                    + accessor.consumer.getProperty("description")
                     + "'. Please close this browser window and click continue"
                     + " in the client.");
             out.close();
@@ -130,5 +122,5 @@ public class AuthorizationOAuthServlet extends HttpServlet {
             response.setHeader("Location", callback);
         }
     }
-    
+	 */
 }

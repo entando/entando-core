@@ -13,30 +13,15 @@
  */
 package org.entando.entando.aps.system.services.oauth;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthConsumer;
-
-import org.entando.entando.aps.system.services.oauth.model.EntandoOAuthAccessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.AbstractDAO;
 
 /**
  * @author E.Santoboni
  */
 public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
-
+	/*
 	private static final Logger _logger =  LoggerFactory.getLogger(OAuthTokenDAO.class);
-	
+
     public void addAccessToken(OAuthAccessor accessor) {
         Connection conn = null;
         PreparedStatement stat = null;
@@ -62,7 +47,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
             closeDaoResources(null, stat, conn);
         }
     }
-	
+
 	public void refreshAccessTokens(String tokenToUpdate, int tokenTimeValidity) {
 		Connection conn = null;
         try {
@@ -80,7 +65,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
             this.closeConnection(conn);
         }
 	}
-    
+
 	protected void updateAccessTokens(String tokenToUpdate, Connection conn) {
         PreparedStatement stat = null;
         try {
@@ -97,7 +82,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
             this.closeDaoResources(null, stat);
         }
 	}
-    
+
 	protected void deleteOldAccessTokens(int tokenTimeValidity, Connection conn) {
         PreparedStatement stat = null;
         try {
@@ -115,7 +100,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
             this.closeDaoResources(null, stat);
         }
 	}
-    
+
     public EntandoOAuthAccessor getAccessor(String accessToken, OAuthConsumer consumer) {
         Connection conn = null;
         EntandoOAuthAccessor accessor = null;
@@ -148,7 +133,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
         }
         return accessor;
     }
-    
+
     public void deleteAccessToken(String username, String accessToken, String consumerKey) {
         Connection conn = null;
         PreparedStatement stat = null;
@@ -170,7 +155,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
             closeDaoResources(null, stat, conn);
         }
     }
-    
+
     public Map<String, Integer> getOccurrencesByConsumer() {
         Connection conn = null;
         Map<String, Integer> occurrences = new HashMap<String, Integer>();
@@ -194,24 +179,24 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
         }
         return occurrences;
     }
-    
-    private String INSERT_TOKEN = 
-            "INSERT INTO api_oauth_tokens (accesstoken, tokensecret, consumerkey, username, lastaccess) " + 
+
+    private String INSERT_TOKEN =
+            "INSERT INTO api_oauth_tokens (accesstoken, tokensecret, consumerkey, username, lastaccess) " +
             "VALUES (? , ? , ? , ? , ? )";
-    
-    private String UPDATE_TOKEN = 
+
+    private String UPDATE_TOKEN =
             "UPDATE api_oauth_tokens SET lastaccess = ? WHERE accesstoken = ?";
-    
-    private String DELETE_OLD_TOKENS = 
+
+    private String DELETE_OLD_TOKENS =
             "DELETE FROM api_oauth_tokens WHERE lastaccess < ?";
-    
-    private String SELECT_TOKEN = 
-            "SELECT tokensecret, username, lastaccess " + 
+
+    private String SELECT_TOKEN =
+            "SELECT tokensecret, username, lastaccess " +
             "FROM api_oauth_tokens WHERE accesstoken = ? AND consumerkey = ?";
-    
-    private String SELECT_OCCURRENCES = 
+
+    private String SELECT_OCCURRENCES =
             "SELECT consumerkey, count(consumerkey) FROM api_oauth_tokens GROUP BY consumerkey";
-    
+
     private String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE username = ? AND accesstoken = ? AND consumerkey = ?";
-    
+	 */
 }

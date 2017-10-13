@@ -13,26 +13,22 @@
  */
 package org.entando.entando.aps.system.services.oauth.model;
 
-import java.util.Date;
-
-import net.oauth.OAuthConsumer;
-
 /**
  * @author E.Santoboni
  */
-public class EntandoOAuthAccessor extends net.oauth.OAuthAccessor {
-	
+public class EntandoOAuthAccessor /*extends net.oauth.OAuthAccessor */ {
+	/*
 	public EntandoOAuthAccessor(OAuthConsumer consumer) {
         super(consumer);
     }
-	
+
 	public Date getLastAccess() {
 		return _lastAccess;
 	}
 	public void setLastAccess(Date lastAccess) {
 		this._lastAccess = lastAccess;
 	}
-	
+
 	private Date _lastAccess;
-	
+	 */
 }

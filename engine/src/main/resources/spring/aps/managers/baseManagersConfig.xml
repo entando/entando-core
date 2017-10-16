@@ -53,9 +53,9 @@
         <property name="keyString">
             <value>${key.string.encryprion}</value>
         </property>
-        <property name="configFolder">
+        <!--        <property name="configFolder">
             <jee:jndi-lookup jndi-name="java:comp/env/configFolder" />
-        </property>
+        </property>-->
         <property name="configDAO" >
             <bean class="com.agiletec.aps.system.services.baseconfig.ConfigItemDAO">
                 <property name="dataSource" ref="portDataSource" />

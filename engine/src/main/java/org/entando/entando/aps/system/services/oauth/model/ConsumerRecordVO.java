@@ -76,11 +76,20 @@ public class ConsumerRecordVO {
         this._issuedDate = issuedDate;
     }
 
+    public String getAuthorizationCode() {
+        return _authorizationCode;
+    }
+
+    public void setAuthorizationCode(String authorizationCode) {
+        this._authorizationCode = authorizationCode;
+    }
+
     private String _clientId;
     private String _key;
     private String _secret;
     private String _description;
     private String _callbackUrl;
+    private String _authorizationCode;
     private Date _expirationDate;
     private Date _issuedDate;
 }

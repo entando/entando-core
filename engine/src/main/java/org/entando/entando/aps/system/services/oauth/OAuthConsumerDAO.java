@@ -65,12 +65,14 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
                 String consumerSecret = res.getString(2);
                 String description = res.getString(3);
                 String callbackurl = res.getString(4);
-                Date expirationdate = res.getDate(5);
-                Date issueddate = res.getDate(6);
+                String authorizationCode = res.getString(5);
+                Date expirationdate = res.getDate(6);
+                Date issueddate = res.getDate(7);
                 if (needRecord) {
                     ConsumerRecordVO consumerRecord = new ConsumerRecordVO();
                     consumerRecord.setClientId(clientId);
                     consumerRecord.setCallbackUrl(callbackurl);
+                    consumerRecord.setAuthorizationCode(authorizationCode);
                     consumerRecord.setDescription(description);
                     consumerRecord.setExpirationDate(expirationdate);
                     consumerRecord.setKey(consumerKey);
@@ -212,16 +214,16 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
     }
 
     private String SELECT_CONSUMER
-            = "SELECT consumerkey, consumersecret, description, callbackurl, expirationdate, issueddate "
+            = "SELECT consumerkey, consumersecret, description, callbackurl, authorizationcode, expirationdate, issueddate "
             + "FROM api_oauth_consumers WHERE clientid = ? ";
 
     private String ADD_CONSUMER
             = "INSERT INTO api_oauth_consumers (clientid, consumerkey, "
-            + "consumersecret, description, callbackurl, expirationdate, issueddate) VALUES (?,?, ?, ?, ?, ?,?) ";
+            + "consumersecret, description, callbackurl, authorizationcode, expirationdate, issueddate) VALUES (?,?,?,?,?,?,?,?) ";
 
     private String UPDATE_CONSUMER
             = "UPDATE api_oauth_consumers SET clientid = ?, consumersecret = ? , "
-            + "description = ? , callbackurl = ? , expirationdate = ?, issueddate = ? WHERE clientid = ? ";
+            + "description = ? , callbackurl = ? ,authorizationcode = ?, expirationdate = ?, issueddate = ? WHERE clientid = ? ";
 
     private String DELETE_CONSUMER
             = "DELETE FROM api_oauth_consumers WHERE clientid = ? ";

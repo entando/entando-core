@@ -14,12 +14,14 @@
 package org.entando.entando.aps.system.services.oauth;
 
 import com.agiletec.aps.system.common.AbstractDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author E.Santoboni
  */
 public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
-	/*
+
 	private static final Logger _logger =  LoggerFactory.getLogger(OAuthTokenDAO.class);
 
     public void addAccessToken(OAuthAccessor accessor) {
@@ -47,7 +49,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
             closeDaoResources(null, stat, conn);
         }
     }
-
+/*
 	public void refreshAccessTokens(String tokenToUpdate, int tokenTimeValidity) {
 		Connection conn = null;
         try {
@@ -204,7 +206,7 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
             "FROM api_oauth_tokens WHERE accesstoken = ? AND clientid = ?";
 
     private String SELECT_OCCURRENCES =
-            "SELECT consumerkey, count(consumerkey) FROM api_oauth_tokens GROUP BY consumerkey";
+            "SELECT clientid, count(clientid) FROM api_oauth_tokens GROUP BY consumerkey";
 
     private String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE accesstoken = ? AND clientid = ?";
 

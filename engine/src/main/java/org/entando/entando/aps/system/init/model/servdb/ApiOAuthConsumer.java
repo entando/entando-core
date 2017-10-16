@@ -49,6 +49,12 @@ public class ApiOAuthConsumer {
 			canBeNull = false)
 	private String _description;
 
+
+    @DatabaseField(columnName = "authorizationcode",
+            dataType = DataType.STRING,
+            canBeNull = false)
+    private String _authorizationCode;
+
 	@DatabaseField(columnName = "callbackurl",
 			dataType = DataType.LONG_STRING)
 	private String _callbackUrl;
@@ -72,6 +78,7 @@ CREATE TABLE api_oauth_consumers
   consumerkey character varying(100) NOT NULL,
   consumersecret character varying(100) NOT NULL,
   description character varying(500) NOT NULL,
+  authorizationcode character varying(500) NOT NULL,
   callbackurl character varying(500),
   expirationdate date,
   issueddate date

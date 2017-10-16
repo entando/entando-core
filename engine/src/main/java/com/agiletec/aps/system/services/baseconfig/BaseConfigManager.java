@@ -61,11 +61,11 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
         if (this.getKeyString().getBytes().length > 56) {
             throw new RuntimeException("Key String for encryption not properly set: > 56 bytes (it must be between 4 and 56 bytes)");
         }
-        Properties props = this.loadParams();
-        if (props != null & (_oldKeyString = props.getProperty("key.string.encryprion")) != null) {
-            this.setKeyChanged(!this.getKeyString().equals(this.getOldKeyString()));
-        }
-        this.saveParamChanges();
+//        Properties props = this.loadParams();
+//        if (props != null & (_oldKeyString = props.getProperty("key.string.encryprion")) != null) {
+//            this.setKeyChanged(!this.getKeyString().equals(this.getOldKeyString()));
+//        }
+//        this.saveParamChanges();
         _logger.debug("{} ready. Initialized {} configuration items and {} parameters", this.getClass().getName(), this._configItems.size(), this._params.size());
         //ApsSystemUtils.getLogger().debug(this.getClass().getName() + ": initialized # "
         //+ this._configItems.size() + " configuration items and "

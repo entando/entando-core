@@ -13,23 +13,20 @@
  */
 package org.entando.entando.aps.system.services.oauth;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.codec.digest.DigestUtils;
+import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.common.message.types.TokenType;
 import org.apache.oltu.oauth2.common.token.BasicOAuthToken;
 import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
 import org.entando.entando.aps.system.services.oauth.model.EntandoOAuthAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.exception.ApsSystemException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manager of consumers, access token (stored in database and in local cache)
@@ -168,8 +165,6 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
 
             final OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
             final String accessToken = oauthIssuerImpl.accessToken();
-            final String authorizatgionCode = oauthIssuerImpl.authorizationCode();
-            final String refreshToken = oauthIssuerImpl.refreshToken();
             BasicOAuthToken basicOAuthToken = new BasicOAuthToken(accessToken, tokenType);
             this.getTokenDAO().addAccessToken(clientId, basicOAuthToken);
         } catch (Throwable t) {
@@ -209,14 +204,14 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
         }
     }
 	 */
-    public ConsumerRecordVO getConsumerRecord(String consumerKey) throws ApsSystemException {
+    public ConsumerRecordVO getConsumerRecord(String clientId) throws ApsSystemException {
         ConsumerRecordVO consumer = null;
         try {
-            consumer = this.getConsumerDAO().getConsumerRecord(consumerKey);
+            consumer = this.getConsumerDAO().getConsumerRecord(clientId);
         } catch (Throwable t) {
-            _logger.error("Error extracting consumer record by key {}", consumerKey, t);
+            _logger.error("Error extracting consumer record by key {}", clientId, t);
             //ApsSystemUtils.logThrowable(t, this, "getConsumerRecord", "Error extracting consumer record by key " + consumerKey);
-            throw new ApsSystemException("Error extracting consumer record by key " + consumerKey, t);
+            throw new ApsSystemException("Error extracting consumer record by key " + clientId, t);
         }
         return consumer;
     }
@@ -241,13 +236,13 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
         }
     }
 
-    public void deleteConsumer(String consumerKey) throws ApsSystemException {
+    public void deleteConsumer(String clientId) throws ApsSystemException {
         try {
-            this.getConsumerDAO().deleteConsumer(consumerKey);
+            this.getConsumerDAO().deleteConsumer(clientId);
         } catch (Throwable t) {
-            _logger.error("Error deleting consumer record by key {}", consumerKey, t);
+            _logger.error("Error deleting consumer record by key {}", clientId, t);
             //ApsSystemUtils.logThrowable(t, this, "getConsumerRecord", "Error deleting consumer record by key " + consumerKey);
-            throw new ApsSystemException("Error deleting consumer record by key " + consumerKey, t);
+            throw new ApsSystemException("Error deleting consumer record by key " + clientId, t);
         }
     }
 
@@ -319,10 +314,7 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
 
     //private Map<String, OAuthConsumer> _consumers = new HashMap<String, OAuthConsumer>();
     private Map<String, EntandoOAuthAccessor> _authorizedTokensCache = new HashMap<String, EntandoOAuthAccessor>();
-    //private Map<String, OAuthAccessor> _unauthorizedTokensCache = new HashMap<String, OAuthAccessor>();
-
     private Integer _tokenTimeValidity;
-
     private IOAuthConsumerDAO _consumerDAO;
     private IOAuthTokenDAO _tokenDAO;
 

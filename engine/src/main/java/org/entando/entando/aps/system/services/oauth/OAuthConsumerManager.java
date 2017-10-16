@@ -16,6 +16,12 @@ package org.entando.entando.aps.system.services.oauth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
+import org.apache.oltu.oauth2.common.message.types.TokenType;
+import org.apache.oltu.oauth2.common.token.BasicOAuthToken;
 import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
 import org.entando.entando.aps.system.services.oauth.model.EntandoOAuthAccessor;
 import org.slf4j.Logger;
@@ -35,18 +41,18 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public class OAuthConsumerManager extends AbstractService implements IOAuthConsumerManager {
 
-	private static final Logger _logger = LoggerFactory.getLogger(OAuthConsumerManager.class);
+    private static final Logger _logger = LoggerFactory.getLogger(OAuthConsumerManager.class);
 
-	public void init() throws Exception {
-		_logger.debug("{} ready", this.getClass().getName());
-	}
+    public void init() throws Exception {
+        _logger.debug("{} ready", this.getClass().getName());
+    }
 
-	protected void release() {
-		super.release();
-		//this.getConsumers().clear();
-		//this.getUnauthorizedTokensCache().clear();
-		//this.getAuthorizedTokensCache().clear();
-	}
+    protected void release() {
+        super.release();
+        //this.getConsumers().clear();
+        //this.getUnauthorizedTokensCache().clear();
+        //this.getAuthorizedTokensCache().clear();
+    }
 
 	/*
     public OAuthConsumer getConsumer(OAuthMessage requestMessage) throws IOException, OAuthProblemException {
@@ -156,47 +162,35 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
         }
     }
 	 */
- /*
-    public synchronized void generateAccessToken(OAuthAccessor accessor) throws OAuthException {
+
+    public synchronized void generateAccessToken(String clientId, String tokenType) {
         try {
-            String requestToken = accessor.requestToken;
-            OAuthAccessor unauthorizedAccessor = this.getUnauthorizedTokensCache().get(requestToken);
-            if (null == unauthorizedAccessor) {
-                throw new OAuthException("Invalid token");
-            }
-            Object authorized = unauthorizedAccessor.getProperty("authorized");
-            if (null == authorized || !authorized.equals(Boolean.TRUE)) {
-                throw new OAuthException("Unauthorized token");
-            }
-            String username = (String) unauthorizedAccessor.getProperty("user");
-            String consumerKey = (String) accessor.consumer.getProperty("name");
-            String token_data = consumerKey + System.nanoTime();
-            String token = DigestUtils.md5Hex(token_data);
-            this.getUnauthorizedTokensCache().remove(requestToken);
-            accessor.requestToken = null;
-            accessor.accessToken = token;
-            accessor.setProperty("user", username);
-            accessor.setProperty("authorized", Boolean.TRUE);
-            this.getTokenDAO().addAccessToken(accessor);
+
+            final OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+            final String accessToken = oauthIssuerImpl.accessToken();
+            final String authorizatgionCode = oauthIssuerImpl.authorizationCode();
+            final String refreshToken = oauthIssuerImpl.refreshToken();
+            BasicOAuthToken basicOAuthToken = new BasicOAuthToken(accessToken, tokenType);
+            this.getTokenDAO().addAccessToken(clientId, basicOAuthToken);
         } catch (Throwable t) {
-        	_logger.error("Error generating access token", t);
+            _logger.error("Error generating access token", t);
             //ApsSystemUtils.logThrowable(t, this, "generateAccessToken", "Error generating access token");
         }
     }
-	 */
- /*
-    public void handleException(Exception e, HttpServletRequest request,
-            HttpServletResponse response, boolean sendBody)
-            throws IOException, ServletException {
-        String realm = (request.isSecure()) ? "https://" : "http://";
-        realm += request.getLocalName();
-        OAuthServlet.handleException(response, e, realm, sendBody);
-    }
 
-    public OAuthValidator getOAuthValidator() {
-        return new SimpleOAuthValidator();
-    }
-	 */
+    /*
+       public void handleException(Exception e, HttpServletRequest request,
+               HttpServletResponse response, boolean sendBody)
+               throws IOException, ServletException {
+           String realm = (request.isSecure()) ? "https://" : "http://";
+           realm += request.getLocalName();
+           OAuthServlet.handleException(response, e, realm, sendBody);
+       }
+
+       public OAuthValidator getOAuthValidator() {
+           return new SimpleOAuthValidator();
+       }
+        */
  /*
     public void deleteMyAccessToken(Properties properties) throws Throwable {
         try {
@@ -215,67 +209,67 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
         }
     }
 	 */
-	public ConsumerRecordVO getConsumerRecord(String consumerKey) throws ApsSystemException {
-		ConsumerRecordVO consumer = null;
-		try {
-			consumer = this.getConsumerDAO().getConsumerRecord(consumerKey);
-		} catch (Throwable t) {
-			_logger.error("Error extracting consumer record by key {}", consumerKey, t);
-			//ApsSystemUtils.logThrowable(t, this, "getConsumerRecord", "Error extracting consumer record by key " + consumerKey);
-			throw new ApsSystemException("Error extracting consumer record by key " + consumerKey, t);
-		}
-		return consumer;
-	}
+    public ConsumerRecordVO getConsumerRecord(String consumerKey) throws ApsSystemException {
+        ConsumerRecordVO consumer = null;
+        try {
+            consumer = this.getConsumerDAO().getConsumerRecord(consumerKey);
+        } catch (Throwable t) {
+            _logger.error("Error extracting consumer record by key {}", consumerKey, t);
+            //ApsSystemUtils.logThrowable(t, this, "getConsumerRecord", "Error extracting consumer record by key " + consumerKey);
+            throw new ApsSystemException("Error extracting consumer record by key " + consumerKey, t);
+        }
+        return consumer;
+    }
 
-	public void addConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
-		try {
-			this.getConsumerDAO().addConsumer(consumer);
-		} catch (Throwable t) {
-			_logger.error("Error adding consumer", t);
-			//ApsSystemUtils.logThrowable(t, this, "addConsumer", "Error adding consumer");
-			throw new ApsSystemException("Error adding consumer", t);
-		}
-	}
+    public void addConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
+        try {
+            this.getConsumerDAO().addConsumer(consumer);
+        } catch (Throwable t) {
+            _logger.error("Error adding consumer", t);
+            //ApsSystemUtils.logThrowable(t, this, "addConsumer", "Error adding consumer");
+            throw new ApsSystemException("Error adding consumer", t);
+        }
+    }
 
-	public void updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
-		try {
-			this.getConsumerDAO().updateConsumer(consumer);
-		} catch (Throwable t) {
-			_logger.error("Error updating consumer", t);
-			//ApsSystemUtils.logThrowable(t, this, "updateConsumer", "Error updating consumer");
-			throw new ApsSystemException("Error updating consumer", t);
-		}
-	}
+    public void updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
+        try {
+            this.getConsumerDAO().updateConsumer(consumer);
+        } catch (Throwable t) {
+            _logger.error("Error updating consumer", t);
+            //ApsSystemUtils.logThrowable(t, this, "updateConsumer", "Error updating consumer");
+            throw new ApsSystemException("Error updating consumer", t);
+        }
+    }
 
-	public void deleteConsumer(String consumerKey) throws ApsSystemException {
-		try {
-			this.getConsumerDAO().deleteConsumer(consumerKey);
-		} catch (Throwable t) {
-			_logger.error("Error deleting consumer record by key {}", consumerKey, t);
-			//ApsSystemUtils.logThrowable(t, this, "getConsumerRecord", "Error deleting consumer record by key " + consumerKey);
-			throw new ApsSystemException("Error deleting consumer record by key " + consumerKey, t);
-		}
-	}
+    public void deleteConsumer(String consumerKey) throws ApsSystemException {
+        try {
+            this.getConsumerDAO().deleteConsumer(consumerKey);
+        } catch (Throwable t) {
+            _logger.error("Error deleting consumer record by key {}", consumerKey, t);
+            //ApsSystemUtils.logThrowable(t, this, "getConsumerRecord", "Error deleting consumer record by key " + consumerKey);
+            throw new ApsSystemException("Error deleting consumer record by key " + consumerKey, t);
+        }
+    }
 
-	public List<String> getConsumerKeys(FieldSearchFilter[] filters) throws ApsSystemException {
-		List<String> consumerKeys = null;
-		try {
-			consumerKeys = this.getConsumerDAO().getConsumerKeys(filters);
-		} catch (Throwable t) {
-			_logger.error("Error extracting consumer keys", t);
-			//ApsSystemUtils.logThrowable(t, this, "getConsumerKeys", "Error extracting consumer keys");
-			throw new ApsSystemException("Error extracting consumer keys", t);
-		}
-		return consumerKeys;
-	}
+    public List<String> getConsumerKeys(FieldSearchFilter[] filters) throws ApsSystemException {
+        List<String> consumerKeys = null;
+        try {
+            consumerKeys = this.getConsumerDAO().getConsumerKeys(filters);
+        } catch (Throwable t) {
+            _logger.error("Error extracting consumer keys", t);
+            //ApsSystemUtils.logThrowable(t, this, "getConsumerKeys", "Error extracting consumer keys");
+            throw new ApsSystemException("Error extracting consumer keys", t);
+        }
+        return consumerKeys;
+    }
 
-	/*
+    /*
     public Map<String, Integer> getTokenOccurrencesByConsumer() throws ApsSystemException {
         Map<String, Integer> occurrences = null;
         try {
             occurrences = this.getTokenDAO().getOccurrencesByConsumer();
         } catch (Throwable t) {
-        	_logger.error("Error extracting token occurrences", t);
+            _logger.error("Error extracting token occurrences", t);
             //ApsSystemUtils.logThrowable(t, this, "getTokenOccurrencesByConsumer", "Error extracting token occurrences");
             throw new ApsSystemException("Error extracting token occurrences", t);
         }
@@ -295,41 +289,41 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
     protected Map<String, OAuthAccessor> getUnauthorizedTokensCache() {
         return _unauthorizedTokensCache;
     }
-	 */
-	protected Integer getTokenTimeValidity() {
-		if (null == this._tokenTimeValidity) {
-			return 365;
-		}
-		return _tokenTimeValidity;
-	}
+     */
+    protected Integer getTokenTimeValidity() {
+        if (null == this._tokenTimeValidity) {
+            return 365;
+        }
+        return _tokenTimeValidity;
+    }
 
-	public void setTokenTimeValidity(Integer tokenTimeValidity) {
-		this._tokenTimeValidity = tokenTimeValidity;
-	}
+    public void setTokenTimeValidity(Integer tokenTimeValidity) {
+        this._tokenTimeValidity = tokenTimeValidity;
+    }
 
-	protected IOAuthConsumerDAO getConsumerDAO() {
-		return _consumerDAO;
-	}
+    protected IOAuthConsumerDAO getConsumerDAO() {
+        return _consumerDAO;
+    }
 
-	public void setConsumerDAO(IOAuthConsumerDAO consumerDAO) {
-		this._consumerDAO = consumerDAO;
-	}
+    public void setConsumerDAO(IOAuthConsumerDAO consumerDAO) {
+        this._consumerDAO = consumerDAO;
+    }
 
-	protected IOAuthTokenDAO getTokenDAO() {
-		return _tokenDAO;
-	}
+    protected IOAuthTokenDAO getTokenDAO() {
+        return _tokenDAO;
+    }
 
-	public void setTokenDAO(IOAuthTokenDAO tokenDAO) {
-		this._tokenDAO = tokenDAO;
-	}
+    public void setTokenDAO(IOAuthTokenDAO tokenDAO) {
+        this._tokenDAO = tokenDAO;
+    }
 
-	//private Map<String, OAuthConsumer> _consumers = new HashMap<String, OAuthConsumer>();
-	private Map<String, EntandoOAuthAccessor> _authorizedTokensCache = new HashMap<String, EntandoOAuthAccessor>();
-	//private Map<String, OAuthAccessor> _unauthorizedTokensCache = new HashMap<String, OAuthAccessor>();
+    //private Map<String, OAuthConsumer> _consumers = new HashMap<String, OAuthConsumer>();
+    private Map<String, EntandoOAuthAccessor> _authorizedTokensCache = new HashMap<String, EntandoOAuthAccessor>();
+    //private Map<String, OAuthAccessor> _unauthorizedTokensCache = new HashMap<String, OAuthAccessor>();
 
-	private Integer _tokenTimeValidity;
+    private Integer _tokenTimeValidity;
 
-	private IOAuthConsumerDAO _consumerDAO;
-	private IOAuthTokenDAO _tokenDAO;
+    private IOAuthConsumerDAO _consumerDAO;
+    private IOAuthTokenDAO _tokenDAO;
 
 }

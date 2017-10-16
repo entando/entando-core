@@ -13,13 +13,15 @@
  */
 package org.entando.entando.aps.system.services.oauth;
 
+import org.apache.oltu.oauth2.common.token.OAuthToken;
+
 /**
  * @author E.Santoboni
  */
 public interface IOAuthTokenDAO {
-	/*
-    public void addAccessToken(OAuthAccessor accessor);
 
+    void addAccessToken(final String clientId, final OAuthToken accessor);
+/*
     public void refreshAccessTokens(String tokenToUpdate, int tokenTimeValidity);
 
     public EntandoOAuthAccessor getAccessor(String accessToken, OAuthConsumer consumer);

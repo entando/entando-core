@@ -28,11 +28,6 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
 
     private static final Logger _logger = LoggerFactory.getLogger(OAuthTokenDAO.class);
 
-/*
-	    "INSERT INTO api_oauth_tokens (accesstoken, clientid, tokentype, expiresin, refreshtoken, scope) " +
-                "VALUES (? , ? , ? , ? , ? , ? )
-*/
-
     public void addAccessToken(String clientId, OAuthToken accessor) {
         Connection conn = null;
         PreparedStatement stat = null;

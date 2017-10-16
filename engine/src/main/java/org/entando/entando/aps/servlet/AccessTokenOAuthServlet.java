@@ -13,12 +13,24 @@
  */
 package org.entando.entando.aps.servlet;
 
-import java.io.IOException;
+import com.agiletec.aps.system.SystemConstants;
+import org.apache.oltu.oauth2.common.OAuth;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.OAuthResponse;
+import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
+import org.apache.oltu.oauth2.common.utils.OAuthUtils;
+import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
+import org.apache.oltu.oauth2.rs.response.OAuthRSResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+
+import static com.agiletec.aps.system.SystemConstants.*;
 
 /**
  * Access Token request handler Special thanks to Praveen Alavilli and OAuth
@@ -62,6 +74,22 @@ public class AccessTokenOAuthServlet extends HttpServlet {
             consumerManager.handleException(e, request, response, true);
         }
 		 */
+
+
+		// Make the OAuth Request out of this request and validate it
+		try {
+			OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.BODY, ParameterStyle.QUERY, ParameterStyle.HEADER);
+			// Get the access token
+			final String accessToken = oauthRequest.getAccessToken();
+
+
+
+		} catch (OAuthSystemException e) {
+			e.printStackTrace();
+		} catch (OAuthProblemException e) {
+			e.printStackTrace();
+		}
 	}
+
 
 }

@@ -24,49 +24,68 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = ApiOAuthToken.TABLE_NAME)
 public class ApiOAuthToken {
-	
-	public ApiOAuthToken() {}
-	
-	@DatabaseField(columnName = "accesstoken", 
-			dataType = DataType.STRING, 
-			width = 100, 
-			canBeNull = false, id = true)
-	private String _accessToken;
-	
-	@DatabaseField(columnName = "tokensecret", 
-			dataType = DataType.STRING, 
-			width = 100, 
-			canBeNull = false)
-	private String _tokenSecret;
-	
-	@DatabaseField(columnName = "consumerkey", 
-			dataType = DataType.STRING, 
-			width = 100, 
-			canBeNull = false)
-	private String _consumerKey;
-	
-	@DatabaseField(columnName = "lastaccess", 
-			dataType = DataType.DATE, 
-			canBeNull = false)
-	private Date _lastAccess;
-	
-	@DatabaseField(columnName = "username", 
-			dataType = DataType.STRING, 
-			width = 40, 
-			canBeNull = false)
-	private String _username;
-	
-	public static final String TABLE_NAME = "api_oauth_tokens";
-	
+
+    public ApiOAuthToken() {
+    }
+
+    @DatabaseField(columnName = "accesstoken",
+            dataType = DataType.STRING,
+            width = 100,
+            canBeNull = false, id = true)
+    private String _accessToken;
+
+    @DatabaseField(columnName = "clientid",
+            dataType = DataType.STRING,
+            width = 100,
+            canBeNull = false)
+    private String _clientId;
+
+
+    @DatabaseField(columnName = "tokentype",
+            dataType = DataType.STRING,
+            width = 100,
+            canBeNull = false, id = true)
+    private String _tokenType;
+
+    @DatabaseField(columnName = "expiresin",
+            dataType = DataType.DATE,
+            width = 100,
+            canBeNull = false)
+    private String _expiresin;
+
+
+    @DatabaseField(columnName = "refreshtoken",
+            dataType = DataType.STRING,
+            canBeNull = false)
+    private Date _refreshToken;
+
+    @DatabaseField(columnName = "scope",
+            dataType = DataType.STRING,
+            width = 40,
+            canBeNull = false)
+    private String _scope;
+
+
+    public static final String TABLE_NAME = "api_oauth_tokens";
+
 }
 /*
+
+	protected String accessToken;
+    protected String tokenType;
+    protected Long expiresIn;
+    protected String refreshToken;
+    protected String scope;
+
+
 CREATE TABLE api_oauth_tokens
 (
   accesstoken character(100) NOT NULL,
-  tokensecret character varying(100) NOT NULL,
-  consumerkey character varying(100) NOT NULL,
-  lastaccess date NOT NULL,
-  username character varying(40) NOT NULL,
+  clientid character varying(100) NOT NULL,
+  tokentype character varying(100) NOT NULL,
+  expiresin date NOT NULL,
+  refreshtoken character varying(40) NOT NULL,
+  scope character varying(100) NOT NULL
   CONSTRAINT api_oauth_tokens_pkey PRIMARY KEY (accesstoken )
 )
 */

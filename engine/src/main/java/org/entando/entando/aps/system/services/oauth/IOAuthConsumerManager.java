@@ -60,10 +60,12 @@ public interface IOAuthConsumerManager {
 	//public void markAsAuthorized(OAuthAccessor accessor, String username) throws OAuthException;
 	//public void handleException(Exception e, HttpServletRequest request,
 	//        HttpServletResponse response, boolean sendBody) throws IOException, ServletException;
-	public static final String CONSUMER_KEY_FILTER_KEY = "consumerkey";
-	public static final String CONSUMER_SECRET_FILTER_KEY = "consumersecret";
-	public static final String CONSUMER_DESCRIPTION_FILTER_KEY = "description";
-	public static final String CONSUMER_CALLBACKURL_FILTER_KEY = "callbackurl";
-	public static final String CONSUMER_EXPIRATIONDATE_FILTER_KEY = "expirationdate";
+	String CLIENT_ID_FILTER_KEY = "clientid";
+	String CONSUMER_KEY_FILTER_KEY = "consumerkey";
+	String CONSUMER_SECRET_FILTER_KEY = "consumersecret";
+	String CONSUMER_DESCRIPTION_FILTER_KEY = "description";
+	String CONSUMER_CALLBACKURL_FILTER_KEY = "callbackurl";
+	String CONSUMER_EXPIRATIONDATE_FILTER_KEY = "expirationdate";
+	String CONSUMER_ISSUEDDATE_FILTER_KEY = "issueddate";
 
 }

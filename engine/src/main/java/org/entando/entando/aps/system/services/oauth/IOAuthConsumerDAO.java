@@ -15,6 +15,8 @@ package org.entando.entando.aps.system.services.oauth;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import java.util.List;
+
+import org.apache.oltu.oauth2.common.domain.client.ClientInfo;
 import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
 
 /**
@@ -22,15 +24,15 @@ import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
  */
 public interface IOAuthConsumerDAO {
 
-	public List<String> getConsumerKeys(FieldSearchFilter[] filters);
+	List<String> getConsumerKeys(FieldSearchFilter[] filters);
 
-	public ConsumerRecordVO getConsumerRecord(String consumerKey);
+	ConsumerRecordVO getConsumerRecord(String clientId);
 
-	public void addConsumer(ConsumerRecordVO consumer);
+	void addConsumer(ConsumerRecordVO consumer);
 
-	public void updateConsumer(ConsumerRecordVO consumer);
+	void updateConsumer(ConsumerRecordVO consumer);
 
-	public void deleteConsumer(String consumerKey);
+	void deleteConsumer(String clientId);
 
-	//public OAuthConsumer getConsumer(String consumerKey);
+	ClientInfo getConsumer(String clientId);
 }

@@ -73,6 +73,7 @@
 		<spring.version>4.1.6.RELEASE</spring.version>
 		<struts2.version>2.5.10.1</struts2.version>
 		<cxf.version>2.7.14</cxf.version>
+		<oltu.version>1.0.2</oltu.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -153,6 +154,47 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.common</artifactId>
+			<version>${oltu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.client</artifactId>
+			<version>${oltu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+			<version>${oltu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.httpclient4</artifactId>
+			<version>${oltu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+			<version>${oltu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.dynamicreg.client</artifactId>
+			<version>${oltu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.dynamicreg.server</artifactId>
+			<version>${oltu.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>

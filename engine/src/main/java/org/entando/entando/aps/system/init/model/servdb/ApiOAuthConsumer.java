@@ -24,45 +24,57 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = ApiOAuthConsumer.TABLE_NAME)
 public class ApiOAuthConsumer {
-	
+
+	@DatabaseField(columnName = "clientid",
+			dataType = DataType.STRING,
+			width = 100,
+			canBeNull = false, id = true)
+	private String _clientId;
+
 	public ApiOAuthConsumer() {}
-	
-	@DatabaseField(columnName = "consumerkey", 
+	@DatabaseField(columnName = "consumerkey",
 			dataType = DataType.STRING, 
 			width = 100, 
-			canBeNull = false, id = true)
+			canBeNull = false)
 	private String _consumerKey;
-	
-	@DatabaseField(columnName = "consumersecret", 
+
+	@DatabaseField(columnName = "consumersecret",
 			dataType = DataType.STRING, 
 			width = 100, 
 			canBeNull = false)
 	private String _consumerSecret;
-	
-	@DatabaseField(columnName = "description", 
+
+	@DatabaseField(columnName = "description",
 			dataType = DataType.LONG_STRING, 
 			canBeNull = false)
 	private String _description;
-	
-	@DatabaseField(columnName = "callbackurl", 
+
+	@DatabaseField(columnName = "callbackurl",
 			dataType = DataType.LONG_STRING)
 	private String _callbackUrl;
-	
-	@DatabaseField(columnName = "expirationdate", 
+
+	@DatabaseField(columnName = "expirationdate",
 			dataType = DataType.DATE)
 	private Date _expirationDate;
-	
+
+	@DatabaseField(columnName = "issueddate",
+			dataType = DataType.DATE)
+	private Date _issuedDate;
+
+
 	public static final String TABLE_NAME = "api_oauth_consumers";
 	
 }
 /*
 CREATE TABLE api_oauth_consumers
 (
+  clientid character varying(100) NOT NULL,
   consumerkey character varying(100) NOT NULL,
   consumersecret character varying(100) NOT NULL,
   description character varying(500) NOT NULL,
   callbackurl character varying(500),
   expirationdate date,
-  CONSTRAINT api_oauth_consumers_pkey PRIMARY KEY (consumerkey )
+  issueddate date
+  CONSTRAINT api_oauth_consumers_pkey PRIMARY KEY (clientid )
 )
 */

@@ -180,23 +180,32 @@ public class OAuthTokenDAO extends AbstractDAO implements IOAuthTokenDAO {
         return occurrences;
     }
 
+
+    protected String accessToken;
+    protected String tokenType;
+    protected Long expiresIn;
+    protected String refreshToken;
+    protected String scope;
+
+
+*/
     private String INSERT_TOKEN =
-            "INSERT INTO api_oauth_tokens (accesstoken, tokensecret, consumerkey, username, lastaccess) " +
-            "VALUES (? , ? , ? , ? , ? )";
+            "INSERT INTO api_oauth_tokens (accesstoken, clientid, tokentype, expiresin, refreshtoken, scope) " +
+            "VALUES (? , ? , ? , ? , ? , ? )";
 
     private String UPDATE_TOKEN =
-            "UPDATE api_oauth_tokens SET lastaccess = ? WHERE accesstoken = ?";
+            "UPDATE api_oauth_tokens SET expiresin = ? WHERE accesstoken = ?";
 
     private String DELETE_OLD_TOKENS =
-            "DELETE FROM api_oauth_tokens WHERE lastaccess < ?";
+            "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
 
     private String SELECT_TOKEN =
-            "SELECT tokensecret, username, lastaccess " +
-            "FROM api_oauth_tokens WHERE accesstoken = ? AND consumerkey = ?";
+            "SELECT tokentype, expiresin, refreshtoken, scope " +
+            "FROM api_oauth_tokens WHERE accesstoken = ? AND clientid = ?";
 
     private String SELECT_OCCURRENCES =
             "SELECT consumerkey, count(consumerkey) FROM api_oauth_tokens GROUP BY consumerkey";
 
-    private String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE username = ? AND accesstoken = ? AND consumerkey = ?";
-	 */
+    private String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE accesstoken = ? AND clientid = ?";
+
 }

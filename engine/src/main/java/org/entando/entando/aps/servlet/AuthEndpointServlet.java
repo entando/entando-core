@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
@@ -35,7 +34,11 @@ public class AuthEndpointServlet extends HttpServlet {
         OAuthAuthzRequest oauthRequest = null;
         OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         try {
-            oauthRequest = new OAuthAuthzRequest(request);
+            try {
+                oauthRequest = new OAuthAuthzRequest(request);
+            } catch (OAuthSystemException e) {
+                e.printStackTrace();
+            }
             validateClient(oauthRequest, request);
 
             //build response according to response_type
@@ -64,12 +67,17 @@ public class AuthEndpointServlet extends HttpServlet {
             String redirectUri = e.getRedirectUri();
 
             if (OAuthUtils.isEmpty(redirectUri)) {
-                throw new WebApplicationException(
-                        responseBuilder.entity("OAuth callback url needs to be provided by client!!!").build());
+
+                try {
+                    throw OAuthUtils.handleBadContentTypeException("OAuth callback url needs to be provided by client!!!");
+                } catch (OAuthProblemException e1) {
+                    e1.printStackTrace();
+                }
             }
             final OAuthResponse resp;
             try {
-                resp = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND)
+                resp = OAuthASResponse
+                        .errorResponse(HttpServletResponse.SC_FOUND)
                         .error(e)
                         .location(redirectUri).buildQueryMessage();
                 response.sendRedirect(resp.getLocationUri());
@@ -77,14 +85,16 @@ public class AuthEndpointServlet extends HttpServlet {
             } catch (OAuthSystemException e1) {
                 e1.printStackTrace();
             }
-
         } catch (OAuthSystemException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+
     }
 
-    private void validateClient(final OAuthAuthzRequest oauthRequest, HttpServletRequest request) throws ServletException {
+    private void validateClient(final OAuthAuthzRequest oauthRequest, HttpServletRequest request) throws OAuthProblemException, ServletException {
         final IApiOAuth2ClientDetailManager clientDetailManager =
                 (IApiOAuth2ClientDetailManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_CONSUMER_MANAGER, request);
         final String clientId = oauthRequest.getClientId();
@@ -95,7 +105,7 @@ public class AuthEndpointServlet extends HttpServlet {
                 boolean check = clientDetail.getClientId().equals(oauthRequest.getClientId()) &&
                         clientDetail.getRedirectUri().equals(oauthRequest.getRedirectURI());
                 if (!check) {
-                    throw new ServletException("Error in the request paramaters clientid and redirecturi");
+                    throw OAuthUtils.handleOAuthProblemException("Error in the request paramaters clientid and redirecturi");
                 }
 
             }

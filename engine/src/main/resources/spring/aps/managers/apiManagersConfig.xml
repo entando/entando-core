@@ -1,49 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		xmlns:context="http://www.springframework.org/schema/context"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
-    
-    <bean id="ApiResponseBuilder" class="org.entando.entando.aps.system.services.api.server.ResponseBuilder" >
-        <property name="apiCatalogManager" ref="ApiCatalogManager" />
-        <property name="velocityRenderer" >
-            <bean class="com.agiletec.aps.system.common.renderer.DefaultVelocityRenderer" parent="abstractService" >
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <bean id="ApiResponseBuilder" class="org.entando.entando.aps.system.services.api.server.ResponseBuilder">
+        <property name="apiCatalogManager" ref="ApiCatalogManager"/>
+        <property name="velocityRenderer">
+            <bean class="com.agiletec.aps.system.common.renderer.DefaultVelocityRenderer" parent="abstractService">
                 <property name="wrapperContextName">
                     <value>item</value>
                 </property>
             </bean>
         </property>
     </bean>
-    
+
     <bean id="ApiCatalogManager" class="org.entando.entando.aps.system.services.api.ApiCatalogManager"
-			parent="abstractService" >
-        <property name="apiCatalogDAO" >
+          parent="abstractService">
+        <property name="apiCatalogDAO">
             <bean class="org.entando.entando.aps.system.services.api.ApiCatalogDAO">
-                <property name="dataSource" ref="servDataSource" />
+                <property name="dataSource" ref="servDataSource"/>
             </bean>
         </property>
     </bean>
-    
-    <bean id="ApiServiceInterface" class="org.entando.entando.aps.system.services.api.ApiServiceInterface" >
-        <property name="apiCatalogManager" ref="ApiCatalogManager" />
-        <property name="langManager" ref="LangManager" />
-        <property name="responseBuilder" ref="ApiResponseBuilder" />
-		<property name="authorizationManager" ref="AuthorizationManager" />
+
+    <bean id="ApiServiceInterface" class="org.entando.entando.aps.system.services.api.ApiServiceInterface">
+        <property name="apiCatalogManager" ref="ApiCatalogManager"/>
+        <property name="langManager" ref="LangManager"/>
+        <property name="responseBuilder" ref="ApiResponseBuilder"/>
+        <property name="authorizationManager" ref="AuthorizationManager"/>
     </bean>
-    
-    <bean id="OAuthConsumerManager" class="org.entando.entando.aps.system.services.oauth.OAuthConsumerManager" 
-            parent="abstractService" >
-        <property name="consumerDAO" >
+
+    <bean id="OAuthConsumerManager" class="org.entando.entando.aps.system.services.oauth.OAuthConsumerManager"
+          parent="abstractService">
+        <property name="consumerDAO">
             <bean class="org.entando.entando.aps.system.services.oauth.OAuthConsumerDAO">
-                <property name="dataSource" ref="servDataSource" />
+                <property name="dataSource" ref="servDataSource"/>
             </bean>
         </property>
-        <property name="tokenDAO" >
+        <property name="tokenDAO">
             <bean class="org.entando.entando.aps.system.services.oauth.OAuthTokenDAO">
-                <property name="dataSource" ref="servDataSource" />
+                <property name="dataSource" ref="servDataSource"/>
             </bean>
         </property>
     </bean>
-	
+
+    <bean id="OAuth2ClientDetailManager"
+          class="org.entando.entando.aps.system.services.oauth2.OAuth2ClientDetailManager"
+          parent="abstractService">
+        <property name="apiOAuth2ClientDetailDAO">
+            <bean class="org.entando.entando.aps.system.services.oauth2.ApiOAuth2ClientDetailDAO">
+                <property name="dataSource" ref="servDataSource"/>
+            </bean>
+        </property>
+
+    </bean>
+
+    <bean id="OAuth2AuthorizationCodeManager"
+          class="org.entando.entando.aps.system.services.oauth2.OAuth2AuthorizationCodeManager"
+          parent="abstractService">
+        <property name="apiOAuth2AuthorizationCodeDAO">
+            <bean class="org.entando.entando.aps.system.services.oauth2.OAuth2AuthorizationCodeDAO">
+                <property name="dataSource" ref="servDataSource"/>
+            </bean>
+        </property>
+
+    </bean>
+
+
 </beans>

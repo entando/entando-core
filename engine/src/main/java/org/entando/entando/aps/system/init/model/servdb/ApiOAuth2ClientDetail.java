@@ -12,11 +12,6 @@ public class ApiOAuth2ClientDetail {
     public ApiOAuth2ClientDetail() {
     }
 
-    @DatabaseField(columnName = "id",
-            dataType = DataType.INTEGER,
-            canBeNull = false, id = true)
-    private int _id;
-
     @DatabaseField(columnName = "name",
             dataType = DataType.LONG_STRING,
             canBeNull = true)
@@ -24,13 +19,24 @@ public class ApiOAuth2ClientDetail {
 
     @DatabaseField(columnName = "clientid",
             dataType = DataType.LONG_STRING,
-            canBeNull = true)
+            canBeNull = false, id=true)
     private String _clientId;
 
     @DatabaseField(columnName = "clientsecret",
             dataType = DataType.LONG_STRING,
             canBeNull = true)
     private String _clientSecret;
+
+
+    @DatabaseField(columnName = "scope",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _scope;
+
+    @DatabaseField(columnName = "authorizedgranttypes",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _authorizedGrantTypes;
 
     @DatabaseField(columnName = "redirecturi",
             dataType = DataType.LONG_STRING,
@@ -61,7 +67,6 @@ public class ApiOAuth2ClientDetail {
             dataType = DataType.DATE,
             canBeNull = true)
     private Date _expiresIn;
-
 
     public static final String TABLE_NAME = "api_oauth2client_detail";
 }

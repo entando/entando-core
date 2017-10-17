@@ -8,7 +8,7 @@ package org.entando.entando.aps.system.services.oauth2;
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import org.apache.commons.lang.StringUtils;
-import org.entando.entando.aps.system.services.oauth2.model.ApiOAuth2ClientDetail;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +28,12 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
 
     @Override
     protected String getMasterTableName() {
-        return "jpapioauth2clientdetail_apioauth2clientdetail";
+        return "api_oauth2client_detail";
     }
 
     @Override
     protected String getMasterTableIdFieldName() {
-        return "id";
+        return "clientId";
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
     }
 
     @Override
-    public List<Integer> searchApiOAuth2ClientDetails(FieldSearchFilter[] filters) {
+    public List<String> searchApiOAuth2ClientDetails(FieldSearchFilter[] filters) {
         List apiOAuth2ClientDetailsId = null;
         try {
             apiOAuth2ClientDetailsId = super.searchId(filters);
@@ -54,8 +54,8 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
     }
 
     @Override
-    public List<Integer> loadApiOAuth2ClientDetails() {
-        List<Integer> apiOAuth2ClientDetailsId = new ArrayList<Integer>();
+    public List<String> loadApiOAuth2ClientDetails() {
+        List<String> apiOAuth2ClientDetailsId = new ArrayList<String>();
         Connection conn = null;
         PreparedStatement stat = null;
         ResultSet res = null;
@@ -64,11 +64,11 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
             stat = conn.prepareStatement(LOAD_APIOAUTH2CLIENTDETAILS_ID);
             res = stat.executeQuery();
             while (res.next()) {
-                int id = res.getInt("id");
+                final String id = res.getString("clientId");
                 apiOAuth2ClientDetailsId.add(id);
             }
         } catch (Throwable t) {
-            _logger.error("Error loading ApiOAuth2ClientDetail list", t);
+            _logger.error("Error loading ApiOAuth2ClientDetail list",  t);
             throw new RuntimeException("Error loading ApiOAuth2ClientDetail list", t);
         } finally {
             closeDaoResources(res, stat, conn);
@@ -77,7 +77,7 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
     }
 
     @Override
-    public void insertApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail) {
+    public void insertApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail) {
         PreparedStatement stat = null;
         Connection conn = null;
         try {
@@ -94,17 +94,11 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
         }
     }
 
-    public void insertApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail, Connection conn) {
+    public void insertApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail, Connection conn) {
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(ADD_APIOAUTH2CLIENTDETAIL);
             int index = 1;
-            stat.setInt(index++, apiOAuth2ClientDetail.getId());
-            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getName())) {
-                stat.setString(index++, apiOAuth2ClientDetail.getName());
-            } else {
-                stat.setNull(index++, Types.VARCHAR);
-            }
             if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getClientId())) {
                 stat.setString(index++, apiOAuth2ClientDetail.getClientId());
             } else {
@@ -112,6 +106,16 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
             }
             if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getClientSecret())) {
                 stat.setString(index++, apiOAuth2ClientDetail.getClientSecret());
+            } else {
+                stat.setNull(index++, Types.VARCHAR);
+            }
+            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getScope())) {
+                stat.setString(index++, apiOAuth2ClientDetail.getScope());
+            } else {
+                stat.setNull(index++, Types.VARCHAR);
+            }
+            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getAuthorizedGrantTypes())) {
+                stat.setString(index++, apiOAuth2ClientDetail.getAuthorizedGrantTypes());
             } else {
                 stat.setNull(index++, Types.VARCHAR);
             }
@@ -157,7 +161,7 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
     }
 
     @Override
-    public void updateApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail) {
+    public void updateApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail) {
         PreparedStatement stat = null;
         Connection conn = null;
         try {
@@ -167,14 +171,14 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error updating apiOAuth2ClientDetail {}", apiOAuth2ClientDetail.getId(), t);
+            _logger.error("Error updating apiOAuth2ClientDetail {}", apiOAuth2ClientDetail.getClientId(), t);
             throw new RuntimeException("Error updating apiOAuth2ClientDetail", t);
         } finally {
             this.closeDaoResources(null, stat, conn);
         }
     }
 
-    public void updateApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail, Connection conn) {
+    public void updateApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail, Connection conn) {
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(UPDATE_APIOAUTH2CLIENTDETAIL);
@@ -185,13 +189,19 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
             } else {
                 stat.setNull(index++, Types.VARCHAR);
             }
-            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getClientId())) {
-                stat.setString(index++, apiOAuth2ClientDetail.getClientId());
+            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getClientSecret())) {
+                stat.setString(index++, apiOAuth2ClientDetail.getClientSecret());
             } else {
                 stat.setNull(index++, Types.VARCHAR);
             }
-            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getClientSecret())) {
-                stat.setString(index++, apiOAuth2ClientDetail.getClientSecret());
+            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getScope())) {
+                stat.setString(index++, apiOAuth2ClientDetail.getScope());
+            } else {
+                stat.setNull(index++, Types.VARCHAR);
+            }
+
+            if (StringUtils.isNotBlank(apiOAuth2ClientDetail.getAuthorizedGrantTypes())) {
+                stat.setString(index++, apiOAuth2ClientDetail.getAuthorizedGrantTypes());
             } else {
                 stat.setNull(index++, Types.VARCHAR);
             }
@@ -227,10 +237,10 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
             } else {
                 stat.setNull(index++, Types.DATE);
             }
-            stat.setInt(index++, apiOAuth2ClientDetail.getId());
+            stat.setString(index++, apiOAuth2ClientDetail.getClientId());
             stat.executeUpdate();
         } catch (Throwable t) {
-            _logger.error("Error updating apiOAuth2ClientDetail {}", apiOAuth2ClientDetail.getId(), t);
+            _logger.error("Error updating apiOAuth2ClientDetail {}", apiOAuth2ClientDetail.getClientId(), t);
             throw new RuntimeException("Error updating apiOAuth2ClientDetail", t);
         } finally {
             this.closeDaoResources(null, stat, null);
@@ -238,84 +248,85 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
     }
 
     @Override
-    public void removeApiOAuth2ClientDetail(int id) {
+    public void removeApiOAuth2ClientDetail(final String clientId) {
         PreparedStatement stat = null;
         Connection conn = null;
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
-            this.removeApiOAuth2ClientDetail(id, conn);
+            this.removeApiOAuth2ClientDetail(clientId, conn);
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error deleting apiOAuth2ClientDetail {}", id, t);
+            _logger.error("Error deleting apiOAuth2ClientDetail {}", clientId, t);
             throw new RuntimeException("Error deleting apiOAuth2ClientDetail", t);
         } finally {
             this.closeDaoResources(null, stat, conn);
         }
     }
 
-    public void removeApiOAuth2ClientDetail(int id, Connection conn) {
+    public void removeApiOAuth2ClientDetail(final String clientId, Connection conn) {
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(DELETE_APIOAUTH2CLIENTDETAIL);
             int index = 1;
-            stat.setInt(index++, id);
+            stat.setString(index++, clientId);
             stat.executeUpdate();
         } catch (Throwable t) {
-            _logger.error("Error deleting apiOAuth2ClientDetail {}", id, t);
+            _logger.error("Error deleting apiOAuth2ClientDetail {}", clientId, t);
             throw new RuntimeException("Error deleting apiOAuth2ClientDetail", t);
         } finally {
             this.closeDaoResources(null, stat, null);
         }
     }
 
-    public ApiOAuth2ClientDetail loadApiOAuth2ClientDetail(int id) {
-        ApiOAuth2ClientDetail apiOAuth2ClientDetail = null;
+    public OAuth2ClientDetail loadApiOAuth2ClientDetail(final String clientId) {
+        OAuth2ClientDetail apiOAuth2ClientDetail = null;
         Connection conn = null;
         PreparedStatement stat = null;
         ResultSet res = null;
         try {
             conn = this.getConnection();
-            apiOAuth2ClientDetail = this.loadApiOAuth2ClientDetail(id, conn);
+            apiOAuth2ClientDetail = this.loadApiOAuth2ClientDetail(clientId, conn);
         } catch (Throwable t) {
-            _logger.error("Error loading apiOAuth2ClientDetail with id {}", id, t);
-            throw new RuntimeException("Error loading apiOAuth2ClientDetail with id " + id, t);
+            _logger.error("Error loading apiOAuth2ClientDetail with id {}", clientId, t);
+            throw new RuntimeException("Error loading apiOAuth2ClientDetail with id " + clientId, t);
         } finally {
             closeDaoResources(res, stat, conn);
         }
         return apiOAuth2ClientDetail;
     }
 
-    public ApiOAuth2ClientDetail loadApiOAuth2ClientDetail(int id, Connection conn) {
-        ApiOAuth2ClientDetail apiOAuth2ClientDetail = null;
+    public OAuth2ClientDetail loadApiOAuth2ClientDetail(final String clientId, Connection conn) {
+        OAuth2ClientDetail apiOAuth2ClientDetail = null;
         PreparedStatement stat = null;
         ResultSet res = null;
         try {
             stat = conn.prepareStatement(LOAD_APIOAUTH2CLIENTDETAIL);
             int index = 1;
-            stat.setInt(index++, id);
+            stat.setString(index++, clientId);
             res = stat.executeQuery();
             if (res.next()) {
                 apiOAuth2ClientDetail = this.buildApiOAuth2ClientDetailFromRes(res);
             }
         } catch (Throwable t) {
-            _logger.error("Error loading apiOAuth2ClientDetail with id {}", id, t);
-            throw new RuntimeException("Error loading apiOAuth2ClientDetail with id " + id, t);
+            _logger.error("Error loading apiOAuth2ClientDetail with id {}", clientId, t);
+            throw new RuntimeException("Error loading apiOAuth2ClientDetail with id " + clientId, t);
         } finally {
             closeDaoResources(res, stat, null);
         }
         return apiOAuth2ClientDetail;
     }
 
-    protected ApiOAuth2ClientDetail buildApiOAuth2ClientDetailFromRes(ResultSet res) {
-        ApiOAuth2ClientDetail apiOAuth2ClientDetail = null;
+    protected OAuth2ClientDetail buildApiOAuth2ClientDetailFromRes(ResultSet res) {
+        OAuth2ClientDetail apiOAuth2ClientDetail = null;
         try {
-            apiOAuth2ClientDetail = new ApiOAuth2ClientDetail();
-            apiOAuth2ClientDetail.setId(res.getInt("id"));
+            apiOAuth2ClientDetail = new OAuth2ClientDetail();
             apiOAuth2ClientDetail.setName(res.getString("name"));
             apiOAuth2ClientDetail.setClientId(res.getString("clientid"));
             apiOAuth2ClientDetail.setClientSecret(res.getString("clientsecret"));
+            apiOAuth2ClientDetail.setScope(res.getString("scope"));
+            apiOAuth2ClientDetail.setAuthorizedGrantTypes(res.getString("authorizedgranttypes"));
             apiOAuth2ClientDetail.setRedirectUri(res.getString("redirecturi"));
             apiOAuth2ClientDetail.setClientUri(res.getString("clienturi"));
             apiOAuth2ClientDetail.setDescription(res.getString("description"));
@@ -334,14 +345,13 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
         return apiOAuth2ClientDetail;
     }
 
-    private static final String ADD_APIOAUTH2CLIENTDETAIL = "INSERT INTO jpapioauth2clientdetail_apioauth2clientdetail (id, name, clientid, clientsecret, redirecturi, clienturi, description, iconuri, issuedat, expiresin ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+    private static final String ADD_APIOAUTH2CLIENTDETAIL = "INSERT INTO api_oauth2client_detail (name, clientid, clientsecret,scope,authorizedgranttypes, redirecturi, clienturi, description, iconuri, issuedat, expiresin ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?  )";
 
-    private static final String UPDATE_APIOAUTH2CLIENTDETAIL = "UPDATE jpapioauth2clientdetail_apioauth2clientdetail SET  name=?,  clientid=?,  clientsecret=?,  redirecturi=?,  clienturi=?,  description=?,  iconuri=?,  issuedat=?, expiresin=? WHERE id = ?";
+    private static final String UPDATE_APIOAUTH2CLIENTDETAIL = "UPDATE api_oauth2client_detail SET  name=?, clientsecret=?,scope = ? ,authorizedgranttypes = ? redirecturi=?,  clienturi=?,  description=?,  iconuri=?,  issuedat=?, expiresin=? WHERE clientid = ?";
 
-    private static final String DELETE_APIOAUTH2CLIENTDETAIL = "DELETE FROM jpapioauth2clientdetail_apioauth2clientdetail WHERE id = ?";
+    private static final String DELETE_APIOAUTH2CLIENTDETAIL = "DELETE FROM api_oauth2client_detail WHERE clientid = ?";
 
-    private static final String LOAD_APIOAUTH2CLIENTDETAIL = "SELECT id, name, clientid, clientsecret, redirecturi, clienturi, description, iconuri, issuedat, expiresin  FROM jpapioauth2clientdetail_apioauth2clientdetail WHERE id = ?";
+    private static final String LOAD_APIOAUTH2CLIENTDETAIL = "SELECT name, clientid, clientsecret, redirecturi, clienturi, description, iconuri, issuedat, expiresin  FROM api_oauth2client_detail WHERE clientid = ?";
 
-    private static final String LOAD_APIOAUTH2CLIENTDETAILS_ID = "SELECT id FROM jpapioauth2clientdetail_apioauth2clientdetail";
-
+    private static final String LOAD_APIOAUTH2CLIENTDETAILS_ID  = "SELECT clientid FROM api_oauth2client_detail";
 }

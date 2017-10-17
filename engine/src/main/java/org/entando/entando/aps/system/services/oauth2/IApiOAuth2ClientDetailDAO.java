@@ -5,24 +5,24 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import java.util.List;
-import java.util.Date;
 import com.agiletec.aps.system.common.FieldSearchFilter;
-import org.entando.entando.aps.system.services.oauth2.model.ApiOAuth2ClientDetail;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
+
+import java.util.List;
 
 public interface IApiOAuth2ClientDetailDAO {
 
-	List<Integer> searchApiOAuth2ClientDetails(FieldSearchFilter[] filters);
-	
-	ApiOAuth2ClientDetail loadApiOAuth2ClientDetail(int id);
+    List<String> searchApiOAuth2ClientDetails(FieldSearchFilter[] filters);
 
-	List<Integer> loadApiOAuth2ClientDetails();
+    List<String> loadApiOAuth2ClientDetails();
 
-	void removeApiOAuth2ClientDetail(int id);
-	
-	void updateApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail);
+    OAuth2ClientDetail loadApiOAuth2ClientDetail(final String id);
 
-	void insertApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail);
-	
+    void removeApiOAuth2ClientDetail(final String clientId);
+
+    void updateApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail);
+
+    void insertApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail);
+
 
 }

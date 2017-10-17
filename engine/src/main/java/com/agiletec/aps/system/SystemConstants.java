@@ -234,6 +234,8 @@ public interface SystemConstants {
 
     public static final String OAUTH_CONSUMER_MANAGER = "OAuthConsumerManager";
 
+    public static final String OAUTH2_CONSUMER_MANAGER = "OAuth2ClientDetailManager";
+
     /**
      * Prefisso del nome del gruppo di oggetti in cache a servizio di una
      * pagina. Il nome và completato con il codice della pagina specifica.

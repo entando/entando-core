@@ -5,7 +5,7 @@
  */
 package org.entando.entando.aps.system.services.oauth2.api;
 
-import org.entando.entando.aps.system.services.oauth2.model.ApiOAuth2ClientDetail;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
 
 import java.util.Date;
 
@@ -22,7 +22,7 @@ public class JAXBApiOAuth2ClientDetail {
         super();
     }
 
-    public JAXBApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail) {
+    public JAXBApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail) {
 		this.setId(apiOAuth2ClientDetail.getId());
 		this.setName(apiOAuth2ClientDetail.getName());
 		this.setClientId(apiOAuth2ClientDetail.getClientId());
@@ -35,8 +35,8 @@ public class JAXBApiOAuth2ClientDetail {
 		this.setExpiresIn(apiOAuth2ClientDetail.getExpiresIn());
     }
     
-    public ApiOAuth2ClientDetail getApiOAuth2ClientDetail() {
-    	ApiOAuth2ClientDetail apiOAuth2ClientDetail = new ApiOAuth2ClientDetail();
+    public OAuth2ClientDetail getApiOAuth2ClientDetail() {
+    	OAuth2ClientDetail apiOAuth2ClientDetail = new OAuth2ClientDetail();
 		apiOAuth2ClientDetail.setId(this.getId());
 		apiOAuth2ClientDetail.setName(this.getName());
 		apiOAuth2ClientDetail.setClientId(this.getClientId());

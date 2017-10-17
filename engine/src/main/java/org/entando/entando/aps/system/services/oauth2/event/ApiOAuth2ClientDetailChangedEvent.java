@@ -7,7 +7,7 @@ package org.entando.entando.aps.system.services.oauth2.event;
 
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.notify.ApsEvent;
-import org.entando.entando.aps.system.services.oauth2.model.ApiOAuth2ClientDetail;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
 
 
 public class ApiOAuth2ClientDetailChangedEvent extends ApsEvent {
@@ -30,15 +30,15 @@ public class ApiOAuth2ClientDetailChangedEvent extends ApsEvent {
         this._operationCode = operationCode;
     }
 
-    public ApiOAuth2ClientDetail getApiOAuth2ClientDetail() {
+    public OAuth2ClientDetail getApiOAuth2ClientDetail() {
         return _apiOAuth2ClientDetail;
     }
 
-    public void setApiOAuth2ClientDetail(ApiOAuth2ClientDetail apiOAuth2ClientDetail) {
+    public void setApiOAuth2ClientDetail(OAuth2ClientDetail apiOAuth2ClientDetail) {
         this._apiOAuth2ClientDetail = apiOAuth2ClientDetail;
     }
 
-    private ApiOAuth2ClientDetail _apiOAuth2ClientDetail;
+    private OAuth2ClientDetail _apiOAuth2ClientDetail;
     private int _operationCode;
 
     public static final int INSERT_OPERATION_CODE = 1;

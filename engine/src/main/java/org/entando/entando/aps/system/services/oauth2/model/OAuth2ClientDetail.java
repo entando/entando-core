@@ -3,15 +3,7 @@ package org.entando.entando.aps.system.services.oauth2.model;
 
 import java.util.Date;
 
-public class ApiOAuth2ClientDetail {
-
-    public int getId() {
-        return _id;
-    }
-
-    public void setId(int id) {
-        this._id = id;
-    }
+public class OAuth2ClientDetail {
 
     public String getName() {
         return _name;
@@ -85,8 +77,22 @@ public class ApiOAuth2ClientDetail {
         this._expiresIn = expiresIn;
     }
 
+    public String getScope() {
+        return _scope;
+    }
 
-    private int _id;
+    public void setScope(String scope) {
+        this._scope = scope;
+    }
+
+    public String getAuthorizedGrantTypes() {
+        return _authorizedGrantTypes;
+    }
+
+    public void setAuthorizedGrantTypes(String authorizedGrantTypes) {
+        this._authorizedGrantTypes = authorizedGrantTypes;
+    }
+
     private String _name;
     private String _clientId;
     private String _clientSecret;
@@ -96,5 +102,8 @@ public class ApiOAuth2ClientDetail {
     private String _iconUri;
     private Date _issuedAt;
     private Date _expiresIn;
+    private String _scope;
+    private String _authorizedGrantTypes;
+
 
 }

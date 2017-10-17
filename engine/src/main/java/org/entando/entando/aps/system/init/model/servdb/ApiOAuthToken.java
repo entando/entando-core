@@ -51,13 +51,13 @@ public class ApiOAuthToken {
             dataType = DataType.DATE,
             width = 100,
             canBeNull = false)
-    private String _expiresin;
+    private Date _expiresin;
 
 
     @DatabaseField(columnName = "refreshtoken",
             dataType = DataType.STRING,
             canBeNull = false)
-    private Date _refreshToken;
+    private String _refreshToken;
 
     @DatabaseField(columnName = "scope",
             dataType = DataType.STRING,
@@ -71,11 +71,7 @@ public class ApiOAuthToken {
 }
 /*
 
-	protected String accessToken;
-    protected String tokenType;
-    protected Long expiresIn;
-    protected String refreshToken;
-    protected String scope;
+
 
 
 CREATE TABLE api_oauth_tokens

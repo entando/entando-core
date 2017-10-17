@@ -9,9 +9,6 @@ import java.util.Date;
 @DatabaseTable(tableName = ApiOAuth2ClientDetail.TABLE_NAME)
 public class ApiOAuth2ClientDetail {
 
-    public ApiOAuth2ClientDetail() {
-    }
-
     @DatabaseField(columnName = "name",
             dataType = DataType.LONG_STRING,
             canBeNull = true)

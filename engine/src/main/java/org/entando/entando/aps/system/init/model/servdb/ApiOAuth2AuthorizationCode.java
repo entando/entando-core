@@ -11,9 +11,6 @@ public class ApiOAuth2AuthorizationCode {
 
     public static final String TABLE_NAME = "api_oauth2authorization_code";
 
-    public ApiOAuth2AuthorizationCode() {
-    }
-
     @DatabaseField(columnName = "authorizationcode",
             dataType = DataType.LONG_STRING,
             canBeNull = false, id = true)

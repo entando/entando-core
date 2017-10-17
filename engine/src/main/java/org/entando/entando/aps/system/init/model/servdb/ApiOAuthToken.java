@@ -44,7 +44,7 @@ public class ApiOAuthToken {
     @DatabaseField(columnName = "tokentype",
             dataType = DataType.STRING,
             width = 100,
-            canBeNull = false, id = true)
+            canBeNull = false)
     private String _tokenType;
 
     @DatabaseField(columnName = "expiresin",

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OAuth2AuthorizationCodeDAO extends AbstractSearcherDAO implements IOAuth2AuthorizationCodeDAO {
+public class ApiOAuth2AuthorizationCodeDAO extends AbstractSearcherDAO implements IApiAuth2AuthorizationCodeDAO {
 
-    private static final Logger _logger = LoggerFactory.getLogger(OAuth2AuthorizationCodeDAO.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ApiOAuth2AuthorizationCodeDAO.class);
 
     @Override
     protected String getTableFieldName(String metadataFieldKey) {

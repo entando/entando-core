@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OAuth2ClientDetailManager extends AbstractService implements IApiOAuth2ClientDetailManager {
+public class ApiOAuth2ClientDetailManager extends AbstractService implements IApiOAuth2ClientDetailManager {
 
     private static final Logger _logger = LoggerFactory.getLogger(IApiOAuth2ClientDetailManager.class);
 

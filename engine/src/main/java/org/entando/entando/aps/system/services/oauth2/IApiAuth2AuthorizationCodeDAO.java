@@ -5,7 +5,7 @@ import org.entando.entando.aps.system.services.oauth2.model.OAuth2AuthorizationC
 
 import java.util.List;
 
-public interface IOAuth2AuthorizationCodeDAO {
+public interface IApiAuth2AuthorizationCodeDAO {
 
     List<String> searchOAuth2AuthorizationCodes(FieldSearchFilter[] filters);
 

@@ -6,7 +6,7 @@ import org.entando.entando.aps.system.services.oauth2.model.OAuth2AuthorizationC
 
 import java.util.List;
 
-public interface IOAuth2AuthorizationCodeManager {
+public interface IApiOAuth2AuthorizationCodeManager {
     OAuth2AuthorizationCode getOAuth2AuthorizationCode(final String authorizationCode) throws ApsSystemException;
 
     List<String> getOAuth2AuthorizationCodes() throws ApsSystemException;

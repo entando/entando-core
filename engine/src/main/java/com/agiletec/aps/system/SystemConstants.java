@@ -234,7 +234,7 @@ public interface SystemConstants {
 
     public static final String OAUTH_CONSUMER_MANAGER = "OAuthConsumerManager";
 
-    public static final String OAUTH2_CONSUMER_MANAGER = "OAuth2ClientDetailManager";
+    public static final String OAUTH2_CLIENT_DETAIL_MANAGER = "OAuth2ClientDetailManager";
 
     public static final String OAUTH2_AUTHORIZATION_CODE_MANAGER = "OAuth2AuthorizationCodeManager";
 

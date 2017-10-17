@@ -13,7 +13,9 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuth2AuthorizationCodeManager;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2ClientDetailManager;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2AuthorizationCode;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.Date;
 
 public class AuthEndpointServlet extends HttpServlet {
 
@@ -47,12 +50,31 @@ public class AuthEndpointServlet extends HttpServlet {
             OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
                     .authorizationResponse(request, HttpServletResponse.SC_FOUND);
 
+
+            final String authorizationCode = oauthIssuerImpl.authorizationCode();
+            final Long expires = 3600l;
+
+            final IApiOAuth2AuthorizationCodeManager autoCodeManager =
+                    (IApiOAuth2AuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
+
+            final OAuth2AuthorizationCode oAuth2AuthorizationCode = new OAuth2AuthorizationCode();
+            oAuth2AuthorizationCode.setAuthorizationCode(authorizationCode);
+            oAuth2AuthorizationCode.setExpires(new Date(System.currentTimeMillis() + expires));
+            oAuth2AuthorizationCode.setClientId(oauthRequest.getClientId());
+            try {
+                autoCodeManager.addOAuth2AuthorizationCode(oAuth2AuthorizationCode);
+            } catch (ApsSystemException e) {
+                _logger.error("Error {}", e.getMessage());
+                e.printStackTrace();
+            }
+
+
             if (responseType.equals(ResponseType.CODE.toString())) {
-                builder.setCode(oauthIssuerImpl.authorizationCode());
+                builder.setCode(authorizationCode);
             }
             if (responseType.equals(ResponseType.TOKEN.toString())) {
-                builder.setAccessToken(oauthIssuerImpl.accessToken());
-                builder.setExpiresIn(3600l);
+                builder.setAccessToken(authorizationCode);
+                builder.setExpiresIn(expires);
             }
 
             String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
@@ -96,7 +118,7 @@ public class AuthEndpointServlet extends HttpServlet {
 
     private void validateClient(final OAuthAuthzRequest oauthRequest, HttpServletRequest request) throws OAuthProblemException, ServletException {
         final IApiOAuth2ClientDetailManager clientDetailManager =
-                (IApiOAuth2ClientDetailManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_CONSUMER_MANAGER, request);
+                (IApiOAuth2ClientDetailManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_CLIENT_DETAIL_MANAGER, request);
         final String clientId = oauthRequest.getClientId();
 
         try {

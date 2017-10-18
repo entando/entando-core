@@ -14,9 +14,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2AuthorizationCodeManager;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2ClientDetailManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2AuthorizationCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

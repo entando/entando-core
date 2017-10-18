@@ -54,15 +54,4 @@
         </property>
     </bean>
 
-    <bean id="OAuth2AuthorizationCodeManager"
-          class="org.entando.entando.aps.system.services.oauth2.ApiOAuth2AuthorizationCodeManager"
-          parent="abstractService">
-        <property name="apiOAuth2AuthorizationCodeDAO">
-            <bean class="org.entando.entando.aps.system.services.oauth2.ApiOAuth2AuthorizationCodeDAO">
-                <property name="dataSource" ref="servDataSource"/>
-            </bean>
-        </property>
-    </bean>
-
-
 </beans>

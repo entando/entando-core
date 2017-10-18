@@ -54,20 +54,9 @@ public class AuthEndpointServlet extends HttpServlet {
             final String authorizationCode = oauthIssuerImpl.authorizationCode();
             final Long expires = 3600l;
 
-            final IApiOAuth2AuthorizationCodeManager autoCodeManager =
-                    (IApiOAuth2AuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
-
-            final OAuth2AuthorizationCode oAuth2AuthorizationCode = new OAuth2AuthorizationCode();
-            oAuth2AuthorizationCode.setAuthorizationCode(authorizationCode);
-            oAuth2AuthorizationCode.setExpires(new Date(System.currentTimeMillis() + expires));
-            oAuth2AuthorizationCode.setClientId(oauthRequest.getClientId());
-            try {
-                autoCodeManager.addOAuth2AuthorizationCode(oAuth2AuthorizationCode);
-            } catch (ApsSystemException e) {
-                _logger.error("Error {}", e.getMessage());
-                e.printStackTrace();
-            }
-
+            request.getSession().setAttribute(OAuth.OAUTH_CODE,authorizationCode);
+            request.getSession().setAttribute(OAuth.OAUTH_CLIENT_ID,oauthRequest.getClientId());
+            request.getSession().setAttribute(OAuth.OAUTH_EXPIRES_IN,System.currentTimeMillis()+expires);
 
             if (responseType.equals(ResponseType.CODE.toString())) {
                 builder.setCode(authorizationCode);

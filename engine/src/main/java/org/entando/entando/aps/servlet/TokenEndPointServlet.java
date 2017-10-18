@@ -79,25 +79,29 @@ public class TokenEndPointServlet extends HttpServlet {
 
     private void validateClient(OAuthTokenRequest oauthRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, OAuthSystemException, ApsSystemException {
 
-        IApiOAuth2AuthorizationCodeManager authorizationCodeManager = (IApiOAuth2AuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
         IApiOAuth2ClientDetailManager autoClientDetailManager = (IApiOAuth2ClientDetailManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_CLIENT_DETAIL_MANAGER, request);
 
         final String clientId = oauthRequest.getClientId();
         final String authCode = oauthRequest.getParam(OAuth.OAUTH_CODE);
         final String clientSecret = oauthRequest.getClientSecret();
-        OAuth2AuthorizationCode authorizationCode = authorizationCodeManager.getOAuth2AuthorizationCode(authCode);
-        if (!clientId.equals(authorizationCode.getClientId())) {
+
+        final String authCodeSession = (String)request.getSession().getAttribute(OAuth.OAUTH_CODE);
+        final String clientIdSession = (String)request.getSession().getAttribute(OAuth.OAUTH_CLIENT_ID);
+        final Long expiresAuthcodeSession = (Long)request.getSession().getAttribute(OAuth.OAUTH_EXPIRES_IN);
+
+        //OAuth2AuthorizationCode authorizationCode = authorizationCodeManager.getOAuth2AuthorizationCode(authCode);
+        if (!clientId.equals(clientIdSession)) {
             errorHandler(response, OAuthError.TokenResponse.INVALID_CLIENT, "client_id not found", HttpServletResponse.SC_BAD_REQUEST);
         }
 
         //do checking for different grant types
         if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
                 .equals(GrantType.AUTHORIZATION_CODE.toString())) {
-            if (!authCode.equals(authorizationCode.getAuthorizationCode())) {
+            if (!authCode.equals(authCodeSession)) {
                 errorHandler(response, OAuthError.TokenResponse.INVALID_GRANT, "invalid authorization code", HttpServletResponse.SC_BAD_REQUEST);
 
             } else {
-                if (System.currentTimeMillis() > authorizationCode.getExpires().getTime()) {
+                if (System.currentTimeMillis() > expiresAuthcodeSession) {
                     errorHandler(response, "Authorization code expires", "The Authoritazion code is expires", HttpServletResponse.SC_BAD_REQUEST);
                 }
                 final String clientSecretDb = autoClientDetailManager.getApiOAuth2ClientDetail(clientId).getClientSecret();

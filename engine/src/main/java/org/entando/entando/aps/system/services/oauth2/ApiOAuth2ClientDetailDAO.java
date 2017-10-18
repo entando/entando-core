@@ -351,7 +351,7 @@ public class ApiOAuth2ClientDetailDAO extends AbstractSearcherDAO implements IAp
 
     private static final String DELETE_APIOAUTH2CLIENTDETAIL = "DELETE FROM api_oauth2client_detail WHERE clientid = ?";
 
-    private static final String LOAD_APIOAUTH2CLIENTDETAIL = "SELECT name, clientid, clientsecret, redirecturi, clienturi, description, iconuri, issuedat, expiresin  FROM api_oauth2client_detail WHERE clientid = ?";
+    private static final String LOAD_APIOAUTH2CLIENTDETAIL = "SELECT * FROM api_oauth2client_detail WHERE clientid = ?";
 
     private static final String LOAD_APIOAUTH2CLIENTDETAILS_ID  = "SELECT clientid FROM api_oauth2client_detail";
 }

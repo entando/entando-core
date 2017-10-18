@@ -9,18 +9,19 @@ import java.util.Date;
 @DatabaseTable(tableName = ApiOAuth2ClientDetail.TABLE_NAME)
 public class ApiOAuth2ClientDetail {
 
-    @DatabaseField(columnName = "name",
-            dataType = DataType.LONG_STRING,
-            canBeNull = true)
-    private String _name;
-
     @DatabaseField(columnName = "clientid",
-            dataType = DataType.LONG_STRING,
+            dataType = DataType.STRING,
             canBeNull = false, id=true)
     private String _clientId;
 
+    @DatabaseField(columnName = "name",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _name;
+
+
     @DatabaseField(columnName = "clientsecret",
-            dataType = DataType.LONG_STRING,
+            dataType = DataType.STRING,
             canBeNull = true)
     private String _clientSecret;
 
@@ -36,22 +37,22 @@ public class ApiOAuth2ClientDetail {
     private String _authorizedGrantTypes;
 
     @DatabaseField(columnName = "redirecturi",
-            dataType = DataType.LONG_STRING,
+            dataType = DataType.STRING,
             canBeNull = true)
     private String _redirectUri;
 
     @DatabaseField(columnName = "clienturi",
-            dataType = DataType.LONG_STRING,
+            dataType = DataType.STRING,
             canBeNull = true)
     private String _clientUri;
 
     @DatabaseField(columnName = "description",
-            dataType = DataType.LONG_STRING,
+            dataType = DataType.STRING,
             canBeNull = true)
     private String _description;
 
     @DatabaseField(columnName = "iconuri",
-            dataType = DataType.LONG_STRING,
+            dataType = DataType.STRING,
             canBeNull = true)
     private String _iconUri;
 

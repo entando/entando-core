@@ -87,7 +87,6 @@ public class TokenEndPointServlet extends HttpServlet {
         final String clientIdSession = (String)request.getSession().getAttribute(OAuth.OAUTH_CLIENT_ID);
         final Long expiresAuthcodeSession = (Long)request.getSession().getAttribute(OAuth.OAUTH_EXPIRES_IN);
 
-        //OAuth2AuthorizationCode authorizationCode = authorizationCodeManager.getOAuth2AuthorizationCode(authCode);
         if (!clientId.equals(clientIdSession)) {
             errorHandler(response, OAuthError.TokenResponse.INVALID_CLIENT, "client_id not found", HttpServletResponse.SC_BAD_REQUEST);
         }

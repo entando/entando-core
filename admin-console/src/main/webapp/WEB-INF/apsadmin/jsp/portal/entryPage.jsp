@@ -22,15 +22,15 @@
 </ol>
 
 <h1 class="page-title-container">
-    <s:if test="strutsAction == 1">
-        <s:text name="title.newPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-            </s:if>
-            <s:elseif test="strutsAction == 2">
-                <s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-            </s:elseif>
-            <s:elseif test="strutsAction == 3">
-                <s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-            </s:elseif>
+	<s:if test="strutsAction == 1">
+		<s:text name="title.newPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+	</s:if>
+	<s:elseif test="strutsAction == 2">
+		<s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+	</s:elseif>
+	<s:elseif test="strutsAction == 3">
+		<s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+	</s:elseif>
 </h1>
 
 
@@ -69,17 +69,20 @@
     <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
 
     <s:form action="save" cssClass="form-horizontal">
-        <p class="sr-only">
+	<p class="sr-only">
         <wpsf:hidden name="strutsAction" />
         <wpsf:hidden name="copyPageCode" />
         <wpsf:hidden name="groupSelectLock" />
-        <s:if test="strutsAction == 2">
+		<s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
+		<s:if test="%{strutsAction == 1 && groupSelectLock}">
+			<wpsf:hidden name="group" />
+		</s:if>
+        <s:elseif test="strutsAction == 2">
             <wpsf:hidden name="parentPageCode" />
             <wpsf:hidden name="pageCode" />
             <wpsf:hidden name="group" />
-        </s:if>
-        <s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
-        <s:if test="strutsAction == 3">
+        </s:elseif>
+        <s:elseif test="strutsAction == 3">
             <wpsf:hidden name="group" />
             <wpsf:hidden name="model" />
             <wpsf:hidden name="defaultShowlet" />
@@ -87,7 +90,7 @@
             <wpsf:hidden name="useExtraTitles" />
             <wpsf:hidden name="charset" />
             <wpsf:hidden name="mimeType" />
-        </s:if>
+        </s:elseif>
     </p>
 
     <legend><s:text name="label.info" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
@@ -108,7 +111,7 @@
                 <s:if test="#hasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                        </span>
+                    </span>
                 </s:if>
             </div>
         </div>
@@ -128,7 +131,7 @@
             <s:if test="#hasFieldErrorVar">
                 <span class="help-block text-danger">
                     <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                    </span>
+                </span>
             </s:if>
         </div>
     </div>
@@ -386,4 +389,3 @@
     </div>
 </s:form>
 </div>
-

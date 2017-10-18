@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -83,12 +84,14 @@ public class TokenEndPointServlet extends HttpServlet {
         final String authCode = oauthRequest.getParam(OAuth.OAUTH_CODE);
         final String clientSecret = oauthRequest.getClientSecret();
 
-        final String authCodeSession = (String)request.getSession().getAttribute(OAuth.OAUTH_CODE);
-        final String clientIdSession = (String)request.getSession().getAttribute(OAuth.OAUTH_CLIENT_ID);
-        final Long expiresAuthcodeSession = (Long)request.getSession().getAttribute(OAuth.OAUTH_EXPIRES_IN);
+        final HttpSession session = request.getSession(true);
+        final String authCodeSession = (String)session.getAttribute(OAuth.OAUTH_CODE);
+        final String clientIdSession = (String)session.getAttribute(OAuth.OAUTH_CLIENT_ID);
+        final Long expiresAuthcodeSession = (Long)session.getAttribute(OAuth.OAUTH_EXPIRES_IN);
 
         if (!clientId.equals(clientIdSession)) {
             errorHandler(response, OAuthError.TokenResponse.INVALID_CLIENT, "client_id not found", HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
 
         //do checking for different grant types

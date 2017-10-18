@@ -24,11 +24,11 @@ import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2ClientDetailManager;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -57,9 +57,11 @@ public class AuthEndpointServlet extends HttpServlet {
             final String authorizationCode = oauthIssuerImpl.authorizationCode();
             final Long expires = 3600l;
 
-            request.getSession().setAttribute(OAuth.OAUTH_CODE, authorizationCode);
-            request.getSession().setAttribute(OAuth.OAUTH_CLIENT_ID, oauthRequest.getClientId());
-            request.getSession().setAttribute(OAuth.OAUTH_EXPIRES_IN, System.currentTimeMillis() + expires);
+            HttpSession session = request.getSession(true);
+            session.setAttribute(OAuth.OAUTH_CODE, authorizationCode);
+            session.setAttribute(OAuth.OAUTH_CLIENT_ID, oauthRequest.getClientId());
+            session.setAttribute(OAuth.OAUTH_EXPIRES_IN, System.currentTimeMillis() + expires);
+
 
             if (responseType.equals(ResponseType.CODE.toString())) {
                 builder.setCode(authorizationCode);
@@ -96,7 +98,7 @@ public class AuthEndpointServlet extends HttpServlet {
                     new InputStreamReader(httpResponse.getEntity().getContent()));
 
             StringBuilder result = new StringBuilder();
-            String line = "";
+            String line;
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }

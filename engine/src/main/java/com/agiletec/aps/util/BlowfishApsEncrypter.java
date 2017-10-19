@@ -14,6 +14,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -53,6 +54,21 @@ public class BlowfishApsEncrypter implements IApsEncrypter {
         String encryptedString = null;
         try {
             Key key = getKey();
+            Cipher bfCipher = Cipher.getInstance(TRIPLE_BLOWFISH);
+            bfCipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] cleartext = plainText.getBytes();
+            byte[] ciphertext = bfCipher.doFinal(cleartext);
+            encryptedString = new String(Base64.encodeBase64(ciphertext));
+        } catch (Throwable t) {
+            throw new ApsSystemException("Error detcted while encoding a string", t);
+        }
+        return encryptedString;
+    }
+
+    public static String encryptString(String keyString, String plainText) throws ApsSystemException {
+        String encryptedString = null;
+        try {
+            Key key = getKey(keyString);
             Cipher bfCipher = Cipher.getInstance(TRIPLE_BLOWFISH);
             bfCipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] cleartext = plainText.getBytes();
@@ -145,6 +161,9 @@ public class BlowfishApsEncrypter implements IApsEncrypter {
     }
 
     public static String getKeyString() {
+        if (StringUtils.isBlank(_keyString)) {
+            _keyString = System.getProperties().getProperty("key.string.encryption");
+        }
         return _keyString;
     }
 

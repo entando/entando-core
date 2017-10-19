@@ -35,6 +35,14 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
 
     @Override
     public void init() throws Exception {
+        User admin = (User) this.getUser("admin");
+        if (admin.isDisabled()) {
+            String pwd = admin.getPassword();
+            pwd = BlowfishApsEncrypter.encryptString(this.getConfigManager().getKeyString(), pwd);
+            admin.setPassword(pwd);
+            admin.setDisabled(false);
+            this.getUserDAO().updateUser(admin);
+        }
         if (this.getConfigManager().isKeyChanged()) {
             List<UserDetails> users = this.getUserDAO().loadUsers();
             for (UserDetails user : users) {

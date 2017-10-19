@@ -12,6 +12,18 @@ import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
 import java.util.List;
 
 public interface IApiOAuth2ClientDetailManager {
+    String NAME_FILTER_KEY = "name";
+    String CLIENT_ID_FILTER_KEY = "clientid";
+    String CLIENT_SECRET_FILTER_KEY = "clientSecret";
+    String CLIENT_REDIRECT_URI_FILTER_KEY = "redirecturi";
+    String CLIENT_URI_FILTER_KEY = "clienturi";
+    String DESCRIPTION_FILTER_KEY = "description";
+    String ICON_URI_FILTER_KEY = "iconuri";
+    String ISSUED_AT_FILTER_KEY = "issuedat";
+    String EXPIRES_IN_FILTER_KEY = "expiresin";
+    String SCOPE_FILTER_KEY = "scope";
+    String AUTHORIZED_GRANT_TYPE_FILTER_KEY =  "authorizedgranttypes";
+
 
     OAuth2ClientDetail getApiOAuth2ClientDetail(String clientId) throws ApsSystemException;
 

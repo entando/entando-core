@@ -54,4 +54,10 @@
         </property>
     </bean>
 
+    <bean id="OAuth2AuthorizationCodeManager"
+          class="org.entando.entando.aps.system.services.oauth2.ApiAuthorizationCodeManager"
+          parent="abstractService">
+
+    </bean>
+
 </beans>

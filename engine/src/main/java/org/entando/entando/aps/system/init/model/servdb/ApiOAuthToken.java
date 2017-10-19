@@ -13,11 +13,11 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
-import java.util.Date;
-
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.Date;
 
 /**
  * @author E.Santoboni
@@ -25,8 +25,6 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = ApiOAuthToken.TABLE_NAME)
 public class ApiOAuthToken {
 
-    public ApiOAuthToken() {
-    }
 
     @DatabaseField(columnName = "accesstoken",
             dataType = DataType.STRING,
@@ -40,13 +38,6 @@ public class ApiOAuthToken {
             canBeNull = false)
     private String _clientId;
 
-
-    @DatabaseField(columnName = "tokentype",
-            dataType = DataType.STRING,
-            width = 100,
-            canBeNull = false)
-    private String _tokenType;
-
     @DatabaseField(columnName = "expiresin",
             dataType = DataType.DATE,
             width = 100,
@@ -59,29 +50,14 @@ public class ApiOAuthToken {
             canBeNull = false)
     private String _refreshToken;
 
-    @DatabaseField(columnName = "scope",
+
+    @DatabaseField(columnName = "granttype",
             dataType = DataType.STRING,
-            width = 40,
+            width = 100,
             canBeNull = false)
-    private String _scope;
+    private String _grantType;
 
 
     public static final String TABLE_NAME = "api_oauth_tokens";
 
 }
-/*
-
-
-
-
-CREATE TABLE api_oauth_tokens
-(
-  accesstoken character(100) NOT NULL,
-  clientid character varying(100) NOT NULL,
-  tokentype character varying(100) NOT NULL,
-  expiresin date NOT NULL,
-  refreshtoken character varying(40) NOT NULL,
-  scope character varying(100) NOT NULL
-  CONSTRAINT api_oauth_tokens_pkey PRIMARY KEY (accesstoken )
-)
-*/

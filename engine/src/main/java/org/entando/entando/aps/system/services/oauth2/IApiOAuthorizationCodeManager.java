@@ -3,7 +3,7 @@ package org.entando.entando.aps.system.services.oauth2;
 import org.entando.entando.aps.system.services.oauth.IOAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.AuthorizationCode;
 
-public interface IApiAuthorizationCodeManager {
+public interface IApiOAuthorizationCodeManager {
 
     void addAuthorizationCode(final AuthorizationCode authCode);
 

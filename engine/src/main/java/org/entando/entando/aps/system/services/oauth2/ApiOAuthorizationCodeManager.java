@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ApiAuthorizationCodeManager extends AbstractService implements IApiAuthorizationCodeManager {
+public class ApiOAuthorizationCodeManager extends AbstractService implements IApiOAuthorizationCodeManager {
 
     private List<AuthorizationCode> authorizationCodes;
 
-    private static final Logger _logger = LoggerFactory.getLogger(ApiAuthorizationCodeManager.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ApiOAuthorizationCodeManager.class);
 
     @Override
     public void init() throws Exception {

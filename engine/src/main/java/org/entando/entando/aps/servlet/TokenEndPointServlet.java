@@ -12,8 +12,10 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.entando.entando.aps.system.services.oauth2.IApiAuthorizationCodeManager;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuthorizationCodeManager;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2ClientDetailManager;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 public class TokenEndPointServlet extends HttpServlet {
 
@@ -31,19 +34,30 @@ public class TokenEndPointServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        OAuthTokenRequest oauthRequest = null;
         try {
-            oauthRequest = new OAuthTokenRequest(request);
+            IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
+
+            final OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
             if (this.validateClient(oauthRequest, request, response)) {
 
                 OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
                 final String accessToken = oauthIssuerImpl.accessToken();
                 final String refreshToken = oauthIssuerImpl.refreshToken();
+                final Long expires = 3600l;
+
+                OAuth2Token oAuth2Token = new OAuth2Token();
+                oAuth2Token.setAccessToken(accessToken);
+                oAuth2Token.setRefreshToken(refreshToken);
+                oAuth2Token.setClientId(oauthRequest.getClientId());
+                oAuth2Token.setExpiresIn(new Date(System.currentTimeMillis()+expires));
+                oAuth2Token.setGrantType(oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE));
+
+                tokenManager.addApiOAuth2Token(oAuth2Token);
 
                 OAuthResponse r = OAuthASResponse
                         .tokenResponse(HttpServletResponse.SC_OK)
                         .setAccessToken(accessToken)
-                        .setExpiresIn("3600")
+                        .setExpiresIn(Long.toString(expires))
                         .setRefreshToken(refreshToken)
                         .buildJSONMessage();
 
@@ -75,7 +89,7 @@ public class TokenEndPointServlet extends HttpServlet {
     private boolean validateClient(OAuthTokenRequest oauthRequest, HttpServletRequest request, HttpServletResponse response) throws Throwable {
 
         IApiOAuth2ClientDetailManager clientDetailManager = (IApiOAuth2ClientDetailManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_CLIENT_DETAIL_MANAGER, request);
-        IApiAuthorizationCodeManager codeManager = (IApiAuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
+        IApiOAuthorizationCodeManager codeManager = (IApiOAuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
 
         final String clientId = oauthRequest.getClientId();
         final String authCode = oauthRequest.getParam(OAuth.OAUTH_CODE);

@@ -13,7 +13,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
-import org.entando.entando.aps.system.services.oauth2.IApiAuthorizationCodeManager;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuthorizationCodeManager;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2ClientDetailManager;
 import org.entando.entando.aps.system.services.oauth2.model.AuthorizationCode;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
@@ -39,7 +39,7 @@ public class AuthEndpointServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         OAuthAuthzRequest oauthRequest = null;
         OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-        IApiAuthorizationCodeManager codeManager = (IApiAuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
+        IApiOAuthorizationCodeManager codeManager = (IApiOAuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
 
         try {
 

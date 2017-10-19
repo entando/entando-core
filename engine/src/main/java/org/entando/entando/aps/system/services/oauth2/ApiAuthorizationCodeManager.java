@@ -1,7 +1,6 @@
 package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.common.AbstractService;
-import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
 import org.entando.entando.aps.system.services.oauth2.model.AuthorizationCode;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
 import org.slf4j.Logger;
@@ -13,9 +12,9 @@ import java.util.List;
 
 public class ApiAuthorizationCodeManager extends AbstractService implements IApiAuthorizationCodeManager {
 
-    private static List<AuthorizationCode> authorizationCodes;
+    private List<AuthorizationCode> authorizationCodes;
 
-    private static final Logger _logger =  LoggerFactory.getLogger(ApiAuthorizationCodeManager.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ApiAuthorizationCodeManager.class);
 
     @Override
     public void init() throws Exception {
@@ -24,9 +23,6 @@ public class ApiAuthorizationCodeManager extends AbstractService implements IApi
     }
 
     public void addAuthorizationCode(final AuthorizationCode authCode) {
-        if (authorizationCodes == null) {
-            authorizationCodes = new ArrayList<AuthorizationCode>();
-        }
         authorizationCodes.add(authCode);
     }
 
@@ -52,8 +48,7 @@ public class ApiAuthorizationCodeManager extends AbstractService implements IApi
             if (!record.getClientId().equals(clientId)) {
                 _logger.info("client id does not match");
                 return false;
-            }
-            else if (!record.getClientSecret().equals(clientSecret)) {
+            } else if (!record.getClientSecret().equals(clientSecret)) {
                 _logger.info("client secret does not match");
                 return false;
             } else if (record.getExpiresIn().getTime() < now.getTime()) {
@@ -66,5 +61,22 @@ public class ApiAuthorizationCodeManager extends AbstractService implements IApi
             _logger.info("client ID not found");
         }
         return false;
+    }
+
+    @Override
+    public boolean verifyCode(final String authCode, final String source) {
+        final AuthorizationCode code = getAuthorizationCode(authCode);
+        if (code == null) {
+            _logger.info("authcode does not match");
+            return false;
+        } else if (!code.getSource().equals(source)) {
+            _logger.info("authcode does not match");
+            return false;
+        } else if (System.currentTimeMillis() > code.getExpires()) {
+            _logger.warn("OAuth2 code '{}' is expired", code);
+            return false;
+
+        }
+        return true;
     }
 }

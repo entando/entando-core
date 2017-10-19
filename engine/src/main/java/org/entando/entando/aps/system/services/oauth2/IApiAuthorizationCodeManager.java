@@ -18,4 +18,6 @@ public interface IApiAuthorizationCodeManager {
      * @throws Throwable
      */
     boolean verifyAccess(final String clientId, final String clientSecret, IApiOAuth2ClientDetailManager clientDetailManager) throws  Throwable;
+
+    boolean verifyCode(final String authCode, final String source);
 }

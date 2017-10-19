@@ -60,11 +60,13 @@ public class AuthEndpointServlet extends HttpServlet {
                 authCode.setAuthorizationCode(authorizationCode);
                 authCode.setExpires(System.currentTimeMillis() + expires);
                 authCode.setClientId(oauthRequest.getClientId());
+                authCode.setSource(request.getRemoteAddr());
 
                 codeManager.addAuthorizationCode(authCode);
 
                 if (responseType.equals(ResponseType.CODE.toString())) {
                     builder.setCode(authorizationCode);
+
                 }
                 if (responseType.equals(ResponseType.TOKEN.toString())) {
                     builder.setAccessToken(authorizationCode);

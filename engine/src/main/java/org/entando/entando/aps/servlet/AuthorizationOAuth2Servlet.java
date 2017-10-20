@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class AuthorizationOAuth2Servlet extends HttpServlet {
+    public class AuthorizationOAuth2Servlet extends HttpServlet {
 
     private static final Logger _logger = LoggerFactory.getLogger(AuthorizationOAuth2Servlet.class);
 

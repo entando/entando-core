@@ -8,6 +8,7 @@ import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
+import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
@@ -23,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -95,9 +97,14 @@ public class TokenEndPointServlet extends HttpServlet {
         final String authCode = oauthRequest.getParam(OAuth.OAUTH_CODE);
         final String clientSecret = oauthRequest.getClientSecret();
 
+
         //do checking for different grant types
         if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
-                .equals(GrantType.AUTHORIZATION_CODE.toString())) {
+                .equals(GrantType.AUTHORIZATION_CODE.toString()) ||
+                oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
+                        .equals(GrantType.REFRESH_TOKEN.toString())
+
+                ) {
 
             if (!codeManager.verifyAccess(clientId, clientSecret, clientDetailManager)) {
                 _logger.error("OAuth2 authentication failed");
@@ -109,6 +116,7 @@ public class TokenEndPointServlet extends HttpServlet {
                 return false;
             }
         }
+
         return true;
     }
 

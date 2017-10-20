@@ -20,12 +20,13 @@ public interface IOAuth2TokenDAO {
 
     void addAccessToken(final OAuth2Token accessor);
 
-    OAuth2Token getAccessToken(String accessToken);
+    OAuth2Token getAccessToken(final String accessToken);
+
+    void deleteAccessToken(final String accessToken);
 /*
     void refreshAccessTokens(String tokenToUpdate, int tokenTimeValidity);
 
 
-    void deleteAccessToken(String accessToken);
 
     //Map<String, Integer> getOccurrencesByConsumer();
 */

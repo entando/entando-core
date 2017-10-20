@@ -27,7 +27,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
 
     private static final Logger _logger = LoggerFactory.getLogger(OAuth2TokenDAO.class);
 
-    public void addAccessToken(OAuth2Token accessToken) {
+    public void addAccessToken(final OAuth2Token accessToken) {
 
         Connection conn = null;
         PreparedStatement stat = null;
@@ -78,6 +78,26 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
             closeDaoResources(res, stat, conn);
         }
         return token;
+    }
+
+    @Override
+    public void deleteAccessToken(final String accessToken) {
+        Connection conn = null;
+        PreparedStatement stat = null;
+        try {
+            conn = this.getConnection();
+            stat = conn.prepareStatement(DELETE_TOKEN);
+            stat.setString(1, accessToken);
+            stat.executeUpdate();
+            conn.commit();
+
+        } catch (Throwable t) {
+            this.executeRollback(conn);
+            _logger.error("Error while remove access token", t);
+            throw new RuntimeException("Error while remove access token", t);
+        } finally {
+            closeDaoResources(null, stat, conn);
+        }
     }
 
     private String INSERT_TOKEN = "INSERT INTO api_oauth_tokens (accesstoken, clientid, expiresin, refreshtoken, granttype)  VALUES (? , ? , ? , ? , ?)";

@@ -1,6 +1,6 @@
 package org.entando.entando.aps.system.services.oauth2.model;
 
-public class AuthorizationCode {
+public class AuthorizationCode implements Comparable<AuthorizationCode> {
 
     private String authorizationCode;
     private Long expires;
@@ -37,5 +37,10 @@ public class AuthorizationCode {
 
     public void setSource(final String source) {
         this.source = source;
+    }
+
+    @Override
+    public int compareTo(AuthorizationCode o) {
+        return this.expires.compareTo(o.expires);
     }
 }

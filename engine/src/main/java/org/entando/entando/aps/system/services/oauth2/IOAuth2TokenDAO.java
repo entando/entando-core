@@ -25,11 +25,5 @@ public interface IOAuth2TokenDAO {
     void deleteAccessToken(final String accessToken);
 
     void deleteExpiredToken();
-/*
-    void refreshAccessTokens(String tokenToUpdate, int tokenTimeValidity);
 
-
-
-    //Map<String, Integer> getOccurrencesByConsumer();
-*/
 }

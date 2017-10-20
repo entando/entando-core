@@ -7,8 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ApiOAuthorizationCodeManager extends AbstractService implements IApiOAuthorizationCodeManager {
 
@@ -20,6 +24,20 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
     public void init() throws Exception {
         authorizationCodes = new ArrayList<AuthorizationCode>();
         _logger.info(this.getClass().getCanonicalName() + " initialized");
+
+        ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
+        scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                Collections.sort(authorizationCodes);
+                for (final AuthorizationCode authorizationCode : authorizationCodes) {
+                    if (authorizationCode.getExpires() < System.currentTimeMillis()){
+                        authorizationCodes.remove(authorizationCode);
+                    }
+                }
+
+            }
+        },0, 5, TimeUnit.MINUTES);
     }
 
     public void addAuthorizationCode(final AuthorizationCode authCode) {

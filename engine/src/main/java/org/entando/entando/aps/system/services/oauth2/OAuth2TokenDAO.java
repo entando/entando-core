@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
 
@@ -86,11 +87,11 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
         PreparedStatement stat = null;
         try {
             conn = this.getConnection();
+            conn.setAutoCommit(false);
             stat = conn.prepareStatement(DELETE_TOKEN);
             stat.setString(1, accessToken);
             stat.executeUpdate();
             conn.commit();
-
         } catch (Throwable t) {
             this.executeRollback(conn);
             _logger.error("Error while remove access token", t);
@@ -100,11 +101,32 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
         }
     }
 
+    @Override
+    public void deleteExpiredToken() {
+        Connection conn = null;
+        PreparedStatement stat = null;
+        try {
+            conn = this.getConnection();
+            conn.setAutoCommit(false);
+            stat = conn.prepareStatement(DELETE_EXPIRED_TOKENS);
+            stat.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+            stat.executeUpdate();
+            conn.commit();
+        } catch (Throwable t) {
+            this.executeRollback(conn);
+            _logger.error("Error while remove access token", t);
+            throw new RuntimeException("Error while remove access token", t);
+        } finally {
+            closeDaoResources(null, stat, conn);
+        }
+
+    }
+
     private String INSERT_TOKEN = "INSERT INTO api_oauth_tokens (accesstoken, clientid, expiresin, refreshtoken, granttype)  VALUES (? , ? , ? , ? , ?)";
 
     private String UPDATE_TOKEN = "UPDATE api_oauth_tokens SET expiresin = ? WHERE accesstoken = ?";
 
-    private String DELETE_OLD_TOKENS = "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
+    private String DELETE_EXPIRED_TOKENS = "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
 
     private String SELECT_TOKEN = "SELECT * FROM api_oauth_tokens WHERE accesstoken = ? ";
 

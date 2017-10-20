@@ -75,8 +75,7 @@ public class ResourceEndPointServlet extends HttpServlet {
                             oauthResponse.getHeader(OAuth.HeaderType.WWW_AUTHENTICATE));
 
                     this.responseHandler(resp, HttpServletResponse.SC_UNAUTHORIZED, OAuthError.ResourceResponse.EXPIRED_TOKEN);
-                }
-                else {
+                } else {
                     //this.responseHandler(resp, HttpServletResponse.SC_OK, accessToken);
                     resp.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
                     resp.setHeader("Location", req.getRequestURI());

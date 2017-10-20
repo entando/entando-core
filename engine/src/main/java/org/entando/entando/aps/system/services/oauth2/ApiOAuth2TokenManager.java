@@ -6,6 +6,12 @@ import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2TokenManager {
 
     private Logger _logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
@@ -24,6 +30,13 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     @Override
     public void init() throws Exception {
         _logger.info(this.getClass().getCanonicalName() + " initialized");
+        // every 30 min start the scheduler for delete expired access token
+        ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
+        ScheduledDeleteExpiredTokenThread expiredTokenThread = new ScheduledDeleteExpiredTokenThread();
+        expiredTokenThread.setTokenDAO(this.getOAuth2TokenDAO());
+        scheduledThreadPool.scheduleAtFixedRate(expiredTokenThread,0, 30, TimeUnit.MINUTES);
+
+
     }
 
     @Override

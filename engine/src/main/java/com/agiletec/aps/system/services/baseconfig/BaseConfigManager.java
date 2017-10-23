@@ -187,7 +187,6 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
     private void encryptPwd() throws ApsSystemException {
         String encryptedPwd = BlowfishApsEncrypter.encryptString(this.getKeyString(), this.getAdminPwd());
-        System.getProperties().setProperty("admin.password", encryptedPwd);
         this.setAdminPwd(encryptedPwd);
     }
 

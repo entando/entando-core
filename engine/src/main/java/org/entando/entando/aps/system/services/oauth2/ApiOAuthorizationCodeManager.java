@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,15 +29,16 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
         scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                Collections.sort(authorizationCodes);
-                for (final AuthorizationCode authorizationCode : authorizationCodes) {
-                    if (authorizationCode.getExpires() < System.currentTimeMillis()){
+                Iterator<AuthorizationCode> iter = authorizationCodes.iterator();
+                while (iter.hasNext()) {
+                    AuthorizationCode authorizationCode = iter.next();
+                    if (authorizationCode.getExpires() < System.currentTimeMillis()) {
                         authorizationCodes.remove(authorizationCode);
                     }
                 }
 
             }
-        },0, 5, TimeUnit.MINUTES);
+        }, 0, 5, TimeUnit.MINUTES);
     }
 
     public void addAuthorizationCode(final AuthorizationCode authCode) {

@@ -43,7 +43,6 @@ public class TestContentAuthorization extends BaseTestCase {
         List<UserDetails> users = this._userManager.getUsers();
         for (UserDetails user : users) {
             User cur = (User) user;
-            System.out.println("current user e password: " + cur.getUsername() + " " + cur.getPassword());
             try {
                 if (cur.isDisabled()) {
                     String pwd = cur.getPassword();
@@ -51,7 +50,6 @@ public class TestContentAuthorization extends BaseTestCase {
                     pwd = BlowfishApsEncrypter.encryptString(pwd);
                     cur.setPassword(pwd);
                     cur.setDisabled(false);
-                    System.out.println("current user e new password: " + cur.getUsername() + " " + cur.getPassword());
                     this._userManager.updateUser(cur);
                 }
             } catch (Exception e) {

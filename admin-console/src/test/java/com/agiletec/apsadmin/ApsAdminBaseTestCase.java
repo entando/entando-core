@@ -56,251 +56,261 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * The base Class for all test of admin area.
- * A Spacial thanks to Arsenalist.
+ * The base Class for all test of admin area. A Spacial thanks to Arsenalist.
+ *
  * @author Zarar Siddiqi - E.Santoboni
  */
 public class ApsAdminBaseTestCase extends TestCase {
 
-	@Override
-	protected void setUp() throws Exception {
-		boolean refresh = false;
-		if (null == _applicationContext) {
-			// Link the servlet context and the Spring context
-			_servletContext = new MockServletContext("", new FileSystemResourceLoader());
-			_applicationContext = this.getConfigUtils().createApplicationContext(_servletContext);
-			_servletContext.setAttribute(
-					WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, _applicationContext);
-		} else {
-			refresh = true;
-		}
-		this._request = new MockHttpServletRequest();
-		this._response = new MockHttpServletResponse();
-		this._request.setSession(new MockHttpSession(this._servletContext));
-		if (refresh) {
-			try {
-				ApsWebApplicationUtils.executeSystemRefresh(this._request);
-				this.waitNotifyingThread();
-			} catch (Throwable e) {}
-		}
-		// Use spring as the object factory for Struts
-		StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, null, _servletContext, null, this.createContainer());
-		ssf.setApplicationContext(_applicationContext);
-		// Dispatcher is the guy that actually handles all requests.  Pass in
-		// an empty Map as the parameters but if you want to change stuff like
-		// what config files to read, you need to specify them here
-		// (see Dispatcher's source code)
-		java.net.URL url = ClassLoader.getSystemResource("struts.properties");
-	    Properties props = new Properties();
-		props.load(url.openStream());
-		this.setInitParameters(props);
-		Map params = new HashMap(props);
-		this._dispatcher = new Dispatcher(_servletContext, params);
-		this._dispatcher.init();
-		Dispatcher.setInstance(this._dispatcher);
-	}
+    @Override
+    protected void setUp() throws Exception {
+        boolean refresh = false;
+        if (null == _applicationContext) {
+            // Link the servlet context and the Spring context
+            _servletContext = new MockServletContext("", new FileSystemResourceLoader());
+            _applicationContext = this.getConfigUtils().createApplicationContext(_servletContext);
+            _servletContext.setAttribute(
+                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, _applicationContext);
+        } else {
+            refresh = true;
+        }
+        this._request = new MockHttpServletRequest();
+        this._response = new MockHttpServletResponse();
+        this._request.setSession(new MockHttpSession(this._servletContext));
+        if (refresh) {
+            try {
+                ApsWebApplicationUtils.executeSystemRefresh(this._request);
+                this.waitNotifyingThread();
+            } catch (Throwable e) {
+            }
+        }
+        // Use spring as the object factory for Struts
+        StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, null, _servletContext, null, this.createContainer());
+        ssf.setApplicationContext(_applicationContext);
+        // Dispatcher is the guy that actually handles all requests.  Pass in
+        // an empty Map as the parameters but if you want to change stuff like
+        // what config files to read, you need to specify them here
+        // (see Dispatcher's source code)
+        java.net.URL url = ClassLoader.getSystemResource("struts.properties");
+        Properties props = new Properties();
+        props.load(url.openStream());
+        this.setInitParameters(props);
+        Map params = new HashMap(props);
+        this._dispatcher = new Dispatcher(_servletContext, params);
+        this._dispatcher.init();
+        Dispatcher.setInstance(this._dispatcher);
+    }
 
-	protected Container createContainer() {
+    protected Container createContainer() {
         ContainerBuilder builder = new ContainerBuilder();
         builder.constant("devMode", "false");
         return builder.create(true);
     }
 
-	@Override
-	protected void tearDown() throws Exception {
-		this.waitThreads(SystemConstants.ENTANDO_THREAD_NAME_PREFIX);
-		super.tearDown();
-		this.getConfigUtils().closeDataSources(this.getApplicationContext());
-	}
+    @Override
+    protected void tearDown() throws Exception {
+        this.waitThreads(SystemConstants.ENTANDO_THREAD_NAME_PREFIX);
+        super.tearDown();
+        this.getConfigUtils().closeDataSources(this.getApplicationContext());
+    }
 
-	protected void waitNotifyingThread() throws InterruptedException {
-		this.waitThreads(NotifyManager.NOTIFYING_THREAD_NAME);
-	}
+    protected void waitNotifyingThread() throws InterruptedException {
+        this.waitThreads(NotifyManager.NOTIFYING_THREAD_NAME);
+    }
 
-	protected void waitThreads(String threadNamePrefix) throws InterruptedException {
-		Thread[] threads = new Thread[20];
-	    Thread.enumerate(threads);
-	    for (int i=0; i<threads.length; i++) {
-	    	Thread currentThread = threads[i];
-			if (currentThread != null &&
-	    			currentThread.getName().startsWith(threadNamePrefix)) {
-	    		currentThread.join();
-	    	}
-	    }
-	}
+    protected void waitThreads(String threadNamePrefix) throws InterruptedException {
+        Thread[] threads = new Thread[20];
+        Thread.enumerate(threads);
+        for (int i = 0; i < threads.length; i++) {
+            Thread currentThread = threads[i];
+            if (currentThread != null
+                    && currentThread.getName().startsWith(threadNamePrefix)) {
+                currentThread.join();
+            }
+        }
+    }
 
-	/**
-	 * Created action class based on namespace and name
-	 * @param namespace The namespace
-	 * @param name The name of the action
-	 * @throws java.lang.Exception In case of error
-	 */
-	protected void initAction(String namespace, String name) throws Exception {
-		// create a proxy class which is just a wrapper around the action call.
-		// The proxy is created by checking the namespace and name against the
-		// struts.xml configuration
-	    ActionProxyFactory proxyFactory = (ActionProxyFactory) this._dispatcher.getContainer().getInstance(ActionProxyFactory.class);
-	    this._proxy = proxyFactory.createActionProxy(namespace, name, null, null, true, false);
-		
-		// set to true if you want to process Freemarker or JSP results
-		this._proxy.setExecuteResult(false);
-		// by default, don't pass in any request parameters
-		
-		// set the actions context to the one which the proxy is using
-		ServletActionContext.setContext(_proxy.getInvocation().getInvocationContext());
-		ServletActionContext.setRequest(_request);
-		ServletActionContext.setResponse(_response);
-		ServletActionContext.setServletContext(_servletContext);
-		this._action = (ActionSupport) this._proxy.getAction();
-
-		//reset previsious params
-		List<String> paramNames = new ArrayList<String>(this._request.getParameterMap().keySet());
-		for (int i=0; i<paramNames.size(); i++) {
-			String paramName = (String) paramNames.get(i);
-			this.removeParameter(paramName);
-		}
-	}
-	
     /**
-     * Metodo da estendere in caso che si voglia impiantare un'altro struts-config.
-	 * @param params The parameters
+     * Created action class based on namespace and name
+     *
+     * @param namespace The namespace
+     * @param name The name of the action
+     * @throws java.lang.Exception In case of error
+     */
+    protected void initAction(String namespace, String name) throws Exception {
+        // create a proxy class which is just a wrapper around the action call.
+        // The proxy is created by checking the namespace and name against the
+        // struts.xml configuration
+        ActionProxyFactory proxyFactory = (ActionProxyFactory) this._dispatcher.getContainer().getInstance(ActionProxyFactory.class);
+        this._proxy = proxyFactory.createActionProxy(namespace, name, null, null, true, false);
+
+        // set to true if you want to process Freemarker or JSP results
+        this._proxy.setExecuteResult(false);
+        // by default, don't pass in any request parameters
+
+        // set the actions context to the one which the proxy is using
+        ServletActionContext.setContext(_proxy.getInvocation().getInvocationContext());
+        ServletActionContext.setRequest(_request);
+        ServletActionContext.setResponse(_response);
+        ServletActionContext.setServletContext(_servletContext);
+        this._action = (ActionSupport) this._proxy.getAction();
+
+        //reset previsious params
+        List<String> paramNames = new ArrayList<String>(this._request.getParameterMap().keySet());
+        for (int i = 0; i < paramNames.size(); i++) {
+            String paramName = (String) paramNames.get(i);
+            this.removeParameter(paramName);
+        }
+    }
+
+    /**
+     * Metodo da estendere in caso che si voglia impiantare un'altro
+     * struts-config.
+     *
+     * @param params The parameters
      */
     protected void setInitParameters(Properties params) {
-    	params.setProperty("config",
-    			"struts-default.xml,struts-plugin.xml,struts.xml,entando-struts-plugin.xml,japs-struts-plugin.xml");
+        params.setProperty("config",
+                "struts-default.xml,struts-plugin.xml,struts.xml,entando-struts-plugin.xml,japs-struts-plugin.xml");
     }
 
     /**
      * Return a user (with his autority) by username.
+     *
      * @param username The username
      * @param password The password
      * @return The required user.
      * @throws Exception In case of error.
      */
     protected UserDetails getUser(String username, String password) throws Exception {
-		IAuthenticationProviderManager provider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
-		IUserManager userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
-		UserDetails user = null;
-		if (username.equals(SystemConstants.GUEST_USER_NAME)) {
-			user = userManager.getGuestUser();
-		} else {
-			user = provider.getUser(username, password);
-		}
-		return user;
+        IAuthenticationProviderManager provider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
+        IUserManager userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
+        UserDetails user = null;
+        if (username.equals(SystemConstants.GUEST_USER_NAME)) {
+            user = userManager.getGuestUser();
+        } else {
+            user = provider.getUser(username, password);
+        }
+        return user;
     }
 
     /**
-     * Return a user (with his autority) by username, with the password equals than username.
+     * Return a user (with his autority) by username, with the password equals
+     * than username.
+     *
      * @param username The username
      * @return The required user.
      * @throws Exception In case of error.
      */
     protected UserDetails getUser(String username) throws Exception {
-		return this.getUser(username, username);
+        return this.getUser(username, username);
     }
 
-	protected void setUserOnSession(String username) throws Exception {
-		if (null == username) {
-			this.removeUserOnSession();
-			return;
-		}
-		UserDetails currentUser = this.getUser(username, username);//nel database di test, username e password sono uguali
-		HttpSession session = this._request.getSession();
-		session.setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, currentUser);
+    protected void setUserOnSession(String username) throws Exception {
+        if (null == username) {
+            this.removeUserOnSession();
+            return;
+        }
+        UserDetails currentUser = this.getUser(username, username);//nel database di test, username e password sono uguali
+        HttpSession session = this._request.getSession();
+        session.setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, currentUser);
     }
 
-	protected void removeUserOnSession() throws Exception {
-    	HttpSession session = this._request.getSession();
-		session.removeAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
+    protected void removeUserOnSession() throws Exception {
+        HttpSession session = this._request.getSession();
+        session.removeAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
     }
 
-	protected void addParameters(Map params) {
-		Iterator iter = params.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = (String) iter.next();
-			this.addParameter(key, params.get(key).toString());
-		}
-	}
-	
-	protected void addParameter(String name, String[] values) {
-		if (null != values) {
-			this.addParameter(name, Arrays.asList(values));
-		}
-	}
-	
-	protected void addParameter(String name, Collection<String> value) {
-		this._request.removeParameter(name);
-		if (null == value) {
-			return;
-		}
-		String[] array = new String[value.size()];
-		Iterator<String> iter = value.iterator();
-		int i = 0;
-		while (iter.hasNext()) {
-			String stringValue = iter.next();
-			this._request.addParameter(name, stringValue);
-			array[i++] = stringValue;
-		}
-		Parameter.Request parameter = new Parameter.Request(name, array);
-		this._parameters.put(name, parameter);
-	}
-	
-	protected void addParameter(String name, Object value) {
-		this._request.removeParameter(name);
-		if (null == value) return;
-		this._request.addParameter(name, value.toString());
-		Parameter.Request parameter = new Parameter.Request(name, value.toString());
-		this._parameters.put(name, parameter);
-	}
-	
-	protected void addAttribute(String name, Object value) {
-		this._request.removeAttribute(name);
-		if (null == value) return;
-		this._request.setAttribute(name, value);
-	}
+    protected void addParameters(Map params) {
+        Iterator iter = params.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+            this.addParameter(key, params.get(key).toString());
+        }
+    }
 
-	private void removeParameter(String name) {
-		this._request.removeParameter(name);
-		this._request.removeAttribute(name);
-		this._parameters.remove(name);
-	}
-	
-	protected String executeAction() throws Throwable {
-		ActionContext ac = this._proxy.getInvocation().getInvocationContext();
-		ac.setParameters(HttpParameters.create(this._request.getParameterMap()).build());
-		ac.getParameters().appendAll(this._parameters);
-		String result = this._proxy.execute();
-		return result;
-	}
-	
-	protected IManager getService(String name) {
-		return (IManager) this.getApplicationContext().getBean(name);
-	}
+    protected void addParameter(String name, String[] values) {
+        if (null != values) {
+            this.addParameter(name, Arrays.asList(values));
+        }
+    }
+
+    protected void addParameter(String name, Collection<String> value) {
+        this._request.removeParameter(name);
+        if (null == value) {
+            return;
+        }
+        String[] array = new String[value.size()];
+        Iterator<String> iter = value.iterator();
+        int i = 0;
+        while (iter.hasNext()) {
+            String stringValue = iter.next();
+            this._request.addParameter(name, stringValue);
+            array[i++] = stringValue;
+        }
+        Parameter.Request parameter = new Parameter.Request(name, array);
+        this._parameters.put(name, parameter);
+    }
+
+    protected void addParameter(String name, Object value) {
+        this._request.removeParameter(name);
+        if (null == value) {
+            return;
+        }
+        this._request.addParameter(name, value.toString());
+        Parameter.Request parameter = new Parameter.Request(name, value.toString());
+        this._parameters.put(name, parameter);
+    }
+
+    protected void addAttribute(String name, Object value) {
+        this._request.removeAttribute(name);
+        if (null == value) {
+            return;
+        }
+        this._request.setAttribute(name, value);
+    }
+
+    private void removeParameter(String name) {
+        this._request.removeParameter(name);
+        this._request.removeAttribute(name);
+        this._parameters.remove(name);
+    }
+
+    protected String executeAction() throws Throwable {
+        ActionContext ac = this._proxy.getInvocation().getInvocationContext();
+        ac.setParameters(HttpParameters.create(this._request.getParameterMap()).build());
+        ac.getParameters().appendAll(this._parameters);
+        String result = this._proxy.execute();
+        return result;
+    }
+
+    protected IManager getService(String name) {
+        return (IManager) this.getApplicationContext().getBean(name);
+    }
 
     protected ApplicationContext getApplicationContext() {
-    	return _applicationContext;
+        return _applicationContext;
     }
 
     protected ConfigTestUtils getConfigUtils() {
-		return new ConfigTestUtils();
-	}
+        return new ConfigTestUtils();
+    }
 
     protected ActionSupport getAction() {
-    	return this._action;
+        return this._action;
     }
 
     protected HttpServletRequest getRequest() {
-    	return this._request;
+        return this._request;
     }
     private static ApplicationContext _applicationContext;
     private Dispatcher _dispatcher;
-	private ActionProxy _proxy;
-	private static MockServletContext _servletContext;
-	private MockHttpServletRequest _request;
-	private MockHttpServletResponse _response;
-	private ActionSupport _action;
-	
-	private Map<String, Parameter> _parameters = new HashMap<String, Parameter>();
-	
+    private ActionProxy _proxy;
+    private static MockServletContext _servletContext;
+    private MockHttpServletRequest _request;
+    private MockHttpServletResponse _response;
+    private ActionSupport _action;
+
+    private Map<String, Parameter> _parameters = new HashMap<String, Parameter>();
+
 }
-	

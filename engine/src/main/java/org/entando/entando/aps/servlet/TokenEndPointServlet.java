@@ -7,6 +7,7 @@ import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
+import org.apache.oltu.oauth2.as.validator.AuthorizationCodeValidator;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -38,6 +39,7 @@ public class TokenEndPointServlet extends HttpServlet {
             IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
 
             final OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
+
             if (this.validateClient(oauthRequest, request, response)) {
 
                 OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());

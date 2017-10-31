@@ -19,18 +19,16 @@ import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.url.IURLManager;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
-import org.apache.oltu.oauth2.rs.response.OAuthRSResponse;
 import org.entando.entando.aps.system.services.api.IApiErrorCodes;
 import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.*;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
+import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
+import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -284,57 +281,28 @@ public class ApiRestServer {
             final OAuth2Token token = tokenManager.getApiOAuth2Token(accessToken);
 
             if (token != null) {
+
+                IOAuthConsumerManager consumerManager = (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
+                ConsumerRecordVO record = consumerManager.getConsumerRecord(token.getClientId());
+
+
                 // Validate the access token
                 if (!token.getAccessToken().equals(accessToken)) {
-
-                    // Return the OAuth error message
-                    OAuthResponse oauthResponse = OAuthRSResponse
-                            .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                            .setRealm(token.getClientId())
-                            .setError(OAuthError.ResourceResponse.INVALID_TOKEN)
-                            .buildHeaderMessage();
-
-                    response.setHeader(OAuth.HeaderType.WWW_AUTHENTICATE,
-                            oauthResponse.getHeader(OAuth.HeaderType.WWW_AUTHENTICATE));
-
-
-                    this.responseHandler(response, HttpServletResponse.SC_UNAUTHORIZED, OAuthError.ResourceResponse.INVALID_TOKEN);
-
+                    throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Token does not match", Response.Status.UNAUTHORIZED);
                 }
                 // check if access token is expired
                 else if (token.getExpiresIn().getTime() < System.currentTimeMillis()) {
-                    // Return the OAuth error message
-                    OAuthResponse oauthResponse = OAuthRSResponse
-                            .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                            .setRealm(token.getClientId())
-                            .setError(OAuthError.ResourceResponse.EXPIRED_TOKEN)
-                            .buildHeaderMessage();
+                    throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Token expired", Response.Status.UNAUTHORIZED);
 
-                    response.setHeader(OAuth.HeaderType.WWW_AUTHENTICATE,
-                            oauthResponse.getHeader(OAuth.HeaderType.WWW_AUTHENTICATE));
-
-                    this.responseHandler(response, HttpServletResponse.SC_UNAUTHORIZED, OAuthError.ResourceResponse.EXPIRED_TOKEN);
                 }
             } else {
                 throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Authentication Required", Response.Status.UNAUTHORIZED);
             }
-        } catch (OAuthSystemException | ApsSystemException ex) {
+        } catch (OAuthSystemException | ApsSystemException | OAuthProblemException ex) {
             _logger.error("System exception {} ", ex.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (OAuthProblemException ex) {
-            _logger.error("OAuth2 error {} ", ex.getMessage());
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            throw new ApiException(IApiErrorCodes.SERVER_ERROR, ex.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
 
-
-    }
-
-    private void responseHandler(HttpServletResponse resp, int status, String body) throws IOException {
-        resp.setStatus(status);
-        PrintWriter pw = resp.getWriter();
-        pw.print(body);
-        pw.flush();
-        pw.close();
 
     }
 

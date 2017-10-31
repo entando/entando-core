@@ -30,29 +30,16 @@
         <property name="authorizationManager" ref="AuthorizationManager"/>
     </bean>
 
-    <bean id="OAuthConsumerManager" class="org.entando.entando.aps.system.services.oauth.OAuthConsumerManager"
+    <bean id="OAuthConsumerManager" class="org.entando.entando.aps.system.services.oauth2.OAuthConsumerManager"
           parent="abstractService">
         <property name="consumerDAO">
-            <bean class="org.entando.entando.aps.system.services.oauth.OAuthConsumerDAO">
+            <bean class="org.entando.entando.aps.system.services.oauth2.OAuthConsumerDAO">
                 <property name="dataSource" ref="servDataSource"/>
             </bean>
         </property>
-        <property name="tokenDAO">
-            <bean class="org.entando.entando.aps.system.services.oauth.OAuthTokenDAO">
-                <property name="dataSource" ref="servDataSource"/>
-            </bean>
-        </property>
+
     </bean>
 
-    <bean id="OAuth2ClientDetailManager"
-          class="org.entando.entando.aps.system.services.oauth2.ApiOAuth2ClientDetailManager"
-          parent="abstractService">
-        <property name="apiOAuth2ClientDetailDAO">
-            <bean class="org.entando.entando.aps.system.services.oauth2.ApiOAuth2ClientDetailDAO">
-                <property name="dataSource" ref="servDataSource"/>
-            </bean>
-        </property>
-    </bean>
 
     <bean id="OAuth2AuthorizationCodeManager"
           class="org.entando.entando.aps.system.services.oauth2.ApiOAuthorizationCodeManager"
@@ -69,7 +56,6 @@
             </bean>
         </property>
     </bean>
-
 
 
 </beans>

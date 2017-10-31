@@ -14,9 +14,9 @@ import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuthorizationCodeManager;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2ClientDetailManager;
+import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.AuthorizationCode;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
+import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Calendar;
 
 public class AuthEndpointServlet extends HttpServlet {
 
@@ -53,12 +54,14 @@ public class AuthEndpointServlet extends HttpServlet {
                         .authorizationResponse(request, HttpServletResponse.SC_FOUND);
 
                 final String authorizationCode = oauthIssuerImpl.authorizationCode();
-                final Long expires = 3600l;
+                final int expires = 60;
 
                 AuthorizationCode authCode = new AuthorizationCode();
 
                 authCode.setAuthorizationCode(authorizationCode);
-                authCode.setExpires(System.currentTimeMillis() + expires);
+                Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+                calendar.add(Calendar.SECOND, expires);
+                authCode.setExpires(calendar.getTimeInMillis());
                 authCode.setClientId(oauthRequest.getClientId());
                 authCode.setSource(request.getRemoteAddr());
 
@@ -70,7 +73,7 @@ public class AuthEndpointServlet extends HttpServlet {
                 }
                 if (responseType.equals(ResponseType.TOKEN.toString())) {
                     builder.setAccessToken(authorizationCode);
-                    builder.setExpiresIn(expires);
+                    builder.setExpiresIn((long) expires);
                 }
 
                 String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
@@ -96,21 +99,19 @@ public class AuthEndpointServlet extends HttpServlet {
     }
 
     private boolean validateClient(final OAuthAuthzRequest oauthRequest, HttpServletRequest request, HttpServletResponse response) throws OAuthProblemException, IOException {
-        final IApiOAuth2ClientDetailManager clientDetailManager =
-                (IApiOAuth2ClientDetailManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_CLIENT_DETAIL_MANAGER, request);
+        final IOAuthConsumerManager consumerManager =
+                (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
         final String clientId = oauthRequest.getClientId();
 
         try {
-            final OAuth2ClientDetail clientDetail = clientDetailManager.getApiOAuth2ClientDetail(clientId);
+            final ConsumerRecordVO clientDetail = consumerManager.getConsumerRecord(clientId);
             if (clientDetail != null) {
 
-                if (!clientDetail.getClientId().equals(oauthRequest.getClientId())) {
+                if (!clientDetail.getKey().equals(oauthRequest.getClientId())) {
                     throw OAuthUtils.handleOAuthProblemException("Invalid clientId");
-                }
-                else if (clientDetail.getExpiresIn().getTime() < System.currentTimeMillis() ){
+                } else if (clientDetail.getExpirationDate().getTime() < System.currentTimeMillis()) {
                     throw OAuthUtils.handleOAuthProblemException("ClientId is expired");
-                }
-                else if (!clientDetail.getRedirectUri().equals(oauthRequest.getRedirectURI()) ){
+                } else if (!clientDetail.getCallbackUrl().equals(oauthRequest.getRedirectURI())) {
                     throw OAuthUtils.handleOAuthProblemException("Invalid redirectUri");
                 }
 

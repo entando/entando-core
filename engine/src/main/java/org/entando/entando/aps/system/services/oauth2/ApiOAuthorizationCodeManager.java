@@ -2,7 +2,7 @@ package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.common.AbstractService;
 import org.entando.entando.aps.system.services.oauth2.model.AuthorizationCode;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2ClientDetail;
+import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,18 +59,18 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
     }
 
     @Override
-    public boolean verifyAccess(String clientId, String clientSecret, IApiOAuth2ClientDetailManager clientDetailManager) throws Throwable {
-        final OAuth2ClientDetail record = clientDetailManager.getApiOAuth2ClientDetail(clientId);
+    public boolean verifyAccess(String clientId, String clientSecret, IOAuthConsumerManager consumerManager) throws Throwable {
+        final ConsumerRecordVO record = consumerManager.getConsumerRecord(clientId);
         final Date now = new Date();
 
         if (null != record) {
-            if (!record.getClientId().equals(clientId)) {
+            if (!record.getKey().equals(clientId)) {
                 _logger.info("client id does not match");
                 return false;
-            } else if (!record.getClientSecret().equals(clientSecret)) {
+            } else if (!record.getSecret().equals(clientSecret)) {
                 _logger.info("client secret does not match");
                 return false;
-            } else if (record.getExpiresIn().getTime() < now.getTime()) {
+            } else if (record.getExpirationDate().getTime() < now.getTime()) {
                 _logger.info("client secret expired");
                 return false;
             }

@@ -13,11 +13,11 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
-import java.util.Date;
-
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.Date;
 
 /**
  * @author E.Santoboni
@@ -25,60 +25,62 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = ApiOAuthConsumer.TABLE_NAME)
 public class ApiOAuthConsumer {
 
-	@DatabaseField(columnName = "clientid",
-			dataType = DataType.STRING,
-			width = 100,
-			canBeNull = false, id = true)
-	private String _clientId;
-
-	public ApiOAuthConsumer() {}
-	@DatabaseField(columnName = "consumerkey",
-			dataType = DataType.STRING, 
-			width = 100, 
-			canBeNull = false)
-	private String _consumerKey;
-
-	@DatabaseField(columnName = "consumersecret",
-			dataType = DataType.STRING, 
-			width = 100, 
-			canBeNull = false)
-	private String _consumerSecret;
-
-	@DatabaseField(columnName = "description",
-			dataType = DataType.LONG_STRING, 
-			canBeNull = false)
-	private String _description;
-
-
-    @DatabaseField(columnName = "authorizationcode",
+    @DatabaseField(columnName = "consumerkey",
             dataType = DataType.STRING,
+            width = 100,
             canBeNull = false)
-    private String _authorizationCode;
+    private String _consumerKey;
 
-	@DatabaseField(columnName = "callbackurl",
-			dataType = DataType.LONG_STRING)
-	private String _callbackUrl;
+    @DatabaseField(columnName = "consumersecret",
+            dataType = DataType.STRING,
+            width = 100,
+            canBeNull = false)
+    private String _consumerSecret;
 
-	@DatabaseField(columnName = "expirationdate",
-			dataType = DataType.DATE)
-	private Date _expirationDate;
+    @DatabaseField(columnName = "name",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _name;
 
-	@DatabaseField(columnName = "issueddate",
-			dataType = DataType.DATE)
-	private Date _issuedDate;
+    @DatabaseField(columnName = "description",
+            dataType = DataType.LONG_STRING,
+            canBeNull = false)
+    private String _description;
 
 
-	public static final String TABLE_NAME = "api_oauth_consumers";
-	
+    @DatabaseField(columnName = "callbackurl",
+            dataType = DataType.LONG_STRING)
+    private String _callbackUrl;
+
+
+    @DatabaseField(columnName = "scope",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _scope;
+
+    @DatabaseField(columnName = "authorizedgranttypes",
+            dataType = DataType.STRING,
+            canBeNull = true)
+    private String _authorizedGrantTypes;
+
+    @DatabaseField(columnName = "expirationdate",
+            dataType = DataType.DATE)
+    private Date _expirationDate;
+
+    @DatabaseField(columnName = "issueddate",
+            dataType = DataType.DATE)
+    private Date _issuedDate;
+
+
+    public static final String TABLE_NAME = "api_oauth_consumers";
+
 }
 /*
 CREATE TABLE api_oauth_consumers
 (
-  clientid character varying(100) NOT NULL,
   consumerkey character varying(100) NOT NULL,
   consumersecret character varying(100) NOT NULL,
   description character varying(500) NOT NULL,
-  authorizationcode character varying(500) NOT NULL,
   callbackurl character varying(500),
   expirationdate date,
   issueddate date

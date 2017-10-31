@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5p - %c - %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apache.log4j.xml" level="all">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+        <Root level="all">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>
+
+
+<!--
+<Configuration>
+
+    <Appenders>
+
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5p - %c - %m%n"/>
+        </Console>
+
+
+        <Async name="async" bufferSize="256">
+            <AppenderRef ref="console"/>
+        </Async>
+
+
+    </Appenders>
+
+    <Loggers>
+
+        <Logger name="org.apache.log4j.xml" level="info" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+        <Logger name="org.apache.struts2" level="WARN" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+
+        <Logger name="org.springframework" additivity="false">
+            <Root level="WARN">
+                <appender-ref ref="console"/>
+            </Root>
+        </Logger>
+
+        <Logger name="com.opensymphony" additivity="false">
+            <Root level="WARN">
+                <appender-ref ref="console"/>
+            </Root>
+        </Logger>
+
+        <Logger name="org.apache.cxf" additivity="false">
+            <Root level="WARN">
+                <appender-ref ref="console"/>
+            </Root>
+        </Logger>
+
+        <Logger name="org.apache.tiles" additivity="false">
+            <Root level="WARN">
+                <appender-ref ref="console"/>
+            </Root>
+        </Logger>
+
+        <Logger name="com.agiletec" additivity="false">
+            <Root level="DEBUG">
+                <appender-ref ref="console"/>
+            </Root>
+        </Logger>
+
+        <Logger name="org.entando" additivity="false">
+            <Root level="DEBUG">
+                <appender-ref ref="console"/>
+            </Root>
+        </Logger>
+
+
+        <Root level="all">
+            <AppenderRef ref="console"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>
+-->

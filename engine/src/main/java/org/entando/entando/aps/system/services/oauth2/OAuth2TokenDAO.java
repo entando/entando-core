@@ -69,7 +69,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
                 token.setRefreshToken(res.getString("refreshtoken"));
                 token.setClientId(res.getString("clientid"));
                 token.setGrantType(res.getString("granttype"));
-                token.setExpiresIn(res.getDate("expiresin"));
+                token.setExpiresIn(res.getTimestamp("expiresin"));
 
             }
         } catch (Throwable t) {

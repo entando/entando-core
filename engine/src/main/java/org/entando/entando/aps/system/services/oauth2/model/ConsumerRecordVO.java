@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.oauth.model;
+package org.entando.entando.aps.system.services.oauth2.model;
 
 import java.util.Date;
 
@@ -60,14 +60,6 @@ public class ConsumerRecordVO {
         this._expirationDate = expirationDate;
     }
 
-    public String getClientId() {
-        return _clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this._clientId = clientId;
-    }
-
     public Date getIssuedDate() {
         return _issuedDate;
     }
@@ -76,20 +68,25 @@ public class ConsumerRecordVO {
         this._issuedDate = issuedDate;
     }
 
-    public String getAuthorizationCode() {
-        return _authorizationCode;
-    }
+    public String getName() { return _name; }
 
-    public void setAuthorizationCode(String authorizationCode) {
-        this._authorizationCode = authorizationCode;
-    }
+    public void setName(String _name) { this._name = _name; }
 
-    private String _clientId;
+    public String getScope() { return _scope; }
+
+    public void setScope(String _scope) { this._scope = _scope; }
+
+    public String getAuthorizedGrantTypes() { return _authorizedGrantTypes; }
+
+    public void setAuthorizedGrantTypes(String _authorizedGrantTypes) { this._authorizedGrantTypes = _authorizedGrantTypes; }
+
     private String _key;
     private String _secret;
+    private String _name;
     private String _description;
     private String _callbackUrl;
-    private String _authorizationCode;
+    private String _scope;
+    private String _authorizedGrantTypes;
     private Date _expirationDate;
     private Date _issuedDate;
 }

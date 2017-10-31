@@ -1,6 +1,5 @@
 package org.entando.entando.aps.system.services.oauth2;
 
-import org.entando.entando.aps.system.services.oauth.IOAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.AuthorizationCode;
 
 public interface IApiOAuthorizationCodeManager {
@@ -13,11 +12,11 @@ public interface IApiOAuthorizationCodeManager {
      * Verify access before getting the access token
      * @param clientId
      * @param clientSecret
-     * @param clientDetailManager
+     * @param consumerManager
      * @return boolean
      * @throws Throwable
      */
-    boolean verifyAccess(final String clientId, final String clientSecret, IApiOAuth2ClientDetailManager clientDetailManager) throws  Throwable;
+    boolean verifyAccess(final String clientId, final String clientSecret, IOAuthConsumerManager consumerManager) throws  Throwable;
 
     boolean verifyCode(final String authCode, final String source);
 }

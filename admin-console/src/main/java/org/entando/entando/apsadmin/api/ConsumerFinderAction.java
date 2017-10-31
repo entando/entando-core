@@ -15,8 +15,8 @@ package org.entando.entando.apsadmin.api;
 
 import java.util.List;
 
-import org.entando.entando.aps.system.services.oauth.IOAuthConsumerManager;
-import org.entando.entando.aps.system.services.oauth.model.ConsumerRecordVO;
+import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
+import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

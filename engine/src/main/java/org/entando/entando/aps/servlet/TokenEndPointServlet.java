@@ -12,9 +12,9 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2ClientDetailManager;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuthorizationCodeManager;
+import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
+import java.util.Calendar;
 
 public class TokenEndPointServlet extends HttpServlet {
 
@@ -43,13 +43,15 @@ public class TokenEndPointServlet extends HttpServlet {
                 OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
                 final String accessToken = oauthIssuerImpl.accessToken();
                 final String refreshToken = oauthIssuerImpl.refreshToken();
-                final Long expires = 3600l;
+                int expires = 3600;
 
                 OAuth2Token oAuth2Token = new OAuth2Token();
                 oAuth2Token.setAccessToken(accessToken);
                 oAuth2Token.setRefreshToken(refreshToken);
                 oAuth2Token.setClientId(oauthRequest.getClientId());
-                oAuth2Token.setExpiresIn(new Date(System.currentTimeMillis() + expires));
+                Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+                calendar.add(Calendar.SECOND, expires);
+                oAuth2Token.setExpiresIn(calendar.getTime());
                 oAuth2Token.setGrantType(oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE));
 
                 tokenManager.addApiOAuth2Token(oAuth2Token);
@@ -88,7 +90,7 @@ public class TokenEndPointServlet extends HttpServlet {
 
     private boolean validateClient(OAuthTokenRequest oauthRequest, HttpServletRequest request, HttpServletResponse response) throws Throwable {
 
-        IApiOAuth2ClientDetailManager clientDetailManager = (IApiOAuth2ClientDetailManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_CLIENT_DETAIL_MANAGER, request);
+        IOAuthConsumerManager consumerManager = (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
         IApiOAuthorizationCodeManager codeManager = (IApiOAuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
 
         final String clientId = oauthRequest.getClientId();
@@ -104,7 +106,7 @@ public class TokenEndPointServlet extends HttpServlet {
 
                 ) {
 
-            if (!codeManager.verifyAccess(clientId, clientSecret, clientDetailManager)) {
+            if (!codeManager.verifyAccess(clientId, clientSecret, consumerManager)) {
                 _logger.error("OAuth2 authentication failed");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;

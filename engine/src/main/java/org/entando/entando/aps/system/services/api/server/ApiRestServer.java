@@ -28,7 +28,6 @@ import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.*;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
-import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -281,10 +280,6 @@ public class ApiRestServer {
             final OAuth2Token token = tokenManager.getApiOAuth2Token(accessToken);
 
             if (token != null) {
-
-                IOAuthConsumerManager consumerManager = (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
-                ConsumerRecordVO record = consumerManager.getConsumerRecord(token.getClientId());
-
 
                 // Validate the access token
                 if (!token.getAccessToken().equals(accessToken)) {

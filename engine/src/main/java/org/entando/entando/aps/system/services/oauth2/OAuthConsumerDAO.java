@@ -52,7 +52,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
                 consumer.setName(res.getString("name"));
                 consumer.setDescription(res.getString("description"));
                 consumer.setAuthorizedGrantTypes(res.getString("authorizedgranttypes"));
-                consumer.setScope(res.getString("callbackurl"));
+                consumer.setScope(res.getString("scope"));
                 consumer.setExpirationDate(res.getDate("expirationdate"));
                 consumer.setIssuedDate(res.getDate("issueddate"));
 

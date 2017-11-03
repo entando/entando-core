@@ -112,7 +112,6 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
 
     private int fillStatement(ConsumerRecordVO consumer, int index, PreparedStatement stat) throws SQLException {
         int idx = index;
-        // consumersecret, name, description, callbackurl,scope, authorizedgranttypes, expirationdate
         stat.setString(idx++, consumer.getSecret());
         stat.setString(idx++, consumer.getName());
         stat.setString(idx++, consumer.getDescription());

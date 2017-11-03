@@ -75,6 +75,6 @@ public class ApiException extends Exception {
 		return this._errors;
 	}
 	
-	private List<ApiError> _errors = new ArrayList<ApiError>();
+	private final List<ApiError> _errors = new ArrayList<>();
 	
 }

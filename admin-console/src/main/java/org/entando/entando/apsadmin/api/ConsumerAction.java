@@ -16,11 +16,13 @@ package org.entando.entando.apsadmin.api;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,6 +32,10 @@ import java.util.Date;
 public class ConsumerAction extends BaseAction {
 
     private static final Logger _logger = LoggerFactory.getLogger(ConsumerAction.class);
+
+    public ConsumerAction() {
+        this._authorizedGrantTyped = GrantType.AUTHORIZATION_CODE.toString();
+    }
 
     public void validate() {
         super.validate();
@@ -65,7 +71,6 @@ public class ConsumerAction extends BaseAction {
             this.setDescription(consumer.getDescription());
             this.setName(consumer.getName());
             this.setScope(consumer.getScope());
-            this.setAuthorizedGrantTyped(consumer.getAuthorizedGrantTypes());
             this.setExpirationDate(consumer.getExpirationDate());
             this.setSecret(consumer.getSecret());
         } catch (Throwable t) {
@@ -213,6 +218,7 @@ public class ConsumerAction extends BaseAction {
         this._authorizedGrantTyped = authorizedGrantTyped;
     }
 
+
     protected IOAuthConsumerManager getOauthConsumerManager() {
         return _oauthConsumerManager;
     }
@@ -220,6 +226,7 @@ public class ConsumerAction extends BaseAction {
     public void setOauthConsumerManager(IOAuthConsumerManager oauthConsumerManager) {
         this._oauthConsumerManager = oauthConsumerManager;
     }
+
 
     private String _consumerKey;
     private int _strutsAction;
@@ -230,7 +237,6 @@ public class ConsumerAction extends BaseAction {
     private String _scope;
     private String _authorizedGrantTyped;
     private Date _expirationDate;
-
     private IOAuthConsumerManager _oauthConsumerManager;
 
 }

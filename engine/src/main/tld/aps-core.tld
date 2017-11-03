@@ -366,7 +366,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description><![CDATA[The name of the (boolean) page context parameter where the result of the authorisation check is placed.]]></description>
+			<description><![CDATA[The name of the (boolean) page context parameter where the result of the authorization check is placed.]]></description>
 			<name>var</name>
 			<required>no</required>
 			<rtexprvalue>false</rtexprvalue>

@@ -45,5 +45,4 @@ public interface IOAuthConsumerManager {
     String SCOPE_FILTER_KEY = "scope";
     String AUTHORIZED_GRANT_TYPE_FILTER_KEY = "authorizedgranttypes";
 
-
 }

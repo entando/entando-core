@@ -98,10 +98,14 @@ public class URLManager extends AbstractURLManager {
 			String url = this.createURL(page, lang, pageUrl.getParams(), pageUrl.isEscapeAmp(), request);
 			if (null != reqCtx && this.useJsessionId()) {
 				HttpServletResponse resp = reqCtx.getResponse();
+				String sessionid = request.getSession().getId();
+				resp.setHeader("Set-Cookie", "JSESSIONID=" + sessionid + "; HttpOnly");
 				String encUrl = resp.encodeURL(url.toString());
 				return encUrl;
 			} else {
-				return url;
+				reqCtx.getResponse().setHeader("Set-Cookie", ";HttpOnly");
+				return reqCtx.getResponse().encodeRedirectURL(url);
+
 			}
 		} catch (Throwable t) {
 			_logger.error("Error creating url", t);

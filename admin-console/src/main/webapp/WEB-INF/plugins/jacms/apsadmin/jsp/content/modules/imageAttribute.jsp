@@ -57,7 +57,7 @@
     <%-- resource empty --%>
     <s:else>
         <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/chooseResourceSubmit.jsp">
-            <s:param name="resourceTypeCode"><s:text name="label.image" /></s:param>
+            <s:param name="resourceTypeCode">Image</s:param>
         </s:include>
     </s:else>
 </s:if>

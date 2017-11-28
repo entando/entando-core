@@ -58,7 +58,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
                 consumer.setIssuedDate(res.getDate("issueddate"));
 
             }
-        } catch (SQLException |ApsSystemException t) {
+        } catch (SQLException | ApsSystemException t) {
             _logger.error("Error while loading consumer by clientid {}", clientId, t);
             throw new RuntimeException("Error while loading consumer by key " + clientId, t);
         } finally {
@@ -80,7 +80,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             index = this.fillStatement(consumer, index, stat);
             stat.executeUpdate();
             conn.commit();
-        } catch (SQLException | ApsSystemException t ) {
+        } catch (SQLException | ApsSystemException t) {
             this.executeRollback(conn);
             _logger.error("Error while adding a consumer", t);
             throw new RuntimeException("Error while adding a consumer", t);
@@ -101,7 +101,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             stat.setString(index++, consumer.getKey());
             stat.executeUpdate();
             conn.commit();
-        } catch (SQLException |ApsSystemException t) {
+        } catch (SQLException | ApsSystemException t) {
             this.executeRollback(conn);
             _logger.error("Error while updating a consumer", t);
             throw new RuntimeException("Error while updating a consumer", t);
@@ -120,8 +120,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
         stat.setString(idx++, consumer.getAuthorizedGrantTypes());
         if (null != consumer.getExpirationDate()) {
             stat.setTimestamp(idx++, new Timestamp(consumer.getExpirationDate().getTime()));
-        }
-        else {
+        } else {
             // no operation
         }
         stat.setTimestamp(idx++, new Timestamp(System.currentTimeMillis()));
@@ -137,7 +136,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             this.delete(clientId, DELETE_CONSUMER_TOKENS, conn);
             this.delete(clientId, DELETE_CONSUMER, conn);
             conn.commit();
-        } catch (SQLException |ApsSystemException t) {
+        } catch (SQLException | ApsSystemException t) {
             this.executeRollback(conn);
             _logger.error("Error while deleting consumer '{}' and its tokens", clientId, t);
             throw new RuntimeException("Error while deleting a consumer and its tokens", t);
@@ -152,7 +151,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             stat = conn.prepareStatement(query);
             stat.setString(1, clientId);
             stat.executeUpdate();
-        } catch (SQLException  t) {
+        } catch (SQLException t) {
             this.executeRollback(conn);
             _logger.error("Error while deleting records for {}", clientId, t);
             throw new RuntimeException("Error while deleting records", t);
@@ -186,7 +185,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             = "INSERT INTO api_oauth_consumers (consumerkey, consumersecret,name, description, callbackurl,scope, authorizedgranttypes, expirationdate, issueddate) VALUES (?,?,?,?,?,?,?,?,?) ";
 
     private String UPDATE_CONSUMER
-            = "UPDATE api_oauth_consumers SET consumersecret = ? , name=?, description = ? , callbackurl = ?, scope=?, authorizedgranttypes = ?, expirationdate = ? WHERE consumerkey = ? ";
+            = "UPDATE api_oauth_consumers SET consumersecret = ? , name=?, description = ? , callbackurl = ?, scope=?, authorizedgranttypes = ?, expirationdate = ? , issueddate = ? WHERE consumerkey = ? ";
 
     private String DELETE_CONSUMER
             = "DELETE FROM api_oauth_consumers WHERE consumerkey = ? ";

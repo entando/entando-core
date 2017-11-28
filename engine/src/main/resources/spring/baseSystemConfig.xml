@@ -74,7 +74,6 @@
         <value>org.entando.entando.aps.system.init.model.servdb.UserGroupRoleReference</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ApiOAuthConsumer</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ApiOAuthToken</value>
-        <value>org.entando.entando.aps.system.init.model.servdb.ApiOAuth2ClientDetail</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ApiCatalogMethod</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ApiCatalogService</value>
         <value>org.entando.entando.aps.system.init.model.servdb.UserProfile</value>
@@ -82,7 +81,6 @@
         <value>org.entando.entando.aps.system.init.model.servdb.UserProfileAttributeRole</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecord</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecordRelation</value>
-
         <value>org.entando.entando.aps.system.init.model.servdb.DataObjectModel</value>
         <value>org.entando.entando.aps.system.init.model.servdb.DataObject</value>
         <value>org.entando.entando.aps.system.init.model.servdb.DataObjectRelation</value>

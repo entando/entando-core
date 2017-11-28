@@ -7,7 +7,6 @@ import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.as.validator.AuthorizationCodeValidator;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -28,9 +27,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
 
-public class TokenEndPointServlet extends HttpServlet {
+public class TokenEndpointServlet extends HttpServlet {
 
-    private static final Logger _logger = LoggerFactory.getLogger(TokenEndPointServlet.class);
+    private static final Logger _logger = LoggerFactory.getLogger(TokenEndpointServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

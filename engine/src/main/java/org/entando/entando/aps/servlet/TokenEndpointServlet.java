@@ -32,7 +32,7 @@ public class TokenEndpointServlet extends HttpServlet {
     private static final Logger _logger = LoggerFactory.getLogger(TokenEndpointServlet.class);
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
         try {
             IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
@@ -55,7 +55,7 @@ public class TokenEndpointServlet extends HttpServlet {
                 oAuth2Token.setExpiresIn(calendar.getTime());
                 oAuth2Token.setGrantType(oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE));
 
-                tokenManager.addApiOAuth2Token(oAuth2Token);
+                tokenManager.addApiOAuth2Token(oAuth2Token, false);
 
                 OAuthResponse r = OAuthASResponse
                         .tokenResponse(HttpServletResponse.SC_OK)
@@ -77,14 +77,26 @@ public class TokenEndpointServlet extends HttpServlet {
 
         } catch (OAuthProblemException e) {
             _logger.error("OAuthProblemException exception {} ", e.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException e1) {
+                _logger.error("OAuthProblemException - IOException exception {} ", e1);
+            }
 
         } catch (OAuthSystemException e) {
             _logger.error("OAuthSystemException exception {} ", e.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException e1) {
+                _logger.error("OAuthSystemException - IOException exception {} ", e1);
+            }
         } catch (Throwable throwable) {
             _logger.error("Throwable exception {} ", throwable.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException e) {
+                _logger.error("Throwable - IOException exception {} ", e);
+            }
         }
     }
 

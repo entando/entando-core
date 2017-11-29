@@ -4,49 +4,58 @@ import java.util.Date;
 
 public class OAuth2Token {
 
-    private String _accessToken;
-    private String _clientId;
-    private Date _expiresIn;
-    private String _refreshToken;
-    private String _grantType;
+    private String accessToken;
+    private String clientId;
+    private Date expiresIn;
+    private String refreshToken;
+    private String grantType;
+    private String localUser;
 
     public String getAccessToken() {
-        return _accessToken;
+        return accessToken;
     }
 
-    public void setAccessToken(String _accessToken) {
-        this._accessToken = _accessToken;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public String getClientId() {
-        return _clientId;
+        return clientId;
     }
 
-    public void setClientId(String _clientId) {
-        this._clientId = _clientId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public Date getExpiresIn() {
-        return _expiresIn;
+        return expiresIn;
     }
 
-    public void setExpiresIn(Date _expiresIn) {
-        this._expiresIn = _expiresIn;
+    public void setExpiresIn(Date expiresIn) {
+        this.expiresIn = expiresIn;
     }
 
     public String getRefreshToken() {
-        return _refreshToken;
+        return refreshToken;
     }
 
-    public void setRefreshToken(String _refreshToken) {
-        this._refreshToken = _refreshToken;
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public String getGrantType() {
-        return _grantType;
+        return grantType;
     }
 
-    public void setGrantType(String _grantType) {
-        this._grantType = _grantType;
+    public void setGrantType(String grantType) {
+        this.grantType = grantType;
+    }
+
+    public String getLocalUser() {
+        return localUser;
+    }
+
+    public void setLocalUser(String localUser) {
+        this.localUser = localUser;
     }
 }

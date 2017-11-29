@@ -30,32 +30,39 @@ public class ApiOAuthToken {
             dataType = DataType.STRING,
             width = 100,
             canBeNull = false, id = true)
-    private String _accessToken;
+    private String accessToken;
 
     @DatabaseField(columnName = "clientid",
             dataType = DataType.STRING,
             width = 100,
             canBeNull = false)
-    private String _clientId;
+    private String clientId;
 
     @DatabaseField(columnName = "expiresin",
             dataType = DataType.DATE,
             width = 100,
             canBeNull = false)
-    private Date _expiresin;
+    private Date expiresin;
 
 
     @DatabaseField(columnName = "refreshtoken",
             dataType = DataType.STRING,
             canBeNull = false)
-    private String _refreshToken;
+    private String refreshToken;
 
 
     @DatabaseField(columnName = "granttype",
             dataType = DataType.STRING,
             width = 100,
             canBeNull = false)
-    private String _grantType;
+    private String grantType;
+
+
+    @DatabaseField(columnName = "localuser",
+            dataType = DataType.STRING,
+            width = 100,
+            canBeNull = true)
+    private String localUser;
 
 
     public static final String TABLE_NAME = "api_oauth_tokens";

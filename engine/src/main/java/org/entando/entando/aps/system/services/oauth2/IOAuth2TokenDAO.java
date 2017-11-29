@@ -13,17 +13,22 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 
 
 public interface IOAuth2TokenDAO {
 
-    void addAccessToken(final OAuth2Token accessor);
+    void addAccessToken(final OAuth2Token accessor, boolean isLocalUser) throws ApsSystemException;
 
-    OAuth2Token getAccessToken(final String accessToken);
+    OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException;
 
-    void deleteAccessToken(final String accessToken);
+    OAuth2Token getAccessTokenFromLocalUser(final String localUser) throws ApsSystemException;
 
-    void deleteExpiredToken();
+    void deleteAccessToken(final String accessToken) throws ApsSystemException;
+
+    void deleteExpiredToken() throws ApsSystemException;
+
+    void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException;
 
 }

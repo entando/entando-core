@@ -29,11 +29,16 @@ import java.util.Calendar;
 
 public class AuthEndpointServlet extends HttpServlet {
 
-    private static final Logger _logger = LoggerFactory.getLogger(AuthEndpointServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthEndpointServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
+        try {
+            doGet(req, resp);
+        } catch (ServletException | IOException e) {
+            logger.error("Exception {} ", e);
+        }
+
     }
 
     @Override
@@ -54,7 +59,7 @@ public class AuthEndpointServlet extends HttpServlet {
                         .authorizationResponse(request, HttpServletResponse.SC_FOUND);
 
                 final String authorizationCode = oauthIssuerImpl.authorizationCode();
-                final int expires = 60;
+                final int expires = 3;
 
                 AuthorizationCode authCode = new AuthorizationCode();
 
@@ -82,23 +87,25 @@ public class AuthEndpointServlet extends HttpServlet {
                 response.setStatus(status);
                 response.sendRedirect(resp.getLocationUri());
             } else {
-                _logger.warn("OAuth2 authentication failed");
+                logger.warn("OAuth2 authentication failed");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 
             }
 
         } catch (OAuthSystemException ex) {
-            _logger.error("System exception {} ", ex.getMessage());
+            logger.error("System exception {} ", ex.getMessage());
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (OAuthProblemException ex) {
-            _logger.error("OAuth2 error {} ", ex.getMessage());
+            logger.error("OAuth2 error {} ", ex.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (IOException e) {
+            logger.error("IOException {} ", e);
         }
 
 
     }
 
-    private boolean validateClient(final OAuthAuthzRequest oauthRequest, HttpServletRequest request, HttpServletResponse response) throws OAuthProblemException, IOException {
+    private boolean validateClient(final OAuthAuthzRequest oauthRequest, HttpServletRequest request, HttpServletResponse response) throws OAuthProblemException {
         final IOAuthConsumerManager consumerManager =
                 (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
         final String clientId = oauthRequest.getClientId();
@@ -119,8 +126,13 @@ public class AuthEndpointServlet extends HttpServlet {
             }
 
         } catch (ApsSystemException e) {
-            _logger.error("ApsSystemException {}", e.getMessage());
-            response.sendError(500);
+            logger.error("ApsSystemException {}", e.getMessage());
+            try {
+                response.sendError(500);
+            } catch (IOException e1) {
+                logger.error("IOException {}", e1);
+
+            }
             return false;
 
         }

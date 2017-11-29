@@ -29,61 +29,49 @@ public class ApiOAuthConsumer {
             dataType = DataType.STRING,
             width = 100,
             canBeNull = false)
-    private String _consumerKey;
+    private String consumerKey;
 
     @DatabaseField(columnName = "consumersecret",
             dataType = DataType.STRING,
             width = 100,
             canBeNull = false)
-    private String _consumerSecret;
+    private String consumerSecret;
 
     @DatabaseField(columnName = "name",
             dataType = DataType.STRING,
             canBeNull = true)
-    private String _name;
+    private String name;
 
     @DatabaseField(columnName = "description",
             dataType = DataType.LONG_STRING,
             canBeNull = false)
-    private String _description;
+    private String description;
 
 
     @DatabaseField(columnName = "callbackurl",
             dataType = DataType.LONG_STRING)
-    private String _callbackUrl;
+    private String callbackUrl;
 
 
     @DatabaseField(columnName = "scope",
             dataType = DataType.STRING,
             canBeNull = true)
-    private String _scope;
+    private String scope;
 
     @DatabaseField(columnName = "authorizedgranttypes",
             dataType = DataType.STRING,
             canBeNull = true)
-    private String _authorizedGrantTypes;
+    private String authorizedGrantTypes;
 
     @DatabaseField(columnName = "expirationdate",
             dataType = DataType.DATE)
-    private Date _expirationDate;
+    private Date expirationDate;
 
     @DatabaseField(columnName = "issueddate",
             dataType = DataType.DATE)
-    private Date _issuedDate;
+    private Date issuedDate;
 
 
     public static final String TABLE_NAME = "api_oauth_consumers";
 
 }
-/*
-CREATE TABLE api_oauth_consumers
-(
-  consumerkey character varying(100) NOT NULL,
-  consumersecret character varying(100) NOT NULL,
-  description character varying(500) NOT NULL,
-  callbackurl character varying(500),
-  expirationdate date,
-  issueddate date
-  CONSTRAINT api_oauth_consumers_pkey PRIMARY KEY (clientid )
-)
-*/

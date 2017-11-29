@@ -289,7 +289,7 @@ public class ApiRestServer {
                 throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Authentication Required", Response.Status.UNAUTHORIZED);
             }
         } catch (OAuthSystemException | ApsSystemException | OAuthProblemException ex) {
-            _logger.error("System exception {} ", ex.getMessage());
+            _logger.error("System exception {}", ex);
             throw new ApiException(IApiErrorCodes.SERVER_ERROR, ex.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
 

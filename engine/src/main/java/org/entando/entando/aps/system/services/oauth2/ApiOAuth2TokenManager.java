@@ -10,11 +10,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-
 public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2TokenManager {
 
-    private Logger _logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
+    private static final String ERROR_ADDING_TOKEN = "Error adding OAuth2Token";
 
     private OAuth2TokenDAO oAuth2TokenDAO;
 
@@ -29,24 +28,20 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public void init() throws Exception {
-        _logger.info(this.getClass().getCanonicalName() + " initialized");
-        // every 30 min start the scheduler for delete expired access token
+        logger.debug("{}  initialized ", this.getClass().getName());
+        // every 1 hour start the scheduler for delete expired access token
         ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
-        ScheduledDeleteExpiredTokenThread expiredTokenThread = new ScheduledDeleteExpiredTokenThread();
-        expiredTokenThread.setTokenDAO(this.getOAuth2TokenDAO());
-        scheduledThreadPool.scheduleAtFixedRate(expiredTokenThread,0, 30, TimeUnit.MINUTES);
-
-
+        Runnable expiredTokenThread = new ScheduledDeleteExpiredTokenThread(this.getOAuth2TokenDAO());
+        scheduledThreadPool.scheduleAtFixedRate(expiredTokenThread, 0, 1, TimeUnit.HOURS);
     }
 
     @Override
-    public void addApiOAuth2Token(OAuth2Token accessToken) throws ApsSystemException {
-
+    public void addApiOAuth2Token(final OAuth2Token accessToken, final boolean isLocalUser) throws ApsSystemException {
         try {
-            this.getOAuth2TokenDAO().addAccessToken(accessToken);
-        } catch (Throwable t) {
-            _logger.error("Error adding ApiOAuth2ClientDetail", t);
-            throw new ApsSystemException("Error adding OAuth2Token", t);
+            this.getOAuth2TokenDAO().addAccessToken(accessToken, isLocalUser);
+        } catch (ApsSystemException t) {
+            logger.error(ERROR_ADDING_TOKEN, t);
+            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
         }
 
     }
@@ -55,11 +50,33 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     public OAuth2Token getApiOAuth2Token(final String accessToken) throws ApsSystemException {
         try {
             return this.getOAuth2TokenDAO().getAccessToken(accessToken);
-        } catch (Throwable t) {
-            _logger.error("Error adding ApiOAuth2ClientDetail", t);
-            throw new ApsSystemException("Error adding OAuth2Token", t);
+        } catch (ApsSystemException t) {
+            logger.error(ERROR_ADDING_TOKEN, t);
+            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
         }
     }
+
+    @Override
+    public String getAccessTokenFromLocalUser(final String localUser) throws ApsSystemException {
+        try {
+            OAuth2Token oAuth2Token = this.getOAuth2TokenDAO().getAccessTokenFromLocalUser(localUser);
+            return oAuth2Token == null ? null : oAuth2Token.getAccessToken();
+        } catch (ApsSystemException t) {
+            logger.error(ERROR_ADDING_TOKEN, t);
+            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
+        }
+    }
+
+    public void updateToken(final String accessToken, final long seconds) throws ApsSystemException {
+        try {
+            this.getOAuth2TokenDAO().updateAccessToken(accessToken, seconds );
+        } catch (ApsSystemException t) {
+            logger.error(ERROR_ADDING_TOKEN, t);
+            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
+        }
+    }
+
+
 
 
 }

@@ -22,8 +22,8 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
 
     @Override
     public void init() throws Exception {
-        authorizationCodes = new ArrayList<AuthorizationCode>();
-        _logger.info(this.getClass().getCanonicalName() + " initialized");
+        authorizationCodes = new ArrayList<>();
+        _logger.debug("{}  initialized ",this.getClass().getName());
 
         ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
         scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
@@ -39,6 +39,11 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
 
             }
         }, 0, 5, TimeUnit.MINUTES);
+    }
+
+    @Override
+    protected void release() {
+        super.release();
     }
 
     public void addAuthorizationCode(final AuthorizationCode authCode) {

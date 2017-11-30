@@ -22,7 +22,6 @@
 	<bean id="dispatchAction" scope="prototype" 
 			class="com.agiletec.apsadmin.common.DispatchAction" parent="abstractBaseAction">
 		<property name="authenticationProvider" ref="AuthenticationProviderManager"/>
-		<property name="tokenManager" ref="OAuth2TokenManager"/>
 	</bean>
 	
 	<bean id="userAvatarAction" 

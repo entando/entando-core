@@ -37,14 +37,6 @@
 	<resource name="myOAuthAccessToken">
 		<description>My OAuth Access Token</description>
 		<source>core</source>
-		<method httpMethod="GET" active="true" requiredPermission="superuser" hidden="true">
-		<description>Get his Access Token</description>
-		<springBean name="ApiOAuth2TokenManager" method="getAccessTokenFromLocalUser" />
-		<parameters>
-			<parameter key="user" required="true" />
-		</parameters>
-		</method>
-
 		<method httpMethod="DELETE" active="true" requiredAuth="true" hidden="true">
 			<description>Delete his Access Token</description>
 			<springBean name="OAuthConsumerManager" method="deleteMyAccessToken" />

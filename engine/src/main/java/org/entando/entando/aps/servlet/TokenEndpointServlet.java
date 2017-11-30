@@ -43,28 +43,26 @@ public class TokenEndpointServlet extends HttpServlet {
 
 
         try {
+            final String grantType = request.getParameter("grant_type");
 
             OAuthResponse oAuthResponse = null;
-            if (request.getParameter("grant_type").contentEquals(GrantType.AUTHORIZATION_CODE.toString())) {
+            if (grantType.contentEquals(GrantType.AUTHORIZATION_CODE.toString())) {
                 oAuthResponse = this.validateClientWithAuthorizationCode(request);
-            }
-            else if (request.getParameter("grant_type").contentEquals(GrantType.PASSWORD.toString())) {
+            } else if (grantType.contentEquals(GrantType.PASSWORD.toString())) {
                 oAuthResponse = this.validateClientWithPassword(request);
-            }
-            else {
+            } else {
                 // no case
             }
 
 
-            if (oAuthResponse != null ) {
+            if (oAuthResponse != null) {
                 response.setStatus(oAuthResponse.getResponseStatus());
                 PrintWriter pw = response.getWriter();
                 pw.print(oAuthResponse.getBody());
                 pw.flush();
                 pw.close();
-            }
-            else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,ERROR_AUTHENTICATION_FAILED);
+            } else {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ERROR_AUTHENTICATION_FAILED);
             }
 
 
@@ -73,14 +71,14 @@ public class TokenEndpointServlet extends HttpServlet {
             try {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (IOException e1) {
-                _logger.error("OAuthSystemException - IOException exception {} ", e1);
+                _logger.error("IOException - IOException exception {} ", e1);
             }
 
         }
     }
 
-    private OAuthResponse registerToken(HttpServletRequest request, final String clientId, final String oauthType, final boolean localUser) throws OAuthSystemException, ApsSystemException {
-        int expires = 60;
+    private OAuthResponse registerToken(HttpServletRequest request, final String clientId, final String oauthType, final String localUser) throws OAuthSystemException, ApsSystemException {
+        int expires = 3600;
         IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
         OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         final String accessToken = oauthIssuerImpl.accessToken();
@@ -94,7 +92,14 @@ public class TokenEndpointServlet extends HttpServlet {
         calendar.add(Calendar.SECOND, expires);
         oAuth2Token.setExpiresIn(calendar.getTime());
         oAuth2Token.setGrantType(oauthType);
-        tokenManager.addApiOAuth2Token(oAuth2Token, localUser);
+
+        if (localUser == null){
+            tokenManager.addApiOAuth2Token(oAuth2Token, false);
+        }
+        else {
+            oAuth2Token.setLocalUser(localUser);
+            tokenManager.addApiOAuth2Token(oAuth2Token, true);
+        }
 
         return OAuthASResponse
                 .tokenResponse(HttpServletResponse.SC_OK)
@@ -133,7 +138,7 @@ public class TokenEndpointServlet extends HttpServlet {
                     _logger.error("OAuth2 authcode does not match or the source of client is different");
                     return null;
                 }
-                return this.registerToken(request, clientId, oauthType,false);
+                return this.registerToken(request, clientId, oauthType, null);
             } else {
                 return null;
             }
@@ -141,7 +146,8 @@ public class TokenEndpointServlet extends HttpServlet {
             _logger.error("OAuthSystemException - {} ", e);
             return null;
         } catch (OAuthProblemException e) {
-            _logger.error("OAuthProblemException - {} ", e);
+            _logger.error("OAuthProblemException - {} ", e.getError().concat(" ").concat(e.getDescription()));
+            _logger.debug("OAuthProblemException - {} ", e);
             return null;
         }
 
@@ -178,7 +184,7 @@ public class TokenEndpointServlet extends HttpServlet {
                             authorizationManager.isAuthOnPermission(user, Permission.BACKOFFICE);
 
                     if (checkUser) {
-                        return this.registerToken(request, clientId, oauthType,true);
+                        return this.registerToken(request, clientId, oauthType, user.getUsername());
                     } else
                         return null;
 
@@ -188,8 +194,11 @@ public class TokenEndpointServlet extends HttpServlet {
             } else {
                 return null;
             }
-        } catch (OAuthSystemException | OAuthProblemException e1) {
-            _logger.error("OAuthException - {} ", e1);
+        } catch (OAuthProblemException e1) {
+            _logger.error("OAuthException - {} ", e1.getError().concat(" ").concat(e1.getDescription()));
+            _logger.debug("OAuthException - {} ", e1);
+        } catch (OAuthSystemException e) {
+            _logger.error("OAuthSystemException - {} ", e.getMessage());
         } catch (ApsSystemException e) {
             _logger.error("ApsSystemException - {}", e);
         }

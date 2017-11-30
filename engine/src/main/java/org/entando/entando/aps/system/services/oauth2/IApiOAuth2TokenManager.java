@@ -14,8 +14,6 @@ public interface IApiOAuth2TokenManager {
 
     OAuth2Token getApiOAuth2Token(final String accessToken) throws ApsSystemException;
 
-    String getAccessTokenFromLocalUser(final String localUser) throws ApsSystemException;
-
     void updateToken(final String accessToken, long seconds) throws ApsSystemException;
 
 

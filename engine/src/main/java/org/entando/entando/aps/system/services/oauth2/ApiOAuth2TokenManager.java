@@ -56,17 +56,6 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
         }
     }
 
-    @Override
-    public String getAccessTokenFromLocalUser(final String localUser) throws ApsSystemException {
-        try {
-            OAuth2Token oAuth2Token = this.getOAuth2TokenDAO().getAccessTokenFromLocalUser(localUser);
-            return oAuth2Token == null ? null : oAuth2Token.getAccessToken();
-        } catch (ApsSystemException t) {
-            logger.error(ERROR_ADDING_TOKEN, t);
-            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
-        }
-    }
-
     public void updateToken(final String accessToken, final long seconds) throws ApsSystemException {
         try {
             this.getOAuth2TokenDAO().updateAccessToken(accessToken, seconds );

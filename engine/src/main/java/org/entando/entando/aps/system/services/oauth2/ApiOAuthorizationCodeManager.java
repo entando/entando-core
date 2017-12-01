@@ -17,33 +17,26 @@ import java.util.concurrent.TimeUnit;
 public class ApiOAuthorizationCodeManager extends AbstractService implements IApiOAuthorizationCodeManager {
 
     private List<AuthorizationCode> authorizationCodes;
-
     private static final Logger _logger = LoggerFactory.getLogger(ApiOAuthorizationCodeManager.class);
 
     @Override
     public void init() throws Exception {
         authorizationCodes = new ArrayList<>();
-        _logger.debug("{}  initialized ",this.getClass().getName());
-
-        ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
+        _logger.debug("{}  initialized ", this.getClass().getName());
+        final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
         scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                Iterator<AuthorizationCode> iter = authorizationCodes.iterator();
-                while (iter.hasNext()) {
-                    AuthorizationCode authorizationCode = iter.next();
+                final Iterator<AuthorizationCode> iterator = authorizationCodes.iterator();
+                while (iterator.hasNext()) {
+                    AuthorizationCode authorizationCode = iterator.next();
                     if (authorizationCode.getExpires() < System.currentTimeMillis()) {
                         authorizationCodes.remove(authorizationCode);
                     }
                 }
 
             }
-        }, 0, 5, TimeUnit.MINUTES);
-    }
-
-    @Override
-    protected void release() {
-        super.release();
+        }, 5, 5, TimeUnit.MINUTES);
     }
 
     public void addAuthorizationCode(final AuthorizationCode authCode) {
@@ -90,10 +83,7 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
     @Override
     public boolean verifyCode(final String authCode, final String source) {
         final AuthorizationCode code = getAuthorizationCode(authCode);
-        if (code == null) {
-            _logger.info("authcode does not match");
-            return false;
-        } else if (!code.getSource().equals(source)) {
+        if (code == null || !code.getSource().equals(source)) {
             _logger.info("authcode does not match");
             return false;
         } else if (System.currentTimeMillis() > code.getExpires()) {

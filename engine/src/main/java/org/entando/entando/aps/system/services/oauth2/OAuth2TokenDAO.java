@@ -27,7 +27,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
 
     private final String ERROR_REMOVE_ACCESS_TOKEN = "Error while remove access token";
 
-    public void addAccessToken(final OAuth2Token accessToken, boolean isLocalUser) throws ApsSystemException {
+    public synchronized void addAccessToken(final OAuth2Token accessToken, boolean isLocalUser) throws ApsSystemException {
 
         Connection conn = null;
         PreparedStatement stat = null;
@@ -54,7 +54,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
         }
     }
 
-    public void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException {
+    public synchronized void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException {
 
         Connection conn = null;
         PreparedStatement stat = null;
@@ -78,7 +78,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
 
 
     @Override
-    public OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException {
+    public synchronized OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException {
         Connection conn = null;
         OAuth2Token token = null;
         PreparedStatement stat = null;
@@ -107,7 +107,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
     }
 
     @Override
-    public void deleteAccessToken(final String accessToken) throws ApsSystemException {
+    public synchronized void deleteAccessToken(final String accessToken) throws ApsSystemException {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
@@ -128,7 +128,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
     }
 
     @Override
-    public void deleteExpiredToken() throws ApsSystemException {
+    public synchronized void deleteExpiredToken() throws ApsSystemException {
         Connection conn = null;
         PreparedStatement stat = null;
         try {

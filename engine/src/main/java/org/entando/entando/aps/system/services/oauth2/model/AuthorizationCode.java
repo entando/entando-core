@@ -1,6 +1,8 @@
 package org.entando.entando.aps.system.services.oauth2.model;
 
-public class AuthorizationCode implements Comparable<AuthorizationCode> {
+import java.io.Serializable;
+
+public class AuthorizationCode implements Comparable<AuthorizationCode> , Serializable{
 
     private String authorizationCode;
     private Long expires;

@@ -30,9 +30,10 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     public void init() throws Exception {
         logger.debug("{}  initialized ", this.getClass().getName());
         // every 1 hour start the scheduler for delete expired access token
-        ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
-        Runnable expiredTokenThread = new ScheduledDeleteExpiredTokenThread(this.getOAuth2TokenDAO());
-        scheduledThreadPool.scheduleAtFixedRate(expiredTokenThread, 0, 1, TimeUnit.HOURS);
+        Runnable expiredTokenThread = new ScheduledDeleteExpiredTokenThread(oAuth2TokenDAO);
+        final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
+        scheduledThreadPool.scheduleAtFixedRate(expiredTokenThread, 1, 1, TimeUnit.HOURS);
+
     }
 
     @Override
@@ -58,14 +59,12 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     public void updateToken(final String accessToken, final long seconds) throws ApsSystemException {
         try {
-            this.getOAuth2TokenDAO().updateAccessToken(accessToken, seconds );
+            this.getOAuth2TokenDAO().updateAccessToken(accessToken, seconds);
         } catch (ApsSystemException t) {
             logger.error(ERROR_ADDING_TOKEN, t);
             throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
         }
     }
-
-
 
 
 }

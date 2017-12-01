@@ -40,7 +40,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
             stat.setTimestamp(3, new Timestamp(accessToken.getExpiresIn().getTime()));
             stat.setString(4, accessToken.getRefreshToken());
             stat.setString(5, accessToken.getGrantType());
-            if (isLocalUser){
+            if (isLocalUser) {
                 stat.setString(6, accessToken.getLocalUser());
             }
             stat.executeUpdate();
@@ -61,9 +61,9 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
-            stat =  conn.prepareStatement(UPDATE_TOKEN);
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis()+ seconds*1000);
-            stat.setTimestamp(1,timestamp);
+            stat = conn.prepareStatement(UPDATE_TOKEN);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis() + seconds * 1000);
+            stat.setTimestamp(1, timestamp);
             stat.setString(2, accessToken);
             stat.executeUpdate();
             conn.commit();
@@ -100,34 +100,6 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
         } catch (ApsSystemException | SQLException t) {
             logger.error("Error while loading token {}", accessToken, t);
             throw new ApsSystemException("Error while loading token " + accessToken, t);
-        } finally {
-            closeDaoResources(res, stat, conn);
-        }
-        return token;
-    }
-
-    public OAuth2Token getAccessTokenFromLocalUser(final String localUser) throws ApsSystemException {
-        Connection conn = null;
-        OAuth2Token token = null;
-        PreparedStatement stat = null;
-        ResultSet res = null;
-        try {
-            conn = this.getConnection();
-            stat = conn.prepareStatement(SELECT_TOKEN_FROM_LOCAL_USER);
-            stat.setString(1, localUser);
-            res = stat.executeQuery();
-            if (res.next()) {
-                token = new OAuth2Token();
-                token.setAccessToken(res.getString("accesstoken"));
-                token.setRefreshToken(res.getString("refreshtoken"));
-                token.setClientId(res.getString("clientid"));
-                token.setGrantType(res.getString("granttype"));
-                token.setExpiresIn(res.getTimestamp("expiresin"));
-
-            }
-        } catch (ApsSystemException | SQLException t) {
-            logger.error("Error while loading token from local user {}", localUser, t);
-            throw new ApsSystemException("Error while loading token from local user " + localUser, t);
         } finally {
             closeDaoResources(res, stat, conn);
         }
@@ -185,8 +157,6 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
     private String DELETE_EXPIRED_TOKENS = "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
 
     private String SELECT_TOKEN = "SELECT * FROM api_oauth_tokens WHERE accesstoken = ? ";
-
-    private String SELECT_TOKEN_FROM_LOCAL_USER = "SELECT * FROM api_oauth_tokens WHERE localuser = ? ";
 
     private String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE accesstoken = ? ";
 

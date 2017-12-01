@@ -2,15 +2,11 @@ package org.entando.entando.aps.servlet;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.role.Permission;
-import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.as.request.*;
+import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -41,19 +37,9 @@ public class TokenEndpointServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
         try {
-            final String grantType = request.getParameter("grant_type");
 
-            OAuthResponse oAuthResponse = null;
-            if (grantType.contentEquals(GrantType.AUTHORIZATION_CODE.toString())) {
-                oAuthResponse = this.validateClientWithAuthorizationCode(request);
-            } else if (grantType.contentEquals(GrantType.PASSWORD.toString())) {
-                oAuthResponse = this.validateClientWithPassword(request);
-            } else {
-                // no case
-            }
-
+            final OAuthResponse oAuthResponse = this.validateClientWithAuthorizationCode(request);
 
             if (oAuthResponse != null) {
                 response.setStatus(oAuthResponse.getResponseStatus());
@@ -93,10 +79,9 @@ public class TokenEndpointServlet extends HttpServlet {
         oAuth2Token.setExpiresIn(calendar.getTime());
         oAuth2Token.setGrantType(oauthType);
 
-        if (localUser == null){
+        if (localUser == null) {
             tokenManager.addApiOAuth2Token(oAuth2Token, false);
-        }
-        else {
+        } else {
             oAuth2Token.setLocalUser(localUser);
             tokenManager.addApiOAuth2Token(oAuth2Token, true);
         }
@@ -151,58 +136,6 @@ public class TokenEndpointServlet extends HttpServlet {
             return null;
         }
 
-    }
-
-    private OAuthResponse validateClientWithPassword(HttpServletRequest request) {
-        try {
-            OAuthUnauthenticatedTokenRequest oAuthUnauthenticatedTokenRequest = new OAuthUnauthenticatedTokenRequest(request);
-
-            if (oAuthUnauthenticatedTokenRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
-                    .equals(GrantType.PASSWORD.toString())) {
-
-                final String clientId = oAuthUnauthenticatedTokenRequest.getClientId();
-                final String oauthType = GrantType.PASSWORD.toString();
-
-                IAuthenticationProviderManager authenticationProvider =
-                        (IAuthenticationProviderManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER, request);
-
-                IAuthorizationManager authorizationManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHORIZATION_SERVICE, request);
-
-                final String username = oAuthUnauthenticatedTokenRequest.getUsername();
-                final String password = oAuthUnauthenticatedTokenRequest.getPassword();
-
-                final UserDetails user;
-
-                user = authenticationProvider.getUser(username, password);
-                if (user == null) {
-                    return null;
-                } else {
-                    boolean checkUser = user.isAccountNotExpired() &&
-                            user.isCredentialsNotExpired() &&
-                            !user.isDisabled() &&
-                            (authorizationManager.isAuthOnPermission(user, Permission.SUPERUSER)) ||
-                            authorizationManager.isAuthOnPermission(user, Permission.BACKOFFICE);
-
-                    if (checkUser) {
-                        return this.registerToken(request, clientId, oauthType, user.getUsername());
-                    } else
-                        return null;
-
-                }
-
-
-            } else {
-                return null;
-            }
-        } catch (OAuthProblemException e1) {
-            _logger.error("OAuthException - {} ", e1.getError().concat(" ").concat(e1.getDescription()));
-            _logger.debug("OAuthException - {} ", e1);
-        } catch (OAuthSystemException e) {
-            _logger.error("OAuthSystemException - {} ", e.getMessage());
-        } catch (ApsSystemException e) {
-            _logger.error("ApsSystemException - {}", e);
-        }
-        return null;
     }
 
 

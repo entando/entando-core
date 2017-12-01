@@ -95,6 +95,7 @@
 			parent="abstractService" >
 		<property name="userManager" ref="UserManager" />
 		<property name="authorizationManager" ref="AuthorizationManager" />
+		<property name="tokenManager" ref="OAuth2TokenManager" />
 	</bean>
 	
 	<!-- SPRING OBJECT -->

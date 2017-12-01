@@ -23,8 +23,6 @@ public interface IOAuth2TokenDAO {
 
     OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException;
 
-    OAuth2Token getAccessTokenFromLocalUser(final String localUser) throws ApsSystemException;
-
     void deleteAccessToken(final String accessToken) throws ApsSystemException;
 
     void deleteExpiredToken() throws ApsSystemException;

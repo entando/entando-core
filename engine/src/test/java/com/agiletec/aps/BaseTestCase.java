@@ -88,7 +88,7 @@ public class BaseTestCase extends TestCase {
 	}
 	
 	protected void waitThreads(String threadNamePrefix) throws InterruptedException {
-		Thread[] threads = new Thread[1000];
+		Thread[] threads = new Thread[2000];
 	    Thread.enumerate(threads);
 	    for (int i=0; i<threads.length; i++) {
 	    	Thread currentThread = threads[i];

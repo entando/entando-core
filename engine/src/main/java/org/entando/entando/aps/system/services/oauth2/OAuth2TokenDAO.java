@@ -78,7 +78,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
 
 
     @Override
-    public synchronized OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException {
+    public OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException {
         Connection conn = null;
         OAuth2Token token = null;
         PreparedStatement stat = null;
@@ -107,7 +107,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
     }
 
     @Override
-    public synchronized void deleteAccessToken(final String accessToken) throws ApsSystemException {
+    public void deleteAccessToken(final String accessToken) throws ApsSystemException {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
@@ -128,7 +128,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
     }
 
     @Override
-    public synchronized void deleteExpiredToken() throws ApsSystemException {
+    public void deleteExpiredToken() throws ApsSystemException {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
@@ -138,7 +138,7 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
             stat.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             stat.executeUpdate();
             conn.commit();
-        } catch (ApsSystemException | SQLException t) {
+        } catch (SQLException t) {
             this.executeRollback(conn);
             logger.error(ERROR_REMOVE_ACCESS_TOKEN, t);
             throw new ApsSystemException(ERROR_REMOVE_ACCESS_TOKEN, t);

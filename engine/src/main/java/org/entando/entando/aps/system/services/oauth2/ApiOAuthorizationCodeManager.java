@@ -18,12 +18,12 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
 
     private List<AuthorizationCode> authorizationCodes;
     private static final Logger _logger = LoggerFactory.getLogger(ApiOAuthorizationCodeManager.class);
-    private transient final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(0);
+    private transient final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
     @Override
     public void init() throws Exception {
         authorizationCodes = new ArrayList<>();
         _logger.debug("{}  initialized ", this.getClass().getName());
-        scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+        /*scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 final Iterator<AuthorizationCode> iterator = authorizationCodes.iterator();
@@ -35,7 +35,7 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
                 }
 
             }
-        }, 5, 5, TimeUnit.MINUTES);
+        }, 5, 5, TimeUnit.MINUTES);*/
     }
 
     public void addAuthorizationCode(final AuthorizationCode authCode) {

@@ -238,7 +238,7 @@
             </label>
             <div class="col-sm-10">
                 <div class="input-group">
-                    <wpsf:select name="extraGroupName" id="extraGroups" list="groups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" cssClass="combobox form-control" />
+                    <wpsf:select name="extraGroupNameToAdd" id="extraGroups" list="groups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" cssClass="combobox form-control" />
                     <span class="input-group-btn">
                         <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-primary">
                             <span class="icon fa fa-plus"></span>&#32;
@@ -248,15 +248,13 @@
                 </div>
                 <br/>
                 <s:if test="extraGroups.size() != 0">
-                    <s:iterator value="extraGroups" var="groupName">
-                        <wpsa:actionParam action="removeExtraGroup" var="actionName" >
-                        </wpsa:actionParam>
-
+                    <s:iterator value="extraGroups" var="groupNameVar">
+						<wpsa:actionParam action="removeExtraGroup" var="actionName" >
+							<wpsa:actionSubParam name="extraGroupNameToRemove" value="%{#groupNameVar}" />
+						</wpsa:actionParam>
                         <div class="label label-default label-tag label-sm">
-                            <s:property value="%{getSystemGroups()[#groupName].getDescr()}"/>&#32;
+                            <s:property value="%{getSystemGroups()[#groupNameVar].getDescr()}"/>&#32;
                             <wpsf:submit type="button" action="%{#actionName}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-tag">
-                                <wpsf:hidden name="extraGroupNameRemove" value="%{#groupName}" />
-
                                 <span class="icon fa fa-times"></span>
                                 <span class="sr-only">x</span>
                             </wpsf:submit>

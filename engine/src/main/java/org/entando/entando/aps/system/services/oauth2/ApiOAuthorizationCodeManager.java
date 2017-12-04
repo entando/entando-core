@@ -16,29 +16,22 @@ import java.util.concurrent.TimeUnit;
 
 public class ApiOAuthorizationCodeManager extends AbstractService implements IApiOAuthorizationCodeManager {
 
-    private List<AuthorizationCode> authorizationCodes;
+    private final List<AuthorizationCode> authorizationCodes = new ArrayList<>();
     private static final Logger _logger = LoggerFactory.getLogger(ApiOAuthorizationCodeManager.class);
-    private transient final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
     @Override
     public void init() throws Exception {
-        authorizationCodes = new ArrayList<>();
         _logger.debug("{}  initialized ", this.getClass().getName());
-        /*scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                final Iterator<AuthorizationCode> iterator = authorizationCodes.iterator();
-                while (iterator.hasNext()) {
-                    AuthorizationCode authorizationCode = iterator.next();
-                    if (authorizationCode.getExpires() < System.currentTimeMillis()) {
-                        authorizationCodes.remove(authorizationCode);
-                    }
-                }
 
-            }
-        }, 5, 5, TimeUnit.MINUTES);*/
     }
 
     public void addAuthorizationCode(final AuthorizationCode authCode) {
+        for (Iterator<AuthorizationCode> iterator = authorizationCodes.iterator(); iterator.hasNext();) {
+            AuthorizationCode authorizationCode = iterator.next();
+            if (authorizationCode.getExpires() < System.currentTimeMillis()) {
+                iterator.remove();
+            }
+        }
+
         authorizationCodes.add(authCode);
     }
 

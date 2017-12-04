@@ -89,7 +89,10 @@ public class BaseTestCase extends TestCase {
         //Iterate over set to find yours
         for (Thread thread : setOfThread) {
             if (thread.getName().matches("pool-(.*)-thread-(.*)")) {
-                thread.interrupt();
+                if (!thread.isInterrupted()){
+
+                    thread.interrupt();
+                }
             }
         }
     }

@@ -17,7 +17,7 @@ public class ScheduledDeleteExpiredTokenThread implements Runnable {
     @Override
     public void run() {
 
-        logger.info("start delete expired access token");
+        logger.debug("start delete expired access token");
         try {
             if (tokenDAO != null) {
 
@@ -26,7 +26,7 @@ public class ScheduledDeleteExpiredTokenThread implements Runnable {
         } catch (ApsSystemException e) {
             logger.error("Error in deleteExpiredToken {}", e);
         }
-        logger.info("end delete expired access token");
+        logger.debug("end delete expired access token");
 
 
     }

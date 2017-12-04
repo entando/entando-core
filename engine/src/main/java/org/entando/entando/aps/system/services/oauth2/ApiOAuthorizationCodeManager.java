@@ -18,12 +18,11 @@ public class ApiOAuthorizationCodeManager extends AbstractService implements IAp
 
     private List<AuthorizationCode> authorizationCodes;
     private static final Logger _logger = LoggerFactory.getLogger(ApiOAuthorizationCodeManager.class);
-
+    private transient final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(0);
     @Override
     public void init() throws Exception {
         authorizationCodes = new ArrayList<>();
         _logger.debug("{}  initialized ", this.getClass().getName());
-        final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
         scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {

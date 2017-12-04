@@ -14,6 +14,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     private static final Logger logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
     private static final String ERROR_ADDING_TOKEN = "Error adding OAuth2Token";
+    private transient final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(0);
 
     private OAuth2TokenDAO oAuth2TokenDAO;
 
@@ -30,9 +31,8 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     public void init() throws Exception {
         logger.debug("{}  initialized ", this.getClass().getName());
         // every 1 hour start the scheduler for delete expired access token
-        Runnable expiredTokenThread = new ScheduledDeleteExpiredTokenThread(oAuth2TokenDAO);
-        final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
-        scheduledThreadPool.scheduleAtFixedRate(expiredTokenThread, 1, 1, TimeUnit.HOURS);
+        scheduler.scheduleAtFixedRate(new ScheduledDeleteExpiredTokenThread(oAuth2TokenDAO), 0, 1, TimeUnit.SECONDS);
+
 
     }
 

@@ -88,9 +88,11 @@ public class BaseTestCase extends TestCase {
 	}
 	
 	protected void waitThreads(String threadNamePrefix) throws InterruptedException {
-		Thread[] threads = new Thread[2000];
+
+		Thread[] threads = new Thread[Thread.activeCount()];
 	    Thread.enumerate(threads);
 	    for (int i=0; i<threads.length; i++) {
+			//System.out.println(i + ": " + threads[i] + "@" + threads[i].getContextClassLoader());
 	    	Thread currentThread = threads[i];
 			if (currentThread != null && 
 	    			currentThread.getName().startsWith(threadNamePrefix)) {

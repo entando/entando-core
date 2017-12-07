@@ -65,6 +65,7 @@
 					<include>**/*.properties</include>
 					<include>**/*.xml</include>
 					<include>**/*.xsd</include>
+                    <include>**/*.txt</include>
 				</includes>
 			</resource>
 			<resource>
@@ -232,7 +233,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.entando.entando</groupId>

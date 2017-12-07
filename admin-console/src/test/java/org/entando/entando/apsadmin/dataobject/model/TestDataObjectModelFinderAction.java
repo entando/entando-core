@@ -25,83 +25,83 @@ import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelM
  */
 public class TestDataObjectModelFinderAction extends ApsAdminBaseTestCase {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		this.init();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+    }
 
-	public void testList() throws Throwable {
-		this.initAction("/do/dataobject/model", "list");
-		this.setUserOnSession("admin");
-		String result = this.executeAction();
-		assertEquals(Action.SUCCESS, result);
-		DataObjectModelFinderAction contentModelFinderAction = (DataObjectModelFinderAction) this.getAction();
-		List<DataObjectModel> contentModels = contentModelFinderAction.getContentModels();
-		assertEquals(4, contentModels.size());
-	}
+    public void testList() throws Throwable {
+        this.initAction("/do/dataobject/model", "list");
+        this.setUserOnSession("admin");
+        String result = this.executeAction();
+        assertEquals(Action.SUCCESS, result);
+        DataObjectModelFinderAction dataObjectModelFinderAction = (DataObjectModelFinderAction) this.getAction();
+        List<DataObjectModel> dataObjectModels = dataObjectModelFinderAction.getDataObjectModels();
+        assertEquals(4, dataObjectModels.size());
+    }
 
-	public void testSearch_1() throws Throwable {
-		String result = this.executeSearch("ART");
-		assertEquals(Action.SUCCESS, result);
-		DataObjectModelFinderAction contentModelFinderAction = (DataObjectModelFinderAction) this.getAction();
-		List<DataObjectModel> contentModels = contentModelFinderAction.getContentModels();
-		assertEquals(4, contentModels.size());
+    public void testSearch_1() throws Throwable {
+        String result = this.executeSearch("ART");
+        assertEquals(Action.SUCCESS, result);
+        DataObjectModelFinderAction dataObjectModelFinderAction = (DataObjectModelFinderAction) this.getAction();
+        List<DataObjectModel> dataObjectModels = dataObjectModelFinderAction.getDataObjectModels();
+        assertEquals(4, dataObjectModels.size());
 
-		result = this.executeSearch("CNG");
-		assertEquals(Action.SUCCESS, result);
-		contentModelFinderAction = (DataObjectModelFinderAction) this.getAction();
-		contentModels = contentModelFinderAction.getContentModels();
-		assertEquals(0, contentModels.size());
-	}
+        result = this.executeSearch("CNG");
+        assertEquals(Action.SUCCESS, result);
+        dataObjectModelFinderAction = (DataObjectModelFinderAction) this.getAction();
+        dataObjectModels = dataObjectModelFinderAction.getDataObjectModels();
+        assertEquals(0, dataObjectModels.size());
+    }
 
-	public void testSearch_2() throws Throwable {
-		DataObjectModel contentModel = this.createContentModel(MODEL_ID, "EVN");
-		this._dataObjectModelManager.addDataObjectModel(contentModel);
+    public void testSearch_2() throws Throwable {
+        DataObjectModel dataObjectModel = this.createDataObjectModel(MODEL_ID, "EVN");
+        this._dataObjectModelManager.addDataObjectModel(dataObjectModel);
 
-		String result = this.executeSearch("");
-		assertEquals(Action.SUCCESS, result);
-		DataObjectModelFinderAction contentModelFinderAction = (DataObjectModelFinderAction) this.getAction();
-		List<DataObjectModel> contentModels = contentModelFinderAction.getContentModels();
-		assertEquals(5, contentModels.size());
+        String result = this.executeSearch("");
+        assertEquals(Action.SUCCESS, result);
+        DataObjectModelFinderAction dataObjectModelFinderAction = (DataObjectModelFinderAction) this.getAction();
+        List<DataObjectModel> dataObjectModels = dataObjectModelFinderAction.getDataObjectModels();
+        assertEquals(5, dataObjectModels.size());
 
-		result = this.executeSearch("EVN");
-		assertEquals(Action.SUCCESS, result);
-		contentModelFinderAction = (DataObjectModelFinderAction) this.getAction();
-		contentModels = contentModelFinderAction.getContentModels();
-		assertEquals(1, contentModels.size());
-	}
+        result = this.executeSearch("EVN");
+        assertEquals(Action.SUCCESS, result);
+        dataObjectModelFinderAction = (DataObjectModelFinderAction) this.getAction();
+        dataObjectModels = dataObjectModelFinderAction.getDataObjectModels();
+        assertEquals(1, dataObjectModels.size());
+    }
 
-	private String executeSearch(String contentType) throws Throwable {
-		this.initAction("/do/dataobject/model", "search");
-		this.setUserOnSession("admin");
-		this.addParameter("contentType", contentType);
-		return this.executeAction();
-	}
+    private String executeSearch(String dataType) throws Throwable {
+        this.initAction("/do/dataobject/model", "search");
+        this.setUserOnSession("admin");
+        this.addParameter("dataType", dataType);
+        return this.executeAction();
+    }
 
-	private DataObjectModel createContentModel(int id, String contentType) {
-		DataObjectModel model = new DataObjectModel();
-		model.setId(id);
-		model.setDataType(contentType);
-		model.setDescription("Event test Model");
-		model.setShape("test shape");
-		return model;
-	}
+    private DataObjectModel createDataObjectModel(int id, String dataType) {
+        DataObjectModel model = new DataObjectModel();
+        model.setId(id);
+        model.setDataType(dataType);
+        model.setDescription("Event test Model");
+        model.setShape("test shape");
+        return model;
+    }
 
-	private void init() {
-		this._dataObjectModelManager = (IDataObjectModelManager) this.getService("DataObjectModelManager");
-	}
+    private void init() {
+        this._dataObjectModelManager = (IDataObjectModelManager) this.getService("DataObjectModelManager");
+    }
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		DataObjectModel model = this._dataObjectModelManager.getDataObjectModel(MODEL_ID);
-		if (null != model) {
-			this._dataObjectModelManager.removeDataObjectModel(model);
-		}
-	}
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        DataObjectModel model = this._dataObjectModelManager.getDataObjectModel(MODEL_ID);
+        if (null != model) {
+            this._dataObjectModelManager.removeDataObjectModel(model);
+        }
+    }
 
-	private IDataObjectModelManager _dataObjectModelManager;
-	private static final int MODEL_ID = 99;
+    private IDataObjectModelManager _dataObjectModelManager;
+    private static final int MODEL_ID = 99;
 
 }

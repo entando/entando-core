@@ -22,19 +22,19 @@ import javax.xml.bind.annotation.XmlType;
  * @author E.Santoboni
  */
 @XmlRootElement(name = "contentAttribute")
-@XmlType(propOrder = {"contentId", "attributeName", "langCode", "value"})
+@XmlType(propOrder = {"dataId", "attributeName", "langCode", "value"})
 public class JAXBDataObjectAttribute implements Serializable {
 
-	public JAXBDataObjectAttribute() {
-		super();
-	}
+    public JAXBDataObjectAttribute() {
+        super();
+    }
 
-	private String _contentId;
-	private String _attributeName;
-	private String _langCode;
-	private String _value;
+    private String _dataId;
+    private String _attributeName;
+    private String _langCode;
+    private String _value;
 
-	/*
+    /*
 	@XmlElement(name = "key", required = true)
 	public String getKey() {
 		return _key;
@@ -57,41 +57,41 @@ public class JAXBDataObjectAttribute implements Serializable {
 
 	private String _key;
 	private List<JAXBLabel> _labels;
-	 */
-	@XmlElement(name = "contentId", required = true)
-	public String getContentId() {
-		return _contentId;
-	}
+     */
+    @XmlElement(name = "dataId", required = true)
+    public String getDataId() {
+        return _dataId;
+    }
 
-	public void setContentId(String contentId) {
-		this._contentId = contentId;
-	}
+    public void setDataId(String dataId) {
+        this._dataId = dataId;
+    }
 
-	@XmlElement(name = "attributeName", required = true)
-	public String getAttributeName() {
-		return _attributeName;
-	}
+    @XmlElement(name = "attributeName", required = true)
+    public String getAttributeName() {
+        return _attributeName;
+    }
 
-	public void setAttributeName(String attributeName) {
-		this._attributeName = attributeName;
-	}
+    public void setAttributeName(String attributeName) {
+        this._attributeName = attributeName;
+    }
 
-	@XmlElement(name = "langCode", required = true)
-	public String getLangCode() {
-		return _langCode;
-	}
+    @XmlElement(name = "langCode", required = true)
+    public String getLangCode() {
+        return _langCode;
+    }
 
-	public void setLangCode(String langCode) {
-		this._langCode = langCode;
-	}
+    public void setLangCode(String langCode) {
+        this._langCode = langCode;
+    }
 
-	@XmlElement(name = "value", required = true)
-	public String getValue() {
-		return _value;
-	}
+    @XmlElement(name = "value", required = true)
+    public String getValue() {
+        return _value;
+    }
 
-	public void setValue(String value) {
-		this._value = value;
-	}
+    public void setValue(String value) {
+        this._value = value;
+    }
 
 }

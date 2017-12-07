@@ -35,10 +35,10 @@ public class DataObjectAttributeRole implements ExtendedColumnDefinition {
             generatedId = true)
     private int _id;
 
-    @DatabaseField(foreign = true, columnName = "contentid",
+    @DatabaseField(foreign = true, columnName = "dataid",
             width = 16,
             canBeNull = false, index = true)
-    private DataObject _contentId;
+    private DataObject _dataId;
 
     @DatabaseField(columnName = "attrname",
             dataType = DataType.STRING,
@@ -61,8 +61,8 @@ public class DataObjectAttributeRole implements ExtendedColumnDefinition {
             contentTableName = "`" + DataObject.TABLE_NAME + "`";
         }
         return new String[]{"ALTER TABLE " + tableName + " "
-            + "ADD CONSTRAINT contentattrroles_contid_fkey FOREIGN KEY (contentid) "
-            + "REFERENCES " + contentTableName + " (contentid)"};
+            + "ADD CONSTRAINT contentattrroles_contid_fkey FOREIGN KEY (dataid) "
+            + "REFERENCES " + contentTableName + " (dataid)"};
     }
 
     public static final String TABLE_NAME = "dataobjectattributeroles";

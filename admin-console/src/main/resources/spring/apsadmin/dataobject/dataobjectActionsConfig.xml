@@ -1,75 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		xmlns:context="http://www.springframework.org/schema/context"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
-	
-	<bean id="DataObjectActionHelper" parent="entityActionHelper" 
-			class="org.entando.entando.apsadmin.dataobject.helper.DataObjectActionHelper" >
-		<property name="dataObjectManager" ref="DataObjectManager" />
-		<property name="dataObjectHelper" ref="DataObjectHelper" />
-		<property name="dataObjectAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
-	</bean>
-	
-	<bean id="AbstractDataObjectAction" abstract="true" 
-			class="org.entando.entando.apsadmin.dataobject.AbstractDataObjectAction" parent="abstractBaseAction" >
-		<property name="dataObjectManager" ref="DataObjectManager"/>
-		<property name="groupManager" ref="GroupManager"/>
-		<property name="dataObjectActionHelper" ref="DataObjectActionHelper"/>
-	</bean>
-	
-	<bean id="DataObjectFinderAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.DataObjectFinderAction" 
-			parent="abstractBaseAction">
-		<property name="entityActionHelper" ref="DataObjectActionHelper" />
-		<property name="dataObjectManager" ref="DataObjectManager"/>
-		<property name="groupManager" ref="GroupManager"/>
-		<property name="categoryManager" ref="CategoryManager"/>
-	</bean>
-	
-	<bean id="DataObjectCategoryAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.DataObjectCategoryAction" 
-			parent="abstractBaseAction">
-		<property name="categoryManager" ref="CategoryManager"/>
-		<property name="dataObjectActionHelper" ref="DataObjectActionHelper"/>
-		<property name="treeHelper" ref="categoryActionHelper"/>
-	</bean>
-	<!--
-	<bean id="DataObjectInspectionAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.ContentInspectionAction" 
-			parent="jacmsAbstractContentAction">
-		<property name="pageManager" ref="PageManager" />
-		<property name="pageManagerWrapper" ref="jacmPageManagerWrapper" />
-  	</bean>
-	-->
-	<bean id="IntroNewDataObjectAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.IntroNewDataObjectAction" parent="AbstractDataObjectAction" />
-	
-	<bean id="DataObjectAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.DataObjectAction" 
-			parent="AbstractDataObjectAction">
-		<property name="pageManager" ref="PageManager" />
-		<property name="configManager" ref="BaseConfigManager" />
-  	</bean>
-  	<!--
-	<bean id="jacmsEntryContentActionActionsHookPoint" class="com.agiletec.apsadmin.system.plugin.HookPointElementContainer" >
-		<property name="filePath"><value>/WEB-INF/plugins/jacms/apsadmin/jsp/content/entryContent-actions-jack.jsp</value></property>
-		<property name="hookPointKey"><value>jacms.entryContent.actions</value></property>
-	</bean>
-	-->
-	<!--
-	<bean id="DataObjectAdminAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.ContentAdminAction" parent="baseAdminAction">
-		<property name="contentManager" ref="jacmsContentManager"/>
-		<property name="searchEngineManager" ref="jacmsSearchEngineManager"/>
-  	</bean>
-	-->
-	
-	<bean id="DataObjectListAttributeAction" scope="prototype" 
-			class="org.entando.entando.apsadmin.dataobject.attribute.action.list.ListAttributeAction" 
-			parent="abstractBaseAction" >
-		<property name="dataObjectActionHelper" ref="DataObjectActionHelper"/>
-	</bean>
-	
+
+    <bean id="DataObjectActionHelper" parent="entityActionHelper"
+              class="org.entando.entando.apsadmin.dataobject.helper.DataObjectActionHelper" >
+        <property name="dataObjectManager" ref="DataObjectManager" />
+        <property name="dataObjectHelper" ref="DataObjectHelper" />
+        <property name="dataObjectAuthorizationHelper" ref="DataObjectAuthorizationHelper" />
+    </bean>
+
+    <bean id="DataObjectListAttributeAction" scope="prototype"
+              class="org.entando.entando.apsadmin.dataobject.attribute.action.list.ListAttributeAction"
+              parent="abstractBaseAction" >
+        <property name="dataObjectActionHelper" ref="DataObjectActionHelper"/>
+    </bean>
+
 </beans>

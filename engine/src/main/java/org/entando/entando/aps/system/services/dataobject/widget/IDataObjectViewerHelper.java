@@ -25,21 +25,21 @@ import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRen
  */
 public interface IDataObjectViewerHelper {
 
-	/**
-	 * Restituisce il dataObject da visualizzare nella showlet.
-	 *
-	 * @param dataObjectId L'identificativo del dataObject ricavato dal tag.
-	 * @param modelId Il modello del dataObject ricavato dal tag.
-	 * @param reqCtx Il contesto della richiesta.
-	 * @return Il dataObject da visualizzare nella showlet.
-	 * @throws ApsSystemException In caso di errore
-	 */
-	public String getRenderedContent(String dataObjectId, String modelId, RequestContext reqCtx) throws ApsSystemException;
+    /**
+     * Restituisce il dataObject da visualizzare nella showlet.
+     *
+     * @param dataObjectId L'identificativo del dataObject ricavato dal tag.
+     * @param modelId Il modello del dataObject ricavato dal tag.
+     * @param reqCtx Il contesto della richiesta.
+     * @return Il dataObject da visualizzare nella showlet.
+     * @throws ApsSystemException In caso di errore
+     */
+    public String getRenderedDataObject(String dataObjectId, String modelId, RequestContext reqCtx) throws ApsSystemException;
 
-	public String getRenderedContent(String dataObjectId, String modelId, boolean publishExtraTitle, RequestContext reqCtx) throws ApsSystemException;
+    public String getRenderedDataObject(String dataObjectId, String modelId, boolean publishExtraTitle, RequestContext reqCtx) throws ApsSystemException;
 
-	public DataObjectRenderizationInfo getRenderizationInfo(String dataObjectId, String modelId, boolean publishExtraTitle, RequestContext reqCtx) throws ApsSystemException;
+    public DataObjectRenderizationInfo getRenderizationInfo(String dataObjectId, String modelId, boolean publishExtraTitle, RequestContext reqCtx) throws ApsSystemException;
 
-	public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String dataObjectId, RequestContext reqCtx) throws ApsSystemException;
+    public PublicDataTypeAuthorizationInfo getAuthorizationInfo(String dataObjectId, RequestContext reqCtx) throws ApsSystemException;
 
 }

@@ -314,5 +314,11 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.mkammerer</groupId>
+            <artifactId>argon2-jvm</artifactId>
+            <version>2.2</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>

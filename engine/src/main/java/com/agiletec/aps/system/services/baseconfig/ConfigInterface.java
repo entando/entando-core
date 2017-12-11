@@ -51,10 +51,6 @@ public interface ConfigInterface {
      */
     public String getParam(String name);
 
-    public String getKeyString();
-
-    public String getOldKeyString();
-
-    public boolean isKeyChanged();
+    public boolean isArgon2();
 
 }

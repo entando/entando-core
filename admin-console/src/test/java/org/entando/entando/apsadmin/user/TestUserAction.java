@@ -402,8 +402,9 @@ public class TestUserAction extends ApsAdminBaseTestCase {
                 try {
                     if (cur.isDisabled()) {
                         String pwd = cur.getPassword();
-                        BlowfishApsEncrypter.encryptString(pwd);
-                        pwd = BlowfishApsEncrypter.encryptString(pwd);
+                        if (!pwd.contains("argon2")) {
+                            pwd = this._userManager.encrypt(pwd);
+                        }
                         cur.setPassword(pwd);
                         cur.setDisabled(false);
                         this._userManager.updateUser(cur);

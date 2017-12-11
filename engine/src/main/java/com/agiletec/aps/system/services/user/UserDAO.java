@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.AbstractDAO;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.util.IApsEncrypter;
+import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 
 /**
  * Data Access Object per gli oggetti Utente.
@@ -137,8 +138,16 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
     public UserDetails loadUser(String username, String password) {
         UserDetails user = null;
         try {
-            String encrypdedPassword = this.getEncryptedPassword(password);
-            user = this.executeLoadingUser(username, encrypdedPassword);
+            if (this.getEncrypter() instanceof Argon2Encrypter) {
+                Argon2Encrypter encrypter = (Argon2Encrypter) this.getEncrypter();
+                user = this.loadUser(username);
+                if (user != null && !encrypter.verify(user.getPassword(), password)) {
+                    user = null;
+                }
+            } else {
+                String encrypdedPassword = this.getEncryptedPassword(password);
+                user = this.executeLoadingUser(username, encrypdedPassword);
+            }
             if (null != user && user instanceof AbstractUser) {
                 ((AbstractUser) user).setPassword(password);
             }
@@ -362,22 +371,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
         }
     }
 
-    /*
-	private void removeUserRoles(String username, Connection conn) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(DELETE_USER_ROLE);
-			stat.setString(1, username);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error deleting the association between the user and his roles for the user {}", username, t);
-			throw new RuntimeException("Error deleting the association between the user and his roles for the user " + username, t);
-			//processDaoException(t, "Error deleting the association between the user and his roles" , "removeUserRoles");
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-     */
     /**
      * Crea un utente leggendo i valori dal record corrente del ResultSet
      * passato. Attenzione: la query di origine del ResultSet deve avere nella
@@ -403,74 +396,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
         return user;
     }
 
-    /*
-	private void removeUserGroups(String username, Connection conn) throws ApsSystemException {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(DELETE_USER_GROUP);
-			stat.setString(1, username);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error deleting the association between the user and his groups for the user {}", username, t);
-			throw new RuntimeException("Error deleting the association between the user and his groups for the user " + username, t);
-
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-     */
- /*
-	@Override
-	public List<String> loadUsernamesForGroup(String groupName) {
-		Connection conn = null;
-		List<String> usernames = new ArrayList<String>();
-		PreparedStatement stat = null;
-		ResultSet res = null;
-		try {
-			conn = this.getConnection();
-			stat = conn.prepareStatement(LOAD_USERNAMES_FROM_GROUP);
-			stat.setString(1, groupName);
-			res = stat.executeQuery();
-			while (res.next()) {
-				usernames.add(res.getString(1));
-			}
-		} catch (Throwable t) {
-			_logger.error("Error loading usernames by group {}", groupName, t);
-			throw new RuntimeException("Error loading usernames by group " + groupName, t);
-
-		} finally {
-			closeDaoResources(res, stat, conn);
-		}
-		return usernames;
-	}
-     */
- /*
-	 * Carica gli utenti membri di un gruppo.
-	 * @param groupName Il nome del grupo tramite il quale cercare gli utenti.
-	 * @return La lista degli utenti (oggetti User) membri del gruppo specificato.
-     */
- /*
-	@Override
-	public List<UserDetails> loadUsersForGroup(String groupName) {
-		Connection conn = null;
-		List<UserDetails> users = null;
-		PreparedStatement stat = null;
-		ResultSet res = null;
-		try {
-			conn = this.getConnection();
-			stat = conn.prepareStatement(LOAD_USERS_FROM_GROUP);
-			stat.setString(1, groupName);
-			res = stat.executeQuery();
-			users = this.loadUsers(res);
-		} catch (Throwable t) {
-			_logger.error("Error loading UserDetails list by group {}", groupName, t);
-			throw new RuntimeException("Error loading UserDetails list by group " + groupName, t);
-		} finally {
-			closeDaoResources(res, stat, conn);
-		}
-		return users;
-	}
-     */
     protected String getEncryptedPassword(String password) throws ApsSystemException {
         String encrypted = password;
         if (null != this.getEncrypter()) {
@@ -479,7 +404,8 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
         return encrypted;
     }
 
-    protected IApsEncrypter getEncrypter() {
+    @Override
+    public IApsEncrypter getEncrypter() {
         return _encrypter;
     }
 

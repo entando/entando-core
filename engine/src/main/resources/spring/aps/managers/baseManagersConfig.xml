@@ -50,15 +50,6 @@
                 </entry>
             </map>
         </property>
-        <property name="keyString">
-            <value>${key.string.encryption}</value>
-        </property>
-        <property name="adminUser">
-            <value>${admin.user}</value>
-        </property>
-        <property name="adminPwd">
-            <value>${admin.password}</value>
-        </property>
         <property name="configFolder">
             <jee:jndi-lookup jndi-name="java:comp/env/configFolder" />
         </property>
@@ -95,10 +86,7 @@
     <bean id="UserDAO" class="com.agiletec.aps.system.services.user.UserDAO">
         <property name="dataSource" ref="servDataSource" />
         <property name="encrypter">
-            <bean class="com.agiletec.aps.util.BlowfishApsEncrypter">
-                <property name="keyString">
-                    <value>${key.string.encryption}</value>
-                </property>
+            <bean class="org.entando.entando.aps.util.argon2.Argon2Encrypter">
             </bean>
         </property>
     </bean>

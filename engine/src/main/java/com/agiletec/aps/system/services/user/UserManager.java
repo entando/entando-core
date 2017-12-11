@@ -22,7 +22,13 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 import com.agiletec.aps.util.BlowfishApsEncrypter;
+import com.agiletec.aps.util.DefaultApsEncrypter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 
 /**
  * Servizio di gestione degli utenti.
@@ -38,21 +44,39 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         User admin = (User) this.getUser("admin");
         if (admin.isDisabled()) {
             String pwd = admin.getPassword();
-            pwd = BlowfishApsEncrypter.encryptString(this.getConfigManager().getKeyString(), pwd);
+            pwd = this.getUserDAO().getEncrypter().encrypt(pwd);
             admin.setPassword(pwd);
             admin.setDisabled(false);
             this.getUserDAO().updateUser(admin);
         }
-        if (this.getConfigManager().isKeyChanged()) {
+        if (this.getUserDAO().getEncrypter() instanceof Argon2Encrypter
+                && !this.getConfigManager().isArgon2()) {
             List<UserDetails> users = this.getUserDAO().loadUsers();
             for (UserDetails user : users) {
                 User cur = (User) user;
                 String pwd = cur.getPassword();
-                pwd = BlowfishApsEncrypter.decrypt(this.getConfigManager().getOldKeyString(), pwd);
-                pwd = BlowfishApsEncrypter.encryptString(pwd);
-                cur.setPassword(pwd);
-                this.getUserDAO().updateUser(cur);
+                if (!pwd.contains("argon2")) {
+                    try {
+                        pwd = DefaultApsEncrypter.decrypt(pwd);
+                    } catch (Exception e) {
+                        _logger.warn("Plain text password for user {}", cur.getUsername());
+                        pwd = cur.getPassword();
+                    }
+                    pwd = this.encrypt(pwd);
+                    cur.setPassword(pwd);
+                    this.getUserDAO().updateUser(cur);
+                }
             }
+            Map<String, String> newParam = new HashMap<>();
+            newParam.put("argon2", "true");
+            String oldParam = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+            String newXmlParams = null;
+            try {
+                newXmlParams = SystemParamsUtils.getNewXmlParams(oldParam, newParam);
+            } catch (Throwable ex) {
+                java.util.logging.Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.getConfigManager().updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);
         }
         _logger.debug("{} ready", this.getClass().getName());
     }
@@ -323,5 +347,10 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
     private IUserDAO _userDao;
 
     private ConfigInterface _configManager;
+
+    @Override
+    public String encrypt(String pwd) throws ApsSystemException {
+        return this.getUserDAO().getEncrypter().encrypt(pwd);
+    }
 
 }

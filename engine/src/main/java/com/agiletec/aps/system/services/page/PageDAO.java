@@ -227,16 +227,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	}
 
 	protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
-		int position = 1;
-		IPage[] sisters = page.getParent().getChildren();
-		if (null != sisters && sisters.length > 0) {
-			IPage last = sisters[sisters.length - 1];
-			if (null != last) {
-				position = last.getPosition() + 1;
-			} else {
-				position = sisters.length + 1;
-			}
-		}
+		int position = this.getLastPosition(page.getCode(), conn) + 1;
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_PAGE);
@@ -371,13 +362,13 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	 * @param pageUp The page to move upwards
 	 */
 	@Override
-	public void updatePosition(IPage pageDown, IPage pageUp) {
+	public void updatePosition(String pageDown, String pageUp) {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.updatePosition(pageDown.getCode(), MOVE_DOWN, conn);
-			this.updatePosition(pageUp.getCode(), MOVE_UP, conn);
+			this.updatePosition(pageDown, MOVE_DOWN, conn);
+			this.updatePosition(pageUp, MOVE_UP, conn);
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
@@ -737,17 +728,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			// position
-			int pos = 1;
-			IPage[] sisters = newParent.getChildren();
-			if (null != sisters && sisters.length > 0) {
-				IPage last = sisters[sisters.length - 1];
-				if (null != last) {
-					pos = last.getPosition() + 1;
-				} else {
-					pos = sisters.length + 1;
-				}
-			}
+			int pos = this.getLastPosition(newParent.getCode(), conn) + 1;
 			stat = conn.prepareStatement(UPDATE_PAGE_TREE_POSITION);
 			stat.setString(1, newParent.getCode());
 			stat.setInt(2, pos);
@@ -762,6 +743,26 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		} finally {
 			this.closeDaoResources(null, stat, conn);
 		}
+	}
+
+	private int getLastPosition(String parentPageCode, Connection conn) {
+		int position = 0;
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		try {
+			stat = conn.prepareStatement(LOAD_LAST_UPDATED_PAGES);
+			stat.setString(1, parentPageCode);
+			res = stat.executeQuery();
+			if (res.next()) {
+				position = res.getInt(1);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading LastPosition", t);
+			throw new RuntimeException("Error loading LastPosition", t);
+		} finally {
+			this.closeDaoResources(res, stat);
+		}
+		return position;
 	}
 
 	private void updatePageMetadataDraftLastUpdate(String pageCode, Date date, Connection conn) throws SQLException {
@@ -837,8 +838,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	// figlie nelle pagine madri, e poi l'ordine dei widget nella pagina.
 	private static final String ALL_PAGES = "SELECT p.parentcode, p.pos, p.code, p.groupcode, "
 			+ "onl.titles, onl.modelcode, onl.showinmenu, onl.extraconfig, onl.updatedat, "
-			+ "drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat FROM pages p " + "LEFT JOIN "
-			+ PageMetadataOnline.TABLE_NAME + " onl ON p.code = onl.code " + "LEFT JOIN " + PageMetadataDraft.TABLE_NAME
+			+ "drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat FROM pages p LEFT JOIN "
+			+ PageMetadataOnline.TABLE_NAME + " onl ON p.code = onl.code LEFT JOIN " + PageMetadataDraft.TABLE_NAME
 			+ " drf ON p.code = drf.code " + "ORDER BY p.parentcode, p.pos, p.code ";
 
 	private static final String ALL_WIDGETS_START = "SELECT w.pagecode, w.framepos, w.widgetcode, w.config " + "FROM pages p JOIN ";
@@ -899,5 +900,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			+ " WHERE pagecode = ?";
 
 	private static final String LOAD_LAST_UPDATED_PAGES = "SELECT code FROM pages_metadata_draft ORDER BY updatedat DESC";
+
+	private static final String GET_LAST_CHILDREN_POSITION = "SELECT pos FROM pages WHERE parentcode = ? ORDER BY pos DESC";
+	//"INSERT INTO pages(code, parentcode, pos, groupcode) VALUES ( ? , ? , ? , ? )";
 
 }

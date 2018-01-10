@@ -87,15 +87,6 @@ public interface IPage extends ITreeNode {
 	 */
 	public String getParentCode();
 
-	/**
-	 * Return the sorted group of the children of the current page, that is the
-	 * pages belonging to the lower level
-	 *
-	 * @return the sorted group of the children
-	 */
-	@Override
-	public IPage[] getChildren();
-
 	@Override
 	public IPage getParent();
 

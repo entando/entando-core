@@ -118,15 +118,6 @@ public class Page extends TreeNode implements IPage {
 		return metadata.getExtraGroups();
 	}
 
-	@Override
-	public IPage[] getChildren() {
-		IPage[] children = new IPage[super.getChildren().length];
-		for (int i = 0; i < super.getChildren().length; i++) {
-			children[i] = (IPage) super.getChildren()[i];
-		}
-		return children;
-	}
-
 	/**
 	 * WARING: this method is reserved to the page manager service only. This
 	 * returns a boolean values indicating whether the page is displayed in the
@@ -304,14 +295,16 @@ public class Page extends TreeNode implements IPage {
 		return "Page: " + this.getCode();
 	}
 
+	@Override
 	public PageMetadata getMetadata() {
-		return metadata;
+		return _metadata;
 	}
 
 	public void setMetadata(PageMetadata metadata) {
-		this.metadata = metadata;
+		this._metadata = metadata;
 	}
 
+	@Override
 	public Widget[] getWidgets() {
 		return widgets;
 	}
@@ -324,7 +317,7 @@ public class Page extends TreeNode implements IPage {
 	 * The code of the higher level page
 	 */
 	private String _parentCode;
-	private PageMetadata metadata = new PageMetadata();
+	private PageMetadata _metadata = new PageMetadata();
 	private Widget[] widgets;
 	private boolean online;
 	private boolean onlineInstance;

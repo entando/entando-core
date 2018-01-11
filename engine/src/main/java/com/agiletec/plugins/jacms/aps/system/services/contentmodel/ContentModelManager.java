@@ -201,9 +201,13 @@ public class ContentModelManager extends AbstractService implements IContentMode
 	 */
 	private void searchReferencingPages(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
 		this.addReferencingPage(modelId, page, page.getWidgets(), utilizers);
-		IPage[] children = page.getChildren();
+		String[] children = page.getChildrenCodes();
+		boolean isOnline = page.isOnline();
 		for (int i = 0; i < children.length; i++) {
-			this.searchReferencingPages(modelId, children[i], utilizers);
+			IPage child = (isOnline)
+					? this.getPageManager().getOnlinePage(children[i])
+					: this.getPageManager().getDraftPage(children[i]);
+			this.searchReferencingPages(modelId, child, utilizers);
 		}
 	}
 

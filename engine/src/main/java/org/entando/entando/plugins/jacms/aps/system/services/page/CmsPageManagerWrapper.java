@@ -54,7 +54,7 @@ public class CmsPageManagerWrapper implements ContentUtilizer {
 	}
 
 	public void searchContentUtilizers(IPage targetPage, List<IPage> pages, String contentId) throws ApsSystemException {
-		if (null == contentId) {
+		if (null == contentId || null == targetPage) {
 			return;
 		}
 		try {
@@ -62,10 +62,14 @@ public class CmsPageManagerWrapper implements ContentUtilizer {
 			if (found) {
 				pages.add(targetPage);
 			}
-			IPage[] children = targetPage.getChildren();
+			boolean isOnline = targetPage.isOnline();
+			String[] children = targetPage.getChildrenCodes();
 			if (null != children) {
-				for (IPage page : children) {
-					this.searchContentUtilizers(page, pages, contentId);
+				for (int i = 0; i < children.length; i++) {
+					IPage child = (isOnline)
+							? this.getPageManager().getOnlinePage(children[i])
+							: this.getPageManager().getDraftPage(children[i]);
+					this.searchContentUtilizers(child, pages, contentId);
 				}
 			}
 		} catch (Throwable t) {

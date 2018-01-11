@@ -135,19 +135,22 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 	}
 
 	private void searchReferencingPages(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
-		this.addReferencingPage(modelId, page, page.getWidgets(), utilizers);
+		this.addReferencingPage(modelId, page, utilizers);
 		boolean isOnline = page.isOnline();
 		String[] children = page.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
 			IPage child = (isOnline)
 					? this.getPageManager().getOnlinePage(children[i])
 					: this.getPageManager().getDraftPage(children[i]);
-			this.searchReferencingPages(modelId, child, utilizers);
+			if (null != child) {
+				this.searchReferencingPages(modelId, child, utilizers);
+			}
 		}
 	}
 
-	private void addReferencingPage(long modelId, IPage page, Widget[] widgets, Map<String, List<IPage>> utilizers) {
-		if (null != widgets) {
+	private void addReferencingPage(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
+		if (null != page && null != page.getWidgets()) {
+			Widget[] widgets = page.getWidgets();
 			for (int i = 0; i < widgets.length; i++) {
 				Widget widget = widgets[i];
 				if (null != widget) {

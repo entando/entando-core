@@ -750,7 +750,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		PreparedStatement stat = null;
 		ResultSet res = null;
 		try {
-			stat = conn.prepareStatement(LOAD_LAST_UPDATED_PAGES);
+			stat = conn.prepareStatement(GET_LAST_CHILDREN_POSITION);
 			stat.setString(1, parentPageCode);
 			res = stat.executeQuery();
 			if (res.next()) {
@@ -902,6 +902,5 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	private static final String LOAD_LAST_UPDATED_PAGES = "SELECT code FROM pages_metadata_draft ORDER BY updatedat DESC";
 
 	private static final String GET_LAST_CHILDREN_POSITION = "SELECT pos FROM pages WHERE parentcode = ? ORDER BY pos DESC";
-	//"INSERT INTO pages(code, parentcode, pos, groupcode) VALUES ( ? , ? , ? , ? )";
 
 }

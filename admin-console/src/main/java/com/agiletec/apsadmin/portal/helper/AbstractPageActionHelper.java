@@ -101,12 +101,15 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 	}
 
 	private void addTreeWrapper(PageTreeNodeWrapper currentNode, IPage currentTreeNode, Collection<String> userGroupCodes, boolean alsoFreeViewPages) {
-		IPage[] children = currentTreeNode.getChildren();
+		boolean isOnline = currentTreeNode.isOnline();
+		String[] children = currentTreeNode.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			IPage newCurrentTreeNode = children[i];
+			IPage newCurrentTreeNode = (isOnline)
+					? this.getPageManager().getOnlinePage(children[i])
+					: this.getPageManager().getDraftPage(children[i]);
 			if (this.isPageAllowed(newCurrentTreeNode, userGroupCodes, alsoFreeViewPages)) {
 				PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentTreeNode);
-				currentNode.addChild(newNode);
+				currentNode.addChildCode(newNode.getCode());
 				this.addTreeWrapper(newNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);
 			} else {
 				this.addTreeWrapper(currentNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);

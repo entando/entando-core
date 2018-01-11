@@ -193,12 +193,12 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	private void builShowableTree(TreeNodeWrapper currentNode, ITreeNode currentTreeNode, Set<String> checkNodes) {
 		if (checkNodes.contains(currentNode.getCode())) {
 			currentNode.setOpen(true);
-			ITreeNode[] children = currentTreeNode.getChildren();
+			String[] children = currentTreeNode.getChildrenCodes();
 			for (int i = 0; i < children.length; i++) {
-				ITreeNode newCurrentTreeNode = children[i];
+				ITreeNode newCurrentTreeNode = this.getTreeNode(children[i]);
 				TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);
 				newNode.setParent(currentNode);
-				currentNode.addChild(newNode);
+				currentNode.addChildCode(newNode.getCode());
 				this.builShowableTree(newNode, newCurrentTreeNode, checkNodes);
 			}
 		}
@@ -223,15 +223,15 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	}
 
 	private void addTreeWrapper(TreeNodeWrapper currentNode, ITreeNode currentTreeNode) {
-		ITreeNode[] children = currentTreeNode.getChildren();
+		String[] children = currentTreeNode.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			ITreeNode newCurrentTreeNode = children[i];
+			ITreeNode newCurrentTreeNode = this.getTreeNode(children[i]);
 			TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);
-			currentNode.addChild(newNode);
+			currentNode.addChildCode(newNode.getCode());
 			this.addTreeWrapper(newNode, newCurrentTreeNode);
 		}
 	}
-	
+
 	protected TreeNodeWrapper buildWrapper(ITreeNode treeNode) {
 		return new TreeNodeWrapper(treeNode);
 	}

@@ -195,9 +195,13 @@ public class BaseAdminAction extends BaseAction {
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME)) {
 			pages.add(page);
 		}
-		IPage[] children = page.getChildren();
+		boolean isOnline = page.isOnline();
+		String[] children = page.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			this.addPages(children[i], pages);
+			IPage child = (isOnline)
+					? this.getPageManager().getOnlinePage(children[i])
+					: this.getPageManager().getDraftPage(children[i]);
+			this.addPages(child, pages);
 		}
 	}
 

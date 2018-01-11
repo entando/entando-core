@@ -216,12 +216,15 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 	}
 
 	private void addTreeWrapper(PageTreeNodeWrapper parent, IPage currentTreeNode) {
-		IPage[] children = currentTreeNode.getChildren();
+		boolean isOnline = currentTreeNode.isOnline();
+		String[] children = currentTreeNode.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			IPage newCurrentTreeNode = children[i];
+			IPage newCurrentTreeNode = (isOnline)
+					? this.getPageManager().getOnlinePage(children[i])
+					: this.getPageManager().getDraftPage(children[i]);
 			PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentTreeNode);
 			if (this.getResultCodes().contains(newCurrentTreeNode.getCode())) {
-				parent.addChild(newNode);
+				parent.addChildCode(newNode.getCode());
 				this.addTreeWrapper(newNode, newCurrentTreeNode);
 			} else {
 				this.addTreeWrapper(parent, newCurrentTreeNode);

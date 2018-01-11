@@ -79,7 +79,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(3, root.getChildren().length);
+		assertEquals(3, root.getChildrenCodes().length);
 	}
 
 	public void testConfigPageLink_2() throws Throwable {
@@ -87,7 +87,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(4, root.getChildren().length);
+		assertEquals(4, root.getChildrenCodes().length);
 	}
 
 	public void testOpenPageTree_1() throws Throwable {
@@ -95,10 +95,10 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(3, root.getChildren().length);
+		assertEquals(3, root.getChildrenCodes().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
-		assertEquals(3, showableRoot.getChildren().length);
+		assertEquals(3, showableRoot.getChildrenCodes().length);
 	}
 
 	public void testOpenPageTree_2() throws Throwable {
@@ -115,17 +115,17 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		this.openTreeOnDemand("editorCustomers", "ART102", "homepage");
 		this.checkTestOpenPageTree_ART102();
 	}
-	
+
 	private void checkTestOpenPageTree_ART102() throws Throwable {
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(4, root.getChildren().length);
+		assertEquals(4, root.getChildrenCodes().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
-		assertEquals(4, showableRoot.getChildren().length);
+		assertEquals(4, showableRoot.getChildrenCodes().length);
 	}
-	
+
 	private void initIntroPageLink(String username, String contentId) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
@@ -153,5 +153,5 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 	}
-	
+
 }

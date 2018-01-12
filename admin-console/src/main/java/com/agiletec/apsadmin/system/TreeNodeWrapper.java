@@ -98,11 +98,31 @@ public class TreeNodeWrapper extends TreeNode {
 		this._empty = empty;
 	}
 
+	public ITreeNode[] getChildren() {
+		return _children;
+	}
+
+	public void setChildren(ITreeNode[] children) {
+		this._children = children;
+	}
+
+	public void addChild(ITreeNode treeNode) {
+		int len = this._children.length;
+		ITreeNode[] newChildren = new ITreeNode[len + 1];
+		for (int i = 0; i < len; i++) {
+			newChildren[i] = this._children[i];
+		}
+		newChildren[len] = treeNode;
+		this._children = newChildren;
+	}
+
 	private boolean _empty;
 	private boolean _open;
 
 	private String _title;
 	private String _fullTitle;
 	private String _shortFullTitle;
+
+	private ITreeNode[] _children = new ITreeNode[0];
 
 }

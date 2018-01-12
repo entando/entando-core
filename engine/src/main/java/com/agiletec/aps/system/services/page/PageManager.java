@@ -91,10 +91,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				}
 			}
 			for (int i = 0; i < pageList.size(); i++) {
-				this.buildTreeHierarchy(pageList, newRoot, newFullMap, true, i);
+				this.buildTreeHierarchy(pageList, newRoot, newFullMap, i);
 			}
 			for (int i = 0; i < pageListO.size(); i++) {
-				this.buildTreeHierarchy(pageListO, newRootOnline, newOnlineMap, false, i);
+				this.buildTreeHierarchy(pageListO, newRootOnline, newOnlineMap, i);
 			}
 			if (newRoot == null) {
 				throw new ApsSystemException("Error in the page tree: root page undefined");
@@ -112,7 +112,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		}
 	}
 
-	protected void buildTreeHierarchy(List<IPage> pageList, IPage root, Map<String, IPage> pagesMap, boolean includeDraft, int i) {
+	protected void buildTreeHierarchy(List<IPage> pageList, IPage root, Map<String, IPage> pagesMap, int i) {
 		Page page = (Page) pagesMap.get(pageList.get(i).getCode());
 		Page parent = (Page) pagesMap.get(page.getParentCode());
 		page.setParent(parent);

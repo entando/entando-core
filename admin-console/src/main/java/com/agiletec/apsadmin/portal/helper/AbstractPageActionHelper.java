@@ -51,6 +51,8 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 
 	protected abstract IPage getPage(String pageCode);
 
+	protected abstract boolean isDraftPageHepler();
+
 	@Override
 	protected abstract IPage getRoot();
 
@@ -101,15 +103,15 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 	}
 
 	private void addTreeWrapper(PageTreeNodeWrapper currentNode, IPage currentTreeNode, Collection<String> userGroupCodes, boolean alsoFreeViewPages) {
-		boolean isOnline = currentTreeNode.isOnline();
 		String[] children = currentTreeNode.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			IPage newCurrentTreeNode = (isOnline)
-					? this.getPageManager().getOnlinePage(children[i])
-					: this.getPageManager().getDraftPage(children[i]);
+			IPage newCurrentTreeNode = (this.isDraftPageHepler())
+					? this.getPageManager().getDraftPage(children[i])
+					: this.getPageManager().getOnlinePage(children[i]);
 			if (this.isPageAllowed(newCurrentTreeNode, userGroupCodes, alsoFreeViewPages)) {
 				PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentTreeNode);
 				currentNode.addChildCode(newNode.getCode());
+				currentNode.addChild(newNode);
 				this.addTreeWrapper(newNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);
 			} else {
 				this.addTreeWrapper(currentNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);

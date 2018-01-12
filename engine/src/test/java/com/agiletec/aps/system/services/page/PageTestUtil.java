@@ -133,7 +133,7 @@ public class PageTestUtil {
 		page.setCode(code);
 		page.setParent(parentPage);
 		page.setParentCode(parentPage.getCode());
-		page.setPosition(parentPage.getChildrenCodes().length + 1);
+		//page.setPosition(parentPage.getChildrenCodes().length + 1);
 		page.setMetadata(metadata);
 		page.setGroup(groupName);
 		page.setWidgets(widgets);

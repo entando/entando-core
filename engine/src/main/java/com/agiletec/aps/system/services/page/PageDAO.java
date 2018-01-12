@@ -227,7 +227,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	}
 
 	protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
-		int position = this.getLastPosition(page.getCode(), conn) + 1;
+		int position = this.getLastPosition(page.getParentCode(), conn) + 1;
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_PAGE);
@@ -652,7 +652,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.removeWidget(page.getCode(), pos, conn);
+			super.executeQueryWithoutResultset(conn, DELETE_WIDGET_FOR_PAGE_DRAFT, page.getCode(), pos);
 			Date now = new Date();
 			this.updatePageMetadataDraftLastUpdate(page.getCode(), now, conn);
 			page.getMetadata().setUpdatedAt(now);
@@ -666,21 +666,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		}
 	}
 
-	protected void removeWidget(String pageCode, int pos, Connection conn) {
-		PreparedStatement stat = null;
-		try {
-			stat = conn.prepareStatement(DELETE_WIDGET_FOR_PAGE_DRAFT);
-			stat.setString(1, pageCode);
-			stat.setInt(2, pos);
-			stat.executeUpdate();
-		} catch (Throwable t) {
-			_logger.error("Error removing the widget from page '{}', frame {}", pageCode, pos, t);
-			throw new RuntimeException("Error removing the widget from page '" + pageCode + "', frame " + pos, t);
-		} finally {
-			closeDaoResources(null, stat);
-		}
-	}
-
 	@Override
 	public void joinWidget(IPage page, Widget widget, int pos) {
 		String pageCode = page.getCode();
@@ -689,7 +674,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
-			this.removeWidget(pageCode, pos, conn);
+			super.executeQueryWithoutResultset(conn, DELETE_WIDGET_FOR_PAGE_DRAFT, pageCode, pos);
 			stat = conn.prepareStatement(ADD_WIDGET_FOR_PAGE_DRAFT);
 			this.valueAddWidgetStatement(pageCode, pos, widget, stat);
 			stat.executeUpdate();

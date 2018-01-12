@@ -176,7 +176,7 @@ public class TestPageManager extends BaseTestCase {
 
 	private void movePage() throws Exception {
 		int firstPos = 6;
-		assertEquals(firstPos, _pageManager.getDraftPage("temp").getPosition());
+		assertEquals(firstPos, _pageManager.getDraftPage("temp").getPosition());//aaaaaaaaaaaaaaaa
 		assertEquals(firstPos + 1, _pageManager.getDraftPage("temp1").getPosition());
 		assertEquals(firstPos + 2, _pageManager.getDraftPage("temp2").getPosition());
 		_pageManager.deletePage("temp");

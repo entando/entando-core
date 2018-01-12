@@ -15,8 +15,12 @@ package com.agiletec.apsadmin.portal;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ITreeAction;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
@@ -195,7 +199,6 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		assertEquals(sisterPage.getPosition(), 1);
 	}
 
-	/*
 	public void testMoveForCoachUser() throws Throwable {
 		String pageToMoveCode = "pagina_12";
 		this.setUserOnSession("pageManagerCoach");
@@ -369,7 +372,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		assertEquals("pageTree", result);
 		assertEquals(1, this.getAction().getActionErrors().size());
 	}
-	 */
+
 	private void init() throws Exception {
 		try {
 			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);

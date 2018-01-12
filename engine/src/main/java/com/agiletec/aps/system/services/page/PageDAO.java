@@ -227,12 +227,13 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 	}
 
 	protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
-		int position = this.getLastPosition(page.getParentCode(), conn) + 1;
+		String parentCode = page.getParent().getCode();
+		int position = this.getLastPosition(parentCode, conn) + 1;
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_PAGE);
 			stat.setString(1, page.getCode());
-			stat.setString(2, page.getParent().getCode());
+			stat.setString(2, parentCode);
 			stat.setInt(3, position);
 			stat.setString(4, page.getGroup());
 			stat.executeUpdate();
@@ -825,7 +826,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 			+ "onl.titles, onl.modelcode, onl.showinmenu, onl.extraconfig, onl.updatedat, "
 			+ "drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat FROM pages p LEFT JOIN "
 			+ PageMetadataOnline.TABLE_NAME + " onl ON p.code = onl.code LEFT JOIN " + PageMetadataDraft.TABLE_NAME
-			+ " drf ON p.code = drf.code " + "ORDER BY p.parentcode, p.pos, p.code ";
+			+ " drf ON p.code = drf.code ORDER BY p.parentcode, p.pos, p.code ";
 
 	private static final String ALL_WIDGETS_START = "SELECT w.pagecode, w.framepos, w.widgetcode, w.config " + "FROM pages p JOIN ";
 	private static final String ALL_WIDGETS_END = " w ON p.code = w.pagecode " + "ORDER BY p.parentcode, p.pos, p.code, w.framepos ";

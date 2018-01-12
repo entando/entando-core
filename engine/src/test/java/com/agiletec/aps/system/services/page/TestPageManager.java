@@ -41,35 +41,45 @@ public class TestPageManager extends BaseTestCase {
 		this.init();
 	}
 
-	public void testGetPage() throws Throwable {
+	public void testGetPage_1() throws Throwable {
 		IPage root = _pageManager.getDraftRoot();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
 		assertTrue(root.isOnline());
 		assertNotNull(root.getMetadata());
 		assertNotNull(root.getMetadata());
-		assertTrue(root.getChildrenCodes().length > 2);
+		assertEquals(7, root.getChildrenCodes().length);
+
+		assertEquals("service", root.getChildrenCodes()[0]);
+		assertEquals("pagina_1", root.getChildrenCodes()[1]);
+		assertEquals("pagina_2", root.getChildrenCodes()[2]);
+		assertEquals("coach_page", root.getChildrenCodes()[3]);
+		assertEquals("customers_page", root.getChildrenCodes()[4]);
+		assertEquals("administrators_page", root.getChildrenCodes()[5]);
+		assertEquals("pagina_draft", root.getChildrenCodes()[6]);
 
 		assertNotNull(_pageManager.getOnlinePage("homepage"));
 		assertNotNull(_pageManager.getDraftPage("homepage"));
+	}
 
+	public void testGetPage_2() throws Throwable {
 		IPage page1 = _pageManager.getOnlinePage("pagina_1");
 		assertNotNull(page1);
 		assertTrue(page1.isOnline());
 		assertNotNull(page1.getMetadata());
 		assertNotNull(page1.getMetadata());
+		assertEquals(2, page1.getPosition());
 		assertTrue(page1.getChildrenCodes().length > 1);
-		assertEquals(page1.getChildrenCodes().length, page1.getChildrenCodes().length);
-		assertEquals(page1.getChildrenCodes().length, page1.getChildrenCodes().length);
 		assertTrue(page1.getWidgets().length > 1);
-		assertEquals(page1.getWidgets().length, page1.getWidgets().length);
-		assertEquals(page1.getWidgets().length, page1.getWidgets().length);
+	}
 
+	public void testGetPage_3() throws Throwable {
 		assertNull(_pageManager.getOnlinePage("pagina_draft"));
 		IPage draft = _pageManager.getDraftPage("pagina_draft");
 		assertFalse(draft.isOnline());
 		assertNotNull(draft.getMetadata());
 		assertEquals(0, draft.getChildrenCodes().length);
+		assertEquals(7, draft.getPosition());
 	}
 
 	public void testAddUpdateMoveDeletePage() throws Throwable {
@@ -175,8 +185,8 @@ public class TestPageManager extends BaseTestCase {
 	}
 
 	private void movePage() throws Exception {
-		int firstPos = 6;
-		assertEquals(firstPos, _pageManager.getDraftPage("temp").getPosition());//aaaaaaaaaaaaaaaa
+		int firstPos = 7;
+		assertEquals(firstPos, _pageManager.getDraftPage("temp").getPosition());
 		assertEquals(firstPos + 1, _pageManager.getDraftPage("temp1").getPosition());
 		assertEquals(firstPos + 2, _pageManager.getDraftPage("temp2").getPosition());
 		_pageManager.deletePage("temp");

@@ -220,7 +220,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		Collection<String> errors = this.getAction().getActionErrors();
 		assertEquals(1, errors.size());
 
-		pageToMoveCode = "errorpage";
+		pageToMoveCode = "dataObjectview";
 		this.initAction("/do/Page", "moveDown");
 		this.addParameter("selectedNode", pageToMoveCode);
 		result = this.executeAction();

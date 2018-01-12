@@ -65,20 +65,17 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		PagesStatus status = new PagesStatus();
 		IPage newRoot = null;
 		IPage newRootOnline = null;
-		List<IPage> pageList = null;
-		List<IPage> pageListO = null;
-		List<PageRecord> pageRecordList = null;
 		try {
-			pageRecordList = this.getPageDAO().loadPageRecords();
+			List<PageRecord> pageRecordList = this.getPageDAO().loadPageRecords();
 			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
 			Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
-			pageListO = new ArrayList<>();
-			pageList = new ArrayList<>();
+			List<IPage> pageListO = new ArrayList<>();
+			List<IPage> pageListD = new ArrayList<>();
 			for (int i = 0; i < pageRecordList.size(); i++) {
 				PageRecord pageRecord = pageRecordList.get(i);
 				IPage pageD = pageRecord.createDraftPage();
 				IPage pageO = pageRecord.createOnlinePage();
-				pageList.add(pageD);
+				pageListD.add(pageD);
 				newFullMap.put(pageD.getCode(), pageD);
 				if (pageD.getCode().equals(pageD.getParentCode())) {
 					newRoot = pageD;
@@ -90,11 +87,11 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 					pageListO.add(pageO);
 				}
 			}
-			for (int i = 0; i < pageList.size(); i++) {
-				this.buildTreeHierarchy(pageList, newRoot, newFullMap, i);
+			for (int i = 0; i < pageListD.size(); i++) {
+				this.buildTreeHierarchy(newRoot, newFullMap, pageListD.get(i));
 			}
 			for (int i = 0; i < pageListO.size(); i++) {
-				this.buildTreeHierarchy(pageListO, newRootOnline, newOnlineMap, i);
+				this.buildTreeHierarchy(newRootOnline, newOnlineMap, pageListO.get(i));
 			}
 			if (newRoot == null) {
 				throw new ApsSystemException("Error in the page tree: root page undefined");
@@ -112,11 +109,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		}
 	}
 
-	protected void buildTreeHierarchy(List<IPage> pageList, IPage root, Map<String, IPage> pagesMap, int i) {
-		Page page = (Page) pagesMap.get(pageList.get(i).getCode());
+	protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {
 		Page parent = (Page) pagesMap.get(page.getParentCode());
-		page.setParent(parent);
-		if (page != root) {
+		((Page) page).setParent(parent);
+		if (!page.getCode().equals(root.getCode())) {
 			parent.addChildCode(page.getCode());
 		}
 	}
@@ -484,6 +480,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	 *
 	 * @return the root page
 	 */
+	@Deprecated
 	@Override
 	public IPage getRoot() {
 		throw new UnsupportedOperationException("METODO NON SUPPORTATO: public IPage getRoot()");
@@ -767,4 +764,5 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	private PagesStatus _pagesStatus = new PagesStatus();
 
 	private IPageDAO _pageDao;
+
 }

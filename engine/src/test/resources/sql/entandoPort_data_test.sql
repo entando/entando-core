@@ -146,26 +146,23 @@ INSERT INTO pagemodels (code, descr, frames, plugincode) VALUES ('internal', 'In
 	</frame>
 </frames>', NULL);
 
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('homepage', 'homepage', -1, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('service', 'homepage', 1, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('primapagina', 'service', 1, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('notfound', 'service', 2, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('login', 'service', 3, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('contentview', 'service', 4, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('homepage', 'homepage', -1, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('errorpage', 'service', 5, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('dataObjectview', 'service', 6, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_1', 'homepage', 2, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_11', 'pagina_1', 1, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_12', 'pagina_1', 2, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_2', 'homepage', 3, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('coach_page', 'homepage', 4, 'coach');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customers_page', 'homepage', 5, 'customers');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_1', 'customers_page', 1, 'customers');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_2', 'customers_page', 2, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('coach_page', 'homepage', 4, 'coach');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('administrators_page', 'homepage', 6, 'administrators');
-
-
-
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_2', 'customers_page', 2, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_12', 'pagina_1', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_11', 'pagina_1', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_1', 'customers_page', 1, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_1', 'homepage', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('dataObjectview', 'service', 6, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('contentview', 'service', 4, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_2', 'homepage', 3, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_draft', 'homepage', 7, 'free');
 
 INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>

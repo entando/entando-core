@@ -16,10 +16,7 @@ package com.agiletec.aps.system.services.page;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +29,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
 import com.agiletec.aps.system.services.lang.events.LangsChangedObserver;
+import com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
@@ -49,74 +47,20 @@ import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedObserve
 public class PageManager extends AbstractService implements IPageManager, GroupUtilizer, LangsChangedObserver, PageModelUtilizer, PageModelChangedObserver {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageManager.class);
+	
+	private IPageManagerCacheWrapper _cacheWrapper;
+	private IPageDAO _pageDao;
 
 	@Override
 	public void init() throws Exception {
 		this.loadPageTree();
-		_logger.debug("{} ready. : Initialized {} pages", this.getClass().getName(), _pages.size());
+		_logger.debug("{} ready. : Initialized", this.getClass().getName());
 	}
-
-	/**
-	 * Load the page and organize them in a tree structure
-	 *
-	 * @throws ApsSystemException In case of database access error.
-	 */
+	
 	private void loadPageTree() throws ApsSystemException {
-		PagesStatus status = new PagesStatus();
-		IPage newRoot = null;
-		IPage newRootOnline = null;
-		try {
-			List<PageRecord> pageRecordList = this.getPageDAO().loadPageRecords();
-			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
-			Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
-			List<IPage> pageListO = new ArrayList<>();
-			List<IPage> pageListD = new ArrayList<>();
-			for (int i = 0; i < pageRecordList.size(); i++) {
-				PageRecord pageRecord = pageRecordList.get(i);
-				IPage pageD = pageRecord.createDraftPage();
-				IPage pageO = pageRecord.createOnlinePage();
-				pageListD.add(pageD);
-				newFullMap.put(pageD.getCode(), pageD);
-				if (pageD.getCode().equals(pageD.getParentCode())) {
-					newRoot = pageD;
-					newRootOnline = pageO;
-				}
-				this.buildPagesStatus(status, pageD);
-				if (pageD.isOnline()) {
-					newOnlineMap.put(pageO.getCode(), pageO);
-					pageListO.add(pageO);
-				}
-			}
-			for (int i = 0; i < pageListD.size(); i++) {
-				this.buildTreeHierarchy(newRoot, newFullMap, pageListD.get(i));
-			}
-			for (int i = 0; i < pageListO.size(); i++) {
-				this.buildTreeHierarchy(newRootOnline, newOnlineMap, pageListO.get(i));
-			}
-			if (newRoot == null) {
-				throw new ApsSystemException("Error in the page tree: root page undefined");
-			}
-			this._root = newRoot;
-			this._onlineRoot = newRootOnline;
-			this._pages = newFullMap;
-			this._onlinePages = newOnlineMap;
-			this._pagesStatus = status;
-		} catch (ApsSystemException e) {
-			throw e;
-		} catch (Throwable t) {
-			_logger.error("Error while building the tree of pages", t);
-			throw new ApsSystemException("Error while building the tree of pages", t);
-		}
+		this.getCacheWrapper().loadPageTree(this.getPageDAO());
 	}
-
-	protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {
-		Page parent = (Page) pagesMap.get(page.getParentCode());
-		((Page) page).setParent(parent);
-		if (!page.getCode().equals(root.getCode())) {
-			parent.addChildCode(page.getCode());
-		}
-	}
-
+	
 	@Override
 	public void updateFromLangsChanged(LangsChangedEvent event) {
 		try {
@@ -138,6 +82,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		if (null != page && page.getChildrenCodes().length <= 0) {
 			try {
 				this.getPageDAO().deletePage(page);
+				this.getCacheWrapper().deleteDraftPage(pageCode);
 			} catch (Throwable t) {
 				_logger.error("Error detected while deleting page {}", pageCode, t);
 				throw new ApsSystemException("Error detected while deleting a page", t);
@@ -199,6 +144,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public void setPageOffline(String pageCode) throws ApsSystemException {
 		try {
 			this.getPageDAO().setPageOffline(pageCode);
+			this.getCacheWrapper().deleteOnlinePage(pageCode);
 		} catch (Throwable t) {
 			_logger.error("Error updating a page as offline", t);
 			throw new ApsSystemException("Error updating a page as offline", t);
@@ -465,16 +411,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw new ApsSystemException("The Position '" + pos + "' is not defined in the model '" + model.getDescription() + "' of the page '" + pageCode + "'!");
 		}
 	}
-
-	/**
-	 * Set the root page.
-	 *
-	 * @param root the Page to be set as root
-	 */
-	protected void setRoot(IPage root) {
-		this._root = root;
-	}
-
+	
 	/**
 	 * Return the root of the pages tree.
 	 *
@@ -488,29 +425,29 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	@Override
 	public IPage getOnlineRoot() {
-		return this._onlineRoot;
+		return this.getCacheWrapper().getOnlineRoot();
 	}
 
 	@Override
 	public IPage getDraftRoot() {
-		return this._root;
+		return this.getCacheWrapper().getDraftRoot();
 	}
 
 	@Override
 	public IPage getOnlinePage(String pageCode) {
-		return this._onlinePages.get(pageCode);
+		return this.getCacheWrapper().getOnlinePage(pageCode);
 	}
 
 	@Override
 	public IPage getDraftPage(String pageCode) {
-		return this._pages.get(pageCode);
+		return this.getCacheWrapper().getDraftPage(pageCode);
 	}
 
 	@Override
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
 		List<IPage> searchResult = new ArrayList<IPage>();
 		try {
-			if (null == this._pages || this._pages.isEmpty() || null == allowedGroups || allowedGroups.isEmpty()) {
+			if (null == allowedGroups || allowedGroups.isEmpty()) {
 				return searchResult;
 			}
 			IPage root = this.getDraftRoot();
@@ -631,7 +568,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public List getPageModelUtilizers(String pageModelCode) throws ApsSystemException {
 		List<IPage> pages = new ArrayList<IPage>();
 		try {
-			if (null == this._pages || this._pages.isEmpty() || null == pageModelCode) {
+			if (null == pageModelCode) {
 				return pages;
 			}
 			IPage root = this.getDraftRoot();
@@ -718,30 +655,20 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		}
 		return pages;
 	}
-
-	protected void buildPagesStatus(PagesStatus status, IPage pageD) {
-		Date currentDate = pageD.getMetadata().getUpdatedAt();
-		if (pageD.isOnline()) {
-			if (pageD.isChanged()) {
-				status.setOnlineWithChanges(status.getOnlineWithChanges() + 1);
-			} else {
-				status.setOnline(status.getOnline() + 1);
-			}
-		} else {
-			status.setDraft(status.getDraft() + 1);
-		}
-		if (null != currentDate) {
-			if (null == status.getLastUpdate() || status.getLastUpdate().before(currentDate)) {
-				status.setLastUpdate(currentDate);
-			}
-		}
-	}
-
+	
 	@Override
 	public PagesStatus getPagesStatus() {
-		return this._pagesStatus;
+		return this.getCacheWrapper().getPagesStatus();
 	}
 
+	protected IPageManagerCacheWrapper getCacheWrapper() {
+		return _cacheWrapper;
+	}
+
+	public void setCacheWrapper(IPageManagerCacheWrapper cacheWrapper) {
+		this._cacheWrapper = cacheWrapper;
+	}
+	
 	protected IPageDAO getPageDAO() {
 		return _pageDao;
 	}
@@ -749,20 +676,5 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public void setPageDAO(IPageDAO pageDao) {
 		this._pageDao = pageDao;
 	}
-
-	/**
-	 * The root of the pages tree.
-	 */
-	private IPage _root;
-	private IPage _onlineRoot;
-
-	/**
-	 * The map of pages, indexed by code.
-	 */
-	private Map<String, IPage> _pages;
-	private Map<String, IPage> _onlinePages;
-	private PagesStatus _pagesStatus = new PagesStatus();
-
-	private IPageDAO _pageDao;
-
+	
 }

@@ -103,7 +103,10 @@
 	<bean id="springCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
 		<property name="caches">
 			<set>
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="Entando_Cache"/>
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_Cache" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_PageManager" />
 			</set>
 		</property>
 	</bean>
@@ -186,6 +189,11 @@
 				<property name="dataSource" ref="portDataSource" />
 				<property name="widgetTypeManager" ref="WidgetTypeManager" />
 				<property name="pageModelManager" ref="PageModelManager" />
+			</bean>
+		</property>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.page.cache.PageManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>
 	</bean>

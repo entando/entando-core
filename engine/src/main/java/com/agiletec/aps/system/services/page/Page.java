@@ -21,13 +21,14 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.io.Serializable;
 
 /**
  * This is the representation of a portal page
  *
  * @author M.Diana - E.Santoboni
  */
-public class Page extends TreeNode implements IPage {
+public class Page extends TreeNode implements IPage, Serializable {
 
 	/**
 	 * Set the position of the page with regard to its sisters

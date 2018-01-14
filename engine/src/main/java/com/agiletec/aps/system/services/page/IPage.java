@@ -18,13 +18,14 @@ import java.util.Set;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.io.Serializable;
 
 /**
  * This class describes a pages of the portal.
  *
  * @author E.Santoboni
  */
-public interface IPage extends ITreeNode {
+public interface IPage extends ITreeNode, Serializable {
 
 	/**
 	 * Returns a properties with the titles of the page, where the keys are the

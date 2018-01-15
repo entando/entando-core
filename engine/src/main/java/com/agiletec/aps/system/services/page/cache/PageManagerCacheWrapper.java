@@ -33,11 +33,11 @@ import org.springframework.cache.CacheManager;
  * @author E.Santoboni
  */
 public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(PageManagerCacheWrapper.class);
-	
+
 	private CacheManager _springCacheManager;
-	
+
 	@Override
 	public void loadPageTree(IPageDAO pageDao) throws ApsSystemException {
 		PagesStatus status = new PagesStatus();
@@ -118,7 +118,7 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 	public void deleteOnlinePage(String pageCode) {
 		this.getCache().evict("PageManager_onLine_" + pageCode);
 	}
-	
+
 	@Override
 	public IPage getOnlineRoot() {
 		return this.getCache().get("PageManager_onLineRoot", IPage.class);
@@ -136,7 +136,7 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 			parent.addChildCode(page.getCode());
 		}
 	}
-	
+
 	protected void buildPagesStatus(PagesStatus status, IPage pageD) {
 		Date currentDate = pageD.getMetadata().getUpdatedAt();
 		if (pageD.isOnline()) {
@@ -154,20 +154,17 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 			}
 		}
 	}
-	
+
 	protected Cache getCache() {
-		return this.getSpringCacheManager().getCache(getCacheName());
+		return this.getSpringCacheManager().getCache(PAGE_MANAGER_CACHE_NAME);
 	}
 
-	public static String getCacheName() {
-		return "Entando_PageManager";
-	}
-	
 	protected CacheManager getSpringCacheManager() {
 		return _springCacheManager;
 	}
+
 	public void setSpringCacheManager(CacheManager springCacheManager) {
 		this._springCacheManager = springCacheManager;
 	}
-	
+
 }

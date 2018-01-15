@@ -22,21 +22,23 @@ import com.agiletec.aps.system.services.page.PagesStatus;
  * @author E.Santoboni
  */
 public interface IPageManagerCacheWrapper {
-	
+
+	public static final String PAGE_MANAGER_CACHE_NAME = "Entando_PageManager";
+
 	public void loadPageTree(IPageDAO pageDao) throws ApsSystemException;
 
 	public PagesStatus getPagesStatus();
-	
+
 	public IPage getOnlinePage(String pageCode);
-	
+
 	public IPage getDraftPage(String pageCode);
 
 	public IPage getOnlineRoot();
 
 	public IPage getDraftRoot();
-	
+
 	public void deleteDraftPage(String pageCode);
-	
+
 	public void deleteOnlinePage(String pageCode);
-	
+
 }

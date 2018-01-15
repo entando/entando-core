@@ -107,6 +107,8 @@
 					  p:name="Entando_Cache" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_PageManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_PageModelManager" />
 			</set>
 		</property>
 	</bean>
@@ -176,6 +178,7 @@
 				<property name="widgetTypeManager" ref="WidgetTypeManager" />
 			</bean>
 		</property>
+		<property name="springCacheManager" ref="springCacheManager" />
 	</bean>
 	
     <bean id="ApiPageModelInterface" class="org.entando.entando.aps.system.services.pagemodel.api.ApiPageModelInterface" >

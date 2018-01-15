@@ -229,6 +229,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 			ITreeNode newCurrentTreeNode = this.getTreeNode(children[i]);
 			TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);
 			currentNode.addChildCode(newNode.getCode());
+			currentNode.addChild(newNode);
 			this.addTreeWrapper(newNode, newCurrentTreeNode);
 		}
 	}

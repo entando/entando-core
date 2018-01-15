@@ -1,6 +1,6 @@
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="wp" uri="/aps-core"%>
-<%@ taglib prefix="wpsf" uri="/apsadmin-form"%>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="wp" uri="/aps-core" %>
+<%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="menu.configure" /></li>
@@ -122,7 +122,7 @@
                         <s:set var="isPosition" value="true" />
                         <s:set var="treeItemIconName" value="'fa-folder'" />
                         <s:if test="#categoryTreeStyleVar == 'classic'">
-                            <s:set var="currentRoot" value="treeRootNode" />
+                            <s:set var="currentRoot" value="allowedTreeRootNode" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
                         </s:if>
                         <s:elseif test="#categoryTreeStyleVar == 'request'">

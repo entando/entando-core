@@ -24,6 +24,11 @@ import com.agiletec.aps.system.services.page.PagesStatus;
 public interface IPageManagerCacheWrapper {
 
 	public static final String PAGE_MANAGER_CACHE_NAME = "Entando_PageManager";
+	public static final String ONLINE_PAGE_CACHE_NAME_PREFIX = "PageManager_onLine_";
+	public static final String DRAFT_PAGE_CACHE_NAME_PREFIX = "PageManager_draft_";
+	public static final String ONLINE_ROOT_CACHE_NAME = "PageManager_onLineRoot";
+	public static final String DRAFT_ROOT_CACHE_NAME = "PageManager_draftRoot";
+	public static final String PAGE_STATUS_CACHE_NAME = "PageManager_pagesStatus";
 
 	public void loadPageTree(IPageDAO pageDao) throws ApsSystemException;
 

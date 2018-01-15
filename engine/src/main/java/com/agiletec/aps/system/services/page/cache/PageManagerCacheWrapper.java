@@ -75,16 +75,16 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 				throw new ApsSystemException("Error in the page tree: root page undefined");
 			}
 			Cache cache = this.getCache();
-			cache.put("PageManager_draftRoot", newRoot);
-			cache.put("PageManager_onLineRoot", newRootOnline);
-			cache.put("PageManager_pagesStatus", status);
+			cache.put(DRAFT_ROOT_CACHE_NAME, newRoot);
+			cache.put(ONLINE_ROOT_CACHE_NAME, newRootOnline);
+			cache.put(PAGE_STATUS_CACHE_NAME, status);
 			for (int i = 0; i < pageListD.size(); i++) {
 				IPage draftPage = pageListD.get(i);
-				cache.put("PageManager_draft_" + draftPage.getCode(), draftPage);
+				cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftPage.getCode(), draftPage);
 			}
 			for (int i = 0; i < pageListO.size(); i++) {
 				IPage onLinePage = pageListO.get(i);
-				cache.put("PageManager_onLine_" + onLinePage.getCode(), onLinePage);
+				cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onLinePage.getCode(), onLinePage);
 			}
 		} catch (ApsSystemException e) {
 			throw e;
@@ -96,37 +96,37 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 
 	@Override
 	public PagesStatus getPagesStatus() {
-		return this.getCache().get("PageManager_pagesStatus", PagesStatus.class);
+		return this.getCache().get(PAGE_STATUS_CACHE_NAME, PagesStatus.class);
 	}
 
 	@Override
 	public IPage getOnlinePage(String pageCode) {
-		return this.getCache().get("PageManager_onLine_" + pageCode, IPage.class);
+		return this.getCache().get(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
 	}
 
 	@Override
 	public IPage getDraftPage(String pageCode) {
-		return this.getCache().get("PageManager_draft_" + pageCode, IPage.class);
-	}
-
-	@Override
-	public void deleteDraftPage(String pageCode) {
-		this.getCache().evict("PageManager_draft_" + pageCode);
+		return this.getCache().get(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
 	}
 
 	@Override
 	public void deleteOnlinePage(String pageCode) {
-		this.getCache().evict("PageManager_onLine_" + pageCode);
+		this.getCache().evict(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode);
+	}
+
+	@Override
+	public void deleteDraftPage(String pageCode) {
+		this.getCache().evict(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode);
 	}
 
 	@Override
 	public IPage getOnlineRoot() {
-		return this.getCache().get("PageManager_onLineRoot", IPage.class);
+		return this.getCache().get(ONLINE_ROOT_CACHE_NAME, IPage.class);
 	}
 
 	@Override
 	public IPage getDraftRoot() {
-		return this.getCache().get("PageManager_draftRoot", IPage.class);
+		return this.getCache().get(DRAFT_ROOT_CACHE_NAME, IPage.class);
 	}
 
 	protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {

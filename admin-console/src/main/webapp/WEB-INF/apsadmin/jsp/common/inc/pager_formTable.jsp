@@ -16,9 +16,8 @@
             <s:if test="%{1 == #group.currItem}">
                 <s:set var="isDisabled" value="%{true}" />
             </s:if>
-
 			<s:if test="#group.advanced">
-				<li ${(isDisabled)?'class="disabled"':''}>
+				<li <s:if test="%{#isDisabled}">class="disabled"</s:if> >
 	                <a href="#" title="<s:text name="label.goToFirst"/>">
 	                    <span class="i fa fa-angle-double-left"></span>
 	                </a>
@@ -27,8 +26,7 @@
 					</wpsf:submit>
 				</li>
 			</s:if>
-
-			<li ${(isDisabled)?'class="disabled"':''}>
+			<li <s:if test="%{#isDisabled}">class="disabled"</s:if>>
                 <a href="#" title="<s:text name="label.prev.full"/>">
                     <span class="i fa fa-angle-left"></span>
                 </a>
@@ -40,7 +38,7 @@
 			</li>
 		</ul>
 	
-	    <s:subset source="#group.items" count="#group.endItemAnchor-#group.beginItemAnchor+1" start="#group.beginItemAnchor-1">
+	    <s:subset source="%{#group.items}" count="%{#group.endItemAnchor-#group.beginItemAnchor+1}" start="%{#group.beginItemAnchor-1}">
 			<select class="pagination-pf-page form-control page-selector">
 			 <s:iterator var="item">
 			     <s:if test="%{#item == #group.currItem}">
@@ -57,7 +55,7 @@
 	    </s:subset>	
 	
         <!-- Current Page -->
-        <span class="page-count">of <span class="pagination-pf-pages"><s:property value="#group.maxItem" /></span></span>
+        <span class="page-count">of <span class="pagination-pf-pages"><s:property value="%{#group.maxItem}" /></span></span>
         
 		<wpsf:submit name="%{#pagerIdMarker + '_' + #group.currItem}" type="button" cssClass="hidden page-navigator"/>
 
@@ -67,21 +65,21 @@
 				<s:set var="isDisabled" value="%{true}" />
 			</s:if>
 
-			<li ${(isDisabled)?'class="disabled"':''}>
+			<li <s:if test="%{#isDisabled}">class="disabled"</s:if> >
 		         <a href="#" title="<s:text name="label.next.full"/>">
                     <span class="i fa fa-angle-right"></span>
 			    </a>
-				<wpsf:submit name="%{#pagerIdMarker + '_' + #group.nextItem}" type="button" title="%{getText('label.next.full')}" disabled="%{isDisabled}" cssClass="hidden">
+				<wpsf:submit name="%{#pagerIdMarker + '_' + #group.nextItem}" type="button" title="%{getText('label.next.full')}" disabled="%{#isDisabled}" cssClass="hidden">
 					<span class="i fa fa-angle-right"></span>
 				</wpsf:submit>
 			</li>
 		
 			<s:if test="#group.advanced">
-				<li ${(isDisabled)?'class="disabled"':''}>
+				<li <s:if test="%{#isDisabled}">class="disabled"</s:if> >
 	                <a href="#" title="<s:text name="label.goToLast"/>">
 	                    <span class="i fa fa-angle-double-right"></span>
 	                </a>
-					<wpsf:submit name="%{#pagerIdMarker + '_' + #group.size}" type="button" disabled="%{isDisabled}" title="%{getText('label.goToLast')}" cssClass="hidden">
+					<wpsf:submit name="%{#pagerIdMarker + '_' + #group.size}" type="button" disabled="%{#isDisabled}" title="%{getText('label.goToLast')}" cssClass="hidden">
 						<span class="icon fa fa-angle-double-right"></span>
 					</wpsf:submit>
 				</li>

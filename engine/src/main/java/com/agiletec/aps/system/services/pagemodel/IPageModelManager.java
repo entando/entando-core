@@ -23,8 +23,6 @@ import java.util.Collection;
  */
 public interface IPageModelManager {
 
-	public static final String PAGE_MODEL_MANAGER_CACHE_NAME = "Entando_PageModelManager";
-
 	/**
 	 * Return a Page Model by the code.
 	 *

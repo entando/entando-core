@@ -27,10 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.pagemodel.cache.IPageModelManagerCacheWrapper;
 import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedEvent;
-import java.util.Map;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 
 /**
  * The manager of the page models.
@@ -43,29 +41,12 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 
 	private IPageModelDAO _pageModelDao;
 
-	private CacheManager _springCacheManager;
+	private IPageModelManagerCacheWrapper _cacheWrapper;
 
 	@Override
 	public void init() throws Exception {
-		this.loadPageModels();
+		this.getCacheWrapper().loadPageModels(this.getPageModelDAO());
 		_logger.debug("{} ready. initialized", this.getClass().getName());
-	}
-
-	private void loadPageModels() throws ApsSystemException {
-		try {
-			Map<String, PageModel> models = this.getPageModelDAO().loadModels();
-			List<String> modelCodes = new ArrayList<String>();
-			Iterator<PageModel> iterator = models.values().iterator();
-			while (iterator.hasNext()) {
-				PageModel pageModel = iterator.next();
-				this.getCache().put("PageModelManager_model_" + pageModel.getCode(), pageModel);
-				modelCodes.add(pageModel.getCode());
-			}
-			this.getCache().put("PageModelManager_models", modelCodes);
-		} catch (Throwable t) {
-			_logger.error("Error loading page models", t);
-			throw new ApsSystemException("Error loading page models", t);
-		}
 	}
 
 	/**
@@ -76,7 +57,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 	 */
 	@Override
 	public PageModel getPageModel(String name) {
-		return this.getCache().get("PageModelManager_model_" + name, PageModel.class); //this._models.get(name);
+		return this.getCacheWrapper().getPageModel(name);
 	}
 
 	/**
@@ -87,16 +68,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 	 */
 	@Override
 	public Collection<PageModel> getPageModels() {
-		List<PageModel> models = new ArrayList<PageModel>();
-		Cache cache = this.getCache();
-		List<String> codes = cache.get("PageModelManager_models", List.class);
-		System.out.println("LISTA -> " + codes);
-		for (int i = 0; i < codes.size(); i++) {
-			String code = codes.get(i);
-			models.add(cache.get("PageModelManager_model_" + code, PageModel.class));
-		}
-		System.out.println("MODELLI -> " + models);
-		return models;
+		return this.getCacheWrapper().getPageModels();
 	}
 
 	@Override
@@ -106,12 +78,8 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 			return;
 		}
 		try {
-			Cache cache = this.getCache();
 			this.getPageModelDAO().addModel(pageModel);
-			cache.put("PageModelManager_model_" + pageModel.getCode(), pageModel);
-			List<String> codes = cache.get("PageModelManager_models", List.class);
-			codes.add(pageModel.getCode());
-			cache.put("PageModelManager_models", codes);
+			this.getCacheWrapper().addPageModel(pageModel);
 			this.notifyPageModelChangedEvent(pageModel, PageModelChangedEvent.INSERT_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error adding page models", t);
@@ -126,8 +94,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 			return;
 		}
 		try {
-			Cache cache = this.getCache();
-			PageModel pageModelToUpdate = cache.get("PageModelManager_model_" + pageModel.getCode(), PageModel.class);
+			PageModel pageModelToUpdate = this.getCacheWrapper().getPageModel(pageModel.getCode());
 			if (null == pageModelToUpdate) {
 				_logger.debug("Page model {} does not exist", pageModel.getCode());
 				return;
@@ -140,7 +107,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 			pageModelToUpdate.setMainFrame(pageModel.getMainFrame());
 			pageModelToUpdate.setPluginCode(pageModel.getPluginCode());
 			pageModelToUpdate.setTemplate(pageModel.getTemplate());
-			cache.put("PageModelManager_model_" + pageModelToUpdate.getCode(), pageModelToUpdate);
+			this.getCacheWrapper().updatePageModel(pageModelToUpdate);
 			this.notifyPageModelChangedEvent(pageModelToUpdate, PageModelChangedEvent.UPDATE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error updating page model {}", pageModel.getCode(), t);
@@ -151,13 +118,9 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 	@Override
 	public void deletePageModel(String code) throws ApsSystemException {
 		try {
-			Cache cache = this.getCache();
 			PageModel model = this.getPageModel(code);
 			this.getPageModelDAO().deleteModel(code);
-			cache.evict("PageModelManager_model_" + code);
-			List<String> codes = cache.get("PageModelManager_models", List.class);
-			codes.remove(code);
-			cache.put("PageModelManager_models", codes);
+			this.getCacheWrapper().deletePageModel(code);
 			this.notifyPageModelChangedEvent(model, PageModelChangedEvent.REMOVE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error deleting page models", t);
@@ -195,8 +158,12 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 		return utilizers;
 	}
 
-	protected Cache getCache() {
-		return this.getSpringCacheManager().getCache(PAGE_MODEL_MANAGER_CACHE_NAME);
+	protected IPageModelManagerCacheWrapper getCacheWrapper() {
+		return _cacheWrapper;
+	}
+
+	public void setCacheWrapper(IPageModelManagerCacheWrapper cacheWrapper) {
+		this._cacheWrapper = cacheWrapper;
 	}
 
 	protected IPageModelDAO getPageModelDAO() {
@@ -205,14 +172,6 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 
 	public void setPageModelDAO(IPageModelDAO pageModelDAO) {
 		this._pageModelDao = pageModelDAO;
-	}
-
-	protected CacheManager getSpringCacheManager() {
-		return _springCacheManager;
-	}
-
-	public void setSpringCacheManager(CacheManager springCacheManager) {
-		this._springCacheManager = springCacheManager;
 	}
 
 }

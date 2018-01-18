@@ -55,17 +55,17 @@ public class PageModelManagerCacheWrapper implements IPageModelManagerCacheWrapp
 
 	@Override
 	public PageModel getPageModel(String name) {
-		return this.getCache().get(PAGE_MODEL_CACHE_NAME_PREFIX + name, PageModel.class);
+		return this.get(PAGE_MODEL_CACHE_NAME_PREFIX + name, PageModel.class);
 	}
 
 	@Override
 	public Collection<PageModel> getPageModels() {
 		List<PageModel> models = new ArrayList<PageModel>();
 		Cache cache = this.getCache();
-		List<String> codes = cache.get(PAGE_MODEL_CODES_CACHE_NAME, List.class);
+		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
 		for (int i = 0; i < codes.size(); i++) {
 			String code = codes.get(i);
-			models.add(cache.get(PAGE_MODEL_CACHE_NAME_PREFIX + code, PageModel.class));
+			models.add(this.get(cache, PAGE_MODEL_CACHE_NAME_PREFIX + code, PageModel.class));
 		}
 		return models;
 	}
@@ -78,7 +78,7 @@ public class PageModelManagerCacheWrapper implements IPageModelManagerCacheWrapp
 		}
 		Cache cache = this.getCache();
 		cache.put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
-		List<String> codes = cache.get(PAGE_MODEL_CODES_CACHE_NAME, List.class);
+		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
 		codes.add(pageModel.getCode());
 		cache.put(PAGE_MODEL_CODES_CACHE_NAME, codes);
 	}
@@ -96,9 +96,21 @@ public class PageModelManagerCacheWrapper implements IPageModelManagerCacheWrapp
 	public void deletePageModel(String code) {
 		Cache cache = this.getCache();
 		cache.evict(PAGE_MODEL_CACHE_NAME_PREFIX + code);
-		List<String> codes = cache.get(PAGE_MODEL_CODES_CACHE_NAME, List.class);
+		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
 		codes.remove(code);
 		cache.put(PAGE_MODEL_CODES_CACHE_NAME, codes);
+	}
+
+	protected <T> T get(String name, Class<T> requiredType) {
+		return this.get(this.getCache(), name, requiredType);
+	}
+
+	protected <T> T get(Cache cache, String name, Class<T> requiredType) {
+		Object value = cache.get(name);
+		if (value instanceof Cache.ValueWrapper) {
+			value = ((Cache.ValueWrapper) value).get();
+		}
+		return (T) value;
 	}
 
 	protected Cache getCache() {

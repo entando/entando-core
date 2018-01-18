@@ -96,17 +96,17 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 
 	@Override
 	public PagesStatus getPagesStatus() {
-		return this.getCache().get(PAGE_STATUS_CACHE_NAME, PagesStatus.class);
+		return this.get(PAGE_STATUS_CACHE_NAME, PagesStatus.class);
 	}
 
 	@Override
 	public IPage getOnlinePage(String pageCode) {
-		return this.getCache().get(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
+		return this.get(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
 	}
 
 	@Override
 	public IPage getDraftPage(String pageCode) {
-		return this.getCache().get(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
+		return this.get(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
 	}
 
 	@Override
@@ -121,12 +121,12 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 
 	@Override
 	public IPage getOnlineRoot() {
-		return this.getCache().get(ONLINE_ROOT_CACHE_NAME, IPage.class);
+		return this.get(ONLINE_ROOT_CACHE_NAME, IPage.class);
 	}
 
 	@Override
 	public IPage getDraftRoot() {
-		return this.getCache().get(DRAFT_ROOT_CACHE_NAME, IPage.class);
+		return this.get(DRAFT_ROOT_CACHE_NAME, IPage.class);
 	}
 
 	protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {
@@ -153,6 +153,18 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 				status.setLastUpdate(currentDate);
 			}
 		}
+	}
+
+	protected <T> T get(String name, Class<T> requiredType) {
+		return this.get(this.getCache(), name, requiredType);
+	}
+
+	protected <T> T get(Cache cache, String name, Class<T> requiredType) {
+		Object value = cache.get(name);
+		if (value instanceof Cache.ValueWrapper) {
+			value = ((Cache.ValueWrapper) value).get();
+		}
+		return (T) value;
 	}
 
 	protected Cache getCache() {

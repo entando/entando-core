@@ -14,7 +14,7 @@
 package org.entando.entando.aps.system.services.widgettype;
 
 import com.agiletec.aps.util.ApsProperties;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Interfaccia base per Data Access Object dei tipi di widget (WidgetType).
@@ -28,7 +28,7 @@ public interface IWidgetTypeDAO {
 	 *
 	 * @return The map of the widget types
 	 */
-	public List<WidgetType> loadWidgetTypes();
+	public Map<String, WidgetType> loadWidgetTypes();
 
 	public void addWidgetType(WidgetType widgetType);
 

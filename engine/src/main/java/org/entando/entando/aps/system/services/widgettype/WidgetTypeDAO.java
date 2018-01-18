@@ -26,8 +26,8 @@ import com.agiletec.aps.system.common.AbstractDAO;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data Access Object per i tipi di widget (WidgetType).
@@ -38,24 +38,19 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 
 	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeDAO.class);
 
-	/**
-	 * Return the list of the widget types
-	 *
-	 * @return The list of the widget types
-	 */
 	@Override
-	public List<WidgetType> loadWidgetTypes() {
+	public Map<String, WidgetType> loadWidgetTypes() {
 		Connection conn = null;
 		Statement stat = null;
 		ResultSet res = null;
-		List<WidgetType> widgetTypes = new ArrayList<WidgetType>();
+		Map<String, WidgetType> widgetTypes = new HashMap<String, WidgetType>();
 		try {
 			conn = this.getConnection();
 			stat = conn.createStatement();
 			res = stat.executeQuery(ALL_WIDGET_TYPES);
 			while (res.next()) {
 				WidgetType widgetType = this.createWidgetTypeFromResultSet(res);
-				widgetTypes.add(widgetType);
+				widgetTypes.put(widgetType.getCode(), widgetType);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error loading widgets", t);

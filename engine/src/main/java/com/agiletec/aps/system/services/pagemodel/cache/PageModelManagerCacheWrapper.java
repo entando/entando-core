@@ -38,15 +38,24 @@ public class PageModelManagerCacheWrapper implements IPageModelManagerCacheWrapp
 	@Override
 	public void loadPageModels(IPageModelDAO pageModelDAO) throws ApsSystemException {
 		try {
+			Cache cache = this.getCache();
+			List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
+			if (null != codes) {
+				for (int i = 0; i < codes.size(); i++) {
+					String code = codes.get(i);
+					cache.evict(PAGE_MODEL_CACHE_NAME_PREFIX + code);
+				}
+				cache.evict(PAGE_MODEL_CODES_CACHE_NAME);
+			}
 			Map<String, PageModel> models = pageModelDAO.loadModels();
 			List<String> modelCodes = new ArrayList<String>();
 			Iterator<PageModel> iterator = models.values().iterator();
 			while (iterator.hasNext()) {
 				PageModel pageModel = iterator.next();
-				this.getCache().put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
+				cache.put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
 				modelCodes.add(pageModel.getCode());
 			}
-			this.getCache().put(PAGE_MODEL_CODES_CACHE_NAME, modelCodes);
+			cache.put(PAGE_MODEL_CODES_CACHE_NAME, modelCodes);
 		} catch (Throwable t) {
 			_logger.error("Error loading page models", t);
 			throw new ApsSystemException("Error loading page models", t);

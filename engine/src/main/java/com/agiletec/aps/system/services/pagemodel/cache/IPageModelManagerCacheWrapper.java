@@ -25,7 +25,7 @@ public interface IPageModelManagerCacheWrapper {
 
 	public static final String PAGE_MODEL_MANAGER_CACHE_NAME = "Entando_PageModelManager";
 	public static final String PAGE_MODEL_CACHE_NAME_PREFIX = "PageModelManager_model_";
-	public static final String PAGE_MODEL_CODES_CACHE_NAME = "PageModelManager_model_codes";
+	public static final String PAGE_MODEL_CODES_CACHE_NAME = "PageModelManager_codes";
 
 	public void loadPageModels(IPageModelDAO pageModelDAO) throws ApsSystemException;
 

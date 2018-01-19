@@ -33,7 +33,7 @@
     </bean>
     
     <bean id="OAuthConsumerManager" class="org.entando.entando.aps.system.services.oauth.OAuthConsumerManager" 
-            parent="abstractService" >
+            parent="abstractService">
         <property name="consumerDAO" >
             <bean class="org.entando.entando.aps.system.services.oauth.OAuthConsumerDAO">
                 <property name="dataSource" ref="servDataSource" />

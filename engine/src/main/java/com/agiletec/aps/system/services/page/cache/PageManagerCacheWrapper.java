@@ -44,6 +44,16 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 		IPage newRoot = null;
 		IPage newRootOnline = null;
 		try {
+			Cache cache = this.getCache();
+			List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
+			if (null != codes) {
+				for (int i = 0; i < codes.size(); i++) {
+					String code = codes.get(i);
+					cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + code);
+					cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + code);
+				}
+				cache.evict(PAGE_CODES_CACHE_NAME);
+			}
 			List<PageRecord> pageRecordList = pageDao.loadPageRecords();
 			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
 			Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
@@ -74,7 +84,6 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 			if (newRoot == null) {
 				throw new ApsSystemException("Error in the page tree: root page undefined");
 			}
-			Cache cache = this.getCache();
 			cache.put(DRAFT_ROOT_CACHE_NAME, newRoot);
 			cache.put(ONLINE_ROOT_CACHE_NAME, newRootOnline);
 			cache.put(PAGE_STATUS_CACHE_NAME, status);

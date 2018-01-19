@@ -29,6 +29,7 @@ public interface IPageManagerCacheWrapper {
 	public static final String ONLINE_ROOT_CACHE_NAME = "PageManager_onLineRoot";
 	public static final String DRAFT_ROOT_CACHE_NAME = "PageManager_draftRoot";
 	public static final String PAGE_STATUS_CACHE_NAME = "PageManager_pagesStatus";
+	public static final String PAGE_CODES_CACHE_NAME = "PageManager_codes";
 
 	public void loadPageTree(IPageDAO pageDao) throws ApsSystemException;
 

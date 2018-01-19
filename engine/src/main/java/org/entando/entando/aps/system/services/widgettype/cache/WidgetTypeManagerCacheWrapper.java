@@ -38,6 +38,15 @@ public class WidgetTypeManagerCacheWrapper implements IWidgetTypeManagerCacheWra
 	@Override
 	public void loadWidgetTypes(IWidgetTypeDAO widgetTypeDAO) throws ApsSystemException {
 		try {
+			Cache cache = this.getCache();
+			List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
+			if (null != codes) {
+				for (int i = 0; i < codes.size(); i++) {
+					String code = codes.get(i);
+					cache.evict(WIDGET_TYPE_CACHE_NAME_PREFIX + code);
+				}
+				cache.evict(WIDGET_TYPE_CODES_CACHE_NAME);
+			}
 			Map<String, WidgetType> widgetTypes = widgetTypeDAO.loadWidgetTypes();
 			Iterator<WidgetType> iter1 = widgetTypes.values().iterator();
 			while (iter1.hasNext()) {
@@ -51,10 +60,10 @@ public class WidgetTypeManagerCacheWrapper implements IWidgetTypeManagerCacheWra
 			Iterator<WidgetType> iter2 = widgetTypes.values().iterator();
 			while (iter2.hasNext()) {
 				WidgetType type = iter2.next();
-				this.getCache().put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
+				cache.put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
 				widgetCodes.add(type.getCode());
 			}
-			this.getCache().put(WIDGET_TYPE_CODES_CACHE_NAME, widgetCodes);
+			cache.put(WIDGET_TYPE_CODES_CACHE_NAME, widgetCodes);
 		} catch (Throwable t) {
 			_logger.error("Error loading widgets types", t);
 			throw new ApsSystemException("Error loading widgets types", t);

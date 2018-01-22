@@ -681,7 +681,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
 			this.addActionError(this.getText("error.page.remove.notAllowed"));
 			return "pageTree";
-		} else if (currentPage.getChildrenCodes().length != 0) {
+		} else if (null != currentPage.getChildrenCodes() && currentPage.getChildrenCodes().length != 0) {
 			this.addActionError(this.getText("error.page.remove.notAllowed2"));
 			return "pageTree";
 		} else {

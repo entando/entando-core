@@ -192,6 +192,9 @@ public class BaseAdminAction extends BaseAction {
 	}
 
 	private void addFreePublicPages(IPage page, List<IPage> pages) {
+		if (null != page) {
+			return;
+		}
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME)) {
 			pages.add(page);
 		}

@@ -41,6 +41,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -646,10 +647,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			boolean hasReferences = false;
 			boolean isOnline = currentPage.isOnline();
 			for (int i = 0; i < children.length; i++) {
-				IPage child = (isOnline)
-						? this.getPageManager().getOnlinePage(children[i])
-						: this.getPageManager().getDraftPage(children[i]);
-				if (child.isOnline()) {
+				IPage child = PageUtils.getPage(this.getPageManager(), isOnline, children[i]);
+				if (null != child && child.isOnline()) {
 					this.addActionError(this.getText("error.page.offline.notAllowed"));
 					hasReferences = true;
 					break;

@@ -28,8 +28,10 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.cache.ICategoryManagerCacheWrapper;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.DateConverter;
 
@@ -41,66 +43,27 @@ import com.agiletec.aps.util.DateConverter;
 public class CategoryManager extends AbstractService implements ICategoryManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CategoryManager.class);
+	
+	public static final String RELOAD_CATEGORY_REFERENCES_THREAD_NAME_PREFIX = "RELOAD_CATEGORY_REFERENCES_";
+	
+	private ILangManager _langManager;
+	
+	private ICategoryManagerCacheWrapper _cacheWrapper;
+
+	private ICategoryDAO _categoryDao;
+
+	private Map<String, Integer> _moveTreeStatus = new HashMap<String, Integer>();
 
 	@Override
 	public void init() throws Exception {
-		this.loadCategories();
-		_logger.debug("{} ready. {} categories initialized", this.getClass().getName(), this._categories.size());
+		this.initCache();
+		_logger.debug("{} initialized", this.getClass().getName());
 	}
-
-	/**
-	 * Caricamento della lista di categorie da db
-	 *
-	 * @throws ApsSystemException in caso di errore nell'accesso al db.
-	 */
-	protected void loadCategories() throws ApsSystemException {
-		List<Category> categories = null;
-		try {
-			categories = this.getCategoryDAO().loadCategories(this.getLangManager());
-			if (categories.isEmpty()) {
-				Category root = this.createRoot();
-				this.addCategory(root);
-			} else {
-				this.build(categories);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error loading the category tree", t);
-			throw new ApsSystemException("Error loading the category tree.", t);
-		}
+	
+	private void initCache() throws ApsSystemException {
+		this.getCacheWrapper().initCache(this.getCategoryDAO(), this.getLangManager());
 	}
-
-	private void build(List<Category> categories) throws ApsSystemException {
-		try {
-			Category root = null;
-			Map<String, Category> categoryMap = new HashMap<String, Category>();
-			for (int i = 0; i < categories.size(); i++) {
-				Category cat = (Category) categories.get(i);
-				categoryMap.put(cat.getCode(), cat);
-				if (cat.getCode().equals(cat.getParentCode())) {
-					root = cat;
-				}
-			}
-			for (int i = 0; i < categories.size(); i++) {
-				Category cat = (Category) categories.get(i);
-				Category parent = (Category) categoryMap.get(cat.getParentCode());
-				if (cat != root) {
-					parent.addChildCode(cat.getCode());
-				}
-				cat.setParent(parent);
-			}
-			if (root == null) {
-				throw new ApsSystemException("Error found in the category tree: undefined root");
-			}
-			_root = root;
-			_categories = categoryMap;
-		} catch (ApsSystemException e) {
-			throw e;
-		} catch (Throwable t) {
-			_logger.error("Error building the category tree", t);
-			throw new ApsSystemException("Error building the category tree", t);
-		}
-	}
-
+	
 	/**
 	 * Aggiunge una categoria al db.
 	 *
@@ -115,7 +78,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 			_logger.error("Error detected while adding a category", t);
 			throw new ApsSystemException("Error detected while adding a category", t);
 		}
-		this.loadCategories();
+		this.initCache();
 	}
 
 	/**
@@ -126,7 +89,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	 */
 	@Override
 	public void deleteCategory(String code) throws ApsSystemException {
-		Category cat = (Category) this.getCategories().get(code);
+		Category cat = this.getCategory(code);
 		if (cat != null && cat.getChildrenCodes().length <= 0) {
 			try {
 				this.getCategoryDAO().deleteCategory(code);
@@ -135,7 +98,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 				throw new ApsSystemException("Error detected while removing a category", t);
 			}
 		}
-		this.loadCategories();
+		this.initCache();
 	}
 
 	/**
@@ -152,16 +115,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 			_logger.error("Error detected while updating a category", t);
 			throw new ApsSystemException("Error detected while updating a category", t);
 		}
-		this.loadCategories();
-	}
-
-	/**
-	 * Restituisce la mappa delle categorie, indicizzate per codice.
-	 *
-	 * @return La mappa delle categorie.
-	 */
-	private Map<String, Category> getCategories() {
-		return this._categories;
+		this.initCache();
 	}
 
 	/**
@@ -171,28 +125,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	 */
 	@Override
 	public Category getRoot() {
-		return _root;
-	}
-
-	/**
-	 * Metodo di utilità per l'inizializzazione del servizio. Il metodo viene
-	 * invocato esclusivamente quando non esiste nessuna categoria nel db e vi è
-	 * la necessità di creare la Categoria radice dell'albero.
-	 *
-	 * @return La categoria radice creata.
-	 */
-	protected Category createRoot() {
-		Category root = new Category();
-		root.setCode("home");
-		root.setParentCode("home");
-		List<Lang> langs = this.getLangManager().getLangs();
-		ApsProperties titles = new ApsProperties();
-		for (int i = 0; i < langs.size(); i++) {
-			Lang lang = (Lang) langs.get(i);
-			titles.setProperty(lang.getCode(), "Home");
-		}
-		root.setTitles(titles);
-		return root;
+		return this.getCacheWrapper().getRoot();
 	}
 
 	/**
@@ -229,8 +162,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	 */
 	@Override
 	public Category getCategory(String categoryCode) {
-		Category category = (Category) this.getCategories().get(categoryCode);
-		return category;
+		return this.getCacheWrapper().getCategory(categoryCode);
 	}
 
 	@Override
@@ -242,9 +174,6 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	public List<Category> searchCategories(String categoryCodeToken) throws ApsSystemException {
 		List<Category> searchResult = new ArrayList<Category>();
 		try {
-			if (null == this._categories || this._categories.isEmpty()) {
-				return searchResult;
-			}
 			Category root = this.getRoot();
 			this.searchCategories(root, categoryCodeToken, searchResult);
 		} catch (Throwable t) {
@@ -266,7 +195,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 			_logger.error("Error while moving  page {} under the node {}", currentCategory, newParent, t);
 			throw new ApsSystemException("Error while moving a category under a different node", t);
 		}
-		this.loadCategories();
+		this.initCache();
 		this.startReloadCategoryReferences(currentCategory.getCode());
 		return resultOperation;
 	}
@@ -275,9 +204,9 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		if ((null == categoryCodeToken || currentTarget.getCode().toLowerCase().contains(categoryCodeToken.toLowerCase()))) {
 			searchResult.add(currentTarget);
 		}
-		String[] childrenNodes = currentTarget.getChildrenCodes();
-		for (int i = 0; i < childrenNodes.length; i++) {
-			Category category = this.getCategory(childrenNodes[i]);
+		String[] children = currentTarget.getChildrenCodes();
+		for (int i = 0; i < children.length; i++) {
+			Category category = this.getCategory(children[i]);
 			this.searchCategories(category, categoryCodeToken, searchResult);
 		}
 	}
@@ -417,17 +346,13 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	public void setCategoryDAO(ICategoryDAO categoryDao) {
 		this._categoryDao = categoryDao;
 	}
-
-	private ILangManager _langManager;
-
-	private Category _root;
-
-	private Map<String, Category> _categories;
-
-	private ICategoryDAO _categoryDao;
-
-	private Map<String, Integer> _moveTreeStatus = new HashMap<String, Integer>();
-
-	public static final String RELOAD_CATEGORY_REFERENCES_THREAD_NAME_PREFIX = "RELOAD_CATEGORY_REFERENCES_";
-
+	
+	protected ICategoryManagerCacheWrapper getCacheWrapper() {
+		return _cacheWrapper;
+	}
+	
+	public void setCacheWrapper(ICategoryManagerCacheWrapper cacheWrapper) {
+		this._cacheWrapper = cacheWrapper;
+	}
+	
 }

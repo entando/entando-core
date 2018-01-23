@@ -30,6 +30,7 @@ import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.aps.util.SelectItem;
+import java.util.Arrays;
 
 /**
  * Return the list of the system categories.
@@ -39,6 +40,17 @@ import com.agiletec.aps.util.SelectItem;
 public class CategoriesTag extends TagSupport {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CategoriesTag.class);
+	
+	private static final String TITLE_TYPE_DEFAULT = "default";
+	private static final String TITLE_TYPE_FULL = "full";
+	private static final String TITLE_TYPE_PRETTY_FULL = "prettyFull";
+	
+	private static final String[] ALLOWED_TITLE_TYPES = {TITLE_TYPE_DEFAULT, TITLE_TYPE_FULL, TITLE_TYPE_PRETTY_FULL};
+
+	private String _titleStyle;
+	private String _fullTitleSeparator;
+	private String _var;
+	private String _root;
 
 	@Override
 	public int doStartTag() throws JspException {
@@ -54,9 +66,8 @@ public class CategoriesTag extends TagSupport {
 			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
 			String langCode = currentLang.getCode();
 			String reqTitStyle = this.getTitleStyle();
-			String titleStyle = (null != reqTitStyle
-					&& (reqTitStyle.equals(TITLE_TYPE_DEFAULT) || reqTitStyle.equals(TITLE_TYPE_FULL) || reqTitStyle.equals(TITLE_TYPE_PRETTY_FULL)))
-					? reqTitStyle : null;
+			List<String> allowedStyles = Arrays.asList(ALLOWED_TITLE_TYPES);
+			String titleStyle = (null != reqTitStyle && (allowedStyles.contains(reqTitStyle))) ? reqTitStyle : null;
 			this.addSmallCategory(categories, root, langCode, titleStyle, catManager);
 			this.pageContext.setAttribute(this.getVar(), categories);
 		} catch (Throwable t) {
@@ -140,14 +151,5 @@ public class CategoriesTag extends TagSupport {
 	public void setRoot(String root) {
 		this._root = root;
 	}
-
-	private String _titleStyle;
-	private String _fullTitleSeparator;
-	private String _var;
-	private String _root;
-
-	private static final String TITLE_TYPE_DEFAULT = "default";
-	private static final String TITLE_TYPE_FULL = "full";
-	private static final String TITLE_TYPE_PRETTY_FULL = "prettyFull";
 
 }

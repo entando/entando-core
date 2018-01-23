@@ -139,8 +139,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		return numFrames;
 	}
 
-	protected void readWidget(PageRecord page, int numOfFrames, Widget widgets[], int startIndex, ResultSet res) throws ApsSystemException,
-			SQLException {
+	protected void readWidget(PageRecord page, int numOfFrames, Widget widgets[], 
+			int startIndex, ResultSet res) throws ApsSystemException, SQLException {
 		Object posObj = res.getObject(startIndex);
 		if (posObj != null) {
 			int pos = res.getInt(startIndex);
@@ -228,6 +228,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 
 	protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
 		String parentCode = page.getParent().getCode();
+		// a new page is always inserted in the last position, 
+		// to avoid changes of the position of the "sister" pages.
 		int position = this.getLastPosition(parentCode, conn) + 1;
 		PreparedStatement stat = null;
 		try {
@@ -714,6 +716,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
+			// a moved page is always inserted in the last position into the new parent, 
+			// to avoid changes of the position of the "sister" pages.
 			int pos = this.getLastPosition(newParent.getCode(), conn) + 1;
 			stat = conn.prepareStatement(UPDATE_PAGE_TREE_POSITION);
 			stat.setString(1, newParent.getCode());

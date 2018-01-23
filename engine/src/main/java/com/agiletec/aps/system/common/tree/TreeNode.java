@@ -146,6 +146,16 @@ public class TreeNode implements ITreeNode, Serializable {
 		return this.getFullTitle(langCode, separator, true);
 	}
 
+	/**
+	 * Create a full title of the code of the current page. The full title (breadcrumb) 
+	 * consists of the set of page titles (from the characters ".." if shortTitle = true) 
+	 * starting from the root up to the current page, and it is created by moving 
+	 * backwards in the page structure starting from the node current.
+	 * @param langCode The language code to extract the title of each node
+	 * @param separator The separator between the nodes
+	 * @param shortTitle defines whether to return the full title in the form "short" (each title of the relative replaced with "..")
+	 * @return The required full title.
+	 */
 	protected String getFullTitle(String langCode, String separator, boolean shortTitle) {
 		String title = this.getTitles().getProperty(langCode);
 		if (null == title) {

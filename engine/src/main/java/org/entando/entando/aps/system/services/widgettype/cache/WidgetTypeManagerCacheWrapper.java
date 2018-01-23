@@ -36,38 +36,46 @@ public class WidgetTypeManagerCacheWrapper implements IWidgetTypeManagerCacheWra
 	private CacheManager _springCacheManager;
 
 	@Override
-	public void loadWidgetTypes(IWidgetTypeDAO widgetTypeDAO) throws ApsSystemException {
+	public void initCache(IWidgetTypeDAO widgetTypeDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
-			if (null != codes) {
-				for (int i = 0; i < codes.size(); i++) {
-					String code = codes.get(i);
-					cache.evict(WIDGET_TYPE_CACHE_NAME_PREFIX + code);
-				}
-				cache.evict(WIDGET_TYPE_CODES_CACHE_NAME);
-			}
+			this.releaseCachedObjects(cache);
 			Map<String, WidgetType> widgetTypes = widgetTypeDAO.loadWidgetTypes();
-			Iterator<WidgetType> iter1 = widgetTypes.values().iterator();
-			while (iter1.hasNext()) {
-				WidgetType type = iter1.next();
+			Iterator<WidgetType> iter = widgetTypes.values().iterator();
+			while (iter.hasNext()) {
+				WidgetType type = iter.next();
 				String mainTypeCode = type.getParentTypeCode();
 				if (null != mainTypeCode) {
 					type.setParentType(widgetTypes.get(mainTypeCode));
 				}
 			}
-			List<String> widgetCodes = new ArrayList<String>();
-			Iterator<WidgetType> iter2 = widgetTypes.values().iterator();
-			while (iter2.hasNext()) {
-				WidgetType type = iter2.next();
-				cache.put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
-				widgetCodes.add(type.getCode());
-			}
-			cache.put(WIDGET_TYPE_CODES_CACHE_NAME, widgetCodes);
+			this.insertObjectsOnCache(cache, widgetTypes);
 		} catch (Throwable t) {
 			_logger.error("Error loading widgets types", t);
 			throw new ApsSystemException("Error loading widgets types", t);
 		}
+	}
+	
+	protected void releaseCachedObjects(Cache cache) {
+		List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
+		if (null != codes) {
+			for (int i = 0; i < codes.size(); i++) {
+				String code = codes.get(i);
+				cache.evict(WIDGET_TYPE_CACHE_NAME_PREFIX + code);
+			}
+			cache.evict(WIDGET_TYPE_CODES_CACHE_NAME);
+		}
+	}
+	
+	protected void insertObjectsOnCache(Cache cache, Map<String, WidgetType> widgetTypes) {
+		List<String> widgetCodes = new ArrayList<String>();
+		Iterator<WidgetType> iter = widgetTypes.values().iterator();
+		while (iter.hasNext()) {
+			WidgetType type = iter.next();
+			cache.put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
+			widgetCodes.add(type.getCode());
+		}
+		cache.put(WIDGET_TYPE_CODES_CACHE_NAME, widgetCodes);
 	}
 
 	@Override

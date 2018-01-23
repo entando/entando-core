@@ -55,7 +55,7 @@ public class WidgetTypeManager extends AbstractService
 
 	@Override
 	public void init() throws Exception {
-		this.getCacheWrapper().loadWidgetTypes(this.getWidgetTypeDAO());
+		this.getCacheWrapper().initCache(this.getWidgetTypeDAO());
 		_logger.debug("{} ready. Initialized", this.getClass().getName());
 	}
 

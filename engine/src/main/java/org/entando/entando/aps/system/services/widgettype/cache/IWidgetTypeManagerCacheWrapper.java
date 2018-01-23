@@ -27,7 +27,7 @@ public interface IWidgetTypeManagerCacheWrapper {
 	public static final String WIDGET_TYPE_CACHE_NAME_PREFIX = "WidgetTypeManager_type_";
 	public static final String WIDGET_TYPE_CODES_CACHE_NAME = "WidgetTypeManager_codes";
 
-	public void loadWidgetTypes(IWidgetTypeDAO widgetTypeDAO) throws ApsSystemException;
+	public void initCache(IWidgetTypeDAO widgetTypeDAO) throws ApsSystemException;
 
 	public WidgetType getWidgetType(String code);
 

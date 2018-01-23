@@ -20,6 +20,7 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import com.agiletec.aps.system.services.page.events.PageChangedObserver;
@@ -97,11 +98,14 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 			}
 			boolean isOnline = page.isOnline();
 			String[] children = page.getChildrenCodes();
+			if (null == children) {
+				return;
+			}
 			for (int i = 0; i < children.length; i++) {
-				IPage child = (isOnline)
-						? this.getPageManager().getOnlinePage(children[i])
-						: this.getPageManager().getDraftPage(children[i]);
-				this.searchPublishedContents(child);
+				IPage child = PageUtils.getPage(this.getPageManager(), isOnline, children[i]);
+				if (null != child) {
+					this.searchPublishedContents(child);
+				}
 			}
 		}
 	}

@@ -31,7 +31,7 @@ public interface IPageManagerCacheWrapper {
 	public static final String PAGE_STATUS_CACHE_NAME = "PageManager_pagesStatus";
 	public static final String PAGE_CODES_CACHE_NAME = "PageManager_codes";
 
-	public void loadPageTree(IPageDAO pageDao) throws ApsSystemException;
+	public void initCache(IPageDAO pageDao) throws ApsSystemException;
 
 	public PagesStatus getPagesStatus();
 

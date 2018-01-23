@@ -39,21 +39,13 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 	private CacheManager _springCacheManager;
 
 	@Override
-	public void loadPageTree(IPageDAO pageDao) throws ApsSystemException {
+	public void initCache(IPageDAO pageDao) throws ApsSystemException {
 		PagesStatus status = new PagesStatus();
-		IPage newRoot = null;
-		IPage newRootOnline = null;
+		IPage newDraftRoot = null;
+		IPage newOnLineRoot = null;
 		try {
 			Cache cache = this.getCache();
-			List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
-			if (null != codes) {
-				for (int i = 0; i < codes.size(); i++) {
-					String code = codes.get(i);
-					cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + code);
-					cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + code);
-				}
-				cache.evict(PAGE_CODES_CACHE_NAME);
-			}
+			this.releaseCachedObjects(cache);
 			List<PageRecord> pageRecordList = pageDao.loadPageRecords();
 			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
 			Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
@@ -66,8 +58,8 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 				pageListD.add(pageD);
 				newFullMap.put(pageD.getCode(), pageD);
 				if (pageD.getCode().equals(pageD.getParentCode())) {
-					newRoot = pageD;
-					newRootOnline = pageO;
+					newDraftRoot = pageD;
+					newOnLineRoot = pageO;
 				}
 				this.buildPagesStatus(status, pageD);
 				if (pageD.isOnline()) {
@@ -76,30 +68,47 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 				}
 			}
 			for (int i = 0; i < pageListD.size(); i++) {
-				this.buildTreeHierarchy(newRoot, newFullMap, pageListD.get(i));
+				this.buildTreeHierarchy(newDraftRoot, newFullMap, pageListD.get(i));
 			}
 			for (int i = 0; i < pageListO.size(); i++) {
-				this.buildTreeHierarchy(newRootOnline, newOnlineMap, pageListO.get(i));
+				this.buildTreeHierarchy(newOnLineRoot, newOnlineMap, pageListO.get(i));
 			}
-			if (newRoot == null) {
+			if (newDraftRoot == null) {
 				throw new ApsSystemException("Error in the page tree: root page undefined");
 			}
-			cache.put(DRAFT_ROOT_CACHE_NAME, newRoot);
-			cache.put(ONLINE_ROOT_CACHE_NAME, newRootOnline);
-			cache.put(PAGE_STATUS_CACHE_NAME, status);
-			for (int i = 0; i < pageListD.size(); i++) {
-				IPage draftPage = pageListD.get(i);
-				cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftPage.getCode(), draftPage);
-			}
-			for (int i = 0; i < pageListO.size(); i++) {
-				IPage onLinePage = pageListO.get(i);
-				cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onLinePage.getCode(), onLinePage);
-			}
+			this.insertObjectsOnCache(cache, status, newDraftRoot, newOnLineRoot, pageListD, pageListO);
 		} catch (ApsSystemException e) {
 			throw e;
 		} catch (Throwable t) {
 			_logger.error("Error while building the tree of pages", t);
 			throw new ApsSystemException("Error while building the tree of pages", t);
+		}
+	}
+	
+	protected void releaseCachedObjects(Cache cache) {
+		List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
+		if (null != codes) {
+			for (int i = 0; i < codes.size(); i++) {
+				String code = codes.get(i);
+				cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + code);
+				cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + code);
+			}
+			cache.evict(PAGE_CODES_CACHE_NAME);
+		}
+	}
+	
+	protected void insertObjectsOnCache(Cache cache, PagesStatus status, 
+			IPage newDraftRoot, IPage newOnLineRoot, List<IPage> pageListD, List<IPage> pageListO) {
+		cache.put(DRAFT_ROOT_CACHE_NAME, newDraftRoot);
+		cache.put(ONLINE_ROOT_CACHE_NAME, newOnLineRoot);
+		cache.put(PAGE_STATUS_CACHE_NAME, status);
+		for (int i = 0; i < pageListD.size(); i++) {
+			IPage draftPage = pageListD.get(i);
+			cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftPage.getCode(), draftPage);
+		}
+		for (int i = 0; i < pageListO.size(); i++) {
+			IPage onLinePage = pageListO.get(i);
+			cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onLinePage.getCode(), onLinePage);
 		}
 	}
 

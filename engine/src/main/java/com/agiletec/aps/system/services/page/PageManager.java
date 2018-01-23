@@ -53,12 +53,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	@Override
 	public void init() throws Exception {
-		this.loadPageTree();
+		this.initCache();
 		_logger.debug("{} ready. : Initialized", this.getClass().getName());
 	}
 	
-	private void loadPageTree() throws ApsSystemException {
-		this.getCacheWrapper().loadPageTree(this.getPageDAO());
+	private void initCache() throws ApsSystemException {
+		this.getCacheWrapper().initCache(this.getPageDAO());
 	}
 	
 	@Override
@@ -88,7 +88,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				throw new ApsSystemException("Error detected while deleting a page", t);
 			}
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(page, PageChangedEvent.REMOVE_OPERATION_CODE, null);
 	}
 
@@ -106,7 +106,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error adding a page", t);
 			throw new ApsSystemException("Error adding a page", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(this.getDraftPage(page.getCode()), PageChangedEvent.INSERT_OPERATION_CODE, null);
 	}
 
@@ -124,7 +124,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error updating a page", t);
 			throw new ApsSystemException("Error updating a page", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(page, PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
 
@@ -136,7 +136,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error updating a page as online", t);
 			throw new ApsSystemException("Error updating a page as online", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(this.getDraftPage(pageCode), PageChangedEvent.UPDATE_OPERATION_CODE, null, PageChangedEvent.EVENT_TYPE_SET_PAGE_ONLINE);
 	}
 
@@ -149,7 +149,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error updating a page as offline", t);
 			throw new ApsSystemException("Error updating a page as offline", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(this.getDraftPage(pageCode), PageChangedEvent.UPDATE_OPERATION_CODE, null, PageChangedEvent.EVENT_TYPE_SET_PAGE_OFFLINE);
 	}
 
@@ -219,7 +219,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error while moving  page {}", pageCode, t);
 			throw new ApsSystemException("Error while moving a page", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		return resultOperation;
 	}
 
@@ -247,7 +247,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error while moving widget. page {} from position {} to position {}", pageCode, frameToMove, destFrame, t);
 			throw new ApsSystemException("Error while moving a widget", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		return resultOperation;
 	}
 
@@ -632,7 +632,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			ApsSystemUtils.logThrowable(t, this, "movePage");
 			throw new ApsSystemException("Error while moving a page under a root node", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		return resultOperation;
 	}
 

@@ -62,10 +62,16 @@ public class ContentTypeConfigAction extends EntityTypeConfigAction {
 	}
 
 	private void addPages(IPage page, List<IPage> pages) {
+		if (null == page) {
+			return;
+		}
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME) && CmsPageUtil.isOnlineFreeViewerPage(page, null)) {
 			pages.add(page);
 		}
 		String[] children = page.getChildrenCodes();
+		if (null == children) {
+			return;
+		}
 		for (int i = 0; i < children.length; i++) {
 			IPage child = this.getPageManager().getOnlinePage(children[i]);
 			this.addPages(child, pages);

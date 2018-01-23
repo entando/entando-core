@@ -182,11 +182,25 @@ public class TreeNode implements ITreeNode, Serializable {
 		return title;
 	}
 
+	/**
+	 * Returns the path of the single node. 
+	 * The path is composed by node codes (separated by "/") starting 
+	 * from the root up to the current node
+	 * @return the path of the single node.
+	 */
 	@Override
 	public String getPath() {
 		return this.getPath("/", true);
 	}
 
+	/**
+	 * Returns the path of the single node. 
+	 * The path is composed by node codes (separated by the given separator) starting 
+	 * from the root up to the current node
+	 * @param separator The separator to use to divide the node codes
+	 * @param addRoot if true, the path starts with the code of the root node
+	 * @return the required path.
+	 */
 	@Override
 	public String getPath(String separator, boolean addRoot) {
 		String[] pathArray = this.getPathArray(addRoot);
@@ -201,11 +215,23 @@ public class TreeNode implements ITreeNode, Serializable {
 		return path.toString();
 	}
 
+	/**
+	 * Returns the path of the single node. The separator between the node will
+	 * be '/' and the path contains the root node.
+	 *
+	 * @return the path of the single node.
+	 */
 	@Override
 	public String[] getPathArray() {
 		return this.getPathArray(true);
 	}
 
+	/**
+	 * Returns the path array of the current node. The array in composed 
+	 * by node codes from the root up to the current node
+	 * @param addRoot if true, the array starts with the code of the root node
+	 * @return the required path array of the single node.
+	 */
 	@Override
 	public String[] getPathArray(boolean addRoot) {
 		String[] pathArray = new String[0];

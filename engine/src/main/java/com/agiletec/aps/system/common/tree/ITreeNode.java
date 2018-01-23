@@ -115,7 +115,7 @@ public interface ITreeNode extends Serializable {
 	public String getFullTitle(String langCode, String separator);
 
 	/**
-	 * Returns the path of the single node. The sepatator between the node will
+	 * Returns the path of the single node. The separator between the node will
 	 * be '/' and the path contains the root node.
 	 *
 	 * @return the path of the single node.
@@ -123,16 +123,28 @@ public interface ITreeNode extends Serializable {
 	public String getPath();
 
 	/**
-	 * Returns the path of the single node.
+	 * Returns the path of the single node. The array in composed 
+	 * by node codes from the root up to the current node
 	 *
 	 * @param separator The separator between the nodes.
 	 * @param addRoot Add the root node
 	 * @return the path of the single node.
 	 */
 	public String getPath(String separator, boolean addRoot);
-
+	
+	/**
+	 * Returns the path array of the current node. The array in composed 
+	 * by node codes from the root up to the current node.
+	 * @return the required path array of the single node.
+	 */
 	public String[] getPathArray();
 
+	/**
+	 * Returns the path array of the current node. The array in composed 
+	 * by node codes from the root up to the current node
+	 * @param addRoot if true, the array starts with the code of the root node
+	 * @return the required path array of the single node.
+	 */
 	public String[] getPathArray(boolean addRoot);
 
 	/**

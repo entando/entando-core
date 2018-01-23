@@ -212,20 +212,20 @@ public class NavigatorWidgetConfigAction extends SimpleWidgetConfigAction {
 	 */
 	public List<IPage> getPages() {
 		IPage root = this.getPageManager().getOnlineRoot();
-		List<IPage> pages = new ArrayList<>();
-		this.addPages(root, pages);
+		List<IPage> pages = new ArrayList<IPage>();
+		this.addPublicPages(root, pages);
 		return pages;
 	}
 
-	private void addPages(IPage page, List<IPage> pages) {
+	private void addPublicPages(IPage page, List<IPage> pages) {
+		if (null == page) {
+			return;
+		}
 		pages.add(page);
-		boolean isOnline = page.isOnline();
 		String[] children = page.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			IPage child = (isOnline)
-					? this.getPageManager().getOnlinePage(children[i])
-					: this.getPageManager().getDraftPage(children[i]);
-			this.addPages(child, pages);
+			IPage child = this.getPageManager().getOnlinePage(children[i]);
+			this.addPublicPages(child, pages);
 		}
 	}
 

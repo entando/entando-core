@@ -106,7 +106,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 	private void addTreeWrapper(PageTreeNodeWrapper currentWrapper, IPage currentNode, Collection<String> userGroupCodes, boolean alsoFreeViewPages) {
 		String[] children = currentNode.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			IPage newCurrentNode = PageUtils.getPage(this.getPageManager(), this.isDraftPageHepler(), children[i]);
+			IPage newCurrentNode = PageUtils.getPage(this.getPageManager(), !this.isDraftPageHepler(), children[i]);
 			if (null == newCurrentNode) {
 				return;
 			}

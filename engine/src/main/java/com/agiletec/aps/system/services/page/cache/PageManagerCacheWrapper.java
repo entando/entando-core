@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.page.cache;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageDAO;
@@ -27,16 +28,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 
 /**
  * @author E.Santoboni
  */
-public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
+public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPageManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageManagerCacheWrapper.class);
-
-	private CacheManager _springCacheManager;
 
 	@Override
 	public void initCache(IPageDAO pageDao) throws ApsSystemException {
@@ -172,29 +170,10 @@ public class PageManagerCacheWrapper implements IPageManagerCacheWrapper {
 			}
 		}
 	}
-
-	protected <T> T get(String name, Class<T> requiredType) {
-		return this.get(this.getCache(), name, requiredType);
+	
+	@Override
+	protected String getCacheName() {
+		return PAGE_MANAGER_CACHE_NAME;
 	}
-
-	protected <T> T get(Cache cache, String name, Class<T> requiredType) {
-		Object value = cache.get(name);
-		if (value instanceof Cache.ValueWrapper) {
-			value = ((Cache.ValueWrapper) value).get();
-		}
-		return (T) value;
-	}
-
-	protected Cache getCache() {
-		return this.getSpringCacheManager().getCache(PAGE_MANAGER_CACHE_NAME);
-	}
-
-	protected CacheManager getSpringCacheManager() {
-		return _springCacheManager;
-	}
-
-	public void setSpringCacheManager(CacheManager springCacheManager) {
-		this._springCacheManager = springCacheManager;
-	}
-
+	
 }

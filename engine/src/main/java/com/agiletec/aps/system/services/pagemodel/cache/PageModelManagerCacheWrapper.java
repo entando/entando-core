@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -36,30 +37,38 @@ public class PageModelManagerCacheWrapper implements IPageModelManagerCacheWrapp
 	private CacheManager _springCacheManager;
 
 	@Override
-	public void loadPageModels(IPageModelDAO pageModelDAO) throws ApsSystemException {
+	public void initCache(IPageModelDAO pageModelDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
-			if (null != codes) {
-				for (int i = 0; i < codes.size(); i++) {
-					String code = codes.get(i);
-					cache.evict(PAGE_MODEL_CACHE_NAME_PREFIX + code);
-				}
-				cache.evict(PAGE_MODEL_CODES_CACHE_NAME);
-			}
+			this.releaseCachedObjects(cache);
 			Map<String, PageModel> models = pageModelDAO.loadModels();
-			List<String> modelCodes = new ArrayList<String>();
-			Iterator<PageModel> iterator = models.values().iterator();
-			while (iterator.hasNext()) {
-				PageModel pageModel = iterator.next();
-				cache.put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
-				modelCodes.add(pageModel.getCode());
-			}
-			cache.put(PAGE_MODEL_CODES_CACHE_NAME, modelCodes);
+			this.insertObjectsOnCache(cache, models);
 		} catch (Throwable t) {
 			_logger.error("Error loading page models", t);
 			throw new ApsSystemException("Error loading page models", t);
 		}
+	}
+	
+	protected void releaseCachedObjects(Cache cache) {
+		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
+		if (null != codes) {
+			for (int i = 0; i < codes.size(); i++) {
+				String code = codes.get(i);
+				cache.evict(PAGE_MODEL_CACHE_NAME_PREFIX + code);
+			}
+			cache.evict(PAGE_MODEL_CODES_CACHE_NAME);
+		}
+	}
+	
+	protected void insertObjectsOnCache(Cache cache, Map<String, PageModel> models) {
+		List<String> modelCodes = new ArrayList<String>();
+		Iterator<PageModel> iterator = models.values().iterator();
+		while (iterator.hasNext()) {
+			PageModel pageModel = iterator.next();
+			cache.put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
+			modelCodes.add(pageModel.getCode());
+		}
+		cache.put(PAGE_MODEL_CODES_CACHE_NAME, modelCodes);
 	}
 
 	@Override

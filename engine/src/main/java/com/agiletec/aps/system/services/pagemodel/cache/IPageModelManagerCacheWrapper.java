@@ -27,7 +27,7 @@ public interface IPageModelManagerCacheWrapper {
 	public static final String PAGE_MODEL_CACHE_NAME_PREFIX = "PageModelManager_model_";
 	public static final String PAGE_MODEL_CODES_CACHE_NAME = "PageModelManager_codes";
 
-	public void loadPageModels(IPageModelDAO pageModelDAO) throws ApsSystemException;
+	public void initCache(IPageModelDAO pageModelDAO) throws ApsSystemException;
 
 	public PageModel getPageModel(String name);
 

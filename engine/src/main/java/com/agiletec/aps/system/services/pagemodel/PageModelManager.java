@@ -45,7 +45,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 
 	@Override
 	public void init() throws Exception {
-		this.getCacheWrapper().loadPageModels(this.getPageModelDAO());
+		this.getCacheWrapper().initCache(this.getPageModelDAO());
 		_logger.debug("{} ready. initialized", this.getClass().getName());
 	}
 

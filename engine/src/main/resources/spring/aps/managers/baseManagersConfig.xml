@@ -103,7 +103,14 @@
 	<bean id="springCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
 		<property name="caches">
 			<set>
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="Entando_Cache"/>
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_Cache" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_PageManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_PageModelManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_WidgetTypeManager" />
 			</set>
 		</property>
 	</bean>
@@ -143,6 +150,11 @@
 			</bean>
 		</property>
 		<property name="guiFragmentManager" ref="GuiFragmentManager"/>
+		<property name="cacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.widgettype.cache.WidgetTypeManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
 	</bean>
 	
     <bean id="ApiWidgetTypeInterface" class="org.entando.entando.aps.system.services.widgettype.api.ApiWidgetTypeInterface" >
@@ -166,11 +178,16 @@
     </bean>
     
 	<bean id="PageModelManager" class="com.agiletec.aps.system.services.pagemodel.PageModelManager" 
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="pageModelDAO" >
 			<bean class="com.agiletec.aps.system.services.pagemodel.PageModelDAO">
 				<property name="dataSource" ref="portDataSource" />
 				<property name="widgetTypeManager" ref="WidgetTypeManager" />
+			</bean>
+		</property>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.pagemodel.cache.PageModelManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>
 	</bean>
@@ -180,12 +197,17 @@
     </bean>
     
 	<bean id="PageManager" class="com.agiletec.aps.system.services.page.PageManager" 
-			parent="abstractService" >
+			parent="abstractService" depends-on="PageModelManager,WidgetTypeManager" >
 		<property name="pageDAO" >
 			<bean class="com.agiletec.aps.system.services.page.PageDAO">
 				<property name="dataSource" ref="portDataSource" />
 				<property name="widgetTypeManager" ref="WidgetTypeManager" />
 				<property name="pageModelManager" ref="PageModelManager" />
+			</bean>
+		</property>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.page.cache.PageManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>
 	</bean>

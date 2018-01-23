@@ -246,7 +246,7 @@ public class CategoryAction extends AbstractTreeAction {
 			this.addActionError(this.getText("error.category.homeDelete.notAllowed"));
 			return "categoryTree";
 		}
-		if (currentCategory.getChildren().length != 0) {
+		if (currentCategory.getChildrenCodes().length != 0) {
 			_logger.info("Category with children not deletable");
 			this.addActionError(this.getText("error.category.deleteWithChildren.notAllowed"));
 			return "categoryTree";

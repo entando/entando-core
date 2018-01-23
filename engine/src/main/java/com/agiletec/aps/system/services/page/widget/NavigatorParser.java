@@ -51,7 +51,7 @@ import com.agiletec.aps.system.services.user.UserDetails;
  * Solo nel caso dell'operatore "Subtree" gli oggetti NavigatorTarget restituiti
  * hanno associato un valore significativo del livello nel sottoalbero; in tutti
  * gli altri casi il livello ha valore zero.
- * 
+ *
  * @author M.Diana
  */
 public class NavigatorParser implements INavigatorParser {
@@ -76,15 +76,17 @@ public class NavigatorParser implements INavigatorParser {
 
 	@Override
 	public String getSpec(List<NavigatorExpression> expressions) {
-		if (null == expressions || expressions.size() == 0)
+		if (null == expressions || expressions.size() == 0) {
 			return "";
-		StringBuffer buffer = new StringBuffer();
+		}
+		StringBuilder buffer = new StringBuilder();
 		boolean first = true;
 		Iterator<NavigatorExpression> iter = expressions.iterator();
 		while (iter.hasNext()) {
 			NavigatorExpression navigatorExpression = iter.next();
-			if (!first)
+			if (!first) {
 				buffer.append(" ").append(EXPRESSION_SEPARATOR).append(" ");
+			}
 			buffer.append(navigatorExpression.toString());
 			first = false;
 		}
@@ -94,12 +96,10 @@ public class NavigatorParser implements INavigatorParser {
 	/**
 	 * Crea e restituisce una lista di oggetti NavigatorTarget, che wrappano
 	 * pagine del portale e possono essere utilizzati dai sub-tag.
-	 * 
-	 * @param spec
-	 * L'espressione usata la specificazione delle pagine da selezionare;
-	 * possono essere assolute o relative o miste.
-	 * @param reqCtx
-	 * Il contesto della richiesta corrente.
+	 *
+	 * @param spec L'espressione usata la specificazione delle pagine da
+	 * selezionare; possono essere assolute o relative o miste.
+	 * @param reqCtx Il contesto della richiesta corrente.
 	 * @return La lista di oggetti NavigatorTarget.
 	 */
 	@Override
@@ -112,14 +112,11 @@ public class NavigatorParser implements INavigatorParser {
 	/**
 	 * Crea e restituisce una lista di oggetti NavigatorTarget, che wrappano
 	 * pagine del portale e possono essere utilizzati dai sub-tag.
-	 * 
-	 * @param spec
-	 * L'espressione usata la specificazione delle pagine da selezionare;
-	 * possono essere assolute o relative o miste.
-	 * @param currentPage
-	 * La pagina corrente dove il tag è inserito.
-	 * @param currentUser
-	 * L'utente corrente.
+	 *
+	 * @param spec L'espressione usata la specificazione delle pagine da
+	 * selezionare; possono essere assolute o relative o miste.
+	 * @param currentPage La pagina corrente dove il tag è inserito.
+	 * @param currentUser L'utente corrente.
 	 * @return La lista di oggetti NavigatorTarget.
 	 */
 	@Override
@@ -211,48 +208,54 @@ public class NavigatorParser implements INavigatorParser {
 		int operatorId = navExpression.getOperatorId();
 		if (operatorId < 0) {
 			targets.add(new NavigatorTarget(basePage, 0));
-		} else {
-			if (operatorId == NavigatorExpression.OPERATOR_CHILDREN_ID) {
-				IPage children[] = basePage.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					if (children[i].isShowable() && isUserAllowed(user, children[i])) {
-						targets.add(new NavigatorTarget(children[i], 0));
-					}
+		} else if (operatorId == NavigatorExpression.OPERATOR_CHILDREN_ID) {
+			boolean isOnline = basePage.isOnline();
+			String[] childrenCodes = basePage.getChildrenCodes();
+			for (int i = 0; i < childrenCodes.length; i++) {
+				IPage child = (isOnline)
+						? this.getPageManager().getOnlinePage(childrenCodes[i])
+						: this.getPageManager().getDraftPage(childrenCodes[i]);
+				if (null != child && child.isShowable() && isUserAllowed(user, child)) {
+					targets.add(new NavigatorTarget(child, 0));
 				}
-			} else if (operatorId == NavigatorExpression.OPERATOR_PATH_ID) {
-				IPage page = basePage;
-				int index = targets.size();
-				int limit = 0;
+			}
+		} else if (operatorId == NavigatorExpression.OPERATOR_PATH_ID) {
+			IPage page = basePage;
+			int index = targets.size();
+			int limit = 0;
+			if (page.isShowable() && this.isUserAllowed(user, page)) {
+				targets.add(index, new NavigatorTarget(page, 0));
+			}
+			while (!page.isRoot() && limit < 20) {
+				page = page.getParent();
 				if (page.isShowable() && this.isUserAllowed(user, page)) {
 					targets.add(index, new NavigatorTarget(page, 0));
 				}
-				while (!page.isRoot() && limit < 20) {
-					page = page.getParent();
-					if (page.isShowable() && this.isUserAllowed(user, page)) {
-						targets.add(index, new NavigatorTarget(page, 0));
-					}
-					limit++;
-				}
-			} else if (operatorId == NavigatorExpression.OPERATOR_SUBTREE_ID) {
-				int depth = navExpression.getOperatorSubtreeLevel();
-				if (depth < 0) {
-					throw new RuntimeException("Operator level 'SUBTREE' not specified");
-				}
-				targets = this.putSubTree(basePage, 0, depth, targets, user);
-			} else {
-				targets = null;
+				limit++;
 			}
+		} else if (operatorId == NavigatorExpression.OPERATOR_SUBTREE_ID) {
+			int depth = navExpression.getOperatorSubtreeLevel();
+			if (depth < 0) {
+				throw new RuntimeException("Operator level 'SUBTREE' not specified");
+			}
+			targets = this.putSubTree(basePage, 0, depth, targets, user);
+		} else {
+			targets = null;
 		}
 		return targets;
 	}
 
 	private List<NavigatorTarget> putSubTree(IPage page, int level, int depth, List<NavigatorTarget> targets, UserDetails currentUser) {
-		if (page.isShowable() && this.isUserAllowed(currentUser, page)) {
+		if (null != page && page.isShowable() && this.isUserAllowed(currentUser, page)) {
 			targets.add(new NavigatorTarget(page, level));
 			if (level < depth) {
-				IPage[] children = page.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					targets = this.putSubTree(children[i], level + 1, depth, targets, currentUser);
+				boolean isOnline = page.isOnline();
+				String[] childrenCodes = page.getChildrenCodes();
+				for (int i = 0; i < childrenCodes.length; i++) {
+					IPage child = (isOnline)
+							? this.getPageManager().getOnlinePage(childrenCodes[i])
+							: this.getPageManager().getDraftPage(childrenCodes[i]);
+					targets = this.putSubTree(child, level + 1, depth, targets, currentUser);
 				}
 			}
 		}

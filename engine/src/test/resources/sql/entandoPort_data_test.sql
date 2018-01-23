@@ -160,7 +160,7 @@ INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_12', 'pagin
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_11', 'pagina_1', 1, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_1', 'customers_page', 1, 'customers');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_1', 'homepage', 2, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('dataObjectview', 'service', 4, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('dataObjectview', 'service', 6, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('contentview', 'service', 4, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_2', 'homepage', 3, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_draft', 'homepage', 7, 'free');

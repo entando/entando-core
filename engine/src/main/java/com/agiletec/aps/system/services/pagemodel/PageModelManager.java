@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,50 +27,50 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.pagemodel.cache.IPageModelManagerCacheWrapper;
 import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedEvent;
 
 /**
  * The manager of the page models.
+ *
  * @author M.Diana - E.Santoboni
  */
 public class PageModelManager extends AbstractService implements IPageModelManager, GuiFragmentUtilizer {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(PageModelManager.class);
-	
+
+	private IPageModelDAO _pageModelDao;
+
+	private IPageModelManagerCacheWrapper _cacheWrapper;
+
 	@Override
 	public void init() throws Exception {
-		this.loadPageModels();
-		_logger.debug("{} ready. initialized {} page models", this.getClass().getName() ,this._models.size());
+		this.getCacheWrapper().initCache(this.getPageModelDAO());
+		_logger.debug("{} ready. initialized", this.getClass().getName());
 	}
-	
-	private void loadPageModels() throws ApsSystemException {
-		try {
-			this._models = this.getPageModelDAO().loadModels();
-		} catch (Throwable t) {
-			_logger.error("Error loading page models", t);
-			throw new ApsSystemException("Error loading page models", t);
-		}
-	}
-	
+
 	/**
 	 * Restituisce il modello di pagina con il codice dato
+	 *
 	 * @param name Il nome del modelo di pagina
 	 * @return Il modello di pagina richiesto
 	 */
 	@Override
 	public PageModel getPageModel(String name) {
-		return this._models.get(name);
+		return this.getCacheWrapper().getPageModel(name);
 	}
-	
+
 	/**
 	 * Restituisce la Collection completa di modelli.
-	 * @return la collection completa dei modelli disponibili in oggetti PageModel.
+	 *
+	 * @return la collection completa dei modelli disponibili in oggetti
+	 * PageModel.
 	 */
 	@Override
 	public Collection<PageModel> getPageModels() {
-		return _models.values();
+		return this.getCacheWrapper().getPageModels();
 	}
-	
+
 	@Override
 	public void addPageModel(PageModel pageModel) throws ApsSystemException {
 		if (null == pageModel) {
@@ -80,14 +79,14 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 		}
 		try {
 			this.getPageModelDAO().addModel(pageModel);
-			this._models.put(pageModel.getCode(), pageModel);
+			this.getCacheWrapper().addPageModel(pageModel);
 			this.notifyPageModelChangedEvent(pageModel, PageModelChangedEvent.INSERT_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error adding page models", t);
 			throw new ApsSystemException("Error adding page models", t);
 		}
 	}
-	
+
 	@Override
 	public void updatePageModel(PageModel pageModel) throws ApsSystemException {
 		if (null == pageModel) {
@@ -95,7 +94,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 			return;
 		}
 		try {
-			PageModel pageModelToUpdate = this._models.get(pageModel.getCode());
+			PageModel pageModelToUpdate = this.getCacheWrapper().getPageModel(pageModel.getCode());
 			if (null == pageModelToUpdate) {
 				_logger.debug("Page model {} does not exist", pageModel.getCode());
 				return;
@@ -108,35 +107,36 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 			pageModelToUpdate.setMainFrame(pageModel.getMainFrame());
 			pageModelToUpdate.setPluginCode(pageModel.getPluginCode());
 			pageModelToUpdate.setTemplate(pageModel.getTemplate());
+			this.getCacheWrapper().updatePageModel(pageModelToUpdate);
 			this.notifyPageModelChangedEvent(pageModelToUpdate, PageModelChangedEvent.UPDATE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error updating page model {}", pageModel.getCode(), t);
 			throw new ApsSystemException("Error updating page model " + pageModel.getCode(), t);
 		}
 	}
-	
+
 	@Override
 	public void deletePageModel(String code) throws ApsSystemException {
 		try {
 			PageModel model = this.getPageModel(code);
 			this.getPageModelDAO().deleteModel(code);
-			this._models.remove(code);
+			this.getCacheWrapper().deletePageModel(code);
 			this.notifyPageModelChangedEvent(model, PageModelChangedEvent.REMOVE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error deleting page models", t);
 			throw new ApsSystemException("Error deleting page models", t);
 		}
 	}
-	
+
 	private void notifyPageModelChangedEvent(PageModel pageModel, int operationCode) {
 		PageModelChangedEvent event = new PageModelChangedEvent();
 		event.setPageModel(pageModel);
 		event.setOperationCode(operationCode);
 		this.notifyEvent(event);
 	}
-	
+
 	@Override
-	public List getGuiFragmentUtilizers(String guiFragmentCode)	throws ApsSystemException {
+	public List getGuiFragmentUtilizers(String guiFragmentCode) throws ApsSystemException {
 		List<PageModel> utilizers = new ArrayList<PageModel>();
 		try {
 			Iterator<PageModel> it = this.getPageModels().iterator();
@@ -144,7 +144,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 				PageModel pModel = it.next();
 				String template = pModel.getTemplate();
 				if (StringUtils.isNotBlank(template)) {
-					Pattern pattern = Pattern.compile("<@wp\\.fragment.*code=\""+ guiFragmentCode + "\".*/>", Pattern.MULTILINE);
+					Pattern pattern = Pattern.compile("<@wp\\.fragment.*code=\"" + guiFragmentCode + "\".*/>", Pattern.MULTILINE);
 					Matcher matcher = pattern.matcher(template);
 					if (matcher.find()) {
 						utilizers.add(pModel);
@@ -157,19 +157,21 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 		}
 		return utilizers;
 	}
-	
+
+	protected IPageModelManagerCacheWrapper getCacheWrapper() {
+		return _cacheWrapper;
+	}
+
+	public void setCacheWrapper(IPageModelManagerCacheWrapper cacheWrapper) {
+		this._cacheWrapper = cacheWrapper;
+	}
+
 	protected IPageModelDAO getPageModelDAO() {
 		return _pageModelDao;
 	}
+
 	public void setPageModelDAO(IPageModelDAO pageModelDAO) {
 		this._pageModelDao = pageModelDAO;
 	}
-	
-	/**
-	 * Map dei modelli di pagina configurati nel sistema
-	 */
-	private Map<String, PageModel> _models;
-	
-	private IPageModelDAO _pageModelDao;
-	
+
 }

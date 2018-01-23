@@ -56,7 +56,7 @@ public interface IPageDAO {
 	 * @param pageDown The page to move downwards
 	 * @param pageUp The page to move upwards
 	 */
-	public void updatePosition(IPage pageDown, IPage pageUp);
+	public void updatePosition(String pageDown, String pageUp);
 
 	public void updateWidgetPosition(String pageCode, Integer frameToMove, Integer destFrame);
 

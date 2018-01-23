@@ -16,10 +16,7 @@ package com.agiletec.aps.system.services.page;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +29,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
 import com.agiletec.aps.system.services.lang.events.LangsChangedObserver;
+import com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
@@ -49,70 +47,20 @@ import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedObserve
 public class PageManager extends AbstractService implements IPageManager, GroupUtilizer, LangsChangedObserver, PageModelUtilizer, PageModelChangedObserver {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageManager.class);
+	
+	private IPageManagerCacheWrapper _cacheWrapper;
+	private IPageDAO _pageDao;
 
 	@Override
 	public void init() throws Exception {
-		this.loadPageTree();
-		_logger.debug("{} ready. : Initialized {} pages", this.getClass().getName(), _pages.size());
+		this.initCache();
+		_logger.debug("{} ready. : Initialized", this.getClass().getName());
 	}
-
-	/**
-	 * Load the page and organize them in a tree structure
-	 *
-	 * @throws ApsSystemException
-	 * In case of database access error.
-	 */
-	private void loadPageTree() throws ApsSystemException {
-		PagesStatus status = new PagesStatus();
-		IPage newRoot = null;
-		IPage newRootOnline = null;
-		List<IPage> pageList = null;
-		List<IPage> pageListO = null;
-		List<PageRecord> pageRecordList = null;
-		try {
-			pageRecordList = this.getPageDAO().loadPageRecords();
-			Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
-			Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
-			pageListO = new ArrayList<>();
-			pageList = new ArrayList<>();
-			for (int i = 0; i < pageRecordList.size(); i++) {
-				PageRecord pageRecord = pageRecordList.get(i);
-				IPage pageD = pageRecord.createDraftPage();
-				IPage pageO = pageRecord.createOnlinePage();
-				pageList.add(pageD);
-				newFullMap.put(pageD.getCode(), pageD);
-				if (pageD.getCode().equals(pageD.getParentCode())) {
-					newRoot = pageD;
-					newRootOnline = pageO;
-				}
-				this.buildPagesStatus(status, pageD);
-				if (pageD.isOnline()) {
-					newOnlineMap.put(pageO.getCode(), pageO);
-					pageListO.add(pageO);
-				}
-			}
-			for (int i = 0; i < pageList.size(); i++) {
-				this.buildTreeHierarchy(pageList, newRoot, newFullMap, true, i);
-			}
-			for (int i = 0; i < pageListO.size(); i++) {
-				this.buildTreeHierarchy(pageListO, newRootOnline, newOnlineMap, false, i);
-			}
-			if (newRoot == null) {
-				throw new ApsSystemException("Error in the page tree: root page undefined");
-			}
-			this._root = newRoot;
-			this._onlineRoot = newRootOnline;
-			this._pages = newFullMap;
-			this._onlinePages = newOnlineMap;
-			this._pagesStatus = status;
-		} catch (ApsSystemException e) {
-			throw e;
-		} catch (Throwable t) {
-			_logger.error("Error while building the tree of pages", t);
-			throw new ApsSystemException("Error while building the tree of pages", t);
-		}
+	
+	private void initCache() throws ApsSystemException {
+		this.getCacheWrapper().initCache(this.getPageDAO());
 	}
-
+	
 	@Override
 	public void updateFromLangsChanged(LangsChangedEvent event) {
 		try {
@@ -125,33 +73,30 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	/**
 	 * Delete a page and eventually the association with the widgets.
 	 *
-	 * @param pageCode
-	 * the code of the page to delete
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @param pageCode the code of the page to delete
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public void deletePage(String pageCode) throws ApsSystemException {
 		IPage page = this.getDraftPage(pageCode);
-		if (null != page && page.getChildren().length <= 0) {
+		if (null != page && page.getChildrenCodes().length <= 0) {
 			try {
 				this.getPageDAO().deletePage(page);
+				this.getCacheWrapper().deleteDraftPage(pageCode);
 			} catch (Throwable t) {
 				_logger.error("Error detected while deleting page {}", pageCode, t);
 				throw new ApsSystemException("Error detected while deleting a page", t);
 			}
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(page, PageChangedEvent.REMOVE_OPERATION_CODE, null);
 	}
 
 	/**
 	 * Add a new page to the database.
 	 *
-	 * @param page
-	 * The page to add
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @param page The page to add
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public void addPage(IPage page) throws ApsSystemException {
@@ -161,17 +106,15 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error adding a page", t);
 			throw new ApsSystemException("Error adding a page", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(this.getDraftPage(page.getCode()), PageChangedEvent.INSERT_OPERATION_CODE, null);
 	}
 
 	/**
 	 * Update a page record in the database.
 	 *
-	 * @param page
-	 * The modified page.
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @param page The modified page.
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public void updatePage(IPage page) throws ApsSystemException {
@@ -181,7 +124,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error updating a page", t);
 			throw new ApsSystemException("Error updating a page", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(page, PageChangedEvent.UPDATE_OPERATION_CODE, null);
 	}
 
@@ -193,7 +136,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error updating a page as online", t);
 			throw new ApsSystemException("Error updating a page as online", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(this.getDraftPage(pageCode), PageChangedEvent.UPDATE_OPERATION_CODE, null, PageChangedEvent.EVENT_TYPE_SET_PAGE_ONLINE);
 	}
 
@@ -201,11 +144,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public void setPageOffline(String pageCode) throws ApsSystemException {
 		try {
 			this.getPageDAO().setPageOffline(pageCode);
+			this.getCacheWrapper().deleteOnlinePage(pageCode);
 		} catch (Throwable t) {
 			_logger.error("Error updating a page as offline", t);
 			throw new ApsSystemException("Error updating a page as offline", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		this.notifyPageChangedEvent(this.getDraftPage(pageCode), PageChangedEvent.UPDATE_OPERATION_CODE, null, PageChangedEvent.EVENT_TYPE_SET_PAGE_OFFLINE);
 	}
 
@@ -240,15 +184,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	/**
 	 * Move a page.
 	 *
-	 * @param pageCode
-	 * The code of the page to move.
-	 * @param moveUp
-	 * When true the page is moved to a higher level of the tree, otherwise to a
-	 * lower level.
+	 * @param pageCode The code of the page to move.
+	 * @param moveUp When true the page is moved to a higher level of the tree,
+	 * otherwise to a lower level.
 	 * @return The result of the operation: false if the move request could not
 	 * be satisfied, true otherwise.
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	@Override
 	public boolean movePage(String pageCode, boolean moveUp) throws ApsSystemException {
@@ -259,18 +200,18 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
 			}
 			IPage parent = currentPage.getParent();
-			IPage[] sisterPages = parent.getChildren();
-			for (int i = 0; i < sisterPages.length; i++) {
-				IPage sisterPage = sisterPages[i];
-				if (sisterPage.getCode().equals(pageCode)) {
-					if (!verifyRequiredMovement(i, moveUp, sisterPages.length)) {
+			String[] sisterPageCodes = parent.getChildrenCodes();
+			for (int i = 0; i < sisterPageCodes.length; i++) {
+				String sisterPageCode = sisterPageCodes[i];
+				if (sisterPageCode.equals(pageCode)) {
+					if (!verifyRequiredMovement(i, moveUp, sisterPageCodes.length)) {
 						return false;
 					} else if (moveUp) {
-						IPage pageDown = sisterPages[i - 1];
-						this.moveUpDown(pageDown, currentPage);
+						String pageDown = sisterPageCodes[i - 1];
+						this.moveUpDown(pageDown, currentPage.getCode());
 					} else {
-						IPage pageUp = sisterPages[i + 1];
-						this.moveUpDown(currentPage, pageUp);
+						String pageUp = sisterPageCodes[i + 1];
+						this.moveUpDown(currentPage.getCode(), pageUp);
 					}
 				}
 			}
@@ -278,7 +219,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error while moving  page {}", pageCode, t);
 			throw new ApsSystemException("Error while moving a page", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		return resultOperation;
 	}
 
@@ -306,7 +247,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			_logger.error("Error while moving widget. page {} from position {} to position {}", pageCode, frameToMove, destFrame, t);
 			throw new ApsSystemException("Error while moving a widget", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		return resultOperation;
 	}
 
@@ -333,13 +274,11 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	/**
 	 * Verify the possibility of the page to be moved elsewhere.
 	 *
-	 * @param position
-	 * The position of the page to move
-	 * @param moveUp
-	 * When true the page is moved to a higher level of the tree, otherwise to a
-	 * lower level.
-	 * @param dimension
-	 * The number the number of the pages of the parent of the page to move.
+	 * @param position The position of the page to move
+	 * @param moveUp When true the page is moved to a higher level of the tree,
+	 * otherwise to a lower level.
+	 * @param dimension The number the number of the pages of the parent of the
+	 * page to move.
 	 * @return if true then the requested movement is possible (but not
 	 * performed) false otherwise.
 	 */
@@ -360,10 +299,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	 *
 	 * @param pageDown
 	 * @param pageUp
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @throws ApsSystemException In case of database access error.
 	 */
-	private void moveUpDown(IPage pageDown, IPage pageUp) throws ApsSystemException {
+	private void moveUpDown(String pageDown, String pageUp) throws ApsSystemException {
 		try {
 			this.getPageDAO().updatePosition(pageDown, pageUp);
 		} catch (Throwable t) {
@@ -375,12 +313,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	/**
 	 * Remove a widgets from the given page.
 	 *
-	 * @param pageCode
-	 * the code of the page
-	 * @param pos
-	 * The position in the page to free
-	 * @throws ApsSystemException
-	 * In case of error
+	 * @param pageCode the code of the page
+	 * @param pos The position in the page to free
+	 * @throws ApsSystemException In case of error
 	 * @deprecated Use {@link #removeWidget(String,int)} instead
 	 */
 	@Override
@@ -391,12 +326,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	/**
 	 * Remove a widget from the given page.
 	 *
-	 * @param pageCode
-	 * the code of the page
-	 * @param pos
-	 * The position in the page to free
-	 * @throws ApsSystemException
-	 * In case of error
+	 * @param pageCode the code of the page
+	 * @param pos The position in the page to free
+	 * @throws ApsSystemException In case of error
 	 */
 	@Override
 	public void removeWidget(String pageCode, int pos) throws ApsSystemException {
@@ -418,8 +350,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	}
 
 	/**
-	 * @throws ApsSystemException
-	 * In case of error.
+	 * @param pageCode
+	 * @param widget
+	 * @param pos
+	 * @throws ApsSystemException In case of error.
 	 * @deprecated Use {@link #joinWidget(String,Widget,int)} instead
 	 */
 	@Override
@@ -432,14 +366,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	 * desired position. If the position is already occupied by another widget
 	 * this will be substituted with the new one.
 	 *
-	 * @param pageCode
-	 * the code of the page where to set the widget
-	 * @param widget
-	 * The widget to set
-	 * @param pos
-	 * The position where to place the widget in
-	 * @throws ApsSystemException
-	 * In case of error.
+	 * @param pageCode the code of the page where to set the widget
+	 * @param widget The widget to set
+	 * @param pos The position where to place the widget in
+	 * @throws ApsSystemException In case of error.
 	 */
 	@Override
 	public void joinWidget(String pageCode, Widget widget, int pos) throws ApsSystemException {
@@ -467,12 +397,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	 * Utility method which perform checks on the parameters submitted when
 	 * editing the page.
 	 *
-	 * @param pageCode
-	 * The code of the page
-	 * @param pos
-	 * The given position
-	 * @throws ApsSystemException
-	 * In case of database access error.
+	 * @param pageCode The code of the page
+	 * @param pos The given position
+	 * @throws ApsSystemException In case of database access error.
 	 */
 	private void checkPagePos(String pageCode, int pos) throws ApsSystemException {
 		IPage currentPage = this.getDraftPage(pageCode);
@@ -484,22 +411,13 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw new ApsSystemException("The Position '" + pos + "' is not defined in the model '" + model.getDescription() + "' of the page '" + pageCode + "'!");
 		}
 	}
-
-	/**
-	 * Set the root page.
-	 *
-	 * @param root
-	 * the Page to be set as root
-	 */
-	protected void setRoot(IPage root) {
-		this._root = root;
-	}
-
+	
 	/**
 	 * Return the root of the pages tree.
 	 *
 	 * @return the root page
 	 */
+	@Deprecated
 	@Override
 	public IPage getRoot() {
 		throw new UnsupportedOperationException("METODO NON SUPPORTATO: public IPage getRoot()");
@@ -507,29 +425,29 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	@Override
 	public IPage getOnlineRoot() {
-		return this._onlineRoot;
+		return this.getCacheWrapper().getOnlineRoot();
 	}
 
 	@Override
 	public IPage getDraftRoot() {
-		return this._root;
+		return this.getCacheWrapper().getDraftRoot();
 	}
 
 	@Override
 	public IPage getOnlinePage(String pageCode) {
-		return this._onlinePages.get(pageCode);
+		return this.getCacheWrapper().getOnlinePage(pageCode);
 	}
 
 	@Override
 	public IPage getDraftPage(String pageCode) {
-		return this._pages.get(pageCode);
+		return this.getCacheWrapper().getDraftPage(pageCode);
 	}
 
 	@Override
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
 		List<IPage> searchResult = new ArrayList<IPage>();
 		try {
-			if (null == this._pages || this._pages.isEmpty() || null == allowedGroups || allowedGroups.isEmpty()) {
+			if (null == allowedGroups || allowedGroups.isEmpty()) {
 				return searchResult;
 			}
 			IPage root = this.getDraftRoot();
@@ -547,9 +465,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				|| allowedGroups.contains(Group.ADMINS_GROUP_NAME))) {
 			searchResult.add(currentTarget);
 		}
-		IPage[] children = currentTarget.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			this.searchPages(children[i], pageCodeToken, allowedGroups, searchResult);
+		String[] childrenCodes = currentTarget.getChildrenCodes();
+		for (int i = 0; i < childrenCodes.length; i++) {
+			IPage child = this.getDraftPage(childrenCodes[i]);
+			this.searchPages(child, pageCodeToken, allowedGroups, searchResult);
 		}
 	}
 
@@ -564,10 +483,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		List<IPage> utilizers = new ArrayList<IPage>();
 		try {
 			IPage root = this.getDraftRoot();
-			this.searchUtilizers(groupName, utilizers, root);
+			this.searchUtilizers(groupName, utilizers, root, true);
 			List<IPage> utilizersOnline = new ArrayList<IPage>();
 			root = this.getOnlineRoot();
-			this.searchUtilizers(groupName, utilizersOnline, root);
+			this.searchUtilizers(groupName, utilizersOnline, root, false);
 			for (IPage page : utilizersOnline) {
 				if (!utilizers.contains(page)) {
 					utilizers.add(page);
@@ -581,7 +500,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		return utilizers;
 	}
 
-	private void searchUtilizers(String groupName, List<IPage> utilizers, IPage page) {
+	private void searchUtilizers(String groupName, List<IPage> utilizers, IPage page, boolean draft) {
 		if (page.getGroup().equals(groupName) && !page.isOnlineInstance()) {
 			utilizers.add(page);
 		} else {
@@ -591,9 +510,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				utilizers.add(page);
 			}
 		}
-		IPage[] children = page.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			this.searchUtilizers(groupName, utilizers, children[i]);
+		String[] childrenCodes = page.getChildrenCodes();
+		for (int i = 0; i < childrenCodes.length; i++) {
+			IPage child = (draft) ? this.getDraftPage(childrenCodes[i]) : this.getOnlinePage(childrenCodes[i]);
+			if (null != child) {
+				this.searchUtilizers(groupName, utilizers, child, draft);
+			}
 		}
 	}
 
@@ -614,7 +536,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				return pages;
 			}
 			IPage root = (draft) ? this.getDraftRoot() : this.getOnlineRoot();
-			this.getWidgetUtilizers(root, widgetTypeCode, pages);
+			this.getWidgetUtilizers(root, widgetTypeCode, pages, draft);
 		} catch (Throwable t) {
 			String message = "Error during searching draft page utilizers of widget with code " + widgetTypeCode;
 			_logger.error("Error during searching draft page utilizers of widget with code {}", widgetTypeCode, t);
@@ -623,7 +545,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		return pages;
 	}
 
-	private void getWidgetUtilizers(IPage page, String widgetTypeCode, List<IPage> widgetUtilizers) {
+	private void getWidgetUtilizers(IPage page, String widgetTypeCode, List<IPage> widgetUtilizers, boolean draft) {
 		Widget[] widgets = page.getWidgets();
 		for (int i = 0; i < widgets.length; i++) {
 			Widget widget = widgets[i];
@@ -632,10 +554,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				break;
 			}
 		}
-		IPage[] children = page.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPage child = children[i];
-			this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers);
+		String[] childrenCodes = page.getChildrenCodes();
+		for (int i = 0; i < childrenCodes.length; i++) {
+			IPage child = (draft) ? this.getDraftPage(childrenCodes[i]) : this.getOnlinePage(childrenCodes[i]);
+			if (null != child) {
+				this.getWidgetUtilizers(child, widgetTypeCode, widgetUtilizers, draft);
+			}
 		}
 	}
 
@@ -644,15 +568,13 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public List getPageModelUtilizers(String pageModelCode) throws ApsSystemException {
 		List<IPage> pages = new ArrayList<IPage>();
 		try {
-			if (null == this._pages || this._pages.isEmpty() || null == pageModelCode) {
+			if (null == pageModelCode) {
 				return pages;
 			}
 			IPage root = this.getDraftRoot();
-			this.getPageModelUtilizers(root, pageModelCode, pages);
-
+			this.getPageModelUtilizers(root, pageModelCode, pages, true);
 			root = this.getOnlineRoot();
-			this.getPageModelUtilizers(root, pageModelCode, pages);
-
+			this.getPageModelUtilizers(root, pageModelCode, pages, false);
 		} catch (Throwable t) {
 			String message = "Error during searching page utilizers of page model with code " + pageModelCode;
 			_logger.error("Error during searching page utilizers of page model with code {}", pageModelCode, t);
@@ -661,7 +583,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		return pages;
 	}
 
-	private void getPageModelUtilizers(IPage page, String pageModelCode, List<IPage> pageModelUtilizers) {
+	private void getPageModelUtilizers(IPage page, String pageModelCode, List<IPage> pageModelUtilizers, boolean draft) {
 		PageMetadata pageMetadata = page.getMetadata();
 		boolean usingModel = pageMetadata != null && pageMetadata.getModel() != null && pageModelCode.equals(pageMetadata.getModel().getCode());
 		if (!usingModel) {
@@ -671,10 +593,12 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		if (usingModel) {
 			pageModelUtilizers.add(page);
 		}
-		IPage[] children = page.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPage child = children[i];
-			this.getPageModelUtilizers(child, pageModelCode, pageModelUtilizers);
+		String[] childrenCodes = page.getChildrenCodes();
+		for (int i = 0; i < childrenCodes.length; i++) {
+			IPage child = (draft) ? this.getDraftPage(childrenCodes[i]) : this.getOnlinePage(childrenCodes[i]);
+			if (null != child) {
+				this.getPageModelUtilizers(child, pageModelCode, pageModelUtilizers, draft);
+			}
 		}
 	}
 
@@ -708,7 +632,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			ApsSystemUtils.logThrowable(t, this, "movePage");
 			throw new ApsSystemException("Error while moving a page under a root node", t);
 		}
-		this.loadPageTree();
+		this.initCache();
 		return resultOperation;
 	}
 
@@ -731,40 +655,20 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		}
 		return pages;
 	}
-
-	protected void buildTreeHierarchy(List<IPage> pageList, IPage root, Map<String, IPage> pagesMap, boolean includeDraft, int i) {
-		Page page = (Page) pagesMap.get(pageList.get(i).getCode());
-		Page parent = (Page) pagesMap.get(page.getParentCode());
-		page.setParent(parent);
-		if (page != root) {
-			parent.addChild(page);
-		}
-	}
-
-	protected void buildPagesStatus(PagesStatus status, IPage pageD) {
-		Date currentDate = pageD.getMetadata().getUpdatedAt();
-		if (pageD.isOnline()) {
-			if (pageD.isChanged()) {
-				status.setOnlineWithChanges(status.getOnlineWithChanges() + 1);
-			} else {
-				status.setOnline(status.getOnline() + 1);
-			}
-		} else {
-			status.setDraft(status.getDraft() + 1);
-		}
-
-		if (null != currentDate) {
-			if (null == status.getLastUpdate() || status.getLastUpdate().before(currentDate)) {
-				status.setLastUpdate(currentDate);
-			}
-		}
-	}
-
+	
 	@Override
 	public PagesStatus getPagesStatus() {
-		return this._pagesStatus;
+		return this.getCacheWrapper().getPagesStatus();
 	}
 
+	protected IPageManagerCacheWrapper getCacheWrapper() {
+		return _cacheWrapper;
+	}
+
+	public void setCacheWrapper(IPageManagerCacheWrapper cacheWrapper) {
+		this._cacheWrapper = cacheWrapper;
+	}
+	
 	protected IPageDAO getPageDAO() {
 		return _pageDao;
 	}
@@ -772,19 +676,5 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public void setPageDAO(IPageDAO pageDao) {
 		this._pageDao = pageDao;
 	}
-
-	/**
-	 * The root of the pages tree.
-	 */
-	private IPage _root;
-	private IPage _onlineRoot;
-
-	/**
-	 * The map of pages, indexed by code.
-	 */
-	private Map<String, IPage> _pages;
-	private Map<String, IPage> _onlinePages;
-	private PagesStatus _pagesStatus = new PagesStatus();
-
-	private IPageDAO _pageDao;
+	
 }

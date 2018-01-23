@@ -186,18 +186,22 @@ public class BaseAdminAction extends BaseAction {
 	 */
 	public List<IPage> getFreePages() {
 		IPage root = this.getPageManager().getOnlineRoot();
-		List<IPage> pages = new ArrayList<>();
-		this.addPages(root, pages);
+		List<IPage> pages = new ArrayList<IPage>();
+		this.addFreePublicPages(root, pages);
 		return pages;
 	}
 
-	private void addPages(IPage page, List<IPage> pages) {
+	private void addFreePublicPages(IPage page, List<IPage> pages) {
+		if (null != page) {
+			return;
+		}
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME)) {
 			pages.add(page);
 		}
-		IPage[] children = page.getChildren();
+		String[] children = page.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			this.addPages(children[i], pages);
+			IPage child = this.getPageManager().getOnlinePage(children[i]);
+			this.addFreePublicPages(child, pages);
 		}
 	}
 

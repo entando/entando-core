@@ -47,8 +47,10 @@ public class CategoriesTag extends TagSupport {
 		ICategoryManager catManager = (ICategoryManager) ApsWebApplicationUtils.getBean(SystemConstants.CATEGORY_MANAGER, this.pageContext);
 		try {
 			List<SelectItem> categories = new ArrayList<SelectItem>();
-			Category root = (null != this.getRoot() && null != catManager.getCategory(this.getRoot()))
-					? (Category) catManager.getNode(this.getRoot()) : (Category) catManager.getRoot();
+			Category root = (null != this.getRoot()) ? catManager.getCategory(this.getRoot()) : null;
+			if (null == root) {
+				root = catManager.getRoot();
+			}
 			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
 			String langCode = currentLang.getCode();
 			String reqTitStyle = this.getTitleStyle();

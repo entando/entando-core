@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.widgettype.cache;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,16 +25,13 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 
 /**
  * @author E.Santoboni
  */
-public class WidgetTypeManagerCacheWrapper implements IWidgetTypeManagerCacheWrapper {
+public class WidgetTypeManagerCacheWrapper extends AbstractCacheWrapper implements IWidgetTypeManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeManagerCacheWrapper.class);
-
-	private CacheManager _springCacheManager;
 
 	@Override
 	public void initCache(IWidgetTypeDAO widgetTypeDAO) throws ApsSystemException {
@@ -55,7 +53,7 @@ public class WidgetTypeManagerCacheWrapper implements IWidgetTypeManagerCacheWra
 			throw new ApsSystemException("Error loading widgets types", t);
 		}
 	}
-	
+
 	protected void releaseCachedObjects(Cache cache) {
 		List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
 		if (null != codes) {
@@ -66,7 +64,7 @@ public class WidgetTypeManagerCacheWrapper implements IWidgetTypeManagerCacheWra
 			cache.evict(WIDGET_TYPE_CODES_CACHE_NAME);
 		}
 	}
-	
+
 	protected void insertObjectsOnCache(Cache cache, Map<String, WidgetType> widgetTypes) {
 		List<String> widgetCodes = new ArrayList<String>();
 		Iterator<WidgetType> iter = widgetTypes.values().iterator();
@@ -126,28 +124,9 @@ public class WidgetTypeManagerCacheWrapper implements IWidgetTypeManagerCacheWra
 		cache.put(WIDGET_TYPE_CODES_CACHE_NAME, codes);
 	}
 
-	protected <T> T get(String name, Class<T> requiredType) {
-		return this.get(this.getCache(), name, requiredType);
-	}
-
-	protected <T> T get(Cache cache, String name, Class<T> requiredType) {
-		Object value = cache.get(name);
-		if (value instanceof Cache.ValueWrapper) {
-			value = ((Cache.ValueWrapper) value).get();
-		}
-		return (T) value;
-	}
-
-	protected Cache getCache() {
-		return this.getSpringCacheManager().getCache(WIDGET_TYPE_MANAGER_CACHE_NAME);
-	}
-
-	protected CacheManager getSpringCacheManager() {
-		return _springCacheManager;
-	}
-
-	public void setSpringCacheManager(CacheManager springCacheManager) {
-		this._springCacheManager = springCacheManager;
+	@Override
+	protected String getCacheName() {
+		return WIDGET_TYPE_MANAGER_CACHE_NAME;
 	}
 
 }

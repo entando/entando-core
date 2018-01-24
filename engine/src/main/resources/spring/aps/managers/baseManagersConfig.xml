@@ -111,6 +111,8 @@
 					  p:name="Entando_PageModelManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_WidgetTypeManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_CategoryManager" />
 			</set>
 		</property>
 	</bean>
@@ -132,17 +134,22 @@
 	</bean>
 	
 	<bean id="CategoryManager" class="com.agiletec.aps.system.services.category.CategoryManager" 
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="langManager" ref="LangManager"/>
 		<property name="categoryDAO" >
 			<bean class="com.agiletec.aps.system.services.category.CategoryDAO">
 				<property name="dataSource" ref="portDataSource" />
 			</bean>
 		</property>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.category.cache.CategoryManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
 	</bean>
 	
 	<bean id="WidgetTypeManager" class="org.entando.entando.aps.system.services.widgettype.WidgetTypeManager" 
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="widgetTypeDAO" >
 			<bean class="org.entando.entando.aps.system.services.widgettype.WidgetTypeDAO">
 				<property name="dataSource" ref="portDataSource" />

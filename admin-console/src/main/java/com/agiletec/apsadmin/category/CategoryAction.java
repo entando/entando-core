@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.category.Category;
-import com.agiletec.aps.system.services.category.CategoryManager;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
 import com.agiletec.aps.system.services.lang.Lang;
@@ -337,7 +336,7 @@ public class CategoryAction extends AbstractTreeAction {
 	}
 
 	protected String checkMoveCategory(String selectedNode, String parentCategoryCode) {
-		if (this.getCategoryManager().getMoveTreeStatus() != CategoryManager.STATUS_READY) {
+		if (this.getCategoryManager().getMoveTreeStatus() != ICategoryManager.STATUS_READY) {
 			this.addActionError(this.getText("error.category.move.updateReferencesRunning"));
 			return "categoryTree";
 		}
@@ -403,7 +402,7 @@ public class CategoryAction extends AbstractTreeAction {
 		Thread[] listOfThreads = new Thread[numThreads];
 		currentGroup.enumerate(listOfThreads);
 		for (int i = 0; i < numThreads; i++) {
-			if (listOfThreads[i].getName().startsWith(CategoryManager.RELOAD_CATEGORY_REFERENCES_THREAD_NAME_PREFIX)) {
+			if (listOfThreads[i].getName().startsWith(ICategoryManager.RELOAD_CATEGORY_REFERENCES_THREAD_NAME_PREFIX)) {
 				ReloadingCategoryReferencesThread thread = (ReloadingCategoryReferencesThread) listOfThreads[i];
 				total = total + thread.getListSize();
 				done = done + thread.getListIndex();

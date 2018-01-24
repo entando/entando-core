@@ -41,8 +41,6 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 
 	private static final Logger _logger = LoggerFactory.getLogger(CategoryManager.class);
 
-	public static final String RELOAD_CATEGORY_REFERENCES_THREAD_NAME_PREFIX = "RELOAD_CATEGORY_REFERENCES_";
-
 	private ILangManager _langManager;
 
 	private ICategoryManagerCacheWrapper _cacheWrapper;

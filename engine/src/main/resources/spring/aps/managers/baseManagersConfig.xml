@@ -26,6 +26,37 @@
 		<property name="notifyManager" ref="NotifyManager" />
 	</bean>
 
+	<!-- SPRING OBJECT -->
+	<bean id="springCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+		<property name="caches">
+			<set>
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_Cache" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_PageManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_PageModelManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_WidgetTypeManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_CategoryManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_ConfigManager" />
+			</set>
+		</property>
+	</bean>
+
+	<!--deprecated -->
+	<bean id="CacheManager" class="com.agiletec.aps.system.services.cache.OldCacheManager"
+			parent="abstractService" >
+		<property name="cacheInfoManager" ref="CacheInfoManager" />
+	</bean>
+
+	<bean id="CacheInfoManager" class="org.entando.entando.aps.system.services.cache.CacheInfoManager"
+			parent="abstractService" >
+		<property name="springCacheManager" ref="springCacheManager" />
+	</bean>
+
 	<bean id="BaseConfigManager" class="com.agiletec.aps.system.services.baseconfig.BaseConfigManager"
 			parent="abstractService" depends-on="springCacheManager" >
 		<property name="systemParams">
@@ -104,44 +135,13 @@
 		<property name="authorizationManager" ref="AuthorizationManager" />
 	</bean>
 
-	<!-- SPRING OBJECT -->
-	<bean id="springCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
-		<property name="caches">
-			<set>
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_Cache" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_PageManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_PageModelManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_WidgetTypeManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_CategoryManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_ConfigManager" />
-			</set>
-		</property>
-	</bean>
-
-	<!--deprecated -->
-	<bean id="CacheManager" class="com.agiletec.aps.system.services.cache.OldCacheManager"
-			parent="abstractService" >
-		<property name="cacheInfoManager" ref="CacheInfoManager" />
-	</bean>
-
-	<bean id="CacheInfoManager" class="org.entando.entando.aps.system.services.cache.CacheInfoManager"
-			parent="abstractService" >
-		<property name="springCacheManager" ref="springCacheManager" />
-	</bean>
-
 	<bean id="LangManager" class="com.agiletec.aps.system.services.lang.LangManager"
 			parent="abstractService" >
 		<property name="configManager" ref="BaseConfigManager"/>
 	</bean>
 
 	<bean id="CategoryManager" class="com.agiletec.aps.system.services.category.CategoryManager"
-			parent="abstractService" depends-on="springCacheManager" >
+			parent="abstractService" depends-on="BaseConfigManager" >
 		<property name="langManager" ref="LangManager"/>
 		<property name="categoryDAO" >
 			<bean class="com.agiletec.aps.system.services.category.CategoryDAO">
@@ -156,7 +156,7 @@
 	</bean>
 
 	<bean id="WidgetTypeManager" class="org.entando.entando.aps.system.services.widgettype.WidgetTypeManager"
-			parent="abstractService" depends-on="springCacheManager" >
+			parent="abstractService" depends-on="BaseConfigManager" >
 		<property name="widgetTypeDAO" >
 			<bean class="org.entando.entando.aps.system.services.widgettype.WidgetTypeDAO">
 				<property name="dataSource" ref="portDataSource" />
@@ -192,7 +192,7 @@
     </bean>
 
 	<bean id="PageModelManager" class="com.agiletec.aps.system.services.pagemodel.PageModelManager"
-			parent="abstractService" depends-on="springCacheManager" >
+			parent="abstractService" depends-on="BaseConfigManager" >
 		<property name="pageModelDAO" >
 			<bean class="com.agiletec.aps.system.services.pagemodel.PageModelDAO">
 				<property name="dataSource" ref="portDataSource" />

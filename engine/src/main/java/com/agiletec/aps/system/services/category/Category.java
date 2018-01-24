@@ -13,19 +13,20 @@
  */
 package com.agiletec.aps.system.services.category;
 
+import com.agiletec.aps.system.common.tree.TreeNode;
+import com.agiletec.aps.util.ApsProperties;
+
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.agiletec.aps.system.common.tree.TreeNode;
-import com.agiletec.aps.util.ApsProperties;
 
 /**
  * Rappresentazione di un'oggetto Categoria.
  *
  * @author E.Santoboni
  */
-public class Category extends TreeNode implements Comparable {
+public class Category extends TreeNode implements Comparable, Serializable {
 
 	@Override
 	public Category getParent() {
@@ -128,7 +129,6 @@ public class Category extends TreeNode implements Comparable {
 	 */
 	public Category getCloneForWrapper() {
 		Category clone = new Category();
-		System.out.println("CLONE for wrapper -> " + this.getCode());
 		clone.setCode(this.getCode());
 		clone.setDefaultLang(this._defaultLang);
 		ApsProperties cloneProperties = new ApsProperties();

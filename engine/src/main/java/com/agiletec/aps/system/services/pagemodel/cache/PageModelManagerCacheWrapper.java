@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.pagemodel.cache;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.IPageModelDAO;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -21,20 +22,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 
 /**
  * @author E.Santoboni
  */
-public class PageModelManagerCacheWrapper implements IPageModelManagerCacheWrapper {
+public class PageModelManagerCacheWrapper extends AbstractCacheWrapper implements IPageModelManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageModelManagerCacheWrapper.class);
-
-	private CacheManager _springCacheManager;
 
 	@Override
 	public void initCache(IPageModelDAO pageModelDAO) throws ApsSystemException {
@@ -118,29 +115,10 @@ public class PageModelManagerCacheWrapper implements IPageModelManagerCacheWrapp
 		codes.remove(code);
 		cache.put(PAGE_MODEL_CODES_CACHE_NAME, codes);
 	}
-
-	protected <T> T get(String name, Class<T> requiredType) {
-		return this.get(this.getCache(), name, requiredType);
-	}
-
-	protected <T> T get(Cache cache, String name, Class<T> requiredType) {
-		Object value = cache.get(name);
-		if (value instanceof Cache.ValueWrapper) {
-			value = ((Cache.ValueWrapper) value).get();
-		}
-		return (T) value;
-	}
-
-	protected Cache getCache() {
-		return this.getSpringCacheManager().getCache(PAGE_MODEL_MANAGER_CACHE_NAME);
-	}
-
-	protected CacheManager getSpringCacheManager() {
-		return _springCacheManager;
-	}
-
-	public void setSpringCacheManager(CacheManager springCacheManager) {
-		this._springCacheManager = springCacheManager;
+	
+	@Override
+	protected String getCacheName() {
+		return PAGE_MODEL_MANAGER_CACHE_NAME;
 	}
 
 }

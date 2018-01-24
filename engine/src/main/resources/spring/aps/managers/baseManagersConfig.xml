@@ -27,7 +27,7 @@
 	</bean>
 	
 	<bean id="BaseConfigManager" class="com.agiletec.aps.system.services.baseconfig.BaseConfigManager" 
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="systemParams">
 			<map>
 				<entry key="version"><value>${version}</value></entry>
@@ -41,6 +41,11 @@
 		<property name="configDAO" >
 			<bean class="com.agiletec.aps.system.services.baseconfig.ConfigItemDAO">
 				<property name="dataSource" ref="portDataSource" />
+			</bean>
+		</property>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.baseconfig.cache.ConfigManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>
 	</bean>
@@ -111,6 +116,8 @@
 					  p:name="Entando_PageModelManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_WidgetTypeManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_ConfigManager" />
 			</set>
 		</property>
 	</bean>
@@ -132,7 +139,7 @@
 	</bean>
 	
 	<bean id="CategoryManager" class="com.agiletec.aps.system.services.category.CategoryManager" 
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="langManager" ref="LangManager"/>
 		<property name="categoryDAO" >
 			<bean class="com.agiletec.aps.system.services.category.CategoryDAO">

@@ -17,6 +17,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryDAO;
 import com.agiletec.aps.system.services.lang.ILangManager;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -27,6 +28,7 @@ public interface ICategoryManagerCacheWrapper {
 	public static final String CATEGORY_CACHE_NAME_PREFIX = "CategoryManager_node_";
 	public static final String CATEGORY_ROOT_CACHE_NAME = "CategoryManager_root";
 	public static final String CATEGORY_CODES_CACHE_NAME = "CategoryManager_codes";
+	public static final String CATEGORY_STATUS_CACHE_NAME = "CategoryManager_status";
 
 	public void initCache(ICategoryDAO categoryDAO, ILangManager langManager) throws ApsSystemException;
 
@@ -35,5 +37,9 @@ public interface ICategoryManagerCacheWrapper {
 	public Category getRoot();
 
 	public void deleteCategory(String code);
+
+	public Map<String, Integer> getMoveNodeStatus();
+
+	public void updateMoveNodeStatus(String beanName, Integer status);
 
 }

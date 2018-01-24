@@ -30,9 +30,6 @@ import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.cache.ICategoryManagerCacheWrapper;
 import com.agiletec.aps.system.services.lang.ILangManager;
-import com.agiletec.aps.system.services.lang.Lang;
-import com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper;
-import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.DateConverter;
 
 /**
@@ -43,27 +40,25 @@ import com.agiletec.aps.util.DateConverter;
 public class CategoryManager extends AbstractService implements ICategoryManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CategoryManager.class);
-	
+
 	public static final String RELOAD_CATEGORY_REFERENCES_THREAD_NAME_PREFIX = "RELOAD_CATEGORY_REFERENCES_";
-	
+
 	private ILangManager _langManager;
-	
+
 	private ICategoryManagerCacheWrapper _cacheWrapper;
 
 	private ICategoryDAO _categoryDao;
-
-	private Map<String, Integer> _moveTreeStatus = new HashMap<String, Integer>();
 
 	@Override
 	public void init() throws Exception {
 		this.initCache();
 		_logger.debug("{} initialized", this.getClass().getName());
 	}
-	
+
 	private void initCache() throws ApsSystemException {
 		this.getCacheWrapper().initCache(this.getCategoryDAO(), this.getLangManager());
 	}
-	
+
 	/**
 	 * Aggiunge una categoria al db.
 	 *
@@ -93,6 +88,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		if (cat != null && cat.getChildrenCodes().length <= 0) {
 			try {
 				this.getCategoryDAO().deleteCategory(code);
+				this.getCacheWrapper().deleteCategory(code);
 			} catch (Throwable t) {
 				_logger.error("Error detected while removing the category {}", code, t);
 				throw new ApsSystemException("Error detected while removing a category", t);
@@ -217,9 +213,10 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		if (null == utilizers || utilizers.length == 0) {
 			return STATUS_READY;
 		}
+		Map<String, Integer> moveNodeStatus = this.getCacheWrapper().getMoveNodeStatus();
 		for (int i = 0; i < utilizers.length; i++) {
 			String beanName = utilizers[i];
-			if (null != this._moveTreeStatus && this._moveTreeStatus.containsKey(beanName) && this._moveTreeStatus.get(beanName) == STATUS_RELOADING_REFERENCES_IN_PROGRESS) {
+			if (null != moveNodeStatus && moveNodeStatus.containsKey(beanName) && moveNodeStatus.get(beanName) == STATUS_RELOADING_REFERENCES_IN_PROGRESS) {
 				return STATUS_RELOADING_REFERENCES_IN_PROGRESS;
 			}
 		}
@@ -231,13 +228,13 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		if (null == utilizers || utilizers.length == 0) {
 			return STATUS_READY;
 		}
-		for (int i = 0; i < utilizers.length; i++) {
-			String beanName = utilizers[i];
-			if (beanName.equalsIgnoreCase(currentBeanName)) {
-				if (null != this._moveTreeStatus && this._moveTreeStatus.containsKey(beanName) && this._moveTreeStatus.get(beanName) == STATUS_RELOADING_REFERENCES_IN_PROGRESS) {
-					return STATUS_RELOADING_REFERENCES_IN_PROGRESS;
-				}
-			}
+		Map<String, Integer> moveNodeStatus = this.getCacheWrapper().getMoveNodeStatus();
+		if (null == moveNodeStatus) {
+			return STATUS_READY;
+		}
+		Integer status = moveNodeStatus.get(currentBeanName);
+		if (null != status && status == STATUS_RELOADING_REFERENCES_IN_PROGRESS) {
+			return STATUS_RELOADING_REFERENCES_IN_PROGRESS;
 		}
 		return STATUS_READY;
 	}
@@ -303,14 +300,14 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		if (StringUtils.isBlank(beanName)) {
 			throw new ApsSystemException("Error: null beanName");
 		}
-		this._moveTreeStatus.put(beanName, STATUS_RELOADING_REFERENCES_IN_PROGRESS);
+		this.getCacheWrapper().updateMoveNodeStatus(beanName, STATUS_RELOADING_REFERENCES_IN_PROGRESS);
 		try {
 			Object service = this.getBeanFactory().getBean(beanName);
 			if (service != null) {
 				CategoryUtilizer categoryUtilizer = (CategoryUtilizer) service;
 				_logger.info("reload category references for {} started at {}", beanName, DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss"));
 				categoryUtilizer.reloadCategoryReferences(categoryCode);
-				this._moveTreeStatus.put(beanName, STATUS_READY);
+				this.getCacheWrapper().updateMoveNodeStatus(beanName, STATUS_READY);
 				_logger.info("reload category references for {} end at {}", beanName, DateConverter.getFormattedDate(new Date(), "yyyyMMddHHmmss"));
 			}
 		} catch (Throwable t) {
@@ -346,13 +343,13 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	public void setCategoryDAO(ICategoryDAO categoryDao) {
 		this._categoryDao = categoryDao;
 	}
-	
+
 	protected ICategoryManagerCacheWrapper getCacheWrapper() {
 		return _cacheWrapper;
 	}
-	
+
 	public void setCacheWrapper(ICategoryManagerCacheWrapper cacheWrapper) {
 		this._cacheWrapper = cacheWrapper;
 	}
-	
+
 }

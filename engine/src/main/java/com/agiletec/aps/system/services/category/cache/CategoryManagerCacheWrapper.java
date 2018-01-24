@@ -51,7 +51,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 			throw new ApsSystemException("Error loading the category tree.", t);
 		}
 	}
-	
+
 	protected Category createRoot(ILangManager langManager) {
 		Category root = new Category();
 		root.setCode("home");
@@ -65,7 +65,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 		root.setTitles(titles);
 		return root;
 	}
-	
+
 	private void initCache(List<Category> categories) throws ApsSystemException {
 		Cache cache = this.getCache();
 		this.releaseCachedObjects(cache);
@@ -91,7 +91,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 		}
 		this.insertObjectsOnCache(cache, root, categoryMap);
 	}
-	
+
 	protected void releaseCachedObjects(Cache cache) {
 		List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
 		if (null != codes) {
@@ -101,8 +101,9 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 			}
 			cache.evict(CATEGORY_CODES_CACHE_NAME);
 		}
+		cache.evict(CATEGORY_STATUS_CACHE_NAME);
 	}
-	
+
 	protected void insertObjectsOnCache(Cache cache, Category root, Map<String, Category> categoryMap) {
 		cache.put(CATEGORY_ROOT_CACHE_NAME, root);
 		Iterator<Category> iter = categoryMap.values().iterator();
@@ -116,7 +117,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 	public Category getCategory(String code) {
 		return this.get(CATEGORY_CACHE_NAME_PREFIX + code, Category.class);
 	}
-	
+
 	@Override
 	public void deleteCategory(String code) {
 		this.getCache().evict(CATEGORY_CACHE_NAME_PREFIX + code);
@@ -131,5 +132,20 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 	protected String getCacheName() {
 		return CATEGORY_MANAGER_CACHE_NAME;
 	}
-	
+
+	@Override
+	public Map<String, Integer> getMoveNodeStatus() {
+		return (Map<String, Integer>) this.get(CATEGORY_STATUS_CACHE_NAME, Map.class);
+	}
+
+	@Override
+	public void updateMoveNodeStatus(String beanName, Integer status) {
+		Map<String, Integer> statusMap = this.getMoveNodeStatus();
+		if (null == statusMap) {
+			statusMap = new HashMap<String, Integer>();
+		}
+		statusMap.put(beanName, status);
+		this.getCache().put(CATEGORY_STATUS_CACHE_NAME, statusMap);
+	}
+
 }

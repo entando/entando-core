@@ -14,6 +14,7 @@
 package com.agiletec.aps.system.services.baseconfig.cache;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.IConfigItemDAO;
 import com.agiletec.aps.util.MapSupportRule;
@@ -28,16 +29,13 @@ import org.apache.commons.digester.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 
 /**
  * @author E.Santoboni
  */
-public class ConfigManagerCacheWrapper implements IConfigManagerCacheWrapper {
+public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements IConfigManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ConfigManagerCacheWrapper.class);
-
-	private CacheManager _springCacheManager;
 
 	@Override
 	public void initCache(IConfigItemDAO configItemDAO, String version) throws ApsSystemException {
@@ -112,29 +110,10 @@ public class ConfigManagerCacheWrapper implements IConfigManagerCacheWrapper {
 	public String getParam(String name) {
 		return this.get(CONFIG_PARAM_CACHE_NAME_PREFIX + name, String.class);
 	}
-	
-	protected <T> T get(String name, Class<T> requiredType) {
-		return this.get(this.getCache(), name, requiredType);
-	}
 
-	protected <T> T get(Cache cache, String name, Class<T> requiredType) {
-		Object value = cache.get(name);
-		if (value instanceof Cache.ValueWrapper) {
-			value = ((Cache.ValueWrapper) value).get();
-		}
-		return (T) value;
-	}
-
-	protected Cache getCache() {
-		return this.getSpringCacheManager().getCache(CONFIG_MANAGER_CACHE_NAME);
-	}
-
-	protected CacheManager getSpringCacheManager() {
-		return _springCacheManager;
-	}
-
-	public void setSpringCacheManager(CacheManager springCacheManager) {
-		this._springCacheManager = springCacheManager;
+	@Override
+	protected String getCacheName() {
+		return CONFIG_MANAGER_CACHE_NAME;
 	}
 
 }

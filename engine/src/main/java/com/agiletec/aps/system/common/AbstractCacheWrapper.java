@@ -13,8 +13,6 @@
  */
 package com.agiletec.aps.system.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
@@ -23,12 +21,10 @@ import org.springframework.cache.CacheManager;
  */
 public abstract class AbstractCacheWrapper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(AbstractCacheWrapper.class);
-
 	private CacheManager _springCacheManager;
-	
+
 	protected abstract String getCacheName();
-	
+
 	protected <T> T get(String name, Class<T> requiredType) {
 		return this.get(this.getCache(), name, requiredType);
 	}

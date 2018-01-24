@@ -111,6 +111,8 @@
 					  p:name="Entando_PageModelManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_WidgetTypeManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_CategoryManager" />
 			</set>
 		</property>
 	</bean>

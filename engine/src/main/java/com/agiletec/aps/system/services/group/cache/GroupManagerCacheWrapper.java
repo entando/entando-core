@@ -18,6 +18,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupDAO;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,14 +77,14 @@ public class GroupManagerCacheWrapper extends AbstractCacheWrapper implements IG
 	}
 
 	@Override
-	public List<Group> getGroups() {
-		List<Group> groups = new ArrayList<Group>();
+	public Map<String, Group> getGroups() {
+		Map<String, Group> groups = new HashMap<String, Group>();
 		Cache cache = this.getCache();
 		List<String> codes = (List<String>) this.get(cache, GROUP_CODES_CACHE_NAME, List.class);
 		if (null != codes) {
 			for (int i = 0; i < codes.size(); i++) {
 				String code = codes.get(i);
-				groups.add(this.get(cache, GROUP_CACHE_NAME_PREFIX + code, Group.class));
+				groups.put(code, this.get(cache, GROUP_CACHE_NAME_PREFIX + code, Group.class));
 			}
 		}
 		return groups;

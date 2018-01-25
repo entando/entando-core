@@ -16,7 +16,7 @@ package com.agiletec.aps.system.services.group.cache;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupDAO;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -29,7 +29,7 @@ public interface IGroupManagerCacheWrapper {
 
 	public void initCache(IGroupDAO groupDAO) throws ApsSystemException;
 
-	public List<Group> getGroups();
+	public Map<String, Group> getGroups();
 
 	public Group getGroup(String code);
 

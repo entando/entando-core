@@ -16,6 +16,8 @@ package com.agiletec.aps.system.services.role.cache;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.IRoleDAO;
+import com.agiletec.aps.system.services.role.Permission;
+import com.agiletec.aps.system.services.role.Role;
 
 /**
  * @author E.Santoboni
@@ -30,5 +32,17 @@ public interface IRoleManagerCacheWrapper {
 	public static final String PERMISSION_CODES_CACHE_NAME = "RoleManager_permissions";
 
 	public void initCache(IRoleDAO roleDAO, IPermissionDAO permissionDAO) throws ApsSystemException;
+
+	public void addRole(Role role);
+
+	public void updateRole(Role role);
+
+	public void removeRole(Role role);
+
+	public void addPermission(Permission permission);
+
+	public void updatePermission(Permission permission);
+
+	public void removePermission(String permissionName);
 
 }

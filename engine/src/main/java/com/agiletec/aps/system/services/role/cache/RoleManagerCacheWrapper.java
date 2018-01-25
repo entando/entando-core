@@ -19,6 +19,9 @@ import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.IRoleDAO;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +49,68 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 	}
 
 	protected void releaseCachedObjects(Cache cache) {
+		this.releaseCachedObjects(cache, ROLE_CODES_CACHE_NAME, ROLE_CACHE_NAME_PREFIX);
+		this.releaseCachedObjects(cache, PERMISSION_CODES_CACHE_NAME, PERMISSION_CACHE_NAME_PREFIX);
+	}
 
+	private void releaseCachedObjects(Cache cache, String codesName, String codePrefix) {
+		List<String> codes = (List<String>) this.get(cache, codesName, List.class);
+		if (null != codes) {
+			for (int i = 0; i < codes.size(); i++) {
+				String code = codes.get(i);
+				cache.evict(codePrefix + code);
+			}
+			cache.evict(codesName);
+		}
 	}
 
 	protected void insertObjectsOnCache(Cache cache, Map<String, Role> roles, Map<String, Permission> permissions) {
+		List<String> roleCodes = new ArrayList<String>();
+		Iterator<String> iterRoles = roles.keySet().iterator();
+		while (iterRoles.hasNext()) {
+			String key = iterRoles.next();
+			cache.put(ROLE_CACHE_NAME_PREFIX + key, roles.get(key));
+			roleCodes.add(key);
+		}
+		cache.put(ROLE_CODES_CACHE_NAME, roleCodes);
+		List<String> permissionCodes = new ArrayList<String>();
+		Iterator<String> iterPermiss = permissions.keySet().iterator();
+		while (iterPermiss.hasNext()) {
+			String key = iterPermiss.next();
+			cache.put(PERMISSION_CACHE_NAME_PREFIX + key, permissions.get(key));
+			permissionCodes.add(key);
+		}
+		cache.put(PERMISSION_CODES_CACHE_NAME, permissionCodes);
+	}
 
+	@Override
+	public void addRole(Role role) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void updateRole(Role role) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void removeRole(Role role) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void addPermission(Permission permission) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void updatePermission(Permission permission) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void removePermission(String permissionName) {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override

@@ -33,7 +33,7 @@ import org.springframework.cache.Cache;
 public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRoleManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RoleManagerCacheWrapper.class);
-	private static enum Operation {ADD, UPDATE, DELETE}
+	private static enum Action {ADD, UPDATE, DELETE}
 	
 	@Override
 	public void initCache(IRoleDAO roleDAO, IPermissionDAO permissionDAO) throws ApsSystemException {
@@ -105,34 +105,34 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 	
 	@Override
 	public void addRole(Role role) {
-		this.manageRole(role, Operation.ADD);
+		this.manageRole(role, Action.ADD);
 	}
 
 	@Override
 	public void updateRole(Role role) {
-		this.manageRole(role, Operation.UPDATE);
+		this.manageRole(role, Action.UPDATE);
 	}
 
 	@Override
 	public void removeRole(Role role) {
-		this.manageRole(role, Operation.DELETE);
+		this.manageRole(role, Action.DELETE);
 	}
 	
-	private void manageRole(Role role, Operation operation) {
+	private void manageRole(Role role, Action operation) {
 		if (null == role) {
 			return;
 		}
 		Cache cache = this.getCache();
 		List<String> codes = (List<String>) this.get(cache, ROLE_CODES_CACHE_NAME, List.class);
-		if (Operation.ADD.equals(operation)) {
+		if (Action.ADD.equals(operation)) {
 			if (!codes.contains(role.getName())) {
 				codes.add(role.getName());
 				cache.put(ROLE_CODES_CACHE_NAME, codes);
 			}
 			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
-		} else if (Operation.UPDATE.equals(operation) && codes.contains(role.getName())) {
+		} else if (Action.UPDATE.equals(operation) && codes.contains(role.getName())) {
 			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
-		} else if (Operation.DELETE.equals(operation)) {
+		} else if (Action.DELETE.equals(operation)) {
 			codes.remove(role.getName());
 			cache.evict(ROLE_CACHE_NAME_PREFIX + role.getName());
 			cache.put(ROLE_CODES_CACHE_NAME, codes);
@@ -160,35 +160,35 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 	
 	@Override
 	public void addPermission(Permission permission) {
-		this.managePermission(permission, Operation.ADD);
+		this.managePermission(permission, Action.ADD);
 	}
 
 	@Override
 	public void updatePermission(Permission permission) {
-		this.managePermission(permission, Operation.UPDATE);
+		this.managePermission(permission, Action.UPDATE);
 	}
 
 	@Override
 	public void removePermission(String permissionName) {
 		Permission permission = this.getPermission(permissionName);
-		this.managePermission(permission, Operation.DELETE);
+		this.managePermission(permission, Action.DELETE);
 	}
 	
-	private void managePermission(Permission permission, Operation operation) {
+	private void managePermission(Permission permission, Action operation) {
 		if (null == permission) {
 			return;
 		}
 		Cache cache = this.getCache();
 		List<String> codes = (List<String>) this.get(cache, PERMISSION_CODES_CACHE_NAME, List.class);
-		if (Operation.ADD.equals(operation)) {
+		if (Action.ADD.equals(operation)) {
 			if (!codes.contains(permission.getName())) {
 				codes.add(permission.getName());
 				cache.put(PERMISSION_CODES_CACHE_NAME, codes);
 			}
 			cache.put(PERMISSION_CACHE_NAME_PREFIX + permission.getName(), permission);
-		} else if (Operation.UPDATE.equals(operation) && codes.contains(permission.getName())) {
+		} else if (Action.UPDATE.equals(operation) && codes.contains(permission.getName())) {
 			cache.put(PERMISSION_CACHE_NAME_PREFIX + permission.getName(), permission);
-		} else if (Operation.DELETE.equals(operation)) {
+		} else if (Action.DELETE.equals(operation)) {
 			codes.remove(permission.getName());
 			cache.evict(PERMISSION_CACHE_NAME_PREFIX + permission.getName());
 			cache.put(PERMISSION_CODES_CACHE_NAME, codes);

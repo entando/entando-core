@@ -47,11 +47,11 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 			Map<String, String> params = this.parseParams(xmlParams);
 			this.insertObjectsOnCache(cache, configItems, params);
 		} catch (ApsSystemException t) {
-			_logger.error("Error loading page models", t);
-			throw new ApsSystemException("Error loading page models", t);
+			_logger.error("Error loading configuration params", t);
+			throw new ApsSystemException("Error loading configuration params", t);
 		}
 	}
-	
+
 	protected Map<String, String> parseParams(String xmlParams) throws ApsSystemException {
 		Map<String, String> params = new HashMap<String, String>();
 		Digester dig = new Digester();
@@ -63,17 +63,17 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 		} catch (Exception e) {
 			_logger.error("Error detected while parsing the \"params\" item in the \"sysconfig\" table: verify the \"sysconfig\" table", e);
 			throw new ApsSystemException(
-					"Error detected while parsing the \"params\" item in the \"sysconfig\" table:" +
-					" verify the \"sysconfig\" table", e);
+					"Error detected while parsing the \"params\" item in the \"sysconfig\" table:"
+					+ " verify the \"sysconfig\" table", e);
 		}
 		return params;
 	}
-	
+
 	protected void releaseCachedObjects(Cache cache) {
 		this.releaseCachedObjects(cache, CONFIG_PARAMS_CODES_CACHE_NAME, CONFIG_PARAM_CACHE_NAME_PREFIX);
 		this.releaseCachedObjects(cache, CONFIG_ITEMS_CODES_CACHE_NAME, CONFIG_ITEM_CACHE_NAME_PREFIX);
 	}
-	
+
 	private void releaseCachedObjects(Cache cache, String codesName, String codePrefix) {
 		List<String> codes = (List<String>) this.get(cache, codesName, List.class);
 		if (null != codes) {
@@ -84,12 +84,12 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 			cache.evict(codesName);
 		}
 	}
-	
+
 	protected void insertObjectsOnCache(Cache cache, Map<String, String> configItems, Map<String, String> params) {
 		this.insertObjectsOnCache(cache, configItems, CONFIG_ITEMS_CODES_CACHE_NAME, CONFIG_ITEM_CACHE_NAME_PREFIX);
 		this.insertObjectsOnCache(cache, params, CONFIG_PARAMS_CODES_CACHE_NAME, CONFIG_PARAM_CACHE_NAME_PREFIX);
 	}
-	
+
 	private void insertObjectsOnCache(Cache cache, Map<String, String> map, String codesCacheName, String codeCachePrefix) {
 		List<String> codes = new ArrayList<String>();
 		Iterator<String> iterator = map.keySet().iterator();
@@ -100,7 +100,7 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 		}
 		cache.put(codesCacheName, codes);
 	}
-	
+
 	@Override
 	public String getConfigItem(String name) {
 		return this.get(CONFIG_ITEM_CACHE_NAME_PREFIX + name, String.class);

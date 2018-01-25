@@ -42,6 +42,8 @@
 					  p:name="Entando_CategoryManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_ConfigManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_RoleManager" />
 			</set>
 		</property>
 	</bean>
@@ -91,7 +93,7 @@
 	</bean>
 
 	<bean id="RoleManager" class="com.agiletec.aps.system.services.role.RoleManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="roleDAO" >
 			<bean class="com.agiletec.aps.system.services.role.RoleDAO">
 				<property name="dataSource" ref="servDataSource" />
@@ -100,6 +102,11 @@
 		<property name="permissionDAO" >
 			<bean class="com.agiletec.aps.system.services.role.PermissionDAO">
 				<property name="dataSource" ref="servDataSource" />
+			</bean>
+		</property>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.role.cache.RoleManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>
 	</bean>

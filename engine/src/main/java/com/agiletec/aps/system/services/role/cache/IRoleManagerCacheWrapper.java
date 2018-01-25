@@ -18,6 +18,7 @@ import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.IRoleDAO;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
+import java.util.List;
 
 /**
  * @author E.Santoboni
@@ -33,11 +34,19 @@ public interface IRoleManagerCacheWrapper {
 
 	public void initCache(IRoleDAO roleDAO, IPermissionDAO permissionDAO) throws ApsSystemException;
 
+	public List<Role> getRoles();
+	
+	public Role getRole(String code);
+	
 	public void addRole(Role role);
 
 	public void updateRole(Role role);
 
 	public void removeRole(Role role);
+	
+	public List<Permission> getPermissions();
+	
+	public Permission getPermission(String code);
 
 	public void addPermission(Permission permission);
 

@@ -33,7 +33,8 @@ import org.springframework.cache.Cache;
 public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRoleManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RoleManagerCacheWrapper.class);
-
+	private static enum Operation {ADD, UPDATE, DELETE}
+	
 	@Override
 	public void initCache(IRoleDAO roleDAO, IPermissionDAO permissionDAO) throws ApsSystemException {
 		try {
@@ -82,35 +83,116 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 		}
 		cache.put(PERMISSION_CODES_CACHE_NAME, permissionCodes);
 	}
-
+	
+	@Override
+	public List<Role> getRoles() {
+		List<Role> roles = new ArrayList<Role>();
+		Cache cache = this.getCache();
+		List<String> codes = (List<String>) this.get(cache, ROLE_CODES_CACHE_NAME, List.class);
+		if (null != codes) {
+			for (int i = 0; i < codes.size(); i++) {
+				String code = codes.get(i);
+				roles.add(this.get(cache, ROLE_CACHE_NAME_PREFIX + code, Role.class));
+			}
+		}
+		return roles;
+	}
+	
+	@Override
+	public Role getRole(String code) {
+		return this.get(this.getCache(), ROLE_CACHE_NAME_PREFIX + code, Role.class);
+	}
+	
 	@Override
 	public void addRole(Role role) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		this.manageRole(role, Operation.ADD);
 	}
 
 	@Override
 	public void updateRole(Role role) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		this.manageRole(role, Operation.UPDATE);
 	}
 
 	@Override
 	public void removeRole(Role role) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		this.manageRole(role, Operation.DELETE);
+	}
+	
+	private void manageRole(Role role, Operation operation) {
+		if (null == role) {
+			return;
+		}
+		Cache cache = this.getCache();
+		List<String> codes = (List<String>) this.get(cache, ROLE_CODES_CACHE_NAME, List.class);
+		if (Operation.ADD.equals(operation)) {
+			if (!codes.contains(role.getName())) {
+				codes.add(role.getName());
+				cache.put(ROLE_CODES_CACHE_NAME, codes);
+			}
+			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
+		} else if (Operation.UPDATE.equals(operation) && codes.contains(role.getName())) {
+			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
+		} else if (Operation.DELETE.equals(operation)) {
+			codes.remove(role.getName());
+			cache.evict(ROLE_CACHE_NAME_PREFIX + role.getName());
+			cache.put(ROLE_CODES_CACHE_NAME, codes);
+		}
 	}
 
 	@Override
+	public List<Permission> getPermissions() {
+		List<Permission> permissions = new ArrayList<Permission>();
+		Cache cache = this.getCache();
+		List<String> codes = (List<String>) this.get(cache, PERMISSION_CODES_CACHE_NAME, List.class);
+		if (null != codes) {
+			for (int i = 0; i < codes.size(); i++) {
+				String code = codes.get(i);
+				permissions.add(this.get(cache, PERMISSION_CACHE_NAME_PREFIX + code, Permission.class));
+			}
+		}
+		return permissions;
+	}
+
+	@Override
+	public Permission getPermission(String code) {
+		return this.get(this.getCache(), PERMISSION_CACHE_NAME_PREFIX + code, Permission.class);
+	}
+	
+	@Override
 	public void addPermission(Permission permission) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		this.managePermission(permission, Operation.ADD);
 	}
 
 	@Override
 	public void updatePermission(Permission permission) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		this.managePermission(permission, Operation.UPDATE);
 	}
 
 	@Override
 	public void removePermission(String permissionName) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		Permission permission = this.getPermission(permissionName);
+		this.managePermission(permission, Operation.DELETE);
+	}
+	
+	private void managePermission(Permission permission, Operation operation) {
+		if (null == permission) {
+			return;
+		}
+		Cache cache = this.getCache();
+		List<String> codes = (List<String>) this.get(cache, PERMISSION_CODES_CACHE_NAME, List.class);
+		if (Operation.ADD.equals(operation)) {
+			if (!codes.contains(permission.getName())) {
+				codes.add(permission.getName());
+				cache.put(PERMISSION_CODES_CACHE_NAME, codes);
+			}
+			cache.put(PERMISSION_CACHE_NAME_PREFIX + permission.getName(), permission);
+		} else if (Operation.UPDATE.equals(operation) && codes.contains(permission.getName())) {
+			cache.put(PERMISSION_CACHE_NAME_PREFIX + permission.getName(), permission);
+		} else if (Operation.DELETE.equals(operation)) {
+			codes.remove(permission.getName());
+			cache.evict(PERMISSION_CACHE_NAME_PREFIX + permission.getName());
+			cache.put(PERMISSION_CODES_CACHE_NAME, codes);
+		}
 	}
 
 	@Override

@@ -22,31 +22,29 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.services.group.cache.IGroupManagerCacheWrapper;
 
 /**
  * Servizio gestore dei gruppi.
+ *
  * @author E.Santoboni
  */
-public class GroupManager extends AbstractService implements IGroupManager  {
-	
+public class GroupManager extends AbstractService implements IGroupManager {
+
 	private static final Logger _logger = LoggerFactory.getLogger(GroupManager.class);
 	
+	private IGroupDAO _groupDao;
+	private IGroupManagerCacheWrapper _cacheWrapper;
+
 	@Override
 	public void init() throws Exception {
-		this.loadGroups();
-		_logger.debug("{} ready. Initialized {}  user groups", this.getClass().getName(), _groups.size());
+		this.getCacheWrapper().initCache(this.getGroupDAO());
+		_logger.debug("{} ready. Initialized", this.getClass().getName());
 	}
-	
-	private void loadGroups() throws ApsSystemException {
-		try {
-			_groups = this.getGroupDAO().loadGroups();
-		} catch (Throwable t) {
-			throw new ApsSystemException("Error loading the group list", t);
-		}
-	}
-	
+
 	/**
 	 * Aggiunge un gruppo nel sistema.
+	 *
 	 * @param group Il gruppo da aggiungere.
 	 * @throws ApsSystemException In caso di errori in accesso al db.
 	 */
@@ -54,15 +52,16 @@ public class GroupManager extends AbstractService implements IGroupManager  {
 	public void addGroup(Group group) throws ApsSystemException {
 		try {
 			this.getGroupDAO().addGroup(group);
-			_groups.put(group.getName(), group );
+			this.getCacheWrapper().addGroup(group);
 		} catch (Throwable t) {
 			_logger.error("Error detected while adding a group", t);
 			throw new ApsSystemException("Error detected while adding a group", t);
 		}
 	}
-	
+
 	/**
 	 * Rimuove un gruppo dal sistema.
+	 *
 	 * @param group Il gruppo da rimuovere.
 	 * @throws ApsSystemException In caso di errori in accesso al db.
 	 */
@@ -70,15 +69,16 @@ public class GroupManager extends AbstractService implements IGroupManager  {
 	public void removeGroup(Group group) throws ApsSystemException {
 		try {
 			this.getGroupDAO().deleteGroup(group);
-			_groups.remove(group.getName());
+			this.getCacheWrapper().removeGroup(group);
 		} catch (Throwable t) {
 			_logger.error("Error while removing a group", t);
 			throw new ApsSystemException("Error while removing a group", t);
 		}
 	}
-	
+
 	/**
 	 * Aggiorna un gruppo di sistema.
+	 *
 	 * @param group Il gruppo da aggiornare.
 	 * @throws ApsSystemException In caso di errori in accesso al db.
 	 */
@@ -86,56 +86,59 @@ public class GroupManager extends AbstractService implements IGroupManager  {
 	public void updateGroup(Group group) throws ApsSystemException {
 		try {
 			this.getGroupDAO().updateGroup(group);
-			Group groupInMap = this.getGroup(group.getName());
-			groupInMap.setDescr(group.getDescr());
+			this.getCacheWrapper().updateGroup(group);
 		} catch (Throwable t) {
 			_logger.error("Error updating a group", t);
 			throw new ApsSystemException("Error updating a group", t);
 		}
 	}
-	
+
 	/**
 	 * Restituisce la lista dei gruppi presenti nel sistema.
+	 *
 	 * @return La lista dei gruppi presenti nel sistema.
 	 */
 	@Override
 	public List<Group> getGroups() {
-		return new ArrayList<Group>(_groups.values());
+		return new ArrayList<Group>(this.getGroupsMap().values());
 	}
-	
+
 	/**
-	 * Restituisce la mappa dei gruppi presenti nel sistema. 
-	 * La mappa è indicizzata in base al nome del gruppo.
+	 * Restituisce la mappa dei gruppi presenti nel sistema. La mappa è
+	 * indicizzata in base al nome del gruppo.
+	 *
 	 * @return La mappa dei gruppi presenti nel sistema.
 	 */
 	@Override
 	public Map<String, Group> getGroupsMap() {
-		return _groups;
+		return this.getCacheWrapper().getGroups();
 	}
-	
+
 	/**
 	 * Restituisce un gruppo in base al nome.
+	 *
 	 * @param groupName Il nome del gruppo.
 	 * @return Il gruppo cercato.
 	 */
 	@Override
 	public Group getGroup(String groupName) {
-		return (Group) this._groups.get(groupName);
+		return this.getCacheWrapper().getGroup(groupName);
 	}
-	
+
 	protected IGroupDAO getGroupDAO() {
 		return this._groupDao;
 	}
+
 	public void setGroupDAO(IGroupDAO groupDao) {
 		this._groupDao = groupDao;
 	}
-	
-	/**
-	 * La mappa dei gruppi presenti nel sistema 
-	 * indicizzata in base al nome del gruppo.
-	 */
-	private Map<String, Group> _groups;
-	
-	private IGroupDAO _groupDao;
+
+	protected IGroupManagerCacheWrapper getCacheWrapper() {
+		return _cacheWrapper;
+	}
+
+	public void setCacheWrapper(IGroupManagerCacheWrapper cacheWrapper) {
+		this._cacheWrapper = cacheWrapper;
+	}
 	
 }

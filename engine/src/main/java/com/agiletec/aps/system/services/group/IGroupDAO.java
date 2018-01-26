@@ -16,40 +16,46 @@ package com.agiletec.aps.system.services.group;
 import java.util.Map;
 
 /**
- * Interfaccia base per i Data Access Object degli oggetti Group. 
+ * Interfaccia base per i Data Access Object degli oggetti Group.
+ *
  * @author E.Santoboni
  */
-public interface IGroupDAO /*extends IApsAuthorityDAO*/ {
-	
+public interface IGroupDAO {
+
 	/**
-	 * Carica la mappa dei gruppi presenti nel sistema 
-	 * indicizzandola in base al nome del gruppo.
+	 * Carica la mappa dei gruppi presenti nel sistema indicizzandola in base al
+	 * nome del gruppo.
+	 *
 	 * @return La mappa dei gruppi presenti nel sistema.
 	 */
 	public Map<String, Group> loadGroups();
-	
+
 	/**
 	 * Aggiunge un gruppo nel db.
+	 *
 	 * @param group Il gruppo da aggiungere.
 	 */
 	public void addGroup(Group group);
-	
+
 	/**
 	 * Aggiorna un gruppo nel db.
+	 *
 	 * @param group Il gruppo da aggiornare.
 	 */
 	public void updateGroup(Group group);
-	
+
 	/**
 	 * Rimuove un gruppo dal db.
+	 *
 	 * @param group Il gruppo da rimuovere.
 	 */
 	public void deleteGroup(Group group);
-	
+
 	/**
 	 * Rimuove un gruppo dal sistema.
+	 *
 	 * @param groupName Il nome del gruppo da rimuovere.
 	 */
 	public void deleteGroup(String groupName);
-	
+
 }

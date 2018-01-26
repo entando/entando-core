@@ -46,6 +46,8 @@
 					  p:name="Entando_RoleManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_GroupManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_LangManager" />
 			</set>
 		</property>
 	</bean>
@@ -148,10 +150,15 @@
 		<property name="userManager" ref="UserManager" />
 		<property name="authorizationManager" ref="AuthorizationManager" />
 	</bean>
-
+	
 	<bean id="LangManager" class="com.agiletec.aps.system.services.lang.LangManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="BaseConfigManager" >
 		<property name="configManager" ref="BaseConfigManager"/>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.lang.cache.LangManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
 	</bean>
 
 	<bean id="CategoryManager" class="com.agiletec.aps.system.services.category.CategoryManager"

@@ -44,6 +44,8 @@
 					  p:name="Entando_ConfigManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_RoleManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_GroupManager" />
 			</set>
 		</property>
 	</bean>
@@ -84,10 +86,15 @@
 	</bean>
 
 	<bean id="GroupManager" class="com.agiletec.aps.system.services.group.GroupManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="groupDAO" >
 			<bean class="com.agiletec.aps.system.services.group.GroupDAO">
 				<property name="dataSource" ref="servDataSource" />
+			</bean>
+		</property>
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.group.cache.GroupManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>
 	</bean>

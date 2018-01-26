@@ -104,20 +104,20 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 
 	@Override
 	public void addRole(Role role) {
-		this.manageRole(role, Action.ADD);
+		this.manage(role, Action.ADD);
 	}
 
 	@Override
 	public void updateRole(Role role) {
-		this.manageRole(role, Action.UPDATE);
+		this.manage(role, Action.UPDATE);
 	}
 
 	@Override
 	public void removeRole(Role role) {
-		this.manageRole(role, Action.DELETE);
+		this.manage(role, Action.DELETE);
 	}
 
-	private void manageRole(Role role, Action operation) {
+	private void manage(Role role, Action operation) {
 		if (null == role) {
 			return;
 		}

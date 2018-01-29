@@ -126,9 +126,9 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		this.setExpirationTime(DEFAULT_CACHE_NAME, key, expiresInMinute);
 	}
 
-	public void setExpirationTime(String targhetCache, String key, int expiresInMinute) {
+	public void setExpirationTime(String targetCache, String key, int expiresInMinute) {
 		Date expirationTime = DateUtils.addMinutes(new Date(), expiresInMinute);
-		this.setExpirationTime(targhetCache, key, expirationTime);
+		this.setExpirationTime(targetCache, key, expirationTime);
 	}
 
 	@Deprecated
@@ -136,16 +136,16 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		this.setExpirationTime(DEFAULT_CACHE_NAME, key, expiresInSeconds);
 	}
 
-	public void setExpirationTime(String targhetCache, String key, long expiresInSeconds) {
+	public void setExpirationTime(String targetCache, String key, long expiresInSeconds) {
 		Date expirationTime = DateUtils.addSeconds(new Date(), (int) expiresInSeconds);
-		this.setExpirationTime(targhetCache, key, expirationTime);
+		this.setExpirationTime(targetCache, key, expirationTime);
 	}
 
-	public void setExpirationTime(String targhetCache, String key, Date expirationTime) {
-		Map<String, Date> expirationTimes = _objectExpirationTimes.get(targhetCache);
+	public void setExpirationTime(String targetCache, String key, Date expirationTime) {
+		Map<String, Date> expirationTimes = _objectExpirationTimes.get(targetCache);
 		if (null == expirationTimes) {
 			expirationTimes = new HashMap<String, Date>();
-			_objectExpirationTimes.put(targhetCache, expirationTimes);
+			_objectExpirationTimes.put(targetCache, expirationTimes);
 		}
 		expirationTimes.put(key.toString(), expirationTime);
 	}
@@ -196,8 +196,8 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	}
 
 	@Override
-	public void flushEntry(String targhetCache, String key) {
-		this.getCache(targhetCache).evict(key);
+	public void flushEntry(String targetCache, String key) {
+		this.getCache(targetCache).evict(key);
 	}
 
 	/**
@@ -214,12 +214,12 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	/**
 	 * Put an object on the given cache.
 	 *
-	 * @param targhetCache The cache name
+	 * @param targetCache The cache name
 	 * @param key The key
 	 * @param obj The object to put into cache.
 	 */
-	public void putInCache(String targhetCache, String key, Object obj) {
-		Cache cache = this.getCache(targhetCache);
+	public void putInCache(String targetCache, String key, Object obj) {
+		Cache cache = this.getCache(targetCache);
 		cache.put(key, obj);
 	}
 
@@ -228,10 +228,10 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		this.putInCache(DEFAULT_CACHE_NAME, key, obj, groups);
 	}
 
-	public void putInCache(String targhetCache, String key, Object obj, String[] groups) {
-		Cache cache = this.getCache(targhetCache);
+	public void putInCache(String targetCache, String key, Object obj, String[] groups) {
+		Cache cache = this.getCache(targetCache);
 		cache.put(key, obj);
-		this.accessOnGroupMapping(targhetCache, 1, groups, key);
+		this.accessOnGroupMapping(targetCache, 1, groups, key);
 	}
 
 	@Deprecated
@@ -239,14 +239,14 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		return getFromCache(DEFAULT_CACHE_NAME, key);
 	}
 
-	public Object getFromCache(String targhetCache, String key) {
-		Cache cache = this.getCache(targhetCache);
+	public Object getFromCache(String targetCache, String key) {
+		Cache cache = this.getCache(targetCache);
 		Cache.ValueWrapper element = cache.get(key);
 		if (null == element) {
 			return null;
 		}
-		if (isExpired(targhetCache, key)) {
-			this.flushEntry(targhetCache, key);
+		if (isExpired(targetCache, key)) {
+			this.flushEntry(targetCache, key);
 			return null;
 		}
 		return element.get();
@@ -264,9 +264,9 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	}
 
 	@Override
-	public void flushGroup(String targhetCache, String group) {
+	public void flushGroup(String targetCache, String group) {
 		String[] groups = {group};
-		this.accessOnGroupMapping(targhetCache, -1, groups, null);
+		this.accessOnGroupMapping(targetCache, -1, groups, null);
 	}
 
 	@Override
@@ -276,7 +276,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	}
 
 	@Override
-	public void putInGroup(String targhetCache, String key, String[] groups) {
+	public void putInGroup(String targetCache, String key, String[] groups) {
 		this.accessOnGroupMapping(DEFAULT_CACHE_NAME, 1, groups, key);
 	}
 
@@ -285,13 +285,13 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		this.accessOnGroupMapping(DEFAULT_CACHE_NAME, operationId, groups, key);
 	}
 
-	protected synchronized void accessOnGroupMapping(String targhetCache, int operationId, String[] groups, String key) {
-		Map<String, List<String>> objectsByGroup = this._cachesObjectGroups.get(targhetCache);
+	protected synchronized void accessOnGroupMapping(String targetCache, int operationId, String[] groups, String key) {
+		Map<String, List<String>> objectsByGroup = this._cachesObjectGroups.get(targetCache);
 		if (operationId > 0) {
 			//add
 			if (null == objectsByGroup) {
 				objectsByGroup = new HashMap<String, List<String>>();
-				this._cachesObjectGroups.put(targhetCache, objectsByGroup);
+				this._cachesObjectGroups.put(targetCache, objectsByGroup);
 			}
 			for (int i = 0; i < groups.length; i++) {
 				String group = groups[i];
@@ -315,7 +315,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 				if (null != objectKeys) {
 					for (int j = 0; j < objectKeys.size(); j++) {
 						String extractedKey = objectKeys.get(j);
-						this.flushEntry(targhetCache, extractedKey);
+						this.flushEntry(targetCache, extractedKey);
 					}
 					objectsByGroup.remove(group);
 				}

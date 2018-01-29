@@ -24,8 +24,8 @@ import com.agiletec.aps.system.services.group.TestGroupManager;
 import com.agiletec.aps.system.services.i18n.TestI18nManager;
 import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorDAO;
 import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorManager;
-import com.agiletec.aps.system.services.lang.TestLangManager;
-import com.agiletec.aps.system.services.lang.TestLangManagerUnit;
+import com.agiletec.aps.system.services.lang.LangManagerIntegrationTest;
+import com.agiletec.aps.system.services.lang.LangManagerTest;
 import com.agiletec.aps.system.services.page.TestPageManager;
 import com.agiletec.aps.system.services.page.widget.TestNavigatorExpression;
 import com.agiletec.aps.system.services.page.widget.TestNavigatorParser;
@@ -45,6 +45,7 @@ import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
 import com.agiletec.aps.util.TestHtmlHandler;
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestGroupUtilizer;
+import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -65,7 +66,6 @@ import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectV
 import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
-import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
@@ -104,8 +104,8 @@ public class AllTests {
 		suite.addTestSuite(TestKeyGeneratorDAO.class);
 		suite.addTestSuite(TestKeyGeneratorManager.class);
 		//
-		suite.addTestSuite(TestLangManager.class);
-		suite.addTest(new JUnit4TestAdapter(TestLangManagerUnit.class));
+		suite.addTestSuite(LangManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(LangManagerTest.class));
 		//
 		suite.addTestSuite(TestPageManager.class);
 		suite.addTestSuite(TestNavigatorExpression.class);
@@ -168,6 +168,7 @@ public class AllTests {
 		suite.addTestSuite(TestDataObjectDispenser.class);
 
 		suite.addTestSuite(TestSearchEngineManager.class);
+
 		return suite;
 	}
 

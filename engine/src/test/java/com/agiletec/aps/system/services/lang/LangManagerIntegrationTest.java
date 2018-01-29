@@ -23,7 +23,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @version 1.0
  * @author M.Diana - W.Ambu - S.Didaci
  */
-public class TestLangManager extends BaseTestCase {
+public class LangManagerIntegrationTest extends BaseTestCase {
+
+	private ILangManager _langManager = null;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -106,7 +108,5 @@ public class TestLangManager extends BaseTestCase {
 			throw new Exception(t);
 		}
 	}
-
-	private ILangManager _langManager = null;
 
 }

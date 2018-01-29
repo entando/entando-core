@@ -73,11 +73,11 @@ public class LangManager extends AbstractService implements ILangManager {
 
 	private void loadAssignableLangs() throws ApsSystemException {
 		try {
-			InputStream is = this.getClass().getResourceAsStream("ISO_639 -1_langs.xml");
+			InputStream is = this.getClass().getResourceAsStream("ISO_639-1_langs.xml");
 			String xmlConfig = FileTextReader.getText(is);
 			LangDOM langDom = new LangDOM(xmlConfig);
 			List<Lang> tempList = langDom.getLangs();
-			this._assignableLangs = new HashMap<>();
+			this._assignableLangs = new HashMap<String, Lang>();
 			for (int i = 0; i < tempList.size(); i++) {
 				Lang lang = (Lang) tempList.get(i);
 				this._assignableLangs.put(lang.getCode(), lang);

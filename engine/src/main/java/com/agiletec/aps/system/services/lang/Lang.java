@@ -17,75 +17,83 @@ import java.io.Serializable;
 
 /**
  * Rappresentazione di una lingua
+ *
  * @author M.Diana
  */
 public class Lang implements Comparable, Serializable {
-	
+
 	/**
 	 * Restituisce il codice della lingua
+	 *
 	 * @return Il codice della lingua
 	 */
 	public String getCode() {
-		return _code;
+		return code;
 	}
 
 	/**
 	 * Imposta il codice della lingua
+	 *
 	 * @param code Il codice da impostare
 	 */
 	public void setCode(String code) {
-		this._code = code;
+		this.code = code;
 	}
 
 	/**
 	 * Restituisce la descrizione della lingua
+	 *
 	 * @return la descrizione della lingua
 	 */
 	public String getDescr() {
-		return _descr;
+		return descr;
 	}
 
 	/**
 	 * Imposta la descrizione della lingua
+	 *
 	 * @param descr la descrizione da impostare
 	 */
 	public void setDescr(String descr) {
-		this._descr = descr;
+		this.descr = descr;
 	}
-	
+
 	/**
 	 * Definisce se la lingua è di default
+	 *
 	 * @param isDefault Vero se la lingua è quella di default
 	 */
 	public void setDefault(boolean isDefault) {
-		this._isDefaultLang = isDefault;
+		this.defaultLang = isDefault;
 	}
-	
+
 	/**
 	 * Restituisce un booleano che indica se la lingua è quella di default.
+	 *
 	 * @return Vero se la lingua è quella di default.
 	 */
-	public boolean isDefault(){
-		return this._isDefaultLang;
+	public boolean isDefault() {
+		return this.defaultLang;
 	}
-	
+
+	@Override
 	public int compareTo(Object lang) {
-		return _descr.compareTo(((Lang) lang).getDescr());
+		return this.descr.compareTo(((Lang) lang).getDescr());
 	}
-	
+
 	/**
 	 * Il codice della lingua
 	 */
-	private String _code;
-	
+	private String code;
+
 	/**
 	 * La descrizione della lingua
 	 */
-	private String _descr;
-	
+	private String descr;
+
 	/**
 	 * La proprietà default
 	 */
-	private boolean _isDefaultLang = false;
-	
+	private boolean defaultLang = false;
+
 }

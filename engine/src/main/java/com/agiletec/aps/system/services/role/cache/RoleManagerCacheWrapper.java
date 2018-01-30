@@ -33,8 +33,7 @@ import org.springframework.cache.Cache;
 public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRoleManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RoleManagerCacheWrapper.class);
-	private static enum Action {ADD, UPDATE, DELETE}
-	
+
 	@Override
 	public void initCache(IRoleDAO roleDAO, IPermissionDAO permissionDAO) throws ApsSystemException {
 		try {
@@ -83,7 +82,7 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 		}
 		cache.put(PERMISSION_CODES_CACHE_NAME, permissionCodes);
 	}
-	
+
 	@Override
 	public List<Role> getRoles() {
 		List<Role> roles = new ArrayList<Role>();
@@ -97,28 +96,28 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 		}
 		return roles;
 	}
-	
+
 	@Override
 	public Role getRole(String code) {
 		return this.get(this.getCache(), ROLE_CACHE_NAME_PREFIX + code, Role.class);
 	}
-	
+
 	@Override
 	public void addRole(Role role) {
-		this.manageRole(role, Action.ADD);
+		this.manage(role, Action.ADD);
 	}
 
 	@Override
 	public void updateRole(Role role) {
-		this.manageRole(role, Action.UPDATE);
+		this.manage(role, Action.UPDATE);
 	}
 
 	@Override
 	public void removeRole(Role role) {
-		this.manageRole(role, Action.DELETE);
+		this.manage(role, Action.DELETE);
 	}
-	
-	private void manageRole(Role role, Action operation) {
+
+	private void manage(Role role, Action operation) {
 		if (null == role) {
 			return;
 		}
@@ -157,7 +156,7 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 	public Permission getPermission(String code) {
 		return this.get(this.getCache(), PERMISSION_CACHE_NAME_PREFIX + code, Permission.class);
 	}
-	
+
 	@Override
 	public void addPermission(Permission permission) {
 		this.managePermission(permission, Action.ADD);
@@ -173,7 +172,7 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 		Permission permission = this.getPermission(permissionName);
 		this.managePermission(permission, Action.DELETE);
 	}
-	
+
 	private void managePermission(Permission permission, Action operation) {
 		if (null == permission) {
 			return;

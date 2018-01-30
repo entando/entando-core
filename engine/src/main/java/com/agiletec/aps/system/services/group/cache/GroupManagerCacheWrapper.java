@@ -33,10 +33,6 @@ public class GroupManagerCacheWrapper extends AbstractCacheWrapper implements IG
 
 	private static final Logger _logger = LoggerFactory.getLogger(GroupManagerCacheWrapper.class);
 
-	private static enum Action {
-		ADD, UPDATE, DELETE
-	}
-
 	@Override
 	public void initCache(IGroupDAO groupDAO) throws ApsSystemException {
 		try {
@@ -97,20 +93,20 @@ public class GroupManagerCacheWrapper extends AbstractCacheWrapper implements IG
 
 	@Override
 	public void addGroup(Group group) {
-		this.manageGroup(group, Action.ADD);
+		this.manage(group, Action.ADD);
 	}
 
 	@Override
 	public void updateGroup(Group group) {
-		this.manageGroup(group, Action.UPDATE);
+		this.manage(group, Action.UPDATE);
 	}
 
 	@Override
 	public void removeGroup(Group group) {
-		this.manageGroup(group, Action.DELETE);
+		this.manage(group, Action.DELETE);
 	}
 
-	private void manageGroup(Group group, Action operation) {
+	private void manage(Group group, Action operation) {
 		if (null == group) {
 			return;
 		}

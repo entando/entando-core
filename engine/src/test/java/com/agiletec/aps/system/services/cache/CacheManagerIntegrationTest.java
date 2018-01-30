@@ -21,7 +21,7 @@ import com.agiletec.aps.system.SystemConstants;
  * @version 1.0
  * @author E.Santoboni
  */
-public class TestCacheManager extends BaseTestCase {
+public class CacheManagerIntegrationTest extends BaseTestCase {
 	
 	@Override
     protected void setUp() throws Exception {

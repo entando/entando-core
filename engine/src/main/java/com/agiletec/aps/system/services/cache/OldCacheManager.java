@@ -52,12 +52,6 @@ public class OldCacheManager extends AbstractService implements ICacheManager {
 	}
 
 	@Override
-	@Deprecated
-	public Object getFromCache(String key, int myRefreshPeriod) {
-		return this.getFromCache(key);
-	}
-
-	@Override
 	public Object getFromCache(String key) {
 		if (this.getCacheInfoManager() instanceof CacheInfoManager) {
 			return ((CacheInfoManager) this.getCacheInfoManager()).getFromCache(ICacheInfoManager.DEFAULT_CACHE_NAME, key);

@@ -129,7 +129,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		Date expirationTime = DateUtils.addSeconds(new Date(), (int) expiresInSeconds);
 		this.setExpirationTime(targetCache, key, expirationTime);
 	}
-	
+
 	public void setExpirationTime(String targetCache, String key, Date expirationTime) {
 		Cache cache = this.getCache(CACHE_INFO_MANAGER_CACHE_NAME);
 		Map<String, Date> expirationTimes = this.get(cache, EXPIRATIONS_CACHE_NAME_PREFIX + targetCache, Map.class);
@@ -200,7 +200,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		cache.put(key, obj);
 		this.accessOnGroupMapping(targetCache, 1, groups, key);
 	}
-	
+
 	@Override
 	public void flushGroup(String targetCache, String group) {
 		String[] groups = {group};
@@ -265,11 +265,11 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		}
 		return caches;
 	}
-	
+
 	protected boolean isNotExpired(String targetCache, String key) {
 		return !isExpired(targetCache, key);
 	}
-	
+
 	@Override
 	public boolean isExpired(String targetCache, String key) {
 		if (StringUtils.isBlank(targetCache)) {
@@ -298,11 +298,15 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		return this.getSpringCacheManager().getCache(cacheName);
 	}
 
-	public Object getFromCache(String cacheName, String key) {
-		Cache cache = this.getCache(cacheName);
+	public Object getFromCache(String targetCache, String key) {
+		if (isExpired(targetCache, key)) {
+			this.flushEntry(targetCache, key);
+			return null;
+		}
+		Cache cache = this.getCache(targetCache);
 		return this.get(cache, key, Object.class);
 	}
-	
+
 	protected <T> T get(String name, Class<T> requiredType) {
 		Cache cache = this.getCache(CACHE_INFO_MANAGER_CACHE_NAME);
 		return this.get(cache, name, requiredType);

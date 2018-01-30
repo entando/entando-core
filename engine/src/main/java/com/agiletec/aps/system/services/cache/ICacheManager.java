@@ -17,6 +17,7 @@ import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 
 /**
  * Interfaccia base per i servizi gestore cache.
+ *
  * @author E.Santoboni
  */
 @Deprecated
@@ -30,6 +31,7 @@ public interface ICacheManager {
 
 	/**
 	 * Flushes a single cache entry.
+	 *
 	 * @param key The key entered by the user.
 	 */
 	@Deprecated
@@ -37,6 +39,7 @@ public interface ICacheManager {
 
 	/**
 	 * Flushes all items that belong to the specified group.
+	 *
 	 * @param group The name of the group to flush.
 	 */
 	@Deprecated
@@ -44,6 +47,7 @@ public interface ICacheManager {
 
 	/**
 	 * Put an object in a cache.
+	 *
 	 * @param key The key entered by the user.
 	 * @param obj The object to store.
 	 */
@@ -52,29 +56,22 @@ public interface ICacheManager {
 
 	/**
 	 * Put an object in a cache.
+	 *
 	 * @param key The key entered by the user.
 	 * @param obj The object to store.
 	 * @param groups The groups that this object belongs to.
 	 */
 	@Deprecated
 	public void putInCache(String key, Object obj, String[] groups);
-	
+
 	/**
 	 * Get an object from the cache.
+	 *
 	 * @param key The key entered by the user.
 	 * @return The object from cache.
 	 */
 	@Deprecated
 	public Object getFromCache(String key);
-
-	/**
-	 * Get an object from the cache.
-	 * @param key The key entered by the user.
-	 * @param myRefreshPeriod How long the object can stay in cache in seconds.
-	 * @return The object from cache.
-	 */
-	@Deprecated
-	public Object getFromCache(String key, int myRefreshPeriod);
 
 	@Deprecated
 	public void putInCacheGroups(String key, String[] groups);

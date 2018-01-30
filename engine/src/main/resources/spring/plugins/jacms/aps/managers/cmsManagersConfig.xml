@@ -129,6 +129,7 @@
 	
     <bean id="jacmsBaseContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper" >
         <property name="contentManager" ref="jacmsContentManager" />
+		<property name="cacheInfoManager" ref="CacheInfoManager" />
     </bean>
     
     <bean id="jacmsContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper" >
@@ -137,6 +138,7 @@
         <property name="userFilterDateFormat">
             <value>${jacms.frontend.userfilter.dateFormat}</value>
         </property>
+		<property name="cacheInfoManager" ref="CacheInfoManager" />
     </bean>
     
     <bean id="jacmsContentViewerHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentViewerHelper" >

@@ -36,23 +36,13 @@ public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILa
 		try {
 			Cache cache = this.getCache();
 			this.releaseCachedObjects(cache);
-			List<Lang> systemLangs = this.loadSystemLangs(xmlConfig);
+			LangDOM langDom = new LangDOM(xmlConfig);
+			List<Lang> systemLangs = langDom.getLangs();
 			this.insertObjectsOnCache(cache, systemLangs);
 		} catch (Throwable t) {
 			logger.error("Error loading the system langs", t);
 			throw new ApsSystemException("Error loading the system langs", t);
 		}
-	}
-
-	private List<Lang> loadSystemLangs(String xmlConfig) throws ApsSystemException {
-		LangDOM langDom = new LangDOM(xmlConfig);
-		List<Lang> tempList = langDom.getLangs();
-		List<Lang> langList = new ArrayList<Lang>(tempList.size());
-		for (int i = 0; i < tempList.size(); i++) {
-			Lang lang = (Lang) tempList.get(i);
-			langList.add(lang);
-		}
-		return langList;
 	}
 
 	protected void releaseCachedObjects(Cache cache) {

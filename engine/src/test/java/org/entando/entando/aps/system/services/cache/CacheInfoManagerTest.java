@@ -15,16 +15,15 @@ package org.entando.entando.aps.system.services.cache;
 
 import java.lang.annotation.Annotation;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.springframework.cache.CacheManager;
 
 /**
@@ -32,10 +31,7 @@ import org.springframework.cache.CacheManager;
  */
 public class CacheInfoManagerTest {
 	
-	@Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @Mock
+	@Mock
     private CacheManager cacheManager;
 
     @Mock
@@ -93,6 +89,22 @@ public class CacheInfoManagerTest {
         Mockito.verify(proceedingJoinPoint, Mockito.times(1)).getTarget();
         Mockito.verify(cacheInfoManager, Mockito.times(2))
 				.flushGroup(Mockito.any(String.class), Mockito.any(String.class));
+    }
+	
+    @Test
+    public void setExpirationTimeInMinutes() throws Throwable {
+		Map<String, Date> map = new HashMap<String, Date>();
+		Mockito.when(cacheInfoManager.get(Mockito.anyString(), Map.class)).thenReturn(map);
+        cacheInfoManager.setExpirationTime("targetCacheName1", "testkey2", 1);
+        Mockito.verify(cacheInfoManager, Mockito.times(1)).getCache(Mockito.anyString());
+    }
+	
+    @Test
+    public void setExpirationTimeInSeconds() throws Throwable {
+		Map<String, Date> map = new HashMap<String, Date>();
+		Mockito.when(cacheInfoManager.get(Mockito.anyString(), Map.class)).thenReturn(map);
+        cacheInfoManager.setExpirationTime("targetCacheName2", "testkey2", 2l);
+        Mockito.verify(cacheInfoManager, Mockito.times(1)).getCache(Mockito.anyString());
     }
 	
 }

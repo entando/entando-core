@@ -29,7 +29,7 @@ import org.springframework.cache.Cache;
  */
 public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILangManagerCacheWrapper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(LangManagerCacheWrapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(LangManagerCacheWrapper.class);
 
 	@Override
 	public void initCache(String xmlConfig) throws ApsSystemException {
@@ -39,7 +39,7 @@ public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILa
 			List<Lang> systemLangs = this.loadSystemLangs(xmlConfig);
 			this.insertObjectsOnCache(cache, systemLangs);
 		} catch (Throwable t) {
-			_logger.error("Error loading the system langs", t);
+			logger.error("Error loading the system langs", t);
 			throw new ApsSystemException("Error loading the system langs", t);
 		}
 	}

@@ -35,15 +35,17 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public class LangDOM {
 
-	private static final Logger _logger = LoggerFactory.getLogger(LangDOM.class);
+	private static final Logger logger = LoggerFactory.getLogger(LangDOM.class);
+	
+	private Document doc;
 	
 	/**
 	 * Costruttore base della classe dom.
 	 */
 	public LangDOM() {
-		this._doc = new Document();
+		this.doc = new Document();
 		Element elementRoot = new Element("Langs");
-		this._doc.setRootElement(elementRoot);
+		this.doc.setRootElement(elementRoot);
 	}
 	
 	/**
@@ -79,7 +81,7 @@ public class LangDOM {
 			defaultElement.setText(new Boolean(lang.isDefault()).toString());
 			langElement.addContent(defaultElement);
 		}
-		_doc.getRootElement().addContent(langElement);
+		this.doc.getRootElement().addContent(langElement);
 	}
 	
 	/**
@@ -88,7 +90,7 @@ public class LangDOM {
 	 */
 	public List<Lang> getLangs() {
 		List<Lang> langs = new ArrayList<Lang>();
-		List<Element> langElements = this._doc.getRootElement().getChildren();
+		List<Element> langElements = this.doc.getRootElement().getChildren();
 		for (int i=0; i<langElements.size(); i++) {
 			Element langElement = (Element) langElements.get(i);
 			Lang lang = new Lang();
@@ -122,7 +124,7 @@ public class LangDOM {
 		XMLOutputter out = new XMLOutputter();
 		Format format = Format.getPrettyFormat();
 		out.setFormat(format);
-		String xml = out.outputString(_doc);
+		String xml = out.outputString(this.doc);
 		return xml;
 	}
 	
@@ -131,13 +133,11 @@ public class LangDOM {
 		builder.setValidation(false);
 		StringReader reader = new StringReader(xmlText);
 		try {
-			_doc = builder.build(reader);
+			this.doc = builder.build(reader);
 		} catch (Throwable t) {
-			_logger.error("Error while parsing xml : {}", xmlText, t);
+			logger.error("Error while parsing xml : {}", xmlText, t);
 			throw new ApsSystemException("Error detected while parsing the XML", t);
 		}
 	}
-	
-	private Document _doc;
 
 }

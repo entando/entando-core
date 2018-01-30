@@ -39,19 +39,19 @@ import org.slf4j.LoggerFactory;
  */
 public class LangManager extends AbstractService implements ILangManager {
 
-	private static final Logger _logger = LoggerFactory.getLogger(LangManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(LangManager.class);
 
-	private Map<String, Lang> _assignableLangs;
+	private Map<String, Lang> assignableLangs;
 
-	private ConfigInterface _configManager;
+	private ConfigInterface configManager;
 
-	private ILangManagerCacheWrapper _cacheWrapper;
+	private ILangManagerCacheWrapper cacheWrapper;
 
 	@Override
 	public void init() throws Exception {
 		String xmlConfig = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_LANGS);
 		this.getCacheWrapper().initCache(xmlConfig);
-		_logger.debug("{} ready: initialized", this.getClass().getName());
+		logger.debug("{} ready: initialized", this.getClass().getName());
 	}
 
 	/**
@@ -63,10 +63,10 @@ public class LangManager extends AbstractService implements ILangManager {
 	 */
 	@Override
 	public List<Lang> getAssignableLangs() throws ApsSystemException {
-		if (_assignableLangs == null) {
+		if (assignableLangs == null) {
 			this.loadAssignableLangs();
 		}
-		List<Lang> assignables = new ArrayList<Lang>(_assignableLangs.values());
+		List<Lang> assignables = new ArrayList<Lang>(assignableLangs.values());
 		Collections.sort(assignables);
 		return assignables;
 	}
@@ -77,13 +77,13 @@ public class LangManager extends AbstractService implements ILangManager {
 			String xmlConfig = FileTextReader.getText(is);
 			LangDOM langDom = new LangDOM(xmlConfig);
 			List<Lang> tempList = langDom.getLangs();
-			this._assignableLangs = new HashMap<String, Lang>();
+			this.assignableLangs = new HashMap<String, Lang>();
 			for (int i = 0; i < tempList.size(); i++) {
 				Lang lang = (Lang) tempList.get(i);
-				this._assignableLangs.put(lang.getCode(), lang);
+				this.assignableLangs.put(lang.getCode(), lang);
 			}
 		} catch (ApsSystemException | IOException e) {
-			_logger.error("Error loading langs from iso definition", e);
+			logger.error("Error loading langs from iso definition", e);
 			throw new ApsSystemException("Error loading langs from iso definition", e);
 		}
 	}
@@ -96,10 +96,10 @@ public class LangManager extends AbstractService implements ILangManager {
 	 */
 	@Override
 	public void addLang(String code) throws ApsSystemException {
-		if (this._assignableLangs == null) {
+		if (this.assignableLangs == null) {
 			this.loadAssignableLangs();
 		}
-		Lang lang = (Lang) this._assignableLangs.get(code);
+		Lang lang = (Lang) this.assignableLangs.get(code);
 		if (lang != null) {
 			this.getCacheWrapper().addLang(lang);
 			this.updateConfig();
@@ -180,19 +180,19 @@ public class LangManager extends AbstractService implements ILangManager {
 	}
 
 	protected ConfigInterface getConfigManager() {
-		return _configManager;
+		return configManager;
 	}
 
 	public void setConfigManager(ConfigInterface configManager) {
-		this._configManager = configManager;
+		this.configManager = configManager;
 	}
 
 	protected ILangManagerCacheWrapper getCacheWrapper() {
-		return _cacheWrapper;
+		return cacheWrapper;
 	}
 
 	public void setCacheWrapper(ILangManagerCacheWrapper cacheWrapper) {
-		this._cacheWrapper = cacheWrapper;
+		this.cacheWrapper = cacheWrapper;
 	}
 
 }

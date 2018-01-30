@@ -28,7 +28,7 @@ public class Lang implements Comparable, Serializable {
 	 * @return Il codice della lingua
 	 */
 	public String getCode() {
-		return _code;
+		return code;
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class Lang implements Comparable, Serializable {
 	 * @param code Il codice da impostare
 	 */
 	public void setCode(String code) {
-		this._code = code;
+		this.code = code;
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class Lang implements Comparable, Serializable {
 	 * @return la descrizione della lingua
 	 */
 	public String getDescr() {
-		return _descr;
+		return descr;
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class Lang implements Comparable, Serializable {
 	 * @param descr la descrizione da impostare
 	 */
 	public void setDescr(String descr) {
-		this._descr = descr;
+		this.descr = descr;
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class Lang implements Comparable, Serializable {
 	 * @param isDefault Vero se la lingua è quella di default
 	 */
 	public void setDefault(boolean isDefault) {
-		this._isDefaultLang = isDefault;
+		this.defaultLang = isDefault;
 	}
 
 	/**
@@ -73,27 +73,27 @@ public class Lang implements Comparable, Serializable {
 	 * @return Vero se la lingua è quella di default.
 	 */
 	public boolean isDefault() {
-		return this._isDefaultLang;
+		return this.defaultLang;
 	}
 
 	@Override
 	public int compareTo(Object lang) {
-		return _descr.compareTo(((Lang) lang).getDescr());
+		return this.descr.compareTo(((Lang) lang).getDescr());
 	}
 
 	/**
 	 * Il codice della lingua
 	 */
-	private String _code;
+	private String code;
 
 	/**
 	 * La descrizione della lingua
 	 */
-	private String _descr;
+	private String descr;
 
 	/**
 	 * La proprietà default
 	 */
-	private boolean _isDefaultLang = false;
+	private boolean defaultLang = false;
 
 }

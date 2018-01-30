@@ -121,19 +121,9 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		return pjp.proceed();
 	}
 
-	@Deprecated
-	public void setExpirationTime(String key, int expiresInMinute) {
-		this.setExpirationTime(DEFAULT_CACHE_NAME, key, expiresInMinute);
-	}
-
 	public void setExpirationTime(String targetCache, String key, int expiresInMinute) {
 		Date expirationTime = DateUtils.addMinutes(new Date(), expiresInMinute);
 		this.setExpirationTime(targetCache, key, expirationTime);
-	}
-
-	@Deprecated
-	public void setExpirationTime(String key, long expiresInSeconds) {
-		this.setExpirationTime(DEFAULT_CACHE_NAME, key, expiresInSeconds);
 	}
 
 	public void setExpirationTime(String targetCache, String key, long expiresInSeconds) {
@@ -190,25 +180,8 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	}
 
 	@Override
-	@Deprecated
-	public void flushEntry(String key) {
-		this.flushEntry(null, key);
-	}
-
-	@Override
 	public void flushEntry(String targetCache, String key) {
 		this.getCache(targetCache).evict(key);
-	}
-
-	/**
-	 * Put an object on the default cache.
-	 *
-	 * @param key The key
-	 * @param obj The object to put into cache.
-	 * @deprecated use putInCache(String, String, Object) instead
-	 */
-	public void putInCache(String key, Object obj) {
-		this.putInCache(DEFAULT_CACHE_NAME, key, obj);
 	}
 
 	/**
@@ -223,20 +196,10 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		cache.put(key, obj);
 	}
 
-	@Deprecated
-	public void putInCache(String key, Object obj, String[] groups) {
-		this.putInCache(DEFAULT_CACHE_NAME, key, obj, groups);
-	}
-
 	public void putInCache(String targetCache, String key, Object obj, String[] groups) {
 		Cache cache = this.getCache(targetCache);
 		cache.put(key, obj);
 		this.accessOnGroupMapping(targetCache, 1, groups, key);
-	}
-
-	@Deprecated
-	public Object getFromCache(String key) {
-		return getFromCache(DEFAULT_CACHE_NAME, key);
 	}
 
 	public Object getFromCache(String targetCache, String key) {
@@ -252,17 +215,6 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		return element.get();
 	}
 
-	@Deprecated
-	public Object getFromCache(String key, int myRefreshPeriod) {
-		return this.getFromCache(key);
-	}
-
-	@Override
-	@Deprecated
-	public void flushGroup(String group) {
-		this.flushGroup(DEFAULT_CACHE_NAME, group);
-	}
-
 	@Override
 	public void flushGroup(String targetCache, String group) {
 		String[] groups = {group};
@@ -270,19 +222,8 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	}
 
 	@Override
-	@Deprecated
-	public void putInGroup(String key, String[] groups) {
-		this.accessOnGroupMapping(1, groups, key);
-	}
-
-	@Override
 	public void putInGroup(String targetCache, String key, String[] groups) {
 		this.accessOnGroupMapping(DEFAULT_CACHE_NAME, 1, groups, key);
-	}
-
-	@Deprecated
-	protected synchronized void accessOnGroupMapping(int operationId, String[] groups, String key) {
-		this.accessOnGroupMapping(DEFAULT_CACHE_NAME, operationId, groups, key);
 	}
 
 	protected synchronized void accessOnGroupMapping(String targetCache, int operationId, String[] groups, String key) {
@@ -341,13 +282,8 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		return caches;
 	}
 
-	@Deprecated
-	public static boolean isNotExpired(String key) {
-		return isNotExpired(DEFAULT_CACHE_NAME, key);
-	}
-
-	public static boolean isNotExpired(String targhetCache, String key) {
-		return !isExpired(targhetCache, key);
+	public static boolean isNotExpired(String targetCache, String key) {
+		return !isExpired(targetCache, key);
 	}
 
 	@Deprecated
@@ -355,11 +291,11 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 		return isExpired(DEFAULT_CACHE_NAME, key);
 	}
 
-	public static boolean isExpired(String targhetCache, String key) {
-		if (StringUtils.isBlank(targhetCache)) {
-			targhetCache = DEFAULT_CACHE_NAME;
+	public static boolean isExpired(String targetCache, String key) {
+		if (StringUtils.isBlank(targetCache)) {
+			targetCache = DEFAULT_CACHE_NAME;
 		}
-		Map<String, Date> expirationTimes = _objectExpirationTimes.get(targhetCache);
+		Map<String, Date> expirationTimes = _objectExpirationTimes.get(targetCache);
 		if (null == expirationTimes) {
 			return false;
 		}

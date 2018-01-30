@@ -17,25 +17,16 @@ package org.entando.entando.aps.system.services.cache;
  * @author E.Santoboni
  */
 public interface ICacheInfoManager {
-	
-	@Deprecated
-	public void flushEntry(String key);
-	
-	public void flushEntry(String targhetCache, String key);
-	
-	@Deprecated
-	public void flushGroup(String group);
-	
-	public void flushGroup(String targhetCache, String group);
-	
-	@Deprecated
-	public void putInGroup(String key, String[] groups);
-	
-	public void putInGroup(String targhetCache, String key, String[] groups);
-	
+
+	public void flushEntry(String targetCache, String key);
+
+	public void flushGroup(String targetCache, String group);
+
+	public void putInGroup(String targetCache, String key, String[] groups);
+
 	public static final String DEFAULT_CACHE_NAME = "Entando_Cache";
-	
+
 	@Deprecated
 	public static final String CACHE_NAME = DEFAULT_CACHE_NAME;
-	
+
 }

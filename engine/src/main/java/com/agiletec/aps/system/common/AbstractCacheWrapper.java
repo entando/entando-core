@@ -21,6 +21,10 @@ import org.springframework.cache.CacheManager;
  */
 public abstract class AbstractCacheWrapper {
 
+	protected static enum Action {
+		ADD, UPDATE, DELETE
+	}
+
 	private CacheManager _springCacheManager;
 
 	protected abstract String getCacheName();

@@ -23,6 +23,7 @@ import com.agiletec.aps.system.SystemConstants;
  */
 public class TestCacheManager extends BaseTestCase {
 	
+	@Override
     protected void setUp() throws Exception {
     	super.setUp();
     	this.init();

@@ -34,5 +34,7 @@ public interface ICacheInfoManager {
 	public void flushGroup(String targetCache, String group);
 
 	public void putInGroup(String targetCache, String key, String[] groups);
+	
+	public boolean isExpired(String targetCache, String key);
 
 }

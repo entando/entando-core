@@ -77,8 +77,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 			}
 			String[] cacheNames = cacheable.value();
 			Object key = this.evaluateExpression(cacheable.key().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
-			for (int j = 0; j < cacheNames.length; j++) {
-				String cacheName = cacheNames[j];
+			for (String cacheName : cacheNames) {
 				if (cacheableInfo.groups() != null && cacheableInfo.groups().trim().length() > 0) {
 					Object groupsCsv = this.evaluateExpression(cacheableInfo.groups().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
 					if (null != groupsCsv && groupsCsv.toString().trim().length() > 0) {
@@ -108,10 +107,8 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 			Object groupsCsv = this.evaluateExpression(cacheInfoEvict.groups().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
 			if (null != groupsCsv && groupsCsv.toString().trim().length() > 0) {
 				String[] groups = groupsCsv.toString().split(",");
-				for (int i = 0; i < groups.length; i++) {
-					String group = groups[i];
-					for (int j = 0; j < cacheNames.length; j++) {
-						String cacheName = cacheNames[j];
+				for (String group : groups) {
+					for (String cacheName : cacheNames) {
 						this.flushGroup(cacheName, group);
 					}
 				}
@@ -223,8 +220,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 			if (null == objectsByGroup) {
 				objectsByGroup = new HashMap<String, List<String>>();
 			}
-			for (int i = 0; i < groups.length; i++) {
-				String group = groups[i];
+			for (String group : groups) {
 				List<String> objectKeys = objectsByGroup.get(group);
 				if (null == objectKeys) {
 					objectKeys = new ArrayList<String>();
@@ -239,12 +235,10 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 			if (null == objectsByGroup) {
 				return;
 			}
-			for (int i = 0; i < groups.length; i++) {
-				String group = groups[i];
+			for (String group : groups) {
 				List<String> objectKeys = objectsByGroup.get(group);
 				if (null != objectKeys) {
-					for (int j = 0; j < objectKeys.size(); j++) {
-						String extractedKey = objectKeys.get(j);
+					for (String extractedKey : objectKeys) {
 						this.flushEntry(targetCache, extractedKey);
 					}
 					objectsByGroup.remove(group);
@@ -275,8 +269,9 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	protected boolean isNotExpired(String targetCache, String key) {
 		return !isExpired(targetCache, key);
 	}
-
-	protected boolean isExpired(String targetCache, String key) {
+	
+	@Override
+	public boolean isExpired(String targetCache, String key) {
 		if (StringUtils.isBlank(targetCache)) {
 			targetCache = DEFAULT_CACHE_NAME;
 		}

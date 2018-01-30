@@ -48,8 +48,7 @@ public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILa
 	protected void releaseCachedObjects(Cache cache) {
 		List<String> codes = (List<String>) this.get(cache, LANG_CODES_CACHE_NAME, List.class);
 		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
+			for (String code : codes) {
 				cache.evict(LANG_CACHE_NAME_PREFIX + code);
 			}
 			cache.evict(LANG_CODES_CACHE_NAME);
@@ -76,8 +75,7 @@ public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILa
 		Cache cache = this.getCache();
 		List<String> codes = (List<String>) this.get(cache, LANG_CODES_CACHE_NAME, List.class);
 		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
+			for (String code : codes) {
 				Lang lang = this.get(cache, LANG_CACHE_NAME_PREFIX + code, Lang.class);
 				if (lang.isDefault()) {
 					langs.add(0, lang);

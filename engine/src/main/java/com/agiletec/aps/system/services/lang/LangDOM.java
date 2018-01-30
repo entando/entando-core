@@ -62,8 +62,7 @@ public class LangDOM {
 	 * @param langs La lista di lingue da aggiungere.
 	 */
 	public void addLangs(List<Lang> langs) {
-		for (int i=0; i<langs.size(); i++) {
-			Lang lang = (Lang) langs.get(i);
+		for (Lang lang : langs) {
 			this.addLang(lang);
 		}
 	}
@@ -91,8 +90,7 @@ public class LangDOM {
 	public List<Lang> getLangs() {
 		List<Lang> langs = new ArrayList<Lang>();
 		List<Element> langElements = this.doc.getRootElement().getChildren();
-		for (int i=0; i<langElements.size(); i++) {
-			Element langElement = (Element) langElements.get(i);
+		for (Element langElement : langElements) {
 			Lang lang = new Lang();
 			Element codeElement = langElement.getChild("code");
 			if (null != codeElement) {

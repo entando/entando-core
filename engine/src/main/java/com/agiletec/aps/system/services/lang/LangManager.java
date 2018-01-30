@@ -76,10 +76,9 @@ public class LangManager extends AbstractService implements ILangManager {
 			InputStream is = this.getClass().getResourceAsStream("ISO_639-1_langs.xml");
 			String xmlConfig = FileTextReader.getText(is);
 			LangDOM langDom = new LangDOM(xmlConfig);
-			List<Lang> tempList = langDom.getLangs();
+			List<Lang> langs = langDom.getLangs();
 			this.assignableLangs = new HashMap<String, Lang>();
-			for (int i = 0; i < tempList.size(); i++) {
-				Lang lang = (Lang) tempList.get(i);
+			for (Lang lang : langs) {
 				this.assignableLangs.put(lang.getCode(), lang);
 			}
 		} catch (ApsSystemException | IOException e) {

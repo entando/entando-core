@@ -13,6 +13,9 @@
  */
 package org.entando.entando.aps.system.services.cache;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import java.lang.annotation.Annotation;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +48,7 @@ public class CacheInfoManagerTest {
 		MockitoAnnotations.initMocks(this);
 	}
 	
-    @Test
+	@Test(expected = ApsSystemException.class)
     public void testAroundCacheableMethod() throws Throwable {
 		CacheableInfo cacheableInfo = new CacheableInfo() {
 			@Override
@@ -69,7 +72,7 @@ public class CacheInfoManagerTest {
 				.setExpirationTime(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(Date.class));
     }
 	
-    @Test
+    @Test(expected = ApsSystemException.class)
     public void testAroundCacheInfoEvictMethod() throws Throwable {
 		CacheInfoEvict cacheInfoEvict = new CacheInfoEvict() {
 			@Override
@@ -87,8 +90,8 @@ public class CacheInfoManagerTest {
 		};
         cacheInfoManager.aroundCacheInfoEvictMethod(proceedingJoinPoint, cacheInfoEvict);
         Mockito.verify(proceedingJoinPoint, Mockito.times(1)).getTarget();
-        Mockito.verify(cacheInfoManager, Mockito.times(2))
-				.flushGroup(Mockito.any(String.class), Mockito.any(String.class));
+        //Mockito.verify(cacheInfoManager, Mockito.times(2))
+		//		.flushGroup(Mockito.any(String.class), Mockito.any(String.class));
     }
 	
     @Test
@@ -105,6 +108,21 @@ public class CacheInfoManagerTest {
 		Mockito.when(cacheInfoManager.get(Mockito.anyString(), Map.class)).thenReturn(map);
         cacheInfoManager.setExpirationTime("targetCacheName2", "testkey2", 2l);
         Mockito.verify(cacheInfoManager, Mockito.times(1)).getCache(Mockito.anyString());
+    }
+	
+    @Test
+    public void updateFromPageChanged() throws Throwable {
+		Map<String, Date> map = new HashMap<String, Date>();
+		Mockito.when(cacheInfoManager.get(Mockito.anyString(), Map.class)).thenReturn(map);
+		PageChangedEvent event = new PageChangedEvent();
+		Page page = new Page();
+		page.setCode("code");
+		event.setPage(page);
+        cacheInfoManager.updateFromPageChanged(event);
+        Mockito.verify(cacheInfoManager, Mockito.times(1)).flushGroup(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(cacheInfoManager, Mockito.times(1)).accessOnGroupMapping(Mockito.anyString(), 
+				Mockito.any(int.class), Mockito.any(String[].class), Mockito.anyString());
+        Mockito.verify(cacheInfoManager, Mockito.times(1)).flushEntry(Mockito.anyString(), Mockito.anyString());
     }
 	
 }

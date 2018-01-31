@@ -17,11 +17,15 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;
 import org.aspectj.lang.ProceedingJoinPoint;
+import static org.entando.entando.aps.system.services.cache.ICacheInfoManager.GROUP_CACHE_NAME_PREFIX;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -134,7 +138,7 @@ public class CacheInfoManagerTest {
 		boolean expired2 = cacheInfoManager.isExpired(targetCache, cacheKey);
 		Assert.assertTrue(expired2);
     }
-	/*
+	
     @Test
     public void updateFromPageChanged() throws Throwable {
 		PageChangedEvent event = new PageChangedEvent();
@@ -142,10 +146,47 @@ public class CacheInfoManagerTest {
 		page.setCode("code");
 		event.setPage(page);
         cacheInfoManager.updateFromPageChanged(event);
+		Mockito.verify(cache, Mockito.times(1)).get(Mockito.anyString());
+		Mockito.verify(cache, Mockito.times(1)).put(Mockito.anyString(), Mockito.any(Map.class));
+		Object requiredMap = cacheInfoManager.getFromCache(CacheInfoManager.CACHE_INFO_MANAGER_CACHE_NAME, 
+				GROUP_CACHE_NAME_PREFIX + CacheInfoManager.CACHE_INFO_MANAGER_CACHE_NAME);
+		Assert.assertTrue(requiredMap instanceof Map);
+		Assert.assertNotNull(requiredMap);
+		Assert.assertEquals(0, ((Map) requiredMap).size());
+		/*
         Mockito.verify(cacheInfoManager, Mockito.times(1)).flushGroup(Mockito.anyString(), Mockito.anyString());
         Mockito.verify(cacheInfoManager, Mockito.times(1)).accessOnGroupMapping(Mockito.anyString(), 
 				Mockito.any(int.class), Mockito.any(String[].class), Mockito.anyString());
         Mockito.verify(cacheInfoManager, Mockito.times(1)).flushEntry(Mockito.anyString(), Mockito.anyString());
+		*/
     }
-	*/
+	
+	@Test
+    public void destroy() throws Throwable {
+		cacheInfoManager.destroy();
+		Mockito.verify(cacheManager, Mockito.times(0)).getCacheNames();
+		Mockito.verify(cacheManager, Mockito.times(4)).getCache(Mockito.anyString());
+		Mockito.verify(cache, Mockito.times(2)).clear();
+	}
+	
+	@Test
+    public void flushAll() throws Throwable {
+		cacheInfoManager.flushAll();
+		Mockito.verify(cacheManager, Mockito.times(1)).getCacheNames();
+		Mockito.verify(cacheManager, Mockito.times(0)).getCache(Mockito.anyString());
+		Mockito.verify(cache, Mockito.times(0)).clear();
+	}
+	
+	@Test
+    public void flushAllWithCaches() throws Throwable {
+		List<String> cacheNames = new ArrayList<String>();
+		cacheNames.add("cache1");
+		cacheNames.add("cache2");
+		Mockito.when(cacheManager.getCacheNames()).thenReturn(cacheNames);
+		cacheInfoManager.flushAll();
+		Mockito.verify(cacheManager, Mockito.times(1)).getCacheNames();
+		Mockito.verify(cacheManager, Mockito.times(4)).getCache(Mockito.anyString());
+		Mockito.verify(cache, Mockito.times(2)).clear();
+	}
+	
 }

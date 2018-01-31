@@ -20,24 +20,34 @@ import java.lang.annotation.Annotation;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import junit.framework.Assert;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 /**
  * @author E.Santoboni
  */
+@RunWith(MockitoJUnitRunner.class)
 public class CacheInfoManagerTest {
 	
 	@Mock
     private CacheManager cacheManager;
+
+    @Mock
+    private Cache cache;
+
+    @Mock
+    private Cache.ValueWrapper valueWrapper;
 
     @Mock
     private ProceedingJoinPoint proceedingJoinPoint;
@@ -48,6 +58,10 @@ public class CacheInfoManagerTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
+		Map<String, Date> map = new HashMap<String, Date>();
+		Mockito.when(valueWrapper.get()).thenReturn(map);
+		Mockito.when(cache.get(Mockito.any())).thenReturn(valueWrapper);
+		Mockito.when(cacheManager.getCache(Mockito.anyString())).thenReturn(this.cache);
 	}
 	
 	@Test(expected = ApsSystemException.class)
@@ -95,30 +109,34 @@ public class CacheInfoManagerTest {
         //Mockito.verify(cacheInfoManager, Mockito.times(2))
 		//		.flushGroup(Mockito.any(String.class), Mockito.any(String.class));
     }
-	/*
+	
     @Test
     public void setExpirationTimeInMinutes() throws Throwable {
-		Mockito.when(cacheInfoManager.getCache(Mockito.anyString())).thenReturn(Mockito.any(Cache.class));
-		Map<String, Date> map = new HashMap<String, Date>();
-		Mockito.when(cacheInfoManager.get(Mockito.anyString(), Map.class)).thenReturn(map);
-        cacheInfoManager.setExpirationTime("targetCacheName1", "testkey2", 1);
-        Mockito.verify(cacheInfoManager, Mockito.times(1)).getCache(Mockito.anyString());
+		String targetCache = "targetCacheName1";
+		String cacheKey = "testkey1";
+		cacheInfoManager.putInCache(targetCache, cacheKey, "Some value");
+        cacheInfoManager.setExpirationTime(targetCache, cacheKey, 1);
+		boolean expired = cacheInfoManager.isExpired(targetCache, cacheKey);
+		Assert.assertFalse(expired);
     }
 	
     @Test
     public void setExpirationTimeInSeconds() throws Throwable {
-		Mockito.when(cacheInfoManager.getCache(Mockito.anyString())).thenReturn(Mockito.any(Cache.class));
-		Map<String, Date> map = new HashMap<String, Date>();
-		Mockito.when(cacheInfoManager.get(Mockito.anyString(), Map.class)).thenReturn(map);
-        cacheInfoManager.setExpirationTime("targetCacheName2", "testkey2", 2l);
-        Mockito.verify(cacheInfoManager, Mockito.times(1)).getCache(Mockito.anyString());
+		String targetCache = "targetCacheName2";
+		String cacheKey = "testkey2";
+		cacheInfoManager.putInCache(targetCache, cacheKey, "Some other value");
+        cacheInfoManager.setExpirationTime(targetCache, cacheKey, 1l);
+		boolean expired = cacheInfoManager.isExpired(targetCache, cacheKey);
+		Assert.assertFalse(expired);
+		synchronized (this) {
+    		this.wait(2000);
+		}
+		boolean expired2 = cacheInfoManager.isExpired(targetCache, cacheKey);
+		Assert.assertTrue(expired2);
     }
-	
+	/*
     @Test
     public void updateFromPageChanged() throws Throwable {
-		Mockito.when(cacheInfoManager.getCache(Mockito.anyString())).thenReturn(Mockito.any(Cache.class));
-		Map<String, Date> map = new HashMap<String, Date>();
-		Mockito.when(cacheInfoManager.get(Mockito.anyString(), Map.class)).thenReturn(map);
 		PageChangedEvent event = new PageChangedEvent();
 		Page page = new Page();
 		page.setCode("code");

@@ -202,14 +202,14 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 	}
 
 	@Override
-	public void flushGroup(String targetCache, String group) {
-		String[] groups = {group};
-		this.accessOnGroupMapping(targetCache, -1, groups, null);
+	public void putInGroup(String targetCache, String key, String[] groups) {
+		this.accessOnGroupMapping(DEFAULT_CACHE_NAME, 1, groups, key);
 	}
 
 	@Override
-	public void putInGroup(String targetCache, String key, String[] groups) {
-		this.accessOnGroupMapping(DEFAULT_CACHE_NAME, 1, groups, key);
+	public void flushGroup(String targetCache, String group) {
+		String[] groups = {group};
+		this.accessOnGroupMapping(targetCache, -1, groups, null);
 	}
 
 	protected synchronized void accessOnGroupMapping(String targetCache, int operationId, String[] groups, String key) {

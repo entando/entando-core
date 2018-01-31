@@ -11,17 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.services.cache;
+package org.entando.entando.aps.system.services.cache;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 
 /**
  * Classe test del servizio gestore cache.
- * @version 1.0
  * @author E.Santoboni
  */
-public class CacheManagerIntegrationTest extends BaseTestCase {
+public class CacheInfoManagerIntegrationTest extends BaseTestCase {
+	
+	private static final String DEFAULT_CACHE = CacheInfoManager.DEFAULT_CACHE_NAME;
+    
+    private CacheInfoManager cacheInfoManager = null;
 	
 	@Override
     protected void setUp() throws Exception {
@@ -32,43 +35,43 @@ public class CacheManagerIntegrationTest extends BaseTestCase {
     public void testPutGetFromCache_1() {
     	String value = "Stringa prova";
     	String key = "Chiave_prova";
-    	this._cacheManager.putInCache(key, value);
-    	Object extracted = this._cacheManager.getFromCache(key);
+    	this.cacheInfoManager.putInCache(DEFAULT_CACHE, key, value);
+    	Object extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertEquals(value, extracted);
-    	this._cacheManager.flushEntry(key);
-    	extracted = this._cacheManager.getFromCache(key);
+    	this.cacheInfoManager.flushEntry(DEFAULT_CACHE, key);
+    	extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertNull(extracted);
     }
     
     public void testPutGetFromCache_2() {
     	String key = "Chiave_prova";
-    	Object extracted = this._cacheManager.getFromCache(key);
+    	Object extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertNull(extracted);
-    	extracted = this._cacheManager.getFromCache(key);
+    	extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertNull(extracted);
     	
     	String value = "Stringa prova";
-    	this._cacheManager.putInCache(key, value);
+    	this.cacheInfoManager.putInCache(DEFAULT_CACHE, key, value);
     	
-    	extracted = this._cacheManager.getFromCache(key);
+    	extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertNotNull(extracted);
     	assertEquals(value, extracted);
-    	this._cacheManager.flushEntry(key);
-    	extracted = this._cacheManager.getFromCache(key);
+    	this.cacheInfoManager.flushEntry(DEFAULT_CACHE, key);
+    	extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertNull(extracted);
     }
     
     public void testPutGetFromCacheOnRefreshPeriod() throws Throwable {
     	String value = "Stringa prova";
     	String key = "Chiave prova";
-    	this._cacheManager.putInCache(key, value);
-		this._cacheManager.setExpirationTime(key, 2);
-		Object extracted = this._cacheManager.getFromCache(key);
+    	this.cacheInfoManager.putInCache(DEFAULT_CACHE, key, value);
+		this.cacheInfoManager.setExpirationTime(DEFAULT_CACHE, key, 2);
+		Object extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertEquals(value, extracted);
     	synchronized (this) {
     		this.wait(3000);
 		}
-    	extracted = this._cacheManager.getFromCache(key);
+    	extracted = this.cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertNull(extracted);
     }
     
@@ -77,22 +80,20 @@ public class CacheManagerIntegrationTest extends BaseTestCase {
     	String key = "Chiave prova";
     	String group1 = "group1";
     	String[] groups = {group1};
-    	_cacheManager.putInCache(key, value, groups);
-    	Object extracted = _cacheManager.getFromCache(key);
+    	cacheInfoManager.putInCache(key, value, groups);
+    	Object extracted = cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertEquals(value, extracted);
-    	_cacheManager.flushGroup(group1);
-    	extracted = _cacheManager.getFromCache(key);
+    	cacheInfoManager.flushGroup(DEFAULT_CACHE, group1);
+    	extracted = cacheInfoManager.getFromCache(DEFAULT_CACHE, key);
     	assertNull(extracted);
     }
     
     private void init() throws Exception {
     	try {
-    		_cacheManager = (ICacheManager) this.getService(SystemConstants.CACHE_MANAGER);
+    		cacheInfoManager = (CacheInfoManager) this.getService(SystemConstants.CACHE_INFO_MANAGER);
     	} catch (Throwable t) {
     		throw new Exception(t);
         }
     }
-    
-    private ICacheManager _cacheManager = null;
     
 }

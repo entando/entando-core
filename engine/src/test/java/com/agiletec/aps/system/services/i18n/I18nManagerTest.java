@@ -63,7 +63,7 @@ public class I18nManagerTest {
 	@Test
 	public void testAddLabelGroup() throws Throwable {
 		String key = "TEST_KEY";
-		ApsProperties labels = this.createLabel("prova", "test");
+		ApsProperties labels = createLabel("prova", "test");
 		i18nManager.addLabelGroup(key, labels);
 		Mockito.verify(cacheWrapper, Mockito.times(1)).addLabelGroup(key, labels);
 	}
@@ -71,7 +71,7 @@ public class I18nManagerTest {
 	@Test
 	public void testUpdateLabels() throws Throwable {
 		String key = "TEST_KEY";
-		ApsProperties labels = this.createLabel("prova", "test");
+		ApsProperties labels = createLabel("prova", "test");
 		i18nManager.updateLabelGroup(key, labels);
 		Mockito.verify(cacheWrapper, Mockito.times(1)).updateLabelGroup(key, labels);
 	}
@@ -98,13 +98,13 @@ public class I18nManagerTest {
 
 	private Map<String, ApsProperties> createMockLabels() {
 		Map<String, ApsProperties> labelsGroup = new HashMap<>();
-		labelsGroup.put("ONE", this.createLabel("uno", "one"));
-		labelsGroup.put("TWO", this.createLabel("due", "two"));
-		labelsGroup.put("3", this.createLabel("tre", "three"));
+		labelsGroup.put("ONE", createLabel("uno", "one"));
+		labelsGroup.put("TWO", createLabel("due", "two"));
+		labelsGroup.put("3", createLabel("tre", "three"));
 		return labelsGroup;
 	}
 
-	private ApsProperties createLabel(String it, String en) {
+	public static ApsProperties createLabel(String it, String en) {
 		ApsProperties labelOne = new ApsProperties();
 		labelOne.put("it", it);
 		labelOne.put("en", en);

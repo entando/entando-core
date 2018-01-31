@@ -25,6 +25,7 @@ public interface II18nManagerCacheWrapper {
 	public static final String I18N_MANAGER_CACHE_NAME = "Entando_I18nManager";
 
 	public static final String I18N_CACHE_NAME_PREFIX = "I18nManager_labelGroup_";
+
 	public static final String I18N_CODES_CACHE_NAME = "I18nManager_labelGroups";
 
 	public void initCache(II18nDAO i18nDAO) throws ApsSystemException;

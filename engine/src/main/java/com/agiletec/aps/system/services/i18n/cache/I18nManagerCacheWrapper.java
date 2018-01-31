@@ -16,6 +16,7 @@ package com.agiletec.aps.system.services.i18n.cache;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -104,7 +105,10 @@ public class I18nManagerCacheWrapper extends AbstractCacheWrapper implements II1
 				cache.put(I18N_CODES_CACHE_NAME, codes);
 			}
 			cache.put(I18N_CACHE_NAME_PREFIX + key, labels);
-		} else if (Action.UPDATE.equals(operation) && codes.containsKey(key)) {
+		} else if (Action.UPDATE.equals(operation)) {
+			if (!codes.containsKey(key)) {
+				throw new CacheItemNotFoundException(key, cache.getName());
+			}
 			cache.put(I18N_CACHE_NAME_PREFIX + key, labels);
 			codes.put(key, labels);
 			cache.put(I18N_CODES_CACHE_NAME, codes);

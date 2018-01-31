@@ -48,6 +48,7 @@ import com.agiletec.aps.system.services.category.TestCategoryManager;
 import com.agiletec.aps.system.services.group.TestGroupManager;
 import com.agiletec.aps.system.services.i18n.I18nManagerIntegrationTest;
 import com.agiletec.aps.system.services.i18n.I18nManagerTest;
+import com.agiletec.aps.system.services.i18n.cache.I18nManagerCacheWrapperTest;
 import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorDAO;
 import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorManager;
 import com.agiletec.aps.system.services.lang.LangManagerIntegrationTest;
@@ -106,6 +107,7 @@ public class AllTests {
 		//
 		suite.addTestSuite(I18nManagerIntegrationTest.class);
 		suite.addTest(new JUnit4TestAdapter(I18nManagerTest.class));
+		suite.addTest(new JUnit4TestAdapter(I18nManagerCacheWrapperTest.class));
 		//
 		suite.addTestSuite(TestKeyGeneratorDAO.class);
 		suite.addTestSuite(TestKeyGeneratorManager.class);

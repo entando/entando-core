@@ -26,7 +26,6 @@ public class I18nManagerIntegrationTest extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
         super.setUp();
-		
         this.init();
     }
 	

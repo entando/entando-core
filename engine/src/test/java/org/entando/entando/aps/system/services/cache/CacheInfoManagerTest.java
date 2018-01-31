@@ -115,8 +115,6 @@ public class CacheInfoManagerTest {
 		};
         cacheInfoManager.aroundCacheInfoEvictMethod(proceedingJoinPoint, cacheInfoEvict);
         Mockito.verify(proceedingJoinPoint, Mockito.times(1)).getTarget();
-        //Mockito.verify(cacheInfoManager, Mockito.times(2))
-		//		.flushGroup(Mockito.any(String.class), Mockito.any(String.class));
     }
 	
     @Test

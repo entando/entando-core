@@ -18,7 +18,6 @@ import com.agiletec.aps.system.services.authorization.TestAuthorityManager;
 import com.agiletec.aps.system.services.authorization.TestAuthorizationManager;
 import com.agiletec.aps.system.services.baseconfig.TestBaseConfigService;
 import com.agiletec.aps.system.services.baseconfig.TestConfigItemDAO;
-import com.agiletec.aps.system.services.cache.TestCacheManager;
 import com.agiletec.aps.system.services.category.TestCategoryManager;
 import com.agiletec.aps.system.services.group.TestGroupManager;
 import com.agiletec.aps.system.services.i18n.TestI18nManager;
@@ -53,6 +52,8 @@ import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
 import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
+import org.entando.entando.aps.system.services.cache.CacheInfoManagerTest;
+import org.entando.entando.aps.system.services.cache.CacheInfoManagerIntegrationTest;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectSearcherDAO;
@@ -92,7 +93,8 @@ public class AllTests {
 		suite.addTestSuite(TestBaseConfigService.class);
 		suite.addTestSuite(TestConfigItemDAO.class);
 		//
-		suite.addTestSuite(TestCacheManager.class);
+		suite.addTestSuite(CacheInfoManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(CacheInfoManagerTest.class));
 		//
 		suite.addTestSuite(TestCategoryManager.class);
 		//

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,6 @@ import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.common.entity.helper.BaseFilterUtils;
@@ -45,6 +44,9 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 public class BaseContentListHelper implements IContentListHelper {
   
 	private static final Logger _logger = LoggerFactory.getLogger(BaseContentListHelper.class);
+	
+	private IContentManager contentManager;
+	private ICacheInfoManager cacheInfoManager;
 	
 	@Override
     public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, String langCode) {
@@ -83,12 +85,9 @@ public class BaseContentListHelper implements IContentListHelper {
 	@Override
 	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, 
 			key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)", condition = "#bean.cacheable")
-	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, 
-			key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)", 
-			beforeInvocation = true, 
-			condition = "T(org.entando.entando.aps.system.services.cache.CacheInfoManager).isExpired(T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user))")
 	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENTS_ID_CACHE_GROUP_PREFIX.concat(#bean.contentType)", expiresInMinute = 30)
     public List<String> getContentsId(IContentListBean bean, UserDetails user) throws Throwable {
+		this.releaseCache(bean, user);
 		List<String> contentsId = null;
         try {
             if (null == bean.getContentType()) {
@@ -102,6 +101,14 @@ public class BaseContentListHelper implements IContentListHelper {
         }
         return contentsId;
     }
+	
+	private void releaseCache(IContentListBean bean, UserDetails user) {
+		String key = BaseContentListHelper.buildCacheKey(bean, user);
+		boolean isExpired = this.getCacheInfoManager().isExpired(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
+		if (isExpired) {
+			this.getCacheInfoManager().flushEntry(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
+		}
+	}
 	
     /**
      * Return the groups to witch execute the filter to contents.
@@ -120,8 +127,7 @@ public class BaseContentListHelper implements IContentListHelper {
 		codes.add(Group.FREE_GROUP_NAME);
 		List<Authorization> auths = (null != user) ? user.getAuthorizations() : null;
         if (null != auths) {
-			for (int i = 0; i < auths.size(); i++) {
-				Authorization auth = auths.get(i);
+			for (Authorization auth : auths) {
 				if (null != auth && null != auth.getGroup()) {
 					codes.add(auth.getGroup().getName());
 				}
@@ -199,36 +205,25 @@ public class BaseContentListHelper implements IContentListHelper {
         List<String> values = new ArrayList<String>();
         if (concatedValues != null && concatedValues.trim().length() > 0) {
             String[] codes = concatedValues.split(separator);
-            for (int i = 0; i < codes.length; i++) {
-                values.add(codes[i]);
+			for (String code : codes) {
+				values.add(code);
             }
         }
         return values;
     }
-	/*
-    protected ICacheManager getCacheManager() {
-        return _cacheManager;
-    }
-    public void setCacheManager(ICacheManager cacheManager) {
-        this._cacheManager = cacheManager;
-    }
-	*/
+	
     protected IContentManager getContentManager() {
-        return _contentManager;
+        return contentManager;
     }
     public void setContentManager(IContentManager contentManager) {
-        this._contentManager = contentManager;
+        this.contentManager = contentManager;
     }
-	/*
-    protected IAuthorizationManager getAuthorizationManager() {
-        return _authorizationManager;
-    }
-    public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
-        this._authorizationManager = authorizationManager;
-    }
-    */
-    //private ICacheManager _cacheManager;
-    private IContentManager _contentManager;
-    //private IAuthorizationManager _authorizationManager;
+	
+	protected ICacheInfoManager getCacheInfoManager() {
+		return cacheInfoManager;
+	}
+	public void setCacheInfoManager(ICacheInfoManager cacheInfoManager) {
+		this.cacheInfoManager = cacheInfoManager;
+	}
     
 }

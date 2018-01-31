@@ -48,18 +48,14 @@
 					  p:name="Entando_GroupManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_LangManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_CacheInfoManager" />
 			</set>
 		</property>
 	</bean>
 
-	<!--deprecated -->
-	<bean id="CacheManager" class="com.agiletec.aps.system.services.cache.OldCacheManager"
-			parent="abstractService" >
-		<property name="cacheInfoManager" ref="CacheInfoManager" />
-	</bean>
-
 	<bean id="CacheInfoManager" class="org.entando.entando.aps.system.services.cache.CacheInfoManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="springCacheManager" ref="springCacheManager" />
 	</bean>
 

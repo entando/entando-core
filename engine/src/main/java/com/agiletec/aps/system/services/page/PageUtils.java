@@ -43,5 +43,9 @@ public class PageUtils {
 		}
 		return buffer;
 	}
+	
+	public static IPage getPage(IPageManager manager, boolean onLine, String code) {
+		return (onLine) ? manager.getOnlinePage(code) : manager.getDraftPage(code);
+	}
 
 }

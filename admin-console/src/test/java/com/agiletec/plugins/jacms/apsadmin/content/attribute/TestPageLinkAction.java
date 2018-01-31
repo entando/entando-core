@@ -43,10 +43,10 @@ public class TestPageLinkAction extends AbstractBaseTestContentAction {
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(3, root.getChildren().length);
+		assertEquals(3, root.getChildrenCodes().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
-		assertEquals(0, showableRoot.getChildren().length);
+		assertEquals(0, showableRoot.getChildrenCodes().length);
 	}
 
 	public void testConfigPageLink_2() throws Throwable {
@@ -57,12 +57,12 @@ public class TestPageLinkAction extends AbstractBaseTestContentAction {
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(4, root.getChildren().length);
+		assertEquals(4, root.getChildrenCodes().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
-		assertEquals(0, showableRoot.getChildren().length);
+		assertEquals(0, showableRoot.getChildrenCodes().length);
 	}
-	
+
 	public void testOpenPageNode_1() throws Throwable {
 		String contentOnSessionMarker = this.initJoinLinkTest("admin", "ART102", "VediAnche", "it");
 		this.initContentAction("/do/jacms/Content/Link", "openCloseTreeNode", contentOnSessionMarker);
@@ -72,7 +72,7 @@ public class TestPageLinkAction extends AbstractBaseTestContentAction {
 		assertEquals(Action.SUCCESS, result);
 		this.checkTestOpenPageTree_ART102();
 	}
-	
+
 	public void testOpenPageNode_2() throws Throwable {
 		String contentOnSessionMarker = this.initJoinLinkTest("editorCustomers", "ART102", "VediAnche", "it");
 		this.initContentAction("/do/jacms/Content/Link", "openCloseTreeNode", contentOnSessionMarker);
@@ -82,15 +82,15 @@ public class TestPageLinkAction extends AbstractBaseTestContentAction {
 		assertEquals(Action.SUCCESS, result);
 		this.checkTestOpenPageTree_ART102();
 	}
-	
+
 	private void checkTestOpenPageTree_ART102() throws Throwable {
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(4, root.getChildren().length);
+		assertEquals(4, root.getChildrenCodes().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
-		assertEquals(4, showableRoot.getChildren().length);
+		assertEquals(4, showableRoot.getChildrenCodes().length);
 	}
 
 	public void testFailureJoinPageLink_1() throws Throwable {

@@ -24,58 +24,41 @@ import com.agiletec.aps.util.ApsProperties;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentUtilizer;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.widgettype.cache.IWidgetTypeManagerCacheWrapper;
 import org.entando.entando.aps.system.services.widgettype.events.WidgetTypeChangedEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Servizio di gestione dei tipi di widget (WidgetType) definiti
- * nel sistema. (Questo servizio non riguarda la configurazione delle
- * istanze di widget nelle pagine)
+ * Servizio di gestione dei tipi di widget (WidgetType) definiti nel sistema.
+ * (Questo servizio non riguarda la configurazione delle istanze di widget nelle
+ * pagine)
+ *
  * @author M.Diana - E.Santoboni
  */
-public class WidgetTypeManager extends AbstractService 
+public class WidgetTypeManager extends AbstractService
 		implements IWidgetTypeManager, LangsChangedObserver, GroupUtilizer, GuiFragmentUtilizer {
-	
-	private static final Logger _logger =  LoggerFactory.getLogger(WidgetTypeManager.class);
-	
+
+	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeManager.class);
+
+	private IWidgetTypeDAO _widgetTypeDAO;
+	private IGuiFragmentManager _guiFragmentManager;
+	private IWidgetTypeManagerCacheWrapper _cacheWrapper;
+
 	@Override
 	public void init() throws Exception {
-		this.loadWidgetTypes();
-		_logger.debug("{} ready. Initialized {} widget types", this.getClass().getName(), this._widgetTypes.size());
+		this.getCacheWrapper().initCache(this.getWidgetTypeDAO());
+		_logger.debug("{} ready. Initialized", this.getClass().getName());
 	}
-	
-	/**
-	 * Caricamento da db del catalogo dei tipi di widget.
-	 * @throws ApsSystemException In caso di errori di lettura da db.
-	 */
-	private void loadWidgetTypes() throws ApsSystemException {
-		try {
-			this._widgetTypes = this.getWidgetTypeDAO().loadWidgetTypes();
-			Iterator<WidgetType> iter = this._widgetTypes.values().iterator();
-			while (iter.hasNext()) {
-				WidgetType type = iter.next();
-				String mainTypeCode = type.getParentTypeCode();
-				if (null != mainTypeCode) {
-					type.setParentType(this._widgetTypes.get(mainTypeCode));
-				}
-			}
-		} catch (Throwable t) {
-			_logger.error("Error loading widgets types", t);
-			throw new ApsSystemException("Error loading widgets types", t);
-		}
-	}
-	
+
 	@Override
 	public void updateFromLangsChanged(LangsChangedEvent event) {
 		try {
@@ -84,7 +67,7 @@ public class WidgetTypeManager extends AbstractService
 			_logger.error("Error on init method", t);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public WidgetType getShowletType(String widgetTypeCode) {
@@ -93,9 +76,9 @@ public class WidgetTypeManager extends AbstractService
 
 	@Override
 	public WidgetType getWidgetType(String code) {
-		return this._widgetTypes.get(code);
+		return this.getCacheWrapper().getWidgetType(code);
 	}
-	
+
 	@Override
 	@Deprecated
 	public List<WidgetType> getShowletTypes() {
@@ -105,16 +88,12 @@ public class WidgetTypeManager extends AbstractService
 	@Override
 	public List<WidgetType> getWidgetTypes() {
 		List<WidgetType> types = new ArrayList<WidgetType>();
-		Iterator<WidgetType> masterTypesIter = this._widgetTypes.values().iterator();
-		while (masterTypesIter.hasNext()) {
-			WidgetType widgetType = masterTypesIter.next();
-			types.add(widgetType.clone());
-		}
+		types.addAll(this.getCacheWrapper().getWidgetTypes());
 		BeanComparator comparator = new BeanComparator("code");
 		Collections.sort(types, comparator);
 		return types;
 	}
-	
+
 	@Override
 	@Deprecated
 	public void addShowletType(WidgetType widgetType) throws ApsSystemException {
@@ -124,13 +103,17 @@ public class WidgetTypeManager extends AbstractService
 	@Override
 	public void addWidgetType(WidgetType widgetType) throws ApsSystemException {
 		try {
-			WidgetType type = this._widgetTypes.get(widgetType.getCode());
+			if (null == widgetType) {
+				_logger.error("Null Widget Type");
+				return;
+			}
+			WidgetType type = this.getWidgetType(widgetType.getCode());
 			if (null != type) {
 				_logger.error("Type already exists : type code {}", widgetType.getCode());
 				return;
 			}
 			String parentTypeCode = widgetType.getParentTypeCode();
-			if (null != parentTypeCode && null == this._widgetTypes.get(parentTypeCode)) {
+			if (null != parentTypeCode && null == this.getWidgetType(parentTypeCode)) {
 				throw new ApsSystemException("ERROR : Parent type '" + parentTypeCode + "' doesn't exists");
 			}
 			if (null == parentTypeCode && null != widgetType.getConfig()) {
@@ -140,25 +123,25 @@ public class WidgetTypeManager extends AbstractService
 				throw new ApsSystemException("ERROR : Params not null and config not null");
 			}
 			this.getWidgetTypeDAO().addWidgetType(widgetType);
-			this._widgetTypes.put(widgetType.getCode(), widgetType);
+			this.getCacheWrapper().addWidgetType(widgetType);
 			this.notifyWidgetTypeChanging(widgetType.getCode(), WidgetTypeChangedEvent.INSERT_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error adding a Widget Type", t);
 			throw new ApsSystemException("Error adding a Widget Type", t);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public void deleteShowletType(String widgetTypeCode) throws ApsSystemException {
 		this.deleteWidgetType(widgetTypeCode);
 	}
-	
+
 	@Override
 	public void deleteWidgetType(String widgetTypeCode) throws ApsSystemException {
 		List<GuiFragment> deletedFragments = new ArrayList<GuiFragment>();
 		try {
-			WidgetType type = this._widgetTypes.get(widgetTypeCode);
+			WidgetType type = this.getWidgetType(widgetTypeCode);
 			if (null == type) {
 				_logger.error("Type not exists : type code {}", widgetTypeCode);
 				return;
@@ -177,7 +160,7 @@ public class WidgetTypeManager extends AbstractService
 				}
 			}
 			this.getWidgetTypeDAO().deleteWidgetType(widgetTypeCode);
-			this._widgetTypes.remove(widgetTypeCode);
+			this.getCacheWrapper().deleteWidgetType(widgetTypeCode);
 			this.notifyWidgetTypeChanging(widgetTypeCode, WidgetTypeChangedEvent.REMOVE_OPERATION_CODE);
 		} catch (Throwable t) {
 			for (int i = 0; i < deletedFragments.size(); i++) {
@@ -190,12 +173,12 @@ public class WidgetTypeManager extends AbstractService
 			throw new ApsSystemException("Error deleting widget type", t);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public void updateShowletType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig) throws ApsSystemException {
 		try {
-			WidgetType type = this._widgetTypes.get(widgetTypeCode);
+			WidgetType type = this.getWidgetType(widgetTypeCode);
 			if (null == type) {
 				_logger.error("Type not exists : type code {}", widgetTypeCode);
 				return;
@@ -206,17 +189,17 @@ public class WidgetTypeManager extends AbstractService
 			throw new ApsSystemException("Error updating Widget type titles : type code" + widgetTypeCode, t);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public void updateShowletType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) throws ApsSystemException {
 		this.updateWidgetType(widgetTypeCode, titles, defaultConfig, mainGroup);
 	}
-	
+
 	@Override
 	public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) throws ApsSystemException {
 		try {
-			WidgetType type = this._widgetTypes.get(widgetTypeCode);
+			WidgetType type = this.getWidgetType(widgetTypeCode);
 			if (null == type) {
 				_logger.error("Type not exists : type code {}", widgetTypeCode);
 				return;
@@ -228,31 +211,14 @@ public class WidgetTypeManager extends AbstractService
 			type.setTitles(titles);
 			type.setConfig(defaultConfig);
 			type.setMainGroup(mainGroup);
+			this.getCacheWrapper().updateWidgetType(type);
 			this.notifyWidgetTypeChanging(widgetTypeCode, WidgetTypeChangedEvent.UPDATE_OPERATION_CODE);
 		} catch (Throwable t) {
 			_logger.error("Error updating Widget type titles : type code {}", widgetTypeCode, t);
 			throw new ApsSystemException("Error updating Widget type titles : type code" + widgetTypeCode, t);
 		}
 	}
-	
-	@Override
-	@Deprecated
-	public void updateShowletTypeTitles(String widgetTypeCode, ApsProperties titles) throws ApsSystemException {
-		try {
-			WidgetType type = this._widgetTypes.get(widgetTypeCode);
-			if (null == type) {
-				_logger.error("Type not exists : type code {}", widgetTypeCode);
-				return;
-			}
-			this.getWidgetTypeDAO().updateShowletTypeTitles(widgetTypeCode, titles);
-			type.setTitles(titles);
-			this.notifyWidgetTypeChanging(widgetTypeCode, WidgetTypeChangedEvent.UPDATE_OPERATION_CODE);
-		} catch (Throwable t) {
-			_logger.error("Error updating Widget type titles : type code {}", widgetTypeCode, t);
-			throw new ApsSystemException("Error updating Widget type titles : type code" + widgetTypeCode, t);
-		}
-	}
-	
+
 	@Override
 	public List<WidgetType> getGroupUtilizers(String groupName) throws ApsSystemException {
 		List<WidgetType> utilizers = null;
@@ -275,7 +241,7 @@ public class WidgetTypeManager extends AbstractService
 		}
 		return utilizers;
 	}
-	
+
 	@Override
 	public List getGuiFragmentUtilizers(String guiFragmentCode) throws ApsSystemException {
 		List<WidgetType> utilizers = new ArrayList<WidgetType>();
@@ -300,35 +266,36 @@ public class WidgetTypeManager extends AbstractService
 		}
 		return utilizers;
 	}
-	
+
 	private void notifyWidgetTypeChanging(String widgetTypeCode, int operationCode) throws ApsSystemException {
 		WidgetTypeChangedEvent event = new WidgetTypeChangedEvent();
 		event.setWidgetTypeCode(widgetTypeCode);
 		event.setOperationCode(operationCode);
 		this.notifyEvent(event);
 	}
-	
+
 	protected IWidgetTypeDAO getWidgetTypeDAO() {
 		return _widgetTypeDAO;
 	}
+
 	public void setWidgetTypeDAO(IWidgetTypeDAO widgetTypeDAO) {
 		this._widgetTypeDAO = widgetTypeDAO;
 	}
-	
+
 	protected IGuiFragmentManager getGuiFragmentManager() {
 		return _guiFragmentManager;
 	}
+
 	public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
 		this._guiFragmentManager = guiFragmentManager;
 	}
-	
-	public void setWidgetTypes(Map<String, WidgetType> widgetTypes) {
-		this._widgetTypes = widgetTypes;
+
+	protected IWidgetTypeManagerCacheWrapper getCacheWrapper() {
+		return _cacheWrapper;
 	}
-	
-	private Map<String, WidgetType> _widgetTypes;
-	
-	private IWidgetTypeDAO _widgetTypeDAO;
-	private IGuiFragmentManager _guiFragmentManager;
-	
+
+	public void setCacheWrapper(IWidgetTypeManagerCacheWrapper cacheWrapper) {
+		this._cacheWrapper = cacheWrapper;
+	}
+
 }

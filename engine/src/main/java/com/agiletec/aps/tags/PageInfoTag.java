@@ -40,7 +40,7 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
 /**
  * Returns the information of the specified page. This tag can use the sub-tag
  * "ParameterTag" to add url parameters if the info attribute is set to 'url'.
- * 
+ *
  * @author E.Santoboni
  */
 public class PageInfoTag extends ExtendedTagSupport implements IParameterParentTag {
@@ -69,7 +69,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 			} else if (this.getInfo().equals(CHILD_OF_INFO)) {
 				this.extractIsChildOfTarget(page);
 			} else if (this.getInfo().equals(HAS_CHILD)) {
-				boolean hasChild = (page.getChildren() != null && page.getChildren().length > 0);
+				boolean hasChild = (page.getChildrenCodes() != null && page.getChildrenCodes().length > 0);
 				this._value = new Boolean(hasChild).toString();
 			}
 			this.evalValue();

@@ -16,8 +16,6 @@ package com.agiletec.aps.system.services.page;
 import java.util.Arrays;
 import java.util.List;
 
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 
@@ -57,7 +55,7 @@ public class TestPageManagerNew extends BaseTestCase {
 		IPage page = this._pageManager.getOnlinePage(onlinePageCode);
 		assertNotNull(page);
 		assertTrue(page.isOnline());
-		List<IPage> childs = Arrays.asList(page.getChildren());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
 		assertEquals(2, childs.size());
 	}
 
@@ -67,11 +65,12 @@ public class TestPageManagerNew extends BaseTestCase {
 		IPage page = this._pageManager.getOnlinePage(onlinePageCode);
 		assertNotNull(page);
 		assertTrue(page.isOnline());
-		List<IPage> childs = Arrays.asList(page.getChildren());
-		for (IPage child : childs) {
-			String code = child.getCode();
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
+		for (String child : childs) {
+			String code = child;
 			assertFalse(code.equalsIgnoreCase(onlyDraftPageCode));
-			assertTrue(child.isOnlineInstance());
+			IPage childPage = this._pageManager.getOnlinePage(code);
+			assertTrue(childPage.isOnlineInstance());
 		}
 	}
 
@@ -81,10 +80,10 @@ public class TestPageManagerNew extends BaseTestCase {
 		IPage page = this._pageManager.getDraftPage(onlinePageCode);
 		assertNotNull(page);
 		assertTrue(page.isOnline());
-		List<IPage> childs = Arrays.asList(page.getChildren());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
 		boolean found = false;
-		for (IPage child : childs) {
-			String code = child.getCode();
+		for (String child : childs) {
+			String code = child;
 			found = code.equals(onlyDraftPageCode);
 		}
 		assertTrue(found);
@@ -93,13 +92,11 @@ public class TestPageManagerNew extends BaseTestCase {
 	private void init() throws Exception {
 		try {
 			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-			this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
 	}
 
 	private IPageManager _pageManager = null;
-	private IWidgetTypeManager _widgetTypeManager;
 
 }

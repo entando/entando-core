@@ -18,112 +18,141 @@ import java.io.Serializable;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
- * Interface of a node of a tree. 
- * The node is the basic information a tree and contains all the 
- * minimum information necessary for its definition.
+ * Interface of a node of a tree. The node is the basic information a tree and
+ * contains all the minimum information necessary for its definition.
+ *
  * @author E.Santoboni
  */
 public interface ITreeNode extends Serializable {
-	
+
 	/**
 	 * Return the node code.
+	 *
 	 * @return The node code.
 	 */
 	public String getCode();
-	
+
 	/**
 	 * Indicates whether the node is the root of the tree.
+	 *
 	 * @return true if the root, false otherwise.
 	 */
 	public boolean isRoot();
-	
+
 	/**
 	 * Return the parent node.
+	 *
 	 * @return The parent node.
 	 */
 	public ITreeNode getParent();
-	
+
 	/**
-	 * Returns the ordered set of nodes of lower level.
-	 * @return The set of nodes of lower level.
+	 * Returns the ordered set codes of nodes in lower level.
+	 *
+	 * @return The set of codes of nodes in lower level.
 	 */
-	public ITreeNode[] getChildren();
-	
+	public String[] getChildrenCodes();
+
 	/**
 	 * Returns the position of the node compared to the brothers nodes.
+	 *
 	 * @return The position of the node compared to the brothers nodes.
 	 */
-    public int getPosition();
-    
+	public int getPosition();
+
 	/**
 	 * Return the group code this node belongs to
+	 *
 	 * @return The group code
 	 */
 	public String getGroup();
-	
+
 	/**
-	 * Returns a properties with the titles of the node, where the keys are the codes of language.
+	 * Returns a properties with the titles of the node, where the keys are the
+	 * codes of language.
+	 *
 	 * @return The node titles.
 	 */
 	public ApsProperties getTitles();
-	
+
 	/**
 	 * Returns the title of the node in the specified language.
+	 *
 	 * @param langCode The code of the language.
 	 * @return The title of the node.
 	 */
 	public String getTitle(String langCode);
-	
+
 	/**
 	 * Set the title of the node in the specified language.
+	 *
 	 * @param langCode The code of the language.
 	 * @param title The title of the node to set.
 	 */
 	public void setTitle(String langCode, String title);
 
 	/**
-	 * Returns the title (including the parent nodes) of the single node in the specified language.
+	 * Returns the title (including the parent nodes) of the single node in the
+	 * specified language.
+	 *
 	 * @param langCode The code of the language.
 	 * @return The full title of the node.
 	 */
 	public String getFullTitle(String langCode);
-	
+
 	public String getShortFullTitle(String langCode);
-	
+
 	public String getShortFullTitle(String langCode, String separator);
-	
+
 	/**
-	 * Returns the title (including the parent nodes) of the single node in the specified language.
+	 * Returns the title (including the parent nodes) of the single node in the
+	 * specified language.
+	 *
 	 * @param langCode The code of the language.
 	 * @param separator The separator between the titles.
 	 * @return The full title of the node.
 	 */
 	public String getFullTitle(String langCode, String separator);
-	
+
 	/**
-	 * Returns the path of the single node.
-	 * The sepatator between the node will be '/' and the path contains the root node.
+	 * Returns the path of the single node. The separator between the node will
+	 * be '/' and the path contains the root node.
+	 *
 	 * @return the path of the single node.
 	 */
 	public String getPath();
-	
+
 	/**
-	 * Returns the path of the single node.
+	 * Returns the path of the single node. The array in composed 
+	 * by node codes from the root up to the current node
+	 *
 	 * @param separator The separator between the nodes.
 	 * @param addRoot Add the root node
 	 * @return the path of the single node.
 	 */
 	public String getPath(String separator, boolean addRoot);
 	
+	/**
+	 * Returns the path array of the current node. The array in composed 
+	 * by node codes from the root up to the current node.
+	 * @return the required path array of the single node.
+	 */
 	public String[] getPathArray();
-	
+
+	/**
+	 * Returns the path array of the current node. The array in composed 
+	 * by node codes from the root up to the current node
+	 * @param addRoot if true, the array starts with the code of the root node
+	 * @return the required path array of the single node.
+	 */
 	public String[] getPathArray(boolean addRoot);
-	
+
 	/**
 	 * Indicates whether the node is child of the other specificated node.
+	 *
 	 * @param nodeCode The code of the node
 	 * @return true if the node is child of the other node, false otherwise.
 	 */
 	public boolean isChildOf(String nodeCode);
-	
+
 }

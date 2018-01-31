@@ -68,10 +68,10 @@
     </td>
     <td class="text-center">
         <span class="statusField">
-            <s:if test="%{!#currentRoot.getOrigin().isOnline()}">
+            <s:if test="%{!#currentRoot.getEntity().isOnline()}">
                 <i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i>
             </s:if>
-            <s:elseif test="%{#currentRoot.getOrigin().isChanged()}">
+            <s:elseif test="%{#currentRoot.getEntity().isChanged()}">
                 <i class="fa fa-circle yellow" aria-hidden="true" title="Online&#32;&ne;&#32;Draft"></i>
             </s:elseif>
             <s:else>
@@ -80,7 +80,7 @@
         </span>
     </td>
     <td class="text-center">
-        <s:if test="%{#currentRoot.getOrigin().isOnline() && #currentRoot.getOrigin().getOnlineMetadata().isShowable()}">
+        <s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().getMetadata().isShowable()}">
             <s:text name="label.pageInMenu.displayed" />
         </s:if>
         <s:else>

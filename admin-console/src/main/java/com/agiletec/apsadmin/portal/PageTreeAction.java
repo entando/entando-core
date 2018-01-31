@@ -24,8 +24,6 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
-import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
-import static com.opensymphony.xwork2.Action.SUCCESS;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;

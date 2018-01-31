@@ -21,13 +21,14 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.io.Serializable;
 
 /**
  * This is the representation of a portal page
  *
  * @author M.Diana - E.Santoboni
  */
-public class Page extends TreeNode implements IPage {
+public class Page extends TreeNode implements IPage, Serializable {
 
 	/**
 	 * Set the position of the page with regard to its sisters
@@ -116,15 +117,6 @@ public class Page extends TreeNode implements IPage {
 	public Set<String> getExtraGroups() {
 		PageMetadata metadata = this.getMetadata();
 		return metadata.getExtraGroups();
-	}
-
-	@Override
-	public IPage[] getChildren() {
-		IPage[] children = new IPage[super.getChildren().length];
-		for (int i = 0; i < super.getChildren().length; i++) {
-			children[i] = (IPage) super.getChildren()[i];
-		}
-		return children;
 	}
 
 	/**
@@ -304,14 +296,16 @@ public class Page extends TreeNode implements IPage {
 		return "Page: " + this.getCode();
 	}
 
+	@Override
 	public PageMetadata getMetadata() {
-		return metadata;
+		return _metadata;
 	}
 
 	public void setMetadata(PageMetadata metadata) {
-		this.metadata = metadata;
+		this._metadata = metadata;
 	}
 
+	@Override
 	public Widget[] getWidgets() {
 		return widgets;
 	}
@@ -324,7 +318,7 @@ public class Page extends TreeNode implements IPage {
 	 * The code of the higher level page
 	 */
 	private String _parentCode;
-	private PageMetadata metadata = new PageMetadata();
+	private PageMetadata _metadata = new PageMetadata();
 	private Widget[] widgets;
 	private boolean online;
 	private boolean onlineInstance;

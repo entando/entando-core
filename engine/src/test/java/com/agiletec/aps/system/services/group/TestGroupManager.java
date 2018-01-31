@@ -19,80 +19,82 @@ import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 
 /**
- * @version 1.0
  * @author E.Santoboni
  */
 public class TestGroupManager extends BaseTestCase {
-	
-    protected void setUp() throws Exception {
-        super.setUp();
-        this.init();
-    }
-    
-    public void testGetGroups() {
-    	List<Group> groups = this._groupManager.getGroups();
-    	assertTrue(groups.size()>=6);
-    }
-    
-    public void testAddDeleteGroup() throws Throwable {
-    	int initSize = this._groupManager.getGroups().size();
-    	Group group = new Group();
-    	group.setName("Gruppo_Prova");
-    	group.setDescr("descr_gruppo_prova");
-    	try {
-    		assertNull(_groupManager.getGroup("Gruppo_Prova"));
-    		_groupManager.addGroup(group);
-    		List<Group> groups = _groupManager.getGroups();
-    		assertEquals(initSize+1, groups.size());
-    		assertNotNull(_groupManager.getGroup("Gruppo_Prova"));
-    		_groupManager.removeGroup(group);
-    		groups = _groupManager.getGroups();
-    		assertEquals(initSize, groups.size());
-    		assertNull(_groupManager.getGroup("Gruppo_Prova"));
-    	} catch (Throwable t) {
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		this.init();
+	}
+
+	public void testGetGroups() {
+		List<Group> groups = this._groupManager.getGroups();
+		assertTrue(groups.size() >= 6);
+	}
+
+	public void testAddDeleteGroup() throws Throwable {
+		int initSize = this._groupManager.getGroups().size();
+		String groupCode = "Gruppo_Prova";
+		Group group = new Group();
+		group.setName(groupCode);
+		group.setDescription("descr_gruppo_prova");
+		try {
+			assertNull(_groupManager.getGroup(groupCode));
+			_groupManager.addGroup(group);
+			List<Group> groups = _groupManager.getGroups();
+			assertEquals(initSize + 1, groups.size());
+			assertNotNull(_groupManager.getGroup(groupCode));
+			_groupManager.removeGroup(group);
+			groups = _groupManager.getGroups();
+			assertEquals(initSize, groups.size());
+			assertNull(_groupManager.getGroup(groupCode));
+		} catch (Throwable t) {
 			throw t;
 		} finally {
 			_groupManager.removeGroup(group);
 		}
-    }
-    
-    public void testUpdateGroup() throws Throwable {
-    	int initSize = this._groupManager.getGroups().size();
-    	Group group = new Group();
-    	group.setName("Gruppo_Prova");
-    	group.setDescr("descr_gruppo_prova");
-    	try {
-    		assertNull(_groupManager.getGroup("Gruppo_Prova"));
-    		_groupManager.addGroup(group);
-    		List<Group> groups = _groupManager.getGroups();
-    		assertEquals(initSize+1, groups.size());
-    		
-    		Group groupNew = new Group();
-			groupNew.setName(group.getName());
-			groupNew.setDescr("Nuova_descr");
-    		_groupManager.updateGroup(groupNew);
-    		Group extracted = _groupManager.getGroup("Gruppo_Prova");
-    		assertEquals(group.getDescr(), extracted.getDescr());
-    		
-    		_groupManager.removeGroup(group);
-    		groups = _groupManager.getGroups();
-    		assertEquals(initSize, groups.size());
-    		assertNull(_groupManager.getGroup("Gruppo_Prova"));
-    	} catch (Throwable t) {
+	}
+
+	public void testUpdateGroup() throws Throwable {
+		int initSize = this._groupManager.getGroups().size();
+		Group group = new Group();
+		String groupCode = "Gruppo_Prova";
+		group.setName(groupCode);
+		group.setDescription("descr_gruppo_prova");
+		try {
+			assertNull(_groupManager.getGroup(groupCode));
+			_groupManager.addGroup(group);
+			List<Group> groups = _groupManager.getGroups();
+			assertEquals(initSize + 1, groups.size());
+
+			Group groupNew = new Group();
+			groupNew.setName(groupCode);
+			groupNew.setDescription("Nuova_descr");
+			_groupManager.updateGroup(groupNew);
+			Group extracted = _groupManager.getGroup(groupCode);
+			assertEquals(groupNew.getDescription(), extracted.getDescription());
+
+			_groupManager.removeGroup(group);
+			groups = _groupManager.getGroups();
+			assertEquals(initSize, groups.size());
+			assertNull(_groupManager.getGroup(groupCode));
+		} catch (Throwable t) {
 			throw t;
 		} finally {
 			_groupManager.removeGroup(group);
 		}
-    }
-    
-    private void init() throws Exception {
-    	try {
-    		_groupManager = (IGroupManager) this.getService(SystemConstants.GROUP_MANAGER);
+	}
+
+	private void init() throws Exception {
+		try {
+			_groupManager = (IGroupManager) this.getService(SystemConstants.GROUP_MANAGER);
 		} catch (Exception e) {
 			throw e;
 		}
-    }
-	
+	}
+
 	private IGroupManager _groupManager = null;
-	
+
 }

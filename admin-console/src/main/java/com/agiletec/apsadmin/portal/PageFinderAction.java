@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
@@ -215,16 +216,23 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
 		return root;
 	}
 
-	private void addTreeWrapper(PageTreeNodeWrapper parent, IPage currentTreeNode) {
-		IPage[] children = currentTreeNode.getChildren();
+	private void addTreeWrapper(PageTreeNodeWrapper parent, IPage currentNode) {
+		boolean isOnline = currentNode.isOnline();
+		String[] children = currentNode.getChildrenCodes();
+		if (null == children) {
+			return;
+		}
 		for (int i = 0; i < children.length; i++) {
-			IPage newCurrentTreeNode = children[i];
-			PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentTreeNode);
-			if (this.getResultCodes().contains(newCurrentTreeNode.getCode())) {
-				parent.addChild(newNode);
-				this.addTreeWrapper(newNode, newCurrentTreeNode);
+			IPage newCurrentNode = PageUtils.getPage(this.getPageManager(), isOnline, children[i]);
+			if (null == newCurrentNode) {
+				continue;
+			}
+			PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
+			if (this.getResultCodes().contains(newCurrentNode.getCode())) {
+				parent.addChildCode(newNode.getCode());
+				this.addTreeWrapper(newNode, newCurrentNode);
 			} else {
-				this.addTreeWrapper(parent, newCurrentTreeNode);
+				this.addTreeWrapper(parent, newCurrentNode);
 			}
 		}
 	}

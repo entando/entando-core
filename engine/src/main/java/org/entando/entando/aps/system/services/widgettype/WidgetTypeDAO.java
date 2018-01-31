@@ -18,8 +18,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,29 +26,18 @@ import com.agiletec.aps.system.common.AbstractDAO;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data Access Object per i tipi di widget (WidgetType).
+ *
  * @author M.Diana - E.Santoboni
  */
 public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(WidgetTypeDAO.class);
-	
-	/**
-	 * Return the map of the widget types
-	 * @return The map of the widget types
-	 * @deprecated Use {@link #loadWidgetTypes()} instead
-	 */
-	@Override
-	public Map<String, WidgetType> loadShowletTypes() {
-		return loadWidgetTypes();
-	}
-	
-	/**
-	 * Return the map of the widget types
-	 * @return The map of the widget types
-	 */
+	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeDAO.class);
+
 	@Override
 	public Map<String, WidgetType> loadWidgetTypes() {
 		Connection conn = null;
@@ -66,19 +53,14 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 				widgetTypes.put(widgetType.getCode(), widgetType);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading widgets",  t);
+			_logger.error("Error loading widgets", t);
 			throw new RuntimeException("Error loading widgets", t);
-		} finally{
+		} finally {
 			closeDaoResources(res, stat, conn);
 		}
 		return widgetTypes;
 	}
-	
-	@Deprecated
-	protected WidgetType showletTypeFromResultSet(ResultSet res) throws ApsSystemException {
-		return this.createWidgetTypeFromResultSet(res);
-	}
-	
+
 	protected WidgetType createWidgetTypeFromResultSet(ResultSet res) throws ApsSystemException {
 		WidgetType widgetType = new WidgetType();
 		String code = null;
@@ -104,8 +86,8 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 				widgetType.setConfig(defaultConfig);
 			}
 			if ((null != widgetType.getConfig() && null == widgetType.getParentTypeCode())) {
-				throw new ApsSystemException("Default configuration found in the type '" +
-						code + "' with no parent type assigned");
+				throw new ApsSystemException("Default configuration found in the type '"
+						+ code + "' with no parent type assigned");
 			}
 			int isLocked = res.getInt(7);
 			widgetType.setLocked(isLocked == 1);
@@ -119,13 +101,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 		}
 		return widgetType;
 	}
-	
-	@Override
-	@Deprecated
-	public void addShowletType(WidgetType widgetType) {
-		this.addWidgetType(widgetType);
-	}
-	
+
 	@Override
 	public void addWidgetType(WidgetType widgetType) {
 		Connection conn = null;
@@ -160,17 +136,11 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while adding a new widget type",  t);
+			_logger.error("Error while adding a new widget type", t);
 			throw new RuntimeException("Error while adding a new widget type", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
-	}
-	
-	@Override
-	@Deprecated
-	public void deleteShowletType(String showletTypeCode) {
-		deleteWidgetType(showletTypeCode);
 	}
 
 	@Override
@@ -193,61 +163,6 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-	
-	@Override
-	@Deprecated
-	public void updateShowletTypeTitles(String widgetTypeCode, ApsProperties titles) {
-		Connection conn = null;
-		PreparedStatement stat = null;
-		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(UPDATE_SHOWLET_TYPE_TITLES);
-			stat.setString(1, titles.toXml());
-			stat.setString(2, widgetTypeCode);
-			stat.executeUpdate();
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error updating titles for showlet type {}", widgetTypeCode,  t);
-			throw new RuntimeException("Error updating showlet type titles", t);
-		} finally {
-			closeDaoResources(null, stat, conn);
-		}
-	}
-	
-	@Override
-	@Deprecated
-	public void updateShowletType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig) {
-		Connection conn = null;
-		PreparedStatement stat = null;
-		try {
-			conn = this.getConnection();
-			conn.setAutoCommit(false);
-			stat = conn.prepareStatement(UPDATE_SHOWLET_TYPE_DEPRECATED);
-			stat.setString(1, titles.toXml());
-			if (null == defaultConfig || defaultConfig.size() == 0) {
-				stat.setNull(2, Types.VARCHAR);
-			} else {
-				stat.setString(2, defaultConfig.toXml());
-			}
-			stat.setString(3, widgetTypeCode);
-			stat.executeUpdate();
-			conn.commit();
-		} catch (Throwable t) {
-			this.executeRollback(conn);
-			_logger.error("Error updating widget type",  t);
-			throw new RuntimeException("Error updating widget type", t);
-		} finally {
-			closeDaoResources(null, stat, conn);
-		}
-	}
-	
-	@Override
-	@Deprecated
-	public void updateShowletType(String showletTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) {
-		updateWidgetType(showletTypeCode, titles, defaultConfig, mainGroup);
-	}
 
 	@Override
 	public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) {
@@ -258,7 +173,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 			conn.setAutoCommit(false);
 			stat = conn.prepareStatement(UPDATE_WIDGET_TYPE);
 			stat.setString(1, titles.toXml());
-			if (null == defaultConfig || defaultConfig.size() == 0) {
+			if (null == defaultConfig || defaultConfig.isEmpty()) {
 				stat.setNull(2, Types.VARCHAR);
 			} else {
 				stat.setString(2, defaultConfig.toXml());
@@ -269,41 +184,34 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error updating widget type {}", widgetTypeCode,  t);
+			_logger.error("Error updating widget type {}", widgetTypeCode, t);
 			throw new RuntimeException("Error updating widget type", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-	
+
 	protected ILangManager getLangManager() {
 		return _langManager;
 	}
+
 	public void setLangManager(ILangManager langManager) {
 		this._langManager = langManager;
 	}
-	
+
 	private ILangManager _langManager;
-	
-	private final String ALL_WIDGET_TYPES = 
-		"SELECT code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup FROM widgetcatalog";
-	
-	private final String ADD_WIDGET_TYPE = 
-		"INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) " +
-		"VALUES ( ? , ? , ? , ? , ? , ? , ? , ?)";
-	
-	private final String DELETE_WIDGET_TYPE = 
-		"DELETE FROM widgetcatalog WHERE code = ? AND locked = ? ";
-	
-	@Deprecated
-	private final String UPDATE_SHOWLET_TYPE_DEPRECATED = 
-		"UPDATE widgetcatalog SET titles = ? , defaultconfig = ? WHERE code = ? ";
-	
-	private final String UPDATE_WIDGET_TYPE = 
-		"UPDATE widgetcatalog SET titles = ? , defaultconfig = ? , maingroup = ? WHERE code = ? ";
-	
-	@Deprecated
-	private final String UPDATE_SHOWLET_TYPE_TITLES = 
-		"UPDATE widgetcatalog SET titles = ? WHERE code = ? ";
-	
+
+	private final String ALL_WIDGET_TYPES
+			= "SELECT code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup FROM widgetcatalog";
+
+	private final String ADD_WIDGET_TYPE
+			= "INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) "
+			+ "VALUES ( ? , ? , ? , ? , ? , ? , ? , ?)";
+
+	private final String DELETE_WIDGET_TYPE
+			= "DELETE FROM widgetcatalog WHERE code = ? AND locked = ? ";
+
+	private final String UPDATE_WIDGET_TYPE
+			= "UPDATE widgetcatalog SET titles = ? , defaultconfig = ? , maingroup = ? WHERE code = ? ";
+
 }

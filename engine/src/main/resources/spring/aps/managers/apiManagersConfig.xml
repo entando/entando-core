@@ -23,6 +23,11 @@
                 <property name="dataSource" ref="servDataSource" />
             </bean>
         </property>
+        <property name="cacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.api.cache.ApiCatalogManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+        </property>
     </bean>
     
     <bean id="ApiServiceInterface" class="org.entando.entando.aps.system.services.api.ApiServiceInterface" >

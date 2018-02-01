@@ -25,7 +25,7 @@ public interface IApiCatalogManagerCacheWrapper {
 
 	public static final String APICATALOG_MANAGER_CACHE_NAME = "Entando_ApiCatalogManager";
 
-	//public static final String APICATALOG_CACHE_NAME_PREFIX = "ApiCatalogManager_labelGroup_";
+	public static final String APICATALOG_SERVICE_CACHE_NAME_PREFIX = "ApiCatalogManager_service_";
 
 	public static final String APICATALOG_RESOURCES_CACHE_NAME = "ApiCatalogManager_resources";
 

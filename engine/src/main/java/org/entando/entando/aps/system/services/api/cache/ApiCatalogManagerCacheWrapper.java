@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.entando.entando.aps.system.services.api.IApiCatalogDAO;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
@@ -63,11 +65,31 @@ public class ApiCatalogManagerCacheWrapper extends AbstractCacheWrapper implemen
 		return this.get(this.getCache(), APICATALOG_SERVICES_CACHE_NAME, Map.class);
 	}
 
+	@Override
+	public void addService(ApiService apiService) {
+		this.manage(apiService.getKey(), apiService, Action.ADD);
+	}
+
+	@Override
+	public void updateService(ApiService apiService) {
+		this.manage(apiService.getKey(), apiService, Action.UPDATE);
+	}
+
+	@Override
+	public void removeService(String key) {
+		this.manage(key, null, Action.DELETE);
+	}
+
 	protected void insertObjectsOnCache(Cache cache, Map<String, ApiResource> resources, IApiCatalogDAO apiCatalogDAO) throws ApsSystemException {
 		Map<String, ApiService> services = new HashMap<>();
 		try {
 			List<ApiMethod> apiGETMethods = buildApiGetMethods(resources);
 			services = apiCatalogDAO.loadServices(apiGETMethods);
+
+			for (Map.Entry<String, ApiService> entry : services.entrySet()) {
+				cache.put(APICATALOG_SERVICE_CACHE_NAME_PREFIX + entry.getKey(), entry.getValue());
+			}
+
 		} catch (Throwable t) {
 			services = new HashMap<String, ApiService>();
 			logger.error("Error loading Services definitions", t);
@@ -79,12 +101,23 @@ public class ApiCatalogManagerCacheWrapper extends AbstractCacheWrapper implemen
 
 
 	protected void releaseCachedObjects(Cache cache) {
+		this.releaseCachedObjects(cache, APICATALOG_SERVICES_CACHE_NAME, APICATALOG_SERVICE_CACHE_NAME_PREFIX);
 		cache.evict(APICATALOG_RESOURCES_CACHE_NAME);
-		cache.evict(APICATALOG_SERVICES_CACHE_NAME);
 	}
 
+	@SuppressWarnings("unchecked")
+	protected void releaseCachedObjects(Cache cache, String cacheKey, String codePrefix) {
+		Map<String, ApiService> services = (Map<String, ApiService>) this.get(cache, cacheKey, Map.class);
+		if (null != services) {
+			for (Map.Entry<String, ApiService> entry : services.entrySet()) {
+				String key = entry.getKey();
+				cache.evict(codePrefix + key);
+			}
+			cache.evict(cacheKey);
+		}
+	}
 
-	private List<ApiMethod> buildApiGetMethods(Map<String, ApiResource> resources) {
+	protected List<ApiMethod> buildApiGetMethods(Map<String, ApiResource> resources) {
 		List<ApiMethod> apiGETMethods = new ArrayList<ApiMethod>();
 		List<ApiResource> resourceList = new ArrayList<ApiResource>(resources.values());
 		for (int i = 0; i < resourceList.size(); i++) {
@@ -96,5 +129,30 @@ public class ApiCatalogManagerCacheWrapper extends AbstractCacheWrapper implemen
 		return apiGETMethods;
 	}
 
+	protected void manage(String key, ApiService service, Action operation) {
+		if (StringUtils.isBlank(key)) {
+			return;
+		}
+		Cache cache = this.getCache();
+		Map<String, ApiService> services = this.getMasterServices();
+		if (Action.ADD.equals(operation)) {
+			if (!services.containsKey(key)) {
+				services.put(key, service);
+				cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
+			}
+			cache.put(APICATALOG_SERVICE_CACHE_NAME_PREFIX + key, service);
+		} else if (Action.UPDATE.equals(operation)) {
+			if (!services.containsKey(key)) {
+				throw new CacheItemNotFoundException(key, cache.getName());
+			}
+			cache.put(APICATALOG_SERVICE_CACHE_NAME_PREFIX + key, service);
+			services.put(key, service);
+			cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
+		} else if (Action.DELETE.equals(operation)) {
+			cache.evict(APICATALOG_SERVICE_CACHE_NAME_PREFIX + key);
+			services.remove(key);
+			cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
+		}
+	}
 
 }

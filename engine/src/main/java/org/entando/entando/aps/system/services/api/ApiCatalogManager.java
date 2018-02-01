@@ -41,7 +41,11 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
 
 	private IApiCatalogManagerCacheWrapper cacheWrapper;
 
-	// 
+	private String locationPatterns;
+
+	private IApiCatalogDAO apiCatalogDAO;
+
+
 
 	protected IApiCatalogManagerCacheWrapper getCacheWrapper() {
 		return cacheWrapper;
@@ -51,58 +55,26 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
 		this.cacheWrapper = cacheWrapper;
 	}
 
-	// 
+	public void setLocationPatterns(String locationPatterns) {
+		this.locationPatterns = locationPatterns;
+	}
+
+	protected IApiCatalogDAO getApiCatalogDAO() {
+		return apiCatalogDAO;
+	}
+
+	public void setApiCatalogDAO(IApiCatalogDAO apiCatalogDAO) {
+		this.apiCatalogDAO = apiCatalogDAO;
+	}
 
 	@Override
 	public void init() throws Exception {
-
 		ApiResourceLoader loader = new ApiResourceLoader(this.getLocationPatterns());
 		Map<String, ApiResource> resources = loader.getResources();
 		this.cacheWrapper.initCache(resources, this.getApiCatalogDAO());
 
 		logger.debug("{} ready.", this.getClass().getName());
 	}
-
-	@Override
-	protected void release() {
-		super.release();
-		//		this.setMasterResources(null);
-		//		this.setMasterServices(null);
-	}
-
-	//    protected void loadResources() throws ApsSystemException {
-	//        try {
-	//            ApiResourceLoader loader = new ApiResourceLoader(this.getLocationPatterns());
-	//            Map<String, ApiResource> resources = loader.getResources();
-	//            this.setMasterResources(resources);
-	//            logger.debug("{}: initialized Api Methods", this.getClass().getName());
-	//            this.getApiCatalogDAO().loadApiStatus(resources);
-	//        } catch (Throwable t) {
-	//        	logger.error("Error loading Api Resources definitions", t);
-	//            throw new ApsSystemException("Error loading Api Resources definitions", t);
-	//        }
-	//    }
-
-	//    protected void loadServices() throws ApsSystemException {
-	//        try {
-	//            if (null == this.getMasterResources()) {
-	//                this.loadResources();
-	//            }
-	//            List<ApiMethod> apiGETMethods = new ArrayList<ApiMethod>();
-	//            List<ApiResource> resourceList = new ArrayList<ApiResource>(this.getMasterResources().values());
-	//            for (int i = 0; i < resourceList.size(); i++) {
-	//                ApiResource apiResource = resourceList.get(i);
-	//                if (null != apiResource.getGetMethod()) {
-	//                    apiGETMethods.add(apiResource.getGetMethod());
-	//                }
-	//            }
-	//            this.setMasterServices(this.getApiCatalogDAO().loadServices(apiGETMethods));
-	//        } catch (Throwable t) {
-	//            this.setMasterServices(new HashMap<String, ApiService>());
-	//            logger.error("Error loading Services definitions", t);
-	//            throw new ApsSystemException("Error loading Services definitions", t);
-	//        }
-	//    }
 
 	@Override
 	public ApiMethod getRelatedMethod(String showletCode) throws ApsSystemException {
@@ -377,7 +349,7 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
 			} else {
 				this.getApiCatalogDAO().addService(service);
 			}
-			this.getMasterServices().put(service.getKey(), service);
+			this.getCacheWrapper().addService(service);
 		} catch (Throwable t) {
 			logger.error("Error saving service", t);
 			throw new ApsSystemException("Error saving service", t);
@@ -388,7 +360,7 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
 	public void deleteService(String key) throws ApsSystemException {
 		try {
 			this.getApiCatalogDAO().deleteService(key);
-			this.getMasterServices().remove(key);
+			this.getCacheWrapper().removeService(key);
 		} catch (Throwable t) {
 			logger.error("Error deleting api service by key '{}'", key, t);
 			throw new ApsSystemException("Error deleting service '" + key + "'", t);
@@ -401,13 +373,14 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
 			if (null == service) {
 				throw new ApsSystemException("Null api service to update");
 			}
-			ApiService masterService = this.getMasterServices().get(service.getKey());
+			ApiService masterService = this.getCacheWrapper().getMasterServices().get(service.getKey());
 			if (null == masterService) {
 				throw new ApsSystemException("Api service '" + service.getKey() + "' does not exist");
 			}
 			masterService.setActive(service.isActive());
 			masterService.setHidden(service.isHidden());
 			this.getApiCatalogDAO().updateService(masterService);
+			this.getCacheWrapper().updateService(service);
 		} catch (Throwable t) {
 			logger.error("Error updating api service with key '{}'", service.getKey(), t);
 			throw new ApsSystemException("Error updating service '" + service.getKey() + "'", t);
@@ -415,30 +388,11 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
 	}
 
 
-
 	protected String getLocationPatterns() {
-		if (null == this._locationPatterns) {
+		if (null == this.locationPatterns) {
 			return DEFAULT_LOCATION_PATTERN;
 		}
-		return _locationPatterns;
+		return locationPatterns;
 	}
-
-	public void setLocationPatterns(String locationPatterns) {
-		this._locationPatterns = locationPatterns;
-	}
-
-	protected IApiCatalogDAO getApiCatalogDAO() {
-		return _apiCatalogDAO;
-	}
-
-	public void setApiCatalogDAO(IApiCatalogDAO apiCatalogDAO) {
-		this._apiCatalogDAO = apiCatalogDAO;
-	}
-
-
-	//private Map<String, ApiService> _masterServices;
-	private String _locationPatterns;
-	private IApiCatalogDAO _apiCatalogDAO;
-
 
 }

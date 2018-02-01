@@ -190,24 +190,20 @@ public abstract class ApsEntityManager extends AbstractService
 	
 	@Override
 	public IApsEntity getEntityPrototype(String typeCode) {
-		IApsEntity entityType = this.getEntityTypes().get(typeCode);
-		if (null == entityType) {
-			return null;
+		IApsEntity prototype = null;
+		try {
+			prototype = this._entityTypeFactory.extractEntityType(typeCode, this.getEntityClass(), 
+				this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
+		} catch (Exception e) {
+			_logger.error("Error while extracting entity type {}", typeCode, e);
+			throw new RuntimeException("Error while extracting entity type " + typeCode, e);
 		}
-		return entityType.getEntityPrototype();
+		return prototype;
 	}
 
 	@Override
 	public Map<String, IApsEntity> getEntityPrototypes() {
-		Collection<IApsEntity> entityTypes = this._entityTypes.values();
-		Map<String, IApsEntity> entityTypesMap = new HashMap<>(entityTypes.size());
-		Iterator<IApsEntity> iter = entityTypes.iterator();
-		while (iter.hasNext()) {
-			IApsEntity entityType = iter.next();
-			IApsEntity clone = entityType.getEntityPrototype();
-			entityTypesMap.put(clone.getTypeCode(), clone);
-		}
-		return entityTypesMap;
+		return this.getEntityTypes();
 	}
 
 	/**
@@ -220,7 +216,7 @@ public abstract class ApsEntityManager extends AbstractService
 		if (null == entityType) {
 			throw new ApsSystemException("Invalid entity type to add");
 		}
-		Map<String, IApsEntity> newEntityTypes = new HashMap<>(this._entityTypes);
+		Map<String, IApsEntity> newEntityTypes = this.getEntityTypes();
 		newEntityTypes.put(entityType.getTypeCode(), entityType);
 		this.updateEntityPrototypes(newEntityTypes);
 		this.notifyEntityTypesChanging(null, entityType, EntityTypesChangingEvent.INSERT_OPERATION_CODE);
@@ -236,13 +232,13 @@ public abstract class ApsEntityManager extends AbstractService
 		if (null == entityType) {
 			throw new ApsSystemException("Invalid entity type to update");
 		}
-		IApsEntity oldEntityType = this._entityTypes.get(entityType.getTypeCode());
+		Map<String, IApsEntity> entityTypes = this.getEntityTypes();
+		IApsEntity oldEntityType = entityTypes.get(entityType.getTypeCode());
 		if (null == oldEntityType) {
 			throw new ApsSystemException("No entity type to update with code '" + entityType.getTypeCode() + "' where found");
 		}
-		Map<String, IApsEntity> newEntityTypes = new HashMap<>(this._entityTypes);
-		newEntityTypes.put(entityType.getTypeCode(), entityType);
-		this.updateEntityPrototypes(newEntityTypes);
+		entityTypes.put(entityType.getTypeCode(), entityType);
+		this.updateEntityPrototypes(entityTypes);
 		this.verifyReloadingNeeded(oldEntityType, entityType);
 		this.notifyEntityTypesChanging(oldEntityType, entityType, EntityTypesChangingEvent.UPDATE_OPERATION_CODE);
 	}
@@ -287,13 +283,13 @@ public abstract class ApsEntityManager extends AbstractService
 	 */
 	@Override
 	public void removeEntityPrototype(String entityTypeCode) throws ApsSystemException {
-		IApsEntity entityTypeToRemove = this._entityTypes.get(entityTypeCode);
+		Map<String, IApsEntity> entityTypes = this.getEntityTypes();
+		IApsEntity entityTypeToRemove = entityTypes.get(entityTypeCode);
 		if (null == entityTypeToRemove) {
 			throw new ApsSystemException("No entity type to remove with code '" + entityTypeCode + "' were found");
 		}
-		Map<String, IApsEntity> newEntityTypes = new HashMap<>(this._entityTypes);
-		newEntityTypes.remove(entityTypeCode);
-		this.updateEntityPrototypes(newEntityTypes);
+		entityTypes.remove(entityTypeCode);
+		this.updateEntityPrototypes(entityTypes);
 		this.notifyEntityTypesChanging(entityTypeToRemove, null, EntityTypesChangingEvent.REMOVE_OPERATION_CODE);
 	}
 
@@ -326,7 +322,15 @@ public abstract class ApsEntityManager extends AbstractService
 	 * @return The map of the Entity Types indexed by the type code.
 	 */
 	protected Map<String, IApsEntity> getEntityTypes() {
-		return this._entityTypes;
+		Map<String, IApsEntity> types = null;
+		try {
+			types = this._entityTypeFactory.extractEntityTypes(this.getEntityClass(), 
+				this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
+		} catch (Exception e) {
+			_logger.error("Error while extracting entity types", e);
+			throw new RuntimeException("Error while extracting entity types", e);
+		}
+		return types;
 	}
 
 	@Override
@@ -621,18 +625,16 @@ public abstract class ApsEntityManager extends AbstractService
 	
 	@Override
 	public List<SmallEntityType> getSmallEntityTypes() {
-		List<SmallEntityType> types = new ArrayList<>();
-		Iterator<IApsEntity> iter = this._entityTypes.values().iterator();
-		while (iter.hasNext()) {
-			IApsEntity apsEntity = iter.next();
-			SmallEntityType set = new SmallEntityType();
-			set.setCode(apsEntity.getTypeCode());
-			set.setDescription(apsEntity.getTypeDescription());
-			types.add(set);
+		List<SmallEntityType> smallTypes = null;
+		try {
+			smallTypes = this._entityTypeFactory.extractSmallEntityTypes(this.getConfigItemName(), this.getEntityTypeDom());
+			BeanComparator comparator = new BeanComparator("description");
+			Collections.sort(smallTypes, comparator);
+		} catch (Exception e) {
+			_logger.error("Error while extracting small entity types", e);
+			throw new RuntimeException("Error while extracting small entity types", e);
 		}
-		BeanComparator comparator = new BeanComparator("description");
-		Collections.sort(types, comparator);
-		return types;
+		return smallTypes;
 	}
 	
 	/**
@@ -692,9 +694,14 @@ public abstract class ApsEntityManager extends AbstractService
 	protected void setStatus(int status, String typeCode) {
 		this._typesStatus.put(typeCode, status);
 	}
-
+	
 	protected List<String> getEntityTypeCodes() {
-		return new ArrayList<>(this._entityTypes.keySet());
+		List<String> codes = new ArrayList<>();
+		List<SmallEntityType> smallTypes = this.getSmallEntityTypes();
+		for (SmallEntityType smallType : smallTypes) {
+			codes.add(smallType.getCode());
+		}
+		return codes;
 	}
 	
 	/**

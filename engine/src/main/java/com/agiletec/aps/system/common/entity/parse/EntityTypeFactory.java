@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,8 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import java.util.List;
 
 /**
  * This class, which serves the ApsEntity managers, is used to obtain the Entity Types.
@@ -31,25 +33,25 @@ import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
  */
 public class EntityTypeFactory implements IEntityTypeFactory {
 
-	private static final Logger _logger = LoggerFactory.getLogger(EntityTypeFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(EntityTypeFactory.class);
 	
-	private ConfigInterface _configManager;
+	private ConfigInterface configManager;
 	
 	@Override
-	public IApsEntity extractEntityType(String typeCode, Class entityClass, String configItemName, IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
-		System.out.println("***************************************");
-		System.out.println("ITEM NAME -> " + configItemName);
-		long start = System.currentTimeMillis();
+	public List<SmallEntityType> extractSmallEntityTypes(String configItemName, IEntityTypeDOM entityTypeDom) throws ApsSystemException {
 		String xml = this.getConfigManager().getConfigItem(configItemName);
-		_logger.debug("{} : {}", configItemName , xml);
-		IApsEntity entityType = entityTypeDom.extractEntityType(typeCode, xml, entityClass, entityDom, entityManagerName);
-		long end = System.currentTimeMillis();
-		System.out.println("DURATA -> " + (end-start));
-		System.out.println("***************************************");
-		return entityType;
+		return entityTypeDom.extractSmallEntityTypes(xml);
 	}
 	
-	/*
+	@Override
+	public IApsEntity extractEntityType(String typeCode, Class entityClass, String configItemName, 
+			IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
+		String xml = this.getConfigManager().getConfigItem(configItemName);
+		logger.debug("{} : {}", configItemName , xml);
+		return entityTypeDom.extractEntityType(typeCode, xml, entityClass, entityDom, entityManagerName);
+	}
+	
+	/**
 	 * Return the Map of the prototypes of the Entity Types (indexed by their code) that the
 	 * entity service is going to handle.
 	 * The structure of the Entity Types is obtained from a configuration XML.
@@ -61,55 +63,38 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 	 * @return The map of the Entity Types Prototypes, indexed by code. 
 	 * @throws ApsSystemException If errors occurs during the parsing process of the XML. 
 	 */
-	/*
 	@Override
-	public Map<String, IApsEntity> getEntityTypes(Class entityClass, String configItemName, 
+	public Map<String, IApsEntity> extractEntityTypes(Class entityClass, String configItemName, 
 			IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
 		Map<String, IApsEntity> entityTypes = null;
 		try {
-			System.out.println("***************************************");
-			System.out.println("ITEM NAME -> " + configItemName);
-			long start = System.currentTimeMillis();
 			String xml = this.getConfigManager().getConfigItem(configItemName);
-			_logger.debug("{} : {}", configItemName , xml);
-			entityTypeDom.initEntityTypeDOM(xml, entityClass, entityDom, entityManagerName);
-			entityTypes = entityTypeDom.getEntityTypes();
-			long end = System.currentTimeMillis();
-			System.out.println("DURATA -> " + (end-start));
-			System.out.println("ENTITA' -> " + entityTypes.size());
-			System.out.println("***************************************");
+			logger.debug("{} : {}", configItemName , xml);
+			entityTypes = entityTypeDom.extractEntityTypes(xml, entityClass, entityDom, entityManagerName);
 		} catch (Throwable t) {
-			_logger.error("Error in the entities initialization process. configItemName:{}", configItemName, t);
-			//ApsSystemUtils.logThrowable(t, this, "getEntityTypes");
+			logger.error("Error in the entities initialization process. configItemName:{}", configItemName, t);
 			throw new ApsSystemException("Error in the entities initialization process", t);
 		}
 		return entityTypes;
 	}
-	*/
+	
 	@Override
 	public void updateEntityTypes(Map<String, IApsEntity> entityTypes, String configItemName, IEntityTypeDOM entityTypeDom) throws ApsSystemException {
 		try {
 			String xml = entityTypeDom.getXml(entityTypes);
 			this.getConfigManager().updateConfigItem(configItemName, xml);
 		} catch (Throwable t) {
-			_logger.error("Error detected while updating the Entity Types. configItemName: {}", configItemName, t);
-			//ApsSystemUtils.logThrowable(t, this, "updateEntityTypes");
+			logger.error("Error detected while updating the Entity Types. configItemName: {}", configItemName, t);
 			throw new ApsSystemException("Error detected while updating the Entity Types", t);
 		}
 	}
 	
 	protected ConfigInterface getConfigManager() {
-		return this._configManager;
+		return this.configManager;
 	}
 	
-	/**
-	 * Set up the manager of the system configuration.
-	 * This method is silently invoked when parsing the XML that defines the service in the Spring
-	 * configuration file. It cannot be invoked directly.
-	 * @param configManager The manager of the system configuration.
-	 */
 	public void setConfigManager(ConfigInterface configManager) {
-		this._configManager = configManager;
+		this.configManager = configManager;
 	}
 	
 }

@@ -33,25 +33,23 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 
 	private static final Logger _logger = LoggerFactory.getLogger(EntityTypeFactory.class);
 	
-	/**
-	 * Return the Map of the prototypes of the Entity Types (indexed by their code) that the
-	 * entity service is going to handle.
-	 * The structure of the Entity Types is obtained from a configuration XML.
-	 * @param entityClass The class of the entity. 
-	 * @param configItemName The configuration item where the Entity Types are defined.
-	 * @param entityTypeDom The DOM class that parses the configuration XML.
-	 * @param entityDom The DOM class that parses the XML representing the single (implemented) entity.
-	 * @return The map of the Entity Types Prototypes, indexed by code. 
-	 * @deprecated Since Entando 2.4.1, use getEntityTypes(Class, String, IEntityTypeDOM, String, IApsEntityDOM)
-	 * @throws ApsSystemException If errors occurs during the parsing process of the XML.
-	 */
+	private ConfigInterface _configManager;
+	
 	@Override
-	public Map<String, IApsEntity> getEntityTypes(Class entityClass, String configItemName, 
-			IEntityTypeDOM entityTypeDom, IApsEntityDOM entityDom) throws ApsSystemException {
-		return this.getEntityTypes(entityClass, configItemName, entityTypeDom, null, entityDom);
+	public IApsEntity extractEntityType(String typeCode, Class entityClass, String configItemName, IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
+		System.out.println("***************************************");
+		System.out.println("ITEM NAME -> " + configItemName);
+		long start = System.currentTimeMillis();
+		String xml = this.getConfigManager().getConfigItem(configItemName);
+		_logger.debug("{} : {}", configItemName , xml);
+		IApsEntity entityType = entityTypeDom.extractEntityType(typeCode, xml, entityClass, entityDom, entityManagerName);
+		long end = System.currentTimeMillis();
+		System.out.println("DURATA -> " + (end-start));
+		System.out.println("***************************************");
+		return entityType;
 	}
 	
-	/**
+	/*
 	 * Return the Map of the prototypes of the Entity Types (indexed by their code) that the
 	 * entity service is going to handle.
 	 * The structure of the Entity Types is obtained from a configuration XML.
@@ -63,15 +61,23 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 	 * @return The map of the Entity Types Prototypes, indexed by code. 
 	 * @throws ApsSystemException If errors occurs during the parsing process of the XML. 
 	 */
+	/*
 	@Override
 	public Map<String, IApsEntity> getEntityTypes(Class entityClass, String configItemName, 
 			IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
 		Map<String, IApsEntity> entityTypes = null;
 		try {
+			System.out.println("***************************************");
+			System.out.println("ITEM NAME -> " + configItemName);
+			long start = System.currentTimeMillis();
 			String xml = this.getConfigManager().getConfigItem(configItemName);
 			_logger.debug("{} : {}", configItemName , xml);
 			entityTypeDom.initEntityTypeDOM(xml, entityClass, entityDom, entityManagerName);
 			entityTypes = entityTypeDom.getEntityTypes();
+			long end = System.currentTimeMillis();
+			System.out.println("DURATA -> " + (end-start));
+			System.out.println("ENTITA' -> " + entityTypes.size());
+			System.out.println("***************************************");
 		} catch (Throwable t) {
 			_logger.error("Error in the entities initialization process. configItemName:{}", configItemName, t);
 			//ApsSystemUtils.logThrowable(t, this, "getEntityTypes");
@@ -79,7 +85,7 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 		}
 		return entityTypes;
 	}
-	
+	*/
 	@Override
 	public void updateEntityTypes(Map<String, IApsEntity> entityTypes, String configItemName, IEntityTypeDOM entityTypeDom) throws ApsSystemException {
 		try {
@@ -105,7 +111,5 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 	public void setConfigManager(ConfigInterface configManager) {
 		this._configManager = configManager;
 	}
-	
-	private ConfigInterface _configManager;
 	
 }

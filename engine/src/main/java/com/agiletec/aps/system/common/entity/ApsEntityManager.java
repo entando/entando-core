@@ -74,11 +74,12 @@ public abstract class ApsEntityManager extends AbstractService
 	@Override
 	public void init() throws Exception {
 		this._entityDom.setRootElementName(this.getXmlAttributeRootElementName());
+		/*
 		String entityManagerName = super.getName();
 		this._entityTypes = this._entityTypeFactory.getEntityTypes(this.getEntityClass(), 
 				this.getConfigItemName(), this.getEntityTypeDom(), entityManagerName, this.getEntityDom());
-		
-		_logger.debug("{} : inizializated {} entity types", this.getName(), this._entityTypes.size());
+		*/
+		_logger.debug("{} : inizializated", this.getName());
 	}
 	
 	@Override
@@ -719,11 +720,6 @@ public abstract class ApsEntityManager extends AbstractService
 	 */
 	protected abstract IEntitySearcherDAO getEntitySearcherDao();
 	
-	/**
-	 * Map of the entity prototypes, indexed by the type code.
-	 */
-	private Map<String, IApsEntity> _entityTypes;
-
 	private IEntityTypeFactory _entityTypeFactory;
 
 	private Class _entityClass;

@@ -13,18 +13,21 @@
  */
 package com.agiletec.aps.system.services.group.cache;
 
-import com.agiletec.aps.system.common.AbstractCacheWrapper;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.group.IGroupDAO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
+
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.group.IGroupDAO;
 
 /**
  * @author E.Santoboni
@@ -118,7 +121,10 @@ public class GroupManagerCacheWrapper extends AbstractCacheWrapper implements IG
 				cache.put(GROUP_CODES_CACHE_NAME, codes);
 			}
 			cache.put(GROUP_CACHE_NAME_PREFIX + group.getName(), group);
-		} else if (Action.UPDATE.equals(operation) && codes.contains(group.getName())) {
+		} else if (Action.UPDATE.equals(operation)) {
+			if (!codes.contains(group.getName())) {
+				throw new CacheItemNotFoundException(group.getName(), cache.getName());
+			}
 			cache.put(GROUP_CACHE_NAME_PREFIX + group.getName(), group);
 		} else if (Action.DELETE.equals(operation)) {
 			codes.remove(group.getName());

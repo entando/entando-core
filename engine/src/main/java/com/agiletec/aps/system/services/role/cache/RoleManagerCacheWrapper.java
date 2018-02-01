@@ -13,19 +13,22 @@
  */
 package com.agiletec.aps.system.services.role.cache;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.Cache;
+
 import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.IRoleDAO;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.Cache;
 
 /**
  * @author E.Santoboni
@@ -129,7 +132,10 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 				cache.put(ROLE_CODES_CACHE_NAME, codes);
 			}
 			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
-		} else if (Action.UPDATE.equals(operation) && codes.contains(role.getName())) {
+		} else if (Action.UPDATE.equals(operation)) {
+			if (!codes.contains(role.getName())) {
+				throw new CacheItemNotFoundException(role.getName(), cache.getName());
+			}
 			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
 		} else if (Action.DELETE.equals(operation)) {
 			codes.remove(role.getName());
@@ -185,7 +191,10 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 				cache.put(PERMISSION_CODES_CACHE_NAME, codes);
 			}
 			cache.put(PERMISSION_CACHE_NAME_PREFIX + permission.getName(), permission);
-		} else if (Action.UPDATE.equals(operation) && codes.contains(permission.getName())) {
+		} else if (Action.UPDATE.equals(operation)) {
+			if (!codes.contains(permission.getName())) {
+				throw new CacheItemNotFoundException(permission.getName(), cache.getName());
+			}
 			cache.put(PERMISSION_CACHE_NAME_PREFIX + permission.getName(), permission);
 		} else if (Action.DELETE.equals(operation)) {
 			codes.remove(permission.getName());

@@ -56,39 +56,44 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * This abstract service must be extended in all those services that make use of ApsEntities.
- * By default, extending the manager, it is necessary to implement the method that returns the specific 
- * category manager and, in the definition of the Spring service, the configuration item where to look 
- * for the definitions of the Entity Types handled by the service.
+ * This abstract service must be extended in all those services that make use of
+ * ApsEntities. By default, extending the manager, it is necessary to implement
+ * the method that returns the specific category manager and, in the definition
+ * of the Spring service, the configuration item where to look for the
+ * definitions of the Entity Types handled by the service.
+ *
  * @author E.Santoboni
  */
-public abstract class ApsEntityManager extends AbstractService 
+public abstract class ApsEntityManager extends AbstractService
 		implements IEntityManager, IEntityTypesConfigurer, ReloadingEntitiesReferencesObserver {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ApsEntityManager.class);
-	
+
 	/**
-	 * Initialize the service by loading the Entity Types form the configuration.
-	 * @throws Exception If errors are detected during the service initialization.
+	 * Initialize the service by loading the Entity Types form the
+	 * configuration.
+	 *
+	 * @throws Exception If errors are detected during the service
+	 * initialization.
 	 */
 	@Override
 	public void init() throws Exception {
 		this._entityDom.setRootElementName(this.getXmlAttributeRootElementName());
 		/*
 		String entityManagerName = super.getName();
-		this._entityTypes = this._entityTypeFactory.getEntityTypes(this.getEntityClass(), 
+		this._entityTypes = this._entityTypeFactory.getEntityTypes(this.getEntityClass(),
 				this.getConfigItemName(), this.getEntityTypeDom(), entityManagerName, this.getEntityDom());
-		*/
+		 */
 		_logger.debug("{} : inizializated", this.getName());
 	}
-	
+
 	@Override
 	public void refresh() throws Throwable {
 		super.refresh();
 		this._attributeDisablingCodes = null;
 		this._attributeRoles = null;
 	}
-	
+
 	@Override
 	public Map<String, String> getAttributeDisablingCodes() {
 		if (null != this._attributeDisablingCodes) {
@@ -102,7 +107,7 @@ public abstract class ApsEntityManager extends AbstractService
 		clone.putAll(this._attributeDisablingCodes);
 		return clone;
 	}
-	
+
 	@Override
 	public List<AttributeRole> getAttributeRoles() {
 		if (null != this._attributeRoles) {
@@ -113,13 +118,13 @@ public abstract class ApsEntityManager extends AbstractService
 		this.initAttributeRoles();
 		return this.getOrderedAttributeRoles();
 	}
-	
+
 	protected void initAttributeRoles() {
 		this._attributeRoles = new HashMap<>();
 		AttributeRolesLoader loader = new AttributeRolesLoader();
 		this._attributeRoles = loader.extractAttributeRoles(this.getAttributeRolesFileName(), super.getBeanFactory(), this);
 	}
-	
+
 	private List<AttributeRole> getOrderedAttributeRoles() {
 		List<AttributeRole> roles = new ArrayList<>(this._attributeRoles.size());
 		Iterator<AttributeRole> iter = this._attributeRoles.values().iterator();
@@ -131,7 +136,7 @@ public abstract class ApsEntityManager extends AbstractService
 		Collections.sort(roles, comparator);
 		return roles;
 	}
-	
+
 	@Override
 	public AttributeRole getAttributeRole(String roleName) {
 		if (null == this._attributeRoles) {
@@ -143,13 +148,16 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Create and populate the entity as specified by its type and XML definition.
+	 * Create and populate the entity as specified by its type and XML
+	 * definition.
+	 *
 	 * @param entityTypeCode The Entity Type code.
 	 * @param xml The XML of the associated entity.
 	 * @return The populated entity.
-	 * @throws ApsSystemException If errors detected while retrieving the entity.
+	 * @throws ApsSystemException If errors detected while retrieving the
+	 * entity.
 	 */
 	protected IApsEntity createEntityFromXml(String entityTypeCode, String xml) throws ApsSystemException {
 		try {
@@ -168,8 +176,9 @@ public abstract class ApsEntityManager extends AbstractService
 	}
 
 	/**
-	 * Indicates whether the service makes use of the search engine.
-	 * Default value: false.
+	 * Indicates whether the service makes use of the search engine. Default
+	 * value: false.
+	 *
 	 * @return true if the services uses the search engine, false otherwise.
 	 */
 	@Override
@@ -178,22 +187,25 @@ public abstract class ApsEntityManager extends AbstractService
 	}
 
 	/**
-	 * Create an entity prototype given the relative code.
-	 * This method is for those managers that extend the ApsEntityManager.
+	 * Create an entity prototype given the relative code. This method is for
+	 * those managers that extend the ApsEntityManager.
+	 *
 	 * @param typeCode The entity code.
 	 * @return The prototype of requested entity.
-	 * @deprecated From jAPS 2.0 version 2.0.9, use getEntityPrototype(String typeCode)
+	 * @deprecated From jAPS 2.0 version 2.0.9, use getEntityPrototype(String
+	 * typeCode)
 	 */
 	protected IApsEntity createEntityPrototype(String typeCode) {
 		return this.getEntityPrototype(typeCode);
 	}
-	
+
 	@Override
 	public IApsEntity getEntityPrototype(String typeCode) {
 		IApsEntity prototype = null;
 		try {
-			prototype = this._entityTypeFactory.extractEntityType(typeCode, this.getEntityClass(), 
-				this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
+			IApsEntity mainPrototype = this._entityTypeFactory.extractEntityType(typeCode, this.getEntityClass(),
+					this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
+			prototype = mainPrototype.getEntityPrototype();
 		} catch (Exception e) {
 			_logger.error("Error while extracting entity type {}", typeCode, e);
 			throw new RuntimeException("Error while extracting entity type " + typeCode, e);
@@ -203,11 +215,20 @@ public abstract class ApsEntityManager extends AbstractService
 
 	@Override
 	public Map<String, IApsEntity> getEntityPrototypes() {
-		return this.getEntityTypes();
+		Map<String, IApsEntity> prototypes = new HashMap<>();
+		Map<String, IApsEntity> mainPrototypes = this.getEntityTypes();
+		Iterator<String> iter = mainPrototypes.keySet().iterator();
+		while (iter.hasNext()) {
+			String code = iter.next();
+			IApsEntity mainPrototype = mainPrototypes.get(code);
+			prototypes.put(code, mainPrototype.getEntityPrototype());
+		}
+		return prototypes;
 	}
 
 	/**
 	 * Add a new entity prototype on the catalog.
+	 *
 	 * @param entityType The entity type to add.
 	 * @throws ApsSystemException In case of error.
 	 */
@@ -224,6 +245,7 @@ public abstract class ApsEntityManager extends AbstractService
 
 	/**
 	 * Update an entity prototype on the catalog.
+	 *
 	 * @param entityType The entity type to update.
 	 * @throws ApsSystemException In case of error.
 	 */
@@ -242,7 +264,7 @@ public abstract class ApsEntityManager extends AbstractService
 		this.verifyReloadingNeeded(oldEntityType, entityType);
 		this.notifyEntityTypesChanging(oldEntityType, entityType, EntityTypesChangingEvent.UPDATE_OPERATION_CODE);
 	}
-	
+
 	protected void verifyReloadingNeeded(IApsEntity oldEntityType, IApsEntity newEntityType) {
 		if (this.getStatus(newEntityType.getTypeCode()) == STATUS_NEED_TO_RELOAD_REFERENCES) {
 			return;
@@ -275,9 +297,10 @@ public abstract class ApsEntityManager extends AbstractService
 			}
 		}
 	}
-	
+
 	/**
 	 * Remove an entity type from the catalog.
+	 *
 	 * @param entityTypeCode The code of the entity type to remove.
 	 * @throws ApsSystemException In case of error.
 	 */
@@ -295,7 +318,9 @@ public abstract class ApsEntityManager extends AbstractService
 
 	/**
 	 * Update entity prototypes
-	 * @param newEntityTypes the map, indexed by code, containing the new entities.
+	 *
+	 * @param newEntityTypes the map, indexed by code, containing the new
+	 * entities.
 	 * @throws ApsSystemException If errors are detected during the process.
 	 */
 	private void updateEntityPrototypes(Map<String, IApsEntity> newEntityTypes) throws ApsSystemException {
@@ -319,13 +344,14 @@ public abstract class ApsEntityManager extends AbstractService
 
 	/**
 	 * Return the map of the Entity Types managed by the service.
+	 *
 	 * @return The map of the Entity Types indexed by the type code.
 	 */
 	protected Map<String, IApsEntity> getEntityTypes() {
 		Map<String, IApsEntity> types = null;
 		try {
-			types = this._entityTypeFactory.extractEntityTypes(this.getEntityClass(), 
-				this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
+			types = this._entityTypeFactory.extractEntityTypes(this.getEntityClass(),
+					this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
 		} catch (Exception e) {
 			_logger.error("Error while extracting entity types", e);
 			throw new RuntimeException("Error while extracting entity types", e);
@@ -345,25 +371,29 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return attributeMap;
 	}
-	
+
 	/**
-	 * Set up the Entity Types factory.
-	 * This method is used and hereby found in the spring XML configuration of the service.
-	 * By default, the definition of the abstract service in the Spring configuration presents a 
-	 * standard factory; such definition must be substituted in the declaration of the service if
-	 * specific operations are required by the particular structure of the Entity Type to manage.
+	 * Set up the Entity Types factory. This method is used and hereby found in
+	 * the spring XML configuration of the service. By default, the definition
+	 * of the abstract service in the Spring configuration presents a standard
+	 * factory; such definition must be substituted in the declaration of the
+	 * service if specific operations are required by the particular structure
+	 * of the Entity Type to manage.
+	 *
 	 * @param entityTypeFactory The factory of Entity Types.
 	 */
 	public void setEntityTypeFactory(IEntityTypeFactory entityTypeFactory) {
 		this._entityTypeFactory = entityTypeFactory;
 	}
-	
+
 	/**
-	 * This method is used and hereby found in the spring XML configuration of the service.
-	 * By default, the declaration of the abstract service in the Spring configuration presents a 
-	 * standard class (ApsEntity); this class must be substituted in the definition of the service
-	 * if a different class, which extends the standard ApsEntity, must be used.
-	 * This method checks the validity of the class.
+	 * This method is used and hereby found in the spring XML configuration of
+	 * the service. By default, the declaration of the abstract service in the
+	 * Spring configuration presents a standard class (ApsEntity); this class
+	 * must be substituted in the definition of the service if a different
+	 * class, which extends the standard ApsEntity, must be used. This method
+	 * checks the validity of the class.
+	 *
 	 * @param className The name of the entity class.
 	 */
 	public void setEntityClassName(String className) {
@@ -372,8 +402,10 @@ public abstract class ApsEntityManager extends AbstractService
 			Class check = this._entityClass;
 			do {
 				Class[] interfaces = check.getInterfaces();
-				for (int j=0; j<interfaces.length; j++) {
-					if (interfaces[j].equals(IApsEntity.class)) return;
+				for (int j = 0; j < interfaces.length; j++) {
+					if (interfaces[j].equals(IApsEntity.class)) {
+						return;
+					}
 				}
 				check = check.getSuperclass();
 			} while (!check.equals(Object.class));
@@ -383,105 +415,123 @@ public abstract class ApsEntityManager extends AbstractService
 			throw new RuntimeException("Error creating the entity class", e);
 		}
 	}
-	
+
 	/**
 	 * Set the entity class name
+	 *
 	 * @param className the entity class name
 	 * @deprecated From jAPS 2.0 version 2.0.9, use setEntityClassName
 	 */
 	public void setEntityClass(String className) {
 		this.setEntityClassName(className);
 	}
-	
+
 	@Override
 	public Class getEntityClass() {
 		return this._entityClass;
 	}
-	
+
 	/**
-	 * Return The name of the configuration item where to extract the definition of the Entity types.
+	 * Return The name of the configuration item where to extract the definition
+	 * of the Entity types.
+	 *
 	 * @return The name of the configuration item.
 	 */
 	protected String getConfigItemName() {
 		return this._configItemName;
 	}
-	
+
 	/**
-	 * Prepare the configuration item where to extract the definition of the various Entity types
-	 * managed by the service.
-	 * @param confItemName The name of the configuration item where to extract the definition
-	 * of the Entity types
+	 * Prepare the configuration item where to extract the definition of the
+	 * various Entity types managed by the service.
+	 *
+	 * @param confItemName The name of the configuration item where to extract
+	 * the definition of the Entity types
 	 */
 	public void setConfigItemName(String confItemName) {
 		this._configItemName = confItemName;
 	}
-	
+
 	protected IEntityTypeDOM getEntityTypeDom() {
 		return this._entityTypeDom;
 	}
-	
+
 	/**
-	 * Prepare the DOM class that interprets the XML defining the various Entity Types managed by the service.
-	 * This method is used and hereby found in the Spring XML configuration of the service.
-	 * By default, the declaration of the abstract service contains the standard DOM class, namely the EntityTypeDOM;
-	 * this definition can be substituted in the declaration of the service if a different DOM class,
-	 * implementing the IEntityTypeDOM interface, is used. This is, for example, to interpret
-	 * customized Entity Types -all implementing the ApsEntity- in a new service.
-	 * @param entityTypeDom The DOM class that parses the XML configuring the Entity Types.
+	 * Prepare the DOM class that interprets the XML defining the various Entity
+	 * Types managed by the service. This method is used and hereby found in the
+	 * Spring XML configuration of the service. By default, the declaration of
+	 * the abstract service contains the standard DOM class, namely the
+	 * EntityTypeDOM; this definition can be substituted in the declaration of
+	 * the service if a different DOM class, implementing the IEntityTypeDOM
+	 * interface, is used. This is, for example, to interpret customized Entity
+	 * Types -all implementing the ApsEntity- in a new service.
+	 *
+	 * @param entityTypeDom The DOM class that parses the XML configuring the
+	 * Entity Types.
 	 */
 	public void setEntityTypeDom(IEntityTypeDOM entityTypeDom) {
 		this._entityTypeDom = entityTypeDom;
 	}
-	
+
 	/**
-	 * Set up the name of the root attribute in the XML representing the single entity.
-	 * This method is used and found in the Spring XML definition of the service.
-	 * By default, the definition of the abstract service in the Spring configuration, presents the
-	 * name "entity"; this definition can be substituted in the implementation of the service if a new name is used.
+	 * Set up the name of the root attribute in the XML representing the single
+	 * entity. This method is used and found in the Spring XML definition of the
+	 * service. By default, the definition of the abstract service in the Spring
+	 * configuration, presents the name "entity"; this definition can be
+	 * substituted in the implementation of the service if a new name is used.
+	 *
 	 * @param xmlAttributeRootElementName The name of the root attribute.
 	 */
 	public void setXmlAttributeRootElementName(String xmlAttributeRootElementName) {
 		this._xmlAttributeRootElementName = xmlAttributeRootElementName;
 	}
-	
+
 	protected String getXmlAttributeRootElementName() {
 		return this._xmlAttributeRootElementName;
 	}
-	
+
 	/**
 	 * Set up the handler class that parses the XML defining single entities.
-	 * This method is used and hereby found in the Spring XML configuration of the service.
-	 * The definition of the abstract service in the Spring configuration presents a default
-	 * handler class, namely the EntityHandler; this definition can be changed in the declaration of the service
-	 * if a particular handler, which extends EntityHandler, is used to parse specific entities.
-	 * The class of such entities must extend the ApsEntity class to be correctly managed by the service.
-	 * @param entityHandler The handler class that parses the XML of the single entities.
+	 * This method is used and hereby found in the Spring XML configuration of
+	 * the service. The definition of the abstract service in the Spring
+	 * configuration presents a default handler class, namely the EntityHandler;
+	 * this definition can be changed in the declaration of the service if a
+	 * particular handler, which extends EntityHandler, is used to parse
+	 * specific entities. The class of such entities must extend the ApsEntity
+	 * class to be correctly managed by the service.
+	 *
+	 * @param entityHandler The handler class that parses the XML of the single
+	 * entities.
 	 */
 	public void setEntityHandler(EntityHandler entityHandler) {
 		this._entityHandler = entityHandler;
 	}
 
 	/**
-	 * Return the handler class that parses the single entity.
-	 * This method returns a prototype ready to be used to parse an entity.
+	 * Return the handler class that parses the single entity. This method
+	 * returns a prototype ready to be used to parse an entity.
+	 *
 	 * @return The handler class that parses the XML of the entity.
 	 */
 	protected EntityHandler getEntityHandler() {
 		return this._entityHandler.getHandlerPrototype();
 	}
-	
+
 	protected IApsEntityDOM getEntityDom() {
 		return this._entityDom;
 	}
-	
+
 	/**
 	 * Set the DOM class that generates the XML that represents a single entity.
-	 * This method is used and hereby found in the Spring XML configuration of the service.
-	 * By default, the definition of the abstract service in the Spring configuration, presents a standard
-	 * DOM class, namely the ApsEntityDOM; this definition can be substituted in the declaration of the service 
-	 * if a different DOM class, implementing the IApsEntityDOM interface, is used to generate 
-	 * the XML of particular entities. Such entities are mapped to a class that must extend,
-	 * as usual, the ApsEntity class.
+	 * This method is used and hereby found in the Spring XML configuration of
+	 * the service. By default, the definition of the abstract service in the
+	 * Spring configuration, presents a standard DOM class, namely the
+	 * ApsEntityDOM; this definition can be substituted in the declaration of
+	 * the service if a different DOM class, implementing the IApsEntityDOM
+	 * interface, is used to generate the XML of particular entities. Such
+	 * entities are mapped to a class that must extend, as usual, the ApsEntity
+	 * class.
+	 *
 	 * @param entityDom the entity type dom
 	 */
 	public void setEntityDom(IApsEntityDOM entityDom) {
@@ -490,8 +540,9 @@ public abstract class ApsEntityManager extends AbstractService
 
 	/**
 	 * Search entities.
-	 * @param filters The filters used to find an sort the entities ID that match
-	 * the given criteria.
+	 *
+	 * @param filters The filters used to find an sort the entities ID that
+	 * match the given criteria.
 	 * @return The list of the IDs found.
 	 * @throws ApsSystemException In case of error.
 	 */
@@ -509,9 +560,10 @@ public abstract class ApsEntityManager extends AbstractService
 
 	/**
 	 * Search entities.
+	 *
 	 * @param typeCode The code of the Entity Types to look for.
 	 * @param filters The search filters to apply to find and sort the ID found.
-	 * @return The list of the ID found. 
+	 * @return The list of the ID found.
 	 * @throws ApsSystemException In case of error.
 	 */
 	@Override
@@ -563,14 +615,16 @@ public abstract class ApsEntityManager extends AbstractService
 				throw new RuntimeException("Error while starting up the reference reload procedure", t);
 			}
 		} else {
-			_logger.info("Reloading entity references suspended: status {}",this.getStatus(typeCode));
+			_logger.info("Reloading entity references suspended: status {}", this.getStatus(typeCode));
 		}
 		return reloadThread;
 	}
-	
+
 	/**
 	 * Reload the entity references.
-	 * @param typeCode The type Code of entities to reload references. If null, will reload all entities.
+	 *
+	 * @param typeCode The type Code of entities to reload references. If null,
+	 * will reload all entities.
 	 * @throws ApsSystemException In case of error.
 	 */
 	protected synchronized void reloadEntitySearchReferencesByType(String typeCode) throws ApsSystemException {
@@ -582,7 +636,7 @@ public abstract class ApsEntityManager extends AbstractService
 			EntitySearchFilter filter = new EntitySearchFilter(ENTITY_TYPE_CODE_FILTER_KEY, false, typeCode, false);
 			EntitySearchFilter[] filters = {filter};
 			List<String> entitiesId = this.getEntitySearcherDao().searchId(filters);
-			for (int i=0; i<entitiesId.size(); i++) {
+			for (int i = 0; i < entitiesId.size(); i++) {
 				String entityId = (String) entitiesId.get(i);
 				this.reloadEntityReferences(entityId);
 			}
@@ -593,7 +647,7 @@ public abstract class ApsEntityManager extends AbstractService
 			this.setStatus(ApsEntityManager.STATUS_READY, typeCode);
 		}
 	}
-	
+
 	protected void reloadEntityReferences(String entityId) {
 		try {
 			IApsEntity entity = this.getEntity(entityId);
@@ -605,12 +659,14 @@ public abstract class ApsEntityManager extends AbstractService
 			_logger.error("Error reloading the entities search references: {}", entityId, t);
 		}
 	}
-	
+
 	/**
 	 * Load the complete list of the entities.
+	 *
 	 * @return The complete list of entity IDs.
 	 * @throws ApsSystemException In case of error.
-	 * @deprecated From jAPS 2.0 version 2.0.9, use {@link IEntitySearcherDAO} searchId(EntitySearchFilter[]) method 
+	 * @deprecated From jAPS 2.0 version 2.0.9, use {@link IEntitySearcherDAO}
+	 * searchId(EntitySearchFilter[]) method
 	 */
 	protected List<String> getAllEntityId() throws ApsSystemException {
 		List<String> entitiesId = new ArrayList<>();
@@ -622,7 +678,7 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return entitiesId;
 	}
-	
+
 	@Override
 	public List<SmallEntityType> getSmallEntityTypes() {
 		List<SmallEntityType> smallTypes = null;
@@ -636,11 +692,13 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return smallTypes;
 	}
-	
+
 	/**
-	 * Return the stutus of the desired entity. If nell it returns the general status.
+	 * Return the stutus of the desired entity. If nell it returns the general
+	 * status.
+	 *
 	 * @param typeCode The Entity type to get the status from. It may be null.
-	 * @return The status of the desidered entity. 
+	 * @return The status of the desidered entity.
 	 */
 	@Override
 	public int getStatus(String typeCode) {
@@ -653,7 +711,7 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return STATUS_READY;
 	}
-	
+
 	@Override
 	public int getStatus() {
 		if (this._typesStatus.containsValue(new Integer(STATUS_RELOADING_REFERENCES_IN_PROGRESS))) {
@@ -663,38 +721,42 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return STATUS_READY;
 	}
-	
+
 	protected String getAttributeRolesFileName() {
 		if (null == this._attributeRolesFileName) {
 			return DEFAULT_ATTRIBUTE_ROLES_FILE_NAME;
 		}
 		return _attributeRolesFileName;
 	}
+
 	public void setAttributeRolesFileName(String attributeRolesFileName) {
 		this._attributeRolesFileName = attributeRolesFileName;
 	}
-	
+
 	protected String getAttributeDisablingCodesFileName() {
 		if (null == this._attributeDisablingCodesFileName) {
 			return DEFAULT_ATTRIBUTE_DISABLING_CODES_FILE_NAME;
 		}
 		return _attributeDisablingCodesFileName;
 	}
+
 	public void setAttributeDisablingCodesFileName(String disablingCodesFileName) {
 		this._attributeDisablingCodesFileName = disablingCodesFileName;
 	}
-	
+
 	/**
-	 * Imposta lo stato del tipo di entità dato. Se null imposta lo stato generale.
-	 * Set up the status of the given entity. If null it sets up the overall status.
+	 * Imposta lo stato del tipo di entità dato. Se null imposta lo stato
+	 * generale. Set up the status of the given entity. If null it sets up the
+	 * overall status.
+	 *
 	 * @param status The status to set up.
-	 * @param typeCode The Entity Type where to apply the new status. If null it sets up the
-	 * general status. 
+	 * @param typeCode The Entity Type where to apply the new status. If null it
+	 * sets up the general status.
 	 */
 	protected void setStatus(int status, String typeCode) {
 		this._typesStatus.put(typeCode, status);
 	}
-	
+
 	protected List<String> getEntityTypeCodes() {
 		List<String> codes = new ArrayList<>();
 		List<SmallEntityType> smallTypes = this.getSmallEntityTypes();
@@ -703,30 +765,34 @@ public abstract class ApsEntityManager extends AbstractService
 		}
 		return codes;
 	}
-	
+
 	/**
 	 * Return the category manager used by the entities managed by the service.
+	 *
 	 * @return The category manager used by the entities.
 	 */
 	protected ICategoryManager getCategoryManager() {
 		return _categoryManager;
 	}
+
 	public void setCategoryManager(ICategoryManager categoryManager) {
 		this._categoryManager = categoryManager;
 	}
-	
+
 	/**
 	 * Return the DAO to access the entity database with.
+	 *
 	 * @return The entity DAO.
 	 */
 	protected abstract IEntityDAO getEntityDao();
 
 	/**
 	 * Return the DAO used to search among entities.
+	 *
 	 * @return TheDAO used to search entities.
 	 */
 	protected abstract IEntitySearcherDAO getEntitySearcherDao();
-	
+
 	private IEntityTypeFactory _entityTypeFactory;
 
 	private Class _entityClass;
@@ -740,19 +806,19 @@ public abstract class ApsEntityManager extends AbstractService
 	private String _xmlAttributeRootElementName;
 
 	private IApsEntityDOM _entityDom;
-	
+
 	private ICategoryManager _categoryManager;
-	
+
 	private Map<String, Integer> _typesStatus = new HashMap<>();
-	
+
 	private Map<String, AttributeRole> _attributeRoles = null;
-	
+
 	private Map<String, String> _attributeDisablingCodes = null;
-	
+
 	private String _attributeRolesFileName;
-	
+
 	private String _attributeDisablingCodesFileName;
-	
+
 	/**
 	 * Prefix of the thread used for references reloading.
 	 */

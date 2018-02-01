@@ -21,12 +21,11 @@ import com.agiletec.aps.util.ApsProperties;
  * @version 1.0
  * @author W.Ambu
  */
-public class TestI18nManager extends BaseTestCase {
+public class I18nManagerIntegrationTest extends BaseTestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
         super.setUp();
-		
         this.init();
     }
 	

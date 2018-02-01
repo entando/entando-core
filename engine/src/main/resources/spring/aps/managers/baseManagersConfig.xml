@@ -50,6 +50,8 @@
 					  p:name="Entando_LangManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_CacheInfoManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_I18nManager" />			
 			</set>
 		</property>
 	</bean>
@@ -257,6 +259,11 @@
 
 	<bean id="I18nManager" class="com.agiletec.aps.system.services.i18n.I18nManager"
 			parent="abstractService" >
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.i18n.cache.I18nManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
 		<property name="i18nDAO" >
 			<bean class="com.agiletec.aps.system.services.i18n.I18nDAO">
 				<property name="dataSource" ref="portDataSource" />

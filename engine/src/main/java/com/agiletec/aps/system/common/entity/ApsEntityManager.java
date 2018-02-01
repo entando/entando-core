@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.common.entity.cache.IEntityManagerCacheWrapper;
 import com.agiletec.aps.system.common.entity.event.EntityTypesChangingEvent;
 import com.agiletec.aps.system.common.entity.event.ReloadingEntitiesReferencesEvent;
 import com.agiletec.aps.system.common.entity.event.ReloadingEntitiesReferencesObserver;
@@ -52,6 +53,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.util.DateConverter;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -66,34 +69,54 @@ import org.xml.sax.SAXException;
  */
 public abstract class ApsEntityManager extends AbstractService
 		implements IEntityManager, IEntityTypesConfigurer, ReloadingEntitiesReferencesObserver {
+	
+	/**
+	 * Prefix of the thread used for references reloading.
+	 */
+	public static final String RELOAD_REFERENCES_THREAD_NAME_PREFIX = "RELOAD_REFERENCES_INDEX_";
 
 	private static final Logger _logger = LoggerFactory.getLogger(ApsEntityManager.class);
 
-	/**
-	 * Initialize the service by loading the Entity Types form the
-	 * configuration.
-	 *
-	 * @throws Exception If errors are detected during the service
-	 * initialization.
-	 */
+	private IEntityTypeFactory _entityTypeFactory;
+
+	private Class _entityClass;
+
+	private String _configItemName;
+
+	private IEntityTypeDOM _entityTypeDom;
+
+	private EntityHandler _entityHandler;
+
+	private String _xmlAttributeRootElementName;
+
+	private IApsEntityDOM _entityDom;
+
+	private ICategoryManager _categoryManager;
+
+	private Map<String, AttributeRole> _attributeRoles = null;
+
+	private Map<String, String> _attributeDisablingCodes = null;
+
+	private String _attributeRolesFileName;
+
+	private String _attributeDisablingCodesFileName;
+	
+	private IEntityManagerCacheWrapper cacheWrapper;
+
 	@Override
 	public void init() throws Exception {
 		this._entityDom.setRootElementName(this.getXmlAttributeRootElementName());
-		/*
-		String entityManagerName = super.getName();
-		this._entityTypes = this._entityTypeFactory.getEntityTypes(this.getEntityClass(),
-				this.getConfigItemName(), this.getEntityTypeDom(), entityManagerName, this.getEntityDom());
-		 */
+		this.getCacheWrapper().initCache(super.getName());
 		_logger.debug("{} : inizializated", this.getName());
 	}
-
+	
 	@Override
 	public void refresh() throws Throwable {
 		super.refresh();
 		this._attributeDisablingCodes = null;
 		this._attributeRoles = null;
 	}
-
+	
 	@Override
 	public Map<String, String> getAttributeDisablingCodes() {
 		if (null != this._attributeDisablingCodes) {
@@ -186,24 +209,11 @@ public abstract class ApsEntityManager extends AbstractService
 		return false;
 	}
 
-	/**
-	 * Create an entity prototype given the relative code. This method is for
-	 * those managers that extend the ApsEntityManager.
-	 *
-	 * @param typeCode The entity code.
-	 * @return The prototype of requested entity.
-	 * @deprecated From jAPS 2.0 version 2.0.9, use getEntityPrototype(String
-	 * typeCode)
-	 */
-	protected IApsEntity createEntityPrototype(String typeCode) {
-		return this.getEntityPrototype(typeCode);
-	}
-
 	@Override
 	public IApsEntity getEntityPrototype(String typeCode) {
 		IApsEntity prototype = null;
 		try {
-			IApsEntity mainPrototype = this._entityTypeFactory.extractEntityType(typeCode, this.getEntityClass(),
+			IApsEntity mainPrototype = this.getEntityTypeFactory().extractEntityType(typeCode, this.getEntityClass(),
 					this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
 			prototype = mainPrototype.getEntityPrototype();
 		} catch (Exception e) {
@@ -279,7 +289,7 @@ public abstract class ApsEntityManager extends AbstractService
 			}
 			String[] oldRoles = (null != oldAttribute.getRoles()) ? oldAttribute.getRoles() : new String[0];
 			String[] newRoles = (null != newAttribute && null != newAttribute.getRoles()) ? newAttribute.getRoles() : new String[0];
-			if ((newRoles.length == 0 && oldRoles.length == 0)) {
+			if (newRoles.length == 0 && oldRoles.length == 0) {
 				continue;
 			} else if (newRoles.length != oldRoles.length) {
 				this.setStatus(IEntityManager.STATUS_NEED_TO_RELOAD_REFERENCES, oldEntityType.getTypeCode());
@@ -325,7 +335,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 */
 	private void updateEntityPrototypes(Map<String, IApsEntity> newEntityTypes) throws ApsSystemException {
 		try {
-			this._entityTypeFactory.updateEntityTypes(newEntityTypes, this.getConfigItemName(), this.getEntityTypeDom());
+			this.getEntityTypeFactory().updateEntityTypes(newEntityTypes, this.getConfigItemName(), this.getEntityTypeDom());
 			this.refresh();
 		} catch (Throwable t) {
 			_logger.error("Error detected while updating entity prototypes", t);
@@ -350,7 +360,7 @@ public abstract class ApsEntityManager extends AbstractService
 	protected Map<String, IApsEntity> getEntityTypes() {
 		Map<String, IApsEntity> types = null;
 		try {
-			types = this._entityTypeFactory.extractEntityTypes(this.getEntityClass(),
+			types = this.getEntityTypeFactory().extractEntityTypes(this.getEntityClass(),
 					this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
 		} catch (Exception e) {
 			_logger.error("Error while extracting entity types", e);
@@ -370,6 +380,10 @@ public abstract class ApsEntityManager extends AbstractService
 			attributeMap.put(clone.getType(), clone);
 		}
 		return attributeMap;
+	}
+	
+	protected IEntityTypeFactory getEntityTypeFactory() {
+		return this._entityTypeFactory;
 	}
 
 	/**
@@ -414,16 +428,6 @@ public abstract class ApsEntityManager extends AbstractService
 			_logger.error("Errore creating the entity class", e);
 			throw new RuntimeException("Error creating the entity class", e);
 		}
-	}
-
-	/**
-	 * Set the entity class name
-	 *
-	 * @param className the entity class name
-	 * @deprecated From jAPS 2.0 version 2.0.9, use setEntityClassName
-	 */
-	public void setEntityClass(String className) {
-		this.setEntityClassName(className);
 	}
 
 	@Override
@@ -683,7 +687,7 @@ public abstract class ApsEntityManager extends AbstractService
 	public List<SmallEntityType> getSmallEntityTypes() {
 		List<SmallEntityType> smallTypes = null;
 		try {
-			smallTypes = this._entityTypeFactory.extractSmallEntityTypes(this.getConfigItemName(), this.getEntityTypeDom());
+			smallTypes = this.getEntityTypeFactory().extractSmallEntityTypes(this.getConfigItemName(), this.getEntityTypeDom());
 			BeanComparator comparator = new BeanComparator("description");
 			Collections.sort(smallTypes, comparator);
 		} catch (Exception e) {
@@ -705,18 +709,19 @@ public abstract class ApsEntityManager extends AbstractService
 		if (typeCode == null) {
 			return this.getStatus();
 		}
-		Integer status = this._typesStatus.get(typeCode);
-		if (status != null) {
-			return status.intValue();
-		}
-		return STATUS_READY;
+		return this.getCacheWrapper().getEntityTypeStatus(typeCode);
 	}
 
 	@Override
 	public int getStatus() {
-		if (this._typesStatus.containsValue(new Integer(STATUS_RELOADING_REFERENCES_IN_PROGRESS))) {
+		Set<Integer> status = new HashSet<>();
+		List<String> codes = this.getEntityTypeCodes();
+		for (String code : codes) {
+			status.add(this.getCacheWrapper().getEntityTypeStatus(code));
+		}
+		if (status.contains(STATUS_RELOADING_REFERENCES_IN_PROGRESS)) {
 			return STATUS_RELOADING_REFERENCES_IN_PROGRESS;
-		} else if (this._typesStatus.containsValue(new Integer(STATUS_NEED_TO_RELOAD_REFERENCES))) {
+		} else if (status.contains(STATUS_NEED_TO_RELOAD_REFERENCES)) {
 			return STATUS_NEED_TO_RELOAD_REFERENCES;
 		}
 		return STATUS_READY;
@@ -754,7 +759,7 @@ public abstract class ApsEntityManager extends AbstractService
 	 * sets up the general status.
 	 */
 	protected void setStatus(int status, String typeCode) {
-		this._typesStatus.put(typeCode, status);
+		this.getCacheWrapper().updateEntityTypeStatus(typeCode, status);
 	}
 
 	protected List<String> getEntityTypeCodes() {
@@ -793,35 +798,12 @@ public abstract class ApsEntityManager extends AbstractService
 	 */
 	protected abstract IEntitySearcherDAO getEntitySearcherDao();
 
-	private IEntityTypeFactory _entityTypeFactory;
+	protected IEntityManagerCacheWrapper getCacheWrapper() {
+		return cacheWrapper;
+	}
 
-	private Class _entityClass;
-
-	private String _configItemName;
-
-	private IEntityTypeDOM _entityTypeDom;
-
-	private EntityHandler _entityHandler;
-
-	private String _xmlAttributeRootElementName;
-
-	private IApsEntityDOM _entityDom;
-
-	private ICategoryManager _categoryManager;
-
-	private Map<String, Integer> _typesStatus = new HashMap<>();
-
-	private Map<String, AttributeRole> _attributeRoles = null;
-
-	private Map<String, String> _attributeDisablingCodes = null;
-
-	private String _attributeRolesFileName;
-
-	private String _attributeDisablingCodesFileName;
-
-	/**
-	 * Prefix of the thread used for references reloading.
-	 */
-	public static final String RELOAD_REFERENCES_THREAD_NAME_PREFIX = "RELOAD_REFERENCES_INDEX_";
-
+	public void setCacheWrapper(IEntityManagerCacheWrapper cacheWrapper) {
+		this.cacheWrapper = cacheWrapper;
+	}
+	
 }

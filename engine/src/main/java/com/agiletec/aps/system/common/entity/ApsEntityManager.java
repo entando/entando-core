@@ -215,6 +215,9 @@ public abstract class ApsEntityManager extends AbstractService
 		try {
 			IApsEntity mainPrototype = this.getEntityTypeFactory().extractEntityType(typeCode, this.getEntityClass(),
 					this.getConfigItemName(), this.getEntityTypeDom(), super.getName(), this.getEntityDom());
+			if (null == mainPrototype) {
+				return null;
+			}
 			prototype = mainPrototype.getEntityPrototype();
 		} catch (Exception e) {
 			_logger.error("Error while extracting entity type {}", typeCode, e);

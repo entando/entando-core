@@ -19,7 +19,6 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelDAO;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -44,28 +43,6 @@ public class PageModelManagerCacheWrapper extends AbstractPlusCacheWrapper<PageM
 			_logger.error("Error loading page models", t);
 			throw new ApsSystemException("Error loading page models", t);
 		}
-	}
-
-	protected void releaseCachedObjects(Cache cache) {
-		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
-		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
-				cache.evict(PAGE_MODEL_CACHE_NAME_PREFIX + code);
-			}
-			cache.evict(PAGE_MODEL_CODES_CACHE_NAME);
-		}
-	}
-
-	protected void insertObjectsOnCache(Cache cache, Map<String, PageModel> models) {
-		List<String> modelCodes = new ArrayList<String>();
-		Iterator<PageModel> iterator = models.values().iterator();
-		while (iterator.hasNext()) {
-			PageModel pageModel = iterator.next();
-			cache.put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
-			modelCodes.add(pageModel.getCode());
-		}
-		cache.put(PAGE_MODEL_CODES_CACHE_NAME, modelCodes);
 	}
 
 	@Override

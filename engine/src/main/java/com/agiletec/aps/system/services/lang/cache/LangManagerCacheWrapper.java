@@ -14,7 +14,6 @@
 package com.agiletec.aps.system.services.lang.cache;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -25,6 +24,8 @@ import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.lang.LangDOM;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -39,36 +40,19 @@ public class LangManagerCacheWrapper extends AbstractPlusCacheWrapper<Lang> impl
 			Cache cache = this.getCache();
 			this.releaseCachedObjects(cache);
 			LangDOM langDom = new LangDOM(xmlConfig);
+			Map<String, Lang> langMap = new HashMap<String, Lang>();
 			List<Lang> systemLangs = langDom.getLangs();
-			this.insertObjectsOnCache(cache, systemLangs);
+			for (Lang lang : systemLangs) {
+				if (lang.isDefault()) {
+					cache.put(LANG_DEFAULT_CACHE_NAME, lang);
+				}
+				langMap.put(lang.getCode(), lang);
+			}
+			super.insertObjectsOnCache(cache, langMap);
 		} catch (Throwable t) {
 			logger.error("Error loading the system langs", t);
 			throw new ApsSystemException("Error loading the system langs", t);
 		}
-	}
-
-	protected void releaseCachedObjects(Cache cache) {
-		List<String> codes = (List<String>) this.get(cache, LANG_CODES_CACHE_NAME, List.class);
-		if (null != codes) {
-			for (String code : codes) {
-				cache.evict(LANG_CACHE_NAME_PREFIX + code);
-			}
-			cache.evict(LANG_CODES_CACHE_NAME);
-		}
-	}
-
-	protected void insertObjectsOnCache(Cache cache, List<Lang> systemLangs) {
-		List<String> langCodes = new ArrayList<String>();
-		Iterator<Lang> langIterator = systemLangs.iterator();
-		while (langIterator.hasNext()) {
-			Lang lang = langIterator.next();
-			cache.put(LANG_CACHE_NAME_PREFIX + lang.getCode(), lang);
-			langCodes.add(lang.getCode());
-			if (lang.isDefault()) {
-				cache.put(LANG_DEFAULT_CACHE_NAME, lang);
-			}
-		}
-		cache.put(LANG_CODES_CACHE_NAME, langCodes);
 	}
 
 	@Override

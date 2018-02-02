@@ -16,9 +16,6 @@ package com.agiletec.aps.system.services.i18n.cache;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +26,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 import com.agiletec.aps.system.services.i18n.I18nManagerTest;
-import com.agiletec.aps.util.ApsProperties;
+import java.util.ArrayList;
+import java.util.List;
 
 public class I18nManagerCacheWrapperTest {
 
@@ -46,11 +44,11 @@ public class I18nManagerCacheWrapperTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-
 		ConcurrentMapCache fakeCache = new ConcurrentMapCache(CACHE_NAME);
-		Map<String, ApsProperties> codes = new HashMap<>();
-		codes.put(TEST_KEY, I18nManagerTest.createLabel("ciao", "hello"));
+		List<String> codes = new ArrayList<>();
+		codes.add(TEST_KEY);
 		fakeCache.put(I18nManagerCacheWrapper.I18N_CODES_CACHE_NAME, codes);
+		fakeCache.put(I18nManagerCacheWrapper.I18N_CACHE_NAME_PREFIX + TEST_KEY, I18nManagerTest.createLabel("ciao", "hello"));
 		when(springCacheManager.getCache(CACHE_NAME)).thenReturn(fakeCache);
 	}
 

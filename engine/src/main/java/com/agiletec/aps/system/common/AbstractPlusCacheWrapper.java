@@ -13,7 +13,10 @@
  */
 package com.agiletec.aps.system.common;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.springframework.cache.Cache;
 
@@ -25,6 +28,27 @@ public abstract class AbstractPlusCacheWrapper<O extends Object> extends Abstrac
 
 	protected static enum Action {
 		ADD, UPDATE, DELETE
+	}
+
+	protected void releaseCachedObjects(Cache cache) {
+		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+		if (null != codes) {
+			for (String code : codes) {
+				cache.evict(this.getCacheKeyPrefix() + code);
+			}
+			cache.evict(this.getCodesCacheKey());
+		}
+	}
+
+	protected void insertObjectsOnCache(Cache cache, Map<String, O> objects) {
+		List<String> codes = new ArrayList<String>();
+		Iterator<String> iter = objects.keySet().iterator();
+		while (iter.hasNext()) {
+			String key = iter.next();
+			cache.put(this.getCacheKeyPrefix() + key, objects.get(key));
+			codes.add(key);
+		}
+		cache.put(this.getCodesCacheKey(), codes);
 	}
 
 	protected void add(String key, O object) {

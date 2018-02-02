@@ -54,28 +54,6 @@ public class WidgetTypeManagerCacheWrapper extends AbstractPlusCacheWrapper<Widg
 		}
 	}
 
-	protected void releaseCachedObjects(Cache cache) {
-		List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
-		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
-				cache.evict(WIDGET_TYPE_CACHE_NAME_PREFIX + code);
-			}
-			cache.evict(WIDGET_TYPE_CODES_CACHE_NAME);
-		}
-	}
-
-	protected void insertObjectsOnCache(Cache cache, Map<String, WidgetType> widgetTypes) {
-		List<String> widgetCodes = new ArrayList<String>();
-		Iterator<WidgetType> iter = widgetTypes.values().iterator();
-		while (iter.hasNext()) {
-			WidgetType type = iter.next();
-			cache.put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
-			widgetCodes.add(type.getCode());
-		}
-		cache.put(WIDGET_TYPE_CODES_CACHE_NAME, widgetCodes);
-	}
-
 	@Override
 	public WidgetType getWidgetType(String code) {
 		return this.get(WIDGET_TYPE_CACHE_NAME_PREFIX + code, WidgetType.class);

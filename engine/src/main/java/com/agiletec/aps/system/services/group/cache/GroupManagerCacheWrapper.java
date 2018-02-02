@@ -13,9 +13,7 @@
  */
 package com.agiletec.aps.system.services.group.cache;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,32 +44,6 @@ public class GroupManagerCacheWrapper extends AbstractPlusCacheWrapper<Group> im
 			_logger.error("Error loading groups", t);
 			throw new ApsSystemException("Error loading groups", t);
 		}
-	}
-
-	protected void releaseCachedObjects(Cache cache) {
-		this.releaseCachedObjects(cache, GROUP_CODES_CACHE_NAME, GROUP_CACHE_NAME_PREFIX);
-	}
-
-	private void releaseCachedObjects(Cache cache, String codesName, String codePrefix) {
-		List<String> codes = (List<String>) this.get(cache, codesName, List.class);
-		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
-				cache.evict(codePrefix + code);
-			}
-			cache.evict(codesName);
-		}
-	}
-
-	protected void insertObjectsOnCache(Cache cache, Map<String, Group> groups) {
-		List<String> groupCodes = new ArrayList<String>();
-		Iterator<String> iterRoles = groups.keySet().iterator();
-		while (iterRoles.hasNext()) {
-			String key = iterRoles.next();
-			cache.put(GROUP_CACHE_NAME_PREFIX + key, groups.get(key));
-			groupCodes.add(key);
-		}
-		cache.put(GROUP_CODES_CACHE_NAME, groupCodes);
 	}
 
 	@Override

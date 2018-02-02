@@ -13,16 +13,19 @@
  */
 package com.agiletec.aps.system.services.lang.cache;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.Cache;
+
 import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.lang.LangDOM;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.Cache;
 
 /**
  * @author E.Santoboni
@@ -124,7 +127,10 @@ public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILa
 				cache.put(LANG_CODES_CACHE_NAME, codes);
 			}
 			cache.put(LANG_CACHE_NAME_PREFIX + lang.getCode(), lang);
-		} else if (Action.UPDATE.equals(operation) && codes.contains(lang.getCode())) {
+		} else if (Action.UPDATE.equals(operation)) {
+			if (!codes.contains(lang.getCode())) {
+				throw new CacheItemNotFoundException(lang.getCode(), cache.getName());
+			}
 			cache.put(LANG_CACHE_NAME_PREFIX + lang.getCode(), lang);
 		} else if (Action.DELETE.equals(operation)) {
 			codes.remove(lang.getCode());

@@ -45,8 +45,6 @@ public class ApiCatalogManagerTest {
 		when(cacheWrapper.getMasterResources()).thenReturn(createRersources());
 		Map<String, ApiResource> resources = this.apiCatalogManager.getResources();
 		assertThat(resources.size(), is(5));
-
-
 	}
 
 	@Test
@@ -90,10 +88,8 @@ public class ApiCatalogManagerTest {
 		for (Map.Entry<String, ApiResource> entry : res.entrySet()) {
 			if (StringUtils.startsWithAny(entry.getKey(), new String[] { "getS", "core:user" })) {
 				resources.put(entry.getKey(), entry.getValue());
-				System.out.println(entry.getKey());
 			}
 		}
-
 		return resources;
 	}
 

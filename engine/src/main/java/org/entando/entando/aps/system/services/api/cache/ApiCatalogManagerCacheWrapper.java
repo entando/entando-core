@@ -81,6 +81,7 @@ public class ApiCatalogManagerCacheWrapper extends AbstractCacheWrapper implemen
 	}
 
 	protected void insertObjectsOnCache(Cache cache, Map<String, ApiResource> resources, IApiCatalogDAO apiCatalogDAO) throws ApsSystemException {
+		cache.put(APICATALOG_RESOURCES_CACHE_NAME, resources);
 		Map<String, ApiService> services = new HashMap<>();
 		try {
 			List<ApiMethod> apiGETMethods = buildApiGetMethods(resources);
@@ -90,30 +91,30 @@ public class ApiCatalogManagerCacheWrapper extends AbstractCacheWrapper implemen
 				cache.put(APICATALOG_SERVICE_CACHE_NAME_PREFIX + entry.getKey(), entry.getValue());
 			}
 
+			cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
 		} catch (Throwable t) {
-			services = new HashMap<String, ApiService>();
+			cache.put(APICATALOG_SERVICES_CACHE_NAME, new HashMap<String, ApiService>());
+			this.releaseServiceEntries(cache, APICATALOG_SERVICES_CACHE_NAME, APICATALOG_SERVICE_CACHE_NAME_PREFIX);
 			logger.error("Error loading Services definitions", t);
 			throw new ApsSystemException("Error loading Services definitions", t);
 		}
-		cache.put(APICATALOG_RESOURCES_CACHE_NAME, resources);
-		cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
 	}
 
 
 	protected void releaseCachedObjects(Cache cache) {
-		this.releaseCachedObjects(cache, APICATALOG_SERVICES_CACHE_NAME, APICATALOG_SERVICE_CACHE_NAME_PREFIX);
+		this.releaseServiceEntries(cache, APICATALOG_SERVICES_CACHE_NAME, APICATALOG_SERVICE_CACHE_NAME_PREFIX);
 		cache.evict(APICATALOG_RESOURCES_CACHE_NAME);
+		cache.evict(APICATALOG_SERVICES_CACHE_NAME);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void releaseCachedObjects(Cache cache, String cacheKey, String codePrefix) {
+	protected void releaseServiceEntries(Cache cache, String cacheKey, String codePrefix) {
 		Map<String, ApiService> services = (Map<String, ApiService>) this.get(cache, cacheKey, Map.class);
 		if (null != services) {
 			for (Map.Entry<String, ApiService> entry : services.entrySet()) {
 				String key = entry.getKey();
 				cache.evict(codePrefix + key);
 			}
-			cache.evict(cacheKey);
 		}
 	}
 
@@ -135,12 +136,12 @@ public class ApiCatalogManagerCacheWrapper extends AbstractCacheWrapper implemen
 		}
 		Cache cache = this.getCache();
 		Map<String, ApiService> services = this.getMasterServices();
+
 		if (Action.ADD.equals(operation)) {
-			if (!services.containsKey(key)) {
-				services.put(key, service);
-				cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
-			}
+			services.put(key, service);
+			cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
 			cache.put(APICATALOG_SERVICE_CACHE_NAME_PREFIX + key, service);
+			logger.trace("executed {} cache entry into {} with key {}", operation, cache.getName(), key);
 		} else if (Action.UPDATE.equals(operation)) {
 			if (!services.containsKey(key)) {
 				throw new CacheItemNotFoundException(key, cache.getName());
@@ -148,10 +149,12 @@ public class ApiCatalogManagerCacheWrapper extends AbstractCacheWrapper implemen
 			cache.put(APICATALOG_SERVICE_CACHE_NAME_PREFIX + key, service);
 			services.put(key, service);
 			cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
+			logger.trace("executed {} cache entry into {} with key {}", operation, cache.getName(), key);
 		} else if (Action.DELETE.equals(operation)) {
 			cache.evict(APICATALOG_SERVICE_CACHE_NAME_PREFIX + key);
 			services.remove(key);
 			cache.put(APICATALOG_SERVICES_CACHE_NAME, services);
+			logger.trace("executed {} cache entry from {} with key {}", operation, cache.getName(), key);
 		}
 	}
 

@@ -19,12 +19,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractCacheWrapper;
+import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupDAO;
@@ -32,7 +31,7 @@ import com.agiletec.aps.system.services.group.IGroupDAO;
 /**
  * @author E.Santoboni
  */
-public class GroupManagerCacheWrapper extends AbstractCacheWrapper implements IGroupManagerCacheWrapper {
+public class GroupManagerCacheWrapper extends AbstractPlusCacheWrapper<Group> implements IGroupManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(GroupManagerCacheWrapper.class);
 
@@ -96,41 +95,27 @@ public class GroupManagerCacheWrapper extends AbstractCacheWrapper implements IG
 
 	@Override
 	public void addGroup(Group group) {
-		this.manage(group, Action.ADD);
+		this.add(group.getName(), group);
 	}
 
 	@Override
 	public void updateGroup(Group group) {
-		this.manage(group, Action.UPDATE);
+		this.update(group.getName(), group);
 	}
 
 	@Override
 	public void removeGroup(Group group) {
-		this.manage(group, Action.DELETE);
+		this.remove(group.getName(), group);
 	}
 
-	private void manage(Group group, Action operation) {
-		if (null == group) {
-			return;
-		}
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, GROUP_CODES_CACHE_NAME, List.class);
-		if (Action.ADD.equals(operation)) {
-			if (!codes.contains(group.getName())) {
-				codes.add(group.getName());
-				cache.put(GROUP_CODES_CACHE_NAME, codes);
-			}
-			cache.put(GROUP_CACHE_NAME_PREFIX + group.getName(), group);
-		} else if (Action.UPDATE.equals(operation)) {
-			if (!codes.contains(group.getName())) {
-				throw new CacheItemNotFoundException(group.getName(), cache.getName());
-			}
-			cache.put(GROUP_CACHE_NAME_PREFIX + group.getName(), group);
-		} else if (Action.DELETE.equals(operation)) {
-			codes.remove(group.getName());
-			cache.evict(GROUP_CACHE_NAME_PREFIX + group.getName());
-			cache.put(GROUP_CODES_CACHE_NAME, codes);
-		}
+	@Override
+	protected String getCodesCacheKey() {
+		return GROUP_CODES_CACHE_NAME;
+	}
+
+	@Override
+	protected String getCacheKeyPrefix() {
+		return GROUP_CACHE_NAME_PREFIX;
 	}
 
 	@Override

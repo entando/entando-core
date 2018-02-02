@@ -17,12 +17,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractCacheWrapper;
+import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.lang.LangDOM;
@@ -30,7 +29,7 @@ import com.agiletec.aps.system.services.lang.LangDOM;
 /**
  * @author E.Santoboni
  */
-public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILangManagerCacheWrapper {
+public class LangManagerCacheWrapper extends AbstractPlusCacheWrapper<Lang> implements ILangManagerCacheWrapper {
 
 	private static final Logger logger = LoggerFactory.getLogger(LangManagerCacheWrapper.class);
 
@@ -102,41 +101,27 @@ public class LangManagerCacheWrapper extends AbstractCacheWrapper implements ILa
 
 	@Override
 	public void addLang(Lang lang) {
-		this.manage(lang, Action.ADD);
+		this.manage(lang.getCode(), lang, Action.ADD);
 	}
 
 	@Override
 	public void updateLang(Lang lang) {
-		this.manage(lang, Action.UPDATE);
+		this.manage(lang.getCode(), lang, Action.UPDATE);
 	}
 
 	@Override
 	public void removeLang(Lang lang) {
-		this.manage(lang, Action.DELETE);
+		this.manage(lang.getCode(), lang, Action.DELETE);
 	}
 
-	private void manage(Lang lang, Action operation) {
-		if (null == lang) {
-			return;
-		}
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, LANG_CODES_CACHE_NAME, List.class);
-		if (Action.ADD.equals(operation)) {
-			if (!codes.contains(lang.getCode())) {
-				codes.add(lang.getCode());
-				cache.put(LANG_CODES_CACHE_NAME, codes);
-			}
-			cache.put(LANG_CACHE_NAME_PREFIX + lang.getCode(), lang);
-		} else if (Action.UPDATE.equals(operation)) {
-			if (!codes.contains(lang.getCode())) {
-				throw new CacheItemNotFoundException(lang.getCode(), cache.getName());
-			}
-			cache.put(LANG_CACHE_NAME_PREFIX + lang.getCode(), lang);
-		} else if (Action.DELETE.equals(operation)) {
-			codes.remove(lang.getCode());
-			cache.evict(LANG_CACHE_NAME_PREFIX + lang.getCode());
-			cache.put(LANG_CODES_CACHE_NAME, codes);
-		}
+	@Override
+	protected String getCodesCacheKey() {
+		return LANG_CODES_CACHE_NAME;
+	}
+
+	@Override
+	protected String getCacheKeyPrefix() {
+		return LANG_CACHE_NAME_PREFIX;
 	}
 
 	@Override

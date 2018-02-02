@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractCacheWrapper;
+import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.IRoleDAO;
@@ -33,7 +33,7 @@ import com.agiletec.aps.system.services.role.Role;
 /**
  * @author E.Santoboni
  */
-public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRoleManagerCacheWrapper {
+public class RoleManagerCacheWrapper extends AbstractPlusCacheWrapper<Role> implements IRoleManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RoleManagerCacheWrapper.class);
 
@@ -107,41 +107,27 @@ public class RoleManagerCacheWrapper extends AbstractCacheWrapper implements IRo
 
 	@Override
 	public void addRole(Role role) {
-		this.manage(role, Action.ADD);
+		this.manage(role.getName(), role, Action.ADD);
 	}
 
 	@Override
 	public void updateRole(Role role) {
-		this.manage(role, Action.UPDATE);
+		this.manage(role.getName(), role, Action.UPDATE);
 	}
 
 	@Override
 	public void removeRole(Role role) {
-		this.manage(role, Action.DELETE);
+		this.manage(role.getName(), role, Action.DELETE);
 	}
 
-	private void manage(Role role, Action operation) {
-		if (null == role) {
-			return;
-		}
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, ROLE_CODES_CACHE_NAME, List.class);
-		if (Action.ADD.equals(operation)) {
-			if (!codes.contains(role.getName())) {
-				codes.add(role.getName());
-				cache.put(ROLE_CODES_CACHE_NAME, codes);
-			}
-			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
-		} else if (Action.UPDATE.equals(operation)) {
-			if (!codes.contains(role.getName())) {
-				throw new CacheItemNotFoundException(role.getName(), cache.getName());
-			}
-			cache.put(ROLE_CACHE_NAME_PREFIX + role.getName(), role);
-		} else if (Action.DELETE.equals(operation)) {
-			codes.remove(role.getName());
-			cache.evict(ROLE_CACHE_NAME_PREFIX + role.getName());
-			cache.put(ROLE_CODES_CACHE_NAME, codes);
-		}
+	@Override
+	protected String getCodesCacheKey() {
+		return ROLE_CODES_CACHE_NAME;
+	}
+
+	@Override
+	protected String getCacheKeyPrefix() {
+		return ROLE_CACHE_NAME_PREFIX;
 	}
 
 	@Override

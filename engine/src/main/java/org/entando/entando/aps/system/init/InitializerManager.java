@@ -49,8 +49,6 @@ public class InitializerManager extends AbstractInitializerManager implements II
 
 	private IDatabaseManager databaseManager;
 
-	//-
-
 	@Override
 	public SystemInstallationReport getCurrentReport() {
 		return this.getCacheWrapper().getReport();
@@ -88,7 +86,6 @@ public class InitializerManager extends AbstractInitializerManager implements II
 		this.databaseManager = databaseManager;
 	}
 
-	//-
 
 	public void init() throws Exception {
 		SystemInstallationReport report = null;

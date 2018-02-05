@@ -31,7 +31,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 /**
  * @author E.Santoboni
  */
-public class TestUserProfileManager extends BaseTestCase {
+public class UserProfileManagerIntegrationTest extends BaseTestCase {
 	
 	@Override
 	protected void setUp() throws Exception {

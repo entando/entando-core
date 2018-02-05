@@ -13,10 +13,12 @@
  */
 package com.agiletec.aps;
 
+import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
-import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
+import org.entando.entando.aps.system.services.api.ApiCatalogManagerIntegrationTest;
+import org.entando.entando.aps.system.services.api.ApiCatalogManagerTest;
 import org.entando.entando.aps.system.services.cache.CacheInfoManagerIntegrationTest;
 import org.entando.entando.aps.system.services.cache.CacheInfoManagerTest;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
@@ -36,7 +38,7 @@ import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManage
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
 import org.entando.entando.aps.system.services.userprofile.TestUserManager;
-import org.entando.entando.aps.system.services.userprofile.TestUserProfileManager;
+import org.entando.entando.aps.system.services.userprofile.UserProfileManagerIntegrationTest;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 
 import com.agiletec.aps.system.common.entity.TestEntityManager;
@@ -87,9 +89,12 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for APS");
 
 		//
+		suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
+		//
 		suite.addTestSuite(TestEntityManager.class);
 		//
-		suite.addTestSuite(TestApiCatalogManager.class);
+		suite.addTestSuite(ApiCatalogManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ApiCatalogManagerTest.class));
 		//
 		suite.addTestSuite(TestAuthorizationManager.class);
 		suite.addTestSuite(TestAuthorityManager.class);
@@ -148,7 +153,7 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestLocalStorageManager.class);
 		//
-		suite.addTestSuite(TestUserProfileManager.class);
+		suite.addTestSuite(UserProfileManagerIntegrationTest.class);
 		suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
 		//
 		suite.addTestSuite(TestGuiFragmentManager.class);

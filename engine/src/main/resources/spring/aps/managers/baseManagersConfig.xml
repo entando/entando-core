@@ -58,6 +58,10 @@
 					  p:name="Entando_DataObjectManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_jacmsContentManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_InitializerManager" />			
+        			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_ApiCatalogManager" />
 			</set>
 		</property>
 	</bean>

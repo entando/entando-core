@@ -17,7 +17,8 @@ import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
-import org.entando.entando.aps.system.services.api.TestApiCatalogManager;
+import org.entando.entando.aps.system.services.api.ApiCatalogManagerIntegrationTest;
+import org.entando.entando.aps.system.services.api.ApiCatalogManagerTest;
 import org.entando.entando.aps.system.services.cache.CacheInfoManagerIntegrationTest;
 import org.entando.entando.aps.system.services.cache.CacheInfoManagerTest;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
@@ -92,7 +93,8 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestEntityManager.class);
 		//
-		suite.addTestSuite(TestApiCatalogManager.class);
+		suite.addTestSuite(ApiCatalogManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ApiCatalogManagerTest.class));
 		//
 		suite.addTestSuite(TestAuthorizationManager.class);
 		suite.addTestSuite(TestAuthorityManager.class);

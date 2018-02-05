@@ -41,7 +41,7 @@ public abstract class AbstractPlusCacheWrapper<O extends Object> extends Abstrac
 	}
 
 	protected void insertObjectsOnCache(Cache cache, Map<String, O> objects) {
-		List<String> codes = new ArrayList<String>();
+		List<String> codes = new ArrayList<>();
 		Iterator<String> iter = objects.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next();

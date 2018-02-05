@@ -51,9 +51,11 @@
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_CacheInfoManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_I18nManager" />			
+					  p:name="Entando_I18nManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_ApiCatalogManager" />			
+					  p:name="Entando_ApiResourceManager" />			
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_ApiServiceManager" />			
 			</set>
 		</property>
 	</bean>

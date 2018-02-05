@@ -25,6 +25,7 @@ import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.HashMap;
 import java.util.List;
+import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 
 public class ApiResourceCacheWrapper extends AbstractGenericCacheWrapper<ApiResource> implements IApiResourceCacheWrapper {
 
@@ -32,7 +33,7 @@ public class ApiResourceCacheWrapper extends AbstractGenericCacheWrapper<ApiReso
 
 	@Override
 	protected String getCacheName() {
-		return APIRESOURCE_CACHE_NAME;
+		return IApiCatalogManager.API_CATALOG_CACHE_NAME;
 	}
 
 	@Override

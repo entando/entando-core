@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.api.cache;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 
 import org.entando.entando.aps.system.services.api.model.ApiService;
 import org.junit.Before;
@@ -28,7 +29,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 public class ApiServiceCacheWrapperTest {
 
-	private static final String CACHE_NAME = IApiServiceCacheWrapper.APISERVICES_CACHE_NAME;
+	private static final String CACHE_NAME = IApiCatalogManager.API_CATALOG_CACHE_NAME;
 
 	@Mock
 	private CacheManager springCacheManager;

@@ -22,8 +22,6 @@ import org.entando.entando.aps.system.services.api.IApiCatalogDAO;
 
 public interface IApiResourceCacheWrapper {
 
-	public static final String APIRESOURCE_CACHE_NAME = "Entando_ApiResourceManager";
-
 	public static final String APICATALOG_RESOURCES_CACHE_NAME = "ApiResourceManager_resources";
 
 	public static final String APICATALOG_RESOURCE_CACHE_NAME_PREFIX = "ApiResourceManager_resource_";

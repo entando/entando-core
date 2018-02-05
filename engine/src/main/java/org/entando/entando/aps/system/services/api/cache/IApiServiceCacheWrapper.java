@@ -23,8 +23,6 @@ import org.entando.entando.aps.system.services.api.model.ApiResource;
 
 public interface IApiServiceCacheWrapper {
 
-	public static final String APISERVICES_CACHE_NAME = "Entando_ApiServiceManager";
-
 	public static final String APICATALOG_SERVICE_CACHE_NAME_PREFIX = "ApiCatalogManager_service_";
 
 	public static final String APICATALOG_SERVICES_CACHE_NAME = "ApiCatalogManager_services";

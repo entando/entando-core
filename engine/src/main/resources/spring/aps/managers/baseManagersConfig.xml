@@ -53,9 +53,7 @@
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_I18nManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_ApiResourceManager" />			
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_ApiServiceManager" />			
+					  p:name="Entando_ApiCatalogManager" />			
 			</set>
 		</property>
 	</bean>
@@ -115,8 +113,13 @@
 				<property name="dataSource" ref="servDataSource" />
 			</bean>
 		</property>
-		<property name="cacheWrapper">
-			<bean class="com.agiletec.aps.system.services.role.cache.RoleManagerCacheWrapper">
+		<property name="roleCacheWrapper">
+			<bean class="com.agiletec.aps.system.services.role.cache.RoleCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
+		<property name="permissionCacheWrapper">
+			<bean class="com.agiletec.aps.system.services.role.cache.PermissionCacheWrapper">
 				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>

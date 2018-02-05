@@ -17,14 +17,19 @@
     </bean>
     
     <bean id="ApiCatalogManager" class="org.entando.entando.aps.system.services.api.ApiCatalogManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
         <property name="apiCatalogDAO" >
             <bean class="org.entando.entando.aps.system.services.api.ApiCatalogDAO">
                 <property name="dataSource" ref="servDataSource" />
             </bean>
         </property>
-        <property name="cacheWrapper">
-			<bean class="org.entando.entando.aps.system.services.api.cache.ApiCatalogManagerCacheWrapper">
+        <property name="resourceCacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.api.cache.ApiResourceCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+        </property>
+        <property name="serviceCacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.api.cache.ApiServiceCacheWrapper">
 				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
         </property>

@@ -13,13 +13,12 @@
  */
 package com.agiletec.aps.system.services.pagemodel.cache;
 
-import com.agiletec.aps.system.common.AbstractCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.IPageModelDAO;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ import org.springframework.cache.Cache;
 /**
  * @author E.Santoboni
  */
-public class PageModelManagerCacheWrapper extends AbstractCacheWrapper implements IPageModelManagerCacheWrapper {
+public class PageModelManagerCacheWrapper extends AbstractGenericCacheWrapper<PageModel> implements IPageModelManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageModelManagerCacheWrapper.class);
 
@@ -44,28 +43,6 @@ public class PageModelManagerCacheWrapper extends AbstractCacheWrapper implement
 			_logger.error("Error loading page models", t);
 			throw new ApsSystemException("Error loading page models", t);
 		}
-	}
-	
-	protected void releaseCachedObjects(Cache cache) {
-		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
-		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
-				cache.evict(PAGE_MODEL_CACHE_NAME_PREFIX + code);
-			}
-			cache.evict(PAGE_MODEL_CODES_CACHE_NAME);
-		}
-	}
-	
-	protected void insertObjectsOnCache(Cache cache, Map<String, PageModel> models) {
-		List<String> modelCodes = new ArrayList<String>();
-		Iterator<PageModel> iterator = models.values().iterator();
-		while (iterator.hasNext()) {
-			PageModel pageModel = iterator.next();
-			cache.put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
-			modelCodes.add(pageModel.getCode());
-		}
-		cache.put(PAGE_MODEL_CODES_CACHE_NAME, modelCodes);
 	}
 
 	@Override
@@ -87,35 +64,29 @@ public class PageModelManagerCacheWrapper extends AbstractCacheWrapper implement
 
 	@Override
 	public void addPageModel(PageModel pageModel) {
-		if (null == pageModel) {
-			_logger.debug("Null page model can be add");
-			return;
-		}
-		Cache cache = this.getCache();
-		cache.put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
-		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
-		codes.add(pageModel.getCode());
-		cache.put(PAGE_MODEL_CODES_CACHE_NAME, codes);
+		this.manage(pageModel.getCode(), pageModel, Action.ADD);
 	}
 
 	@Override
 	public void updatePageModel(PageModel pageModel) {
-		if (null == pageModel) {
-			_logger.debug("Null page model can be update");
-			return;
-		}
-		this.getCache().put(PAGE_MODEL_CACHE_NAME_PREFIX + pageModel.getCode(), pageModel);
+		this.manage(pageModel.getCode(), pageModel, Action.UPDATE);
 	}
 
 	@Override
 	public void deletePageModel(String code) {
-		Cache cache = this.getCache();
-		cache.evict(PAGE_MODEL_CACHE_NAME_PREFIX + code);
-		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
-		codes.remove(code);
-		cache.put(PAGE_MODEL_CODES_CACHE_NAME, codes);
+		this.manage(code, new PageModel(), Action.DELETE);
 	}
-	
+
+	@Override
+	protected String getCodesCacheKey() {
+		return PAGE_MODEL_CODES_CACHE_NAME;
+	}
+
+	@Override
+	protected String getCacheKeyPrefix() {
+		return PAGE_MODEL_CACHE_NAME_PREFIX;
+	}
+
 	@Override
 	protected String getCacheName() {
 		return PAGE_MODEL_MANAGER_CACHE_NAME;

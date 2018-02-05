@@ -13,7 +13,7 @@
  */
 package com.agiletec.aps.system.services.pagemodel.cache;
 
-import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.IPageModelDAO;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -28,7 +28,7 @@ import org.springframework.cache.Cache;
 /**
  * @author E.Santoboni
  */
-public class PageModelManagerCacheWrapper extends AbstractPlusCacheWrapper<PageModel> implements IPageModelManagerCacheWrapper {
+public class PageModelManagerCacheWrapper extends AbstractGenericCacheWrapper<PageModel> implements IPageModelManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(PageModelManagerCacheWrapper.class);
 

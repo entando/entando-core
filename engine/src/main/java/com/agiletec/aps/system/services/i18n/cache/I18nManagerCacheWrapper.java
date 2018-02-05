@@ -19,14 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.II18nDAO;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.HashMap;
 import java.util.List;
 
-public class I18nManagerCacheWrapper extends AbstractPlusCacheWrapper<ApsProperties> implements II18nManagerCacheWrapper {
+public class I18nManagerCacheWrapper extends AbstractGenericCacheWrapper<ApsProperties> implements II18nManagerCacheWrapper {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 

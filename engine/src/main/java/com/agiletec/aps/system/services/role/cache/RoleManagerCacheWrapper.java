@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.IRoleDAO;
@@ -33,7 +33,7 @@ import com.agiletec.aps.system.services.role.Role;
 /**
  * @author E.Santoboni
  */
-public class RoleManagerCacheWrapper extends AbstractPlusCacheWrapper<Role> implements IRoleManagerCacheWrapper {
+public class RoleManagerCacheWrapper extends AbstractGenericCacheWrapper<Role> implements IRoleManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(RoleManagerCacheWrapper.class);
 

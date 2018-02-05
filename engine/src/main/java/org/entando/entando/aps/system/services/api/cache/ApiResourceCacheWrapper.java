@@ -21,12 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.HashMap;
 import java.util.List;
 
-public class ApiResourceCacheWrapper extends AbstractPlusCacheWrapper<ApiResource> implements IApiResourceCacheWrapper {
+public class ApiResourceCacheWrapper extends AbstractGenericCacheWrapper<ApiResource> implements IApiResourceCacheWrapper {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 

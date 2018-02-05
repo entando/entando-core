@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.widgettype.cache;
 
-import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +29,7 @@ import org.springframework.cache.Cache;
 /**
  * @author E.Santoboni
  */
-public class WidgetTypeManagerCacheWrapper extends AbstractPlusCacheWrapper<WidgetType> implements IWidgetTypeManagerCacheWrapper {
+public class WidgetTypeManagerCacheWrapper extends AbstractGenericCacheWrapper<WidgetType> implements IWidgetTypeManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeManagerCacheWrapper.class);
 

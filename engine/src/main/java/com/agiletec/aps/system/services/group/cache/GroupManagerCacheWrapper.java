@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupDAO;
@@ -29,7 +29,7 @@ import com.agiletec.aps.system.services.group.IGroupDAO;
 /**
  * @author E.Santoboni
  */
-public class GroupManagerCacheWrapper extends AbstractPlusCacheWrapper<Group> implements IGroupManagerCacheWrapper {
+public class GroupManagerCacheWrapper extends AbstractGenericCacheWrapper<Group> implements IGroupManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(GroupManagerCacheWrapper.class);
 

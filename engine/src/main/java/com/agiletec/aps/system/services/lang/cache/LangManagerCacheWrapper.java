@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractPlusCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.lang.LangDOM;
@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author E.Santoboni
  */
-public class LangManagerCacheWrapper extends AbstractPlusCacheWrapper<Lang> implements ILangManagerCacheWrapper {
+public class LangManagerCacheWrapper extends AbstractGenericCacheWrapper<Lang> implements ILangManagerCacheWrapper {
 
 	private static final Logger logger = LoggerFactory.getLogger(LangManagerCacheWrapper.class);
 

@@ -24,7 +24,7 @@ import org.springframework.cache.Cache;
  * @author E.Santoboni
  * @param <O> The object to manage
  */
-public abstract class AbstractPlusCacheWrapper<O extends Object> extends AbstractCacheWrapper {
+public abstract class AbstractGenericCacheWrapper<O extends Object> extends AbstractCacheWrapper {
 
 	protected static enum Action {
 		ADD, UPDATE, DELETE

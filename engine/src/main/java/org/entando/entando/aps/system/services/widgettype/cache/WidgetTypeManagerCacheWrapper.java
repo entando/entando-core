@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.widgettype.cache;
 
-import com.agiletec.aps.system.common.AbstractCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +29,7 @@ import org.springframework.cache.Cache;
 /**
  * @author E.Santoboni
  */
-public class WidgetTypeManagerCacheWrapper extends AbstractCacheWrapper implements IWidgetTypeManagerCacheWrapper {
+public class WidgetTypeManagerCacheWrapper extends AbstractGenericCacheWrapper<WidgetType> implements IWidgetTypeManagerCacheWrapper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeManagerCacheWrapper.class);
 
@@ -54,28 +54,6 @@ public class WidgetTypeManagerCacheWrapper extends AbstractCacheWrapper implemen
 		}
 	}
 
-	protected void releaseCachedObjects(Cache cache) {
-		List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
-		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
-				cache.evict(WIDGET_TYPE_CACHE_NAME_PREFIX + code);
-			}
-			cache.evict(WIDGET_TYPE_CODES_CACHE_NAME);
-		}
-	}
-
-	protected void insertObjectsOnCache(Cache cache, Map<String, WidgetType> widgetTypes) {
-		List<String> widgetCodes = new ArrayList<String>();
-		Iterator<WidgetType> iter = widgetTypes.values().iterator();
-		while (iter.hasNext()) {
-			WidgetType type = iter.next();
-			cache.put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
-			widgetCodes.add(type.getCode());
-		}
-		cache.put(WIDGET_TYPE_CODES_CACHE_NAME, widgetCodes);
-	}
-
 	@Override
 	public WidgetType getWidgetType(String code) {
 		return this.get(WIDGET_TYPE_CACHE_NAME_PREFIX + code, WidgetType.class);
@@ -95,33 +73,27 @@ public class WidgetTypeManagerCacheWrapper extends AbstractCacheWrapper implemen
 
 	@Override
 	public void addWidgetType(WidgetType type) {
-		if (null == type) {
-			_logger.debug("Null widget type can be add");
-			return;
-		}
-		Cache cache = this.getCache();
-		cache.put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
-		List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
-		codes.add(type.getCode());
-		cache.put(WIDGET_TYPE_CODES_CACHE_NAME, codes);
+		this.manage(type.getCode(), type, Action.ADD);
 	}
 
 	@Override
 	public void updateWidgetType(WidgetType type) {
-		if (null == type) {
-			_logger.debug("Null widget type can be update");
-			return;
-		}
-		this.getCache().put(WIDGET_TYPE_CACHE_NAME_PREFIX + type.getCode(), type);
+		this.manage(type.getCode(), type, Action.UPDATE);
 	}
 
 	@Override
 	public void deleteWidgetType(String code) {
-		Cache cache = this.getCache();
-		cache.evict(WIDGET_TYPE_CACHE_NAME_PREFIX + code);
-		List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
-		codes.remove(code);
-		cache.put(WIDGET_TYPE_CODES_CACHE_NAME, codes);
+		this.manage(code, new WidgetType(), Action.DELETE);
+	}
+
+	@Override
+	protected String getCodesCacheKey() {
+		return WIDGET_TYPE_CODES_CACHE_NAME;
+	}
+
+	@Override
+	protected String getCacheKeyPrefix() {
+		return WIDGET_TYPE_CACHE_NAME_PREFIX;
 	}
 
 	@Override

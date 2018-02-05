@@ -23,7 +23,7 @@ import org.entando.entando.aps.system.services.api.model.ApiService;
 /**
  * @author E.Santoboni
  */
-public class TestApiCatalogManager extends ApiBaseTestCase {
+public class ApiCatalogManagerIntegrationTest extends ApiBaseTestCase {
 	
     public void testGetMethod() throws Throwable {
     	ApiMethod method = this.getApiCatalogManager().getMethod(ApiMethod.HttpMethod.GET, "getService");

@@ -240,6 +240,11 @@
                 </entry>
             </map>
         </property>
+		<property name="cacheWrapper">
+			<bean class="org.entando.entando.aps.system.init.cache.InitializerManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
     </bean>
 
     <bean class="org.entando.entando.aps.system.init.SystemPostProcessor" />

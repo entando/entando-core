@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.entando.entando.aps.system.init.cache.IInitializerManagerCacheWrapper;
 import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.init.model.ComponentEnvironment;
 import org.entando.entando.aps.system.init.model.ComponentInstallationReport;
@@ -36,25 +37,73 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public class InitializerManager extends AbstractInitializerManager implements IInitializerManager {
 
-	private static final Logger _logger = LoggerFactory.getLogger(InitializerManager.class);
-	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
+	public static final String REPORT_CONFIG_ITEM = "entandoComponentsReport";
+
+	private IInitializerManagerCacheWrapper cacheWrapper;
+
+	private boolean checkOnStartup;
+
+	private Map<String, IPostProcessor> postProcessors;
+
+	private IDatabaseManager databaseManager;
+
+	@Override
+	public SystemInstallationReport getCurrentReport() {
+		return this.getCacheWrapper().getReport();
+	}
+
+	protected IInitializerManagerCacheWrapper getCacheWrapper() {
+		return cacheWrapper;
+	}
+
+	public void setCacheWrapper(IInitializerManagerCacheWrapper cacheWrapper) {
+		this.cacheWrapper = cacheWrapper;
+	}
+
+	protected boolean isCheckOnStartup() {
+		return checkOnStartup;
+	}
+
+	public void setCheckOnStartup(boolean checkOnStartup) {
+		this.checkOnStartup = checkOnStartup;
+	}
+
+	public Map<String, IPostProcessor> getPostProcessors() {
+		return postProcessors;
+	}
+
+	public void setPostProcessors(Map<String, IPostProcessor> postProcessors) {
+		this.postProcessors = postProcessors;
+	}
+
+	protected IDatabaseManager getDatabaseManager() {
+		return databaseManager;
+	}
+
+	public void setDatabaseManager(IDatabaseManager databaseManager) {
+		this.databaseManager = databaseManager;
+	}
+
+
 	public void init() throws Exception {
 		SystemInstallationReport report = null;
 		try {
 			report = this.extractReport();
 			report = ((IDatabaseInstallerManager) this.getDatabaseManager()).installDatabase(report, this.isCheckOnStartup());
-			this.setCurrentReport(report);
+			this.getCacheWrapper().initCache(report);
 		} catch (Throwable t) {
-			_logger.error("Error while initializating Db Installer", t);
+			logger.error("Error while initializating Db Installer", t);
 			throw new Exception("Error while initializating Db Installer", t);
 		} finally {
 			if (null != report && report.isUpdated()) {
 				this.saveReport(report);
 			}
 		}
-		_logger.debug("{}: initializated - Check on startup {}", this.getClass().getName(), this.isCheckOnStartup());
+		logger.debug("{}: initializated - Check on startup {}", this.getClass().getName(), this.isCheckOnStartup());
 	}
-	
+
 	public void executePostInitProcesses() throws BeansException {
 		SystemInstallationReport report = null;
 		try {
@@ -69,9 +118,7 @@ public class InitializerManager extends AbstractInitializerManager implements II
 				}
 				String compEnvKey = (AbstractInitializerManager.Environment.test.equals(this.getEnvironment())) 
 						? AbstractInitializerManager.Environment.test.toString() : AbstractInitializerManager.Environment.production.toString();
-				ComponentEnvironment componentEnvironment = (null != component.getEnvironments()) ? 
-						component.getEnvironments().get(compEnvKey) :
-						null;
+				ComponentEnvironment componentEnvironment = (null != component.getEnvironments()) ? component.getEnvironments().get(compEnvKey) : null;
 				List<IPostProcess> postProcesses = (null != componentEnvironment) ? componentEnvironment.getPostProcesses() : null;
 				if (null == postProcesses || postProcesses.isEmpty()) {
 					postProcessStatus = SystemInstallationReport.Status.NOT_AVAILABLE;
@@ -87,7 +134,7 @@ public class InitializerManager extends AbstractInitializerManager implements II
 				report.setUpdated();
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while executing post processes", t);
+			logger.error("Error while executing post processes", t);
 			throw new FatalBeanException("Error while executing post processes", t);
 		} finally {
 			if (null != report && report.isUpdated()) {
@@ -95,7 +142,7 @@ public class InitializerManager extends AbstractInitializerManager implements II
 			}
 		}
 	}
-	
+
 	protected SystemInstallationReport.Status executePostProcesses(List<IPostProcess> postProcesses) throws ApsSystemException {
 		if (null == postProcesses || postProcesses.isEmpty()) {
 			return SystemInstallationReport.Status.NOT_AVAILABLE;
@@ -107,32 +154,32 @@ public class InitializerManager extends AbstractInitializerManager implements II
 				if (null != postProcessor) {
 					postProcessor.executePostProcess(postProcess);
 				} else {
-					_logger.error("Missing Post Processor for process '{}'", postProcess.getCode());
+					logger.error("Missing Post Processor for process '{}'", postProcess.getCode());
 				}
 			} catch (InvalidPostProcessResultException t) {
-				_logger.error("Error while executing post process of index {}",i, t);
+				logger.error("Error while executing post process of index {}", i, t);
 				return SystemInstallationReport.Status.INCOMPLETE;
 			} catch (Throwable t) {
-				_logger.error("Error while executing post process - index {}", i, t);
+				logger.error("Error while executing post process - index {}", i, t);
 				return SystemInstallationReport.Status.INCOMPLETE;
 			}
 		}
 		return SystemInstallationReport.Status.OK;
 	}
-	
+
 	@Override
 	public void reloadCurrentReport() {
 		try {
 			SystemInstallationReport report = this.extractReport();
-			this.setCurrentReport(report);
+			this.getCacheWrapper().setCurrentReport(report);
 		} catch (Throwable t) {
-			_logger.error("Error reloading report", t);
+			logger.error("Error reloading report", t);
 			throw new RuntimeException("Error reloading report", t);
 		}
 	}
-	
+
 	//-------------------- REPORT -------- START
-	
+
 	private void saveReport(SystemInstallationReport report) throws BeansException {
 		if (null == report || report.getReports().isEmpty()) {
 			return;
@@ -142,49 +189,12 @@ public class InitializerManager extends AbstractInitializerManager implements II
 			DataSource dataSource = (DataSource) this.getBeanFactory().getBean("portDataSource");
 			dao.setDataSource(dataSource);
 			dao.saveConfigItem(report.toXml(), this.getConfigVersion());
-			this.setCurrentReport(report);
+			this.getCacheWrapper().setCurrentReport(report);
 		} catch (Throwable t) {
-			_logger.error("Error saving report", t);
+			logger.error("Error saving report", t);
 			throw new FatalBeanException("Error saving report", t);
 		}
 	}
-	
-	protected boolean isCheckOnStartup() {
-		return _checkOnStartup;
-	}
-	public void setCheckOnStartup(boolean checkOnStartup) {
-		this._checkOnStartup = checkOnStartup;
-	}
-	
-	@Override
-	public SystemInstallationReport getCurrentReport() {
-		return _currentReport;
-	}
-	protected void setCurrentReport(SystemInstallationReport currentReport) {
-		this._currentReport = currentReport;
-	}
-	
-	public Map<String, IPostProcessor> getPostProcessors() {
-		return _postProcessors;
-	}
-	public void setPostProcessors(Map<String, IPostProcessor> postProcessors) {
-		this._postProcessors = postProcessors;
-	}
-	
-	protected IDatabaseManager getDatabaseManager() {
-		return _databaseManager;
-	}
-	public void setDatabaseManager(IDatabaseManager databaseManager) {
-		this._databaseManager = databaseManager;
-	}
-	
-	private boolean _checkOnStartup;
-	private SystemInstallationReport _currentReport;
-	
-	private Map<String, IPostProcessor> _postProcessors;
-	
-	private IDatabaseManager _databaseManager;
-	
-	public static final String REPORT_CONFIG_ITEM = "entandoComponentsReport";
-	
+
 }
+

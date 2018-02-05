@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps;
 
+import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
@@ -87,6 +88,8 @@ public class AllTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for APS");
 
+		//
+		suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
 		//
 		suite.addTestSuite(TestEntityManager.class);
 		//

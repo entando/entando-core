@@ -71,10 +71,6 @@ public class UserProfileManagerTest {
 				userProfileManager.getName(), 
 				this.entityDom))
 		.thenReturn(this.createFakeProfile(SystemConstants.DEFAULT_PROFILE_TYPE_CODE));
-		
-		
-		
-		
 		// @formatter:on
 
 		IUserProfile userProfile = userProfileManager.getDefaultProfileType();

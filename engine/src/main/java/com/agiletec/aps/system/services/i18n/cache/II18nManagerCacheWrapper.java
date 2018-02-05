@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
 package com.agiletec.aps.system.services.i18n.cache;
 
 import java.util.Map;
@@ -39,4 +38,3 @@ public interface II18nManagerCacheWrapper {
 	public void removeLabelGroup(String key);
 
 }
-

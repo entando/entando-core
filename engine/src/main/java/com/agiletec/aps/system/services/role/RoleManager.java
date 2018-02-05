@@ -23,7 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.role.cache.IRoleManagerCacheWrapper;
+import com.agiletec.aps.system.services.role.cache.IPermissionCacheWrapper;
+import com.agiletec.aps.system.services.role.cache.IRoleCacheWrapper;
 
 /**
  * Servizio di gestione dei ruoli.
@@ -32,16 +33,18 @@ import com.agiletec.aps.system.services.role.cache.IRoleManagerCacheWrapper;
  */
 public class RoleManager extends AbstractService implements IRoleManager {
 
-	private static final Logger _logger = LoggerFactory.getLogger(RoleManager.class);
-	
-	private IRoleDAO _roleDao;
-	private IPermissionDAO _permissionDao;
-	private IRoleManagerCacheWrapper _cacheWrapper;
+	private static final Logger logger = LoggerFactory.getLogger(RoleManager.class);
+
+	private IRoleDAO roleDao;
+	private IPermissionDAO permissionDao;
+	private IRoleCacheWrapper roleCacheWrapper;
+	private IPermissionCacheWrapper permissionCacheWrapper;
 
 	@Override
 	public void init() throws Exception {
-		this.getCacheWrapper().initCache(this.getRoleDAO(), this.getPermissionDAO());
-		_logger.debug("{} : initialized", this.getClass().getName());
+		this.getPermissionCacheWrapper().initCache(this.getPermissionDAO());
+		this.getRoleCacheWrapper().initCache(this.getRoleDAO());
+		logger.debug("{} : initialized", this.getClass().getName());
 	}
 
 	/**
@@ -51,7 +54,7 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	 */
 	@Override
 	public List<Role> getRoles() {
-		return this.getCacheWrapper().getRoles();
+		return this.getRoleCacheWrapper().getRoles();
 	}
 
 	/**
@@ -62,7 +65,7 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	 */
 	@Override
 	public Role getRole(String roleName) {
-		return this.getCacheWrapper().getRole(roleName);
+		return this.getRoleCacheWrapper().getRole(roleName);
 	}
 
 	/**
@@ -75,9 +78,9 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	public void removeRole(Role role) throws ApsSystemException {
 		try {
 			this.getRoleDAO().deleteRole(role);
-			this.getCacheWrapper().removeRole(role);
+			this.getRoleCacheWrapper().removeRole(role);
 		} catch (Throwable t) {
-			_logger.error("Error while removing a role", t);
+			logger.error("Error while removing a role", t);
 			throw new ApsSystemException("Error while removing a role", t);
 		}
 	}
@@ -92,9 +95,9 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	public void updateRole(Role role) throws ApsSystemException {
 		try {
 			this.getRoleDAO().updateRole(role);
-			this.getCacheWrapper().updateRole(role);
+			this.getRoleCacheWrapper().updateRole(role);
 		} catch (Throwable t) {
-			_logger.error("Error while updating a role", t);
+			logger.error("Error while updating a role", t);
 			throw new ApsSystemException("Error while updating a role", t);
 		}
 	}
@@ -109,9 +112,9 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	public void addRole(Role role) throws ApsSystemException {
 		try {
 			this.getRoleDAO().addRole(role);
-			this.getCacheWrapper().addRole(role);
+			this.getRoleCacheWrapper().addRole(role);
 		} catch (Throwable t) {
-			_logger.error("Error while adding a role", t);
+			logger.error("Error while adding a role", t);
 			throw new ApsSystemException("Error while adding a role", t);
 		}
 	}
@@ -124,14 +127,14 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	 */
 	@Override
 	public List<Permission> getPermissions() {
-		List<Permission> permissions = this.getCacheWrapper().getPermissions();
+		List<Permission> permissions = this.getPermissionCacheWrapper().getPermissions();
 		Collections.sort(permissions);
 		return permissions;
 	}
 
 	@Override
 	public Permission getPermission(String permissionName) {
-		return this.getCacheWrapper().getPermission(permissionName);
+		return this.getPermissionCacheWrapper().getPermission(permissionName);
 	}
 
 	/**
@@ -144,16 +147,16 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	public void removePermission(String permissionName) throws ApsSystemException {
 		try {
 			this.getPermissionDAO().deletePermission(permissionName);
-			this.getCacheWrapper().removePermission(permissionName);
+			this.getPermissionCacheWrapper().removePermission(permissionName);
 			List<Role> roles = this.getRolesWithPermission(permissionName);
 			Iterator<Role> roleIt = roles.iterator();
 			while (roleIt.hasNext()) {
 				Role role = roleIt.next();
 				role.removePermission(permissionName);
-				this.getCacheWrapper().updateRole(role);
+				this.getRoleCacheWrapper().updateRole(role);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while deleting permission {}", permissionName, t);
+			logger.error("Error while deleting permission {}", permissionName, t);
 			throw new ApsSystemException("Error while deleting a permission", t);
 		}
 	}
@@ -168,9 +171,9 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	public void updatePermission(Permission permission) throws ApsSystemException {
 		try {
 			this.getPermissionDAO().updatePermission(permission);
-			this.getCacheWrapper().updatePermission(permission);
+			this.getPermissionCacheWrapper().updatePermission(permission);
 		} catch (Throwable t) {
-			_logger.error("Error updating permission", t);
+			logger.error("Error updating permission", t);
 			throw new ApsSystemException("Error while updating perrmission", t);
 		}
 	}
@@ -185,9 +188,9 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	public void addPermission(Permission permission) throws ApsSystemException {
 		try {
 			this.getPermissionDAO().addPermission(permission);
-			this.getCacheWrapper().addPermission(permission);
+			this.getPermissionCacheWrapper().addPermission(permission);
 		} catch (Throwable t) {
-			_logger.error("Error while adding a permission", t);
+			logger.error("Error while adding a permission", t);
 			throw new ApsSystemException("Error while adding a permission", t);
 		}
 	}
@@ -206,27 +209,35 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	}
 
 	protected IPermissionDAO getPermissionDAO() {
-		return _permissionDao;
+		return permissionDao;
 	}
 
 	public void setPermissionDAO(IPermissionDAO permissionDao) {
-		this._permissionDao = permissionDao;
+		this.permissionDao = permissionDao;
 	}
 
 	protected IRoleDAO getRoleDAO() {
-		return _roleDao;
+		return roleDao;
 	}
 
 	public void setRoleDAO(IRoleDAO roleDao) {
-		this._roleDao = roleDao;
+		this.roleDao = roleDao;
 	}
 
-	protected IRoleManagerCacheWrapper getCacheWrapper() {
-		return _cacheWrapper;
+	protected IRoleCacheWrapper getRoleCacheWrapper() {
+		return roleCacheWrapper;
 	}
 
-	public void setCacheWrapper(IRoleManagerCacheWrapper cacheWrapper) {
-		this._cacheWrapper = cacheWrapper;
+	public void setRoleCacheWrapper(IRoleCacheWrapper roleCacheWrapper) {
+		this.roleCacheWrapper = roleCacheWrapper;
+	}
+
+	protected IPermissionCacheWrapper getPermissionCacheWrapper() {
+		return permissionCacheWrapper;
+	}
+
+	public void setPermissionCacheWrapper(IPermissionCacheWrapper permissionCacheWrapper) {
+		this.permissionCacheWrapper = permissionCacheWrapper;
 	}
 
 }

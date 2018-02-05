@@ -11,12 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.services.i18n.cache;
+package org.entando.entando.aps.system.services.api.cache;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
+import java.util.HashMap;
+import org.entando.entando.aps.system.services.api.IApiCatalogManager;
+
+import org.entando.entando.aps.system.services.api.model.ApiService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -25,42 +27,27 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
-import com.agiletec.aps.system.services.i18n.I18nManagerTest;
-import java.util.ArrayList;
-import java.util.List;
+public class ApiServiceCacheWrapperTest {
 
-public class I18nManagerCacheWrapperTest {
-
-	private static final String CACHE_NAME = I18nManagerCacheWrapper.I18N_MANAGER_CACHE_NAME;
-
-	private static final String TEST_KEY = "LABEL_HELLO";
+	private static final String CACHE_NAME = IApiCatalogManager.API_CATALOG_CACHE_NAME;
 
 	@Mock
 	private CacheManager springCacheManager;
 
 	@InjectMocks
-	private I18nManagerCacheWrapper cacheWrapper;
+	private ApiServiceCacheWrapper cacheWrapper;
 
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		ConcurrentMapCache fakeCache = new ConcurrentMapCache(CACHE_NAME);
-		List<String> codes = new ArrayList<>();
-		codes.add(TEST_KEY);
-		fakeCache.put(I18nManagerCacheWrapper.I18N_CODES_CACHE_NAME, codes);
-		fakeCache.put(I18nManagerCacheWrapper.I18N_CACHE_NAME_PREFIX + TEST_KEY, I18nManagerTest.createLabel("ciao", "hello"));
+		fakeCache.put(IApiServiceCacheWrapper.APICATALOG_SERVICES_CACHE_NAME, new HashMap<String, ApiService>());
 		when(springCacheManager.getCache(CACHE_NAME)).thenReturn(fakeCache);
-	}
-
-	@Test(expected = CacheItemNotFoundException.class)
-	public void should_raise_exception_on_update_invalid_entry() {
-		cacheWrapper.updateLabelGroup("THIS_DO_NOT_EXISTS", I18nManagerTest.createLabel("si", "yes"));
 	}
 
 	@Test
 	public void should_update_existing_entry() {
-		cacheWrapper.updateLabelGroup(TEST_KEY, I18nManagerTest.createLabel("ciao", "Hello world!"));
-		assertEquals("Hello world!", cacheWrapper.getLabelGroups().get(TEST_KEY).get("en"));
+		cacheWrapper.removeService("test");
 	}
 
 }

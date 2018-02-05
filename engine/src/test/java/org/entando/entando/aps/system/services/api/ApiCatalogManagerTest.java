@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.api.cache.ApiCatalogManagerCacheWrapper;
+import org.entando.entando.aps.system.services.api.cache.ApiServiceCacheWrapper;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
 import org.entando.entando.aps.system.services.api.model.ApiService;
@@ -23,11 +22,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import org.entando.entando.aps.system.services.api.cache.ApiResourceCacheWrapper;
 
 public class ApiCatalogManagerTest {
 
 	@Mock
-	private ApiCatalogManagerCacheWrapper cacheWrapper;
+	private ApiServiceCacheWrapper cacheWrapper;
+
+	@Mock
+	private ApiResourceCacheWrapper resourceCacheWrapper;
 
 	@Mock
 	private ApiCatalogDAO apiCatalogDAO;
@@ -42,14 +45,14 @@ public class ApiCatalogManagerTest {
 
 	@Test
 	public void testResources() throws ApsSystemException {
-		when(cacheWrapper.getMasterResources()).thenReturn(createRersources());
+		when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
 		Map<String, ApiResource> resources = this.apiCatalogManager.getResources();
-		assertThat(resources.size(), is(5));
+		assertThat(resources.size(), is(33));
 	}
 
 	@Test
 	public void testGetMethod() throws Throwable {
-		when(cacheWrapper.getMasterResources()).thenReturn(createRersources());
+		when(resourceCacheWrapper.getMasterResource("getService")).thenReturn(createResource(null, "getService"));
 		ApiMethod method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
 		assertNotNull(method);
 		assertTrue(method.isActive());
@@ -57,7 +60,7 @@ public class ApiCatalogManagerTest {
 
 	@Test
 	public void testGetMethods() throws Throwable {
-		when(cacheWrapper.getMasterResources()).thenReturn(createRersources());
+		when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
 		List<ApiMethod> methods = this.apiCatalogManager.getMethods(ApiMethod.HttpMethod.GET);
 		assertNotNull(methods);
 		assertTrue(methods.size() > 0);
@@ -65,7 +68,7 @@ public class ApiCatalogManagerTest {
 
 	@Test
 	public void testUpdateMethodStatus() throws Throwable {
-		when(cacheWrapper.getMasterResources()).thenReturn(createRersources());
+		when(resourceCacheWrapper.getMasterResource("getService")).thenReturn(createResource(null, "getService"));
 		ApiMethod method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
 		method.setStatus(false);
 		this.apiCatalogManager.updateMethodConfig(method);
@@ -75,22 +78,27 @@ public class ApiCatalogManagerTest {
 
 	@Test
 	public void testGetServices() throws Throwable {
-		when(cacheWrapper.getMasterResources()).thenReturn(createRersources());
+		when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
 		Map<String, ApiService> services = this.apiCatalogManager.getServices();
 		assertNotNull(services);
-		assertTrue(services.size() == 0);
+		assertTrue(services.isEmpty());
 	}
 
-	private Map<String, ApiResource> createRersources() throws ApsSystemException {
+	private Map<String, ApiResource> createResources() throws ApsSystemException {
 		ApiResourceLoader loader = new ApiResourceLoader(ApiCatalogManager.DEFAULT_LOCATION_PATTERN);
 		Map<String, ApiResource> res = loader.getResources();
 		Map<String, ApiResource> resources = new HashMap<>();
 		for (Map.Entry<String, ApiResource> entry : res.entrySet()) {
-			if (StringUtils.startsWithAny(entry.getKey(), new String[] { "getS", "core:user" })) {
-				resources.put(entry.getKey(), entry.getValue());
-			}
+			resources.put(entry.getKey(), entry.getValue());
 		}
 		return resources;
+	}
+
+	private ApiResource createResource(String namespace, String resourceName) throws ApsSystemException {
+		ApiResourceLoader loader = new ApiResourceLoader(ApiCatalogManager.DEFAULT_LOCATION_PATTERN);
+		Map<String, ApiResource> resources = loader.getResources();
+		String resourceCode = ApiResource.getCode(namespace, resourceName);
+		return resources.get(resourceCode);
 	}
 
 }

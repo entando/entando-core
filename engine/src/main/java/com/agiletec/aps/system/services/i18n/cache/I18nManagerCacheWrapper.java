@@ -15,18 +15,18 @@ package com.agiletec.aps.system.services.i18n.cache;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.CacheItemNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
-import com.agiletec.aps.system.common.AbstractCacheWrapper;
+import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.II18nDAO;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.HashMap;
+import java.util.List;
 
-public class I18nManagerCacheWrapper extends AbstractCacheWrapper implements II18nManagerCacheWrapper {
+public class I18nManagerCacheWrapper extends AbstractGenericCacheWrapper<ApsProperties> implements II18nManagerCacheWrapper {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -48,34 +48,19 @@ public class I18nManagerCacheWrapper extends AbstractCacheWrapper implements II1
 		}
 	}
 
-	private void insertObjectsOnCache(Cache cache, Map<String, ApsProperties> labels) {
-		for (Map.Entry<String, ApsProperties> entry : labels.entrySet()) {
-			String key = entry.getKey();
-			cache.put(I18N_CACHE_NAME_PREFIX + key, entry.getValue());
-		}
-		cache.put(I18N_CODES_CACHE_NAME, labels);
-	}
-
-	protected void releaseCachedObjects(Cache cache) {
-		this.releaseCachedObjects(cache, I18N_CODES_CACHE_NAME, I18N_CACHE_NAME_PREFIX);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected void releaseCachedObjects(Cache cache, String cacheKey, String codePrefix) {
-		Map<String, ApsProperties> groupCodes = (Map<String, ApsProperties>) this.get(cache, cacheKey, Map.class);
-		if (null != groupCodes) {
-			for (Map.Entry<String, ApsProperties> entry : groupCodes.entrySet()) {
-				String key = entry.getKey();
-				cache.evict(codePrefix + key);
-			}
-			cache.evict(cacheKey);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ApsProperties> getLabelGroups() {
-		return this.get(this.getCache(), I18N_CODES_CACHE_NAME, Map.class);
+		Map<String, ApsProperties> map = new HashMap<>();
+		Cache cache = this.getCache();
+		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+		if (null != codes) {
+			for (String code : codes) {
+				ApsProperties labels = this.get(cache, this.getCacheKeyPrefix() + code, ApsProperties.class);
+				map.put(code, labels);
+			}
+		}
+		return map;
 	}
 
 	@Override
@@ -90,32 +75,17 @@ public class I18nManagerCacheWrapper extends AbstractCacheWrapper implements II1
 
 	@Override
 	public void removeLabelGroup(String key) {
-		this.manage(key, null, Action.DELETE);
+		this.manage(key, new ApsProperties(), Action.DELETE);
 	}
 
-	private void manage(String key, ApsProperties labels, Action operation) {
-		if (StringUtils.isBlank(key)) {
-			return;
-		}
-		Cache cache = this.getCache();
-		Map<String, ApsProperties> codes = this.getLabelGroups();
-		if (Action.ADD.equals(operation)) {
-			if (!codes.containsKey(key)) {
-				codes.put(key, labels);
-				cache.put(I18N_CODES_CACHE_NAME, codes);
-			}
-			cache.put(I18N_CACHE_NAME_PREFIX + key, labels);
-		} else if (Action.UPDATE.equals(operation)) {
-			if (!codes.containsKey(key)) {
-				throw new CacheItemNotFoundException(key, cache.getName());
-			}
-			cache.put(I18N_CACHE_NAME_PREFIX + key, labels);
-			codes.put(key, labels);
-			cache.put(I18N_CODES_CACHE_NAME, codes);
-		} else if (Action.DELETE.equals(operation)) {
-			codes.remove(key);
-			cache.evict(I18N_CACHE_NAME_PREFIX + key);
-			cache.put(I18N_CODES_CACHE_NAME, codes);
-		}
+	@Override
+	protected String getCodesCacheKey() {
+		return I18N_CODES_CACHE_NAME;
 	}
+
+	@Override
+	protected String getCacheKeyPrefix() {
+		return I18N_CACHE_NAME_PREFIX;
+	}
+
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context" 
+		xmlns:util="http://www.springframework.org/schema/util" 
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	
+	<bean id="PreviewRequestValidatorControlService" class="org.entando.entando.aps.system.services.controller.preview.control.PreviewRequestValidator" 
+			parent="abstractControlService" >
+		<property name="langManager" ref="LangManager"/>
+		<property name="pageManager" ref="PageManager"/>
+	</bean>
+	
+	<bean id="PreviewRequestAuthorizatorControlService" class="org.entando.entando.aps.system.services.controller.preview.control.PreviewRequestAuthorizator" 
+			parent="abstractControlService" >
+		<property name="authManager" ref="AuthorizationManager"/>
+		<property name="userManager" ref="UserManager"/>
+		<property name="pageTokenMager" ref="PageTokenManager" />
+	</bean>
+	
+	<bean id="PreviewErrorManagerControlService" class="org.entando.entando.aps.system.services.controller.preview.control.PreviewErrorManager" 
+			parent="abstractControlService" >
+		<property name="configManager" ref="BaseConfigManager"/>
+	</bean>
+	
+	<util:list id="PreviewControllerServices" >
+		<ref bean="PreviewRequestValidatorControlService" />
+		<ref bean="PreviewRequestAuthorizatorControlService" />
+		<ref bean="PreviewErrorManagerControlService" />
+	</util:list>
+	
+</beans>

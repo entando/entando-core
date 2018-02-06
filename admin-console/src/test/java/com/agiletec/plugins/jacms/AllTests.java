@@ -23,6 +23,8 @@ import org.entando.entando.plugins.jacms.apsadmin.content.TestValidateMonotextAt
 import org.entando.entando.plugins.jacms.apsadmin.content.TestValidateNumberAttribute;
 import org.entando.entando.plugins.jacms.apsadmin.content.TestValidateResourceAttribute;
 import org.entando.entando.plugins.jacms.apsadmin.content.TestValidateTextAttribute;
+import org.entando.entando.plugins.jacms.apsadmin.content.bulk.TestContentCategoryBulkAction;
+import org.entando.entando.plugins.jacms.apsadmin.content.bulk.TestContentGroupBulkAction;
 
 import com.agiletec.plugins.jacms.apsadmin.category.TestTrashReferencedCategory;
 import com.agiletec.plugins.jacms.apsadmin.content.TestContentAction;
@@ -92,6 +94,8 @@ public class AllTests {
 		suite.addTestSuite(TestContentGroupAction.class);
 		suite.addTestSuite(TestContentInspectionAction.class);
 		suite.addTestSuite(TestIntroNewContentAction.class);
+		suite.addTestSuite(TestContentGroupBulkAction.class);
+		suite.addTestSuite(TestContentCategoryBulkAction.class);
 		
 		// Page
 		suite.addTestSuite(TestContentListViewerWidgetAction.class);

@@ -27,40 +27,47 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = ActionLogLikeRecord.TABLE_NAME)
 public class ActionLogLikeRecord implements ExtendedColumnDefinition {
-	
-	public ActionLogLikeRecord() {}
-	
-	@DatabaseField(columnName = "recordid", 
-			foreign = true,
-			canBeNull = false)
-	private ActionLogRecord _record;
-	
-	@DatabaseField(columnName = "username", 
-			dataType = DataType.STRING, 
-			width = 20, 
-			canBeNull = false)
-	private String _username;
-	
-	@DatabaseField(columnName = "likedate", 
-			dataType = DataType.DATE, 
-			canBeNull = false)
-	private Date _likeDate;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String recordTableName = ActionLogRecord.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			recordTableName = "`" + recordTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT actionloglikerec_recid_fkey FOREIGN KEY (recordid) "
-				+ "REFERENCES " + recordTableName + " (id)"};
-	}
-	
-	public static final String TABLE_NAME = "actionloglikerecords";
-	
+
+    public ActionLogLikeRecord() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(columnName = "recordid",
+            foreign = true,
+            canBeNull = false)
+    private ActionLogRecord _record;
+
+    @DatabaseField(columnName = "username",
+            dataType = DataType.STRING,
+            width = 20,
+            canBeNull = false)
+    private String _username;
+
+    @DatabaseField(columnName = "likedate",
+            dataType = DataType.DATE,
+            canBeNull = false)
+    private Date _likeDate;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String recordTableName = ActionLogRecord.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            recordTableName = "`" + recordTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT actionloglikerec_recid_fkey FOREIGN KEY (recordid) "
+            + "REFERENCES " + recordTableName + " (id)"};
+    }
+
+    public static final String TABLE_NAME = "actionloglikerecords";
+
 }
 /*
 CREATE TABLE actionloglikerecords

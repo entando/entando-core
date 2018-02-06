@@ -4,46 +4,57 @@
 
 <s:set var="targetNS" value="%{'/do/jacms/Resource'}" />
 <s:set var="targetParamName" value="%{'resourceTypeCode'}" />
-<s:set var="targetParamValue" value="resourceTypeCode" />	
-<h1 class="panel panel-default title-page">
-	<span class="panel-body display-block">
-		<a href="<s:url action="list" namespace="/do/jacms/Resource">
-		<s:param name="resourceTypeCode">
-			<s:property value="resourceTypeCode" />
-		</s:param>
-		</s:url>" 
-		title="<s:text name="note.goToSomewhere" />: <s:text name="title.resourceManagement" />"> <s:property value="%{getText('title.' + resourceTypeCode + 'Management')}" />
-		</a>
-		&#32;/&#32;
-		<s:text name="title.resourceManagement.resourceTrash" />
-	</span>
+<s:set var="targetParamValue" value="resourceTypeCode" />
+
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="breadcrumb.app"/></li>
+    <li><s:text name="breadcrumb.jacms"/></li>
+    <li><s:text name="breadcrumb.digitalAsset" /></li>
+    <li>
+        <a href="<s:url action="list" ><s:param name="resourceTypeCode" ><s:text name="%{resourceTypeCode}"></s:text></s:param></s:url>">
+            <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+        </a>
+    </li>
+    <li class="page-title-container">
+        <s:text name="title.resourceManagement.resourceTrash"/>
+    </li>
+</ol>
+<h1 class="page-title-container">
+    <div>
+        <s:text name="title.resourceManagement.resourceTrash"/>
+    </div>
 </h1>
+<div class="text-right">
+    <div class="form-group-separator"></div>
+</div>
+<br>
 
 <div id="main" role="main">
 
-<div class="alert alert-danger alert-dismissable fade in">
-	<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-	<h2 class="h4 margin-none">
-		<s:text name="message.title.ActionErrors" />
-	</h2>
-	<p class="margin-base-vertical"><s:text name="message.note.resolveReferences" /></p>
-</div>
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            <span class="pficon pficon-close"></span>
+        </button>
+        <span class="pficon pficon-error-circle-o"></span>
+        <strong><s:text name="message.title.ActionErrors" /></strong>
+        <p><s:text name="message.note.resolveReferences" /></p>
+    </div>
 
-<s:form>
-	<p class="sr-only">
-		<wpsf:hidden name="resourceId" />
-	</p>
+    <s:form>
+        <p class="sr-only">
+        <wpsf:hidden name="resourceId" />
+    </p>
 
-	<s:if test="references['jacmsContentManagerUtilizers']">
-		<s:set var="referencingContentsId" value="references['jacmsContentManagerUtilizers']" />
-		<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
-	</s:if>
+    <s:if test="references['jacmsContentManagerUtilizers']">
+        <s:set var="referencingContentsId" value="references['jacmsContentManagerUtilizers']" />
+        <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
+    </s:if>
 
-	<wpsa:hookPoint key="jacms.resourceReferences" objectName="hookPointElements_jacms_resourceReferences">
-	<s:iterator value="#hookPointElements_jacms_resourceReferences" var="hookPointElement">
-		<wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
-	</s:iterator>
-	</wpsa:hookPoint>
+    <wpsa:hookPoint key="jacms.resourceReferences" objectName="hookPointElements_jacms_resourceReferences">
+        <s:iterator value="#hookPointElements_jacms_resourceReferences" var="hookPointElement">
+            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+        </s:iterator>
+    </wpsa:hookPoint>
 
 </s:form>
 

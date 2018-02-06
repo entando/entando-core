@@ -44,33 +44,33 @@ import org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBConte
  * @author E.Santoboni
  */
 public class TestApiContentInterface extends ApiBaseTestCase {
-	
+
 	@Override
-    protected void setUp() throws Exception {
-    	super.setUp();
-    	this.init();
-    }
-	
+	protected void setUp() throws Exception {
+		super.setUp();
+		this.init();
+	}
+
 	public void testGetXmlContent() throws Throwable {
 		MediaType mediaType = MediaType.APPLICATION_XML_TYPE;
 		this.testGetContent(mediaType, "admin", "ALL4", "it");
 	}
-	
+
 	public void testGetJsonContent() throws Throwable {
 		MediaType mediaType = MediaType.APPLICATION_JSON_TYPE;
 		this.testGetContent(mediaType, "admin", "ALL4", "en");
 	}
-	
+
 	public void testCreateNewContentFromXml() throws Throwable {
 		MediaType mediaType = MediaType.APPLICATION_XML_TYPE;
 		this.testCreateNewContent(mediaType, "ALL4");
 	}
-	
+
 	public void testCreateNewContentFromJson() throws Throwable {
 		MediaType mediaType = MediaType.APPLICATION_JSON_TYPE;
 		this.testCreateNewContent(mediaType, "ALL4");
 	}
-	
+
 	protected void testCreateNewContent(MediaType mediaType, String contentId) throws Throwable {
 		String dateNow = DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
 		EntitySearchFilter filter = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false, dateNow, null);
@@ -111,7 +111,7 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 			}
 		}
 	}
-	
+
 	private void checkAttributes(AttributeInterface oldAttribute, AttributeInterface newAttribute) {
 		if (null == newAttribute) {
 			fail();
@@ -147,10 +147,10 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 			assertEquals(oldAttribute.getValue(), newAttribute.getValue());
 		}
 	}
-	
+
 	protected JAXBContent testGetContent(MediaType mediaType, String username, String contentId, String langCode) throws Throwable {
-		ApiResource contentResource = 
-				this.getApiCatalogManager().getResource("jacms", "content");
+		ApiResource contentResource
+				= this.getApiCatalogManager().getResource("jacms", "content");
 		ApiMethod getMethod = contentResource.getGetMethod();
 		Properties properties = super.createApiProperties(username, langCode, mediaType);
 		properties.put("id", contentId);
@@ -165,15 +165,15 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 		assertNotNull(jaxbContent);
 		return jaxbContent;
 	}
-	
+
 	private void init() throws Exception {
-    	try {
-    		this._contentManager = (IContentManager) this.getApplicationContext().getBean(JacmsSystemConstants.CONTENT_MANAGER);
-    	} catch (Throwable t) {
-    		throw new Exception(t);
-        }
-    }
-	
+		try {
+			this._contentManager = (IContentManager) this.getApplicationContext().getBean(JacmsSystemConstants.CONTENT_MANAGER);
+		} catch (Throwable t) {
+			throw new Exception(t);
+		}
+	}
+
 	private IContentManager _contentManager;
-	
+
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-    "http://struts.apache.org/dtds/struts-2.3.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
     
@@ -25,10 +25,11 @@
 			
 			<interceptor name="requestAuth" class="com.agiletec.apsadmin.system.InterceptorMadMax" />
 			<interceptor name="backofficeRequestAuth" class="com.agiletec.apsadmin.system.InterceptorMadMax2nd" />
-			<interceptor name="apsActionParams" class="com.agiletec.apsadmin.system.ApsActionParamsInterceptor" />
+			<interceptor name="apsParams" class="org.entando.entando.apsadmin.system.ApsParametersInterceptor" />
 			<interceptor name="chain" class="com.agiletec.apsadmin.system.ChainingInterceptor" />
 			<interceptor name="apsFileUpload" class="com.agiletec.apsadmin.system.ApsFileUploadInterceptor" />
-			<interceptor name="entandoActionLogger" class="org.entando.entando.apsadmin.system.ActionLoggerInterceptor" />
+			<interceptor name="entandoActionLogger" class="org.entando.entando.apsadmin.system.ActionLoggerInterceptor" />	
+			<interceptor name="redirectMessage" class="org.entando.entando.apsadmin.system.RedirectMessageInterceptor" />
 			
 			<interceptor-stack name="entandoFreeStack">
 				<interceptor-ref name="exception"/>
@@ -39,9 +40,8 @@
 				<interceptor-ref name="chain"/>
 				<interceptor-ref name="debugging"/>
 				<interceptor-ref name="checkbox"/>
-				<interceptor-ref name="apsActionParams"/>
 				<interceptor-ref name="staticParams"/>
-				<interceptor-ref name="params"/>
+				<interceptor-ref name="apsParams"/>
 				<interceptor-ref name="conversionError"/>
 			</interceptor-stack>
 			
@@ -119,9 +119,8 @@
 				<interceptor-ref name="chain"/>
 				<interceptor-ref name="debugging"/>
 				<interceptor-ref name="checkbox"/>
-				<interceptor-ref name="apsActionParams"/>
 				<interceptor-ref name="staticParams"/>
-				<interceptor-ref name="params"/>
+				<interceptor-ref name="apsParams"/>
 				<interceptor-ref name="conversionError"/>
 			</interceptor-stack>
             
@@ -221,5 +220,7 @@
 	
 	<include file="org/entando/entando/aps/internalservlet/api/api.xml" />
 	<include file="org/entando/entando/aps/internalservlet/user/currentUserProfile.xml"/>
-    
+	
+	<include file="org/entando/entando/apsadmin/dataobject/model/dataObjectModel.xml" />
+	
 </struts>

@@ -2,163 +2,147 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
-<h1 class="panel panel-default title-page">
-	<span class="panel-body display-block"><s:text name="title.apiConsumerManagement" /></span>
+
+<ol class="breadcrumb page-tabs-header breadcrumb-position">
+    <li><s:text name="title.integrations" /></li>
+    <li><s:text name="title.apiManagement" /></li>
+    <li class="page-title-container"><s:text name="title.apiConsumerManagement" /></li>
+</ol>
+
+<h1 class="page-title-container"><s:text name="title.apiConsumerManagement" />
+    <span class="pull-right">
+        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="title.api.resources.help" />" data-placement="left" data-original-title=""><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+    </span>
 </h1>
-<div id="main" role="main">
-	<s:if test="hasActionMessages()">
-		<div class="alert alert-info alert-dismissable fade in">
-			<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-			<h2 class="h4 margin-none"><s:text name="messages.confirm" /></h2>
-			<ul class="margin-base-top">
-				<s:iterator value="actionMessages">
-					<li><s:property escape="false" /></li>
-				</s:iterator>
-			</ul>
-		</div>
-	</s:if>
-	<s:if test="hasActionErrors()">
-		<div class="alert alert-danger alert-dismissable fade in">
-			<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>
-			<h2 class="h4 margin-none"><s:text name="message.title.ActionErrors" /></h2>
-			<ul class="margin-base-top">
-				<s:iterator value="actionErrors">
-					<li><s:property escape="false" /></li>
-				</s:iterator>
-			</ul>
-		</div>
-	</s:if>
 
-	<s:form action="search" cssClass="form-horizontal" role="search">
-		<div class="form-group">
-			<div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<span class="input-group-addon">
-					<span class="icon fa fa-file-text-o fa-lg" title="<s:text name="label.search.by"/>&#32;<s:text name="label.consumer.description"/>"></span>
-				</span>
-				<label for="search_consumer_description" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="label.consumer.description"/></label>
-				<wpsf:textfield name="text" id="search_consumer_description" cssClass="form-control input-lg" placeholder="%{getText('label.description')}" title="%{getText('label.search.by')} %{getText('label.consumer.description')}" />
-				<span class="input-group-btn">
-					<wpsf:submit type="button" cssClass="btn btn-primary btn-lg" title="%{getText('label.search')}">
-						<span class="sr-only"><s:text name="label.search" /></span>
-						<span class="icon fa fa-search"></span>
-					</wpsf:submit>
-					<button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="collapse" data-target="#search-advanced" title="<s:text name="title.searchFilters" />">
-							<span class="sr-only"><s:text name="title.searchFilters" /></span>
-							<span class="caret"></span>
-					</button>
-				</span>
-			</div>
-				<div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					<div id="search-advanced" class="collapse well collapse-input-group">
-						<div class="form-group">
-							<label for="search_consumer_key" class="control-label col-sm-2 text-right">Key</label>
-							<div class="col-sm-5">
-								<wpsf:textfield name="insertedKey" id="search_consumer_key" cssClass="form-control" />
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-5 col-sm-offset-2">
-								<wpsf:submit type="button" cssClass="btn btn-primary">
-									<span class="icon fa fa-search"></span>&#32;<s:text name="label.search" />
-								</wpsf:submit>
-							</div>
-						</div>
-					</div><%--// search-advanced --%>
-				</div>
-			</div>
-	</s:form>
-	<hr />
-	<a href="<s:url action="new" />" class="btn btn-default">
-		<span class="icon fa fa-plus-circle"></span>&#32;<s:text name="label.new" />
-	</a>
-	<s:form action="search">
-		<p class="sr-only">
-			<wpsf:hidden name="insertedKey" />
-			<wpsf:hidden name="insertedDescription" />
-		</p>
-		<wpsa:subset source="searchResult" count="10" objectName="groupSearchResult" advanced="true" offset="5">
-			<s:set name="group" value="#groupSearchResult" />
-			<s:set name="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />
-			<div class="text-center">
-				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
-				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-			</div>
-			<div class="table-responsive">
-				<table class="table table-bordered">
-					<caption class="sr-only"><span><s:text name="title.apiManagement.consumerList" /></span></caption>
-					<tr>
-						<th class="text-center padding-large-left padding-large-right"><abbr title="<s:text name="label.actions" />">&ndash;</abbr>
-						<th><s:text name="label.key" /></th>
-						<th><s:text name="label.description" /></th>
-						<th><abbr title="<s:text name="label.tokens.full" />"><s:text name="label.tokens.short" /></abbr></th>
-						<%--
-						<th><s:text name="label.expirationDate" /></th>
-						<th><abbr title="<s:text name="label.remove" />">&ndash;</abbr></th>
-						--%>
-					</tr>
-					<s:iterator var="consumerKeyVar" status="status">
-						<s:set var="consumerVar" value="%{getConsumer(#consumerKeyVar)}" />
-						<tr>
-							<td class="text-center text-nowrap">
-								<div class="btn-group btn-group-xs">
-									<a class="btn btn-default" href="<s:url action="edit"><s:param name="consumerKey" value="#consumerKeyVar" /></s:url>" title="<s:text name="label.edit" />: <s:property value="#consumerKeyVar" />">
-										<span class="icon fa fa-pencil-square-o"></span>
-										<span class="sr-only"><s:text name="label.edit" /></span>
-									</a>
-								</div>
-								<div class="btn-group btn-group-xs">
-									<a class="btn btn-warning" href="<s:url action="trash"><s:param name="consumerKey" value="#consumerKeyVar"/></s:url>" title="<s:text name="label.remove" />: <s:property value="#consumerKeyVar" />">
-										<span class="icon fa fa-times-circle-o"></span>
-										<span class="sr-only"><s:text name="label.alt.clear" /></span>
-									</a>
-								</div>
-							</td>
-							<td><code><s:property value="#consumerKeyVar" /></code></td>
-							<td>
-								<s:if test="%{#consumerVar.description.length()>140}">
-									<abbr title="<s:property value="#consumerVar.description" />"><s:property value="%{#consumerVar.description.substring(0,140)}" />&hellip;</abbr>
-								</s:if>
-								<s:else>
-									<s:property value="#consumerVar.description" />
-								</s:else>
-							</td>
-							<td class="text-right">
-								<s:if test="null == #tokenOccurrencesVar[#consumerKeyVar]" >0</s:if>
-								<s:else><s:property value="#tokenOccurrencesVar[#consumerKeyVar]" /></s:else>
-								<span class="sr-only"><s:text name="label.tokens.full" /></span>
-							</td>
-
-						<%--
-							<td class="monospace"><a href="<s:url action="edit"><s:param name="consumerKey" value="#consumerKeyVar" /></s:url>" title="<s:text name="label.edit" />: <s:property value="#consumerKeyVar" />" ><s:property value="#consumerKeyVar" /></a></td>
-							<td>
-								<s:if test="%{#consumerVar.description.length()>200}">
-									<s:property value="%{#consumerVar.description.substring(0,200)}" />&#133;
-								</s:if>
-								<s:else>
-									<s:property value="#consumerVar.description" />
-								</s:else>
-							</td>
-							<td class="centerText monospace">
-								<s:if test="#consumerVar.expirationDate != null">
-									<s:date name="#consumerVar.expirationDate" format="dd/MM/yyyy" />
-								</s:if>
-								<s:else><abbr title="<s:text name="label.none" />">&ndash;</abbr></s:else>
-							</td>
-							<td class="monospace icon">
-								<s:property value="#tokenOccurrencesVar.class"/>
-								<s:if test="null == #tokenOccurrencesVar[#consumerKeyVar]" >0</s:if>
-								<s:else><s:property value="#tokenOccurrencesVar[#consumerKeyVar]" /></s:else>
-							</td>
-							<td><a href="<s:url action="trash"><s:param name="consumerKey" value="#consumerKeyVar"/></s:url>" title="<s:text name="label.remove" />: <s:property value="#consumerKeyVar" />"><img src="<wp:resourceURL />administration/common/img/icons/delete.png" alt="<s:text name="label.alt.clear" />" /></a></td>
-							--%>
-						</tr>
-					</s:iterator>
-				</table>
-			</div>
-
-			<div class="text-center">
-				<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
-			</div>
-		</wpsa:subset>
-	</s:form>
+<div class="text-right">
+    <div class="form-group-separator">
+    </div>
 </div>
+<br>
+
+<s:form action="search"  role="search" cssClass="form-horizontal">
+    <s:if test="hasActionMessages()">
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                <span class="pficon pficon-close"></span>
+            </button>
+            <span class="pficon pficon-error-circle-o"></span>
+            <strong><s:text name="message.title.ActionErrors" /></strong>
+            <ul class="">
+                <s:iterator value="actionMessages">
+                    <li><s:property escapeHtml="false" /></li>
+                    </s:iterator>
+            </ul>
+        </div>
+    </s:if>
+    <s:if test="hasActionErrors()">
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                <span class="pficon pficon-close"></span>
+            </button>
+            <span class="pficon pficon-error-circle-o"></span>
+            <strong><s:text name="message.title.ActionErrors" /></strong>
+            <ul class="margin-base-top">
+                <s:iterator value="actionErrors">
+                    <li><s:property escapeHtml="false" /></li>
+                    </s:iterator>
+            </ul>
+        </div>
+    </s:if>
+    <div class="searchPanel form-group">
+        <div class="well col-md-offset-3 col-md-6  ">
+            <p class="search-label"><s:text name="label.search.label"/></p>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label"><s:text name="label.search.by"/></label>
+                <div class="col-sm-9">
+                    <wpsf:textfield name="insertedDescription" id="search_consumer_description" cssClass="form-control" placeholder="%{getText('label.consumer.description')}" title="%{getText('label.search.by')} %{getText('label.consumer.description')}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="search_consumer_key" ><s:text name="api.consumer.key"/></label>
+                <div class="col-sm-9">
+                    <wpsf:textfield name="insertedKey" id="search_consumer_key" placeholder="%{getText('api.consumer.key')}" cssClass="form-control"  />
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+                        <s:text name="label.search" />
+                    </wpsf:submit>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+    <a href="<s:url action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
+        <s:text name="label.add" />
+    </a>
+
+    <wpsa:subset source="searchResult" count="10" objectName="groupSearchResult" advanced="true" offset="5">
+        <s:set var="group" value="#groupSearchResult" />
+        <s:set var="tokenOccurrencesVar" value="tokenOccurrencesByConsumer" />
+
+        <div class="col-xs-12 no-padding">
+            <table class="table table-striped table-bordered table-hover no-mb">
+                <thead>
+                    <tr>
+                        <th class="table-w-20"><s:text name="label.key" /></th>
+                        <th><s:text name="label.description" /></th>
+                        <th class="table-w-10"><s:text name="label.tokens.full" /></th>
+                        <th class="table-w-5 text-center"><s:text name="label.actions" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <s:iterator var="consumerKeyVar" status="status">
+                        <s:set var="consumerVar" value="%{getConsumer(#consumerKeyVar)}" />
+                        <tr>
+                            <td><s:property value="#consumerKeyVar" /></td>
+                            <td>
+                                <s:if test="%{#consumerVar.description.length()>140}">
+                                    <abbr title="<s:property value="#consumerVar.description" />"><s:property value="%{#consumerVar.description.substring(0,140)}" />&hellip;</abbr>
+                                </s:if>
+                                <s:else>
+                                    <s:property value="#consumerVar.description" />
+                                </s:else>
+                            </td>
+                            <td class="text-center">
+                                <s:if test="null == #tokenOccurrencesVar[#consumerKeyVar]" >0</s:if>
+                                <s:else><s:property value="#tokenOccurrencesVar[#consumerKeyVar]" /></s:else>
+                                <span class="sr-only"><s:text name="label.tokens.full" /></span>
+                            </td>
+                            <td class="text-center table-view-pf-actions">
+                                <div class="dropdown dropdown-kebab-pf">
+                                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-ellipsis-v"></span></button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li>
+                                            <a href="<s:url action="edit"><s:param name="consumerKey" value="#consumerKeyVar" /></s:url>" title="<s:text name="label.edit" />: <s:property value="#consumerKeyVar" />">
+                                                <span><s:text name="label.edit" /></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<s:url action="trash"><s:param name="consumerKey" value="#consumerKeyVar"/></s:url>" title="<s:text name="label.remove" />: <s:property value="#consumerKeyVar" />">
+                                                <span><s:text name="label.delete" /></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </s:iterator>
+                </tbody>
+            </table>
+        </div>
+        <div class="content-view-pf-pagination clearfix">
+            <div class="form-group">
+                <span><s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                <div class="mt-5">
+                    <s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                </div>
+            </div>
+        </div>
+    </wpsa:subset>
+</s:form>

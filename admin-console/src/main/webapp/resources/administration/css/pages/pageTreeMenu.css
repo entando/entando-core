@@ -1,0 +1,124 @@
+
+
+.widget-square.ui-draggable-dragging {
+    transform-origin: left;
+    transform: rotate(3deg);
+    z-index: 9999;
+}
+
+.grid-widget {
+    min-width: 70px;
+    color: #444;
+    border: 1px solid #666;
+    border-radius: 3px;
+    text-align: center;
+    cursor: move;
+    display: inline-block;
+    padding: 5px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.grid-widget .menu-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    font-size: 20px;
+    color: #bbb;
+    cursor: pointer;
+    z-index: 9;
+}
+
+
+.grid-widget .dropdown {
+    position: absolute;
+    top: 0;
+    height: 0;
+    width: 20px;
+    right: 0;
+}
+
+.grid-slot .slot-name {
+    position: absolute;
+    left: 10px;
+    color: #bbb;
+}
+
+.grid-slot .widget-icon {
+    font-size: 20px;
+    line-height: 35px;
+}
+
+.grid-slot .icon-text-block {
+    position: relative;
+    top: calc(50% - 50px);
+    text-align: center;
+}
+
+.grid-widget .icon-text-block {
+    position: relative;
+    top: calc(50% - 30px);
+    text-align: center;
+}
+
+.grid-slot .icon-text-block.ghost .widget-icon {
+    color: #bbb!important;
+}
+
+.main-container {
+    width: calc(100% - 323px);
+}
+
+.button-bar {
+	margin-top: 5px;
+}
+
+.button-bar .restore-online-btn {
+    margin-left: 10px;
+}
+
+.button-bar .defwidgets-btn {
+	color: #23a8e0;
+	border-color: #23a8e0;
+	font-weight: normal;
+}
+
+
+.grid-container {
+    margin-top: 15px;
+}
+
+.grid-container[data-online="false"] .grid-slot .widget-icon {
+    color: #8b8d8f;
+}
+.grid-container[data-online="true"] .grid-slot .widget-icon {
+    color: #3f9c35;
+}
+
+.grid-container[data-online="true"] .grid-slot.diff-slot .widget-icon {
+    color: #f0ab00;
+}
+
+.on-the-fly-dropdown-wrapper {
+	display: inline-block;
+	margin-left: 5px;
+}
+
+.defwidgets-label .text {
+	color: #c1c1c1;
+}
+
+.defwidgets-label .glyphicon {
+	color: #3a9c2f;
+    font-size: 20px;
+    margin-left: 5px;
+    vertical-align: text-bottom;
+}
+
+.ui-droppable-hover {
+    border: 1px solid #f0ab00;
+    background: #F0F0F0;
+}

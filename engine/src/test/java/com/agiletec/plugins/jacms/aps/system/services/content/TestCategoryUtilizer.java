@@ -21,36 +21,35 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 
 /**
  * Test del servizio gestore categorie.
+ *
  * @author E.Santoboni
  */
 public class TestCategoryUtilizer extends BaseTestCase {
-	
+
 	public void testGetCategoryUtilizers_1() throws Throwable {
-    	String[] names = this.getApplicationContext().getBeanNamesForType(CategoryUtilizer.class);
-    	assertTrue(names.length>=2);
-    	for (int i=0; i<names.length; i++) {
-    		CategoryUtilizer service = (CategoryUtilizer) this.getApplicationContext().getBean(names[i]);
-    		List utilizers = service.getCategoryUtilizers("evento");
+		String[] names = this.getApplicationContext().getBeanNamesForType(CategoryUtilizer.class);
+		assertTrue(names.length >= 2);
+		for (int i = 0; i < names.length; i++) {
+			CategoryUtilizer service = (CategoryUtilizer) this.getApplicationContext().getBean(names[i]);
+			List utilizers = service.getCategoryUtilizers("evento");
 			if (names[i].equals(JacmsSystemConstants.CONTENT_MANAGER)) {
-				assertTrue(utilizers.size()==2);
-			} else {
-				assertTrue(utilizers.size()==0);
+				assertTrue(utilizers.size() == 2);
 			}
 		}
-    }
-	
+	}
+
 	public void testGetCategoryUtilizers_2() throws Throwable {
-    	String[] names = this.getApplicationContext().getBeanNamesForType(CategoryUtilizer.class);
-    	assertTrue(names.length>=2);
-    	for (int i=0; i<names.length; i++) {
-    		CategoryUtilizer service = (CategoryUtilizer) this.getApplicationContext().getBean(names[i]);
-    		List utilizers = service.getCategoryUtilizers("resCat1");
+		String[] names = this.getApplicationContext().getBeanNamesForType(CategoryUtilizer.class);
+		assertTrue(names.length >= 2);
+		for (int i = 0; i < names.length; i++) {
+			CategoryUtilizer service = (CategoryUtilizer) this.getApplicationContext().getBean(names[i]);
+			List utilizers = service.getCategoryUtilizers("resCat1");
 			if (names[i].equals(JacmsSystemConstants.RESOURCE_MANAGER)) {
-				assertTrue(utilizers.size()==1);
+				assertTrue(utilizers.size() == 1);
 			} else {
-				assertTrue(utilizers.size()==0);
+				assertTrue(utilizers.size() == 0);
 			}
 		}
-    }
-    
+	}
+
 }

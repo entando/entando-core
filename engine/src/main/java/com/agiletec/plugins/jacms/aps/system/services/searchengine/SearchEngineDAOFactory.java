@@ -25,12 +25,13 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 
 /**
  * Classe factory degli elementi ad uso del SearchEngine.
+ *
  * @author E.Santoboni
  */
 public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 
 	private static final Logger _logger = LoggerFactory.getLogger(SearchEngineDAOFactory.class);
-	
+
 	@Override
 	public void init() throws Exception {
 		this._subDirectory = this.getConfigManager().getConfigItem(JacmsSystemConstants.CONFIG_ITEM_CONTENT_INDEX_SUB_DIR);
@@ -38,23 +39,23 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 			throw new ApsSystemException("Item configurazione assente: " + JacmsSystemConstants.CONFIG_ITEM_CONTENT_INDEX_SUB_DIR);
 		}
 	}
-	
+
 	@Override
 	public IIndexerDAO getIndexer() throws ApsSystemException {
 		return this.getIndexer(this._subDirectory);
 	}
-	
+
 	@Override
 	public ISearcherDAO getSearcher() throws ApsSystemException {
 		return this.getSearcher(this._subDirectory);
 	}
-	
+
 	@Override
 	public IIndexerDAO getIndexer(String subDir) throws ApsSystemException {
 		IIndexerDAO indexerDao = null;
 		try {
 			Class indexerClass = Class.forName(this.getIndexerClassName());
-            indexerDao = (IIndexerDAO) indexerClass.newInstance();
+			indexerDao = (IIndexerDAO) indexerClass.newInstance();
 			indexerDao.setLangManager(this.getLangManager());
 			indexerDao.init(this.getDirectory(subDir));
 		} catch (Throwable t) {
@@ -63,13 +64,13 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 		}
 		return indexerDao;
 	}
-	
+
 	@Override
 	public ISearcherDAO getSearcher(String subDir) throws ApsSystemException {
 		ISearcherDAO searcherDao = null;
 		try {
 			Class searcherClass = Class.forName(this.getSearcherClassName());
-            searcherDao = (ISearcherDAO) searcherClass.newInstance();
+			searcherDao = (ISearcherDAO) searcherClass.newInstance();
 			searcherDao.init(this.getDirectory(subDir));
 		} catch (Throwable t) {
 			_logger.error("Error creating new searcher", t);
@@ -77,7 +78,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 		}
 		return searcherDao;
 	}
-	
+
 	@Override
 	public void updateSubDir(String newSubDirectory) throws ApsSystemException {
 		this.getConfigManager().updateConfigItem(JacmsSystemConstants.CONFIG_ITEM_CONTENT_INDEX_SUB_DIR, newSubDirectory);
@@ -85,13 +86,13 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 		this._subDirectory = newSubDirectory;
 		this.deleteSubDirectory(oldDir);
 	}
-	
+
 	private File getDirectory(String subDirectory) throws ApsSystemException {
 		String dirName = this.getIndexDiskRootFolder();
 		if (!dirName.endsWith("/")) {
 			dirName += "/";
 		}
-		dirName += subDirectory;
+		dirName += "cmscontents/" + subDirectory;
 		_logger.debug("Index Directory: {}", dirName);
 		File dir = new File(dirName);
 		if (!dir.exists() || !dir.isDirectory()) {
@@ -103,7 +104,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 		}
 		return dir;
 	}
-    
+
 	@Override
 	public void deleteSubDirectory(String subDirectory) {
 		String dirName = this.getIndexDiskRootFolder();
@@ -114,7 +115,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 		File dir = new File(dirName);
 		if (dir.exists() || dir.isDirectory()) {
 			String[] filesName = dir.list();
-			for (int i=0; i<filesName.length; i++) {
+			for (int i = 0; i < filesName.length; i++) {
 				File fileToDelete = new File(dirName + File.separator + filesName[i]);
 				fileToDelete.delete();
 			}
@@ -122,49 +123,54 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 			_logger.debug("Deleted subfolder {}", subDirectory);
 		}
 	}
-	
+
 	public String getIndexerClassName() {
 		return _indexerClassName;
 	}
+
 	public void setIndexerClassName(String indexerClassName) {
 		this._indexerClassName = indexerClassName;
 	}
-	
+
 	public String getSearcherClassName() {
 		return _searcherClassName;
 	}
+
 	public void setSearcherClassName(String searcherClassName) {
 		this._searcherClassName = searcherClassName;
 	}
-	
+
 	protected String getIndexDiskRootFolder() {
 		return _indexDiskRootFolder;
 	}
+
 	public void setIndexDiskRootFolder(String indexDiskRootFolder) {
 		this._indexDiskRootFolder = indexDiskRootFolder;
 	}
-	
+
 	protected ConfigInterface getConfigManager() {
 		return _configManager;
 	}
+
 	public void setConfigManager(ConfigInterface configService) {
 		this._configManager = configService;
 	}
-	
+
 	protected ILangManager getLangManager() {
 		return _langManager;
 	}
+
 	public void setLangManager(ILangManager langManager) {
 		this._langManager = langManager;
 	}
-	
+
 	private String _indexerClassName;
 	private String _searcherClassName;
-	
+
 	private String _indexDiskRootFolder;
 	private String _subDirectory;
-	
+
 	private ConfigInterface _configManager;
 	private ILangManager _langManager;
-	
+
 }

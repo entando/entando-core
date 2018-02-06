@@ -24,8 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.mapper.ActionMapper;
 import org.apache.struts2.dispatcher.mapper.ActionMapping;
-import org.apache.struts2.dispatcher.ng.ExecuteOperations;
-import org.apache.struts2.dispatcher.ng.servlet.ServletHostConfig;
 
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
@@ -34,6 +32,8 @@ import com.agiletec.aps.tags.InternalServletTag;
 import com.agiletec.apsadmin.system.dispatcher.EntandoActionUtils;
 import com.agiletec.apsadmin.system.dispatcher.InitOperations;
 import com.agiletec.apsadmin.system.dispatcher.PrepareOperations;
+import org.apache.struts2.dispatcher.ExecuteOperations;
+import org.apache.struts2.dispatcher.servlet.ServletHostConfig;
 
 import org.entando.entando.aps.internalservlet.system.dispatcher.mapper.ExtendedDefaultActionMapper;
 
@@ -57,8 +57,8 @@ public class Struts2ServletDispatcher extends HttpServlet {
             init.initLogging(config);
             dispatcher = init.initDispatcher(config);
             init.initStaticContentLoader(config, dispatcher);
-            prepare = new PrepareOperations(filterConfig.getServletContext(), dispatcher);
-            execute = new ExecuteOperations(filterConfig.getServletContext(), dispatcher);
+            prepare = new PrepareOperations(dispatcher);
+            execute = new ExecuteOperations(dispatcher);
         } finally {
             if (dispatcher != null) {
                 dispatcher.cleanUpAfterInit();

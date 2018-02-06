@@ -36,14 +36,13 @@ public class ExtraAttributeLoader {
 		try {
 			attributes = this.loadExtraAttributes(beanFactory, entityManagerName);
 		} catch (Throwable t) {
-			//ApsSystemUtils.logThrowable(t, this, "extractAttributes", "Error loading extra attributes");
 			_logger.error("Error loading extra attributes. entityManager: {}", entityManagerName, t);
 		}
 		return attributes;
 	}
 	
 	private Map<String, AttributeInterface> loadExtraAttributes(BeanFactory beanFactory, String entityManagerName) {
-		Map<String, AttributeInterface> extraAttributes = new HashMap<String, AttributeInterface>();
+		Map<String, AttributeInterface> extraAttributes = new HashMap<>();
 		try {
 			ListableBeanFactory factory = (ListableBeanFactory) beanFactory;
 			String[] defNames = factory.getBeanNamesForType(ExtraAttributeWrapper.class);
@@ -58,12 +57,10 @@ public class ExtraAttributeLoader {
 						}
 					}
 				} catch (Throwable t) {
-					//ApsSystemUtils.logThrowable(t, this, "loadExtraAttributes", "Error extracting attribute : wrapper bean " + defNames[i]);
 					_logger.error("Error extracting attribute : wrapper bean {}", defNames[i], t);
 				}
 			}
 		} catch (Throwable t) {
-			//ApsSystemUtils.logThrowable(t, this, "loadExtraAttributes", "Error loading extra attributes");
 			_logger.error("Error loading extra attributes. entityManagerName: {}", entityManagerName, t);
 		}
 		return extraAttributes;

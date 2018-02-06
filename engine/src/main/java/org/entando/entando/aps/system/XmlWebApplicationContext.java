@@ -26,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author M.Casari
  */
 public class XmlWebApplicationContext extends org.springframework.web.context.support.XmlWebApplicationContext {
-
+	/*
     @Override
     public <T> Map<String, T> getBeansOfType(Class<T> type, boolean includeNonSingletons, boolean allowEagerInit) throws BeansException {
         Map<String, T> map = super.getBeansOfType(type, includeNonSingletons, allowEagerInit);
@@ -198,5 +198,5 @@ public class XmlWebApplicationContext extends org.springframework.web.context.su
         }
         return bean;
     }
-
+	*/
 }

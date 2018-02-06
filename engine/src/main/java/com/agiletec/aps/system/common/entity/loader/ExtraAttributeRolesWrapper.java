@@ -43,7 +43,7 @@ public class ExtraAttributeRolesWrapper extends AbstractExtraAttributeSupportObj
 		try {
 			String xml = super.extractXml();
 			Map<String, AttributeRole> attributeRoles = dom.extractRoles(xml, this.getDefsFilePath());
-			List<AttributeRole> roles = new ArrayList<AttributeRole>(attributeRoles.values());
+			List<AttributeRole> roles = new ArrayList<>(attributeRoles.values());
 			for (int i = 0; i < roles.size(); i++) {
 				AttributeRole role = roles.get(i);
 				if (collectionToFill.containsKey(role.getName())) {

@@ -27,6 +27,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
  */
 public class ListAttributeHandler extends AbstractMLAttributeHandler {
 	
+	@Override
 	public void startAttribute(Attributes attributes, String qName) throws SAXException {
 		if (qName.equals("list")) {
 			this.startList(attributes, qName);
@@ -62,6 +63,7 @@ public class ListAttributeHandler extends AbstractMLAttributeHandler {
 		}
 	}
 	
+	@Override
 	public void endAttribute(String qName, StringBuffer textBuffer) {
 		if (qName.equals("list")) {
 			this.endList();
@@ -85,6 +87,7 @@ public class ListAttributeHandler extends AbstractMLAttributeHandler {
 		//nothing to do
 	}
 	
+	@Override
 	public boolean isEndAttribute(String qName) {
 		return qName.equals("list");
 	}

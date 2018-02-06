@@ -5,12 +5,12 @@
  * This file is part of Entando Enterprise Edition software.
  * You can redistribute it and/or modify it
  * under the terms of the Entando's EULA
- * 
- * See the file License for the specific language governing permissions   
+ *
+ * See the file License for the specific language governing permissions
  * and limitations under the License
- * 
- * 
- * 
+ *
+ *
+ *
  * Copyright 2013 Entando S.r.l. (http://www.entando.com) All rights reserved.
  *
  */
@@ -35,9 +35,10 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 /**
- * Manages the operations on the contents in case of events on categories. 
- * In the case of moving categories from one node to another must be recharged references
- * EVOLUZIONE DEL CORE - AGGIUNTA FIRST EDITOR e funzioni aggiornamento referenze
+ * Manages the operations on the contents in case of events on categories. In
+ * the case of moving categories from one node to another must be recharged
+ * references EVOLUZIONE DEL CORE - AGGIUNTA FIRST EDITOR e funzioni
+ * aggiornamento referenze
  *
  */
 public class ContentUpdaterService extends AbstractService implements IContentUpdaterService {
@@ -46,7 +47,7 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 	public void init() throws Exception {
 		ApsSystemUtils.getLogger().info(this.getClass().getName() + " ready");
 	}
-	
+
 	@Override
 	public void reloadCategoryReferences(String categoryCode) {
 		try {
@@ -62,13 +63,15 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 			while (it.hasNext()) {
 				String contentId = it.next();
 				this.reloadEntityReferences(contentId);
-				if (null != th) th.setListIndex(th.getListIndex() + 1);
+				if (null != th) {
+					th.setListIndex(th.getListIndex() + 1);
+				}
 			}
 		} catch (Throwable t) {
 			ApsSystemUtils.logThrowable(t, this, "reloadCategoryReferences");
 		}
 	}
-	
+
 	@Override
 	public Set<String> getContentsId(String categoryCode) throws ApsSystemException {
 		Set<String> allContents = new HashSet<String>();
@@ -79,30 +82,30 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 			//tutti i gruppi
 			List<String> userGroupCodes = new ArrayList<String>();
 			userGroupCodes.add(Group.ADMINS_GROUP_NAME);
-			
+
 			//associati alla categoria che è stata spostata...
 			String[] categories = new String[]{categoryCode};
-			
-			List<String> publicContents = this.getContentManager().loadPublicContentsId(categories, orCategoryFilter,  filters, userGroupCodes);
+
+			List<String> publicContents = this.getContentManager().loadPublicContentsId(categories, orCategoryFilter, filters, userGroupCodes);
 			ApsSystemUtils.getLogger().debug("public contents: " + publicContents.size());
-			
+
 			List<String> workContents = this.getContentManager().loadWorkContentsId(categories, filters, userGroupCodes);
 			ApsSystemUtils.getLogger().debug("work contents: " + workContents.size());
-			
+
 			allContents.addAll(publicContents);
 			allContents.addAll(workContents);
-			
+
 		} catch (Throwable t) {
 			ApsSystemUtils.logThrowable(t, this, "getContentsId");
 			throw new ApsSystemException("Error loading contents to update", t);
 		}
 		return allContents;
 	}
-	
+
 	public void reloadEntityReferences(String entityId) {
 		try {
 			String cacheKey = JacmsSystemConstants.CONTENT_CACHE_PREFIX + entityId;
-			this.getCacheInfoManager().flushEntry(cacheKey);
+			this.getCacheInfoManager().flushEntry(ICacheInfoManager.DEFAULT_CACHE_NAME, cacheKey);
 			ApsSystemUtils.getLogger().debug("removing_from_cache " + cacheKey);
 			Content content = this.getContentManager().loadContent(entityId, true);
 			if (content != null) {
@@ -117,17 +120,19 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 			ApsSystemUtils.logThrowable(t, this, "reloadEntityReferences");
 		}
 	}
-	
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
+
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
 	protected ICategoryManager getCategoryManager() {
 		return _categoryManager;
 	}
+
 	public void setCategoryManager(ICategoryManager categoryManager) {
 		this._categoryManager = categoryManager;
 	}
@@ -135,6 +140,7 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 	protected IContentUpdaterDAO getContentUpdaterDAO() {
 		return _contentUpdaterDAO;
 	}
+
 	public void setContentUpdaterDAO(IContentUpdaterDAO contentUpdaterDAO) {
 		this._contentUpdaterDAO = contentUpdaterDAO;
 	}
@@ -142,13 +148,14 @@ public class ContentUpdaterService extends AbstractService implements IContentUp
 	protected ICacheInfoManager getCacheInfoManager() {
 		return _cacheInfoManager;
 	}
+
 	public void setCacheInfoManager(ICacheInfoManager cacheInfoManager) {
 		this._cacheInfoManager = cacheInfoManager;
 	}
-	
+
 	private IContentManager _contentManager;
 	private ICategoryManager _categoryManager;
 	private IContentUpdaterDAO _contentUpdaterDAO;
 	private ICacheInfoManager _cacheInfoManager;
-	
+
 }

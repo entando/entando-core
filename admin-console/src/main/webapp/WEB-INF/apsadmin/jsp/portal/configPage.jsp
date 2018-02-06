@@ -11,6 +11,10 @@
 
 <div id="main" role="main">
 
+    <div class="grid-container"></div>
+
+    <div class="widget-list"></div>
+
 <s:set var="breadcrumbs_pivotPageCode" value="currentPage.code" />
 <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
 
@@ -18,17 +22,18 @@
 	<s:param name="selectedNode" value="currentPage.code"></s:param>
 </s:action>
 
-<s:if test="currentPage.widgets.length > 0">
+<s:if test="currentPage.draftWidgets.length > 0">
 
 	<ol start="0" class="list-group">
 
 	<s:set var="showletTypeApiMappingsVar" value="showletTypeApiMappings" />
-	<s:iterator var="showlet" value="currentPage.widgets" status="rowstatus">
+	<s:iterator var="showlet" value="currentPage.draftWidgets" status="rowstatus">
 		<s:set var="showletType" value="#showlet.getType()" ></s:set>
+		<s:set var="metadata" value="currentPage.metadata" ></s:set>
 
 		<li class="list-group-item padding-base-top padding-base-bottom" id="widget<s:property value="#rowstatus.count" />">
 			<h2 class="h5 list-group-item-heading">
-				<s:if test="currentPage.getModel().getMainFrame() == #rowstatus.index">
+				<s:if test="#metadata.getModel().getMainFrame() == #rowstatus.index">
 					<a href="
 					<s:url action="editFrame" namespace="/do/Page">
 						<s:param name="pageCode"><s:property value="currentPage.code"/></s:param>
@@ -46,7 +51,7 @@
 					</s:url>">
 						<span class="icon fa fa-cog fa-fw"></span>&#32;
 				</s:else>
-						<s:property value="currentPage.getModel().getFrames()[#rowstatus.index]"/>
+						<s:property value="#metadata.getModel().getFrames()[#rowstatus.index]"/>
 					</a>
 			</h2>
 			<s:if test="null != #showletType.code">

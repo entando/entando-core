@@ -13,95 +13,49 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 
-import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.apsadmin.tags.ResourceInfoTag;
 
 /**
  * @author E.Santoboni
  */
 public class CmsPageActionUtil {
 
-	private static final Logger _logger = LoggerFactory.getLogger(CmsPageActionUtil.class);
-	
+	/**
+	 * Check if is possible to publish the content in the given page.
+	 * @param publishingContent The publishing content.
+	 * @param page The page where you want to publish the content.
+	 * @return True/false if is possible to publish the content in the given page.
+	 * @deprecated Use {@link CmsPageUtil#isContentPublishableOnPageOnline(Content, IPage)} or {@link CmsPageUtil#isContentPublishableOnPageDraft(Content, IPage)} instead.
+	 */
+	@Deprecated
 	public static boolean isContentPublishableOnPage(Content publishingContent, IPage page) {
-		if (publishingContent.getMainGroup().equals(Group.FREE_GROUP_NAME) || publishingContent.getGroups().contains(Group.FREE_GROUP_NAME)) {
-			return true;
-		}
-		//tutti i gruppi posseduti dalla pagina devono essere contemplati nel contenuto.
-		List<String> pageGroups = new ArrayList<String>();
-		pageGroups.add(page.getGroup());
-		if (null != page.getExtraGroups()) {
-			pageGroups.addAll(page.getExtraGroups());
-		}
-		List<String> contentGroups = getContentGroups(publishingContent);
-		for (int i = 0; i < pageGroups.size(); i++) {
-			String pageGroup = pageGroups.get(i);
-			if (!pageGroup.equals(Group.ADMINS_GROUP_NAME) && !contentGroups.contains(pageGroup)) return false;
-		}
-		return true;
+		return CmsPageUtil.isContentPublishableOnPageOnline(publishingContent, page);
 	}
 	
+	/**
+	 * Check if is possible to link a page by the given content.
+	 * @param page The page to link
+	 * @param content The content where link the given page.
+	 * @return True/false if is possible to link the page in the given content.
+	 * @deprecated Use {@link CmsPageUtil#isPageLinkableByContentOnline(IPage, Content)} or {@link CmsPageUtil#isPageLinkableByContentDraft(IPage, Content)} instead.
+	 */
+	@Deprecated
 	public static boolean isPageLinkableByContent(IPage page, Content content) {
-		Collection<String> extraPageGroups = page.getExtraGroups();
-		if (page.getGroup().equals(Group.FREE_GROUP_NAME) 
-				|| (null != extraPageGroups && extraPageGroups.contains(Group.FREE_GROUP_NAME))) {
-			return true;
-		}
-		if (content.getMainGroup().equals(Group.ADMINS_GROUP_NAME)) return true;
-		List<String> contentGroups = getContentGroups(content);
-		for (int i = 0; i < contentGroups.size(); i++) {
-			String contentGroup = contentGroups.get(i);
-			if (contentGroup.equals(page.getGroup())) return true;
-		}
-		return false;
-	}
-	
-	private static List<String> getContentGroups(Content content) {
-		List<String> contentGroups = new ArrayList<String>();
-		contentGroups.add(content.getMainGroup());
-		if (null != content.getGroups()) {
-			contentGroups.addAll(content.getGroups());
-		}
-		return contentGroups;
+		return CmsPageUtil.isPageLinkableByContentOnline(page, content);
 	}
 	
 	/**
 	 * Check whether the page can publish free content.
 	 * @param page The page to check.
-	 * @param viewerShowletCode The code of the viewer widget (optional)
+	 * @param viewerWidgetCode The code of the viewer widget (optional)
 	 * @return True if the page can publish free content, false else.
+	 * @deprecated Use {@link CmsPageUtil#isOnlineFreeViewerPage(IPage, String)} or {@link CmsPageUtil#isDraftFreeViewerPage(IPage, String)} instead.
 	 */
-	public static boolean isFreeViewerPage(IPage page, String viewerShowletCode) {
-		try {
-			int mainFrame = page.getModel().getMainFrame();
-			if (mainFrame < 0) return false;
-			Widget viewer = page.getWidgets()[mainFrame];
-			if (null == viewer) return false;
-			boolean isRightCode = null == viewerShowletCode || viewer.getType().getCode().equals(viewerShowletCode);
-			String actionName = viewer.getType().getAction();
-			boolean isRightAction = null != actionName && actionName.toLowerCase().indexOf("viewer") >= 0;
-			List<WidgetTypeParameter> typeParameters = viewer.getType().getTypeParameters();
-			if ((isRightCode || isRightAction )  
-					&& (null != typeParameters && !typeParameters.isEmpty())
-					&& (null == viewer.getConfig() || viewer.getConfig().isEmpty())) {
-				return true;
-			}
-		} catch (Throwable t) {
-			_logger.error("Error while checking page '{}'", page.getCode(), t);
-			//ApsSystemUtils.logThrowable(t, CmsPageActionUtil.class, "isViewerPage", "Error while checking page '" + page.getCode() + "'");
-		}
-		return false;
+	public static boolean isFreeViewerPage(IPage page, String viewerWidgetCode) {
+		return CmsPageUtil.isOnlineFreeViewerPage(page, viewerWidgetCode);
 	}
 	
 }

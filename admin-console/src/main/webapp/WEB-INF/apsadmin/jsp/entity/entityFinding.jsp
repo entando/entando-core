@@ -14,7 +14,7 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 		<ul>
 			<s:iterator value="fieldErrors">
 				<s:iterator value="value">
-					<li><s:property escape="false" /></li>
+					<li><s:property escapeHtml="false" /></li>
 				</s:iterator>
 			</s:iterator>
 		</ul>
@@ -34,7 +34,7 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 				<wpsf:hidden name="entityTypeCode" />
 			</s:if>
 			<s:else>
-				<wpsf:select useTabindexAutoIncrement="true" list="entityPrototypes" name="entityTypeCode" headerKey="" headerValue="" 
+				<wpsf:select useTabindexAutoIncrement="true" list="entityPrototypes" name="entityTypeCode" headerKey="" headerValue="%{getText('note.choose')}" 
 					listKey="typeCode" listValue="typeDescr"></wpsf:select>
 			</s:else>
 			
@@ -48,14 +48,14 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 					<s:if test="%{#attributeRoleVar.formFieldType.toString().equals('TEXT')}">
 						<p>
 							<label for="<s:property value="%{#currentFieldIdVar}" />"><s:property value="#attributeRoleVar.name" /></label><br />
-							<s:set name="textInputFieldName"><s:property value="#attributeRoleVar.name" />_textFieldName</s:set>
+							<s:set var="textInputFieldName"><s:property value="#attributeRoleVar.name" />_textFieldName</s:set>
 							<wpsf:textfield useTabindexAutoIncrement="true" id="%{#currentFieldIdVar}" cssClass="text" name="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" /><br />
 						</p>
 					</s:if>
 					
 					<s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('DATE')}">
-						<s:set name="dateStartInputFieldName" ><s:property value="#attributeRoleVar.name" />_dateStartFieldName</s:set>
-						<s:set name="dateEndInputFieldName" ><s:property value="#attributeRoleVar.name" />_dateEndFieldName</s:set>
+						<s:set var="dateStartInputFieldName" ><s:property value="#attributeRoleVar.name" />_dateStartFieldName</s:set>
+						<s:set var="dateEndInputFieldName" ><s:property value="#attributeRoleVar.name" />_dateEndFieldName</s:set>
 						<p>
 							<label for="<s:property value="%{#currentFieldIdVar}" />_dateStartFieldName"><s:property value="#attributeRoleVar.name" /> ** from date **</label>:<br />
 							<wpsf:textfield useTabindexAutoIncrement="true" id="%{#currentFieldIdVar}_dateStartFieldName" cssClass="text" name="%{#dateStartInputFieldName}" value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" /><span class="inlineNote">dd/MM/yyyy</span>
@@ -67,8 +67,8 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 					</s:elseif>
 					
 					<s:elseif test="%{#attributeRoleVar.formFieldType.toString().equals('NUMBER')}">
-						<s:set name="numberStartInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberStartFieldName</s:set>
-						<s:set name="numberEndInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberEndFieldName</s:set>
+						<s:set var="numberStartInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberStartFieldName</s:set>
+						<s:set var="numberEndInputFieldName" ><s:property value="#attributeRoleVar.name" />_numberEndFieldName</s:set>
 						<p>
 							<label for="<s:property value="%{#currentFieldIdVar}" />_start"><s:property value="#attributeRoleVar.name" /> ** from value **</label>:<br />
 							<wpsf:textfield useTabindexAutoIncrement="true" id="%{#currentFieldIdVar}_start" cssClass="text" name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" /><br />
@@ -83,8 +83,8 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 						<p>
 							<span class="important"><s:property value="#attributeRoleVar.name" /></span><br />
 						</p>
-						<s:set name="booleanInputFieldName" ><s:property value="#attributeRoleVar.name" />_booleanFieldName</s:set>
-						<s:set name="booleanInputFieldValue" ><s:property value="%{getSearchFormFieldValue(#booleanInputFieldName)}" /></s:set>
+						<s:set var="booleanInputFieldName" ><s:property value="#attributeRoleVar.name" />_booleanFieldName</s:set>
+						<s:set var="booleanInputFieldValue" ><s:property value="%{getSearchFormFieldValue(#booleanInputFieldName)}" /></s:set>
 						<ul class="noBullet">
 							<li><wpsf:radio useTabindexAutoIncrement="true" id="none_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="" checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" cssClass="radio" /><label for="none_<s:property value="#booleanInputFieldName" />" class="normal" ><s:text name="label.bothYesAndNo"/></label></li>
 							<li><wpsf:radio useTabindexAutoIncrement="true" id="true_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="true" checked="%{#booleanInputFieldValue == 'true'}" cssClass="radio" /><label for="true_<s:property value="#booleanInputFieldName" />" class="normal" ><s:text name="label.yes"/></label></li>
@@ -106,14 +106,14 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 					<s:if test="#attribute.textAttribute"> 
 						<p>
 							<label for="<s:property value="%{#currentFieldId}" />"><s:property value="#attribute.name" /></label><br />
-							<s:set name="textInputFieldName"><s:property value="#attribute.name" />_textFieldName</s:set>
+							<s:set var="textInputFieldName"><s:property value="#attribute.name" />_textFieldName</s:set>
 							<wpsf:textfield useTabindexAutoIncrement="true" id="%{#currentFieldId}" cssClass="text" name="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" /><br />
 						</p>
 					</s:if>
 					
 					<s:elseif test="#attribute.type == 'Date'">
-						<s:set name="dateStartInputFieldName" ><s:property value="#attribute.name" />_dateStartFieldName</s:set>
-						<s:set name="dateEndInputFieldName" ><s:property value="#attribute.name" />_dateEndFieldName</s:set>
+						<s:set var="dateStartInputFieldName" ><s:property value="#attribute.name" />_dateStartFieldName</s:set>
+						<s:set var="dateEndInputFieldName" ><s:property value="#attribute.name" />_dateEndFieldName</s:set>
 						<p>
 							<label for="<s:property value="%{currentFieldId}" />_dateStartFieldName"><s:property value="#attribute.name" /> ** from date **</label>:<br />
 							<wpsf:textfield useTabindexAutoIncrement="true" id="%{currentFieldId}_dateStartFieldName" cssClass="text" name="%{#dateStartInputFieldName}" value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" /><span class="inlineNote">dd/MM/yyyy</span>
@@ -125,8 +125,8 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 					</s:elseif>
 					
 					<s:elseif test="#attribute.type == 'Number'">
-						<s:set name="numberStartInputFieldName" ><s:property value="#attribute.name" />_numberStartFieldName</s:set>
-						<s:set name="numberEndInputFieldName" ><s:property value="#attribute.name" />_numberEndFieldName</s:set>
+						<s:set var="numberStartInputFieldName" ><s:property value="#attribute.name" />_numberStartFieldName</s:set>
+						<s:set var="numberEndInputFieldName" ><s:property value="#attribute.name" />_numberEndFieldName</s:set>
 						<p>
 							<label for="<s:property value="currentFieldId" />_start"><s:property value="#attribute.name" /> ** from value **</label>:<br />
 							<wpsf:textfield useTabindexAutoIncrement="true" id="%{currentFieldId}_start" cssClass="text" name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" /><br />
@@ -141,8 +141,8 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 						<p>
 							<span class="important"><s:property value="#attribute.name" /></span><br />
 						</p>
-						<s:set name="booleanInputFieldName" ><s:property value="#attribute.name" />_booleanFieldName</s:set>
-						<s:set name="booleanInputFieldValue" ><s:property value="%{getSearchFormFieldValue(#booleanInputFieldName)}" /></s:set>
+						<s:set var="booleanInputFieldName" ><s:property value="#attribute.name" />_booleanFieldName</s:set>
+						<s:set var="booleanInputFieldValue" ><s:property value="%{getSearchFormFieldValue(#booleanInputFieldName)}" /></s:set>
 						<ul class="noBullet">
 							<li><wpsf:radio useTabindexAutoIncrement="true" id="none_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="" checked="%{!#booleanInputFieldValue.equals('true') && !#booleanInputFieldValue.equals('false')}" cssClass="radio" /><label for="none_<s:property value="#booleanInputFieldName" />" class="normal" ><s:text name="label.bothYesAndNo"/></label></li>
 							<li><wpsf:radio useTabindexAutoIncrement="true" id="true_%{#booleanInputFieldName}" name="%{#booleanInputFieldName}" value="true" checked="%{#booleanInputFieldValue == 'true'}" cssClass="radio" /><label for="true_<s:property value="#booleanInputFieldName" />" class="normal" ><s:text name="label.yes"/></label></li>
@@ -164,23 +164,23 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 		<wpsf:hidden name="entityTypeCode" />
 		<s:iterator var="attribute" value="#searchableAttributesVar">
 			<s:if test="#attribute.textAttribute">
-				<s:set name="textInputFieldName" ><s:property value="#attribute.name" />_textFieldName</s:set>
+				<s:set var="textInputFieldName" ><s:property value="#attribute.name" />_textFieldName</s:set>
 				<wpsf:hidden name="%{#textInputFieldName}" value="%{getSearchFormFieldValue(#textInputFieldName)}" />
 			</s:if>
 			<s:elseif test="#attribute.type == 'Date'">
-				<s:set name="dateStartInputFieldName" ><s:property value="#attribute.name" />_dateStartFieldName</s:set>
-				<s:set name="dateEndInputFieldName" ><s:property value="#attribute.name" />_dateEndFieldName</s:set>
+				<s:set var="dateStartInputFieldName" ><s:property value="#attribute.name" />_dateStartFieldName</s:set>
+				<s:set var="dateEndInputFieldName" ><s:property value="#attribute.name" />_dateEndFieldName</s:set>
 				<wpsf:hidden name="%{#dateStartInputFieldName}" value="%{getSearchFormFieldValue(#dateStartInputFieldName)}" />
 				<wpsf:hidden name="%{#dateEndInputFieldName}" value="%{getSearchFormFieldValue(#dateEndInputFieldName)}" />
 			</s:elseif>
 			<s:elseif test="#attribute.type == 'Number'">
-				<s:set name="numberStartInputFieldName" ><s:property value="#attribute.name" />_numberStartFieldName</s:set>
-				<s:set name="numberEndInputFieldName" ><s:property value="#attribute.name" />_numberEndFieldName</s:set>
+				<s:set var="numberStartInputFieldName" ><s:property value="#attribute.name" />_numberStartFieldName</s:set>
+				<s:set var="numberEndInputFieldName" ><s:property value="#attribute.name" />_numberEndFieldName</s:set>
 				<wpsf:hidden name="%{#numberStartInputFieldName}" value="%{getSearchFormFieldValue(#numberStartInputFieldName)}" />
 				<wpsf:hidden name="%{#numberEndInputFieldName}" value="%{getSearchFormFieldValue(#numberEndInputFieldName)}" />
 			</s:elseif>
 			<s:elseif test="#attribute.type == 'Boolean' || #attribute.type == 'ThreeState'"> 
-				<s:set name="booleanInputFieldName" ><s:property value="#attribute.name" />_booleanFieldName</s:set>
+				<s:set var="booleanInputFieldName" ><s:property value="#attribute.name" />_booleanFieldName</s:set>
 				<wpsf:hidden name="%{#booleanInputFieldName}" value="%{getSearchFormFieldValue(#booleanInputFieldName)}" />
 			</s:elseif>
 		</s:iterator>
@@ -189,7 +189,7 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 	<s:set var="entityIds" value="searchResult" />
 	<%-- <s:if test="#entityIds.isEmpty()">no risultati </s:if> --%>
 	<wpsa:subset source="#entityIds" count="15" objectName="entityGroup" advanced="true" offset="5">
-		<s:set name="group" value="#entityGroup" />
+		<s:set var="group" value="#entityGroup" />
 		
 		<div class="text-center">
 			<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />

@@ -2,6 +2,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%-- tabs --%>
+<script src="<wp:resourceURL />administration/js/jquery.entando.js"/>
 <script>
 	jQuery(function(){
 		<%--
@@ -78,28 +79,27 @@ $(function() {
 
 //for content categories
 <s:if test="#categoryTreeStyleVar == 'classic'">
-
-	var catTree = jQuery("#categoryTree").EntandoWoodMenu({
-		menuToggler: "subTreeToggler",
-		menuRetriever: function(toggler) {
-			return $(toggler).parent().children("ul");
-		},
-		openClass: "node_open",
-		closedClass: "node_closed",
-		showTools: true,
-		onStart: function() {
-			this.collapseAll();
-		},
-		expandAllLabel: "<s:text name="label.expandAll" />",
-		collapseAllLabel: "<s:text name="label.collapseAll" />",
-	<s:if test="%{categoryCode != null && !(categoryCode.equalsIgnoreCase(''))}">
-		startIndex: "fagianonode_<s:property value="categoryCode" />",
-	</s:if>
-		toolTextIntro: "<s:text name="label.introExpandAll" />",
-		toolexpandAllLabelTitle: "<s:text name="label.expandAllTitle" />",
-		toolcollapseLabelTitle: "<s:text name="label.collapseAllTitle" />"
+	$('.table-treegrid').treegrid(null, false);
+	$(".treeRow ").on("click", function (event) {
+	    $(".treeRow").removeClass("active");
+	    $(this).find('.subTreeToggler').prop("checked", true);
+	    $(this).addClass("active");
 	});
-
+	
+	$("#expandAll").click(function() {
+	    $('#categoryTree .treeRow').removeClass('hidden');
+	    $('#categoryTree .treeRow').removeClass('collapsed');
+	    $('#categoryTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
+	});
+	
+	$("#collapseAll").click(function() {
+	    $('#categoryTree .treeRow:not(:first-child)').addClass('hidden');
+	    $('#categoryTree .treeRow').addClass('collapsed');
+	    $('#categoryTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
+	});
+	
+	var selectedNode = $(".table-treegrid .subTreeToggler:checked");
+	$(selectedNode).closest(".treeRow").addClass("active").removeClass("hidden").addClass("collapsed");
 </s:if>
 
 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/inc/js_trees_context_menu.jsp" />
@@ -115,9 +115,10 @@ $(function() {
 //End Hypertext Attribute
 }); //End domready
 </script>
+
 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/inc/snippet-datepicker.jsp" />
 
-<script>
+<script type="text/javascript">
 	$(function(){
 		var gatherData = function(form, ignoreSelector) {
 			var myform = form.serialize();
@@ -209,7 +210,21 @@ $(function() {
 			ev.preventDefault();
 			sendSave(true);
 		});
+
+		/* Sticky Toolbar */
+	    $("body").append("<div class='ghost-toolbar'></div>");
+	    $(".ghost-toolbar").height($("#sticky-toolbar").height());
+
+	    $(window).resize(function(){
+	        $(".ghost-toolbar").height($("#sticky-toolbar").height());
+	        setStickyToolbar();
+	    });
 	});
+	
+	function setStickyToolbar() {
+	    var width = $("#sticky-toolbar").parent().width();
+	    $("#sticky-toolbar").css({position: 'fixed', bottom: 0, zIndex: 1020, width: width});
+	}
 </script>
 
 <wpsa:hookPoint key="jacms.entryContent.extraResources" objectName="hookPointElements_jacms_entryContent_extraResources">

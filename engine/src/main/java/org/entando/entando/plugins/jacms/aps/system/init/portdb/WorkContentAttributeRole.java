@@ -25,39 +25,46 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = WorkContentAttributeRole.TABLE_NAME)
 public class WorkContentAttributeRole implements ExtendedColumnDefinition {
-	
-	public WorkContentAttributeRole() {}
-	
-	@DatabaseField(foreign = true, columnName = "contentid", 
-			width = 16, 
-			canBeNull = false, index = true)
-	private Content _contentId;
-	
-	@DatabaseField(columnName = "attrname", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false, index = true)
-	private String _attributeName;
-	
-	@DatabaseField(columnName = "rolename", 
-			dataType = DataType.STRING, 
-			width = 50, 
-			canBeNull = false, index = true)
-	private String _roleName;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String contentTableName = Content.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			contentTableName = "`" + Content.TABLE_NAME + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT workcontentattrroles_id_fkey FOREIGN KEY (contentid) "
-				+ "REFERENCES " + contentTableName + " (contentid)"};
-	}
-	
-	public static final String TABLE_NAME = "workcontentattributeroles";
-	
+
+    public WorkContentAttributeRole() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(foreign = true, columnName = "contentid",
+            width = 16,
+            canBeNull = false, index = true)
+    private Content _contentId;
+
+    @DatabaseField(columnName = "attrname",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, index = true)
+    private String _attributeName;
+
+    @DatabaseField(columnName = "rolename",
+            dataType = DataType.STRING,
+            width = 50,
+            canBeNull = false, index = true)
+    private String _roleName;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String contentTableName = Content.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            contentTableName = "`" + Content.TABLE_NAME + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT workcontentattrroles_id_fkey FOREIGN KEY (contentid) "
+            + "REFERENCES " + contentTableName + " (contentid)"};
+    }
+
+    public static final String TABLE_NAME = "workcontentattributeroles";
+
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator Definition 1.0//EN"
+        "http://struts.apache.org/dtds/xwork-validator-definition-1.0.dtd">
+
+<!-- START SNIPPET: extended-validators-default -->
+<validators>
+    <validator name="url" class="org.entando.entando.apsadmin.system.validator.URLValidator"/>
+</validators>
+<!--  END SNIPPET: extended-validators-default -->

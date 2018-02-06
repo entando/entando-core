@@ -9,7 +9,7 @@ nbactions.xml
 */nb-configuration.xml
 */target
 */derby.log
-
+*.jsp~
 
 ### Eclipse ###
 .metadata
@@ -26,3 +26,7 @@ local.properties
 *.launch
 .classpath
 .springBeans
+
+# Webstorm
+.idea
+*.iml

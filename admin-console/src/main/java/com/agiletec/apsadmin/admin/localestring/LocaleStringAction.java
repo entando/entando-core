@@ -26,25 +26,27 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
 
 /**
- * This base action class declares the default operations for the Localization Strings.
+ * This base action class declares the default operations for the Localization
+ * Strings.
+ * 
  * @author E.Santoboni
  */
 public class LocaleStringAction extends BaseAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(LocaleStringAction.class);
-	
+
 	@Override
 	public void validate() {
 		super.validate();
 		this.checkKey();
 		this.checkLabels();
 	}
-	
+
 	public String newLabel() {
 		this.setStrutsAction(ApsAdminSystemConstants.ADD);
 		return SUCCESS;
 	}
-	
+
 	public String edit() {
 		try {
 			String key = this.getKey();
@@ -57,7 +59,7 @@ public class LocaleStringAction extends BaseAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String save() {
 		try {
 			int strutsAction = this.getStrutsAction();
@@ -72,7 +74,14 @@ public class LocaleStringAction extends BaseAction {
 		}
 		return SUCCESS;
 	}
-	
+
+	public String trash() {
+		String key = this.getKey();
+		ApsProperties labels = (ApsProperties) this.getI18nManager().getLabelGroups().get(key);
+		this.setLabels(labels);
+		return SUCCESS;
+	}
+
 	public String delete() {
 		try {
 			this.getI18nManager().deleteLabelGroup(this.getKey());
@@ -82,77 +91,82 @@ public class LocaleStringAction extends BaseAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	private void checkKey() {
 		String key = this.getKey();
-		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD && null!=key && key.trim().length()>0) {
+		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD && null != key && key.trim().length() > 0) {
 			String currectKey = key.trim();
 			this.setKey(currectKey);
 			if (null != this.getI18nManager().getLabelGroups().get(currectKey)) {
-				String[] args = {currectKey};
+				String[] args = { currectKey };
 				this.addFieldError("key", this.getText("error.label.keyAlreadyPresent", args));
 			}
 			this.setKey(currectKey);
 		}
 	}
-	
+
 	private void checkLabels() {
 		Iterator<Lang> langsIter = this.getLangManager().getLangs().iterator();
 		while (langsIter.hasNext()) {
 			Lang lang = langsIter.next();
 			String code = lang.getCode();
 			String label = this.getRequest().getParameter(code);
-			if (null != label && label.trim().length()>0) {
+			if (null != label && label.trim().length() > 0) {
 				this.addLabel(code, label);
 			} else {
 				this.getLabels().remove(code);
 				if (lang.isDefault()) {
-					String[] args = {lang.getDescr()};
+					String[] args = { lang.getDescr() };
 					this.addFieldError(code, this.getText("error.label.valueMandatory", args));
 				}
 			}
 		}
 	}
-	
+
 	public List<Lang> getLangs() {
 		return this.getLangManager().getLangs();
 	}
-	
+
 	public String getKey() {
 		return _key;
 	}
+
 	public void setKey(String key) {
 		this._key = key;
 	}
-	
+
 	public ApsProperties getLabels() {
 		return _labels;
 	}
+
 	protected void setLabels(ApsProperties labels) {
 		this._labels = labels;
 	}
+
 	protected void addLabel(String code, String label) {
 		this._labels.put(code, label);
 	}
-	
+
 	public int getStrutsAction() {
 		return _strutsAction;
 	}
+
 	public void setStrutsAction(int strutsAction) {
 		this._strutsAction = strutsAction;
 	}
-	
+
 	protected II18nManager getI18nManager() {
 		return _i18nManager;
 	}
+
 	public void setI18nManager(II18nManager i18nManager) {
 		_i18nManager = i18nManager;
 	}
-	
+
 	private String _key;
 	private ApsProperties _labels = new ApsProperties();
 	private int _strutsAction;
-	
+
 	private II18nManager _i18nManager;
-	
+
 }

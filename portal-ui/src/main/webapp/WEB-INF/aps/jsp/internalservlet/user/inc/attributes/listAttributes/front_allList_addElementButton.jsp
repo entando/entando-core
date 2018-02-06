@@ -9,7 +9,7 @@
 	<wpsa:actionSubParam name="attributeName" value="%{#attribute.name}" />
 	<wpsa:actionSubParam name="listLangCode" value="%{#lang.code}" />
 </wpsa:actionParam>
-<s:set name="iconImagePath" id="iconImagePath"><wp:resourceURL/>administration/common/img/icons/list-add.png</s:set> 
+<s:set var="iconImagePath" id="iconImagePath"><wp:resourceURL/>administration/common/img/icons/list-add.png</s:set> 
 <wpsf:submit 
 	cssClass="btn"
 	useTabindexAutoIncrement="true" 

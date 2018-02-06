@@ -13,58 +13,32 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
-import java.util.Map;
-
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Map;
 
 /**
  * Interfaccia base per Data Access Object dei tipi di widget (WidgetType).
+ *
  * @author E.Santoboni
  */
 public interface IWidgetTypeDAO {
-	
-	/**
-	 * Return the map of the widget types
-	 * @return The map of the widget types
-	 * @deprecated Use {@link #loadWidgetTypes()} instead
-	 */
-	public Map<String, WidgetType> loadShowletTypes();
 
 	/**
 	 * Return the map of the widget types
+	 *
 	 * @return The map of the widget types
 	 */
 	public Map<String, WidgetType> loadWidgetTypes();
-	
-	@Deprecated
-	public void addShowletType(WidgetType showletType);
-	
+
 	public void addWidgetType(WidgetType widgetType);
-	
+
 	/**
 	 * Delete a widget type.
-	 * @param showletTypeCode The code of widget type to delete
-	 * @deprecated Use {@link #deleteWidgetType(String)} instead
-	 */
-	public void deleteShowletType(String showletTypeCode);
-	
-	/**
-	 * Delete a widget type.
+	 *
 	 * @param widgetTypeCode The code of widget type to delete
 	 */
 	public void deleteWidgetType(String widgetTypeCode);
-	
-	@Deprecated
-	public void updateShowletTypeTitles(String showletTypeCode, ApsProperties titles);
-	
-	@Deprecated
-	public void updateShowletType(String showletTypeCode, ApsProperties titles, ApsProperties defaultConfig);
-	
-	/**
-	 * @deprecated Use {@link #updateWidgetType(String,ApsProperties,ApsProperties,String)} instead
-	 */
-	public void updateShowletType(String showletTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup);
 
 	public void updateWidgetType(String showletTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup);
-	
+
 }

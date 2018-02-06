@@ -19,6 +19,7 @@ import java.util.Iterator;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
@@ -28,27 +29,28 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author E.Santoboni
  */
 public class TestPageAction extends ApsAdminBaseTestCase {
-	
+
 	@Override
 	protected void setUp() throws Exception {
-        super.setUp();
-        this.init();
-    }
-	
+		super.setUp();
+		this.init();
+	}
+
 	public void testSavePage() throws Throwable {
 		String pageCode = "customer_subpage_2";
-		IPage page = this._pageManager.getPage(pageCode);
+		IPage page = this._pageManager.getDraftPage(pageCode);
 		assertNotNull(page);
 		try {
+			PageMetadata metadata = page.getMetadata();
 			this.setUserOnSession("admin");
 			this.initAction("/do/Page", "save");
 			this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.EDIT));
 			this.addParameter("langit", "");
-			this.addParameter("langen", page.getTitle("en"));
-			this.addParameter("model", page.getModel().getCode());
+			this.addParameter("langen", metadata.getTitle("en"));
+			this.addParameter("model", metadata.getModel().getCode());
 			this.addParameter("group", page.getGroup());
 			this.addParameter("pageCode", pageCode);
-			Collection<String> extraGroups = page.getExtraGroups();
+			Collection<String> extraGroups = metadata.getExtraGroups();
 			if (null != extraGroups) {
 				Iterator<String> extraGroupIter = extraGroups.iterator();
 				while (extraGroupIter.hasNext()) {
@@ -68,15 +70,15 @@ public class TestPageAction extends ApsAdminBaseTestCase {
 			throw t;
 		}
 	}
-	
+
 	private void init() throws Exception {
-    	try {
-    		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-    	} catch (Throwable t) {
-            throw new Exception(t);
-        }
-    }
-    
-    private IPageManager _pageManager = null;
-	
+		try {
+			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+		} catch (Throwable t) {
+			throw new Exception(t);
+		}
+	}
+
+	private IPageManager _pageManager = null;
+
 }

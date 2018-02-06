@@ -148,6 +148,7 @@ public class InternalServletTag extends TagSupport {
 			if (null != cookies) {
 				for (int i = 0; i < cookies.length; i++) {
 					Cookie cookie = cookies[i];
+					cookie.setHttpOnly(true);
 					reqCtx.getResponse().addCookie(cookie);
 				}
 			}

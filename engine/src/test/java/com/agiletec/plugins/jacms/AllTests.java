@@ -13,12 +13,6 @@
  */
 package com.agiletec.plugins.jacms;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.entando.entando.plugins.jacms.aps.system.services.cache.TestCacheInfoManager;
-import org.entando.entando.plugins.jacms.aps.system.services.page.TestCmsPageManagerWrapper;
-
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestCategoryUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestContentDAO;
@@ -41,17 +35,23 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceDAO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.TestResourceDOM;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.entando.entando.plugins.jacms.aps.system.services.api.TestApiContentInterface;
+import org.entando.entando.plugins.jacms.aps.system.services.cache.TestCacheInfoManager;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.TestContentBulkCommand;
+import org.entando.entando.plugins.jacms.aps.system.services.page.TestCmsPageManagerWrapper;
 
 public class AllTests {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for jACMS");
-		
+
 		System.out.println("Test for jACMS plugin");
-		
-		// 
+
+		//
 		suite.addTestSuite(TestContentAuthorization.class);
+		suite.addTestSuite(TestContentBulkCommand.class);
 		suite.addTestSuite(TestContentEntityManager.class);
 		suite.addTestSuite(TestContentDOM.class);
 		suite.addTestSuite(TestContentListHelper.class);
@@ -79,15 +79,15 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestSearchEngineManager.class);
 		suite.addTestSuite(TestApplicationContext.class);
-		
+
 		// Test cross utilizers
 		suite.addTestSuite(TestCategoryUtilizer.class);
 		suite.addTestSuite(TestGroupUtilizer.class);
-		
+
 		suite.addTestSuite(TestCacheInfoManager.class);
 		//
 		suite.addTestSuite(TestApiContentInterface.class);
-		
+
 		return suite;
 	}
 

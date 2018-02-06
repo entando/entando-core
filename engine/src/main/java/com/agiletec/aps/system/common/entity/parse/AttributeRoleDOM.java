@@ -42,7 +42,7 @@ public class AttributeRoleDOM extends AbstractAttributeSupportObjectDOM {
 	}
 	
 	private Map<String, AttributeRole> extractRoles(Document document) {
-		Map<String, AttributeRole> roles = new HashMap<String, AttributeRole>();
+		Map<String, AttributeRole> roles = new HashMap<>();
 		List<Element> roleElements = document.getRootElement().getChildren("role");
 		for (int i=0; i<roleElements.size(); i++) {
 			Element roleElement = roleElements.get(i);

@@ -1,9 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-    "http://struts.apache.org/dtds/struts-2.3.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
+
+	<package name="core_do/rs/Portal/WidgetType" namespace="/do/rs/Portal/WidgetType" extends="entando-default">
+
+		<interceptors>
+			<interceptor name="json" class="org.apache.struts2.json.JSONInterceptor" />
+			<interceptor-stack name="jsonStack">
+				<interceptor-ref name="json">
+					<param name="enableSMD">true</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+
+		<action name="list" class="widgetsViewerAction" method="listJson">
+			<result type="json">
+				<param name="root">widgetFlavours</param>
+			</result>
+			<interceptor-ref name="jsonStack">
+			</interceptor-ref>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">managePages</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="apiMappings" class="widgetsViewerAction">
+			<result type="json">
+				<param name="root">widgetTypeApiMappings</param>
+			</result>
+			<interceptor-ref name="jsonStack">
+			</interceptor-ref>
+			<interceptor-ref name="entandoDefaultStack">
+				<param name="requestAuth.requiredPermission">enterBackend</param>
+			</interceptor-ref>
+		</action>
+
+
+	</package>
+	
+	
 	
     <package name="core_do/Portal/WidgetType" namespace="/do/Portal/WidgetType" extends="entando-default">
 		

@@ -31,7 +31,7 @@ public class AttributeRole implements Serializable {
 	
 	@Override
 	public AttributeRole clone() {
-		List<String> allowedTypes = new ArrayList<String>();
+		List<String> allowedTypes = new ArrayList<>();
 		allowedTypes.addAll(this.getAllowedAttributeTypes());
 		AttributeRole clone = new AttributeRole(this.getName(), this.getDescription(), allowedTypes);
 		clone.setFormFieldType(this.getFormFieldType());

@@ -1,0 +1,188 @@
+<apiMethodDefinitions>
+	
+	<!-- ************** CONTENT TYPES ************** -->
+	
+    <resource name="dataObjectType" namespace="core">
+        <description>The representation of the content type</description>
+        <source>core</source>
+        <method httpMethod="GET" active="true">
+            <description>Return a dataObject type</description>
+            <springBean name="ApiDataObjectTypeTypeInterface" method="getDataObjectType" />
+            <responseClass>org.entando.entando.aps.system.services.dataobject.api.response.DataObjectTypeResponse</responseClass>
+            <parameters>
+                <parameter key="code" required="true">
+                    <description>The code of the type to return (Example: CNG, NEW, EVN...)</description>
+                </parameter>
+            </parameters>
+        </method>
+        <method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+            <description>Add a dataObject type</description>
+            <springBean name="ApiDataObjectTypeInterface" method="addDataObjectType" />
+            <expectedType>org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObjectType</expectedType>
+        </method>
+        <method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+            <description>Update a dataObject type</description>
+            <springBean name="ApiDataObjectTypeInterface" method="updateDataObjectType" />
+            <expectedType>org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObjectType</expectedType>
+        </method>
+        <method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+            <description>Delete a dataObject type</description>
+            <springBean name="ApiDataObjectTypeInterface" method="deleteDataObjectType" />
+            <parameters>
+                <parameter key="code" required="true">
+                    <description>The code of the type to delete</description>
+                </parameter>
+            </parameters>
+        </method>
+    </resource>
+	
+	<!-- ************** CONTENTS ************** -->
+    
+    <resource name="dataObject" namespace="core">
+        <description>The representation of the dataObject</description>
+        <source>core</source>
+        <method httpMethod="GET" active="true" canSpawnOthers="true">
+            <description>Return a public dataObject</description>
+            <springBean name="ApiDataObjectInterface" method="getDataObject" />
+            <responseClass>org.entando.entando.aps.system.services.dataobject.api.response.DataObjectResponse</responseClass>
+            <parameters>
+                <parameter key="id" required="true">
+                    <description>The Id of the dataObject to return (Example: "CNG34", or "NEW45")</description>
+                </parameter>
+                <parameter key="modelId" required="false">
+                    <description>The Id of the dataObject model used to render each dataObject in the HTML section of the response. Must be an integer, 'default' or 'list'</description>
+                </parameter>
+            </parameters>
+			<!--
+            <relatedWidget code="content_viewer">
+                <mapParameter widget="contentId" method="id" />
+                <mapParameter widget="modelId" method="modelId" />
+            </relatedWidget>
+			-->
+        </method>
+        <method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="validateDataObjects">
+            <description>Add a dataObject</description>
+            <springBean name="ApiDataObjectInterface" method="addDataObject" />
+            <expectedType>org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObject</expectedType>
+            <parameters>
+                <parameter key="insertOnLine" required="false">
+                    <description>If 'true', insert the new dataObject online. Entries 'true' or 'false', default value 'false'</description>
+                </parameter>
+            </parameters>
+        </method>
+        <method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="validateDataObjects">
+            <description>Update a dataObject</description>
+            <springBean name="ApiDataObjectInterface" method="updateDataObject" />
+            <expectedType>org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObject</expectedType>
+            <parameters>
+                <parameter key="insertOnLine" required="false">
+                    <description>If 'true', update the new dataObject online. Entries 'true' or 'false', default value 'false'</description>
+                </parameter>
+            </parameters>
+        </method>
+        <method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="validateDataObjects">
+            <description>Delete a content</description>
+            <springBean name="ApiDataObjectInterface" method="deleteDataObject" />
+            <parameters>
+                <parameter key="id" required="true">
+                    <description>The Id of the dataObject to delete (Example: "CNG34", or "NEW45")</description>
+                </parameter>
+                <parameter key="removeWorkVersion" required="false">
+                    <description>If 'true', remove also the work version. Entries 'true' or 'false', default value 'false'</description>
+                </parameter>
+            </parameters>
+        </method>
+    </resource>
+	
+    <resource name="dataObject" namespace="inline">
+        <description>The resource to manage inline editing on dataObject</description>
+        <source>core</source>
+        <method httpMethod="PUT" active="true">
+            <description>The resource to manage inline editing on dataObject</description>
+            <springBean name="ApiDataObjectInterface" method="updateDataObjectText"/>
+            <expectedType>org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObjectAttribute</expectedType>
+        </method>
+    </resource>
+    
+    <resource name="dataObjects" namespace="core">
+        <description>Returns a list of public dataObjects, composed using the specified filters</description>
+        <source>core</source>
+		<method httpMethod="GET" active="true" canSpawnOthers="true">
+			<springBean name="ApiDataObjectInterface" method="getDataObjects" />
+			<responseClass>org.entando.entando.aps.system.services.api.model.StringListApiResponse</responseClass>
+			<parameters>
+				<parameter key="dataType" required="true">
+					<description>The key of a dataObject type (Example: CNG, NEW, EVN...)</description>
+				</parameter>
+				<parameter key="categories" required="false">
+					<description>A CSV list of category codes (Example: "music,sports,frontpage")</description>
+				</parameter>
+				<parameter key="filters" required="false">
+					<description>The filters (Example: "(order=DESC;attributeFilter=true;key=Date)+(order=ASC;attributeFilter=true;key=Title)" )</description>
+				</parameter>
+				<parameter key="modelId" required="false">
+					<description>The Id of the dataObject model used to render each content in the HTML section of the response. Must be an integer, 'default' or 'list'</description>
+				</parameter>
+			</parameters>
+			<!--
+			<relatedWidget code="content_viewer_list">
+				<mapParameter widget="contentType" method="contentType" />
+				<mapParameter widget="categories" method="categories" />
+				<mapParameter widget="filters" method="filters" />
+				<mapParameter widget="modelId" method="modelId" />
+			</relatedWidget>
+			-->
+		</method>
+    </resource>
+	
+	<!-- ************** CONTENT MODELS ************** -->
+	
+	<resource name="dataObjectModels" namespace="core">
+        <description>Returns a list of dataObject models</description>
+        <source>core</source>
+        <method httpMethod="GET" active="true">
+            <description>Returns a list of dataObject models, composed using the specified filters</description>
+            <springBean name="ApiDataObjectModelInterface" method="getModels" />
+            <parameters>
+                <parameter key="dataType" required="false">
+					<description>The key of a dataObject type of the models to return (Example: CNG, NEW, EVN...)</description>
+				</parameter>
+            </parameters>
+        </method>
+	</resource>
+	
+    <resource name="dataObjectModel" namespace="core">
+        <description>The representation of the dataObject model</description>
+        <source>core</source>
+        <method httpMethod="GET" active="true">
+            <description>Return a dataObject model</description>
+            <springBean name="ApiDataObjectModelInterface" method="getModel" />
+            <responseClass>org.entando.entando.aps.system.services.dataobjectmodel.api.DataObjectModelResponse</responseClass>
+            <parameters>
+                <parameter key="id" required="true">
+                    <description>The id of the model to return</description>
+                </parameter>
+            </parameters>
+        </method>
+        <method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
+            <description>Add a dataObject model</description>
+            <springBean name="ApiDataObjectModelInterface" method="addModel" />
+            <expectedType>org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel</expectedType>
+        </method>
+        <method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
+            <description>Update a dataObject model</description>
+            <springBean name="ApiDataObjectModelInterface" method="updateModel" />
+            <expectedType>org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel</expectedType>
+        </method>
+        <method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
+            <description>Delete a dataObject model</description>
+            <springBean name="ApiDataObjectModelInterface" method="deleteModel" />
+            <parameters>
+                <parameter key="id" required="true">
+                    <description>The id of the type to delete</description>
+                </parameter>
+            </parameters>
+        </method>
+    </resource>
+	
+</apiMethodDefinitions>

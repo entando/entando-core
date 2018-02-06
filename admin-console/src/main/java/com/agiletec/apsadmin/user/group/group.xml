@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-    "http://struts.apache.org/dtds/struts-2.3.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
 	
@@ -39,9 +39,9 @@
         </action>
         
     	<action name="trash" class="groupAction" method="trash">
-            <result name="groupList" type="chain">list</result>
         	<result name="references" type="tiles">admin.Group.references</result>
         	<result type="tiles">admin.Group.trash</result>
+            <result name="groupList" type="chain">list</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
         

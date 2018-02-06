@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.init.model.servdb;
 
+import com.j256.ormlite.field.DataType;
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
 
@@ -24,41 +25,48 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = RolePermissionReference.TABLE_NAME)
 public class RolePermissionReference implements ExtendedColumnDefinition {
-	
-	public RolePermissionReference() {}
-	
-	@DatabaseField(columnName = "rolename", 
-			foreign = true,
-			width = 20, 
-			canBeNull = false)
-	private Role _role;
-	
-	@DatabaseField(columnName = "permissionname", 
-			foreign = true,
-			width = 30, 
-			canBeNull = false)
-	private Permission _permission;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String roleTableName = Role.TABLE_NAME;
-		String permissionableName = Permission.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			roleTableName = "`" + roleTableName + "`";
-			permissionableName = "`" + permissionableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_perm_fkey FOREIGN KEY (permissionname) "
-				+ "REFERENCES " + permissionableName + " (permissionname)", 
-			"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_role_fkey FOREIGN KEY (rolename) "
-				+ "REFERENCES " + roleTableName + " (rolename)"};
-	}
-	
-	public static final String TABLE_NAME = "authrolepermissions";
-	
+
+    public RolePermissionReference() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(columnName = "rolename",
+            foreign = true,
+            width = 20,
+            canBeNull = false)
+    private Role _role;
+
+    @DatabaseField(columnName = "permissionname",
+            foreign = true,
+            width = 30,
+            canBeNull = false)
+    private Permission _permission;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String roleTableName = Role.TABLE_NAME;
+        String permissionableName = Permission.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            roleTableName = "`" + roleTableName + "`";
+            permissionableName = "`" + permissionableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_perm_fkey FOREIGN KEY (permissionname) "
+            + "REFERENCES " + permissionableName + " (permissionname)",
+            "ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_role_fkey FOREIGN KEY (rolename) "
+            + "REFERENCES " + roleTableName + " (rolename)"};
+    }
+
+    public static final String TABLE_NAME = "authrolepermissions";
+
 }
 /*
 CREATE TABLE authrolepermissions

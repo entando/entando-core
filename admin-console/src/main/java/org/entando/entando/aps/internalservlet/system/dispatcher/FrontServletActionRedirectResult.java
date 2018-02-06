@@ -13,19 +13,6 @@
  */
 package org.entando.entando.aps.internalservlet.system.dispatcher;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.dispatcher.ServletRedirectResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.lang.Lang;
@@ -36,13 +23,23 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.config.entities.ResultConfig;
 import com.opensymphony.xwork2.util.reflection.ReflectionExceptionHandler;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.result.ServletRedirectResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Redirect Action Result with ancot for internal servlet actions.
  * @author E.Santoboni
  */
 public class FrontServletActionRedirectResult extends ServletRedirectResult implements ReflectionExceptionHandler {
-
+	
 	private static final Logger _logger = LoggerFactory.getLogger(FrontServletActionRedirectResult.class);
 	
     protected String _actionName;
@@ -100,7 +97,7 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
             IURLManager urlManager = (IURLManager) ApsWebApplicationUtils.getBean(SystemConstants.URL_MANAGER, request);
             Page currentPage = (Page) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
             Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-            String url = urlManager.createUrl(currentPage, currentLang, redirectParams, false, request);
+            String url = urlManager.createURL(currentPage, currentLang, redirectParams, false, request);
             if (null != anchorDest) {
                 url += "#" + anchorDest;
             }
@@ -144,7 +141,7 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
         redirectParams.put(InternalServletTag.REQUEST_PARAM_ACTIONPATH, actionPath);
         redirectParams.put(InternalServletTag.REQUEST_PARAM_FRAMEDEST, currentFrame.toString());
     }
-
+	
     /**
      * Sets the action name
      * @param actionName The name

@@ -1,53 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" 
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		xmlns:context="http://www.springframework.org/schema/context" 
-		xmlns:jee="http://www.springframework.org/schema/jee" 
-		xmlns:util="http://www.springframework.org/schema/util" 
-		xmlns:aop="http://www.springframework.org/schema/aop" 
-		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
 			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
 			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd" >
-    
+
+    <context:annotation-config />
+
     <jee:jndi-lookup id="portDataSource" jndi-name="java:comp/env/jdbc/portDataSource"/>
-    
+
     <jee:jndi-lookup id="servDataSource" jndi-name="java:comp/env/jdbc/servDataSource"/>
-    
+
     <bean id="ApsSystemUtils" class="com.agiletec.aps.system.ApsSystemUtils" init-method="init" >
         <property name="systemParams">
             <map>
-                <entry key="logName"><jee:jndi-lookup jndi-name="java:comp/env/logName" /></entry>
-                <entry key="logFilePrefix"><jee:jndi-lookup jndi-name="java:comp/env/logFilePrefix" /></entry>
-                <entry key="logLevel"><jee:jndi-lookup jndi-name="java:comp/env/logLevel" /></entry>
-                <entry key="logFileSize"><jee:jndi-lookup jndi-name="java:comp/env/logFileSize" /></entry>
-                <entry key="logFilesCount"><jee:jndi-lookup jndi-name="java:comp/env/logFilesCount" /></entry>
+                <entry key="logName">
+                    <jee:jndi-lookup jndi-name="java:comp/env/logName" />
+                </entry>
+                <entry key="logFilePrefix">
+                    <jee:jndi-lookup jndi-name="java:comp/env/logFilePrefix" />
+                </entry>
+                <entry key="logLevel">
+                    <jee:jndi-lookup jndi-name="java:comp/env/logLevel" />
+                </entry>
+                <entry key="logFileSize">
+                    <jee:jndi-lookup jndi-name="java:comp/env/logFileSize" />
+                </entry>
+                <entry key="logFilesCount">
+                    <jee:jndi-lookup jndi-name="java:comp/env/logFilesCount" />
+                </entry>
             </map>
         </property>
     </bean>
-    
-    <bean id="ComponentManager" class="org.entando.entando.aps.system.init.ComponentManager" 
-              init-method="init">
+
+    <bean id="ComponentManager" class="org.entando.entando.aps.system.init.ComponentManager"
+          init-method="init">
         <property name="postProcessClasses">
             <map>
-                <entry key="selfRestCall"><value>org.entando.entando.aps.system.init.model.SelfRestCallPostProcess</value></entry>
+                <entry key="selfRestCall">
+                    <value>org.entando.entando.aps.system.init.model.SelfRestCallPostProcess</value>
+                </entry>
             </map>
         </property>
     </bean>
-    
+
     <util:list id="entandoPortTableClasses">
         <value>org.entando.entando.aps.system.init.model.portdb.Sysconfig</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Category</value>
         <value>org.entando.entando.aps.system.init.model.portdb.LocalString</value>
         <value>org.entando.entando.aps.system.init.model.portdb.PageModel</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Page</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.PageMetadataOnline</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.PageMetadataDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetCatalog</value>
         <value>org.entando.entando.aps.system.init.model.portdb.GuiFragment</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfig</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfigDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Uniquekeys</value>
     </util:list>
-    
+
     <util:list id="entandoServTableClasses">
         <value>org.entando.entando.aps.system.init.model.servdb.Group</value>
         <value>org.entando.entando.aps.system.init.model.servdb.Permission</value>
@@ -64,119 +81,173 @@
         <value>org.entando.entando.aps.system.init.model.servdb.UserProfileAttributeRole</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecord</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecordRelation</value>
+
+        <value>org.entando.entando.aps.system.init.model.servdb.DataObjectModel</value>
+        <value>org.entando.entando.aps.system.init.model.servdb.DataObject</value>
+        <value>org.entando.entando.aps.system.init.model.servdb.DataObjectRelation</value>
+        <value>org.entando.entando.aps.system.init.model.servdb.DataObjectSearch</value>
+        <value>org.entando.entando.aps.system.init.model.servdb.DataObjectAttributeRole</value>
+
     </util:list>
-    
-    <bean id="StorageManager" class="org.entando.entando.aps.system.services.storage.LocalStorageManager" 
-              init-method="init" >
-        <property name="baseURL" ><jee:jndi-lookup jndi-name="java:comp/env/resourceRootURL" /></property>
-        <property name="baseDiskRoot" ><jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" /></property>
-        <property name="protectedBaseDiskRoot" ><jee:jndi-lookup jndi-name="java:comp/env/protectedResourceDiskRootFolder" /></property>
-        <property name="protectedBaseURL" ><jee:jndi-lookup jndi-name="java:comp/env/protectedResourceRootURL" /></property>
+
+    <bean id="StorageManager" class="org.entando.entando.aps.system.services.storage.LocalStorageManager"
+          init-method="init" >
+        <property name="baseURL" >
+            <jee:jndi-lookup jndi-name="java:comp/env/resourceRootURL" />
+        </property>
+        <property name="baseDiskRoot" >
+            <jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" />
+        </property>
+        <property name="protectedBaseDiskRoot" >
+            <jee:jndi-lookup jndi-name="java:comp/env/protectedResourceDiskRootFolder" />
+        </property>
+        <property name="protectedBaseURL" >
+            <jee:jndi-lookup jndi-name="java:comp/env/protectedResourceRootURL" />
+        </property>
     </bean>
-    
+
     <bean id="LocalStorageManagerInterface" class="org.entando.entando.aps.system.services.storage.api.LocalStorageManagerInterface" >
         <property name="storageManager" ref="StorageManager" />
     </bean>
 
     <util:map id="databaseTypeDrivers" map-class="java.util.Properties" value-type="java.util.List">
         <entry>
-            <key><value>DERBY</value></key>
+            <key>
+                <value>DERBY</value>
+            </key>
             <list>
                 <value>org.apache.derby.jdbc.EmbeddedDriver</value>
                 <value>org.apache.derby.jdbc.ClientDriver</value>
             </list>
         </entry>
         <entry>
-            <key><value>POSTGRESQL</value></key>
+            <key>
+                <value>POSTGRESQL</value>
+            </key>
             <list>
                 <value>org.postgresql.Driver</value>
             </list>
         </entry>
         <entry>
-            <key><value>MYSQL</value></key>
+            <key>
+                <value>MYSQL</value>
+            </key>
             <list>
                 <value>com.mysql.jdbc.Driver</value>
             </list>
         </entry>
         <entry>
-            <key><value>ORACLE</value></key>
+            <key>
+                <value>ORACLE</value>
+            </key>
             <list>
                 <value>oracle.jdbc.driver.OracleDriver</value>
             </list>
         </entry>
         <entry>
-            <key><value>SQLSERVER</value></key>
+            <key>
+                <value>SQLSERVER</value>
+            </key>
             <list>
                 <value>com.microsoft.sqlserver.jdbc.SQLServerDriver</value>
             </list>
         </entry>
     </util:map>
-	
+
     <util:map id="DefaultSqlDump" map-class="java.util.Properties" >
     </util:map>
-	
-    <bean id="abstractDatabaseUtils" class="org.entando.entando.aps.system.init.AbstractDatabaseUtils" 
-              abstract="true">
+
+    <bean id="abstractDatabaseUtils" class="org.entando.entando.aps.system.init.AbstractDatabaseUtils"
+          abstract="true">
         <property name="componentManager" ref="ComponentManager" />
         <property name="entandoTableMapping">
             <map>
-                <entry key="portDataSource"><ref bean="entandoPortTableClasses" /></entry>
-                <entry key="servDataSource"><ref bean="entandoServTableClasses" /></entry>
+                <entry key="portDataSource">
+                    <ref bean="entandoPortTableClasses" />
+                </entry>
+                <entry key="servDataSource">
+                    <ref bean="entandoServTableClasses" />
+                </entry>
             </map>
         </property>
         <property name="databaseTypeDrivers" ref="databaseTypeDrivers" />
         <property name="storageManager" ref="StorageManager" />
     </bean>
-	
+
     <bean id="DatabaseDumper" class="org.entando.entando.aps.system.init.DatabaseDumper" parent="abstractDatabaseUtils" />
-    
+
     <bean id="DatabaseRestorer" class="org.entando.entando.aps.system.init.DatabaseRestorer" parent="abstractDatabaseUtils" />
-    
-    <bean id="abstractInitializerManager" class="org.entando.entando.aps.system.init.AbstractInitializerManager" 
-              abstract="true" init-method="init">
-        <property name="configVersion"><jee:jndi-lookup jndi-name="java:comp/env/configVersion" /></property>
-        <property name="environment"><value>${db.environment}</value></property>
+
+    <bean id="abstractInitializerManager" class="org.entando.entando.aps.system.init.AbstractInitializerManager"
+          abstract="true" init-method="init">
+        <property name="configVersion">
+            <jee:jndi-lookup jndi-name="java:comp/env/configVersion" />
+        </property>
+        <property name="environment">
+            <value>${db.environment}</value>
+        </property>
         <property name="componentManager" ref="ComponentManager" />
     </bean>
-	
-    <bean id="DatabaseManager" class="org.entando.entando.aps.system.init.DatabaseManager" 
-              parent="abstractInitializerManager">
+
+    <bean id="DatabaseManager" class="org.entando.entando.aps.system.init.DatabaseManager"
+          parent="abstractInitializerManager">
         <property name="entandoTableMapping">
             <map>
-                <entry key="portDataSource"><ref bean="entandoPortTableClasses" /></entry>
-                <entry key="servDataSource"><ref bean="entandoServTableClasses" /></entry>
+                <entry key="portDataSource">
+                    <ref bean="entandoPortTableClasses" />
+                </entry>
+                <entry key="servDataSource">
+                    <ref bean="entandoServTableClasses" />
+                </entry>
             </map>
         </property>
         <property name="entandoDefaultSqlResources">
             <map>
-                <entry key="portDataSource"><value>classpath:sql/entandoPort_data_production.sql</value></entry>
-                <entry key="servDataSource"><value>classpath:sql/entandoServ_data_production.sql</value></entry>
+                <entry key="portDataSource">
+                    <value>classpath:sql/entandoPort_data_production.sql</value>
+                </entry>
+                <entry key="servDataSource">
+                    <value>classpath:sql/entandoServ_data_production.sql</value>
+                </entry>
             </map>
         </property>
         <property name="testSqlResources">
             <map>
-                <entry key="portDataSource"><value>classpath:sql/entandoPort_data_test.sql</value></entry>
-                <entry key="servDataSource"><value>classpath:sql/entandoServ_data_test.sql</value></entry>
+                <entry key="portDataSource">
+                    <value>classpath:sql/entandoPort_data_test.sql</value>
+                </entry>
+                <entry key="servDataSource">
+                    <value>classpath:sql/entandoServ_data_test.sql</value>
+                </entry>
             </map>
         </property>
         <property name="defaultSqlDump" ref="DefaultSqlDump" />
         <property name="databaseDumper" ref="DatabaseDumper" />
         <property name="databaseRestorer" ref="DatabaseRestorer" />
     </bean>
-	
+
     <bean id="SelfRestCaller" class="org.entando.entando.aps.system.init.SelfRestCaller" />
-	
-    <bean id="InitializerManager" class="org.entando.entando.aps.system.init.InitializerManager" 
-              parent="abstractInitializerManager">
-        <property name="checkOnStartup"><value>${db.startup.check}</value></property>
+
+    <bean id="InitializerManager" class="org.entando.entando.aps.system.init.InitializerManager"
+          parent="abstractInitializerManager">
+        <property name="checkOnStartup">
+            <value>${db.startup.check}</value>
+        </property>
         <property name="databaseManager" ref="DatabaseManager" />
         <property name="postProcessors">
             <map>
-                <entry key="selfRestCall"><ref bean="SelfRestCaller" /></entry>
+                <entry key="selfRestCall">
+                    <ref bean="SelfRestCaller" />
+                </entry>
             </map>
         </property>
+		<property name="cacheWrapper">
+			<bean class="org.entando.entando.aps.system.init.cache.InitializerManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
     </bean>
-	
+
     <bean class="org.entando.entando.aps.system.init.SystemPostProcessor" />
-	
+
 </beans>

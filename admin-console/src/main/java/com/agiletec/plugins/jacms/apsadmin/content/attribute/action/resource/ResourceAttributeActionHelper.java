@@ -76,6 +76,7 @@ public class ResourceAttributeActionHelper {
 			String langCode = (String) session.getAttribute(RESOURCE_LANG_CODE_SESSION_PARAM);
 			langCode = (langCode!=null && !"".equals(langCode)) ? langCode : null;
 			((ResourceAttributeInterface) attribute).setResource(resource, langCode);
+			((AbstractResourceAttribute) attribute).setText(resource.getDescription(), langCode);
 		} else if (attribute instanceof MonoListAttribute) {
 			int elementIndex = ((Integer) session.getAttribute(LIST_ELEMENT_INDEX_SESSION_PARAM)).intValue();
 			AttributeInterface attributeElement = ((MonoListAttribute) attribute).getAttribute(elementIndex);

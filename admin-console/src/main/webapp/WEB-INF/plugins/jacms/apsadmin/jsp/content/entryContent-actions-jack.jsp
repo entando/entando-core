@@ -2,57 +2,68 @@
 <%@ taglib uri="/aps-core" prefix="wp" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-<div class="row margin-none margin-large-top">
-	
-	<div class="col-xs-12 col-sm-4 col-md-2 margin-small-vertical">
-		<a class="btn btn-default btn-sm btn-danger btn-block" href="<s:url action="list" namespace="/do/jacms/Content" />">
-			<span class="icon fa fa-times-circle"></span>&#32;<s:text name="label.cancel" />
-		</a>
-	</div>
-	
-	<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-		<wpsf:submit id="edit-saveAndContinue" data-button-type="autosave" 
-			data-loading-text="%{getText('label.autosaving.button.text')}" 
-			action="saveAndContinue" type="button" cssClass="btn btn-default btn-sm btn-block" 
-			title="%{getText('note.button.saveAndContinue')}">
-				<span class="icon fa fa-play-circle-o"></span>&#32;
-				<s:text name="label.saveAndContinue" />
-		</wpsf:submit>
-	</div>
-	<div class="input-group col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-		<label for="status" class="sr-only"><s:text name="label.state" /></label>
-		<wpsf:select name="status" id="status" list="avalaibleStatus" 
-					 value="%{content.status}" listKey="key" listValue="%{getText(value)}" cssClass="form-control btn-sm selectCustom" />
-		<span class="input-group-btn">
-			<wpsf:submit action="save" type="button" cssClass="btn btn-sm btn-default" title="%{getText('note.button.saveContent')}">
-				<span class="icon fa fa-floppy-o"></span>
-			</wpsf:submit>
-		</span>
-	</div>
-	<wp:ifauthorized permission="validateContents">
-		<div class="col-xs-12 col-sm-4 col-md-2 margin-small-vertical">
-			<wpsf:submit action="saveAndApprove" type="button" cssClass="btn btn-sm btn-success btn-block" title="%{getText('note.button.saveAndApprove')}" >
-				<span class="icon fa fa-check"></span>&#32;Approva
-				<%-- <s:text name="label.saveAndApprove" /> --%>
-			</wpsf:submit>
-		</div>
-		<s:if test="content.onLine">
-			<div class="col-xs-12 col-sm-4 col-md-2 margin-small-vertical">
-				<wpsf:submit action="suspend" type="button" cssClass="btn btn-sm btn-warning btn-block" title="%{getText('note.button.suspend')}">
-					<span class="icon fa fa-pause"></span>&#32;
-					<s:text name="label.suspend" />
-				</wpsf:submit>
-			</div>
-		</s:if>
-	</wp:ifauthorized>
+<div class="row mb-10 bottom-border">
+    <div class="col-xs-12 mb-10">
+        <span class="bold">
+            <s:text name="note.autosaved.at" />: <span data-autosave="last-save-time"></span>
+        </span>
+    </div>
 </div>
 
-<div class="row margin-none margin-large-bottom">
-	<div class="col-xs-12 col-sm-4 col-md-3 margin-none">
-		<small class="help help-block text-muted text-center">
-			<span class="hide">
-				<span class="icon fa fa-check-square-o"></span>&#32;<s:text name="note.autosaved.at" />: <span data-autosave="last-save-time"></span>
-			</span>&nbsp;<%-- little hack prevents to scroll down the page the first time the message appears --%>
-		</small>
-	</div>
+<!-- toolbar first row  -->
+<div class="toolbar-pf-actions">
+    <!-- items selected -->
+    <div class="col-lg-6 col-md-6 col-xs-12 no-padding">
+        <div class="col-xs-12 no-padding">
+            <span class="mr-20 bold"><s:text name="label.state" /></span>
+            <wpsf:select name="status" id="status" list="avalaibleStatus"
+                         headerKey="" headerValue="%{getText('note.choose')}"
+                         value="%{content.status}" listKey="key"
+                         listValue="%{getText(value)}"
+                         cssClass="form-control selectCustom display-inline wauto"/>
+        </div>
+    </div>
+
+    <!-- toolbar -->
+    <div class="col-lg-6 col-md-6 col-xs-12 no-padding text-right">
+        <wpsf:submit action="save" type="button" cssClass="btn btn-primary wauto display-inline"
+                     title="%{getText('note.button.saveContent')}">
+            <s:text name="label.save" />
+        </wpsf:submit>
+    </div>
+</div>
+
+
+<!-- toolbar second row -->
+<div class="row toolbar-pf-results">
+    <div class="col-lg-6 col-lg-offset-6 col-md-8 col-md-offset-4 col-xs-12 no-padding">
+        <div class="col-xs-12 text-right">
+            <span class="mr-20 bold"><s:text name="label.setAs" /></span>
+            <wpsf:submit id="edit-saveAndContinue" data-button-type="autosave"
+                         data-loading-text="%{getText('label.autosaving.button.text')}"
+                         action="saveAndContinue" type="button" cssClass="btn btn-default"
+                         title="%{getText('note.button.saveAndContinue')}">
+                <s:text name="label.saveAndContinue" />
+            </wpsf:submit>
+            <wp:ifauthorized permission="validateContents">
+                <wpsf:submit action="saveAndApprove" type="button"
+                             cssClass="btn btn-success"
+                             title="%{getText('note.button.saveAndApprove')}" >
+                    <s:text name="label.saveAndApprove" />
+                </wpsf:submit>
+                <s:if test="content.onLine">
+                    <wpsf:submit action="suspend" type="button"
+                                 cssClass="btn btn-warning"
+                                 title="%{getText('note.button.suspend')}">
+                        <span class="icon fa fa-pause"></span>&#32;
+                        <s:text name="label.suspend" />
+                    </wpsf:submit>
+                </s:if>
+            </wp:ifauthorized>
+            <s:url action="list" namespace="/do/jacms/Content" var="backAction"/>
+            <a class="btn btn-danger ml-20" href="${backAction}">
+                <s:text name="label.cancel" />
+            </a>
+        </div>
+    </div>
 </div>

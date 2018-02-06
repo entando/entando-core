@@ -7,6 +7,6 @@
 		<s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
 	</s:if>
 	<s:else>
-		<span class="form-control-static text-info"><s:text name="note.editContent.doThisInTheDefaultLanguage.must" />.</span>
+            <span class=""><s:text name="note.editContent.doThisInTheDefaultLanguage.must" />.</span>
 	</s:else>
 </s:else>

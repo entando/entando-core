@@ -13,16 +13,16 @@
  */
 package org.entando.entando.aps.system.services.controller.executor;
 
-import com.agiletec.aps.system.RequestContext;
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.page.IPage;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.agiletec.aps.system.RequestContext;
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.page.IPage;
 
 /**
  * Performs the Content Negotiation.
@@ -48,7 +48,8 @@ public class ContentNegotiationExecutorService implements ExecutorServiceInterfa
 			IPage page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
 			StringBuilder contentType = new StringBuilder(mimetype);
 			contentType.append("; charset=");
-			String charset = (null != page && null != page.getCharset() && page.getCharset().trim().length() > 0) ? page.getCharset() : DEFAULT_CHARSET;
+			String pageCharset = page.getCharset();
+			String charset = (null != page && null != pageCharset && pageCharset.trim().length() > 0) ? pageCharset : DEFAULT_CHARSET;
 			contentType.append(charset);
 			response.setContentType(contentType.toString());
 		} catch (Throwable t) {
@@ -63,11 +64,12 @@ public class ContentNegotiationExecutorService implements ExecutorServiceInterfa
 			String header = request.getHeader("accept");
 			if (null != header) {
 				IPage page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
-				String customMimeType = (null != page.getMimeType() && page.getMimeType().trim().length() > 0) ? page.getMimeType() : null;
+				String mimeType = page.getMimeType();
+				String customMimeType = (null != mimeType && mimeType.trim().length() > 0) ? mimeType : null;
 				if (null != customMimeType) {
-					boolean isAcceptedMimeType = (header.indexOf(page.getMimeType()) >= 0);
+					boolean isAcceptedMimeType = (header.indexOf(mimeType) >= 0);
 					if (isAcceptedMimeType) {
-						return page.getMimeType();
+						return mimeType;
 					}
 				}
 			}

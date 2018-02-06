@@ -13,25 +13,33 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content;
 
+import com.agiletec.apsadmin.admin.BaseAdminAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.apsadmin.system.BaseAction;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.ICmsSearchEngineManager;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.LastReloadInfo;
 
 /**
- * Classi Action delegata alla esecuzione delle operazioni di amministrazione dei contenuti.
+ * Classi Action delegata alla esecuzione delle operazioni di amministrazione
+ * dei contenuti.
+ *
  * @author E.Santoboni
  */
-public class ContentAdminAction extends BaseAction {
+public class ContentAdminAction extends BaseAdminAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentAdminAction.class);
-	
+
+	@Override
+	public String updateSystemParams() {
+		return this.updateSystemParams(true);
+	}
+
 	/**
-	 * Effettua la richiesta di ricaricamento degli indici a servizio 
-	 * del motore di ricerca interno.
+	 * Effettua la richiesta di ricaricamento degli indici a servizio del motore
+	 * di ricerca interno.
+	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String reloadContentsIndex() {
@@ -44,13 +52,16 @@ public class ContentAdminAction extends BaseAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
-	 * Effettua la richeista di ricaricamento delle referenze dei contenuti.
-	 * Le referenze sono rappresentate sia dalle repliche dei valori degli Attributi 
-	 * di Contenuto dichiarati ricercabili in apposita tabella (elementi a servizio degli erogatori di contenuti in lista) e 
-	 * che delle referenze tra Contenuti e Pagine, Risorse, Gruppi e Contenuti stessi in apposita tabella (elementi a 
-	 * servizio di controlli di autorizzazione e validazione).
+	 * Effettua la richeista di ricaricamento delle referenze dei contenuti. Le
+	 * referenze sono rappresentate sia dalle repliche dei valori degli
+	 * Attributi di Contenuto dichiarati ricercabili in apposita tabella
+	 * (elementi a servizio degli erogatori di contenuti in lista) e che delle
+	 * referenze tra Contenuti e Pagine, Risorse, Gruppi e Contenuti stessi in
+	 * apposita tabella (elementi a servizio di controlli di autorizzazione e
+	 * validazione).
+	 *
 	 * @return Il codice del risultato dell'azione.
 	 */
 	public String reloadContentsReference() {
@@ -64,48 +75,52 @@ public class ContentAdminAction extends BaseAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public int getContentManagerStatus() {
 		return this.getContentManager().getStatus();
 	}
-	
+
 	public int getSearcherManagerStatus() {
 		return this.getSearchEngineManager().getStatus();
 	}
-	
+
 	/**
-	 * @deprecated From jAPS 2.0 version 2.0.9. Use getContentManagerStatus() method
+	 * @deprecated From jAPS 2.0 version 2.0.9. Use getContentManagerStatus()
+	 * method
 	 */
 	public int getContentManagerState() {
 		return this.getContentManagerStatus();
 	}
-	
+
 	/**
-	 * @deprecated From jAPS 2.0 version 2.0.9. Use getSearcherManagerStatus() method
+	 * @deprecated From jAPS 2.0 version 2.0.9. Use getSearcherManagerStatus()
+	 * method
 	 */
 	public int getSearcherManagerState() {
 		return this.getSearcherManagerStatus();
 	}
-	
+
 	public LastReloadInfo getLastReloadInfo() {
 		return this.getSearchEngineManager().getLastReloadInfo();
 	}
-	
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
+
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
 	protected ICmsSearchEngineManager getSearchEngineManager() {
 		return _searchEngineManager;
 	}
+
 	public void setSearchEngineManager(ICmsSearchEngineManager searchEngineManager) {
 		this._searchEngineManager = searchEngineManager;
 	}
-	
+
 	private IContentManager _contentManager;
 	private ICmsSearchEngineManager _searchEngineManager;
-	
+
 }

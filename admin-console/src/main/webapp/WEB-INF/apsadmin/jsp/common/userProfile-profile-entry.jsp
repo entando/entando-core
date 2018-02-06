@@ -10,7 +10,7 @@
 			<ul>
 				<s:iterator value="fieldErrors">
 					<s:iterator value="value">
-						<li><s:property escape="false" /></li>
+						<li><s:property escapeHtml="false" /></li>
 					</s:iterator>
 				</s:iterator>
 			</ul>
@@ -19,13 +19,14 @@
 
 	<s:include value="/WEB-INF/apsadmin/jsp/common/inc/profile-formFields.jsp" />
 
-	<div class="form-group">
-		<div class="col-xs-12 col-sm-4 col-md-3 margin-small-vertical">
-			<wpsf:submit action="save" type="button" cssClass="btn btn-primary btn-block">
-				<span class="icon fa fa-floppy-o"></span>&#32;
-				<s:text name="label.save" />
-			</wpsf:submit>
-		</div>
-	</div>
+            <div class="col-md-12"> 
+                <div class="form-group pull-right "> 
+                    <div class="btn-group">
+                        <wpsf:submit type="button" cssClass="btn btn-primary btn-block">
+                            <s:text name="label.save" />
+                        </wpsf:submit>
+                    </div>
+                </div>
+            </div>    
 
 </s:form>

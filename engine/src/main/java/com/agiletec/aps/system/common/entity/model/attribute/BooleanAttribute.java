@@ -79,7 +79,7 @@ public class BooleanAttribute extends AbstractAttribute {
 	
 	@Override
 	public List<AttributeSearchInfo> getSearchInfos(List<Lang> systemLangs) {
-		List<AttributeSearchInfo> infos = new ArrayList<AttributeSearchInfo>();
+		List<AttributeSearchInfo> infos = new ArrayList<>();
 		if (this.addSearchInfo()) {
 			AttributeSearchInfo info = new AttributeSearchInfo(String.valueOf(this.getValue()), null, null, null);
 			infos.add(info);

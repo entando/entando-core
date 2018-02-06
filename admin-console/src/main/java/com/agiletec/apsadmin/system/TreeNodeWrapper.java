@@ -23,7 +23,10 @@ import com.agiletec.aps.system.common.tree.TreeNode;
  * @author E.Santoboni
  */
 public class TreeNodeWrapper extends TreeNode {
-	
+
+	protected TreeNodeWrapper() {
+	}
+
 	public TreeNodeWrapper(ITreeNode node) {
 		this.setCode(node.getCode());
 		Set<Object> codes = node.getTitles().keySet();
@@ -33,10 +36,10 @@ public class TreeNodeWrapper extends TreeNode {
 			String title = node.getTitles().getProperty(key);
 			this.getTitles().put(key, title);
 		}
-		this._empty = (null == node.getChildren() || node.getChildren().length == 0);
+		this._empty = (null == node.getChildrenCodes() || node.getChildrenCodes().length == 0);
 		this.setParent(node.getParent());
 	}
-	
+
 	public TreeNodeWrapper(ITreeNode tree, String currentLang) {
 		this.setCode(tree.getCode());
 		ITreeNode parent = tree.getParent();
@@ -47,54 +50,79 @@ public class TreeNodeWrapper extends TreeNode {
 		this.setFullTitle(tree.getFullTitle(currentLang));
 		this.setShortFullTitle(tree.getShortFullTitle(currentLang));
 	}
-	
+
 	public boolean isOpen() {
 		return _open;
 	}
+
 	public void setOpen(boolean open) {
 		this._open = open;
 	}
-	
+
 	public String getParentCode() {
 		if (null != super.getParent()) {
 			return super.getParent().getCode();
 		}
 		return null;
 	}
-	
+
 	public String getTitle() {
 		return _title;
 	}
+
 	public void setTitle(String title) {
 		this._title = title;
 	}
-	
+
 	public String getFullTitle() {
 		return _fullTitle;
 	}
+
 	public void setFullTitle(String fullTitle) {
 		this._fullTitle = fullTitle;
 	}
-	
+
 	public String getShortFullTitle() {
 		return _shortFullTitle;
 	}
+
 	public void setShortFullTitle(String shortFullTitle) {
 		this._shortFullTitle = shortFullTitle;
 	}
-	
+
 	public boolean isEmpty() {
 		return _empty;
 	}
+
 	public void setEmpty(boolean empty) {
 		this._empty = empty;
 	}
-	
+
+	public ITreeNode[] getChildren() {
+		return _children;
+	}
+
+	public void setChildren(ITreeNode[] children) {
+		this._children = children;
+	}
+
+	public void addChild(ITreeNode treeNode) {
+		int len = this._children.length;
+		ITreeNode[] newChildren = new ITreeNode[len + 1];
+		for (int i = 0; i < len; i++) {
+			newChildren[i] = this._children[i];
+		}
+		newChildren[len] = treeNode;
+		this._children = newChildren;
+	}
+
 	private boolean _empty;
 	private boolean _open;
-	
+
 	private String _title;
 	private String _fullTitle;
 	private String _shortFullTitle;
-	
+
+	private ITreeNode[] _children = new ITreeNode[0];
+
 }

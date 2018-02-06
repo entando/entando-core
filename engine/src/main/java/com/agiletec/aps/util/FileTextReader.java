@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Utility class for reading the contents of files.
@@ -27,44 +29,57 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public class FileTextReader {
 	
-	public static String getText(InputStream is) throws ApsSystemException {
+	public static String getText(InputStream is) throws ApsSystemException, IOException {
 		return getText(is, null);
 	}
 	
-	public static String getText(InputStream is, String charset) throws ApsSystemException {
+	public static String getText(InputStream is, String charset) throws ApsSystemException, IOException {
+		Reader reader = null;
+		BufferedReader br = null;
 		try {
-			Reader reader = (null != charset) ? new InputStreamReader(is, charset) : new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(reader);
+			reader = (null != charset) ? new InputStreamReader(is, charset) : new InputStreamReader(is);
+			br = new BufferedReader(reader);
 			return getText(br);
 		} catch (Throwable t) {
 			throw new ApsSystemException("Error reading text", t);
-		}
-	}
-	
-	public static String getText(String filename) throws ApsSystemException {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(filename));
-			return getText(br);
-		} catch (Throwable t) {
-			throw new ApsSystemException("Error reading text", t);
-		}
-	}
-	
-	private static String getText(BufferedReader br) throws ApsSystemException {
-		String text = null;
-		try {
-			String lineSep = System.getProperty("line.separator");
-			String nextLine = "";
-			StringBuilder sb = new StringBuilder();
-			while ((nextLine = br.readLine()) != null) {
-				sb.append(nextLine);
-				sb.append(lineSep);
+		} finally {
+			if (null != br) {
+				br.close();
 			}
-			text = sb.toString();
-		} catch (Throwable t) {
-			throw new ApsSystemException("Error reading text", t);
+			if (null != reader) {
+				reader.close();
+			}
 		}
-		return text;
+	}
+	
+	public static String getText(String filename) throws ApsSystemException, IOException {
+		Reader reader = null;
+		BufferedReader br = null;
+		try {
+			reader = new FileReader(filename);
+			br = new BufferedReader(reader);
+			return getText(br);
+		} catch (FileNotFoundException t) {
+			throw new ApsSystemException("Error reading text", t);
+		} finally {
+			if (null != br) {
+				br.close();
+			}
+			if (null != reader) {
+				reader.close();
+			}
+		}
+	}
+	
+	private static String getText(BufferedReader br) throws IOException {
+		String lineSep = System.getProperty("line.separator");
+		String nextLine = "";
+		StringBuilder sb = new StringBuilder();
+		while ((nextLine = br.readLine()) != null) {
+			sb.append(nextLine);
+			sb.append(lineSep);
+		}
+		return sb.toString();
 	}
 	
 }

@@ -148,97 +148,89 @@ INSERT INTO pagemodels (code, descr, frames, plugincode) VALUES ('internal', 'In
 	</frame>
 </frames>', NULL);
 
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('service', 'homepage', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('primapagina', 'service', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('notfound', 'service', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('login', 'service', 3, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('homepage', 'homepage', -1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('errorpage', 'service', 5, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customers_page', 'homepage', 5, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('coach_page', 'homepage', 4, 'coach');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('administrators_page', 'homepage', 6, 'administrators');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_2', 'customers_page', 2, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_12', 'pagina_1', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_11', 'pagina_1', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('customer_subpage_1', 'customers_page', 1, 'customers');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_1', 'homepage', 2, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('dataObjectview', 'service', 6, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('contentview', 'service', 4, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_2', 'homepage', 3, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('pagina_draft', 'homepage', 7, 'free');
 
-
-
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('service', 'homepage', 1, 'service', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Nodo pagine di servizio</property>
 </properties>
-
-', 'free', 0, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('primapagina', 'service', 1, 'service', '<?xml version="1.0" encoding="UTF-8"?>
+', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('primapagina', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Nodo pagine di servizio</property>
-</properties>
-
-
-', 'free', 0, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('notfound', 'service', 2, 'service', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagina non trovata</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('login', 'service', 3, 'service', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagina di login</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('homepage', 'homepage', -1, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Start Page</property>
 <property key="it">Pagina iniziale</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('errorpage', 'service', 5, 'service', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagina di errore</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('customers_page', 'homepage', 5, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customers_page', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Customers Page</property>
 <property key="it">Pagina gruppo Customers</property>
-</properties>
-
-', 'customers', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('coach_page', 'homepage', 4, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('coach_page', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Coach Page</property>
 <property key="it">Pagina gruppo Coach</property>
-</properties>
-
-', 'coach', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('administrators_page', 'homepage', 6, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('administrators_page', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Administrators Page</property>
 <property key="it">Pagina gruppo Amministratori</property>
-</properties>', 'administrators', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('customer_subpage_2', 'customers_page', 2, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_2', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Customer SubPage 2</property>
 <property key="it">Customer SubPage 2</property>
-</properties>
-
-', 'customers', 0, '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
 <config />
 
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_12', 'pagina_1', 2, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_12', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Page 1-2</property>
 <property key="it">Pagina 1-2</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_11', 'pagina_1', 1, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_11', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Page 1-1</property>
 <property key="it">Pagina 1-1</property>
-</properties>
-
-', 'free', 1, NULL);
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('customer_subpage_1', 'customers_page', 1, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_1', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Customer SubPage 1</property>
 <property key="it">Customer SubPage 1</property>
-</properties>
-
-', 'customers', 0, '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
 <config>
   <useextratitles>false</useextratitles>
   <extragroups>
@@ -246,45 +238,170 @@ INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinme
   </extragroups>
 </config>
 
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_1', 'homepage', 2, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_1', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Page 1</property>
 <property key="it">Pagina 1</property>
-</properties>
-
-', 'free', 1, '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
 <config>
   <useextratitles>false</useextratitles>
 </config>
 
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('contentview', 'service', 4, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('dataObjectview', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">DataObject Publishing</property>
+<property key="it">Publicazione DataObject</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('contentview', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Content Publishing</property>
 <property key="it">Publicazione Contenuto</property>
-</properties>
-
-', 'free', 1, '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
 <config>
   <useextratitles>false</useextratitles>
 </config>
 
-');
-INSERT INTO pages (code, parentcode, pos, modelcode, titles, groupcode, showinmenu, extraconfig) VALUES ('pagina_2', 'homepage', 3, 'home', '<?xml version="1.0" encoding="UTF-8"?>
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_2', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Page 2</property>
 <property key="it">Pagina 2</property>
-</properties>
-
-', 'free', 1, '<?xml version="1.0" encoding="UTF-8"?>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
 <config>
   <useextratitles>false</useextratitles>
 </config>
 
-');
+', '2017-02-17 13:06:24');
 
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Nodo pagine di servizio</property>
+</properties>
+', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('primapagina', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Nodo pagine di servizio</property>
+</properties>', 'service', 0, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina non trovata</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina di login</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Start Page</property>
+<property key="it">Pagina iniziale</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="it">Pagina di errore</property>
+</properties>', 'service', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customers_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customers Page</property>
+<property key="it">Pagina gruppo Customers</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('coach_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Coach Page</property>
+<property key="it">Pagina gruppo Coach</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('administrators_page', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Administrators Page</property>
+<property key="it">Pagina gruppo Amministratori</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_2', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customer SubPage 2</property>
+<property key="it">Customer SubPage 2</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config />
 
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_12', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1-2</property>
+<property key="it">Pagina 1-2</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_11', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1-1</property>
+<property key="it">Pagina 1-1</property>
+</properties>', 'home', 1, NULL, '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('customer_subpage_1', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Customer SubPage 1</property>
+<property key="it">Customer SubPage 1</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+  <extragroups>
+    <group name="coach" />
+  </extragroups>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_1', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 1</property>
+<property key="it">Pagina 1</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('dataObjectview', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">DataObject Publishing</property>
+<property key="it">Publicazione DataObject</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('contentview', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Content Publishing</property>
+<property key="it">Publicazione Contenuto</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_2', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page 2</property>
+<property key="it">Pagina 2</property>
+</properties>', 'home', 1, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>false</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
+INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('pagina_draft', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Page Draft</property>
+<property key="it">Pagina Draft</property>
+</properties>', 'home', 0, '<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <useextratitles>true</useextratitles>
+</config>
+
+', '2017-02-17 13:06:24');
 
 
 INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) VALUES ('login_form', '<?xml version="1.0" encoding="UTF-8"?>
@@ -327,14 +444,13 @@ INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode,
 ', 1, 'free');
 
 
-
-
 INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagina_1', 2, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="navSpec">abs(1).subtree(2)</property>
 </properties>
 
 ');
+INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('dataObjectview', 1, 'login_form', NULL);
 INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('contentview', 1, 'login_form', NULL);
 INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -344,6 +460,38 @@ INSERT INTO widgetconfig (pagecode, framepos, widgetcode, config) VALUES ('pagin
 ');
 
 
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_1', 2, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="navSpec">abs(1).subtree(2)</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('dataObjectview', 1, 'login_form', NULL);
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('contentview', 1, 'login_form', NULL);
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 0, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="navSpec">abs(1).subtree(2)</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="actionPath">/do/login</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_draft', 1, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="navSpec">abs(1).subtree(2)</property>
+</properties>
+
+');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_draft', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="actionPath">/do/login</property>
+</properties>
+
+');
 
 
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'langs', 'Definition of the system languages', '<?xml version="1.0" encoding="UTF-8"?>
@@ -410,6 +558,262 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'userProfil
 		</attributes>
 	</profiletype>
 </profiletypes>');
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDefinitions', 'Definition of the Data Types', '<?xml version="1.0" encoding="UTF-8"?>
+<datatypes>
+	<datatype typecode="ALL" typedescr="DataObject type with all attribute types" viewpage="announcements_read" listmodel="**NULL**" defaultmodel="**NULL**">
+		<attributes>
+			<attribute name="Boolean" attributetype="Boolean" />
+			<attribute name="CheckBox" attributetype="CheckBox" />
+			<attribute name="Date" attributetype="Date" />
+			<attribute name="Date2" attributetype="Date">
+				<validations>
+					<rangestart attribute="Date" />
+					<rangeend>25/11/2020</rangeend>
+				</validations>
+			</attribute>
+			<attribute name="Enumerator" attributetype="Enumerator" separator=","><![CDATA[a,b,c]]></attribute>
+			<attribute name="EnumeratorMap" attributetype="EnumeratorMap" separator=";"><![CDATA[01=Value 1;02=Value 2;03=Value 3]]></attribute>
+			<attribute name="Hypertext" attributetype="Hypertext" />
+			<attribute name="Longtext" attributetype="Longtext" />
+			<attribute name="Monotext" attributetype="Monotext" />
+			<attribute name="Monotext2" attributetype="Monotext">
+				<validations>
+					<minlength>15</minlength>
+					<maxlength>30</maxlength>
+					<regexp><![CDATA[.+@.+.[a-z]+]]></regexp>
+				</validations>
+			</attribute>
+			<attribute name="Number" attributetype="Number" />
+			<attribute name="Number2" attributetype="Number">
+				<validations>
+					<rangestart>50</rangestart>
+					<rangeend>300</rangeend>
+				</validations>
+			</attribute>
+			<attribute name="Text" attributetype="Text">
+				<roles>
+					<role>dataObject:title</role>
+				</roles>
+			</attribute>
+			<attribute name="Text2" attributetype="Text">
+				<validations>
+					<minlength>15</minlength>
+					<maxlength>30</maxlength>
+					<regexp><![CDATA[.+@.+.[a-z]+]]></regexp>
+				</validations>
+			</attribute>
+			<attribute name="ThreeState" attributetype="ThreeState" />
+			<attribute name="Composite" attributetype="Composite">
+				<attributes>
+					<attribute name="Boolean" attributetype="Boolean" />
+					<attribute name="CheckBox" attributetype="CheckBox" />
+					<attribute name="Date" attributetype="Date">
+						<validations>
+							<rangestart attribute="Date" />
+							<rangeend>10/10/2030</rangeend>
+						</validations>
+					</attribute>
+					<attribute name="Enumerator" attributetype="Enumerator" separator="," />
+					<attribute name="Hypertext" attributetype="Hypertext" />
+					<attribute name="Longtext" attributetype="Longtext" />
+					<attribute name="Monotext" attributetype="Monotext" />
+					<attribute name="Number" attributetype="Number">
+						<validations>
+							<expression evalOnValuedAttribute="true">
+								<ognlexpression><![CDATA[#entity.getAttribute(''Number'').value == null || (#entity.getAttribute(''Number'').value != null && value > #entity.getAttribute(''Number'').value)]]></ognlexpression>
+								<errormessage><![CDATA[Value has to be upper then ''Number'' attribute]]></errormessage>
+								<helpmessage><![CDATA[If ''Number'' valued attribute, Value has to be upper]]></helpmessage>
+							</expression>
+						</validations>
+					</attribute>
+					<attribute name="Text" attributetype="Text" />
+					<attribute name="ThreeState" attributetype="ThreeState" />
+				</attributes>
+			</attribute>
+			<list name="ListBoolea" attributetype="List">
+				<nestedtype>
+					<attribute name="ListBoolea" attributetype="Boolean" />
+				</nestedtype>
+			</list>
+			<list name="ListCheck" attributetype="List">
+				<nestedtype>
+					<attribute name="ListCheck" attributetype="CheckBox" />
+				</nestedtype>
+			</list>
+			<list name="ListDate" attributetype="List">
+				<nestedtype>
+					<attribute name="ListDate" attributetype="Date" />
+				</nestedtype>
+			</list>
+			<list name="ListEnum" attributetype="List">
+				<nestedtype>
+					<attribute name="ListEnum" attributetype="Enumerator" separator=","><![CDATA[a,b,c]]></attribute>
+				</nestedtype>
+			</list>
+			<list name="ListMonot" attributetype="List">
+				<nestedtype>
+					<attribute name="ListMonot" attributetype="Monotext" />
+				</nestedtype>
+			</list>
+			<list name="ListNumber" attributetype="List">
+				<nestedtype>
+					<attribute name="ListNumber" attributetype="Number" />
+				</nestedtype>
+			</list>
+			<list name="List3Stat" attributetype="List">
+				<nestedtype>
+					<attribute name="List3Stat" attributetype="ThreeState" />
+				</nestedtype>
+			</list>
+			<list name="MonoLBool" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLBool" attributetype="Boolean" />
+				</nestedtype>
+			</list>
+			<list name="MonoLChec" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLChec" attributetype="CheckBox" />
+				</nestedtype>
+			</list>
+			<list name="MonoLCom" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLCom" attributetype="Composite">
+						<attributes>
+							<attribute name="Date" attributetype="Date">
+								<validations>
+									<rangestart>10/10/1971</rangestart>
+									<rangeend attribute="Date" />
+								</validations>
+							</attribute>
+							<attribute name="Enumerator" attributetype="Enumerator" separator=","><![CDATA[a,b,c]]></attribute>
+							<attribute name="EnumeratorMapTris" attributetype="EnumeratorMap" separator=";"><![CDATA[01=Value 1 Tris;02=Value 2 Tris;03=Value 3 Tris]]></attribute>
+							<attribute name="Hypertext" attributetype="Hypertext" />
+							<attribute name="Longtext" attributetype="Longtext" />
+							<attribute name="Monotext" attributetype="Monotext" />
+							<attribute name="Number" attributetype="Number">
+								<validations>
+									<rangestart>25</rangestart>
+									<rangeend attribute="Number" />
+								</validations>
+							</attribute>
+							<attribute name="Text" attributetype="Text" />
+						</attributes>
+					</attribute>
+				</nestedtype>
+			</list>
+			<list name="MonoLCom2" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLCom2" attributetype="Composite">
+						<attributes>
+							<attribute name="Boolean" attributetype="Boolean" />
+							<attribute name="CheckBox" attributetype="CheckBox" />
+							<attribute name="ThreeState" attributetype="ThreeState" />
+						</attributes>
+					</attribute>
+				</nestedtype>
+			</list>
+			<list name="MonoLDate" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLDate" attributetype="Date" />
+				</nestedtype>
+			</list>
+			<list name="MonoLEnum" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLEnum" attributetype="Enumerator" separator=","><![CDATA[a,b,c]]></attribute>
+				</nestedtype>
+			</list>
+			<list name="MonoLHyper" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLHyper" attributetype="Hypertext" />
+				</nestedtype>
+			</list>
+			<list name="MonoLLong" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLLong" attributetype="Longtext" />
+				</nestedtype>
+			</list>
+			<list name="MonoLMonot" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLMonot" attributetype="Monotext" />
+				</nestedtype>
+			</list>
+			<list name="MonoLNumb" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLNumb" attributetype="Number" />
+				</nestedtype>
+			</list>
+			<list name="MonoLText" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoLText" attributetype="Text" />
+				</nestedtype>
+			</list>
+			<list name="MonoL3stat" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="MonoL3stat" attributetype="ThreeState" />
+				</nestedtype>
+			</list>
+			<attribute name="EnumeratorMapBis" attributetype="EnumeratorMap" separator=";"><![CDATA[01=Value 1 Bis;02=Value 2 Bis;03=Value 3 Bis]]></attribute>
+			<attribute name="MARKER" attributetype="Monotext">
+				<validations>
+					<required>true</required>
+				</validations>
+			</attribute>
+		</attributes>
+	</datatype>
+	<datatype typecode="ART" typedescr="Articolo rassegna stampa" viewpage="dataObjectview" listmodel="11" defaultmodel="1">
+		<attributes>
+			<attribute name="Titolo" attributetype="Text" indexingtype="TEXT">
+				<validations>
+					<required>true</required>
+				</validations>
+				<roles>
+					<role>dataObject:title</role>
+				</roles>
+			</attribute>
+			<list name="Autori" attributetype="Monolist">
+				<nestedtype>
+					<attribute name="Autori" attributetype="Monotext" />
+				</nestedtype>
+			</list>
+			<attribute name="CorpoTesto" attributetype="Hypertext" indexingtype="text" />
+			<attribute name="Data" attributetype="Date" searchable="true" />
+			<attribute name="Numero" attributetype="Number" searchable="true" />
+		</attributes>
+	</datatype>
+	<datatype typecode="EVN" typedescr="Evento" viewpage="dataObjectview" listmodel="51" defaultmodel="5">
+		<attributes>
+			<attribute name="Titolo" attributetype="Text" searchable="true" indexingtype="TEXT">
+				<validations />
+				<roles>
+					<role>dataObject:title</role>
+				</roles>
+			</attribute>
+			<attribute name="CorpoTesto" attributetype="Hypertext" indexingtype="text" />
+			<attribute name="DataInizio" attributetype="Date" searchable="true" />
+			<attribute name="DataFine" attributetype="Date" searchable="true" />
+		</attributes>
+	</datatype>
+	<datatype typecode="RAH" typedescr="Tipo_Semplice" viewpage="dataObjectview" listmodel="126" defaultmodel="457">
+		<attributes>
+			<attribute name="Titolo" attributetype="Text" indexingtype="text">
+				<validations>
+					<minlength>10</minlength>
+					<maxlength>100</maxlength>
+				</validations>
+			</attribute>
+			<attribute name="CorpoTesto" attributetype="Hypertext" indexingtype="text" />
+			<attribute name="email" attributetype="Monotext">
+				<validations>
+					<regexp><![CDATA[.+@.+.[a-z]+]]></regexp>
+				</validations>
+			</attribute>
+			<attribute name="Numero" attributetype="Number" />
+			<attribute name="Checkbox" attributetype="CheckBox" />
+		</attributes>
+	</datatype>
+</datatypes>
+');
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataobjectsubdir', 'Name of the sub-directory containing dataobject indexing files', 'index');
 
 
 

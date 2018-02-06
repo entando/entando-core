@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +30,13 @@ import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.tags.util.IParameterParentTag;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import org.entando.entando.aps.tags.ExtendedTagSupport;
 
 /**
  * Tag for string localisation
  * @author S.Didaci - E.Santoboni
  */
-public class I18nTag extends OutSupport implements IParameterParentTag {
+public class I18nTag extends ExtendedTagSupport implements IParameterParentTag {
 
 	private static final Logger _logger = LoggerFactory.getLogger(I18nTag.class);
 	
@@ -95,10 +95,10 @@ public class I18nTag extends OutSupport implements IParameterParentTag {
 	
 	@Override
 	public void release() {
+		super.release();
 		this._key = null;
 		this._lang = null;
 		this._varName = null;
-		super.escapeXml = true;
 		this._parameters = null;
 	}
 	
@@ -148,22 +148,6 @@ public class I18nTag extends OutSupport implements IParameterParentTag {
 	 */
 	public void setKey(String key) {
 		this._key = key;
-	}
-	
-	/**
-	 * Checks whether to perform the escaping of the special characters.
-	 * @return TTrue to escape special characters, false otherwise.
-	 */
-	public boolean getEscapeXml() {
-		return super.escapeXml;
-	}
-	
-	/**
-	 * Toggles the escape of the special characters of the label to return.
-	 * @param escapeXml True to escape special characters
-	 */
-	public void setEscapeXml(boolean escapeXml) {
-		super.escapeXml = escapeXml;
 	}
 	
 	public Map<String, String> getParameters() {

@@ -30,31 +30,37 @@
 	<bean id="springCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
 		<property name="caches">
 			<set>
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_Cache" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_PageManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_PageModelManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_WidgetTypeManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_CategoryManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_ConfigManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_RoleManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_GroupManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_LangManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					  p:name="Entando_CacheInfoManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					  p:name="Entando_I18nManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_I18nManager" />	
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_UserProfileManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_DataObjectManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					  p:name="Entando_jacmsContentManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_InitializerManager" />			
-        <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+        			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_ApiCatalogManager" />
 			</set>
 		</property>

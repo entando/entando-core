@@ -13,34 +13,6 @@
  */
 package com.agiletec.aps;
 
-import org.entando.entando.aps.system.init.InitializerManagerTest;
-import org.entando.entando.aps.system.init.util.TestQueryExtractor;
-import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
-import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
-import org.entando.entando.aps.system.services.api.ApiCatalogManagerIntegrationTest;
-import org.entando.entando.aps.system.services.api.ApiCatalogManagerTest;
-import org.entando.entando.aps.system.services.cache.CacheInfoManagerIntegrationTest;
-import org.entando.entando.aps.system.services.cache.CacheInfoManagerTest;
-import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
-import org.entando.entando.aps.system.services.dataobject.TestDataObjectManager;
-import org.entando.entando.aps.system.services.dataobject.TestDataObjectSearcherDAO;
-import org.entando.entando.aps.system.services.dataobject.TestUtilizer;
-import org.entando.entando.aps.system.services.dataobject.TestValidateDataObject;
-import org.entando.entando.aps.system.services.dataobject.authorization.TestDataObjectAuthorization;
-import org.entando.entando.aps.system.services.dataobject.entity.TestDataObjectEntityManager;
-import org.entando.entando.aps.system.services.dataobject.parse.TestDataObjectDOM;
-import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectListHelper;
-import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectViewerHelper;
-import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
-import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
-import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
-import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
-import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
-import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
-import org.entando.entando.aps.system.services.userprofile.TestUserManager;
-import org.entando.entando.aps.system.services.userprofile.TestUserProfileManager;
-import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
-
 import com.agiletec.aps.system.common.entity.TestEntityManager;
 import com.agiletec.aps.system.services.authorization.TestAuthorityManager;
 import com.agiletec.aps.system.services.authorization.TestAuthorizationManager;
@@ -75,10 +47,38 @@ import com.agiletec.aps.util.TestHtmlHandler;
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestGroupUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
-
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.system.init.InitializerManagerTest;
+import org.entando.entando.aps.system.init.util.TestQueryExtractor;
+import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
+import org.entando.entando.aps.system.services.actionlog.TestActionLogManager;
+import org.entando.entando.aps.system.services.api.ApiCatalogManagerIntegrationTest;
+import org.entando.entando.aps.system.services.api.ApiCatalogManagerTest;
+import org.entando.entando.aps.system.services.cache.CacheInfoManagerIntegrationTest;
+import org.entando.entando.aps.system.services.cache.CacheInfoManagerTest;
+import org.entando.entando.aps.system.services.dataobject.DataObjectManagerTest;
+import org.entando.entando.aps.system.services.dataobject.TestDataObjectDAO;
+import org.entando.entando.aps.system.services.dataobject.TestDataObjectManager;
+import org.entando.entando.aps.system.services.dataobject.TestDataObjectSearcherDAO;
+import org.entando.entando.aps.system.services.dataobject.TestUtilizer;
+import org.entando.entando.aps.system.services.dataobject.TestValidateDataObject;
+import org.entando.entando.aps.system.services.dataobject.authorization.TestDataObjectAuthorization;
+import org.entando.entando.aps.system.services.dataobject.entity.TestDataObjectEntityManager;
+import org.entando.entando.aps.system.services.dataobject.parse.TestDataObjectDOM;
+import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectListHelper;
+import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectViewerHelper;
+import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
+import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
+import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
+import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
+import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
+import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
+import org.entando.entando.aps.system.services.userprofile.TestUserManager;
+import org.entando.entando.aps.system.services.userprofile.UserProfileManagerIntegrationTest;
+import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTest;
+import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 
 /**
  * @author W.Ambu
@@ -153,9 +153,10 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestLocalStorageManager.class);
 		//
-		suite.addTestSuite(TestUserProfileManager.class);
+		suite.addTestSuite(UserProfileManagerIntegrationTest.class);
 		suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
-		//
+        suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
+        //
 		suite.addTestSuite(TestGuiFragmentManager.class);
 		//
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
@@ -175,6 +176,7 @@ public class AllTests {
 
 		suite.addTestSuite(TestDataObjectDAO.class);
 		suite.addTestSuite(TestDataObjectManager.class);
+		suite.addTest(new JUnit4TestAdapter(DataObjectManagerTest.class));
 		suite.addTestSuite(TestDataObjectSearcherDAO.class);
 		suite.addTestSuite(TestValidateDataObject.class);
 		suite.addTestSuite(TestUtilizer.class);

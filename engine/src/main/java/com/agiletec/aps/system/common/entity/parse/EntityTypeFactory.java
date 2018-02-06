@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,8 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import java.util.List;
 
 /**
  * This class, which serves the ApsEntity managers, is used to obtain the Entity Types.
@@ -31,24 +33,22 @@ import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
  */
 public class EntityTypeFactory implements IEntityTypeFactory {
 
-	private static final Logger _logger = LoggerFactory.getLogger(EntityTypeFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(EntityTypeFactory.class);
 	
-	/**
-	 * Return the Map of the prototypes of the Entity Types (indexed by their code) that the
-	 * entity service is going to handle.
-	 * The structure of the Entity Types is obtained from a configuration XML.
-	 * @param entityClass The class of the entity. 
-	 * @param configItemName The configuration item where the Entity Types are defined.
-	 * @param entityTypeDom The DOM class that parses the configuration XML.
-	 * @param entityDom The DOM class that parses the XML representing the single (implemented) entity.
-	 * @return The map of the Entity Types Prototypes, indexed by code. 
-	 * @deprecated Since Entando 2.4.1, use getEntityTypes(Class, String, IEntityTypeDOM, String, IApsEntityDOM)
-	 * @throws ApsSystemException If errors occurs during the parsing process of the XML.
-	 */
+	private ConfigInterface configManager;
+	
 	@Override
-	public Map<String, IApsEntity> getEntityTypes(Class entityClass, String configItemName, 
-			IEntityTypeDOM entityTypeDom, IApsEntityDOM entityDom) throws ApsSystemException {
-		return this.getEntityTypes(entityClass, configItemName, entityTypeDom, null, entityDom);
+	public List<SmallEntityType> extractSmallEntityTypes(String configItemName, IEntityTypeDOM entityTypeDom) throws ApsSystemException {
+		String xml = this.getConfigManager().getConfigItem(configItemName);
+		return entityTypeDom.extractSmallEntityTypes(xml);
+	}
+	
+	@Override
+	public IApsEntity extractEntityType(String typeCode, Class entityClass, String configItemName, 
+			IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
+		String xml = this.getConfigManager().getConfigItem(configItemName);
+		logger.debug("{} : {}", configItemName , xml);
+		return entityTypeDom.extractEntityType(typeCode, xml, entityClass, entityDom, entityManagerName);
 	}
 	
 	/**
@@ -64,17 +64,15 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 	 * @throws ApsSystemException If errors occurs during the parsing process of the XML. 
 	 */
 	@Override
-	public Map<String, IApsEntity> getEntityTypes(Class entityClass, String configItemName, 
+	public Map<String, IApsEntity> extractEntityTypes(Class entityClass, String configItemName, 
 			IEntityTypeDOM entityTypeDom, String entityManagerName, IApsEntityDOM entityDom) throws ApsSystemException {
 		Map<String, IApsEntity> entityTypes = null;
 		try {
 			String xml = this.getConfigManager().getConfigItem(configItemName);
-			_logger.debug("{} : {}", configItemName , xml);
-			entityTypeDom.initEntityTypeDOM(xml, entityClass, entityDom, entityManagerName);
-			entityTypes = entityTypeDom.getEntityTypes();
+			logger.debug("{} : {}", configItemName , xml);
+			entityTypes = entityTypeDom.extractEntityTypes(xml, entityClass, entityDom, entityManagerName);
 		} catch (Throwable t) {
-			_logger.error("Error in the entities initialization process. configItemName:{}", configItemName, t);
-			//ApsSystemUtils.logThrowable(t, this, "getEntityTypes");
+			logger.error("Error in the entities initialization process. configItemName:{}", configItemName, t);
 			throw new ApsSystemException("Error in the entities initialization process", t);
 		}
 		return entityTypes;
@@ -86,26 +84,17 @@ public class EntityTypeFactory implements IEntityTypeFactory {
 			String xml = entityTypeDom.getXml(entityTypes);
 			this.getConfigManager().updateConfigItem(configItemName, xml);
 		} catch (Throwable t) {
-			_logger.error("Error detected while updating the Entity Types. configItemName: {}", configItemName, t);
-			//ApsSystemUtils.logThrowable(t, this, "updateEntityTypes");
+			logger.error("Error detected while updating the Entity Types. configItemName: {}", configItemName, t);
 			throw new ApsSystemException("Error detected while updating the Entity Types", t);
 		}
 	}
 	
 	protected ConfigInterface getConfigManager() {
-		return this._configManager;
+		return this.configManager;
 	}
 	
-	/**
-	 * Set up the manager of the system configuration.
-	 * This method is silently invoked when parsing the XML that defines the service in the Spring
-	 * configuration file. It cannot be invoked directly.
-	 * @param configManager The manager of the system configuration.
-	 */
 	public void setConfigManager(ConfigInterface configManager) {
-		this._configManager = configManager;
+		this.configManager = configManager;
 	}
-	
-	private ConfigInterface _configManager;
 	
 }

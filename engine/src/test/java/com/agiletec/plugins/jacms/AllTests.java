@@ -14,6 +14,7 @@
 package com.agiletec.plugins.jacms;
 
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
+import com.agiletec.plugins.jacms.aps.system.services.content.ContentManagerTest;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestCategoryUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestContentDAO;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestContentManager;
@@ -35,6 +36,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceDAO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.TestResourceDOM;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.entando.entando.plugins.jacms.aps.system.services.api.TestApiContentInterface;
@@ -59,6 +61,8 @@ public class AllTests {
 		suite.addTestSuite(TestContentAttributeIterator.class);
 		suite.addTestSuite(TestContentDAO.class);
 		suite.addTestSuite(TestContentManager.class);
+        suite.addTest(new JUnit4TestAdapter(ContentManagerTest.class));
+
 		suite.addTestSuite(TestPublicContentSearcherDAO.class);
 		suite.addTestSuite(TestValidateContent.class);
 		//

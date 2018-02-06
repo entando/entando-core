@@ -1,11 +1,26 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.userprofile;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
+import com.agiletec.aps.system.common.entity.parse.IApsEntityDOM;
+import com.agiletec.aps.system.common.entity.parse.IEntityTypeFactory;
+import com.agiletec.aps.system.common.entity.parse.attribute.MonoTextAttributeHandler;
+import com.agiletec.aps.system.common.notify.INotifyManager;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.userprofile.event.ProfileChangedEvent;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
@@ -17,14 +32,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
-import com.agiletec.aps.system.common.entity.parse.IApsEntityDOM;
-import com.agiletec.aps.system.common.entity.parse.IEntityTypeFactory;
-import com.agiletec.aps.system.common.entity.parse.attribute.MonoTextAttributeHandler;
-import com.agiletec.aps.system.common.notify.INotifyManager;
-import com.agiletec.aps.system.exception.ApsSystemException;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 public class UserProfileManagerTest {
 

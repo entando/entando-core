@@ -76,7 +76,6 @@ import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManage
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
 import org.entando.entando.aps.system.services.userprofile.TestUserManager;
-import org.entando.entando.aps.system.services.userprofile.UserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerIntegrationTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTest;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
@@ -155,7 +154,6 @@ public class AllTests {
 		suite.addTestSuite(TestLocalStorageManager.class);
 		//
 		suite.addTestSuite(UserProfileManagerIntegrationTest.class);
-		suite.addTest(new JUnit4TestAdapter(UserProfileManager.class));
 		suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
         suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
         //

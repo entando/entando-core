@@ -13,11 +13,12 @@
  */
 package com.agiletec.aps.system.common.entity.cache;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -27,7 +28,7 @@ import org.springframework.cache.Cache;
  */
 public class EntityManagerCacheWrapper extends AbstractCacheWrapper implements IEntityManagerCacheWrapper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(EntityManagerCacheWrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(EntityManagerCacheWrapper.class);
 	
 	private String entityManagerName;
 

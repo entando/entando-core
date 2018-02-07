@@ -25,6 +25,11 @@
     
     <bean id="jacmsContentModelManager" class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManager" 
           parent="abstractService" >
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.cache.ContentModelManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
         <property name="contentModelDAO" >
             <bean class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelDAO">
                 <property name="dataSource" ref="portDataSource" />

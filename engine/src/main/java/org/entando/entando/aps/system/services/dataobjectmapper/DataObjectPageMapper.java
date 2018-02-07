@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmapper;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,13 +21,15 @@ import java.util.Map;
  * Rappresentazione della mappa dei datatype pubblicati esplicitamene nelle
  * pagine del portale.
  */
-public class DataObjectPageMapper {
+public class DataObjectPageMapper implements Serializable {
 
+	private Map<String, String> dataTypePageMapper;
+	
     /**
      * Inizializza la mappa.
      */
     public DataObjectPageMapper() {
-        this._dataTypePageMapper = new HashMap<String, String>();
+        this.dataTypePageMapper = new HashMap<>();
     }
 
     /**
@@ -35,8 +38,8 @@ public class DataObjectPageMapper {
      * @param dataId L'id del datatype.
      * @param pageCode Il codice della pagina nel quale è publicato il datatype.
      */
-    protected void add(String dataId, String pageCode) {
-        this._dataTypePageMapper.put(dataId, pageCode);
+    public void add(String dataId, String pageCode) {
+        this.dataTypePageMapper.put(dataId, pageCode);
     }
 
     /**
@@ -45,7 +48,7 @@ public class DataObjectPageMapper {
      * @return La mappa dei datatypes pubblicati.
      */
     protected Map<String, String> getDataObjectPageMapper() {
-        return _dataTypePageMapper;
+        return dataTypePageMapper;
     }
 
     /**
@@ -57,8 +60,8 @@ public class DataObjectPageMapper {
      * @return Il codice pagina nel quale è stato publicato il datatype
      * specificato.
      */
-    protected String getPageCode(String dataId) {
-        return (String) _dataTypePageMapper.get(dataId);
+    public String getPageCode(String dataId) {
+        return this.dataTypePageMapper.get(dataId);
     }
 
     /**
@@ -67,7 +70,7 @@ public class DataObjectPageMapper {
      * @param dataId L'id del datatype.
      */
     protected void removeDataObjectPageMapping(String dataId) {
-        this._dataTypePageMapper.remove(dataId);
+        this.dataTypePageMapper.remove(dataId);
     }
 
     /**
@@ -78,9 +81,7 @@ public class DataObjectPageMapper {
      * pagina, false in caso contrario.
      */
     protected boolean containDataObject(String dataId) {
-        return this._dataTypePageMapper.containsKey(dataId);
-    }
-
-    private Map<String, String> _dataTypePageMapper;
+        return this.dataTypePageMapper.containsKey(dataId);
+	}
 
 }

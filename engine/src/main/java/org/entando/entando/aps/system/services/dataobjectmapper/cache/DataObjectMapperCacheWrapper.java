@@ -44,13 +44,6 @@ public class DataObjectMapperCacheWrapper extends AbstractCacheWrapper implement
 		}
 	}
 
-	/**
-	 * Cerca i DataObject pubblicati e li aggiunge al mapper. Nella ricerca
-	 * vengono considerati solamente i DataObject pubblicati nel mainFrame e la
-	 * ricerca viene estesa anche alle pagine figlie di quella specificate.
-	 *
-	 * @param page La pagina nel qual cercare i DataObject pubblicati.
-	 */
 	private void searchPublishedDataObjects(DataObjectPageMapper dataObjectPageMapper, IPage page, IPageManager pageManager) {
 		PageModel pageModel = page.getModel();
 		if (pageModel != null) {
@@ -65,13 +58,12 @@ public class DataObjectMapperCacheWrapper extends AbstractCacheWrapper implement
 			if (null != dataId) {
 				dataObjectPageMapper.add(dataId, page.getCode());
 			}
-			boolean isOnline = page.isOnline();
-			String[] children = page.getChildrenCodes();
-			for (int i = 0; i < children.length; i++) {
-				IPage child = (isOnline)
-						? pageManager.getOnlinePage(children[i])
-						: pageManager.getDraftPage(children[i]);
-				this.searchPublishedDataObjects(dataObjectPageMapper, child, pageManager);
+			String[] childCodes = page.getChildrenCodes();
+			for (String childCode : childCodes) {
+				IPage child = pageManager.getOnlinePage(childCode);
+				if (null != child) {
+					this.searchPublishedDataObjects(dataObjectPageMapper, child, pageManager);
+				}
 			}
 		}
 	}

@@ -70,6 +70,8 @@ import org.entando.entando.aps.system.services.dataobject.parse.TestDataObjectDO
 import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectListHelper;
 import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectViewerHelper;
 import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
+import org.entando.entando.aps.system.services.dataobjectmapper.DataObjectMapperManagerTest;
+import org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObjectMapperCacheWrapperTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
@@ -87,7 +89,7 @@ public class AllTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for APS");
-
+		
 		//
 		suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
 		//
@@ -166,7 +168,8 @@ public class AllTests {
 		// DATA OBJECT
 		suite.addTestSuite(TestDataObjectModelDAO.class);
 		suite.addTestSuite(TestDataObjectModelManager.class);
-
+		suite.addTest(new JUnit4TestAdapter(DataObjectMapperCacheWrapperTest.class));
+		suite.addTest(new JUnit4TestAdapter(DataObjectMapperManagerTest.class));
 		suite.addTestSuite(TestDataObjectAuthorization.class);
 		suite.addTestSuite(TestDataObjectEntityManager.class);
 		suite.addTestSuite(TestDataObjectDOM.class);
@@ -183,7 +186,7 @@ public class AllTests {
 		suite.addTestSuite(TestDataObjectDispenser.class);
 
 		suite.addTestSuite(TestSearchEngineManager.class);
-
+		
 		return suite;
 	}
 

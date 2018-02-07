@@ -59,7 +59,7 @@ public class KeyGeneratorManager extends AbstractService implements IKeyGenerato
      * @throws ApsSystemException In caso di errore 
      * nell'aggiornamento della chiave corrente.
      */
-    public int getUniqueKeyCurrentValue() throws ApsSystemException {
+    public synchronized int getUniqueKeyCurrentValue() throws ApsSystemException {
         int key = this.getCacheWrapper().getUniqueKeyCurrentValue() + 1;
         this.updateKey(key);
         return key;

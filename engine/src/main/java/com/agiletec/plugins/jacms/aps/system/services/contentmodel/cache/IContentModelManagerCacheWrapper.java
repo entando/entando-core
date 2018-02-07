@@ -23,7 +23,7 @@ public interface IContentModelManagerCacheWrapper {
 
     public static final String CACHE_NAME = "Entando_ContentModelManager";
 
-    public static final String CACHE_NAME_PREFIX = "ContentModelManager_lang_";
+    public static final String CACHE_NAME_PREFIX = "ContentModelManager_model_";
     public static final String CODES_CACHE_NAME = "ContentModelManager_codes";
 
     public void initCache(IContentModelDAO contentModelDao) throws ApsSystemException;

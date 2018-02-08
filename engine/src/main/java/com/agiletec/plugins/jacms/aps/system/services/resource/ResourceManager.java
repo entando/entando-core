@@ -13,25 +13,6 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.resource;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.CategoryUtilizer;
-import com.agiletec.aps.system.services.category.ICategoryManager;
-import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
-import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
-import com.agiletec.aps.util.DateConverter;
-import com.agiletec.plugins.jacms.aps.system.services.resource.event.ResourceChangedEvent;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMonoInstanceResource;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMultiInstanceResource;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
-import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +25,25 @@ import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.CategoryUtilizer;
+import com.agiletec.aps.system.services.category.ICategoryManager;
+import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
+import com.agiletec.aps.system.services.group.GroupUtilizer;
+import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
+import com.agiletec.aps.util.DateConverter;
+import com.agiletec.plugins.jacms.aps.system.services.resource.cache.IResourceManagerCacheWrapper;
+import com.agiletec.plugins.jacms.aps.system.services.resource.event.ResourceChangedEvent;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMonoInstanceResource;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMultiInstanceResource;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
+import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -52,14 +52,70 @@ import org.xml.sax.InputSource;
  * Servizio gestore tipi di risorse (immagini, audio, video, etc..).
  * @author W.Ambu - E.Santoboni
  */
-public class ResourceManager extends AbstractService 
-		implements IResourceManager, GroupUtilizer, CategoryUtilizer {
+public class ResourceManager extends AbstractService implements IResourceManager, GroupUtilizer, CategoryUtilizer {
 	
-	private static final Logger _logger = LoggerFactory.getLogger(ResourceManager.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 	
+    private IResourceDAO resourceDao;
+
+    private ICategoryManager categoryManager;
+    
+    private IResourceManagerCacheWrapper cacheWrapper;
+
+    /**
+     * Mappa dei prototipi dei tipi di risorsa
+     */
+    private Map<String, ResourceInterface> resourceTypes;
+
+    /**
+     * Restutuisce il dao in uso al manager.
+     * @return Il dao in uso al manager.
+     */
+    protected IResourceDAO getResourceDAO() {
+        return resourceDao;
+    }
+
+    /**
+     * Setta il dao in uso al manager.
+     * @param resourceDao Il dao in uso al manager.
+     */
+    public void setResourceDAO(IResourceDAO resourceDao) {
+        this.resourceDao = resourceDao;
+    }
+
+    protected ICategoryManager getCategoryManager() {
+        return categoryManager;
+    }
+
+    public void setCategoryManager(ICategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
+    }
+   
+    protected IResourceManagerCacheWrapper getCacheWrapper() {
+        return cacheWrapper;
+    }
+
+    public void setCacheWrapper(IResourceManagerCacheWrapper cacheWrapper) {
+        this.cacheWrapper = cacheWrapper;
+    }
+
+    @Override
+    public int getStatus() {
+        return this.getCacheWrapper().getStatus();
+    }
+
+    protected void setStatus(int status) {
+        this.getCacheWrapper().updateStatus(status);
+    }
+
+    public void setResourceTypes(Map<String, ResourceInterface> resourceTypes) {
+        this.resourceTypes = resourceTypes;
+    }
+
 	@Override
 	public void init() throws Exception {
-    	_logger.debug("{} ready. Initialized {} resource types", this.getClass().getName(), this._resourceTypes.size());
+        this.getCacheWrapper().initCache(IResourceManager.STATUS_READY);
+        logger.debug("{} ready. Initialized {} resource types", this.getClass().getName(), this.resourceTypes.size());
 	}
 	
 	/**
@@ -70,7 +126,7 @@ public class ResourceManager extends AbstractService
      */
 	@Override
 	public ResourceInterface createResourceType(String typeCode) {
-    	ResourceInterface resource = (ResourceInterface) _resourceTypes.get(typeCode);
+        ResourceInterface resource = (ResourceInterface) resourceTypes.get(typeCode);
         return resource.getResourcePrototype();
     }
     
@@ -80,7 +136,7 @@ public class ResourceManager extends AbstractService
      */
 	@Override
 	public List<String> getResourceTypeCodes() {
-    	return new ArrayList<String>(this._resourceTypes.keySet());
+        return new ArrayList<String>(this.resourceTypes.keySet());
     }
     
     /**
@@ -97,7 +153,7 @@ public class ResourceManager extends AbstractService
     		this.getResourceDAO().addResource(newResource);
     	} catch (Throwable t) {
 			newResource.deleteResourceInstances();
-			_logger.error("Error adding resource", t);
+            logger.error("Error adding resource", t);
 			throw new ApsSystemException("Error adding resource", t);
     	}
 		return newResource;
@@ -114,7 +170,7 @@ public class ResourceManager extends AbstractService
 			this.generateAndSetResourceId(resource, resource.getId());
     		this.getResourceDAO().addResource(resource);
     	} catch (Throwable t) {
-    		_logger.error("Error adding resource", t);
+            logger.error("Error adding resource", t);
 			throw new ApsSystemException("Error adding resource", t);
     	}
     }
@@ -147,7 +203,7 @@ public class ResourceManager extends AbstractService
 				this.notifyResourceChanging(updatedResource);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error updating resource", t);
+            logger.error("Error updating resource", t);
 			throw new ApsSystemException("Error updating resource", t);
 		}
 	}
@@ -163,7 +219,7 @@ public class ResourceManager extends AbstractService
 			this.getResourceDAO().updateResource(resource);
 			this.notifyResourceChanging(resource);
 		} catch (Throwable t) {
-			_logger.error("Error updating resource", t);
+            logger.error("Error updating resource", t);
 			throw new ApsSystemException("Error updating resource", t);
 		}
 	}
@@ -213,7 +269,7 @@ public class ResourceManager extends AbstractService
     	try {
     		resourcesId = this.getResourceDAO().searchResourcesId(type, text, filename, categoryCode, groupCodes);
     	} catch (Throwable t) {
-    		_logger.error("Error searching resources id", t);
+            logger.error("Error searching resources id", t);
 			throw new ApsSystemException("Error searching resources id", t);
     	}
     	return resourcesId;
@@ -226,7 +282,7 @@ public class ResourceManager extends AbstractService
     	try {
     		resourcesId = this.getResourceDAO().searchResourcesId(filters, categoryCode, groupCodes);
     	} catch (Throwable t) {
-    		_logger.error("Error searching resources id", t);
+            logger.error("Error searching resources id", t);
 			throw new ApsSystemException("Error searching resources id", t);
     	}
     	return resourcesId;
@@ -262,7 +318,7 @@ public class ResourceManager extends AbstractService
     			resource.setMasterFileName(resourceVo.getMasterFileName());
     		}
     	} catch (Throwable t) {
-    		_logger.error("Error loading resource : id {}", id, t);
+            logger.error("Error loading resource : id {}", id, t);
     		throw new ApsSystemException("Error loading resource : id " + id, t);
     	}
     	return resource;
@@ -301,7 +357,7 @@ public class ResourceManager extends AbstractService
     		ResourceHandler handler = new ResourceHandler(resource, this.getCategoryManager());
     		parser.parse(is, handler);
     	} catch (Throwable t) {
-    		_logger.error("Error loading resource", t);
+            logger.error("Error loading resource", t);
     		throw new ApsSystemException("Error loading resource", t);
     	}
     }
@@ -317,7 +373,7 @@ public class ResourceManager extends AbstractService
     		this.getResourceDAO().deleteResource(resource.getId());
     		resource.deleteResourceInstances();
     	} catch (Throwable t) {
-    		_logger.error("Error deleting resource", t);
+            logger.error("Error deleting resource", t);
     		throw new ApsSystemException("Error deleting resource", t);
     	}
     }
@@ -334,7 +390,7 @@ public class ResourceManager extends AbstractService
     
     protected void startResourceReloaderThread(String resourceTypeCode, int operationCode) throws ApsSystemException {
     	if (this.getStatus() != STATUS_READY) {
-    		_logger.info("Service not ready : status {}", this.getStatus());
+            logger.info("Service not ready : status {}", this.getStatus());
     		return;
 		}
     	String threadName = this.getName() + "_resourceReloader_" + DateConverter.getFormattedDate(new Date(), "yyyyMMdd");
@@ -343,9 +399,9 @@ public class ResourceManager extends AbstractService
 			ResourceReloaderThread thread = new ResourceReloaderThread(this, operationCode, resources);
     		thread.setName(threadName);
 			thread.start();
-			_logger.info("Reloader started");
+            logger.info("Reloader started");
 		} catch (Throwable t) {
-			_logger.error("Error refreshing Resource of type {} - Thread Name '{}'",resourceTypeCode, threadName, t);
+            logger.error("Error refreshing Resource of type {} - Thread Name '{}'", resourceTypeCode, threadName, t);
 		}
 	}
     
@@ -366,7 +422,7 @@ public class ResourceManager extends AbstractService
     		}
     		this.updateResource(resource);
 		} catch (Throwable t) {
-			_logger.error("Error reloading master file name of resource {}", resourceId, t);
+            logger.error("Error reloading master file name of resource {}", resourceId, t);
 		}
     }
     
@@ -376,7 +432,7 @@ public class ResourceManager extends AbstractService
     		resource.reloadResourceInstances();
     		this.updateResource(resource);
 		} catch (Throwable t) {
-			_logger.error("Error refreshing resource instances of resource {}", resourceId, t);
+            logger.error("Error refreshing resource instances of resource {}", resourceId, t);
 		}
     }
     
@@ -388,7 +444,7 @@ public class ResourceManager extends AbstractService
 	    	allowedGroups.add(groupName);
 	    	resourcesId = this.getResourceDAO().searchResourcesId(null, null, null, null, allowedGroups);
 		} catch (Throwable t) {
-			_logger.error("Error searching group utilizers : group '{}'", groupName, t);
+            logger.error("Error searching group utilizers : group '{}'", groupName, t);
 			throw new ApsSystemException("Error searching group utilizers : group '" + groupName + "'", t);
 		}
 		return resourcesId;
@@ -400,7 +456,7 @@ public class ResourceManager extends AbstractService
     	try {
 	    	resourcesId = this.getResourceDAO().searchResourcesId(null, null, null, categoryCode, null);
     	} catch (Throwable t) {
-    		_logger.error("Error searching category utilizers : category code '{}'", categoryCode, t);
+            logger.error("Error searching category utilizers : category code '{}'", categoryCode, t);
 			throw new ApsSystemException("Error searching category utilizers : category code '" + categoryCode + "'", t);
 		}
     	return resourcesId;
@@ -410,7 +466,7 @@ public class ResourceManager extends AbstractService
 	public void reloadCategoryReferences(String categoryCode) throws ApsSystemException {
 		try {
 			List<String> resources = this.getCategoryUtilizersForReloadReferences(categoryCode);
-			_logger.info("start reload category references for {} resources", resources.size());
+            logger.info("start reload category references for {} resources", resources.size());
 			ReloadingCategoryReferencesThread th = null;
 			Thread currentThread = Thread.currentThread();
 			if (currentThread instanceof ReloadingCategoryReferencesThread) {
@@ -427,7 +483,7 @@ public class ResourceManager extends AbstractService
 				}
 			}
     	} catch (Throwable t) {
-			_logger.error("Error searching category utilizers : category code '{}'", categoryCode, t);
+            logger.error("Error searching category utilizers : category code '{}'", categoryCode, t);
 			throw new ApsSystemException("Error searching category utilizers : category code '" + categoryCode + "'", t);
 		}
 	}
@@ -442,51 +498,5 @@ public class ResourceManager extends AbstractService
 		}
     	return resourcesId;
 	}
-	
-    @Override
-	public int getStatus() {
-		return this._status;
-	}
-	protected void setStatus(int status) {
-		this._status = status;
-	}
-    
-	/**
-     * Restutuisce il dao in uso al manager.
-     * @return Il dao in uso al manager.
-     */
-    protected IResourceDAO getResourceDAO() {
-		return _resourceDao;
-	}
-    
-    /**
-     * Setta il dao in uso al manager.
-     * @param resourceDao Il dao in uso al manager.
-     */
-	public void setResourceDAO(IResourceDAO resourceDao) {
-		this._resourceDao = resourceDao;
-	}
-	
-	public void setResourceTypes(Map<String, ResourceInterface> resourceTypes) {
-		this._resourceTypes = resourceTypes;
-	}
-    
-	protected ICategoryManager getCategoryManager() {
-		return _categoryManager;
-	}
-	public void setCategoryManager(ICategoryManager categoryManager) {
-		this._categoryManager = categoryManager;
-	}
-	
-	/**
-     * Mappa dei prototipi dei tipi di risorsa
-     */
-    private Map<String, ResourceInterface> _resourceTypes;
-    
-    private int _status;
-    
-    private IResourceDAO _resourceDao;
-    
-    private ICategoryManager _categoryManager;
 	
 }

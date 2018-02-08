@@ -71,6 +71,8 @@ import org.entando.entando.aps.system.services.dataobject.parse.TestDataObjectDO
 import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectListHelper;
 import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectViewerHelper;
 import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
+import org.entando.entando.aps.system.services.dataobjectmapper.DataObjectMapperManagerTest;
+import org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObjectMapperCacheWrapperTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerIntegrationTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
@@ -117,8 +119,8 @@ public class AllTests {
 		suite.addTest(new JUnit4TestAdapter(I18nManagerCacheWrapperTest.class));
 		//
 		suite.addTestSuite(TestKeyGeneratorDAO.class);
-        suite.addTestSuite(KeyGeneratorManagerIntegrationTest.class);
-        suite.addTest(new JUnit4TestAdapter(KeyGeneratorManagerTest.class));
+		suite.addTestSuite(KeyGeneratorManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(KeyGeneratorManagerTest.class));
 		//
 		suite.addTestSuite(LangManagerIntegrationTest.class);
 		suite.addTest(new JUnit4TestAdapter(LangManagerTest.class));
@@ -158,8 +160,8 @@ public class AllTests {
 		//
 		suite.addTestSuite(UserProfileManagerIntegrationTest.class);
 		suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
-        suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
-        //
+		suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
+		//
 		suite.addTestSuite(TestGuiFragmentManager.class);
 		//
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
@@ -168,9 +170,10 @@ public class AllTests {
 		suite.addTestSuite(TestQueryExtractor.class);
 		// DATA OBJECT
 		suite.addTestSuite(TestDataObjectModelDAO.class);
-        suite.addTestSuite(DataObjectModelManagerIntegrationTest.class);
-        suite.addTest(new JUnit4TestAdapter(DataObjectModelManagerTest.class));
-
+		suite.addTestSuite(DataObjectModelManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(DataObjectModelManagerTest.class));
+		suite.addTest(new JUnit4TestAdapter(DataObjectMapperCacheWrapperTest.class));
+		suite.addTest(new JUnit4TestAdapter(DataObjectMapperManagerTest.class));
 		suite.addTestSuite(TestDataObjectAuthorization.class);
 		suite.addTestSuite(TestDataObjectEntityManager.class);
 		suite.addTestSuite(TestDataObjectDOM.class);

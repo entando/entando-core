@@ -20,14 +20,14 @@ import com.agiletec.aps.system.common.entity.parse.EntityTypeDOM;
  */
 public class UserProfileTypeDOM extends EntityTypeDOM {
 
-	@Override
-	protected String getEntityTypeRootElementName() {
-		return "profiletype";
-	}
-	
-	@Override
-	protected String getEntityTypesRootElementName() {
-		return "profiletypes";
-	}
-	
+    @Override
+    protected String getEntityTypeRootElementName() {
+        return "profiletype";
+    }
+
+    @Override
+    protected String getEntityTypesRootElementName() {
+        return "profiletypes";
+    }
+
 }

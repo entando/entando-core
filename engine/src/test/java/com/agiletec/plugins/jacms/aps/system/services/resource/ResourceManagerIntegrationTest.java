@@ -35,7 +35,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
 /**
  * @author W.Ambu - E.Santoboni
  */
-public class TestResourceManager extends BaseTestCase {
+public class ResourceManagerIntegrationTest extends BaseTestCase {
 	
 	@Override
     protected void setUp() throws Exception {

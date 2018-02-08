@@ -64,6 +64,8 @@
 					  p:name="Entando_ApiCatalogManager" />
        			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_KeyGeneratorManager" />
+       			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_ResourceManager" />
 			</set>
 		</property>
 	</bean>

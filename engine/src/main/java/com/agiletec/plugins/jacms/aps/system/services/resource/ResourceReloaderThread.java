@@ -53,7 +53,6 @@ public class ResourceReloaderThread extends Thread {
 			}
 		} catch (Throwable t) {
 			_logger.error("error in run", t);
-			//ApsSystemUtils.logThrowable(t, this, "run");
 		} finally {
 			this._resourceManager.setStatus(IResourceManager.STATUS_READY);
 		}

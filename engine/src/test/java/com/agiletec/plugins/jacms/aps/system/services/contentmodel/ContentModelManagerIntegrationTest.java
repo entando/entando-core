@@ -25,7 +25,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContent
  * @version 1.1
  * @author W.Ambu - S.Didaci - C.Siddi
  */
-public class TestContentModelManager extends BaseTestCase {
+public class ContentModelManagerIntegrationTest extends BaseTestCase {
 	
     protected void setUp() throws Exception {
         super.setUp();

@@ -27,8 +27,9 @@ import com.agiletec.plugins.jacms.aps.system.services.content.parse.TestContentD
 import com.agiletec.plugins.jacms.aps.system.services.content.util.TestContentAttributeIterator;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.TestContentListHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.TestContentViewerHelper;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManagerIntegrationTest;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManagerTest;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.TestContentModelDAO;
-import com.agiletec.plugins.jacms.aps.system.services.contentmodel.TestContentModelManager;
 import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.TestContentPageMapperManager;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.TestContentDispenser;
 import com.agiletec.plugins.jacms.aps.system.services.linkresolver.TestLinkResolverManager;
@@ -67,7 +68,8 @@ public class AllTests {
 		suite.addTestSuite(TestValidateContent.class);
 		//
 		suite.addTestSuite(TestContentModelDAO.class);
-		suite.addTestSuite(TestContentModelManager.class);
+        suite.addTestSuite(ContentModelManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(ContentModelManagerTest.class));
 		//
 		suite.addTestSuite(TestContentPageMapperManager.class);
 		//

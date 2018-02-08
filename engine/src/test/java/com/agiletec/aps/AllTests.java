@@ -71,8 +71,9 @@ import org.entando.entando.aps.system.services.dataobject.parse.TestDataObjectDO
 import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectListHelper;
 import org.entando.entando.aps.system.services.dataobject.widget.TestDataObjectViewerHelper;
 import org.entando.entando.aps.system.services.dataobjectdispender.TestDataObjectDispenser;
+import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerIntegrationTest;
+import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
-import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelManager;
 import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
@@ -167,7 +168,8 @@ public class AllTests {
 		suite.addTestSuite(TestQueryExtractor.class);
 		// DATA OBJECT
 		suite.addTestSuite(TestDataObjectModelDAO.class);
-		suite.addTestSuite(TestDataObjectModelManager.class);
+        suite.addTestSuite(DataObjectModelManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(DataObjectModelManagerTest.class));
 
 		suite.addTestSuite(TestDataObjectAuthorization.class);
 		suite.addTestSuite(TestDataObjectEntityManager.class);

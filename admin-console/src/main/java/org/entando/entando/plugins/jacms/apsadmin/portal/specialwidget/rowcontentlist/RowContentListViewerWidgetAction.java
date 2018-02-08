@@ -204,11 +204,12 @@ public class RowContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		return this._pages;
 	}
 
-	protected void addPages(IPage page, List<IPage> pages) {
+	private void addPages(IPage page, List<IPage> pages) {
 		pages.add(page);
-		IPage[] children = page.getChildren();
+		String[] children = page.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			this.addPages(children[i], pages);
+			IPage child = this.getPageManager().getOnlinePage(children[i]);
+			this.addPages(child, pages);
 		}
 	}
 

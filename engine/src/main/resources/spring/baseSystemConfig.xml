@@ -81,7 +81,6 @@
         <value>org.entando.entando.aps.system.init.model.servdb.UserProfileAttributeRole</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecord</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecordRelation</value>
-
         <value>org.entando.entando.aps.system.init.model.servdb.DataObjectModel</value>
         <value>org.entando.entando.aps.system.init.model.servdb.DataObject</value>
         <value>org.entando.entando.aps.system.init.model.servdb.DataObjectRelation</value>
@@ -241,6 +240,11 @@
                 </entry>
             </map>
         </property>
+		<property name="cacheWrapper">
+			<bean class="org.entando.entando.aps.system.init.cache.InitializerManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
     </bean>
 
     <bean class="org.entando.entando.aps.system.init.SystemPostProcessor" />

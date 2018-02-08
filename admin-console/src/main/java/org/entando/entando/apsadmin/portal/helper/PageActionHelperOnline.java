@@ -43,4 +43,9 @@ public class PageActionHelperOnline extends AbstractPageActionHelper {
 		return page != null && page.isOnline() && super.isPageAllowed(page, groupCodes, alsoFreeViewPages);
 	}
 
+	@Override
+	protected boolean isDraftPageHepler() {
+		return true;
+	}
+
 }

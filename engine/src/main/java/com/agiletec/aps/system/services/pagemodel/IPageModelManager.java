@@ -18,27 +18,30 @@ import java.util.Collection;
 
 /**
  * Interface of the page models manager.
+ *
  * @author E.Santoboni
  */
 public interface IPageModelManager {
 
 	/**
 	 * Return a Page Model by the code.
+	 *
 	 * @param code The code of the Page Model
 	 * @return The required Page Model
 	 */
 	public PageModel getPageModel(String code);
-	
+
 	/**
 	 * Return the collection of defined Page Models
+	 *
 	 * @return The collection of defined Page Models
 	 */
 	public Collection<PageModel> getPageModels();
-	
+
 	public void addPageModel(PageModel pageModel) throws ApsSystemException;
-	
+
 	public void updatePageModel(PageModel pageModel) throws ApsSystemException;
-	
+
 	public void deletePageModel(String code) throws ApsSystemException;
-	
+
 }

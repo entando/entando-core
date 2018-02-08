@@ -20,7 +20,7 @@ import java.util.Date;
  * Rappresentazione di un'utente.
  * @author M.Diana - E.Santoboni
  */
-public class User extends AbstractUser {
+public class User extends AbstractUser{
 	
 	@Override
 	@Deprecated

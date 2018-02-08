@@ -62,12 +62,19 @@ public class ContentTypeConfigAction extends EntityTypeConfigAction {
 	}
 
 	private void addPages(IPage page, List<IPage> pages) {
+		if (null == page) {
+			return;
+		}
 		if (page.getGroup().equals(Group.FREE_GROUP_NAME) && CmsPageUtil.isOnlineFreeViewerPage(page, null)) {
 			pages.add(page);
 		}
-		IPage[] children = page.getChildren();
+		String[] children = page.getChildrenCodes();
+		if (null == children) {
+			return;
+		}
 		for (int i = 0; i < children.length; i++) {
-			this.addPages(children[i], pages);
+			IPage child = this.getPageManager().getOnlinePage(children[i]);
+			this.addPages(child, pages);
 		}
 	}
 
@@ -86,7 +93,6 @@ public class ContentTypeConfigAction extends EntityTypeConfigAction {
 			models = this.getContentModelManager().getModelsForContentType(typeCode);
 		} catch (Throwable t) {
 			_logger.error("Error on extracting models by type  {}", typeCode, t);
-			//ApsSystemUtils.logThrowable(t, this, "getModels");
 			throw new RuntimeException("Error on extracting models by type " + typeCode, t);
 		}
 		return models;

@@ -27,18 +27,16 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
  * Rappresenta un obbiettivo di navigazione, da utilizzare come voce di un menu.
  * E' un wrapper della classe Page alla quale aggiunge un livello (relativo),
  * per poter definire menu a più livelli.
- * 
+ *
  * @author M.Diana - E.Santoboni
  */
 public class NavigatorTarget {
 
 	/**
 	 * Costruttore.
-	 * 
-	 * @param page
-	 * La pagina da wrappare.
-	 * @param level
-	 * Il livello.
+	 *
+	 * @param page La pagina da wrappare.
+	 * @param level Il livello.
 	 */
 	public NavigatorTarget(IPage page, int level) {
 		this._page = page;
@@ -49,7 +47,7 @@ public class NavigatorTarget {
 	 * Restituisce il titolo della pagina nella lingua corrente. Nel caso il
 	 * titolo nella lingua corrente sia assente, viene restituito il titolo
 	 * nella lingua di default.
-	 * 
+	 *
 	 * @return Il titolo della pagina.
 	 */
 	public String getTitle() {
@@ -68,7 +66,7 @@ public class NavigatorTarget {
 
 	/**
 	 * Restituisce il codice della pagina.
-	 * 
+	 *
 	 * @return Il codice della pagina.
 	 */
 	public String getCode() {
@@ -79,7 +77,7 @@ public class NavigatorTarget {
 	 * Verifica se il target corrente è vuoto (nessun frame configurato).
 	 * Analizza il target corrente e se i frame della pagina non contengono
 	 * nessuna showlet restituisce true, false in caso contrario.
-	 * 
+	 *
 	 * @return true se la pagina è vuota, false in caso contrario.
 	 * @deprecated compatibility with JSP specification 2.1 - "void" is a
 	 * reserved word
@@ -92,7 +90,7 @@ public class NavigatorTarget {
 	 * Verifica se il target corrente è vuoto (nessun frame configurato).
 	 * Analizza il target corrente e se i frame della pagina non contengono
 	 * nessuna showlet restituisce true, false in caso contrario.
-	 * 
+	 *
 	 * @return true se la pagina è vuota, false in caso contrario.
 	 */
 	public boolean isVoidPage() {
@@ -111,7 +109,7 @@ public class NavigatorTarget {
 
 	/**
 	 * Restituisce il link alla pagina corrente.
-	 * 
+	 *
 	 * @return Il link alla pagina.
 	 */
 	public String getUrl() {
@@ -125,20 +123,19 @@ public class NavigatorTarget {
 	/**
 	 * Check if the current target has children. Analyze the current target and
 	 * return true if it has at least one child, false otherwise.
-	 * 
+	 *
 	 * @return true if the current target has children, false otherwise.
 	 */
 	public boolean isParent() {
 		IPage page = this.getPage();
-		boolean isParent = (null != page && null != page.getChildren() && page.getChildren().length > 0);
+		boolean isParent = (null != page && null != page.getChildrenCodes() && page.getChildrenCodes().length > 0);
 		return isParent;
 	}
 
 	/**
 	 * Setta il contesto della richiesta.
-	 * 
-	 * @param reqCtx
-	 * Il contesto della richiesta.
+	 *
+	 * @param reqCtx Il contesto della richiesta.
 	 */
 	public void setRequestContext(RequestContext reqCtx) {
 		this._reqCtx = reqCtx;
@@ -146,7 +143,7 @@ public class NavigatorTarget {
 
 	/**
 	 * Restituisce il valore dell'attributo livello.
-	 * 
+	 *
 	 * @return Il livello
 	 */
 	public int getLevel() {
@@ -155,7 +152,7 @@ public class NavigatorTarget {
 
 	/**
 	 * Restituisce l'oggetto pagina sottostante.
-	 * 
+	 *
 	 * @return La pagina
 	 */
 	public IPage getPage() {

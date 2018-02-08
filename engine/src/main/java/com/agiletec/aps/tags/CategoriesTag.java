@@ -30,45 +30,61 @@ import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.aps.util.SelectItem;
+import java.util.Arrays;
 
 /**
  * Return the list of the system categories.
+ *
  * @author E.Santoboni
  */
 public class CategoriesTag extends TagSupport {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CategoriesTag.class);
 	
+	private static final String TITLE_TYPE_DEFAULT = "default";
+	private static final String TITLE_TYPE_FULL = "full";
+	private static final String TITLE_TYPE_PRETTY_FULL = "prettyFull";
+	
+	private static final String[] ALLOWED_TITLE_TYPES = {TITLE_TYPE_DEFAULT, TITLE_TYPE_FULL, TITLE_TYPE_PRETTY_FULL};
+
+	private String _titleStyle;
+	private String _fullTitleSeparator;
+	private String _var;
+	private String _root;
+
 	@Override
 	public int doStartTag() throws JspException {
-		ServletRequest request =  this.pageContext.getRequest();
+		ServletRequest request = this.pageContext.getRequest();
 		RequestContext reqCtx = (RequestContext) request.getAttribute(RequestContext.REQCTX);
-    	ICategoryManager catManager = (ICategoryManager) ApsWebApplicationUtils.getBean(SystemConstants.CATEGORY_MANAGER, this.pageContext);
+		ICategoryManager catManager = (ICategoryManager) ApsWebApplicationUtils.getBean(SystemConstants.CATEGORY_MANAGER, this.pageContext);
 		try {
 			List<SelectItem> categories = new ArrayList<SelectItem>();
-			Category root = (null != this.getRoot() && null != catManager.getCategory(this.getRoot())) ? 
-					(Category) catManager.getNode(this.getRoot()) : (Category) catManager.getRoot();
+			Category root = (null != this.getRoot()) ? catManager.getCategory(this.getRoot()) : null;
+			if (null == root) {
+				root = catManager.getRoot();
+			}
 			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
 			String langCode = currentLang.getCode();
 			String reqTitStyle = this.getTitleStyle();
-			String titleStyle = (null != reqTitStyle && 
-					(reqTitStyle.equals(TITLE_TYPE_DEFAULT) || reqTitStyle.equals(TITLE_TYPE_FULL) || reqTitStyle.equals(TITLE_TYPE_PRETTY_FULL))) 
-					? reqTitStyle : null;
-			this.addSmallCategory(categories, root, langCode, true, titleStyle);
+			List<String> allowedStyles = Arrays.asList(ALLOWED_TITLE_TYPES);
+			String titleStyle = (null != reqTitStyle && (allowedStyles.contains(reqTitStyle))) ? reqTitStyle : null;
+			this.addSmallCategory(categories, root, langCode, titleStyle, catManager);
 			this.pageContext.setAttribute(this.getVar(), categories);
 		} catch (Throwable t) {
 			_logger.error("Error starting tag", t);
-			//ApsSystemUtils.logThrowable(t, this, "doStartTag");
 			throw new JspException("Error starting tag", t);
 		}
 		return super.doStartTag();
 	}
-	
-	private void addSmallCategory(List<SelectItem> categories, Category category, String langCode, boolean isFirst, String titleStyle) {
-		Category[] children = category.getChildren();
-		if (null == children) return;
+
+	private void addSmallCategory(List<SelectItem> categories,
+			Category category, String langCode, String titleStyle, ICategoryManager catManager) {
+		String[] children = category.getChildrenCodes();
+		if (null == children) {
+			return;
+		}
 		for (int i = 0; i < children.length; i++) {
-			Category child = children[i];
+			Category child = catManager.getCategory(children[i]);
 			String title = null;
 			if (null == titleStyle || titleStyle.equals(TITLE_TYPE_DEFAULT)) {
 				title = child.getTitles().getProperty(langCode);
@@ -87,58 +103,53 @@ public class CategoriesTag extends TagSupport {
 			}
 			SelectItem catSmall = new SelectItem(child.getCode(), title);
 			categories.add(catSmall);
-			this.addSmallCategory(categories, child, langCode, false, titleStyle);
+			this.addSmallCategory(categories, child, langCode, titleStyle, catManager);
 		}
 	}
-	
+
 	@Override
 	public int doEndTag() throws JspException {
 		this.release();
 		return super.doEndTag();
 	}
-	
+
 	@Override
 	public void release() {
 		this.setVar(null);
 		this.setTitleStyle(null);
 		this.setFullTitleSeparator(null);
 	}
-	
+
 	public String getTitleStyle() {
 		return _titleStyle;
 	}
+
 	public void setTitleStyle(String titleStyle) {
 		this._titleStyle = titleStyle;
 	}
-	
+
 	public String getFullTitleSeparator() {
 		return _fullTitleSeparator;
 	}
+
 	public void setFullTitleSeparator(String fullTitleSeparator) {
 		this._fullTitleSeparator = fullTitleSeparator;
 	}
-	
+
 	public String getVar() {
 		return _var;
 	}
+
 	public void setVar(String var) {
 		this._var = var;
 	}
-	
+
 	public String getRoot() {
 		return _root;
 	}
+
 	public void setRoot(String root) {
 		this._root = root;
 	}
-	
-	private String _titleStyle;
-	private String _fullTitleSeparator;
-	private String _var;
-	private String _root;
-	
-	private static final String TITLE_TYPE_DEFAULT = "default";
-	private static final String TITLE_TYPE_FULL = "full";
-	private static final String TITLE_TYPE_PRETTY_FULL = "prettyFull";
-	
+
 }

@@ -20,6 +20,7 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import com.agiletec.aps.system.services.page.events.PageChangedObserver;
@@ -30,7 +31,7 @@ import com.agiletec.aps.util.ApsProperties;
  * Servizio gestore della mappa dei contenuti pubblicati nelle pagine. Il
  * servizio carica e gestisce nella mappa esclusivamente i contenuti pubblicati
  * esplicitamente nel frame principale delle pagine.
- * 
+ *
  * @author W.Ambu
  */
 public class ContentPageMapperManager extends AbstractService implements IContentPageMapperManager, PageChangedObserver {
@@ -45,7 +46,7 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 
 	/**
 	 * Effettua il caricamento della mappa contenuti pubblicati / pagine
-	 * 
+	 *
 	 * @throws ApsSystemException
 	 */
 	@Override
@@ -60,7 +61,7 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 
 	/**
 	 * Crea la mappa dei contenuti pubblicati nelle pagine.
-	 * 
+	 *
 	 * @throws ApsSystemException
 	 */
 	private void createContentPageMapper() throws ApsSystemException {
@@ -78,9 +79,8 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 	 * Cerca i contenuti pubblicati e li aggiunge al mapper. Nella ricerca
 	 * vengono considerati solamente i contenuti pubblicati nel mainFrame e la
 	 * ricerca viene estesa anche alle pagine figlie di quella specificate.
-	 * 
-	 * @param page
-	 * La pagina nel qual cercare i contenuti pubblicati.
+	 *
+	 * @param page La pagina nel qual cercare i contenuti pubblicati.
 	 */
 	private void searchPublishedContents(IPage page) {
 		PageModel pageModel = page.getModel();
@@ -96,9 +96,16 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 			if (null != contentId) {
 				this.getContentPageMapper().add(contentId, page.getCode());
 			}
-			IPage[] children = page.getChildren();
+			boolean isOnline = page.isOnline();
+			String[] children = page.getChildrenCodes();
+			if (null == children) {
+				return;
+			}
 			for (int i = 0; i < children.length; i++) {
-				this.searchPublishedContents(children[i]);
+				IPage child = PageUtils.getPage(this.getPageManager(), isOnline, children[i]);
+				if (null != child) {
+					this.searchPublishedContents(child);
+				}
 			}
 		}
 	}
@@ -116,7 +123,7 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 
 	/**
 	 * Restituisce la mappa dei contenuti pubblicati nelle pagine.
-	 * 
+	 *
 	 * @return La mappa dei contenuti pubblicati nelle pagine.
 	 */
 	protected ContentPageMapper getContentPageMapper() {

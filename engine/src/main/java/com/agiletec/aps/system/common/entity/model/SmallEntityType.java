@@ -18,28 +18,35 @@ import java.io.Serializable;
 /**
  * @author E.Santoboni
  */
-public class SmallEntityType implements Comparable, Serializable {
+public class SmallEntityType implements Comparable<SmallEntityType>, Serializable {
+	
+	private String code;
+	private String description;
+	
+	public SmallEntityType(){}
+	
+	public SmallEntityType(String code, String description) {
+		this.setCode(code);
+		this.setDescription(description);
+	}
 	
 	public String getCode() {
-		return _code;
+		return code;
 	}
 	public void setCode(String code) {
-		this._code = code;
+		this.code = code;
 	}
 	
 	public String getDescription() {
-		return _description;
+		return description;
 	}
 	public void setDescription(String description) {
-		this._description = description;
+		this.description = description;
 	}
 	
 	@Override
-	public int compareTo(Object smallEntityType) {
-		return _description.compareTo(((SmallEntityType) smallEntityType).getDescription());
+	public int compareTo(SmallEntityType smallEntityType) {
+		return this.description.compareTo(smallEntityType.getDescription());
 	}
-	
-	private String _code;
-	private String _description;
 	
 }

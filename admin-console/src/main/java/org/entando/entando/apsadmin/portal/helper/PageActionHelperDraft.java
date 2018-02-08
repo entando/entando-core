@@ -36,4 +36,9 @@ public class PageActionHelperDraft extends AbstractPageActionHelper {
 		return this.getPageManager().getDraftRoot();
 	}
 
+	@Override
+	protected boolean isDraftPageHepler() {
+		return true;
+	}
+
 }

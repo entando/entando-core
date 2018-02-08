@@ -19,18 +19,23 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
  * Interfaccia base per il servizio di gestione dei ruoli.
+ *
  * @author E.Santoboni
  */
 public interface IRoleManager {
 
+	public static final String ROLE_MANAGER_CACHE_NAME = "Entando_RoleManager";
+
 	/**
 	 * Restituisce la lista ordinata dei ruoli esistenti.
+	 *
 	 * @return La lista ordinata dei ruoli esistenti.
 	 */
 	public List<Role> getRoles();
 
 	/**
 	 * Restituisce un ruolo in base al nome.
+	 *
 	 * @param roleName Il nome del ruolo richesto.
 	 * @return Il ruolo cercato.
 	 */
@@ -38,6 +43,7 @@ public interface IRoleManager {
 
 	/**
 	 * Rimuove un ruolo.
+	 *
 	 * @param role Oggetto di tipo Role relativo al ruolo da rimuovere.
 	 * @throws ApsSystemException in caso di errore.
 	 */
@@ -45,14 +51,15 @@ public interface IRoleManager {
 
 	/**
 	 * Aggiorna un ruolo.
+	 *
 	 * @param role Il ruolo da aggiornare.
 	 * @throws ApsSystemException in caso di errore.
 	 */
 	public void updateRole(Role role) throws ApsSystemException;
 
-
 	/**
 	 * Aggiunge un ruolo.
+	 *
 	 * @param role Oggetto di tipo Role relativo al ruolo da aggiungere.
 	 * @throws ApsSystemException in caso di errore.
 	 */
@@ -60,12 +67,14 @@ public interface IRoleManager {
 
 	/**
 	 * Restituisce la lista ordinata dei permessi di autorizzazione.
+	 *
 	 * @return La lista ordinata dei permessi
 	 */
 	public List<Permission> getPermissions();
 
 	/**
 	 * Restituisce un permesso in base al nome.
+	 *
 	 * @param permissionName Il nome del permesso richiesto.
 	 * @return Il permesso richiesto.
 	 */
@@ -73,6 +82,7 @@ public interface IRoleManager {
 
 	/**
 	 * Rimuove il permesso specificato e dai ruoli.
+	 *
 	 * @param permissionName Il permesso da rimuovere dal ruolo.
 	 * @throws ApsSystemException in caso di errore.
 	 */
@@ -80,6 +90,7 @@ public interface IRoleManager {
 
 	/**
 	 * Aggiorna un permesso di autorizzazione.
+	 *
 	 * @param permission Il permesso da aggiornare.
 	 * @throws ApsSystemException in caso di errore.
 	 */
@@ -87,15 +98,16 @@ public interface IRoleManager {
 
 	/**
 	 * Aggiunge un permesso di autorizzazione.
+	 *
 	 * @param permission Il permesso da aggiungere.
 	 * @throws ApsSystemException in caso di errore.
 	 */
 	public void addPermission(Permission permission) throws ApsSystemException;
-	
-	//public int getRoleUses(Role role) throws ApsSystemException;
 
+	//public int getRoleUses(Role role) throws ApsSystemException;
 	/**
 	 * Restituisce la lista di ruoli comprendente il permesso specificato.
+	 *
 	 * @param permissionName Il nome del permesso.
 	 * @return La lista di ruoli.
 	 */

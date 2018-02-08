@@ -44,15 +44,15 @@ public class PageTestUtil {
 			assertNull(actual);
 		} else {
 			assertEquals(expected.getCode(), actual.getCode());
-			if (expected.getChildren() == null) {
-				assertNull(actual.getChildren());
+			if (expected.getChildrenCodes() == null) {
+				assertNull(actual.getChildrenCodes());
 			} else {
-				assertEquals(expected.getChildren().length, actual.getChildren().length);
+				assertEquals(expected.getChildrenCodes().length, actual.getChildrenCodes().length);
 			}
-			if (expected.getChildren() == null) {
-				assertNull(actual.getChildren());
+			if (expected.getChildrenCodes() == null) {
+				assertNull(actual.getChildrenCodes());
 			} else {
-				assertEquals(expected.getChildren().length, actual.getChildren().length);
+				assertEquals(expected.getChildrenCodes().length, actual.getChildrenCodes().length);
 			}
 			assertEquals(expected.getGroup(), actual.getGroup());
 			assertEquals(expected.getTitles(), actual.getTitles());
@@ -133,7 +133,7 @@ public class PageTestUtil {
 		page.setCode(code);
 		page.setParent(parentPage);
 		page.setParentCode(parentPage.getCode());
-		page.setPosition(parentPage.getChildren().length + 1);
+		//page.setPosition(parentPage.getChildrenCodes().length + 1);
 		page.setMetadata(metadata);
 		page.setGroup(groupName);
 		page.setWidgets(widgets);

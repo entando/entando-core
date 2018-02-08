@@ -41,6 +41,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -637,15 +638,17 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 			return check;
 		}
 		IPage currentPage = this.getPage(selectedNode);
-		IPage[] childs = currentPage.getChildren();
+		String[] children = currentPage.getChildrenCodes();
 		IPage root = this.getPageManager().getOnlineRoot();
 		if (root.getCode().equals(currentPage.getCode())) {
 			this.addActionError(this.getText("error.page.offlineHome.notAllowed"));
 			return "pageTree";
-		} else if (null != childs && childs.length != 0) {
+		} else if (null != children && children.length != 0) {
 			boolean hasReferences = false;
-			for (IPage child : childs) {
-				if (child.isOnline()) {
+			boolean isOnline = currentPage.isOnline();
+			for (int i = 0; i < children.length; i++) {
+				IPage child = PageUtils.getPage(this.getPageManager(), isOnline, children[i]);
+				if (null != child && child.isOnline()) {
 					this.addActionError(this.getText("error.page.offline.notAllowed"));
 					hasReferences = true;
 					break;
@@ -678,7 +681,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 		} else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
 			this.addActionError(this.getText("error.page.remove.notAllowed"));
 			return "pageTree";
-		} else if (currentPage.getChildren().length != 0) {
+		} else if (null != currentPage.getChildrenCodes() && currentPage.getChildrenCodes().length != 0) {
 			this.addActionError(this.getText("error.page.remove.notAllowed2"));
 			return "pageTree";
 		} else {

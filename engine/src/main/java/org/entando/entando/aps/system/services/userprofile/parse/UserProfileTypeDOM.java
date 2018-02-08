@@ -77,5 +77,4 @@ public class UserProfileTypeDOM extends EntityTypeDOM {
     }
 
     private static final String NULL_VALUE = "**NULL**";
-
 }

@@ -29,7 +29,10 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * @version 1.0
  * @author W.Ambu
  */
-public class TestKeyGeneratorManager extends BaseTestCase {
+public class KeyGeneratorManagerIntegrationTest extends BaseTestCase {
+
+    private int currentKey;
+    private IKeyGeneratorManager keyGeneratorManager = null;
 
 	protected void setUp() throws Exception {
         super.setUp();
@@ -47,14 +50,14 @@ public class TestKeyGeneratorManager extends BaseTestCase {
      */
     public void testGetUniqueKeyCurrentValueWithRightIncrement() throws ApsSystemException{
         int uniqueKeyCurrentValue = 0;
-        uniqueKeyCurrentValue = _keyGeneratorManager.getUniqueKeyCurrentValue();      
-        int expectedUniqueKeyCurrentValue = _currentKey + 1;
+        uniqueKeyCurrentValue = keyGeneratorManager.getUniqueKeyCurrentValue();
+        int expectedUniqueKeyCurrentValue = currentKey + 1;
         assertEquals(expectedUniqueKeyCurrentValue,uniqueKeyCurrentValue); 
-        uniqueKeyCurrentValue = _keyGeneratorManager.getUniqueKeyCurrentValue();
-        expectedUniqueKeyCurrentValue = _currentKey + 2;
+        uniqueKeyCurrentValue = keyGeneratorManager.getUniqueKeyCurrentValue();
+        expectedUniqueKeyCurrentValue = currentKey + 2;
         assertEquals(expectedUniqueKeyCurrentValue,uniqueKeyCurrentValue);
-        uniqueKeyCurrentValue = _keyGeneratorManager.getUniqueKeyCurrentValue();
-        expectedUniqueKeyCurrentValue = _currentKey + 3;
+        uniqueKeyCurrentValue = keyGeneratorManager.getUniqueKeyCurrentValue();
+        expectedUniqueKeyCurrentValue = currentKey + 3;
         assertEquals(expectedUniqueKeyCurrentValue,uniqueKeyCurrentValue);
     }
     
@@ -69,7 +72,7 @@ public class TestKeyGeneratorManager extends BaseTestCase {
     		prepStat = conn.createStatement();
     		result = prepStat.executeQuery(SELECT_KEY);
     		result.next();
-    		_currentKey = result.getInt(1);
+            currentKey = result.getInt(1);
     	} catch (Throwable t) {
     		throw new Exception(t);
     	} finally {
@@ -90,7 +93,7 @@ public class TestKeyGeneratorManager extends BaseTestCase {
         try {
         	conn = dataSource.getConnection();
             prepStat = conn.prepareStatement(UPDATE_KEY);
-            prepStat.setInt(1, _currentKey);
+            prepStat.setInt(1, currentKey);
             prepStat.executeUpdate();
         } catch (Throwable t) {
     		throw new Exception(t);
@@ -115,14 +118,10 @@ public class TestKeyGeneratorManager extends BaseTestCase {
     
     private void init() throws Exception {
     	try {
-    		_keyGeneratorManager = (IKeyGeneratorManager) this.getService(SystemConstants.KEY_GENERATOR_MANAGER);
+            keyGeneratorManager = (IKeyGeneratorManager) this.getService(SystemConstants.KEY_GENERATOR_MANAGER);
     	} catch (Throwable t) {
             throw new Exception(t);
         }
     }
-    
-    private int _currentKey;
-    
-    private IKeyGeneratorManager _keyGeneratorManager = null;
-    
+
 }

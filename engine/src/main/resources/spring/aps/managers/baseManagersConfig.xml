@@ -60,8 +60,10 @@
 					  p:name="Entando_jacmsContentManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_InitializerManager" />			
-        			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+       			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					  p:name="Entando_ApiCatalogManager" />
+       			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					  p:name="Entando_KeyGeneratorManager" />
 			</set>
 		</property>
 	</bean>
@@ -296,6 +298,11 @@
 
 	<bean id="KeyGeneratorManager" class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorManager"
 			parent="abstractService" >
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.aps.system.services.cache.KeyGeneratorManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
 		<property name="keyGeneratorDAO" >
 			<bean class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorDAO">
 				<property name="dataSource" ref="portDataSource" />

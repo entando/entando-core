@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DataObjectMapperCacheWrapper extends AbstractCacheWrapper implements IDataObjectMapperCacheWrapper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(DataObjectMapperCacheWrapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataObjectMapperCacheWrapper.class);
 
 	@Override
 	public void initCache(IPageManager pageManager) throws ApsSystemException {
@@ -39,7 +39,7 @@ public class DataObjectMapperCacheWrapper extends AbstractCacheWrapper implement
 			this.searchPublishedDataObjects(dataObjectPageMapper, root, pageManager);
 			this.getCache().put(OBJECT_MAPPER_CACHE_KEY, dataObjectPageMapper);
 		} catch (Throwable t) {
-			_logger.error("Error loading data object mapper", t);
+			logger.error("Error loading data object mapper", t);
 			throw new ApsSystemException("Error loading data object mapper", t);
 		}
 	}
@@ -67,7 +67,7 @@ public class DataObjectMapperCacheWrapper extends AbstractCacheWrapper implement
 			}
 		}
 	}
-	
+
 	@Override
 	public String getPageCode(String dataId) {
 		DataObjectPageMapper dataObjectPageMapper = this.get(OBJECT_MAPPER_CACHE_KEY, DataObjectPageMapper.class);
@@ -76,10 +76,10 @@ public class DataObjectMapperCacheWrapper extends AbstractCacheWrapper implement
 		}
 		return null;
 	}
-	
+
 	@Override
 	protected String getCacheName() {
 		return IDataObjectMapperCacheWrapper.OBJECT_MAPPER_CACHE_NAME;
 	}
-	
+
 }

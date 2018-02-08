@@ -33,8 +33,9 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.TestContentMo
 import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.TestContentPageMapperManager;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.TestContentDispenser;
 import com.agiletec.plugins.jacms.aps.system.services.linkresolver.TestLinkResolverManager;
+import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManagerIntegrationTest;
+import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManagerTest;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceDAO;
-import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.TestResourceDOM;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
 import junit.framework.JUnit4TestAdapter;
@@ -81,7 +82,8 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestResourceDOM.class);
 		suite.addTestSuite(TestResourceDAO.class);
-		suite.addTestSuite(TestResourceManager.class);
+        suite.addTestSuite(ResourceManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(ResourceManagerTest.class));
 		//
 		suite.addTestSuite(TestSearchEngineManager.class);
 		suite.addTestSuite(TestApplicationContext.class);

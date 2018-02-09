@@ -3,68 +3,68 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" >
 
-	<appender name="async" class="org.apache.log4j.AsyncAppender">
-		<!-- <appender-ref ref="socket" /> -->
-		<param name="Blocking" value="false" />
-		<param name="bufferSize" value="256" />
-		<appender-ref ref="console" />
-	</appender>
+    <appender name="async" class="org.apache.log4j.AsyncAppender">
+        <!-- <appender-ref ref="socket" /> -->
+        <param name="Blocking" value="false" />
+        <param name="bufferSize" value="256" />
+        <appender-ref ref="console" />
+    </appender>
 
-<!-- uncomment this appender and uncomment the ref into the async appender to enable remote logging
-	<appender name="socket" class="org.apache.log4j.net.SocketAppender">
-		<param name="Port" value="4560" />
-		<param name="RemoteHost" value="xxx.xxx.xxx.xxx" />
-		<param name="ReconnectionDelay" value="5000" />
-		<param name="LocationInfo" value="true" />
-	</appender>
- -->
+    <!-- uncomment this appender and uncomment the ref into the async appender to enable remote logging
+        <appender name="socket" class="org.apache.log4j.net.SocketAppender">
+            <param name="Port" value="4560" />
+            <param name="RemoteHost" value="xxx.xxx.xxx.xxx" />
+            <param name="ReconnectionDelay" value="5000" />
+            <param name="LocationInfo" value="true" />
+        </appender>
+     -->
 
-	<appender name="console" class="org.apache.log4j.ConsoleAppender">	
-		<param name="Target" value="System.out" />
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out" />
         <param name="Threshold" value="INFO" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5p - %c - %m%n" />
-		</layout>
-	</appender>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5p - %c - %m%n" />
+        </layout>
+    </appender>
 
-	<logger name="org.apache.struts2" additivity="false">
-		<level value="WARN" />
-		<appender-ref ref="async" />
-	</logger>
+    <logger name="org.apache.struts2" additivity="false">
+        <level value="WARN" />
+        <appender-ref ref="async" />
+    </logger>
 
-	<logger name="org.springframework" additivity="false">
-		<level value="WARN" />
-		<appender-ref ref="async" />
-	</logger>
+    <logger name="org.springframework" additivity="false">
+        <level value="WARN" />
+        <appender-ref ref="async" />
+    </logger>
 
-	<logger name="com.opensymphony" additivity="false">
-		<level value="WARN" />
-		<appender-ref ref="async" />
-	</logger>
+    <logger name="com.opensymphony" additivity="false">
+        <level value="WARN" />
+        <appender-ref ref="async" />
+    </logger>
 
-	<logger name="org.apache.cxf" additivity="false">
-		<level value="WARN" />
-		<appender-ref ref="async" />
-	</logger>
+    <logger name="org.apache.cxf" additivity="false">
+        <level value="WARN" />
+        <appender-ref ref="async" />
+    </logger>
 
-	<logger name="org.apache.tiles" additivity="false">
-		<level value="WARN" />
-		<appender-ref ref="async" />
-	</logger>
+    <logger name="org.apache.tiles" additivity="false">
+        <level value="WARN" />
+        <appender-ref ref="async" />
+    </logger>
 
-	<logger name="com.agiletec" additivity="false">
-		<level value="DEBUG" />
-		<appender-ref ref="async" />
-	</logger>
-	
-	<logger name="org.entando" additivity="false">
-		<level value="DEBUG" />
-		<appender-ref ref="async" />
-	</logger>
+    <logger name="com.agiletec" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="async" />
+    </logger>
 
-	<root>
-		<param name="level" value="INFO" />
-		<appender-ref ref="async" />
-	</root>
+    <logger name="org.entando" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="async" />
+    </logger>
+
+    <root>
+        <param name="level" value="INFO" />
+        <appender-ref ref="async" />
+    </root>
 
 </log4j:configuration>

@@ -79,10 +79,34 @@ public class BaseTestCase extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
+<<<<<<< HEAD
+=======
+
+>>>>>>> oauth2_oltu
         this.waitThreads(SystemConstants.ENTANDO_THREAD_NAME_PREFIX);
         super.tearDown();
         this.getConfigUtils().closeDataSources(this.getApplicationContext());
         this.getConfigUtils().destroyContext(this.getApplicationContext());
+<<<<<<< HEAD
+    }
+
+    protected void waitNotifyingThread() throws InterruptedException {
+        this.waitThreads(NotifyManager.NOTIFYING_THREAD_NAME);
+    }
+
+    protected void waitThreads(String threadNamePrefix) throws InterruptedException {
+        Thread[] threads = new Thread[20];
+        Thread.enumerate(threads);
+        for (int i = 0; i < threads.length; i++) {
+            Thread currentThread = threads[i];
+            if (currentThread != null
+                    && currentThread.getName().startsWith(threadNamePrefix)) {
+                currentThread.join();
+            }
+        }
+    }
+
+=======
 
         Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
         //Iterate over set to find yours
@@ -109,11 +133,14 @@ public class BaseTestCase extends TestCase {
                     currentThread.getName().startsWith(threadNamePrefix)) {
                 currentThread.join();
             }
+
         }
     }
 
+>>>>>>> oauth2_oltu
     /**
      * Return a user (with his autority) by username.
+     *
      * @param username The username
      * @param password The password
      * @return The required user.
@@ -132,7 +159,13 @@ public class BaseTestCase extends TestCase {
     }
 
     /**
+<<<<<<< HEAD
+     * Return a user (with his autority) by username, with the password equals
+     * than username.
+=======
      * Return a user (with his autority) by username, with the password equals than username.
+>>>>>>> oauth2_oltu
+     *
      * @param username The username
      * @return The required user.
      * @throws Exception In case of error.
@@ -175,4 +208,8 @@ public class BaseTestCase extends TestCase {
 
     private ApplicationContext _applicationContext;
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> oauth2_oltu

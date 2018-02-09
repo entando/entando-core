@@ -36,7 +36,6 @@
     </div>
 </div>
 <br>
-
 <div id="main" role="main">
     <s:form action="save"  cssClass="form-horizontal">
         <s:if test="hasFieldErrors()">
@@ -52,7 +51,7 @@
                 <ul class="margin-base-top">
                     <s:iterator value="actionErrors">
                         <li><s:property escapeHtml="false" /></li>
-                        </s:iterator>
+                    </s:iterator>
                 </ul>
             </div>
         </s:if>
@@ -75,6 +74,22 @@
                 </s:if>
             </div>
         </div>
+
+
+
+
+        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+            <label class="col-sm-2 control-label" for="callbackUrl"><s:text name="label.callbackUrl" /></label>
+            <div class="col-sm-10">
+                <wpsf:textfield name="callbackUrl" id="callbackUrl" cssClass="form-control" />
+                <s:if test="#currentFieldHasFieldErrorVar">
+                    <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                </s:if>
+            </div>
+        </div>
+
+
+
         <s:set var="currentFieldErrorsVar" value="%{fieldErrors['secret']}" />
         <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
@@ -87,11 +102,25 @@
                 </s:if>
             </div>
         </div>
+
+
+        <s:set var="currentFieldErrorsVar" value="%{fieldErrors['name']}" />
+        <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
+        <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
+        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+            <label class="col-sm-2 control-label" for="name"><s:text name="label.name" /></label>
+            <div class="col-sm-10">
+                <wpsf:textfield name="name" id="name" cssClass="form-control" />
+                <s:if test="#currentFieldHasFieldErrorVar">
+                    <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                </s:if>
+            </div>
+        </div>
         <s:set var="currentFieldErrorsVar" value="%{fieldErrors['description']}" />
         <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
         <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-            <label class="col-sm-2 control-label" for="description"><s:text name="label.description" /></label>
+            <label class="col-sm-2 control-label" for="description"><s:text name="label.consumer.description" /></label>
             <div class="col-sm-10">
                 <s:textarea  cols="50" rows="3" name="description" id="description" cssClass="form-control"  />
                 <s:if test="#currentFieldHasFieldErrorVar">
@@ -99,6 +128,36 @@
                 </s:if>
             </div>
         </div>
+
+
+        <s:set var="currentFieldErrorsVar" value="%{fieldErrors['scope']}" />
+        <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
+        <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
+        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+            <label class="col-sm-2 control-label" for="scope"><s:text name="label.scope" /></label>
+            <div class="col-sm-10">
+                <wpsf:textfield name="scope" id="scope" cssClass="form-control" />
+                <s:if test="#currentFieldHasFieldErrorVar">
+                    <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                </s:if>
+            </div>
+        </div>
+
+        <s:set var="currentFieldErrorsVar" value="%{fieldErrors['authorizedGrantTyped']}" />
+        <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
+        <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
+        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+            <label class="col-sm-2 control-label" for="authorizedGrantTyped"><s:text name="label.authorizedGrantTyped" /></label>
+            <div class="col-sm-10">
+                <wpsf:textfield name="authorizedGrantTyped" id="authorizedGrantTyped" disabled="true" cssClass="form-control" />
+                <s:if test="#currentFieldHasFieldErrorVar">
+                    <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                </s:if>
+            </div>
+        </div>
+
+
+
         <s:set var="currentFieldErrorsVar" value="%{fieldErrors['expirationDate']}" />
         <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />

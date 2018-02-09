@@ -18,14 +18,10 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.PageUtils;
-import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import com.agiletec.aps.system.services.page.events.PageChangedObserver;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.cache.IContentMapperCacheWrapper;
 
 /**
  * Servizio gestore della mappa dei contenuti pubblicati nelle pagine. Il
@@ -38,9 +34,12 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentPageMapperManager.class);
 
+	private IPageManager pageManager;
+	private IContentMapperCacheWrapper cacheWrapper;
+	
 	@Override
 	public void init() throws Exception {
-		this.createContentPageMapper();
+		this.getCacheWrapper().initCache(this.getPageManager());
 		_logger.debug("{} ready.", this.getClass().getName());
 	}
 
@@ -51,63 +50,12 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 	 */
 	@Override
 	public void reloadContentPageMapper() throws ApsSystemException {
-		this.createContentPageMapper();
+		this.getCacheWrapper().initCache(this.getPageManager());
 	}
 
 	@Override
 	public String getPageCode(String contentId) {
-		return this.getContentPageMapper().getPageCode(contentId);
-	}
-
-	/**
-	 * Crea la mappa dei contenuti pubblicati nelle pagine.
-	 *
-	 * @throws ApsSystemException
-	 */
-	private void createContentPageMapper() throws ApsSystemException {
-		this._contentPageMapper = new ContentPageMapper();
-		try {
-			IPage root = this.getPageManager().getOnlineRoot();
-			this.searchPublishedContents(root);
-		} catch (Throwable t) {
-			_logger.error("Error loading ContentPageMapper", t);
-			throw new ApsSystemException("Errore loading ContentPageMapper", t);
-		}
-	}
-
-	/**
-	 * Cerca i contenuti pubblicati e li aggiunge al mapper. Nella ricerca
-	 * vengono considerati solamente i contenuti pubblicati nel mainFrame e la
-	 * ricerca viene estesa anche alle pagine figlie di quella specificate.
-	 *
-	 * @param page La pagina nel qual cercare i contenuti pubblicati.
-	 */
-	private void searchPublishedContents(IPage page) {
-		PageModel pageModel = page.getModel();
-		if (pageModel != null) {
-			int mainFrame = pageModel.getMainFrame();
-			Widget[] widgets = page.getWidgets();
-			Widget widget = null;
-			if (null != widgets && mainFrame != -1) {
-				widget = widgets[mainFrame];
-			}
-			ApsProperties config = (null != widget) ? widget.getConfig() : null;
-			String contentId = (null != config) ? config.getProperty("contentId") : null;
-			if (null != contentId) {
-				this.getContentPageMapper().add(contentId, page.getCode());
-			}
-			boolean isOnline = page.isOnline();
-			String[] children = page.getChildrenCodes();
-			if (null == children) {
-				return;
-			}
-			for (int i = 0; i < children.length; i++) {
-				IPage child = PageUtils.getPage(this.getPageManager(), isOnline, children[i]);
-				if (null != child) {
-					this.searchPublishedContents(child);
-				}
-			}
-		}
+		return this.getCacheWrapper().getPageCode(contentId);
 	}
 
 	@Override
@@ -121,28 +69,20 @@ public class ContentPageMapperManager extends AbstractService implements IConten
 		}
 	}
 
-	/**
-	 * Restituisce la mappa dei contenuti pubblicati nelle pagine.
-	 *
-	 * @return La mappa dei contenuti pubblicati nelle pagine.
-	 */
-	protected ContentPageMapper getContentPageMapper() {
-		return _contentPageMapper;
-	}
-
 	protected IPageManager getPageManager() {
-		return _pageManager;
+		return pageManager;
 	}
 
 	public void setPageManager(IPageManager pageManager) {
-		this._pageManager = pageManager;
+		this.pageManager = pageManager;
 	}
 
-	private IPageManager _pageManager;
-
-	/**
-	 * La mappa dei contenuti pubblicati nelle pagine.
-	 */
-	private ContentPageMapper _contentPageMapper;
+	protected IContentMapperCacheWrapper getCacheWrapper() {
+		return cacheWrapper;
+	}
+	
+	public void setCacheWrapper(IContentMapperCacheWrapper cacheWrapper) {
+		this.cacheWrapper = cacheWrapper;
+	}
 
 }

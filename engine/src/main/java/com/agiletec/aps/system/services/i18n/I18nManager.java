@@ -46,8 +46,6 @@ public class I18nManager extends AbstractService implements II18nManager {
 	
 	private II18nDAO i18nDAO;
 
-	private String defaultLang;
-
 	protected II18nDAO getI18nDAO() {
 		return i18nDAO;
 	}
@@ -80,7 +78,6 @@ public class I18nManager extends AbstractService implements II18nManager {
 		this.getCacheWrapper().initCache(this.getI18nDAO());
 		_logger.debug("{} : initialized {} labels", this.getClass().getName(), this.getLabelGroups().size());
 	}
-
 
 	/**
 	 * Return the group of labels.

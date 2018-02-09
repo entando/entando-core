@@ -14,6 +14,7 @@
 package com.agiletec.plugins.jacms;
 
 import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
+import com.agiletec.plugins.jacms.aps.system.services.content.ContentManagerTest;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestCategoryUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestContentDAO;
 import com.agiletec.plugins.jacms.aps.system.services.content.TestContentManager;
@@ -26,15 +27,20 @@ import com.agiletec.plugins.jacms.aps.system.services.content.parse.TestContentD
 import com.agiletec.plugins.jacms.aps.system.services.content.util.TestContentAttributeIterator;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.TestContentListHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.TestContentViewerHelper;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManagerIntegrationTest;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManagerTest;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.TestContentModelDAO;
-import com.agiletec.plugins.jacms.aps.system.services.contentmodel.TestContentModelManager;
-import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.TestContentPageMapperManager;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManagerIntegrationTest;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManagerTest;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.cache.ContentMapperCacheWrapperTest;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.TestContentDispenser;
 import com.agiletec.plugins.jacms.aps.system.services.linkresolver.TestLinkResolverManager;
+import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManagerIntegrationTest;
+import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManagerTest;
 import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceDAO;
-import com.agiletec.plugins.jacms.aps.system.services.resource.TestResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.TestResourceDOM;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.entando.entando.plugins.jacms.aps.system.services.api.TestApiContentInterface;
@@ -59,13 +65,18 @@ public class AllTests {
 		suite.addTestSuite(TestContentAttributeIterator.class);
 		suite.addTestSuite(TestContentDAO.class);
 		suite.addTestSuite(TestContentManager.class);
+		suite.addTest(new JUnit4TestAdapter(ContentManagerTest.class));
+
 		suite.addTestSuite(TestPublicContentSearcherDAO.class);
 		suite.addTestSuite(TestValidateContent.class);
 		//
 		suite.addTestSuite(TestContentModelDAO.class);
-		suite.addTestSuite(TestContentModelManager.class);
+		suite.addTestSuite(ContentModelManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ContentModelManagerTest.class));
 		//
-		suite.addTestSuite(TestContentPageMapperManager.class);
+		suite.addTestSuite(ContentPageMapperManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ContentMapperCacheWrapperTest.class));
+		suite.addTest(new JUnit4TestAdapter(ContentPageMapperManagerTest.class));
 		//
 		suite.addTestSuite(TestContentDispenser.class);
 		//
@@ -75,7 +86,8 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestResourceDOM.class);
 		suite.addTestSuite(TestResourceDAO.class);
-		suite.addTestSuite(TestResourceManager.class);
+		suite.addTestSuite(ResourceManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ResourceManagerTest.class));
 		//
 		suite.addTestSuite(TestSearchEngineManager.class);
 		suite.addTestSuite(TestApplicationContext.class);

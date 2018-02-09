@@ -90,8 +90,13 @@
     </bean>
     
     <bean id="jacmsContentPageMapperManager" class="com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManager" 
-          parent="abstractService" >
+          parent="abstractService" depends-on="springCacheManager" >
         <property name="pageManager" ref="PageManager" />
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.cache.ContentMapperCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
     </bean>
     
     <bean id="jacmsLinkResolverManager" class="com.agiletec.plugins.jacms.aps.system.services.linkresolver.LinkResolverManager" 

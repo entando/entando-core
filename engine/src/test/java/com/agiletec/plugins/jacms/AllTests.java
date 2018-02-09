@@ -30,7 +30,9 @@ import com.agiletec.plugins.jacms.aps.system.services.content.widget.TestContent
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManagerIntegrationTest;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManagerTest;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.TestContentModelDAO;
-import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.TestContentPageMapperManager;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManagerIntegrationTest;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManagerTest;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.cache.ContentMapperCacheWrapperTest;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.TestContentDispenser;
 import com.agiletec.plugins.jacms.aps.system.services.linkresolver.TestLinkResolverManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManagerIntegrationTest;
@@ -63,16 +65,18 @@ public class AllTests {
 		suite.addTestSuite(TestContentAttributeIterator.class);
 		suite.addTestSuite(TestContentDAO.class);
 		suite.addTestSuite(TestContentManager.class);
-        suite.addTest(new JUnit4TestAdapter(ContentManagerTest.class));
+		suite.addTest(new JUnit4TestAdapter(ContentManagerTest.class));
 
 		suite.addTestSuite(TestPublicContentSearcherDAO.class);
 		suite.addTestSuite(TestValidateContent.class);
 		//
 		suite.addTestSuite(TestContentModelDAO.class);
-        suite.addTestSuite(ContentModelManagerIntegrationTest.class);
-        suite.addTest(new JUnit4TestAdapter(ContentModelManagerTest.class));
+		suite.addTestSuite(ContentModelManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ContentModelManagerTest.class));
 		//
-		suite.addTestSuite(TestContentPageMapperManager.class);
+		suite.addTestSuite(ContentPageMapperManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ContentMapperCacheWrapperTest.class));
+		suite.addTest(new JUnit4TestAdapter(ContentPageMapperManagerTest.class));
 		//
 		suite.addTestSuite(TestContentDispenser.class);
 		//
@@ -82,8 +86,8 @@ public class AllTests {
 		//
 		suite.addTestSuite(TestResourceDOM.class);
 		suite.addTestSuite(TestResourceDAO.class);
-        suite.addTestSuite(ResourceManagerIntegrationTest.class);
-        suite.addTest(new JUnit4TestAdapter(ResourceManagerTest.class));
+		suite.addTestSuite(ResourceManagerIntegrationTest.class);
+		suite.addTest(new JUnit4TestAdapter(ResourceManagerTest.class));
 		//
 		suite.addTestSuite(TestSearchEngineManager.class);
 		suite.addTestSuite(TestApplicationContext.class);

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<taglib
-	xmlns="http://java.sun.com/xml/ns/j2ee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	version="2.0"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
 	<description><![CDATA[Apsadmin Core Tag Library]]></description>
 	<display-name>Apsadmin Core Tag Library</display-name>
 	<tlib-version>2.2</tlib-version>
 	<short-name>wpsa</short-name>
 	<uri>/apsadmin-core</uri>
-
+	
 	<tag>
 		<description><![CDATA[Handles the submit in the administration interface,
 			building the name of the action with a defined sequence of parameters.<br/>
@@ -204,22 +200,17 @@
 		</attribute>
 	</tag>
 	<tag>
-		<description><![CDATA[Includes a servlet's output (result of servlet or a JSP page).]]></description>
+		<description><![CDATA[Includes a servlet's output (result of servlet or a JSP page). **DEPRECATED**]]></description>
 		<name>include</name>
-		<tag-class>com.agiletec.apsadmin.tags.IncludeTag</tag-class>
+		<tag-class>org.apache.struts2.views.jsp.IncludeTag</tag-class>
 		<body-content>JSP</body-content>
-		<attribute>
-			<description><![CDATA[id for referencing element. For UI and form tags it will be used as HTML id attribute.]]></description>
-			<name>id</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
 		<attribute>
 			<description><![CDATA[The jsp/servlet output to include.]]></description>
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
+		<dynamic-attributes>false</dynamic-attributes>
 	</tag>
 	<tag>
 		<description>
@@ -254,6 +245,79 @@
 			"widgets" (the widgets applied to the page).]]></description>
 			<name>property</name>
 			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Returns a page (or one of its property) through the code.
+			You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property through the "property" attribute.]]>
+		</description>
+		<name>pageTree</name>
+		<tag-class>org.entando.entando.apsadmin.tags.PageTreeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the page (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The allewd groups for current user]]></description>
+			<name>allowedGroups</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[If true, return only the 'online' nodes]]></description>
+			<name>online</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[If true, return the tree 'on demand']]></description>
+			<name>onDemand</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Used for tree 'on demand'. If true, open the target node, if false, close it. If null, nothing is done]]></description>
+			<name>open</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Used for tree 'on demand'. The current node]]></description>
+			<name>targetNode</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Used for tree 'on demand'. The current opened nodes]]></description>
+			<name>treeNodesToOpen</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+	</tag>
+	<tag>
+		<description>
+			<![CDATA[Tag used to fing the groups for the current user, associated with the given permission.]]>
+		</description>
+		<name>groupsByPermission</name>
+		<tag-class>org.entando.entando.apsadmin.tags.GroupsByPermissionTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<description><![CDATA[Name used to reference the page (or one of its property) pushed into the Value Stack. If not specified, the tag will print the returned value.]]></description>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[The desired permission.]]></description>
+			<name>permission</name>
+			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>

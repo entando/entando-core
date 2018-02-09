@@ -13,7 +13,7 @@
 			</span>
 			<wpsf:textfield name="categoryCodeToken" id="categoryCodeToken" value="%{categoryCodeToken}" cssClass="form-control input-lg" placeholder="%{getText('label.categoryCode')}" />
 			<div class="input-group-btn">
-				<wpsf:submit type="button" cssClass="btn btn-primary btn-lg">
+				<wpsf:submit type="button" cssClass="btn btn-primary">
 					<span class="icon fa fa-search" title="<s:text name="label.search" />"></span>
 				</wpsf:submit>
 			</div>

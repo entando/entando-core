@@ -13,29 +13,6 @@
  */
 package com.agiletec.apsadmin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import junit.framework.TestCase;
-
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.dispatcher.Dispatcher;
-import org.apache.struts2.spring.StrutsSpringObjectFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.FileSystemResourceLoader;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.WebApplicationContext;
-
 import com.agiletec.ConfigTestUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.IManager;
@@ -44,11 +21,39 @@ import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.ActionProxyFactory;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.inject.ContainerBuilder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import junit.framework.TestCase;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.Dispatcher;
+import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
+import org.apache.struts2.spring.StrutsSpringObjectFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.FileSystemResourceLoader;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * The base Class for all test of admin area.
@@ -63,30 +68,24 @@ public class ApsAdminBaseTestCase extends TestCase {
 		if (null == _applicationContext) {
 			// Link the servlet context and the Spring context
 			_servletContext = new MockServletContext("", new FileSystemResourceLoader());
-
 			_applicationContext = this.getConfigUtils().createApplicationContext(_servletContext);
-
 			_servletContext.setAttribute(
 					WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, _applicationContext);
 		} else {
 			refresh = true;
 		}
-
 		this._request = new MockHttpServletRequest();
 		this._response = new MockHttpServletResponse();
 		this._request.setSession(new MockHttpSession(this._servletContext));
-
 		if (refresh) {
 			try {
 				ApsWebApplicationUtils.executeSystemRefresh(this._request);
 				this.waitNotifyingThread();
 			} catch (Throwable e) {}
 		}
-
 		// Use spring as the object factory for Struts
-		StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, _servletContext, null, this.createContainer());
+		StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, null, _servletContext, null, this.createContainer());
 		ssf.setApplicationContext(_applicationContext);
-
 		// Dispatcher is the guy that actually handles all requests.  Pass in
 		// an empty Map as the parameters but if you want to change stuff like
 		// what config files to read, you need to specify them here
@@ -95,7 +94,6 @@ public class ApsAdminBaseTestCase extends TestCase {
 	    Properties props = new Properties();
 		props.load(url.openStream());
 		this.setInitParameters(props);
-
 		Map params = new HashMap(props);
 		this._dispatcher = new Dispatcher(_servletContext, params);
 		this._dispatcher.init();
@@ -133,6 +131,9 @@ public class ApsAdminBaseTestCase extends TestCase {
 
 	/**
 	 * Created action class based on namespace and name
+	 * @param namespace The namespace
+	 * @param name The name of the action
+	 * @throws java.lang.Exception In case of error
 	 */
 	protected void initAction(String namespace, String name) throws Exception {
 		// create a proxy class which is just a wrapper around the action call.
@@ -140,12 +141,11 @@ public class ApsAdminBaseTestCase extends TestCase {
 		// struts.xml configuration
 	    ActionProxyFactory proxyFactory = (ActionProxyFactory) this._dispatcher.getContainer().getInstance(ActionProxyFactory.class);
 	    this._proxy = proxyFactory.createActionProxy(namespace, name, null, null, true, false);
-
+		
 		// set to true if you want to process Freemarker or JSP results
 		this._proxy.setExecuteResult(false);
 		// by default, don't pass in any request parameters
-		this._proxy.getInvocation().getInvocationContext().setParameters(new HashMap());
-
+		
 		// set the actions context to the one which the proxy is using
 		ServletActionContext.setContext(_proxy.getInvocation().getInvocationContext());
 		ServletActionContext.setRequest(_request);
@@ -160,9 +160,10 @@ public class ApsAdminBaseTestCase extends TestCase {
 			this.removeParameter(paramName);
 		}
 	}
-
+	
     /**
      * Metodo da estendere in caso che si voglia impiantare un'altro struts-config.
+	 * @param params The parameters
      */
     protected void setInitParameters(Properties params) {
     	params.setProperty("config",
@@ -220,15 +221,38 @@ public class ApsAdminBaseTestCase extends TestCase {
 			this.addParameter(key, params.get(key).toString());
 		}
 	}
-
+	
+	protected void addParameter(String name, String[] values) {
+		if (null != values) {
+			this.addParameter(name, Arrays.asList(values));
+		}
+	}
+	
+	protected void addParameter(String name, Collection<String> value) {
+		this._request.removeParameter(name);
+		if (null == value) {
+			return;
+		}
+		String[] array = new String[value.size()];
+		Iterator<String> iter = value.iterator();
+		int i = 0;
+		while (iter.hasNext()) {
+			String stringValue = iter.next();
+			this._request.addParameter(name, stringValue);
+			array[i++] = stringValue;
+		}
+		Parameter.Request parameter = new Parameter.Request(name, array);
+		this._parameters.put(name, parameter);
+	}
+	
 	protected void addParameter(String name, Object value) {
 		this._request.removeParameter(name);
 		if (null == value) return;
 		this._request.addParameter(name, value.toString());
-		Map parameters = this._proxy.getInvocation().getInvocationContext().getParameters();
-		parameters.put(name, value);
+		Parameter.Request parameter = new Parameter.Request(name, value.toString());
+		this._parameters.put(name, parameter);
 	}
-
+	
 	protected void addAttribute(String name, Object value) {
 		this._request.removeAttribute(name);
 		if (null == value) return;
@@ -238,15 +262,17 @@ public class ApsAdminBaseTestCase extends TestCase {
 	private void removeParameter(String name) {
 		this._request.removeParameter(name);
 		this._request.removeAttribute(name);
-		Map parameters = this._proxy.getInvocation().getInvocationContext().getParameters();
-		parameters.remove(name);
+		this._parameters.remove(name);
 	}
-
+	
 	protected String executeAction() throws Throwable {
+		ActionContext ac = this._proxy.getInvocation().getInvocationContext();
+		ac.setParameters(HttpParameters.create(this._request.getParameterMap()).build());
+		ac.getParameters().appendAll(this._parameters);
 		String result = this._proxy.execute();
 		return result;
 	}
-
+	
 	protected IManager getService(String name) {
 		return (IManager) this.getApplicationContext().getBean(name);
 	}
@@ -266,7 +292,6 @@ public class ApsAdminBaseTestCase extends TestCase {
     protected HttpServletRequest getRequest() {
     	return this._request;
     }
-
     private static ApplicationContext _applicationContext;
     private Dispatcher _dispatcher;
 	private ActionProxy _proxy;
@@ -274,5 +299,8 @@ public class ApsAdminBaseTestCase extends TestCase {
 	private MockHttpServletRequest _request;
 	private MockHttpServletResponse _response;
 	private ActionSupport _action;
-
+	
+	private Map<String, Parameter> _parameters = new HashMap<String, Parameter>();
+	
 }
+	

@@ -15,6 +15,7 @@ package org.entando.entando.plugins.jacms.aps.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -149,9 +150,9 @@ public class ProtectedResourceProvider implements IProtectedResourceProvider {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("returnUrl", targetUrl.toString());
 			String loginPageCode = this.getConfigManager().getParam(SystemConstants.CONFIG_PARAM_LOGIN_PAGE_CODE);
-			IPage page = this.getPageManager().getPage(loginPageCode);
+			IPage page = this.getPageManager().getOnlinePage(loginPageCode);
 			Lang defaultLang = this.getLangManager().getDefaultLang();
-			String url = this.getUrlManager().createUrl(page, defaultLang, params);
+			String url = this.getUrlManager().createURL(page, defaultLang, params);
 			response.sendRedirect(url);
 		} catch (Throwable t) {
 			_logger.error("Error executing redirect login page", t);

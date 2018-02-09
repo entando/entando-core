@@ -16,4 +16,8 @@
 		<property name="treeHelper" ref="categoryActionHelper" />
 	</bean>
 	
+    <bean id="categorySettingsAction" scope="prototype" 
+              class="com.agiletec.apsadmin.category.CategorySettingsAction" parent="baseAdminAction">
+    </bean>
+    
 </beans>

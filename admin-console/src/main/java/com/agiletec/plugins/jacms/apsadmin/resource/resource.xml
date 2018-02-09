@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-    "http://struts.apache.org/dtds/struts-2.3.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
 	
@@ -87,6 +87,12 @@
             <result name="references" type="tiles">admin.jacms.resource.references</result>
             <result name="input" type="chain">list</result>
             <result type="chain">list</result>
+            <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
+        </action>
+        
+        <action name="detail" class="jacmsResourceAction" method="detail">
+            <result type="tiles">admin.jacms.resource.detail</result>
+            <result name="input" type="chain">list</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
     	

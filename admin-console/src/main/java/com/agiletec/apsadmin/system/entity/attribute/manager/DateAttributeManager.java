@@ -22,8 +22,8 @@ import com.agiletec.aps.system.common.entity.model.FieldError;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.util.DateAttributeValidationRules;
+import com.agiletec.aps.util.CheckFormatUtil;
 import com.agiletec.aps.util.DateConverter;
-import com.agiletec.apsadmin.util.CheckFormatUtil;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**

@@ -20,14 +20,14 @@ import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.user.group.GroupAction;
 
 public class TestTrashReferencedGroup extends ApsAdminBaseTestCase {
-	
+
 	public void testFailureTrashReferencedGroup() throws Throwable {
 		String result = this.executeTrash("admin", "customers");
 		assertEquals("references", result);
 		GroupAction groupAction = (GroupAction) this.getAction();
 		Map<String, List<Object>> references = groupAction.getReferences();
 		assertNotNull(references);
-		assertEquals(4, references.size());
+		assertEquals(5, references.size());
 		List contents = references.get("jacmsContentManagerUtilizers");
 		assertNotNull(contents);
 		assertEquals(5, contents.size());
@@ -35,12 +35,12 @@ public class TestTrashReferencedGroup extends ApsAdminBaseTestCase {
 		assertNotNull(resources);
 		assertEquals(1, resources.size());
 	}
-	
+
 	private String executeTrash(String currentUser, String groupName) throws Throwable {
 		this.setUserOnSession(currentUser);
 		this.initAction("/do/Group", "trash");
 		this.addParameter("name", groupName);
 		return this.executeAction();
 	}
-	
+
 }

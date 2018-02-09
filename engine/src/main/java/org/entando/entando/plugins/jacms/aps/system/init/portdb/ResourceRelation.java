@@ -13,6 +13,7 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.init.portdb;
 
+import com.j256.ormlite.field.DataType;
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.ExtendedColumnDefinition;
 import org.entando.entando.aps.system.init.model.portdb.Category;
@@ -25,39 +26,46 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = ResourceRelation.TABLE_NAME)
 public class ResourceRelation implements ExtendedColumnDefinition {
-	
-	public ResourceRelation() {}
-	
-	@DatabaseField(foreign = true, columnName = "resid", 
-			width = 16, 
-			canBeNull = false)
-	private Resource _resource;
-	
-	@DatabaseField(foreign = true, columnName = "refcategory", 
-			width = 30, 
-			canBeNull = false)
-	private Category _category;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String categoryTableName = Category.TABLE_NAME;
-		String resourceTableName = Resource.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			categoryTableName = "`" + categoryTableName + "`";
-			resourceTableName = "`" + resourceTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_refcat_fkey FOREIGN KEY (refcategory) "
-				+ "REFERENCES " + categoryTableName + " (catcode)", 
-			"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_resid_fkey FOREIGN KEY (resid) "
-				+ "REFERENCES " + resourceTableName + " (resid)"};
-	}
-	
-	public static final String TABLE_NAME = "resourcerelations";
-	
+
+    public ResourceRelation() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(foreign = true, columnName = "resid",
+            width = 16,
+            canBeNull = false)
+    private Resource _resource;
+
+    @DatabaseField(foreign = true, columnName = "refcategory",
+            width = 30,
+            canBeNull = false)
+    private Category _category;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String categoryTableName = Category.TABLE_NAME;
+        String resourceTableName = Resource.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            categoryTableName = "`" + categoryTableName + "`";
+            resourceTableName = "`" + resourceTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_refcat_fkey FOREIGN KEY (refcategory) "
+            + "REFERENCES " + categoryTableName + " (catcode)",
+            "ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_resid_fkey FOREIGN KEY (resid) "
+            + "REFERENCES " + resourceTableName + " (resid)"};
+    }
+
+    public static final String TABLE_NAME = "resourcerelations";
+
 }
 /*
 CREATE TABLE resourcerelations

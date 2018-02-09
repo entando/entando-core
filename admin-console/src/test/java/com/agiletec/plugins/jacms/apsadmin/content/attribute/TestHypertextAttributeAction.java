@@ -69,7 +69,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 	private void initIntroContentLink(String username, String contentId) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
-		this.initContentAction("/do/jacms/Content/Hypertext", "introContentLink", contentOnSessionMarker);
+		this.initContentAction("/do/jacms/Content/Hypertext", "entandoIntroContentLink", contentOnSessionMarker);
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 	}
@@ -79,7 +79,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(3, root.getChildren().length);
+		assertEquals(3, root.getChildrenCodes().length);
 	}
 
 	public void testConfigPageLink_2() throws Throwable {
@@ -87,7 +87,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(4, root.getChildren().length);
+		assertEquals(4, root.getChildrenCodes().length);
 	}
 
 	public void testOpenPageTree_1() throws Throwable {
@@ -95,10 +95,10 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(3, root.getChildren().length);
+		assertEquals(3, root.getChildrenCodes().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
-		assertEquals(3, showableRoot.getChildren().length);
+		assertEquals(3, showableRoot.getChildrenCodes().length);
 	}
 
 	public void testOpenPageTree_2() throws Throwable {
@@ -115,21 +115,21 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		this.openTreeOnDemand("editorCustomers", "ART102", "homepage");
 		this.checkTestOpenPageTree_ART102();
 	}
-	
+
 	private void checkTestOpenPageTree_ART102() throws Throwable {
 		ITreeNode root = ((PageTreeAction) this.getAction()).getAllowedTreeRootNode();
 		assertNotNull(root);
 		assertEquals("homepage", root.getCode());
-		assertEquals(4, root.getChildren().length);
+		assertEquals(4, root.getChildrenCodes().length);
 		ITreeNode showableRoot = ((PageTreeAction) this.getAction()).getShowableTree();
 		assertEquals("homepage", showableRoot.getCode());
-		assertEquals(4, showableRoot.getChildren().length);
+		assertEquals(4, showableRoot.getChildrenCodes().length);
 	}
-	
+
 	private void initIntroPageLink(String username, String contentId) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
-		this.initContentAction("/do/jacms/Content/Hypertext", "introPageLink", contentOnSessionMarker);
+		this.initContentAction("/do/jacms/Content/Hypertext", "entandoPageLink", contentOnSessionMarker);
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 	}
@@ -137,7 +137,7 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 	private void openTree(String username, String contentId, String nodeToOpen) throws Throwable {
 		this.executeEdit(contentId, username);
 		String contentOnSessionMarker = super.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
-		this.initContentAction("/do/jacms/Content/Hypertext", "introPageLink", contentOnSessionMarker);
+		this.initContentAction("/do/jacms/Content/Hypertext", "entandoPageLink", contentOnSessionMarker);
 		this.addParameter("treeNodeActionMarkerCode", ITreeAction.ACTION_MARKER_OPEN);
 		this.addParameter("targetNode", nodeToOpen);
 		String result = this.executeAction();
@@ -153,5 +153,5 @@ public class TestHypertextAttributeAction extends AbstractBaseTestContentAction 
 		String result = this.executeAction();
 		assertEquals(Action.SUCCESS, result);
 	}
-	
+
 }

@@ -17,11 +17,21 @@
     </bean>
     
     <bean id="ApiCatalogManager" class="org.entando.entando.aps.system.services.api.ApiCatalogManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
         <property name="apiCatalogDAO" >
             <bean class="org.entando.entando.aps.system.services.api.ApiCatalogDAO">
                 <property name="dataSource" ref="servDataSource" />
             </bean>
+        </property>
+        <property name="resourceCacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.api.cache.ApiResourceCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+        </property>
+        <property name="serviceCacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.api.cache.ApiServiceCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
         </property>
     </bean>
     
@@ -33,7 +43,7 @@
     </bean>
     
     <bean id="OAuthConsumerManager" class="org.entando.entando.aps.system.services.oauth.OAuthConsumerManager" 
-            parent="abstractService" >
+            parent="abstractService">
         <property name="consumerDAO" >
             <bean class="org.entando.entando.aps.system.services.oauth.OAuthConsumerDAO">
                 <property name="dataSource" ref="servDataSource" />

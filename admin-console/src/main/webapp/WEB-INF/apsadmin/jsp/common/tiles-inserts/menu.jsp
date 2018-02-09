@@ -4,190 +4,400 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
 
-<p id="manage" class="sr-only"><s:text name="note.userbar.intro" />:</p>
+<script>
+    $(document).ready(function () {
+        // matchHeight the contents of each .card-pf and then the .card-pf itself
+        $(".row-cards-pf > [class*='col'] > .card-pf .card-pf-title").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-body").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-footer").matchHeight();
+        $(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
+        // Initialize the vertical navigation
+        $().setupVerticalNavigation(true);
+        $('[data-toggle=popover]').popovers();
+//        $(".bootstrap-switch").bootstrapSwitch();
+    });
+</script>
 
-<p>
-	<a class="btn btn-info btn-block" href="<s:url namespace="/do/BaseAdmin" action="settings" />"><span class="icon fa fa-cog"></span>&#32;<s:text name="menu.configure" /></a>
-</p>
+<wp:ifauthorized permission="superuser" var="isSuperUser" />
 
-<ul class="nav nav-pills nav-stacked" id="backoffice-menu-main" role="menubar">
+<ul class="list-group">
+    <wp:ifauthorized permission="managePages" var="isManagePage" />
+    <c:if test="${isManagePage || isSuperUser}">
+        <!-- Page Designer -->
+        <li class="list-group-item secondary-nav-item-pf" data-target="#page-designer-secondary">
+            <a>
+                <span class="fa fa-files-o" data-toggle="tooltip" title="<s:text name="menu.pageDesigner" />" ></span>
+                <span class="list-group-item-value"><s:text name="menu.pageDesigner" /></span>
+            </a>
 
-	<wp:info key="systemParam" paramName="groupsOnDemand" var="groupsOnDemandVar" />
-	<c:if test="${groupsOnDemandVar}" >
-	<wp:ifauthorized permission="superuser">
-		<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/Group" />"><s:text name="menu.accountAdmin.groups" /></a></li>
-	</wp:ifauthorized>
-	</c:if>
+            <div id="page-designer-secondary" class="nav-pf-secondary-nav">
+                <div class="nav-item-pf-header">
+                    <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                    <span><s:text name="menu.pageDesigner" /></span>
+                </div>
 
-	<wp:info key="systemParam" paramName="categoriesOnDemand" var="categoriesOnDemandVar" />
-	<c:if test="${categoriesOnDemandVar}">
-	<wp:ifauthorized permission="manageCategories">
-		<li role="presentation"><a role="menuitem" href="<s:url action="viewTree" namespace="/do/Category" />"><s:text name="menu.categoryAdmin" /></a></li>
-	</wp:ifauthorized>
-	</c:if>
+                <!-- Page Designer Secondary -->
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a id="linkHome" href='<s:url action="viewTree" namespace="/do/Page" />'>
+                            <span class="list-group-item-value"><s:text name="menu.pageDesigner.pageTree" /></span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a id="" href='<s:url action="viewTreeMenu" namespace="/do/Page/Console" />'>
+                            <span class="list-group-item-value"><s:text name="menu.pageDesigner.pageConfiguration" /></span>
+                        </a>
+                    </li>
+                    <c:if test="${isSuperUser}">
+                        <li class="list-group-item">
+                            <a href='<s:url action="systemParams" namespace="/do/Page" />'>
+                                <span class="list-group-item-value"><s:text name="menu.pageDesigner.pageSettings" /></span>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+                <!--Fine Page Designer Secondary-->
+            </div>
+        </li>
+    </c:if>
 
-	<wpsa:pluginsSubMenu objectName="pluginsSubMenus" />
-	<s:if test="#pluginsSubMenus.size > 0">
-		<li class="panel-group" role="presentation">
-			<div class="panel panel-default" role="presentation">
-				<div class="panel-heading" role="presentation">
-					<a data-toggle="collapse" href="#submenu-plugins" class="display-block" id="aria-menu-plugin"  aria-haspopup="true" role="menuitem">
-						<s:text name="menu.plugins" />&#32;
-						<span class="icon fa fa-chevron-down pull-right"></span>
-					</a>
-				</div>
-				<div id="submenu-plugins" class="panel-collapse collapse">
-					<ul class="panel-body nav nav-pills nav-stacked" role="menubar" aria-labelledby="aria-menu-plugin">
-						<s:iterator value="#pluginsSubMenus" id="pluginSubMenu">
-							<wpsa:include value="%{#pluginSubMenu.subMenuFilePath}"></wpsa:include>
-						</s:iterator>
-					</ul>
-				</div>
-			</div>
-		</li>
-	</s:if>
-	<s:else>
-		<li role="presentation"><a href="#" role="menuitem" ><s:text name="menu.plugins" /></a></li>
-	</s:else>
+    <!-- UX Patterns -->
+    <c:if test="${isManagePage || isSuperUser}">
+        <li class="list-group-item secondary-nav-item-pf" data-target="#ux-pattern-secondary">
+            <a>
+                <span class="fa fa-object-ungroup" data-toggle="tooltip" title="<s:text name="menu.UXPattern" />"></span>
+                <span class="list-group-item-value"><s:text name="menu.UXPattern" /></span>
+            </a>
 
-<wp:ifauthorized permission="managePages" var="isEditPages" />
-<wp:ifauthorized permission="superuser" var="isSuperuser" />
+            <div id="ux-pattern-secondary" class="nav-pf-secondary-nav">
+                <div class="nav-item-pf-header">
+                    <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                    <span><s:text name="menu.UXPattern" /></span>
+                </div>
 
-<c:if test="${isEditPages || isSuperuser}">
+                <!-- UX Patterns Secondary -->
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href='<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />'>
+                            <span class="list-group-item-value"><s:text name="menu.UXPattern.widget" /></span>
+                        </a>
+                    </li>
+                    <c:if test="${isSuperUser}">
+                        <li class="list-group-item">
+                            <a href='<s:url action="list" namespace="/do/Portal/GuiFragment" />'>
+                                <span class="list-group-item-value"><s:text name="menu.UXPattern.fragments" /></span>
 
-<wp:ifauthorized permission="managePages">
-	<li role="presentation"><a role="menuitem" href="<s:url action="viewTree" namespace="/do/Page" />"><s:text name="menu.pageAdmin" /></a></li>
-	<li role="presentation"><a role="menuitem" href="<s:url action="viewWidgets" namespace="/do/Portal/WidgetType" />"><s:text name="menu.widgetAdmin" /></a></li>
-</wp:ifauthorized>
+                            </a>
+                        </li>
 
-<wp:info key="systemParam" paramName="apisOnDemand" var="apisOnDemandVar" />
-<c:if test="${apisOnDemandVar}" >
-<wp:ifauthorized permission="superuser">
-	<li class="panel-group" role="presentation">
-		<div class="panel panel-default" role="presentation">
-			<div class="panel-heading" role="presentation">
-				<a data-toggle="collapse" href="#submenu-api" class="display-block" id="aria-menu-api" aria-haspopup="true" role="menuitem">
-					<s:text name="menu.apisAdmin" />&#32;
-					<span class="icon fa fa-chevron-down pull-right"></span>
-				</a>
-			</div>
-			<div id="submenu-api" class="panel-collapse collapse" role="presentation">
-				<ul class="panel-body nav nav-pills nav-stacked"  role="menubar" aria-labelledby="aria-menu-api">
-					<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/Api/Resource" />" ><s:text name="menu.apisAdmin.resources" /></a></li>
-					<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/Api/Service" />" ><s:text name="menu.apisAdmin.services" /></a></li>
-					<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/Api/Consumer" />" ><s:text name="menu.apisAdmin.consumers" /></a></li>
-				</ul>
-			</div>
-		</div>
-	</li>
-</wp:ifauthorized>
-</c:if>
+                        <li class="list-group-item">
+                            <a href='<s:url action="list" namespace="/do/PageModel" />'>
+                                <span class="list-group-item-value"><s:text name="menu.UXPattern.pageModels" /></span>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+                <!--Fine UX Patterns Secondary-->
+            </div>
+        </li>
+    </c:if>
 
-</c:if>
+    <!-- Integrations -->
 
-<wp:ifauthorized permission="editContents" var="isEditContents" />
-<wp:ifauthorized permission="manageResources" var="isManageResources" />
+    <li class="list-group-item secondary-nav-item-pf" data-target="#integration-secondary">
+        <a>
+            <span class="fa fa-cubes" data-toggle="tooltip" title="<s:text name="menu.integrations" />"></span>
+            <span class="list-group-item-value"><s:text name="menu.integrations" /></span>
+        </a>
 
-<c:if test="${isEditContents || isManageResources}">
-	<wp:ifauthorized permission="editContents">
+        <!--Integrations secondary-->
 
-		<li class="panel-group" role="presentation">
-			<div class="panel panel-default overflow-visible" role="presentation">
-				<div class="panel-heading" role="presentation">
-					<a data-toggle="collapse" href="#submenu-contents" class="display-block" id="aria-menu-jacms-contentadmin"  aria-haspopup="true" role="menuitem">
-						<s:text name="jacms.menu.contentAdmin" />&#32;
-						<span class="icon fa fa-chevron-down pull-right"></span>
-					</a>
-				</div>
-				<div id="submenu-contents" class="panel-collapse collapse" role="presentation">
-					<ul class="panel-body nav nav-pills nav-stacked" role="menubar" aria-labelledby="aria-menu-jacms-contentadmin">
-						<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/jacms/Content" />"><s:text name="jacms.menu.contentAdmin.list" /></a></li>
-						<wpsa:entityTypes entityManagerName="jacmsContentManager" var="contentTypesVar" />
-						<li class="dropdown hidden-xs hidden-sm visible-md visible-lg" role="presentation">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="aria-menu-jacms-new" role="menuitem">
-								<s:text name="label.new.male" />&#32;<s:text name="label.content" />&#32;<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menubar" aria-labelledby="aria-menu-jacms-new">
-								<s:iterator var="contentTypeVar" value="#contentTypesVar">
-									<jacmswpsa:contentType typeCode="%{#contentTypeVar.typeCode}" property="isAuthToEdit" var="isAuthToEditVar" />
-									<s:if test="%{#isAuthToEditVar}">
-									<li role="presentation" class="hidden-xs hidden-sm visible-md visible-lg"><a role="menuitem" href="<s:url action="createNew" namespace="/do/jacms/Content" >
-											   <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
-										   </s:url>" ><s:text name="label.new.male" />&#32;<s:property value="%{#contentTypeVar.typeDescr}" /></a></li>
-									</s:if>
-								</s:iterator>
-							</ul>
-						</li>
-						<s:iterator var="contentTypeVar" value="#contentTypesVar">
-							<jacmswpsa:contentType typeCode="%{#contentTypeVar.typeCode}" property="isAuthToEdit" var="isAuthToEditVar" />
-							<s:if test="%{#isAuthToEditVar}">
-							<li role="presentation" class="visible-xs visible-sm hidden-md hidden-lg"><a role="menuitem" href="<s:url action="createNew" namespace="/do/jacms/Content" >
-									   <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
-								   </s:url>" ><s:text name="label.new.male" />&#32;<s:property value="%{#contentTypeVar.typeDescr}" /></a></li>
-							</s:if>
-						</s:iterator>
-						<li role="presentation" class="divider visible-xs visible-sm hidden-md hidden-lg"><hr role="presentation" class="margin-none" />
-						<wp:ifauthorized permission="superuser">
-							<wp:info key="systemParam" paramName="contentModelsOnDemand" var="contentModelsOnDemandVar" />
-							<c:if test="${contentModelsOnDemandVar}" >
-							<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/jacms/ContentModel" />"><s:text name="jacms.menu.contentModelAdmin" /></a></li>
-							</c:if>
-							<wp:info key="systemParam" paramName="contentTypesOnDemand" var="contentTypesOnDemandVar" />
-							<c:if test="${contentTypesOnDemandVar}" >
-							<li role="presentation"><a role="menuitem" href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>"><s:text name="jacms.menu.contentTypeAdmin" /></a></li>
-							</c:if>
-						</wp:ifauthorized>
-					</ul>
-				</div>
-			</div>
-		</li>
+        <div id="integration-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span><s:text name="menu.integrations" /></span>
+            </div>
 
-	</wp:ifauthorized>
+            <ul class="list-group">
+                <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-ux-components-tertiary">
+                    <a>
+                        <span class="list-group-item-value"><s:text name="menu.integrations.components" /></span>
+                    </a>
+                <wpsa:pluginsSubMenu objectName="pluginsSubMenusVar" />
+                <s:if test="#pluginsSubMenusVar.size > 0">
+                    <div id="integrations-ux-components-tertiary" class="nav-pf-tertiary-nav">
+                        <div class="nav-item-pf-header">
+                            <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                            <span><s:text name="menu.integrations.components" /></span>
+                        </div>
+                        <ul class="list-group">
 
-	<wp:info key="systemParam" paramName="resourceArchivesOnDemand" var="resourceArchivesOnDemandVar" />
-	<c:if test="${resourceArchivesOnDemandVar}" >
-	<wp:ifauthorized permission="manageResources">
-		<li role="presentation" class="panel-group">
-			<div role="presentation" class="panel panel-default">
-				<div role="presentation" class="panel-heading">
-					<a data-toggle="collapse" href="#submenu-resources" class="display-block" id="aria-menu-jacms-resources"  aria-haspopup="true" role="menuitem">
-						<s:text name="jacms.menu.resourceAdmin" />&#32;
-						<span class="icon fa fa-chevron-down pull-right"></span>
-					</a>
-				</div>
-				<div id="submenu-resources" class="panel-collapse collapse" role="presentation">
-					<ul class="panel-body nav nav-pills nav-stacked" role="menubar" aria-labelledby="aria-menu-jacms-resources">
-						<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/jacms/Resource"><s:param name="resourceTypeCode" >Image</s:param></s:url>"><s:text name="jacms.menu.imageAdmin" /></a></li>
-						<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/jacms/Resource"><s:param name="resourceTypeCode" >Attach</s:param></s:url>"><s:text name="jacms.menu.attachAdmin" /></a></li>
-					</ul>
-				</div>
-			</div>
-		</li>
-	</wp:ifauthorized>
-	</c:if>
+                            <s:iterator value="#pluginsSubMenusVar" var="pluginSubMenuVar">
+                                <s:include value="%{#pluginSubMenuVar.subMenuFilePath}" />
+                            </s:iterator>
+                        </ul>
+                    </div>
+                </s:if>
+                </li>
+                <c:if test="${isSuperUser}">
+                    <li class="list-group-item tertiary-nav-item-pf" data-target="integrations-api-tertiary">
+                        <a>
+                            <span class="list-group-item-value"><s:text name="menu.integrations.APIManagement" /></span>
+                        </a>
 
-</c:if>
+                        <div id="integrations-api-tertiary" class="nav-pf-tertiary-nav">
+                            <div class="nav-item-pf-header">
+                                <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                                <span><s:text name="menu.integrations.APIManagement" /></span>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <a href='<s:url action="list" namespace="/do/Api/Resource" />'>
+                                        <span class="list-group-item-value"><s:text name="menu.integrations.API.resources" /></span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href='<s:url action="list" namespace="/do/Api/Service" />'>
+                                        <span  class="list-group-item-value"><s:text name="menu.integrations.API.services" /></span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href='<s:url action="list" namespace="/do/Api/Consumer" />'>
+                                        <span class="list-group-item-value"><s:text name="menu.integrations.API.consumers" /></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </c:if>
+            </ul>
+        </div>
+    </li>
 
-<c:if test="${isSuperuser}">
-	<li class="panel-group" role="presentation">
-		<div class="panel panel-default" role="presentation">
-			<div class="panel-heading" role="presentation">
-				<a data-toggle="collapse" href="#submenu-template" class="display-block" id="aria-menu-template" aria-haspopup="true" role="menuitem">
-					<s:text name="menu.template" />&#32;
-					<span class="icon fa fa-chevron-down pull-right"></span>
-				</a>
-			</div>
-			<div id="submenu-template" class="panel-collapse collapse" role="presentation">
-				<ul class="panel-body nav nav-pills nav-stacked" role="menubar" aria-labelledby="aria-menu-template">
-					<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/PageModel" />"><s:text name="menu.pageModelAdmin" /></a></li>
+    <wp:ifauthorized permission="viewUsers" var="isViewUsers" />
+    <wp:ifauthorized permission="editUsers" var="isEditUsers" />
+    <wp:ifauthorized permission="editUserProfile" var="isEditProfiles" />
+    <c:if test="${isViewUsers || isEditUsers || isEditProfiles}">
+        <!--  Users Settings -->
+        <li class="list-group-item secondary-nav-item-pf" data-target="#user-settings-secondary">
+            <a>
+                <span class="fa fa-users" data-toggle="tooltip" title="<s:text name="menu.userSettings" />" ></span>
+                <span class="list-group-item-value"><s:text name="menu.userSettings" /></span>
+            </a>
 
-					<li><a href="<s:url namespace="/do/Portal/GuiFragment" action="list" />" ><s:text name="menu.guiFragmentAdmin" /></a></li>
+            <div id="#user-settings-secondary" class="nav-pf-secondary-nav">
+                <div class="nav-item-pf-header">
+                    <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                    <span><s:text name="menu.userSettings"/></span>
+                </div>
 
-					<li role="presentation"><a role="menuitem" href="<s:url action="list" namespace="/do/FileBrowser" />"><s:text name="menu.filebrowserAdmin" /></a></li>
-				</ul>
-			</div>
-		</div>
-	</li>
-</c:if>
+                <!-- Users Settings Secondary -->
+
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href='<s:url action="list" namespace="/do/User" />'>
+                            <span class="list-group-item-value"><s:text name="menu.usersSettings.users" /></span>
+                        </a>
+                    </li>
+
+                    <c:if test="${isSuperUser}">
+                        <li class="list-group-item">
+                            <a href='<s:url action="initViewEntityTypes" namespace="/do/Entity" ><s:param name="entityManagerName">UserProfileManager</s:param></s:url>'>
+                                <span class="list-group-item-value"><s:text name="menu.usersSettings.profileTypes" /></span>
+                            </a>
+                        </li>
+
+                        <c:if test="${isSuperUser}">
+                            <li class="list-group-item">
+                                <a href='<s:url action="systemParams" namespace="/do/User" />'>
+                                    <span class="list-group-item-value"><s:text name="menu.usersSettings.usersRestriction" /></span>
+                                </a>
+                            </li>
+                        </c:if>
+                        <li class="list-group-item">
+                            <a href='<s:url action="list" namespace="/do/Role" />'>
+                                <span class="list-group-item-value"><s:text name="menu.usersSettings.roles" /></span>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+                <!--Fine Users Settings Secondary-->
+            </div>
+        </li>
+    </c:if>
+
+    <!-- APPS -->
+    <li class="list-group-item secondary-nav-item-pf" data-target="#apps-secondary">
+        <a>
+            <span class="fa fa-rocket" data-toggle="tooltip" title="<s:text name="menu.APPS" />"></span>
+            <span class="list-group-item-value"><s:text name="menu.APPS" /></span>
+        </a>
+
+        <!--Integrations secondary-->
+
+        <div id="apps-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span><s:text name="menu.APPS" /></span>
+            </div>
+            <wp:ifauthorized permission="editContents" var="isEditContents" />
+            <wp:ifauthorized permission="manageResources" var="isManageResources" />
+
+            <ul class="list-group">
+                <c:if test="${isEditContents || isManageResources}">
+                    <li class="list-group-item tertiary-nav-item-pf" data-target="apps-cms-tertiary">
+                        <a>
+                            <span class="list-group-item-value"><s:text name="menu.APPS.CMS" /></span>
+                        </a>
+                        <div id="apps-cms-tertiary" class="nav-pf-tertiary-nav">
+                            <div class="nav-item-pf-header">
+                                <a class="tertiary-collapse-toggle-pf" data-toggle="collapse-tertiary-nav"></a>
+                                <span><s:text name="menu.APPS.CMS" /></span>
+                            </div>
+                            <ul class="list-group">
+                                <c:if test="${isEditContents}">
+                                    <li class="list-group-item">
+                                        <a href="<s:url action="list" namespace="/do/jacms/Content" />">
+                                           <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contents" /></span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                                <c:if test="${isManageResources}">
+                                    <li class="list-group-item">
+                                        <a href="<s:url action="list" namespace="/do/jacms/Resource" ><s:param name="resourceTypeCode" >Image</s:param></s:url>">
+                                            <span class="list-group-item-value"><s:text name="menu.APPS.CMS.digitalAssets" /></span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                                <c:if test="${isSuperUser}">
+                                    <li class="list-group-item">
+                                        <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">jacmsContentManager</s:param></s:url>">
+                                            <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentTypes" /></span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="<s:url action="list" namespace="/do/jacms/ContentModel" />">
+                                           <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentModels" /></span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />">
+                                           <span class="list-group-item-value"><s:text name="menu.APPS.CMS.contentSettings" /></span>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </ul>
+                        </div>
+                    </li>
+                </c:if>
+                <li class="list-group-item disabled">
+                    <a>
+                        <span class="ml-5"><s:text name="menu.APPS.IoT" /></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+
+
+
+    <!-- DATA TYPE -->
+    <c:if test="${isSuperUser}">
+        <li class="list-group-item secondary-nav-item-pf" data-target="#datatype-secondary">
+            <a>
+                <span class="fa fa-file-text-o" data-toggle="tooltip" title="<s:text name="menu.DataType" />"></span>
+                <span class="list-group-item-value"><s:text name="menu.DataType" /></span>
+            </a>
+            <div id="datatype-secondary" class="nav-pf-secondary-nav">
+                <div class="nav-item-pf-header">
+                    <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                    <span><s:text name="menu.DataType" /></span>
+                </div>
+                <!-- DataType Secondary -->
+                <ul class="list-group">
+                    <c:if test="${isSuperUser}">
+                        <li class="list-group-item">
+                            <a href="<s:url action="initViewEntityTypes" namespace="/do/Entity"><s:param name="entityManagerName">DataObjectManager</s:param></s:url>">
+                                <span class="list-group-item-value"><s:text name="menu.DataType.Model" /></span>
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="<s:url action="list" namespace="/do/dataobject/model" />">
+                               <span class="list-group-item-value"><s:text name="menu.DataType.UX" /></span>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+                <!--Fine DATA TYPE Secondary-->
+            </div>
+        </li>
+    </c:if>
+
 
 </ul>
+
+<wp:ifauthorized permission="manageCategories" var="isCategories" />
+<c:if test="${isCategories || isSuperUser}">
+    <ul class="list-group fixed-bottom">
+
+        <li class="list-group-item secondary-nav-item-pf" data-target="#settings-secondary">
+            <a>
+                <span class="fa fa-cogs" data-toggle="tooltip" title="<s:text name="menu.settings" />"></span>
+                <span class="list-group-item-value"><s:text name="menu.settings" /></span>
+            </a>
+
+            <div id="#settings-secondary" class="nav-pf-secondary-nav">
+                <div class="nav-item-pf-header">
+                    <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                    <span><s:text name="menu.settings" /></span>
+                </div>
+
+                <!-- Settings Secondary -->
+
+                <ul class="list-group">
+                    <c:if test="${isCategories}">
+                        <li class="list-group-item">
+                            <a href='<s:url action="viewTree" namespace="/do/Category" />'>
+                                <span class="list-group-item-value"><s:text name="menu.settings.categories" /></span>
+                            </a>
+                        </li>
+                    </c:if>
+
+                    <c:if test="${isSuperUser}">
+                        <li class="list-group-item">
+                            <a href='<s:url action="list" namespace="/do/Lang" />'>
+                                <span class="list-group-item-value"><s:text name="menu.settings.labelsLanguages" /></span>
+                            </a>
+                        </li>
+
+                        <li class="list-group-item">
+                            <a href='<s:url action="reloadChoose" namespace="/do/BaseAdmin" />'>
+                                <span class="list-group-item-value"><s:text name="menu.settings.reloadConfigurations" /></span>
+                            </a>
+                        </li>
+
+                        <li class="list-group-item">
+                            <a href='<s:url action="entry" namespace="/do/Admin/Database" />'>
+                                <span class="list-group-item-value"><s:text name="menu.settings.database" /></span>
+                            </a>
+                        </li>
+
+                        <li class="list-group-item">
+                            <a href='<s:url action="list" namespace="/do/FileBrowser" />'>
+                                <span class="list-group-item-value"><s:text name="menu.settings.fileBrowser" /></span>
+                            </a>
+                        </li>
+
+                        <li class="list-group-item">
+                            <a href='<s:url action="list" namespace="/do/Group" />'>
+                                <span class="list-group-item-value"><s:text name="menu.settings.groups" /></span>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+                <!--Fine Users Settings Secondary-->
+            </div>
+
+        </li>
+    </ul>
+</c:if>

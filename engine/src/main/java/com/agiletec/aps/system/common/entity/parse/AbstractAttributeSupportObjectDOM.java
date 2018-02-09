@@ -13,10 +13,13 @@
  */
 package com.agiletec.aps.system.common.entity.parse;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -26,12 +29,11 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.jdom.Document;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import java.nio.charset.StandardCharsets;
+import org.xml.sax.SAXException;
 
 /**
  * Abstract Dom class parser of Attribute support Objects.
@@ -55,7 +57,7 @@ public abstract class AbstractAttributeSupportObjectDOM {
 	        Source source = new StreamSource(xmlIs);
 	        validator.validate(source);
 	        _logger.debug("Valid definition : {}", definitionPath);
-        } catch (Throwable t) {
+        } catch (SAXException | IOException t) {
         	String message = "Error validating definition : " + definitionPath;
         	_logger.error("Error validating definition : {}", definitionPath, t);
         	throw new ApsSystemException(message, t);
@@ -76,7 +78,7 @@ public abstract class AbstractAttributeSupportObjectDOM {
 		StringReader reader = new StringReader(xmlText);
 		try {
 			doc = builder.build(reader);
-		} catch (Exception ex) {
+		} catch (JDOMException | IOException ex) {
 			throw new ApsSystemException("Error while parsing: " + ex.getMessage(), ex);
 		}
 		return doc;

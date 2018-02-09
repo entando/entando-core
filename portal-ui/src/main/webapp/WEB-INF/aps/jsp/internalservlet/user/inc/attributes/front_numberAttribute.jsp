@@ -4,10 +4,10 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
 <s:if test="#attribute.failedNumberString == null">
-	<s:set name="numberAttributeValue" value="#attribute.value"></s:set>
+	<s:set var="numberAttributeValue" value="#attribute.value"></s:set>
 </s:if>
 <s:else>
-	<s:set name="numberAttributeValue" value="#attribute.failedNumberString"></s:set>
+	<s:set var="numberAttributeValue" value="#attribute.failedNumberString"></s:set>
 </s:else>
 <wpsf:textfield 
 		useTabindexAutoIncrement="true" 

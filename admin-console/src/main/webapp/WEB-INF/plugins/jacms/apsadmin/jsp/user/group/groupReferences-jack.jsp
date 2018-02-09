@@ -11,7 +11,7 @@
 		<div class="panel-body">
 			<s:if test="null != references['jacmsContentManagerUtilizers']">
 				<wpsa:subset source="references['jacmsContentManagerUtilizers']" count="10" objectName="contentReferences" advanced="true" offset="5" pagerId="contentManagerReferences">
-					<s:set name="group" value="#contentReferences" />
+					<s:set var="group" value="#contentReferences" />
 					<div class="text-center">
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -65,7 +65,7 @@
 		<div class="panel-body">
 			<s:if test="null != references['jacmsResourceManagerUtilizers']">
 				<wpsa:subset source="references['jacmsResourceManagerUtilizers']" count="10" objectName="resourceReferences" advanced="true" offset="5" pagerId="resourceManagerReferences">
-					<s:set name="group" value="#resourceReferences" />
+					<s:set var="group" value="#resourceReferences" />
 					<div class="text-center">
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" />
 						<s:include value="/WEB-INF/apsadmin/jsp/common/inc/pager_formBlock.jsp" />
@@ -83,7 +83,7 @@
 							<jacmswpsa:resource resourceId="%{#currentResourceIdVar}" var="currentResourceVar" />
 							<tr>
 								<s:set var="canEditCurrentResource" value="%{false}" />
-								<c:set var="currentResourceGroup"><s:property value="#currentResourceVar.mainGroup" escape="false"/></c:set>
+								<c:set var="currentResourceGroup"><s:property value="#currentResourceVar.mainGroup" escapeHtml="false"/></c:set>
 								<td>
 									<wp:ifauthorized groupName="${currentResourceGroup}" permission="manageResources"><s:set var="canEditCurrentResource" value="%{true}" /></wp:ifauthorized>
 									<s:if test="#canEditCurrentResource">

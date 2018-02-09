@@ -13,23 +13,24 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.resource.model;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.Category;
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM;
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Classe astratta di base per gli oggetti Resource.
@@ -262,7 +263,7 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		try {
 			Class resourceClass = Class.forName(this.getClass().getName());
 			prototype = (AbstractResource) resourceClass.newInstance();
-		} catch (Throwable t) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException t) {
 			throw new RuntimeException("Errore in creazione prototipo " +
 					"Risorsa tipo '" + this.getType() + "'", t);
 		}
@@ -382,22 +383,28 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 		return (!Group.FREE_GROUP_NAME.equals(this.getMainGroup()));
 	}
 	
-	protected File saveTempFile(String filename, InputStream is) throws ApsSystemException {
+	protected File saveTempFile(String filename, InputStream is) throws ApsSystemException, IOException {
 		String tempDir = System.getProperty("java.io.tmpdir");
 		String filePath = tempDir + File.separator + filename;
+		FileOutputStream outStream = null;
 		try {
 			byte[] buffer = new byte[1024];
 			int length = -1;
-			FileOutputStream outStream = new FileOutputStream(filePath);
+			outStream = new FileOutputStream(filePath);
 			while ((length = is.read(buffer)) != -1) {
 				outStream.write(buffer, 0, length);
 				outStream.flush();
 			}
-			outStream.close();
-			is.close();
 		} catch (Throwable t) {
 			_logger.error("Error on saving temporary file '{}'", filename, t);
 			throw new ApsSystemException("Error on saving temporary file", t);
+		} finally {
+			if (null != outStream) {
+				outStream.close();
+			}
+			if (null != is) {
+				is.close();
+			}
 		}
 		return new File(filePath);
 	}

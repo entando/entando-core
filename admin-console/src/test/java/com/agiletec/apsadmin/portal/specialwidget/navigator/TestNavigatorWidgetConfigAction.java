@@ -35,9 +35,9 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-        super.setUp();
-        this.init();
-    }
+		super.setUp();
+		this.init();
+	}
 
 	public void testInitConfigNavigator_1() throws Throwable {
 		String result = this.executeConfigNavigator("admin", "homepage", "1", "leftmenu");
@@ -69,7 +69,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testExecuteMoveExpression_1() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
 		params.put("movement", ApsAdminSystemConstants.MOVEMENT_DOWN_CODE);
@@ -86,7 +86,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		assertEquals(3, expressions.size());
 		NavigatorExpression expression1 = expressions.get(1);
 		assertEquals(NavigatorExpression.SPEC_CURRENT_PAGE_ID, expression1.getSpecId());
-		assertTrue(expression1.getOperatorId()<0);
+		assertTrue(expression1.getOperatorId() < 0);
 	}
 
 	public void testExecuteMoveExpression_2() throws Throwable {
@@ -109,7 +109,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		assertEquals(3, expressions.size());
 		NavigatorExpression expression1 = expressions.get(1);
 		assertEquals(NavigatorExpression.SPEC_CURRENT_PAGE_ID, expression1.getSpecId());
-		assertTrue(expression1.getOperatorId()<0);
+		assertTrue(expression1.getOperatorId() < 0);
 	}
 
 	public void testExecuteMoveExpression_3() throws Throwable {
@@ -132,7 +132,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		assertEquals(3, expressions.size());
 		NavigatorExpression expression2 = expressions.get(2);
 		assertEquals(NavigatorExpression.SPEC_CURRENT_PAGE_ID, expression2.getSpecId());
-		assertTrue(expression2.getOperatorId()<0);
+		assertTrue(expression2.getOperatorId() < 0);
 	}
 
 	public void testExecuteRemoveExpression_1() throws Throwable {
@@ -154,7 +154,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		assertEquals(2, expressions.size());
 		NavigatorExpression expression1 = expressions.get(1);
 		assertEquals(NavigatorExpression.SPEC_CURRENT_PAGE_ID, expression1.getSpecId());
-		assertTrue(expression1.getOperatorId()<0);
+		assertTrue(expression1.getOperatorId() < 0);
 	}
 
 	public void testExecuteRemoveExpression_2() throws Throwable {
@@ -176,13 +176,13 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		assertEquals(3, expressions.size());
 		NavigatorExpression expression2 = expressions.get(2);
 		assertEquals(NavigatorExpression.SPEC_CURRENT_PAGE_ID, expression2.getSpecId());
-		assertTrue(expression2.getOperatorId()<0);
+		assertTrue(expression2.getOperatorId() < 0);
 	}
 
 	public void testFailureAddExpression_1() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
 		String result = this.executeAddExpression("admin", params);
@@ -204,7 +204,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testFailureAddExpression_2() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+abs(1).subtree(2)+current");
 		params.put("specId", "3");
@@ -226,7 +226,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testFailureAddExpression_3() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "parent.subtree(2)+current");
 		params.put("specId", "4");
@@ -248,7 +248,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	public void testFailureAddExpression_4() throws Throwable {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("pageCode", "pagina_2");
-		params.put("frame", "0");
+		params.put("frame", "3");
 		params.put("widgetTypeCode", "leftmenu");
 		params.put("navSpec", "");
 		params.put("specId", "5");
@@ -303,8 +303,8 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 
 	public void testSave() throws Throwable {
 		String pageCode = "pagina_2";
-		int frame = 0;
-		IPage page = this._pageManager.getPage(pageCode);
+		int frame = 3;
+		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getWidgets()[frame];
 		assertNull(widget);
 		try {
@@ -316,7 +316,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 			this.addParameter("navSpec", "parent.subtree(2)");
 			String result = this.executeAction();
 			assertEquals("configure", result);
-			page = this._pageManager.getPage(pageCode);
+			page = this._pageManager.getDraftPage(pageCode);
 			widget = page.getWidgets()[frame];
 			assertNotNull(widget);
 			assertEquals("leftmenu", widget.getType().getCode());
@@ -325,7 +325,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			page = this._pageManager.getPage(pageCode);
+			page = this._pageManager.getDraftPage(pageCode);
 			page.getWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
@@ -333,8 +333,8 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 
 	public void testFailureSaveEmptyExpression() throws Throwable {
 		String pageCode = "pagina_2";
-		int frame = 0;
-		IPage page = this._pageManager.getPage(pageCode);
+		int frame = 3;
+		IPage page = this._pageManager.getDraftPage(pageCode);
 		Widget widget = page.getWidgets()[frame];
 		assertNull(widget);
 		try {
@@ -351,7 +351,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			page = this._pageManager.getPage(pageCode);
+			page = this._pageManager.getDraftPage(pageCode);
 			page.getWidgets()[frame] = null;
 			this._pageManager.updatePage(page);
 		}
@@ -363,7 +363,7 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 		this.initAction("/do/Page/SpecialWidget", "navigatorConfig");
 		this.addParameter("pageCode", pageCode);
 		this.addParameter("frame", frame);
-		if (null != showletTypeCode && showletTypeCode.trim().length()>0) {
+		if (null != showletTypeCode && showletTypeCode.trim().length() > 0) {
 			this.addParameter("widgetTypeCode", showletTypeCode);
 		}
 		return this.executeAction();
@@ -397,13 +397,13 @@ public class TestNavigatorWidgetConfigAction extends ApsAdminBaseTestCase {
 	}
 
 	private void init() throws Exception {
-    	try {
-    		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-    	} catch (Throwable t) {
-            throw new Exception(t);
-        }
-    }
+		try {
+			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+		} catch (Throwable t) {
+			throw new Exception(t);
+		}
+	}
 
-    private IPageManager _pageManager = null;
+	private IPageManager _pageManager = null;
 
 }

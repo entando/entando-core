@@ -13,7 +13,6 @@
  */
 package com.agiletec.apsadmin.system.dispatcher;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,12 +25,11 @@ import com.opensymphony.xwork2.inject.Container;
 /**
  * @author E.Santoboni
  */
-public class PrepareOperations extends org.apache.struts2.dispatcher.ng.PrepareOperations {
+public class PrepareOperations extends org.apache.struts2.dispatcher.PrepareOperations {
 	
-	public PrepareOperations(ServletContext servletContext, Dispatcher dispatcher) {
-        super(servletContext, dispatcher);
+	public PrepareOperations(Dispatcher dispatcher) {
+        super(dispatcher);
 		this._dispatcher = dispatcher;
-		this._servletContext = servletContext;
     }
 	
 	@Override
@@ -50,7 +48,7 @@ public class PrepareOperations extends org.apache.struts2.dispatcher.ng.PrepareO
                     request.setAttribute(STRUTS_ACTION_MAPPING_KEY, mapping);
                 }
             } catch (Exception ex) {
-                this._dispatcher.sendError(request, response, this._servletContext, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex);
+                this._dispatcher.sendError(request, response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex);
             }
         }
         return mapping;
@@ -61,7 +59,6 @@ public class PrepareOperations extends org.apache.struts2.dispatcher.ng.PrepareO
 	}
 	
 	private Dispatcher _dispatcher;
-	private ServletContext _servletContext;
 	
 	private static final String STRUTS_ACTION_MAPPING_KEY = "struts.actionMapping";
 	

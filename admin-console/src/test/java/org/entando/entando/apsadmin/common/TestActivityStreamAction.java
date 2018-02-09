@@ -13,6 +13,15 @@
  */
 package org.entando.entando.apsadmin.common;
 
+import java.util.Date;
+import java.util.List;
+
+import org.entando.entando.aps.system.services.actionlog.ActionLoggerTestHelper;
+import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
+import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
+import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
+import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.page.IPageManager;
@@ -24,17 +33,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.apsadmin.content.AbstractContentAction;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-
 import com.opensymphony.xwork2.Action;
-import java.util.Date;
-import java.util.List;
-import static junit.framework.Assert.assertEquals;
-
-import org.entando.entando.aps.system.services.actionlog.ActionLoggerTestHelper;
-import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
-import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
-import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
 
 /**
  * @author E.Santoboni

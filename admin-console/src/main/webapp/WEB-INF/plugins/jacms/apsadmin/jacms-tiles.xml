@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE tiles-definitions PUBLIC
-	"-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
-	"http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+	"-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+	"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 
 <tiles-definitions>
 
@@ -35,24 +35,64 @@
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/contentReferences.jsp" />
 	</definition>
 
+	<!-- *** Content Bulk Actions - Init *** -->
+	<definition extends="layout.default" name="admin.jacms.content.bulkOnline.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/online-confirm.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkOffline.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/offline-confirm.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkRemove.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/remove-confirm.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.entryChoice">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-choice.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkGroup.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/group/group-confirm.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.entryChoice">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/content/bulk_categories.jsp" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-choice.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.content.bulkCategory.entryConfirm">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/category/category-confirm.jsp" />
+	</definition>
+	
+	<definition extends="layout.default" name="admin.jacms.content.bulk.result">
+		<put-attribute name="title" value="title.contentManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/bulk/bulk-result.jsp" />
+	</definition>
+	<!-- *** Content Bulk Actions - End *** -->
+
 	<!-- *** Inizio Area Gestione Risorse Contenuti *** -->
 	<definition extends="layout.default" name="admin.jacms.content.findResource.Image">
 		<put-attribute name="title" value="title.contentManagement" />
-		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource.jsp" />
+		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource/resource.jsp" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/imageArchive.jsp" />
 	</definition>
 	<definition extends="layout.default" name="admin.jacms.content.findResource.Attach">
 		<put-attribute name="title" value="title.contentManagement" />
-		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource.jsp" />
+		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource/resource.jsp" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/attachArchive.jsp" />
 	</definition>
 	<!-- *** Fine Area Gestione Risorse Contenuti *** -->
 
 	<!-- *** Inizio Area Gestione LINK *** -->
-	<definition extends="layout.default" name="admin.jacms.content.chooseLinkType">
-		<put-attribute name="title" value="title.contentManagement" />
-		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/linkAttribute/chooseLink.jsp" />
-	</definition>
+    <definition extends="layout.default" name="admin.jacms.content.chooseLinkType">
+        <put-attribute name="title" value="title.contentManagement" />
+        <put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/linkAttribute/configUrlLinkType.jsp" />
+    </definition>	
+	
 	<definition extends="layout.default" name="admin.jacms.content.link.configUrlLinkType">
 		<put-attribute name="title" value="title.contentManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/linkAttribute/configUrlLinkType.jsp" />
@@ -88,24 +128,23 @@
 		<put-attribute name="title" value="title.contentModels" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/model/trashModel.jsp" />
 	</definition>
-
-    <!-- ********* INIZIO Area Gestione Modelli di Contenuto ********* -->
+    <!-- ********* FINE Area Gestione Modelli di Contenuto ********* -->
 
     <!-- ********* INIZIO Area Gestione Risorse ********* -->
 
     <definition extends="layout.default" name="admin.jacms.resource.Image.list">
 		<put-attribute name="title" value="title.resourceManagement" />
-		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource.jsp" />
+		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource/resource.jsp" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/imageArchive.jsp" />
 	</definition>
 	<definition extends="layout.default" name="admin.jacms.resource.Attach.list">
 		<put-attribute name="title" value="title.resourceManagement" />
-		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource.jsp" />
+		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource/resource.jsp" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/attachArchive.jsp" />
 	</definition>
 	<definition extends="layout.default" name="admin.jacms.resource.entry">
 		<put-attribute name="title" value="title.resourceManagement" />
-		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource.jsp" />
+		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource/resource.jsp" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/entryResource.jsp" />
 	</definition>
 	<definition extends="layout.default" name="admin.jacms.resource.references">
@@ -115,6 +154,10 @@
 	<definition extends="layout.default" name="admin.jacms.resource.trash">
 		<put-attribute name="title" value="title.resourceManagement" />
 		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/trashResource.jsp" />
+	</definition>
+	<definition extends="layout.default" name="admin.jacms.resource.detail">
+		<put-attribute name="title" value="title.resourceManagement" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/detailResource.jsp" />
 	</definition>
 
 	<definition extends="layout.default" name="admin.jacms.resource.porting22.intro">

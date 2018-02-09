@@ -14,18 +14,17 @@
 package org.entando.entando.aps.system.init;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.FileTextReader;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.entando.entando.aps.system.init.model.Component;
+import org.entando.entando.aps.system.init.util.QueryExtractor;
 import org.entando.entando.aps.system.init.util.TableDataUtils;
 import org.entando.entando.aps.system.init.util.TableFactory;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class DatabaseRestorer extends AbstractDatabaseUtils {
 
 	private static final Logger _logger = LoggerFactory.getLogger(DatabaseRestorer.class);
-	
+
 	protected void initOracleSchema(DataSource dataSource) throws Throwable {
 		IDatabaseManager.DatabaseType type = this.getType(dataSource);
 		try {
@@ -51,7 +50,7 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			throw new ApsSystemException("Error initializing oracle schema", t);
 		}
 	}
-	
+
 	protected void initDerbySchema(DataSource dataSource) throws Throwable {
 		String username = this.invokeGetMethod("getUsername", dataSource);
 		try {
@@ -69,7 +68,7 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			throw new ApsSystemException("Error initializating Derby Schema", t);
 		}
 	}
-	
+
 	protected void dropAndRestoreBackup(String backupSubFolder) throws ApsSystemException {
 		try {
 			List<Component> components = this.getComponents();
@@ -85,7 +84,7 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			throw new ApsSystemException("Error while restoring backup", t);
 		}
 	}
-	
+
 	private void dropTables(Map<String, List<String>> tableMapping) throws ApsSystemException {
 		if (null == tableMapping) {
 			return;
@@ -95,7 +94,9 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			for (int i = 0; i < dataSourceNames.length; i++) {
 				String dataSourceName = dataSourceNames[i];
 				List<String> tableClasses = tableMapping.get(dataSourceName);
-				if (null == tableClasses || tableClasses.isEmpty()) continue;
+				if (null == tableClasses || tableClasses.isEmpty()) {
+					continue;
+				}
 				DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
 				int size = tableClasses.size();
 				for (int j = 0; j < tableClasses.size(); j++) {
@@ -111,7 +112,7 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			throw new RuntimeException("Error while dropping tables", t);
 		}
 	}
-	
+
 	protected void restoreBackup(String backupSubFolder) throws ApsSystemException {
 		try {
 			this.restoreLocalDump(this.getEntandoTableMapping(), backupSubFolder);
@@ -125,7 +126,7 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			throw new ApsSystemException("Error while restoring local backup", t);
 		}
 	}
-	
+
 	private void restoreLocalDump(Map<String, List<String>> tableMapping, String backupSubFolder) throws ApsSystemException {
 		if (null == tableMapping) {
 			return;
@@ -149,8 +150,7 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 					String fileName = folder.toString() + dataSourceName + File.separator + tableName + ".sql";
 					InputStream is = this.getStorageManager().getStream(fileName, true);
 					if (null != is) {
-						BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-						this.executeQuery(br, dataSource);
+						this.restoreTableData(is, dataSource);
 					}
 				}
 			}
@@ -159,32 +159,18 @@ public class DatabaseRestorer extends AbstractDatabaseUtils {
 			throw new RuntimeException("Error while restoring local dump", t);
 		}
 	}
-	
-	private void executeQuery(BufferedReader br, DataSource dataSource) throws ApsSystemException {
+
+	private void restoreTableData(InputStream is, DataSource dataSource) {
 		try {
-			String startsWith = "insert into";
-			String endsWith = ");";
-			String lineSep = System.getProperty("line.separator");
-			String nextLine = "";
-			StringBuilder sb = new StringBuilder();
-			while ((nextLine = br.readLine()) != null) {
-				sb.append(nextLine);
-				if ((sb.toString().toLowerCase().trim().startsWith(startsWith) 
-					&& (sb.toString().toLowerCase().trim().endsWith(endsWith)))) {
-					String[] queries = {sb.toString()};
-					try {
-						TableDataUtils.executeQueries(dataSource, queries, true);
-					} catch (Exception e) {
-						_logger.error("Error executing query", e);
-					}
-					sb = new StringBuilder();
-				} else {
-					sb.append(lineSep);
-				}
+			String script = FileTextReader.getText(is, "UTF-8");
+			String[] queries = (null != script) ? QueryExtractor.extractInsertQueries(script) : null;
+			if (null == queries) {
+				return;
 			}
+			TableDataUtils.executeQueries(dataSource, queries, true);
 		} catch (Throwable t) {
-			throw new ApsSystemException("Error reading text", t);
+			_logger.error("Error executing queries", t);
 		}
 	}
-	
+
 }

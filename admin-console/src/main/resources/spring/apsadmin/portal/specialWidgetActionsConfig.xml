@@ -8,6 +8,7 @@
 	<bean id="simpleWidgetAction" scope="prototype" 
 			class="com.agiletec.apsadmin.portal.specialwidget.SimpleWidgetConfigAction" parent="abstractPortalAction" >
 		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+		<property name="pageActionHelper" ref="pageActionHelperDraft" />
 	</bean>
 	
 	<bean id="navigatorWidgetAction" scope="prototype" 

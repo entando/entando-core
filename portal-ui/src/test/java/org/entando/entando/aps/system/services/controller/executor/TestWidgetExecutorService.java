@@ -13,32 +13,31 @@
  */
 package org.entando.entando.aps.system.services.controller.executor;
 
+import org.apache.commons.lang.StringUtils;
+import org.entando.entando.aps.system.services.controller.AbstractTestExecutorService;
+import org.entando.entando.aps.system.services.guifragment.GuiFragment;
+import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
 
-import org.apache.commons.lang.StringUtils;
-
-import org.entando.entando.aps.system.services.controller.AbstractTestExecutorService;
-import org.entando.entando.aps.system.services.guifragment.GuiFragment;
-import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-
 /**
  * @author E.Santoboni
  */
 public class TestWidgetExecutorService extends AbstractTestExecutorService {
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
 	}
-	
+
 	public void testExecutor() throws Exception {
 		super.setUserOnSession("admin");
 		IPageManager pageManager = (IPageManager) super.getApplicationContext().getBean(SystemConstants.PAGE_MANAGER);
-		IPage currentPage = pageManager.getPage("homepage");
+		IPage currentPage = pageManager.getOnlinePage("homepage");
 		super.getRequestContext().addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, currentPage);
 		ExecutorServiceInterface wes = (ExecutorServiceInterface) super.getApplicationContext().getBean("WidgetExecutorService");
 		wes.service(super.getRequestContext());
@@ -61,7 +60,7 @@ public class TestWidgetExecutorService extends AbstractTestExecutorService {
 			}
 		}
 	}
-	
+
 	private void init() throws Exception {
 		try {
 			this._guiFragmentManager = (IGuiFragmentManager) this.getApplicationContext().getBean(SystemConstants.GUI_FRAGMENT_MANAGER);
@@ -69,6 +68,6 @@ public class TestWidgetExecutorService extends AbstractTestExecutorService {
 			throw new Exception(t);
 		}
 	}
-	
+
 	private IGuiFragmentManager _guiFragmentManager;
 }

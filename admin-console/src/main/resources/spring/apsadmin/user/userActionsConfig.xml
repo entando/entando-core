@@ -18,7 +18,11 @@
 		<property name="userManager" ref="UserManager" />
 		<property name="userProfileManager" ref="UserProfileManager" />
 	</bean>
-	
+        
+        <bean id="userSettingsAction" scope="prototype" 
+              class="org.entando.entando.apsadmin.user.UserSettingsAction" parent="baseAdminAction">              
+        </bean>
+    	
 	<bean id="userProfileAction" scope="prototype" 
 			class="org.entando.entando.apsadmin.user.UserProfileAction" 
 			parent="abstractEntityAction" >

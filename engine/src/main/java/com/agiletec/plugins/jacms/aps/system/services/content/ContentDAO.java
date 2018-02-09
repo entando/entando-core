@@ -43,18 +43,19 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecor
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.IReferenceableAttribute;
 
 /**
- * DAO class for objects of type content. 
+ * DAO class for objects of type content.
+ * 
  * @author M.Diana - E.Santoboni - S.Didaci
  */
 public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(ContentDAO.class);
-	
+	private static final Logger _logger = LoggerFactory.getLogger(ContentDAO.class);
+
 	@Override
 	protected String getLoadEntityRecordQuery() {
 		return LOAD_CONTENT_VO;
 	}
-	
+
 	@Override
 	protected ApsEntityRecord createEntityRecord(ResultSet res) throws Throwable {
 		ContentRecordVO contentVo = new ContentRecordVO();
@@ -77,18 +78,18 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		contentVo.setLastEditor(res.getString(12));
 		return contentVo;
 	}
-	
+
 	@Override
 	protected void executeAddEntity(IApsEntity entity, Connection conn) throws Throwable {
 		super.executeAddEntity(entity, conn);
 		this.addWorkContentRelationsRecord((Content) entity, conn);
 	}
-	
+
 	@Override
 	protected String getAddEntityRecordQuery() {
 		return ADD_CONTENT;
 	}
-	
+
 	@Override
 	protected void buildAddEntityStatement(IApsEntity entity, PreparedStatement stat) throws Throwable {
 		Content content = (Content) entity;
@@ -105,7 +106,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		stat.setString(10, content.getFirstEditor());
 		stat.setString(11, content.getLastEditor());
 	}
-	
+
 	@Override
 	public void updateContent(Content content, boolean updateDate) {
 		Connection conn = null;
@@ -116,13 +117,13 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error updating content",  t);
+			_logger.error("Error updating content", t);
 			throw new RuntimeException("Error updating content", t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
-	
+
 	protected void executeUpdateContent(Content content, boolean updateDate, Connection conn) throws Throwable {
 		PreparedStatement stat = null;
 		try {
@@ -145,28 +146,28 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			this.closeDaoResources(null, stat);
 		}
 	}
-	
+
 	@Override
 	protected void executeUpdateEntity(IApsEntity entity, Connection conn) throws Throwable {
 		this.deleteRecordsByEntityId(entity.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.executeUpdateEntity(entity, conn);
 		this.addWorkContentRelationsRecord((Content) entity, conn);
 	}
-	
+
 	@Override
 	protected String getUpdateEntityRecordQuery() {
 		return UPDATE_CONTENT;
 	}
-	
+
 	protected String getUpdateEntityRecordQueryWithoutDate() {
 		return UPDATE_CONTENT_WITHOUT_DATE;
 	}
-	
+
 	@Override
 	protected void buildUpdateEntityStatement(IApsEntity entity, PreparedStatement stat) throws Throwable {
 		this.buildUpdateEntityStatement(entity, true, stat);
 	}
-	
+
 	protected void buildUpdateEntityStatement(IApsEntity entity, boolean updateDate, PreparedStatement stat) throws Throwable {
 		Content content = (Content) entity;
 		int index = 1;
@@ -182,10 +183,12 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		stat.setString(index++, content.getLastEditor());
 		stat.setString(index++, content.getId());
 	}
-	
+
 	/**
 	 * This publishes a content.
-	 * @param content the content to publish.
+	 * 
+	 * @param content
+	 * the content to publish.
 	 */
 	@Override
 	public void insertOnLineContent(Content content) {
@@ -197,21 +200,25 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error publish content {} ", content.getId(),  t);
+			_logger.error("Error publish content {} ", content.getId(), t);
 			throw new RuntimeException("Error publish content - " + content.getId(), t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
-	
+
 	protected void executeInsertOnLineContent(Content content, Connection conn) throws Throwable {
+		this.executeInsertOnLineContent(content, true, conn);
+	}
+
+	protected void executeInsertOnLineContent(Content content, boolean updateDate, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_ATTRIBUTE_ROLE_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_ATTRIBUTE_ROLE_RECORD, conn);
 		super.deleteEntitySearchRecord(content.getId(), conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_REL_RECORD, conn);
-		this.updateContentRecordForInsertOnLine(content, conn);
+		this.updateContentRecordForInsertOnLine(content, updateDate, conn);
 		this.addPublicContentSearchRecord(content.getId(), content, conn);
 		super.addEntitySearchRecord(content.getId(), content, conn);
 		this.addContentAttributeRoleRecord(content.getId(), content, ADD_ATTRIBUTE_ROLE_RECORD, conn);
@@ -219,52 +226,65 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		this.addContentRelationsRecord(content, conn);
 		this.addContentAttributeRoleRecord(content.getId(), content, ADD_WORK_ATTRIBUTE_ROLE_RECORD, conn);
 	}
-	
+
 	@Deprecated
 	protected void deletePublicContentSearchRecord(String id, Connection conn) throws ApsSystemException {
 		super.deleteRecordsByEntityId(id, DELETE_CONTENT_SEARCH_RECORD, conn);
 	}
-	
+
 	protected void addPublicContentSearchRecord(String id, IApsEntity entity, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_CONTENT_SEARCH_RECORD);
 			this.addEntitySearchRecord(id, entity, stat);
 		} catch (Throwable t) {
-			_logger.error("Error on adding public content search records",  t);
+			_logger.error("Error on adding public content search records", t);
 			throw new RuntimeException("Error on adding public content search records", t);
 		} finally {
 			closeDaoResources(null, stat);
 		}
 	}
-	
+
 	protected void updateContentRecordForInsertOnLine(Content content, Connection conn) throws ApsSystemException {
+		this.updateContentRecordForInsertOnLine(content, true, conn);
+	}
+
+	protected void updateContentRecordForInsertOnLine(Content content, boolean updateDate, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
-			stat = conn.prepareStatement(INSERT_ONLINE_CONTENT);
-			stat.setString(1, content.getTypeCode());
-			stat.setString(2, content.getDescription());
-			stat.setString(3, content.getStatus());
+			int index = 1;
+			if (updateDate) {
+				stat = conn.prepareStatement(INSERT_ONLINE_CONTENT);
+			} else {
+				stat = conn.prepareStatement(INSERT_ONLINE_CONTENT_WITHOUT_DATE);
+			}
+			stat.setString(index++, content.getTypeCode());
+			stat.setString(index++, content.getDescription());
+			stat.setString(index++, content.getStatus());
 			String xml = content.getXML();
-			stat.setString(4, xml);
-			stat.setString(5, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
-			stat.setString(6, xml);
-			stat.setString(7, content.getMainGroup());
-			stat.setString(8, content.getVersion());
-			stat.setString(9, content.getLastEditor());
-			stat.setString(10, content.getId());
+			stat.setString(index++, xml);
+			if (updateDate) {
+				stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+			}
+			stat.setString(index++, xml);
+			stat.setString(index++, content.getMainGroup());
+			stat.setString(index++, content.getVersion());
+			stat.setString(index++, content.getLastEditor());
+			stat.setString(index++, content.getId());
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error updating for insert onLine content {}", content.getId(),  t);
+			_logger.error("Error updating for insert onLine content {}", content.getId(), t);
 			throw new RuntimeException("Error updating for insert onLine content " + content.getId(), t);
 		} finally {
 			closeDaoResources(null, stat);
 		}
 	}
-	
+
 	/**
 	 * Updates the references of a published content
-	 * @param content the published content
+	 * 
+	 * @param content
+	 * the published content
 	 */
 	@Override
 	public void reloadPublicContentReferences(Content content) {
@@ -277,14 +297,14 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 				conn.commit();
 			} catch (Throwable t) {
 				this.executeRollback(conn);
-				_logger.error("Error reloading references - Content {}", content.getId(),  t);
+				_logger.error("Error reloading references - Content {}", content.getId(), t);
 				throw new RuntimeException("Error reloading references - Content " + content.getId(), t);
 			} finally {
 				this.closeConnection(conn);
 			}
 		}
 	}
-	
+
 	protected void executeReloadPublicContentReferences(Content content, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_REL_RECORD, conn);
@@ -293,10 +313,12 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		this.addContentRelationsRecord(content, conn);
 		this.addContentAttributeRoleRecord(content.getId(), content, ADD_ATTRIBUTE_ROLE_RECORD, conn);
 	}
-	
+
 	/**
 	 * Updates the references of a content
-	 * @param content the content
+	 * 
+	 * @param content
+	 * the content
 	 */
 	@Override
 	public void reloadWorkContentReferences(Content content) {
@@ -308,13 +330,13 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Errore in reloading references - Work Content {}", content.getId(),  t);
+			_logger.error("Errore in reloading references - Work Content {}", content.getId(), t);
 			throw new RuntimeException("Errore in reloading references - Work Content " + content.getId(), t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
-	
+
 	protected void executeReloadWorkContentReferences(Content content, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_WORK_ATTRIBUTE_ROLE_RECORD, conn);
@@ -323,10 +345,13 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		this.addWorkContentRelationsRecord(content, conn);
 		this.addContentAttributeRoleRecord(content.getId(), content, ADD_WORK_ATTRIBUTE_ROLE_RECORD, conn);
 	}
-	
+
 	/**
-	 * Unpublish a content, preventing it from being displayed in the portal. Obviously the content itslef is not deleted.
-	 * @param content the content to unpublish.
+	 * Unpublish a content, preventing it from being displayed in the portal.
+	 * Obviously the content itslef is not deleted.
+	 * 
+	 * @param content
+	 * the content to unpublish.
 	 */
 	@Override
 	public void removeOnLineContent(Content content) {
@@ -338,48 +363,62 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error removing online content {}", content.getId(),  t);
+			_logger.error("Error removing online content {}", content.getId(), t);
 			throw new RuntimeException("Error removing online content - " + content.getId(), t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
-	
+
+	protected void executeRemoveOnLineContent(Content content, Connection conn) {
+		this.executeRemoveOnLineContent(content, true, conn);
+	}
+
 	/**
-	 * Unpublish a content, preventing it from being displayed in the portal. Obviously
-	 * the content itslef is not deleted.
-	 * @param content the content to unpublish.
-	 * @param conn the connection to the DB.
-	 * @throws ApsSystemException when connection errors to the database are detected.
+	 * Unpublish a content, preventing it from being displayed in the portal.
+	 * Obviously the content itslef is not deleted.
+	 * 
+	 * @param content
+	 * the content to unpublish.
+	 * @param updateDate
+	 * @param conn
+	 * the connection to the DB.
 	 */
-	protected void executeRemoveOnLineContent(Content content, Connection conn) throws ApsSystemException {
+	protected void executeRemoveOnLineContent(Content content, boolean updateDate, Connection conn) {
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_SEARCH_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_CONTENT_REL_RECORD, conn);
 		super.deleteRecordsByEntityId(content.getId(), DELETE_ATTRIBUTE_ROLE_RECORD, conn);
 		PreparedStatement stat = null;
 		try {
-			stat = conn.prepareStatement(REMOVE_ONLINE_CONTENT);
-			stat.setString(1, null);
-			stat.setString(2, content.getStatus());
-			stat.setString(3, content.getXML());
-			stat.setString(4, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
-			stat.setString(5, content.getVersion());
-			stat.setString(6, content.getLastEditor());
-			stat.setString(7, content.getId());
+			if (updateDate) {
+				stat = conn.prepareStatement(REMOVE_ONLINE_CONTENT);
+			} else {
+				stat = conn.prepareStatement(REMOVE_ONLINE_CONTENT_WITHOUT_DATE);
+			}
+			int index = 1;
+			stat.setString(index++, null);
+			stat.setString(index++, content.getStatus());
+			stat.setString(index++, content.getXML());
+			if (updateDate) {
+				stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+			}
+			stat.setString(index++, content.getVersion());
+			stat.setString(index++, content.getLastEditor());
+			stat.setString(index++, content.getId());
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error removing online content {}", content.getId(),  t);
+			_logger.error("Error removing online content {}", content.getId(), t);
 			throw new RuntimeException("Error removing online content - " + content.getId(), t);
 		} finally {
 			closeDaoResources(null, stat);
 		}
 	}
-	
+
 	@Override
 	protected String getDeleteEntityRecordQuery() {
 		return DELETE_CONTENT;
 	}
-	
+
 	@Override
 	protected void executeDeleteEntity(String entityId, Connection conn) throws Throwable {
 		super.deleteRecordsByEntityId(entityId, DELETE_CONTENT_SEARCH_RECORD, conn);
@@ -388,9 +427,9 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		super.deleteRecordsByEntityId(entityId, DELETE_WORK_CONTENT_REL_RECORD, conn);
 		super.executeDeleteEntity(entityId, conn);
 	}
-	
+
 	private void addCategoryRelationsRecord(Content content, boolean isPublicRelations, PreparedStatement stat) throws ApsSystemException {
-		if (content.getCategories().size()>0) {
+		if (content.getCategories().size() > 0) {
 			try {
 				Set<String> codes = new HashSet<String>();
 				Iterator<Category> categoryIter = content.getCategories().iterator();
@@ -416,12 +455,12 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 					stat.clearParameters();
 				}
 			} catch (SQLException e) {
-				_logger.error("Error saving content relation record for content {}", content.getId(),  e.getNextException());
+				_logger.error("Error saving content relation record for content {}", content.getId(), e.getNextException());
 				throw new RuntimeException("Error saving content relation record for content " + content.getId(), e.getNextException());
 			}
 		}
 	}
-	
+
 	private void addCategoryCode(Category category, Set<String> codes) {
 		codes.add(category.getCode());
 		Category parentCategory = (Category) category.getParent();
@@ -429,7 +468,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			this.addCategoryCode(parentCategory, codes);
 		}
 	}
-	
+
 	private void addGroupRelationsRecord(Content content, PreparedStatement stat) throws ApsSystemException {
 		try {
 			content.addGroup(content.getMainGroup());
@@ -446,19 +485,23 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 				stat.clearParameters();
 			}
 		} catch (Throwable t) {
-			_logger.error("Error saving group relation record for content {}", content.getId(),  t);
+			_logger.error("Error saving group relation record for content {}", content.getId(), t);
 			throw new RuntimeException("Error saving group relation record for content " + content.getId(), t);
 		}
 	}
-	
+
 	/**
-	 * Add a record in the table 'contentrelations' for every resource, page, other content,
-	 * role and category associated to the given content).
-	 * @param content The current content.
-	 * @param conn The connection to the database.
-	 * @throws ApsSystemException when connection error are detected.
+	 * Add a record in the table 'contentrelations' for every resource, page,
+	 * other content, role and category associated to the given content).
+	 * 
+	 * @param content
+	 * The current content.
+	 * @param conn
+	 * The connection to the database.
+	 * @throws ApsSystemException
+	 * when connection error are detected.
 	 */
-	protected void addContentRelationsRecord(Content content, Connection conn) throws ApsSystemException{
+	protected void addContentRelationsRecord(Content content, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_CONTENT_REL_RECORD);
@@ -470,7 +513,7 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 				if (currAttribute instanceof IReferenceableAttribute) {
 					IReferenceableAttribute cmsAttribute = (IReferenceableAttribute) currAttribute;
 					List<CmsAttributeReference> refs = cmsAttribute.getReferences(this.getLangManager().getLangs());
-					for (int i=0; i<refs.size(); i++) {
+					for (int i = 0; i < refs.size(); i++) {
 						CmsAttributeReference ref = refs.get(i);
 						stat.setString(1, content.getId());
 						stat.setString(2, ref.getRefPage());
@@ -488,14 +531,14 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			_logger.error("Error saving record into contentrelations {}", content.getId(), e.getNextException());
 			throw new RuntimeException("Error saving record into contentrelations " + content.getId(), e.getNextException());
 		} catch (Throwable t) {
-			_logger.error("Error saving record into contentrelations {}", content.getId(),  t);
+			_logger.error("Error saving record into contentrelations {}", content.getId(), t);
 			throw new RuntimeException("Error saving record into contentrelations " + content.getId(), t);
 		} finally {
 			closeDaoResources(null, stat);
 		}
 	}
-	
-	protected void addWorkContentRelationsRecord(Content content, Connection conn) throws ApsSystemException{
+
+	protected void addWorkContentRelationsRecord(Content content, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_WORK_CONTENT_REL_RECORD);
@@ -511,80 +554,80 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 			closeDaoResources(null, stat);
 		}
 	}
-	
+
 	protected void addContentAttributeRoleRecord(String id, IApsEntity entity, String query, Connection conn) throws ApsSystemException {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(query);
 			super.addEntityAttributeRoleRecord(id, entity, stat);
 		} catch (Throwable t) {
-			_logger.error("Error on adding content attribute role records",  t);
+			_logger.error("Error on adding content attribute role records", t);
 			throw new RuntimeException("Error on adding content attribute role records", t);
 		} finally {
 			closeDaoResources(null, stat);
 		}
 	}
-	
+
 	@Override
 	public List<String> getContentUtilizers(String contentId) {
 		List<String> contentIds = null;
 		try {
 			contentIds = this.getUtilizers(contentId, LOAD_REFERENCED_CONTENTS_FOR_CONTENT);
 		} catch (Throwable t) {
-			_logger.error("Error loading referenced contents for content {}", contentId,  t);
+			_logger.error("Error loading referenced contents for content {}", contentId, t);
 			throw new RuntimeException("Error loading referenced contents for content" + contentId, t);
 		}
 		return contentIds;
 	}
-	
+
 	@Override
 	public List<String> getPageUtilizers(String pageCode) {
 		List<String> contentIds = null;
 		try {
 			contentIds = this.getUtilizers(pageCode, LOAD_REFERENCED_CONTENTS_FOR_PAGE);
 		} catch (Throwable t) {
-			_logger.error("Error loading referenced contents for page {}", pageCode,  t);
+			_logger.error("Error loading referenced contents for page {}", pageCode, t);
 			throw new RuntimeException("Error loading referenced contents for page" + pageCode, t);
 		}
 		return contentIds;
 	}
-	
+
 	@Override
 	public List<String> getGroupUtilizers(String groupName) {
 		List<String> contentIds = null;
 		try {
 			contentIds = this.getUtilizers(groupName, LOAD_REFERENCED_CONTENTS_FOR_GROUP);
 		} catch (Throwable t) {
-			_logger.error("Error loading referenced contents for group {}", groupName,  t);
+			_logger.error("Error loading referenced contents for group {}", groupName, t);
 			throw new RuntimeException("Error loading referenced contents for group " + groupName, t);
 		}
 		return contentIds;
 	}
-	
+
 	@Override
 	public List<String> getResourceUtilizers(String resourceId) {
 		List<String> contentIds = null;
 		try {
 			contentIds = this.getUtilizers(resourceId, LOAD_REFERENCED_CONTENTS_FOR_RESOURCE);
 		} catch (Throwable t) {
-			_logger.error("Error loading referenced contents for resource {}", resourceId,  t);
+			_logger.error("Error loading referenced contents for resource {}", resourceId, t);
 			throw new RuntimeException("Error loading referenced contents for resource " + resourceId, t);
 		}
 		return contentIds;
 	}
-	
+
 	@Override
 	public List<String> getCategoryUtilizers(String categoryCode) {
 		List<String> contentIds = null;
 		try {
 			contentIds = this.getUtilizers(categoryCode, LOAD_REFERENCED_CONTENTS_FOR_CATEGORY);
 		} catch (Throwable t) {
-			_logger.error("Error loading referenced contents for category {}", categoryCode,  t);
+			_logger.error("Error loading referenced contents for category {}", categoryCode, t);
 			throw new RuntimeException("Error loading referenced contents for category " + categoryCode, t);
 		}
 		return contentIds;
 	}
-	
+
 	protected List<String> getUtilizers(String referencedObjectCode, String query) throws Throwable {
 		Connection conn = null;
 		List<String> contentIds = new ArrayList<String>();
@@ -606,137 +649,186 @@ public class ContentDAO extends AbstractEntityDAO implements IContentDAO {
 		}
 		return contentIds;
 	}
-	
+
+	@Override
+	public ContentsStatus loadContentStatus() {
+		Connection conn = null;
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		ContentsStatus status = null;
+		try {
+			conn = this.getConnection();
+			int online = this.loadContentStatus(conn, COUNT_ONLINE_CONTENTS);
+			int offline = this.loadContentStatus(conn, COUNT_OFFLINE_CONTENTS);
+			int withDiffs = this.loadContentStatus(conn, COUNT_ONLINE_CONTENTS_WITH_DIFFS);
+			Date lastModified = this.loadContentStatusLastModified(conn, LOAD_LAST_MODIFIED);
+			status = new ContentsStatus();
+			status.setDraft(offline);
+			status.setOnline(online);
+			status.setOnlineWithChanges(withDiffs);
+			status.setLastUpdate(lastModified);
+		} catch (Throwable t) {
+			_logger.error("Error loading contents status", t);
+			throw new RuntimeException("Error loading contents status", t);
+		} finally {
+			closeDaoResources(res, stat, conn);
+		}
+		return status;
+	}
+
+	private int loadContentStatus(Connection conn, String query) {
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		int count = 0;
+		try {
+			stat = conn.prepareStatement(query);
+			res = stat.executeQuery();
+			if (res.next()) {
+				count = res.getInt(1);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading contents status. If you are runing Entando backed by Apache Derby it's a known issue");
+		} finally {
+			closeDaoResources(res, stat);
+		}
+		return count;
+	}
+
+	private Date loadContentStatusLastModified(Connection conn, String query) {
+		PreparedStatement stat = null;
+		ResultSet res = null;
+		Date lastModified = null;
+		try {
+			stat = conn.prepareStatement(query);
+			res = stat.executeQuery();
+			if (res.next()) {
+				String lastMod = res.getString("lastmodified");
+				lastModified = DateConverter.parseDate(lastMod, JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
+			}
+		} catch (Throwable t) {
+			_logger.error("Error loading contents status last modified date", t);
+			throw new RuntimeException("Error loading contents status last modified date", t);
+		} finally {
+			closeDaoResources(res, stat);
+		}
+		return lastModified;
+	}
+
 	@Override
 	protected String getAddingSearchRecordQuery() {
 		return ADD_WORK_CONTENT_SEARCH_RECORD;
 	}
-	
+
 	@Override
 	protected String getRemovingSearchRecordQuery() {
 		return DELETE_WORK_CONTENT_SEARCH_RECORD;
 	}
-	
+
 	@Override
 	protected String getAddingAttributeRoleRecordQuery() {
 		return ADD_WORK_ATTRIBUTE_ROLE_RECORD;
 	}
-	
+
 	@Override
 	protected String getRemovingAttributeRoleRecordQuery() {
 		return DELETE_WORK_ATTRIBUTE_ROLE_RECORD;
 	}
-	
+
 	@Override
 	protected String getExtractingAllEntityIdQuery() {
 		return LOAD_ALL_CONTENTS_ID;
 	}
-	
-	private final String DELETE_CONTENT =
-		"DELETE FROM contents WHERE contentid = ? ";
-	
-	private final String DELETE_CONTENT_REL_RECORD =
-		"DELETE FROM contentrelations WHERE contentid = ? ";
-	
-	private final String DELETE_WORK_CONTENT_REL_RECORD =
-		"DELETE FROM workcontentrelations WHERE contentid = ? ";
 
-	private final String ADD_CONTENT_SEARCH_RECORD =
-		"INSERT INTO contentsearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) " +
-		"VALUES ( ? , ? , ? , ? , ? , ? )";
-	
-	private final String DELETE_CONTENT_SEARCH_RECORD =
-		"DELETE FROM contentsearch WHERE contentid = ? ";
-	
-	private final String ADD_WORK_CONTENT_SEARCH_RECORD =
-		"INSERT INTO workcontentsearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) " +
-		"VALUES ( ? , ? , ? , ? , ? , ? )";
-	
-	private final String DELETE_WORK_CONTENT_SEARCH_RECORD =
-		"DELETE FROM workcontentsearch WHERE contentid = ? ";
-	
-	private final String ADD_CONTENT_REL_RECORD =
-		"INSERT INTO contentrelations " +
-		"(contentid, refpage, refcontent, refresource, refcategory, refgroup) " +
-		"VALUES ( ? , ? , ? , ? , ? , ? )";
-	
-	private final String ADD_WORK_CONTENT_REL_RECORD =
-		"INSERT INTO workcontentrelations (contentid, refcategory) VALUES ( ? , ? )";
-	
-	private final String LOAD_CONTENTS_ID_MAIN_BLOCK = 
-		"SELECT DISTINCT contents.contentid FROM contents ";
-	
-	private final String LOAD_REFERENCED_CONTENTS_FOR_PAGE = 
-		LOAD_CONTENTS_ID_MAIN_BLOCK + 
-		" RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refpage = ? " +
-		"ORDER BY contents.contentid";
-	
-	private final String LOAD_REFERENCED_CONTENTS_FOR_CONTENT = 
-		LOAD_CONTENTS_ID_MAIN_BLOCK + 
-		" RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refcontent = ? " +
-		"ORDER BY contents.contentid";
-	
-	private final String LOAD_REFERENCED_CONTENTS_FOR_GROUP = 
-		LOAD_CONTENTS_ID_MAIN_BLOCK + 
-		" RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refgroup = ? " +
-		"ORDER BY contents.contentid";
-	
-	private final String LOAD_REFERENCED_CONTENTS_FOR_RESOURCE = 
-		LOAD_CONTENTS_ID_MAIN_BLOCK + 
-		" RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refresource = ? " +
-		"ORDER BY contents.contentid";
-	
-	private final String LOAD_REFERENCED_CONTENTS_FOR_CATEGORY = 
-		LOAD_CONTENTS_ID_MAIN_BLOCK + 
-		" RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refcategory = ? " +
-		"ORDER BY contents.contentid";
-	
-	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = 
-		"SELECT contents.contentid, contents.contenttype, contents.descr, contents.status, " +
-		"contents.workxml, contents.created, contents.lastmodified, contents.onlinexml, contents.maingroup, " + 
-		"contents.currentversion, contents.firsteditor, contents.lasteditor " +
-		"FROM contents ";
-	
-	private final String LOAD_CONTENT_VO = 
-		LOAD_CONTENTS_VO_MAIN_BLOCK + " WHERE contents.contentid = ? ";
-	
-	private final String ADD_CONTENT =
-		"INSERT INTO contents (contentid, contenttype, descr, status, workxml, " + 
-		"created, lastmodified, maingroup, currentversion, firsteditor, lasteditor) " +
-		"VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
-	
-	private final String INSERT_ONLINE_CONTENT =
-		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +
-		"workxml = ? , lastmodified = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " +
-		"WHERE contentid = ? ";
-	
-	private final String REMOVE_ONLINE_CONTENT = 
-		"UPDATE contents SET onlinexml = ? , status = ? , " +
-		"workxml = ? , lastmodified = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
-	
-	private final String UPDATE_CONTENT =
-		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +
-		"workxml = ? , lastmodified = ? , maingroup = ? , currentversion = ? , lasteditor = ? " +
-		"WHERE contentid = ? ";
-	
-	private final String UPDATE_CONTENT_WITHOUT_DATE =
-		"UPDATE contents SET contenttype = ? , descr = ? , status = ? , " +
-		"workxml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " +
-		"WHERE contentid = ? ";
-	
-	private final String LOAD_ALL_CONTENTS_ID = 
-		"SELECT contentid FROM contents";
-	
-	private final String ADD_ATTRIBUTE_ROLE_RECORD =
-		"INSERT INTO contentattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
-	
-	private final String DELETE_ATTRIBUTE_ROLE_RECORD =
-		"DELETE FROM contentattributeroles WHERE contentid = ? ";
-	
-	private final String ADD_WORK_ATTRIBUTE_ROLE_RECORD =
-		"INSERT INTO workcontentattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
-	
-	private final String DELETE_WORK_ATTRIBUTE_ROLE_RECORD =
-		"DELETE FROM workcontentattributeroles WHERE contentid = ? ";
-	
+	private final String DELETE_CONTENT = "DELETE FROM contents WHERE contentid = ? ";
+
+	private final String DELETE_CONTENT_REL_RECORD = "DELETE FROM contentrelations WHERE contentid = ? ";
+
+	private final String DELETE_WORK_CONTENT_REL_RECORD = "DELETE FROM workcontentrelations WHERE contentid = ? ";
+
+	private final String ADD_CONTENT_SEARCH_RECORD = "INSERT INTO contentsearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) "
+			+ "VALUES ( ? , ? , ? , ? , ? , ? )";
+
+	private final String DELETE_CONTENT_SEARCH_RECORD = "DELETE FROM contentsearch WHERE contentid = ? ";
+
+	private final String ADD_WORK_CONTENT_SEARCH_RECORD = "INSERT INTO workcontentsearch (contentid, attrname, textvalue, datevalue, numvalue, langcode) "
+			+ "VALUES ( ? , ? , ? , ? , ? , ? )";
+
+	private final String DELETE_WORK_CONTENT_SEARCH_RECORD = "DELETE FROM workcontentsearch WHERE contentid = ? ";
+
+	private final String ADD_CONTENT_REL_RECORD = "INSERT INTO contentrelations "
+			+ "(contentid, refpage, refcontent, refresource, refcategory, refgroup) " + "VALUES ( ? , ? , ? , ? , ? , ? )";
+
+	private final String ADD_WORK_CONTENT_REL_RECORD = "INSERT INTO workcontentrelations (contentid, refcategory) VALUES ( ? , ? )";
+
+	private final String LOAD_CONTENTS_ID_MAIN_BLOCK = "SELECT DISTINCT contents.contentid FROM contents ";
+
+	private final String LOAD_REFERENCED_CONTENTS_FOR_PAGE = LOAD_CONTENTS_ID_MAIN_BLOCK
+			+ " RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refpage = ? "
+			+ "ORDER BY contents.contentid";
+
+	private final String LOAD_REFERENCED_CONTENTS_FOR_CONTENT = LOAD_CONTENTS_ID_MAIN_BLOCK
+			+ " RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refcontent = ? "
+			+ "ORDER BY contents.contentid";
+
+	private final String LOAD_REFERENCED_CONTENTS_FOR_GROUP = LOAD_CONTENTS_ID_MAIN_BLOCK
+			+ " RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refgroup = ? "
+			+ "ORDER BY contents.contentid";
+
+	private final String LOAD_REFERENCED_CONTENTS_FOR_RESOURCE = LOAD_CONTENTS_ID_MAIN_BLOCK
+			+ " RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refresource = ? "
+			+ "ORDER BY contents.contentid";
+
+	private final String LOAD_REFERENCED_CONTENTS_FOR_CATEGORY = LOAD_CONTENTS_ID_MAIN_BLOCK
+			+ " RIGHT JOIN contentrelations ON contents.contentid = contentrelations.contentid WHERE refcategory = ? "
+			+ "ORDER BY contents.contentid";
+
+	private final String LOAD_CONTENTS_VO_MAIN_BLOCK = "SELECT contents.contentid, contents.contenttype, contents.descr, contents.status, "
+			+ "contents.workxml, contents.created, contents.lastmodified, contents.onlinexml, contents.maingroup, "
+			+ "contents.currentversion, contents.firsteditor, contents.lasteditor " + "FROM contents ";
+
+	private final String LOAD_CONTENT_VO = LOAD_CONTENTS_VO_MAIN_BLOCK + " WHERE contents.contentid = ? ";
+
+	private final String ADD_CONTENT = "INSERT INTO contents (contentid, contenttype, descr, status, workxml, "
+			+ "created, lastmodified, maingroup, currentversion, firsteditor, lasteditor) "
+			+ "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
+
+	private final String INSERT_ONLINE_CONTENT = "UPDATE contents SET contenttype = ? , descr = ? , status = ? , "
+			+ "workxml = ? , lastmodified = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? "
+			+ "WHERE contentid = ? ";
+
+	private final String INSERT_ONLINE_CONTENT_WITHOUT_DATE = "UPDATE contents SET contenttype = ? , descr = ? , status = ? , "
+			+ "workxml = ? , onlinexml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
+
+	private final String REMOVE_ONLINE_CONTENT = "UPDATE contents SET onlinexml = ? , status = ? , "
+			+ "workxml = ? , lastmodified = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
+
+	private final String REMOVE_ONLINE_CONTENT_WITHOUT_DATE = "UPDATE contents SET onlinexml = ? , status = ? , "
+			+ "workxml = ? , currentversion = ? , lasteditor = ? WHERE contentid = ? ";
+
+	private final String UPDATE_CONTENT = "UPDATE contents SET contenttype = ? , descr = ? , status = ? , "
+			+ "workxml = ? , lastmodified = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
+
+	private final String UPDATE_CONTENT_WITHOUT_DATE = "UPDATE contents SET contenttype = ? , descr = ? , status = ? , "
+			+ "workxml = ? , maingroup = ? , currentversion = ? , lasteditor = ? " + "WHERE contentid = ? ";
+
+	private final String LOAD_ALL_CONTENTS_ID = "SELECT contentid FROM contents";
+
+	private final String ADD_ATTRIBUTE_ROLE_RECORD = "INSERT INTO contentattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
+
+	private final String DELETE_ATTRIBUTE_ROLE_RECORD = "DELETE FROM contentattributeroles WHERE contentid = ? ";
+
+	private final String ADD_WORK_ATTRIBUTE_ROLE_RECORD = "INSERT INTO workcontentattributeroles (contentid, attrname, rolename) VALUES ( ? , ? , ? )";
+
+	private final String DELETE_WORK_ATTRIBUTE_ROLE_RECORD = "DELETE FROM workcontentattributeroles WHERE contentid = ? ";
+
+	private static final String COUNT_OFFLINE_CONTENTS = "SELECT count(contentid) FROM contents " + "WHERE onlinexml IS NULL";
+
+	private static final String COUNT_ONLINE_CONTENTS = "SELECT count(contentid) FROM contents "
+			+ "WHERE onlinexml IS NOT NULL AND onlinexml = workxml";
+
+	private static final String COUNT_ONLINE_CONTENTS_WITH_DIFFS = "SELECT count(contentid) FROM contents "
+			+ "WHERE onlinexml IS NOT NULL AND onlinexml <> workxml";
+
+	private final String LOAD_LAST_MODIFIED = LOAD_CONTENTS_VO_MAIN_BLOCK + "order by contents.lastmodified desc";
+
 }

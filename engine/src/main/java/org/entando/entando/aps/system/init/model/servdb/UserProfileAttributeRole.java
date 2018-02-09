@@ -25,39 +25,46 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = UserProfileAttributeRole.TABLE_NAME)
 public class UserProfileAttributeRole implements ExtendedColumnDefinition {
-	
-	public UserProfileAttributeRole() {}
-	
-	@DatabaseField(foreign = true, columnName = "username", 
-			width = 40, 
-			canBeNull = false, index = true)
-	private UserProfile _username;
-	
-	@DatabaseField(columnName = "attrname", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false, index = true)
-	private String _attributeName;
-	
-	@DatabaseField(columnName = "rolename", 
-			dataType = DataType.STRING, 
-			width = 50, 
-			canBeNull = false, index = true)
-	private String _roleName;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String profileTableName = UserProfile.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			profileTableName = "`" + UserProfile.TABLE_NAME + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_fkey FOREIGN KEY (username) "
-				+ "REFERENCES " + profileTableName + " (username)"};
-	}
-	
-	public static final String TABLE_NAME = "authuserprofileattrroles";
-	
+
+    public UserProfileAttributeRole() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(foreign = true, columnName = "username",
+            width = 40,
+            canBeNull = false, index = true)
+    private UserProfile _username;
+
+    @DatabaseField(columnName = "attrname",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, index = true)
+    private String _attributeName;
+
+    @DatabaseField(columnName = "rolename",
+            dataType = DataType.STRING,
+            width = 50,
+            canBeNull = false, index = true)
+    private String _roleName;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String profileTableName = UserProfile.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            profileTableName = "`" + UserProfile.TABLE_NAME + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_fkey FOREIGN KEY (username) "
+            + "REFERENCES " + profileTableName + " (username)"};
+    }
+
+    public static final String TABLE_NAME = "authuserprofileattrroles";
+
 }

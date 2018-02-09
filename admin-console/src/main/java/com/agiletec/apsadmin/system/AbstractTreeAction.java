@@ -23,22 +23,23 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 
 /**
- * Abstract Action class which handles tree. 
+ * Abstract Action class which handles tree.
+ *
  * @author E.Santoboni
  */
 public abstract class AbstractTreeAction extends BaseAction implements ITreeAction {
-	
+
 	private static final Logger _logger = LoggerFactory.getLogger(AbstractTreeAction.class);
-	
+
 	@Override
 	public String buildTree() {
 		Set<String> targets = this.getTreeNodesToOpen();
 		try {
 			String marker = this.getTreeNodeActionMarkerCode();
 			if (null != marker) {
-				if (null != marker && marker.equalsIgnoreCase(ACTION_MARKER_OPEN)) {
+				if (marker.equalsIgnoreCase(ACTION_MARKER_OPEN)) {
 					targets = this.getTreeHelper().checkTargetNodes(this.getTargetNode(), targets, this.getNodeGroupCodes());
-				} else if (null != marker && marker.equalsIgnoreCase(ACTION_MARKER_CLOSE)) {
+				} else if (marker.equalsIgnoreCase(ACTION_MARKER_CLOSE)) {
 					targets = this.getTreeHelper().checkTargetNodesOnClosing(this.getTargetNode(), targets, this.getNodeGroupCodes());
 				}
 			}
@@ -49,7 +50,7 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 		}
 		return SUCCESS;
 	}
-	
+
 	@Override
 	public ITreeNode getShowableTree() {
 		ITreeNode node = null;
@@ -61,7 +62,7 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 		}
 		return node;
 	}
-	
+
 	@Override
 	public ITreeNode getAllowedTreeRootNode() {
 		ITreeNode node = null;
@@ -72,49 +73,54 @@ public abstract class AbstractTreeAction extends BaseAction implements ITreeActi
 		}
 		return node;
 	}
-	
+
 	/**
-	 * Return the allowed codes of the group of the nodes to manage.
-	 * This method has to be extended if the helper manage tree nodes with authority.
+	 * Return the allowed codes of the group of the nodes to manage. This method
+	 * has to be extended if the helper manage tree nodes with authority.
+	 *
 	 * @return The allowed group codes.
 	 */
 	protected Collection<String> getNodeGroupCodes() {
 		return super.getActualAllowedGroupCodes();
 	}
-	
+
 	public String getTargetNode() {
 		return _targetNode;
 	}
+
 	public void setTargetNode(String targetNode) {
 		this._targetNode = targetNode;
 	}
-	
+
 	public Set<String> getTreeNodesToOpen() {
 		return _treeNodesToOpen;
 	}
+
 	public void setTreeNodesToOpen(Set<String> treeNodesToOpen) {
 		this._treeNodesToOpen = treeNodesToOpen;
 	}
-	
+
 	public String getTreeNodeActionMarkerCode() {
 		return _treeNodeActionMarkerCode;
 	}
+
 	public void setTreeNodeActionMarkerCode(String treeNodeActionMarkerCode) {
 		this._treeNodeActionMarkerCode = treeNodeActionMarkerCode;
 	}
-	
+
 	protected ITreeNodeBaseActionHelper getTreeHelper() {
 		return _treeHelper;
 	}
+
 	public void setTreeHelper(ITreeNodeBaseActionHelper treeHelper) {
 		this._treeHelper = treeHelper;
 	}
-	
+
 	private String _targetNode;
 	private Set<String> _treeNodesToOpen = new HashSet<String>();
-	
+
 	private String _treeNodeActionMarkerCode;
-	
+
 	private ITreeNodeBaseActionHelper _treeHelper;
-	
+
 }

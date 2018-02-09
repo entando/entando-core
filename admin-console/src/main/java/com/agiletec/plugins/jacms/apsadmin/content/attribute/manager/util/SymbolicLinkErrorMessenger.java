@@ -25,63 +25,63 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
 
 /**
- * Classe di utilità per i manager degli attributi in cui negli elementi compositivi 
- * vi può essere in link rappresentato dal proprio link simbolico.
+ * Classe di utilità per i manager degli attributi in cui negli elementi
+ * compositivi vi può essere in link rappresentato dal proprio link simbolico.
+ *
  * @author E.Santoboni
- * @deprecated Moved validation into general validation of link and hypertext attribute
+ * @deprecated Moved validation into general validation of link and hypertext
+ * attribute
  */
 public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
-	
+
 	@Override
 	public int scan(SymbolicLink symbLink, Content content) {
 		int errorCode = MESSAGE_CODE_NO_ERROR;
 		if (symbLink != null) {
 			switch (symbLink.getDestType()) {
-			case SymbolicLink.URL_TYPE:
-				break;
-			case SymbolicLink.PAGE_TYPE:
-				errorCode = this.checkPageDest(symbLink, content);
-				break;
-			case SymbolicLink.CONTENT_TYPE:
-				errorCode = this.checkContentDest(symbLink, content);
-				break;
-			case SymbolicLink.CONTENT_ON_PAGE_TYPE:
-				errorCode = this.checkContentOnPageDest(symbLink, content);
-				break;
+				case SymbolicLink.URL_TYPE:
+					break;
+				case SymbolicLink.PAGE_TYPE:
+					errorCode = this.checkPageDest(symbLink, content);
+					break;
+				case SymbolicLink.CONTENT_TYPE:
+					errorCode = this.checkContentDest(symbLink, content);
+					break;
+				case SymbolicLink.CONTENT_ON_PAGE_TYPE:
+					errorCode = this.checkContentOnPageDest(symbLink, content);
+					break;
 			}
 		}
 		return errorCode;
 	}
-	
+
 	protected int checkPageDest(SymbolicLink symbLink, Content content) {
 		String pageCode = symbLink.getPageDest();
-		IPage page = this.getPageManager().getPage(pageCode);
+		IPage page = this.getPageManager().getOnlinePage(pageCode);
 		if (null == page) {
 			return MESSAGE_CODE_INVALID_PAGE;
+		} else if (this.isVoidPage(page)) {
+			return MESSAGE_CODE_VOID_PAGE;
 		} else {
-			if (this.isVoidPage(page)) {
-				return MESSAGE_CODE_VOID_PAGE;
-			} else {
-				String pageGroup = page.getGroup();
-				if (!Group.FREE_GROUP_NAME.equals(pageGroup) 
-						&& (page.getExtraGroups() == null || !page.getExtraGroups().contains(Group.FREE_GROUP_NAME)) ) {
-					//Bisogna controllare che tutti i gruppi abilitati possano accedere alla pagina lincata.
-					List<String> linkingContentGroups = new ArrayList<String>();
-					linkingContentGroups.add(content.getMainGroup());
-					linkingContentGroups.addAll(content.getGroups());
-					for (int i=0; i<linkingContentGroups.size(); i++) {
-						String groupName = linkingContentGroups.get(i);
-						if (!groupName.equals(pageGroup) && !groupName.equals(Group.ADMINS_GROUP_NAME)) {
-							//TODO NON DICE QUALE è IL GRUPPO INVALIDO
-							return MESSAGE_CODE_INVALID_PAGE_GROUPS;
-						}
+			String pageGroup = page.getGroup();
+			if (!Group.FREE_GROUP_NAME.equals(pageGroup)
+					&& (page.getExtraGroups() == null || !page.getExtraGroups().contains(Group.FREE_GROUP_NAME))) {
+				//Bisogna controllare che tutti i gruppi abilitati possano accedere alla pagina lincata.
+				List<String> linkingContentGroups = new ArrayList<String>();
+				linkingContentGroups.add(content.getMainGroup());
+				linkingContentGroups.addAll(content.getGroups());
+				for (int i = 0; i < linkingContentGroups.size(); i++) {
+					String groupName = linkingContentGroups.get(i);
+					if (!groupName.equals(pageGroup) && !groupName.equals(Group.ADMINS_GROUP_NAME)) {
+						//TODO NON DICE QUALE è IL GRUPPO INVALIDO
+						return MESSAGE_CODE_INVALID_PAGE_GROUPS;
 					}
 				}
 			}
 		}
 		return MESSAGE_CODE_NO_ERROR;
 	}
-	
+
 	protected int checkContentDest(SymbolicLink symbLink, Content content) {
 		Content linkedContent = null;
 		try {
@@ -97,7 +97,7 @@ public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
 			List<String> linkingContentGroups = new ArrayList<String>();
 			linkingContentGroups.add(content.getMainGroup());
 			linkingContentGroups.addAll(content.getGroups());
-			for (int i=0; i<linkingContentGroups.size(); i++) {
+			for (int i = 0; i < linkingContentGroups.size(); i++) {
 				String groupName = linkingContentGroups.get(i);
 				if (!groupName.equals(linkedContent.getMainGroup()) && !linkedContent.getGroups().contains(groupName)) {
 					//TODO NON DICE QUALE è IL GRUPPO INVALIDO
@@ -107,7 +107,7 @@ public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
 		}
 		return MESSAGE_CODE_NO_ERROR;
 	}
-	
+
 	protected int checkContentOnPageDest(SymbolicLink symbLink, Content content) {
 		int errorCode = this.checkContentDest(symbLink, content);
 		if (errorCode == MESSAGE_CODE_NO_ERROR) {
@@ -115,14 +115,15 @@ public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
 		}
 		return errorCode;
 	}
-	
+
 	/**
 	 * Metodo di servizio: verifica che la pagina abbia dei widget configurate.
-	 * Restituisce true nel caso tutti i frame siano vuoti, false in caso che 
+	 * Restituisce true nel caso tutti i frame siano vuoti, false in caso che
 	 * anche un frame sia occupato da una showlet.
+	 *
 	 * @param page La pagina da controllare.
-	 * @return true nel caso tutti i frame siano vuoti, false in caso 
-	 * che anche un frame sia occupato da una showlet.
+	 * @return true nel caso tutti i frame siano vuoti, false in caso che anche
+	 * un frame sia occupato da una showlet.
 	 */
 	protected boolean isVoidPage(IPage page) {
 		Widget[] widgets = page.getWidgets();
@@ -133,22 +134,24 @@ public class SymbolicLinkErrorMessenger implements ISymbolicLinkErrorMessenger {
 		}
 		return true;
 	}
-	
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
+
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
 	protected IPageManager getPageManager() {
 		return _pageManager;
 	}
+
 	public void setPageManager(IPageManager pageManager) {
 		this._pageManager = pageManager;
 	}
-	
+
 	private IContentManager _contentManager;
 	private IPageManager _pageManager;
-	
+
 }

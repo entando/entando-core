@@ -44,13 +44,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
 /**
- * Action per la gestione della configurazione della showlet erogatore avanzato lista contenuti.
+ * Action per la gestione della configurazione della showlet erogatore avanzato
+ * lista contenuti.
+ *
  * @author E.Santoboni
  */
 public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentListViewerWidgetAction.class);
-	
+
 	@Override
 	public void validate() {
 		super.validate();
@@ -60,7 +62,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 					this.addFieldError("contentType", this.getText("error.widget.listViewer.invalidContentType", new String[]{this.getContentType()}));
 				}
 			}
-			if (this.getActionErrors().size()>0 || this.getFieldErrors().size()>0) {
+			if (this.getActionErrors().size() > 0 || this.getFieldErrors().size() > 0) {
 				this.setWidget(super.createNewShowlet());
 				return;
 			}
@@ -71,7 +73,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			_logger.error("Error validating list viewer", t);
 		}
 	}
-	
+
 	protected void validateTitle() {
 		String titleParamPrefix = IContentListWidgetHelper.WIDGET_PARAM_TITLE + "_";
 		if (this.isMultilanguageParamValued(titleParamPrefix)) {
@@ -105,11 +107,15 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	private boolean isMultilanguageParamValued(String prefix) {
 		ApsProperties config = this.getWidget().getConfig();
-		if (null == config) return false;
+		if (null == config) {
+			return false;
+		}
 		for (int i = 0; i < this.getLangs().size(); i++) {
 			Lang lang = this.getLangs().get(i);
-			String paramValue = config.getProperty(prefix+lang.getCode());
-			if (null != paramValue && paramValue.trim().length() > 0) return true;
+			String paramValue = config.getProperty(prefix + lang.getCode());
+			if (null != paramValue && paramValue.trim().length() > 0) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -119,7 +125,9 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		try {
 			super.init();
 			ApsProperties config = this.getWidget().getConfig();
-			if (null == config) return SUCCESS;
+			if (null == config) {
+				return SUCCESS;
+			}
 			this.extractFiltersProperties(config);
 			this.extractUserFiltersProperties(config);
 			this.extractCategories(config);
@@ -129,7 +137,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	@Override
 	public String save() {
 		this.validateFilters();
@@ -138,12 +146,12 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return super.save();
 	}
-	
+
 	protected void validateFilters() {
 		WidgetType type = this.getWidget().getType();
 		ApsProperties config = this.getWidget().getConfig();
-		if (null != config && null != type && type.hasParameter("categories") && type.hasParameter("maxElemForItem") && type.hasParameter("maxElements") &&
-				StringUtils.isNotEmpty(config.getProperty("contentType")) && StringUtils.isEmpty(config.getProperty("categories")) && StringUtils.isEmpty(config.getProperty("maxElemForItem")) && StringUtils.isEmpty(config.getProperty("maxElements"))   ) {
+		if (null != config && null != type && type.hasParameter("categories") && type.hasParameter("maxElemForItem") && type.hasParameter("maxElements")
+				&& StringUtils.isNotEmpty(config.getProperty("contentType")) && StringUtils.isEmpty(config.getProperty("categories")) && StringUtils.isEmpty(config.getProperty("maxElemForItem")) && StringUtils.isEmpty(config.getProperty("maxElements"))) {
 			this.addFieldError("categories", this.getText("error.widget.listViewer.parameters.invalid"));
 		}
 	}
@@ -159,7 +167,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String changeContentType() {
 		try {
 			Widget widget = super.createNewShowlet();
@@ -170,11 +178,11 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	public String addCategory() {
 		return this.addRemoveCategory(true);
 	}
-	
+
 	public String removeCategory() {
 		return this.addRemoveCategory(false);
 	}
@@ -195,7 +203,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			this.getWidget().getConfig().setProperty(IContentListWidgetHelper.WIDGET_PARAM_CATEGORIES, categories);
 		} catch (Throwable t) {
 			String marker = (add) ? "adding" : "removing";
-			_logger.error("Error {} category : '{}'",marker, this.getCategoryCode(), t);
+			_logger.error("Error {} category : '{}'", marker, this.getCategoryCode(), t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -209,7 +217,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			String contentType = this.getWidget().getConfig().getProperty(IContentListWidgetHelper.WIDGET_PARAM_CONTENT_TYPE);
 			Content prototype = this.getContentManager().createContentType(contentType);
 			List<AttributeInterface> contentAttributes = prototype.getAttributeList();
-			for (int i=0; i<contentAttributes.size(); i++) {
+			for (int i = 0; i < contentAttributes.size(); i++) {
 				AttributeInterface attribute = contentAttributes.get(i);
 				if (attribute.isSearchable()) {
 					types.add(new SelectItem(UserFilterOptionBean.TYPE_ATTRIBUTE + "_" + attribute.getName(), this.getText("label.attribute", new String[]{attribute.getName()})));
@@ -230,7 +238,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			String contentType = this.getWidget().getConfig().getProperty(IContentListWidgetHelper.WIDGET_PARAM_CONTENT_TYPE);
 			Content prototype = this.getContentManager().createContentType(contentType);
 			List<AttributeInterface> contentAttributes = prototype.getAttributeList();
-			for (int i=0; i<contentAttributes.size(); i++) {
+			for (int i = 0; i < contentAttributes.size(); i++) {
 				AttributeInterface attribute = contentAttributes.get(i);
 				if (attribute.isSearchable()) {
 					types.add(new SelectItem(attribute.getName(), this.getText("label.attribute", new String[]{attribute.getName()})));
@@ -248,7 +256,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			this.createValuedShowlet();
 			String filterKey = this.getUserFilterKey();
 			if (filterKey.equals(UserFilterOptionBean.KEY_CATEGORY)) {
-				if(null == this.getUserFilterCategoryCode()) {
+				if (null == this.getUserFilterCategoryCode()) {
 					return "userfiltercategory";
 				}
 			}
@@ -272,7 +280,9 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	protected Properties createUserFilterProperties() throws ApsSystemException {
 		String filterKey = this.getUserFilterKey();
-		if (null == filterKey) return null;
+		if (null == filterKey) {
+			return null;
+		}
 		Properties properties = new Properties();
 		try {
 			if (filterKey.equals(UserFilterOptionBean.KEY_FULLTEXT)) {
@@ -289,7 +299,9 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 				properties.put(UserFilterOptionBean.PARAM_KEY, filterKey.substring((UserFilterOptionBean.TYPE_ATTRIBUTE + "_").length()));
 				properties.put(UserFilterOptionBean.PARAM_IS_ATTRIBUTE_FILTER, String.valueOf(true));
 			}
-			if (properties.isEmpty()) return null;
+			if (properties.isEmpty()) {
+				return null;
+			}
 		} catch (Throwable t) {
 			_logger.error("Error creating user filter", t);
 			throw new ApsSystemException("Error creating user filter", t);
@@ -315,10 +327,10 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 				if (getMovement().equalsIgnoreCase(ApsAdminSystemConstants.MOVEMENT_UP_CODE)) {
 					if (filterIndex > 0) {
 						userFiltersProperties.remove(filterIndex);
-						userFiltersProperties.add(filterIndex -1, element);
+						userFiltersProperties.add(filterIndex - 1, element);
 					}
 				} else if (getMovement().equalsIgnoreCase(ApsAdminSystemConstants.MOVEMENT_DOWN_CODE)) {
-					if (filterIndex < userFiltersProperties.size() -1) {
+					if (filterIndex < userFiltersProperties.size() - 1) {
 						userFiltersProperties.remove(filterIndex);
 						userFiltersProperties.add(filterIndex + 1, element);
 					}
@@ -330,7 +342,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			this.getWidget().getConfig().setProperty(IContentListWidgetHelper.WIDGET_PARAM_USER_FILTERS, newShowletParam);
 		} catch (Throwable t) {
 			String marker = (move) ? "moving" : "removing";
-			_logger.error("Error {} userFilter",marker, t);
+			_logger.error("Error {} userFilter", marker, t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -365,13 +377,13 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 			int filterIndex = this.getFilterIndex();
 			if (move) {
 				Properties element = userFiltersProperties.get(filterIndex);
-				if (getMovement().equalsIgnoreCase(ApsAdminSystemConstants.MOVEMENT_UP_CODE)){
+				if (getMovement().equalsIgnoreCase(ApsAdminSystemConstants.MOVEMENT_UP_CODE)) {
 					if (filterIndex > 0) {
 						userFiltersProperties.remove(filterIndex);
-						userFiltersProperties.add(filterIndex -1, element);
+						userFiltersProperties.add(filterIndex - 1, element);
 					}
 				} else if (getMovement().equalsIgnoreCase(ApsAdminSystemConstants.MOVEMENT_DOWN_CODE)) {
-					if (filterIndex < userFiltersProperties.size() -1) {
+					if (filterIndex < userFiltersProperties.size() - 1) {
 						userFiltersProperties.remove(filterIndex);
 						userFiltersProperties.add(filterIndex + 1, element);
 					}
@@ -404,21 +416,27 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	}
 
 	private void extractFiltersProperties(ApsProperties config) {
-		if (null == config) return;
+		if (null == config) {
+			return;
+		}
 		String filters = config.getProperty(IContentListWidgetHelper.WIDGET_PARAM_FILTERS);
 		List<Properties> properties = FilterUtils.getFiltersProperties(filters);
 		this.setFiltersProperties(properties);
 	}
 
 	private void extractUserFiltersProperties(ApsProperties config) {
-		if (null == config) return;
+		if (null == config) {
+			return;
+		}
 		String filters = config.getProperty(IContentListWidgetHelper.WIDGET_PARAM_USER_FILTERS);
 		List<Properties> properties = FilterUtils.getFiltersProperties(filters);
 		this.setUserFiltersProperties(properties);
 	}
 
 	protected void extractCategories(ApsProperties config) {
-		if (null == config) return;
+		if (null == config) {
+			return;
+		}
 		String categories = config.getProperty(IContentListWidgetHelper.WIDGET_PARAM_CATEGORIES);
 		if (null != categories) {
 			List<String> categoryCodes = ContentListHelper.splitValues(categories, IContentListWidgetHelper.CATEGORIES_SEPARATOR);
@@ -441,7 +459,9 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	 * Restituisce la lista di contenuti (in forma small) definiti nel sistema.
 	 * Il metodo è a servizio delle jsp che richiedono questo dato per fornire
 	 * una corretta visualizzazione della pagina.
-	 * @return La lista di tipi di contenuto (in forma small) definiti nel sistema.
+	 *
+	 * @return La lista di tipi di contenuto (in forma small) definiti nel
+	 * sistema.
 	 */
 	public List<SmallContentType> getContentTypes() {
 		return this.getContentManager().getSmallContentTypes();
@@ -449,6 +469,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	/**
 	 * Restituisce la lista di categorie definite nel sistema.
+	 *
 	 * @return La lista di categorie definite nel sistema.
 	 */
 	public List<Category> getCategories() {
@@ -460,9 +481,13 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	}
 
 	/**
-	 * Restituisce la lista di Modelli di Contenuto compatibili con il tipo di contenuto specificato.
-	 * @param contentType Il tipo di contenuto cui restituire i modelli compatibili.
-	 * @return La lista di Modelli di Contenuto compatibili con il tipo di contenuto specificato.
+	 * Restituisce la lista di Modelli di Contenuto compatibili con il tipo di
+	 * contenuto specificato.
+	 *
+	 * @param contentType Il tipo di contenuto cui restituire i modelli
+	 * compatibili.
+	 * @return La lista di Modelli di Contenuto compatibili con il tipo di
+	 * contenuto specificato.
 	 */
 	public List<ContentModel> getModelsForContentType(String contentType) {
 		return this.getContentModelManager().getModelsForContentType(contentType);
@@ -471,7 +496,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public List<IPage> getPages() {
 		if (this._pages == null) {
 			this._pages = new ArrayList<IPage>();
-			IPage root = this.getPageManager().getRoot();
+			IPage root = this.getPageManager().getOnlineRoot();
 			this.addPages(root, this._pages);
 		}
 		return this._pages;
@@ -479,15 +504,17 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 
 	protected void addPages(IPage page, List<IPage> pages) {
 		pages.add(page);
-		IPage[] children = page.getChildren();
-		for (int i=0; i<children.length; i++) {
-			this.addPages(children[i], pages);
+		String[] children = page.getChildrenCodes();
+		for (int i = 0; i < children.length; i++) {
+			IPage child = this.getPageManager().getOnlinePage(children[i]);
+			this.addPages(child, pages);
 		}
 	}
 
 	public String getContentType() {
 		return _contentType;
 	}
+
 	public void setContentType(String contentType) {
 		this._contentType = contentType;
 	}
@@ -495,6 +522,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getModelId() {
 		return _modelId;
 	}
+
 	public void setModelId(String modelId) {
 		this._modelId = modelId;
 	}
@@ -502,6 +530,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getCategoryCode() {
 		return _categoryCode;
 	}
+
 	public void setCategoryCode(String categoryCode) {
 		this._categoryCode = categoryCode;
 	}
@@ -509,6 +538,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public List<String> getCategoryCodes() {
 		return _categoryCodes;
 	}
+
 	public void setCategoryCodes(List<String> categoryCodes) {
 		this._categoryCodes = categoryCodes;
 	}
@@ -517,6 +547,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getCategory() {
 		return this.getCategoryCode();
 	}
+
 	@Deprecated
 	public void setCategory(String category) {
 		this.setCategoryCode(category);
@@ -525,6 +556,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getUserFilterKey() {
 		return _userFilterKey;
 	}
+
 	public void setUserFilterKey(String userFilterKey) {
 		this._userFilterKey = userFilterKey;
 	}
@@ -532,6 +564,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public void setUserFiltersProperties(List<Properties> userFiltersProperties) {
 		this._userFiltersProperties = userFiltersProperties;
 	}
+
 	public List<Properties> getUserFiltersProperties() {
 		return _userFiltersProperties;
 	}
@@ -539,6 +572,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public void setUserFilters(String userFilters) {
 		this._userFilters = userFilters;
 	}
+
 	public String getUserFilters() {
 		return _userFilters;
 	}
@@ -546,6 +580,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getMaxElemForItem() {
 		return _maxElemForItem;
 	}
+
 	public void setMaxElemForItem(String maxElemForItem) {
 		this._maxElemForItem = maxElemForItem;
 	}
@@ -553,6 +588,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getFilters() {
 		return _filters;
 	}
+
 	public void setFilters(String filters) {
 		this._filters = filters;
 	}
@@ -560,6 +596,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public int getFilterIndex() {
 		return _filterIndex;
 	}
+
 	public void setFilterIndex(int filterIndex) {
 		this._filterIndex = filterIndex;
 	}
@@ -567,6 +604,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getMovement() {
 		return _movement;
 	}
+
 	public void setMovement(String movement) {
 		this._movement = movement;
 	}
@@ -574,6 +612,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public List<Properties> getFiltersProperties() {
 		return _filtersProperties;
 	}
+
 	public void setFiltersProperties(List<Properties> filtersProperties) {
 		this._filtersProperties = filtersProperties;
 	}
@@ -581,6 +620,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public Properties getNewFilter() {
 		return _newFilter;
 	}
+
 	public void setNewFilter(Properties newFilter) {
 		this._newFilter = newFilter;
 	}
@@ -588,6 +628,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	public String getUserFilterCategoryCode() {
 		return _userFilterCategoryCode;
 	}
+
 	public void setUserFilterCategoryCode(String userFilterCategoryCode) {
 		this._userFilterCategoryCode = userFilterCategoryCode;
 	}
@@ -595,6 +636,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	protected IContentModelManager getContentModelManager() {
 		return _contentModelManager;
 	}
+
 	public void setContentModelManager(IContentModelManager contentModelManager) {
 		this._contentModelManager = contentModelManager;
 	}
@@ -602,6 +644,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
+
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
@@ -609,6 +652,7 @@ public class ContentListViewerWidgetAction extends SimpleWidgetConfigAction {
 	protected ICategoryManager getCategoryManager() {
 		return _categoryManager;
 	}
+
 	public void setCategoryManager(ICategoryManager categoryManager) {
 		this._categoryManager = categoryManager;
 	}

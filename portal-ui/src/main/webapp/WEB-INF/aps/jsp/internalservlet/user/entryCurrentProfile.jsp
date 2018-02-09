@@ -14,16 +14,16 @@
 					<ul class="unstyled">
 						<s:iterator value="fieldErrors">
 							<s:iterator value="value">
-								<li><s:property escape="false" /></li>
+								<li><s:property escapeHtml="false" /></li>
 								</s:iterator>
 							</s:iterator>
 					</ul>
 				</div>
 			</s:if>
 
-			<s:set name="lang" value="defaultLang" />
+			<s:set var="lang" value="defaultLang" />
 
-			<s:iterator value="userProfile.attributeList" id="attribute">
+			<s:iterator value="userProfile.attributeList" var="attribute">
 				<s:if test="%{#attribute.active}">
 					<wpsa:tracerFactory var="attributeTracer" lang="%{#lang.code}" />
 					<s:set var="i18n_attribute_name">userprofile_<s:property value="userProfile.typeCode" />_<s:property value="#attribute.name" /></s:set>

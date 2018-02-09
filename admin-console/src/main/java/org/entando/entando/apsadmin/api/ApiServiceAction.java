@@ -41,8 +41,8 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
  */
 public class ApiServiceAction extends AbstractApiAction {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(ApiServiceAction.class);
-	
+	private static final Logger _logger = LoggerFactory.getLogger(ApiServiceAction.class);
+
 	@Override
 	public void validate() {
 		super.validate();
@@ -89,7 +89,7 @@ public class ApiServiceAction extends AbstractApiAction {
 			throw new RuntimeException("Error checking service key", t);
 		}
 	}
-	
+
 	private void checkParameters() {
 		try {
 			this.setApiParameterValues(new ApsProperties());
@@ -117,7 +117,7 @@ public class ApiServiceAction extends AbstractApiAction {
 			throw new RuntimeException("Error checking parameters", t);
 		}
 	}
-	
+
 	private void extractFreeParameters(List<ApiMethodParameter> apiParameters) {
 		if (null == apiParameters) {
 			return;
@@ -131,9 +131,10 @@ public class ApiServiceAction extends AbstractApiAction {
 			}
 		}
 	}
-	
+
 	/**
 	 * Create of new api service.
+	 *
 	 * @return The result code.
 	 */
 	public String newService() {
@@ -155,8 +156,8 @@ public class ApiServiceAction extends AbstractApiAction {
 			if (null != this.getWidgetTypeCode() && null != masterMethod.getRelatedWidget()) {
 				WidgetType type = this.getWidgetTypeManager().getWidgetType(this.getWidgetTypeCode());
 				if (null != type && type.isLogic()) {
-					ApsProperties parameters =
-							this.extractParametersFromWidgetProperties(masterMethod.getRelatedWidget(), type.getConfig());
+					ApsProperties parameters
+							= this.extractParametersFromWidgetProperties(masterMethod.getRelatedWidget(), type.getConfig());
 					this.setApiParameterValues(parameters);
 				}
 			}
@@ -182,7 +183,7 @@ public class ApiServiceAction extends AbstractApiAction {
 	public List<Lang> getSystemLangs() {
 		return this.getLangManager().getLangs();
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #copyFromWidget()} instead
 	 */
@@ -191,8 +192,9 @@ public class ApiServiceAction extends AbstractApiAction {
 	}
 
 	/**
-	 * Copy an exist widget (physic and with parameters, joined with a exist api method) 
-	 * and value the form of creation of new api service.
+	 * Copy an exist widget (physic and with parameters, joined with a exist api
+	 * method) and value the form of creation of new api service.
+	 *
 	 * @return The result code.
 	 */
 	public String copyFromWidget() {
@@ -202,7 +204,8 @@ public class ApiServiceAction extends AbstractApiAction {
 				return check;
 			}
 			ApiMethod masterMethod = this.getMethod(this.getNamespace(), this.getResourceName());
-			IPage page = this.getPageManager().getPage(this.getPageCode());
+			// TODO Verify if DRAFT/ONLINE
+			IPage page = this.getPageManager().getOnlinePage(this.getPageCode());
 			if (null == page) {
 				this.addFieldError("pageCode", this.getText("error.service.paste.invalidPageCode", new String[]{this.getPageCode()}));
 				return INPUT;
@@ -232,7 +235,7 @@ public class ApiServiceAction extends AbstractApiAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	private ApsProperties extractParametersFromWidget(ApiMethodRelatedWidget relatedWidget, Widget masterWidget) {
 		ApsProperties showletProperties = (masterWidget.getType().isLogic())
 				? masterWidget.getType().getConfig() : masterWidget.getConfig();
@@ -266,6 +269,7 @@ public class ApiServiceAction extends AbstractApiAction {
 
 	/**
 	 * Edit an exist api service.
+	 *
 	 * @return The result code.
 	 */
 	public String edit() {
@@ -302,6 +306,7 @@ public class ApiServiceAction extends AbstractApiAction {
 
 	/**
 	 * Save an api service.
+	 *
 	 * @return The result code.
 	 */
 	public String save() {
@@ -331,9 +336,10 @@ public class ApiServiceAction extends AbstractApiAction {
 		}
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Start the deletion operations for the given api service.
+	 *
 	 * @return The result code.
 	 */
 	public String trash() {
@@ -351,6 +357,7 @@ public class ApiServiceAction extends AbstractApiAction {
 
 	/**
 	 * Delete an api service from the system.
+	 *
 	 * @return The result code.
 	 */
 	public String delete() {
@@ -389,19 +396,21 @@ public class ApiServiceAction extends AbstractApiAction {
 		}
 		return null;
 	}
-	
-    public String generateResponseBodySchema() {
-        try {
-            String result = this.checkService();
-			if (null != result) return result;
+
+	public String generateResponseBodySchema() {
+		try {
+			String result = this.checkService();
+			if (null != result) {
+				return result;
+			}
 			ApiService apiService = this.getApiService(this.getServiceKey());
-            return super.generateResponseBodySchema(apiService.getMaster());
-        } catch (Throwable t) {
-        	_logger.error("Error extracting response body Schema", t);
-            return FAILURE;
-        }
-    }
-	
+			return super.generateResponseBodySchema(apiService.getMaster());
+		} catch (Throwable t) {
+			_logger.error("Error extracting response body Schema", t);
+			return FAILURE;
+		}
+	}
+
 	protected String checkService() throws Throwable {
 		ApiService apiService = this.getApiService(this.getServiceKey());
 		if (apiService == null) {
@@ -410,22 +419,24 @@ public class ApiServiceAction extends AbstractApiAction {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return the list of system groups.
+	 *
 	 * @return The list of system groups.
 	 */
 	public List<Group> getGroups() {
 		return this.getGroupManager().getGroups();
 	}
-	
+
 	public Group getGroup(String name) {
 		return this.getGroupManager().getGroup(name);
 	}
-	
+
 	public String getServiceGroup() {
 		return _serviceGroup;
 	}
+
 	public void setServiceGroup(String serviceGroup) {
 		this._serviceGroup = serviceGroup;
 	}
@@ -433,34 +444,39 @@ public class ApiServiceAction extends AbstractApiAction {
 	public int getStrutsAction() {
 		return _strutsAction;
 	}
+
 	public void setStrutsAction(int strutsAction) {
 		this._strutsAction = strutsAction;
 	}
-	
+
 	public String getResourceCode() {
 		return _resourceCode;
 	}
+
 	public void setResourceCode(String resourceCode) {
 		this._resourceCode = resourceCode;
 	}
-	
+
 	public String getNamespace() {
 		return _namespace;
 	}
+
 	public void setNamespace(String namespace) {
 		this._namespace = namespace;
 	}
-	
+
 	public String getResourceName() {
 		return _resourceName;
 	}
+
 	public void setResourceName(String resourceName) {
 		this._resourceName = resourceName;
 	}
-	
+
 	public String getServiceKey() {
 		return _serviceKey;
 	}
+
 	public void setServiceKey(String serviceKey) {
 		this._serviceKey = serviceKey;
 	}
@@ -468,6 +484,7 @@ public class ApiServiceAction extends AbstractApiAction {
 	public ApsProperties getDescriptions() {
 		return _descriptions;
 	}
+
 	public void setDescriptions(ApsProperties descriptions) {
 		this._descriptions = descriptions;
 	}
@@ -475,16 +492,19 @@ public class ApiServiceAction extends AbstractApiAction {
 	public boolean isActiveService() {
 		return _activeService;
 	}
+
 	public void setActiveService(boolean activeService) {
 		this._activeService = activeService;
 	}
-	
+
 	public boolean isHiddenService() {
 		return _hiddenService;
 	}
+
 	public void setHiddenService(boolean hiddenService) {
 		this._hiddenService = hiddenService;
 	}
+
 	/*
 	public boolean isMyEntandoService() {
 		return _myEntandoService;
@@ -492,31 +512,35 @@ public class ApiServiceAction extends AbstractApiAction {
 	public void setMyEntandoService(boolean myEntandoService) {
 		this._myEntandoService = myEntandoService;
 	}
-	*/
-    public Boolean getRequiredAuth() {
+	 */
+	public Boolean getRequiredAuth() {
 		return _requiredAuth;
-    }
-    public void setRequiredAuth(Boolean requiredAuth) {
-        this._requiredAuth = requiredAuth;
-    }
-    
+	}
+
+	public void setRequiredAuth(Boolean requiredAuth) {
+		this._requiredAuth = requiredAuth;
+	}
+
 	public String getRequiredGroup() {
 		return _requiredGroup;
 	}
+
 	public void setRequiredGroup(String requiredGroup) {
 		this._requiredGroup = requiredGroup;
 	}
-	
+
 	public String getRequiredPermission() {
 		return _requiredPermission;
 	}
+
 	public void setRequiredPermission(String requiredPermission) {
 		this._requiredPermission = requiredPermission;
 	}
-	
+
 	public List<ApiMethodParameter> getApiParameters() {
 		return _apiParameters;
 	}
+
 	public void setApiParameters(List<ApiMethodParameter> apiParameters) {
 		this._apiParameters = apiParameters;
 	}
@@ -524,6 +548,7 @@ public class ApiServiceAction extends AbstractApiAction {
 	public ApsProperties getApiParameterValues() {
 		return _apiParameterValues;
 	}
+
 	public void setApiParameterValues(ApsProperties apiParameterValues) {
 		this._apiParameterValues = apiParameterValues;
 	}
@@ -531,6 +556,7 @@ public class ApiServiceAction extends AbstractApiAction {
 	public List<String> getFreeParameters() {
 		return _freeParameters;
 	}
+
 	public void setFreeParameters(List<String> freeParameters) {
 		this._freeParameters = freeParameters;
 	}
@@ -538,6 +564,7 @@ public class ApiServiceAction extends AbstractApiAction {
 	public String getTag() {
 		return _tag;
 	}
+
 	public void setTag(String tag) {
 		this._tag = tag;
 	}
@@ -545,6 +572,7 @@ public class ApiServiceAction extends AbstractApiAction {
 	public String getPageCode() {
 		return _pageCode;
 	}
+
 	public void setPageCode(String pageCode) {
 		this._pageCode = pageCode;
 	}
@@ -552,40 +580,45 @@ public class ApiServiceAction extends AbstractApiAction {
 	public Integer getFramePos() {
 		return _framePos;
 	}
+
 	public void setFramePos(Integer framePos) {
 		this._framePos = framePos;
 	}
-	
+
 	@Deprecated
 	public String getShowletTypeCode() {
 		return this.getWidgetTypeCode();
 	}
+
 	@Deprecated
-	public void setShowletTypeCode(String showletTypeCode) {
-		this.setWidgetTypeCode(showletTypeCode);
+	public void setShowletTypeCode(String widgetTypeCode) {
+		this.setWidgetTypeCode(widgetTypeCode);
 	}
-	
+
 	public String getWidgetTypeCode() {
 		return _widgetTypeCode;
 	}
+
 	public void setWidgetTypeCode(String widgetTypeCode) {
 		this._widgetTypeCode = widgetTypeCode;
 	}
-	
+
 	protected IPageManager getPageManager() {
 		return _pageManager;
 	}
+
 	public void setPageManager(IPageManager pageManager) {
 		this._pageManager = pageManager;
 	}
-	
+
 	protected IGroupManager getGroupManager() {
 		return _groupManager;
 	}
+
 	public void setGroupManager(IGroupManager groupManager) {
 		this._groupManager = groupManager;
 	}
-	
+
 	public IWidgetTypeManager getWidgetTypeManager() {
 		return _widgetTypeManager;
 	}
@@ -593,25 +626,25 @@ public class ApiServiceAction extends AbstractApiAction {
 	public void setWidgetTypeManager(IWidgetTypeManager widgetTypeManager) {
 		this._widgetTypeManager = widgetTypeManager;
 	}
-	
+
 	private String _serviceGroup;
 	private int _strutsAction;
-	
+
 	private String _resourceCode;
-	
+
 	private String _resourceName;
 	private String _namespace;
-	
+
 	private String _serviceKey;
 	private ApsProperties _descriptions;
 	private boolean _activeService;
 	private boolean _hiddenService;
 	//private boolean _myEntandoService;
-	
+
 	private Boolean _requiredAuth;
 	private String _requiredPermission;
 	private String _requiredGroup;
-	
+
 	private List<ApiMethodParameter> _apiParameters;
 	private ApsProperties _apiParameterValues;
 	private List<String> _freeParameters = new ArrayList<String>();
@@ -619,9 +652,9 @@ public class ApiServiceAction extends AbstractApiAction {
 	private String _pageCode;
 	private Integer _framePos;
 	private String _widgetTypeCode;
-	
+
 	private IPageManager _pageManager;
 	private IGroupManager _groupManager;
 	private IWidgetTypeManager _widgetTypeManager;
-	
+
 }

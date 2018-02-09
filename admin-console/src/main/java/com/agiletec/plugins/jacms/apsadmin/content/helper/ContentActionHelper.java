@@ -13,6 +13,21 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content.helper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.ServletActionContext;
+import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.entando.entando.plugins.jacms.aps.system.services.content.helper.IContentHelper;
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
@@ -20,6 +35,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
@@ -30,31 +46,17 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentAuthorizationHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-import com.agiletec.plugins.jacms.apsadmin.util.CmsPageActionUtil;
 import com.opensymphony.xwork2.ActionSupport;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.ServletActionContext;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Classe Helper della ContentAction.
+ *
  * @author E.Santoboni
  */
 public class ContentActionHelper extends EntityActionHelper implements IContentActionHelper {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentActionHelper.class);
-	
+
 	@Override
 	public void updateContent(IApsEntity entity, boolean updateMainGroup, HttpServletRequest request) {
 		this.updateEntity(entity, request);
@@ -68,23 +70,27 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			}
 		}
 	}
-	
+
 	@Override
 	public void updateEntity(IApsEntity entity, HttpServletRequest request) {
 		Content content = (Content) entity;
 		try {
-            if (null != content) {
-            	String descr = request.getParameter("descr");
-            	if (descr != null) content.setDescription(descr.trim());
-            	String status = request.getParameter("status");
-            	if (status != null) content.setStatus(status);
+			if (null != content) {
+				String descr = request.getParameter("descr");
+				if (descr != null) {
+					content.setDescription(descr.trim());
+				}
+				String status = request.getParameter("status");
+				if (status != null) {
+					content.setStatus(status);
+				}
 				if (null == content.getId()) {
-	            	String mainGroup = request.getParameter("mainGroup");
-	            	if (mainGroup != null) {
+					String mainGroup = request.getParameter("mainGroup");
+					if (mainGroup != null) {
 						request.getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_GROUP, mainGroup);
 					}
-	            }
-	            super.updateEntity(content, request);
+				}
+				super.updateEntity(content, request);
 				String description = content.getDescription();
 				if (null == description || description.trim().length() == 0) {
 					ITextAttribute titleAttribute = (ITextAttribute) content.getAttributeByRole(JacmsSystemConstants.ATTRIBUTE_ROLE_TITLE);
@@ -92,27 +98,27 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 						content.setDescription(titleAttribute.getText());
 					}
 				}
-            }
-        } catch (Throwable t) {
-        	_logger.error("ContentActionHelper - updateContent", t);
-        	throw new RuntimeException("Error updating Content", t);
-        }
+			}
+		} catch (Throwable t) {
+			_logger.error("ContentActionHelper - updateContent", t);
+			throw new RuntimeException("Error updating Content", t);
+		}
 	}
-	
+
 	@Override
 	public void scanEntity(IApsEntity entity, ActionSupport action) {
 		Content content = (Content) entity;
 		if (null == content) {
-    		_logger.error("Null Content");
-    		return;
-    	}
+			_logger.error("Null Content");
+			return;
+		}
 		String descr = content.getDescription();
-    	if (descr == null || descr.length() == 0) {
+		if (descr == null || descr.length() == 0) {
 			action.addFieldError("descr", action.getText("error.content.descr.required"));
 		} else {
 			int maxLength = 250;
 			if (descr.length() > maxLength) {
-				String[] args = {String.valueOf(maxLength)};
+				String[] args = { String.valueOf(maxLength) };
 				action.addFieldError("descr", action.getText("error.content.descr.wrongMaxLength", args));
 			}
 			if (!descr.matches("([^\"])+")) {
@@ -130,11 +136,11 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			throw new RuntimeException("Error checking entity", t);
 		}
 	}
-    
+
 	@Override
 	public EntitySearchFilter getOrderFilter(String groupBy, String order) {
 		String key = null;
-		if (null == groupBy || groupBy.trim().length()== 0 || groupBy.equals("lastModified")) {
+		if (null == groupBy || groupBy.trim().length() == 0 || groupBy.equals("lastModified")) {
 			key = IContentManager.CONTENT_MODIFY_DATE_FILTER_KEY;
 		} else if (groupBy.equals("code")) {
 			key = IContentManager.ENTITY_ID_FILTER_KEY;
@@ -142,7 +148,9 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			key = IContentManager.CONTENT_DESCR_FILTER_KEY;
 		} else if (groupBy.equals("created")) {
 			key = IContentManager.CONTENT_CREATION_DATE_FILTER_KEY;
-		} else throw new RuntimeException("Invalid Filter '" + groupBy + "'");
+		} else {
+			throw new RuntimeException("Invalid Filter '" + groupBy + "'");
+		}
 		EntitySearchFilter filter = new EntitySearchFilter(key, false);
 		if (null == order || order.trim().length() == 0) {
 			filter.setOrder(EntitySearchFilter.DESC_ORDER);
@@ -151,15 +159,18 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 		}
 		return filter;
 	}
-	
+
 	/**
-     * Verifica che l'utente corrente possegga 
-     * i diritti di accesso al contenuto selezionato.
-     * @param content Il contenuto.
-     * @param currentUser Il contenuto corrente.
-     * @return True nel caso che l'utente corrente abbia i permessi 
-     * di lettura/scrittura sul contenuto, false in caso contrario.
-     */
+	 * Verifica che l'utente corrente possegga i diritti di accesso al contenuto
+	 * selezionato.
+	 *
+	 * @param content
+	 * Il contenuto.
+	 * @param currentUser
+	 * Il contenuto corrente.
+	 * @return True nel caso che l'utente corrente abbia i permessi di
+	 * lettura/scrittura sul contenuto, false in caso contrario.
+	 */
 	@Override
 	public boolean isUserAllowed(Content content, UserDetails currentUser) {
 		try {
@@ -169,45 +180,30 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			throw new RuntimeException("Error checking user authority", t);
 		}
 	}
-	
+
 	@Override
 	public Map getReferencingObjects(Content content, HttpServletRequest request) throws ApsSystemException {
-    	Map<String, List> references = new HashMap<String, List>();
-    	try {
-    		String[] defNames = ApsWebApplicationUtils.getWebApplicationContext(request).getBeanNamesForType(ContentUtilizer.class);
-			for (int i=0; i<defNames.length; i++) {
-				Object service = null;
-				try {
-					service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
-				} catch (Throwable t) {
-					_logger.error("error loading ReferencingObject ", t);
-					service = null;
-				}
-				if (service != null) {
-					ContentUtilizer contentUtilizer = (ContentUtilizer) service;
-					List utilizers = contentUtilizer.getContentUtilizers(content.getId());
-					if (utilizers != null && !utilizers.isEmpty()) {
-						references.put(contentUtilizer.getName()+"Utilizers", utilizers);
-					}
-				}
-			}
-    	} catch (Throwable t) {
-			_logger.error("Error extracting referencing object", t);
-    		throw new ApsSystemException("Error in hasReferencingObject method", t);
-    	}
-    	return references;
-    }
-	
+		return this.getContentHelper().getReferencingObjects(content);
+	}
+
 	/**
-	 * Controlla le referenziazioni di un contenuto. Verifica la referenziazione di un contenuto con altri contenuti o pagine nel caso 
-	 * di operazioni di ripubblicazione di contenuti non del gruppo ad accesso libero.
-	 * L'operazione si rende necessaria per ovviare a casi nel cui il contenuto, di un particolare gruppo, sia stato
-	 * pubblicato precedentemente in una pagina o referenziato in un'altro contenuto grazie alla associazione di questo con 
-	 * altri gruppi abilitati alla visualizzazione. Il controllo evidenzia quali devono essere i gruppi al quale il contenuto 
-	 * deve essere necessariamente associato (ed il perchè) per salvaguardare le precedenti relazioni. 
-	 * @param content Il contenuto da analizzare.
-	 * @param action L'action da valorizzare con i messaggi di errore.
-	 * @throws ApsSystemException In caso di errore.
+	 * Controlla le referenziazioni di un contenuto. Verifica la referenziazione
+	 * di un contenuto con altri contenuti o pagine nel caso di operazioni di
+	 * ripubblicazione di contenuti non del gruppo ad accesso libero.
+	 * L'operazione si rende necessaria per ovviare a casi nel cui il contenuto,
+	 * di un particolare gruppo, sia stato pubblicato precedentemente in una
+	 * pagina o referenziato in un'altro contenuto grazie alla associazione di
+	 * questo con altri gruppi abilitati alla visualizzazione. Il controllo
+	 * evidenzia quali devono essere i gruppi al quale il contenuto deve essere
+	 * necessariamente associato (ed il perchè) per salvaguardare le precedenti
+	 * relazioni.
+	 *
+	 * @param content
+	 * Il contenuto da analizzare.
+	 * @param action
+	 * L'action da valorizzare con i messaggi di errore.
+	 * @throws ApsSystemException
+	 * In caso di errore.
 	 */
 	@Override
 	public void scanReferences(Content content, ActionSupport action) throws ApsSystemException {
@@ -215,7 +211,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			HttpServletRequest request = ServletActionContext.getRequest();
 			try {
 				String[] defNames = ApsWebApplicationUtils.getWebApplicationContext(request).getBeanNamesForType(ContentUtilizer.class);
-				for (int i=0; i<defNames.length; i++) {
+				for (int i = 0; i < defNames.length; i++) {
 					Object service = null;
 					try {
 						service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
@@ -232,22 +228,27 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 						Lang lang = this.getLangManager().getDefaultLang();
 						for (int j = 0; j < utilizers.size(); j++) {
 							Object object = utilizers.get(j);
-							if (service instanceof IContentManager && object instanceof String) { //Content ID
+							if (service instanceof IContentManager && object instanceof String) { // Content
+																									// ID
 								Content refContent = this.getContentManager().loadContent(object.toString(), true);
-								if (!content.getMainGroup().equals(refContent.getMainGroup()) && 
-										!content.getGroups().contains(refContent.getMainGroup())) {
-									String[] args = {this.getGroupManager().getGroup(refContent.getMainGroup()).getDescription(), object.toString()+" '"+refContent.getDescription()+"'"};
+								if (!content.getMainGroup().equals(refContent.getMainGroup()) && !content.getGroups().contains(refContent
+										.getMainGroup())) {
+									String[] args = { this.getGroupManager().getGroup(refContent.getMainGroup()).getDescription(), object
+											.toString() + " '" + refContent.getDescription() + "'" };
 									action.addFieldError("mainGroup", action.getText("error.content.referencedContent.wrongGroups", args));
 								}
-							} else if (object instanceof IPage) { //Content ID
+							} else if (object instanceof IPage) { // Content ID
 								IPage page = (IPage) object;
-								if (!CmsPageActionUtil.isContentPublishableOnPage(content, page)) {
+								// Verifies the online version. On putting the
+								// page online, must be done the same check
+								if (!CmsPageUtil.isContentPublishableOnPageOnline(content, page)) {
+									PageMetadata metadata = page.getMetadata();
 									List<String> pageGroups = new ArrayList<String>();
 									pageGroups.add(page.getGroup());
-									if (null != page.getExtraGroups()) {
-										pageGroups.addAll(page.getExtraGroups());
+									if (metadata != null && null != metadata.getExtraGroups()) {
+										pageGroups.addAll(metadata.getExtraGroups());
 									}
-									String[] args = {pageGroups.toString(), page.getTitle(lang.getCode())};
+									String[] args = { pageGroups.toString(), page.getTitle(lang.getCode()) };
 									action.addFieldError("mainGroup", action.getText("error.content.referencedPage.wrongGroups", args));
 								}
 							}
@@ -259,7 +260,7 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 			}
 		}
 	}
-	
+
 	@Override
 	public ActivityStreamInfo createActivityStreamInfo(Content content, int strutsAction, boolean addLink) {
 		ActivityStreamInfo asi = new ActivityStreamInfo();
@@ -283,23 +284,34 @@ public class ContentActionHelper extends EntityActionHelper implements IContentA
 		asi.setGroups(groupCodes);
 		return asi;
 	}
-	
+
 	protected IContentManager getContentManager() {
 		return _contentManager;
 	}
+
 	public void setContentManager(IContentManager contentManager) {
 		this._contentManager = contentManager;
 	}
-	
+
+	protected IContentHelper getContentHelper() {
+		return contentHelper;
+	}
+
+	public void setContentHelper(IContentHelper contentHelper) {
+		this.contentHelper = contentHelper;
+	}
+
 	protected IContentAuthorizationHelper getContentAuthorizationHelper() {
 		return _contentAuthorizationHelper;
 	}
+
 	public void setContentAuthorizationHelper(IContentAuthorizationHelper contentAuthorizationHelper) {
 		this._contentAuthorizationHelper = contentAuthorizationHelper;
 	}
-	
+
 	private IContentManager _contentManager;
-	
+	private IContentHelper contentHelper;
+
 	private IContentAuthorizationHelper _contentAuthorizationHelper;
-	
+
 }

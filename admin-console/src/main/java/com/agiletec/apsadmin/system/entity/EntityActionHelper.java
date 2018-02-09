@@ -25,21 +25,23 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 
+import com.agiletec.aps.system.common.entity.model.ApsEntity;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
+import com.agiletec.aps.util.CheckFormatUtil;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.apsadmin.system.BaseActionHelper;
 import com.agiletec.apsadmin.system.entity.attribute.manager.AbstractAttributeManager;
 import com.agiletec.apsadmin.system.entity.attribute.manager.AttributeManagerInterface;
-import com.agiletec.apsadmin.util.CheckFormatUtil;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -66,7 +68,6 @@ public class EntityActionHelper extends BaseActionHelper implements IEntityActio
 			}
 		} catch (Throwable t) {
 			_logger.error("Error updating Entity", t);
-			//ApsSystemUtils.logThrowable(t, this, "updateEntity");
 			throw new RuntimeException("Error updating Entity", t);
 		}
 	}
@@ -95,7 +96,6 @@ public class EntityActionHelper extends BaseActionHelper implements IEntityActio
 			}
 		} catch (Throwable t) {
 			_logger.error("Error scanning Entity", t);
-			//ApsSystemUtils.logThrowable(t, this, "scanEntity");
 			throw new RuntimeException("Error scanning Entity", t);
 		}
 	}
@@ -136,7 +136,6 @@ public class EntityActionHelper extends BaseActionHelper implements IEntityActio
             String message = "Error creating manager of attribute '"
                     + attribute.getName() + "' type '" + attribute.getType() + "' -  Manager class '" + managerClassName + "'";
             _logger.error("Error creating manager of attribute '{}', type: {} - Manager class: {}", attribute.getName(),attribute.getType(), managerClassName,  t);
-            //ApsSystemUtils.logThrowable(t, this, "getManager", message);;
             throw new RuntimeException(message, t);
         }
         return null;
@@ -228,6 +227,21 @@ public class EntityActionHelper extends BaseActionHelper implements IEntityActio
 		}
 		return filters;
 	}
+
+	@Override
+	public String[] getAttributeFilterFieldName(ApsEntity prototype, String attrName) {
+		AbstractAttribute attr = (AbstractAttribute) prototype.getAttribute(attrName);
+		if (attr.isTextAttribute()) {
+			return new String[] {attrName + "_textFieldName"};
+		} else if (attr instanceof DateAttribute) {
+			return new String[] {attrName + "_dateStartFieldName", attrName + "_dateEndFieldName"};
+		} else if (attr instanceof NumberAttribute) {
+			return new String[] {attrName + "_numberStartFieldName", attrName + "_numberEndFieldName"};
+		} else if (attr instanceof BooleanAttribute) {
+			return new String[] {attrName + "_booleanFieldName"};
+		}
+		return null;
+	}
 	
     private Date getDateSearchFormValue(AbstractApsEntityFinderAction entityFinderAction,
             String fieldName, String dateFieldNameSuffix, boolean start) {
@@ -236,7 +250,7 @@ public class EntityActionHelper extends BaseActionHelper implements IEntityActio
         Date date = null;
         if (insertedDate != null && insertedDate.trim().length() > 0) {
             if (CheckFormatUtil.isValidDate(insertedDate.trim())) {
-                date = DateConverter.parseDate(insertedDate.trim(), "dd/MM/yyyy");
+                date = DateConverter.parseDate(insertedDate.trim(), EntitySearchFilter.DATE_PATTERN);
             } else {
                 String[] args = {fieldName};
                 if (start) {

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+	
+    <package name="jacms_do/jacms/Content/BulkBase" extends="entando-default">
+		
+		<interceptors>
+			<interceptor name="json" class="org.apache.struts2.json.JSONInterceptor" />
+			<interceptor-stack name="jsonStack">
+				<interceptor-ref name="json">
+					<param name="enableSMD">true</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+
+		<!--  Json action -->
+    	<action name="checkResult" class="jacmsContentBulkAction" method="viewResult">
+			<result name="expired" type="json">
+				<param name="root">smallReport</param>
+			</result>
+			<result type="json">
+				<param name="root">smallReport</param>
+			</result>
+			<interceptor-ref name="jsonStack" />
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    	<action name="viewResult" class="jacmsContentBulkAction" method="viewResult">
+            <result name="expired" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+    		</result>
+            <result type="tiles">admin.jacms.content.bulk.result</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+    	
+    </package>
+	
+    <package name="jacms_do/jacms/Content/Bulk" namespace="/do/jacms/Content/Bulk" extends="jacms_do/jacms/Content/BulkBase">
+
+		<action name="entryPutOnline" class="jacmsContentBulkAction" method="entry" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="tiles">admin.jacms.content.bulkOnline.entryConfirm</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
+        </action>
+
+		<action name="applyOnline" class="jacmsContentBulkAction" method="applyOnline" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="redirectAction">
+    			<param name="actionName">viewResult</param>
+    			<param name="commandId">${commandId}</param>
+    			<param name="strutsAction">${strutsAction}</param>
+            </result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
+        </action>
+
+		<action name="entryPutOffline" class="jacmsContentBulkAction" method="entry" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="tiles">admin.jacms.content.bulkOffline.entryConfirm</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
+        </action>
+
+		<action name="applyOffline" class="jacmsContentBulkAction" method="applyOffline" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="redirectAction">
+    			<param name="actionName">viewResult</param>
+    			<param name="commandId">${commandId}</param>
+    			<param name="strutsAction">${strutsAction}</param>
+            </result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
+        </action>
+
+		<action name="entryRemove" class="jacmsContentBulkAction" method="entry" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="tiles">admin.jacms.content.bulkRemove.entryConfirm</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
+        </action>
+
+		<action name="applyRemove" class="jacmsContentBulkAction" method="applyRemove" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="redirectAction">
+    			<param name="actionName">viewResult</param>
+    			<param name="commandId">${commandId}</param>
+    			<param name="strutsAction">${strutsAction}</param>
+            </result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">validateContents</param></interceptor-ref>
+        </action>
+
+    </package>
+	
+    <package name="jacms_do/jacms/Content/Group" namespace="/do/jacms/Content/Group" extends="jacms_do/jacms/Content/BulkBase">
+
+		<action name="entry" class="jacmsContentGroupBulkAction" method="entry" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+        </action>
+
+    	<action name="join*" class="jacmsContentGroupBulkAction" method="join">
+            <result type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    	<action name="disjoin*" class="jacmsContentGroupBulkAction" method="disjoin">
+            <result type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    	<action name="checkApply" class="jacmsContentGroupBulkAction" method="checkApply">
+            <result name="input" type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
+            <result type="tiles">admin.jacms.content.bulkGroup.entryConfirm</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    	<action name="apply" class="jacmsContentGroupBulkAction" method="apply">
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result name="input" type="tiles">admin.jacms.content.bulkGroup.entryChoice</result>
+            <result type="redirectAction">
+    			<param name="actionName">viewResult</param>
+    			<param name="commandId">${commandId}</param>
+    			<param name="strutsAction">${strutsAction}</param>
+            </result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    </package>
+	
+    <package name="jacms_do/jacms/Content/Category" namespace="/do/jacms/Content/Category" extends="jacms_do/jacms/Content/BulkBase">
+
+		<action name="entry" class="jacmsContentCategoryBulkAction" method="entry" >
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+        </action>
+
+    	<action name="join*" class="jacmsContentCategoryBulkAction" method="join">
+            <result type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    	<action name="disjoin*" class="jacmsContentCategoryBulkAction" method="disjoin">
+            <result type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    	<action name="checkApply" class="jacmsContentCategoryBulkAction" method="checkApply">
+            <result name="input" type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
+            <result type="tiles">admin.jacms.content.bulkCategory.entryConfirm</result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    	<action name="apply" class="jacmsContentCategoryBulkAction" method="apply">
+            <result name="list" type="chain">
+            	<param name="namespace">/do/jacms/Content</param>
+    			<param name="actionName">results</param>
+            </result>
+            <result name="input" type="tiles">admin.jacms.content.bulkCategory.entryChoice</result>
+            <result type="redirectAction">
+    			<param name="actionName">viewResult</param>
+    			<param name="commandId">${commandId}</param>
+    			<param name="strutsAction">${strutsAction}</param>
+            </result>
+        	<interceptor-ref name="entandoDefaultStack">
+        		<param name="requestAuth.requiredPermission">editContents</param>
+        	</interceptor-ref>
+        </action>
+
+    </package>
+	
+</struts>

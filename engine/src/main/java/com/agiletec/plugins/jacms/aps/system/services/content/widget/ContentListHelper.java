@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -27,7 +27,6 @@ import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.entando.entando.aps.system.services.searchengine.IEntitySearchEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.RequestContext;
@@ -53,6 +52,10 @@ import com.agiletec.plugins.jacms.aps.system.services.content.widget.util.Filter
 public class ContentListHelper extends BaseContentListHelper implements IContentListWidgetHelper {
 
     private static final Logger _logger = LoggerFactory.getLogger(ContentListHelper.class);
+
+    private String userFilterDateFormat;
+
+    private IEntitySearchEngineManager searchEngineManager;
 
     @Override
     public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, RequestContext reqCtx) {
@@ -100,13 +103,10 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
     @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
             key = "T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).buildCacheKey(#bean, #reqCtx)",
             condition = "#bean.cacheable && !T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).isUserFilterExecuted(#bean)")
-    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-            key = "T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).buildCacheKey(#bean, #reqCtx)",
-            beforeInvocation = true,
-            condition = "T(org.entando.entando.aps.system.services.cache.CacheInfoManager).isExpired(T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).buildCacheKey(#bean, #reqCtx))")
     @CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentListCacheGroupsCsv(#bean, #reqCtx)", expiresInMinute = 30)
     public List<String> getContentsId(IContentListTagBean bean, RequestContext reqCtx) throws Throwable {
-        List<String> contentsId = null;
+        this.releaseCache(bean, reqCtx);
+		List<String> contentsId = null;
         try {
             contentsId = this.extractContentsId(bean, reqCtx);
             contentsId = this.executeFullTextSearch(bean, contentsId, reqCtx);
@@ -116,14 +116,25 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         }
         return contentsId;
     }
+	
+	private void releaseCache(IContentListTagBean bean, RequestContext reqCtx) {
+		String key = ContentListHelper.buildCacheKey(bean, reqCtx);
+		boolean isExpired = this.getCacheInfoManager().isExpired(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
+		if (isExpired) {
+			this.getCacheInfoManager().flushEntry(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
+		}
+	}
 
     public static boolean isUserFilterExecuted(IContentListTagBean bean) {
-        if (null == bean || null == bean.getUserFilterOptions() || bean.getUserFilterOptions().isEmpty()) {
+		if (null == bean) {
+			return false;
+		}
+		List<UserFilterOptionBean> filterOptions = bean.getUserFilterOptions();
+        if (null == filterOptions || filterOptions.isEmpty()) {
             return false;
         }
-        for (int i = 0; i < bean.getUserFilterOptions().size(); i++) {
-            UserFilterOptionBean userFilter = bean.getUserFilterOptions().get(i);
-            if (null != userFilter.getFormFieldValues() && userFilter.getFormFieldValues().size() > 0) {
+		for (UserFilterOptionBean userFilter : filterOptions) {
+			if (null != userFilter.getFormFieldValues() && userFilter.getFormFieldValues().size() > 0) {
                 return true;
             }
         }
@@ -147,9 +158,8 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
             }
             this.addWidgetFilters(bean, config, WIDGET_PARAM_FILTERS, reqCtx);
             if (null != userFilters && userFilters.size() > 0) {
-                for (int i = 0; i < userFilters.size(); i++) {
-                    UserFilterOptionBean userFilter = userFilters.get(i);
-                    EntitySearchFilter filter = userFilter.getEntityFilter();
+				for (UserFilterOptionBean userFilter : userFilters) {
+					EntitySearchFilter filter = userFilter.getEntityFilter();
                     if (null != filter) {
                         bean.addFilter(filter);
                     }
@@ -183,9 +193,8 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         UserFilterOptionBean fullTextUserFilter = null;
         List<UserFilterOptionBean> userFilterOptions = bean.getUserFilterOptions();
         if (null != userFilterOptions) {
-            for (int i = 0; i < userFilterOptions.size(); i++) {
-                UserFilterOptionBean userFilter = userFilterOptions.get(i);
-                if (null != userFilter.getFormFieldValues() && userFilter.getFormFieldValues().size() > 0) {
+			for (UserFilterOptionBean userFilter : userFilterOptions) {
+				if (null != userFilter.getFormFieldValues() && userFilter.getFormFieldValues().size() > 0) {
                     if (!userFilter.isAttributeFilter()
                             && userFilter.getKey().equals(UserFilterOptionBean.KEY_FULLTEXT)) {
                         fullTextUserFilter = userFilter;
@@ -195,23 +204,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         }
         if (fullTextUserFilter != null && null != fullTextUserFilter.getFormFieldValues()) {
 			String word = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[0]);
-			/*
-			String optionString = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[1]);
-			SearchEngineFilter.TextSearchOption option = SearchEngineFilter.TextSearchOption.AT_LEAST_ONE_WORD;
-			if (null != optionString) {
-				if (optionString.equals(UserFilterOptionBean.FULLTEXT_OPTION_ALL_WORDS)) {
-					option = SearchEngineFilter.TextSearchOption.ALL_WORDS;
-				} else if (optionString.equals(UserFilterOptionBean.FULLTEXT_OPTION_EXACT)) {
-					option = SearchEngineFilter.TextSearchOption.EXACT;
-				}
-			}
-			*/
 			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-			/*
-			SearchEngineFilter filter = new SearchEngineFilter(currentLang.getCode(), word, option);
-			SearchEngineFilter[] filters = {filter};
-			List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(filters, null, this.getAllowedGroups(reqCtx));
-			*/
 			List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(currentLang.getCode(), word, this.getAllowedGroups(reqCtx));
 			if (null != fullTextResult) {
 				return ListUtils.intersection(fullTextResult, masterContentsId);
@@ -226,21 +219,20 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
     protected String[] getCategories(String[] categories, ApsProperties config, List<UserFilterOptionBean> userFilters) {
         Set<String> codes = new HashSet<String>();
         if (null != categories) {
-            for (int i = 0; i < categories.length; i++) {
-                codes.add(categories[i]);
+			for (String category : categories) {
+				codes.add(category);
             }
         }
         String categoriesParam = (null != config) ? config.getProperty(WIDGET_PARAM_CATEGORIES) : null;
         if (null != categoriesParam && categoriesParam.trim().length() > 0) {
             List<String> categoryCodes = splitValues(categoriesParam, CATEGORIES_SEPARATOR);
-            for (int j = 0; j < categoryCodes.size(); j++) {
-                codes.add(categoryCodes.get(j));
+			for (String categoryCode : categoryCodes) {
+				codes.add(categoryCode);
             }
         }
         if (null != userFilters) {
-            for (int i = 0; i < userFilters.size(); i++) {
-                UserFilterOptionBean userFilterBean = userFilters.get(i);
-                if (!userFilterBean.isAttributeFilter()
+			for (UserFilterOptionBean userFilterBean : userFilters) {
+				if (!userFilterBean.isAttributeFilter()
                         && userFilterBean.getKey().equals(UserFilterOptionBean.KEY_CATEGORY)
                         && null != userFilterBean.getFormFieldValues()) {
                     codes.add(userFilterBean.getFormFieldValues().get(userFilterBean.getFormFieldNames()[0]));
@@ -273,8 +265,8 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         if (null == filters) {
             return;
         }
-        for (int i = 0; i < filters.length; i++) {
-            bean.addFilter(filters[i]);
+		for (EntitySearchFilter filter : filters) {
+			bean.addFilter(filter);
         }
     }
 
@@ -316,9 +308,8 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
             groupCodes.add(Group.FREE_GROUP_NAME);
         }
         Collections.sort(groupCodes);
-        for (int i = 0; i < groupCodes.size(); i++) {
-            String code = (String) groupCodes.get(i);
-            cacheKey.append("_").append(code);
+		for (String code : groupCodes) {
+			cacheKey.append("_").append(code);
         }
         if (null != currentWidget && null != currentWidget.getConfig()) {
             List<String> paramKeys = new ArrayList(currentWidget.getConfig().keySet());
@@ -368,21 +359,17 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
     }
 
     protected String getUserFilterDateFormat() {
-        return _userFilterDateFormat;
+        return userFilterDateFormat;
     }
     public void setUserFilterDateFormat(String userFilterDateFormat) {
-        this._userFilterDateFormat = userFilterDateFormat;
+        this.userFilterDateFormat = userFilterDateFormat;
     }
 
     protected IEntitySearchEngineManager getSearchEngineManager() {
-        return _searchEngineManager;
+        return searchEngineManager;
     }
     public void setSearchEngineManager(IEntitySearchEngineManager searchEngineManager) {
-        this._searchEngineManager = searchEngineManager;
+        this.searchEngineManager = searchEngineManager;
     }
-
-    private String _userFilterDateFormat;
-
-    private IEntitySearchEngineManager _searchEngineManager;
 
 }

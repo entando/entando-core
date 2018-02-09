@@ -17,6 +17,6 @@
 		<s:property value="#currentContentVar.typeDescr"/>
 	</td>
 	<td class="text-center text-nowrap">
-		<code><s:date name="#currentContentRecordVar.modify" format="dd/MM/yyyy" /></code>
+		<s:date name="#currentContentRecordVar.modify" format="dd/MM/yyyy" />
 	</td>
 </tr>

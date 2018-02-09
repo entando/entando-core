@@ -15,12 +15,12 @@ package com.agiletec.aps.system.services.url;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Interfaccia base per i servizi di creazione di URL.
@@ -54,11 +54,11 @@ public interface IURLManager {
 	 * @param params A map of params. Could be null.
 	 * @return The url.
 	 */
-	public String createUrl(IPage requiredPage, Lang requiredLang, Map<String, String> params);
+	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params);
 	
-	public String createUrl(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp);
+	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp);
 	
-	public String createUrl(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp, HttpServletRequest request) throws ApsSystemException;
+	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp, HttpServletRequest request) throws ApsSystemException;
 	
 	public String getApplicationBaseURL(HttpServletRequest request) throws ApsSystemException;
 	

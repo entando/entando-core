@@ -25,33 +25,40 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = ActionLogRecordRelation.TABLE_NAME)
 public class ActionLogRecordRelation implements ExtendedColumnDefinition {
-	
-	public ActionLogRecordRelation() {}
-	
-	@DatabaseField(foreign = true, columnName = "recordid", 
-			canBeNull = false, index = true)
-	private ActionLogRecord _recordId;
-	
-	@DatabaseField(columnName = "refgroup", 
-			dataType = DataType.STRING, 
-			width = 20, index = true)
-	private String _group;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String logTableName = ActionLogRecord.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + TABLE_NAME + "`";
-			logTableName = "`" + logTableName + "`";
-		}
-		return new String[]{"ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_recid_fkey FOREIGN KEY (recordid) "
-				+ "REFERENCES " + logTableName + " (id)"};
-	}
-	
-	public static final String TABLE_NAME = "actionlogrelations";
-	
+
+    public ActionLogRecordRelation() {
+    }
+
+    @DatabaseField(columnName = "id",
+            dataType = DataType.INTEGER,
+            canBeNull = false,
+            generatedId = true)
+    private int _id;
+
+    @DatabaseField(foreign = true, columnName = "recordid",
+            canBeNull = false, index = true)
+    private ActionLogRecord _recordId;
+
+    @DatabaseField(columnName = "refgroup",
+            dataType = DataType.STRING,
+            width = 20, index = true)
+    private String _group;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String logTableName = ActionLogRecord.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + TABLE_NAME + "`";
+            logTableName = "`" + logTableName + "`";
+        }
+        return new String[]{"ALTER TABLE " + tableName + " "
+            + "ADD CONSTRAINT " + TABLE_NAME + "_recid_fkey FOREIGN KEY (recordid) "
+            + "REFERENCES " + logTableName + " (id)"};
+    }
+
+    public static final String TABLE_NAME = "actionlogrelations";
+
 }
 /*
 CREATE TABLE actionlogrelations

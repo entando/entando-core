@@ -24,39 +24,40 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = User.TABLE_NAME)
 public class User {
-	
-	public User() {}
-	
-	@DatabaseField(columnName = "username", 
-			dataType = DataType.STRING, 
-			width = 40, 
-			canBeNull = false, id = true)
-	private String _username;
-	
-	@DatabaseField(columnName = "passwd", 
-			dataType = DataType.STRING, 
-			width = 40)
-	private String _password;
-	
-	@DatabaseField(columnName = "registrationdate", 
-			dataType = DataType.DATE, 
-			canBeNull = false)
-	private Date _registrationDate;
-	
-	@DatabaseField(columnName = "lastaccess", 
-			dataType = DataType.DATE)
-	private Date _lastAccess;
-	
-	@DatabaseField(columnName = "lastpasswordchange", 
-			dataType = DataType.DATE)
-	private Date _lastPasswordChange;
-	
-	@DatabaseField(columnName = "active", 
-			dataType = DataType.SHORT)
-	private short _active;
-	
-	public static final String TABLE_NAME = "authusers";
-	
+
+    public User() {
+    }
+
+    @DatabaseField(columnName = "username",
+            dataType = DataType.STRING,
+            width = 40,
+            canBeNull = false, id = true)
+    private String _username;
+
+    @DatabaseField(columnName = "passwd",
+            dataType = DataType.STRING,
+            width = 512)
+    private String _password;
+
+    @DatabaseField(columnName = "registrationdate",
+            dataType = DataType.DATE,
+            canBeNull = false)
+    private Date _registrationDate;
+
+    @DatabaseField(columnName = "lastaccess",
+            dataType = DataType.DATE)
+    private Date _lastAccess;
+
+    @DatabaseField(columnName = "lastpasswordchange",
+            dataType = DataType.DATE)
+    private Date _lastPasswordChange;
+
+    @DatabaseField(columnName = "active",
+            dataType = DataType.SHORT)
+    private short _active;
+
+    public static final String TABLE_NAME = "authusers";
+
 }
 /*
 CREATE TABLE authusers

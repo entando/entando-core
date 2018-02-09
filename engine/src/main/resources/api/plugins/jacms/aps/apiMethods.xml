@@ -95,7 +95,7 @@
     <resource name="content" namespace="inline">
         <description>The resource to manage inline editing on CMS content</description>
         <source>inline</source>
-        <method httpMethod="PUT" active="true">
+        <method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
             <description>The resource to manage inline editing on CMS content</description>
             <springBean name="jacmsApiContentInterface" method="updateContentText"/>
             <expectedType>org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBContentAttribute</expectedType>

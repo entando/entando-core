@@ -68,15 +68,12 @@ public abstract class AbstractURLManager extends AbstractService implements IURL
 			buf.append("?");
 			Iterator<String> keyIter = params.keySet().iterator();
 			int index = 1;
+			String paramSeparator = escapeAmp ? "&amp;" : "&";
 			while (keyIter.hasNext()) {
 				String name = keyIter.next();
 				buf.append(this.encodeParam(name)).append("=").append(this.encodeParam(params.get(name)));
 				if (index != params.size()) {
-					if (escapeAmp) {
-						buf.append("&amp;");
-					} else {
-						buf.append("&");
-					}
+					buf.append(paramSeparator);
 					index++;
 				}
 			}

@@ -13,8 +13,17 @@
  */
 package com.agiletec.aps.system.services.user;
 
+import java.util.Calendar;
 import java.util.List;
 
+import com.agiletec.aps.system.services.role.Permission;
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,12 +84,49 @@ public class AuthenticationProviderManager extends AbstractService
                 return user;
             }
             this.addUserAuthorizations(user);
+
+            if (this.getAuthorizationManager().isAuthOnPermission(user, Permission.SUPERUSER)){
+                this.registerToken(user);
+            }
+
+
         } catch (Throwable t) {
             throw new ApsSystemException("Error detected during the authentication of the user " + username, t);
         }
         return user;
     }
-    
+
+    private void registerToken(final UserDetails user) {
+
+        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+        try {
+            final String accessToken = oauthIssuerImpl.accessToken();
+            final String refreshToken = oauthIssuerImpl.refreshToken();
+            user.setAccessToken(accessToken);
+            user.setRefreshToken(refreshToken);
+
+            final OAuth2Token oAuth2Token = new OAuth2Token();
+            oAuth2Token.setAccessToken(accessToken);
+            oAuth2Token.setRefreshToken(refreshToken);
+            oAuth2Token.setClientId("LOCAL_USER");
+            oAuth2Token.setLocalUser(user.getUsername());
+            Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+            calendar.add(Calendar.SECOND, 3600);
+            oAuth2Token.setExpiresIn(calendar.getTime());
+            oAuth2Token.setGrantType(GrantType.IMPLICIT.toString());
+            tokenManager.addApiOAuth2Token(oAuth2Token,true);
+        } catch (OAuthSystemException e) {
+            _logger.error("OAuthSystemException {} ", e.getMessage());
+            _logger.debug("OAuthSystemException {} ", e);
+
+        } catch (ApsSystemException e) {
+            _logger.error("ApsSystemException {} ", e.getMessage());
+            _logger.debug("ApsSystemException {} ", e);
+        }
+
+
+    }
+
     protected void addUserAuthorizations(UserDetails user) throws ApsSystemException {
         if (null == user) {
             return;
@@ -94,6 +140,7 @@ public class AuthenticationProviderManager extends AbstractService
 			user.addAuthorization(authorization);
 		}
     }
+
 	
     protected IUserManager getUserManager() {
         return _userManager;
@@ -108,8 +155,17 @@ public class AuthenticationProviderManager extends AbstractService
 	public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
 		this._authorizationManager = authorizationManager;
 	}
-	
+
+    public IApiOAuth2TokenManager getTokenManager() {
+        return tokenManager;
+    }
+
+    public void setTokenManager(IApiOAuth2TokenManager tokenManager) {
+        this.tokenManager = tokenManager;
+    }
+
     private IUserManager _userManager;
 	private IAuthorizationManager _authorizationManager;
+    private IApiOAuth2TokenManager tokenManager;
     
 }

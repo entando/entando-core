@@ -22,10 +22,10 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.Frame;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapper;
 import java.util.Arrays;
 import java.util.List;
 import junit.framework.Assert;
-import org.entando.entando.aps.system.services.dataobjectmapper.DataObjectPageMapper;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
 import org.junit.Before;
@@ -76,10 +76,10 @@ public class ContentMapperCacheWrapperTest {
 
 	@Test
 	public void testGetPageCode() throws Throwable {
-		DataObjectPageMapper dataObjectPageMapper = new DataObjectPageMapper();
-		dataObjectPageMapper.add("ART12", "temp_page");
-		dataObjectPageMapper.add("NEW56", "wring_page");
-		Mockito.when(valueWrapper.get()).thenReturn(dataObjectPageMapper);
+		ContentPageMapper contentPageMapper = new ContentPageMapper();
+		contentPageMapper.add("ART12", "temp_page");
+		contentPageMapper.add("NEW56", "wring_page");
+		Mockito.when(valueWrapper.get()).thenReturn(contentPageMapper);
 		Mockito.when(cache.get(Mockito.anyString())).thenReturn(valueWrapper);
 		Mockito.when(cacheManager.getCache(Mockito.anyString())).thenReturn(this.cache);
 		String pageCode = this.cacheWrapper.getPageCode("ART12");

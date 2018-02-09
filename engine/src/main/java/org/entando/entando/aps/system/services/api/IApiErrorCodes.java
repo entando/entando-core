@@ -16,8 +16,12 @@ package org.entando.entando.aps.system.services.api;
 /**
  * @author E.Santoboni
  */
-public interface IApiErrorCodes {
-    
+public final class IApiErrorCodes {
+
+    private IApiErrorCodes() {
+        //
+    }
+
     /**
      * Generic Error returned by server.
      */
@@ -32,53 +36,53 @@ public interface IApiErrorCodes {
      * Generic Error - Authorization Required. Error returned by server.
      */
     public static final String API_AUTHORIZATION_REQUIRED = "API_AUTHORIZATION_REQUIRED";
-    
+
     //------------------------------ Response Builder errors
-    
+
     /**
      * Validation Error - Invalid method. Error returned by API Response Builder.
      */
     public static final String API_INVALID = "API_INVALID";
-    
+
     /**
      * Validation Error - Unactive method. Error returned by API Response Builder.
      */
     public static final String API_ACTIVE_FALSE = "API_ACTIVE_FALSE";
-    
+
     /**
      * Validation Error - Invalid method response. Error returned by API Response Builder.
      */
     public static final String API_INVALID_RESPONSE = "API_INVALID_RESPONSE";
-    
+
     /**
      * Validation error - Required parameter. Error returned by API Response Builder.
      */
     public static final String API_PARAMETER_REQUIRED = "API_PARAMETER_REQUIRED";
-    
+
     /**
      * Method error - Unexpected method error. Error returned by API Response Builder.
      */
     public static final String API_METHOD_ERROR = "API_METHOD_ERROR";
-    
+
     //------------------------------ Service errors
-    
+
     /**
      * Service Error - Invalid Service. Error returned by API Service Interface.
      */
     public static final String API_SERVICE_INVALID = "API_SERVICE_INVALID";
-    
+
     /**
      * Service Error - Service not active. Error returned by API Service Interface.
      */
     public static final String API_SERVICE_ACTIVE_FALSE = "API_SERVICE_ACTIVE_FALSE";
-    
+
     //------------------------------ Custom java method errors
-    
+
     /**
      * Validation Error. Error returned by custom method implementation.
      */
     public static final String API_VALIDATION_ERROR = "API_VALIDATION_ERROR";
-    
+
     /**
      * Validation Error - Invalid parameter value (ex: Wrong patterm). Error returned by custom method implementation.
      */

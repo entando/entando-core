@@ -165,7 +165,10 @@ public class AllTests {
         suite.addTestSuite(TestDataObjectDispenser.class);
 
         suite.addTestSuite(TestSearchEngineManager.class);
+
+
         return suite;
     }
+
 
 }

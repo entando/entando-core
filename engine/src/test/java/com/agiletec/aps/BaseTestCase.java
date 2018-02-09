@@ -37,6 +37,8 @@ import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 
+import java.util.Set;
+
 /**
  * @author W.Ambu - E.Santoboni
  */
@@ -81,6 +83,16 @@ public class BaseTestCase extends TestCase {
         super.tearDown();
         this.getConfigUtils().closeDataSources(this.getApplicationContext());
         this.getConfigUtils().destroyContext(this.getApplicationContext());
+        Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
+        //Iterate over set to find yours
+        for (Thread thread : setOfThread) {
+            if (thread.getName().matches("pool-(.*)-thread-(.*)")) {
+                if (!thread.isInterrupted()){
+
+                    thread.interrupt();
+                }
+            }
+        }
     }
 
     protected void waitNotifyingThread() throws InterruptedException {
@@ -88,14 +100,15 @@ public class BaseTestCase extends TestCase {
     }
 
     protected void waitThreads(String threadNamePrefix) throws InterruptedException {
-        Thread[] threads = new Thread[20];
+        Thread[] threads = new Thread[Thread.activeCount()];
         Thread.enumerate(threads);
         for (int i = 0; i < threads.length; i++) {
             Thread currentThread = threads[i];
-            if (currentThread != null
-                    && currentThread.getName().startsWith(threadNamePrefix)) {
+            if (currentThread != null &&
+                    currentThread.getName().startsWith(threadNamePrefix)) {
                 currentThread.join();
             }
+
         }
     }
 
@@ -120,8 +133,7 @@ public class BaseTestCase extends TestCase {
     }
 
     /**
-     * Return a user (with his autority) by username, with the password equals
-     * than username.
+     * Return a user (with his autority) by username, with the password equals than username.
      *
      * @param username The username
      * @return The required user.
@@ -164,5 +176,5 @@ public class BaseTestCase extends TestCase {
     private RequestContext _reqCtx;
 
     private ApplicationContext _applicationContext;
-
 }
+

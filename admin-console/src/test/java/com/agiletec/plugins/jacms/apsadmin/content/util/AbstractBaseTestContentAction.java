@@ -13,7 +13,12 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content.util;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
+import com.agiletec.aps.system.services.user.IUserManager;
+import com.agiletec.aps.system.services.user.User;
+import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
@@ -31,6 +36,18 @@ public abstract class AbstractBaseTestContentAction extends ApsAdminBaseTestCase
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
+
+
+		IAuthenticationProviderManager provider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
+		IUserManager userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
+
+		User editorCustomers = new User();
+		editorCustomers.setUsername("editorCustomers");
+		editorCustomers.setPassword("bRpYPITxXz83hR9QUlj5bQ==");
+		editorCustomers.setDisabled(false);
+		userManager.updateUser(editorCustomers);
+
+
 	}
 
 	protected String executeEdit(String contentId, String currentUserName) throws Throwable {

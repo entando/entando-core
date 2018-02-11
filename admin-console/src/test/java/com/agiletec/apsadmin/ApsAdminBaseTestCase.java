@@ -47,6 +47,8 @@ import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.Parameter;
 import org.apache.struts2.spring.StrutsSpringObjectFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -61,6 +63,8 @@ import org.springframework.web.context.WebApplicationContext;
  * @author Zarar Siddiqi - E.Santoboni
  */
 public class ApsAdminBaseTestCase extends TestCase {
+
+    private static final Logger _logger = LoggerFactory.getLogger(ApsAdminBaseTestCase.class);
 
     @Override
     protected void setUp() throws Exception {
@@ -186,6 +190,8 @@ public class ApsAdminBaseTestCase extends TestCase {
         IAuthenticationProviderManager provider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
         IUserManager userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
         UserDetails user = null;
+        _logger.info("Current users. {}", userManager.getUsernames());
+
         if (username.equals(SystemConstants.GUEST_USER_NAME)) {
             user = userManager.getGuestUser();
         } else {
@@ -212,6 +218,8 @@ public class ApsAdminBaseTestCase extends TestCase {
             return;
         }
         UserDetails currentUser = this.getUser(username, username);//nel database di test, username e password sono uguali
+        _logger.info("Setting user on session in test case username {} and result {}", username, currentUser);
+
         HttpSession session = this._request.getSession();
         session.setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, currentUser);
     }

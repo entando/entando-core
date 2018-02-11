@@ -40,26 +40,6 @@ public class TestContentGroupBulkAction extends ApsAdminBaseTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
-
-		IUserManager userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
-
-		User editorCustomers = new User();
-		editorCustomers.setUsername("editorCustomers");
-		editorCustomers.setPassword("bRpYPITxXz83hR9QUlj5bQ==");
-		editorCustomers.setDisabled(false);
-		userManager.updateUser(editorCustomers);
-
-		User mainEditor = new User();
-		mainEditor.setUsername("mainEditor");
-		mainEditor.setPassword("7eDt/vDRr2+KQW1HTS1T+g==");
-		mainEditor.setDisabled(false);
-		userManager.updateUser(mainEditor);
-
-		User pageManagerCoach = new User();
-		pageManagerCoach.setUsername("pageManagerCoach");
-		pageManagerCoach.setPassword("ef8GX0ikX+3iPL2bo5LbeYZgJCqJme8w");
-		pageManagerCoach.setDisabled(false);
-		userManager.updateUser(pageManagerCoach);
 	}
 
 	public void testUserNotAllowed() throws Throwable {

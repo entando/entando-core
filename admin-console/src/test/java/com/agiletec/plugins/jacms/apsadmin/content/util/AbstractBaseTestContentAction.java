@@ -36,15 +36,6 @@ public abstract class AbstractBaseTestContentAction extends ApsAdminBaseTestCase
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
-
-		IUserManager userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
-
-		User editorCustomers = new User();
-		editorCustomers.setUsername("editorCustomers");
-		editorCustomers.setPassword("bRpYPITxXz83hR9QUlj5bQ==");
-		editorCustomers.setDisabled(false);
-		userManager.updateUser(editorCustomers);
-
 	}
 
 	protected String executeEdit(String contentId, String currentUserName) throws Throwable {

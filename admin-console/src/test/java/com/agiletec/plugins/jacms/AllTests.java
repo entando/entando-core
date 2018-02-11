@@ -68,59 +68,57 @@ public class AllTests {
 		System.out.println("Test for jACMS plugin");
 		
 		suite.addTestSuite(TestTrashReferencedCategory.class);
-		
-		// Content
-		suite.addTestSuite(TestContentGroupBulkAction.class);
-		suite.addTestSuite(TestHypertextAttributeAction.class);
 
-//		suite.addTestSuite(TestListAttributeAction.class);
-//		suite.addTestSuite(TestResourceAttributeAction.class);
-//		suite.addTestSuite(TestExtendedResourceAction.class);
-//		suite.addTestSuite(TestExtendedResourceFinderAction.class);
-//		suite.addTestSuite(TestLinkAttributeAction.class);
-//		suite.addTestSuite(TestPageLinkAction.class);
-//		suite.addTestSuite(TestContentLinkAction.class);
-//		suite.addTestSuite(TestUrlLinkAction.class);
-//		suite.addTestSuite(TestContentModelAction.class);
-//		suite.addTestSuite(TestContentModelFinderAction.class);
-//		suite.addTestSuite(TestContentAction.class);
-//		suite.addTestSuite(TestSaveBooleanAttributes.class);
-//		suite.addTestSuite(TestValidateBooleanAttributes.class);
-//		suite.addTestSuite(TestValidateDateAttribute.class);
-//		suite.addTestSuite(TestValidateMonotextAttribute.class);
-//		suite.addTestSuite(TestValidateNumberAttribute.class);
-//		suite.addTestSuite(TestValidateResourceAttribute.class);
-//		suite.addTestSuite(TestValidateTextAttribute.class);
-//		suite.addTestSuite(TestContentAdminAction.class);
-//		suite.addTestSuite(TestContentFinderAction.class);
-//		suite.addTestSuite(TestContentGroupAction.class);
-//		suite.addTestSuite(TestContentInspectionAction.class);
-//		suite.addTestSuite(TestIntroNewContentAction.class);
-//		suite.addTestSuite(TestContentGroupBulkAction.class);
-//		suite.addTestSuite(TestContentCategoryBulkAction.class);
-//
-//		// Page
-//		suite.addTestSuite(TestContentListViewerWidgetAction.class);
-//		suite.addTestSuite(TestBaseFilterAction.class);
-//		suite.addTestSuite(TestDateAttributeFilterAction.class);
-//		suite.addTestSuite(TestNumberAttributeFilterAction.class);
-//		suite.addTestSuite(TestTextAttributeFilterAction.class);
-//		suite.addTestSuite(TestContentFinderViewerAction.class);
-//		suite.addTestSuite(TestContentViewerWidgetAction.class);
-//		suite.addTestSuite(TestPageAction.class);
-//		suite.addTestSuite(TestTrashReferencedPage.class);
-//
-//		//Resource
-//		suite.addTestSuite(TestResourceAction.class);
-//		suite.addTestSuite(TestResourceFinderAction.class);
-//
-//		//Entity
-//		suite.addTestSuite(TestJacmsEntityAttributeConfigAction.class);
-//		suite.addTestSuite(TestJacmsEntityTypeConfigAction.class);
-//		suite.addTestSuite(TestJacmsEntityManagersAction.class);
-//
-//		//Group
-//		suite.addTestSuite(TestTrashReferencedGroup.class);
+		// Content
+		suite.addTestSuite(TestListAttributeAction.class);
+		suite.addTestSuite(TestResourceAttributeAction.class);
+		suite.addTestSuite(TestExtendedResourceAction.class);
+		suite.addTestSuite(TestExtendedResourceFinderAction.class);
+		suite.addTestSuite(TestHypertextAttributeAction.class);
+		suite.addTestSuite(TestLinkAttributeAction.class);
+		suite.addTestSuite(TestPageLinkAction.class);
+		suite.addTestSuite(TestContentLinkAction.class);
+		suite.addTestSuite(TestUrlLinkAction.class);
+		suite.addTestSuite(TestContentModelAction.class);
+		suite.addTestSuite(TestContentModelFinderAction.class);
+		suite.addTestSuite(TestContentAction.class);
+		suite.addTestSuite(TestSaveBooleanAttributes.class);
+		suite.addTestSuite(TestValidateBooleanAttributes.class);
+		suite.addTestSuite(TestValidateDateAttribute.class);
+		suite.addTestSuite(TestValidateMonotextAttribute.class);
+		suite.addTestSuite(TestValidateNumberAttribute.class);
+		suite.addTestSuite(TestValidateResourceAttribute.class);
+		suite.addTestSuite(TestValidateTextAttribute.class);
+		suite.addTestSuite(TestContentAdminAction.class);
+		suite.addTestSuite(TestContentFinderAction.class);
+		suite.addTestSuite(TestContentGroupAction.class);
+		suite.addTestSuite(TestContentInspectionAction.class);
+		suite.addTestSuite(TestIntroNewContentAction.class);
+		suite.addTestSuite(TestContentGroupBulkAction.class);
+		suite.addTestSuite(TestContentCategoryBulkAction.class);
+
+		// Page
+		suite.addTestSuite(TestContentListViewerWidgetAction.class);
+		suite.addTestSuite(TestBaseFilterAction.class);
+		suite.addTestSuite(TestDateAttributeFilterAction.class);
+		suite.addTestSuite(TestNumberAttributeFilterAction.class);
+		suite.addTestSuite(TestTextAttributeFilterAction.class);
+		suite.addTestSuite(TestContentFinderViewerAction.class);
+		suite.addTestSuite(TestContentViewerWidgetAction.class);
+		suite.addTestSuite(TestPageAction.class);
+		suite.addTestSuite(TestTrashReferencedPage.class);
+
+		//Resource
+		suite.addTestSuite(TestResourceAction.class);
+		suite.addTestSuite(TestResourceFinderAction.class);
+
+		//Entity
+		suite.addTestSuite(TestJacmsEntityAttributeConfigAction.class);
+		suite.addTestSuite(TestJacmsEntityTypeConfigAction.class);
+		suite.addTestSuite(TestJacmsEntityManagersAction.class);
+
+		//Group
+		suite.addTestSuite(TestTrashReferencedGroup.class);
 		
 		return suite;
 	}

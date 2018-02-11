@@ -37,8 +37,6 @@ public abstract class AbstractBaseTestContentAction extends ApsAdminBaseTestCase
 		super.setUp();
 		this.init();
 
-
-		IAuthenticationProviderManager provider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
 		IUserManager userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
 
 		User editorCustomers = new User();
@@ -46,7 +44,6 @@ public abstract class AbstractBaseTestContentAction extends ApsAdminBaseTestCase
 		editorCustomers.setPassword("bRpYPITxXz83hR9QUlj5bQ==");
 		editorCustomers.setDisabled(false);
 		userManager.updateUser(editorCustomers);
-
 
 	}
 

@@ -79,12 +79,10 @@ public class BaseTestCase extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-
         this.waitThreads(SystemConstants.ENTANDO_THREAD_NAME_PREFIX);
         super.tearDown();
         this.getConfigUtils().closeDataSources(this.getApplicationContext());
         this.getConfigUtils().destroyContext(this.getApplicationContext());
-
         Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
         //Iterate over set to find yours
         for (Thread thread : setOfThread) {
@@ -178,5 +176,5 @@ public class BaseTestCase extends TestCase {
     private RequestContext _reqCtx;
 
     private ApplicationContext _applicationContext;
-
 }
+

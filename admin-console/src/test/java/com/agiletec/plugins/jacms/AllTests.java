@@ -68,7 +68,7 @@ public class AllTests {
 		System.out.println("Test for jACMS plugin");
 		
 		suite.addTestSuite(TestTrashReferencedCategory.class);
-		
+
 		// Content
 		suite.addTestSuite(TestListAttributeAction.class);
 		suite.addTestSuite(TestResourceAttributeAction.class);
@@ -96,7 +96,7 @@ public class AllTests {
 		suite.addTestSuite(TestIntroNewContentAction.class);
 		suite.addTestSuite(TestContentGroupBulkAction.class);
 		suite.addTestSuite(TestContentCategoryBulkAction.class);
-		
+
 		// Page
 		suite.addTestSuite(TestContentListViewerWidgetAction.class);
 		suite.addTestSuite(TestBaseFilterAction.class);
@@ -107,16 +107,16 @@ public class AllTests {
 		suite.addTestSuite(TestContentViewerWidgetAction.class);
 		suite.addTestSuite(TestPageAction.class);
 		suite.addTestSuite(TestTrashReferencedPage.class);
-		
+
 		//Resource
 		suite.addTestSuite(TestResourceAction.class);
 		suite.addTestSuite(TestResourceFinderAction.class);
-		
+
 		//Entity
 		suite.addTestSuite(TestJacmsEntityAttributeConfigAction.class);
 		suite.addTestSuite(TestJacmsEntityTypeConfigAction.class);
 		suite.addTestSuite(TestJacmsEntityManagersAction.class);
-		
+
 		//Group
 		suite.addTestSuite(TestTrashReferencedGroup.class);
 		

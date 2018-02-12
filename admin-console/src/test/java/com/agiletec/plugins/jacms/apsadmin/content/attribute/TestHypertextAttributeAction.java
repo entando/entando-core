@@ -28,6 +28,7 @@ import com.opensymphony.xwork2.Action;
  */
 public class TestHypertextAttributeAction extends AbstractBaseTestContentAction {
 
+	
 	public void testFindContent_1() throws Throwable {
 		this.initIntroContentLink("admin", "ART1");//Contenuto del gruppo Free
 		ContentLinkAttributeAction action = (ContentLinkAttributeAction) this.getAction();

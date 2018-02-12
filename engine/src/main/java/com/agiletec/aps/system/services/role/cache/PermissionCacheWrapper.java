@@ -49,15 +49,8 @@ public class PermissionCacheWrapper extends AbstractGenericCacheWrapper<Permissi
 
 	@Override
 	public List<Permission> getPermissions() {
-		List<Permission> permissions = new ArrayList<>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
-		if (null != codes) {
-			for (String code : codes) {
-				permissions.add(this.get(cache, this.getCacheKeyPrefix() + code, Permission.class));
-			}
-		}
-		return permissions;
+		Map<String, Permission> map = super.getObjectMap();
+		return new ArrayList<>(map.values());
 	}
 
 	@Override

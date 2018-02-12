@@ -17,9 +17,7 @@ import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.IPageModelDAO;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,14 +50,8 @@ public class PageModelManagerCacheWrapper extends AbstractGenericCacheWrapper<Pa
 
 	@Override
 	public Collection<PageModel> getPageModels() {
-		List<PageModel> models = new ArrayList<PageModel>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, PAGE_MODEL_CODES_CACHE_NAME, List.class);
-		for (int i = 0; i < codes.size(); i++) {
-			String code = codes.get(i);
-			models.add(this.get(cache, PAGE_MODEL_CACHE_NAME_PREFIX + code, PageModel.class));
-		}
-		return models;
+		Map<String, PageModel> map = super.getObjectMap();
+		return map.values();
 	}
 
 	@Override

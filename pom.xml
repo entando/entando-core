@@ -53,6 +53,7 @@
 		<test.database.port.url>jdbc:postgresql://${test.database.hostname}:${test.database.port}/${project.artifactId}testPort</test.database.port.url>
 		<test.database.serv.url>jdbc:postgresql://${test.database.hostname}:${test.database.port}/${project.artifactId}testServ</test.database.serv.url>
 		-->
+
 		<!--
 		<test.database.driver>com.mysql.jdbc.Driver</test.database.driver>
 		<test.database.hostname>localhost</test.database.hostname>

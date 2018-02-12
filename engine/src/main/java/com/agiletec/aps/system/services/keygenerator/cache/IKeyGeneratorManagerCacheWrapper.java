@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -11,20 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.system.services.cache;
+package com.agiletec.aps.system.services.keygenerator.cache;
 
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorDAO;
 
 public interface IKeyGeneratorManagerCacheWrapper {
 
-    public static final String CACHE_NAME = "Entando_KeyGeneratorManager";
+	public static final String CACHE_NAME = "Entando_KeyGeneratorManager";
 
-    public static final String CURRENT_KEY = "KeyGeneratorManager_key";
+	public static final String CURRENT_KEY = "KeyGeneratorManager_key";
 
+	public void initCache(IKeyGeneratorDAO keyGeneratorDAO);
 
-    public void initCache(IKeyGeneratorDAO keyGeneratorDAO);
+	public int getUniqueKeyCurrentValue();
 
-    public int getUniqueKeyCurrentValue();
+	public void updateCurrentKey(int val);
 
-    public void updateCurrentKey(int val);
 }

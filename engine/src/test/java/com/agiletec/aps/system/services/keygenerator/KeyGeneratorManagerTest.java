@@ -14,7 +14,7 @@
 package com.agiletec.aps.system.services.keygenerator;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.cache.IKeyGeneratorManagerCacheWrapper;
+import com.agiletec.aps.system.services.keygenerator.cache.IKeyGeneratorManagerCacheWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

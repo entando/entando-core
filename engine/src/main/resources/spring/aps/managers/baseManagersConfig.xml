@@ -303,9 +303,9 @@
 		  parent="ApiI18nLabelInterface" />
 
 	<bean id="KeyGeneratorManager" class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="cacheWrapper">
-			<bean class="com.agiletec.aps.system.services.cache.KeyGeneratorManagerCacheWrapper">
+			<bean class="com.agiletec.aps.system.services.keygenerator.cache.KeyGeneratorManagerCacheWrapper">
 				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>

@@ -19,8 +19,6 @@ import java.util.Map;
 import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 
 /**
@@ -28,15 +26,13 @@ import org.springframework.cache.Cache;
  */
 public class EntityManagerCacheWrapper extends AbstractCacheWrapper implements IEntityManagerCacheWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(EntityManagerCacheWrapper.class);
-	
 	private String entityManagerName;
 
 	@Override
 	public void initCache(String managerName) throws ApsSystemException {
 		this.setEntityManagerName(managerName);
 	}
-	
+
 	@Override
 	public Integer getEntityTypeStatus(String typeCode) {
 		Map<String, Integer> status = this.get(IEntityManagerCacheWrapper.ENTITY_STATUS_CACHE_NAME, Map.class);
@@ -45,7 +41,7 @@ public class EntityManagerCacheWrapper extends AbstractCacheWrapper implements I
 		}
 		return status.get(typeCode);
 	}
-	
+
 	@Override
 	public void updateEntityTypeStatus(String typeCode, Integer state) {
 		Cache cache = this.getCache();
@@ -56,12 +52,12 @@ public class EntityManagerCacheWrapper extends AbstractCacheWrapper implements I
 		status.put(typeCode, state);
 		cache.put(IEntityManagerCacheWrapper.ENTITY_STATUS_CACHE_NAME, status);
 	}
-	
+
 	@Override
 	protected String getCacheName() {
 		return ENTITY_MANAGER_CACHE_NAME_PREFIX + this.getEntityManagerName();
 	}
-	
+
 	protected String getEntityManagerName() {
 		return entityManagerName;
 	}

@@ -19,18 +19,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
+import org.entando.entando.aps.system.services.dataobjectmodel.cache.IDataObjectModelCacheWrapper;
 import org.entando.entando.aps.system.services.dataobjectmodel.event.DataObjectModelChangedEvent;
-import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manager dei modelli di datatype.
@@ -39,20 +39,51 @@ import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
  */
 public class DataObjectModelManager extends AbstractService implements IDataObjectModelManager {
 
-    private static final Logger _logger = LoggerFactory.getLogger(DataObjectModelManager.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private IDataObjectModelDAO dataModelDAO;
+    private IPageManager pageManager;
+    private IDataObjectManager dataObjectManager;
+    private IDataObjectModelCacheWrapper cacheWrapper;
+
+    protected IDataObjectModelDAO getDataModelDAO() {
+        return dataModelDAO;
+    }
+
+    public void setDataModelDAO(IDataObjectModelDAO dataModelDAO) {
+        this.dataModelDAO = dataModelDAO;
+    }
+
+    protected IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
+    }
+
+    protected IDataObjectManager getDataObjectManager() {
+        return dataObjectManager;
+    }
+
+    public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+        this.dataObjectManager = dataObjectManager;
+    }
+
+    protected IDataObjectModelCacheWrapper getCacheWrapper() {
+        return cacheWrapper;
+    }
+
+    public void setCacheWrapper(IDataObjectModelCacheWrapper cacheWrapper) {
+        this.cacheWrapper = cacheWrapper;
+    }
+
 
     @Override
     public void init() throws Exception {
-        this.loadDataObjectModels();
-        _logger.debug("{} ready. Initialized {} dataObject models", this.getClass().getName(), _dataModels.size());
-    }
+        this.getCacheWrapper().initCache(this.getDataModelDAO());
 
-    private void loadDataObjectModels() throws ApsSystemException {
-        try {
-            this._dataModels = this.getDataModelDAO().loadDataModels();
-        } catch (Throwable t) {
-            throw new ApsSystemException("Errore in caricamento modelli", t);
-        }
+        logger.debug("{} ready. Initialized {} dataObject models", this.getClass().getName(), this.getCacheWrapper().getModels().size());
     }
 
     @Override
@@ -60,10 +91,10 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
         try {
             this.getDataModelDAO().addDataModel(model);
             Long wrapLongId = new Long(model.getId());
-            _dataModels.put(wrapLongId, model);
+            this.getCacheWrapper().addModel(model);
             this.notifyDataModelChanging(model, DataObjectModelChangedEvent.INSERT_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error saving a dataObjectModel", t);
+            logger.error("Error saving a dataObjectModel", t);
             throw new ApsSystemException("Error saving a dataObjectModel", t);
         }
     }
@@ -72,10 +103,10 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     public void removeDataObjectModel(DataObjectModel model) throws ApsSystemException {
         try {
             this.getDataModelDAO().deleteDataModel(model);
-            _dataModels.remove(new Long(model.getId()));
+            this.getCacheWrapper().removeModel(model);
             this.notifyDataModelChanging(model, DataObjectModelChangedEvent.REMOVE_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error deleting a dataObject model", t);
+            logger.error("Error deleting a dataObject model", t);
             throw new ApsSystemException("Error deleting a dataObject model", t);
         }
     }
@@ -84,10 +115,10 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     public void updateDataObjectModel(DataObjectModel model) throws ApsSystemException {
         try {
             this.getDataModelDAO().updateDataModel(model);
-            this._dataModels.put(new Long(model.getId()), model);
+            this.getCacheWrapper().updateModel(model);
             this.notifyDataModelChanging(model, DataObjectModelChangedEvent.UPDATE_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error updating a dataObject model", t);
+            logger.error("Error updating a dataObject model", t);
             throw new ApsSystemException("Error updating a dataObject model", t);
         }
     }
@@ -101,12 +132,12 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 
     @Override
     public DataObjectModel getDataObjectModel(long dataObjectModelId) {
-        return (DataObjectModel) _dataModels.get(new Long(dataObjectModelId));
+        return (DataObjectModel) this.getCacheWrapper().getModel(String.valueOf(dataObjectModelId));
     }
 
     @Override
     public List<DataObjectModel> getDataObjectModels() {
-        List<DataObjectModel> models = new ArrayList<DataObjectModel>(this._dataModels.values());
+        List<DataObjectModel> models = new ArrayList<DataObjectModel>(this.getCacheWrapper().getModels());
         Collections.sort(models);
         return models;
     }
@@ -114,7 +145,7 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     @Override
     public List<DataObjectModel> getModelsForDataObjectType(String dataType) {
         List<DataObjectModel> models = new ArrayList<DataObjectModel>();
-        Object[] allModels = this._dataModels.values().toArray();
+        Object[] allModels = this.getCacheWrapper().getModels().toArray();
         for (int i = 0; i < allModels.length; i++) {
             DataObjectModel dataObjectModel = (DataObjectModel) allModels[i];
             if (null == dataType || dataObjectModel.getDataType().equals(dataType)) {
@@ -135,15 +166,22 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     }
 
     private void searchReferencingPages(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
-        this.addReferencingPage(modelId, page, page.getWidgets(), utilizers);
-        IPage[] children = page.getChildren();
+        this.addReferencingPage(modelId, page, utilizers);
+        boolean isOnline = page.isOnline();
+        String[] children = page.getChildrenCodes();
         for (int i = 0; i < children.length; i++) {
-            this.searchReferencingPages(modelId, children[i], utilizers);
+            IPage child = (isOnline)
+                    ? this.getPageManager().getOnlinePage(children[i])
+                            : this.getPageManager().getDraftPage(children[i]);
+                    if (null != child) {
+                        this.searchReferencingPages(modelId, child, utilizers);
+                    }
         }
     }
 
-    private void addReferencingPage(long modelId, IPage page, Widget[] widgets, Map<String, List<IPage>> utilizers) {
-        if (null != widgets) {
+    private void addReferencingPage(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
+        if (null != page && null != page.getWidgets()) {
+            Widget[] widgets = page.getWidgets();
             for (int i = 0; i < widgets.length; i++) {
                 Widget widget = widgets[i];
                 if (null != widget) {
@@ -182,35 +220,5 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
         return null;
     }
 
-    public IDataObjectModelDAO getDataModelDAO() {
-        return _dataModelDAO;
-    }
-
-    public void setDataModelDAO(IDataObjectModelDAO dataModelDAO) {
-        this._dataModelDAO = dataModelDAO;
-    }
-
-    protected IPageManager getPageManager() {
-        return _pageManager;
-    }
-
-    public void setPageManager(IPageManager pageManager) {
-        this._pageManager = pageManager;
-    }
-
-    protected IDataObjectManager getDataObjectManager() {
-        return _dataObjectManager;
-    }
-
-    public void setDataObjectManager(IDataObjectManager dataObjectManager) {
-        this._dataObjectManager = dataObjectManager;
-    }
-
-    private Map<Long, DataObjectModel> _dataModels;
-
-    private IDataObjectModelDAO _dataModelDAO;
-
-    private IPageManager _pageManager;
-    private IDataObjectManager _dataObjectManager;
 
 }

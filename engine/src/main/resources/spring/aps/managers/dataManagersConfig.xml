@@ -14,6 +14,11 @@
                 <property name="dataSource" ref="servDataSource" />
             </bean>
         </property>
+		<property name="cacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.dataobjectmodel.cache.DataObjectModelCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
         <property name="pageManager" ref="PageManager" />
         <property name="dataObjectManager" ref="DataObjectManager" />
     </bean>
@@ -62,6 +67,11 @@
     <bean id="DataObjectPageMapperManager" class="org.entando.entando.aps.system.services.dataobjectmapper.DataObjectPageMapperManager"
           parent="abstractService" >
         <property name="pageManager" ref="PageManager" />
+		<property name="cacheWrapper">
+			<bean class="org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObjectMapperCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
     </bean>
 
     <bean id="DataObjectDispenserManager" class="org.entando.entando.aps.system.services.dataobjectdispenser.BaseDataObjectDispenser"

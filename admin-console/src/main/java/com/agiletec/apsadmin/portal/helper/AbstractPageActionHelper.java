@@ -21,6 +21,7 @@ import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.PageUtilizer;
+import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
@@ -50,6 +51,8 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 	private static final Logger _logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
 
 	protected abstract IPage getPage(String pageCode);
+
+	protected abstract boolean isDraftPageHepler();
 
 	@Override
 	protected abstract IPage getRoot();
@@ -100,16 +103,20 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 		return root;
 	}
 
-	private void addTreeWrapper(PageTreeNodeWrapper currentNode, IPage currentTreeNode, Collection<String> userGroupCodes, boolean alsoFreeViewPages) {
-		IPage[] children = currentTreeNode.getChildren();
+	private void addTreeWrapper(PageTreeNodeWrapper currentWrapper, IPage currentNode, Collection<String> userGroupCodes, boolean alsoFreeViewPages) {
+		String[] children = currentNode.getChildrenCodes();
 		for (int i = 0; i < children.length; i++) {
-			IPage newCurrentTreeNode = children[i];
-			if (this.isPageAllowed(newCurrentTreeNode, userGroupCodes, alsoFreeViewPages)) {
-				PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentTreeNode);
-				currentNode.addChild(newNode);
-				this.addTreeWrapper(newNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);
+			IPage newCurrentNode = PageUtils.getPage(this.getPageManager(), !this.isDraftPageHepler(), children[i]);
+			if (null == newCurrentNode) {
+				return;
+			}
+			if (this.isPageAllowed(newCurrentNode, userGroupCodes, alsoFreeViewPages)) {
+				PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
+				currentWrapper.addChildCode(newNode.getCode());
+				currentWrapper.addChild(newNode);
+				this.addTreeWrapper(newNode, newCurrentNode, userGroupCodes, alsoFreeViewPages);
 			} else {
-				this.addTreeWrapper(currentNode, newCurrentTreeNode, userGroupCodes, alsoFreeViewPages);
+				this.addTreeWrapper(currentWrapper, newCurrentNode, userGroupCodes, alsoFreeViewPages);
 			}
 		}
 	}

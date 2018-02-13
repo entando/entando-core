@@ -10,6 +10,11 @@
     <bean id="jacmsResourceManager" class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManager" 
               parent="abstractService" >
         <property name="categoryManager" ref="CategoryManager" />
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.plugins.jacms.aps.system.services.resource.cache.ResourceManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
         <property name="resourceDAO" >
             <bean class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -25,6 +30,11 @@
     
     <bean id="jacmsContentModelManager" class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelManager" 
           parent="abstractService" >
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.cache.ContentModelManagerCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
         <property name="contentModelDAO" >
             <bean class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -80,8 +90,13 @@
     </bean>
     
     <bean id="jacmsContentPageMapperManager" class="com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.ContentPageMapperManager" 
-          parent="abstractService" >
+          parent="abstractService" depends-on="springCacheManager" >
         <property name="pageManager" ref="PageManager" />
+		<property name="cacheWrapper">
+			<bean class="com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.cache.ContentMapperCacheWrapper">
+				<property name="springCacheManager" ref="springCacheManager" />
+			</bean>
+		</property>
     </bean>
     
     <bean id="jacmsLinkResolverManager" class="com.agiletec.plugins.jacms.aps.system.services.linkresolver.LinkResolverManager" 
@@ -129,6 +144,7 @@
 	
     <bean id="jacmsBaseContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper" >
         <property name="contentManager" ref="jacmsContentManager" />
+		<property name="cacheInfoManager" ref="CacheInfoManager" />
     </bean>
     
     <bean id="jacmsContentListHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper" >
@@ -137,6 +153,7 @@
         <property name="userFilterDateFormat">
             <value>${jacms.frontend.userfilter.dateFormat}</value>
         </property>
+		<property name="cacheInfoManager" ref="CacheInfoManager" />
     </bean>
     
     <bean id="jacmsContentViewerHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentViewerHelper" >

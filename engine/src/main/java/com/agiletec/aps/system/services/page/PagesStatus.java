@@ -13,9 +13,10 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PagesStatus {
+public class PagesStatus implements Serializable {
 
 	public int getTotal() {
 		return this.getOnline() + this.getOnlineWithChanges() + this.getDraft();
@@ -54,12 +55,11 @@ public class PagesStatus {
 	public void setLastUpdate(Date lastUpdate) {
 		this._lastUpdate = lastUpdate;
 	}
-
-
+	
 	private int _online;
 	private int _onlineWithChanges;
 	private int _draft;
 	private Date _lastUpdate;
-
+	
 }
 

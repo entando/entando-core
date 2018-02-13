@@ -46,7 +46,7 @@ import com.agiletec.aps.system.services.page.Widget;
  * nomi "currentLang" e "currentPage", ed il metodo service restituisce
  * Controller.CONTINUE. Se la richiesta non è valida, viene restituito lo stato
  * di errore.
- * 
+ *
  * @author M.Diana - E.Santoboni
  */
 public class PreviewRequestValidator extends AbstractControlService {
@@ -61,11 +61,9 @@ public class PreviewRequestValidator extends AbstractControlService {
 	/**
 	 * Esecuzione. Le operazioni sono descritte nella documentazione della
 	 * classe.
-	 * 
-	 * @param reqCtx
-	 * Il contesto di richiesta
-	 * @param status
-	 * Lo stato di uscita del servizio precedente
+	 *
+	 * @param reqCtx Il contesto di richiesta
+	 * @param status Lo stato di uscita del servizio precedente
 	 * @return Lo stato di uscita
 	 */
 	@Override
@@ -110,8 +108,9 @@ public class PreviewRequestValidator extends AbstractControlService {
 				page = this.getDesiredPage(sect2);
 			}
 		}
-		if (!ok)
+		if (!ok) {
 			return false;
+		}
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG, lang);
 		reqCtx.addExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE, page);
 		return true;
@@ -128,8 +127,8 @@ public class PreviewRequestValidator extends AbstractControlService {
 			page.setGroup(currentPage.getGroup());
 			PageMetadata metadata = currentPage.getMetadata();
 			page.setMetadata(metadata);
-			IPage[] children = currentPage.getChildren();
-			page.setChildren(children);
+			String[] children = currentPage.getChildrenCodes();
+			page.setChildrenCodes(children);
 			Widget[] widgets = currentPage.getWidgets();
 			page.setWidgets(widgets);
 		}
@@ -138,9 +137,8 @@ public class PreviewRequestValidator extends AbstractControlService {
 
 	/**
 	 * Recupera il ServletPath richiesto dal client.
-	 * 
-	 * @param reqCtx
-	 * Il contesto di richiesta
+	 *
+	 * @param reqCtx Il contesto di richiesta
 	 * @return Il ServletPath
 	 */
 	protected String getResourcePath(RequestContext reqCtx) {

@@ -19,11 +19,13 @@ import com.agiletec.aps.util.ApsProperties;
 
 /**
  * The representation of an api service
+ *
  * @author E.Santoboni
  */
 public class ApiService implements Serializable {
 
-	protected ApiService() {}
+	protected ApiService() {
+	}
 
 	public ApiService(String key, ApsProperties description, ApiMethod master, ApsProperties parameters,
 			String[] freeParameters, String tag, boolean isPublic, boolean isActive/*, boolean isMyEntando*/) {
@@ -37,7 +39,7 @@ public class ApiService implements Serializable {
 		this.setActive(isActive);
 		//this.setMyEntando(isMyEntando);
 	}
-	
+
 	@Override
 	public ApiService clone() {
 		ApiService clone = new ApiService();
@@ -67,31 +69,35 @@ public class ApiService implements Serializable {
 	public String getKey() {
 		return _key;
 	}
+
 	protected void setKey(String key) {
 		this._key = key;
 	}
-	
+
 	public ApsProperties getDescription() {
 		return _description;
 	}
+
 	protected void setDescription(ApsProperties description) {
 		this._description = description;
 	}
-	
+
 	public ApsProperties getParameters() {
 		return _parameters;
 	}
+
 	public void setParameters(ApsProperties parameters) {
 		this._parameters = parameters;
 	}
-	
+
 	public String[] getFreeParameters() {
 		return _freeParameters;
 	}
+
 	protected void setFreeParameters(String[] freeParameters) {
 		this._freeParameters = freeParameters;
 	}
-	
+
 	public boolean isFreeParameter(String paramName) {
 		if (null == this.getFreeParameters() || null == paramName) {
 			return false;
@@ -104,43 +110,49 @@ public class ApiService implements Serializable {
 		}
 		return false;
 	}
-	
+
 	public ApiMethod getMaster() {
 		return _master;
 	}
+
 	protected void setMaster(ApiMethod master) {
 		this._master = master;
 	}
-	
+
 	public String getTag() {
 		return _tag;
 	}
+
 	protected void setTag(String tag) {
 		this._tag = tag;
 	}
-	
+
 	@Deprecated
 	public boolean isPublicService() {
 		return !this.isHidden();
 	}
+
 	@Deprecated
 	public void setPublicService(boolean publicService) {
 		this.setHidden(!publicService);
 	}
-	
+
 	public boolean isHidden() {
 		return _hidden;
 	}
+
 	public void setHidden(boolean hidden) {
 		this._hidden = hidden;
 	}
-	
+
 	public boolean isActive() {
 		return _active;
 	}
+
 	public void setActive(boolean active) {
 		this._active = active;
 	}
+
 	/*
 	public boolean isMyEntando() {
 		return _myEntando;
@@ -148,32 +160,37 @@ public class ApiService implements Serializable {
 	protected void setMyEntando(boolean myEntando) {
 		this._myEntando = myEntando;
 	}
-	*/
-    public Boolean getRequiredAuth() {
+	 */
+	public Boolean getRequiredAuth() {
 		if (null != this.getRequiredGroup() || null != this.getRequiredPermission()) {
 			return true;
 		}
-        if (null == this._requiredAuth) return false;
-        return _requiredAuth;
-    }
-    public void setRequiredAuth(Boolean requiredAuth) {
-        this._requiredAuth = requiredAuth;
-    }
-    
+		if (null == this._requiredAuth) {
+			return false;
+		}
+		return _requiredAuth;
+	}
+
+	public void setRequiredAuth(Boolean requiredAuth) {
+		this._requiredAuth = requiredAuth;
+	}
+
 	public String getRequiredGroup() {
 		return _requiredGroup;
 	}
+
 	public void setRequiredGroup(String requiredGroup) {
 		this._requiredGroup = requiredGroup;
 	}
-	
+
 	public String getRequiredPermission() {
 		return _requiredPermission;
 	}
+
 	public void setRequiredPermission(String requiredPermission) {
 		this._requiredPermission = requiredPermission;
 	}
-	
+
 	private String _key;
 	private ApsProperties _description;
 	private ApiMethod _master;
@@ -183,9 +200,9 @@ public class ApiService implements Serializable {
 	private boolean _hidden;
 	private boolean _active;
 	//private boolean _myEntando;
-	
+
 	private Boolean _requiredAuth;
 	private String _requiredPermission;
 	private String _requiredGroup;
-	
+
 }

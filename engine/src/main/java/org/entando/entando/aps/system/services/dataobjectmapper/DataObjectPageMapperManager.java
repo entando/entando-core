@@ -18,13 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
 import com.agiletec.aps.system.services.page.events.PageChangedObserver;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import com.agiletec.aps.util.ApsProperties;
+
+import org.entando.entando.aps.system.services.dataobjectmapper.cache.IDataObjectMapperCacheWrapper;
 
 /**
  * Servizio gestore della mappa dei datatypes pubblicati nelle pagine. Il
@@ -35,106 +33,56 @@ import com.agiletec.aps.util.ApsProperties;
  */
 public class DataObjectPageMapperManager extends AbstractService implements IDataObjectPageMapperManager, PageChangedObserver {
 
-    private static final Logger _logger = LoggerFactory.getLogger(DataObjectPageMapperManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataObjectPageMapperManager.class);
+	
+	private IPageManager pageManager;
+	private IDataObjectMapperCacheWrapper cacheWrapper;
 
-    @Override
-    public void init() throws Exception {
-        this.createDataObjectPageMapper();
-        _logger.debug("{} ready.", this.getClass().getName());
-    }
+	@Override
+	public void init() throws Exception {
+		this.getCacheWrapper().initCache(this.getPageManager());
+		logger.debug("{} ready.", this.getClass().getName());
+	}
 
-    /**
-     * Effettua il caricamento della mappa contenuti pubblicati / pagine
-     *
-     * @throws ApsSystemException
-     */
-    @Override
-    public void reloadDataObjectPageMapper() throws ApsSystemException {
-        this.createDataObjectPageMapper();
-    }
+	/**
+	 * Effettua il caricamento della mappa contenuti pubblicati / pagine
+	 * @throws ApsSystemException
+	 */
+	@Override
+	public void reloadDataObjectPageMapper() throws ApsSystemException {
+		this.getCacheWrapper().initCache(this.getPageManager());
+	}
 
-    @Override
-    public String getPageCode(String dataId) {
-        return this.getDataObjectPageMapper().getPageCode(dataId);
-    }
+	@Override
+	public String getPageCode(String dataId) {
+		return this.getCacheWrapper().getPageCode(dataId);
+	}
 
-    /**
-     * Crea la mappa dei DataObject pubblicati nelle pagine.
-     *
-     * @throws ApsSystemException
-     */
-    private void createDataObjectPageMapper() throws ApsSystemException {
-        this._dataObjectPageMapper = new DataObjectPageMapper();
-        try {
-            IPage root = this.getPageManager().getOnlineRoot();
-            this.searchPublishedDataObjects(root);
-        } catch (Throwable t) {
-            _logger.error("Error loading DataObjectPageMapper", t);
-            throw new ApsSystemException("Errore loading DataObjectPageMapper", t);
-        }
-    }
+	@Override
+	public void updateFromPageChanged(PageChangedEvent event) {
+		try {
+			this.reloadDataObjectPageMapper();
+			String pagecode = (null != event.getPage()) ? event.getPage().getCode() : "*undefined*";
+			logger.debug("Notified page change event for page '{}'", pagecode);
+		} catch (Throwable t) {
+			logger.error("Error notifying event", t);
+		}
+	}
 
-    /**
-     * Cerca i DataObject pubblicati e li aggiunge al mapper. Nella ricerca
-     * vengono considerati solamente i DataObject pubblicati nel mainFrame e la
-     * ricerca viene estesa anche alle pagine figlie di quella specificate.
-     *
-     * @param page La pagina nel qual cercare i DataObject pubblicati.
-     */
-    private void searchPublishedDataObjects(IPage page) {
-        PageModel pageModel = page.getModel();
-        if (pageModel != null) {
-            int mainFrame = pageModel.getMainFrame();
-            Widget[] widgets = page.getWidgets();
-            Widget widget = null;
-            if (null != widgets && mainFrame != -1) {
-                widget = widgets[mainFrame];
-            }
-            ApsProperties config = (null != widget) ? widget.getConfig() : null;
-            String dataId = (null != config) ? config.getProperty("dataId") : null;
-            if (null != dataId) {
-                this.getDataObjectPageMapper().add(dataId, page.getCode());
-            }
-            IPage[] children = page.getChildren();
-            for (int i = 0; i < children.length; i++) {
-                this.searchPublishedDataObjects(children[i]);
-            }
-        }
-    }
+	protected IPageManager getPageManager() {
+		return pageManager;
+	}
 
-    @Override
-    public void updateFromPageChanged(PageChangedEvent event) {
-        try {
-            this.reloadDataObjectPageMapper();
-            String pagecode = (null != event.getPage()) ? event.getPage().getCode() : "*undefined*";
-            _logger.debug("Notified page change event for page '{}'", pagecode);
-        } catch (Throwable t) {
-            _logger.error("Error notifying event", t);
-        }
-    }
+	public void setPageManager(IPageManager pageManager) {
+		this.pageManager = pageManager;
+	}
 
-    /**
-     * Restituisce la mappa dei DataObject pubblicati nelle pagine.
-     *
-     * @return La mappa dei DataObject pubblicati nelle pagine.
-     */
-    protected DataObjectPageMapper getDataObjectPageMapper() {
-        return _dataObjectPageMapper;
-    }
+	protected IDataObjectMapperCacheWrapper getCacheWrapper() {
+		return cacheWrapper;
+	}
 
-    protected IPageManager getPageManager() {
-        return _pageManager;
-    }
-
-    public void setPageManager(IPageManager pageManager) {
-        this._pageManager = pageManager;
-    }
-
-    private IPageManager _pageManager;
-
-    /**
-     * La mappa dei DataObject pubblicati nelle pagine.
-     */
-    private DataObjectPageMapper _dataObjectPageMapper;
-
+	public void setCacheWrapper(IDataObjectMapperCacheWrapper cacheWrapper) {
+		this.cacheWrapper = cacheWrapper;
+	}
+	
 }

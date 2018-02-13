@@ -43,111 +43,111 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObject;
  */
 public class DataObjectUpdaterService extends AbstractService implements IDataObjectUpdaterService {
 
-    @Override
-    public void init() throws Exception {
-        ApsSystemUtils.getLogger().info(this.getClass().getName() + " ready");
-    }
+	@Override
+	public void init() throws Exception {
+		ApsSystemUtils.getLogger().info(this.getClass().getName() + " ready");
+	}
 
-    @Override
-    public void reloadCategoryReferences(String categoryCode) {
-        try {
-            Set<String> contents = this.getDataObjectsId(categoryCode);
-            ApsSystemUtils.getLogger().debug("start reload category references for " + contents.size() + " contents");
-            ReloadingCategoryReferencesThread th = null;
-            Thread currentThread = Thread.currentThread();
-            if (currentThread instanceof ReloadingCategoryReferencesThread) {
-                th = (ReloadingCategoryReferencesThread) Thread.currentThread();
-                th.setListSize(contents.size());
-            }
-            Iterator<String> it = contents.iterator();
-            while (it.hasNext()) {
-                String dataid = it.next();
-                this.reloadEntityReferences(dataid);
-                if (null != th) {
-                    th.setListIndex(th.getListIndex() + 1);
-                }
-            }
-        } catch (Throwable t) {
-            ApsSystemUtils.logThrowable(t, this, "reloadCategoryReferences");
-        }
-    }
+	@Override
+	public void reloadCategoryReferences(String categoryCode) {
+		try {
+			Set<String> contents = this.getDataObjectsId(categoryCode);
+			ApsSystemUtils.getLogger().debug("start reload category references for " + contents.size() + " contents");
+			ReloadingCategoryReferencesThread th = null;
+			Thread currentThread = Thread.currentThread();
+			if (currentThread instanceof ReloadingCategoryReferencesThread) {
+				th = (ReloadingCategoryReferencesThread) Thread.currentThread();
+				th.setListSize(contents.size());
+			}
+			Iterator<String> it = contents.iterator();
+			while (it.hasNext()) {
+				String dataid = it.next();
+				this.reloadEntityReferences(dataid);
+				if (null != th) {
+					th.setListIndex(th.getListIndex() + 1);
+				}
+			}
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "reloadCategoryReferences");
+		}
+	}
 
-    @Override
-    public Set<String> getDataObjectsId(String categoryCode) throws ApsSystemException {
-        Set<String> allContents = new HashSet<String>();
-        try {
-            //Ricerca contenuti per
-            EntitySearchFilter[] filters = null;
-            boolean orCategoryFilter = false;
-            //tutti i gruppi
-            List<String> userGroupCodes = new ArrayList<String>();
-            userGroupCodes.add(Group.ADMINS_GROUP_NAME);
+	@Override
+	public Set<String> getDataObjectsId(String categoryCode) throws ApsSystemException {
+		Set<String> allContents = new HashSet<String>();
+		try {
+			//Ricerca contenuti per
+			EntitySearchFilter[] filters = null;
+			boolean orCategoryFilter = false;
+			//tutti i gruppi
+			List<String> userGroupCodes = new ArrayList<String>();
+			userGroupCodes.add(Group.ADMINS_GROUP_NAME);
 
-            //associati alla categoria che è stata spostata...
-            String[] categories = new String[]{categoryCode};
+			//associati alla categoria che è stata spostata...
+			String[] categories = new String[]{categoryCode};
 
-            List<String> publicContents = this.getContentManager().loadDataObjectsId(categories, orCategoryFilter, filters, userGroupCodes);
-            ApsSystemUtils.getLogger().debug("public contents: " + publicContents.size());
+			List<String> publicContents = this.getContentManager().loadDataObjectsId(categories, orCategoryFilter, filters, userGroupCodes);
+			ApsSystemUtils.getLogger().debug("public contents: " + publicContents.size());
 
-            allContents.addAll(publicContents);
+			allContents.addAll(publicContents);
 
-        } catch (Throwable t) {
-            ApsSystemUtils.logThrowable(t, this, "getContentsId");
-            throw new ApsSystemException("Error loading contents to update", t);
-        }
-        return allContents;
-    }
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "getContentsId");
+			throw new ApsSystemException("Error loading contents to update", t);
+		}
+		return allContents;
+	}
 
-    public void reloadEntityReferences(String entityId) {
-        try {
-            String cacheKey = JacmsSystemConstants.CONTENT_CACHE_PREFIX + entityId;
-            this.getCacheInfoManager().flushEntry(cacheKey);
-            ApsSystemUtils.getLogger().debug("removing_from_cache " + cacheKey);
-            DataObject content = this.getContentManager().loadDataObject(entityId, true);
-            if (content != null) {
-                this.getContentUpdaterDAO().reloadDataObjectCategoryReferences(content);
-            }
-            ApsSystemUtils.getLogger().debug("Reload content references for content " + entityId + "- DONE");
-        } catch (Throwable t) {
-            ApsSystemUtils.logThrowable(t, this, "reloadEntityReferences");
-        }
-    }
+	public void reloadEntityReferences(String entityId) {
+		try {
+			String cacheKey = JacmsSystemConstants.CONTENT_CACHE_PREFIX + entityId;
+			this.getCacheInfoManager().flushEntry(ICacheInfoManager.DEFAULT_CACHE_NAME, cacheKey);
+			ApsSystemUtils.getLogger().debug("removing_from_cache " + cacheKey);
+			DataObject content = this.getContentManager().loadDataObject(entityId, true);
+			if (content != null) {
+				this.getContentUpdaterDAO().reloadDataObjectCategoryReferences(content);
+			}
+			ApsSystemUtils.getLogger().debug("Reload content references for content " + entityId + "- DONE");
+		} catch (Throwable t) {
+			ApsSystemUtils.logThrowable(t, this, "reloadEntityReferences");
+		}
+	}
 
-    protected IDataObjectManager getContentManager() {
-        return _contentManager;
-    }
+	protected IDataObjectManager getContentManager() {
+		return _contentManager;
+	}
 
-    public void setContentManager(IDataObjectManager contentManager) {
-        this._contentManager = contentManager;
-    }
+	public void setContentManager(IDataObjectManager contentManager) {
+		this._contentManager = contentManager;
+	}
 
-    protected ICategoryManager getCategoryManager() {
-        return _categoryManager;
-    }
+	protected ICategoryManager getCategoryManager() {
+		return _categoryManager;
+	}
 
-    public void setCategoryManager(ICategoryManager categoryManager) {
-        this._categoryManager = categoryManager;
-    }
+	public void setCategoryManager(ICategoryManager categoryManager) {
+		this._categoryManager = categoryManager;
+	}
 
-    protected IDataObjectUpdaterDAO getContentUpdaterDAO() {
-        return _contentUpdaterDAO;
-    }
+	protected IDataObjectUpdaterDAO getContentUpdaterDAO() {
+		return _contentUpdaterDAO;
+	}
 
-    public void setContentUpdaterDAO(IDataObjectUpdaterDAO contentUpdaterDAO) {
-        this._contentUpdaterDAO = contentUpdaterDAO;
-    }
+	public void setContentUpdaterDAO(IDataObjectUpdaterDAO contentUpdaterDAO) {
+		this._contentUpdaterDAO = contentUpdaterDAO;
+	}
 
-    protected ICacheInfoManager getCacheInfoManager() {
-        return _cacheInfoManager;
-    }
+	protected ICacheInfoManager getCacheInfoManager() {
+		return _cacheInfoManager;
+	}
 
-    public void setCacheInfoManager(ICacheInfoManager cacheInfoManager) {
-        this._cacheInfoManager = cacheInfoManager;
-    }
+	public void setCacheInfoManager(ICacheInfoManager cacheInfoManager) {
+		this._cacheInfoManager = cacheInfoManager;
+	}
 
-    private IDataObjectManager _contentManager;
-    private ICategoryManager _categoryManager;
-    private IDataObjectUpdaterDAO _contentUpdaterDAO;
-    private ICacheInfoManager _cacheInfoManager;
+	private IDataObjectManager _contentManager;
+	private ICategoryManager _categoryManager;
+	private IDataObjectUpdaterDAO _contentUpdaterDAO;
+	private ICacheInfoManager _cacheInfoManager;
 
 }

@@ -18,13 +18,14 @@ import java.util.Set;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.io.Serializable;
 
 /**
  * This class describes a pages of the portal.
  *
  * @author E.Santoboni
  */
-public interface IPage extends ITreeNode {
+public interface IPage extends ITreeNode, Serializable {
 
 	/**
 	 * Returns a properties with the titles of the page, where the keys are the
@@ -86,15 +87,6 @@ public interface IPage extends ITreeNode {
 	 * @return the code of the higher level page
 	 */
 	public String getParentCode();
-
-	/**
-	 * Return the sorted group of the children of the current page, that is the
-	 * pages belonging to the lower level
-	 *
-	 * @return the sorted group of the children
-	 */
-	@Override
-	public IPage[] getChildren();
 
 	@Override
 	public IPage getParent();

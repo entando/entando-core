@@ -52,16 +52,14 @@ public class PageTreeMenuAction extends PageTreeAction {
 		if (StringUtils.isBlank(pageCode)) {
 			ITreeNode rootNode = this.getAllowedTreeRootNode();
 			pageCode = rootNode.getCode();
-
 			if (VIRTUAL_ROOT_CODE.equals(pageCode)) {
-				if (null != rootNode.getChildren() && rootNode.getChildren().length > 0) {
-					pageCode = rootNode.getChildren()[0].getCode();
+				if (null != rootNode.getChildrenCodes() && rootNode.getChildrenCodes().length > 0) {
+					pageCode = rootNode.getChildrenCodes()[0];
 				} else {
 					this.addActionError(this.getText("error.page.virtualRootSelected"));
 					return "noRoot";
 				}
 			}
-
 		}
 		this.setPageCode(pageCode);
 		this.setSelectedNode(pageCode);
@@ -164,8 +162,8 @@ public class PageTreeMenuAction extends PageTreeAction {
 	/**
 	 * Returns the 'bread crumbs' targets.
 	 *
-	 * @param pageCode
-	 * The code of the page being represented in the bread crumbs path.
+	 * @param pageCode The code of the page being represented in the bread
+	 * crumbs path.
 	 * @return The bread crumbs targets requested.
 	 */
 	public List<IPage> getBreadCrumbsTargets(String pageCode) {
@@ -189,8 +187,7 @@ public class PageTreeMenuAction extends PageTreeAction {
 	/**
 	 * Check if the current user can access the specified page.
 	 *
-	 * @param page
-	 * The page to check against the current user.
+	 * @param page The page to check against the current user.
 	 * @return True if the user has can access the given page, false otherwise.
 	 */
 	@Override

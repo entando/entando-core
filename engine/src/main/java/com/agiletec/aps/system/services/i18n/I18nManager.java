@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.i18n.cache.II18nManagerCacheWrapper;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
@@ -36,23 +37,42 @@ public class I18nManager extends AbstractService implements II18nManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(I18nManager.class);
 	
-	@Override
-	public void init() throws Exception {
-		this.loadLabels();
-		_logger.debug("{} : initialized {} labels", this.getClass().getName(), this._labelGroups.size());
+	private II18nManagerCacheWrapper cacheWrapper;
+
+	private II18nDAO i18nDAO;
+
+
+	protected II18nDAO getI18nDAO() {
+		return i18nDAO;
 	}
 
+	public void setI18nDAO(II18nDAO i18nDao) {
+		i18nDAO = i18nDao;
+	}
+
+	protected II18nManagerCacheWrapper getCacheWrapper() {
+		return cacheWrapper;
+	}
+
+	public void setCacheWrapper(II18nManagerCacheWrapper cacheWrapper) {
+		this.cacheWrapper = cacheWrapper;
+	}
+
+	@Override
+	public void init() throws Exception {
+		this.getCacheWrapper().initCache(this.getI18nDAO());
+		_logger.debug("{} : initialized {} labels", this.getClass().getName(), this.getLabelGroups().size());
+	}
+
+
 	/**
-	 * Carica le label dalla configurazione riguardanti tutte le 
-	 * lingue caricate nel sistema e le inserisce in un'HashMap
-	 * @throws ApsSystemException in caso di errori di parsing
+	 * Return the group of labels.
+	 * 
+	 * @return The group of labels.
 	 */
-	private void loadLabels() throws ApsSystemException {
-		try {
-			this._labelGroups = this.getI18nDAO().loadLabelGroups();
-		} catch (Throwable t) {
-			throw new ApsSystemException("Error loading labels", t);
-		}
+	@Override
+	public Map<String, ApsProperties> getLabelGroups() {
+		return this.getCacheWrapper().getLabelGroups();
 	}
 
 	/**
@@ -65,7 +85,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 	@Override
 	public String getLabel(String key, String langCode) throws ApsSystemException {
 		String label = null;
-		ApsProperties labelsProp = (ApsProperties) _labelGroups.get(key);
+		ApsProperties labelsProp = (ApsProperties) this.getCacheWrapper().getLabelGroups().get(key);
 		if (labelsProp != null) {
 			label = labelsProp.getProperty(langCode);
 		}
@@ -74,7 +94,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 	
 	@Override
 	public ApsProperties getLabelGroup(String key) throws ApsSystemException {
-		ApsProperties labelsProp = (ApsProperties) this._labelGroups.get(key);
+		ApsProperties labelsProp = (ApsProperties) this.getCacheWrapper().getLabelGroups().get(key);
 		if (null == labelsProp) {
 			return null;
 		}
@@ -91,10 +111,9 @@ public class I18nManager extends AbstractService implements II18nManager {
 	public void addLabelGroup(String key, ApsProperties labels) throws ApsSystemException {
 		try {
 			this.getI18nDAO().addLabelGroup(key, labels);
-			this._labelGroups.put(key, labels);
+			this.getCacheWrapper().addLabelGroup(key, labels);
 		} catch (Throwable t) {
 			_logger.error("Error while adding a group of labels by key '{}'", key, t);
-			//ApsSystemUtils.logThrowable(t, this, "addLabelGroup");
 			throw new ApsSystemException("Error while adding a group of labels", t);
 		}
 	}
@@ -108,10 +127,9 @@ public class I18nManager extends AbstractService implements II18nManager {
 	public void deleteLabelGroup(String key) throws ApsSystemException {
 		try {
 			this.getI18nDAO().deleteLabelGroup(key);
-			this._labelGroups.remove(key);
+			this.getCacheWrapper().removeLabelGroup(key);
 		} catch (Throwable t) {
 			_logger.error("Error while deleting a label by key {}", key, t);
-			//ApsSystemUtils.logThrowable(t, this, "deleteLabelGroup");
 			throw new ApsSystemException("Error while deleting a label", t);
 		}
 	}
@@ -126,10 +144,9 @@ public class I18nManager extends AbstractService implements II18nManager {
 	public void updateLabelGroup(String key, ApsProperties labels) throws ApsSystemException {
 		try {
 			this.getI18nDAO().updateLabelGroup(key, labels);
-			this._labelGroups.put(key, labels);
+			this.getCacheWrapper().updateLabelGroup(key, labels);
 		} catch (Throwable t) {
 			_logger.error("Error while updating label with key {}", key, t);
-			//ApsSystemUtils.logThrowable(t, this, "updateLabel");
 			throw new ApsSystemException("Error while updating a label", t);
 		}
 	}
@@ -187,38 +204,15 @@ public class I18nManager extends AbstractService implements II18nManager {
 		return keys;
 	}
 
-	private boolean labelMatch(String target, Matcher matcher){
+	private boolean labelMatch(String target, Matcher matcher) {
 		boolean match = false;
-		if(null != target) {
+		if (null != target) {
 			matcher = matcher.reset(target);
-			if(matcher.find()) {
-				match =true;
+			if (matcher.find()) {
+				match = true;
 			}
 		}
 		return match;
 	}
 	
-	/**
-	 * Return the group of labels.
-	 * @return The group of labels.
-	 */
-	@Override
-	public Map<String, ApsProperties> getLabelGroups() {
-		return this._labelGroups;
-	}
-
-	protected II18nDAO getI18nDAO() {
-		return _i18nDAO;
-	}
-	public void setI18nDAO(II18nDAO i18nDao) {
-		_i18nDAO = i18nDao;
-	}
-
-	/**
-	 * Map delle label internazionalizzate.
-	 */
-	private Map<String, ApsProperties> _labelGroups;
-
-	private II18nDAO _i18nDAO;
-
 }

@@ -23,11 +23,13 @@ import java.util.Map;
  */
 public class ContentPageMapper {
 	
+	private Map<String, String> contentPageMapper;
+	
 	/**
 	 * Inizializza la mappa.
 	 */
     public ContentPageMapper() {
-        this._contentPageMapper = new HashMap<String, String>();
+        this.contentPageMapper = new HashMap<String, String>();
     }
     
     /**
@@ -36,8 +38,8 @@ public class ContentPageMapper {
      * @param pageCode Il codice della pagina 
      * nel quale è publicato il contenuto.
      */
-    protected void add(String contentId, String pageCode) {
-		this._contentPageMapper.put(contentId, pageCode);
+    public void add(String contentId, String pageCode) {
+		this.contentPageMapper.put(contentId, pageCode);
 	}
     
     /**
@@ -45,7 +47,7 @@ public class ContentPageMapper {
      * @return La mappa dei contenuti pubblicati.
      */
     protected Map<String, String> getContentPageMapper() {
-		return _contentPageMapper;
+		return contentPageMapper;
 	}
     
     /**
@@ -54,9 +56,8 @@ public class ContentPageMapper {
      * @param contentId L'id del contenuto.
      * @return Il codice pagina nel quale è stato publicato il contenuto specificato. 
      */
-    protected String getPageCode(String contentId) {
-		String pageCode = (String) _contentPageMapper.get(contentId);
-		return pageCode;
+    public String getPageCode(String contentId) {
+		return this.contentPageMapper.get(contentId);
 	}
     
     /**
@@ -64,7 +65,7 @@ public class ContentPageMapper {
      * @param contentId L'id del contenuto.
      */
     protected void removeContentPageMapping(String contentId) {
-		this._contentPageMapper.remove(contentId);
+		this.contentPageMapper.remove(contentId);
 	}
     
     /**
@@ -74,9 +75,7 @@ public class ContentPageMapper {
      * esplicitamente in una pagina, false in caso contrario.
      */
     protected boolean containContent(String contentId) {
-		return this._contentPageMapper.containsKey(contentId);
+		return this.contentPageMapper.containsKey(contentId);
 	}
-    
-    private Map<String, String> _contentPageMapper;
     
 }

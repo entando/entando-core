@@ -22,7 +22,7 @@
     <bean id="NotifyManager" class="com.agiletec.aps.system.common.notify.NotifyManager" />
 
     <bean id="abstractService" abstract="true" class="com.agiletec.aps.system.common.AbstractService"
-              init-method="init" destroy-method="destroy" >
+          init-method="init" destroy-method="destroy" >
         <property name="notifyManager" ref="NotifyManager" />
     </bean>
 
@@ -31,56 +31,56 @@
         <property name="caches">
             <set>
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_Cache" />
+                      p:name="Entando_Cache" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_PageManager" />
+                      p:name="Entando_PageManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_PageModelManager" />
+                      p:name="Entando_PageModelManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_WidgetTypeManager" />
+                      p:name="Entando_WidgetTypeManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_CategoryManager" />
+                      p:name="Entando_CategoryManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_ConfigManager" />
+                      p:name="Entando_ConfigManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_RoleManager" />
+                      p:name="Entando_RoleManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_GroupManager" />
+                      p:name="Entando_GroupManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_LangManager" />
+                      p:name="Entando_LangManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_CacheInfoManager" />
+                      p:name="Entando_CacheInfoManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_I18nManager" />
+                      p:name="Entando_I18nManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_UserProfileManager" />
+                      p:name="Entando_UserProfileManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_DataObjectManager" />
+                      p:name="Entando_DataObjectManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_jacmsContentManager" />
+                      p:name="Entando_jacmsContentManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_InitializerManager" />
+                      p:name="Entando_InitializerManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                              p:name="Entando_ApiCatalogManager" />
+                      p:name="Entando_ApiCatalogManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_DataObjectModelManager" />
+                      p:name="Entando_DataObjectModelManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                              p:name="Entando_ContentModelManager" />
+                      p:name="Entando_ContentModelManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                                      p:name="Entando_KeyGeneratorManager" />
+                      p:name="Entando_KeyGeneratorManager" />
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                              p:name="Entando_ResourceManager" />
+                      p:name="Entando_ResourceManager" />
             </set>
         </property>
     </bean>
 
     <bean id="CacheInfoManager" class="org.entando.entando.aps.system.services.cache.CacheInfoManager"
-              parent="abstractService" depends-on="springCacheManager" >
+          parent="abstractService" depends-on="springCacheManager" >
         <property name="springCacheManager" ref="springCacheManager" />
     </bean>
 
     <bean id="BaseConfigManager" class="com.agiletec.aps.system.services.baseconfig.BaseConfigManager"
-              parent="abstractService" depends-on="springCacheManager" >
+          parent="abstractService" depends-on="springCacheManager" >
         <property name="systemParams">
             <map>
                 <entry key="version">
@@ -103,6 +103,9 @@
                 </entry>
             </map>
         </property>
+        <property name="configFolder">
+            <jee:jndi-lookup jndi-name="java:comp/env/configFolder" />
+        </property>
         <property name="configDAO" >
             <bean class="com.agiletec.aps.system.services.baseconfig.ConfigItemDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -116,7 +119,7 @@
     </bean>
 
     <bean id="GroupManager" class="com.agiletec.aps.system.services.group.GroupManager"
-              parent="abstractService" depends-on="springCacheManager" >
+          parent="abstractService" depends-on="springCacheManager" >
         <property name="groupDAO" >
             <bean class="com.agiletec.aps.system.services.group.GroupDAO">
                 <property name="dataSource" ref="servDataSource" />
@@ -130,7 +133,7 @@
     </bean>
 
     <bean id="RoleManager" class="com.agiletec.aps.system.services.role.RoleManager"
-              parent="abstractService" depends-on="springCacheManager" >
+          parent="abstractService" depends-on="springCacheManager" >
         <property name="roleDAO" >
             <bean class="com.agiletec.aps.system.services.role.RoleDAO">
                 <property name="dataSource" ref="servDataSource" />
@@ -156,21 +159,19 @@
     <bean id="UserDAO" class="com.agiletec.aps.system.services.user.UserDAO">
         <property name="dataSource" ref="servDataSource" />
         <property name="encrypter">
-            <bean class="com.agiletec.aps.util.DefaultApsEncrypter"></bean>
-        </property>
-        <property name="passwordPlainTextAllowed">
-            <value>${password.plainText.allowed}</value>
+            <bean class="org.entando.entando.aps.util.argon2.Argon2Encrypter">
+            </bean>
         </property>
     </bean>
 
     <bean id="UserManager" class="com.agiletec.aps.system.services.user.UserManager"
-              parent="abstractService" >
+          parent="abstractService" >
         <property name="userDAO" ref="UserDAO" />
         <property name="configManager" ref="BaseConfigManager"/>
     </bean>
 
     <bean id="AuthorizationManager" class="com.agiletec.aps.system.services.authorization.AuthorizationManager"
-              parent="abstractService" >
+          parent="abstractService" >
         <property name="groupManager" ref="GroupManager"/>
         <property name="roleManager" ref="RoleManager"/>
         <property name="authorizationDAO" >
@@ -181,14 +182,14 @@
     </bean>
 
     <bean id="AuthenticationProviderManager" class="com.agiletec.aps.system.services.user.AuthenticationProviderManager"
-              parent="abstractService" >
+          parent="abstractService" >
         <property name="userManager" ref="UserManager" />
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="tokenManager" ref="OAuth2TokenManager" />
     </bean>
 
     <bean id="LangManager" class="com.agiletec.aps.system.services.lang.LangManager"
-              parent="abstractService" depends-on="BaseConfigManager" >
+          parent="abstractService" depends-on="BaseConfigManager" >
         <property name="configManager" ref="BaseConfigManager"/>
         <property name="cacheWrapper">
             <bean class="com.agiletec.aps.system.services.lang.cache.LangManagerCacheWrapper">
@@ -198,7 +199,7 @@
     </bean>
 
     <bean id="CategoryManager" class="com.agiletec.aps.system.services.category.CategoryManager"
-              parent="abstractService" depends-on="BaseConfigManager" >
+          parent="abstractService" depends-on="BaseConfigManager" >
         <property name="langManager" ref="LangManager"/>
         <property name="categoryDAO" >
             <bean class="com.agiletec.aps.system.services.category.CategoryDAO">
@@ -213,7 +214,7 @@
     </bean>
 
     <bean id="WidgetTypeManager" class="org.entando.entando.aps.system.services.widgettype.WidgetTypeManager"
-              parent="abstractService" depends-on="BaseConfigManager" >
+          parent="abstractService" depends-on="BaseConfigManager" >
         <property name="widgetTypeDAO" >
             <bean class="org.entando.entando.aps.system.services.widgettype.WidgetTypeDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -238,7 +239,7 @@
     </bean>
 
     <bean id="GuiFragmentManager" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentManager"
-              parent="abstractService">
+          parent="abstractService">
         <property name="guiFragmentDAO">
             <bean class="org.entando.entando.aps.system.services.guifragment.GuiFragmentDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -251,7 +252,7 @@
     </bean>
 
     <bean id="PageModelManager" class="com.agiletec.aps.system.services.pagemodel.PageModelManager"
-              parent="abstractService" depends-on="BaseConfigManager" >
+          parent="abstractService" depends-on="BaseConfigManager" >
         <property name="pageModelDAO" >
             <bean class="com.agiletec.aps.system.services.pagemodel.PageModelDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -270,7 +271,7 @@
     </bean>
 
     <bean id="PageManager" class="com.agiletec.aps.system.services.page.PageManager"
-              parent="abstractService" depends-on="PageModelManager,WidgetTypeManager" >
+          parent="abstractService" depends-on="PageModelManager,WidgetTypeManager" >
         <property name="pageDAO" >
             <bean class="com.agiletec.aps.system.services.page.PageDAO">
                 <property name="dataSource" ref="portDataSource" />
@@ -291,14 +292,14 @@
     </bean>
 
     <bean id="URLManager" class="com.agiletec.aps.system.services.url.URLManager"
-              parent="abstractService" >
+          parent="abstractService" >
         <property name="configManager" ref="BaseConfigManager"/>
         <property name="pageManager" ref="PageManager"/>
         <property name="langManager" ref="LangManager"/>
     </bean>
 
     <bean id="I18nManager" class="com.agiletec.aps.system.services.i18n.I18nManager"
-              parent="abstractService" >
+          parent="abstractService" >
         <property name="cacheWrapper">
             <bean class="com.agiletec.aps.system.services.i18n.cache.I18nManagerCacheWrapper">
                 <property name="springCacheManager" ref="springCacheManager" />
@@ -320,7 +321,7 @@
           parent="ApiI18nLabelInterface" />
 
     <bean id="KeyGeneratorManager" class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorManager"
-              parent="abstractService" >
+          parent="abstractService" >
         <property name="cacheWrapper">
             <bean class="com.agiletec.aps.system.services.cache.KeyGeneratorManagerCacheWrapper">
                 <property name="springCacheManager" ref="springCacheManager" />
@@ -334,7 +335,7 @@
     </bean>
 
     <bean id="ActionLogManager" class="org.entando.entando.aps.system.services.actionlog.ActionLogManager"
-              parent="abstractService" >
+          parent="abstractService" >
         <property name="keyGeneratorManager" ref="KeyGeneratorManager" />
         <property name="actionLogDAO">
             <bean class="org.entando.entando.aps.system.services.actionlog.ActionLogDAO">

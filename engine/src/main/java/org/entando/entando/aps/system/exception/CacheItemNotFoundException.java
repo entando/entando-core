@@ -13,18 +13,17 @@
  */
 package org.entando.entando.aps.system.exception;
 
-
 public class CacheItemNotFoundException extends RuntimeException {
 
-	public CacheItemNotFoundException(String message) {
-		super(message);
-	}
+    public CacheItemNotFoundException(String message) {
+        super(message);
+    }
 
-	public CacheItemNotFoundException(String entryKey, String cacheName) {
-		super(String.format("the cache entry %s was not found in %s cache", new Object[] { entryKey, cacheName }));
-	}
+    public CacheItemNotFoundException(String entryKey, String cacheName) {
+        super(String.format("the cache entry %s was not found in %s cache", new Object[]{entryKey, cacheName}));
+    }
 
-	public CacheItemNotFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public CacheItemNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

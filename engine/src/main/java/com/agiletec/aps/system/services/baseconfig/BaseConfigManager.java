@@ -238,7 +238,7 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
                 throw new RuntimeException("Memory size must be greater than 8xparallelism");
             }
         } catch (Exception e) {
-            this.setMemory(1 << 12);
+            this.setMemory(1 << 16);
             _logger.warn("Value for Argon2 memory not correctly set; using default value...", e.getMessage());
         }
         System.getProperties().setProperty("algo.argon2.memory", String.valueOf(this.getMemory()));

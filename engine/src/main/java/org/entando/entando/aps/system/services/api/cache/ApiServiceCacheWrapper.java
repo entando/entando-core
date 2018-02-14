@@ -27,7 +27,6 @@ import org.springframework.cache.Cache;
 import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 
 public class ApiServiceCacheWrapper extends AbstractGenericCacheWrapper<ApiService> implements IApiServiceCacheWrapper {
@@ -65,19 +64,9 @@ public class ApiServiceCacheWrapper extends AbstractGenericCacheWrapper<ApiServi
 		return apiGETMethods;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ApiService> getMasterServices() {
-		Map<String, ApiService> map = new HashMap<>();
-		Cache cache = this.getCache();
-		List<String> codes = this.get(cache, this.getCodesCacheKey(), List.class);
-		for (String code : codes) {
-			ApiService apiService = this.get(this.getCacheKeyPrefix() + code, ApiService.class);
-			if (null != apiService) {
-				map.put(code, apiService);
-			}
-		}
-		return map;
+		return super.getObjectMap();
 	}
 
 	@Override

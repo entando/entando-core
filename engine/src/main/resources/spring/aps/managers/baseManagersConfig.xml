@@ -54,21 +54,27 @@
 					p:name="Entando_I18nManager" />	
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
 					p:name="Entando_UserProfileManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-					p:name="Entando_DataObjectManager" />
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-					p:name="Entando_jacmsContentManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					p:name="Entando_InitializerManager" />			
 		       	<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					p:name="Entando_ApiCatalogManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					p:name="Entando_DataObjectModelManager" />			
-		       	<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					p:name="Entando_KeyGeneratorManager" />
+				
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					p:name="Entando_DataObjectManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					p:name="Entando_DataObjectModelManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					p:name="Entando_DataObjectPageMapperManager" />
+				
+       			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
+					p:name="Entando_jacmsContentManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					p:name="Entando_ContentModelManager" />
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-					p:name="Entando_KeyGeneratorManager" />
-       			<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					p:name="Entando_ContentPageMapperManager" />
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					p:name="Entando_ResourceManager" />
 			</set>
 		</property>
@@ -303,9 +309,9 @@
 		  parent="ApiI18nLabelInterface" />
 
 	<bean id="KeyGeneratorManager" class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorManager"
-			parent="abstractService" >
+			parent="abstractService" depends-on="springCacheManager" >
 		<property name="cacheWrapper">
-			<bean class="com.agiletec.aps.system.services.cache.KeyGeneratorManagerCacheWrapper">
+			<bean class="com.agiletec.aps.system.services.keygenerator.cache.KeyGeneratorManagerCacheWrapper">
 				<property name="springCacheManager" ref="springCacheManager" />
 			</bean>
 		</property>

@@ -28,79 +28,69 @@ import org.springframework.cache.Cache;
 
 public class ContentModelManagerCacheWrapper extends AbstractGenericCacheWrapper<ContentModel> implements IContentModelManagerCacheWrapper {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Override
-    public void initCache(IContentModelDAO contentModelDao) throws ApsSystemException {
-        try {
-            Cache cache = this.getCache();
-            this.releaseCachedObjects(cache);
-            Map<String, ContentModel> modelsMap = getMoldelsMap(contentModelDao);
-            super.insertObjectsOnCache(cache, modelsMap);
-        } catch (Throwable t) {
-            logger.error("Error bootstrapping models map cache", t);
-            throw new ApsSystemException("Error bootstrapping models map cache", t);
-        }
-    }
+	@Override
+	public void initCache(IContentModelDAO contentModelDao) throws ApsSystemException {
+		try {
+			Cache cache = this.getCache();
+			this.releaseCachedObjects(cache);
+			Map<String, ContentModel> modelsMap = this.getModelsMap(contentModelDao);
+			super.insertObjectsOnCache(cache, modelsMap);
+		} catch (Throwable t) {
+			logger.error("Error bootstrapping models map cache", t);
+			throw new ApsSystemException("Error bootstrapping models map cache", t);
+		}
+	}
 
-    @Override
-    protected String getCacheName() {
-        return CACHE_NAME;
-    }
+	@Override
+	protected String getCacheName() {
+		return CACHE_NAME;
+	}
 
-    @Override
-    protected String getCodesCacheKey() {
-        return CODES_CACHE_NAME;
-    }
+	@Override
+	protected String getCodesCacheKey() {
+		return CODES_CACHE_NAME;
+	}
 
-    @Override
-    protected String getCacheKeyPrefix() {
-        return CACHE_NAME_PREFIX;
-    }
+	@Override
+	protected String getCacheKeyPrefix() {
+		return CACHE_NAME_PREFIX;
+	}
 
-    private Map<String, ContentModel> getMoldelsMap(IContentModelDAO contentModelDao) {
-        Map<Long, ContentModel> models = contentModelDao.loadContentModels();
-        Map<String, ContentModel> modelsMap = new HashMap<>();
+	private Map<String, ContentModel> getModelsMap(IContentModelDAO contentModelDao) {
+		Map<Long, ContentModel> models = contentModelDao.loadContentModels();
+		Map<String, ContentModel> modelsMap = new HashMap<>();
+		for (Map.Entry<Long, ContentModel> entry : models.entrySet()) {
+			modelsMap.put(entry.getKey().toString(), entry.getValue());
+		}
+		return modelsMap;
+	}
 
-        for (Map.Entry<Long, ContentModel> entry : models.entrySet()) {
-            modelsMap.put(entry.getKey().toString(), entry.getValue());
-        }
-        return modelsMap;
-    }
+	@Override
+	public List<ContentModel> getContentModels() {
+		Map<String, ContentModel> map = super.getObjectMap();
+		return new ArrayList<>(map.values());
+	}
 
+	@Override
+	public ContentModel getContentModel(String code) {
+		return this.get(this.getCache(), CACHE_NAME_PREFIX + code, ContentModel.class);
+	}
 
-    @Override
-    public List<ContentModel> getContentModels() {
-        List<ContentModel> contentModels = new ArrayList<ContentModel>();
-        Cache cache = this.getCache();
-        List<String> codes = (List<String>) this.get(cache, CODES_CACHE_NAME, List.class);
-        if (null != codes) {
-            for (String code : codes) {
-                ContentModel contentModel = this.get(cache, CACHE_NAME_PREFIX + code, ContentModel.class);
-                contentModels.add(contentModel);
-            }
-        }
-        return contentModels;
-    }
+	@Override
+	public void addContentModel(ContentModel contentModel) {
+		this.manage(String.valueOf(contentModel.getId()), contentModel, Action.ADD);
+	}
 
-    @Override
-    public ContentModel getContentModel(String code) {
-        return this.get(this.getCache(), CACHE_NAME_PREFIX + code, ContentModel.class);
-    }
+	@Override
+	public void updateContentModel(ContentModel contentModel) {
+		this.manage(String.valueOf(contentModel.getId()), contentModel, Action.UPDATE);
+	}
 
-    @Override
-    public void addContentModel(ContentModel contentModel) {
-        this.manage(String.valueOf(contentModel.getId()), contentModel, Action.ADD);
-    }
-
-    @Override
-    public void updateContentModel(ContentModel contentModel) {
-        this.manage(String.valueOf(contentModel.getId()), contentModel, Action.UPDATE);
-    }
-
-    @Override
-    public void removeContentModel(ContentModel contentModel) {
-        this.manage(String.valueOf(contentModel.getId()), contentModel, Action.DELETE);
-    }
+	@Override
+	public void removeContentModel(ContentModel contentModel) {
+		this.manage(String.valueOf(contentModel.getId()), contentModel, Action.DELETE);
+	}
 
 }

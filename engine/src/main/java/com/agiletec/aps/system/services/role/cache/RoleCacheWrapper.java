@@ -49,15 +49,8 @@ public class RoleCacheWrapper extends AbstractGenericCacheWrapper<Role> implemen
 
 	@Override
 	public List<Role> getRoles() {
-		List<Role> roles = new ArrayList<>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
-		if (null != codes) {
-			for (String code : codes) {
-				roles.add(this.get(cache, this.getCacheKeyPrefix() + code, Role.class));
-			}
-		}
-		return roles;
+		Map<String, Role> map = super.getObjectMap();
+		return new ArrayList<>(map.values());
 	}
 
 	@Override

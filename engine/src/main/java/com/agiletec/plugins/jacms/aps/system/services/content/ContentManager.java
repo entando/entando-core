@@ -36,6 +36,7 @@ import com.agiletec.aps.system.common.entity.IEntityDAO;
 import com.agiletec.aps.system.common.entity.IEntitySearcherDAO;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
@@ -58,34 +59,23 @@ public class ContentManager extends ApsEntityManager
     
     private static final Logger _logger = LoggerFactory.getLogger(ContentManager.class);
     
+    private IContentDAO contentDao;
+    
+    private IWorkContentSearcherDAO workContentSearcherDAO;
+    
+    private IPublicContentSearcherDAO publicContentSearcherDAO;
+	
+	private IContentUpdaterService contentUpdaterService;
+    
     @Override
     public void init() throws Exception {
         super.init();
-        this.createSmallContentTypes();
         _logger.debug("{} ready. Initialized {} content types",this.getClass().getName(), super.getEntityTypes().size());
     }
     
     @Override
     protected String getConfigItemName() {
         return JacmsSystemConstants.CONFIG_ITEM_CONTENT_TYPES;
-    }
-    
-    private void createSmallContentTypes() {
-        this._smallContentTypes = new HashMap<String, SmallContentType>(this.getEntityTypes().size());
-        List<IApsEntity> types = new ArrayList<IApsEntity>(this.getEntityTypes().values());
-        for (int i=0; i<types.size(); i++) {
-            Content contentPrototype = (Content) types.get(i);
-            SmallContentType smallContentType = new SmallContentType();
-            smallContentType.setCode(contentPrototype.getTypeCode());
-            smallContentType.setDescription(contentPrototype.getTypeDescription());
-            this._smallContentTypes.put(smallContentType.getCode(), smallContentType);
-        }
-    }
-    
-    @Override
-    public void updateEntityPrototype(IApsEntity entityType) throws ApsSystemException {
-        super.updateEntityPrototype(entityType);
-        this.createSmallContentTypes();
     }
     
     /**
@@ -96,8 +86,7 @@ public class ContentManager extends ApsEntityManager
      */
     @Override
     public Content createContentType(String typeCode) {
-        Content content = (Content) super.getEntityPrototype(typeCode);
-        return content;
+        return (Content) super.getEntityPrototype(typeCode);
     }
     
     /**
@@ -108,8 +97,8 @@ public class ContentManager extends ApsEntityManager
      */
     @Override
     public List<SmallContentType> getSmallContentTypes() {
-        List<SmallContentType> smallContentTypes = new ArrayList<SmallContentType>();
-        smallContentTypes.addAll(this._smallContentTypes.values());
+        List<SmallContentType> smallContentTypes = new ArrayList<>();
+		smallContentTypes.addAll(this.getSmallContentTypesMap().values());
         Collections.sort(smallContentTypes);
         return smallContentTypes;
     }
@@ -121,7 +110,15 @@ public class ContentManager extends ApsEntityManager
      */
     @Override
     public Map<String, SmallContentType> getSmallContentTypesMap() {
-        return this._smallContentTypes;
+		Map<String, SmallContentType> smallContentTypes = new HashMap<>();
+		List<SmallEntityType> entityTypes = super.getSmallEntityTypes();
+		for (SmallEntityType entityType : entityTypes) {
+			SmallContentType sct = new SmallContentType();
+			sct.setCode(entityType.getCode());
+			sct.setDescription(entityType.getDescription());
+			smallContentTypes.put(entityType.getCode(), sct);
+		}
+        return smallContentTypes;
     }
     
     /**
@@ -134,8 +131,7 @@ public class ContentManager extends ApsEntityManager
     @Override
     public String getViewPage(String contentId) {
         Content type = this.getTypeById(contentId);
-        String pageCode = type.getViewPage();
-        return pageCode;
+        return type.getViewPage();
     }
     
     /**
@@ -146,8 +142,7 @@ public class ContentManager extends ApsEntityManager
     @Override
     public String getDefaultModel(String contentId) {
         Content type = this.getTypeById(contentId);
-        String defaultModel = type.getDefaultModel();
-        return defaultModel;
+        return type.getDefaultModel();
     }
     
     /**
@@ -158,8 +153,7 @@ public class ContentManager extends ApsEntityManager
     @Override
     public String getListModel(String contentId) {
         Content type = this.getTypeById(contentId);
-        String defaultListModel = type.getListModel();
-        return defaultListModel;
+        return type.getListModel();
     }
 	
     /**
@@ -613,7 +607,7 @@ public class ContentManager extends ApsEntityManager
      * @return The DAO managing the contents.
      */
     protected IContentDAO getContentDAO() {
-        return _contentDao;
+        return contentDao;
     }
     
     /**
@@ -621,7 +615,7 @@ public class ContentManager extends ApsEntityManager
      * @param contentDao The DAO managing the contents.
      */
     public void setContentDAO(IContentDAO contentDao) {
-        this._contentDao = contentDao;
+        this.contentDao = contentDao;
     }
     
     @Override
@@ -635,24 +629,24 @@ public class ContentManager extends ApsEntityManager
     }
     
     protected IWorkContentSearcherDAO getWorkContentSearcherDAO() {
-        return _workContentSearcherDAO;
+        return workContentSearcherDAO;
     }
     public void setWorkContentSearcherDAO(IWorkContentSearcherDAO workContentSearcherDAO) {
-        this._workContentSearcherDAO = workContentSearcherDAO;
+        this.workContentSearcherDAO = workContentSearcherDAO;
     }
     
     public IPublicContentSearcherDAO getPublicContentSearcherDAO() {
-        return _publicContentSearcherDAO;
+        return publicContentSearcherDAO;
     }
     public void setPublicContentSearcherDAO(IPublicContentSearcherDAO publicContentSearcherDAO) {
-        this._publicContentSearcherDAO = publicContentSearcherDAO;
+        this.publicContentSearcherDAO = publicContentSearcherDAO;
     }
 	
     protected IContentUpdaterService getContentUpdaterService() {
-		return _contentUpdaterService;
+		return contentUpdaterService;
 	}
 	public void setContentUpdaterService(IContentUpdaterService contentUpdaterService) {
-		this._contentUpdaterService = contentUpdaterService;
+		this.contentUpdaterService = contentUpdaterService;
 	}
 	
     @Override
@@ -667,19 +661,5 @@ public class ContentManager extends ApsEntityManager
     public int getState() {
         return super.getStatus();
     }
-    
-    /**
-     * Map of the prototypes of the content types in the so called 'small form', indexed by
-     * the type code.
-     */
-    private Map<String, SmallContentType> _smallContentTypes;
-    
-    private IContentDAO _contentDao;
-    
-    private IWorkContentSearcherDAO _workContentSearcherDAO;
-    
-    private IPublicContentSearcherDAO _publicContentSearcherDAO;
-	
-	private IContentUpdaterService _contentUpdaterService;
 	
 }

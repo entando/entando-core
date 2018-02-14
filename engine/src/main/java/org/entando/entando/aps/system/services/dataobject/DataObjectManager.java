@@ -31,6 +31,7 @@ import com.agiletec.aps.system.common.entity.IEntityDAO;
 import com.agiletec.aps.system.common.entity.IEntitySearcherDAO;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
@@ -51,34 +52,21 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
 
     private static final Logger _logger = LoggerFactory.getLogger(DataObjectManager.class);
 
+    private IDataObjectDAO dataObjectDao;
+
+    private IDataObjectSearcherDAO dataObjectSearcherDAO;
+
+    private IDataObjectUpdaterService dataobjectUpdaterService;
+
     @Override
     public void init() throws Exception {
         super.init();
-        this.createSmallDataObjectTypes();
         _logger.debug("{} ready. Initialized {} DataObject types", this.getClass().getName(), super.getEntityTypes().size());
     }
 
     @Override
     protected String getConfigItemName() {
         return "dataTypeDefinitions";
-    }
-
-    private void createSmallDataObjectTypes() {
-        this._smallDataObjectTypes = new HashMap<String, SmallDataType>(this.getEntityTypes().size());
-        List<IApsEntity> types = new ArrayList<IApsEntity>(this.getEntityTypes().values());
-        for (int i = 0; i < types.size(); i++) {
-            DataObject dataobjectPrototype = (DataObject) types.get(i);
-            SmallDataType smallDataObjectType = new SmallDataType();
-            smallDataObjectType.setCode(dataobjectPrototype.getTypeCode());
-            smallDataObjectType.setDescription(dataobjectPrototype.getTypeDescription());
-            this._smallDataObjectTypes.put(smallDataObjectType.getCode(), smallDataObjectType);
-        }
-    }
-
-    @Override
-    public void updateEntityPrototype(IApsEntity entityType) throws ApsSystemException {
-        super.updateEntityPrototype(entityType);
-        this.createSmallDataObjectTypes();
     }
 
     /**
@@ -92,8 +80,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      */
     @Override
     public DataObject createDataObject(String typeCode) {
-        DataObject dataobject = (DataObject) super.getEntityPrototype(typeCode);
-        return dataobject;
+        return (DataObject) super.getEntityPrototype(typeCode);
     }
 
     /**
@@ -106,8 +93,8 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      */
     @Override
     public List<SmallDataType> getSmallDataTypes() {
-        List<SmallDataType> smallDataObjectTypes = new ArrayList<SmallDataType>();
-        smallDataObjectTypes.addAll(this._smallDataObjectTypes.values());
+        List<SmallDataType> smallDataObjectTypes = new ArrayList<>();
+        smallDataObjectTypes.addAll(this.getSmallDataTypesMap().values());
         Collections.sort(smallDataObjectTypes);
         return smallDataObjectTypes;
     }
@@ -122,7 +109,15 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      */
     @Override
     public Map<String, SmallDataType> getSmallDataTypesMap() {
-        return this._smallDataObjectTypes;
+        Map<String, SmallDataType> smallDataTypes = new HashMap<>();
+		List<SmallEntityType> entityTypes = super.getSmallEntityTypes();
+		for (SmallEntityType entityType : entityTypes) {
+			SmallDataType sdt = new SmallDataType();
+			sdt.setCode(entityType.getCode());
+			sdt.setDescription(entityType.getDescription());
+			smallDataTypes.put(entityType.getCode(), sdt);
+		}
+        return smallDataTypes;
     }
 
     /**
@@ -136,8 +131,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     @Override
     public String getViewPage(String dataId) {
         DataObject type = this.getTypeById(dataId);
-        String pageCode = type.getViewPage();
-        return pageCode;
+        return type.getViewPage();
     }
 
     /**
@@ -149,8 +143,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     @Override
     public String getDefaultModel(String dataId) {
         DataObject type = this.getTypeById(dataId);
-        String defaultModel = type.getDefaultModel();
-        return defaultModel;
+        return type.getDefaultModel();
     }
 
     /**
@@ -163,8 +156,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     @Override
     public String getListModel(String dataId) {
         DataObject type = this.getTypeById(dataId);
-        String defaultListModel = type.getListModel();
-        return defaultListModel;
+        return type.getListModel();
     }
 
     /**
@@ -179,17 +171,11 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      * @throws ApsSystemException In case of error.
      */
     @Override
-    //@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine")
-    //@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsCsv(#id)")
     public DataObject loadDataObject(String id, boolean onLine) throws ApsSystemException {
         return this.loadDataObject(id, onLine, false);
     }
 
     @Override
-    //@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine and #cacheable")
-    //@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsCsv(#id)")
     public DataObject loadDataObject(String id, boolean onLine, boolean cacheable) throws ApsSystemException {
         DataObject dataobject = null;
         try {
@@ -329,10 +315,6 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      * @throws ApsSystemException in case of error.
      */
     @Override
-    //@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#dataobject.id)", condition = "#dataobject.id != null")
-    //@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsToEvictCsv(#dataobject.id, #dataobject.typeCode)")
     public void insertDataObject(DataObject dataobject) throws ApsSystemException {
         try {
             dataobject.setLastModified(new Date());
@@ -391,10 +373,6 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      * @throws ApsSystemException in case of error
      */
     @Override
-    //@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#dataobject.id)", condition = "#dataobject.id != null")
-    //@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsToEvictCsv(#dataobject.id, #dataobject.typeCode)")
     public void removeDataObject(DataObject dataobject) throws ApsSystemException {
         try {
             dataobject.setLastModified(new Date());
@@ -445,10 +423,6 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      * @throws ApsSystemException in case of error.
      */
     @Override
-    //@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#dataobject.id)", condition = "#dataobject.id != null")
-    //@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //		groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getDataObjectCacheGroupsToEvictCsv(#dataobject.id, #dataobject.typeCode)")
     public void deleteDataObject(DataObject dataobject) throws ApsSystemException {
         try {
             this.getDataObjectDAO().deleteEntity(dataobject.getId());
@@ -573,11 +547,11 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
      * @return The DAO managing the dataobjects.
      */
     protected IDataObjectDAO getDataObjectDAO() {
-        return _dataObjectDao;
+        return dataObjectDao;
     }
 
     public void setDataObjectDAO(IDataObjectDAO dao) {
-        this._dataObjectDao = dao;
+        this.dataObjectDao = dao;
     }
 
     @Override
@@ -591,19 +565,19 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     }
 
     public IDataObjectSearcherDAO getDataObjectSearcherDAO() {
-        return _dataObjectSearcherDAO;
+        return dataObjectSearcherDAO;
     }
 
     public void setDataObjectSearcherDAO(IDataObjectSearcherDAO dataObjectSearcherDAO) {
-        this._dataObjectSearcherDAO = dataObjectSearcherDAO;
+        this.dataObjectSearcherDAO = dataObjectSearcherDAO;
     }
 
     protected IDataObjectUpdaterService getDataObjectUpdaterService() {
-        return _dataobjectUpdaterService;
+        return dataobjectUpdaterService;
     }
 
     public void setDataObjectUpdaterService(IDataObjectUpdaterService dataobjectUpdaterService) {
-        this._dataobjectUpdaterService = dataobjectUpdaterService;
+        this.dataobjectUpdaterService = dataobjectUpdaterService;
     }
 
     @Override
@@ -618,17 +592,5 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     public int getState() {
         return super.getStatus();
     }
-
-    /**
-     * Map of the prototypes of the dataobject types in the so called 'small
-     * form', indexed by the type code.
-     */
-    private Map<String, SmallDataType> _smallDataObjectTypes;
-
-    private IDataObjectDAO _dataObjectDao;
-
-    private IDataObjectSearcherDAO _dataObjectSearcherDAO;
-
-    private IDataObjectUpdaterService _dataobjectUpdaterService;
 
 }

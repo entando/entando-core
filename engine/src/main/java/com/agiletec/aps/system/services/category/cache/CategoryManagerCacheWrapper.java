@@ -33,21 +33,23 @@ import org.springframework.cache.Cache;
  */
 public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements ICategoryManagerCacheWrapper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(CategoryManagerCacheWrapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(CategoryManagerCacheWrapper.class);
 
 	@Override
 	public void initCache(ICategoryDAO categoryDAO, ILangManager langManager) throws ApsSystemException {
 		List<Category> categories = null;
 		try {
+			Cache cache = this.getCache();
+			this.releaseCachedObjects(cache);
 			categories = categoryDAO.loadCategories(langManager);
 			if (categories.isEmpty()) {
 				Category root = this.createRoot(langManager);
 				categoryDAO.addCategory(root);
 				categories.add(root);
 			}
-			this.initCache(categories);
+			this.initCache(cache, categories);
 		} catch (Throwable t) {
-			_logger.error("Error loading the category tree", t);
+			logger.error("Error loading the category tree", t);
 			throw new ApsSystemException("Error loading the category tree.", t);
 		}
 	}
@@ -58,28 +60,23 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 		root.setParentCode("home");
 		List<Lang> langs = langManager.getLangs();
 		ApsProperties titles = new ApsProperties();
-		for (int i = 0; i < langs.size(); i++) {
-			Lang lang = (Lang) langs.get(i);
+		for (Lang lang : langs) {
 			titles.setProperty(lang.getCode(), "Home");
 		}
 		root.setTitles(titles);
 		return root;
 	}
 
-	private void initCache(List<Category> categories) throws ApsSystemException {
-		Cache cache = this.getCache();
-		this.releaseCachedObjects(cache);
+	private void initCache(Cache cache, List<Category> categories) throws ApsSystemException {
 		Category root = null;
-		Map<String, Category> categoryMap = new HashMap<String, Category>();
-		for (int i = 0; i < categories.size(); i++) {
-			Category cat = (Category) categories.get(i);
+		Map<String, Category> categoryMap = new HashMap<>();
+		for (Category cat : categories) {
 			categoryMap.put(cat.getCode(), cat);
 			if (cat.getCode().equals(cat.getParentCode())) {
 				root = cat;
 			}
 		}
-		for (int i = 0; i < categories.size(); i++) {
-			Category cat = categories.get(i);
+		for (Category cat : categories) {
 			Category parent = categoryMap.get(cat.getParentCode());
 			if (cat != root) {
 				parent.addChildCode(cat.getCode());
@@ -95,8 +92,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 	protected void releaseCachedObjects(Cache cache) {
 		List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
 		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
+			for (String code : codes) {
 				cache.evict(CATEGORY_CACHE_NAME_PREFIX + code);
 			}
 			cache.evict(CATEGORY_CODES_CACHE_NAME);
@@ -142,7 +138,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 	public void updateMoveNodeStatus(String beanName, Integer status) {
 		Map<String, Integer> statusMap = this.getMoveNodeStatus();
 		if (null == statusMap) {
-			statusMap = new HashMap<String, Integer>();
+			statusMap = new HashMap<>();
 		}
 		statusMap.put(beanName, status);
 		this.getCache().put(CATEGORY_STATUS_CACHE_NAME, statusMap);

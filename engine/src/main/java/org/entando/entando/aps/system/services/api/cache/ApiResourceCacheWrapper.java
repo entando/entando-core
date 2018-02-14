@@ -23,8 +23,6 @@ import org.springframework.cache.Cache;
 
 import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import java.util.HashMap;
-import java.util.List;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 
 public class ApiResourceCacheWrapper extends AbstractGenericCacheWrapper<ApiResource> implements IApiResourceCacheWrapper {
@@ -54,19 +52,9 @@ public class ApiResourceCacheWrapper extends AbstractGenericCacheWrapper<ApiReso
 		return this.get(this.getCacheKeyPrefix() + code, ApiResource.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ApiResource> getMasterResources() {
-		Map<String, ApiResource> map = new HashMap<>();
-		Cache cache = this.getCache();
-		List<String> codes = this.get(cache, this.getCodesCacheKey(), List.class);
-		for (String code : codes) {
-			ApiResource apiResource = this.get(this.getCacheKeyPrefix() + code, ApiResource.class);
-			if (null != apiResource) {
-				map.put(code, apiResource);
-			}
-		}
-		return map;
+		return super.getObjectMap();
 	}
 
 	@Override

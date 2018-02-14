@@ -148,7 +148,7 @@ public class ProtectedResourceProvider implements IProtectedResourceProvider {
 		try {
 			StringBuilder targetUrl = new StringBuilder(request.getRequestURL());
 			Map<String, String> params = new HashMap<String, String>();
-			params.put("returnUrl", URLEncoder.encode(targetUrl.toString(), "UTF-8"));
+			params.put("returnUrl", targetUrl.toString());
 			String loginPageCode = this.getConfigManager().getParam(SystemConstants.CONFIG_PARAM_LOGIN_PAGE_CODE);
 			IPage page = this.getPageManager().getOnlinePage(loginPageCode);
 			Lang defaultLang = this.getLangManager().getDefaultLang();

@@ -23,8 +23,6 @@ import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.II18nDAO;
 import com.agiletec.aps.util.ApsProperties;
-import java.util.HashMap;
-import java.util.List;
 
 public class I18nManagerCacheWrapper extends AbstractGenericCacheWrapper<ApsProperties> implements II18nManagerCacheWrapper {
 
@@ -48,19 +46,9 @@ public class I18nManagerCacheWrapper extends AbstractGenericCacheWrapper<ApsProp
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ApsProperties> getLabelGroups() {
-		Map<String, ApsProperties> map = new HashMap<>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
-		if (null != codes) {
-			for (String code : codes) {
-				ApsProperties labels = this.get(cache, this.getCacheKeyPrefix() + code, ApsProperties.class);
-				map.put(code, labels);
-			}
-		}
-		return map;
+		return super.getObjectMap();
 	}
 
 	@Override

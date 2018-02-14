@@ -13,8 +13,6 @@
  */
 package com.agiletec.aps.system.services.group.cache;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -48,16 +46,7 @@ public class GroupManagerCacheWrapper extends AbstractGenericCacheWrapper<Group>
 
 	@Override
 	public Map<String, Group> getGroups() {
-		Map<String, Group> groups = new HashMap<String, Group>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, GROUP_CODES_CACHE_NAME, List.class);
-		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
-				groups.put(code, this.get(cache, GROUP_CACHE_NAME_PREFIX + code, Group.class));
-			}
-		}
-		return groups;
+		return super.getObjectMap();
 	}
 
 	@Override

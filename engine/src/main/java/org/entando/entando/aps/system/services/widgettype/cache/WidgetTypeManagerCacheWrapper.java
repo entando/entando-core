@@ -15,10 +15,8 @@ package org.entando.entando.aps.system.services.widgettype.cache;
 
 import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeDAO;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
@@ -61,14 +59,8 @@ public class WidgetTypeManagerCacheWrapper extends AbstractGenericCacheWrapper<W
 
 	@Override
 	public Collection<WidgetType> getWidgetTypes() {
-		List<WidgetType> types = new ArrayList<WidgetType>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, WIDGET_TYPE_CODES_CACHE_NAME, List.class);
-		for (int i = 0; i < codes.size(); i++) {
-			String code = codes.get(i);
-			types.add(this.get(cache, WIDGET_TYPE_CACHE_NAME_PREFIX + code, WidgetType.class));
-		}
-		return types;
+		Map<String, WidgetType> map = super.getObjectMap();
+		return map.values();
 	}
 
 	@Override

@@ -35,7 +35,7 @@ import org.springframework.cache.Cache;
  */
 public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements IConfigManagerCacheWrapper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ConfigManagerCacheWrapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConfigManagerCacheWrapper.class);
 
 	@Override
 	public void initCache(IConfigItemDAO configItemDAO, String version) throws ApsSystemException {
@@ -47,13 +47,13 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 			Map<String, String> params = this.parseParams(xmlParams);
 			this.insertObjectsOnCache(cache, configItems, params);
 		} catch (ApsSystemException t) {
-			_logger.error("Error loading configuration params", t);
+			logger.error("Error loading configuration params", t);
 			throw new ApsSystemException("Error loading configuration params", t);
 		}
 	}
 
 	protected Map<String, String> parseParams(String xmlParams) throws ApsSystemException {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		Digester dig = new Digester();
 		Rule rule = new MapSupportRule("name");
 		dig.addRule("*/Param", rule);
@@ -61,7 +61,7 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 		try {
 			dig.parse(new StringReader(xmlParams));
 		} catch (Exception e) {
-			_logger.error("Error detected while parsing the \"params\" item in the \"sysconfig\" table: verify the \"sysconfig\" table", e);
+			logger.error("Error detected while parsing the \"params\" item in the \"sysconfig\" table: verify the \"sysconfig\" table", e);
 			throw new ApsSystemException(
 					"Error detected while parsing the \"params\" item in the \"sysconfig\" table:"
 					+ " verify the \"sysconfig\" table", e);
@@ -77,8 +77,7 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 	private void releaseCachedObjects(Cache cache, String codesName, String codePrefix) {
 		List<String> codes = (List<String>) this.get(cache, codesName, List.class);
 		if (null != codes) {
-			for (int i = 0; i < codes.size(); i++) {
-				String code = codes.get(i);
+			for (String code : codes) {
 				cache.evict(codePrefix + code);
 			}
 			cache.evict(codesName);
@@ -91,7 +90,7 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
 	}
 
 	private void insertObjectsOnCache(Cache cache, Map<String, String> map, String codesCacheName, String codeCachePrefix) {
-		List<String> codes = new ArrayList<String>();
+		List<String> codes = new ArrayList<>();
 		Iterator<String> iterator = map.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = iterator.next();

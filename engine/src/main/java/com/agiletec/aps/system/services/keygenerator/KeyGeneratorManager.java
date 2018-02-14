@@ -15,69 +15,72 @@ package com.agiletec.aps.system.services.keygenerator;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.cache.IKeyGeneratorManagerCacheWrapper;
+import com.agiletec.aps.system.services.keygenerator.cache.IKeyGeneratorManagerCacheWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Servizio gestore di sequenze univoche.
+ *
  * @author S.Didaci - E.Santoboni
  */
 public class KeyGeneratorManager extends AbstractService implements IKeyGeneratorManager {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final String UNIQUE_KEY_LOCK = "UNIQUE_KEY_LOCK";
+	private final String UNIQUE_KEY_LOCK = "UNIQUE_KEY_LOCK";
 
-    private IKeyGeneratorDAO keyGeneratorDao;
+	private IKeyGeneratorDAO keyGeneratorDao;
 
-    private IKeyGeneratorManagerCacheWrapper cacheWrapper;
+	private IKeyGeneratorManagerCacheWrapper cacheWrapper;
 
-    protected IKeyGeneratorDAO getKeyGeneratorDAO() {
-        return keyGeneratorDao;
-    }
+	@Override
+	public void init() throws Exception {
+		this.getCacheWrapper().initCache(this.getKeyGeneratorDAO());
+		logger.debug("{} ready. : last loaded key {}", this.getClass().getName(), this.getCacheWrapper().getUniqueKeyCurrentValue());
+	}
 
-    public void setKeyGeneratorDAO(IKeyGeneratorDAO generatorDAO) {
-        this.keyGeneratorDao = generatorDAO;
-    }
+	/**
+	 * Restituisce la chiave univoca corrente.
+	 *
+	 * @return La chiave univoca corrente.
+	 * @throws ApsSystemException In caso di errore nell'aggiornamento della
+	 * chiave corrente.
+	 */
+	@Override
+	public int getUniqueKeyCurrentValue() throws ApsSystemException {
+		int key;
+		synchronized (UNIQUE_KEY_LOCK) {
+			key = this.getCacheWrapper().getUniqueKeyCurrentValue() + 1;
+		}
+		this.updateKey(key);
+		return key;
+	}
 
-    protected IKeyGeneratorManagerCacheWrapper getCacheWrapper() {
-        return cacheWrapper;
-    }
+	private void updateKey(int val) throws ApsSystemException {
+		try {
+			this.getKeyGeneratorDAO().updateKey(val);
+			this.cacheWrapper.updateCurrentKey(val);
+		} catch (Throwable t) {
+			logger.error("Error updating the unique key", t);
+			throw new ApsSystemException("Error updating the unique key", t);
+		}
+	}
 
-    public void setCacheWrapper(IKeyGeneratorManagerCacheWrapper cacheWrapper) {
-        this.cacheWrapper = cacheWrapper;
-    }
+	protected IKeyGeneratorDAO getKeyGeneratorDAO() {
+		return keyGeneratorDao;
+	}
 
-    @Override
-    public void init() throws Exception {
-        this.getCacheWrapper().initCache(this.getKeyGeneratorDAO());
-        logger.debug("{} ready. : last loaded key {}", this.getClass().getName(), this.getCacheWrapper().getUniqueKeyCurrentValue());
-    }
+	public void setKeyGeneratorDAO(IKeyGeneratorDAO generatorDAO) {
+		this.keyGeneratorDao = generatorDAO;
+	}
 
-    /**
-     * Restituisce la chiave univoca corrente.
-     * @return La chiave univoca corrente.
-     * @throws ApsSystemException In caso di errore 
-     * nell'aggiornamento della chiave corrente.
-     */
-    public int getUniqueKeyCurrentValue() throws ApsSystemException {
-        int key;
-        synchronized (UNIQUE_KEY_LOCK) {
-            key = this.getCacheWrapper().getUniqueKeyCurrentValue() + 1;
-        }
-        this.updateKey(key);
-        return key;
-    }
+	protected IKeyGeneratorManagerCacheWrapper getCacheWrapper() {
+		return cacheWrapper;
+	}
 
-    private void updateKey(int val) throws ApsSystemException {
-        try {
-            this.getKeyGeneratorDAO().updateKey(val);
-            this.cacheWrapper.updateCurrentKey(val);
-        } catch (Throwable t) {
-            logger.error("Error updating the unique key", t);
-            throw new ApsSystemException("Error updating the unique key", t);
-        }
-    }
+	public void setCacheWrapper(IKeyGeneratorManagerCacheWrapper cacheWrapper) {
+		this.cacheWrapper = cacheWrapper;
+	}
 
 }

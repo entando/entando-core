@@ -16,14 +16,12 @@ package org.entando.entando.aps.system.services.dataobjectmapper.cache;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPageManager;
 
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-
 /**
  * @author E.Santoboni
  */
 public interface IDataObjectMapperCacheWrapper {
 
-	public static final String OBJECT_MAPPER_CACHE_NAME = ICacheInfoManager.DEFAULT_CACHE_NAME;
+	public static final String OBJECT_MAPPER_CACHE_NAME = "Entando_DataObjectPageMapperManager";
 	public static final String OBJECT_MAPPER_CACHE_KEY = "DataObjectMapper_mapper";
 
 	public void initCache(IPageManager pageManager) throws ApsSystemException;

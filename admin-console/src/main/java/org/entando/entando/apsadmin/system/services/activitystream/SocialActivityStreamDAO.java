@@ -36,7 +36,31 @@ import org.slf4j.LoggerFactory;
  */
 public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActivityStreamDAO {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(SocialActivityStreamDAO.class);
+	private static final Logger logger =  LoggerFactory.getLogger(SocialActivityStreamDAO.class);
+	
+	private static final String ADD_ACTION_LIKE_RECORD
+			= "INSERT INTO actionloglikerecords ( recordid, username, likedate) VALUES ( ? , ? , ? )";
+	
+	private static final String DELETE_LOG_LIKE_RECORDS
+			= "DELETE from actionloglikerecords where recordid = ? ";
+
+	private static final String DELETE_LOG_LIKE_RECORD
+			= DELETE_LOG_LIKE_RECORDS + "AND username = ? ";
+
+	private static final String GET_ACTION_LIKE_RECORDS
+			= "SELECT username from actionloglikerecords where recordid = ? ";
+	
+	private static final String ADD_ACTION_COMMENT_RECORD
+			= "INSERT INTO actionlogcommentrecords (id, recordid, username, commenttext, commentdate) VALUES ( ? , ? , ? , ? , ? )";
+	
+	private static final String DELETE_ACTION_COMMENT_RECORD
+			= "DELETE from actionlogcommentrecords where id = ?";
+	
+	private static final String DELETE_ACTION_COMMENT_RECORDS_BY_ID
+			= "DELETE from actionlogcommentrecords where recordid = ?";
+	
+	private static final String GET_ACTION_COMMENT_RECORDS
+			= "SELECT id, username, commenttext, commentdate FROM actionlogcommentrecords WHERE recordid = ? ORDER BY commentdate ASC";
 	
 	@Override
 	public void editActionLikeRecord(int id, String username, boolean add) {
@@ -64,7 +88,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on insert actionlogger like record",  t);
+			logger.error("Error on insert actionlogger like record",  t);
 			throw new RuntimeException("Error on insert actionlogger like record", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -85,7 +109,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on delete like record: {}", id, t);
+			logger.error("Error on delete like record: {}", id, t);
 			throw new RuntimeException("Error on delete like record: " + id, t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -99,7 +123,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 			stat.setInt(1, id);
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error on delete record: {}", id, t);
+			logger.error("Error on delete record: {}", id, t);
 			throw new RuntimeException("Error on delete record: " + id, t);
 		} finally {
 			closeDaoResources(null, stat);
@@ -123,7 +147,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 				infos.add(asli);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while loading activity stream like records",  t);
+			logger.error("Error while loading activity stream like records",  t);
 			throw new RuntimeException("Error while loading activity stream like records", t);
 		} finally {
 			closeDaoResources(result, stat, conn);
@@ -152,7 +176,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 				comments.add(comment);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while loading activity stream comment records",  t);
+			logger.error("Error while loading activity stream comment records",  t);
 			throw new RuntimeException("Error while loading activity stream comment records", t);
 		} finally {
 			closeDaoResources(result, stat, conn);
@@ -178,7 +202,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on insert actionlogger comment record",  t);
+			logger.error("Error on insert actionlogger comment record",  t);
 			throw new RuntimeException("Error on insert actionlogger comment record", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -197,7 +221,7 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on delete social records {}", streamId, t);
+			logger.error("Error on delete social records {}", streamId, t);
 			throw new RuntimeException("Error on delete social records: " + streamId, t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -217,35 +241,11 @@ public class SocialActivityStreamDAO extends AbstractDAO implements ISocialActiv
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on delete comment record {}", id, t);
+			logger.error("Error on delete comment record {}", id, t);
 			throw new RuntimeException("Error on delete comment record: " + id, t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-	
-	private static final String ADD_ACTION_LIKE_RECORD
-			= "INSERT INTO actionloglikerecords ( recordid, username, likedate) VALUES ( ? , ? , ? )";
-	
-	private static final String DELETE_LOG_LIKE_RECORDS
-			= "DELETE from actionloglikerecords where recordid = ? ";
-
-	private static final String DELETE_LOG_LIKE_RECORD
-			= DELETE_LOG_LIKE_RECORDS + "AND username = ? ";
-
-	private static final String GET_ACTION_LIKE_RECORDS
-			= "SELECT username from actionloglikerecords where recordid = ? ";
-	
-	private static final String ADD_ACTION_COMMENT_RECORD
-			= "INSERT INTO actionlogcommentrecords (id, recordid, username, comment, commentdate) VALUES ( ? , ? , ? , ? , ? )";
-	
-	private static final String DELETE_ACTION_COMMENT_RECORD
-			= "DELETE from actionlogcommentrecords where id = ?";
-	
-	private static final String DELETE_ACTION_COMMENT_RECORDS_BY_ID
-			= "DELETE from actionlogcommentrecords where recordid = ?";
-	
-	private static final String GET_ACTION_COMMENT_RECORDS
-			= "SELECT id, username, comment, commentdate FROM actionlogcommentrecords WHERE recordid = ? ORDER BY commentdate ASC";
 	
 }

@@ -62,4 +62,6 @@ public interface IURLManager {
 	
 	public String getApplicationBaseURL(HttpServletRequest request) throws ApsSystemException;
 	
+	public static final String ENCODING_CHARSET = "UTF-8";
+	
 }

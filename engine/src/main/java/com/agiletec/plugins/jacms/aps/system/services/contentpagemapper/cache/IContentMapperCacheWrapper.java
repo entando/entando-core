@@ -16,14 +16,12 @@ package com.agiletec.plugins.jacms.aps.system.services.contentpagemapper.cache;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPageManager;
 
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-
 /**
  * @author E.Santoboni
  */
 public interface IContentMapperCacheWrapper {
 
-	public static final String CONTENT_MAPPER_CACHE_NAME = ICacheInfoManager.DEFAULT_CACHE_NAME;
+	public static final String CONTENT_MAPPER_CACHE_NAME = "Entando_ContentPageMapperManager";
 	public static final String CONTENT_MAPPER_CACHE_KEY = "ContentPageMapper_mapper";
 
 	public void initCache(IPageManager pageManager) throws ApsSystemException;

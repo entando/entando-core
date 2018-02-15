@@ -14,6 +14,7 @@
 package com.agiletec.aps.system.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,18 @@ public abstract class AbstractGenericCacheWrapper<O extends Object> extends Abst
 			codes.add(key);
 		}
 		cache.put(this.getCodesCacheKey(), codes);
+	}
+
+	protected <O> Map<String, O> getObjectMap() {
+		Map<String, O> map = new HashMap<>();
+		Cache cache = this.getCache();
+		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+		if (null != codes) {
+			for (String code : codes) {
+				map.put(code, (O) this.get(cache, this.getCacheKeyPrefix() + code, Object.class));
+			}
+		}
+		return map;
 	}
 
 	protected void add(String key, O object) {

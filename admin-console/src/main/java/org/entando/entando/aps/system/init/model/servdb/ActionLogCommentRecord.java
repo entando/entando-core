@@ -46,7 +46,7 @@ public class ActionLogCommentRecord implements ExtendedColumnDefinition {
 			canBeNull = false)
 	private String _username;
 	
-	@DatabaseField(columnName = "comment", 
+	@DatabaseField(columnName = "commenttext", 
 			dataType = DataType.LONG_STRING, 
 			canBeNull = false)
 	private String _commentText;
@@ -78,7 +78,7 @@ CREATE TABLE actionlogcommentrecords
   id integer NOT NULL,
   recordid integer NOT NULL,
   username character varying(20) NOT NULL,
-  comment text NOT NULL,	
+  commenttext text NOT NULL,	
   commentdate timestamp without time zone NOT NULL,
   CONSTRAINT actionlogcommentrecords_pkey PRIMARY KEY (id)
   CONSTRAINT actionloglikerec_recid_fkey FOREIGN KEY (recordid)

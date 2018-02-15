@@ -40,7 +40,7 @@ public class LangManagerCacheWrapper extends AbstractGenericCacheWrapper<Lang> i
 			Cache cache = this.getCache();
 			this.releaseCachedObjects(cache);
 			LangDOM langDom = new LangDOM(xmlConfig);
-			Map<String, Lang> langMap = new HashMap<String, Lang>();
+			Map<String, Lang> langMap = new HashMap<>();
 			List<Lang> systemLangs = langDom.getLangs();
 			for (Lang lang : systemLangs) {
 				if (lang.isDefault()) {
@@ -57,7 +57,7 @@ public class LangManagerCacheWrapper extends AbstractGenericCacheWrapper<Lang> i
 
 	@Override
 	public List<Lang> getLangs() {
-		List<Lang> langs = new ArrayList<Lang>();
+		List<Lang> langs = new ArrayList<>();
 		Cache cache = this.getCache();
 		List<String> codes = (List<String>) this.get(cache, LANG_CODES_CACHE_NAME, List.class);
 		if (null != codes) {

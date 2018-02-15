@@ -66,7 +66,7 @@ public class URLManager extends AbstractURLManager {
      * </ul>
      *
      * @param pageUrl L'oggetto contenente le informazioni da tradurre in URL.
-     * @param reqCtx  Il contesto della richiesta.
+     * @param reqCtx Il contesto della richiesta.
      * @return La Stringa contenente l'URL.
      * @see com.agiletec.aps.system.services.url.AbstractURLManager#getURLString(com.agiletec.aps.system.services.url.PageURL,
      * com.agiletec.aps.system.RequestContext)
@@ -98,8 +98,6 @@ public class URLManager extends AbstractURLManager {
                 return encUrl;
             } else {
                 return url;
-
-
             }
         } catch (Throwable t) {
             _logger.error("Error creating url", t);
@@ -112,13 +110,13 @@ public class URLManager extends AbstractURLManager {
      *
      * @param requiredPage The required page.
      * @param requiredLang The required lang.
-     * @param params       A map of params. It can be null.
+     * @param params A map of params. It can be null.
      * @return The url.
      */
     @Override
     public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params) {
         try {
-            return this.createURL(requiredPage, requiredLang, params, true, null);
+            return this.createURL(requiredPage, requiredLang, params, false, null);
         } catch (ApsSystemException ex) {
             throw new RuntimeException(ex);
         }

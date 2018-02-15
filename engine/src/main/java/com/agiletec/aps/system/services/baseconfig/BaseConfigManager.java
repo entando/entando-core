@@ -13,31 +13,27 @@
  */
 package com.agiletec.aps.system.services.baseconfig;
 
-import java.io.StringReader;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.digester.Digester;
-import org.apache.commons.digester.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.BlowfishApsEncrypter;
-import com.agiletec.aps.util.MapSupportRule;
+import com.agiletec.aps.system.services.baseconfig.cache.IConfigManagerCacheWrapper;
 import de.mkammerer.argon2.Argon2Factory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Base64;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 
 /**
  * Servizio di configurazione. Carica da db e rende disponibile la
@@ -53,18 +49,27 @@ import org.entando.entando.aps.util.argon2.Argon2Encrypter;
  */
 public class BaseConfigManager extends AbstractService implements ConfigInterface {
 
-    private static final Logger _logger = LoggerFactory.getLogger(BaseConfigManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseConfigManager.class);
+
+    private Map<String, String> systemParams;
+	
+    private IConfigManagerCacheWrapper cacheWrapper;
+
+    private String configFolder;
+
+    private boolean argon2 = false;
+
+    private IConfigItemDAO configDao;
 
     @Override
     public void init() throws Exception {
-        this.loadConfigItems();
-        this.parseParams();
-        _argon2 = (this.getParam("argon2") != null
+        String version = this.getSystemParams().get(SystemConstants.INIT_PROP_CONFIG_VERSION);
+        this.getCacheWrapper().initCache(this.getConfigDAO(), version);
+        argon2 = (this.getParam("argon2") != null
                 && this.getParam("argon2").equalsIgnoreCase("true"));
-        _logger.debug("{} ready. Initialized {} configuration items and {} parameters", this.getClass().getName(), this._configItems.size(), this._params.size());
         Properties props = this.loadParams();
-        this.validateProps(props);
-        this.saveParamChanges();
+        this.saveParamChanges(props);
+		logger.debug("{} ready. Initialized", this.getClass().getName());
     }
 
     /**
@@ -76,7 +81,7 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
      */
     @Override
     public String getConfigItem(String name) {
-        return (String) this._configItems.get(name);
+        return this.getCacheWrapper().getConfigItem(name);
     }
 
     /**
@@ -89,16 +94,12 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
      */
     @Override
     public void updateConfigItem(String itemName, String config) throws ApsSystemException {
-        String oldParamValue = this.getConfigItem(itemName);
-        this._configItems.put(itemName, config);
-        String version = (String) this._params.get(SystemConstants.INIT_PROP_CONFIG_VERSION);
+        String version = this.getSystemParams().get(SystemConstants.INIT_PROP_CONFIG_VERSION);
         try {
             this.getConfigDAO().updateConfigItem(itemName, config, version);
             this.refresh();
         } catch (Throwable t) {
-            this._configItems.put(itemName, oldParamValue);
-            _logger.error("Error while updating item {}", itemName, t);
-            //ApsSystemUtils.logThrowable(t, this, "updateConfigItem");
+            logger.error("Error while updating item {}", itemName, t);
             throw new ApsSystemException("Error while updating item", t);
         }
     }
@@ -112,72 +113,17 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
      */
     @Override
     public String getParam(String name) {
-        return (String) this._params.get(name);
-    }
-
-    /**
-     * Carica le voci di configurazione da db e le memorizza su un Map.
-     *
-     * @throws ApsSystemException in caso di errori di lettura da db
-     */
-    private void loadConfigItems() throws ApsSystemException {
-        String version = (String) this._params.get(SystemConstants.INIT_PROP_CONFIG_VERSION);
-        try {
-            _configItems = this.getConfigDAO().loadVersionItems(version);
-        } catch (Throwable t) {
-            throw new ApsSystemException("Error while loading items", t);
+        String param = this.getSystemParams().get(name);
+        if (null != param) {
+            return param;
+        } else {
+            return this.getCacheWrapper().getParam(name);
         }
     }
 
-    /**
-     * Esegue il parsing della voce di configurazione "params" per estrarre i
-     * parametri. I parametri sono caricati sul Map passato come argomento. I
-     * parametri corrispondono a tag del tipo:<br>
-     * &lt;Param name="nome_parametro"&gt;valore_parametro&lt;/Param&gt;<br>
-     * qualunque sia la loro posizione relativa nel testo XML.<br>
-     * ATTENZIONE: non viene controllata l'univocità del nome, in caso di
-     * doppioni il precedente valore perso.
-     *
-     * @throws ApsSystemException In caso di errori IO e Sax
-     */
-    private void parseParams() throws ApsSystemException {
-        String xml = this.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
-        Digester dig = new Digester();
-        Rule rule = new MapSupportRule("name");
-        dig.addRule("*/Param", rule);
-        dig.push(this._params);
-        try {
-            dig.parse(new StringReader(xml));
-        } catch (Exception e) {
-            _logger.error("Error detected while parsing the \"params\" item in the \"sysconfig\" table: verify the \"sysconfig\" table", e);
-            //ApsSystemUtils.logThrowable(e, this, "parseParams");
-            throw new ApsSystemException(
-                    "Error detected while parsing the \"params\" item in the \"sysconfig\" table:"
-                    + " verify the \"sysconfig\" table", e);
-        }
-    }
-
-    public void keyGenerate() throws Exception {
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(256);
-        SecretKey secretKey = keyGen.generateKey();
-        this.setKeyString(Base64.getEncoder().encodeToString(secretKey.getEncoded()));
-        System.getProperties().setProperty("key.string.encryption", this.getKeyString());
-        try {
-            Properties props = new Properties();
-            props.setProperty("key.string.encryption", this.getKeyString());
-            File f = new File(this.getConfigFolder() + File.separator + "security.properties");
-            OutputStream out = new FileOutputStream(f);
-            props.store(out, "DO NOT EDIT THIS FILE");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Properties loadParams() {
+    private Properties loadParams() throws IOException {
         Properties props = new Properties();
         InputStream is = null;
-
         // First try loading from the current directory
         try {
             File f = new File(this.getConfigFolder() + File.separator + "security.properties");
@@ -185,110 +131,117 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
         } catch (Exception e) {
             is = null;
         }
-
         try {
             if (is == null) {
                 // Try loading from classpath
-                is = getClass().getResourceAsStream("security.properties");
+                is = this.getClass().getResourceAsStream("security.properties");
             }
-
             // Try loading properties from the file (if found)
             props.load(is);
         } catch (Exception e) {
-            _logger.error("Error getting security.properties");
+			if (null != is) {
+				is.close();
+			}
+            logger.error("Error getting security.properties");
         }
         return props;
     }
-
-    public void saveParamChanges() throws Exception {
-        if (StringUtils.isBlank(_keyString)) {
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(256);
-            SecretKey secretKey = keyGen.generateKey();
-            this.setKeyString(Base64.getEncoder().encodeToString(secretKey.getEncoded()));
-        }
-        System.getProperties().setProperty("key.string.encryption", this.getKeyString());
-        try {
-            Properties props = new Properties();
-            props.setProperty("key.string.encryption", this.getKeyString());
-            props.setProperty("algo.argon2.type", this.getAlgoType());
-            props.setProperty("algo.argon2.hash.length", String.valueOf(this.getHashLen()));
-            props.setProperty("algo.argon2.salt.length", String.valueOf(this.getSaltLen()));
-            props.setProperty("algo.argon2.iterations", String.valueOf(this.getIterations()));
-            props.setProperty("algo.argon2.memory", String.valueOf(this.getMemory()));
-            props.setProperty("algo.argon2.parallelism", String.valueOf(this.getParallelism()));
-            File f = new File(this.getConfigFolder() + File.separator + "security.properties");
-            OutputStream out = new FileOutputStream(f);
-            props.store(out, "DO NOT EDIT THIS FILE");
+	
+	public void saveParamChanges(Properties mainProps) throws Exception {
+		Properties props = new Properties();
+		String keyString = mainProps.getProperty(ALGO_KEY_ENCRYPTION_PARAM_NAME);
+		if (StringUtils.isBlank(keyString)) {
+			KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+			keyGen.init(256);
+			SecretKey secretKey = keyGen.generateKey();
+			keyString = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+		}
+		System.getProperties().setProperty(ALGO_KEY_ENCRYPTION_PARAM_NAME, keyString);
+		props.setProperty(ALGO_KEY_ENCRYPTION_PARAM_NAME, keyString);
+		
+		String algoType = null;
+		try {
+            algoType = Argon2Factory.Argon2Types.valueOf(mainProps.getProperty(ALGO_TYPE_PARAM_NAME)).name();
         } catch (Exception e) {
-            e.printStackTrace();
+            algoType = Argon2Factory.Argon2Types.ARGON2i.name();
+            logger.warn("Value for Argon2 hashType not correctly set; using default value...", e.getMessage());
         }
-    }
-
-    private void validateProps(Properties props) {
+		System.getProperties().setProperty(ALGO_TYPE_PARAM_NAME, algoType);
+		props.setProperty(ALGO_TYPE_PARAM_NAME, algoType);
+		
+		Integer hashLength = null;
         try {
-            this.setAlgoType(Argon2Factory.Argon2Types.valueOf(props.getProperty("algo.argon2.type")).name());
-        } catch (Exception e) {
-            this.setAlgoType(Argon2Factory.Argon2Types.ARGON2i.name());
-            _logger.warn("Value for Argon2 hashType not correctly set; using default value...");
-        }
-        System.getProperties().setProperty("algo.argon2.type", this.getAlgoType());
-
-        try {
-            this.setHashLen(Integer.valueOf(props.getProperty("algo.argon2.hash.length")));
-            if (this.getHashLen() < 4) {
+            hashLength = Integer.valueOf(mainProps.getProperty(ALGO_HASH_LENGTH_PARAM_NAME));
+            if (hashLength < 4) {
                 throw new RuntimeException("Hash length must be greater than 4");
             }
         } catch (Exception e) {
-            this.setHashLen(32);
-            _logger.warn("Value for Argon2 hashLength not correctly set; using default value...", e.getMessage());
+            hashLength = 32;
+            logger.warn("Value for Argon2 hashLength not correctly set; using default value...", e.getMessage());
         }
-        System.getProperties().setProperty("algo.argon2.hash.length", String.valueOf(this.getHashLen()));
-
-        try {
-            this.setSaltLen(Integer.valueOf(props.getProperty("algo.argon2.salt.length")));
-            if (this.getSaltLen() < 8) {
+        System.getProperties().setProperty(ALGO_HASH_LENGTH_PARAM_NAME, String.valueOf(hashLength));
+		props.setProperty(ALGO_HASH_LENGTH_PARAM_NAME, String.valueOf(hashLength));
+		
+		Integer saltLength = null;
+		 try {
+            saltLength = Integer.valueOf(mainProps.getProperty(ALGO_SALT_LENGTH_PARAM_NAME));
+            if (saltLength < 8) {
                 throw new RuntimeException("Salt length must be greater than 8");
             }
         } catch (Exception e) {
-            this.setSaltLen(16);
-            _logger.warn("Value for Argon2 saltLength not correctly set; using default value...", e.getMessage());
+            saltLength = 16;
+            logger.warn("Value for Argon2 saltLength not correctly set; using default value...", e.getMessage());
         }
-        System.getProperties().setProperty("algo.argon2.salt.length", String.valueOf(this.getSaltLen()));
-
-        try {
-            this.setIterations(Integer.valueOf(props.getProperty("algo.argon2.iterations")));
-            if (this.getIterations() < 1) {
+        System.getProperties().setProperty(ALGO_SALT_LENGTH_PARAM_NAME, String.valueOf(saltLength));
+		props.setProperty(ALGO_SALT_LENGTH_PARAM_NAME, String.valueOf(saltLength));
+		
+		Integer iterations = null;
+		try {
+            iterations = Integer.valueOf(mainProps.getProperty(ALGO_ITERATIONS_PARAM_NAME));
+            if (iterations < 1) {
                 throw new RuntimeException("Iterations number must be greater than 1");
             }
         } catch (Exception e) {
-            this.setIterations(4);
-            _logger.warn("Value for Argon2 iterations not correctly set; using default value...", e.getMessage());
+            iterations = 4;
+            logger.warn("Value for Argon2 iterations not correctly set; using default value...", e.getMessage());
         }
-        System.getProperties().setProperty("algo.argon2.iterations", String.valueOf(this.getIterations()));
-
-        try {
-            this.setParallelism(Integer.valueOf(props.getProperty("algo.argon2.parallelism")));
-            if (this.getParallelism() < 1) {
+        System.getProperties().setProperty(ALGO_ITERATIONS_PARAM_NAME, String.valueOf(iterations));
+		props.setProperty(ALGO_ITERATIONS_PARAM_NAME, String.valueOf(iterations));
+		
+		Integer parallelism = null;
+		try {
+            parallelism = Integer.valueOf(mainProps.getProperty(ALGO_PARALLELISM_PARAM_NAME));
+            if (parallelism < 1) {
                 throw new RuntimeException("Parallelism number must be greater than 1");
             }
         } catch (Exception e) {
-            this.setParallelism(4);
-            _logger.warn("Value for Argon2 parallelism not correctly set; using default value...", e.getMessage());
+            parallelism = 4;
+            logger.warn("Value for Argon2 parallelism not correctly set; using default value...", e.getMessage());
         }
-        System.getProperties().setProperty("algo.argon2.parallelism", String.valueOf(this.getParallelism()));
-
-        try {
-            this.setMemory(Integer.valueOf(props.getProperty("algo.argon2.memory")));
-            if (this.getMemory() < 8 * this.getParallelism()) {
+		props.setProperty(ALGO_PARALLELISM_PARAM_NAME, String.valueOf(parallelism));
+		System.getProperties().setProperty(ALGO_PARALLELISM_PARAM_NAME, String.valueOf(parallelism));
+		
+		Integer memory = null;
+		try {
+            memory = Integer.valueOf(mainProps.getProperty(ALGO_MEMORY_PARAM_NAME));
+            if (memory < (8 * parallelism)) {
                 throw new RuntimeException("Memory size must be greater than 8xparallelism");
             }
         } catch (Exception e) {
-            this.setMemory(1 << 12);
-            _logger.warn("Value for Argon2 memory not correctly set; using default value...", e.getMessage());
+            memory = (1 << 16);
+            logger.warn("Value for Argon2 memory not correctly set; using default value...", e.getMessage());
         }
-        System.getProperties().setProperty("algo.argon2.memory", String.valueOf(this.getMemory()));
-    }
+        System.getProperties().setProperty(ALGO_MEMORY_PARAM_NAME, String.valueOf(memory));
+		props.setProperty(ALGO_MEMORY_PARAM_NAME, String.valueOf(memory));
+		
+		try {
+			File f = new File(this.getConfigFolder() + File.separator + "security.properties");
+			OutputStream out = new FileOutputStream(f);
+			props.store(out, "DO NOT EDIT THIS FILE");
+		} catch (Exception e) {
+			throw new RuntimeException("Error saving configuration", e);
+		}
+	}
 
     /**
      * Restituisce il dao in uso al manager.
@@ -296,7 +249,7 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
      * @return Il dao in uso al manager.
      */
     protected IConfigItemDAO getConfigDAO() {
-        return _configDao;
+        return configDao;
     }
 
     /**
@@ -305,119 +258,40 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
      * @param configDao Il dao in uso al manager.
      */
     public void setConfigDAO(IConfigItemDAO configDao) {
-        this._configDao = configDao;
+        this.configDao = configDao;
     }
 
-    /**
-     * Setta la mappa dei parametri di inizializzazione del sistema.
-     *
-     * @param systemParams La mappa dei parametri di inizializzazione.
-     */
+    protected Map<String, String> getSystemParams() {
+        return this.systemParams;
+    }
+
     public void setSystemParams(Map<String, String> systemParams) {
-        this._params = systemParams;
+        this.systemParams = systemParams;
     }
 
-    public String getKeyString() {
-        return _keyString;
+    protected IConfigManagerCacheWrapper getCacheWrapper() {
+        return cacheWrapper;
     }
 
-    public void setKeyString(String _keyString) {
-        this._keyString = _keyString;
-    }
-
-    public String getAlgoType() {
-        return _algoType;
-    }
-
-    public void setAlgoType(String _algoType) {
-        this._algoType = _algoType;
-    }
-
-    public int getHashLen() {
-        return _hashLen;
-    }
-
-    public void setHashLen(int _hashLen) {
-        this._hashLen = _hashLen;
-    }
-
-    public int getSaltLen() {
-        return _saltLen;
-    }
-
-    public void setSaltLen(int _saltLen) {
-        this._saltLen = _saltLen;
-    }
-
-    public int getIterations() {
-        return _iterations;
-    }
-
-    public void setIterations(int _iterations) {
-        this._iterations = _iterations;
-    }
-
-    public int getMemory() {
-        return _memory;
-    }
-
-    public void setMemory(int _memory) {
-        this._memory = _memory;
-    }
-
-    public int getParallelism() {
-        return _parallelism;
-    }
-
-    public void setParallelism(int _parallelism) {
-        this._parallelism = _parallelism;
+    public void setCacheWrapper(IConfigManagerCacheWrapper cacheWrapper) {
+        this.cacheWrapper = cacheWrapper;
     }
 
     @Override
     public boolean isArgon2() {
-        return _argon2;
+        return argon2;
     }
 
-    public void setArgon2(boolean _argon2) {
-        this._argon2 = _argon2;
+    public void setArgon2(boolean argon2) {
+        this.argon2 = argon2;
     }
 
     public String getConfigFolder() {
-        return _configFolder;
+        return configFolder;
     }
 
     public void setConfigFolder(String configFolder) {
-        this._configFolder = configFolder;
+        this.configFolder = configFolder;
     }
-
-    /**
-     * Map contenente tutte le voci di configurazione di una versione.
-     */
-    private Map<String, String> _configItems;
-
-    /**
-     * Map contenente tutti i parametri di configurazione di una versione.
-     */
-    private Map<String, String> _params;
-
-    private String _keyString;
-
-    private String _algoType;
-
-    private int _hashLen;
-
-    private int _saltLen;
-
-    private int _iterations;
-
-    private int _memory;
-
-    private int _parallelism;
-
-    private String _configFolder;
-
-    private boolean _argon2 = false;
-
-    private IConfigItemDAO _configDao;
 
 }

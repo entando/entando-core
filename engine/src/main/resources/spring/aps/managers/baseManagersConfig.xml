@@ -97,6 +97,7 @@
 				<entry key="resourceDiskRootFolder"><jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" /></entry>
 			</map>
 		</property>
+		<property name="securityConfigPath"><value>${algoritm.securityConfiguration.path}</value></property>
 		<property name="configDAO" >
 			<bean class="com.agiletec.aps.system.services.baseconfig.ConfigItemDAO">
 				<property name="dataSource" ref="portDataSource" />

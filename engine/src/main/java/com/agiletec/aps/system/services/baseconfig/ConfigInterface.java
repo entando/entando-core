@@ -29,8 +29,6 @@ public interface ConfigInterface {
 	public static final String ALGO_MEMORY_PARAM_NAME = "algo.argon2.memory";
 	public static final String ALGO_PARALLELISM_PARAM_NAME = "algo.argon2.parallelism";
 
-	public static final String ALGO_CONFIG_PATH = "/WEB-INF/conf/security.properties";
-
 	/**
 	 * Restituisce una voce di configurazione. La voce è un elemento di testo
 	 * che può essere complesso (es. XML). I valori restituiti sono relativi

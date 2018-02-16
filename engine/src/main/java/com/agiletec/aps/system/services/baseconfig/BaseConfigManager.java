@@ -47,6 +47,8 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
 	private Map<String, String> systemParams;
 
+	private String securityConfigPath = null;
+
 	private IConfigManagerCacheWrapper cacheWrapper;
 
 	private boolean argon2 = false;
@@ -117,9 +119,9 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
 	protected Properties extractSecurityConfiguration() throws IOException {
 		Properties props = new Properties();
-		InputStream is = this.getServletContext().getResourceAsStream(ALGO_CONFIG_PATH);
+		InputStream is = this.getServletContext().getResourceAsStream(this.getSecurityConfigPath());
 		if (null == is) {
-			throw new RuntimeException("Null security configuration inside " + ALGO_CONFIG_PATH);
+			throw new RuntimeException("Null security configuration inside " + this.getSecurityConfigPath());
 		}
 		props.load(is);
 		is.close();
@@ -192,6 +194,14 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
 	public void setSystemParams(Map<String, String> systemParams) {
 		this.systemParams = systemParams;
+	}
+
+	protected String getSecurityConfigPath() {
+		return securityConfigPath;
+	}
+
+	public void setSecurityConfigPath(String securityConfigPath) {
+		this.securityConfigPath = securityConfigPath;
 	}
 
 	protected IConfigManagerCacheWrapper getCacheWrapper() {

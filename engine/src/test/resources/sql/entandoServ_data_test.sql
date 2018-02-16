@@ -55,14 +55,17 @@ INSERT INTO authusergrouprole (username, groupname, rolename) VALUES ('admin', '
 
 
 
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('supervisorCoach', 'X8AlnouNph3GzJ9rqWORxg==', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('mainEditor', '7eDt/vDRr2+KQW1HTS1T+g==', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('pageManagerCoach', 'ef8GX0ikX+3iPL2bo5LbeYZgJCqJme8w', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('supervisorCustomers', 'X8AlnouNph1lGlPlVxfcga7Fg5v0b+f0', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('pageManagerCustomers', 'ef8GX0ikX+2jgLLNXzQFw5Va6o8fhB9I', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('editorCustomers', 'bRpYPITxXz83hR9QUlj5bQ==', '2008-09-25 00:00:00', '2009-07-02 00:00:00', NULL, 1);
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('editorCoach', '3eOZaZ8p4ZHRvbbYW2LORQ==', '2008-09-25 00:00:00', '2009-07-02 00:00:00', NULL, 1);
-INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('admin', 'ZVzjxTZrEa4=', '2008-09-25 00:00:00', '2009-12-16 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('supervisorCoach', 'supervisorCoach', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('mainEditor', 'mainEditor', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('pageManagerCoach', 'pageManagerCoach', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('supervisorCustomers', 'supervisorCustomers', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('pageManagerCustomers', 'pageManagerCustomers', '2008-09-25 00:00:00', '2009-01-30 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('editorCustomers', 'editorCustomers', '2008-09-25 00:00:00', '2009-07-02 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('editorCoach', 'editorCoach', '2008-09-25 00:00:00', '2009-07-02 00:00:00', NULL, 1);
+INSERT INTO authusers (username, passwd, registrationdate, lastaccess, lastpasswordchange, active) VALUES ('admin', 'admin', '2008-09-25 00:00:00', '2009-12-16 00:00:00', NULL, 1);
+
+
+
 
 INSERT INTO authuserprofiles (username, profiletype, profilexml, publicprofile) VALUES ('editorCustomers', 'PFL', '<?xml version="1.0" encoding="UTF-8"?>
 <profile id="editorCustomers" typecode="PFL" typedescr="Default user profile"><descr /><groups /><categories />

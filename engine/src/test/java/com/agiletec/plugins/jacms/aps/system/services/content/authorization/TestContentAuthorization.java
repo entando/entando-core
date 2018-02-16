@@ -35,7 +35,7 @@ import java.util.List;
  * @author E.Santoboni
  */
 public class TestContentAuthorization extends BaseTestCase {
-
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -53,17 +53,17 @@ public class TestContentAuthorization extends BaseTestCase {
                     this._userManager.updateUser(cur);
                 }
             } catch (Exception e) {
-
+                
             }
         }
     }
-
+    
     public void testCheckAdminUser() throws Throwable {
         UserDetails adminUser = this.getUser("admin");
+        assertNotNull(adminUser);
         assertEquals("admin", adminUser.getUsername());
-        assertEquals("admin", adminUser.getPassword());
         assertEquals(1, adminUser.getAuthorizations().size());
-
+        
         IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
         Content content = contentManager.loadContent("ART111", true);
         boolean check = this._authorizationManager.isAuth(adminUser, content);
@@ -75,13 +75,13 @@ public class TestContentAuthorization extends BaseTestCase {
         check = this._authorizationManager.isAuth(adminUser, content);
         assertTrue(check);
     }
-
+    
     public void testCheckCustomerUser() throws Throwable {
         UserDetails extractedUser = this.getUser("pageManagerCustomers");
+        assertNotNull(extractedUser);
         assertEquals("pageManagerCustomers", extractedUser.getUsername());
-        assertEquals("pageManagerCustomers", extractedUser.getPassword());
         assertEquals(1, extractedUser.getAuthorizations().size());
-
+        
         IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
         Content content = contentManager.loadContent("ART111", true);
         boolean checkContent = this._authorizationManager.isAuth(extractedUser, content);
@@ -107,14 +107,14 @@ public class TestContentAuthorization extends BaseTestCase {
             assertEquals(username, extractedUser.getUsername());
             assertNotNull(extractedUser);
             assertEquals(1, extractedUser.getAuthorizations().size());
-
+            
             Group group = this._groupManager.getGroup("coach");
             boolean checkGroup = this._authorizationManager.isAuth(extractedUser, group);
             assertFalse(checkGroup);
             group = this._groupManager.getGroup(Group.FREE_GROUP_NAME);
             checkGroup = this._authorizationManager.isAuth(extractedUser, group);
             assertTrue(checkGroup);
-
+            
             boolean checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, Permission.SUPERVISOR);
             assertFalse(checkPermission);
             checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, Permission.SUPERUSER);
@@ -123,7 +123,7 @@ public class TestContentAuthorization extends BaseTestCase {
             assertTrue(checkPermission);
             checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, "editContents");
             assertTrue(checkPermission);
-
+            
             IContentManager contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
             Content content = contentManager.loadContent("ART111", true);
             boolean checkContent = this._authorizationManager.isAuth(extractedUser, content);
@@ -144,7 +144,7 @@ public class TestContentAuthorization extends BaseTestCase {
             assertNull(extractedUser);
         }
     }
-
+    
     private void addUserForTest(String username, String password) throws Throwable {
         MockUser user = new MockUser();
         user.setUsername(username);
@@ -159,7 +159,7 @@ public class TestContentAuthorization extends BaseTestCase {
         this._userManager.addUser(user);
         this._authorizationManager.addUserAuthorization(username, auth);
     }
-
+    
     private void init() throws Exception {
         try {
             this._authorizationManager = (IAuthorizationManager) this.getService(SystemConstants.AUTHORIZATION_SERVICE);
@@ -170,10 +170,10 @@ public class TestContentAuthorization extends BaseTestCase {
             throw new Exception(e);
         }
     }
-
+    
     private IAuthorizationManager _authorizationManager;
     private IUserManager _userManager = null;
     private RoleManager _roleManager = null;
     private GroupManager _groupManager = null;
-
+    
 }

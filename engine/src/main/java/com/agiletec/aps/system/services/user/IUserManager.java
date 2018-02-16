@@ -132,4 +132,6 @@ public interface IUserManager {
 
     public String encrypt(String text) throws ApsSystemException;
 
+    public boolean isArgon2Encrypted(String encrypted);
+
 }

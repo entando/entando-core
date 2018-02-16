@@ -33,7 +33,7 @@ import java.util.List;
  * @author E.Santoboni
  */
 public class TestAuthorizationManager extends BaseTestCase {
-
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -54,11 +54,11 @@ public class TestAuthorizationManager extends BaseTestCase {
                     this._userManager.updateUser(cur);
                 }
             } catch (Exception e) {
-
+                
             }
         }
     }
-
+    
     public void testIsAuthOnGroupAndPermission_1() throws Throwable {
         String username = "pageManagerCoach";
         UserDetails user = this._authenticationProvider.getUser(username);
@@ -69,7 +69,7 @@ public class TestAuthorizationManager extends BaseTestCase {
         isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, "coach", Permission.MANAGE_PAGES, false);
         assertTrue(isAuth);
     }
-
+    
     public void testIsAuthOnGroupAndPermission_2() throws Throwable {
         String username = "mainEditor";
         UserDetails user = this._authenticationProvider.getUser(username);
@@ -82,44 +82,44 @@ public class TestAuthorizationManager extends BaseTestCase {
         isAuth = this._authorizationManager.isAuthOnGroupAndPermission(user, "coach", Permission.CONTENT_EDITOR, true);
         assertTrue(isAuth);
     }
-
+    
     public void testAuthoritiesByGroup_1() throws Throwable {
         String username = "pageManagerCoach";
         UserDetails user = this._authenticationProvider.getUser(username);
         List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByGroup(user, "coach");
         assertNotNull(autorities);
         assertEquals(1, autorities.size());
-
+        
         autorities = this._authorizationManager.getAuthoritiesByGroup(user, "wrong_group");
         assertNull(autorities);
     }
-
+    
     public void testAuthoritiesByGroup_2() throws Throwable {
         String username = "admin";
         UserDetails user = this._authenticationProvider.getUser(username);
         List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByGroup(user, Group.ADMINS_GROUP_NAME);
         assertNotNull(autorities);
         assertEquals(1, autorities.size());
-
+        
         autorities = this._authorizationManager.getAuthoritiesByGroup(user, "coach");
         assertNotNull(autorities);
         assertEquals(1, autorities.size());
-
+        
         autorities = this._authorizationManager.getAuthoritiesByGroup(user, "wrong_group");
         assertNull(autorities);
     }
-
+    
     public void testAuthoritiesByRole_1() throws Throwable {
         String username = "pageManagerCoach";
         UserDetails user = this._authenticationProvider.getUser(username);
         List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByRole(user, "pageManager");
         assertNotNull(autorities);
         assertEquals(2, autorities.size());
-
+        
         autorities = this._authorizationManager.getAuthoritiesByRole(user, "wrong_role");
         assertNull(autorities);
     }
-
+    
     public void testAuthoritiesByRole_2() throws Throwable {
         int allGroupSize = this._groupManager.getGroups().size();
         String username = "admin";
@@ -127,31 +127,31 @@ public class TestAuthorizationManager extends BaseTestCase {
         List<IApsAuthority> autorities = this._authorizationManager.getAuthoritiesByRole(user, "admin");
         assertNotNull(autorities);
         assertEquals(allGroupSize, autorities.size());
-
+        
         autorities = this._authorizationManager.getAuthoritiesByRole(user, "pageManager");
         assertNotNull(autorities);
         assertEquals(allGroupSize, autorities.size());
-
+        
         autorities = this._authorizationManager.getAuthoritiesByRole(user, "wrong_role");
         assertNull(autorities);
     }
-
+    
     public void testGroupsByPermission_1() throws Throwable {
         String username = "pageManagerCoach";
         UserDetails user = this._authenticationProvider.getUser(username);
         List<Group> autorities = this._authorizationManager.getGroupsByPermission(user, Permission.MANAGE_PAGES);
         assertNotNull(autorities);
         assertEquals(2, autorities.size());
-
+        
         autorities = this._authorizationManager.getGroupsByPermission(user, Permission.SUPERUSER);
         assertNotNull(autorities);
         assertTrue(autorities.isEmpty());
-
+        
         autorities = this._authorizationManager.getGroupsByPermission(user, "wrong_permission");
         assertNotNull(autorities);
         assertTrue(autorities.isEmpty());
     }
-
+    
     public void testGroupsByPermission_2() throws Throwable {
         int allGroupSize = this._groupManager.getGroups().size();
         String username = "admin";
@@ -159,22 +159,22 @@ public class TestAuthorizationManager extends BaseTestCase {
         List<Group> autorities = this._authorizationManager.getGroupsByPermission(user, Permission.MANAGE_PAGES);
         assertNotNull(autorities);
         assertEquals(allGroupSize, autorities.size());
-
+        
         autorities = this._authorizationManager.getGroupsByPermission(user, Permission.SUPERUSER);
         assertNotNull(autorities);
         assertEquals(allGroupSize, autorities.size());
-
+        
         autorities = this._authorizationManager.getGroupsByPermission(user, "wrong_permission");
         assertNotNull(autorities);
         assertEquals(allGroupSize, autorities.size());
     }
-
+    
     public void testCheckAdminUser() throws Throwable {
         UserDetails adminUser = this._authenticationProvider.getUser("admin", "admin");//nel database di test, username e password sono uguali
+        assertNotNull(adminUser);
         assertEquals("admin", adminUser.getUsername());
-        assertEquals("admin", adminUser.getPassword());
         assertEquals(1, adminUser.getAuthorizations().size());
-
+        
         List<Group> groups = this._groupManager.getGroups();
         for (int i = 0; i < groups.size(); i++) {
             Group group = groups.get(i);
@@ -183,7 +183,7 @@ public class TestAuthorizationManager extends BaseTestCase {
             check = this._authorizationManager.isAuthOnGroup(adminUser, group.getName());
             assertTrue(check);
         }
-
+        
         List<Permission> permissions = new ArrayList<Permission>(this._roleManager.getPermissions());
         for (int i = 0; i < permissions.size(); i++) {
             Permission perm = permissions.get(i);
@@ -193,13 +193,13 @@ public class TestAuthorizationManager extends BaseTestCase {
             assertTrue(check);
         }
     }
-
+    
     public void testCheckCustomerUser() throws Throwable {
         UserDetails extractedUser = this._authenticationProvider.getUser("pageManagerCustomers", "pageManagerCustomers");
+        assertNotNull(extractedUser);
         assertEquals("pageManagerCustomers", extractedUser.getUsername());
-        assertEquals("pageManagerCustomers", extractedUser.getPassword());
         assertEquals(1, extractedUser.getAuthorizations().size());
-
+        
         Group group = this._groupManager.getGroup("coach");
         boolean checkGroup = this._authorizationManager.isAuth(extractedUser, group);
         assertFalse(checkGroup);
@@ -209,7 +209,7 @@ public class TestAuthorizationManager extends BaseTestCase {
         group = this._groupManager.getGroup("customers");
         checkGroup = this._authorizationManager.isAuth(extractedUser, group);
         assertTrue(checkGroup);
-
+        
         boolean checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, Permission.CONTENT_SUPERVISOR);
         assertFalse(checkPermission);
         checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, Permission.SUPERUSER);
@@ -221,7 +221,7 @@ public class TestAuthorizationManager extends BaseTestCase {
         checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, Permission.MANAGE_PAGES);
         assertTrue(checkPermission);
     }
-
+    
     public void testCheckNewUser() throws Throwable {
         String username = "UserForTest";
         String password = "PasswordForTest";
@@ -232,14 +232,14 @@ public class TestAuthorizationManager extends BaseTestCase {
             assertEquals(username, extractedUser.getUsername());
             assertNotNull(extractedUser);
             assertEquals(1, extractedUser.getAuthorizations().size());
-
+            
             Group group = this._groupManager.getGroup("coach");
             boolean checkGroup = this._authorizationManager.isAuth(extractedUser, group);
             assertFalse(checkGroup);
             group = this._groupManager.getGroup(Group.FREE_GROUP_NAME);
             checkGroup = this._authorizationManager.isAuth(extractedUser, group);
             assertTrue(checkGroup);
-
+            
             boolean checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, Permission.CONTENT_SUPERVISOR);
             assertFalse(checkPermission);
             checkPermission = this._authorizationManager.isAuthOnPermission(extractedUser, Permission.SUPERUSER);
@@ -258,7 +258,7 @@ public class TestAuthorizationManager extends BaseTestCase {
             assertNull(extractedUser);
         }
     }
-
+    
     public void testUsersByAutority_1() throws Throwable {
         List<String> usernames = this._authorizationManager.getUsersByGroup("coach", false);
         assertEquals(3, usernames.size());
@@ -269,7 +269,7 @@ public class TestAuthorizationManager extends BaseTestCase {
         usernames = this._authorizationManager.getUsersByGroup("customers", true);
         assertEquals(8, usernames.size());
     }
-
+    
     public void testUsersByAutority_2() throws Throwable {
         List<String> usernames = this._authorizationManager.getUsersByRole("pageManager", false);
         assertEquals(2, usernames.size());
@@ -280,7 +280,7 @@ public class TestAuthorizationManager extends BaseTestCase {
         usernames = this._authorizationManager.getUsersByRole("supervisor", true);
         assertEquals(3, usernames.size());
     }
-
+    
     public void testUsersByAutority_3() throws Throwable {
         List<String> usernames = this._authorizationManager.getUsersByAuthorities("coach", null, false);
         assertEquals(3, usernames.size());
@@ -290,18 +290,18 @@ public class TestAuthorizationManager extends BaseTestCase {
         assertEquals(6, usernames.size());
         usernames = this._authorizationManager.getUsersByAuthorities("customers", null, true);
         assertEquals(8, usernames.size());
-
+        
         usernames = this._authorizationManager.getUsersByAuthorities("coach", "pageManager", false);
         assertEquals(1, usernames.size());
         usernames = this._authorizationManager.getUsersByAuthorities("coach", "pageManager", true);
         assertEquals(2, usernames.size());
-
+        
         usernames = this._authorizationManager.getUsersByAuthorities("helpdesk", "editor", false);
         assertEquals(0, usernames.size());
         usernames = this._authorizationManager.getUsersByAuthorities("helpdesk", "pageManager", true);
         assertEquals(1, usernames.size());
     }
-
+    
     public void testUpdateAuthorization_1() throws Throwable {
         String username = "UserForTest";
         String password = "PasswordForTest";
@@ -315,7 +315,7 @@ public class TestAuthorizationManager extends BaseTestCase {
             extractedUser = this._authenticationProvider.getUser(username, password);
             List<Authorization> authorizations = this._authorizationManager.getUserAuthorizations(username);
             assertEquals(1, authorizations.size());
-
+            
             this._authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
             authorizations = this._authorizationManager.getUserAuthorizations(username);
             assertEquals(2, authorizations.size());
@@ -329,11 +329,11 @@ public class TestAuthorizationManager extends BaseTestCase {
             this._authorizationManager.addUserAuthorization(username, wrongGroupName, null);
             authorizations = this._authorizationManager.getUserAuthorizations(username);
             assertEquals(2, authorizations.size());
-
+            
             this._authorizationManager.addUserAuthorization(username, null, "admin");
             authorizations = this._authorizationManager.getUserAuthorizations(username);
             assertEquals(3, authorizations.size());
-
+            
             this._authorizationManager.addUserAuthorization(username, "coach", null);
             authorizations = this._authorizationManager.getUserAuthorizations(username);
             assertEquals(4, authorizations.size());
@@ -342,7 +342,7 @@ public class TestAuthorizationManager extends BaseTestCase {
             this._authorizationManager.addUserAuthorization(username, "coach", null);
             authorizations = this._authorizationManager.getUserAuthorizations(username);
             assertEquals(4, authorizations.size());
-
+            
         } catch (Throwable t) {
             throw t;
         } finally {
@@ -353,7 +353,7 @@ public class TestAuthorizationManager extends BaseTestCase {
             assertNull(extractedUser);
         }
     }
-
+    
     private void init() throws Exception {
         try {
             this._authenticationProvider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
@@ -365,7 +365,7 @@ public class TestAuthorizationManager extends BaseTestCase {
             throw new Exception(e);
         }
     }
-
+    
     private void addUserForTest(String username, String password) throws Throwable {
         MockUser user = new MockUser();
         user.setUsername(username);
@@ -380,11 +380,11 @@ public class TestAuthorizationManager extends BaseTestCase {
         this._userManager.addUser(user);
         this._authorizationManager.addUserAuthorization(username, auth);
     }
-
+    
     private IAuthorizationManager _authorizationManager;
     private IAuthenticationProviderManager _authenticationProvider;
     private IUserManager _userManager = null;
     private RoleManager _roleManager = null;
     private GroupManager _groupManager = null;
-
+    
 }

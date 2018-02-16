@@ -28,6 +28,7 @@ import com.agiletec.aps.util.DefaultApsEncrypter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 
 /**
@@ -41,31 +42,15 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
 
     @Override
     public void init() throws Exception {
-        User admin = (User) this.getUser("admin");
-        if (admin.isDisabled()) {
-            String pwd = admin.getPassword();
-            pwd = this.getUserDAO().getEncrypter().encrypt(pwd);
-            admin.setPassword(pwd);
-            admin.setDisabled(false);
-            this.getUserDAO().updateUser(admin);
+        UserDetails admin = this.getUser("admin");
+        if (admin != null && !this.isArgon2Encrypted(admin.getPassword())) {
+            this.changeUserPasswordInArgon2(admin);
         }
         if (this.getUserDAO().getEncrypter() instanceof Argon2Encrypter
                 && !this.getConfigManager().isArgon2()) {
             List<UserDetails> users = this.getUserDAO().loadUsers();
             for (UserDetails user : users) {
-                User cur = (User) user;
-                String pwd = cur.getPassword();
-                if (!pwd.contains("argon2")) {
-                    try {
-                        pwd = DefaultApsEncrypter.decrypt(pwd);
-                    } catch (Exception e) {
-                        _logger.warn("Plain text password for user {}", cur.getUsername());
-                        pwd = cur.getPassword();
-                    }
-                    pwd = this.encrypt(pwd);
-                    cur.setPassword(pwd);
-                    this.getUserDAO().updateUser(cur);
-                }
+                this.changeUserPasswordInArgon2(user);
             }
             Map<String, String> newParam = new HashMap<>();
             newParam.put("argon2", "true");
@@ -285,6 +270,32 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
             value = defaultValue;
         }
         return value;
+    }
+
+    private void changeUserPasswordInArgon2(UserDetails user) throws ApsSystemException {
+        String pwd = user.getPassword();
+        if (!this.isArgon2Encrypted(pwd)) {
+            try {
+                pwd = DefaultApsEncrypter.decrypt(pwd);
+            } catch (Exception e) {
+                _logger.warn("Plain text password for user {}", user.getUsername());
+                pwd = user.getPassword();
+            }
+            this.changePassword(user.getUsername(), pwd);
+        }
+    }
+
+    @Override
+    public boolean isArgon2Encrypted(String encrypted) {
+        if (StringUtils.isBlank(encrypted)) {
+            return false;
+        }
+        if (encrypted.contains("$argon2") && encrypted.contains("$v=")
+                && encrypted.contains("$m=") && encrypted.contains(",t=")
+                && encrypted.contains(",p=")) {
+            return true;
+        }
+        return false;
     }
 
     /**

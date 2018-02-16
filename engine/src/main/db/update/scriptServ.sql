@@ -55,6 +55,8 @@ CREATE TABLE dataobjectmodels
   CONSTRAINT dataobjectmodels_pkey PRIMARY KEY (modelid )
 );
 
+ALTER TABLE actionlogcommentrecords RENAME comment TO commenttext;
+
 -- script for storing encrypted paswords
 
 ALTER TABLE authusers

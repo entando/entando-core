@@ -97,6 +97,7 @@
 				<entry key="resourceDiskRootFolder"><jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" /></entry>
 			</map>
 		</property>
+		<property name="securityConfigPath"><value>${algorithm.securityConfiguration.path}</value></property>
 		<property name="configDAO" >
 			<bean class="com.agiletec.aps.system.services.baseconfig.ConfigItemDAO">
 				<property name="dataSource" ref="portDataSource" />
@@ -147,13 +148,13 @@
 		</property>
 	</bean>
 
-	<bean id="UserDAO" class="com.agiletec.aps.system.services.user.UserDAO">
-		<property name="dataSource" ref="servDataSource" />
-		<property name="encrypter">
-			<bean class="com.agiletec.aps.util.DefaultApsEncrypter"></bean>
-		</property>
-		<property name="passwordPlainTextAllowed"><value>${password.plainText.allowed}</value></property>
-	</bean>
+    <bean id="UserDAO" class="com.agiletec.aps.system.services.user.UserDAO">
+        <property name="dataSource" ref="servDataSource" />
+        <property name="encrypter">
+            <bean class="org.entando.entando.aps.util.argon2.Argon2Encrypter">
+            </bean>
+        </property>
+    </bean>
 
 	<bean id="UserManager" class="com.agiletec.aps.system.services.user.UserManager"
 			parent="abstractService" >
@@ -176,6 +177,7 @@
 			parent="abstractService" >
 		<property name="userManager" ref="UserManager" />
 		<property name="authorizationManager" ref="AuthorizationManager" />
+    <property name="tokenManager" ref="OAuth2TokenManager" />
 	</bean>
 	
 	<bean id="LangManager" class="com.agiletec.aps.system.services.lang.LangManager"

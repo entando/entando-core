@@ -81,7 +81,6 @@
         <value>org.entando.entando.aps.system.init.model.servdb.UserProfileAttributeRole</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecord</value>
         <value>org.entando.entando.aps.system.init.model.servdb.ActionLogRecordRelation</value>
-
         <value>org.entando.entando.aps.system.init.model.servdb.DataObjectModel</value>
         <value>org.entando.entando.aps.system.init.model.servdb.DataObject</value>
         <value>org.entando.entando.aps.system.init.model.servdb.DataObjectRelation</value>

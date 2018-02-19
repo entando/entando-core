@@ -70,11 +70,11 @@ public class AllTests {
 		suite.addTestSuite(TestTrashReferencedCategory.class);
 		
 		// Content
+		suite.addTestSuite(TestHypertextAttributeAction.class);
 		suite.addTestSuite(TestListAttributeAction.class);
 		suite.addTestSuite(TestResourceAttributeAction.class);
 		suite.addTestSuite(TestExtendedResourceAction.class);
 		suite.addTestSuite(TestExtendedResourceFinderAction.class);
-		suite.addTestSuite(TestHypertextAttributeAction.class);
 		suite.addTestSuite(TestLinkAttributeAction.class);
 		suite.addTestSuite(TestPageLinkAction.class);
 		suite.addTestSuite(TestContentLinkAction.class);

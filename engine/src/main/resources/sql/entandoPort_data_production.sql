@@ -416,9 +416,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <@s.else>
 <@s.set var="dateAttributeValue" value="#attribute.failedDateString" />
 </@s.else>
-<@wpsf.textfield 
-useTabindexAutoIncrement=true id="%{attribute_id}" 
-name="%{#attributeTracer.getFormFieldName(#attribute)}" 
+<@wpsf.textfield
+useTabindexAutoIncrement=true id="%{attribute_id}"
+name="%{#attributeTracer.getFormFieldName(#attribute)}"
 value="%{#dateAttributeValue}" maxlength="10" cssClass="text userprofile-date" />
 &#32;
 <#assign js_for_datepicker="jQuery(function($){
@@ -503,12 +503,12 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-HypertextAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 
-<@wpsf.textarea 
-	useTabindexAutoIncrement=true 
-	cols="50" 
-	rows="3" 
-	id="%{#attribute_id}" 
-	name="%{#attributeTracer.getFormFieldName(#attribute)}" 
+<@wpsf.textarea
+	useTabindexAutoIncrement=true
+	cols="50"
+	rows="3"
+	id="%{#attribute_id}"
+	name="%{#attributeTracer.getFormFieldName(#attribute)}"
 	value="%{#attribute.textMap[#lang.code]}"  />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-NumberAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
@@ -520,33 +520,33 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <@s.else>
 	<@s.set var="numberAttributeValue" value="#attribute.failedNumberString"></@s.set>
 </@s.else>
-<@wpsf.textfield 
-		useTabindexAutoIncrement=true 
-		id="%{#attribute_id}" 
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
+<@wpsf.textfield
+		useTabindexAutoIncrement=true
+		id="%{#attribute_id}"
+		name="%{#attributeTracer.getFormFieldName(#attribute)}"
 		value="%{#numberAttributeValue}"
 		maxlength="254" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-BooleanAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 <label class="radio inline" for="<@s.property value="%{#attribute_id + ''-true''}" />">
-	<@wpsf.radio 
-		useTabindexAutoIncrement=true 
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
-		id="%{#attribute_id + ''-true''}" 
+	<@wpsf.radio
+		useTabindexAutoIncrement=true
+		name="%{#attributeTracer.getFormFieldName(#attribute)}"
+		id="%{#attribute_id + ''-true''}"
 		value="true"
-		checked="%{#attribute.value == true}" 
+		checked="%{#attribute.value == true}"
 		cssClass="radio" />
 		<@wp.i18n key="userprofile_YES" />
 </label>
 &#32;
 <label class="radio inline" for="<@s.property value="%{#attribute_id+''-false''}" />">
-	<@wpsf.radio 
-		useTabindexAutoIncrement=true 
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
-		id="%{#attribute_id + ''-false''}" 
-		value="false" 
-		checked="%{#attribute.value == false}" 
+	<@wpsf.radio
+		useTabindexAutoIncrement=true
+		name="%{#attributeTracer.getFormFieldName(#attribute)}"
+		id="%{#attribute_id + ''-false''}"
+		value="false"
+		checked="%{#attribute.value == false}"
 		cssClass="radio" />
 		<@wp.i18n key="userprofile_NO" />
 </label>', 1);
@@ -554,34 +554,34 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign wp=JspTaglibs["/aps-core"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 <label class="radio inline" for="<@s.property value="%{#attribute_id + ''-none''}" />">
-	<@wpsf.radio 
-		useTabindexAutoIncrement=true  
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
-		id="%{#attribute_id + ''-none''}" 
-		value="" 
-		checked="%{#attribute.booleanValue == null}" 
+	<@wpsf.radio
+		useTabindexAutoIncrement=true
+		name="%{#attributeTracer.getFormFieldName(#attribute)}"
+		id="%{#attribute_id + ''-none''}"
+		value=""
+		checked="%{#attribute.booleanValue == null}"
 		cssClass="radio" />
 		<@wp.i18n key="userprofile_BOTH_YES_AND_NO" />
 </label>
 &#32;
 <label class="radio inline" for="<@s.property value="%{#attribute_id + ''-true''}" />">
-	<@wpsf.radio 
-		useTabindexAutoIncrement=true  
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
-		id="%{#attribute_id + ''-true''}" 
-		value="true" 
+	<@wpsf.radio
+		useTabindexAutoIncrement=true
+		name="%{#attributeTracer.getFormFieldName(#attribute)}"
+		id="%{#attribute_id + ''-true''}"
+		value="true"
 		checked="%{#attribute.booleanValue != null && #attribute.booleanValue == true}"
 		cssClass="radio" />
 		<@wp.i18n key="userprofile_YES" />
 </label>
 &#32;
 <label class="radio inline" for="<@s.property value="%{#attribute_id + ''-false''}" />">
-	<@wpsf.radio 
-		useTabindexAutoIncrement=true  
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
-		id="%{#attribute_id + ''-false''}" 
-		value="false" 
-		checked="%{#attribute.booleanValue != null && #attribute.booleanValue == false}" 
+	<@wpsf.radio
+		useTabindexAutoIncrement=true
+		name="%{#attributeTracer.getFormFieldName(#attribute)}"
+		id="%{#attribute_id + ''-false''}"
+		value="false"
+		checked="%{#attribute.booleanValue != null && #attribute.booleanValue == false}"
 		cssClass="radio" />
 		<@wp.i18n key="userprofile_NO" />
 </label>', 1);
@@ -646,12 +646,12 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<@wpsa.actionSubParam name="attributeName" value="%{#attribute.name}" />
 	<@wpsa.actionSubParam name="listLangCode" value="%{#lang.code}" />
 </@wpsa.actionParam>
-<@s.set var="iconImagePath" id="iconImagePath"><@wp.resourceURL/>administration/common/img/icons/list-add.png</@s.set> 
-<@wpsf.submit 
+<@s.set var="iconImagePath" id="iconImagePath"><@wp.resourceURL/>administration/common/img/icons/list-add.png</@s.set>
+<@wpsf.submit
 	cssClass="btn"
-	useTabindexAutoIncrement=true 
-	action="%{#actionName}" 
-	value="%{add_label}" 
+	useTabindexAutoIncrement=true
+	action="%{#actionName}"
+	value="%{add_label}"
 	title="%{i18n_attribute_name}%{'': ''}%{add_label}" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_IteratorAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
@@ -662,7 +662,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 	
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
 			<@wp.fragment code="userprofile_is_front-BooleanAttribute" escapeXml=false />
@@ -674,14 +674,14 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
 			<@wp.fragment code="userprofile_is_front-CheckboxAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
-</@s.elseif>	
+</@s.elseif>
 <@s.elseif test="#attribute.type == ''Composite''">
 	<div class="well well-small">
 		<fieldset class=" <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
@@ -698,10 +698,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
-			<@wp.fragment code="userprofile_is_front-DateAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front-DateAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
@@ -710,10 +710,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
-			<@wp.fragment code="userprofile_is_front-EnumeratorAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front-EnumeratorAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
@@ -722,10 +722,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
-			<@wp.fragment code="userprofile_is_front-EnumeratorMapAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front-EnumeratorMapAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
@@ -734,10 +734,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
-			<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front-HypertextAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
@@ -747,10 +747,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 		<fieldset class=" <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 			<legend class="margin-medium-top">
 				<@wp.i18n key="${i18n_attribute_name}" />
-					<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 			
+					<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 			</legend>
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
-			<@wp.fragment code="userprofile_is_front-MonolistAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front-MonolistAttribute" escapeXml=false />
 		</fieldset>
 	</div>
 </@s.elseif>
@@ -761,7 +761,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
-			<@wp.fragment code="userprofile_is_front-LongtextAttribute" escapeXml=false /> 			
+			<@wp.fragment code="userprofile_is_front-LongtextAttribute" escapeXml=false />
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
 	</div>
@@ -773,7 +773,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 				<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 			</legend>
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
-			<@wp.fragment code="userprofile_is_front-MonolistAttribute" escapeXml=false /> 		
+			<@wp.fragment code="userprofile_is_front-MonolistAttribute" escapeXml=false />
 		</fieldset>
 	</div>
 </@s.elseif>
@@ -781,7 +781,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
 			<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
@@ -793,7 +793,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 			
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
 			<@wp.fragment code="userprofile_is_front-NumberAttribute" escapeXml=false />
@@ -805,7 +805,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
 			<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
@@ -817,7 +817,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="#attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
 			<@wp.fragment code="userprofile_is_front-ThreeStateAttribute" escapeXml=false />
@@ -829,7 +829,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group <@s.property value="%{'' attribute-type-''+#attribute.type+'' ''}" />">
 		<label class="control-label" for="<@s.property value="attribute_id" />">
 			<@wp.i18n key="${i18n_attribute_name}" />
-			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_front_AttributeInfo" escapeXml=false />
 		</label>
 		<div class="controls">
 			<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
@@ -868,9 +868,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group">
 		<label for="userprofile-old-password" class="control-label"><@wp.i18n key="userprofile_OLDPASSWORD" /></label>
 		<div class="controls">
-			<@wpsf.password 
-				useTabindexAutoIncrement=true 
-				name="oldPassword" 
+			<@wpsf.password
+				useTabindexAutoIncrement=true
+				name="oldPassword"
 				id="userprofile-old-password" />
 		</div>
 	</div>
@@ -878,9 +878,9 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group">
 		<label for="userprofile-new-password" class="control-label"><@wp.i18n key="userprofile_NEWPASS" /></label>
 		<div class="controls">
-			<@wpsf.password 
-				useTabindexAutoIncrement=true 
-				name="password" 
+			<@wpsf.password
+				useTabindexAutoIncrement=true
+				name="password"
 				id="userprofile-new-password" />
 		</div>
 	</div>
@@ -888,23 +888,23 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<div class="control-group">
 		<label for="userprofile-new-password-confirm" class="control-label"><@wp.i18n key="userprofile_CONFIRM_NEWPASS" /></label>
 		<div class="controls">
-			<@wpsf.password 
-				useTabindexAutoIncrement=true 
-				name="passwordConfirm" 
+			<@wpsf.password
+				useTabindexAutoIncrement=true
+				name="passwordConfirm"
 				id="userprofile-new-password-confirm" />
 		</div>
 	</div>
 
 	<p class="form-actions">
 		<@wp.i18n key="userprofile_SAVE_PASSWORD" var="userprofile_SAVE_PASSWORD" />
-		<@wpsf.submit 
-			useTabindexAutoIncrement=true 
-			value="%{#attr.userprofile_SAVE_PASSWORD}" 
+		<@wpsf.submit
+			useTabindexAutoIncrement=true
+			value="%{#attr.userprofile_SAVE_PASSWORD}"
 			cssClass="btn btn-primary" />
 	</p>
 
 	</form>
-	
+
 <#else>
 	<p>
 		<@wp.i18n key="userprofile_PLEASE_LOGIN_TO_EDIT_PASSWORD" />
@@ -933,13 +933,13 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 				<@s.property value="#elementStatus.count" /><span class="noscreen">&#32;<@s.text name="label.compositeAttribute.element" /></span>
 				&#32;
 				<@s.if test="#lang.default">
-					<@wp.fragment code="userprofile_is_front_AllList_operationModule" escapeXml=false /> 
+					<@wp.fragment code="userprofile_is_front_AllList_operationModule" escapeXml=false />
 				</@s.if>
 			</@s.if>
 			<@s.else>
 				<@s.property value="#elementStatus.count" />
 				&#32;
-				<@wp.fragment code="userprofile_is_front_AllList_operationModule" escapeXml=false /> 
+				<@wp.fragment code="userprofile_is_front_AllList_operationModule" escapeXml=false />
 			</@s.else>
 		</label>
 		<div class="controls">
@@ -953,7 +953,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 				<@wp.fragment code="userprofile_is_front-CompositeAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Date''">
-				<@wp.fragment code="userprofile_is_front-DateAttribute" escapeXml=false /> 
+				<@wp.fragment code="userprofile_is_front-DateAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Enumerator''">
 				<@wp.fragment code="userprofile_is_front-EnumeratorAttribute" escapeXml=false />
@@ -977,10 +977,10 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 				<@wp.fragment code="userprofile_is_front-ThreeStateAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.elseif test="#attribute.type == ''Text''">
-				<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />				
+				<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
 			</@s.elseif>
 			<@s.else>
-				<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />	
+				<@wp.fragment code="userprofile_is_front-MonotextAttribute" escapeXml=false />
 			</@s.else>
 			<@wp.fragment code="userprofile_is_front_attributeInfo-help-block" escapeXml=false />
 		</div>
@@ -996,7 +996,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <@s.if test="#lang.default">
 	<div class="control-group">
 		<div class="controls">
-			<@wp.fragment code="userprofile_is_front-AllList-addElementButton" escapeXml=false />				
+			<@wp.fragment code="userprofile_is_front-AllList-addElementButton" escapeXml=false />
 		</div>
 	</div>
 </@s.if>', 1);
@@ -1028,7 +1028,7 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 			<@wpsa.tracerFactory var="attributeTracer" lang="%{#lang.code}" />
 			<@s.set var="i18n_attribute_name">userprofile_<@s.property value="userProfile.typeCode" />_<@s.property value="#attribute.name" /></@s.set>
 			<@s.set var="attribute_id">userprofile_<@s.property value="#attribute.name" /></@s.set>
-			<@wp.fragment code="userprofile_is_IteratorAttribute" escapeXml=false /> 
+			<@wp.fragment code="userprofile_is_IteratorAttribute" escapeXml=false />
 		</@s.if>
 	</@s.iterator>
 	<p class="form-actions">
@@ -1047,11 +1047,11 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-CheckboxAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 
-<@wpsf.checkbox useTabindexAutoIncrement=true 
-	name="%{#attributeTracer.getFormFieldName(#attribute)}" 
+<@wpsf.checkbox useTabindexAutoIncrement=true
+	name="%{#attributeTracer.getFormFieldName(#attribute)}"
 	id="%{attribute_id}" value="%{#attribute.value == true}"/>', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-MonotextAttribute', NULL, NULL, NULL, '<#assign wpsf=JspTaglibs["/apsadmin-form"]>
-<@wpsf.textfield useTabindexAutoIncrement=true id="%{attribute_id}" 
+<@wpsf.textfield useTabindexAutoIncrement=true id="%{attribute_id}"
 	name="%{#attributeTracer.getFormFieldName(#attribute)}" value="%{#attribute.getTextForLang(#lang.code)}"
 	maxlength="254" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-LongtextAttribute', NULL, NULL, NULL, '<#assign wpsf=JspTaglibs["/apsadmin-form"]>
@@ -1077,15 +1077,15 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 <@wpsf.select useTabindexAutoIncrement=true
 	name="%{#attributeTracer.getFormFieldName(#attribute)}"
-	id="%{attribute_id}"  
-	headerKey="" headerValue="" 
+	id="%{attribute_id}"
+	headerKey="" headerValue=""
 	list="#attribute.items" value="%{#attribute.getText()}" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('userprofile_is_front-EnumeratorMapAttribute', NULL, NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wpsf=JspTaglibs["/apsadmin-form"]>
 <@wpsf.select useTabindexAutoIncrement=true
 	name="%{#attributeTracer.getFormFieldName(#attribute)}"
-	id="%{attribute_id}"  
-	headerKey="" headerValue="" 
+	id="%{attribute_id}"
+	headerKey="" headerValue=""
 	list="#attribute.mapItems" value="%{#attribute.getText()}" listKey="key" listValue="value" />', 1);
 INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked) VALUES ('entandoapi_is_resource_list', 'entando_apis', NULL, NULL, '<#assign s=JspTaglibs["/struts-tags"]>
 <#assign wp=JspTaglibs["/aps-core"]>
@@ -1797,7 +1797,8 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'para
 	<Param name="baseUrlContext">true</Param>
   <Param name="useJsessionId">false</Param>
 	<Param name="gravatarIntegrationEnabled">false</Param>
-  <Param name="editEmptyFragmentEnabled">false</Param>
+        <Param name="editEmptyFragmentEnabled">false</Param>
+        <Param name="argon2">true</Param>
 	<SpecialPages>
 		<Param name="notFoundPageCode">notfound</Param>
 		<Param name="homePageCode">homepage</Param>

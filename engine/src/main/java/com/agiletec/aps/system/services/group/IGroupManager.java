@@ -16,6 +16,8 @@ package com.agiletec.aps.system.services.group;
 import java.util.List;
 import java.util.Map;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
@@ -64,5 +66,8 @@ public interface IGroupManager {
 	 * @return Il gruppo cercato.
 	 */
 	public Group getGroup(String groupName);
+
+    public SearcherDaoPaginatedResult<Group> getGroups(FieldSearchFilter[] fieldSearchFilters) throws ApsSystemException;
+
 	
 }

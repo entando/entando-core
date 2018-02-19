@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class extended by those DAO that perform searches on entities.
@@ -47,7 +46,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, true, conn);
 			result = stat.executeQuery();
-			this.flowRecordsResult(records, filters, result);
+            //this.flowRecordsResult(records, filters, result);
 		} catch (Throwable t) {
 			_logger.error("Error while loading records list",  t);
 			throw new RuntimeException("Error while loading records list", t);
@@ -57,21 +56,21 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		return records;
 	}
 	
-	protected void flowRecordsResult(List<ApsEntityRecord> records, EntitySearchFilter[] filters, ResultSet result) throws Throwable {
-		while (result.next()) {
-			ApsEntityRecord record = this.createRecord(result);
-			if (!records.contains(record)) {
-				if (!this.isForceTextCaseSearch() || null == filters || filters.length == 0) {
-					records.add(record);
-				} else {
-					boolean verify = this.verifyLikeFieldFilters(result, filters);
-					if (verify) {
-						records.add(record);
-					}
-				}
-			}
-		}
-	}
+    //	protected void flowRecordsResult(List<ApsEntityRecord> records, EntitySearchFilter[] filters, ResultSet result) throws Throwable {
+    //		while (result.next()) {
+    //			ApsEntityRecord record = this.createRecord(result);
+    //			if (!records.contains(record)) {
+    //				if (!this.isForceTextCaseSearch() || null == filters || filters.length == 0) {
+    //					records.add(record);
+    //				} else {
+    //					boolean verify = this.verifyLikeFieldFilters(result, filters);
+    //					if (verify) {
+    //						records.add(record);
+    //					}
+    //				}
+    //			}
+    //		}
+    //	}
 	
 	protected abstract ApsEntityRecord createRecord(ResultSet result) throws Throwable;
 	
@@ -95,7 +94,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, false, conn);
 			result = stat.executeQuery();
-			this.flowResult(idList, filters, result);
+            //this.flowResult(idList, filters, result);
 		} catch (Throwable t) {
 			_logger.error("Error while loading the list of IDs",  t);
 			throw new RuntimeException("Error while loading the list of IDs", t);
@@ -118,54 +117,54 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		return newFilters;
 	}
 	
-	protected void flowResult(List<String> contentsId, EntitySearchFilter[] filters, ResultSet result) throws SQLException {
-		while (result.next()) {
-			String id = result.getString(this.getEntityMasterTableIdFieldName());
-			if (contentsId.contains(id)) {
-				continue;
-			}
-			if (!this.isForceTextCaseSearch() || null == filters || filters.length == 0) {
-				contentsId.add(id);
-			} else {
-				boolean verify = this.verifyLikeFieldFilters(result, filters);
-				if (verify) {
-					contentsId.add(id);
-				}
-			}
-		}
-	}
-	
-	protected boolean verifyLikeFieldFilters(ResultSet result,
-			EntitySearchFilter[] likeFieldFilters) throws SQLException {
-		boolean verify = true;
-		for (int i=0; i<likeFieldFilters.length; i++) {
-			EntitySearchFilter filter = likeFieldFilters[i];
-			if ((null == filter.getKey() && null == filter.getRoleName()) 
-					|| !filter.isLikeOption() || !this.isForceTextCaseSearch()) {
-				continue;
-			}
-			String fieldName = null;
-			if (filter.isAttributeFilter()) {
-				fieldName = this.getAttributeFieldColunm(filter)+i;
-			} else {
-				fieldName = this.getTableFieldName(filter.getKey());
-			}
-			String value = result.getString(fieldName);
-			if (null != filter.getValue()) {
-				verify = this.checkText((String)filter.getValue(), value, filter.getLikeOptionType());
-				if (!verify) {
-					break;
-				}
-			} else if (filter.getAllowedValues() != null && filter.getAllowedValues().size() > 0) {
-				List<Object> allowedValues = filter.getAllowedValues();
-				verify = this.verifyLikeAllowedValuesFilter(value, allowedValues, filter.getLikeOptionType());
-				if (!verify) {
-					break;
-				}
-			}
-		}
-		return verify;
-	}
+    //	protected void flowResult(List<String> contentsId, EntitySearchFilter[] filters, ResultSet result) throws SQLException {
+    //		while (result.next()) {
+    //			String id = result.getString(this.getEntityMasterTableIdFieldName());
+    //			if (contentsId.contains(id)) {
+    //				continue;
+    //			}
+    //			if (!this.isForceTextCaseSearch() || null == filters || filters.length == 0) {
+    //				contentsId.add(id);
+    //			} else {
+    //				boolean verify = this.verifyLikeFieldFilters(result, filters);
+    //				if (verify) {
+    //					contentsId.add(id);
+    //				}
+    //			}
+    //		}
+    //	}
+    //	
+    //	protected boolean verifyLikeFieldFilters(ResultSet result,
+    //			EntitySearchFilter[] likeFieldFilters) throws SQLException {
+    //		boolean verify = true;
+    //		for (int i=0; i<likeFieldFilters.length; i++) {
+    //			EntitySearchFilter filter = likeFieldFilters[i];
+    //			if ((null == filter.getKey() && null == filter.getRoleName()) 
+    //					|| !filter.isLikeOption() || !this.isForceTextCaseSearch()) {
+    //				continue;
+    //			}
+    //			String fieldName = null;
+    //			if (filter.isAttributeFilter()) {
+    //				fieldName = this.getAttributeFieldColunm(filter)+i;
+    //			} else {
+    //				fieldName = this.getTableFieldName(filter.getKey());
+    //			}
+    //			String value = result.getString(fieldName);
+    //			if (null != filter.getValue()) {
+    //				verify = this.checkText((String)filter.getValue(), value, filter.getLikeOptionType());
+    //				if (!verify) {
+    //					break;
+    //				}
+    //			} else if (filter.getAllowedValues() != null && filter.getAllowedValues().size() > 0) {
+    //				List<Object> allowedValues = filter.getAllowedValues();
+    //				verify = this.verifyLikeAllowedValuesFilter(value, allowedValues, filter.getLikeOptionType());
+    //				if (!verify) {
+    //					break;
+    //				}
+    //			}
+    //		}
+    //		return verify;
+    //	}
 	
 	private PreparedStatement buildStatement(EntitySearchFilter[] filters, boolean selectAll, Connection conn) {
 		String query = this.createQueryString(filters, selectAll);
@@ -276,7 +275,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		} else {
 			query.append(this.getEntityMasterTableIdFieldName());
 		}
-		if (this.isForceTextCaseSearch() && filters != null) {
+        if (filters != null) {
 			String searchTableName = this.getEntitySearchTableName();
 			for (int i=0; i<filters.length; i++) {
 				EntitySearchFilter filter = filters[i];
@@ -287,6 +286,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 						query.append(", ").append(masterTableName).append(".").append(tableFieldName);
 					}
 				} else if (filter.isAttributeFilter() && filter.isLikeOption()) {
+                    //SPUDDU
 					String columnName = this.getAttributeFieldColunm(filter);
 					query.append(", ").append(searchTableName).append(i).append(".").append(columnName);
 					query.append(" AS ").append(columnName).append(i).append(" ");
@@ -365,9 +365,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 			query.append(" AND ").append(searchTableNameAlias).append(".attrname = ").append(attributeRoleTableNameAlias).append(".attrname ");
 		}
 		hasAppendWhereClause = this.addAttributeLangQueryBlock(searchTableNameAlias, query, filter, hasAppendWhereClause);
-		if (filter.isLikeOption() && this.isForceTextCaseSearch()) {
-			return hasAppendWhereClause;
-		}
+
 		if (filter.getAllowedValues() != null && filter.getAllowedValues().size() > 0) {
 			hasAppendWhereClause = this.verifyWhereClauseAppend(query, hasAppendWhereClause);
 			List<Object> allowedValues = filter.getAllowedValues();

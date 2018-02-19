@@ -141,7 +141,7 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testSearchDataObjects_1_4() throws Throwable {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
+        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> dataObjectIds = this._dataObjectManager.searchId(null);
         assertNotNull(dataObjectIds);
@@ -168,7 +168,7 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testSearchDataObjects_1_5() throws Throwable {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
+        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
         creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -207,7 +207,7 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testSearchDataObjects_1_6() throws Throwable {
         //forcing case sensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseSensitiveLikeSearch(true);
+        //searcherDao.setForceCaseSensitiveLikeSearch(true);
 
         EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
         creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -330,7 +330,7 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testSearchDataObjects_2_b() throws Throwable {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
+        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> groupCodes = new ArrayList<String>();
         groupCodes.add("customers");
@@ -650,7 +650,7 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testLoadEvents_2_1() throws ApsSystemException {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
+        // searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> groups = new ArrayList<String>();
         groups.add("coach");
@@ -671,7 +671,7 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testLoadEvents_2_2() throws ApsSystemException {
         //forcing case sensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseSensitiveLikeSearch(true);
+        //searcherDao.setForceCaseSensitiveLikeSearch(true);
 
         List<String> groups = new ArrayList<String>();
         groups.add("coach");
@@ -866,7 +866,7 @@ public class TestDataObjectManager extends BaseTestCase {
     protected void testLoadEvents_9_b(boolean useRoleFilter) throws ApsSystemException {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
+        //ssearcherDao.setForceCaseInsensitiveLikeSearch(true);
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);
         EntitySearchFilter filter = (useRoleFilter)
@@ -891,7 +891,7 @@ public class TestDataObjectManager extends BaseTestCase {
     protected void testLoadEvents_9_c(boolean useRoleFilter) throws ApsSystemException {
         //forcing case sensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseSensitiveLikeSearch(true);
+        //searcherDao.setForceCaseSensitiveLikeSearch(true);
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);
         EntitySearchFilter filter = (useRoleFilter)
@@ -933,7 +933,7 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testLoadEvents_1_b() throws ApsSystemException {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
+        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);

@@ -17,14 +17,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
-
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
-import java.util.ArrayList;
-
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +48,11 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 		return "code";
 	}
 	
-	@Override
-	protected boolean isForceCaseInsensitiveLikeSearch() {
-		return true;
-	}
-	
+    //	@Override
+    //	protected boolean isForceCaseInsensitiveLikeSearch() {
+    //		return true;
+    //	}
+
 	@Override
 	public List<String> searchGuiFragments(FieldSearchFilter[] filters) {
 		List<String> guiFragmentsId = null;

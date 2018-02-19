@@ -121,22 +121,22 @@ public class TestDataObjectManager extends BaseTestCase {
     /*
 	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
      */
-    public void testSearchDataObjects_1_3() throws Throwable {
-        EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
-        creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-        EntitySearchFilter descrFilter_b = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "cont", true);
-        EntitySearchFilter[] filters1_b = {creationOrder, descrFilter_b};
-        List<String> dataObjectIds = this._dataObjectManager.searchId(filters1_b);
-        assertNotNull(dataObjectIds);
-        assertEquals(0, dataObjectIds.size());
-
-        EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "Cont", true);
-        EntitySearchFilter lastEditorFilter_b = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
-        EntitySearchFilter[] filters2_b = {creationOrder, descrFilter, lastEditorFilter_b};
-        dataObjectIds = this._dataObjectManager.searchId(filters2_b);
-        assertNotNull(dataObjectIds);
-        assertEquals(0, dataObjectIds.size());
-    }
+    //    public void testSearchDataObjects_1_3() throws Throwable {
+    //        EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
+    //        creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
+    //        EntitySearchFilter descrFilter_b = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "cont", true);
+    //        EntitySearchFilter[] filters1_b = {creationOrder, descrFilter_b};
+    //        List<String> dataObjectIds = this._dataObjectManager.searchId(filters1_b);
+    //        assertNotNull(dataObjectIds);
+    //        assertEquals(0, dataObjectIds.size());
+    //
+    //        EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "Cont", true);
+    //        EntitySearchFilter lastEditorFilter_b = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
+    //        EntitySearchFilter[] filters2_b = {creationOrder, descrFilter, lastEditorFilter_b};
+    //        dataObjectIds = this._dataObjectManager.searchId(filters2_b);
+    //        assertNotNull(dataObjectIds);
+    //        assertEquals(0, dataObjectIds.size());
+    //    }
 
     public void testSearchDataObjects_1_4() throws Throwable {
         //forcing case insensitive search

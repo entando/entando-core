@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * Abstract class extended by those DAO that perform searches on entities.
  * @author E.Santoboni
  */
+@SuppressWarnings(value = {"serial", "rawtypes"})
 public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO implements IEntitySearcherDAO {
 
 	private static final Logger _logger =  LoggerFactory.getLogger(AbstractEntitySearcherDAO.class);
@@ -46,6 +47,14 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, true, conn);
 			result = stat.executeQuery();
+
+            while (result.next()) {
+                ApsEntityRecord record = this.createRecord(result);
+                if (!records.contains(record)) {
+
+                    records.add(record);
+                }
+            }
             //this.flowRecordsResult(records, filters, result);
 		} catch (Throwable t) {
 			_logger.error("Error while loading records list",  t);
@@ -57,19 +66,19 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 	}
 	
     //	protected void flowRecordsResult(List<ApsEntityRecord> records, EntitySearchFilter[] filters, ResultSet result) throws Throwable {
-    //		while (result.next()) {
-    //			ApsEntityRecord record = this.createRecord(result);
-    //			if (!records.contains(record)) {
-    //				if (!this.isForceTextCaseSearch() || null == filters || filters.length == 0) {
-    //					records.add(record);
-    //				} else {
-    //					boolean verify = this.verifyLikeFieldFilters(result, filters);
-    //					if (verify) {
-    //						records.add(record);
-    //					}
-    //				}
-    //			}
-    //		}
+    //      while (result.next()) {
+    //          ApsEntityRecord record = this.createRecord(result);
+    //          if (!records.contains(record)) {
+    //              if (!this.isForceTextCaseSearch() || null == filters || filters.length == 0) {
+    //                  records.add(record);
+    //              } else {
+    //                  boolean verify = this.verifyLikeFieldFilters(result, filters);
+    //                  if (verify) {
+    //                      records.add(record);
+    //                  }
+    //              }
+    //          }
+    //      }
     //	}
 	
 	protected abstract ApsEntityRecord createRecord(ResultSet result) throws Throwable;
@@ -94,6 +103,12 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, false, conn);
 			result = stat.executeQuery();
+            while (result.next()) {
+                String id = result.getString(this.getMasterTableIdFieldName());
+                if (!idList.contains(id)) {
+                    idList.add(id);
+                }
+            }
             //this.flowResult(idList, filters, result);
 		} catch (Throwable t) {
 			_logger.error("Error while loading the list of IDs",  t);
@@ -170,6 +185,11 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		String query = this.createQueryString(filters, selectAll);
 		PreparedStatement stat = null;
 		try {
+
+            System.out.println("@@@@@@@@@@@@@@@@@@");
+            System.out.println(query);
+            System.out.println("@@@@@@@@@@@@@@@@@@");
+
 			stat = conn.prepareStatement(query);
 			int index = 0;
 			index = this.addAttributeFilterStatementBlock(filters, index, stat);
@@ -221,7 +241,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 				if (null != filter.getKey()) {
 					stat.setString(++index, filter.getKey());
 				} else {
-					stat.setString(++index, filter.getRoleName());
+                    stat.setString(++index, filter.getRoleName().toUpperCase());
 				}
 				index = this.addObjectSearchStatementBlock(filter, index, stat);
 			}
@@ -361,7 +381,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 		if (null != filter.getKey()) {
 			query.append(searchTableNameAlias).append(".attrname = ? ");
 		} else {
-			query.append(attributeRoleTableNameAlias).append(".rolename = ? ");
+            query.append("UPPER(").append(attributeRoleTableNameAlias).append(".rolename) = ? ");
 			query.append(" AND ").append(searchTableNameAlias).append(".attrname = ").append(attributeRoleTableNameAlias).append(".attrname ");
 		}
 		hasAppendWhereClause = this.addAttributeLangQueryBlock(searchTableNameAlias, query, filter, hasAppendWhereClause);
@@ -387,16 +407,16 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 			Object object = filter.getValue();
 			String operator = filter.isLikeOption() ? this.getLikeClause() : "= ? ";
 			hasAppendWhereClause = this.addAttributeObjectSearchQueryBlock(searchTableNameAlias, query, 
-					object, operator, hasAppendWhereClause, filter.getLangCode());
+                                                                           object, operator, hasAppendWhereClause, filter.getLangCode(), filter);
 		} else {
 			//creazione blocco selezione su tabella ricerca
 			if (null != filter.getStart()) {
 				hasAppendWhereClause = this.addAttributeObjectSearchQueryBlock(searchTableNameAlias, query, 
-						filter.getStart(), ">= ? ", hasAppendWhereClause, filter.getLangCode());
+                                                                               filter.getStart(), ">= ? ", hasAppendWhereClause, filter.getLangCode(), filter);
 			}
 			if (null != filter.getEnd()) {
 				hasAppendWhereClause = this.addAttributeObjectSearchQueryBlock(searchTableNameAlias, query, 
-						filter.getEnd(), "<= ? ", hasAppendWhereClause, filter.getLangCode());
+                                                                               filter.getEnd(), "<= ? ", hasAppendWhereClause, filter.getLangCode(), filter);
 			}
 			if (null == filter.getStart() && null == filter.getEnd()) {
 				hasAppendWhereClause = this.verifyWhereClauseAppend(query, hasAppendWhereClause);
@@ -454,9 +474,21 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
 	}
 	
 	protected boolean addAttributeObjectSearchQueryBlock(String searchTableName, 
-			StringBuffer query, Object object, String operator, boolean hasAppendWhereClause, String langCode) {
-		hasAppendWhereClause = this.verifyWhereClauseAppend(query, hasAppendWhereClause);
-		query.append(searchTableName).append(".").append(this.getAttributeFieldColunm(object)).append(" ");
+                                                         StringBuffer query,
+                                                         Object object,
+                                                         String operator,
+                                                         boolean hasAppendWhereClause,
+                                                         String langCode,
+                                                         EntitySearchFilter filter) {
+        hasAppendWhereClause = this.verifyWhereClauseAppend(query, hasAppendWhereClause);
+        if (filter.getValue() != null) {
+
+            query.append("UPPER(").append(searchTableName).append(".").append(this.getAttributeFieldColunm(object)).append(") ");
+        } else {
+
+            query.append("(").append(searchTableName).append(".").append(this.getAttributeFieldColunm(object)).append(") ");
+        }
+
 		query.append(operator);
 		return hasAppendWhereClause;
 	}

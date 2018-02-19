@@ -74,7 +74,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             if (result.next()) {
                 count = result.getInt(1);
             }
-            //this.flowResult(idList, filters, result);
         } catch (Throwable t) {
             logger.error("Error while loading the count of IDs", t);
             throw new RuntimeException("Error while loading the count of IDs", t);
@@ -325,6 +324,8 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                                                  Integer dateDelay,
                                                  boolean isLikeOption,
                                                  FieldSearchFilter.LikeOptionType likeOptionType) throws SQLException {
+
+        System.out.println(index + " ...\t" + object);
         if (object instanceof String) {
             if (isLikeOption) {
                 object = ((String) object).toUpperCase();
@@ -492,7 +493,13 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                 } else {
                     query.append(" OR ");
                 }
-                query.append(this.getMasterTableName()).append(".").append(tableFieldName).append(" ");
+                StringBuffer x = new StringBuffer(this.getMasterTableName()).append(".").append(tableFieldName).append(" ");
+                if (filter.isLikeOption()) {
+                    query.append("UPPER(").append(x.toString()).append(") ");
+                } else {
+                    query.append(x.toString());
+                }
+                //query.append(this.getMasterTableName()).append(".").append(tableFieldName).append(" ");
                 if (filter.isLikeOption()) {
                     query.append(this.getLikeClause());
                 } else {

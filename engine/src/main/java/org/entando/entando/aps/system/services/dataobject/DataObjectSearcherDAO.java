@@ -74,6 +74,14 @@ public class DataObjectSearcherDAO extends AbstractDataObjectSearcherDAO impleme
             stat = this.buildStatement(filters, categories, orClauseCategoryFilter, groupCodes, false, conn);
             result = stat.executeQuery();
             //this.flowResult(contentsId, filters, result);
+
+            while (result.next()) {
+                String id = result.getString(this.getMasterTableIdFieldName());
+                if (!contentsId.contains(id)) {
+                    contentsId.add(id);
+                }
+            }
+
         } catch (Throwable t) {
             _logger.error("Error loading dataObject id list", t);
             throw new RuntimeException("Error loading dataObject id list", t);

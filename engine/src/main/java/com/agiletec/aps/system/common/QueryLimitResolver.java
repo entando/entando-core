@@ -27,6 +27,7 @@ public class QueryLimitResolver {
     //TODO MOVE
     private static final String JDBC_DRIVER_DERBY_EMBEDDED = "org.apache.derby.jdbc.EmbeddedDriver";
     private static final String JDBC_DRIVER_POSTGRES = "org.postgresql.Driver";
+    private static final String JDBC_DRIVER_MYSQL = " com.mysql.jdbc.Driver";
 
     private static final Logger logger = LoggerFactory.getLogger(QueryLimitResolver.class);
 
@@ -43,8 +44,8 @@ public class QueryLimitResolver {
             limitBlock = String.format(" OFFSET %d ROWS FETCH NEXT %d ROWS ONLY ", new Object[]{offset, limit});
         } else if (driverClassName.equalsIgnoreCase(JDBC_DRIVER_POSTGRES)) {
             limitBlock = String.format(" OFFSET %d ROWS FETCH NEXT %d ROWS ONLY ", new Object[]{offset, limit});
-        } else if (driverClassName.equalsIgnoreCase("TODO")) {
-            throw new UnsupportedOperationException(driverClassName + " not implemented!");
+        } else if (driverClassName.equalsIgnoreCase(JDBC_DRIVER_MYSQL)) {
+            limitBlock = String.format(" LIMIT %d OFFSET %d ", new Object[]{limit, offset});
         }  else {
             logger.warn("driver {} not implemented", driverClassName);
             throw new UnsupportedOperationException(driverClassName + " not implemented!");

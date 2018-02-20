@@ -124,7 +124,7 @@ public class TestGroupManager extends BaseTestCase {
         fieldSearchFilters = ArrayUtils.add(fieldSearchFilters, groupNameFilter);
         fieldSearchFilters = ArrayUtils.add(fieldSearchFilters, limitFilter);
         result = this._groupManager.getGroups(fieldSearchFilters);
-        //assertThat(result.getCount(), is(3));
+        assertThat(result.getCount(), is(3));
         assertThat(result.getList().size(), is(2));
 
         fieldSearchFilters = new FieldSearchFilter[0];

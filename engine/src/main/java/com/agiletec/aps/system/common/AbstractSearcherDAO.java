@@ -52,7 +52,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                     idList.add(id);
                 }
             }
-            //this.flowResult(idList, filters, result);
         } catch (Throwable t) {
             logger.error("Error while loading the list of IDs", t);
             throw new RuntimeException("Error while loading the list of IDs", t);
@@ -96,123 +95,9 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return newFilters;
     }
 
-    //    protected void flowResult(List<String> contentsId, FieldSearchFilter[] filters, ResultSet result) throws SQLException {
-    //        while (result.next()) {
-    //            String id = result.getString(this.getMasterTableIdFieldName());
-    //            if (contentsId.contains(id)) {
-    //                continue;
-    //            }
-    //            if (!this.isForceTextCaseSearch() || null == filters || filters.length == 0) {
-    //                contentsId.add(id);
-    //            } else {
-    //                boolean verify = this.verifyLikeFieldFilters(result, filters);
-    //                if (verify) {
-    //                    contentsId.add(id);
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    protected boolean verifyLikeFieldFilters(ResultSet result,
-    //                                             FieldSearchFilter[] likeFieldFilters) throws SQLException {
-    //        boolean verify = true;
-    //        for (int i = 0; i < likeFieldFilters.length; i++) {
-    //            FieldSearchFilter filter = likeFieldFilters[i];
-    //            if (filter.getKey() == null || !filter.isLikeOption() || !this.isForceTextCaseSearch()) {
-    //                continue;
-    //            }
-    //            String fieldName = this.getTableFieldName(filter.getKey());
-    //            String value = result.getString(fieldName);
-    //            if (null != filter.getValue()) {
-    //                verify = this.checkText((String) filter.getValue(), value, filter.getLikeOptionType());
-    //                if (!verify) {
-    //                    break;
-    //                }
-    //            } else if (filter.getAllowedValues() != null && filter.getAllowedValues().size() > 0) {
-    //                List<Object> allowedValues = filter.getAllowedValues();
-    //                verify = this.verifyLikeAllowedValuesFilter(value, allowedValues, filter.getLikeOptionType());
-    //                if (!verify) {
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //        return verify;
-    //    }
-
-    //    @Deprecated
-    //    protected boolean verifyLikeAllowedValuesFilter(String extractedValue, List<Object> allowedValues) {
-    //        return this.verifyLikeAllowedValuesFilter(extractedValue, allowedValues, FieldSearchFilter.LikeOptionType.COMPLETE);
-    //    }
-    //
-    //    protected boolean verifyLikeAllowedValuesFilter(String extractedValue,
-    //                                                    List<Object> allowedValues,
-    //                                                    FieldSearchFilter.LikeOptionType likeOptionType) {
-    //        boolean verify = false;
-    //        for (int j = 0; j < allowedValues.size(); j++) {
-    //            String allowedValue = (String) allowedValues.get(j);
-    //            verify = this.checkText(allowedValue, extractedValue, likeOptionType);
-    //            if (verify) {
-    //                break;
-    //            }
-    //        }
-    //        return verify;
-    //    }
-
-    //    /**
-    //     * This utility method checks if the given Text matches or is contained inside another one.
-    //     * @param insertedText The text to look for
-    //     * @param text The text to search in
-    //     * @return True if an occurrence of 'insertedText' is found in 'text'.
-    //     * @deprecated use checkText(String insertedText, String text)
-    //     */
-    //    protected boolean checkText(String insertedText, String text) {
-    //        return this.checkText(insertedText, text, FieldSearchFilter.LikeOptionType.COMPLETE);
-    //    }
-
-    //    /**
-    //     * This utility method checks if the given Text matches or is contained inside another one, depends on the like option type.
-    //     * @param insertedText The text to look for
-    //     * @param text The text to search in
-    //     * @param likeOptionType The like option type. It can be COMPLETE, RIGHT or LEFT
-    //     * @return True if an occurrence of 'insertedText' is found in 'text', depends on the like option type.
-    //     */
-    //    protected boolean checkText(String insertedText, String text, FieldSearchFilter.LikeOptionType likeOptionType) {
-    //        if (this.isForceTextCaseSearch() && (null == insertedText || insertedText.trim().length() == 0)) {
-    //            return true;
-    //        }
-    //        if (null == text) {
-    //            return false;
-    //        }
-    //        FieldSearchFilter.LikeOptionType lot = (null != likeOptionType) ? likeOptionType : FieldSearchFilter.LikeOptionType.COMPLETE;
-    //        if (this.isForceCaseInsensitiveLikeSearch()) {
-    //            //&& (null != text && text.toLowerCase().indexOf(insertedText.trim().toLowerCase()) != -1)) {
-    //            String textToCompare = text.toLowerCase();
-    //            String insertedTextToCompare = insertedText.trim().toLowerCase();
-    //            if ((lot.equals(FieldSearchFilter.LikeOptionType.COMPLETE) && textToCompare.indexOf(insertedTextToCompare) != -1) || (lot.equals(FieldSearchFilter.LikeOptionType.LEFT) && textToCompare.endsWith(
-    //                                                                                                                                                                                                              insertedTextToCompare)) ||
-    //                (lot.equals(FieldSearchFilter.LikeOptionType.RIGHT) && textToCompare.startsWith(insertedTextToCompare))) {
-    //                return true;
-    //            }
-    //        }
-    //        if (this.isForceCaseSensitiveLikeSearch()) {
-    //            //&& (null != text && text.indexOf(insertedText.trim()) != -1)) {
-    //            if ((lot.equals(FieldSearchFilter.LikeOptionType.COMPLETE) && text.indexOf(insertedText) != -1) || (lot.equals(FieldSearchFilter.LikeOptionType.LEFT) && text.endsWith(insertedText)) || (lot.equals(
-    //                                                                                                                                                                                                                 FieldSearchFilter.LikeOptionType.RIGHT) &&
-    //                                                                                                                                                                                                      text.startsWith(insertedText))) {
-    //                return true;
-    //            }
-    //        }
-    //        return false;
-    //    }
-
     protected PreparedStatement buildStatement(FieldSearchFilter[] filters, boolean isCount, boolean selectAll, Connection conn) {
         String query = this.createQueryString(filters, isCount, selectAll);
         logger.trace("{}", query);
-
-        System.out.println("+++++++++++++++++++++");
-        System.out.println(query);
-        System.out.println("+++++++++++++++++++++");
-
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(query);
@@ -325,7 +210,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                                                  boolean isLikeOption,
                                                  FieldSearchFilter.LikeOptionType likeOptionType) throws SQLException {
 
-        System.out.println(index + " ...\t" + object);
         if (object instanceof String) {
             if (isLikeOption) {
                 object = ((String) object).toUpperCase();
@@ -499,7 +383,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                 } else {
                     query.append(x.toString());
                 }
-                //query.append(this.getMasterTableName()).append(".").append(tableFieldName).append(" ");
                 if (filter.isLikeOption()) {
                     query.append(this.getLikeClause());
                 } else {
@@ -510,7 +393,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                 }
             }
         } else {
-            //IL MODO MEGLIO PER SAPERE SE IL FILTRO è STRING O NUMERO/DATA??????????
             if (filter.isLikeOption()) {
                 query.append("UPPER(").append(this.getMasterTableName()).append(".").append(tableFieldName).append(") ");
             } else {
@@ -599,10 +481,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         this._likeClause = likeClause;
     }
 
-    //    protected boolean isForceTextCaseSearch() {
-    //        return (this.isForceCaseInsensitiveLikeSearch() || this.isForceCaseSensitiveLikeSearch());
-    //    }
-
     protected boolean hasLikeFilters(FieldSearchFilter[] filters) {
         if (null == filters || filters.length == 0) {
             return false;
@@ -616,25 +494,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return false;
     }
 
-    //    protected boolean isForceCaseSensitiveLikeSearch() {
-    //        return _forceCaseSensitiveLikeSearch;
-    //    }
-    //
-    //    public void setForceCaseSensitiveLikeSearch(boolean forceCaseSensitiveLikeSearch) {
-    //        this._forceCaseSensitiveLikeSearch = forceCaseSensitiveLikeSearch;
-    //    }
-    //
-    //    protected boolean isForceCaseInsensitiveLikeSearch() {
-    //        return _forceCaseInsensitiveLikeSearch;
-    //    }
-    //
-    //    public void setForceCaseInsensitiveLikeSearch(boolean forceCaseInsensitiveLikeSearch) {
-    //        this._forceCaseInsensitiveLikeSearch = forceCaseInsensitiveLikeSearch;
-    //    }
-
     private String _likeClause;
     private static final String DEFAULT_LIKE_CLAUSE = "LIKE ? ";
-    //    private boolean _forceCaseSensitiveLikeSearch = false;
-    //    private boolean _forceCaseInsensitiveLikeSearch = false;
 
 }

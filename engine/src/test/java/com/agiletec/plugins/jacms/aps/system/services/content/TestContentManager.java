@@ -147,7 +147,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testSearchContents_1_4() throws Throwable {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> contentIds = this._contentManager.searchId(null);
 		assertNotNull(contentIds);
@@ -174,7 +173,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testSearchContents_1_5() throws Throwable {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -213,7 +211,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testSearchContents_1_6() throws Throwable {
 		//forcing case sensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-        //searcherDao.setForceCaseSensitiveLikeSearch(true);
 
 		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -336,7 +333,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testSearchWorkContents_2_b() throws Throwable {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> groupCodes = new ArrayList<String>();
 		groupCodes.add("customers");
@@ -677,7 +673,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testLoadPublicEvents_2_1() throws ApsSystemException {
 		//forcing case insensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> groups = new ArrayList<String>();
 		groups.add("coach");
@@ -698,7 +693,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testLoadPublicEvents_2_2() throws ApsSystemException {
 		//forcing case sensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-        //searcherDao.setForceCaseSensitiveLikeSearch(true);
 
 		List<String> groups = new ArrayList<String>();
 		groups.add("coach");
@@ -893,7 +887,6 @@ public class TestContentManager extends BaseTestCase {
 	protected void testLoadPublicEvents_9_b(boolean useRoleFilter) throws ApsSystemException {
 		//forcing case insensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 		EntitySearchFilter filter = (useRoleFilter)
@@ -918,7 +911,6 @@ public class TestContentManager extends BaseTestCase {
 	protected void testLoadPublicEvents_9_c(boolean useRoleFilter) throws ApsSystemException {
 		//forcing case sensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-        //searcherDao.setForceCaseSensitiveLikeSearch(true);
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 		EntitySearchFilter filter = (useRoleFilter)
@@ -960,7 +952,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testLoadWorkEvents_1_b() throws ApsSystemException {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-        //searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);

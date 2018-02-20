@@ -176,11 +176,6 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
         return metadataFieldKey;
     }
 
-    //    @Override
-    //    protected boolean isForceCaseInsensitiveLikeSearch() {
-    //        return true;
-    //    }
-
     private String SELECT_CONSUMER
             = "SELECT consumerkey, consumersecret, name, description, callbackurl,scope, authorizedgranttypes, expirationdate, issueddate "
             + "FROM api_oauth_consumers WHERE consumerkey = ? ";

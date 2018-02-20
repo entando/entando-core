@@ -154,7 +154,6 @@ public class TestContentFinderAction extends AbstractBaseTestContentAction {
 		assertEquals(0, contents.size());
 		
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-    	searcherDao.setForceCaseInsensitiveLikeSearch(true);
 		this.executeSearch("admin", params);
 		action = (ContentFinderAction) this.getAction();
 		contents = action.getContents();

@@ -398,11 +398,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 	protected String getTableFieldName(String metadataFieldKey) {
 		return metadataFieldKey;
 	}
-
-    //	@Override
-    //	protected boolean isForceCaseInsensitiveLikeSearch() {
-    //		return true;
-    //	}
 	
 	@Override
 	public Set<Integer> extractOldRecords(Integer maxActivitySizeByGroup) {

@@ -174,11 +174,6 @@ public class GroupDAO extends AbstractSearcherDAO implements IGroupDAO {
         return "groupname";
     }
 
-    //    @Override
-    //    protected boolean isForceCaseInsensitiveLikeSearch() {
-    //        return true;
-    //    }
-
     private final String ALL_GROUPS =
             "SELECT groupname, descr FROM authgroups";
 

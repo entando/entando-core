@@ -48,11 +48,6 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 		return "code";
 	}
 	
-    //	@Override
-    //	protected boolean isForceCaseInsensitiveLikeSearch() {
-    //		return true;
-    //	}
-
 	@Override
 	public List<String> searchGuiFragments(FieldSearchFilter[] filters) {
 		List<String> guiFragmentsId = null;

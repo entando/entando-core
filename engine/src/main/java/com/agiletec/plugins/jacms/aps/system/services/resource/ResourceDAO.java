@@ -433,11 +433,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		return metadataFieldKey;
 	}
 	
-    //	@Override
-    //	protected boolean isForceCaseInsensitiveLikeSearch() {
-    //		return true;
-    //	}
-	
+
 	private final String LOAD_RESOURCE_VO =
 		"SELECT restype, descr, maingroup, resourcexml, masterfilename, creationdate, lastmodified FROM resources WHERE resid = ? ";
 	

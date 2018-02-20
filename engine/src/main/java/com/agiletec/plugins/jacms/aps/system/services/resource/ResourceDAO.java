@@ -243,7 +243,14 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, categoryCode, groupCodes, conn);
 			res = stat.executeQuery();
-            //this.flowResult(resources, filters, res);
+
+            while (res.next()) {
+                String id = res.getString(this.getMasterTableIdFieldName());
+                if (!resources.contains(id)) {
+                    resources.add(id);
+                }
+            }
+
 		} catch (Throwable t) {
 			_logger.error("Error loading resources id",  t);
 			throw new RuntimeException("Error loading resources id", t);

@@ -73,6 +73,12 @@ public class PublicContentSearcherDAO extends AbstractContentSearcherDAO impleme
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, categories, orClauseCategoryFilter, groupCodes, false, conn);
 			result = stat.executeQuery();
+            while (result.next()) {
+                String id = result.getString(this.getMasterTableIdFieldName());
+                if (!contentsId.contains(id)) {
+                    contentsId.add(id);
+                }
+            }
             //this.flowResult(contentsId, filters, result);
 		} catch (Throwable t) {
 			_logger.error("Error loading contents id list",  t);

@@ -288,6 +288,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return query;
     }
 
+    //TODO REMOVE VARS per prepared statement
     private void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
         try {
             if (null == filters || filters.length == 0) {

@@ -23,9 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -33,6 +30,8 @@ import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -244,7 +243,14 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, categoryCode, groupCodes, conn);
 			res = stat.executeQuery();
-			this.flowResult(resources, filters, res);
+
+            while (res.next()) {
+                String id = res.getString(this.getMasterTableIdFieldName());
+                if (!resources.contains(id)) {
+                    resources.add(id);
+                }
+            }
+
 		} catch (Throwable t) {
 			_logger.error("Error loading resources id",  t);
 			throw new RuntimeException("Error loading resources id", t);
@@ -434,11 +440,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
 		return metadataFieldKey;
 	}
 	
-	@Override
-	protected boolean isForceCaseInsensitiveLikeSearch() {
-		return true;
-	}
-	
+
 	private final String LOAD_RESOURCE_VO =
 		"SELECT restype, descr, maingroup, resourcexml, masterfilename, creationdate, lastmodified FROM resources WHERE resid = ? ";
 	

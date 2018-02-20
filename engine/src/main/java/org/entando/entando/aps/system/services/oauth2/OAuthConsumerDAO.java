@@ -13,15 +13,19 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.*;
-import java.util.List;
 
 /**
  * @author E.Santoboni
@@ -170,11 +174,6 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
 
     protected String getTableFieldName(String metadataFieldKey) {
         return metadataFieldKey;
-    }
-
-    @Override
-    protected boolean isForceCaseInsensitiveLikeSearch() {
-        return true;
     }
 
     private String SELECT_CONSUMER

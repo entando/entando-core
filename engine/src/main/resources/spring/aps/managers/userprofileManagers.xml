@@ -26,9 +26,6 @@
 		<property name="entitySearcherDAO" >
 			<bean class="org.entando.entando.aps.system.services.userprofile.UserProfileSearcherDAO">
 				<property name="dataSource" ref="servDataSource" />
-				<property name="forceCaseInsensitiveLikeSearch">
-					<value>true</value>
-				</property>
 			</bean>
 		</property>
 	</bean>

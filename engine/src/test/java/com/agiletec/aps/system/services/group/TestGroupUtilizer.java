@@ -46,7 +46,7 @@ public class TestGroupUtilizer extends BaseTestCase {
 			if (names[i].equals(SystemConstants.USER_MANAGER)) {
 				assertEquals(3, utilizers.size());
 			} else if (names[i].equals(SystemConstants.PAGE_MANAGER)) {
-				assertEquals(2, utilizers.size());
+                assertEquals(3, utilizers.size());
 			}
 		}
 	}

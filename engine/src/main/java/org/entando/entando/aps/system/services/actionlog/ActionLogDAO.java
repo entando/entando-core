@@ -31,18 +31,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.group.Group;
-
+import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
+import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
+import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author E.Santoboni
@@ -400,11 +397,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 	@Override
 	protected String getTableFieldName(String metadataFieldKey) {
 		return metadataFieldKey;
-	}
-
-	@Override
-	protected boolean isForceCaseInsensitiveLikeSearch() {
-		return true;
 	}
 	
 	@Override

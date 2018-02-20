@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.plugins.jacms.aps.system.services.content.WorkContentSearcherDAO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.apsadmin.content.util.AbstractBaseTestContentAction;
 import com.opensymphony.xwork2.Action;
@@ -151,10 +150,8 @@ public class TestContentFinderAction extends AbstractBaseTestContentAction {
 		this.executeSearch("admin", params);
 		ContentFinderAction action = (ContentFinderAction) this.getAction();
 		List<String> contents = action.getContents();
-		assertEquals(0, contents.size());
+        assertEquals(1, contents.size());
 		
-		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-    	searcherDao.setForceCaseInsensitiveLikeSearch(true);
 		this.executeSearch("admin", params);
 		action = (ContentFinderAction) this.getAction();
 		contents = action.getContents();

@@ -46,6 +46,7 @@ public class QueryLimitResolver {
         } else if (driverClassName.equalsIgnoreCase("TODO")) {
             throw new UnsupportedOperationException(driverClassName + " not implemented!");
         }  else {
+            logger.warn("driver {} not implemented", driverClassName);
             throw new UnsupportedOperationException(driverClassName + " not implemented!");
         }
         logger.trace("sql limit: {}", limitBlock);

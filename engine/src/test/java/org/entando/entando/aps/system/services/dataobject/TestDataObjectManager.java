@@ -775,9 +775,7 @@ public class TestDataObjectManager extends BaseTestCase {
         this.testLoadEvents_9_a(false);
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
+
     protected void testLoadEvents_9_a(boolean useRoleFilter) throws ApsSystemException {
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);
@@ -788,7 +786,7 @@ public class TestDataObjectManager extends BaseTestCase {
         filter.setOrder(EntitySearchFilter.DESC_ORDER);
         EntitySearchFilter[] filters = {filter};
         List<String> dataObjects = _dataObjectManager.loadDataObjectsId("EVN", null, filters, groups);
-        String[] expectedOrderedDataObjectsId2 = {"EVN21", "EVN23"};//not EVN25
+        String[] expectedOrderedDataObjectsId2 = {"EVN25", "EVN21", "EVN23"};
         assertEquals(expectedOrderedDataObjectsId2.length, dataObjects.size());
         for (int i = 0; i < expectedOrderedDataObjectsId2.length; i++) {
             assertEquals(expectedOrderedDataObjectsId2[i], dataObjects.get(i));

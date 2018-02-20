@@ -122,8 +122,8 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         if (filters == null) {
             return index;
         }
-        for (int i = 0; i < filters.length; i++) {
-            FieldSearchFilter filter = filters[i];
+
+        for (FieldSearchFilter filter : filters) {
             if (filter.getKey() != null) {
                 index = this.addObjectSearchStatementBlock(filter, index, stat);
             }
@@ -276,10 +276,10 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         } else {
             query.append(this.getMasterTableIdFieldName());
             if (filters != null) {
-                for (int i = 0; i < filters.length; i++) {
-                    FieldSearchFilter filter = filters[i];
+
+                for (FieldSearchFilter filter : filters) {
                     if (filter.isLikeOption()) {
-                        query.append(", ").append(masterTableName).append(".").append(this.getTableFieldName(filters[i].getKey()));
+                        query.append(", ").append(masterTableName).append(".").append(this.getTableFieldName(filter.getKey()));
                     }
                 }
             }
@@ -288,7 +288,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return query;
     }
 
-    //XXX REMOVE VARS per prepared statement
     private void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
         try {
             if (null == filters || filters.length == 0) {
@@ -311,12 +310,13 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         if (filters == null) {
             return hasAppendWhereClause;
         }
-        for (int i = 0; i < filters.length; i++) {
-            FieldSearchFilter filter = filters[i];
+
+        for (FieldSearchFilter filter : filters) {
             if (filter.getKey() != null) {
                 hasAppendWhereClause = this.addMetadataFieldFilterQueryBlock(filter, query, hasAppendWhereClause);
             }
         }
+
         return hasAppendWhereClause;
     }
 
@@ -389,8 +389,8 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         if (filters == null) {
             return ordered;
         }
-        for (int i = 0; i < filters.length; i++) {
-            FieldSearchFilter filter = filters[i];
+
+        for (FieldSearchFilter filter : filters) {
             if (null != filter.getKey() && null != filter.getOrder() && !filter.isNullOption()) {
                 if (!ordered) {
                     query.append("ORDER BY ");
@@ -402,6 +402,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                 query.append(this.getMasterTableName()).append(".").append(fieldName).append(" ").append(filter.getOrder());
             }
         }
+
         return ordered;
     }
 
@@ -444,8 +445,8 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         if (null == filters || filters.length == 0) {
             return false;
         }
-        for (int i = 0; i < filters.length; i++) {
-            FieldSearchFilter filter = filters[i];
+
+        for (FieldSearchFilter filter : filters) {
             if (filter.isLikeOption()) {
                 return true;
             }

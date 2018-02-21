@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.User;
 import org.apache.commons.lang3.StringUtils;
@@ -84,9 +85,9 @@ public class OAuth2TestUtils {
             return this;
         }
 
-        public UserBuilder grantedToManageRoles(String groupName) {
-            //TODO permission name constants should be placed elsewhere
-            OAuth2TestUtils.addAuthorization(this.user, groupName, "groupEditors", new String[]{"group_read", "group_write", "group_delete"});
+        public UserBuilder grantedToRoleAdmin() {
+
+            OAuth2TestUtils.addAuthorization(this.user, null, "admin", new String[]{Permission.SUPERUSER});
             return this;
         }
 

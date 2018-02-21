@@ -1,8 +1,22 @@
+/*
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.group;
 
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.group.IGroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -48,29 +62,28 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-
-    @RestAccessControl(permission = "group_read")
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGroups(RestListRequest requestList) {
         PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
 	}
 
-    @RestAccessControl(permission = "group_read")
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/group/{groupName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> getGroup(@PathVariable String groupName) {
         GroupDto group = this.getGroupService().getGroup(groupName);
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
 	}
 
-    @RestAccessControl(permission = "group_write")
+    @RestAccessControl(permission = Permission.SUPERUSER)
 	@RequestMapping(value = "/group/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
     public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupPutRequest groupRequest) {
         GroupDto group = this.getGroupService().updateGroup(groupName, groupRequest.getDescr());
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
 	}
 
-    @RestAccessControl(permission = "group_write")
+    @RestAccessControl(permission = Permission.SUPERUSER)
 	@RequestMapping(value = "/groups", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
 	public ResponseEntity<?> addGroup(@Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations

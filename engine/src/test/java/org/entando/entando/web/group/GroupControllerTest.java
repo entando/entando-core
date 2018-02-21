@@ -69,9 +69,7 @@ public class GroupControllerTest extends AbstractControllerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void should_load_the_list_of_groups() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .grantedToManageRoles(Group.FREE_GROUP_NAME)
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
         String mockJsonResult = "{\n" +
@@ -110,9 +108,7 @@ public class GroupControllerTest extends AbstractControllerTest {
     @Test
     public void should_load_the_list_of_groups_2() throws Exception {
 
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .grantedToManageRoles(Group.FREE_GROUP_NAME)
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
         String mockJsonResult = "{\n" +

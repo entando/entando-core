@@ -3,7 +3,7 @@ package org.entando.entando.web.group.model;
 import javax.validation.constraints.NotNull;
 
 /**
- * rappresenta il payload per l'add (post)
+ * group add payload 
  *
  */
 public class GroupRequest extends GroupPutRequest {

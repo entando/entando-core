@@ -22,9 +22,7 @@ public class RestResponse {
 	private List<RestError> errors = new ArrayList<>();
 	private Object metadata;
 
-	public RestResponse() {
-		//
-	}
+    public RestResponse() {}
 
 	public RestResponse(Object payload) {
 		this.payload = payload;

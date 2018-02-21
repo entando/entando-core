@@ -28,9 +28,7 @@ public class PagedMetadata<T> {
     @JsonIgnore
     private List<T> body;
 
-    public PagedMetadata() {
-        //
-    }
+    public PagedMetadata() {}
 
 
     public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {

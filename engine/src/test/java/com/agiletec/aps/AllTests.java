@@ -191,6 +191,10 @@ public class AllTests {
 
 		suite.addTestSuite(TestSearchEngineManager.class);
 
+        //$JUnit-BEGIN$
+        suite.addTest(ServicesAllTests.suite());
+        suite.addTest(ControllersAllTests.suite());
+        //$JUnit-END$
 		return suite;
 	}
 

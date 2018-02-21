@@ -74,6 +74,9 @@
 		<struts2.version>2.5.10.1</struts2.version>
 		<cxf.version>2.7.14</cxf.version>
 		<oltu.version>1.0.2</oltu.version>
+		<jackson.version>2.4.0</jackson.version>
+		
+		<hibernate-validator-version>5.3.0.Final</hibernate-validator-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -83,8 +86,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<target>1.7</target>
-					<source>1.7</source>
+					<target>1.8</target>
+					<source>1.8</source>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -364,6 +367,14 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>oro</groupId>
 			<artifactId>oro</artifactId>
@@ -718,6 +729,37 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.7</version>
 		</dependency>
+		
+		
+		<!-- json -->
+ 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.dataformat</groupId>
+    		<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>	
+ 
+ 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator-version}</version>
+		</dependency>
+ 
+ 
 	</dependencies>
 	<reporting>
 		<plugins>

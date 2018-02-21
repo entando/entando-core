@@ -158,7 +158,7 @@ public class FieldSearchFilter<T> implements Serializable {
         }
     }
     
-    protected void setKey(String key) {
+    public void setKey(String key) {
         if (null == key || key.trim().length() == 0) {
             throw new RuntimeException("Error: Key required");
         }

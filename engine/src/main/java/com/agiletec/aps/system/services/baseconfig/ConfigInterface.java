@@ -22,35 +22,42 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public interface ConfigInterface {
 
-    /**
-     * Restituisce una voce di configurazione. La voce è un elemento di testo
-     * che può essere complesso (es. XML). I valori restituiti sono relativi
-     * alla versione di configurazione con cui è stato avviato il sistema.
-     *
-     * @param name Il codice della voce da restituire.
-     * @return Il testo della voce di configurazione.
-     */
-    public String getConfigItem(String name);
+	public static final String ALGO_TYPE_PARAM_NAME = "algo.argon2.type";
+	public static final String ALGO_HASH_LENGTH_PARAM_NAME = "algo.argon2.hash.length";
+	public static final String ALGO_SALT_LENGTH_PARAM_NAME = "algo.argon2.salt.length";
+	public static final String ALGO_ITERATIONS_PARAM_NAME = "algo.argon2.iterations";
+	public static final String ALGO_MEMORY_PARAM_NAME = "algo.argon2.memory";
+	public static final String ALGO_PARALLELISM_PARAM_NAME = "algo.argon2.parallelism";
 
-    /**
-     * Aggiorna una voce di configurazione. La voce è un elemento di testo che
-     * può essere complesso (es. XML).
-     *
-     * @param name Il codice della voceda aggiornare.
-     * @param config Il testo della voce di configurazione da aggiornare.
-     * @throws ApsSystemException In caso di errore nell'aggiornamento
-     */
-    public void updateConfigItem(String name, String config) throws ApsSystemException;
+	/**
+	 * Restituisce una voce di configurazione. La voce è un elemento di testo
+	 * che può essere complesso (es. XML). I valori restituiti sono relativi
+	 * alla versione di configurazione con cui è stato avviato il sistema.
+	 *
+	 * @param name Il codice della voce da restituire.
+	 * @return Il testo della voce di configurazione.
+	 */
+	public String getConfigItem(String name);
 
-    /**
-     * Restituisce un parametro di configurazione. Un parametro è una stringa
-     * semplice.
-     *
-     * @param name Il nome del parametro
-     * @return Il valore del parametro
-     */
-    public String getParam(String name);
+	/**
+	 * Aggiorna una voce di configurazione. La voce è un elemento di testo che
+	 * può essere complesso (es. XML).
+	 *
+	 * @param name Il codice della voceda aggiornare.
+	 * @param config Il testo della voce di configurazione da aggiornare.
+	 * @throws ApsSystemException In caso di errore nell'aggiornamento
+	 */
+	public void updateConfigItem(String name, String config) throws ApsSystemException;
 
-    public boolean isArgon2();
+	/**
+	 * Restituisce un parametro di configurazione. Un parametro è una stringa
+	 * semplice.
+	 *
+	 * @param name Il nome del parametro
+	 * @return Il valore del parametro
+	 */
+	public String getParam(String name);
+
+	public boolean isArgon2();
 
 }

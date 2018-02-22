@@ -148,9 +148,9 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
                 String encrypdedPassword = this.getEncryptedPassword(password);
                 user = this.executeLoadingUser(username, encrypdedPassword);
             }
-            if (null != user && user instanceof AbstractUser) {
-                ((AbstractUser) user).setPassword(password);
-            }
+//            if (null != user && user instanceof AbstractUser) {
+//                ((AbstractUser) user).setPassword(password);
+//            }
         } catch (Throwable t) {
             _logger.error("Error while loading the user {} ", username, t);
             throw new RuntimeException("Error while loading the user " + username, t);

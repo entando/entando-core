@@ -46,19 +46,19 @@ public class GroupControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        String mockJsonResult = "{\n"
-                + "  \"page\" : 1,\n"
-                + "  \"size\" : 2,\n"
-                + "  \"last\" : 1,\n"
-                + "  \"count\" : 6,\n"
-                + "  \"body\" : [ {\n"
-                + "    \"code\" : \"helpdesk\",\n"
-                + "    \"name\" : \"Helpdesk\"\n"
-                + "  }, {\n"
-                + "    \"code\" : \"management\",\n"
-                + "    \"name\" : \"Management\"\n"
-                + "  } ]\n"
-                + "}";
+        String mockJsonResult = "{\n" +
+                "  \"page\" : 1,\n" +
+                "  \"size\" : 2,\n" +
+                "  \"last\" : 1,\n" +
+                "  \"count\" : 6,\n" +
+                "  \"body\" : [ {\n" +
+                "    \"code\" : \"helpdesk\",\n" +
+                "    \"name\" : \"Helpdesk\"\n" +
+                "  }, {\n" +
+                "    \"code\" : \"management\",\n" +
+                "    \"name\" : \"Management\"\n" +
+                "  } ]\n" +
+                "}";
         PagedMetadata<GroupDto> mockResult = (PagedMetadata<GroupDto>) this.createPagedMetadata(mockJsonResult);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(mockResult);
 
@@ -84,19 +84,19 @@ public class GroupControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        String mockJsonResult = "{\n"
-                + "  \"page\" : 1,\n"
-                + "  \"size\" : 2,\n"
-                + "  \"last\" : 1,\n"
-                + "  \"count\" : 6,\n"
-                + "  \"body\" : [ {\n"
-                + "    \"code\" : \"helpdesk\",\n"
-                + "    \"name\" : \"Helpdesk\"\n"
-                + "  }, {\n"
-                + "    \"code\" : \"management\",\n"
-                + "    \"name\" : \"Management\"\n"
-                + "  } ]\n"
-                + "}";
+        String mockJsonResult = "{\n" +
+                                "  \"page\" : 1,\n" +
+                                "  \"size\" : 2,\n" +
+                                "  \"last\" : 1,\n" +
+                                "  \"count\" : 6,\n" +
+                                "  \"body\" : [ {\n" +
+                                "    \"code\" : \"helpdesk\",\n" +
+                                "    \"name\" : \"Helpdesk\"\n" +
+                                "  }, {\n" +
+                                "    \"code\" : \"management\",\n" +
+                                "    \"name\" : \"Management\"\n" +
+                                "  } ]\n" +
+                                "}";
         PagedMetadata<GroupDto> mockResult = (PagedMetadata<GroupDto>) this.createPagedMetadata(mockJsonResult);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(mockResult);
 
@@ -135,5 +135,47 @@ public class GroupControllerTest extends AbstractControllerTest {
         System.out.println(response);
         result.andExpect(status().isUnauthorized());
     }
+
+
+    @Test
+    public void should_validate_put_path_mismatch() throws ApsSystemException, Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        ObjectMapper mapper = new ObjectMapper();
+        GroupRequest group = new GroupRequest();
+        group.setName("__helpdesk_");
+        group.setDescr("Helpdesk");
+        String payload = mapper.writeValueAsString(group);
+
+        this.controller.setGroupValidator(new GroupValidator());
+        ResultActions result = mockMvc.perform(
+                                               put("/group/{groupCode}", "helpdesk")
+                                                                                    .content(payload)
+                                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                                    .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest());
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println(response);
+    }
+
+
+    protected String mockOAuthInterceptor(UserDetails user) throws Exception, ApsSystemException {
+        String accessToken = OAuth2TestUtils.getValidAccessToken();
+        when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
+        when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
+        when(authorizationManager.isAuthOnPermission(any(UserDetails.class), anyString())).then(new Answer<Boolean>() {
+
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                UserDetails user = (UserDetails) invocation.getArguments()[0];
+                String permissionName = (String) invocation.getArguments()[1];
+                return new AuthorizationManager().isAuthOnPermission(user, permissionName);
+            }
+        });
+        return accessToken;
+    }
+
 
 }

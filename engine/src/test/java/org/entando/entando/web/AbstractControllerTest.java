@@ -55,22 +55,21 @@ public class AbstractControllerTest {
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
     /**
-     * The returned list contains an {@link HandlerExceptionResolver} built with
-     * an instance of a {@link ResourceBundleMessageSource}, that points to the
-     * default baseName and with an instance of {@link RestExceptionHandler},
-     * the global exceptionHandler
-     *
+     * The returned list contains an {@link HandlerExceptionResolver} built with an instance of 
+     * a {@link ResourceBundleMessageSource}, that points to the default baseName 
+     * and with an instance of {@link RestExceptionHandler}, the global exceptionHandler
+     * 
      * A typical use is:
      * <pre>
      * <code>
      * mockMvc = MockMvcBuilders.standaloneSetup(someControllerUnderTest)
-     * .addInterceptors(...)
-     * .setHandlerExceptionResolvers(createHandlerExceptionResolver())
-     * .build();
+                     .addInterceptors(...)
+                     .setHandlerExceptionResolvers(createHandlerExceptionResolver())
+                     .build();
      * </code>
      * </pre>
-     *
-     *
+     * 
+     * 
      * @return
      */
     protected List<HandlerExceptionResolver> createHandlerExceptionResolver() {

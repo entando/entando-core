@@ -18,9 +18,7 @@ public class RestError {
 	private String code;
 	private String message;
 
-	public RestError() {
-		//
-	}
+    public RestError() {}
 
 	public RestError(String code, String localizedErrorMessage) {
 		this.setCode(code);

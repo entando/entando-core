@@ -32,6 +32,7 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
     @Test
     public void testGetGroups() throws JsonProcessingException {
         RestListRequest restListRequest = new RestListRequest();
+        restListRequest.setPageSize(5);
         PagedMetadata<GroupDto> res = this.groupService.getGroups(restListRequest);
         assertThat(res.getPage(), is(0));
         assertThat(res.getSize(), is(5));

@@ -14,6 +14,7 @@
 package org.entando.entando.web.group.validator;
 
 import com.agiletec.aps.system.services.group.IGroupManager;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.group.GroupController;
 import org.entando.entando.web.group.model.GroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,14 @@ public class GroupValidator implements Validator {
 		GroupRequest request = (GroupRequest) target;
 		String groupName = request.getName();
 		if (null != groupManager.getGroup(groupName)) {
-            errors.reject(GroupController.ERR_CODE_GROUP_ALREADY_EXISTS, new String[]{groupName}, "group.exists");
+            errors.reject(GroupController.ERRCODE_GROUP_ALREADY_EXISTS, new String[]{groupName}, "group.exists");
 		}
 	}
+
+    public void validateBodyName(String groupName, GroupRequest groupRequest, Errors errors) {
+        if (!StringUtils.equals(groupName, groupRequest.getName())) {
+            errors.rejectValue("name", GroupController.ERRCODE_URINAME_MISMATCH, new String[]{groupName, groupRequest.getName()}, "group.name.mismatch");
+        }
+    }
 
 }

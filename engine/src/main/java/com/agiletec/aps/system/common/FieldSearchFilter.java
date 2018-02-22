@@ -322,4 +322,11 @@ public class FieldSearchFilter<T> implements Serializable {
         this.offset = offset;
     }
 
+    @Override
+    public String toString() {
+        return "FieldSearchFilter [key=" + key + ", value=" + value + ", order=" + order + ", start=" + start + ", end=" + end + ", likeOption=" + likeOption + ", likeOptionType=" + likeOptionType + ", nullOption=" +
+               nullOption + ", allowedValues=" + allowedValues + ", startDateDelay=" + startDateDelay + ", endDateDelay=" + endDateDelay + ", valueDateDelay=" + valueDateDelay + ", limit=" + limit + ", offset=" +
+               offset + "]";
+    }
+
 }

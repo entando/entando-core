@@ -49,9 +49,7 @@ public class Filter {
     }
 
 
-    public Filter() {
-        //
-    }
+    public Filter() {}
 
     public Filter(String attribute, String value) {
         this.attribute = attribute;

@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.group;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
@@ -61,10 +60,11 @@ public class GroupService implements IGroupService {
     @Override
     public PagedMetadata<GroupDto> getGroups(RestListRequest restListReq) {
         try {
-
-            Arrays.stream(restListReq.getFieldSearchFilters())
-                  .filter(i -> i.getKey() != null)
-                  .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
+            //transforms the filters by overriding the key specified in the request with the correct one known by the dto
+            restListReq.getFieldSearchFilters()
+                       .stream()
+                       .filter(i -> i.getKey() != null)
+                       .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
 
             SearcherDaoPaginatedResult<Group> groups = this.getGroupManager().getGroups(restListReq.getFieldSearchFilters());
             List<GroupDto> dtoList = dtoBuilder.convert(groups.getList());
@@ -74,31 +74,33 @@ public class GroupService implements IGroupService {
 
             return pagedMetadata;
         } catch (Throwable t) {
+            logger.error("error in search groups", t);
             throw new RestServerError("error in search groups", t);
         }
     }
 
     @Override
-    public GroupDto getGroup(String groupName) {
-        Group group = this.getGroupManager().getGroup(groupName);
+    public GroupDto getGroup(String groupCode) {
+        Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
-            throw new RestRourceNotFoundException("group", groupName);
+            logger.warn("no group found with code {}", groupCode);
+            throw new RestRourceNotFoundException("group", groupCode);
         }
         return this.getDtoBuilder().convert(group);
     }
 
     @Override
-    public GroupDto updateGroup(String groupName, String descr) {
-        Group group = this.getGroupManager().getGroup(groupName);
+    public GroupDto updateGroup(String groupCode, String descr) {
+        Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
-            throw new RestRourceNotFoundException("group", groupName);
+            throw new RestRourceNotFoundException("group", groupCode);
         }
         group.setDescription(descr);
         try {
             this.getGroupManager().updateGroup(group);
             return this.getDtoBuilder().convert(group);
         } catch (ApsSystemException e) {
-            logger.error("Error updating group {}", groupName, e);
+            logger.error("Error updating group {}", groupCode, e);
             throw new RestServerError("error in update group", e);
         }
     }

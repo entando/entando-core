@@ -13,7 +13,9 @@
  */
 package org.entando.entando.web.common.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -22,11 +24,13 @@ import org.apache.commons.lang3.StringUtils;
 
 public class RestListRequest {
 
+    public static final Integer PAGE_SIZE_DEFAULT = 25;
+
     private String sort;
     private String direction;
 
     private Integer pageNum = 0;
-    private Integer pageSize = 5;
+    private Integer pageSize = PAGE_SIZE_DEFAULT;
 
     private Filter[] filter;
 
@@ -75,37 +79,45 @@ public class RestListRequest {
     }
 
     @SuppressWarnings("rawtypes")
-    public FieldSearchFilter[] getFieldSearchFilters() {
-        FieldSearchFilter[] filters = new FieldSearchFilter[0];
+    public List<FieldSearchFilter> getFieldSearchFilters() {
+        List<FieldSearchFilter> fieldSearchFilters = new ArrayList<>();
+
         if (null != filter && filter.length > 0) {
-            for (Filter filter : filter) {
-                filters = ArrayUtils.add(filters, filter.getFieldSearchFilter());
-            }
+            Arrays.stream(filter).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
         }
-        filters = addSortFilter(filters);
-        filters = addPaginationFilter(filters);
-        return filters;
+
+        FieldSearchFilter pageFilter = this.getPaginationFilter();
+        if (null != pageFilter) {
+            fieldSearchFilters.add(pageFilter);
+        }
+
+        FieldSearchFilter sortFilter = this.getSortFilter();
+        if (null != sortFilter) {
+            fieldSearchFilters.add(sortFilter);
+        }
+
+        return fieldSearchFilters;
     }
 
     @SuppressWarnings("rawtypes")
-    private FieldSearchFilter[] addPaginationFilter(FieldSearchFilter[] filters) {
-        if (null != this.getPageSize()) {
+    private FieldSearchFilter getPaginationFilter() {
+        if (null != this.getPageSize() && this.getPageSize() > 0) {
             FieldSearchFilter pageFilter = new FieldSearchFilter(this.getPageSize(), this.getOffset());
-            filters = ArrayUtils.add(filters, pageFilter);
+            return pageFilter;
         }
-        return filters;
+        return null;
     }
 
     @SuppressWarnings("rawtypes")
-    private FieldSearchFilter[] addSortFilter(FieldSearchFilter[] filters) {
+    private FieldSearchFilter getSortFilter() {
         if (StringUtils.isNotBlank(StringEscapeUtils.escapeSql(this.getSort()))) {
             FieldSearchFilter sort = new FieldSearchFilter(this.getSort());
             if (StringUtils.isNotBlank(this.getDirection())) {
                 sort.setOrder(FieldSearchFilter.Order.valueOf(StringEscapeUtils.escapeSql(this.getDirection())));
             }
-            filters = ArrayUtils.add(filters, sort);
+            return sort;
         }
-        return filters;
+        return null;
     }
 
     private Integer getOffset() {

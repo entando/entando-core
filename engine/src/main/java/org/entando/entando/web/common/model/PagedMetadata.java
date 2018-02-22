@@ -16,6 +16,7 @@ package org.entando.entando.web.common.model;
 import java.util.List;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PagedMetadata<T> {
 
@@ -24,12 +25,10 @@ public class PagedMetadata<T> {
     private int last;
     private int count;
 
-    //@JsonIgnore
+    @JsonIgnore
     private List<T> body;
 
-    public PagedMetadata() {
-        //
-    }
+    public PagedMetadata() {}
 
 
     public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {

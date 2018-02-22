@@ -34,103 +34,102 @@ import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 
 /**
- * Implementazione concreta dell'oggetto Authentication Provider di default del sistema.
- * L'Authentication Provider è l'oggetto delegato alla restituzione di un'utenza 
- * (comprensiva delle sue autorizzazioni) in occasione di una richiesta di autenticazione utente; 
- * questo oggetto non ha visibilità ai singoli sistemi (concreti) delegati alla gestione 
- * delle autorizzazioni.
+ * Implementazione concreta dell'oggetto Authentication Provider di default del
+ * sistema. L'Authentication Provider è l'oggetto delegato alla restituzione di
+ * un'utenza (comprensiva delle sue autorizzazioni) in occasione di una
+ * richiesta di autenticazione utente; questo oggetto non ha visibilità ai
+ * singoli sistemi (concreti) delegati alla gestione delle autorizzazioni.
+ *
  * @author E.Santoboni
  */
-public class AuthenticationProviderManager extends AbstractService 
+public class AuthenticationProviderManager extends AbstractService
 		implements IAuthenticationProviderManager {
 
 	private static final Logger _logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
-	
+
 	@Override
-    public void init() throws Exception {
-        _logger.debug("{} ready", this.getClass().getName() );
-    }
-    
+	public void init() throws Exception {
+		_logger.debug("{} ready", this.getClass().getName());
+	}
+
 	@Override
-    public UserDetails getUser(String username) throws ApsSystemException {
-        return this.extractUser(username, null);
-    }
-    
+	public UserDetails getUser(String username) throws ApsSystemException {
+		return this.extractUser(username, null);
+	}
+
 	@Override
-    public UserDetails getUser(String username, String password) throws ApsSystemException {
-        return this.extractUser(username, password);
-    }
-    
-    protected UserDetails extractUser(String username, String password) throws ApsSystemException {
-        UserDetails user = null;
-        try {
-            if (null == password) {
-                user = this.getUserManager().getUser(username);
-            } else {
-                user = this.getUserManager().getUser(username, password);
-            }
-            if (null == user || user.isDisabled()) {
-                return null;
-            }
-            if (!user.getUsername().equals(SystemConstants.ADMIN_USER_NAME)) {
-                if (!user.isAccountNotExpired()) {
-                    _logger.info("USER ACCOUNT '{}' EXPIRED", user.getUsername());
-                    return user;
-                }
-            }
-            this.getUserManager().updateLastAccess(user);
-            if (!user.isCredentialsNotExpired()) {
-                _logger.info("USER '{}' credentials EXPIRED", user.getUsername());
-                return user;
-            }
-            this.addUserAuthorizations(user);
+	public UserDetails getUser(String username, String password) throws ApsSystemException {
+		return this.extractUser(username, password);
+	}
 
-            if (this.getAuthorizationManager().isAuthOnPermission(user, Permission.SUPERUSER)){
-                this.registerToken(user);
-            }
+	protected UserDetails extractUser(String username, String password) throws ApsSystemException {
+		UserDetails user = null;
+		try {
+			if (null == password) {
+				user = this.getUserManager().getUser(username);
+			} else {
+				user = this.getUserManager().getUser(username, password);
+			}
+			if (null == user || user.isDisabled()) {
+				return null;
+			}
+			if (!user.getUsername().equals(SystemConstants.ADMIN_USER_NAME)) {
+				if (!user.isAccountNotExpired()) {
+					_logger.info("USER ACCOUNT '{}' EXPIRED", user.getUsername());
+					return user;
+				}
+			}
+			this.getUserManager().updateLastAccess(user);
+			if (!user.isCredentialsNotExpired()) {
+				_logger.info("USER '{}' credentials EXPIRED", user.getUsername());
+				return user;
+			}
+			this.addUserAuthorizations(user);
 
+			if (this.getAuthorizationManager().isAuthOnPermission(user, Permission.SUPERUSER)) {
+				this.registerToken(user);
+			}
 
-        } catch (Throwable t) {
-            throw new ApsSystemException("Error detected during the authentication of the user " + username, t);
-        }
-        return user;
-    }
+		} catch (Throwable t) {
+			throw new ApsSystemException("Error detected during the authentication of the user " + username, t);
+		}
+		return user;
+	}
 
-    private void registerToken(final UserDetails user) {
+	private void registerToken(final UserDetails user) {
+		if (null == this.tokenManager) {
+			return;
+		}
+		OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+		try {
+			final String accessToken = oauthIssuerImpl.accessToken();
+			final String refreshToken = oauthIssuerImpl.refreshToken();
+			user.setAccessToken(accessToken);
+			user.setRefreshToken(refreshToken);
 
-        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-        try {
-            final String accessToken = oauthIssuerImpl.accessToken();
-            final String refreshToken = oauthIssuerImpl.refreshToken();
-            user.setAccessToken(accessToken);
-            user.setRefreshToken(refreshToken);
+			final OAuth2Token oAuth2Token = new OAuth2Token();
+			oAuth2Token.setAccessToken(accessToken);
+			oAuth2Token.setRefreshToken(refreshToken);
+			oAuth2Token.setClientId("LOCAL_USER");
+			oAuth2Token.setLocalUser(user.getUsername());
+			Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+			calendar.add(Calendar.SECOND, 3600);
+			oAuth2Token.setExpiresIn(calendar.getTime());
+			oAuth2Token.setGrantType(GrantType.IMPLICIT.toString());
+			tokenManager.addApiOAuth2Token(oAuth2Token, true);
+		} catch (OAuthSystemException e) {
+			_logger.error("OAuthSystemException {} ", e.getMessage());
+			_logger.debug("OAuthSystemException {} ", e);
+		} catch (ApsSystemException e) {
+			_logger.error("ApsSystemException {} ", e.getMessage());
+			_logger.debug("ApsSystemException {} ", e);
+		}
+	}
 
-            final OAuth2Token oAuth2Token = new OAuth2Token();
-            oAuth2Token.setAccessToken(accessToken);
-            oAuth2Token.setRefreshToken(refreshToken);
-            oAuth2Token.setClientId("LOCAL_USER");
-            oAuth2Token.setLocalUser(user.getUsername());
-            Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-            calendar.add(Calendar.SECOND, 3600);
-            oAuth2Token.setExpiresIn(calendar.getTime());
-            oAuth2Token.setGrantType(GrantType.IMPLICIT.toString());
-            tokenManager.addApiOAuth2Token(oAuth2Token,true);
-        } catch (OAuthSystemException e) {
-            _logger.error("OAuthSystemException {} ", e.getMessage());
-            _logger.debug("OAuthSystemException {} ", e);
-
-        } catch (ApsSystemException e) {
-            _logger.error("ApsSystemException {} ", e.getMessage());
-            _logger.debug("ApsSystemException {} ", e);
-        }
-
-
-    }
-
-    protected void addUserAuthorizations(UserDetails user) throws ApsSystemException {
-        if (null == user) {
-            return;
-        }
+	protected void addUserAuthorizations(UserDetails user) throws ApsSystemException {
+		if (null == user) {
+			return;
+		}
 		List<Authorization> auths = this.getAuthorizationManager().getUserAuthorizations(user.getUsername());
 		if (null == auths) {
 			return;
@@ -139,33 +138,34 @@ public class AuthenticationProviderManager extends AbstractService
 			Authorization authorization = auths.get(i);
 			user.addAuthorization(authorization);
 		}
-    }
+	}
 
-	
-    protected IUserManager getUserManager() {
-        return _userManager;
-    }
-    public void setUserManager(IUserManager userManager) {
-        this._userManager = userManager;
-    }
-	
+	protected IUserManager getUserManager() {
+		return _userManager;
+	}
+
+	public void setUserManager(IUserManager userManager) {
+		this._userManager = userManager;
+	}
+
 	protected IAuthorizationManager getAuthorizationManager() {
 		return _authorizationManager;
 	}
+
 	public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
 		this._authorizationManager = authorizationManager;
 	}
 
-    public IApiOAuth2TokenManager getTokenManager() {
-        return tokenManager;
-    }
+	public IApiOAuth2TokenManager getTokenManager() {
+		return tokenManager;
+	}
 
-    public void setTokenManager(IApiOAuth2TokenManager tokenManager) {
-        this.tokenManager = tokenManager;
-    }
+	public void setTokenManager(IApiOAuth2TokenManager tokenManager) {
+		this.tokenManager = tokenManager;
+	}
 
-    private IUserManager _userManager;
+	private IUserManager _userManager;
 	private IAuthorizationManager _authorizationManager;
-    private IApiOAuth2TokenManager tokenManager;
-    
+	private IApiOAuth2TokenManager tokenManager;
+
 }

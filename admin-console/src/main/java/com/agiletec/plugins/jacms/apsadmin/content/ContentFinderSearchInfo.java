@@ -22,14 +22,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
+import java.io.Serializable;
 
 @SuppressWarnings("rawtypes")
-public class ContentFinderSearchInfo {
+public class ContentFinderSearchInfo implements Serializable {
 
 	public static final String SESSION_NAME = "ContentFinderSearchInfo";
 	public static final String ORDER_FILTER = "OrderFilter";
 	public static final String ATTRIBUTE_FILTER = "attribute_filter_";
-
 
 	private String pageName;
 	private int pagePos;
@@ -40,10 +40,10 @@ public class ContentFinderSearchInfo {
 
 	private Map<String, EntitySearchFilter> filters = new HashMap<String, EntitySearchFilter>();
 
-
 	public String getCategoryCode() {
 		return categoryCode;
 	}
+
 	public void setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
 	}
@@ -51,6 +51,7 @@ public class ContentFinderSearchInfo {
 	public EntitySearchFilter[] getAttributeFilters() {
 		return attributeFilters;
 	}
+
 	public void setAttributeFilters(EntitySearchFilter[] attributeFilters) {
 		this.attributeFilters = attributeFilters;
 	}
@@ -58,6 +59,7 @@ public class ContentFinderSearchInfo {
 	public int getPagePos() {
 		return pagePos;
 	}
+
 	public void setPagePos(int pagePos) {
 		this.pagePos = pagePos;
 	}
@@ -65,6 +67,7 @@ public class ContentFinderSearchInfo {
 	public Integer getPageSize() {
 		return pageSize;
 	}
+
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 	}
@@ -72,6 +75,7 @@ public class ContentFinderSearchInfo {
 	public String getPageName() {
 		return pageName;
 	}
+
 	public void setPageName(String pageName) {
 		this.pageName = pageName;
 	}
@@ -79,10 +83,10 @@ public class ContentFinderSearchInfo {
 	public Map<String, EntitySearchFilter> getFilters() {
 		return filters;
 	}
+
 	public void setFilters(Map<String, EntitySearchFilter> filters) {
 		this.filters = filters;
 	}
-
 
 	public void addFilter(String key, EntitySearchFilter filterToAdd) {
 		this.filters.put(key, filterToAdd);
@@ -106,7 +110,7 @@ public class ContentFinderSearchInfo {
 		List<EntitySearchFilter> list = new ArrayList<EntitySearchFilter>();
 		for (String keyEntry : this.filters.keySet()) {
 			if (keyEntry.startsWith(key)) {
-				list.add (filters.get(keyEntry));
+				list.add(filters.get(keyEntry));
 			}
 		}
 
@@ -131,7 +135,9 @@ public class ContentFinderSearchInfo {
 	}
 
 	/**
-	 * Try to set the page name and page position by choosing a parameter from the given parameters names enumeration
+	 * Try to set the page name and page position by choosing a parameter from
+	 * the given parameters names enumeration
+	 *
 	 * @return true if a valid parameter is found and the values have been set
 	 */
 	public boolean setPagerFromParameters(Enumeration parameterNames) {
@@ -155,4 +161,3 @@ public class ContentFinderSearchInfo {
 	}
 
 }
-

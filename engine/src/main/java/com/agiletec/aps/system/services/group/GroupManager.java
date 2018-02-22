@@ -162,4 +162,13 @@ public class GroupManager extends AbstractService implements IGroupManager {
         return pagedResult;
     }
 
+    @Override
+    public SearcherDaoPaginatedResult<Group> getGroups(List<FieldSearchFilter> filters) throws ApsSystemException {
+        FieldSearchFilter[] array = null;
+        if (null != filters) {
+            array = filters.toArray(new FieldSearchFilter[filters.size()]);
+        }
+        return this.getGroups(array);
+    }
+
 }

@@ -191,6 +191,9 @@ public class AllTests {
 
 		suite.addTestSuite(TestSearchEngineManager.class);
 
+        suite.addTest(ServicesAllTests.suite());
+        suite.addTest(ControllersAllTests.suite());
+
 		return suite;
 	}
 

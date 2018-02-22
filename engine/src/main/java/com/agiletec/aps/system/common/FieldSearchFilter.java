@@ -158,7 +158,7 @@ public class FieldSearchFilter<T> implements Serializable {
         }
     }
     
-    protected void setKey(String key) {
+    public void setKey(String key) {
         if (null == key || key.trim().length() == 0) {
             throw new RuntimeException("Error: Key required");
         }
@@ -320,6 +320,13 @@ public class FieldSearchFilter<T> implements Serializable {
 
     public void setOffset(Integer offset) {
         this.offset = offset;
+    }
+
+    @Override
+    public String toString() {
+        return "FieldSearchFilter [key=" + key + ", value=" + value + ", order=" + order + ", start=" + start + ", end=" + end + ", likeOption=" + likeOption + ", likeOptionType=" + likeOptionType + ", nullOption=" +
+               nullOption + ", allowedValues=" + allowedValues + ", startDateDelay=" + startDateDelay + ", endDateDelay=" + endDateDelay + ", valueDateDelay=" + valueDateDelay + ", limit=" + limit + ", offset=" +
+               offset + "]";
     }
 
 }

@@ -69,5 +69,6 @@ public interface IGroupManager {
 
     public SearcherDaoPaginatedResult<Group> getGroups(FieldSearchFilter[] fieldSearchFilters) throws ApsSystemException;
 
+    public SearcherDaoPaginatedResult<Group> getGroups(List<FieldSearchFilter> fieldSearchFilters) throws ApsSystemException;
 	
 }

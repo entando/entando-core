@@ -25,7 +25,6 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
-import org.entando.entando.web.group.model.GroupPutRequest;
 import org.entando.entando.web.group.model.GroupRequest;
 import org.entando.entando.web.group.validator.GroupValidator;
 import org.slf4j.Logger;
@@ -46,7 +45,8 @@ public class GroupController {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERR_CODE_GROUP_ALREADY_EXISTS = "1";
+    public static final String ERRCODE_GROUP_ALREADY_EXISTS = "1";
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
 
 	@Autowired
     private IGroupService groupService;
@@ -62,6 +62,14 @@ public class GroupController {
         this.groupService = groupService;
     }
 
+    public GroupValidator getGroupValidator() {
+        return groupValidator;
+    }
+
+    public void setGroupValidator(GroupValidator groupValidator) {
+        this.groupValidator = groupValidator;
+    }
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGroups(RestListRequest requestList) {
@@ -70,15 +78,24 @@ public class GroupController {
 	}
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/group/{groupName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getGroup(@PathVariable String groupName) {
-        GroupDto group = this.getGroupService().getGroup(groupName);
+    @RequestMapping(value = "/group/{groupCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getGroup(@PathVariable String groupCode) {
+        GroupDto group = this.getGroupService().getGroup(groupCode);
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
 	}
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-	@RequestMapping(value = "/group/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
-    public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupPutRequest groupRequest) {
+    @RequestMapping(value = "/group/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
+    public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getGroupValidator().validateBodyName(groupName, groupRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
         GroupDto group = this.getGroupService().updateGroup(groupName, groupRequest.getDescr());
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
 	}
@@ -91,7 +108,7 @@ public class GroupController {
 			throw new ValidationGenericException(bindingResult);
 		}
         //business validations 
-		groupValidator.validate(groupRequest, bindingResult);
+		getGroupValidator().validate(groupRequest, bindingResult);
 		if (bindingResult.hasErrors()) {
 			throw new ValidationConflictException(bindingResult);
 		}
@@ -106,6 +123,7 @@ public class GroupController {
         this.getGroupService().removeGroup(groupName);
 		return new ResponseEntity<>(new RestResponse(groupName), HttpStatus.OK);
 	}
+
 
 }
 

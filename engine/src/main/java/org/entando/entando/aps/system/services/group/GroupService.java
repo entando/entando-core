@@ -90,17 +90,17 @@ public class GroupService implements IGroupService {
     }
 
     @Override
-    public GroupDto updateGroup(String groupName, String descr) {
-        Group group = this.getGroupManager().getGroup(groupName);
+    public GroupDto updateGroup(String groupCode, String descr) {
+        Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
-            throw new RestRourceNotFoundException("group", groupName);
+            throw new RestRourceNotFoundException("group", groupCode);
         }
         group.setDescription(descr);
         try {
             this.getGroupManager().updateGroup(group);
             return this.getDtoBuilder().convert(group);
         } catch (ApsSystemException e) {
-            logger.error("Error updating group {}", groupName, e);
+            logger.error("Error updating group {}", groupCode, e);
             throw new RestServerError("error in update group", e);
         }
     }

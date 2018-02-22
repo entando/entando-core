@@ -6,6 +6,7 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.group.GroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
@@ -14,6 +15,8 @@ import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.group.model.GroupRequest;
+import org.entando.entando.web.group.validator.GroupValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +26,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,6 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -162,6 +167,30 @@ public class GroupControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println(response);
         result.andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    public void should_validate_put_path_mismatch() throws ApsSystemException, Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        ObjectMapper mapper = new ObjectMapper();
+        GroupRequest group = new GroupRequest();
+        group.setName("__helpdesk_");
+        group.setDescr("Helpdesk");
+        String payload = mapper.writeValueAsString(group);
+
+        this.controller.setGroupValidator(new GroupValidator());
+        ResultActions result = mockMvc.perform(
+                                               put("/group/{groupCode}", "helpdesk")
+                                                                                    .content(payload)
+                                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                                    .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest());
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println(response);
     }
 
 

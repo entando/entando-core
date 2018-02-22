@@ -6,28 +6,37 @@ import javax.validation.constraints.NotNull;
  * group add payload 
  *
  */
-public class GroupRequest extends GroupPutRequest {
+public class GroupRequest {
 
-	@NotNull(message = "NotBlank.group.name")
-	private String name;
+    @NotNull(message = "NotBlank.group.name")
+    private String name;
 
-
-	public GroupRequest() {
-
-	}
-
-	public GroupRequest(String name, String descr) {
-		super(descr);
-		this.name = name;
-	}
+    @NotNull(message = "NotBlank.group.descr")
+    private String descr;
 
 
-	public String getName() {
-		return name;
-	}
+    public GroupRequest() {
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    }
+
+    public GroupRequest(String name, String descr) {
+        this.name = name;
+    }
+
+    public String getDescr() {
+        return descr;
+    }
+
+    public void setDescr(String descr) {
+        this.descr = descr;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

@@ -143,7 +143,7 @@ public class RestExceptionHandler {
             List<RestError> errors = new ArrayList<>();
             for (FieldError fieldError : fieldErrors) {
                 String localizedErrorMessage = resolveLocalizedErrorMessage(fieldError);
-                errors.add(new RestError(null, localizedErrorMessage));
+                errors.add(new RestError(fieldError.getCode(), localizedErrorMessage));
             }
             dto.addErrors(errors);
         }

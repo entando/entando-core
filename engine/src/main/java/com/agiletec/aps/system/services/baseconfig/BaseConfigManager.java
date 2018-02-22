@@ -13,16 +13,25 @@
  */
 package com.agiletec.aps.system.services.baseconfig;
 
+import java.io.StringReader;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.digester.Digester;
+import org.apache.commons.digester.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.baseconfig.cache.IConfigManagerCacheWrapper;
+import static com.agiletec.aps.system.services.baseconfig.ConfigInterface.ALGO_HASH_LENGTH_PARAM_NAME;
+import static com.agiletec.aps.system.services.baseconfig.ConfigInterface.ALGO_ITERATIONS_PARAM_NAME;
+import static com.agiletec.aps.system.services.baseconfig.ConfigInterface.ALGO_MEMORY_PARAM_NAME;
+import static com.agiletec.aps.system.services.baseconfig.ConfigInterface.ALGO_PARALLELISM_PARAM_NAME;
+import static com.agiletec.aps.system.services.baseconfig.ConfigInterface.ALGO_SALT_LENGTH_PARAM_NAME;
+import static com.agiletec.aps.system.services.baseconfig.ConfigInterface.ALGO_TYPE_PARAM_NAME;
+import com.agiletec.aps.util.MapSupportRule;
 import de.mkammerer.argon2.Argon2Factory;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,29 +52,17 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class BaseConfigManager extends AbstractService implements ConfigInterface, ServletContextAware {
 
-	private static final Logger logger = LoggerFactory.getLogger(BaseConfigManager.class);
-
-	private Map<String, String> systemParams;
-
-	private String securityConfigPath = null;
-
-	private IConfigManagerCacheWrapper cacheWrapper;
-
-	private boolean argon2 = false;
-
-	private IConfigItemDAO configDao;
-
-	private ServletContext servletContext;
+	private static final Logger _logger = LoggerFactory.getLogger(BaseConfigManager.class);
 
 	@Override
 	public void init() throws Exception {
-		String version = this.getSystemParams().get(SystemConstants.INIT_PROP_CONFIG_VERSION);
-		this.getCacheWrapper().initCache(this.getConfigDAO(), version);
-		argon2 = (this.getParam("argon2") != null
+		this.loadConfigItems();
+		this.parseParams();
+		_argon2 = (this.getParam("argon2") != null
 				&& this.getParam("argon2").equalsIgnoreCase("true"));
 		Properties props = this.extractSecurityConfiguration();
 		this.checkSecurityConfiguration(props);
-		logger.debug("{} ready. Initialized", this.getClass().getName());
+		_logger.debug("{} ready. Initialized {} configuration items and {} parameters", this.getClass().getName(), this._configItems.size(), this._params.size());
 	}
 
 	/**
@@ -77,7 +74,7 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 	 */
 	@Override
 	public String getConfigItem(String name) {
-		return this.getCacheWrapper().getConfigItem(name);
+		return (String) this._configItems.get(name);
 	}
 
 	/**
@@ -90,12 +87,16 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 	 */
 	@Override
 	public void updateConfigItem(String itemName, String config) throws ApsSystemException {
-		String version = this.getSystemParams().get(SystemConstants.INIT_PROP_CONFIG_VERSION);
+		String oldParamValue = this.getConfigItem(itemName);
+		this._configItems.put(itemName, config);
+		String version = (String) this._params.get(SystemConstants.INIT_PROP_CONFIG_VERSION);
 		try {
 			this.getConfigDAO().updateConfigItem(itemName, config, version);
 			this.refresh();
 		} catch (Throwable t) {
-			logger.error("Error while updating item {}", itemName, t);
+			this._configItems.put(itemName, oldParamValue);
+			_logger.error("Error while updating item {}", itemName, t);
+			//ApsSystemUtils.logThrowable(t, this, "updateConfigItem");
 			throw new ApsSystemException("Error while updating item", t);
 		}
 	}
@@ -109,11 +110,48 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 	 */
 	@Override
 	public String getParam(String name) {
-		String param = this.getSystemParams().get(name);
-		if (null != param) {
-			return param;
-		} else {
-			return this.getCacheWrapper().getParam(name);
+		return (String) this._params.get(name);
+	}
+
+	/**
+	 * Carica le voci di configurazione da db e le memorizza su un Map.
+	 *
+	 * @throws ApsSystemException in caso di errori di lettura da db
+	 */
+	private void loadConfigItems() throws ApsSystemException {
+		String version = (String) this._params.get(SystemConstants.INIT_PROP_CONFIG_VERSION);
+		try {
+			_configItems = this.getConfigDAO().loadVersionItems(version);
+		} catch (Throwable t) {
+			throw new ApsSystemException("Error while loading items", t);
+		}
+	}
+
+	/**
+	 * Esegue il parsing della voce di configurazione "params" per estrarre i
+	 * parametri. I parametri sono caricati sul Map passato come argomento. I
+	 * parametri corrispondono a tag del tipo:<br>
+	 * &lt;Param name="nome_parametro"&gt;valore_parametro&lt;/Param&gt;<br>
+	 * qualunque sia la loro posizione relativa nel testo XML.<br>
+	 * ATTENZIONE: non viene controllata l'univocità del nome, in caso di
+	 * doppioni il precedente valore perso.
+	 *
+	 * @throws ApsSystemException In caso di errori IO e Sax
+	 */
+	private void parseParams() throws ApsSystemException {
+		String xml = this.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+		Digester dig = new Digester();
+		Rule rule = new MapSupportRule("name");
+		dig.addRule("*/Param", rule);
+		dig.push(this._params);
+		try {
+			dig.parse(new StringReader(xml));
+		} catch (Exception e) {
+			_logger.error("Error detected while parsing the \"params\" item in the \"sysconfig\" table: verify the \"sysconfig\" table", e);
+			//ApsSystemUtils.logThrowable(e, this, "parseParams");
+			throw new ApsSystemException(
+					"Error detected while parsing the \"params\" item in the \"sysconfig\" table:"
+					+ " verify the \"sysconfig\" table", e);
 		}
 	}
 
@@ -134,7 +172,7 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 			algoType = Argon2Factory.Argon2Types.valueOf(mainProps.getProperty(ALGO_TYPE_PARAM_NAME)).name();
 		} catch (Exception e) {
 			String defaultAlgoType = Argon2Factory.Argon2Types.ARGON2i.name();
-			logger.error("Invalid value for Argon2 hashType '{}'; the default value is '{}'", algoType, defaultAlgoType, e);
+			_logger.error("Invalid value for Argon2 hashType '{}'; the default value is '{}'", algoType, defaultAlgoType, e);
 			throw new RuntimeException("Invalid value for Argon2 hashType '" + algoType + "'; the default value is '" + defaultAlgoType + "'", e);
 		}
 		System.getProperties().setProperty(ALGO_TYPE_PARAM_NAME, algoType);
@@ -170,55 +208,12 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 		System.getProperties().setProperty(ALGO_MEMORY_PARAM_NAME, String.valueOf(memory));
 	}
 
-	/**
-	 * Restituisce il dao in uso al manager.
-	 *
-	 * @return Il dao in uso al manager.
-	 */
-	protected IConfigItemDAO getConfigDAO() {
-		return configDao;
-	}
-
-	/**
-	 * Setta il dao in uso al manager.
-	 *
-	 * @param configDao Il dao in uso al manager.
-	 */
-	public void setConfigDAO(IConfigItemDAO configDao) {
-		this.configDao = configDao;
-	}
-
-	protected Map<String, String> getSystemParams() {
-		return this.systemParams;
-	}
-
-	public void setSystemParams(Map<String, String> systemParams) {
-		this.systemParams = systemParams;
-	}
-
 	protected String getSecurityConfigPath() {
 		return securityConfigPath;
 	}
 
 	public void setSecurityConfigPath(String securityConfigPath) {
 		this.securityConfigPath = securityConfigPath;
-	}
-
-	protected IConfigManagerCacheWrapper getCacheWrapper() {
-		return cacheWrapper;
-	}
-
-	public void setCacheWrapper(IConfigManagerCacheWrapper cacheWrapper) {
-		this.cacheWrapper = cacheWrapper;
-	}
-
-	@Override
-	public boolean isArgon2() {
-		return argon2;
-	}
-
-	public void setArgon2(boolean argon2) {
-		this.argon2 = argon2;
 	}
 
 	protected ServletContext getServletContext() {
@@ -229,5 +224,59 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
+
+	/**
+	 * Restituisce il dao in uso al manager.
+	 *
+	 * @return Il dao in uso al manager.
+	 */
+	protected IConfigItemDAO getConfigDAO() {
+		return _configDao;
+	}
+
+	/**
+	 * Setta il dao in uso al manager.
+	 *
+	 * @param configDao Il dao in uso al manager.
+	 */
+	public void setConfigDAO(IConfigItemDAO configDao) {
+		this._configDao = configDao;
+	}
+
+	/**
+	 * Setta la mappa dei parametri di inizializzazione del sistema.
+	 *
+	 * @param systemParams La mappa dei parametri di inizializzazione.
+	 */
+	public void setSystemParams(Map<String, String> systemParams) {
+		this._params = systemParams;
+	}
+
+	@Override
+	public boolean isArgon2() {
+		return _argon2;
+	}
+
+	public void setArgon2(boolean _argon2) {
+		this._argon2 = _argon2;
+	}
+
+	/**
+	 * Map contenente tutte le voci di configurazione di una versione.
+	 */
+	private Map<String, String> _configItems;
+
+	/**
+	 * Map contenente tutti i parametri di configurazione di una versione.
+	 */
+	private Map<String, String> _params;
+
+	private boolean _argon2 = false;
+
+	private String securityConfigPath = null;
+
+	private ServletContext servletContext;
+
+	private IConfigItemDAO _configDao;
 
 }

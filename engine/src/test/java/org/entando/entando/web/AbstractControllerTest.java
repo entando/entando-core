@@ -14,24 +14,25 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.pagesettings.PageSettingsService;
 import org.entando.entando.web.common.handlers.RestExceptionHandler;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.junit.Before;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -55,21 +56,22 @@ public class AbstractControllerTest {
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
     /**
-     * The returned list contains an {@link HandlerExceptionResolver} built with an instance of 
-     * a {@link ResourceBundleMessageSource}, that points to the default baseName 
-     * and with an instance of {@link RestExceptionHandler}, the global exceptionHandler
-     * 
+     * The returned list contains an {@link HandlerExceptionResolver} built with
+     * an instance of a {@link ResourceBundleMessageSource}, that points to the
+     * default baseName and with an instance of {@link RestExceptionHandler},
+     * the global exceptionHandler
+     *
      * A typical use is:
      * <pre>
      * <code>
      * mockMvc = MockMvcBuilders.standaloneSetup(someControllerUnderTest)
-                     .addInterceptors(...)
-                     .setHandlerExceptionResolvers(createHandlerExceptionResolver())
-                     .build();
+     * .addInterceptors(...)
+     * .setHandlerExceptionResolvers(createHandlerExceptionResolver())
+     * .build();
      * </code>
      * </pre>
-     * 
-     * 
+     *
+     *
      * @return
      */
     protected List<HandlerExceptionResolver> createHandlerExceptionResolver() {

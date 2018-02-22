@@ -13,7 +13,6 @@ import java.util.Map;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
-import org.entando.entando.aps.system.services.pagesettings.model.ParamDto;
 import org.entando.entando.web.pagesettings.model.PageSettingsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +64,12 @@ public class PageSettingsService implements IPageSettingsService {
         try {
             Map<String, String> params = this.createParamsMap(request);
             Map<String, String> systemParams = this.getSystemParams();
-            params.values().forEach((param) -> {
+            params.keySet().forEach((param) -> {
                 systemParams.put(param, params.get(param));
             });
+            String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+            String newXmlParams = SystemParamsUtils.getNewXmlParams(xmlParams, systemParams);
+            this.getConfigManager().updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);
             return this.getDtoBuilder().convert(systemParams);
         } catch (Throwable e) {
             logger.error("Error updating page settings", e);

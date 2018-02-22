@@ -13,11 +13,11 @@ import org.entando.entando.aps.system.services.DtoBuilder;
  * @author paddeo
  */
 public class PageSettingsDtoBuilder extends DtoBuilder<Map<String, String>, PageSettingsDto> {
-    
+
     @Override
     protected PageSettingsDto toDto(Map<String, String> sysParams) {
         PageSettingsDto dest = new PageSettingsDto();
-        sysParams.values().stream().map((name) -> {
+        sysParams.keySet().stream().map((name) -> {
             ParamDto param = new ParamDto();
             param.setName(name);
             param.setValue(sysParams.get(name));
@@ -27,5 +27,5 @@ public class PageSettingsDtoBuilder extends DtoBuilder<Map<String, String>, Page
         });
         return dest;
     }
-    
+
 }

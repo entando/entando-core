@@ -24,10 +24,19 @@
         <property name="groupManager" ref="GroupManager" />
     </bean>
 
+    <bean id="PageSettingsDtoBuilder" class="org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDtoBuilder" />
+
+    <bean id="PageSettingsService" class="org.entando.entando.aps.system.services.pagesettings.PageSettingsService" >
+        <property name="dtoBuilder" ref="PageSettingsDtoBuilder" />
+        <property name="configManager" ref="BaseConfigManager" />
+
+    </bean>
+
     <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" />
 
     <bean id="PageService" class="org.entando.entando.aps.system.services.page.GroupService" >
         <property name="dtoBuilder" ref="PageDtoBuilder" />
         <property name="pageManager" ref="PageManager" />
     </bean>
+
 </beans>

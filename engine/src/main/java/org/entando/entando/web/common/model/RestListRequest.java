@@ -120,7 +120,6 @@ public class RestListRequest {
         return null;
     }
 
-
     private Integer getOffset() {
         int page = this.getPageNum();
         if (null == this.getPageNum() || this.getPageNum() == 0) {

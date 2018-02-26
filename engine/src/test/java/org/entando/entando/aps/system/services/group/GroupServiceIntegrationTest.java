@@ -1,8 +1,10 @@
 package org.entando.entando.aps.system.services.group;
 
 import com.agiletec.aps.BaseTestCase;
+import com.agiletec.aps.system.services.group.Group;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -10,6 +12,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
 
 public class GroupServiceIntegrationTest extends BaseTestCase {
 
@@ -112,5 +115,11 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
         assertThat(res.getCount(), is(3));
     }
 
+    @Test(expected = ValidationConflictException.class)
+    public void testxxxx() throws JsonProcessingException {
+
+        this.groupService.removeGroup(Group.ADMINS_GROUP_NAME);
+
+    }
 
 }

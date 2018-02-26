@@ -15,7 +15,6 @@ package org.entando.entando.web.group.validator;
 
 import com.agiletec.aps.system.services.group.IGroupManager;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.web.group.GroupController;
 import org.entando.entando.web.group.model.GroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +24,11 @@ import org.springframework.validation.Validator;
 
 @Component
 public class GroupValidator implements Validator {
+
+    public static final String ERRCODE_GROUP_ALREADY_EXISTS = "1";
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
+    public static final String ERRCODE_CANNOT_DELETE_RESERVED_GROUP = "3";
+    public static final String ERRCODE_GROUP_REFERENCES = "4";
 
     @Autowired
     private IGroupManager groupManager;
@@ -40,13 +44,13 @@ public class GroupValidator implements Validator {
 		GroupRequest request = (GroupRequest) target;
 		String groupName = request.getName();
 		if (null != groupManager.getGroup(groupName)) {
-            errors.reject(GroupController.ERRCODE_GROUP_ALREADY_EXISTS, new String[]{groupName}, "group.exists");
+            errors.reject(ERRCODE_GROUP_ALREADY_EXISTS, new String[]{groupName}, "group.exists");
 		}
 	}
 
     public void validateBodyName(String groupName, GroupRequest groupRequest, Errors errors) {
         if (!StringUtils.equals(groupName, groupRequest.getName())) {
-            errors.rejectValue("name", GroupController.ERRCODE_URINAME_MISMATCH, new String[]{groupName, groupRequest.getName()}, "group.name.mismatch");
+            errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new String[]{groupName, groupRequest.getName()}, "group.name.mismatch");
         }
     }
 

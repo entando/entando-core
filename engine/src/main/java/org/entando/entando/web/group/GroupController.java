@@ -45,9 +45,6 @@ public class GroupController {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERRCODE_GROUP_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-
 	@Autowired
     private IGroupService groupService;
 
@@ -85,7 +82,7 @@ public class GroupController {
 	}
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/group/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
+    @RequestMapping(value = "/group/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
@@ -101,7 +98,7 @@ public class GroupController {
 	}
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-	@RequestMapping(value = "/groups", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
+    @RequestMapping(value = "/groups", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> addGroup(@Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
 		if (bindingResult.hasErrors()) {
@@ -117,7 +114,7 @@ public class GroupController {
 	}
 
     @RestAccessControl(permission = "group_delete")
-	@RequestMapping(value = "/groups/{groupName}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
+    @RequestMapping(value = "/group/{groupName}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteGroup(@PathVariable String groupName) throws ApsSystemException {
 		logger.info("deleting {}", groupName);
         this.getGroupService().removeGroup(groupName);

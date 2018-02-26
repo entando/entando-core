@@ -17,6 +17,8 @@ import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentService;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.slf4j.Logger;
@@ -58,6 +60,13 @@ public class GuiFragmentController {
 
 	public void setGuiFragmentValidator(GuiFragmentValidator guiFragmentValidator) {
 		this.guiFragmentValidator = guiFragmentValidator;
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/fragments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getGuiFragments(RestListRequest requestList) {
+		PagedMetadata<GuiFragmentDto> result = this.getGuiFragmentService().getGuiFragments(requestList);
+		return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
 	}
 
 	@RestAccessControl(permission = Permission.SUPERUSER)

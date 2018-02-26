@@ -13,6 +13,8 @@
  */
 package org.entando.entando.aps.system.services.guifragment;
 
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -33,7 +35,7 @@ public class GuiFragmentService implements IGuiFragmentService {
 	@Autowired
 	private IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder;
 
-	public IGuiFragmentManager getGuiFragmentManager() {
+	protected IGuiFragmentManager getGuiFragmentManager() {
 		return guiFragmentManager;
 	}
 
@@ -41,7 +43,7 @@ public class GuiFragmentService implements IGuiFragmentService {
 		this.guiFragmentManager = guiFragmentManager;
 	}
 
-	public IDtoBuilder<GuiFragment, GuiFragmentDto> getDtoBuilder() {
+	protected IDtoBuilder<GuiFragment, GuiFragmentDto> getDtoBuilder() {
 		return dtoBuilder;
 	}
 
@@ -51,7 +53,23 @@ public class GuiFragmentService implements IGuiFragmentService {
 
 	@Override
 	public PagedMetadata<GuiFragmentDto> getGuiFragments(RestListRequest restListReq) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		PagedMetadata<GuiFragmentDto> pagedMetadata = null;
+		try {
+			/*
+			//transforms the filters by overriding the key specified in the request with the correct one known by the dto
+			restListReq.getFieldSearchFilters().stream()
+					.filter(searchFilter -> searchFilter.getKey() != null)
+					.forEach(searchFilter -> searchFilter.setKey(GuiFragmentDto.getEntityFieldName(searchFilter.getKey())));
+			 */
+			SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.getFieldSearchFilters());
+			List<GuiFragmentDto> dtoList = this.getDtoBuilder().convert(fragments.getList());
+			pagedMetadata = new PagedMetadata<>(restListReq, fragments);
+			pagedMetadata.setBody(dtoList);
+		} catch (Throwable t) {
+			logger.error("error in search fragments", t);
+			throw new RestServerError("error in search fragments", t);
+		}
+		return pagedMetadata;
 	}
 
 	@Override

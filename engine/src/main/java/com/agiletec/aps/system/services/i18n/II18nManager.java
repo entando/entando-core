@@ -24,11 +24,47 @@ import com.agiletec.aps.util.ApsProperties;
  * @author S.Didaci - E.Santoboni - S.Puddu
  */
 public interface II18nManager {
+
+	/**
+	 * Renders a label, according to a given key, in the desired language.
+	 * If the label is empty or not translated, is rendered in the default language.
+	 * If the label is empty or not translated in the default language, 
+	 * the value is returned accordingly to keyIfEmpty value:
+	 * <ul>
+	 * 	<li>false: return null</li>
+	 * 	<li>true: return the key value</li>
+	 * </ul>
+	 * @param key The key.
+	 * @param renderingLang The code of the rendering language.
+	 * @param keyIfEmpty If the label is empty or not exists, returns the label key
+	 * @return The value of the label, in the rendering language.
+	 * @throws ApsSystemException
+	 */
+	public String renderLabel(String key, String renderingLang, boolean keyIfEmpty) throws ApsSystemException;
+	
+	/**
+	 * Renders a label, according to a given key, in the desired language.
+	 * If the label is empty or not translated, is rendered in the default language.
+	 * If the label is empty or not translated in the default language, 
+	 * the value is returned accordingly to keyIfEmpty value:
+	 * <ul>
+	 * 	<li>false: return null</li>
+	 * 	<li>true: return the key value</li>
+	 * </ul>
+	 * @param key The key.
+	 * @param renderingLang The code of the rendering language.
+	 * @param keyIfEmpty If the label is empty or not exists, returns the label key
+	 * @param params The parameters to be replaced into the label.
+	 * The parameters, in the label text, must be as ${param_name}
+	 * @return The value of the label, in the rendering language.
+	 * @throws ApsSystemException
+	 */
+	public String renderLabel(String key, String renderingLang, boolean keyIfEmpty, Map<String, String> params) throws ApsSystemException;
 	
 	/**
 	 * Restituisce una label in base alla chiave ed alla lingua specificata.
-	 * @param key La chiave
-	 * @param langCode Il codice della lingua.
+	 * @param key The key.
+	 * @param langCode The code of the language.
 	 * @return La label richiesta.
 	 * @throws ApsSystemException
 	 */
@@ -39,7 +75,7 @@ public interface II18nManager {
 	/**
 	 * Add a group of labels on db.
 	 * @param key The key of the labels.
-	 * @param labels Th labels to add.
+	 * @param labels The labels to add.
 	 * @throws ApsSystemException In case of Exception.
 	 */
 	public void addLabelGroup(String key, ApsProperties labels) throws ApsSystemException;

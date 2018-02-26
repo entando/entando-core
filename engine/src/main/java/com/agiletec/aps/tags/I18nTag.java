@@ -13,8 +13,12 @@
  */
 package com.agiletec.aps.tags;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.jsp.JspException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +28,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.tags.util.IParameterParentTag;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import org.entando.entando.aps.tags.ExtendedTagSupport;
 
@@ -31,15 +36,20 @@ import org.entando.entando.aps.tags.ExtendedTagSupport;
  * Tag for string localisation
  * @author S.Didaci - E.Santoboni
  */
-public class I18nTag extends ExtendedTagSupport {
+public class I18nTag extends ExtendedTagSupport implements IParameterParentTag {
 
 	private static final Logger _logger = LoggerFactory.getLogger(I18nTag.class);
 	
 	@Override
 	public int doStartTag() throws JspException {
+		return EVAL_BODY_INCLUDE;
+	}
+	
+	@Override
+	public int doEndTag() throws JspException {
 		RequestContext reqCtx = (RequestContext) this.pageContext.getRequest().getAttribute(RequestContext.REQCTX);
 		try {
-			Lang currentLang = null;;
+			Lang currentLang = null;
 			if (reqCtx != null) {
 				currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
 			} else {
@@ -67,21 +77,14 @@ public class I18nTag extends ExtendedTagSupport {
 		String label = null;
 		II18nManager i18nManager = (II18nManager) ApsWebApplicationUtils.getBean(SystemConstants.I18N_MANAGER, this.pageContext);
 		try {
-			if (this._lang == null 
-					|| this._lang.equals("") 
-					|| currentLang.getCode().equalsIgnoreCase(this._lang)) {
-				label = i18nManager.getLabel(this._key, currentLang.getCode());
-				if (label == null) {
-					ILangManager langManager = 
-						(ILangManager) ApsWebApplicationUtils.getBean(SystemConstants.LANGUAGE_MANAGER, this.pageContext);
-					Lang defaultLang = langManager.getDefaultLang();
-					label = i18nManager.getLabel(this._key, defaultLang.getCode());
-				}
-			} else {
-				label = i18nManager.getLabel(this._key, this._lang);
+			String key = this.getKey();
+			String langCode = this.getLang();
+			Map<String, String> params = this.getParameters();
+			if (StringUtils.isNotEmpty(langCode) && !currentLang.getCode().equalsIgnoreCase(langCode)) {
+				label = i18nManager.renderLabel(key, langCode, false, params);
 			}
 			if (label == null) {
-				label = this._key;
+				label = i18nManager.renderLabel(key, currentLang.getCode(), true, params);
 			}
 		} catch (Throwable t) {
 			_logger.error("Error getting label", t);
@@ -96,6 +99,7 @@ public class I18nTag extends ExtendedTagSupport {
 		this._key = null;
 		this._lang = null;
 		this._varName = null;
+		this._parameters = null;
 	}
 	
 	/**
@@ -146,8 +150,21 @@ public class I18nTag extends ExtendedTagSupport {
 		this._key = key;
 	}
 	
+	public Map<String, String> getParameters() {
+		return this._parameters;
+	}
+	
+	@Override
+	public void addParameter(String name, String value) {
+		if (null == this._parameters) {
+			this._parameters = new HashMap<String, String>();
+		}
+		this._parameters.put(name, value);
+	}
+	
 	private String _varName;
 	private String _key;
 	private String _lang;
+	private Map<String, String> _parameters;
 	
 }

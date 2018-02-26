@@ -14,13 +14,16 @@
 package org.entando.entando.aps.system.services.guifragment;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.List;
+import org.entando.entando.aps.system.exception.RestReferencedResourceException;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +89,68 @@ public class GuiFragmentService implements IGuiFragmentService {
 			throw new RestRourceNotFoundException("fragment", code);
 		}
 		return this.getDtoBuilder().convert(fragment);
+	}
+
+	@Override
+	public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
+		//String code = guiFragmentRequest.getCode();
+		try {
+			//if (null != this.getGuiFragment(code)) {
+			//	throw new RestRourceNotFoundException("fragment", code);
+			//}
+			GuiFragment fragment = this.createGuiFragment(guiFragmentRequest);
+			this.getGuiFragmentManager().addGuiFragment(fragment);
+			return this.getDtoBuilder().convert(fragment);
+		} catch (ApsSystemException e) {
+			logger.error("Error adding fragment", e);
+			throw new RestServerError("error add fragment", e);
+		}
+	}
+
+	@Override
+	public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
+		String code = guiFragmentRequest.getCode();
+		try {
+			GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(code);
+			if (null == fragment) {
+				throw new RestRourceNotFoundException("fragment", code);
+			}
+			fragment.setGui(guiFragmentRequest.getGuiCode());
+			this.getGuiFragmentManager().updateGuiFragment(fragment);
+			return this.getDtoBuilder().convert(fragment);
+		} catch (RestRourceNotFoundException e) {
+			throw e;
+		} catch (ApsSystemException e) {
+			logger.error("Error updating fragment {}", code, e);
+			throw new RestServerError("error in update fragment", e);
+		}
+	}
+
+	@Override
+	public void removeGuiFragment(String guiFragmentCode) {
+		try {
+			GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(guiFragmentCode);
+			if (null == fragment) {
+				return;
+			}
+			GuiFragmentDto dto = this.getDtoBuilder().convert(fragment);
+			if (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty()) {
+				throw new RestReferencedResourceException(guiFragmentCode);
+			}
+			this.getGuiFragmentManager().deleteGuiFragment(guiFragmentCode);
+		} catch (RestReferencedResourceException e) {
+			throw e;
+		} catch (ApsSystemException e) {
+			logger.error("Error in delete guiFragmentCode {}", guiFragmentCode, e);
+			throw new RestServerError("error in delete guiFragmentCode", e);
+		}
+	}
+
+	private GuiFragment createGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
+		GuiFragment fragment = new GuiFragment();
+		fragment.setCode(guiFragmentRequest.getCode());
+		fragment.setGui(guiFragmentRequest.getGuiCode());
+		return fragment;
 	}
 
 }

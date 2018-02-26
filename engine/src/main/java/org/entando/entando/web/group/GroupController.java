@@ -45,85 +45,82 @@ public class GroupController {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERRCODE_GROUP_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
+	public static final String ERRCODE_GROUP_ALREADY_EXISTS = "1";
+	public static final String ERRCODE_URINAME_MISMATCH = "2";
 
 	@Autowired
-    private IGroupService groupService;
+	private IGroupService groupService;
 
-    @Autowired
-    private GroupValidator groupValidator;
+	@Autowired
+	private GroupValidator groupValidator;
 
-    public IGroupService getGroupService() {
-        return groupService;
-    }
-
-    public void setGroupService(IGroupService groupService) {
-        this.groupService = groupService;
-    }
-
-    public GroupValidator getGroupValidator() {
-        return groupValidator;
-    }
-
-    public void setGroupValidator(GroupValidator groupValidator) {
-        this.groupValidator = groupValidator;
-    }
-
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGroups(RestListRequest requestList) {
-        PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+	public IGroupService getGroupService() {
+		return groupService;
 	}
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/group/{groupCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGroup(@PathVariable String groupCode) {
-        GroupDto group = this.getGroupService().getGroup(groupCode);
-        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+	public void setGroupService(IGroupService groupService) {
+		this.groupService = groupService;
 	}
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/group/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
-    public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getGroupValidator().validateBodyName(groupName, groupRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-
-        GroupDto group = this.getGroupService().updateGroup(groupName, groupRequest.getDescr());
-        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+	public GroupValidator getGroupValidator() {
+		return groupValidator;
 	}
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
-	@RequestMapping(value = "/groups", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
-	public ResponseEntity<?> addGroup(@Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) throws ApsSystemException {
-        //field validations
+	public void setGroupValidator(GroupValidator groupValidator) {
+		this.groupValidator = groupValidator;
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getGroups(RestListRequest requestList) {
+		PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
+		return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/group/{groupCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getGroup(@PathVariable String groupCode) {
+		GroupDto group = this.getGroupService().getGroup(groupCode);
+		return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/group/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
+	public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
+		//field validations
 		if (bindingResult.hasErrors()) {
 			throw new ValidationGenericException(bindingResult);
 		}
-        //business validations 
+		this.getGroupValidator().validateBodyName(groupName, groupRequest, bindingResult);
+		if (bindingResult.hasErrors()) {
+			throw new ValidationGenericException(bindingResult);
+		}
+		GroupDto group = this.getGroupService().updateGroup(groupName, groupRequest.getDescr());
+		return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/groups", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
+	public ResponseEntity<?> addGroup(@Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) throws ApsSystemException {
+		//field validations
+		if (bindingResult.hasErrors()) {
+			throw new ValidationGenericException(bindingResult);
+		}
+		//business validations
 		getGroupValidator().validate(groupRequest, bindingResult);
 		if (bindingResult.hasErrors()) {
 			throw new ValidationConflictException(bindingResult);
 		}
-        GroupDto dto = this.getGroupService().addGroup(groupRequest);
+		GroupDto dto = this.getGroupService().addGroup(groupRequest);
 		return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
 	}
 
-    @RestAccessControl(permission = "group_delete")
+	@RestAccessControl(permission = "group_delete")
 	@RequestMapping(value = "/groups/{groupName}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
 	public ResponseEntity<?> deleteGroup(@PathVariable String groupName) throws ApsSystemException {
 		logger.info("deleting {}", groupName);
-        this.getGroupService().removeGroup(groupName);
+		this.getGroupService().removeGroup(groupName);
 		return new ResponseEntity<>(new RestResponse(groupName), HttpStatus.OK);
 	}
 
-
 }
-

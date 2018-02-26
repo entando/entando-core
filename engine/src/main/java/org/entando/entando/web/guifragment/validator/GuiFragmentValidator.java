@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.guifragment.validator;
 
+import org.apache.commons.lang.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.web.guifragment.GuiFragmentController;
@@ -50,11 +51,11 @@ public class GuiFragmentValidator implements Validator {
 			throw new RestServerError("error extracting fragment", e);
 		}
 	}
-	/*
-	public void validateBodyName(String groupName, GroupRequest groupRequest, Errors errors) {
-		if (!StringUtils.equals(groupName, groupRequest.getName())) {
-			errors.rejectValue("name", GroupController.ERRCODE_URINAME_MISMATCH, new String[]{groupName, groupRequest.getName()}, "fragment.code.mismatch");
+
+	public void validateBodyName(String fragmentCode, GuiFragmentRequestBody guiFragmentRequest, Errors errors) {
+		if (!StringUtils.equals(fragmentCode, guiFragmentRequest.getCode())) {
+			errors.rejectValue("code", GuiFragmentController.ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, guiFragmentRequest.getCode()}, "fragment.code.mismatch");
 		}
 	}
-	 */
+
 }

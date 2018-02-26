@@ -13,13 +13,18 @@
  */
 package org.entando.entando.web.guifragment;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import javax.validation.Valid;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentService;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,7 +53,7 @@ public class GuiFragmentController {
 	@Autowired
 	private GuiFragmentValidator guiFragmentValidator;
 
-	public IGuiFragmentService getGuiFragmentService() {
+	protected IGuiFragmentService getGuiFragmentService() {
 		return guiFragmentService;
 	}
 
@@ -54,7 +61,7 @@ public class GuiFragmentController {
 		this.guiFragmentService = guiFragmentService;
 	}
 
-	public GuiFragmentValidator getGuiFragmentValidator() {
+	protected GuiFragmentValidator getGuiFragmentValidator() {
 		return guiFragmentValidator;
 	}
 
@@ -74,6 +81,46 @@ public class GuiFragmentController {
 	public ResponseEntity<?> getGuiFragment(@PathVariable String fragmentCode) {
 		GuiFragmentDto fragment = this.getGuiFragmentService().getGuiFragment(fragmentCode);
 		return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/fragments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> addGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) throws ApsSystemException {
+		//field validations
+		if (bindingResult.hasErrors()) {
+			throw new ValidationGenericException(bindingResult);
+		}
+		//business validations
+		this.getGuiFragmentValidator().validate(guiFragmentRequest, bindingResult);
+		if (bindingResult.hasErrors()) {
+			throw new ValidationConflictException(bindingResult);
+		}
+		GuiFragmentDto fragment = this.getGuiFragmentService().addGuiFragment(guiFragmentRequest);
+		return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/fragments/{fragmentCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateGuiFragment(@PathVariable String fragmentCode,
+			@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
+		//field validations
+		if (bindingResult.hasErrors()) {
+			throw new ValidationGenericException(bindingResult);
+		}
+		this.getGuiFragmentValidator().validateBodyName(fragmentCode, guiFragmentRequest, bindingResult);
+		if (bindingResult.hasErrors()) {
+			throw new ValidationGenericException(bindingResult);
+		}
+		GuiFragmentDto fragment = this.getGuiFragmentService().updateGuiFragment(guiFragmentRequest);
+		return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
+	}
+
+	@RestAccessControl(permission = Permission.SUPERUSER)
+	@RequestMapping(value = "/fragments/{fragmentCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
+		logger.info("deleting {}", fragmentCode);
+		this.getGuiFragmentService().removeGuiFragment(fragmentCode);
+		return new ResponseEntity<>(new RestResponse(fragmentCode), HttpStatus.OK);
 	}
 
 }

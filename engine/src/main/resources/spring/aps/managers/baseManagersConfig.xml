@@ -300,6 +300,7 @@
 				<property name="dataSource" ref="portDataSource" />
 			</bean>
 		</property>
+		<property name="langManager" ref="LangManager" />
 	</bean>
 
     <bean id="ApiI18nLabelInterface" class="org.entando.entando.aps.system.services.i18n.ApiI18nLabelInterface" >

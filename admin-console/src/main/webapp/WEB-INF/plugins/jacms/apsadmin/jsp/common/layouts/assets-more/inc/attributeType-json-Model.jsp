@@ -36,7 +36,8 @@ This converter shall always return a json object like this:
 	</s:if>
 	},
 	"$i18n": {
-		"getLabel(\"<LABEL_CODE>\")": null 
+		"getLabel(\"<LABEL_CODE>\")": null, 
+		"getLabelWithParams(\"<LABEL_CODE>\").addParam(\"<PARAM_KEY>\", \"<PARAM_VALUE>\")": null 
 	},
 	"$info": {
 		"getConfigParameter(\"<PARAM_NAME>\")": null, 

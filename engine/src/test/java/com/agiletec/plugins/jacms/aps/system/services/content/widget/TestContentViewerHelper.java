@@ -55,6 +55,21 @@ public class TestContentViewerHelper extends BaseTestCase {
             throw t;
         }
     }
+	
+    public void testGetRenderedContentWithParams() throws Throwable {
+        try {
+            String contentId = "ART1";
+            String modelId = "11";
+            String renderedContent = _helper.getRenderedContent(contentId, modelId, _requestContext);
+            
+            String expected = "<h1 class=\"titolo\">Il titolo</h1>" + 
+            		"<a href=\"/Entando/it/homepage.page\">Details...</a>" + 
+            		"Benvenuto Name Surname (admin - Name.Surname)";
+            assertEquals(replaceNewLine(expected.trim()), replaceNewLine(renderedContent.trim()));
+        } catch (Throwable t) {
+            throw t;
+        }
+    }
     
     private String replaceNewLine(String input) {
     	input = input.replaceAll("\\n", "");

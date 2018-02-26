@@ -71,7 +71,7 @@ public class GroupService implements IGroupService, ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.setApplicationContext(applicationContext);
+        this.applicationContext = applicationContext;
     }
 
     @Override

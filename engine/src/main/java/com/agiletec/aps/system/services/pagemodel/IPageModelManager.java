@@ -13,8 +13,12 @@
  */
 package com.agiletec.aps.system.services.pagemodel;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Collection;
+import java.util.List;
+
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
  * Interface of the page models manager.
@@ -43,5 +47,7 @@ public interface IPageModelManager {
 	public void updatePageModel(PageModel pageModel) throws ApsSystemException;
 
 	public void deletePageModel(String code) throws ApsSystemException;
+
+    public SearcherDaoPaginatedResult<PageModel> searchPageModels(List<FieldSearchFilter> filters) throws ApsSystemException;
 
 }

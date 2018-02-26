@@ -33,11 +33,13 @@ import org.entando.entando.web.group.model.GroupRequest;
 import org.entando.entando.web.group.validator.GroupValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.validation.BeanPropertyBindingResult;
 
-public class GroupService implements IGroupService {
+public class GroupService implements IGroupService, ApplicationContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -48,7 +50,7 @@ public class GroupService implements IGroupService {
     private IDtoBuilder<Group, GroupDto> dtoBuilder;
 
 
-    private static ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     protected IGroupManager getGroupManager() {
         return groupManager;
@@ -64,6 +66,12 @@ public class GroupService implements IGroupService {
 
     public void setDtoBuilder(IDtoBuilder<Group, GroupDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
+    }
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.setApplicationContext(applicationContext);
     }
 
     @Override
@@ -147,8 +155,8 @@ public class GroupService implements IGroupService {
 
     protected Group createGroup(GroupRequest groupRequest) {
         Group group = new Group();
-        group.setName(groupRequest.getName());
-        group.setDescription(groupRequest.getDescr());
+        group.setName(groupRequest.getCode());
+        group.setDescription(groupRequest.getName());
         return group;
     }
 
@@ -197,5 +205,6 @@ public class GroupService implements IGroupService {
         }
         return references;
     }
+
 
 }

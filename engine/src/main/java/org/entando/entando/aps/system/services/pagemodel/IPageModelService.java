@@ -10,11 +10,11 @@ public interface IPageModelService {
 
     PagedMetadata<PageModelDto> getPageModels(RestListRequest restRequest);
 
-    PageModelDto getPageModelDto(String groupName);
+    PageModelDto getPageModel(String code);
 
-    PageModelDto updatePageModel(String groupName, String descr);
+    PageModelDto updatePageModel(PageModelRequest pageModelRequest);
 
-    PageModelDto addPageModel(PageModelRequest groupRequest);
+    PageModelDto addPageModel(PageModelRequest pageModelRequest);
 
     void removePageModel(String groupName);
 }

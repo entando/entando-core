@@ -33,10 +33,13 @@ public class PagedMetadata<T> {
 
     public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
         this.page = req.getPageNum();
-        this.size = result.getList().size();
-        Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
-        this.last = pages.intValue() - 1;
-        this.count = result.getCount();
+        if (null != result) {
+
+            this.size = result.getList().size();
+            Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
+            this.last = pages.intValue() - 1;
+            this.count = result.getCount();
+        }
     }
 
     public PagedMetadata(int page, int size, int last, int count) {
@@ -84,6 +87,48 @@ public class PagedMetadata<T> {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((body == null) ? 0 : body.hashCode());
+        result = prime * result + count;
+        result = prime * result + last;
+        result = prime * result + page;
+        result = prime * result + size;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PagedMetadata other = (PagedMetadata) obj;
+        if (body == null) {
+            if (other.body != null)
+                return false;
+        } else if (!body.equals(other.body))
+            return false;
+        if (count != other.count)
+            return false;
+        if (last != other.last)
+            return false;
+        if (page != other.page)
+            return false;
+        if (size != other.size)
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "PagedMetadata [page=" + page + ", size=" + size + ", last=" + last + ", count=" + count + ", body=" + body + "]";
     }
 
 }

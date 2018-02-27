@@ -55,7 +55,6 @@ public class TestPageModelManager extends BaseTestCase {
     }
 
     public void testSearch_with_page_filter() throws ApsSystemException {
-
         RestListRequest restListRequest = new RestListRequest();
         restListRequest.setPageSize(2);
         restListRequest.setPageNum(1);

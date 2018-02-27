@@ -5,6 +5,7 @@ import java.util.List;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
@@ -29,6 +30,14 @@ public class PageModelService implements IPageModelService {
         this.pageModelManager = pageModelManager;
     }
 
+    public IDtoBuilder<PageModel, PageModelDto> getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(IDtoBuilder<PageModel, PageModelDto> dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
+    }
+
     @Override
     public PagedMetadata<PageModelDto> getPageModels(RestListRequest restListReq) {
         try {
@@ -39,7 +48,11 @@ public class PageModelService implements IPageModelService {
                        .forEach(i -> i.setKey(PageModelDto.getEntityFieldName(i.getKey())));
 
             SearcherDaoPaginatedResult<PageModel> pageModels = this.getPageModelManager().searchPageModels(restListReq.getFieldSearchFilters());
-            List<PageModelDto> dtoList = dtoBuilder.convert(pageModels.getList());
+
+            List<PageModelDto> dtoList = null;
+            if (null != pageModels) {
+                dtoList = this.getDtoBuilder().convert(pageModels.getList());
+            }
 
             PagedMetadata<PageModelDto> pagedMetadata = new PagedMetadata<>(restListReq, pageModels);
             pagedMetadata.setBody(dtoList);
@@ -52,19 +65,35 @@ public class PageModelService implements IPageModelService {
     }
 
     @Override
-    public PageModelDto getPageModelDto(String groupName) {
+    public PageModelDto getPageModel(String code) {
+        PageModel pageModel = this.getPageModelManager().getPageModel(code);
+        if (null == pageModel) {
+            logger.warn("no pageModel found with code {}", code);
+            throw new RestRourceNotFoundException("pageModel", code);
+        }
+        return this.getDtoBuilder().convert(pageModel);
+    }
+
+    @Override
+    public PageModelDto updatePageModel(PageModelRequest pageModelRequest) {
+
+        //        Group group = this.getGroupManager().getGroup(pageModelRequest.getClass);
+        //        if (null == group) {
+        //            throw new RestRourceNotFoundException("group", groupCode);
+        //        }
+
+        PageModel pageModel = this.createPageModel(pageModelRequest);
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private PageModel createPageModel(PageModelRequest pageModelRequest) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public PageModelDto updatePageModel(String groupName, String descr) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public PageModelDto addPageModel(PageModelRequest groupRequest) {
+    public PageModelDto addPageModel(PageModelRequest pageModelRequest) {
         // TODO Auto-generated method stub
         return null;
     }

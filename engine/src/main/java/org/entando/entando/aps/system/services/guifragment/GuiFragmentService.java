@@ -16,17 +16,19 @@ package org.entando.entando.aps.system.services.guifragment;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.List;
-import org.entando.entando.aps.system.exception.RestReferencedResourceException;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
+import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 public class GuiFragmentService implements IGuiFragmentService {
 
@@ -134,12 +136,11 @@ public class GuiFragmentService implements IGuiFragmentService {
 				return;
 			}
 			GuiFragmentDto dto = this.getDtoBuilder().convert(fragment);
-			if (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty()) {
-				throw new RestReferencedResourceException(guiFragmentCode);
+			BeanPropertyBindingResult validationResult = this.checkFragmentForDelete(fragment, dto);
+			if (validationResult.hasErrors()) {
+				throw new ValidationConflictException(validationResult);
 			}
 			this.getGuiFragmentManager().deleteGuiFragment(guiFragmentCode);
-		} catch (RestReferencedResourceException e) {
-			throw e;
 		} catch (ApsSystemException e) {
 			logger.error("Error in delete guiFragmentCode {}", guiFragmentCode, e);
 			throw new RestServerError("error in delete guiFragmentCode", e);
@@ -151,6 +152,17 @@ public class GuiFragmentService implements IGuiFragmentService {
 		fragment.setCode(guiFragmentRequest.getCode());
 		fragment.setGui(guiFragmentRequest.getGuiCode());
 		return fragment;
+	}
+
+	protected BeanPropertyBindingResult checkFragmentForDelete(GuiFragment fragment, GuiFragmentDto dto) throws ApsSystemException {
+		BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(fragment, "fragment");
+		if (null == fragment) {
+			return bindingResult;
+		}
+		if (!bindingResult.hasErrors() && (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty())) {
+			bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.references");
+		}
+		return bindingResult;
 	}
 
 }

@@ -45,9 +45,6 @@ public class GuiFragmentController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "1";
-	public static final String ERRCODE_URINAME_MISMATCH = "2";
-
 	@Autowired
 	private IGuiFragmentService guiFragmentService;
 

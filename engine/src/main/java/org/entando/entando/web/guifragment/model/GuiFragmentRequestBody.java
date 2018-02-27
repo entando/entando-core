@@ -17,10 +17,10 @@ import javax.validation.constraints.NotNull;
 
 public class GuiFragmentRequestBody {
 
-	@NotNull(message = "NotBlank.fragment.code")
+	@NotNull(message = "guifragment.code.notBlank")
 	private String code;
 
-	@NotNull(message = "NotBlank.fragment.guiCode")
+	@NotNull(message = "guifragment.gui.notBlank")
 	private String guiCode;
 
 	public GuiFragmentRequestBody() {

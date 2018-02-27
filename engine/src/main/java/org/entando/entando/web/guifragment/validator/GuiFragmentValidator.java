@@ -16,7 +16,6 @@ package org.entando.entando.web.guifragment.validator;
 import org.apache.commons.lang.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-import org.entando.entando.web.guifragment.GuiFragmentController;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +28,11 @@ import org.springframework.validation.Validator;
 public class GuiFragmentValidator implements Validator {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "1";
+	public static final String ERRCODE_URINAME_MISMATCH = "2";
+
+	public static final String ERRCODE_FRAGMENT_REFERENCES = "4";
 
 	@Autowired
 	private IGuiFragmentManager guiFragmentManager;
@@ -44,7 +48,7 @@ public class GuiFragmentValidator implements Validator {
 		String code = request.getCode();
 		try {
 			if (null != this.guiFragmentManager.getGuiFragment(code)) {
-				errors.reject(GuiFragmentController.ERRCODE_FRAGMENT_ALREADY_EXISTS, new String[]{code}, "fragment.exists");
+				errors.reject(ERRCODE_FRAGMENT_ALREADY_EXISTS, new String[]{code}, "guifragment.exists");
 			}
 		} catch (Exception e) {
 			logger.error("Error extracting fragment {}", code, e);
@@ -54,7 +58,7 @@ public class GuiFragmentValidator implements Validator {
 
 	public void validateBodyName(String fragmentCode, GuiFragmentRequestBody guiFragmentRequest, Errors errors) {
 		if (!StringUtils.equals(fragmentCode, guiFragmentRequest.getCode())) {
-			errors.rejectValue("code", GuiFragmentController.ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, guiFragmentRequest.getCode()}, "fragment.code.mismatch");
+			errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, guiFragmentRequest.getCode()}, "guifragment.code.mismatch");
 		}
 	}
 

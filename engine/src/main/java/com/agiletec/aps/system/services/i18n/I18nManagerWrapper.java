@@ -14,6 +14,7 @@
 package com.agiletec.aps.system.services.i18n;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.i18n.wrapper.I18nLabelBuilder;
 
 /**
  * Wrapper del Servizio I18N utilizzato nel contesto di Velocity per il parsing dei modelli.
@@ -46,6 +47,20 @@ public class I18nManagerWrapper {
 			label = this._i18nManager.getLabel(key, this._lang);
 		}
 		return label;
+	}
+
+	/**
+	 * Returns a {@link I18nLabelBuilder} from a given key, that allows to translate a label containing parameters. 
+	 * @param key The key of the desired label.
+	 * @return A {@link I18nLabelBuilder} that allows you to replace the params of the label.
+	 * @throws ApsSystemException in case of parsing errors.
+	 */
+	public I18nLabelBuilder getLabelWithParams(String key) throws ApsSystemException {
+		String label = null;
+		if (key != null) {
+			label = this._i18nManager.getLabel(key, this._lang);
+		}
+		return new I18nLabelBuilder(label);
 	}
 
 	private String _lang = null;

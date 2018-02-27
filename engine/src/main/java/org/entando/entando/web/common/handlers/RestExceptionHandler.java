@@ -62,6 +62,7 @@ public class RestExceptionHandler {
     @ResponseBody
     public RestResponse processRuntimeExceptionException(RuntimeException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
+        ex.printStackTrace();
         RestResponse response = new RestResponse();
         RestError error = new RestError(RestErrorCodes.INTERNAL_ERROR, this.resolveLocalizedErrorMessage("GENERIC_ERROR", new Object[]{ex.getMessage()}));
         List<RestError> errors = new ArrayList<>();

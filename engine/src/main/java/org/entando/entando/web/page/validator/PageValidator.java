@@ -5,6 +5,7 @@
  */
 package org.entando.entando.web.page.validator;
 
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.page.PageController;
@@ -33,15 +34,28 @@ public class PageValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         PageRequest request = (PageRequest) target;
-        String groupName = request.getName();
-        if (null != groupManager.getPage(groupName)) {
-            errors.reject(PageController.ERRCODE_GROUP_ALREADY_EXISTS, new String[]{groupName}, "group.exists");
+        String pageCode = request.getCode();
+        if (null != pageManager.getDraftPage(pageCode)) {
+            errors.reject(PageController.ERRCODE_PAGE_ALREADY_EXISTS, new String[]{pageCode}, "page.exists");
         }
     }
 
-    public void validateBodyName(String groupName, PageRequest groupRequest, Errors errors) {
-        if (!StringUtils.equals(groupName, groupRequest.getName())) {
-            errors.rejectValue("name", PageController.ERRCODE_URINAME_MISMATCH, new String[]{groupName, groupRequest.getName()}, "group.name.mismatch");
+    public void validateBodyCode(String pageCode, PageRequest pageRequest, Errors errors) {
+        if (!StringUtils.equals(pageCode, pageRequest.getCode())) {
+            errors.rejectValue("code", PageController.ERRCODE_URINAME_MISMATCH, new String[]{pageCode, pageRequest.getCode()}, "page.code.mismatch");
+        }
+    }
+
+    public void validateOnlinePage(String pageCode, Errors errors) {
+        if (null != pageManager.getOnlinePage(pageCode)) {
+            errors.reject(PageController.ERRCODE_ONLINE_PAGE, new String[]{pageCode}, "page.delete.online");
+        }
+    }
+
+    public void validateChildren(String pageCode, Errors errors) {
+        IPage page = pageManager.getDraftPage(pageCode);
+        if (page != null && page.getChildrenCodes() != null && page.getChildrenCodes().length > 0) {
+            errors.reject(PageController.ERRCODE_PAGE_HAS_CHILDREN, new String[]{pageCode}, "page.delete.children");
         }
     }
 

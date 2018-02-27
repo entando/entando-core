@@ -34,9 +34,10 @@
 
     <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" />
 
-    <bean id="PageService" class="org.entando.entando.aps.system.services.page.GroupService" >
+    <bean id="PageService" class="org.entando.entando.aps.system.services.page.PageService" >
         <property name="dtoBuilder" ref="PageDtoBuilder" />
         <property name="pageManager" ref="PageManager" />
+        <property name="pageModelManager" ref="PageModelManager" />
     </bean>
 
 </beans>

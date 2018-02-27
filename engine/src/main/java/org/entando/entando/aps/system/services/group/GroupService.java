@@ -13,24 +13,33 @@
  */
 package org.entando.entando.aps.system.services.group;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.group.model.GroupRequest;
+import org.entando.entando.web.group.validator.GroupValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.validation.BeanPropertyBindingResult;
 
-public class GroupService implements IGroupService {
+public class GroupService implements IGroupService, ApplicationContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -40,6 +49,8 @@ public class GroupService implements IGroupService {
     @Autowired
     private IDtoBuilder<Group, GroupDto> dtoBuilder;
 
+
+    private ApplicationContext applicationContext;
 
     protected IGroupManager getGroupManager() {
         return groupManager;
@@ -57,14 +68,20 @@ public class GroupService implements IGroupService {
         this.dtoBuilder = dtoBuilder;
     }
 
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
     @Override
     public PagedMetadata<GroupDto> getGroups(RestListRequest restListReq) {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             restListReq.getFieldSearchFilters()
-                       .stream()
-                       .filter(i -> i.getKey() != null)
-                       .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
+            .stream()
+            .filter(i -> i.getKey() != null)
+            .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
 
             SearcherDaoPaginatedResult<Group> groups = this.getGroupManager().getGroups(restListReq.getFieldSearchFilters());
             List<GroupDto> dtoList = dtoBuilder.convert(groups.getList());
@@ -121,6 +138,12 @@ public class GroupService implements IGroupService {
     public void removeGroup(String groupName) {
         try {
             Group group = this.getGroupManager().getGroup(groupName);
+
+            BeanPropertyBindingResult validationResult = this.checkGroupForDelete(group);
+            if (validationResult.hasErrors()) {
+                throw new ValidationConflictException(validationResult);
+            }
+
             if (null != group) {
                 this.getGroupManager().removeGroup(group);
             }
@@ -132,8 +155,56 @@ public class GroupService implements IGroupService {
 
     protected Group createGroup(GroupRequest groupRequest) {
         Group group = new Group();
-        group.setName(groupRequest.getName());
-        group.setDescription(groupRequest.getDescr());
+        group.setName(groupRequest.getCode());
+        group.setDescription(groupRequest.getName());
         return group;
     }
+
+    protected BeanPropertyBindingResult checkGroupForDelete(Group group) throws ApsSystemException {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(group, "group");
+
+        if (null == group) {
+            return bindingResult;
+        }
+        if (Group.FREE_GROUP_NAME.equals(group.getName()) || Group.ADMINS_GROUP_NAME.equals(group.getName())) {
+            bindingResult.reject(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP, new String[]{group.getName()}, "group.cannot.delete.reserved");
+        }
+        if (!bindingResult.hasErrors()) {
+
+            Map references = this.getReferencingObjects(group);
+            if (references.size() > 0) {
+                bindingResult.reject(GroupValidator.ERRCODE_GROUP_REFERENCES, new Object[]{group.getName(), references}, "group.cannot.delete.references");
+            }
+        }
+
+        return bindingResult;
+    }
+
+    public Map<String, List<Object>> getReferencingObjects(Group group) throws ApsSystemException {
+        Map<String, List<Object>> references = new HashMap<String, List<Object>>();
+        try {
+            String[] defNames = applicationContext.getBeanNamesForType(GroupUtilizer.class);
+            for (int i = 0; i < defNames.length; i++) {
+                Object service = null;
+                try {
+                    service = applicationContext.getBean(defNames[i]);
+                } catch (Throwable t) {
+                    logger.error("error in hasReferencingObjects", t);
+                    service = null;
+                }
+                if (service != null) {
+                    GroupUtilizer groupUtilizer = (GroupUtilizer) service;
+                    List<Object> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
+                    if (utilizers != null && !utilizers.isEmpty()) {
+                        references.put(groupUtilizer.getName() + "Utilizers", utilizers);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            throw new ApsSystemException("Error in getReferencingObjects", t);
+        }
+        return references;
+    }
+
+
 }

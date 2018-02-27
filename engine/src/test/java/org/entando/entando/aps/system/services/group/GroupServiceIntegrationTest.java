@@ -11,6 +11,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+
 public class GroupServiceIntegrationTest extends BaseTestCase {
 
     private IGroupService groupService;
@@ -111,6 +112,5 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
         assertThat(res.getLast(), is(1));
         assertThat(res.getCount(), is(3));
     }
-
 
 }

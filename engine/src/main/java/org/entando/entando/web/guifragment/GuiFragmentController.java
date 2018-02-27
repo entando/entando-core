@@ -101,13 +101,13 @@ public class GuiFragmentController {
 	}
 
 	@RestAccessControl(permission = Permission.SUPERUSER)
-	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> updateGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
+	@RequestMapping(value = "/{fragmentCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateGuiFragment(@PathVariable String fragmentCode, @Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
 		//field validations
 		if (bindingResult.hasErrors()) {
 			throw new ValidationGenericException(bindingResult);
 		}
-		this.getGuiFragmentValidator().validateBodyName(guiFragmentRequest.getCode(), guiFragmentRequest, bindingResult);
+		this.getGuiFragmentValidator().validateBodyName(fragmentCode, guiFragmentRequest, bindingResult);
 		if (bindingResult.hasErrors()) {
 			throw new ValidationGenericException(bindingResult);
 		}

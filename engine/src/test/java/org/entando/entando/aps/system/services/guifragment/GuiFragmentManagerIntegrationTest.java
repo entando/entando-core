@@ -18,19 +18,18 @@ import com.agiletec.aps.system.SystemConstants;
 
 import java.util.List;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
 
 /**
  * @author S.Puddu - E.Santoboni
  */
 public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.init();
 	}
-	
+
 	public void testCrud() throws Exception {
 		String code = "mockCrud_1";
 		try {
@@ -55,7 +54,7 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
 			throw e;
 		}
 	}
-	
+
 	public void testReferences() throws Exception {
 		List<String> codes = this._guiFragmentManager.searchGuiFragments(null);
 		assertEquals(1, codes.size());
@@ -79,7 +78,7 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
 			String newGui = "<@wp.fragment code=\"" + codeSlave + "\" escapeXml=false /> " + guiFragment.getDefaultGui();
 			guiFragment.setGui(newGui);
 			this._guiFragmentManager.updateGuiFragment(guiFragment);
-			
+
 			for (int i = 0; i < utilizersNames.length; i++) {
 				String beanNames = utilizersNames[i];
 				GuiFragmentUtilizer beanUtilizer = (GuiFragmentUtilizer) this.getApplicationContext().getBean(beanNames);
@@ -103,7 +102,7 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
 			assertEquals(1, codes.size());
 		}
 	}
-	
+
 	protected GuiFragment createMockFragment(String code, String gui, String widgetTypeCode) {
 		GuiFragment fragment = new GuiFragment();
 		fragment.setCode(code);
@@ -111,7 +110,7 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
 		fragment.setWidgetTypeCode(widgetTypeCode);
 		return fragment;
 	}
-	
+
 	private void init() throws Exception {
 		try {
 			this._guiFragmentManager = (IGuiFragmentManager) this.getApplicationContext().getBean(SystemConstants.GUI_FRAGMENT_MANAGER);
@@ -119,7 +118,7 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
 			throw new Exception(t);
 		}
 	}
-	
+
 	private IGuiFragmentManager _guiFragmentManager;
-	
+
 }

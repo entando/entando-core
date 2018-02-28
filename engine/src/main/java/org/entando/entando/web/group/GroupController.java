@@ -1,16 +1,3 @@
-/*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- */
 package org.entando.entando.web.group;
 
 import javax.validation.Valid;
@@ -83,18 +70,18 @@ public class GroupController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
+    @RequestMapping(value = "/{groupCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateGroup(@PathVariable String groupCode, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getGroupValidator().validateBodyName(groupName, groupRequest, bindingResult);
+        this.getGroupValidator().validateBodyName(groupCode, groupRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
 
-        GroupDto group = this.getGroupService().updateGroup(groupName, groupRequest.getName());
+        GroupDto group = this.getGroupService().updateGroup(groupCode, groupRequest.getName());
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
     }
 

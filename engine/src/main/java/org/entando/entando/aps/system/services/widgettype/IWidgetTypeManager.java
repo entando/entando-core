@@ -15,7 +15,10 @@ package org.entando.entando.aps.system.services.widgettype;
 
 import java.util.List;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
@@ -123,5 +126,8 @@ public interface IWidgetTypeManager {
 	 * @throws ApsSystemException in case of error
 	 */
 	public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) throws ApsSystemException;
+
+
+	public SearcherDaoPaginatedResult<WidgetType> getWidgetTypes(List<FieldSearchFilter> fieldSearchFilters) throws ApsSystemException;
 
 }

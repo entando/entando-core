@@ -12,8 +12,10 @@ import org.springframework.validation.Validator;
 @Component
 public class WidgetValidator implements Validator {
 
-    @Autowired
-    private IWidgetTypeManager widgetTypeManager;
+
+    public static final String ERRCODE_CANNOT_DELETE_USED_WIDGET = "1";
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
+
 
     @Override
     public boolean supports(Class<?> paramClass) {
@@ -22,12 +24,11 @@ public class WidgetValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-       //TODO
     }
 
     public void validateWidgetCode(String widgetCode, WidgetRequest widgetRequest, Errors errors) {
         if (!StringUtils.equals(widgetCode, widgetRequest.getCode())) {
-            errors.rejectValue("name", GroupController.ERRCODE_URINAME_MISMATCH, new String[]{widgetCode, widgetRequest.getCode()}, "widget.name.mismatch");
+            errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{widgetCode, widgetRequest.getCode()}, "widget.code.mismatch");
         }
     }
 }

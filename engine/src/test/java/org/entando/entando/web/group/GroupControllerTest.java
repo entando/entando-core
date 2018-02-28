@@ -66,8 +66,7 @@ public class GroupControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
         ResultActions result = mockMvc.perform(
-                                               get("/groups")
-                                               .param("pageNum", "1")
+                                               get("/groups").param("page", "1")
                                                .param("pageSize", "4")
                                                .header("Authorization", "Bearer " + accessToken)
                 );
@@ -75,7 +74,7 @@ public class GroupControllerTest extends AbstractControllerTest {
         result.andExpect(status().isOk());
 
         RestListRequest restListReq = new RestListRequest();
-        restListReq.setPageNum(1);
+        restListReq.setPage(1);
         restListReq.setPageSize(4);
         Mockito.verify(groupService, Mockito.times(1)).getGroups(restListReq);
     }
@@ -90,8 +89,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 
 
         ResultActions result = mockMvc.perform(
-                                               get("/groups")
-                                               .param("pageNum", "1")
+                                               get("/groups").param("page", "1")
                                                .param("pageSize", "4")
                                                .param("filter[0].attribute", "code")
                                                .param("filter[0].value", "free")
@@ -101,7 +99,7 @@ public class GroupControllerTest extends AbstractControllerTest {
         result.andExpect(status().isOk());
 
         RestListRequest restListReq = new RestListRequest();
-        restListReq.setPageNum(1);
+        restListReq.setPage(1);
         restListReq.setPageSize(4);
         restListReq.addFilter(new Filter("code", "free"));
         Mockito.verify(groupService, Mockito.times(1)).getGroups(restListReq);

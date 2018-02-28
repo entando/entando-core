@@ -83,18 +83,18 @@ public class GroupController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{groupName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@PathVariable String groupName, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
+    @RequestMapping(value = "/{groupCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateGroup(@PathVariable String groupCode, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getGroupValidator().validateBodyName(groupName, groupRequest, bindingResult);
+        this.getGroupValidator().validateBodyName(groupCode, groupRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
 
-        GroupDto group = this.getGroupService().updateGroup(groupName, groupRequest.getName());
+        GroupDto group = this.getGroupService().updateGroup(groupCode, groupRequest.getName());
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
     }
 

@@ -48,9 +48,9 @@ public class GroupValidator implements Validator {
 		}
 	}
 
-    public void validateBodyName(String groupName, GroupRequest groupRequest, Errors errors) {
-        if (!StringUtils.equals(groupName, groupRequest.getName())) {
-            errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new String[]{groupName, groupRequest.getName()}, "group.name.mismatch");
+    public void validateBodyName(String groupCode, GroupRequest groupRequest, Errors errors) {
+        if (!StringUtils.equals(groupCode, groupRequest.getCode())) {
+            errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new String[]{groupCode, groupRequest.getName()}, "group.code.mismatch");
         }
     }
 

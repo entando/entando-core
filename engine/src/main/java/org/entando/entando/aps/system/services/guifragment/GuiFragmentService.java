@@ -20,6 +20,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
+import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmall;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -40,6 +41,9 @@ public class GuiFragmentService implements IGuiFragmentService {
 	@Autowired
 	private IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder;
 
+	@Autowired
+	private IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder;
+
 	protected IGuiFragmentManager getGuiFragmentManager() {
 		return guiFragmentManager;
 	}
@@ -56,9 +60,17 @@ public class GuiFragmentService implements IGuiFragmentService {
 		this.dtoBuilder = dtoBuilder;
 	}
 
+	protected IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> getDtoSmallBuilder() {
+		return dtoSmallBuilder;
+	}
+
+	public void setDtoSmallBuilder(IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder) {
+		this.dtoSmallBuilder = dtoSmallBuilder;
+	}
+
 	@Override
-	public PagedMetadata<GuiFragmentDto> getGuiFragments(RestListRequest restListReq) {
-		PagedMetadata<GuiFragmentDto> pagedMetadata = null;
+	public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq) {
+		PagedMetadata<GuiFragmentDtoSmall> pagedMetadata = null;
 		try {
 			/*
 			//transforms the filters by overriding the key specified in the request with the correct one known by the dto
@@ -67,7 +79,7 @@ public class GuiFragmentService implements IGuiFragmentService {
 					.forEach(searchFilter -> searchFilter.setKey(GuiFragmentDto.getEntityFieldName(searchFilter.getKey())));
 			 */
 			SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.getFieldSearchFilters());
-			List<GuiFragmentDto> dtoList = this.getDtoBuilder().convert(fragments.getList());
+			List<GuiFragmentDtoSmall> dtoList = this.getDtoSmallBuilder().convert(fragments.getList());
 			pagedMetadata = new PagedMetadata<>(restListReq, fragments);
 			pagedMetadata.setBody(dtoList);
 		} catch (Throwable t) {

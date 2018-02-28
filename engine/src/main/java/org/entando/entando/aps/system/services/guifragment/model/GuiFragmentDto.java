@@ -16,19 +16,14 @@ package org.entando.entando.aps.system.services.guifragment.model;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
 /**
  * @author E.Santoboni
  */
-public class GuiFragmentDto {
+public class GuiFragmentDto extends GuiFragmentDtoSmall {
 
-	private String code;
-	private boolean locked;
-	private WidgetTypeRef widgetType;
-	private PluginRef plugin;
 	private List<FragmentRef> fragments = new ArrayList<>();
 	private List<PageModelRef> pageModels = new ArrayList<>();
 	private String defaultGuiCode;
@@ -38,50 +33,9 @@ public class GuiFragmentDto {
 	}
 
 	public GuiFragmentDto(GuiFragment guiFragment, WidgetType type) {
-		this.setCode(guiFragment.getCode());
-		this.setLocked(guiFragment.isLocked());
-		if (!StringUtils.isEmpty(guiFragment.getWidgetTypeCode())) {
-			WidgetTypeRef widgetType = new WidgetTypeRef(guiFragment.getWidgetTypeCode(), null);
-			this.setWidgetType(widgetType);
-		}
-		if (!StringUtils.isEmpty(guiFragment.getPluginCode())) {
-			PluginRef plugin = new PluginRef(guiFragment.getPluginCode(), null);
-			this.setPlugin(plugin);
-		}
+		super(guiFragment, type);
 		this.setDefaultGuiCode(guiFragment.getDefaultGui());
 		this.setGuiCode(guiFragment.getGui());
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public boolean isLocked() {
-		return locked;
-	}
-
-	public void setLocked(boolean locked) {
-		this.locked = locked;
-	}
-
-	public WidgetTypeRef getWidgetType() {
-		return widgetType;
-	}
-
-	public void setWidgetType(WidgetTypeRef widgetType) {
-		this.widgetType = widgetType;
-	}
-
-	public PluginRef getPlugin() {
-		return plugin;
-	}
-
-	public void setPlugin(PluginRef plugin) {
-		this.plugin = plugin;
 	}
 
 	public void addFragmentRef(GuiFragment fragment) {
@@ -130,60 +84,6 @@ public class GuiFragmentDto {
 
 	public void setGuiCode(String guiCode) {
 		this.guiCode = guiCode;
-	}
-
-	protected class WidgetTypeRef {
-
-		private String code;
-		private String title;
-
-		public WidgetTypeRef(String code, String title) {
-			this.setCode(code);
-			this.setTitle(title);
-		}
-
-		public String getCode() {
-			return code;
-		}
-
-		public void setCode(String code) {
-			this.code = code;
-		}
-
-		public String getTitle() {
-			return title;
-		}
-
-		public void setTitle(String title) {
-			this.title = title;
-		}
-	}
-
-	protected class PluginRef {
-
-		private String code;
-		private String title;
-
-		public PluginRef(String code, String title) {
-			this.setCode(code);
-			this.setTitle(title);
-		}
-
-		public String getCode() {
-			return code;
-		}
-
-		public void setCode(String code) {
-			this.code = code;
-		}
-
-		public String getTitle() {
-			return title;
-		}
-
-		public void setTitle(String title) {
-			this.title = title;
-		}
 	}
 
 	protected class FragmentRef {

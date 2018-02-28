@@ -121,7 +121,7 @@ public class GroupControllerTest extends AbstractControllerTest {
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
+        //System.out.println(response);
         result.andExpect(status().isUnauthorized());
     }
 
@@ -147,7 +147,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
+        //System.out.println(response);
     }
 
     @Test

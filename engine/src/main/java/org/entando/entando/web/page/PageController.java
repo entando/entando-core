@@ -9,13 +9,12 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.validator.PageValidator;
@@ -26,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,10 +42,10 @@ public class PageController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERRCODE_PAGE_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-    public static final String ERRCODE_ONLINE_PAGE = "3";
-    public static final String ERRCODE_PAGE_HAS_CHILDREN = "4";
+    public static final String ERRCODE_PAGE_ALREADY_EXISTS = "101";
+    public static final String ERRCODE_URINAME_MISMATCH = "102";
+    public static final String ERRCODE_ONLINE_PAGE = "103";
+    public static final String ERRCODE_PAGE_HAS_CHILDREN = "104";
 
     @Autowired
     private IPageService pageService;
@@ -116,8 +117,24 @@ public class PageController {
 
     @RestAccessControl(permission = "page_delete")
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deletePage(@PathVariable String pageCode, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<?> deletePage(@PathVariable String pageCode) throws ApsSystemException {
         logger.info("deleting {}", pageCode);
+        DataBinder binder = new DataBinder(pageCode);
+        BindingResult bindingResult = binder.getBindingResult();
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        //business validations 
+        getPageValidator().validateOnlinePage(pageCode, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        //business validations 
+        getPageValidator().validateChildren(pageCode, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         this.getPageService().removePage(pageCode);
         return new ResponseEntity<>(new RestResponse(pageCode), HttpStatus.OK);
     }

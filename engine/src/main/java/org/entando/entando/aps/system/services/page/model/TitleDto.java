@@ -14,6 +14,9 @@ public class TitleDto {
     private String lang;
     private String title;
 
+    public TitleDto() {
+    }
+
     public TitleDto(String lang, String title) {
         this.lang = lang;
         this.title = title;

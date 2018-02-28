@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  */
 public class PageRequest {
 
-    @NotNull(message = "NotBlank.page.code")
+    @NotNull(message = "page.code.NotBlank")
     private String code;
     private String status;
     private boolean displayedInMenu;

@@ -25,6 +25,14 @@ public class PageValidator implements Validator {
     @Autowired
     IPageManager pageManager;
 
+    public IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
+    }
+
     @Override
     public boolean supports(Class<?> paramClass) {
 
@@ -35,7 +43,7 @@ public class PageValidator implements Validator {
     public void validate(Object target, Errors errors) {
         PageRequest request = (PageRequest) target;
         String pageCode = request.getCode();
-        if (null != pageManager.getDraftPage(pageCode)) {
+        if (null != this.getPageManager().getDraftPage(pageCode)) {
             errors.reject(PageController.ERRCODE_PAGE_ALREADY_EXISTS, new String[]{pageCode}, "page.exists");
         }
     }
@@ -47,13 +55,13 @@ public class PageValidator implements Validator {
     }
 
     public void validateOnlinePage(String pageCode, Errors errors) {
-        if (null != pageManager.getOnlinePage(pageCode)) {
+        if (null != this.getPageManager().getOnlinePage(pageCode)) {
             errors.reject(PageController.ERRCODE_ONLINE_PAGE, new String[]{pageCode}, "page.delete.online");
         }
     }
 
     public void validateChildren(String pageCode, Errors errors) {
-        IPage page = pageManager.getDraftPage(pageCode);
+        IPage page = this.getPageManager().getDraftPage(pageCode);
         if (page != null && page.getChildrenCodes() != null && page.getChildrenCodes().length > 0) {
             errors.reject(PageController.ERRCODE_PAGE_HAS_CHILDREN, new String[]{pageCode}, "page.delete.children");
         }

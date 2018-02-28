@@ -32,6 +32,9 @@ public class PageDto {
     private List<String> joinGroups = new ArrayList<>();
     private int position;
 
+    public PageDto() {
+    }
+
     public PageDto(IPage page) {
         this.setCode(page.getCode());
         this.setStatus(page.isOnline() ? "online" : "draft");//TODO

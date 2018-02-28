@@ -31,42 +31,45 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author paddeo
  */
 public class PageService implements IPageService {
-    
+
+    private static final String STATUS_ONLINE = "online";
+    private static final String STATUS_DRAFT = "draft";
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     @Autowired
     private IPageManager pageManager;
-    
+
     @Autowired
     private IPageModelManager pageModelManager;
-    
+
     @Autowired
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
-    
+
     public IPageManager getPageManager() {
         return pageManager;
     }
-    
+
     public void setPageManager(IPageManager pageManager) {
         this.pageManager = pageManager;
     }
-    
+
     public IPageModelManager getPageModelManager() {
         return pageModelManager;
     }
-    
+
     public void setPageModelManager(IPageModelManager pageModelManager) {
         this.pageModelManager = pageModelManager;
     }
-    
+
     public IDtoBuilder<IPage, PageDto> getDtoBuilder() {
         return dtoBuilder;
     }
-    
+
     public void setDtoBuilder(IDtoBuilder<IPage, PageDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
     }
-    
+
     @Override
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
@@ -78,7 +81,7 @@ public class PageService implements IPageService {
         }));
         return res;
     }
-    
+
     @Override
     public PageDto getPage(String pageCode) {
         IPage page = this.getPageManager().getDraftPage(pageCode);
@@ -88,7 +91,7 @@ public class PageService implements IPageService {
         }
         return this.getDtoBuilder().convert(page);
     }
-    
+
     @Override
     public PageDto addPage(PageRequest pageRequest) {
         try {
@@ -100,7 +103,7 @@ public class PageService implements IPageService {
             throw new RestServerError("error add page", e);
         }
     }
-    
+
     @Override
     public void removePage(String pageCode) {
         try {
@@ -113,23 +116,29 @@ public class PageService implements IPageService {
             throw new RestServerError("error in delete page", e);
         }
     }
-    
+
     @Override
     public PageDto updatePage(String pageCode, PageRequest pageRequest) {
-        IPage page = this.getPageManager().getDraftPage(pageCode);
-        if (null == page) {
+        IPage oldPage = this.getPageManager().getDraftPage(pageCode);
+        if (null == oldPage) {
             throw new RestRourceNotFoundException("page", pageCode);
         }
         try {
-            page = this.updatePage(page, pageRequest);
-            this.getPageManager().updatePage(page);
-            return this.getDtoBuilder().convert(page);
+            IPage newPage = this.updatePage(oldPage, pageRequest);
+            this.getPageManager().updatePage(newPage);
+            if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_ONLINE)) {
+                this.getPageManager().setPageOnline(pageCode);
+                newPage = this.getPageManager().getOnlinePage(pageCode);
+            } else if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_DRAFT)) {
+                this.getPageManager().setPageOffline(pageCode);
+            }
+            return this.getDtoBuilder().convert(newPage);
         } catch (ApsSystemException e) {
             logger.error("Error updating page {}", pageCode, e);
             throw new RestServerError("error in update page", e);
         }
     }
-    
+
     private IPage createPage(PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
@@ -158,7 +167,7 @@ public class PageService implements IPageService {
         }
         return page;
     }
-    
+
     private IPage updatePage(IPage oldPage, PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
@@ -185,5 +194,5 @@ public class PageService implements IPageService {
         page.setParentCode(pageRequest.getParentCode());
         return page;
     }
-    
+
 }

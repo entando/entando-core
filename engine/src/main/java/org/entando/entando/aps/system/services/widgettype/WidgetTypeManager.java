@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.widgettype;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class WidgetTypeManager extends AbstractService
 		implements IWidgetTypeManager, LangsChangedObserver, GroupUtilizer, GuiFragmentUtilizer {
 
-	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(WidgetTypeManager.class);
 
 	private IWidgetTypeDAO _widgetTypeDAO;
 	private IGuiFragmentManager _guiFragmentManager;
@@ -56,7 +57,7 @@ public class WidgetTypeManager extends AbstractService
 	@Override
 	public void init() throws Exception {
 		this.getCacheWrapper().initCache(this.getWidgetTypeDAO());
-		_logger.debug("{} ready. Initialized", this.getClass().getName());
+		logger.debug("{} ready. Initialized", this.getClass().getName());
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class WidgetTypeManager extends AbstractService
 		try {
 			this.init();
 		} catch (Throwable t) {
-			_logger.error("Error on init method", t);
+			logger.error("Error on init method", t);
 		}
 	}
 
@@ -104,12 +105,12 @@ public class WidgetTypeManager extends AbstractService
 	public void addWidgetType(WidgetType widgetType) throws ApsSystemException {
 		try {
 			if (null == widgetType) {
-				_logger.error("Null Widget Type");
+				logger.error("Null Widget Type");
 				return;
 			}
 			WidgetType type = this.getWidgetType(widgetType.getCode());
 			if (null != type) {
-				_logger.error("Type already exists : type code {}", widgetType.getCode());
+				logger.error("Type already exists : type code {}", widgetType.getCode());
 				return;
 			}
 			String parentTypeCode = widgetType.getParentTypeCode();
@@ -126,7 +127,7 @@ public class WidgetTypeManager extends AbstractService
 			this.getCacheWrapper().addWidgetType(widgetType);
 			this.notifyWidgetTypeChanging(widgetType.getCode(), WidgetTypeChangedEvent.INSERT_OPERATION_CODE);
 		} catch (Throwable t) {
-			_logger.error("Error adding a Widget Type", t);
+			logger.error("Error adding a Widget Type", t);
 			throw new ApsSystemException("Error adding a Widget Type", t);
 		}
 	}
@@ -143,11 +144,11 @@ public class WidgetTypeManager extends AbstractService
 		try {
 			WidgetType type = this.getWidgetType(widgetTypeCode);
 			if (null == type) {
-				_logger.error("Type not exists : type code {}", widgetTypeCode);
+				logger.error("Type not exists : type code {}", widgetTypeCode);
 				return;
 			}
 			if (type.isLocked()) {
-				_logger.error("A locked widget can't be deleted - type {}", widgetTypeCode);
+				logger.error("A locked widget can't be deleted - type {}", widgetTypeCode);
 				return;
 			}
 			List<String> fragmentCodes = this.getGuiFragmentManager().getGuiFragmentCodesByWidgetType(widgetTypeCode);
@@ -169,7 +170,7 @@ public class WidgetTypeManager extends AbstractService
 					this.getGuiFragmentManager().addGuiFragment(guiFragment);
 				}
 			}
-			_logger.error("Error deleting widget type", t);
+			logger.error("Error deleting widget type", t);
 			throw new ApsSystemException("Error deleting widget type", t);
 		}
 	}
@@ -180,12 +181,12 @@ public class WidgetTypeManager extends AbstractService
 		try {
 			WidgetType type = this.getWidgetType(widgetTypeCode);
 			if (null == type) {
-				_logger.error("Type not exists : type code {}", widgetTypeCode);
+				logger.error("Type not exists : type code {}", widgetTypeCode);
 				return;
 			}
 			this.updateWidgetType(widgetTypeCode, titles, defaultConfig, Group.FREE_GROUP_NAME);
 		} catch (Throwable t) {
-			_logger.error("Error updating Widget type titles : type code {}", widgetTypeCode, t);
+			logger.error("Error updating Widget type titles : type code {}", widgetTypeCode, t);
 			throw new ApsSystemException("Error updating Widget type titles : type code" + widgetTypeCode, t);
 		}
 	}
@@ -201,7 +202,7 @@ public class WidgetTypeManager extends AbstractService
 		try {
 			WidgetType type = this.getWidgetType(widgetTypeCode);
 			if (null == type) {
-				_logger.error("Type not exists : type code {}", widgetTypeCode);
+				logger.error("Type not exists : type code {}", widgetTypeCode);
 				return;
 			}
 			if (type.isLocked() || !type.isLogic() || !type.isUserType()) {
@@ -214,7 +215,7 @@ public class WidgetTypeManager extends AbstractService
 			this.getCacheWrapper().updateWidgetType(type);
 			this.notifyWidgetTypeChanging(widgetTypeCode, WidgetTypeChangedEvent.UPDATE_OPERATION_CODE);
 		} catch (Throwable t) {
-			_logger.error("Error updating Widget type titles : type code {}", widgetTypeCode, t);
+			logger.error("Error updating Widget type titles : type code {}", widgetTypeCode, t);
 			throw new ApsSystemException("Error updating Widget type titles : type code" + widgetTypeCode, t);
 		}
 	}
@@ -236,7 +237,7 @@ public class WidgetTypeManager extends AbstractService
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error extracting utilizers", t);
+			logger.error("Error extracting utilizers", t);
 			throw new ApsSystemException("Error extracting utilizers", t);
 		}
 		return utilizers;
@@ -261,7 +262,7 @@ public class WidgetTypeManager extends AbstractService
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error extracting utilizers", t);
+			logger.error("Error extracting utilizers", t);
 			throw new ApsSystemException("Error extracting utilizers", t);
 		}
 		return utilizers;
@@ -298,4 +299,28 @@ public class WidgetTypeManager extends AbstractService
 		this._cacheWrapper = cacheWrapper;
 	}
 
+	public SearcherDaoPaginatedResult<WidgetType> getWidgetTypes(List<FieldSearchFilter> fieldSearchFilters) throws ApsSystemException {
+
+        SearcherDaoPaginatedResult<WidgetType> pagedResult = null;
+        try {
+            List<WidgetType> widgets = new ArrayList<>();
+
+            FieldSearchFilter[] array = null;
+            if (null != fieldSearchFilters) {
+                array = fieldSearchFilters.toArray(new FieldSearchFilter[fieldSearchFilters.size()]);
+            }
+
+            int count = this.getWidgetTypeDAO().countWidgetTypes(array);
+
+            List<String> widgetCodes = this.getWidgetTypeDAO().searchWidgetTypes(array);
+            for (String widgetCode : widgetCodes) {
+                widgets.add(this.getWidgetType(widgetCode));
+            }
+            pagedResult = new SearcherDaoPaginatedResult<>(count, widgets);
+        } catch (Throwable t) {
+            logger.error("Error searching groups", t);
+            throw new ApsSystemException("Error searching groups", t);
+        }
+        return pagedResult;
+	}
 }

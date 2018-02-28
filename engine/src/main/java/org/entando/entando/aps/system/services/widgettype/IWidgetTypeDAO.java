@@ -13,7 +13,10 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.util.ApsProperties;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,4 +44,7 @@ public interface IWidgetTypeDAO {
 
 	public void updateWidgetType(String showletTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup);
 
+	public int countWidgetTypes(FieldSearchFilter[] filters);
+
+    public List<String> searchWidgetTypes(FieldSearchFilter[] filters);
 }

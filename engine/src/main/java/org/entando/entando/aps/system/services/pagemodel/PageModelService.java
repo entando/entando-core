@@ -9,10 +9,14 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.pagemodel.model.PageModelRequest;
+import org.entando.entando.web.pagemodel.validator.PagemModelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 public class PageModelService implements IPageModelService {
 
@@ -75,6 +79,35 @@ public class PageModelService implements IPageModelService {
     }
 
     @Override
+    public PageModelDto addPageModel(PageModelRequest pageModelRequest) {
+
+        BeanPropertyBindingResult validationResult = this.validateAdd(pageModelRequest);
+        if (validationResult.hasErrors()) {
+            throw new ValidationConflictException(validationResult);
+        }
+
+        //        Group group = this.createGroup(groupRequest);
+        //        this.getGroupManager().addGroup(group);
+        //        return this.getDtoBuilder().convert(group);
+
+        return null;
+    }
+
+    private BeanPropertyBindingResult validateAdd(PageModelRequest pageModelRequest) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageModelRequest, "pageModel");
+
+        PageModel pageModel = this.getPageModelManager().getPageModel(pageModelRequest.getCode());
+
+        if (null == pageModel) {
+            return bindingResult;
+        }
+
+        bindingResult.reject(PagemModelValidator.ERRCODE_CODE_EXISTS, new String[]{pageModelRequest.getCode()}, "pagemodel.code.exists");
+
+        return bindingResult;
+    }
+
+    @Override
     public PageModelDto updatePageModel(PageModelRequest pageModelRequest) {
 
         //        Group group = this.getGroupManager().getGroup(pageModelRequest.getClass);
@@ -92,11 +125,6 @@ public class PageModelService implements IPageModelService {
         return null;
     }
 
-    @Override
-    public PageModelDto addPageModel(PageModelRequest pageModelRequest) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override
     public void removePageModel(String groupName) {

@@ -6,7 +6,6 @@ import java.util.List;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.Frame;
-import com.agiletec.aps.system.services.pagemodel.FrameSketch;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
@@ -57,23 +56,14 @@ public class PageModelServiceTest {
         System.out.println(result);
     }
 
+
     private PageModel createPageModel(String code, String template, List<Frame> framesConfiguration) {
         PageModel pageModel = new PageModel();
         pageModel.setCode(code);
         pageModel.setDescription(code + "_" + "description");
         pageModel.setTemplate(template);
-        //Frame[] frames = framesConfiguration.toArray(new Frame[framesConfiguration.size()]);
-        //pageModel.setConfiguration(frames);
-
         return pageModel;
     }
 
-    public Frame createFrame(int pos, boolean mainFrame) {
-        Frame frame = new Frame();
-        frame.setPos(pos);
-        frame.setDescription("description_" + pos);
-        frame.setMainFrame(mainFrame);
-        frame.setSketch(new FrameSketch());
-        return frame;
-    }
+
 }

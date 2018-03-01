@@ -6,7 +6,6 @@
 package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +36,13 @@ public class PageDto {
 
     public PageDto(IPage page) {
         this.setCode(page.getCode());
-        this.setStatus(page.isOnline() ? "online" : "draft");//TODO
-        this.setDisplayedInMenu(page.isShowable());//TODO
+        this.setStatus(page.isOnline() ? "online" : "draft");
+        this.setDisplayedInMenu(page.isShowable());
         this.setPageModel(page.getModel().getCode());
         this.setCharset(page.getCharset());
         this.setContentType(page.getMimeType());
         this.setParentCode(page.getParentCode());
-        this.setSeo(false);//TODO
+        this.setSeo(page.isUseExtraTitles());
         Optional<ApsProperties> apsTitles = Optional.ofNullable(page.getTitles());
         apsTitles.ifPresent(values -> values.keySet().forEach((lang) -> {
             this.titles.add(new TitleDto((String) lang, (String) values.get(lang)));

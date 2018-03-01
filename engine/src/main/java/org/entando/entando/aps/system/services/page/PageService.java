@@ -142,13 +142,13 @@ public class PageService implements IPageService {
     private IPage createPage(PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
-        page.setShowable(pageRequest.isDisplayedInMenu());//TODO
+        page.setShowable(pageRequest.isDisplayedInMenu());
         PageModel model = this.getPageModelManager().getPageModel(pageRequest.getPageModel());
         page.setModel(model);
         page.setCharset(pageRequest.getCharset());
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
-//        page.setSeo(false);//TODO
+        page.setUseExtraTitles(pageRequest.isSeo());
         Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
         titles.ifPresent(values -> values.forEach((title) -> {
@@ -171,7 +171,7 @@ public class PageService implements IPageService {
     private IPage updatePage(IPage oldPage, PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
-        page.setShowable(pageRequest.isDisplayedInMenu());//TODO
+        page.setShowable(pageRequest.isDisplayedInMenu());
         if (oldPage.getModel().getCode().equals(pageRequest.getPageModel())) {
             PageModel model = this.getPageModelManager().getPageModel(pageRequest.getPageModel());
             page.setModel(model);
@@ -179,7 +179,7 @@ public class PageService implements IPageService {
         page.setCharset(pageRequest.getCharset());
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
-//        page.setSeo(false);//TODO
+        page.setUseExtraTitles(pageRequest.isSeo());
         Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
         titles.ifPresent(values -> values.forEach((title) -> {

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,9 @@ import org.springframework.validation.Validator;
 public class PagemModelValidator implements Validator {
 
     public static final String ERRCODE_FRAMES_POS_MISMATCH = "1";
-    public static final String ERRCODE_CODE_EXISTS = "2";;
+    public static final String ERRCODE_CODE_EXISTS = "2";
+    public static final String ERRCODE_PAGEMODEL_REFERENCES = "3";
+    public static final String ERRCODE_URINAME_MISMATCH = "4";;
 
 
     @Override
@@ -43,7 +46,7 @@ public class PagemModelValidator implements Validator {
     }
 
     private void validateConfiguration(PageModelRequest request, Errors errors) {
-        List<PageModelFrameReq> conf = request.getConfiguration();
+        List<PageModelFrameReq> conf = request.getConfiguration().getFrames();
         if (null == conf || conf.isEmpty()) {
             return;
         }
@@ -54,21 +57,28 @@ public class PagemModelValidator implements Validator {
                                       .map(i -> i.getPos()).collect(Collectors.toList());
         int firstPosition = positions.get(0);
         if (firstPosition != 0) {
-            errors.reject(ERRCODE_FRAMES_POS_MISMATCH, new String[]{}, "pagemodel.frames.pos.mismatch");
+            errors.reject(ERRCODE_FRAMES_POS_MISMATCH, new String[]{}, "pageModel.frames.pos.mismatch");
             return;
         }
 
         int lastPosition = positions.get(positions.size() - 1);
         if (lastPosition != positions.size() - 1) {
-            errors.reject(ERRCODE_FRAMES_POS_MISMATCH, new String[]{}, "pagemodel.frames.pos.mismatch");
+            errors.reject(ERRCODE_FRAMES_POS_MISMATCH, new String[]{}, "pageModel.frames.pos.mismatch");
             return;
         }
         if (positions.size() != new HashSet<Integer>(positions).size()) {
-            errors.reject(ERRCODE_FRAMES_POS_MISMATCH, new String[]{}, "pagemodel.frames.pos.mismatch");
+            errors.reject(ERRCODE_FRAMES_POS_MISMATCH, new String[]{}, "pageModel.frames.pos.mismatch");
             return;
         }
     }
 
+    public void validateBodyName(String code, PageModelRequest pageModelRequest, Errors errors) {
+
+        if (!StringUtils.equals(code, pageModelRequest.getCode())) {
+            errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{code, pageModelRequest.getCode()}, "pageModel.code.mismatch");
+        }
+
+    }
 
 
 }

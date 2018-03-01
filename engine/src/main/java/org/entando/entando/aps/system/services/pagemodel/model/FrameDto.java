@@ -5,6 +5,7 @@ import com.agiletec.aps.system.services.pagemodel.FrameSketch;
 public class FrameDto {
 
     private int pos;
+
     private String description;
     private boolean mainFrame;
     private DefaultWidgetDto defaultWidget;

@@ -1,7 +1,6 @@
 package org.entando.entando.aps.system.services.pagemodel.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PageModelDto {
 
@@ -9,7 +8,9 @@ public class PageModelDto {
 
     private String code;
     private String description;
-    private List<FrameDto> frames = new ArrayList<>();
+
+    @JsonProperty(value = "configuration")
+    private PageModelConfigurationDto configuration = new PageModelConfigurationDto();
     private int mainFrame = NO_MAIN_FRAME;
     private String pluginCode;
     private String template;
@@ -30,13 +31,7 @@ public class PageModelDto {
         this.description = description;
     }
 
-    public List<FrameDto> getFrames() {
-        return frames;
-    }
 
-    public void setFrames(List<FrameDto> frames) {
-        this.frames = frames;
-    }
 
     public int getMainFrame() {
         return mainFrame;
@@ -73,6 +68,14 @@ public class PageModelDto {
             default:
                 return dtoFieldName;
         }
+    }
+
+    public PageModelConfigurationDto getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(PageModelConfigurationDto configuration) {
+        this.configuration = configuration;
     }
 
 }

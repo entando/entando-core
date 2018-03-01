@@ -1,25 +1,20 @@
 package org.entando.entando.aps.system.services.pagemodel;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.pagemodel.Frame;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDtoBuilder;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import static org.mockito.Mockito.when;
 
 public class PageModelServiceTest {
 
@@ -40,30 +35,36 @@ public class PageModelServiceTest {
 
 
     @Test
-    public void test_searchPageModels() throws ApsSystemException {
+    public void test_add_page_model() throws ApsSystemException, JsonParseException, JsonMappingException, IOException {
 
-        RestListRequest restListReq = new RestListRequest();
+        String payload = " {\n" +
+                         "            \"code\": \"test\",\n" +
+                         "            \"description\": \"test\",\n" +
+                         "            \"configuration\": {\n" +
+                         "                \"frames\": [\n" +
+                         "                    {\n" +
+                         "                        \"pos\": 0,\n" +
+                         "                        \"description\": \"test_frame\",\n" +
+                         "                        \"mainFrame\": false,\n" +
+                         "                        \"defaultWidget\": null,\n" +
+                         "                        \"sketch\": null\n" +
+                         "                    }\n" +
+                         "                ]\n" +
+                         "            },\n" +
+                         "            \"pluginCode\": null,\n" +
+                         "            \"template\": \"hello world\"\n" +
+                         "        }";
 
-        List<PageModel> list = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            list.add(this.createPageModel("M_" + i, "<code></code>", null));
-        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        PageModelRequest pageModelRequest = objectMapper.readValue(payload, PageModelRequest.class);
 
-        SearcherDaoPaginatedResult<PageModel> paginatedResult = new SearcherDaoPaginatedResult<>(list.size(), list);
-        when(pageModelManager.searchPageModels(Mockito.any(List.class))).thenReturn(paginatedResult);
+        this.pageModelService.addPageModel(pageModelRequest);
 
-        PagedMetadata<PageModelDto> result = this.pageModelService.getPageModels(restListReq);
-        System.out.println(result);
+        Mockito.verify(pageModelManager, Mockito.times(1)).addPageModel(Mockito.any());
+
     }
 
 
-    private PageModel createPageModel(String code, String template, List<Frame> framesConfiguration) {
-        PageModel pageModel = new PageModel();
-        pageModel.setCode(code);
-        pageModel.setDescription(code + "_" + "description");
-        pageModel.setTemplate(template);
-        return pageModel;
-    }
 
 
 }

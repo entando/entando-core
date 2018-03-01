@@ -4,17 +4,30 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.agiletec.aps.system.services.pagemodel.FrameSketch;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PageModelFrameReq {
 
     @Min(value = 0)
     private int pos;
 
     @NotNull(message = "pageModelFrame.descr.notBlank")
+    @JsonProperty("description")
     private String descr;
 
     private boolean mainFrame;
     private FrameSketch sketch;
+
+    public PageModelFrameReq() {
+
+    }
+
+    public PageModelFrameReq(int pos, String descr) {
+        this.pos = pos;
+        this.descr = descr;
+    }
 
     public int getPos() {
         return pos;

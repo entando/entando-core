@@ -20,7 +20,7 @@ public class PageModelDtoBuilder extends DtoBuilder<PageModel, PageModelDto> {
 
         dest.setCode(src.getCode());
         dest.setDescription(src.getDescription());
-        dest.setFrames(this.convertFrames(src.getFramesConfig()));
+        dest.getConfiguration().setFrames(this.convertFrames(src.getFramesConfig()));
 
         dest.setMainFrame(src.getMainFrame());
         dest.setPluginCode(src.getPluginCode());
@@ -40,6 +40,9 @@ public class PageModelDtoBuilder extends DtoBuilder<PageModel, PageModelDto> {
     }
 
     private FrameDto convertFrame(Frame frame) {
+        if (null == frame) {
+            return null;
+        }
         FrameDto frameDto = new FrameDto();
         frameDto.setDefaultWidget(this.convertDefaultWidget(frame.getDefaultWidget()));
         frameDto.setDescription(frame.getDescription());

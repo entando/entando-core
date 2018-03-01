@@ -17,5 +17,6 @@ public interface IPageModelService {
 
     PageModelDto addPageModel(PageModelRequest pageModelRequest);
 
-    void removePageModel(String groupName);
+    void removePageModel(String code);
+
 }

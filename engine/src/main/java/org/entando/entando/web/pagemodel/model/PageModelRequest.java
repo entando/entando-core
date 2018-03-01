@@ -1,8 +1,6 @@
 package org.entando.entando.web.pagemodel.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class PageModelRequest {
@@ -13,7 +11,9 @@ public class PageModelRequest {
     @NotNull(message = "pageModel.descr.notBlank")
     private String description;
 
-    private List<PageModelFrameReq> configuration = new ArrayList<>();
+    @Valid
+    @NotNull(message = "pageModel.configuration.notBlank")
+    private PageModelConfigurationRequest configuration = new PageModelConfigurationRequest();
 
     private String template;
     private String pluginCode;
@@ -34,11 +34,11 @@ public class PageModelRequest {
         this.description = description;
     }
 
-    public List<PageModelFrameReq> getConfiguration() {
+    public PageModelConfigurationRequest getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(List<PageModelFrameReq> configuration) {
+    public void setConfiguration(PageModelConfigurationRequest configuration) {
         this.configuration = configuration;
     }
 
@@ -57,5 +57,6 @@ public class PageModelRequest {
     public void setPluginCode(String pluginCode) {
         this.pluginCode = pluginCode;
     }
+
 
 }

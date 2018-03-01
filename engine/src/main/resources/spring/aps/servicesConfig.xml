@@ -36,6 +36,7 @@
 
     <bean id="PageModelService" class="org.entando.entando.aps.system.services.pagemodel.PageModelService" >
         <property name="dtoBuilder" ref="PageModelDtoBuilder" />
+        <property name="pageModelManager" ref="PageModelManager" />
     </bean>
 
 

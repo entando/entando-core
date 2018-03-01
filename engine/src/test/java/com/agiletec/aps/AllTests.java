@@ -76,7 +76,7 @@ import org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObject
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerIntegrationTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.TestDataObjectModelDAO;
-import org.entando.entando.aps.system.services.guifragment.TestGuiFragmentManager;
+import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
 import org.entando.entando.aps.system.services.userprofile.TestUserManager;
@@ -162,7 +162,7 @@ public class AllTests {
 		suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
 		suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
 		//
-		suite.addTestSuite(TestGuiFragmentManager.class);
+		suite.addTestSuite(GuiFragmentManagerIntegrationTest.class);
 		//
 		suite.addTestSuite(TestApiWidgetTypeInterface.class);
 		suite.addTestSuite(TestApiI18nLabelInterface.class);
@@ -191,12 +191,10 @@ public class AllTests {
 
 		suite.addTestSuite(TestSearchEngineManager.class);
 
-        suite.addTest(ServicesAllTests.suite());
-        suite.addTest(ControllersAllTests.suite());
+		suite.addTest(ServicesAllTests.suite());
+		suite.addTest(ControllersAllTests.suite());
 
 		return suite;
 	}
-
-
 
 }

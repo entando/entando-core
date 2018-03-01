@@ -36,6 +36,19 @@
         <property name="dtoBuilder" ref="WidgetDtoBuilder" />
         <property name="widgetManager" ref="WidgetTypeManager" />
     </bean>
-
-
+	
+    <bean id="GuiFragmentDtoBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder">
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+	</bean>
+	
+    <bean id="GuiFragmentDtoSmallBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmallBuilder">
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+	</bean>
+	
+    <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >
+        <property name="dtoBuilder" ref="GuiFragmentDtoBuilder" />
+        <property name="dtoSmallBuilder" ref="GuiFragmentDtoSmallBuilder" />
+        <property name="guiFragmentManager" ref="GuiFragmentManager" />
+    </bean>
+	
 </beans>

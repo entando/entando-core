@@ -30,8 +30,17 @@
     <bean id="PageSettingsService" class="org.entando.entando.aps.system.services.pagesettings.PageSettingsService" >
         <property name="dtoBuilder" ref="PageSettingsDtoBuilder" />
         <property name="configManager" ref="BaseConfigManager" />
+
     </bean>
 
+    <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" />
+
+    <bean id="PageService" class="org.entando.entando.aps.system.services.page.PageService" >
+        <property name="dtoBuilder" ref="PageDtoBuilder" />
+        <property name="pageManager" ref="PageManager" />
+        <property name="pageModelManager" ref="PageModelManager" />
+    </bean>
+  
     <bean id="WidgetService" class="org.entando.entando.aps.system.services.widget.WidgetService" >
         <property name="dtoBuilder" ref="WidgetDtoBuilder" />
         <property name="widgetManager" ref="WidgetTypeManager" />

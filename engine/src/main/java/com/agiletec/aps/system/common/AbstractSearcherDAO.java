@@ -28,8 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility Class for searching operation on db.
- * This class presents utility method for searching on db table throw Field search filter.
+ * Utility Class for searching operation on db. This class presents utility
+ * method for searching on db table throw Field search filter.
+ *
  * @author E.Santoboni
  */
 @SuppressWarnings(value = {"serial", "rawtypes"})

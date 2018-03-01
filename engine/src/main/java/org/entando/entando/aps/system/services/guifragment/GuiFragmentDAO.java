@@ -30,74 +30,96 @@ import org.slf4j.LoggerFactory;
  * @author E.Santoboni
  */
 public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentDAO {
-	
-	private static final Logger _logger =  LoggerFactory.getLogger(GuiFragmentDAO.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(GuiFragmentDAO.class);
+
+	private static final String ADD_GUIFRAGMENT = "INSERT INTO guifragment (code, widgettypecode, plugincode, gui, locked ) VALUES (? , ? , ? , ? , ?)";
+
+	private static final String UPDATE_GUIFRAGMENT = "UPDATE guifragment SET widgettypecode = ?, plugincode = ? , gui = ? WHERE code = ? ";
+
+	private static final String DELETE_GUIFRAGMENT = "DELETE FROM guifragment WHERE code = ?";
+
+	private static final String LOAD_GUIFRAGMENT = "SELECT code, widgettypecode, plugincode, gui, defaultgui, locked FROM guifragment WHERE code = ?";
+
+	private static final String LOAD_GUIFRAGMENT_PLUGIN_CODES = "SELECT plugincode FROM guifragment";
+
 	@Override
 	protected String getTableFieldName(String metadataFieldKey) {
 		return metadataFieldKey;
 	}
-	
+
 	@Override
 	protected String getMasterTableName() {
 		return "guifragment";
 	}
-	
+
 	@Override
 	protected String getMasterTableIdFieldName() {
 		return "code";
 	}
-	
+
+	@Override
+	public int countGuiFragments(FieldSearchFilter[] filters) {
+		Integer fragments = null;
+		try {
+			fragments = super.countId(filters);
+		} catch (Throwable t) {
+			logger.error("error in count fragments", t);
+			throw new RuntimeException("error in count fragments", t);
+		}
+		return fragments;
+	}
+
 	@Override
 	public List<String> searchGuiFragments(FieldSearchFilter[] filters) {
 		List<String> guiFragmentsId = null;
 		try {
-			guiFragmentsId  = super.searchId(filters);
+			guiFragmentsId = super.searchId(filters);
 		} catch (Throwable t) {
-			_logger.error("error in searchGuiFragments",  t);
+			logger.error("error in searchGuiFragments", t);
 			throw new RuntimeException("error in searchGuiFragments", t);
 		}
 		return guiFragmentsId;
 	}
-	
+
 	@Override
 	public void insertGuiFragment(GuiFragment guiFragment) {
-		Connection conn  = null;
+		Connection conn = null;
 		try {
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
 			this.insertGuiFragment(guiFragment, conn);
- 			conn.commit();
+			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on insert guiFragment",  t);
+			logger.error("Error on insert guiFragment", t);
 			throw new RuntimeException("Error on insert guiFragment", t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
-	
+
 	protected void insertGuiFragment(GuiFragment guiFragment, Connection conn) {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(ADD_GUIFRAGMENT);
 			int index = 1;
- 			stat.setString(index++, guiFragment.getCode());
- 			if (StringUtils.isNotBlank(guiFragment.getWidgetTypeCode())) {
-				stat.setString(index++, guiFragment.getWidgetTypeCode());				
+			stat.setString(index++, guiFragment.getCode());
+			if (StringUtils.isNotBlank(guiFragment.getWidgetTypeCode())) {
+				stat.setString(index++, guiFragment.getWidgetTypeCode());
 			} else {
 				stat.setNull(index++, Types.VARCHAR);
 			}
- 			if (StringUtils.isNotBlank(guiFragment.getPluginCode())) {
-				stat.setString(index++, guiFragment.getPluginCode());				
+			if (StringUtils.isNotBlank(guiFragment.getPluginCode())) {
+				stat.setString(index++, guiFragment.getPluginCode());
 			} else {
 				stat.setNull(index++, Types.VARCHAR);
 			}
- 			stat.setString(index++, guiFragment.getGui());
- 			stat.setInt(index++, 0);
+			stat.setString(index++, guiFragment.getGui());
+			stat.setInt(index++, 0);
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error on insert guiFragment",  t);
+			logger.error("Error on insert guiFragment", t);
 			throw new RuntimeException("Error on insert guiFragment", t);
 		} finally {
 			this.closeDaoResources(null, stat);
@@ -111,42 +133,42 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
 			this.updateGuiFragment(guiFragment, conn);
- 			conn.commit();
+			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error updating guiFragment {}", guiFragment.getCode(),  t);
+			logger.error("Error updating guiFragment {}", guiFragment.getCode(), t);
 			throw new RuntimeException("Error updating guiFragment", t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
-	
+
 	protected void updateGuiFragment(GuiFragment guiFragment, Connection conn) {
 		PreparedStatement stat = null;
 		try {
 			stat = conn.prepareStatement(UPDATE_GUIFRAGMENT);
 			int index = 1;
- 			if(StringUtils.isNotBlank(guiFragment.getWidgetTypeCode())) {
-				stat.setString(index++, guiFragment.getWidgetTypeCode());				
+			if (StringUtils.isNotBlank(guiFragment.getWidgetTypeCode())) {
+				stat.setString(index++, guiFragment.getWidgetTypeCode());
 			} else {
 				stat.setNull(index++, Types.VARCHAR);
 			}
- 			if(StringUtils.isNotBlank(guiFragment.getPluginCode())) {
-				stat.setString(index++, guiFragment.getPluginCode());				
+			if (StringUtils.isNotBlank(guiFragment.getPluginCode())) {
+				stat.setString(index++, guiFragment.getPluginCode());
 			} else {
 				stat.setNull(index++, Types.VARCHAR);
 			}
- 			stat.setString(index++, guiFragment.getGui());
+			stat.setString(index++, guiFragment.getGui());
 			stat.setString(index++, guiFragment.getCode());
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error updating guiFragment {}", guiFragment.getCode(),  t);
+			logger.error("Error updating guiFragment {}", guiFragment.getCode(), t);
 			throw new RuntimeException("Error updating guiFragment", t);
 		} finally {
 			this.closeDaoResources(null, stat);
 		}
 	}
-	
+
 	@Override
 	public void removeGuiFragment(String code) {
 		Connection conn = null;
@@ -154,16 +176,16 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 			conn = this.getConnection();
 			conn.setAutoCommit(false);
 			this.removeGuiFragment(code, conn);
- 			conn.commit();
+			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error deleting guiFragment {}", code, t);
+			logger.error("Error deleting guiFragment {}", code, t);
 			throw new RuntimeException("Error deleting guiFragment", t);
 		} finally {
 			this.closeConnection(conn);
 		}
 	}
-	
+
 	public void removeGuiFragment(String code, Connection conn) {
 		PreparedStatement stat = null;
 		try {
@@ -172,13 +194,13 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 			stat.setString(index++, code);
 			stat.executeUpdate();
 		} catch (Throwable t) {
-			_logger.error("Error deleting guiFragment {}", code, t);
+			logger.error("Error deleting guiFragment {}", code, t);
 			throw new RuntimeException("Error deleting guiFragment", t);
 		} finally {
 			this.closeDaoResources(null, stat);
 		}
 	}
-	
+
 	@Override
 	public GuiFragment loadGuiFragment(String code) {
 		GuiFragment guiFragment = null;
@@ -187,14 +209,14 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 			conn = this.getConnection();
 			guiFragment = this.loadGuiFragment(code, conn);
 		} catch (Throwable t) {
-			_logger.error("Error loading guiFragment with id {}", code, t);
+			logger.error("Error loading guiFragment with id {}", code, t);
 			throw new RuntimeException("Error loading guiFragment with id " + code, t);
 		} finally {
 			this.closeConnection(conn);
 		}
 		return guiFragment;
 	}
-	
+
 	protected GuiFragment loadGuiFragment(String code, Connection conn) {
 		GuiFragment guiFragment = null;
 		PreparedStatement stat = null;
@@ -208,7 +230,7 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 				guiFragment = this.buildGuiFragmentFromRes(res);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading guiFragment with id {}", code, t);
+			logger.error("Error loading guiFragment with id {}", code, t);
 			throw new RuntimeException("Error loading guiFragment with id " + code, t);
 		} finally {
 			closeDaoResources(res, stat);
@@ -219,7 +241,7 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 	protected GuiFragment buildGuiFragmentFromRes(ResultSet res) {
 		GuiFragment guiFragment = null;
 		try {
-			guiFragment = new GuiFragment();				
+			guiFragment = new GuiFragment();
 			guiFragment.setCode(res.getString("code"));
 			guiFragment.setWidgetTypeCode(res.getString("widgettypecode"));
 			guiFragment.setPluginCode(res.getString("plugincode"));
@@ -228,14 +250,14 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 			Integer locked = res.getInt("locked");
 			guiFragment.setLocked(null != locked && locked.intValue() == 1);
 		} catch (Throwable t) {
-			_logger.error("Error in buildGuiFragmentFromRes", t);
+			logger.error("Error in buildGuiFragmentFromRes", t);
 		}
 		return guiFragment;
 	}
-	
+
 	@Override
 	public List<String> loadGuiFragmentPluginCodes() {
-		List<String> codes = new ArrayList<String>();
+		List<String> codes = new ArrayList<>();
 		PreparedStatement stat = null;
 		ResultSet res = null;
 		Connection conn = null;
@@ -250,22 +272,12 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading guiFragment plugin codes", t);
+			logger.error("Error loading guiFragment plugin codes", t);
 			throw new RuntimeException("Error loading guiFragment plugin codes", t);
 		} finally {
 			this.closeDaoResources(res, stat, conn);
 		}
 		return codes;
 	}
-	
-	private static final String ADD_GUIFRAGMENT = "INSERT INTO guifragment (code, widgettypecode, plugincode, gui, locked ) VALUES (? , ? , ? , ? , ?)";
 
-	private static final String UPDATE_GUIFRAGMENT = "UPDATE guifragment SET widgettypecode = ?, plugincode = ? , gui = ? WHERE code = ? ";
-
-	private static final String DELETE_GUIFRAGMENT = "DELETE FROM guifragment WHERE code = ?";
-	
-	private static final String LOAD_GUIFRAGMENT = "SELECT code, widgettypecode, plugincode, gui, defaultgui, locked FROM guifragment WHERE code = ?";
-	
-	private static final String LOAD_GUIFRAGMENT_PLUGIN_CODES = "SELECT plugincode FROM guifragment";
-	
 }

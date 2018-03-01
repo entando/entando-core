@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 public class GroupControllerTest extends AbstractControllerTest {
 
     private MockMvc mockMvc;
@@ -47,16 +46,13 @@ public class GroupControllerTest extends AbstractControllerTest {
     @InjectMocks
     private GroupController controller;
 
-
-
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                                 .addInterceptors(entandoOauth2Interceptor)
-                                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
-                                 .build();
+                .addInterceptors(entandoOauth2Interceptor)
+                .setHandlerExceptionResolvers(createHandlerExceptionResolver())
+                .build();
     }
 
     @SuppressWarnings("unchecked")
@@ -66,15 +62,16 @@ public class GroupControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
         ResultActions result = mockMvc.perform(
-                                               get("/groups").param("page", "1")
-                                               .param("pageSize", "4")
-                                               .header("Authorization", "Bearer " + accessToken)
-                );
+                get("/groups")
+                        .param("pageNum", "1")
+                        .param("pageSize", "4")
+                        .header("Authorization", "Bearer " + accessToken)
+        );
 
         result.andExpect(status().isOk());
 
         RestListRequest restListReq = new RestListRequest();
-        restListReq.setPage(1);
+        restListReq.setPageNum(1);
         restListReq.setPageSize(4);
         Mockito.verify(groupService, Mockito.times(1)).getGroups(restListReq);
     }
@@ -87,24 +84,23 @@ public class GroupControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
 
-
         ResultActions result = mockMvc.perform(
-                                               get("/groups").param("page", "1")
-                                               .param("pageSize", "4")
-                                               .param("filter[0].attribute", "code")
-                                               .param("filter[0].value", "free")
-                                               .header("Authorization", "Bearer " + accessToken)
-                );
+                get("/groups")
+                        .param("pageNum", "1")
+                        .param("pageSize", "4")
+                        .param("filter[0].attribute", "code")
+                        .param("filter[0].value", "free")
+                        .header("Authorization", "Bearer " + accessToken)
+        );
 
         result.andExpect(status().isOk());
 
         RestListRequest restListReq = new RestListRequest();
-        restListReq.setPage(1);
+        restListReq.setPageNum(1);
         restListReq.setPageSize(4);
         restListReq.addFilter(new Filter("code", "free"));
         Mockito.verify(groupService, Mockito.times(1)).getGroups(restListReq);
     }
-
 
     @Test
     public void should_be_unauthorized() throws Exception {
@@ -114,15 +110,14 @@ public class GroupControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
-                                               get("/groups")
-                                               .header("Authorization", "Bearer " + accessToken)
+                get("/groups")
+                        .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
         //System.out.println(response);
         result.andExpect(status().isUnauthorized());
     }
-
 
     @Test
     public void should_validate_put_path_mismatch() throws ApsSystemException, Exception {
@@ -137,11 +132,11 @@ public class GroupControllerTest extends AbstractControllerTest {
 
         this.controller.setGroupValidator(new GroupValidator());
         ResultActions result = mockMvc.perform(
-                                               put("/groups/{groupCode}",
-                                                   "helpdesk")
-                                                              .content(payload)
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .header("Authorization", "Bearer " + accessToken));
+                put("/groups/{groupCode}",
+                        "helpdesk")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -155,22 +150,18 @@ public class GroupControllerTest extends AbstractControllerTest {
 
         String groupName = Group.FREE_GROUP_NAME;
 
-
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult("group", "group");
         bindingResult.reject(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP, new String[]{groupName}, "group.cannot.delete.reserved");
         doThrow(new ValidationConflictException(bindingResult)).when(groupService).removeGroup(groupName);
 
         this.controller.setGroupValidator(new GroupValidator());
         ResultActions result = mockMvc.perform(
-                                               delete("/groups/{groupName}",
-                                                      groupName)
-                                                                .contentType(MediaType.APPLICATION_JSON)
-                                                                .header("Authorization", "Bearer " + accessToken));
+                delete("/groups/{groupName}",
+                        groupName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP)));
     }
-
-
-
 
 }

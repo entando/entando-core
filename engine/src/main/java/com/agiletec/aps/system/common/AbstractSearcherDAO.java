@@ -28,8 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility Class for searching operation on db.
- * This class presents utility method for searching on db table throw Field search filter.
+ * Utility Class for searching operation on db. This class presents utility
+ * method for searching on db table throw Field search filter.
+ *
  * @author E.Santoboni
  */
 @SuppressWarnings(value = {"serial", "rawtypes"})
@@ -112,6 +113,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
 
     /**
      * Add to the statement the filters on the entity metadata.
+     *
      * @param filters the filters to add to the statement.
      * @param index The current index of the statement.
      * @param stat The statement.
@@ -131,12 +133,12 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return index;
     }
 
-
-
     /**
      * Add to the statement a filter on a attribute.
+     *
      * @param filter The filter on the attribute to apply in the statement.
-     * @param index The last index used to associate the elements to the statement.
+     * @param index The last index used to associate the elements to the
+     * statement.
      * @param stat The statement where the filters are applied.
      * @return The last used index.
      * @throws SQLException In case of error.
@@ -166,28 +168,27 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return index;
     }
 
-
     protected void addObjectSearchStatementBlock(PreparedStatement stat,
-                                                 int index,
-                                                 Object object,
-                                                 boolean isLikeOption) throws SQLException {
+            int index,
+            Object object,
+            boolean isLikeOption) throws SQLException {
         this.addObjectSearchStatementBlock(stat, index, object, null, isLikeOption, null);
     }
 
     protected void addObjectSearchStatementBlock(PreparedStatement stat,
-                                                 int index,
-                                                 Object object,
-                                                 Integer dateDelay,
-                                                 boolean isLikeOption) throws SQLException {
+            int index,
+            Object object,
+            Integer dateDelay,
+            boolean isLikeOption) throws SQLException {
         this.addObjectSearchStatementBlock(stat, index, object, dateDelay, isLikeOption, null);
     }
 
     protected void addObjectSearchStatementBlock(PreparedStatement stat,
-                                                 int index,
-                                                 Object object,
-                                                 Integer dateDelay,
-                                                 boolean isLikeOption,
-                                                 FieldSearchFilter.LikeOptionType likeOptionType) throws SQLException {
+            int index,
+            Object object,
+            Integer dateDelay,
+            boolean isLikeOption,
+            FieldSearchFilter.LikeOptionType likeOptionType) throws SQLException {
 
         if (object instanceof String) {
             if (isLikeOption) {
@@ -230,20 +231,22 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         StringBuffer query = this.createBaseQueryBlock(filters, isCount, selectAll);
         boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
         if (!isCount) {
-            boolean ordered = appendOrderQueryBlocks(filters, query, false);
             this.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
+            boolean ordered = appendOrderQueryBlocks(filters, query, false);
         }
 
         return query.toString();
     }
 
     /**
-     * Create the 'base block' of the query with the eventual references to the support table.
+     * Create the 'base block' of the query with the eventual references to the
+     * support table.
+     *
      * @param filters The filters defined.
-     * @param selectAll When true, this will insert all the fields in the master table in the select 
-     * of the master query.
-     * When true we select all the available fields; when false only the field addressed by the filter
-     * is selected.
+     * @param selectAll When true, this will insert all the fields in the master
+     * table in the select of the master query. When true we select all the
+     * available fields; when false only the field addressed by the filter is
+     * selected.
      * @return The base block of the query.
      */
     protected StringBuffer createBaseQueryBlock(FieldSearchFilter[] filters, boolean selectAll) {
@@ -305,7 +308,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         }
     }
 
-
     protected boolean appendMetadataFieldFilterQueryBlocks(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
         if (filters == null) {
             return hasAppendWhereClause;
@@ -319,7 +321,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
 
         return hasAppendWhereClause;
     }
-
 
     protected boolean addMetadataFieldFilterQueryBlock(FieldSearchFilter filter, StringBuffer query, boolean hasAppendWhereClause) {
         return addFilters(filter, query, hasAppendWhereClause);
@@ -420,12 +421,14 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
 
     /**
      * Return the name of the entities master table.
+     *
      * @return The name of the master table.
      */
     protected abstract String getMasterTableName();
 
     /**
      * Return the name of the ID field in the master table.
+     *
      * @return The name of the ID field.
      */
     protected abstract String getMasterTableIdFieldName();

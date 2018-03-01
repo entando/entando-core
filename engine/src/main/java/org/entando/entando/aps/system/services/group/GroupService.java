@@ -49,7 +49,6 @@ public class GroupService implements IGroupService, ApplicationContextAware {
     @Autowired
     private IDtoBuilder<Group, GroupDto> dtoBuilder;
 
-
     private ApplicationContext applicationContext;
 
     protected IGroupManager getGroupManager() {
@@ -68,7 +67,6 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         this.dtoBuilder = dtoBuilder;
     }
 
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -79,9 +77,9 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             restListReq.getFieldSearchFilters()
-            .stream()
-            .filter(i -> i.getKey() != null)
-            .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
+                    .stream()
+                    .filter(i -> i.getKey() != null)
+                    .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
 
             SearcherDaoPaginatedResult<Group> groups = this.getGroupManager().getGroups(restListReq.getFieldSearchFilters());
             List<GroupDto> dtoList = dtoBuilder.convert(groups.getList());
@@ -205,6 +203,5 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         }
         return references;
     }
-
 
 }

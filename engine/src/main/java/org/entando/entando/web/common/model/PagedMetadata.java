@@ -28,11 +28,11 @@ public class PagedMetadata<T> {
     @JsonIgnore
     private List<T> body;
 
-    public PagedMetadata() {}
-
+    public PagedMetadata() {
+    }
 
     public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
-        this.page = req.getPage();
+        this.page = req.getPageNum();
         this.size = result.getList().size();
         Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
         this.last = pages.intValue() - 1;

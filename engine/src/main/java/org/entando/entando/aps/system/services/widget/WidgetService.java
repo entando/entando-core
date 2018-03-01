@@ -1,23 +1,29 @@
 package org.entando.entando.aps.system.services.widget;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.aps.system.services.widget.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.group.validator.GroupValidator;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.entando.entando.web.widget.validator.WidgetValidator;
 import org.slf4j.Logger;
@@ -47,8 +53,8 @@ public class WidgetService implements IWidgetService {
 
         try {
             addFragments(widgetDto);
-        }catch(Exception e){
-            logger.error("Failed to fetch gui fragment for widget type code ",e);
+        } catch (Exception e) {
+            logger.error("Failed to fetch gui fragment for widget type code ", e);
         }
         return widgetDto;
     }
@@ -60,8 +66,8 @@ public class WidgetService implements IWidgetService {
 
         try {
             widgetManager.addWidgetType(widgetType);
-        }catch(ApsSystemException e) {
-            logger.error("Failed to add widget type for request {} ",widgetRequest);
+        } catch (ApsSystemException e) {
+            logger.error("Failed to add widget type for request {} ", widgetRequest);
             throw new RestServerError("error in update group", e);
         }
 
@@ -81,28 +87,26 @@ public class WidgetService implements IWidgetService {
             }
 
             this.widgetManager.deleteWidgetType(widgetCode);
-        }catch(ApsSystemException e) {
-            logger.error("Failed to remove widget type for request {} ",widgetCode);
+        } catch (ApsSystemException e) {
+            logger.error("Failed to remove widget type for request {} ", widgetCode);
             throw new RestServerError("failed to update widget type by code ", e);
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restListReq) {
 
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
-            List<FieldSearchFilter> filters = new ArrayList<FieldSearchFilter>(restListReq.buildFieldSearchFilters());
-            filters
-                   .stream()
-                   .filter(i -> i.getKey() != null)
-                   .forEach(i -> i.setKey(WidgetDto.getEntityFieldName(i.getKey())));
+            restListReq.getFieldSearchFilters()
+                    .stream()
+                    .filter(i -> i.getKey() != null)
+                    .forEach(i -> i.setKey(WidgetDto.getEntityFieldName(i.getKey())));
 
-            SearcherDaoPaginatedResult<WidgetType> widgets = this.widgetManager.getWidgetTypes(filters);
+            SearcherDaoPaginatedResult<WidgetType> widgets = this.widgetManager.getWidgetTypes(restListReq.getFieldSearchFilters());
             List<WidgetDto> dtoList = dtoBuilder.convert(widgets.getList());
 
-            for(WidgetDto widgetDto: dtoList) {
+            for (WidgetDto widgetDto : dtoList) {
                 addFragments(widgetDto);
             }
 
@@ -121,7 +125,7 @@ public class WidgetService implements IWidgetService {
 
         WidgetType type = this.widgetManager.getWidgetType(widgetCode);
 
-        if(type == null) {
+        if (type == null) {
             throw new RestRourceNotFoundException("widget", widgetCode);
         }
 
@@ -132,7 +136,7 @@ public class WidgetService implements IWidgetService {
             widgetManager.updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
 
             addFragments(widgetDto);
-        }catch(Throwable e) {
+        } catch (Throwable e) {
             logger.error("failed to update widget type", e);
             throw new RestServerError("Failed to update widget", e);
         }
@@ -153,14 +157,14 @@ public class WidgetService implements IWidgetService {
         type.setLocked(widgetRequest.getUsed());
 
         ApsProperties titles = new ApsProperties();
-        widgetRequest.getTitles().forEach((k,v) -> titles.put(k, v));
+        widgetRequest.getTitles().forEach((k, v) -> titles.put(k, v));
         type.setTitles(titles);
         type.setPluginCode(widgetRequest.getPluginCode());
         type.setMainGroup(widgetRequest.getGroup());
 
     }
 
-    private void addFragments(WidgetDto widgetDto) throws Exception{
+    private void addFragments(WidgetDto widgetDto) throws Exception {
         List<String> fragmentCodes = guiFragmentManager.getGuiFragmentCodesByWidgetType(widgetDto.getCode());
 
         if (fragmentCodes != null) {
@@ -170,6 +174,7 @@ public class WidgetService implements IWidgetService {
             }
         }
     }
+
     public IWidgetTypeManager getWidgetManager() {
         return widgetManager;
     }
@@ -193,7 +198,7 @@ public class WidgetService implements IWidgetService {
             return bindingResult;
         }
 
-        if(widgetType.isLocked()) {
+        if (widgetType.isLocked()) {
             bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_USED_WIDGET, new String[]{widgetType.getCode()}, widgetType.getCode() + " cannot be deleted because it is referenced in use");
         }
 

@@ -12,7 +12,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
-import org.entando.entando.web.pagemodel.validator.PagemModelValidator;
+import org.entando.entando.web.pagemodel.validator.PageModelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class PageModelController {
     private IPageModelService pageModelService;
 
     @Autowired
-    private PagemModelValidator pagemModelValidator;
+    private PageModelValidator pageModelValidator;
 
     protected IPageModelService getPageModelService() {
         return pageModelService;
@@ -46,12 +46,12 @@ public class PageModelController {
         this.pageModelService = pageModelService;
     }
 
-    protected PagemModelValidator getPagemModelValidator() {
-        return pagemModelValidator;
+    protected PageModelValidator getPagemModelValidator() {
+        return pageModelValidator;
     }
 
-    public void setPagemModelValidator(PagemModelValidator pagemModelValidator) {
-        this.pagemModelValidator = pagemModelValidator;
+    public void setPageModelValidator(PageModelValidator pageModelValidator) {
+        this.pageModelValidator = pageModelValidator;
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

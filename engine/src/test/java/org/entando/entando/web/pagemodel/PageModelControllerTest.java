@@ -8,7 +8,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
-import org.entando.entando.web.pagemodel.validator.PagemModelValidator;
+import org.entando.entando.web.pagemodel.validator.PageModelValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class PageModelControllerTest extends AbstractControllerTest {
 
 
     @Spy
-    private PagemModelValidator pagemModelValidator = new PagemModelValidator();
+    private PageModelValidator pagemModelValidator = new PageModelValidator();
 
     @Before
     public void setUp() throws Exception {

@@ -20,7 +20,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
-import org.entando.entando.web.pagemodel.validator.PagemModelValidator;
+import org.entando.entando.web.pagemodel.validator.PageModelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -196,7 +196,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         if (null == pageModel) {
             return bindingResult;
         }
-        bindingResult.reject(PagemModelValidator.ERRCODE_CODE_EXISTS, new String[]{pageModelRequest.getCode()}, "pageModel.code.exists");
+        bindingResult.reject(PageModelValidator.ERRCODE_CODE_EXISTS, new String[]{pageModelRequest.getCode()}, "pageModel.code.exists");
         return bindingResult;
     }
 
@@ -205,7 +205,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
         Map<String, List<Object>> references = this.getReferencingObjects(pageModel);
         if (references.size() > 0) {
-            bindingResult.reject(PagemModelValidator.ERRCODE_PAGEMODEL_REFERENCES, new Object[]{pageModel.getCode(), references}, "pageModel.cannot.delete.references");
+            bindingResult.reject(PageModelValidator.ERRCODE_PAGEMODEL_REFERENCES, new Object[]{pageModel.getCode(), references}, "pageModel.cannot.delete.references");
         }
         return bindingResult;
 

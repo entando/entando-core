@@ -26,7 +26,7 @@ import org.springframework.validation.Validator;
 
 
 @Component
-public class PagemModelValidator implements Validator {
+public class PageModelValidator implements Validator {
 
     public static final String ERRCODE_FRAMES_POS_MISMATCH = "1";
     public static final String ERRCODE_CODE_EXISTS = "2";

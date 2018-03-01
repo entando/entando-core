@@ -19,14 +19,16 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 
+import com.agiletec.aps.system.common.AbstractSearcherDAO;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.common.AbstractDAO;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,9 +36,9 @@ import java.util.Map;
  *
  * @author M.Diana - E.Santoboni
  */
-public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
+public class WidgetTypeDAO extends AbstractSearcherDAO implements IWidgetTypeDAO {
 
-	private static final Logger _logger = LoggerFactory.getLogger(WidgetTypeDAO.class);
+	private static final Logger logger = LoggerFactory.getLogger(WidgetTypeDAO.class);
 
 	@Override
 	public Map<String, WidgetType> loadWidgetTypes() {
@@ -53,7 +55,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 				widgetTypes.put(widgetType.getCode(), widgetType);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading widgets", t);
+			logger.error("Error loading widgets", t);
 			throw new RuntimeException("Error loading widgets", t);
 		} finally {
 			closeDaoResources(res, stat, conn);
@@ -96,7 +98,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 				widgetType.setMainGroup(mainGroup.trim());
 			}
 		} catch (Throwable t) {
-			_logger.error("Error parsing the Widget Type '{}'", code, t);
+			logger.error("Error parsing the Widget Type '{}'", code, t);
 			throw new ApsSystemException("Error in the parsing in the Widget Type '" + code + "'", t);
 		}
 		return widgetType;
@@ -136,7 +138,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while adding a new widget type", t);
+			logger.error("Error while adding a new widget type", t);
 			throw new RuntimeException("Error while adding a new widget type", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -157,7 +159,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error deleting widget type '{}'", widgetTypeCode, t);
+			logger.error("Error deleting widget type '{}'", widgetTypeCode, t);
 			throw new RuntimeException("Error deleting widget type", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -184,7 +186,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error updating widget type {}", widgetTypeCode, t);
+			logger.error("Error updating widget type {}", widgetTypeCode, t);
 			throw new RuntimeException("Error updating widget type", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -197,6 +199,45 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
 
 	public void setLangManager(ILangManager langManager) {
 		this._langManager = langManager;
+	}
+
+	@Override
+	public int countWidgetTypes(FieldSearchFilter[] filters) {
+		Integer widgetTypes = null;
+		try {
+			widgetTypes = super.countId(filters);
+		} catch (Throwable t) {
+			logger.error("error in count groups", t);
+			throw new RuntimeException("error in count groups", t);
+		}
+		return widgetTypes;
+	}
+
+	@Override
+	public List<String> searchWidgetTypes(FieldSearchFilter[] filters) {
+		List<String> groupsNames = null;
+		try {
+			groupsNames = super.searchId(filters);
+		} catch (Throwable t) {
+			logger.error("error in search groups", t);
+			throw new RuntimeException("error in search groups", t);
+		}
+		return groupsNames;
+	}
+
+	@Override
+	protected String getTableFieldName(String metadataFieldKey) {
+		return metadataFieldKey;
+	}
+
+	@Override
+	protected String getMasterTableName() {
+		return "widgetcatalog";
+	}
+
+	@Override
+	protected String getMasterTableIdFieldName() {
+		return "code";
 	}
 
 	private ILangManager _langManager;

@@ -20,115 +20,70 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PagedMetadata<T> {
 
-    private int page;
-    private int size;
-    private int last;
-    private int count;
+	private int page;
+	private int pageSize;
+	private int lastPage;
+	private int count;
 
-    @JsonIgnore
-    private List<T> body;
+	@JsonIgnore
+	private List<T> body;
 
-    public PagedMetadata() {}
+	public PagedMetadata() {
+	}
 
+	public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
+		this.page = req.getPageNum();
+		this.pageSize = result.getList().size();
+		Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
+		this.lastPage = pages.intValue() - 1;
+		this.count = result.getCount();
+	}
 
-    public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
-        this.page = req.getPageNum();
-        if (null != result) {
+	public PagedMetadata(int page, int size, int last, int count) {
+		this.page = page;
+		this.pageSize = size;
+		this.lastPage = last;
+		this.count = count;
+	}
 
-            this.size = result.getList().size();
-            Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
-            this.last = pages.intValue() - 1;
-            this.count = result.getCount();
-        }
-    }
+	public int getPage() {
+		return page;
+	}
 
-    public PagedMetadata(int page, int size, int last, int count) {
-        this.page = page;
-        this.size = size;
-        this.last = last;
-        this.count = count;
-    }
+	public void setPage(int page) {
+		this.page = page;
+	}
 
-    public int getPage() {
-        return page;
-    }
+	public int getPageSize() {
+		return pageSize;
+	}
 
-    public void setPage(int page) {
-        this.page = page;
-    }
+	public void setPageSize(int size) {
+		this.pageSize = size;
+	}
 
-    public int getSize() {
-        return size;
-    }
+	public int getLastPage() {
+		return lastPage;
+	}
 
-    public void setSize(int size) {
-        this.size = size;
-    }
+	public void setLastPage(int last) {
+		this.lastPage = last;
+	}
 
-    public int getLast() {
-        return last;
-    }
+	public List<T> getBody() {
+		return body;
+	}
 
-    public void setLast(int last) {
-        this.last = last;
-    }
+	public void setBody(List<T> body) {
+		this.body = body;
+	}
 
-    public List<T> getBody() {
-        return body;
-    }
+	public int getCount() {
+		return count;
+	}
 
-    public void setBody(List<T> body) {
-        this.body = body;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((body == null) ? 0 : body.hashCode());
-        result = prime * result + count;
-        result = prime * result + last;
-        result = prime * result + page;
-        result = prime * result + size;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PagedMetadata other = (PagedMetadata) obj;
-        if (body == null) {
-            if (other.body != null)
-                return false;
-        } else if (!body.equals(other.body))
-            return false;
-        if (count != other.count)
-            return false;
-        if (last != other.last)
-            return false;
-        if (page != other.page)
-            return false;
-        if (size != other.size)
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "PagedMetadata [page=" + page + ", size=" + size + ", last=" + last + ", count=" + count + ", body=" + body + "]";
-    }
+	public void setCount(int count) {
+		this.count = count;
+	}
 
 }

@@ -21,17 +21,19 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
  * @author E.Santoboni
  */
 public interface IGuiFragmentDAO {
-	
+
 	public List<String> searchGuiFragments(FieldSearchFilter[] filters);
-	
+
+	public int countGuiFragments(FieldSearchFilter[] filters);
+
 	public GuiFragment loadGuiFragment(String code);
-	
+
 	public void removeGuiFragment(String code);
-	
+
 	public void updateGuiFragment(GuiFragment guiFragment);
-	
+
 	public void insertGuiFragment(GuiFragment guiFragment);
-	
+
 	public List<String> loadGuiFragmentPluginCodes();
-	
+
 }

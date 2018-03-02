@@ -27,19 +27,20 @@ import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class GuiFragmentControllerTest extends AbstractControllerTest {
 
@@ -67,7 +68,7 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
 		when(this.guiFragmentService.getGuiFragments(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
 		ResultActions result = mockMvc.perform(
 				get("/fragments")
-				.param("pageNum", "1")
+                                                                .param("page", "1")
 				.param("pageSize", "4")
 				.header("Authorization", "Bearer " + accessToken)
 		);
@@ -85,7 +86,7 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
 		when(this.guiFragmentService.getGuiFragments(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
 		ResultActions result = mockMvc.perform(
 				get("/fragments")
-				.param("pageNum", "1")
+                                                                .param("page", "1")
 				.param("pageSize", "4")
 				.param("filter[0].attribute", "code")
 				.param("filter[0].value", "userprofile_editCurrentUser_profile")

@@ -53,7 +53,7 @@ public class DataObjectModelService implements IDataObjectModelService {
     }
 
     @Override
-    public PagedMetadata<DataModelDto> getGuiFragments(RestListRequest restListReq) {
+    public PagedMetadata<DataModelDto> getDataObjectModels(RestListRequest restListReq) {
         PagedMetadata<DataModelDto> pagedMetadata = null;
         try {
             List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());

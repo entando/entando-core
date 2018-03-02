@@ -19,6 +19,6 @@ import org.entando.entando.web.common.model.RestListRequest;
 
 public interface IDataObjectModelService {
 
-    public PagedMetadata<DataModelDto> getGuiFragments(RestListRequest restListReq);
+    public PagedMetadata<DataModelDto> getDataObjectModels(RestListRequest restListReq);
 
 }

@@ -37,7 +37,7 @@ public class PageDto {
 
     public PageDto(IPage page) {
         this.setCode(page.getCode());
-        this.setStatus(page.isOnline() ? IPageService.STATUS_ONLINE : IPageService.STATUS_DRAFT);
+        this.setStatus(page.isOnlineInstance() ? IPageService.STATUS_ONLINE : IPageService.STATUS_DRAFT);
         this.setDisplayedInMenu(page.isShowable());
         this.setPageModel(page.getModel().getCode());
         this.setCharset(page.getCharset());

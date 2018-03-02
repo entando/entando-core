@@ -19,7 +19,10 @@ public interface IPageService {
 
     String BEAN_NAME = "PageService";
 
-    public PageDto getPage(String pageCode);
+    public static final String STATUS_ONLINE = "published";
+    public static final String STATUS_DRAFT = "draft";
+
+    public PageDto getPage(String pageCode, String status);
 
     public PageDto addPage(PageRequest pageRequest);
 

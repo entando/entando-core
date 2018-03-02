@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.page.model.PageDto;
-import org.entando.entando.aps.system.services.page.model.PageDtoBuilder;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.Title;
 import org.junit.Test;
@@ -39,9 +38,9 @@ public class PageServiceIntegrationTest extends BaseTestCase {
 
     @Test
     public void testGetPage() {
-        PageDto page = pageService.getPage("pagina_1");
+        PageDto page = pageService.getPage("pagina_1", IPageService.STATUS_ONLINE);
         assertNotNull(page);
-        assertEquals("online", page.getStatus());
+        assertEquals(IPageService.STATUS_ONLINE, page.getStatus());
     }
 
     @Test
@@ -49,12 +48,12 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         List<PageDto> pages = pageService.getPages("pagina_1");
         assertNotNull(pages);
         assertEquals(2, pages.size());
-        assertEquals("online", pages.get(0).getStatus());
+        assertEquals(IPageService.STATUS_ONLINE, pages.get(0).getStatus());
     }
 
     @Test
     public void testAddAndRemovePage() throws Throwable {
-        PageDto pageToClone = pageService.getPage("pagina_11");
+        PageDto pageToClone = pageService.getPage("pagina_11", "draft");
         assertNotNull(pageToClone);
         PageRequest pageRequest = this.createRequestFromDto(pageToClone);
         pageRequest.setCode("pagina_13");
@@ -63,7 +62,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         assertEquals("pagina_13", addedPage.getCode());
         assertEquals("pagina_1", addedPage.getParentCode());
 
-        addedPage = pageService.getPage("pagina_13");
+        addedPage = pageService.getPage("pagina_13", "draft");
         assertNotNull(addedPage);
         assertEquals("pagina_13", addedPage.getCode());
         assertEquals("pagina_1", addedPage.getParentCode());
@@ -71,7 +70,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         pageService.removePage("pagina_13");
         try {
             addedPage = null;
-            addedPage = pageService.getPage("pagina_13");
+            addedPage = pageService.getPage("pagina_13", "draft");
             fail("RestRourceNotFoundException not thrown");
         } catch (RestRourceNotFoundException e) {
             assertNull(addedPage);
@@ -80,7 +79,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
 
     @Test
     public void testUpdatePage() {
-        PageDto oldPages = pageService.getPage("pagina_12");
+        PageDto oldPages = pageService.getPage("pagina_12", "draft");
         assertNotNull(oldPages);
         assertEquals(2, oldPages.getTitles().size());
         assertEquals("Pagina 1-2", oldPages.getTitles().stream()
@@ -95,7 +94,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         assertEquals("Pagina 1-2 mod", modPage.getTitles().stream()
                 .filter(title -> title.getLang().equals("it")).findFirst().get().getTitle());
 
-        modPage = pageService.getPage("pagina_12");
+        modPage = pageService.getPage("pagina_12", "draft");
         assertNotNull(modPage);
         assertEquals(2, modPage.getTitles().size());
         assertEquals("Pagina 1-2 mod", modPage.getTitles().stream()

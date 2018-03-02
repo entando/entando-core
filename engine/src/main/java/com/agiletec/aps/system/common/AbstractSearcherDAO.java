@@ -231,8 +231,8 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         StringBuffer query = this.createBaseQueryBlock(filters, isCount, selectAll);
         boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
         if (!isCount) {
-            this.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
             boolean ordered = appendOrderQueryBlocks(filters, query, false);
+            this.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
         }
 
         return query.toString();

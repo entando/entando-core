@@ -78,7 +78,7 @@ public class GuiFragmentService implements IGuiFragmentService {
 					.filter(searchFilter -> searchFilter.getKey() != null)
 					.forEach(searchFilter -> searchFilter.setKey(GuiFragmentDto.getEntityFieldName(searchFilter.getKey())));
 			 */
-			SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.getFieldSearchFilters());
+			SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.buildFieldSearchFilters());
 			List<GuiFragmentDtoSmall> dtoList = this.getDtoSmallBuilder().convert(fragments.getList());
 			pagedMetadata = new PagedMetadata<>(restListReq, fragments);
 			pagedMetadata.setBody(dtoList);

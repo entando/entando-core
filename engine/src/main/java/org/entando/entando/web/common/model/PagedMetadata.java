@@ -20,70 +20,70 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PagedMetadata<T> {
 
-    private int page;
-    private int size;
-    private int last;
-    private int count;
+	private int page;
+	private int pageSize;
+	private int lastPage;
+	private int count;
 
-    @JsonIgnore
-    private List<T> body;
+	@JsonIgnore
+	private List<T> body;
 
-    public PagedMetadata() {
-    }
+	public PagedMetadata() {
+	}
 
-    public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
-        this.page = req.getPageNum();
-        this.size = result.getList().size();
-        Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
-        this.last = pages.intValue() - 1;
-        this.count = result.getCount();
-    }
+	public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
+		this.page = req.getPage();
+		this.pageSize = result.getList().size();
+		Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
+		this.lastPage = pages.intValue() - 1;
+		this.count = result.getCount();
+	}
 
-    public PagedMetadata(int page, int size, int last, int count) {
-        this.page = page;
-        this.size = size;
-        this.last = last;
-        this.count = count;
-    }
+	public PagedMetadata(int page, int size, int last, int count) {
+		this.page = page;
+		this.pageSize = size;
+		this.lastPage = last;
+		this.count = count;
+	}
 
-    public int getPage() {
-        return page;
-    }
+	public int getPage() {
+		return page;
+	}
 
-    public void setPage(int page) {
-        this.page = page;
-    }
+	public void setPage(int page) {
+		this.page = page;
+	}
 
-    public int getSize() {
-        return size;
-    }
+	public int getPageSize() {
+		return pageSize;
+	}
 
-    public void setSize(int size) {
-        this.size = size;
-    }
+	public void setPageSize(int size) {
+		this.pageSize = size;
+	}
 
-    public int getLast() {
-        return last;
-    }
+	public int getLastPage() {
+		return lastPage;
+	}
 
-    public void setLast(int last) {
-        this.last = last;
-    }
+	public void setLastPage(int last) {
+		this.lastPage = last;
+	}
 
-    public List<T> getBody() {
-        return body;
-    }
+	public List<T> getBody() {
+		return body;
+	}
 
-    public void setBody(List<T> body) {
-        this.body = body;
-    }
+	public void setBody(List<T> body) {
+		this.body = body;
+	}
 
-    public int getCount() {
-        return count;
-    }
+	public int getCount() {
+		return count;
+	}
 
-    public void setCount(int count) {
-        this.count = count;
-    }
+	public void setCount(int count) {
+		this.count = count;
+	}
 
 }

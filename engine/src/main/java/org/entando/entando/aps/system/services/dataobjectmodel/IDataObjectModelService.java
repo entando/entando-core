@@ -16,9 +16,14 @@ package org.entando.entando.aps.system.services.dataobjectmodel;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 
 public interface IDataObjectModelService {
 
     public PagedMetadata<DataModelDto> getDataObjectModels(RestListRequest restListReq);
+
+    public DataModelDto getDataObjectModel(Long dataModelId);
+
+    public DataModelDto addDataObjectModel(DataObjectModelRequest dataObjectModelRequest);
 
 }

@@ -15,13 +15,16 @@ package org.entando.entando.aps.system.services.dataobjectmodel;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.ArrayList;
 import java.util.List;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +79,38 @@ public class DataObjectModelService implements IDataObjectModelService {
             throw new RestServerError("error in search data models", t);
         }
         return pagedMetadata;
+    }
+
+    @Override
+    public DataModelDto getDataObjectModel(Long dataModelId) {
+        DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(dataModelId);
+        if (null == model) {
+            logger.warn("no model found with code {}", dataModelId);
+            throw new RestRourceNotFoundException("dataModelId", String.valueOf(dataModelId));
+        }
+        return this.getDtoBuilder().convert(model);
+    }
+
+    @Override
+    public DataModelDto addDataObjectModel(DataObjectModelRequest dataObjectModelRequest) {
+        try {
+            DataObjectModel dataModel = this.createDataObjectModel(dataObjectModelRequest);
+            this.getDataObjectModelManager().addDataObjectModel(dataModel);
+            return this.getDtoBuilder().convert(dataModel);
+        } catch (ApsSystemException e) {
+            logger.error("Error adding DataObjectModel", e);
+            throw new RestServerError("error add DataObjectModel", e);
+        }
+    }
+
+    protected DataObjectModel createDataObjectModel(DataObjectModelRequest dataObjectModelRequest) {
+        DataObjectModel model = new DataObjectModel();
+        model.setDataType(dataObjectModelRequest.getType());
+        model.setDescription(dataObjectModelRequest.getDescr());
+        model.setId(dataObjectModelRequest.getModelId());
+        model.setShape(dataObjectModelRequest.getModel());
+        model.setStylesheet(dataObjectModelRequest.getStylesheet());
+        return model;
     }
 
 }

@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class DataObjectModelDAO extends AbstractSearcherDAO implements IDataObjectModelDAO {
 
-    private static final Logger _logger = LoggerFactory.getLogger(DataObjectModelDAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataObjectModelDAO.class);
 
     private final String ALL_DATA_UX
             = "SELECT modelid, datatype, descr, model, stylesheet FROM dataobjectmodels";
@@ -99,7 +99,7 @@ public class DataObjectModelDAO extends AbstractSearcherDAO implements IDataObje
                 models.put(wrapLongId, contentModel);
             }
         } catch (Throwable t) {
-            _logger.error("Error loading datatype models", t);
+            logger.error("Error loading datatype models", t);
             throw new RuntimeException("Error loading datatype models", t);
         } finally {
             closeDaoResources(res, stat, conn);
@@ -127,7 +127,7 @@ public class DataObjectModelDAO extends AbstractSearcherDAO implements IDataObje
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error adding datatype ux {}", model.getId(), t);
+            logger.error("Error adding datatype ux {}", model.getId(), t);
             throw new RuntimeException("Error adding datatype ux " + model.getId(), t);
         } finally {
             closeDaoResources(null, stat, conn);
@@ -147,7 +147,7 @@ public class DataObjectModelDAO extends AbstractSearcherDAO implements IDataObje
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error deleting datatype model {} ", model.getId(), t);
+            logger.error("Error deleting datatype model {} ", model.getId(), t);
             throw new RuntimeException("Error deleting datatype model " + model.getId(), t);
         } finally {
             closeDaoResources(null, stat, conn);
@@ -171,7 +171,7 @@ public class DataObjectModelDAO extends AbstractSearcherDAO implements IDataObje
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error updating datatype model {} ", model.getId(), t);
+            logger.error("Error updating datatype model {} ", model.getId(), t);
             throw new RuntimeException("Error updating datatype model " + model.getId(), t);
         } finally {
             closeDaoResources(null, stat, conn);
@@ -198,7 +198,7 @@ public class DataObjectModelDAO extends AbstractSearcherDAO implements IDataObje
             res.next();
             id = res.getLong(1) + 1; // N.B.: funziona anche per il primo record
         } catch (Throwable t) {
-            _logger.error("Error extracting next id", t);
+            logger.error("Error extracting next id", t);
             throw new RuntimeException("Error extracting next id", t);
         } finally {
             this.closeDaoResources(res, stat);

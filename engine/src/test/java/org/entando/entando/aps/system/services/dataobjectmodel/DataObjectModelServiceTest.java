@@ -11,35 +11,40 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.guifragment;
+package org.entando.entando.aps.system.services.dataobjectmodel;
 
-import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
-import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class GuiFragmentServiceTest {
+public class DataObjectModelServiceTest {
 
     @InjectMocks
-    private GuiFragmentService guiFragmentService;
+    private DataObjectModelService dataObjectModelService;
 
     @Mock
-    private GuiFragmentDtoBuilder dtoBuilder;
+    private DataModelDtoBuilder dtoBuilder;
 
     @Mock
-    private IGuiFragmentManager guiFragmentManager;
+    private IDataObjectModelManager dataObjectModelManager;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
 
+    @Test(expected = RestRourceNotFoundException.class)
+    public void getNullObjectModel() {
+        Mockito.when(dataObjectModelManager.getDefaultUtilizer(Mockito.any(Long.class))).thenReturn(null);
+        this.dataObjectModelService.getDataObjectModel(4l);
+    }
+
+    /*
     @Test(expected = ValidationConflictException.class)
     public void should_raise_exception_on_delete_reserved_fragment() throws Throwable {
         GuiFragment reference = new GuiFragment();
@@ -55,5 +60,5 @@ public class GuiFragmentServiceTest {
         when(guiFragmentManager.getGuiFragment("test_code")).thenReturn(fragment);
         this.guiFragmentService.removeGuiFragment(fragment.getCode());
     }
-
+     */
 }

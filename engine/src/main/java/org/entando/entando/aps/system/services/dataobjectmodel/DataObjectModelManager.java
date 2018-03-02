@@ -83,7 +83,6 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     @Override
     public void init() throws Exception {
         this.getCacheWrapper().initCache(this.getDataModelDAO());
-
         logger.debug("{} ready. Initialized {} dataObject models", this.getClass().getName(), this.getCacheWrapper().getModels().size());
     }
 

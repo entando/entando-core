@@ -81,6 +81,8 @@ public class DataModelDto {
         switch (dtoFieldName) {
             case "code":
                 return "modelid";
+            case "type":
+                return "datatype";
             default:
                 return dtoFieldName;
         }

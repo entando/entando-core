@@ -31,50 +31,56 @@ import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
 @XmlType(propOrder = {"id", "dataType", "description", "shape", "stylesheet"})
 public class DataObjectModel implements Comparable, Serializable {
 
+    private long id;
+    private String dataType;
+    private String description;
+    private String dataShape;
+    private String stylesheet;
+
     @XmlElement(name = "id", required = true)
     public long getId() {
-        return _id;
+        return id;
     }
 
     public void setId(long id) {
-        this._id = id;
+        this.id = id;
     }
 
     @XmlElement(name = "dataType", required = true)
     public String getDataType() {
-        return _dataType;
+        return dataType;
     }
 
     public void setDataType(String dataType) {
-        this._dataType = dataType;
+        this.dataType = dataType;
     }
 
     @XmlElement(name = "description", required = true)
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     public void setDescription(String descr) {
-        this._description = descr;
+        this.description = descr;
     }
 
     @XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
     @XmlElement(name = "shape", required = true)
     public String getShape() {
-        return _dataShape;
+        return dataShape;
     }
 
     public void setShape(String shape) {
-        this._dataShape = shape;
+        this.dataShape = shape;
     }
 
     @XmlElement(name = "stylesheet", required = false)
     public String getStylesheet() {
-        return _stylesheet;
+        return stylesheet;
     }
 
     public void setStylesheet(String stylesheet) {
-        this._stylesheet = stylesheet;
+        this.stylesheet = stylesheet;
     }
 
     @Override
@@ -89,11 +95,5 @@ public class DataObjectModel implements Comparable, Serializable {
         }
         return result;
     }
-
-    private long _id;
-    private String _dataType;
-    private String _description;
-    private String _dataShape;
-    private String _stylesheet;
 
 }

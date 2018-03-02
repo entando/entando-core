@@ -13,13 +13,18 @@
  */
 package org.entando.entando.web.dataobjectmodel;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import javax.validation.Valid;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelService;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.entando.entando.web.dataobjectmodel.validator.DataObjectModelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,16 +73,33 @@ public class DataObjectModelController {
         PagedMetadata<DataModelDto> result = this.getDataObjectModelService().getDataObjectModels(requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
-    /*
+
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{groupCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGroup(@PathVariable String groupCode) {
-        GroupDto group = this.getGroupService().getGroup(groupCode);
-        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+    @RequestMapping(value = "/{dataModelId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getDataObjectModel(@Valid @PathVariable Long dataModelId) {
+        DataModelDto dataModelDto = this.getDataObjectModelService().getDataObjectModel(dataModelId);
+        return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{groupCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addDataObjectModel(@Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) throws ApsSystemException {
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        //business validations
+        this.getDataObjectModelValidator().validate(dataObjectModelRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationConflictException(bindingResult);
+        }
+        DataModelDto dataModelDto = this.getDataObjectModelService().addDataObjectModel(dataObjectModelRequest);
+        return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
+    }
+
+    /*
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateGroup(@PathVariable String groupCode, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
@@ -84,25 +109,8 @@ public class DataObjectModelController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
         GroupDto group = this.getGroupService().updateGroup(groupCode, groupRequest.getName());
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
-    }
-
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addGroup(@Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) throws ApsSystemException {
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        //business validations
-        getGroupValidator().validate(groupRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
-        }
-        GroupDto dto = this.getGroupService().addGroup(groupRequest);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = "group_delete")

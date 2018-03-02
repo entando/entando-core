@@ -13,25 +13,12 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmodel;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import java.util.List;
-import java.util.Map;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 
-/**
- * Interfaccia base per i Data Access Object degli oggetti modello datatype
- */
-public interface IDataObjectModelDAO {
+public interface IDataObjectModelService {
 
-    public Map<Long, DataObjectModel> loadDataModels();
-
-    public void addDataModel(DataObjectModel model);
-
-    public void deleteDataModel(DataObjectModel model);
-
-    public void updateDataModel(DataObjectModel model);
-
-    public int countDataObjectModels(FieldSearchFilter[] filters);
-
-    public List<Long> searchDataObjectModels(FieldSearchFilter[] filters);
+    public PagedMetadata<DataModelDto> getGuiFragments(RestListRequest restListReq);
 
 }

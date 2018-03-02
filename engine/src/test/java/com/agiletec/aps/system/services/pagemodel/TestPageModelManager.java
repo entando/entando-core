@@ -57,20 +57,20 @@ public class TestPageModelManager extends BaseTestCase {
     public void testSearch_with_page_filter() throws ApsSystemException {
         RestListRequest restListRequest = new RestListRequest();
         restListRequest.setPageSize(2);
-        restListRequest.setPageNum(1);
+        restListRequest.setPage(1);
 
-        List<FieldSearchFilter> filters = restListRequest.getFieldSearchFilters();
+        List<FieldSearchFilter> filters = restListRequest.buildFieldSearchFilters();
         SearcherDaoPaginatedResult<PageModel> result = this._pageModelManager.searchPageModels(filters);
         assertThat(result.getCount(), is(3));
         assertThat(result.getList().size(), is(1));
 
         restListRequest.addFilter(new Filter("descr", "modello"));
-        result = this._pageModelManager.searchPageModels(restListRequest.getFieldSearchFilters());
+        result = this._pageModelManager.searchPageModels(restListRequest.buildFieldSearchFilters());
         assertThat(result.getCount(), is(2));
         assertThat(result.getList().size(), is(0));
 
-        restListRequest.setPageNum(0);
-        result = this._pageModelManager.searchPageModels(restListRequest.getFieldSearchFilters());
+        restListRequest.setPage(0);
+        result = this._pageModelManager.searchPageModels(restListRequest.buildFieldSearchFilters());
         assertThat(result.getCount(), is(2));
         assertThat(result.getList().size(), is(2));
     }

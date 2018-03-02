@@ -57,7 +57,7 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 
 		//
 		restListRequest.setPageSize(4);
-		restListRequest.setPageNum(1);
+		restListRequest.setPage(1);
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(1));
 		assertThat(res.getPageSize(), is(2));
@@ -65,7 +65,7 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 		assertThat(res.getCount(), is(6));
 		//
 		restListRequest.setPageSize(4);
-		restListRequest.setPageNum(1000);
+		restListRequest.setPage(1000);
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(1000));
 		assertThat(res.getPageSize(), is(0));
@@ -97,14 +97,14 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 		assertThat(res.getLastPage(), is(1));
 		assertThat(res.getCount(), is(3));
 
-		restListRequest.setPageNum(1);
+		restListRequest.setPage(1);
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(1));
 		assertThat(res.getPageSize(), is(1));
 		assertThat(res.getLastPage(), is(1));
 		assertThat(res.getCount(), is(3));
 
-		restListRequest.setPageNum(2);
+		restListRequest.setPage(2);
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(2));
 		assertThat(res.getPageSize(), is(0));

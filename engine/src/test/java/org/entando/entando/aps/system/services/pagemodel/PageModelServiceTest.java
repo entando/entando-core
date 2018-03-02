@@ -33,7 +33,6 @@ public class PageModelServiceTest {
         pageModelService.setDtoBuilder(dtoBuilder);
     }
 
-
     @Test
     public void test_add_page_model() throws ApsSystemException, JsonParseException, JsonMappingException, IOException {
 
@@ -63,8 +62,5 @@ public class PageModelServiceTest {
         Mockito.verify(pageModelManager, Mockito.times(1)).addPageModel(Mockito.any());
 
     }
-
-
-
 
 }

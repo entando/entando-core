@@ -1,10 +1,12 @@
 package org.entando.entando.aps.system.services.pagemodel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.Frame;
@@ -66,14 +68,13 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     public PagedMetadata<PageModelDto> getPageModels(RestListRequest restListReq) {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
+            List<FieldSearchFilter> filters = new ArrayList<FieldSearchFilter>(restListReq.buildFieldSearchFilters());
+            filters
+                   .stream()
+                   .filter(i -> i.getKey() != null)
+                   .forEach(i -> i.setKey(PageModelDto.getEntityFieldName(i.getKey())));
 
-
-            restListReq.getFieldSearchFilters()
-                       .stream()
-                       .filter(i -> i.getKey() != null)
-                       .forEach(i -> i.setKey(PageModelDto.getEntityFieldName(i.getKey())));
-
-            SearcherDaoPaginatedResult<PageModel> pageModels = this.getPageModelManager().searchPageModels(restListReq.getFieldSearchFilters());
+            SearcherDaoPaginatedResult<PageModel> pageModels = this.getPageModelManager().searchPageModels(filters);
 
             List<PageModelDto> dtoList = null;
             if (null != pageModels) {
@@ -174,8 +175,8 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             return destConfiguration;
         }
         List<Frame> frames = frameRequestList.stream()
-                                         .map(p -> createFrame(p))
-                                         .collect(Collectors.toList());
+                                             .map(p -> createFrame(p))
+                                             .collect(Collectors.toList());
 
         destConfiguration = frames.toArray(new Frame[frames.size()]);
         return destConfiguration;

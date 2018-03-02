@@ -17,6 +17,8 @@ import org.entando.entando.web.page.model.PageRequest;
  */
 public interface IPageService {
 
+    String BEAN_NAME = "PageService";
+
     public PageDto getPage(String pageCode);
 
     public PageDto addPage(PageRequest pageRequest);

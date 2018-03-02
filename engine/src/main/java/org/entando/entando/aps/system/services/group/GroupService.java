@@ -13,10 +13,12 @@
  */
 package org.entando.entando.aps.system.services.group;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
@@ -74,16 +76,18 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public PagedMetadata<GroupDto> getGroups(RestListRequest restListReq) {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
-            restListReq.getFieldSearchFilters()
+            List<FieldSearchFilter> filters = new ArrayList<FieldSearchFilter>(restListReq.buildFieldSearchFilters());
+            filters
             .stream()
             .filter(i -> i.getKey() != null)
             .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
 
-            SearcherDaoPaginatedResult<Group> groups = this.getGroupManager().getGroups(restListReq.getFieldSearchFilters());
+            SearcherDaoPaginatedResult<Group> groups = this.getGroupManager().getGroups(filters);
             List<GroupDto> dtoList = dtoBuilder.convert(groups.getList());
 
             PagedMetadata<GroupDto> pagedMetadata = new PagedMetadata<>(restListReq, groups);

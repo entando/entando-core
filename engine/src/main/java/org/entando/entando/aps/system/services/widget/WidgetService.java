@@ -1,29 +1,23 @@
 package org.entando.entando.aps.system.services.widget;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
-import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.aps.system.services.widget.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
-import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.group.validator.GroupValidator;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.entando.entando.web.widget.validator.WidgetValidator;
 import org.slf4j.Logger;
@@ -65,7 +59,7 @@ public class WidgetService implements IWidgetService {
         WidgetType widgetType = this.createWidget(widgetRequest);
 
         try {
-           widgetManager.addWidgetType(widgetType);
+            widgetManager.addWidgetType(widgetType);
         }catch(ApsSystemException e) {
             logger.error("Failed to add widget type for request {} ",widgetRequest);
             throw new RestServerError("error in update group", e);
@@ -93,17 +87,19 @@ public class WidgetService implements IWidgetService {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restListReq) {
 
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
-            restListReq.getFieldSearchFilters()
-                    .stream()
-                    .filter(i -> i.getKey() != null)
-                    .forEach(i -> i.setKey(WidgetDto.getEntityFieldName(i.getKey())));
+            List<FieldSearchFilter> filters = new ArrayList<FieldSearchFilter>(restListReq.buildFieldSearchFilters());
+            filters
+                   .stream()
+                   .filter(i -> i.getKey() != null)
+                   .forEach(i -> i.setKey(WidgetDto.getEntityFieldName(i.getKey())));
 
-            SearcherDaoPaginatedResult<WidgetType> widgets = this.widgetManager.getWidgetTypes(restListReq.getFieldSearchFilters());
+            SearcherDaoPaginatedResult<WidgetType> widgets = this.widgetManager.getWidgetTypes(filters);
             List<WidgetDto> dtoList = dtoBuilder.convert(widgets.getList());
 
             for(WidgetDto widgetDto: dtoList) {

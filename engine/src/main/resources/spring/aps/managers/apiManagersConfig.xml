@@ -76,4 +76,11 @@
         </property>
     </bean>
 
+    <beans profile="swagger">
+        <bean id="swaggerInitializer" class="org.entando.entando.aps.system.init.SwaggerInitializer" >
+            <constructor-arg name="baseConfigManager" ref="BaseConfigManager" />
+            <constructor-arg name="consumerManager" ref="OAuthConsumerManager" />
+        </bean>
+    </beans>
+
 </beans>

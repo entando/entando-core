@@ -13,11 +13,6 @@
  */
 package org.entando.entando.web.pagemodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.pagemodel.IPageModelService;
@@ -36,11 +31,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/pageModels")
@@ -72,7 +68,7 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getPageModels(RestListRequest requestList) {
+    public ResponseEntity<RestResponse<List<PageModelDto>>> getPageModels(RestListRequest requestList) {
         logger.trace("loading page models");
         this.getPagemModelValidator().validateRestListRequest(requestList, PageModelDto.class);
         PagedMetadata<PageModelDto> result = this.getPageModelService().getPageModels(requestList);
@@ -82,21 +78,21 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getPageModel(@PathVariable String code) {
+    public ResponseEntity<RestResponse<PageModelDto>> getPageModel(@PathVariable String code) {
         PageModelDto pageModelDto = this.getPageModelService().getPageModel(code);
         return new ResponseEntity<>(new RestResponse(pageModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}/references/{manager}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageModelReferences(@PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
+    public ResponseEntity<RestResponse<?>> getPageModelReferences(@PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
         PagedMetadata<?> result = this.getPageModelService().getPageModelReferences(code, manager, requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
-    public ResponseEntity<RestResponse> updatePageModel(@PathVariable String code, @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<PageModelDto>> updatePageModel(@PathVariable String code, @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -111,7 +107,7 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addPageModel(@Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse<PageModelDto>> addPageModel(@Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

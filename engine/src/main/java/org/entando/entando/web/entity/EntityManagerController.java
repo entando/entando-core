@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author E.Santoboni
  */
@@ -66,7 +68,7 @@ public class EntityManagerController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getEntityManagers(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<List<String>>> getEntityManagers(RestListRequest requestList) throws JsonProcessingException {
         this.getEntityManagerValidator().validateRestListRequest(requestList, null);
         PagedMetadata<String> result = this.getEntityManagerService().getEntityManagers(requestList);
         logger.debug("Main Response -> {}", result);
@@ -75,7 +77,7 @@ public class EntityManagerController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{entityManagerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getEntityManager(@PathVariable String entityManagerCode) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<EntityManagerDto>> getEntityManager(@PathVariable String entityManagerCode) throws JsonProcessingException {
         logger.debug("Requested manager -> {}", entityManagerCode);
         EntityManagerDto dto = this.getEntityManagerService().getEntityManager(entityManagerCode);
         logger.debug("Main Response -> {}", dto);

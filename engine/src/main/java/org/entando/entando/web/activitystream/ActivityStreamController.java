@@ -13,9 +13,6 @@
  */
 package org.entando.entando.web.activitystream;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,11 +31,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/activityStream")
@@ -69,7 +66,7 @@ public class ActivityStreamController {
 
     @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getActivityStream(RestListRequest requestList, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<List<ActionLogRecordDto>>> getActivityStream(RestListRequest requestList, HttpServletRequest request) throws JsonProcessingException {
         this.getActivityStreamValidator().validateRestListRequest(requestList, ActionLogRecordDto.class);
         PagedMetadata<ActionLogRecordDto> result = this.getActivityStreamService().getActivityStream(requestList, (UserDetails) request.getSession().getAttribute("user"));
         this.getActivityStreamValidator().validateRestListResult(requestList, result);
@@ -79,7 +76,7 @@ public class ActivityStreamController {
 
     @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(value = "/{recordId}/like", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addLike(@PathVariable int recordId, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<ActionLogRecordDto>> addLike(@PathVariable int recordId, HttpServletRequest request) throws JsonProcessingException {
         ActionLogRecordDto result = this.getActivityStreamService().addLike(recordId, (UserDetails) request.getSession().getAttribute("user"));
         logger.debug("adding like to activity stream record", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
@@ -87,7 +84,7 @@ public class ActivityStreamController {
 
     @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(value = "/{recordId}/like", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> removeLike(@PathVariable int recordId, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<ActionLogRecordDto>> removeLike(@PathVariable int recordId, HttpServletRequest request) throws JsonProcessingException {
         ActionLogRecordDto result = this.getActivityStreamService().removeLike(recordId, (UserDetails) request.getSession().getAttribute("user"));
         logger.debug("remove like to activity stream record", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
@@ -95,7 +92,7 @@ public class ActivityStreamController {
 
     @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(value = "/{recordId}/comments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addComment(@PathVariable int recordId,
+    public ResponseEntity<RestResponse<ActionLogRecordDto>> addComment(@PathVariable int recordId,
             @Valid @RequestBody ActivityStreamCommentRequest commentRequest,
             BindingResult bindingResult,
             HttpServletRequest request) throws JsonProcessingException {
@@ -110,7 +107,7 @@ public class ActivityStreamController {
 
     @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(value = "/{recordId}/comments/{commentId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> removeComment(@PathVariable int recordId, @PathVariable int commentId, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<ActionLogRecordDto>> removeComment(@PathVariable int recordId, @PathVariable int commentId, HttpServletRequest request) throws JsonProcessingException {
         ActionLogRecordDto result = this.getActivityStreamService().removeComment(recordId, commentId, (UserDetails) request.getSession().getAttribute("user"));
         logger.debug("remove comment to activity stream record", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);

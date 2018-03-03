@@ -15,11 +15,6 @@ package org.entando.entando.web.filebrowser;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.storage.IFileBrowserService;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
@@ -36,11 +31,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -59,7 +56,7 @@ public class FileBrowserController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> browseFolder(@RequestParam(value = "currentPath", required = false, defaultValue = "") String currentPath,
+    public ResponseEntity<RestResponse<List<BasicFileAttributeViewDto>>> browseFolder(@RequestParam(value = "currentPath", required = false, defaultValue = "") String currentPath,
             @RequestParam(value = "protectedFolder", required = false) Boolean protectedFolder) {
         logger.debug("browsing folder {} - protected {}", currentPath, protectedFolder);
         List<BasicFileAttributeViewDto> result = this.getFileBrowserService().browseFolder(currentPath, protectedFolder);

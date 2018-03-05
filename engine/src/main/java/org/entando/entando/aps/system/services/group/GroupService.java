@@ -51,7 +51,6 @@ public class GroupService implements IGroupService, ApplicationContextAware {
     @Autowired
     private IDtoBuilder<Group, GroupDto> dtoBuilder;
 
-
     private ApplicationContext applicationContext;
 
     protected IGroupManager getGroupManager() {
@@ -69,7 +68,6 @@ public class GroupService implements IGroupService, ApplicationContextAware {
     public void setDtoBuilder(IDtoBuilder<Group, GroupDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
     }
-
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -209,6 +207,4 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         }
         return references;
     }
-
-
 }

@@ -73,7 +73,8 @@ public class PageService implements IPageService {
         IPage parent = this.getPageManager().getDraftPage(parentCode);
         Optional<String[]> optional = Optional.ofNullable(parent.getChildrenCodes());
         optional.ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
-            IPage child = this.getPageManager().getDraftPage(childCode);
+            IPage child = this.getPageManager().getOnlinePage(childCode) != null
+                    ? this.getPageManager().getOnlinePage(childCode) : this.getPageManager().getDraftPage(childCode);
             res.add(dtoBuilder.convert(child));
         }));
         return res;

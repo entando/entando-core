@@ -13,18 +13,18 @@
  */
 package org.entando.entando.aps.system.services.api.model;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
+import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.services.api.ApiResourcesDefDOM;
 import org.jdom.Element;
-
-import com.agiletec.aps.util.ApsProperties;
 
 /**
  * @author E.Santoboni
  */
-public class ApiMethodRelatedWidget {
+public class ApiMethodRelatedWidget implements Serializable {
 	
 	protected ApiMethodRelatedWidget() {}
 	

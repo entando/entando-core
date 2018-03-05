@@ -66,16 +66,10 @@
     
     <bean id="jacmsPublicContentSearcherDAO" class="com.agiletec.plugins.jacms.aps.system.services.content.PublicContentSearcherDAO">
         <property name="dataSource" ref="portDataSource" />
-        <property name="forceCaseInsensitiveLikeSearch">
-            <value>${jacms.publicContentSearcher.forceCaseInsensitiveLikeSearch}</value>
-        </property>
     </bean>
     
     <bean id="jacmsWorkContentSearcherDAO"  class="com.agiletec.plugins.jacms.aps.system.services.content.WorkContentSearcherDAO">
         <property name="dataSource" ref="portDataSource" />
-        <property name="forceCaseInsensitiveLikeSearch">
-            <value>${jacms.workContentSearcher.forceCaseInsensitiveLikeSearch}</value>
-        </property>
     </bean>
     
     <bean id="jacmsContentAuthorizationHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.ContentAuthorizationHelper" >

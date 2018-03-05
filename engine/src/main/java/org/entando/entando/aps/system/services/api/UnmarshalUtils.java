@@ -38,7 +38,11 @@ import org.springframework.context.ApplicationContext;
 public class UnmarshalUtils {
 
 	private static final Logger _logger =  LoggerFactory.getLogger(UnmarshalUtils.class);
-	
+
+	private UnmarshalUtils() {
+		//
+	}
+
 	@Deprecated
 	public static Object unmarshal(ApiMethod apiMethod, HttpServletRequest request, MediaType contentType) throws Throwable {
 		return unmarshal(apiMethod.getExpectedType(), request, contentType);
@@ -80,7 +84,7 @@ public class UnmarshalUtils {
             } else {
                 JAXBContext context = JAXBContext.newInstance(expectedType);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                bodyObject = (Object) unmarshaller.unmarshal(stream/*bodyStream*/);
+                bodyObject = unmarshaller.unmarshal(stream);
             }
 		} catch (Throwable t) {
 			_logger.error("Error unmarshalling request body", t);

@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 
 /**
  * @author E.Santoboni
@@ -56,7 +55,12 @@ public class WorkContentSearcherDAO extends AbstractContentSearcherDAO implement
 			conn = this.getConnection();
 			stat = this.buildStatement(filters, categories, orClauseCategoryFilter, userGroupCodes, false, conn);
 			result = stat.executeQuery();
-			this.flowResult(contentsId, filters, result);
+            while (result.next()) {
+                String id = result.getString(this.getMasterTableIdFieldName());
+                if (!contentsId.contains(id)) {
+                    contentsId.add(id);
+                }
+            }
 		} catch (Throwable t) {
 			_logger.error("Error loading contents id list",  t);
 			throw new RuntimeException("Error loading contents id list", t);

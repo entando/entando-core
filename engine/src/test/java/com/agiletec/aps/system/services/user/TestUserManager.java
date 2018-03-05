@@ -23,34 +23,52 @@ import com.agiletec.aps.system.SystemConstants;
  * @author M.Casari
  */
 public class TestUserManager extends BaseTestCase {
-	
+
     protected void setUp() throws Exception {
         super.setUp();
         this.init();
     }
-    
+
     public void testGetUsers() throws Throwable {
-		List<UserDetails> users = this._userManager.getUsers();
-		assertTrue(users.size()>=8);
+        List<UserDetails> users = this._userManager.getUsers();
+        assertTrue(users.size() >= 8);
     }
-    
+
+    public void testAdminUserPasswordIsArgon2() throws Throwable {
+        UserDetails admin = this.getUser("admin");
+        assertNotNull(admin);
+        boolean res = this._userManager.isArgon2Encrypted(admin.getPassword());
+        assertTrue(res);
+    }
+
+    public void testAllUsersPasswordsIsArgon2() throws Throwable {
+        List<UserDetails> users = this._userManager.getUsers();
+        boolean res = true;
+        for (UserDetails user : users) {
+            res = this._userManager.isArgon2Encrypted(user.getPassword());
+            if (!res) {
+                break;
+            }
+        }
+        assertTrue(res);
+    }
+
     //TODO FARE TEST PER OPERAZIONI SPECIALI SU UTENTE (VERIFICA DATE ACCESSI E CAMBIO PASSWORD)
-    
     private void init() throws Exception {
-    	try {
-    		this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
-		} catch (Throwable e) {
-			throw new Exception(e);
-		}
+        try {
+            this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
+        } catch (Throwable e) {
+            throw new Exception(e);
+        }
     }
-    
+
     protected MockUser createUserForTest(String username) {
-    	MockUser user = new MockUser();
-		user.setUsername(username);
+        MockUser user = new MockUser();
+        user.setUsername(username);
         user.setPassword("temp");
         return user;
-	}
-	
-	private IUserManager _userManager = null;
-	
+    }
+
+    private IUserManager _userManager = null;
+
 }

@@ -125,7 +125,7 @@
     <resource name="i18nlabel" namespace="inline">
         <description>The resource to manage inline editing on labels</description>
         <source>inline</source>
-        <method httpMethod="PUT" active="true">
+        <method httpMethod="PUT" active="true" requiredPermission="superuser" requiredAuth="true">
             <description>The put method to manage inline editing on labels</description>
             <springBean name="InlineApiI18nLabelInterface" method="updateInlineLabel"/>
             <expectedType>org.entando.entando.aps.system.services.i18n.inlinediting.model.JAXBI18nLabel</expectedType>

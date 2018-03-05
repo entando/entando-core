@@ -18,21 +18,34 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.agiletec.aps.system.common.AbstractSearcherDAO;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.common.AbstractDAO;
 
 /**
  * Data Access Object per gli oggetti Group. 
  * @author E.Santoboni
  */
-public class GroupDAO extends AbstractDAO implements IGroupDAO {
+public class GroupDAO extends AbstractSearcherDAO implements IGroupDAO {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(GroupDAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(GroupDAO.class);
 	
+    @Override
+    public int countGroups(FieldSearchFilter[] filters) {
+        Integer groups = null;
+        try {
+            groups = super.countId(filters);
+        } catch (Throwable t) {
+            logger.error("error in count groups", t);
+            throw new RuntimeException("error in count groups", t);
+        }
+        return groups;
+    }
+
 	/**
 	 * Carica la mappa dei gruppi presenti nel sistema 
 	 * indicizzandola in base al nome del gruppo.
@@ -55,7 +68,7 @@ public class GroupDAO extends AbstractDAO implements IGroupDAO {
 				groups.put(group.getName(), group);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while loading groups",  t);
+            logger.error("Error while loading groups", t);
 			throw new RuntimeException("Error while loading groups", t);
 		} finally {
 			closeDaoResources(res, stat, conn);
@@ -81,7 +94,7 @@ public class GroupDAO extends AbstractDAO implements IGroupDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while adding a group",  t);
+            logger.error("Error while adding a group", t);
 			throw new RuntimeException("Error while adding a group", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -106,7 +119,7 @@ public class GroupDAO extends AbstractDAO implements IGroupDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while updating a group",  t);
+            logger.error("Error while updating a group", t);
 			throw new RuntimeException("Error while updating a group", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -139,64 +152,50 @@ public class GroupDAO extends AbstractDAO implements IGroupDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while deleting a group",  t);
+            logger.error("Error while deleting a group", t);
 			throw new RuntimeException("Error while deleting a group", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
 		}
 	}
-	/*
-	@Override
-	protected String getLoadAuthsForUserQuery() {
-		return SELECT_GROUPS_FOR_USER;
-	}
-	
-	@Override
-	protected String getAddUserAuthorizationQuery() {
-		return ADD_USER_GROUP;
-	}
-	
-	@Override
-	protected String getRemoveUserAuthorizationQuery() {
-		return REMOVE_USER_GROUP;
-	}
-	
-	@Override
-	protected String getRemoveUserAuthorizationsQuery() {
-		return REMOVE_USER_GROUPS;
-	}
-	
-	@Override
-	protected String getUserAuthorizatedQuery() {
-		return SELECT_USERS_FOR_GROUP;
-	}
-	*/
-	private final String ALL_GROUPS =
-		"SELECT groupname, descr FROM authgroups";
-	/*
-	private final String SELECT_GROUPS_FOR_USER =
-		"SELECT groupname FROM authusergroups WHERE username = ? ";
-	
-	private final String SELECT_USERS_FOR_GROUP =
-		"SELECT username FROM authusergroups WHERE groupname = ? ";
-	*/
-	private final String DELETE_GROUP =
-		"DELETE FROM authgroups WHERE groupname = ? ";
-	
-	private final String ADD_GROUP =
-		"INSERT INTO authgroups (groupname ,descr ) VALUES ( ? , ? )";
-	
-	private final String UPDATE_GROUP =
-		"UPDATE authgroups SET descr= ? WHERE groupname = ? ";	
-	/*
-	private final String ADD_USER_GROUP =
-		"INSERT INTO authusergroups (username, groupname) VALUES ( ? , ? )";
-	
-	private final String REMOVE_USER_GROUP =
-		"DELETE FROM authusergroups WHERE username = ? AND groupname = ? ";
-	
-	private final String REMOVE_USER_GROUPS =
-		"DELETE FROM authusergroups WHERE username = ? ";
-	*/
+
+    @Override
+    protected String getTableFieldName(String metadataFieldKey) {
+        return metadataFieldKey;
+    }
+
+    @Override
+    protected String getMasterTableName() {
+        return "authgroups";
+    }
+
+    @Override
+    protected String getMasterTableIdFieldName() {
+        return "groupname";
+    }
+
+    private final String ALL_GROUPS =
+            "SELECT groupname, descr FROM authgroups";
+
+    private final String DELETE_GROUP =
+            "DELETE FROM authgroups WHERE groupname = ? ";
+
+    private final String ADD_GROUP =
+            "INSERT INTO authgroups (groupname ,descr ) VALUES ( ? , ? )";
+
+    private final String UPDATE_GROUP =
+            "UPDATE authgroups SET descr= ? WHERE groupname = ? ";
+
+    @Override
+    public List<String> searchGroups(FieldSearchFilter[] filters) {
+        List<String> groupsNames = null;
+        try {
+            groupsNames = super.searchId(filters);
+        } catch (Throwable t) {
+            logger.error("error in search groups", t);
+            throw new RuntimeException("error in search groups", t);
+        }
+        return groupsNames;
+    }
 	
 }

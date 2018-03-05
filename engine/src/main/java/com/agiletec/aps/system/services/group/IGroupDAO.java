@@ -13,7 +13,10 @@
  */
 package com.agiletec.aps.system.services.group;
 
+import java.util.List;
 import java.util.Map;
+
+import com.agiletec.aps.system.common.FieldSearchFilter;
 
 /**
  * Interfaccia base per i Data Access Object degli oggetti Group.
@@ -57,5 +60,9 @@ public interface IGroupDAO {
 	 * @param groupName Il nome del gruppo da rimuovere.
 	 */
 	public void deleteGroup(String groupName);
+
+    public List<String> searchGroups(FieldSearchFilter[] filters);
+
+    public int countGroups(FieldSearchFilter[] filters);
 
 }

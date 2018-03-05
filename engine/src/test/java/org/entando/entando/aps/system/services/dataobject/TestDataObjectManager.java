@@ -118,30 +118,9 @@ public class TestDataObjectManager extends BaseTestCase {
         assertEquals(22, dataObjectIds.size());
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
-    public void testSearchDataObjects_1_3() throws Throwable {
-        EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
-        creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-        EntitySearchFilter descrFilter_b = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "cont", true);
-        EntitySearchFilter[] filters1_b = {creationOrder, descrFilter_b};
-        List<String> dataObjectIds = this._dataObjectManager.searchId(filters1_b);
-        assertNotNull(dataObjectIds);
-        assertEquals(0, dataObjectIds.size());
-
-        EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "Cont", true);
-        EntitySearchFilter lastEditorFilter_b = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
-        EntitySearchFilter[] filters2_b = {creationOrder, descrFilter, lastEditorFilter_b};
-        dataObjectIds = this._dataObjectManager.searchId(filters2_b);
-        assertNotNull(dataObjectIds);
-        assertEquals(0, dataObjectIds.size());
-    }
-
     public void testSearchDataObjects_1_4() throws Throwable {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> dataObjectIds = this._dataObjectManager.searchId(null);
         assertNotNull(dataObjectIds);
@@ -168,7 +147,6 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testSearchDataObjects_1_5() throws Throwable {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
         creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -204,24 +182,7 @@ public class TestDataObjectManager extends BaseTestCase {
         assertEquals(expected4.length, dataObjectIds.size());
     }
 
-    public void testSearchDataObjects_1_6() throws Throwable {
-        //forcing case sensitive search
-        DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseSensitiveLikeSearch(true);
 
-        EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
-        creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-        EntitySearchFilter descrFilter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "CoNt", true);
-        EntitySearchFilter[] filters1 = {creationOrder, descrFilter};
-        List<String> dataObjectIds = this._dataObjectManager.searchId(filters1);
-        assertEquals(0, dataObjectIds.size());
-
-        EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
-        EntitySearchFilter[] filters2 = {creationOrder, descrFilter, lastEditorFilter};
-        dataObjectIds = this._dataObjectManager.searchId(filters2);
-        assertNotNull(dataObjectIds);
-        assertEquals(0, dataObjectIds.size());
-    }
 
     public void testSearchDataObjects_2() throws Throwable {
         EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
@@ -304,33 +265,11 @@ public class TestDataObjectManager extends BaseTestCase {
         assertEquals(24, dataObjects.size());
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
-    public void testSearchDataObjects_2_a() throws Throwable {
-        List<String> groupCodes = new ArrayList<String>();
-        groupCodes.add("customers");
-        groupCodes.add(Group.FREE_GROUP_NAME);
-        EntitySearchFilter creationOrder = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false);
-        creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
 
-        EntitySearchFilter descrFilter_1 = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "eScR", true);
-        EntitySearchFilter[] filters_1 = {creationOrder, descrFilter_1};
-        List<String> dataObjects = this._dataObjectManager.loadDataObjectsId(null, filters_1, groupCodes);
-        assertEquals(0, dataObjects.size());
-
-        EntitySearchFilter descrFilter_2 = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "escr", true);
-        EntitySearchFilter[] filters_2 = {creationOrder, descrFilter_2};
-        dataObjects = this._dataObjectManager.loadDataObjectsId(null, filters_2, groupCodes);
-        String[] order = {"ALL4", "ART187", "ART180"};
-        assertEquals(order.length, dataObjects.size());
-        this.verifyOrder(dataObjects, order);
-    }
 
     public void testSearchDataObjects_2_b() throws Throwable {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> groupCodes = new ArrayList<String>();
         groupCodes.add("customers");
@@ -650,7 +589,6 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testLoadEvents_2_1() throws ApsSystemException {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> groups = new ArrayList<String>();
         groups.add("coach");
@@ -671,7 +609,6 @@ public class TestDataObjectManager extends BaseTestCase {
     public void testLoadEvents_2_2() throws ApsSystemException {
         //forcing case sensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseSensitiveLikeSearch(true);
 
         List<String> groups = new ArrayList<String>();
         groups.add("coach");
@@ -684,7 +621,7 @@ public class TestDataObjectManager extends BaseTestCase {
         EntitySearchFilter[] filters_1 = {filter, filter_x1};
 
         List<String> dataObjects = _dataObjectManager.loadDataObjectsId("EVN", null, filters_1, groups);
-        assertEquals(0, dataObjects.size());
+        assertEquals(2, dataObjects.size());
 
         EntitySearchFilter filter_x2 = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, "Even", true);
         filter_x2.setOrder(EntitySearchFilter.DESC_ORDER);
@@ -838,9 +775,7 @@ public class TestDataObjectManager extends BaseTestCase {
         this.testLoadEvents_9_a(false);
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
+
     protected void testLoadEvents_9_a(boolean useRoleFilter) throws ApsSystemException {
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);
@@ -851,7 +786,7 @@ public class TestDataObjectManager extends BaseTestCase {
         filter.setOrder(EntitySearchFilter.DESC_ORDER);
         EntitySearchFilter[] filters = {filter};
         List<String> dataObjects = _dataObjectManager.loadDataObjectsId("EVN", null, filters, groups);
-        String[] expectedOrderedDataObjectsId2 = {"EVN21", "EVN23"};//not EVN25
+        String[] expectedOrderedDataObjectsId2 = {"EVN25", "EVN21", "EVN23"};
         assertEquals(expectedOrderedDataObjectsId2.length, dataObjects.size());
         for (int i = 0; i < expectedOrderedDataObjectsId2.length; i++) {
             assertEquals(expectedOrderedDataObjectsId2[i], dataObjects.get(i));
@@ -866,7 +801,6 @@ public class TestDataObjectManager extends BaseTestCase {
     protected void testLoadEvents_9_b(boolean useRoleFilter) throws ApsSystemException {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);
         EntitySearchFilter filter = (useRoleFilter)
@@ -883,57 +817,13 @@ public class TestDataObjectManager extends BaseTestCase {
         }
     }
 
-    public void testLoadEvents_9_c() throws ApsSystemException {
-        this.testLoadEvents_9_c(true);
-        this.testLoadEvents_9_c(false);
-    }
 
-    protected void testLoadEvents_9_c(boolean useRoleFilter) throws ApsSystemException {
-        //forcing case sensitive search
-        DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseSensitiveLikeSearch(true);
-        List<String> groups = new ArrayList<String>();
-        groups.add(Group.ADMINS_GROUP_NAME);
-        EntitySearchFilter filter = (useRoleFilter)
-                ? EntitySearchFilter.createRoleFilter(SystemConstants.DATA_TYPE_ATTRIBUTE_ROLE_TITLE, "LE", true)
-                : new EntitySearchFilter("Titolo", true, "LE", true);
-        filter.setLangCode("it");
-        filter.setOrder(EntitySearchFilter.DESC_ORDER);
-        EntitySearchFilter[] filters = {filter};
-        List<String> dataObjects = this._dataObjectManager.loadDataObjectsId("EVN", null, filters, groups);
-        String[] expectedOrderedDataObjectsId2 = {"EVN25"};
-        assertEquals(expectedOrderedDataObjectsId2.length, dataObjects.size());
-        for (int i = 0; i < expectedOrderedDataObjectsId2.length; i++) {
-            assertEquals(expectedOrderedDataObjectsId2[i], dataObjects.get(i));
-        }
-    }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
-    public void testLoadEvents_1_a() throws ApsSystemException {
-        List<String> groups = new ArrayList<String>();
-        groups.add(Group.ADMINS_GROUP_NAME);
-        List<String> allowedDescription = new ArrayList<String>();
-        allowedDescription.add("descrizione");//"ART179" "ART180" "ART187"
-        allowedDescription.add("on line");//"ART179"
-        allowedDescription.add("customers");//"ART102" "RAH101" ...but not included because the standard search is case sensitive
-        EntitySearchFilter filter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_DESCR_FILTER_KEY, false, allowedDescription, true);
-        EntitySearchFilter filter2 = new EntitySearchFilter(IDataObjectManager.ENTITY_ID_FILTER_KEY, false);
-        filter2.setOrder(EntitySearchFilter.ASC_ORDER);
-        EntitySearchFilter[] filters = {filter, filter2};
-        List<String> dataObjects = _dataObjectManager.loadDataObjectsId(null, filters, groups);
-        String[] expectedOrderedDataObjectsId2 = {"ART180", "ART187"};
-        assertEquals(expectedOrderedDataObjectsId2.length, dataObjects.size());
-        for (int i = 0; i < expectedOrderedDataObjectsId2.length; i++) {
-            assertEquals(expectedOrderedDataObjectsId2[i], dataObjects.get(i));
-        }
-    }
+
 
     public void testLoadEvents_1_b() throws ApsSystemException {
         //forcing case insensitive search
         DataObjectSearcherDAO searcherDao = (DataObjectSearcherDAO) this.getApplicationContext().getBean("DataObjectSearcherDAO");
-        searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);

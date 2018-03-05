@@ -48,9 +48,6 @@
 
     <bean id="DataObjectSearcherDAO" class="org.entando.entando.aps.system.services.dataobject.DataObjectSearcherDAO">
         <property name="dataSource" ref="servDataSource" />
-        <property name="forceCaseInsensitiveLikeSearch">
-            <value>false</value>
-        </property>
     </bean>
 
     <bean id="DataObjectAuthorizationHelper" class="org.entando.entando.aps.system.services.dataobject.helper.DataAuthorizationHelper" >

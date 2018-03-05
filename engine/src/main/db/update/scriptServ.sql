@@ -57,3 +57,9 @@ CREATE TABLE dataobjectmodels
 
 ALTER TABLE actionlogcommentrecords RENAME comment TO commenttext;
 
+-- script for storing encrypted paswords
+
+ALTER TABLE authusers
+   ALTER COLUMN passwd TYPE character varying(512);
+   
+ALTER TABLE actionlogcommentrecords RENAME comment TO commenttext;

@@ -124,30 +124,11 @@ public class TestContentManager extends BaseTestCase {
 		assertEquals(22, contentIds.size());
 	}
 
-	/*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-	 */
-	public void testSearchContents_1_3() throws Throwable {
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
-		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter descrFilter_b = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "cont", true);
-		EntitySearchFilter[] filters1_b = {creationOrder, descrFilter_b};
-		List<String> contentIds = this._contentManager.searchId(filters1_b);
-		assertNotNull(contentIds);
-		assertEquals(0, contentIds.size());
 
-		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Cont", true);
-		EntitySearchFilter lastEditorFilter_b = new EntitySearchFilter(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
-		EntitySearchFilter[] filters2_b = {creationOrder, descrFilter, lastEditorFilter_b};
-		contentIds = this._contentManager.searchId(filters2_b);
-		assertNotNull(contentIds);
-		assertEquals(0, contentIds.size());
-	}
 
 	public void testSearchContents_1_4() throws Throwable {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-		searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> contentIds = this._contentManager.searchId(null);
 		assertNotNull(contentIds);
@@ -174,7 +155,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testSearchContents_1_5() throws Throwable {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-		searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -213,20 +193,19 @@ public class TestContentManager extends BaseTestCase {
 	public void testSearchContents_1_6() throws Throwable {
 		//forcing case sensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-		searcherDao.setForceCaseSensitiveLikeSearch(true);
 
 		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
 		creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
 		EntitySearchFilter descrFilter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "CoNt", true);
 		EntitySearchFilter[] filters1 = {creationOrder, descrFilter};
 		List<String> contentIds = this._contentManager.searchId(filters1);
-		assertEquals(0, contentIds.size());
+        assertEquals(9, contentIds.size());
 
 		EntitySearchFilter lastEditorFilter = new EntitySearchFilter(IContentManager.CONTENT_LAST_EDITOR_FILTER_KEY, false, "AdMin", true);
 		EntitySearchFilter[] filters2 = {creationOrder, descrFilter, lastEditorFilter};
 		contentIds = this._contentManager.searchId(filters2);
 		assertNotNull(contentIds);
-		assertEquals(0, contentIds.size());
+        assertEquals(9, contentIds.size());
 	}
 
 	public void testSearchContents_2() throws Throwable {
@@ -310,33 +289,11 @@ public class TestContentManager extends BaseTestCase {
 		assertEquals(25, contents.size());
 	}
 
-	/*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-	 */
-	public void testSearchWorkContents_2_a() throws Throwable {
-		List<String> groupCodes = new ArrayList<String>();
-		groupCodes.add("customers");
-		groupCodes.add(Group.FREE_GROUP_NAME);
-		EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
-		creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
 
-		EntitySearchFilter descrFilter_1 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "eScR", true);
-		EntitySearchFilter[] filters_1 = {creationOrder, descrFilter_1};
-		List<String> contents = this._contentManager.loadWorkContentsId(filters_1, groupCodes);
-		assertEquals(0, contents.size());
-
-		EntitySearchFilter descrFilter_2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "escr", true);
-		EntitySearchFilter[] filters_2 = {creationOrder, descrFilter_2};
-		contents = this._contentManager.loadWorkContentsId(filters_2, groupCodes);
-		String[] order = {"ALL4", "ART187", "ART180", "ART179"};
-		assertEquals(order.length, contents.size());
-		this.verifyOrder(contents, order);
-	}
 
 	public void testSearchWorkContents_2_b() throws Throwable {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-		searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> groupCodes = new ArrayList<String>();
 		groupCodes.add("customers");
@@ -677,7 +634,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testLoadPublicEvents_2_1() throws ApsSystemException {
 		//forcing case insensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-		searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> groups = new ArrayList<String>();
 		groups.add("coach");
@@ -698,7 +654,6 @@ public class TestContentManager extends BaseTestCase {
 	public void testLoadPublicEvents_2_2() throws ApsSystemException {
 		//forcing case sensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-		searcherDao.setForceCaseSensitiveLikeSearch(true);
 
 		List<String> groups = new ArrayList<String>();
 		groups.add("coach");
@@ -710,14 +665,14 @@ public class TestContentManager extends BaseTestCase {
 		filter_x1.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters_1 = {filter, filter_x1};
 
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters_1, groups);
-		assertEquals(0, contents.size());
+        List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters_1, groups);
+        assertEquals(2, contents.size());
 
 		EntitySearchFilter filter_x2 = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, "Even", true);
 		filter_x2.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters_2 = {filter, filter_x2};
 
-		contents = _contentManager.loadPublicContentsId("EVN", null, filters_2, groups);
+        contents = _contentManager.loadPublicContentsId("EVN", null, filters_2, groups);
 		assertEquals(2, contents.size());
 		assertEquals("EVN193", contents.get(0));
 		assertEquals("EVN192", contents.get(1));
@@ -860,30 +815,7 @@ public class TestContentManager extends BaseTestCase {
 		}
 	}
 
-	public void testLoadPublicEvents_9_a() throws ApsSystemException {
-		this.testLoadPublicEvents_9_a(true);
-		this.testLoadPublicEvents_9_a(false);
-	}
 
-	/*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-	 */
-	protected void testLoadPublicEvents_9_a(boolean useRoleFilter) throws ApsSystemException {
-		List<String> groups = new ArrayList<String>();
-		groups.add(Group.ADMINS_GROUP_NAME);
-		EntitySearchFilter filter = (useRoleFilter)
-				? EntitySearchFilter.createRoleFilter(JacmsSystemConstants.ATTRIBUTE_ROLE_TITLE, "le", true)
-				: new EntitySearchFilter("Titolo", true, "le", true);
-		filter.setLangCode("it");
-		filter.setOrder(EntitySearchFilter.DESC_ORDER);
-		EntitySearchFilter[] filters = {filter};
-		List<String> contents = _contentManager.loadPublicContentsId("EVN", null, filters, groups);
-		String[] expectedOrderedContentsId2 = {"EVN21", "EVN23"};//not EVN25
-		assertEquals(expectedOrderedContentsId2.length, contents.size());
-		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
-			assertEquals(expectedOrderedContentsId2[i], contents.get(i));
-		}
-	}
 
 	public void testLoadPublicEvents_9_b() throws ApsSystemException {
 		this.testLoadPublicEvents_9_b(true);
@@ -893,7 +825,6 @@ public class TestContentManager extends BaseTestCase {
 	protected void testLoadPublicEvents_9_b(boolean useRoleFilter) throws ApsSystemException {
 		//forcing case insensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-		searcherDao.setForceCaseInsensitiveLikeSearch(true);
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 		EntitySearchFilter filter = (useRoleFilter)
@@ -918,7 +849,6 @@ public class TestContentManager extends BaseTestCase {
 	protected void testLoadPublicEvents_9_c(boolean useRoleFilter) throws ApsSystemException {
 		//forcing case sensitive search
 		PublicContentSearcherDAO searcherDao = (PublicContentSearcherDAO) this.getApplicationContext().getBean("jacmsPublicContentSearcherDAO");
-		searcherDao.setForceCaseSensitiveLikeSearch(true);
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);
 		EntitySearchFilter filter = (useRoleFilter)
@@ -928,39 +858,18 @@ public class TestContentManager extends BaseTestCase {
 		filter.setOrder(EntitySearchFilter.DESC_ORDER);
 		EntitySearchFilter[] filters = {filter};
 		List<String> contents = this._contentManager.loadPublicContentsId("EVN", null, filters, groups);
-		String[] expectedOrderedContentsId2 = {"EVN25"};
+        String[] expectedOrderedContentsId2 = {"EVN25", "EVN21", "EVN23"};
 		assertEquals(expectedOrderedContentsId2.length, contents.size());
 		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
 			assertEquals(expectedOrderedContentsId2[i], contents.get(i));
 		}
 	}
 
-	/*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-	 */
-	public void testLoadWorkEvents_1_a() throws ApsSystemException {
-		List<String> groups = new ArrayList<String>();
-		groups.add(Group.ADMINS_GROUP_NAME);
-		List<String> allowedDescription = new ArrayList<String>();
-		allowedDescription.add("descrizione");//"ART179" "ART180" "ART187"
-		allowedDescription.add("on line");//"ART179"
-		allowedDescription.add("customers");//"ART102" "RAH101" ...but not included because the standard search is case sensitive
-		EntitySearchFilter filter = new EntitySearchFilter(IContentManager.CONTENT_DESCR_FILTER_KEY, false, allowedDescription, true);
-		EntitySearchFilter filter2 = new EntitySearchFilter(IContentManager.ENTITY_ID_FILTER_KEY, false);
-		filter2.setOrder(EntitySearchFilter.ASC_ORDER);
-		EntitySearchFilter[] filters = {filter, filter2};
-		List<String> contents = _contentManager.loadWorkContentsId(filters, groups);
-		String[] expectedOrderedContentsId2 = {"ART179", "ART180", "ART187"};
-		assertEquals(expectedOrderedContentsId2.length, contents.size());
-		for (int i = 0; i < expectedOrderedContentsId2.length; i++) {
-			assertEquals(expectedOrderedContentsId2[i], contents.get(i));
-		}
-	}
+
 
 	public void testLoadWorkEvents_1_b() throws ApsSystemException {
 		//forcing case insensitive search
 		WorkContentSearcherDAO searcherDao = (WorkContentSearcherDAO) this.getApplicationContext().getBean("jacmsWorkContentSearcherDAO");
-		searcherDao.setForceCaseInsensitiveLikeSearch(true);
 
 		List<String> groups = new ArrayList<String>();
 		groups.add(Group.ADMINS_GROUP_NAME);

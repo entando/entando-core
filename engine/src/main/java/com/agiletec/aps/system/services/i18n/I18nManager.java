@@ -20,12 +20,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.cache.II18nManagerCacheWrapper;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
@@ -39,8 +42,9 @@ public class I18nManager extends AbstractService implements II18nManager {
 	
 	private II18nManagerCacheWrapper cacheWrapper;
 
+	private ILangManager _langManager;
+	
 	private II18nDAO i18nDAO;
-
 
 	protected II18nDAO getI18nDAO() {
 		return i18nDAO;
@@ -48,6 +52,13 @@ public class I18nManager extends AbstractService implements II18nManager {
 
 	public void setI18nDAO(II18nDAO i18nDao) {
 		i18nDAO = i18nDao;
+	}
+	
+	protected ILangManager getLangManager() {
+		return _langManager;
+	}
+	public void setLangManager(ILangManager langManager) {
+		this._langManager = langManager;
 	}
 
 	protected II18nManagerCacheWrapper getCacheWrapper() {
@@ -57,13 +68,16 @@ public class I18nManager extends AbstractService implements II18nManager {
 	public void setCacheWrapper(II18nManagerCacheWrapper cacheWrapper) {
 		this.cacheWrapper = cacheWrapper;
 	}
+	
+	protected String getDefaultLang() {
+		return this.getLangManager().getDefaultLang().getCode();
+	}
 
 	@Override
 	public void init() throws Exception {
 		this.getCacheWrapper().initCache(this.getI18nDAO());
 		_logger.debug("{} : initialized {} labels", this.getClass().getName(), this.getLabelGroups().size());
 	}
-
 
 	/**
 	 * Return the group of labels.
@@ -73,6 +87,38 @@ public class I18nManager extends AbstractService implements II18nManager {
 	@Override
 	public Map<String, ApsProperties> getLabelGroups() {
 		return this.getCacheWrapper().getLabelGroups();
+	}
+	
+	@Override
+	public String renderLabel(String key, String renderingLang, 
+			boolean keyIfEmpty) throws ApsSystemException {
+		String label = null;
+		ApsProperties labelsProp = this.getLabelGroup(key);
+		if (labelsProp != null) {
+			label = labelsProp.getProperty(renderingLang);
+			if (StringUtils.isEmpty(label)) {
+				label = labelsProp.getProperty(this.getDefaultLang());
+			}
+		}
+		if (keyIfEmpty && StringUtils.isEmpty(label)) {
+			label = key;
+		}
+		return label;
+	}
+	
+	@Override
+	public String renderLabel(String key, String renderingLang,
+			boolean keyIfEmpty, Map<String, String> params) throws ApsSystemException {
+		String value = this.renderLabel(key, renderingLang, keyIfEmpty);
+		if (params != null && !params.isEmpty() && value != null) {
+			value = this.parseText(value, params);
+		}
+		return value;
+	}
+	
+	protected String parseText(String defaultText, Map<String, String> params) {
+		StrSubstitutor strSub = new StrSubstitutor(params);
+		return strSub.replace(defaultText);
 	}
 
 	/**

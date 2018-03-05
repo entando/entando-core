@@ -13,19 +13,17 @@
  */
 package org.entando.entando.aps.system.services.i18n.inlinediting.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.agiletec.aps.util.ApsProperties;
+import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
-
-import com.agiletec.aps.util.ApsProperties;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author E.Santoboni
@@ -34,91 +32,92 @@ import com.agiletec.aps.util.ApsProperties;
 @XmlType(propOrder = {"key", "labels"})
 public class JAXBI18nLabel implements Serializable {
 
-	public JAXBI18nLabel() {
-		super();
-	}
+    public JAXBI18nLabel() {
+        super();
+    }
 
-	public JAXBI18nLabel(String key, ApsProperties labels) {
-		this.setKey(key);
-		if (null != labels) {
-			List<JAXBLabel> jaxbLabels = new ArrayList<JAXBLabel>();
-			Iterator<Object> labelCodeIter = labels.keySet().iterator();
-			while (labelCodeIter.hasNext()) {
-				Object langCode = labelCodeIter.next();
-				JAXBLabel jaxbLabel = new JAXBLabel(langCode.toString(), labels.get(langCode).toString());
-				jaxbLabels.add(jaxbLabel);
-			}
-			this.setLabels(jaxbLabels);
-		}
-	}
+    public JAXBI18nLabel(String key, ApsProperties labels) {
+        this.setKey(key);
+        if (null != labels) {
+            List<JAXBLabel> jaxbLabels = new ArrayList<JAXBLabel>();
+            Iterator<Object> labelCodeIter = labels.keySet().iterator();
+            while (labelCodeIter.hasNext()) {
+                Object langCode = labelCodeIter.next();
+                JAXBLabel jaxbLabel = new JAXBLabel(langCode.toString(), labels.get(langCode).toString());
+                jaxbLabels.add(jaxbLabel);
+            }
+            this.setLabels(jaxbLabels);
+        }
+    }
 
-	public ApsProperties extractLabels() {
-		ApsProperties properties = new ApsProperties();
-		if (null != this.getLabels()) {
-			for (int i = 0; i < this.getLabels().size(); i++) {
-				JAXBLabel jAXBLabel = this.getLabels().get(i);
-				properties.put(jAXBLabel.getLangCode(), jAXBLabel.getValue());
-			}
-		}
-		return properties;
-	}
+    public ApsProperties extractLabels() {
+        ApsProperties properties = new ApsProperties();
+        if (null != this.getLabels()) {
+            for (int i = 0; i < this.getLabels().size(); i++) {
+                JAXBLabel jAXBLabel = this.getLabels().get(i);
+                properties.put(jAXBLabel.getLangCode(), jAXBLabel.getValue());
+            }
+        }
+        return properties;
+    }
 
-	@XmlElement(name = "key", required = true)
-	public String getKey() {
-		return _key;
-	}
+    @XmlElement(name = "key", required = true)
+    public String getKey() {
+        return _key;
+    }
 
-	public void setKey(String key) {
-		this._key = key;
-	}
+    public void setKey(String key) {
+        this._key = key;
+    }
 
-	//modifica per redhat
-	@XmlElement(name = "labels", required = true)
-	//@XmlElementWrapper(name = "labels")
-	public List<JAXBLabel> getLabels() {
-		return _labels;
-	}
+    //modifica per redhat
+    @XmlElement(name = "labels", required = true)
+    //@XmlElementWrapper(name = "labels")
+    public List<JAXBLabel> getLabels() {
+        return _labels;
+    }
 
-	public void setLabels(List<JAXBLabel> labels) {
-		this._labels = labels;
-	}
+    public void setLabels(List<JAXBLabel> labels) {
+        this._labels = labels;
+    }
 
-	private String _key;
-	private List<JAXBLabel> _labels;
+    private String _key;
+    private List<JAXBLabel> _labels;
 
-	@XmlRootElement(name = "label")
-	@XmlType(propOrder = {"langCode", "value"})
-	public static class JAXBLabel {
+    @XmlRootElement(name = "label")
+    @XmlType(propOrder = {"langCode", "value"})
+    public static class JAXBLabel {
 
-		public JAXBLabel() {}
+        public JAXBLabel() {
+        }
 
-		public JAXBLabel(String langCode, String value) {
-			this.setLangCode(langCode);
-			this.setValue(value);
-		}
+        public JAXBLabel(String langCode, String value) {
+            this.setLangCode(langCode);
+            this.setValue(value);
+        }
 
-		@XmlElement(name = "langCode", required = true)
-		public String getLangCode() {
-			return _langCode;
-		}
+        @XmlElement(name = "langCode", required = true)
+        public String getLangCode() {
+            return _langCode;
+        }
 
-		public void setLangCode(String langCode) {
-			this._langCode = langCode;
-		}
+        public void setLangCode(String langCode) {
+            this._langCode = langCode;
+        }
 
-		@XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
-		@XmlElement(name = "value", required = true)
-		public String getValue() {
-			return _value;
-		}
+        @XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
+        @XmlElement(name = "value", required = true)
+        public String getValue() {
+            return _value;
+        }
 
-		public void setValue(String value) {
-			this._value = value;
-		}
+        public void setValue(String value) {
+            this._value = value;
+        }
 
-		private String _langCode;
-		private String _value;
+        private String _langCode;
+        private String _value;
 
-	}
+    }
 
 }

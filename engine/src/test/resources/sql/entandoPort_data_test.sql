@@ -93,6 +93,8 @@ INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('userprofile_P
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('userprofile_PFL_language', 'it', 'language');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('userprofile_PFL_boolean1', 'it', 'boolean 1');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('userprofile_PFL_boolean2', 'it', 'boolean 2');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('LABEL_WITH_PARAMS', 'it', 'Benvenuto ${name} ${surname} (${username} - ${name}.${surname})');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('LABEL_WITH_PARAMS', 'en', 'Welcome ${surname} ${name} (${username} - ${name}.${surname})');
 
 
 

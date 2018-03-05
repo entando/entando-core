@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -79,8 +80,8 @@ public class PageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/page/{pageCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPage(@PathVariable String pageCode) {
-        PageDto page = this.getPageService().getPage(pageCode);
+    public ResponseEntity<?> getPage(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+        PageDto page = this.getPageService().getPage(pageCode, status);
         return new ResponseEntity<>(new RestResponse(page), HttpStatus.OK);
     }
 

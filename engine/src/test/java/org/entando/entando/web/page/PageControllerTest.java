@@ -7,7 +7,6 @@ package org.entando.entando.web.page;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -77,7 +76,7 @@ public class PageControllerTest extends AbstractControllerTest {
         String mockJsonResult = "[\n"
                 + "        {\n"
                 + "            \"code\": \"notfound\",\n"
-                + "            \"status\": \"online\",\n"
+                + "            \"status\": \"draft\",\n"
                 + "            \"displayedInMenu\": true,\n"
                 + "            \"pageModel\": \"service\",\n"
                 + "            \"charset\": null,\n"
@@ -100,7 +99,7 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "        },\n"
                 + "        {\n"
                 + "            \"code\": \"errorpage\",\n"
-                + "            \"status\": \"online\",\n"
+                + "            \"status\": \"draft\",\n"
                 + "            \"displayedInMenu\": true,\n"
                 + "            \"pageModel\": \"service\",\n"
                 + "            \"charset\": null,\n"
@@ -123,7 +122,7 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "        },\n"
                 + "        {\n"
                 + "            \"code\": \"login\",\n"
-                + "            \"status\": \"online\",\n"
+                + "            \"status\": \"draft\",\n"
                 + "            \"displayedInMenu\": true,\n"
                 + "            \"pageModel\": \"service\",\n"
                 + "            \"charset\": null,\n"

@@ -82,7 +82,6 @@ public class RestListRequestTest {
         assertThat(filters.get(1).getKey(), is("city"));
         assertThat(filters.get(2).getKey(), is("mobile"));
 
-
         //sort
         assertThat(filters.get(3).getKey(), is("name"));
         assertThat(filters.get(3).getOrder(), is(FieldSearchFilter.Order.ASC));

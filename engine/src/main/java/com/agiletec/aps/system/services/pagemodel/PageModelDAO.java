@@ -14,29 +14,53 @@
 package com.agiletec.aps.system.services.pagemodel;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.agiletec.aps.system.common.AbstractSearcherDAO;
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.agiletec.aps.system.common.AbstractDAO;
-import com.agiletec.aps.system.exception.ApsSystemException;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Data Access Object for page model objects
  * @author M.Diana - E.Santoboni
  */
-public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
+public class PageModelDAO extends AbstractSearcherDAO implements IPageModelDAO {
 	
-	private static final Logger _logger =  LoggerFactory.getLogger(PageModelDAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(PageModelDAO.class);
 	
+    @Override
+    public int count(FieldSearchFilter[] filters) {
+        Integer count = null;
+        try {
+            count = super.countId(filters);
+        } catch (Throwable t) {
+            logger.error("error in count pagemodels", t);
+            throw new RuntimeException("error in count pagemodels", t);
+        }
+        return count;
+    }
+
+    @Override
+    public List<String> search(FieldSearchFilter[] filters) {
+        List<String> entityIdList = null;
+        try {
+            entityIdList = super.searchId(filters);
+        } catch (Throwable t) {
+            logger.error("error in search pagemodels", t);
+            throw new RuntimeException("error in search pagemodels", t);
+        }
+        return entityIdList;
+    }
+
 	/**
 	 * Carica e restituisce la mappa dei modelli di pagina.
 	 * @return La mappa dei modelli.
@@ -56,7 +80,7 @@ public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
 				models.put(pageModel.getCode(), pageModel);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading the page models",  t);
+            logger.error("Error loading the page models", t);
 			throw new RuntimeException("Error loading the page models", t);
 		} finally{
 			closeDaoResources(res, stat, conn);
@@ -86,7 +110,7 @@ public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
 			pageModel.setPluginCode(res.getString(4));
 			pageModel.setTemplate(res.getString(5));
 		} catch (Throwable t) {
-			_logger.error("Error building the page model code '{}'", code, t);
+            logger.error("Error building the page model code '{}'", code, t);
 			throw new RuntimeException("Error building the page model code '" + code + "'", t);
 		}
 		return pageModel;
@@ -112,7 +136,7 @@ public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while adding a model",  t);
+            logger.error("Error while adding a model", t);
 			throw new RuntimeException("Error while adding a model", t);
 		} finally {
 			this.closeDaoResources(null, stat, conn);
@@ -139,7 +163,7 @@ public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while updating a model",  t);
+            logger.error("Error while updating a model", t);
 			throw new RuntimeException("Error while updating a model", t);
 		} finally {
 			this.closeDaoResources(null, stat, conn);
@@ -159,13 +183,28 @@ public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error while deleting a model",  t);
+            logger.error("Error while deleting a model", t);
 			throw new RuntimeException("Error while deleting a model", t);
 		} finally {
 			this.closeDaoResources(null, stat, conn);
 		}
 	}
 	
+    @Override
+    protected String getTableFieldName(String metadataFieldKey) {
+        return metadataFieldKey;
+    }
+
+    @Override
+    protected String getMasterTableName() {
+        return " pagemodels";
+    }
+
+    @Override
+    protected String getMasterTableIdFieldName() {
+        return "code";
+    }
+
 	protected IWidgetTypeManager getWidgetTypeManager() {
 		return _widgetTypeManager;
 	}
@@ -175,6 +214,7 @@ public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
 	
 	private IWidgetTypeManager _widgetTypeManager;
 	
+
 	private final String ALL_PAGEMODEL = 
 			"SELECT code, descr, frames, plugincode, templategui FROM pagemodels";
 	
@@ -186,5 +226,5 @@ public class PageModelDAO extends AbstractDAO implements IPageModelDAO {
 	
 	private static final String DELETE_PAGEMODEL =
 			"DELETE FROM pagemodels WHERE code = ?";
-	
+
 }

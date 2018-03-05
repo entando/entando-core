@@ -105,15 +105,16 @@ public class PageService implements IPageService {
         IPage parent = this.getPageManager().getDraftPage(parentCode);
         Optional<String[]> optional = Optional.ofNullable(parent.getChildrenCodes());
         optional.ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
-            IPage child = this.getPageManager().getDraftPage(childCode);
+            IPage child = this.getPageManager().getOnlinePage(childCode) != null
+                    ? this.getPageManager().getOnlinePage(childCode) : this.getPageManager().getDraftPage(childCode);
             res.add(dtoBuilder.convert(child));
         }));
         return res;
     }
 
     @Override
-    public PageDto getPage(String pageCode) {
-        IPage page = this.getPageManager().getDraftPage(pageCode);
+    public PageDto getPage(String pageCode, String status) {
+        IPage page = this.loadPage(pageCode, status);
         if (null == page) {
             logger.warn("no page found with code {}", pageCode);
             throw new RestRourceNotFoundException("page", pageCode);
@@ -170,7 +171,7 @@ public class PageService implements IPageService {
 
     @Override
     public PageConfigurationDto getPageConfiguration(String pageCode, String status) {
-        IPage page = this.getPage(pageCode, status);
+        IPage page = this.loadPage(pageCode, status);
         if (null == page) {
             throw new RestRourceNotFoundException("page", pageCode);
         }
@@ -180,7 +181,7 @@ public class PageService implements IPageService {
 
     @Override
     public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status) {
-        IPage page = this.getPage(pageCode, status);
+        IPage page = this.loadPage(pageCode, status);
         if (null == page) {
             throw new RestRourceNotFoundException("page", pageCode);
         }
@@ -199,7 +200,7 @@ public class PageService implements IPageService {
 
         try {
 
-            IPage page = this.getPage(pageCode, status);
+            IPage page = this.loadPage(pageCode, status);
             if (null == page) {
                 throw new RestRourceNotFoundException("page", pageCode);
             }
@@ -282,7 +283,7 @@ public class PageService implements IPageService {
     }
 
 
-    private IPage getPage(String pageCode, String status) {
+    private IPage loadPage(String pageCode, String status) {
         IPage page = null;
         switch (status) {
             case STATUS_DRAFT:

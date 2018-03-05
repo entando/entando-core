@@ -19,12 +19,12 @@ import org.entando.entando.web.page.model.WidgetConfigurationRequest;
  */
 public interface IPageService {
 
-    public static final String BEAN_NAME = "PageService";
+    String BEAN_NAME = "PageService";
 
-    public static final String STATUS_ONLINE = "online";
+    public static final String STATUS_ONLINE = "published";
     public static final String STATUS_DRAFT = "draft";
 
-    public PageDto getPage(String pageCode);
+    public PageDto getPage(String pageCode, String status);
 
     public PageDto addPage(PageRequest pageRequest);
 

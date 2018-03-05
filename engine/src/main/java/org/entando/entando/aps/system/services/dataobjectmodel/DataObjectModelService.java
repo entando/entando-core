@@ -138,7 +138,7 @@ public class DataObjectModelService implements IDataObjectModelService {
                 return;
             }
             DataModelDto dto = this.getDtoBuilder().convert(dataObjectModel);
-            BeanPropertyBindingResult validationResult = this.checkFragmentForDelete(dataObjectModel, dto);
+            BeanPropertyBindingResult validationResult = this.checkDataObjectModelForDelete(dataObjectModel, dto);
             if (validationResult.hasErrors()) {
                 throw new ValidationConflictException(validationResult);
             }
@@ -159,7 +159,7 @@ public class DataObjectModelService implements IDataObjectModelService {
         return model;
     }
 
-    protected BeanPropertyBindingResult checkFragmentForDelete(DataObjectModel model, DataModelDto dto) throws ApsSystemException {
+    protected BeanPropertyBindingResult checkDataObjectModelForDelete(DataObjectModel model, DataModelDto dto) throws ApsSystemException {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(model, "dataObjectModel");
         if (null == model) {
             return bindingResult;

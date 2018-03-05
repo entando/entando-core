@@ -13,11 +13,24 @@
  */
 package org.entando.entando.aps.system.services.api.model;
 
+import java.io.Serializable;
+
 /**
  * @author E.Santoboni
  */
-public class ApiResource {
-    
+public class ApiResource implements Serializable {
+
+    private String resourceName;
+    private String namespace;
+    private String description;
+    private String source;
+    private String pluginCode;
+
+    private ApiMethod getMethod;
+    private ApiMethod postMethod;
+    private ApiMethod putMethod;
+    private ApiMethod deleteMethod;
+
     public ApiResource clone() {
         ApiResource clone = new ApiResource();
         clone.setDescription(this.getDescription());
@@ -39,48 +52,52 @@ public class ApiResource {
         }
         return clone;
     }
-	
-	public String getCode() {
-		return getCode(this.getNamespace(), this.getResourceName());
-	}
-    
-	public static String getCode(String namespace, String resourceName) {
-		StringBuilder buffer = new StringBuilder();
-		if (null != namespace && namespace.trim().length() > 0) {
-			buffer.append(namespace.trim()).append(":");
-		}
-		buffer.append(resourceName.trim());
-		return buffer.toString();
-	}
-    
+
+    public String getCode() {
+        return getCode(this.getNamespace(), this.getResourceName());
+    }
+
+    public static String getCode(String namespace, String resourceName) {
+        StringBuilder buffer = new StringBuilder();
+        if (null != namespace && namespace.trim().length() > 0) {
+            buffer.append(namespace.trim()).append(":");
+        }
+        buffer.append(resourceName.trim());
+        return buffer.toString();
+    }
+
     public String getResourceName() {
-        return _resourceName;
+        return resourceName;
     }
+
     public void setResourceName(String resourceName) {
-        this._resourceName = resourceName;
+        this.resourceName = resourceName;
     }
-    
+
     public String getNamespace() {
-        return _namespace;
+        return namespace;
     }
+
     public void setNamespace(String namespace) {
-        this._namespace = namespace;
+        this.namespace = namespace;
     }
-    
+
     public String getDescription() {
-        return _description;
+        return description;
     }
+
     public void setDescription(String description) {
-        this._description = description;
+        this.description = description;
     }
-    
+
     public String getPluginCode() {
-        return _pluginCode;
+        return pluginCode;
     }
+
     public void setPluginCode(String pluginCode) {
-        this._pluginCode = pluginCode;
+        this.pluginCode = pluginCode;
     }
-    
+
     public String getSectionCode() {
         if (null != this.getPluginCode() && this.getPluginCode().trim().length() > 0) {
             return this.getPluginCode();
@@ -89,42 +106,47 @@ public class ApiResource {
         }
         return "custom";
     }
-    
+
     public String getSource() {
-        return _source;
+        return source;
     }
+
     public void setSource(String source) {
-        this._source = source;
+        this.source = source;
     }
-    
+
     public ApiMethod getGetMethod() {
-        return _getMethod;
+        return getMethod;
     }
+
     public void setGetMethod(ApiMethod getMethod) {
-        this._getMethod = getMethod;
+        this.getMethod = getMethod;
     }
-    
+
     public ApiMethod getPostMethod() {
-        return _postMethod;
+        return postMethod;
     }
+
     public void setPostMethod(ApiMethod postMethod) {
-        this._postMethod = postMethod;
+        this.postMethod = postMethod;
     }
-    
+
     public ApiMethod getPutMethod() {
-        return _putMethod;
+        return putMethod;
     }
+
     public void setPutMethod(ApiMethod putMethod) {
-        this._putMethod = putMethod;
+        this.putMethod = putMethod;
     }
-    
+
     public ApiMethod getDeleteMethod() {
-        return _deleteMethod;
+        return deleteMethod;
     }
+
     public void setDeleteMethod(ApiMethod deleteMethod) {
-        this._deleteMethod = deleteMethod;
+        this.deleteMethod = deleteMethod;
     }
-    
+
     public void setMethod(ApiMethod method) {
         if (method.getHttpMethod().equals(ApiMethod.HttpMethod.GET)) {
             this.setGetMethod(method);
@@ -136,9 +158,11 @@ public class ApiResource {
             this.setDeleteMethod(method);
         }
     }
-    
+
     public ApiMethod getMethod(ApiMethod.HttpMethod httpMethod) {
-        if (null == httpMethod) return null;
+        if (null == httpMethod) {
+            return null;
+        }
         if (httpMethod.equals(ApiMethod.HttpMethod.GET)) {
             return this.getGetMethod();
         } else if (httpMethod.equals(ApiMethod.HttpMethod.POST)) {
@@ -150,16 +174,5 @@ public class ApiResource {
         }
         return null;
     }
-    
-    private String _resourceName;
-	private String _namespace;
-    private String _description;
-    private String _source;
-    private String _pluginCode;
-    
-    private ApiMethod _getMethod;
-    private ApiMethod _postMethod;
-    private ApiMethod _putMethod;
-    private ApiMethod _deleteMethod;
-    
+
 }

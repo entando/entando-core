@@ -32,9 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PageService implements IPageService {
 
-    private static final String STATUS_ONLINE = "online";
-    private static final String STATUS_DRAFT = "draft";
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -76,15 +73,16 @@ public class PageService implements IPageService {
         IPage parent = this.getPageManager().getDraftPage(parentCode);
         Optional<String[]> optional = Optional.ofNullable(parent.getChildrenCodes());
         optional.ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
-            IPage child = this.getPageManager().getDraftPage(childCode);
+            IPage child = this.getPageManager().getOnlinePage(childCode) != null
+                    ? this.getPageManager().getOnlinePage(childCode) : this.getPageManager().getDraftPage(childCode);
             res.add(dtoBuilder.convert(child));
         }));
         return res;
     }
 
     @Override
-    public PageDto getPage(String pageCode) {
-        IPage page = this.getPageManager().getDraftPage(pageCode);
+    public PageDto getPage(String pageCode, String status) {
+        IPage page = status.equals(STATUS_ONLINE) ? this.getPageManager().getOnlinePage(pageCode) : this.getPageManager().getDraftPage(pageCode);
         if (null == page) {
             logger.warn("no page found with code {}", pageCode);
             throw new RestRourceNotFoundException("page", pageCode);

@@ -16,18 +16,23 @@ package org.entando.entando.aps.system.services.dataobjectmodel;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.page.IPage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
+import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 public class DataObjectModelService implements IDataObjectModelService {
 
@@ -103,6 +108,47 @@ public class DataObjectModelService implements IDataObjectModelService {
         }
     }
 
+    @Override
+    public DataModelDto updateDataObjectModel(DataObjectModelRequest dataObjectModelRequest) {
+        Long code = dataObjectModelRequest.getModelId();
+        try {
+            DataObjectModel dataObjectModel = this.getDataObjectModelManager().getDataObjectModel(code);
+            if (null == dataObjectModel) {
+                throw new RestRourceNotFoundException("dataObjectModel", String.valueOf(code));
+            }
+            dataObjectModel.setDataType(dataObjectModelRequest.getType());
+            dataObjectModel.setDescription(dataObjectModelRequest.getDescr());
+            dataObjectModel.setShape(dataObjectModelRequest.getModel());
+            dataObjectModel.setStylesheet(dataObjectModelRequest.getStylesheet());
+            this.getDataObjectModelManager().updateDataObjectModel(dataObjectModel);
+            return this.getDtoBuilder().convert(dataObjectModel);
+        } catch (RestRourceNotFoundException e) {
+            throw e;
+        } catch (ApsSystemException e) {
+            logger.error("Error updating DataObjectModel {}", code, e);
+            throw new RestServerError("error in update DataObjectModel", e);
+        }
+    }
+
+    @Override
+    public void removeDataObjectModel(Long dataModelId) {
+        try {
+            DataObjectModel dataObjectModel = this.getDataObjectModelManager().getDataObjectModel(dataModelId);
+            if (null == dataObjectModel) {
+                return;
+            }
+            DataModelDto dto = this.getDtoBuilder().convert(dataObjectModel);
+            BeanPropertyBindingResult validationResult = this.checkFragmentForDelete(dataObjectModel, dto);
+            if (validationResult.hasErrors()) {
+                throw new ValidationConflictException(validationResult);
+            }
+            this.getDataObjectModelManager().removeDataObjectModel(dataObjectModel);
+        } catch (ApsSystemException e) {
+            logger.error("Error in delete DataObjectModel {}", dataModelId, e);
+            throw new RestServerError("error in delete DataObjectModel", e);
+        }
+    }
+
     protected DataObjectModel createDataObjectModel(DataObjectModelRequest dataObjectModelRequest) {
         DataObjectModel model = new DataObjectModel();
         model.setDataType(dataObjectModelRequest.getType());
@@ -111,6 +157,18 @@ public class DataObjectModelService implements IDataObjectModelService {
         model.setShape(dataObjectModelRequest.getModel());
         model.setStylesheet(dataObjectModelRequest.getStylesheet());
         return model;
+    }
+
+    protected BeanPropertyBindingResult checkFragmentForDelete(DataObjectModel model, DataModelDto dto) throws ApsSystemException {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(model, "dataObjectModel");
+        if (null == model) {
+            return bindingResult;
+        }
+        Map<String, List<IPage>> pages = this.getDataObjectModelManager().getReferencingPages(model.getId());
+        if (!bindingResult.hasErrors() && !pages.isEmpty()) {
+            bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES, new Object[]{String.valueOf(model.getId())}, "guifragment.cannot.delete.references");
+        }
+        return bindingResult;
     }
 
 }

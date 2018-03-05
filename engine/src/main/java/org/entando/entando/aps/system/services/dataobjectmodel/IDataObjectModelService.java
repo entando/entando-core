@@ -26,4 +26,8 @@ public interface IDataObjectModelService {
 
     public DataModelDto addDataObjectModel(DataObjectModelRequest dataObjectModelRequest);
 
+    public DataModelDto updateDataObjectModel(DataObjectModelRequest dataObjectModelRequest);
+
+    public void removeDataObjectModel(Long dataModelId);
+
 }

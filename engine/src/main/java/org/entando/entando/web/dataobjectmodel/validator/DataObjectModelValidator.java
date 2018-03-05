@@ -45,17 +45,10 @@ public class DataObjectModelValidator implements Validator {
         }
     }
 
-    public void validateBodyName(String modelId, DataObjectModelRequest request, Errors errors) {
-        Long modelIdPath = null;
-        try {
-            modelIdPath = Long.parseLong(modelId);
-        } catch (Exception e) {
-            errors.rejectValue("modelId", ERRCODE_URINAME_INVALID, new String[]{modelId}, "dataObjectModel.modelId.Invalid");
-            return;
-        }
-        if (!modelIdPath.equals(request.getModelId())) {
+    public void validateBodyName(Long modelId, DataObjectModelRequest request, Errors errors) {
+        if (!modelId.equals(request.getModelId())) {
             errors.rejectValue("modelId", ERRCODE_URINAME_MISMATCH,
-                    new String[]{String.valueOf(modelIdPath), String.valueOf(request.getModelId())}, "dataObjectModel.modelId.mismatch");
+                    new String[]{String.valueOf(modelId), String.valueOf(request.getModelId())}, "dataObjectModel.modelId.mismatch");
         }
     }
 

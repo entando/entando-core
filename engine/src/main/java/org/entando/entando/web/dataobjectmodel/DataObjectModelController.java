@@ -97,28 +97,27 @@ public class DataObjectModelController {
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
-    /*
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@PathVariable String groupCode, @Valid @RequestBody GroupRequest groupRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> updateGroup(@Valid @PathVariable Long dataModelId, @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getGroupValidator().validateBodyName(groupCode, groupRequest, bindingResult);
+        this.getDataObjectModelValidator().validateBodyName(dataModelId, dataObjectModelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        GroupDto group = this.getGroupService().updateGroup(groupCode, groupRequest.getName());
-        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+        DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
+        return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = "group_delete")
-    @RequestMapping(value = "/{groupName}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGroup(@PathVariable String groupName) throws ApsSystemException {
-        logger.info("deleting {}", groupName);
-        this.getGroupService().removeGroup(groupName);
-        return new ResponseEntity<>(new RestResponse(groupName), HttpStatus.OK);
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{dataModelId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteGroup(@Valid @PathVariable Long dataModelId) throws ApsSystemException {
+        logger.info("deleting {}", dataModelId);
+        this.getDataObjectModelService().removeDataObjectModel(dataModelId);
+        return new ResponseEntity<>(new RestResponse(dataModelId), HttpStatus.OK);
     }
-     */
+
 }

@@ -321,6 +321,7 @@
             <version>2.13.0</version>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>de.mkammerer</groupId>
             <artifactId>argon2-jvm</artifactId>

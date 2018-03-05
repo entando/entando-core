@@ -60,4 +60,10 @@
         <property name="guiFragmentManager" ref="GuiFragmentManager" />
     </bean>
 	
+    <bean id="PageModelDtoBuilder" class="org.entando.entando.aps.system.services.pagemodel.model.PageModelDtoBuilder" />
+
+    <bean id="PageModelService" class="org.entando.entando.aps.system.services.pagemodel.PageModelService" >
+        <property name="dtoBuilder" ref="PageModelDtoBuilder" />
+        <property name="pageModelManager" ref="PageModelManager" />
+    </bean>
 </beans>

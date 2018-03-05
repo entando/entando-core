@@ -5,35 +5,42 @@
  */
 package org.entando.entando.aps.system.services.page;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.page.helper.WidgetValidatorFactory;
+import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.Title;
+import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 /**
  *
  * @author paddeo
  */
 public class PageService implements IPageService {
-
-    private static final String STATUS_ONLINE = "online";
-    private static final String STATUS_DRAFT = "draft";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -44,9 +51,15 @@ public class PageService implements IPageService {
     private IPageModelManager pageModelManager;
 
     @Autowired
+    private IWidgetTypeManager widgetTypeManager;
+
+    @Autowired
+    private WidgetValidatorFactory widgetValidatorFactory;
+
+    @Autowired
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
 
-    public IPageManager getPageManager() {
+    protected IPageManager getPageManager() {
         return pageManager;
     }
 
@@ -54,7 +67,7 @@ public class PageService implements IPageService {
         this.pageManager = pageManager;
     }
 
-    public IPageModelManager getPageModelManager() {
+    protected IPageModelManager getPageModelManager() {
         return pageModelManager;
     }
 
@@ -62,12 +75,28 @@ public class PageService implements IPageService {
         this.pageModelManager = pageModelManager;
     }
 
-    public IDtoBuilder<IPage, PageDto> getDtoBuilder() {
+    protected IDtoBuilder<IPage, PageDto> getDtoBuilder() {
         return dtoBuilder;
     }
 
     public void setDtoBuilder(IDtoBuilder<IPage, PageDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
+    }
+
+    protected WidgetValidatorFactory getWidgetValidatorFactory() {
+        return widgetValidatorFactory;
+    }
+
+    public void setWidgetValidatorFactory(WidgetValidatorFactory widgetValidatorFactory) {
+        this.widgetValidatorFactory = widgetValidatorFactory;
+    }
+
+    protected IWidgetTypeManager getWidgetTypeManager() {
+        return widgetTypeManager;
+    }
+
+    public void setWidgetTypeManager(IWidgetTypeManager widgetTypeManager) {
+        this.widgetTypeManager = widgetTypeManager;
     }
 
     @Override
@@ -139,6 +168,63 @@ public class PageService implements IPageService {
         }
     }
 
+    @Override
+    public PageConfigurationDto getPageConfiguration(String pageCode, String status) {
+        IPage page = this.getPage(pageCode, status);
+        if (null == page) {
+            throw new RestRourceNotFoundException("page", pageCode);
+        }
+        PageConfigurationDto pageConfigurationDto = new PageConfigurationDto(page, status);
+        return pageConfigurationDto;
+    }
+
+    @Override
+    public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status) {
+        IPage page = this.getPage(pageCode, status);
+        if (null == page) {
+            throw new RestRourceNotFoundException("page", pageCode);
+        }
+        if (frameId > page.getWidgets().length) {
+            throw new RestRourceNotFoundException("frame", String.valueOf(frameId));
+        }
+        Widget widget = page.getWidgets()[frameId];
+        if (null == widget) {
+            return null;
+        }
+        return new WidgetConfigurationDto(widget);
+    }
+
+    @Override
+    public WidgetConfigurationDto updateWidgetConfiguration(String pageCode, int frameId, String status, WidgetConfigurationRequest widgetReq) {
+
+        try {
+
+            IPage page = this.getPage(pageCode, status);
+            if (null == page) {
+                throw new RestRourceNotFoundException("page", pageCode);
+            }
+            if (frameId > page.getWidgets().length) {
+                throw new RestRourceNotFoundException("frame", String.valueOf(frameId));
+            }
+            BeanPropertyBindingResult validation = this.getWidgetValidatorFactory().get(widgetReq.getCode()).validate(widgetReq, page);
+            if (validation.hasErrors()) {
+                throw new ValidationConflictException(validation);
+            }
+
+            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+            WidgetType widgetType = this.getWidgetType(widgetReq.getCode());
+            Widget widget = new Widget();
+            widget.setType(widgetType);
+            widget.setConfig(widgetReq.getConfig());
+            this.getPageManager().joinWidget(pageCode, widget, frameId);
+
+            return new WidgetConfigurationDto(widget);
+        } catch (ApsSystemException e) {
+            logger.error("Error in update widget configuration {}", pageCode, e);
+            throw new RestServerError("error in update widget configuration", e);
+        }
+    }
+
     private IPage createPage(PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
@@ -195,4 +281,25 @@ public class PageService implements IPageService {
         return page;
     }
 
+
+    private IPage getPage(String pageCode, String status) {
+        IPage page = null;
+        switch (status) {
+            case STATUS_DRAFT:
+                page = this.getPageManager().getDraftPage(pageCode);
+                break;
+            case STATUS_ONLINE:
+                page = this.getPageManager().getOnlinePage(pageCode);
+                break;
+            default:
+                break;
+        }
+        return page;
+    }
+
+    public WidgetType getWidgetType(String typeCode) {
+        return this.getWidgetTypeManager().getWidgetType(typeCode);
+    }
+
 }
+

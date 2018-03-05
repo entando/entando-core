@@ -67,6 +67,7 @@ public class RestExceptionHandler {
         List<RestError> errors = new ArrayList<>();
         errors.add(error);
         response.setErrors(errors);
+        ex.printStackTrace();
         return response;
     }
 

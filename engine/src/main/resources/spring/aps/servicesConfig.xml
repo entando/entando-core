@@ -39,6 +39,7 @@
         <property name="dtoBuilder" ref="PageDtoBuilder" />
         <property name="pageManager" ref="PageManager" />
         <property name="pageModelManager" ref="PageModelManager" />
+        <property name="widgetValidatorFactory" ref="WidgetValidatorFactory" />
     </bean>
   
     <bean id="WidgetService" class="org.entando.entando.aps.system.services.widget.WidgetService" >
@@ -59,5 +60,7 @@
         <property name="dtoSmallBuilder" ref="GuiFragmentDtoSmallBuilder" />
         <property name="guiFragmentManager" ref="GuiFragmentManager" />
     </bean>
-	
+
+	<bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.page.helper.WidgetValidatorFactory" />
+
 </beans>

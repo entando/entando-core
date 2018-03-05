@@ -5,6 +5,7 @@
  */
 package org.entando.entando.web.page.validator;
 
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import org.apache.commons.lang3.StringUtils;
@@ -74,16 +75,25 @@ public class PageValidator implements Validator {
         if (pageRequest.getParentCode() == null || pageRequest.getPosition() <= 0
                 || (parent = this.getPageManager().getDraftPage(pageRequest.getParentCode())) == null
                 || parent.getChildrenCodes().length < pageRequest.getPosition()) {
-            errors.reject(PageController.ERRCODE_CHANGE_POSITION_INVALID_REQUEST, new String[]{pageCode}, "page.position.invalid");
+            errors.reject(PageController.ERRCODE_CHANGE_POSITION_INVALID_REQUEST, new String[]{pageCode}, "page.move.position.invalid");
         }
     }
 
     public void validateGroups(String pageCode, PageRequest pageRequest, Errors errors) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
+                page = this.getPageManager().getDraftPage(pageCode);
+        if (!page.getGroup().equals(Group.FREE_GROUP_NAME)
+                && !page.getGroup().equals(parent.getGroup())) {
+            errors.reject(PageController.ERRCODE_GROUP_MISMATCH, new String[]{pageCode}, "page.move.group.mismatch");
+        }
     }
 
     public void validatePagesStatus(String pageCode, PageRequest pageRequest, Errors errors) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
+                page = this.getPageManager().getDraftPage(pageCode);
+        if (page.isOnline() && !parent.isOnline()) {
+            errors.reject(PageController.ERRCODE_STATUS_PAGE_MISMATCH, new String[]{pageCode}, "page.move.status.mismatch");
+        }
     }
 
 }

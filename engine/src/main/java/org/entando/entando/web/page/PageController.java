@@ -164,7 +164,7 @@ public class PageController {
             throw new ValidationGenericException(bindingResult);
         }
 
-        PageDto page = this.getPageService().updatePage(pageCode, pageRequest);
+        PageDto page = this.getPageService().movePage(pageCode, pageRequest);
         return new ResponseEntity<>(new RestResponse(page), HttpStatus.OK);
     }
 }

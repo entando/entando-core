@@ -13,7 +13,6 @@
  */
 package org.entando.entando.web.common.model;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -181,6 +180,5 @@ public class RestListRequest {
             return false;
         return true;
     }
-
 
 }

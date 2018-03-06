@@ -13,7 +13,10 @@
  */
 package com.agiletec.aps.system.services.pagemodel;
 
+import java.util.List;
 import java.util.Map;
+
+import com.agiletec.aps.system.common.FieldSearchFilter;
 
 /**
  * Interfaccia base per Data Access Object deii modelli di pagina (PageModel)
@@ -32,5 +35,9 @@ public interface IPageModelDAO {
 	public void updateModel(PageModel model);
 	
 	public void deleteModel(String code);
+
+    public int count(FieldSearchFilter[] filters);
+
+    public List<String> search(FieldSearchFilter[] filters);
 	
 }

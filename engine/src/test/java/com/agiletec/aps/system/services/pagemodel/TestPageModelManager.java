@@ -16,14 +16,20 @@ package com.agiletec.aps.system.services.pagemodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
-
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.web.common.model.Filter;
+import org.entando.entando.web.common.model.RestListRequest;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author M.Diana
@@ -35,6 +41,39 @@ public class TestPageModelManager extends BaseTestCase {
 		super.setUp();
 		this.init();
 	}
+
+    public void testSearch_with_null_empty_filters() throws ApsSystemException {
+        List<FieldSearchFilter> filters = null;
+        SearcherDaoPaginatedResult<PageModel> result = this._pageModelManager.searchPageModels(filters);
+        assertThat(result.getCount(), is(3));
+        assertThat(result.getList().size(), is(3));
+
+        filters = new ArrayList<>();
+        result = this._pageModelManager.searchPageModels(filters);
+        assertThat(result.getCount(), is(3));
+        assertThat(result.getList().size(), is(3));
+    }
+
+    public void testSearch_with_page_filter() throws ApsSystemException {
+        RestListRequest restListRequest = new RestListRequest();
+        restListRequest.setPageSize(2);
+        restListRequest.setPage(1);
+
+        List<FieldSearchFilter> filters = restListRequest.buildFieldSearchFilters();
+        SearcherDaoPaginatedResult<PageModel> result = this._pageModelManager.searchPageModels(filters);
+        assertThat(result.getCount(), is(3));
+        assertThat(result.getList().size(), is(1));
+
+        restListRequest.addFilter(new Filter("descr", "modello"));
+        result = this._pageModelManager.searchPageModels(restListRequest.buildFieldSearchFilters());
+        assertThat(result.getCount(), is(2));
+        assertThat(result.getList().size(), is(0));
+
+        restListRequest.setPage(0);
+        result = this._pageModelManager.searchPageModels(restListRequest.buildFieldSearchFilters());
+        assertThat(result.getCount(), is(2));
+        assertThat(result.getList().size(), is(2));
+    }
 
 	public void testGetPageModel() throws ApsSystemException {
 		PageModel pageModel = this._pageModelManager.getPageModel("home");

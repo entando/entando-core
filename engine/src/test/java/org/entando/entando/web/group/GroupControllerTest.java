@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 public class GroupControllerTest extends AbstractControllerTest {
 
     private MockMvc mockMvc;
@@ -46,9 +45,6 @@ public class GroupControllerTest extends AbstractControllerTest {
 
     @InjectMocks
     private GroupController controller;
-
-
-
 
     @Before
     public void setUp() throws Exception {

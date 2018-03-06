@@ -8,6 +8,7 @@ import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
 import org.entando.entando.web.group.GroupControllerTest;
 import org.entando.entando.web.guifragment.GuiFragmentControllerTest;
 import org.entando.entando.web.page.PageControllerTest;
+import org.entando.entando.web.pagemodel.PageModelControllerTest;
 import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
 
 public class ControllersAllTests extends TestCase {
@@ -20,6 +21,7 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(PageControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(GuiFragmentControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(PageModelControllerTest.class));
         return suite;
     }
 

@@ -5,9 +5,11 @@
  */
 package org.entando.entando.web.page;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -15,32 +17,31 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.List;
 import org.entando.entando.aps.system.services.page.PageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.validator.PageValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  *
@@ -77,7 +78,7 @@ public class PageControllerTest extends AbstractControllerTest {
         String mockJsonResult = "[\n"
                 + "        {\n"
                 + "            \"code\": \"notfound\",\n"
-                + "            \"status\": \"online\",\n"
+                + "            \"status\": \"draft\",\n"
                 + "            \"displayedInMenu\": true,\n"
                 + "            \"pageModel\": \"service\",\n"
                 + "            \"charset\": null,\n"
@@ -100,7 +101,7 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "        },\n"
                 + "        {\n"
                 + "            \"code\": \"errorpage\",\n"
-                + "            \"status\": \"online\",\n"
+                + "            \"status\": \"draft\",\n"
                 + "            \"displayedInMenu\": true,\n"
                 + "            \"pageModel\": \"service\",\n"
                 + "            \"charset\": null,\n"
@@ -123,7 +124,7 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "        },\n"
                 + "        {\n"
                 + "            \"code\": \"login\",\n"
-                + "            \"status\": \"online\",\n"
+                + "            \"status\": \"draft\",\n"
                 + "            \"displayedInMenu\": true,\n"
                 + "            \"pageModel\": \"service\",\n"
                 + "            \"charset\": null,\n"

@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.common.AbstractService;
@@ -143,7 +144,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
 	}
 	
 	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)")
+	@CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)")
 	@CacheableInfo(groups = "'GuiFragment_uniqueByWidgetTypeGroup'")//TODO improve group handling
 	public GuiFragment getUniqueGuiFragmentByWidgetType(String widgetTypeCode) throws ApsSystemException {
 		GuiFragment guiFragment = null;
@@ -163,7 +164,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
 	}
 	
 	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)")
+	@CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)")
 	@CacheableInfo(groups = "'GuiFragment_codesByWidgetTypeGroup'")//TODO improve group handling
 	public List<String> getGuiFragmentCodesByWidgetType(String widgetTypeCode) throws ApsSystemException {
 		List<String> codes = null;
@@ -230,7 +231,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
 	}
 	
 	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
+	@CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
 	public List<String> loadGuiFragmentPluginCodes() throws ApsSystemException {
 		List<String> codes = null;
 		try {

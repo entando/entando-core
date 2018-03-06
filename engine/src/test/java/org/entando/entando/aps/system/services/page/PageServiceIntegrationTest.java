@@ -101,6 +101,57 @@ public class PageServiceIntegrationTest extends BaseTestCase {
                 .filter(title -> title.getLang().equals("it")).findFirst().get().getTitle());
     }
 
+    @Test
+    public void testChangeOnlyPosition() {
+        PageDto pageToClone = pageService.getPage("pagina_11", "draft");
+        assertNotNull(pageToClone);
+        PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+        pageRequest.setCode("pagina_13");
+        PageDto addedPage = pageService.addPage(pageRequest);
+        assertNotNull(addedPage);
+        assertEquals("pagina_1", addedPage.getParentCode());
+        assertEquals(3, addedPage.getPosition());
+
+        pageRequest = new PageRequest();
+        pageRequest.setCode("pagina_13");
+        pageRequest.setParentCode("pagina_1");
+        pageRequest.setPosition(1);
+        addedPage = pageService.movePage("pagina_13", pageRequest);
+        assertNotNull(addedPage);
+        assertEquals("pagina_1", addedPage.getParentCode());
+        assertEquals(1, addedPage.getPosition());
+
+        pageService.removePage("pagina_13");
+    }
+
+    @Test
+    public void testChangeNode() {
+        PageDto pageToClone = pageService.getPage("pagina_11", "draft");
+        assertNotNull(pageToClone);
+        PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+        pageRequest.setCode("pagina_13");
+        PageDto addedPage = pageService.addPage(pageRequest);
+        assertNotNull(addedPage);
+        assertEquals("pagina_1", addedPage.getParentCode());
+        assertEquals(3, addedPage.getPosition());
+
+        pageRequest = new PageRequest();
+        pageRequest.setCode("pagina_13");
+        pageRequest.setParentCode("pagina_2");
+        pageRequest.setPosition(1);
+        addedPage = pageService.movePage("pagina_13", pageRequest);
+        assertNotNull(addedPage);
+        assertEquals("pagina_2", addedPage.getParentCode());
+        assertEquals(1, addedPage.getPosition());
+
+        List<PageDto> pages = pageService.getPages("pagina_2");
+        assertNotNull(pages);
+        assertEquals(1, pages.size());
+        assertEquals("pagina_13", pages.get(0).getCode());
+
+        pageService.removePage("pagina_13");
+    }
+
     private PageRequest createRequestFromDto(PageDto pageToClone) {
         PageRequest request = new PageRequest();
         request.setCharset(pageToClone.getCharset());

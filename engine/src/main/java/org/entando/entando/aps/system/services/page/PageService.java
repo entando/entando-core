@@ -174,6 +174,27 @@ public class PageService implements IPageService {
     }
 
     @Override
+    public PageDto movePage(String pageCode, PageRequest pageRequest) {
+        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
+                page = this.getPageManager().getDraftPage(pageCode);
+        boolean moved = true;
+        int iterations = Math.abs(page.getPosition() - pageRequest.getPosition());
+        boolean moveUp = page.getPosition() > pageRequest.getPosition();
+        try {
+            if (page.getParentCode().equals(parent.getCode())) {
+                while (iterations-- > 0 && (moved = this.getPageManager().movePage(pageCode, moveUp)));
+            } else {
+                moved = this.getPageManager().movePage(page, parent);
+            }
+            page = this.getPageManager().getDraftPage(pageCode);
+        } catch (ApsSystemException e) {
+            logger.error("Error moving page {}", pageCode, e);
+            throw new RestServerError("error in moving page", e);
+        }
+        return this.getDtoBuilder().convert(page);
+    }
+
+    @Override
     public PageConfigurationDto getPageConfiguration(String pageCode, String status) {
         IPage page = this.loadPage(pageCode, status);
         if (null == page) {

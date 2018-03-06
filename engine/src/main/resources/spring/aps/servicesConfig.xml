@@ -22,7 +22,6 @@
 	<bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
 		<property name="contentManager" ref="jacmsContentManager" />
 	</bean>
-	
 
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
     
@@ -38,11 +37,12 @@
 		<property name="widgetTypeManager" ref="WidgetTypeManager" />
 	</bean>
     
-    
-    
     <bean id="GuiFragmentDtoSmallBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmallBuilder">
 		<property name="widgetTypeManager" ref="WidgetTypeManager" />
 	</bean>
+
+	<bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
+	
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
         <property name="dtoBuilder" ref="GroupDtoBuilder" />
@@ -69,8 +69,6 @@
         <property name="widgetManager" ref="WidgetTypeManager" />
     </bean>
 	
-	
-	
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >
         <property name="dtoBuilder" ref="GuiFragmentDtoBuilder" />
         <property name="dtoSmallBuilder" ref="GuiFragmentDtoSmallBuilder" />
@@ -82,4 +80,9 @@
         <property name="pageModelManager" ref="PageModelManager" />
     </bean>	
 
+    <bean id="DataObjectModelService" class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelService" >
+        <property name="dtoBuilder" ref="DataObjectModelBuilder" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+    </bean>
+	
 </beans>

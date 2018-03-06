@@ -34,6 +34,8 @@ public interface IPageService {
 
     public List<PageDto> getPages(String parentCode);
 
+    public PageDto movePage(String pageCode, PageRequest pageRequest);
+
     public PageConfigurationDto getPageConfiguration(String pageCode, String status);
 
     public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status);

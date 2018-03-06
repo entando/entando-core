@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,6 +13,8 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmodel;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,12 +22,16 @@ import java.util.Map;
  */
 public interface IDataObjectModelDAO {
 
-	public Map<Long, DataObjectModel> loadDataModels();
+    public Map<Long, DataObjectModel> loadDataModels();
 
-	public void addDataModel(DataObjectModel model);
+    public void addDataModel(DataObjectModel model);
 
-	public void deleteDataModel(DataObjectModel model);
+    public void deleteDataModel(DataObjectModel model);
 
-	public void updateDataModel(DataObjectModel model);
+    public void updateDataModel(DataObjectModel model);
+
+    public int countDataObjectModels(FieldSearchFilter[] filters);
+
+    public List<Long> searchDataObjectModels(FieldSearchFilter[] filters);
 
 }

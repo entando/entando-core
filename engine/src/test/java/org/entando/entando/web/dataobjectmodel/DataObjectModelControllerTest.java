@@ -11,19 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.guifragment;
+package org.entando.entando.web.dataobjectmodel;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.entando.entando.aps.system.services.guifragment.GuiFragmentService;
+import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelService;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
-import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
+import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
+import org.entando.entando.web.dataobjectmodel.validator.DataObjectModelValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,21 +37,21 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class GuiFragmentControllerTest extends AbstractControllerTest {
+public class DataObjectModelControllerTest extends AbstractControllerTest {
 
     private MockMvc mockMvc;
 
     @Mock
-    private GuiFragmentService guiFragmentService;
+    private DataObjectModelService dataObjectModelService;
 
     @InjectMocks
-    private GuiFragmentController controller;
+    private DataObjectModelController controller;
 
     @Before
     public void setUp() throws Exception {
@@ -61,14 +62,14 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
                 .build();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void should_load_the_list_of_fragments() throws Exception {
+    public void should_load_the_list_of_dataModels() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        when(this.guiFragmentService.getGuiFragments(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
+        when(dataObjectModelService.getDataObjectModels(any(RestListRequest.class))).thenReturn(new PagedMetadata<DataModelDto>());
         ResultActions result = mockMvc.perform(
-                get("/fragments")
-                .param("page", "1")
+                get("/dataModels").param("page", "1")
                 .param("pageSize", "4")
                 .header("Authorization", "Bearer " + accessToken)
         );
@@ -76,39 +77,42 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
         RestListRequest restListReq = new RestListRequest();
         restListReq.setPage(1);
         restListReq.setPageSize(4);
-        Mockito.verify(this.guiFragmentService, Mockito.times(1)).getGuiFragments(restListReq);
+        Mockito.verify(dataObjectModelService, Mockito.times(1)).getDataObjectModels(restListReq);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void should_load_the_list_of_fragments_2() throws Exception {
+    public void should_load_the_list_of_dataModels_2() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        when(this.guiFragmentService.getGuiFragments(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
+        when(dataObjectModelService.getDataObjectModels(any(RestListRequest.class))).thenReturn(new PagedMetadata<DataModelDto>());
         ResultActions result = mockMvc.perform(
-                get("/fragments").param("page", "1")
+                get("/dataModels").param("page", "1")
                 .param("pageSize", "4")
                 .param("filter[0].attribute", "code")
-                .param("filter[0].value", "userprofile_editCurrentUser_profile")
+                .param("filter[0].value", "1")
                 .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
         restListReq.setPage(1);
         restListReq.setPageSize(4);
-        restListReq.addFilter(new Filter("code", "userprofile_editCurrentUser_profile"));
-        Mockito.verify(this.guiFragmentService, Mockito.times(1)).getGuiFragments(restListReq);
+        restListReq.addFilter(new Filter("code", "1"));
+        Mockito.verify(dataObjectModelService, Mockito.times(1)).getDataObjectModels(restListReq);
     }
 
     @Test
     public void should_be_unauthorized() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup(Group.FREE_GROUP_NAME).build();
+                .withGroup(Group.FREE_GROUP_NAME)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc.perform(get("/fragments")
+        ResultActions result = mockMvc.perform(
+                get("/dataModels")
                 .header("Authorization", "Bearer " + accessToken)
         );
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
+        //String response = result.andReturn().getResponse().getContentAsString();
+        //System.out.println(response);
         result.andExpect(status().isUnauthorized());
     }
 
@@ -117,18 +121,18 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ObjectMapper mapper = new ObjectMapper();
-        GuiFragmentRequestBody requestBody = new GuiFragmentRequestBody();
-        requestBody.setCode("__new_fragment_");
-        requestBody.setGuiCode("<h1>This is the fragment</h1>");
-        String payload = mapper.writeValueAsString(requestBody);
-        this.controller.setGuiFragmentValidator(new GuiFragmentValidator());
-        ResultActions result = mockMvc.perform(put("/fragments/{fragmentCode}", "new_fragment")
+        DataObjectModelRequest group = new DataObjectModelRequest();
+        group.setModelId(2l);
+        group.setDescr("Description");
+        group.setType("AAA");
+        group.setModel("<p>Test</p>");
+        String payload = mapper.writeValueAsString(group);
+        this.controller.setDataObjectModelValidator(new DataObjectModelValidator());
+        ResultActions result = mockMvc.perform(put("/dataModels/{dataModelId}", "67")
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
     }
 
 }

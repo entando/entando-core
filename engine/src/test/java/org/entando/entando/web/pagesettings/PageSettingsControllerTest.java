@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.web.pagesettings;
 
@@ -60,7 +68,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
         when(pageSettingsService.getPageSettings()).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -78,9 +86,9 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
         when(pageSettingsService.updatePageSettings(createMockRequestEmptyParams())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 put("/pageSettings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
-                        .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -98,9 +106,9 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
         when(pageSettingsService.updatePageSettings(createMockRequest())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 put("/pageSettings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(convertObjectToJsonBytes(createMockRequest()))
-                        .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createMockRequest()))
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -117,7 +125,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();

@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.pagemodel;
 
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -32,7 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class PageModelControllerTest extends AbstractControllerTest {
 
-
     private MockMvc mockMvc;
 
     @Mock
@@ -41,7 +53,6 @@ public class PageModelControllerTest extends AbstractControllerTest {
     @InjectMocks
     private PageModelController controller;
 
-
     @Spy
     private PageModelValidator pagemModelValidator = new PageModelValidator();
 
@@ -49,21 +60,19 @@ public class PageModelControllerTest extends AbstractControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                                 .addInterceptors(entandoOauth2Interceptor)
-                                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
-                                 .build();
+                .addInterceptors(entandoOauth2Interceptor)
+                .setHandlerExceptionResolvers(createHandlerExceptionResolver())
+                .build();
     }
-
 
     @Test
     public void should_load_the_list_of_pageModels() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-
         when(pageModelService.getPageModels(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
         ResultActions result = mockMvc.perform(get("/pagemodels")
-                                                                 .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
         Mockito.verify(pageModelService, Mockito.times(1)).getPageModels(restListReq);
@@ -77,10 +86,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String payload = mapper.writeValueAsString(pageModel);
         ResultActions result = mockMvc.perform(
-                                               post("/pagemodels")
-                                                                  .content(payload)
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .header("Authorization", "Bearer " + accessToken));
+                post("/pagemodels")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(3)));
 
@@ -104,10 +113,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         String payload = mapper.writeValueAsString(pageModel);
 
         ResultActions result = mockMvc.perform(
-                                               post("/pagemodels")
-                                               .content(payload)
-                                               .contentType(MediaType.APPLICATION_JSON)
-                                               .header("Authorization", "Bearer " + accessToken));
+                post("/pagemodels")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(1)));
@@ -132,10 +141,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         String payload = mapper.writeValueAsString(pageModel);
 
         ResultActions result = mockMvc.perform(
-                                               post("/pagemodels")
-                                                                  .content(payload)
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .header("Authorization", "Bearer " + accessToken));
+                post("/pagemodels")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(1)));
@@ -164,10 +173,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         String payload = mapper.writeValueAsString(pageModel);
 
         ResultActions result = mockMvc.perform(
-                                               post("/pagemodels")
-                                                                  .content(payload)
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .header("Authorization", "Bearer " + accessToken));
+                post("/pagemodels")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(1)));
 
@@ -186,7 +195,6 @@ public class PageModelControllerTest extends AbstractControllerTest {
         PageModelFrameReq frame0 = new PageModelFrameReq(0, "descr_0");
         PageModelFrameReq frame1 = new PageModelFrameReq(1, null);
 
-
         pageModel.getConfiguration().add(frame0);
         pageModel.getConfiguration().add(frame1);
 
@@ -194,10 +202,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         String payload = mapper.writeValueAsString(pageModel);
 
         ResultActions result = mockMvc.perform(
-                                               post("/pagemodels")
-                                                                  .content(payload)
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .header("Authorization", "Bearer " + accessToken));
+                post("/pagemodels")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
 
     }
@@ -208,29 +216,29 @@ public class PageModelControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        String payload = " {\n" +
-                         "            \"code\": \"test\",\n" +
-                         "            \"description\": \"test\",\n" +
-                         "            \"configuration\": {\n" +
-                         "                \"frames\": [\n" +
-                         "                    {\n" +
-                         "                        \"pos\": 0,\n" +
-                         "                        \"description\": \"test_frame\",\n" +
-                         "                        \"mainFrame\": false,\n" +
-                         "                        \"defaultWidget\": null,\n" +
-                         "                        \"sketch\": null\n" +
-                         "                    }\n" +
-                         "                ]\n" +
-                         "            },\n" +
-                         "            \"pluginCode\": null,\n" +
-                         "            \"template\": \"ciao\"\n" +
-                         "        }";
+        String payload = " {\n"
+                + "            \"code\": \"test\",\n"
+                + "            \"description\": \"test\",\n"
+                + "            \"configuration\": {\n"
+                + "                \"frames\": [\n"
+                + "                    {\n"
+                + "                        \"pos\": 0,\n"
+                + "                        \"description\": \"test_frame\",\n"
+                + "                        \"mainFrame\": false,\n"
+                + "                        \"defaultWidget\": null,\n"
+                + "                        \"sketch\": null\n"
+                + "                    }\n"
+                + "                ]\n"
+                + "            },\n"
+                + "            \"pluginCode\": null,\n"
+                + "            \"template\": \"ciao\"\n"
+                + "        }";
 
         ResultActions result = mockMvc.perform(
-                                               post("/pagemodels")
-                                                                  .content(payload)
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .header("Authorization", "Bearer " + accessToken));
+                post("/pagemodels")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         Mockito.verify(pageModelService, Mockito.times(1)).addPageModel(Mockito.any());
 

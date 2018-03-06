@@ -207,5 +207,4 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         }
         return references;
     }
-
 }

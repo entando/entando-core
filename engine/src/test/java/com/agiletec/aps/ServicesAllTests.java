@@ -8,6 +8,8 @@ import org.entando.entando.aps.system.services.group.GroupServiceIntegrationTest
 import org.entando.entando.aps.system.services.group.GroupServiceTest;
 import org.entando.entando.aps.system.services.group.RestListRequestTest;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentServiceTest;
+import org.entando.entando.aps.system.services.pagemodel.PageModelDtoTest;
+import org.entando.entando.aps.system.services.pagemodel.PageModelServiceTest;
 import org.entando.entando.aps.system.services.page.PageServiceIntegrationTest;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsServiceIntegrationTest;
 
@@ -23,6 +25,8 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(RestListRequestTest.class));
         suite.addTest(new JUnit4TestAdapter(GroupServiceTest.class));
         suite.addTest(new JUnit4TestAdapter(GuiFragmentServiceTest.class));
+        suite.addTest(new JUnit4TestAdapter(PageModelDtoTest.class));
+        suite.addTest(new JUnit4TestAdapter(PageModelServiceTest.class));
 
         return suite;
     }

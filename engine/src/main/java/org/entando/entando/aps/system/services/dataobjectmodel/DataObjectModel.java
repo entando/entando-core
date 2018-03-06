@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,69 +31,69 @@ import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
 @XmlType(propOrder = {"id", "dataType", "description", "shape", "stylesheet"})
 public class DataObjectModel implements Comparable, Serializable {
 
-	@XmlElement(name = "id", required = true)
-	public long getId() {
-		return _id;
-	}
+    private long id;
+    private String dataType;
+    private String description;
+    private String dataShape;
+    private String stylesheet;
 
-	public void setId(long id) {
-		this._id = id;
-	}
+    @XmlElement(name = "id", required = true)
+    public long getId() {
+        return id;
+    }
 
-	@XmlElement(name = "dataType", required = true)
-	public String getDataType() {
-		return _dataType;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setDataType(String dataType) {
-		this._dataType = dataType;
-	}
+    @XmlElement(name = "dataType", required = true)
+    public String getDataType() {
+        return dataType;
+    }
 
-	@XmlElement(name = "description", required = true)
-	public String getDescription() {
-		return _description;
-	}
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
 
-	public void setDescription(String descr) {
-		this._description = descr;
-	}
+    @XmlElement(name = "description", required = true)
+    public String getDescription() {
+        return description;
+    }
 
-	@XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
-	@XmlElement(name = "shape", required = true)
-	public String getShape() {
-		return _dataShape;
-	}
+    public void setDescription(String descr) {
+        this.description = descr;
+    }
 
-	public void setShape(String shape) {
-		this._dataShape = shape;
-	}
+    @XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
+    @XmlElement(name = "shape", required = true)
+    public String getShape() {
+        return dataShape;
+    }
 
-	@XmlElement(name = "stylesheet", required = false)
-	public String getStylesheet() {
-		return _stylesheet;
-	}
+    public void setShape(String shape) {
+        this.dataShape = shape;
+    }
 
-	public void setStylesheet(String stylesheet) {
-		this._stylesheet = stylesheet;
-	}
+    @XmlElement(name = "stylesheet", required = false)
+    public String getStylesheet() {
+        return stylesheet;
+    }
 
-	@Override
-	public int compareTo(Object model) {
-		int result = this.getDataType().compareTo(((DataObjectModel) model).getDataType());
-		if (result == 0) {
-			if (this.getId() > (((DataObjectModel) model).getId())) {
-				return 1;
-			} else {
-				return -1;
-			}
-		}
-		return result;
-	}
+    public void setStylesheet(String stylesheet) {
+        this.stylesheet = stylesheet;
+    }
 
-	private long _id;
-	private String _dataType;
-	private String _description;
-	private String _dataShape;
-	private String _stylesheet;
+    @Override
+    public int compareTo(Object model) {
+        int result = this.getDataType().compareTo(((DataObjectModel) model).getDataType());
+        if (result == 0) {
+            if (this.getId() > (((DataObjectModel) model).getId())) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        return result;
+    }
 
 }

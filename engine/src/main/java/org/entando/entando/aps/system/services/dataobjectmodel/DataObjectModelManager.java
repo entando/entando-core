@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
@@ -78,11 +80,9 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
         this.cacheWrapper = cacheWrapper;
     }
 
-
     @Override
     public void init() throws Exception {
         this.getCacheWrapper().initCache(this.getDataModelDAO());
-
         logger.debug("{} ready. Initialized {} dataObject models", this.getClass().getName(), this.getCacheWrapper().getModels().size());
     }
 
@@ -90,7 +90,7 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     public void addDataObjectModel(DataObjectModel model) throws ApsSystemException {
         try {
             this.getDataModelDAO().addDataModel(model);
-            Long wrapLongId = new Long(model.getId());
+            //Long wrapLongId = new Long(model.getId());
             this.getCacheWrapper().addModel(model);
             this.notifyDataModelChanging(model, DataObjectModelChangedEvent.INSERT_OPERATION_CODE);
         } catch (Throwable t) {
@@ -137,14 +137,14 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 
     @Override
     public List<DataObjectModel> getDataObjectModels() {
-        List<DataObjectModel> models = new ArrayList<DataObjectModel>(this.getCacheWrapper().getModels());
+        List<DataObjectModel> models = new ArrayList<>(this.getCacheWrapper().getModels());
         Collections.sort(models);
         return models;
     }
 
     @Override
     public List<DataObjectModel> getModelsForDataObjectType(String dataType) {
-        List<DataObjectModel> models = new ArrayList<DataObjectModel>();
+        List<DataObjectModel> models = new ArrayList<>();
         Object[] allModels = this.getCacheWrapper().getModels().toArray();
         for (int i = 0; i < allModels.length; i++) {
             DataObjectModel dataObjectModel = (DataObjectModel) allModels[i];
@@ -157,7 +157,7 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
 
     @Override
     public Map<String, List<IPage>> getReferencingPages(long modelId) {
-        Map<String, List<IPage>> utilizers = new HashMap<String, List<IPage>>();
+        Map<String, List<IPage>> utilizers = new HashMap<>();
         IPage root = this.getPageManager().getDraftRoot();
         this.searchReferencingPages(modelId, root, utilizers);
         root = this.getPageManager().getOnlineRoot();
@@ -172,32 +172,32 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
         for (int i = 0; i < children.length; i++) {
             IPage child = (isOnline)
                     ? this.getPageManager().getOnlinePage(children[i])
-                            : this.getPageManager().getDraftPage(children[i]);
-                    if (null != child) {
-                        this.searchReferencingPages(modelId, child, utilizers);
-                    }
+                    : this.getPageManager().getDraftPage(children[i]);
+            if (null != child) {
+                this.searchReferencingPages(modelId, child, utilizers);
+            }
         }
     }
 
     private void addReferencingPage(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
         if (null != page && null != page.getWidgets()) {
             Widget[] widgets = page.getWidgets();
-            for (int i = 0; i < widgets.length; i++) {
-                Widget widget = widgets[i];
-                if (null != widget) {
-                    if (null != widget.getConfig()) {
-                        String id = widget.getConfig().getProperty("modelId");
-                        String dataId = widget.getConfig().getProperty("dataId");
-                        if (null != id && null != dataId) {
-                            long longId = new Long(id).longValue();
-                            if (modelId == longId) {
-                                List<IPage> pages = (List<IPage>) utilizers.get(dataId);
-                                if (null == pages) {
-                                    pages = new ArrayList<IPage>();
-                                }
-                                pages.add(page);
-                                utilizers.put(dataId, pages);
+            for (Widget widget : widgets) {
+                if (null == widget) {
+                    continue;
+                }
+                if (null != widget.getConfig()) {
+                    String id = widget.getConfig().getProperty("modelId");
+                    String dataId = widget.getConfig().getProperty("dataId");
+                    if (null != id && null != dataId) {
+                        long longId = Long.parseLong(id);
+                        if (modelId == longId) {
+                            List<IPage> pages = (List<IPage>) utilizers.get(dataId);
+                            if (null == pages) {
+                                pages = new ArrayList<>();
                             }
+                            pages.add(page);
+                            utilizers.put(dataId, pages);
                         }
                     }
                 }
@@ -209,8 +209,7 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     public SmallDataType getDefaultUtilizer(long modelId) {
         String modelIdString = String.valueOf(modelId);
         List<SmallDataType> smallDataTypes = this.getDataObjectManager().getSmallDataTypes();
-        for (int i = 0; i < smallDataTypes.size(); i++) {
-            SmallDataType smallDataType = (SmallDataType) smallDataTypes.get(i);
+        for (SmallDataType smallDataType : smallDataTypes) {
             DataObject prototype = this.getDataObjectManager().createDataObject(smallDataType.getCode());
             if ((null != prototype.getListModel() && prototype.getListModel().equals(modelIdString)) || (null != prototype.getDefaultModel()
                     && prototype.getDefaultModel().equals(modelIdString))) {
@@ -220,5 +219,35 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
         return null;
     }
 
+    @Override
+    public SearcherDaoPaginatedResult<DataObjectModel> getDataObjectModels(List<FieldSearchFilter> filters) throws ApsSystemException {
+        SearcherDaoPaginatedResult<DataObjectModel> pagedResult = null;
+        try {
+            List<DataObjectModel> dataObjectModels = new ArrayList<>();
+            FieldSearchFilter[] filtersArray = filters.toArray(new FieldSearchFilter[filters.size()]);
+            int count = this.getDataModelDAO().countDataObjectModels(filtersArray);
+            List<Long> codes = this.searchDataObjectModels(filtersArray);
+            for (Long code : codes) {
+                dataObjectModels.add(this.getDataObjectModel(code));
+            }
+            pagedResult = new SearcherDaoPaginatedResult<>(count, dataObjectModels);
+        } catch (Throwable t) {
+            logger.error("Error searching models", t);
+            throw new ApsSystemException("Error searching models", t);
+        }
+        return pagedResult;
+    }
+
+    @Override
+    public List<Long> searchDataObjectModels(FieldSearchFilter[] filters) throws ApsSystemException {
+        List<Long> models = null;
+        try {
+            models = this.getDataModelDAO().searchDataObjectModels(filters);
+        } catch (Throwable t) {
+            logger.error("Error searching models", t);
+            throw new ApsSystemException("Error searching models", t);
+        }
+        return models;
+    }
 
 }

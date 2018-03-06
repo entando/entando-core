@@ -17,15 +17,38 @@
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
 
+	<bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory" />
+
+	<bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
+		<property name="contentManager" ref="jacmsContentManager" />
+	</bean>
+	
+
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
+    
     <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widget.model.WidgetDtoBuilder" />
+    
+    <bean id="PageSettingsDtoBuilder" class="org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDtoBuilder" />
+    
+    <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" />
+    
+    <bean id="PageModelDtoBuilder" class="org.entando.entando.aps.system.services.pagemodel.model.PageModelDtoBuilder" />
+
+    <bean id="GuiFragmentDtoBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder">
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+	</bean>
+    
+    
+    
+    <bean id="GuiFragmentDtoSmallBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmallBuilder">
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+	</bean>
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
         <property name="dtoBuilder" ref="GroupDtoBuilder" />
         <property name="groupManager" ref="GroupManager" />
     </bean>
 
-    <bean id="PageSettingsDtoBuilder" class="org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDtoBuilder" />
 
     <bean id="PageSettingsService" class="org.entando.entando.aps.system.services.pagesettings.PageSettingsService" >
         <property name="dtoBuilder" ref="PageSettingsDtoBuilder" />
@@ -33,7 +56,6 @@
 
     </bean>
 
-    <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" />
 
     <bean id="PageService" class="org.entando.entando.aps.system.services.page.PageService" >
         <property name="dtoBuilder" ref="PageDtoBuilder" />
@@ -47,13 +69,7 @@
         <property name="widgetManager" ref="WidgetTypeManager" />
     </bean>
 	
-    <bean id="GuiFragmentDtoBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder">
-		<property name="widgetTypeManager" ref="WidgetTypeManager" />
-	</bean>
 	
-    <bean id="GuiFragmentDtoSmallBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmallBuilder">
-		<property name="widgetTypeManager" ref="WidgetTypeManager" />
-	</bean>
 	
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >
         <property name="dtoBuilder" ref="GuiFragmentDtoBuilder" />
@@ -61,6 +77,9 @@
         <property name="guiFragmentManager" ref="GuiFragmentManager" />
     </bean>
 
-	<bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.page.helper.WidgetValidatorFactory" />
+    <bean id="PageModelService" class="org.entando.entando.aps.system.services.pagemodel.PageModelService" >
+        <property name="dtoBuilder" ref="PageModelDtoBuilder" />
+        <property name="pageModelManager" ref="PageModelManager" />
+    </bean>	
 
 </beans>

@@ -21,10 +21,10 @@ import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
-import org.entando.entando.aps.system.services.page.helper.WidgetValidatorFactory;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
+import org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -43,6 +43,10 @@ import org.springframework.validation.BeanPropertyBindingResult;
 public class PageService implements IPageService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final String ERRCODE_PAGE_NOT_FOUND = "1";
+    private static final String ERRCODE_PAGE_ONLY_DRAFT = "2";
+    private static final String ERRCODE_FRAME_INVALID = "3";
 
     @Autowired
     private IPageManager pageManager;
@@ -117,7 +121,7 @@ public class PageService implements IPageService {
         IPage page = this.loadPage(pageCode, status);
         if (null == page) {
             logger.warn("no page found with code {}", pageCode);
-            throw new RestRourceNotFoundException("page", pageCode);
+            throw new RestRourceNotFoundException(null, "page", pageCode);
         }
         return this.getDtoBuilder().convert(page);
     }
@@ -151,7 +155,7 @@ public class PageService implements IPageService {
     public PageDto updatePage(String pageCode, PageRequest pageRequest) {
         IPage oldPage = this.getPageManager().getDraftPage(pageCode);
         if (null == oldPage) {
-            throw new RestRourceNotFoundException("page", pageCode);
+            throw new RestRourceNotFoundException(null, "page", pageCode);
         }
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
@@ -173,7 +177,7 @@ public class PageService implements IPageService {
     public PageConfigurationDto getPageConfiguration(String pageCode, String status) {
         IPage page = this.loadPage(pageCode, status);
         if (null == page) {
-            throw new RestRourceNotFoundException("page", pageCode);
+            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
         }
         PageConfigurationDto pageConfigurationDto = new PageConfigurationDto(page, status);
         return pageConfigurationDto;
@@ -183,10 +187,10 @@ public class PageService implements IPageService {
     public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status) {
         IPage page = this.loadPage(pageCode, status);
         if (null == page) {
-            throw new RestRourceNotFoundException("page", pageCode);
+            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
         }
         if (frameId > page.getWidgets().length) {
-            throw new RestRourceNotFoundException("frame", String.valueOf(frameId));
+            throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
         }
         Widget widget = page.getWidgets()[frameId];
         if (null == widget) {
@@ -196,23 +200,20 @@ public class PageService implements IPageService {
     }
 
     @Override
-    public WidgetConfigurationDto updateWidgetConfiguration(String pageCode, int frameId, String status, WidgetConfigurationRequest widgetReq) {
-
+    public WidgetConfigurationDto updateWidgetConfiguration(String pageCode, int frameId, WidgetConfigurationRequest widgetReq) {
         try {
-
-            IPage page = this.loadPage(pageCode, status);
+            IPage page = this.loadPage(pageCode, STATUS_DRAFT);
             if (null == page) {
-                throw new RestRourceNotFoundException("page", pageCode);
+                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
             if (frameId > page.getWidgets().length) {
-                throw new RestRourceNotFoundException("frame", String.valueOf(frameId));
+                throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
             }
             BeanPropertyBindingResult validation = this.getWidgetValidatorFactory().get(widgetReq.getCode()).validate(widgetReq, page);
-            if (validation.hasErrors()) {
+            if (null != validation && validation.hasErrors()) {
                 throw new ValidationConflictException(validation);
             }
 
-            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             WidgetType widgetType = this.getWidgetType(widgetReq.getCode());
             Widget widget = new Widget();
             widget.setType(widgetType);
@@ -224,6 +225,27 @@ public class PageService implements IPageService {
             logger.error("Error in update widget configuration {}", pageCode, e);
             throw new RestServerError("error in update widget configuration", e);
         }
+    }
+
+    @Override
+    public void deleteWidgetConfiguration(String pageCode, int frameId) {
+        try {
+            IPage page = this.loadPage(pageCode, STATUS_DRAFT);
+            if (null == page) {
+                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+            }
+            if (frameId > page.getWidgets().length) {
+                throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
+            }
+            this.pageManager.removeWidget(pageCode, frameId);
+        } catch (ApsSystemException e) {
+            logger.error("Error in delete widget configuration for page {} and frame {}", pageCode, frameId, e);
+            throw new RestServerError("error in delete widget configuration", e);
+        }
+    }
+
+    public WidgetType getWidgetType(String typeCode) {
+        return this.getWidgetTypeManager().getWidgetType(typeCode);
     }
 
     private IPage createPage(PageRequest pageRequest) {
@@ -295,12 +317,12 @@ public class PageService implements IPageService {
             default:
                 break;
         }
+        if (status.equals(STATUS_ONLINE) && null == page && null != this.getPageManager().getDraftPage(pageCode)) {
+            throw new RestRourceNotFoundException(ERRCODE_PAGE_ONLY_DRAFT, "page", pageCode);
+        }
         return page;
     }
 
-    public WidgetType getWidgetType(String typeCode) {
-        return this.getWidgetTypeManager().getWidgetType(typeCode);
-    }
 
 }
 

@@ -103,7 +103,7 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
             logger.warn("no group found with code {}", groupCode);
-            throw new RestRourceNotFoundException("group", groupCode);
+            throw new RestRourceNotFoundException(null, "group", groupCode);
         }
         return this.getDtoBuilder().convert(group);
     }
@@ -112,7 +112,7 @@ public class GroupService implements IGroupService, ApplicationContextAware {
     public GroupDto updateGroup(String groupCode, String descr) {
         Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
-            throw new RestRourceNotFoundException("group", groupCode);
+            throw new RestRourceNotFoundException(null, "group", groupCode);
         }
         group.setDescription(descr);
         try {

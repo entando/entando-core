@@ -100,7 +100,7 @@ public class GuiFragmentService implements IGuiFragmentService {
 		}
 		if (null == fragment) {
 			logger.warn("no fragment found with code {}", code);
-			throw new RestRourceNotFoundException("fragment", code);
+			throw new RestRourceNotFoundException(null, "fragment", code);
 		}
 		return this.getDtoBuilder().convert(fragment);
 	}
@@ -127,7 +127,7 @@ public class GuiFragmentService implements IGuiFragmentService {
 		try {
 			GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(code);
 			if (null == fragment) {
-				throw new RestRourceNotFoundException("fragment", code);
+				throw new RestRourceNotFoundException(null, "fragment", code);
 			}
 			fragment.setGui(guiFragmentRequest.getGuiCode());
 			this.getGuiFragmentManager().updateGuiFragment(fragment);

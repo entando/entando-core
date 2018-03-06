@@ -1,4 +1,4 @@
-package org.entando.entando.aps.system.services.page.helper;
+package org.entando.entando.aps.system.services.widget.validators;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class WidgetValidatorFactory implements ApplicationContextAware {
         WidgetConfigurationValidator defName = beans.values().stream()
                                       .filter(service -> service.supports(widgetCode))
                                       .findFirst()
-                                      .orElse(null);
+                                                    .orElseGet(NoOpWidgetConfigurationValidator::new);
         //TODO .. if defName is null, check the parent, the parent configuration...
         return defName;
     }

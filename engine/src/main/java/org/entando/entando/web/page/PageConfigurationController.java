@@ -70,18 +70,29 @@ public class PageConfigurationController {
         return new ResponseEntity<>(new RestResponse(widgetConfiguration, null, metadata), HttpStatus.OK);
     }
 
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageWidget(
                                               @PathVariable String pageCode, 
                                               @PathVariable int frameId, 
-                                              @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status,
                                               @Valid @RequestBody WidgetConfigurationRequest widget,
                                               BindingResult bindingResult) {
-        WidgetConfigurationDto widgetConfiguration = this.getPageService().updateWidgetConfiguration(pageCode, frameId, status, widget);
+        WidgetConfigurationDto widgetConfiguration = this.getPageService().updateWidgetConfiguration(pageCode, frameId, widget);
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("status", status);
+        metadata.put("status", IPageService.STATUS_DRAFT);
         return new ResponseEntity<>(new RestResponse(widgetConfiguration, null, metadata), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deletePageWidget(
+                                              @PathVariable String pageCode,
+                                              @PathVariable int frameId) {
+        this.getPageService().deleteWidgetConfiguration(pageCode, frameId);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("status", IPageService.STATUS_DRAFT);
+        return new ResponseEntity<>(new RestResponse(frameId, null, metadata), HttpStatus.OK);
     }
 
 

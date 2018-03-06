@@ -30,6 +30,8 @@ public interface IPageService {
 
     public PageDto updatePage(String pageCode, PageRequest pageRequest);
 
+    public PageDto movePage(String pageCode, PageRequest pageRequest);
+
     public List<PageDto> getPages(String parentCode);
 
 }

@@ -73,8 +73,7 @@ public class PageValidator implements Validator {
         this.validateBodyCode(pageCode, pageRequest, errors);
         IPage parent = null;
         if (pageRequest.getParentCode() == null || pageRequest.getPosition() <= 0
-                || (parent = this.getPageManager().getDraftPage(pageRequest.getParentCode())) == null
-                || parent.getChildrenCodes().length < pageRequest.getPosition()) {
+                || (parent = this.getPageManager().getDraftPage(pageRequest.getParentCode())) == null) {
             errors.reject(PageController.ERRCODE_CHANGE_POSITION_INVALID_REQUEST, new String[]{pageCode}, "page.move.position.invalid");
         }
     }

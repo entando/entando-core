@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +38,9 @@ public class DataObjectModelServiceTest {
     @Mock
     private IDataObjectModelManager dataObjectModelManager;
 
+    @Mock
+    private DataModelDtoBuilder dtoBuilder;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -43,6 +48,11 @@ public class DataObjectModelServiceTest {
 
     @Test(expected = ValidationConflictException.class)
     public void should_raise_exception_on_delete_referenced_dataModel() throws Throwable {
+        DataObjectModel mockDataModel = new DataObjectModel();
+        mockDataModel.setId(234l);
+        when(this.dataObjectModelManager.getDataObjectModel(any(Long.class))).thenReturn(mockDataModel);
+        DataModelDto dto = new DataModelDto(mockDataModel);
+        when(this.dtoBuilder.convert(mockDataModel)).thenReturn(dto);
         Map<String, List<IPage>> utilizers = new HashMap<>();
         List<IPage> pages = new ArrayList<>();
         Page referencedPage = new Page();

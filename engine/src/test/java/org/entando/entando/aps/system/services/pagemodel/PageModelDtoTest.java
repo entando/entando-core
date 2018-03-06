@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.pagemodel;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,24 +37,9 @@ public class PageModelDtoTest {
         dto.getConfiguration().getFrames().add(frameDto);
 
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dto);
+        String json = mapper.writer().writeValueAsString(dto);
 
-        String actual = "{\n" +
-                        "  \"code\" : \"code\",\n" +
-                        "  \"description\" : \"description\",\n" +
-                        "  \"mainFrame\" : -1,\n" +
-                        "  \"pluginCode\" : null,\n" +
-                        "  \"template\" : null,\n" +
-                        "  \"configuration\" : {\n" +
-                        "    \"frames\" : [ {\n" +
-                        "      \"pos\" : 0,\n" +
-                        "      \"description\" : \"description\",\n" +
-                        "      \"mainFrame\" : false,\n" +
-                        "      \"defaultWidget\" : null,\n" +
-                        "      \"sketch\" : null\n" +
-                        "    } ]\n" +
-                        "  }\n" +
-                        "}";
+        String actual = "{\"code\":\"code\",\"description\":\"description\",\"mainFrame\":-1,\"pluginCode\":null,\"template\":null,\"configuration\":{\"frames\":[{\"pos\":0,\"description\":\"description\",\"mainFrame\":false,\"defaultWidget\":null,\"sketch\":null}]}}";
         assertThat(json, is(actual));
     }
 }

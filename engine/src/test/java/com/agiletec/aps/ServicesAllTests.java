@@ -30,7 +30,6 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(DataObjectModelServiceTest.class));
         suite.addTest(new JUnit4TestAdapter(PageModelDtoTest.class));
         suite.addTest(new JUnit4TestAdapter(PageModelServiceTest.class));
-        suite.addTest(new JUnit4TestAdapter(PageServiceIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(PageService_WidgetIntegrationTest.class));
 
         return suite;

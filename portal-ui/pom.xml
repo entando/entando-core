@@ -173,6 +173,28 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>deploy-jar-lib</id>
+						<goals>
+							<goal>deploy-file</goal>
+						</goals>
+						<phase>deploy</phase>
+						<configuration>
+							<file>${project.build.directory}/${project.build.finalName}.jar</file>
+							<url>${maven-repository-url}</url>
+							<repositoryId>nexus</repositoryId>
+							<generatePom>false</generatePom>
+							<pomFile>pom.xml</pomFile>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>

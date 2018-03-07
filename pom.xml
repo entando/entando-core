@@ -32,16 +32,28 @@
 		<url>http://www.entando.com/</url>
 	</organization>
 	<profiles>
-            <profile>
-                <id>java8</id>
-                <activation>
-                   <jdk>[1.8,)</jdk>
-                </activation>
-                <properties>
-                    <javadoc.opts>-Xdoclint:none</javadoc.opts>
-                </properties>
-             </profile>
-        </profiles>
+		<profile>
+			<id>java8</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+	</profiles>
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>Releases</name>
+			<url>${maven-repository-url}</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>Snapshot</name>
+			<url>${maven-repository-url}</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<properties>
 		
 		<!--

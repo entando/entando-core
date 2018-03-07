@@ -77,8 +77,8 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             }
             pagedResult = new SearcherDaoPaginatedResult<>(count, fragments);
         } catch (Throwable t) {
-            logger.error("Error searching groups", t);
-            throw new ApsSystemException("Error searching groups", t);
+            logger.error("Error searching GuiFragments", t);
+            throw new ApsSystemException("Error searching GuiFragments", t);
         }
         return pagedResult;
     }

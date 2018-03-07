@@ -15,8 +15,7 @@
 			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
-
-
+	
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
     <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widget.model.WidgetDtoBuilder" />
 
@@ -66,4 +65,12 @@
         <property name="dtoBuilder" ref="PageModelDtoBuilder" />
         <property name="pageModelManager" ref="PageModelManager" />
     </bean>
+	
+	<bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
+	
+    <bean id="DataObjectModelService" class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelService" >
+        <property name="dtoBuilder" ref="DataObjectModelBuilder" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+    </bean>
+	
 </beans>

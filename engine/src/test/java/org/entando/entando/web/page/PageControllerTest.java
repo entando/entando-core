@@ -178,6 +178,7 @@ public class PageControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pages/{parentCode}", "mock_page")
+                        .sessionAttr("user", user)
                         .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();

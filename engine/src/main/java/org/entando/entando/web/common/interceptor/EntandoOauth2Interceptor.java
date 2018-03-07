@@ -93,6 +93,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
     protected void checkAuthorization(String username, String permission, HttpServletRequest request) throws ApsSystemException {
         UserDetails user = authenticationProviderManager.getUser(username);
         if (user != null) {
+            request.getSession().setAttribute("user", user);
             logger.info("User {} requesting resource that requires {} permission ", username, permission);
             if (StringUtils.isNotBlank(permission)) {
                 if (!authorizationManager.isAuthOnPermission(user, permission)) {

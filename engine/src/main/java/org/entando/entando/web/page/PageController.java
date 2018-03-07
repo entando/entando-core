@@ -7,6 +7,7 @@ package org.entando.entando.web.page;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.List;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.page.IPageService;
@@ -25,18 +26,21 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  *
  * @author paddeo
  */
 @RestController
+@SessionAttributes("user")
 public class PageController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -73,7 +77,8 @@ public class PageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{parentCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPages(@PathVariable String parentCode) {
+    public ResponseEntity<?> getPages(@ModelAttribute("user") UserDetails user, @PathVariable String parentCode) {
+        logger.info("user details for user {} with group {}", user.getUsername(), user.getAuthorizations().get(0).getGroup().getName());
         List<PageDto> result = this.getPageService().getPages(parentCode);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }

@@ -18,6 +18,7 @@ import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import java.util.ArrayList;
 import java.util.List;
+import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -32,6 +33,8 @@ public class EntityManagerService implements IEntityManagerService {
     @Autowired
     private List<IEntityManager> entityManagers;
 
+    private IDtoBuilder<IEntityManager, EntityManagerDto> dtoBuilder;
+
     protected List<IEntityManager> getEntityManagers() {
         return entityManagers;
     }
@@ -40,13 +43,24 @@ public class EntityManagerService implements IEntityManagerService {
         this.entityManagers = entityManagers;
     }
 
+    protected IDtoBuilder<IEntityManager, EntityManagerDto> getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(IDtoBuilder<IEntityManager, EntityManagerDto> dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
+    }
+
     @Override
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
+        PagedMetadata<String> pagedMetadata = null;
         List<String> codes = new ArrayList<>();
         List<IEntityManager> managers = this.getEntityManagers();
         managers.stream().forEach(i -> codes.add(((IManager) i).getName()));
         SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(managers.size(), codes);
-        return new PagedMetadata<>(requestList, result);
+        pagedMetadata = new PagedMetadata<>(requestList, result);
+        pagedMetadata.setBody(codes);
+        return pagedMetadata;
     }
 
     @Override

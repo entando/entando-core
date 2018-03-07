@@ -13,6 +13,14 @@
  */
 package org.entando.entando.aps.system.services.entity.model;
 
-public class EntityManagerDtoBuilder {
+import com.agiletec.aps.system.common.entity.IEntityManager;
+import org.entando.entando.aps.system.services.DtoBuilder;
+
+public class EntityManagerDtoBuilder extends DtoBuilder<IEntityManager, EntityManagerDto> {
+
+    @Override
+    protected EntityManagerDto toDto(IEntityManager src) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

@@ -47,6 +47,7 @@ public class PageService implements IPageService {
     private static final String ERRCODE_PAGE_NOT_FOUND = "1";
     private static final String ERRCODE_PAGE_ONLY_DRAFT = "2";
     private static final String ERRCODE_FRAME_INVALID = "3";
+    private static final String ERRCODE_WIDGET_INVALID = "4";
 
     @Autowired
     private IPageManager pageManager;
@@ -230,6 +231,10 @@ public class PageService implements IPageService {
             if (frameId > page.getWidgets().length) {
                 throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
             }
+            if (null == this.getWidgetType(widgetReq.getCode())) {
+                throw new RestRourceNotFoundException(ERRCODE_WIDGET_INVALID, "widget", String.valueOf(widgetReq.getCode()));
+            }
+
             BeanPropertyBindingResult validation = this.getWidgetValidatorFactory().get(widgetReq.getCode()).validate(widgetReq, page);
             if (null != validation && validation.hasErrors()) {
                 throw new ValidationConflictException(validation);

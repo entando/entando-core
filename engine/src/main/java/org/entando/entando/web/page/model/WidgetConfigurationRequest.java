@@ -6,7 +6,7 @@ import com.agiletec.aps.util.ApsProperties;
 
 public class WidgetConfigurationRequest {
 
-    @NotNull(message = "widget.code.notBlank")
+    @NotNull(message = "widgetConfigurationRequest.code.notBlank")
     private String code;
 
     private ApsProperties config;

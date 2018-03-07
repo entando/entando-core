@@ -25,7 +25,7 @@ public class ContentViewerWidgetValidator implements WidgetConfigurationValidato
 
     public static final String WIDGET_CODE = "content_viewer";
 
-    public static final String CONFIG_KEY_CONTENT_ID = "contentId";
+    public static final String WIDGET_CONFIG_KEY_CONTENT_ID = "contentId";
 
     private static final String ERRCODE_CONTENT_ID_NULL = "1";
     private static final String ERRCODE_CONTENT_INVALID = "2";
@@ -57,7 +57,7 @@ public class ContentViewerWidgetValidator implements WidgetConfigurationValidato
 
             Content publishingContent = this.getContentManager().loadContent(contentId, true);
             if (null == publishingContent) {
-                bindingResult.reject(ERRCODE_CONTENT_ID_NULL, new String[]{}, WIDGET_CODE + ".contentId.not_found");
+                bindingResult.reject(ERRCODE_CONTENT_ID_NULL, new String[]{contentId}, WIDGET_CODE + ".contentId.not_found");
                 return bindingResult;
             }
 
@@ -76,13 +76,12 @@ public class ContentViewerWidgetValidator implements WidgetConfigurationValidato
             throw new RestServerError("error in widget config validation", e);
         }
         return bindingResult;
-
     }
 
     protected String extractContentId(WidgetConfigurationRequest widget) {
         ApsProperties properties = widget.getConfig();
         if (null != properties) {
-            return properties.getProperty(CONFIG_KEY_CONTENT_ID);
+            return properties.getProperty(WIDGET_CONFIG_KEY_CONTENT_ID);
         }
         return null;
     }

@@ -19,7 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class PageServiceTest extends BaseTestCase {
+public class PageService_WidgetIntegrationTest extends BaseTestCase {
 
     private IPageService pageService;
     private IPageManager pageManager;

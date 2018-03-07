@@ -13,15 +13,40 @@
  */
 package org.entando.entando.aps.system.services.entity;
 
+import com.agiletec.aps.system.common.IManager;
+import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import java.util.ArrayList;
+import java.util.List;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class EntityManagerService implements IEntityManagerService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private List<IEntityManager> entityManagers;
+
+    protected List<IEntityManager> getEntityManagers() {
+        return entityManagers;
+    }
+
+    public void setEntityManagers(List<IEntityManager> entityManagers) {
+        this.entityManagers = entityManagers;
+    }
+
     @Override
-    public PagedMetadata<EntityManagerDto> getEntityManagers(RestListRequest requestList) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
+        List<String> codes = new ArrayList<>();
+        List<IEntityManager> managers = this.getEntityManagers();
+        managers.stream().forEach(i -> codes.add(((IManager) i).getName()));
+        SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(managers.size(), codes);
+        return new PagedMetadata<>(requestList, result);
     }
 
     @Override

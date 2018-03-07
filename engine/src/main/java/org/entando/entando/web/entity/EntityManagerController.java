@@ -47,7 +47,7 @@ public class EntityManagerController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getEntityManagers(RestListRequest requestList) {
-        PagedMetadata<EntityManagerDto> result = this.getEntityManagerService().getEntityManagers(requestList);
+        PagedMetadata<String> result = this.getEntityManagerService().getEntityManagers(requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

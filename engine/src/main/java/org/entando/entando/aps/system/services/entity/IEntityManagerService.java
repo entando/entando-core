@@ -22,7 +22,7 @@ import org.entando.entando.web.common.model.RestListRequest;
  */
 public interface IEntityManagerService {
 
-    public PagedMetadata<EntityManagerDto> getEntityManagers(RestListRequest requestList);
+    public PagedMetadata<String> getEntityManagers(RestListRequest requestList);
 
     public EntityManagerDto getEntityManager(String entityManagerCode);
 

@@ -24,6 +24,7 @@ import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
+import org.entando.entando.aps.system.services.widget.validators.WidgetProcessorFactory;
 import org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
@@ -62,6 +63,9 @@ public class PageService implements IPageService {
     private WidgetValidatorFactory widgetValidatorFactory;
 
     @Autowired
+    private WidgetProcessorFactory widgetProcessorFactory;
+
+    @Autowired
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
 
     protected IPageManager getPageManager() {
@@ -94,6 +98,14 @@ public class PageService implements IPageService {
 
     public void setWidgetValidatorFactory(WidgetValidatorFactory widgetValidatorFactory) {
         this.widgetValidatorFactory = widgetValidatorFactory;
+    }
+
+    protected WidgetProcessorFactory getWidgetProcessorFactory() {
+        return widgetProcessorFactory;
+    }
+
+    public void setWidgetProcessorFactory(WidgetProcessorFactory widgetProcessorFactory) {
+        this.widgetProcessorFactory = widgetProcessorFactory;
     }
 
     protected IWidgetTypeManager getWidgetTypeManager() {
@@ -240,10 +252,12 @@ public class PageService implements IPageService {
                 throw new ValidationConflictException(validation);
             }
 
+            ApsProperties properties = (ApsProperties) this.getWidgetProcessorFactory().get(widgetReq.getCode()).buildConfig(widgetReq);
+
             WidgetType widgetType = this.getWidgetType(widgetReq.getCode());
             Widget widget = new Widget();
             widget.setType(widgetType);
-            widget.setConfig(widgetReq.getConfig());
+            widget.setConfig(properties);
             this.getPageManager().joinWidget(pageCode, widget, frameId);
 
             return new WidgetConfigurationDto(widget);
@@ -348,6 +362,7 @@ public class PageService implements IPageService {
         }
         return page;
     }
+
 
 
 }

@@ -17,11 +17,37 @@
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
 
+	<!-- === WIDGET VALIDATORS === -->
+
 	<bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory" />
+
 
 	<bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
 		<property name="contentManager" ref="jacmsContentManager" />
 	</bean>
+	
+	<bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.AbstractListViewerWidgetValidator">
+		<property name="langManager" ref="LangManager" />
+		<property name="pageManager" ref="PageManager" />
+	</bean>
+
+	<bean id="RowContentListViewerWidgetValidator" parent="AbstractListViewerWidgetValidator"
+			class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerWidgetValidator" >
+		<property name="contentManager" ref="jacmsContentManager" />	
+	</bean>
+
+	<bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
+			class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentListViewerWidgetValidator">
+		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+	</bean>
+
+	<!-- === WIDGET PROCESSORS === -->
+		
+	<bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetProcessorFactory" />
+
+	<bean id="RowContentListViewerConfigProcessor" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerConfigProcessor" />
+
+
 
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
     

@@ -15,6 +15,9 @@ package org.entando.entando.web.entity;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.ArrayList;
+import junit.framework.Assert;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.EntityManagerService;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.Filter;
@@ -53,6 +56,7 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
+        entityManagerService.setEntityManagers(new ArrayList<>());
     }
 
     @Test
@@ -105,24 +109,11 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
         System.out.println(response);
         result.andExpect(status().isUnauthorized());
     }
-    /*
-    @Test
-    public void should_validate_put_path_mismatch() throws ApsSystemException, Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
-        ObjectMapper mapper = new ObjectMapper();
-        GuiFragmentRequestBody requestBody = new GuiFragmentRequestBody();
-        requestBody.setCode("__new_fragment_");
-        requestBody.setGuiCode("<h1>This is the fragment</h1>");
-        String payload = mapper.writeValueAsString(requestBody);
-        this.controller.setGuiFragmentValidator(new GuiFragmentValidator());
-        ResultActions result = mockMvc.perform(put("/fragments/{fragmentCode}", "new_fragment")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isBadRequest());
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
+
+    @Test(expected = RestRourceNotFoundException.class)
+    public void testGetNotExistingManager() {
+        this.controller.getEntityManager("customCode");
+        Assert.fail();
     }
-     */
+
 }

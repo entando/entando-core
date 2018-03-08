@@ -18,6 +18,7 @@ import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import java.util.ArrayList;
 import java.util.List;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -65,7 +66,19 @@ public class EntityManagerService implements IEntityManagerService {
 
     @Override
     public EntityManagerDto getEntityManager(String entityManagerCode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        IEntityManager entityManager = null;
+        List<IEntityManager> managers = this.getEntityManagers();
+        for (IEntityManager manager : managers) {
+            if (((IManager) manager).getName().equals(entityManagerCode)) {
+                entityManager = manager;
+                break;
+            }
+        }
+        if (null == entityManager) {
+            logger.warn("no entity manager found with code {}", entityManagerCode);
+            throw new RestRourceNotFoundException("entityManagerCode", entityManagerCode);
+        }
+        return this.getDtoBuilder().convert(entityManager);
     }
 
 }

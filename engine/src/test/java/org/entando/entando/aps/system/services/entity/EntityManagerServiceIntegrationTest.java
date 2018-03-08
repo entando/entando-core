@@ -14,8 +14,10 @@
 package org.entando.entando.aps.system.services.entity;
 
 import com.agiletec.aps.BaseTestCase;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import java.util.List;
+import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.junit.Test;
@@ -42,7 +44,7 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
     }
 
     @Test
-    public void testGetManagers() throws JsonProcessingException {
+    public void testGetManagers() {
         RestListRequest restListRequest = new RestListRequest();
         restListRequest.setPageSize(5);
         PagedMetadata<String> res = this.entityManagerService.getEntityManagers(restListRequest);
@@ -55,4 +57,27 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
         assertEquals(3, result.size());
     }
 
+    @Test
+    public void testGetManager_1() {
+        EntityManagerDto dto = this.entityManagerService.getEntityManager(SystemConstants.USER_PROFILE_MANAGER);
+        assertNotNull(dto);
+        assertEquals(SystemConstants.USER_PROFILE_MANAGER, dto.getCode());
+        assertEquals(1, dto.getEntityTypes().size());
+        assertEquals("PFL", dto.getEntityTypes().get(0).getCode());
+    }
+
+    @Test
+    public void testGetManager_2() {
+        EntityManagerDto dto = this.entityManagerService.getEntityManager(JacmsSystemConstants.CONTENT_MANAGER);
+        assertNotNull(dto);
+        assertEquals(JacmsSystemConstants.CONTENT_MANAGER, dto.getCode());
+        assertEquals(4, dto.getEntityTypes().size());
+    }
+    /*
+    @Test(expected = RestRourceNotFoundException.class)
+    public void testGetNotExistingManager() throws RestRourceNotFoundException {
+        this.entityManagerService.getEntityManager("customManagerName");
+        fail();
+    }
+     */
 }

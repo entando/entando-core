@@ -20,7 +20,7 @@ public class EntityManagerDtoBuilder extends DtoBuilder<IEntityManager, EntityMa
 
     @Override
     protected EntityManagerDto toDto(IEntityManager src) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new EntityManagerDto(src);
     }
 
 }

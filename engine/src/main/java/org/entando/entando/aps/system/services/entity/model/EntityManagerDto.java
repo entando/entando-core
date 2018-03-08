@@ -13,6 +13,74 @@
  */
 package org.entando.entando.aps.system.services.entity.model;
 
+import com.agiletec.aps.system.common.IManager;
+import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author E.Santoboni
+ */
 public class EntityManagerDto {
 
+    private String code;
+    private List<EntityTypeDto> entityTypes = new ArrayList<>();
+
+    public EntityManagerDto() {
+    }
+
+    public EntityManagerDto(IEntityManager src) {
+        this.setCode(((IManager) src).getName());
+        List<AttributeRole> roles = src.getAttributeRoles();
+        List<IApsEntity> entityTypes = new ArrayList<>(src.getEntityPrototypes().values());
+        for (IApsEntity entityType : entityTypes) {
+            EntityTypeDto dto = new EntityTypeDto(entityType, roles);
+            this.getEntityTypes().add(dto);
+        }
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public List<EntityTypeDto> getEntityTypes() {
+        return entityTypes;
+    }
+
+    public void setEntityTypes(List<EntityTypeDto> entityTypes) {
+        this.entityTypes = entityTypes;
+    }
+
 }
+
+/*
+{
+    "payload": [{
+        "code": "userProfileManager",
+        "entityTypes": [{
+            "code": "PFL",
+            "name": "Default user profile",
+            "attributes": [{
+                "code": "fullName",
+                "type": "Monotext",
+                "name": "Full Name",
+                "roles": [{
+                    "code": "userprofile:fullname",
+                    "descr": "The attr containing the full name"
+                }],
+                "isMandatory": true,
+                "canBeUsedAsFilterInList": true
+            }]
+
+        }]
+    }],
+    "errors": [],
+    "metadata": {}
+}
+ */

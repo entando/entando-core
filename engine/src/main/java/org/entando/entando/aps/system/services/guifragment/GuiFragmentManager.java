@@ -13,6 +13,10 @@
  */
 package org.entando.entando.aps.system.services.guifragment;
 
+import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.exception.ApsSystemException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,33 +25,29 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
 import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.entando.entando.aps.system.services.guifragment.event.GuiFragmentChangedEvent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
  * @author E.Santoboni
  */
 public class GuiFragmentManager extends AbstractService implements IGuiFragmentManager, GuiFragmentUtilizer {
 
-    private static final Logger _logger = LoggerFactory.getLogger(GuiFragmentManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuiFragmentManager.class);
+
+    private IGuiFragmentDAO guiFragmentDAO;
 
     @Override
     public void init() throws Exception {
-        _logger.debug("{} ready.", this.getClass().getName());
+        logger.debug("{} ready.", this.getClass().getName());
     }
 
     @Override
@@ -57,12 +57,12 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
         try {
             guiFragment = this.getGuiFragmentDAO().loadGuiFragment(code);
         } catch (Throwable t) {
-            _logger.error("Error loading guiFragment with code '{}'", code, t);
+            logger.error("Error loading guiFragment with code '{}'", code, t);
             throw new ApsSystemException("Error loading guiFragment with code: " + code, t);
         }
         return guiFragment;
     }
-
+    
     @Override
     public List<String> getGuiFragments() throws ApsSystemException {
         return this.searchGuiFragments(null);
@@ -77,7 +77,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             filters = this.addFilter(filters, filter);
             guiFragments = this.getGuiFragmentDAO().searchGuiFragments(filters);
         } catch (Throwable t) {
-            _logger.error("Error searching GuiFragments", t);
+            logger.error("Error searching GuiFragments", t);
             throw new ApsSystemException("Error searching GuiFragments", t);
         }
         return guiFragments;
@@ -103,7 +103,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             this.getGuiFragmentDAO().insertGuiFragment(guiFragment);
             this.notifyGuiFragmentChangedEvent(guiFragment, GuiFragmentChangedEvent.INSERT_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error adding GuiFragment", t);
+            logger.error("Error adding GuiFragment", t);
             throw new ApsSystemException("Error adding GuiFragment", t);
         }
     }
@@ -116,7 +116,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             this.getGuiFragmentDAO().updateGuiFragment(guiFragment);
             this.notifyGuiFragmentChangedEvent(guiFragment, GuiFragmentChangedEvent.UPDATE_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error updating GuiFragment", t);
+            logger.error("Error updating GuiFragment", t);
             throw new ApsSystemException("Error updating GuiFragment " + guiFragment, t);
         }
     }
@@ -130,7 +130,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             this.getGuiFragmentDAO().removeGuiFragment(code);
             this.notifyGuiFragmentChangedEvent(guiFragment, GuiFragmentChangedEvent.REMOVE_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error deleting GuiFragment with code {}", code, t);
+            logger.error("Error deleting GuiFragment with code {}", code, t);
             throw new ApsSystemException("Error deleting GuiFragment with code:" + code, t);
         }
     }
@@ -143,7 +143,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)")
     @CacheableInfo(groups = "'GuiFragment_uniqueByWidgetTypeGroup'")//TODO improve group handling
     public GuiFragment getUniqueGuiFragmentByWidgetType(String widgetTypeCode) throws ApsSystemException {
         GuiFragment guiFragment = null;
@@ -151,19 +151,19 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             List<String> fragmentCodes = this.getGuiFragmentCodesByWidgetType(widgetTypeCode);
             if (null != fragmentCodes && !fragmentCodes.isEmpty()) {
                 if (fragmentCodes.size() > 1) {
-                    _logger.warn("There are more then one fragment joined with widget '{}'", widgetTypeCode);
+                    logger.warn("There are more then one fragment joined with widget '{}'", widgetTypeCode);
                 }
                 guiFragment = this.getGuiFragment(fragmentCodes.get(0));
             }
         } catch (Throwable t) {
-            _logger.error("Error loading guiFragment by widget '{}'", widgetTypeCode, t);
+            logger.error("Error loading guiFragment by widget '{}'", widgetTypeCode, t);
             throw new ApsSystemException("Error loading guiFragment by widget " + widgetTypeCode, t);
         }
         return guiFragment;
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)")
     @CacheableInfo(groups = "'GuiFragment_codesByWidgetTypeGroup'")//TODO improve group handling
     public List<String> getGuiFragmentCodesByWidgetType(String widgetTypeCode) throws ApsSystemException {
         List<String> codes = null;
@@ -173,7 +173,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             FieldSearchFilter[] filters = {filter};
             codes = this.searchGuiFragments(filters);
         } catch (Throwable t) {
-            _logger.error("Error loading fragments code by widget '{}'", widgetTypeCode, t);
+            logger.error("Error loading fragments code by widget '{}'", widgetTypeCode, t);
             throw new ApsSystemException("Error loading fragment codes by widget " + widgetTypeCode, t);
         }
         return codes;
@@ -184,7 +184,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
         List<GuiFragment> utilizers = new ArrayList<GuiFragment>();
         try {
             String strToSearch = "code=\"" + guiFragmentCode + "\"";
-            Set<String> results = new HashSet<String>();
+            Set<String> results = new HashSet<>();
             results.addAll(this.searchFragments(strToSearch, "gui"));
             results.addAll(this.searchFragments(strToSearch, "defaultgui"));
             if (!results.isEmpty()) {
@@ -199,7 +199,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
                 }
             }
         } catch (Throwable t) {
-            _logger.error("Error extracting utilizers", t);
+            logger.error("Error extracting utilizers", t);
             throw new ApsSystemException("Error extracting utilizers", t);
         }
         return utilizers;
@@ -223,33 +223,31 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
         FieldSearchFilter filterCode = new FieldSearchFilter(column, strToSearch, true);
         FieldSearchFilter[] filters2 = new FieldSearchFilter[]{filterCode};
         List<String> result2 = this.searchGuiFragments(filters2);
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         result.addAll(result1);
         result.addAll(result2);
         return result;
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
     public List<String> loadGuiFragmentPluginCodes() throws ApsSystemException {
         List<String> codes = null;
         try {
             codes = this.getGuiFragmentDAO().loadGuiFragmentPluginCodes();
         } catch (Throwable t) {
-            _logger.error("Error loading guiFragment plugin codes", t);
+            logger.error("Error loading guiFragment plugin codes", t);
             throw new ApsSystemException("Error loading guiFragment plugin codes", t);
         }
         return codes;
     }
 
     public void setGuiFragmentDAO(IGuiFragmentDAO guiFragmentDAO) {
-        this._guiFragmentDAO = guiFragmentDAO;
+        this.guiFragmentDAO = guiFragmentDAO;
     }
 
     protected IGuiFragmentDAO getGuiFragmentDAO() {
-        return _guiFragmentDAO;
+        return guiFragmentDAO;
     }
-
-    private IGuiFragmentDAO _guiFragmentDAO;
 
 }

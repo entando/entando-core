@@ -11,15 +11,16 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.entity;
+package org.entando.entando.web.dataobject;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.entity.IEntityManagerService;
-import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityPropertyView;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -30,14 +31,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/entityManagers")
-public class EntityManagerController {
+@RequestMapping(value = "/dataTypes")
+public class DataTypeController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -52,14 +52,15 @@ public class EntityManagerController {
         this.entityManagerService = entityManagerService;
     }
 
+    @JsonView(EntityPropertyView.Short.class)
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getEntityManagers(RestListRequest requestList) throws JsonProcessingException {
-        PagedMetadata<String> result = this.getEntityManagerService().getEntityManagers(requestList);
+    public ResponseEntity<?> getDataTypes(RestListRequest requestList) throws JsonProcessingException {
+        PagedMetadata<EntityTypeDto> result = this.getEntityManagerService().getEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
-
+    /*
     @JsonView(EntityPropertyView.Medium.class)
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{entityManagerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,5 +70,5 @@ public class EntityManagerController {
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
-
+     */
 }

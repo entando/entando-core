@@ -15,12 +15,15 @@ package org.entando.entando.aps.system.services.entity;
 
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.slf4j.Logger;
@@ -54,18 +57,38 @@ public class EntityManagerService implements IEntityManagerService {
 
     @Override
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
-        PagedMetadata<String> pagedMetadata = null;
         List<String> codes = new ArrayList<>();
         List<IEntityManager> managers = this.getEntityManagers();
         managers.stream().forEach(i -> codes.add(((IManager) i).getName()));
         SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(managers.size(), codes);
-        pagedMetadata = new PagedMetadata<>(requestList, result);
+        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
         pagedMetadata.setBody(codes);
         return pagedMetadata;
     }
 
     @Override
     public EntityManagerDto getEntityManager(String entityManagerCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        return this.getDtoBuilder().convert(entityManager);
+    }
+
+    @Override
+    public PagedMetadata<EntityTypeDto> getEntityTypes(String entityManagerCode, RestListRequest requestList) {
+        List<EntityTypeDto> dtoList = new ArrayList<>();
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        List<AttributeRole> roles = entityManager.getAttributeRoles();
+        List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
+        for (IApsEntity entityType : entityTypes) {
+            EntityTypeDto dto = new EntityTypeDto(entityType, roles);
+            dtoList.add(dto);
+        }
+        SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(entityTypes.size(), dtoList);
+        PagedMetadata<EntityTypeDto> pagedMetadata = new PagedMetadata<>(requestList, result);
+        pagedMetadata.setBody(dtoList);
+        return pagedMetadata;
+    }
+
+    private IEntityManager extractEntityManager(String entityManagerCode) {
         IEntityManager entityManager = null;
         List<IEntityManager> managers = this.getEntityManagers();
         for (IEntityManager manager : managers) {
@@ -78,7 +101,7 @@ public class EntityManagerService implements IEntityManagerService {
             logger.warn("no entity manager found with code {}", entityManagerCode);
             throw new RestRourceNotFoundException("entityManagerCode", entityManagerCode);
         }
-        return this.getDtoBuilder().convert(entityManager);
+        return entityManager;
     }
 
 }

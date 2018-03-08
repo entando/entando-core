@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.entity.model;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
+import com.fasterxml.jackson.annotation.JsonView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +25,11 @@ import java.util.List;
  */
 public class EntityTypeDto {
 
+    @JsonView(value = {EntityPropertyView.Short.class})
     private String code;
+    @JsonView(value = {EntityPropertyView.Short.class})
     private String name;
+    @JsonView(value = {EntityPropertyView.Medium.class})
     private List<EntityAttributeDto> attributes = new ArrayList<>();
 
     public EntityTypeDto() {

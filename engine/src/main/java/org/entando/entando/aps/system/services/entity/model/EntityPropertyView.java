@@ -11,22 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.entity;
-
-import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeDto;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
+package org.entando.entando.aps.system.services.entity.model;
 
 /**
  * @author E.Santoboni
  */
-public interface IEntityManagerService {
+public class EntityPropertyView {
 
-    public PagedMetadata<String> getEntityManagers(RestListRequest requestList);
+    public static class Short {
+    }
 
-    public EntityManagerDto getEntityManager(String entityManagerCode);
+    public static class Medium extends Short {
+    }
 
-    public PagedMetadata<EntityTypeDto> getEntityTypes(String entityManagerCode, RestListRequest requestList);
+    public static class Complete extends Medium {
+    }
 
 }

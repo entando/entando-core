@@ -13,8 +13,10 @@
  */
 package org.entando.entando.aps.system.services.entity.model;
 
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
+import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class EntityAttributeDto {
     private List<AttributeRoleDto> roles = new ArrayList<>();
     private boolean mandatory;
     private boolean canBeUsedAsFilterInList;
+    private EntityAttributeDto nestedAttribute;
+    private List<EntityAttributeDto> compositeAttributes;
 
     public EntityAttributeDto() {
     }
@@ -49,6 +53,19 @@ public class EntityAttributeDto {
         }
         this.mandatory = attribute.isRequired();
         this.canBeUsedAsFilterInList = attribute.isSearchable();
+        if (attribute.isSimple()) {
+            return;
+        }
+        if (attribute instanceof AbstractListAttribute) {
+            AttributeInterface nestedAttribute = ((AbstractListAttribute) attribute).getNestedAttributeType();
+            this.setNestedAttribute(new EntityAttributeDto(nestedAttribute, roles));
+        } else if (attribute instanceof CompositeAttribute) {
+            this.setCompositeAttributes(new ArrayList<>());
+            List<AttributeInterface> attributes = ((CompositeAttribute) attribute).getAttributes();
+            for (AttributeInterface compAttribute : attributes) {
+                this.getCompositeAttributes().add(new EntityAttributeDto(compAttribute, roles));
+            }
+        }
     }
 
     /*
@@ -110,6 +127,22 @@ public class EntityAttributeDto {
 
     public void setCanBeUsedAsFilterInList(boolean canBeUsedAsFilterInList) {
         this.canBeUsedAsFilterInList = canBeUsedAsFilterInList;
+    }
+
+    public EntityAttributeDto getNestedAttribute() {
+        return nestedAttribute;
+    }
+
+    public void setNestedAttribute(EntityAttributeDto nestedAttribute) {
+        this.nestedAttribute = nestedAttribute;
+    }
+
+    public List<EntityAttributeDto> getCompositeAttributes() {
+        return compositeAttributes;
+    }
+
+    public void setCompositeAttributes(List<EntityAttributeDto> compositeAttributes) {
+        this.compositeAttributes = compositeAttributes;
     }
 
 }

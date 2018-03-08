@@ -73,4 +73,10 @@
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>
 	
+	<bean id="EntityManagerDtoBuilder" class="org.entando.entando.aps.system.services.entity.model.EntityManagerDtoBuilder" />
+	
+    <bean id="EntityManagerService" class="org.entando.entando.aps.system.services.entity.EntityManagerService" >
+        <property name="dtoBuilder" ref="EntityManagerDtoBuilder" />
+    </bean>
+	
 </beans>

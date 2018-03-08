@@ -13,17 +13,17 @@
  */
 package org.entando.entando.aps.system.init.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.agiletec.aps.util.DateConverter;
 import org.entando.entando.aps.system.init.model.SystemInstallationReport.Status;
 import org.jdom.Element;
-
-import com.agiletec.aps.util.DateConverter;
 
 /**
  * @author E.Santoboni
  */
-public class ComponentInstallationReport {
+public class ComponentInstallationReport implements Serializable {
 	
 	private ComponentInstallationReport() {}
 	
@@ -45,13 +45,13 @@ public class ComponentInstallationReport {
 		if (null != postProcessElement) {
 			String postProcessStatusString = postProcessElement.getAttributeValue(SystemInstallationReport.STATUS_ATTRIBUTE);
 			if (null != postProcessStatusString) {
-				SystemInstallationReport.Status postProcessStatus = 
+				SystemInstallationReport.Status postProcessStatus =
 						Enum.valueOf(SystemInstallationReport.Status.class, postProcessStatusString.toUpperCase());
 				this.setPostProcessStatus(postProcessStatus);
 			}
 		}
 	}
-	
+
 	public static ComponentInstallationReport getInstance(String componentCode) {
 		ComponentInstallationReport report = new ComponentInstallationReport();
 		report.setDate(new Date());
@@ -60,7 +60,7 @@ public class ComponentInstallationReport {
 		report.setDataReport(new DataInstallationReport());
 		return report;
 	}
-	
+
 	protected Element toJdomElement() {
 		Element element = new Element(SystemInstallationReport.COMPONENT_ELEMENT);
 		element.setAttribute(SystemInstallationReport.CODE_ATTRIBUTE, this.getComponentCode());
@@ -80,7 +80,7 @@ public class ComponentInstallationReport {
 		}
 		return element;
 	}
-	
+
 	public SystemInstallationReport.Status getStatus() {
 		SystemInstallationReport.Status schemaStatus = this.getDataSourceReport().getStatus();
 		SystemInstallationReport.Status dataStatus = this.getDataReport().getStatus();
@@ -88,11 +88,11 @@ public class ComponentInstallationReport {
 		boolean isDataStatusSafe = SystemInstallationReport.isSafeStatus(dataStatus);
 		SystemInstallationReport.Status postProcessStatus = this.getPostProcessStatus();
 		boolean isPostProcessStatusSafe = SystemInstallationReport.isSafeStatus(postProcessStatus);
-		if (!isSchemaStatusSafe || !isDataStatusSafe || 
+		if (!isSchemaStatusSafe || !isDataStatusSafe ||
 				(!isPostProcessStatusSafe && !postProcessStatus.equals(SystemInstallationReport.Status.INIT))) {
 			return SystemInstallationReport.Status.INCOMPLETE;
 		} else if (isSchemaStatusSafe && isDataStatusSafe && isPostProcessStatusSafe) {
-			if ((null != schemaStatus && SystemInstallationReport.Status.UNINSTALLED.equals(schemaStatus)) 
+			if ((null != schemaStatus && SystemInstallationReport.Status.UNINSTALLED.equals(schemaStatus))
 					|| (null != dataStatus && SystemInstallationReport.Status.UNINSTALLED.equals(dataStatus))) {
 				return SystemInstallationReport.Status.UNINSTALLED;
 			} else {
@@ -102,32 +102,32 @@ public class ComponentInstallationReport {
 			return SystemInstallationReport.Status.INIT;
 		}
 	}
-	
+
 	public boolean isPostProcessExecutionRequired() {
 		SystemInstallationReport.Status dataSourceStatus = this.getDataSourceReport().getStatus();
 		SystemInstallationReport.Status dataStatus = this.getDataReport().getStatus();
 		SystemInstallationReport.Status ok = SystemInstallationReport.Status.OK;
 		return (dataSourceStatus.equals(ok) && dataStatus.equals(ok) && !this.getDataReport().isDataAlreadyPresent());
 	}
-	
+
 	public boolean isUninstalled() {
 		return this.getStatus().equals(Status.UNINSTALLED);
 	}
-	
+
 	public String getComponentCode() {
 		return _componentCode;
 	}
 	public void setComponentCode(String componentCode) {
 		this._componentCode = componentCode;
 	}
-	
+
 	public Date getDate() {
 		return _date;
 	}
 	protected void setDate(Date date) {
 		this._date = date;
 	}
-	
+
 	public Status getPostProcessStatus() {
 		if ("entandoCore".equals(this.getComponentCode())) {
 			return Status.NOT_AVAILABLE;
@@ -137,21 +137,21 @@ public class ComponentInstallationReport {
 	public void setPostProcessStatus(Status postProcessStatus) {
 		this._postProcessStatus = postProcessStatus;
 	}
-	
+
 	public DataSourceInstallationReport getDataSourceReport() {
 		return _dataSourceReport;
 	}
 	private void setDataSourceReport(DataSourceInstallationReport schemaReport) {
 		this._dataSourceReport = schemaReport;
 	}
-	
+
 	public DataInstallationReport getDataReport() {
 		return _dataReport;
 	}
 	private void setDataReport(DataInstallationReport dataReport) {
 		this._dataReport = dataReport;
 	}
-	
+
 	private String _componentCode;
 	private Date _date;
 	private SystemInstallationReport.Status _postProcessStatus = SystemInstallationReport.Status.INIT;

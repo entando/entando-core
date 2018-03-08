@@ -16,8 +16,6 @@ package org.entando.entando.web.entity;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
-import junit.framework.Assert;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.EntityManagerService;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.Filter;
@@ -108,12 +106,6 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println(response);
         result.andExpect(status().isUnauthorized());
-    }
-
-    @Test(expected = RestRourceNotFoundException.class)
-    public void testGetNotExistingManager() {
-        this.controller.getEntityManager("customCode");
-        Assert.fail();
     }
 
 }

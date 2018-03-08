@@ -29,8 +29,6 @@ public class EntityAttributeDto {
     private List<AttributeRoleDto> roles = new ArrayList<>();
     private boolean mandatory;
     private boolean canBeUsedAsFilterInList;
-    //private EntityAttributeDto nestedAttribute;
-    //private List<EntityAttributeDto> compositeAttributes;
 
     public EntityAttributeDto() {
     }
@@ -54,33 +52,8 @@ public class EntityAttributeDto {
         if (attribute.isSimple()) {
             return;
         }
-        /*
-        if (attribute instanceof AbstractListAttribute) {
-            AttributeInterface nestedAttribute = ((AbstractListAttribute) attribute).getNestedAttributeType();
-            this.setNestedAttribute(new EntityAttributeDto(nestedAttribute, roles));
-        } else if (attribute instanceof CompositeAttribute) {
-            this.setCompositeAttributes(new ArrayList<>());
-            List<AttributeInterface> attributes = ((CompositeAttribute) attribute).getAttributes();
-            for (AttributeInterface compAttribute : attributes) {
-                this.getCompositeAttributes().add(new EntityAttributeDto(compAttribute, roles));
-            }
-        }
-         */
     }
 
-    /*
-"attributes": [{
-    "code": "fullName",
-    "type": "Monotext",
-    "name": "Full Name",
-    "roles": [{
-        "code": "userprofile:fullname",
-        "descr": "The attr containing the full name"
-    }],
-    "mandatory": true,
-    "canBeUsedAsFilterInList": true
-}]
-     */
     public String getCode() {
         return code;
     }
@@ -128,21 +101,5 @@ public class EntityAttributeDto {
     public void setCanBeUsedAsFilterInList(boolean canBeUsedAsFilterInList) {
         this.canBeUsedAsFilterInList = canBeUsedAsFilterInList;
     }
-    /*
-    public EntityAttributeDto getNestedAttribute() {
-        return nestedAttribute;
-    }
 
-    public void setNestedAttribute(EntityAttributeDto nestedAttribute) {
-        this.nestedAttribute = nestedAttribute;
-    }
-
-    public List<EntityAttributeDto> getCompositeAttributes() {
-        return compositeAttributes;
-    }
-
-    public void setCompositeAttributes(List<EntityAttributeDto> compositeAttributes) {
-        this.compositeAttributes = compositeAttributes;
-    }
-     */
 }

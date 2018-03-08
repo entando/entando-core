@@ -14,12 +14,10 @@
 package org.entando.entando.web.entity;
 
 import com.agiletec.aps.system.services.role.Permission;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.entity.IEntityManagerService;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
-import org.entando.entando.aps.system.services.entity.model.EntityPropertyView;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -60,7 +58,6 @@ public class EntityManagerController {
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
-    @JsonView(EntityPropertyView.Medium.class)
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{entityManagerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getEntityManager(@PathVariable String entityManagerCode) throws JsonProcessingException {

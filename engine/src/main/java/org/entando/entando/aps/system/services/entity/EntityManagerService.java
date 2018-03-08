@@ -23,7 +23,8 @@ import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDtoBuilder;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.slf4j.Logger;
@@ -73,17 +74,14 @@ public class EntityManagerService implements IEntityManagerService {
     }
 
     @Override
-    public PagedMetadata<EntityTypeDto> getEntityTypes(String entityManagerCode, RestListRequest requestList) {
-        List<EntityTypeDto> dtoList = new ArrayList<>();
+    public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<AttributeRole> roles = entityManager.getAttributeRoles();
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
-        for (IApsEntity entityType : entityTypes) {
-            EntityTypeDto dto = new EntityTypeDto(entityType, roles);
-            dtoList.add(dto);
-        }
+        IDtoBuilder<IApsEntity, EntityTypeShortDto> builder = new EntityTypeShortDtoBuilder();
+        List<EntityTypeShortDto> dtoList = builder.convert(entityTypes);
         SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(entityTypes.size(), dtoList);
-        PagedMetadata<EntityTypeDto> pagedMetadata = new PagedMetadata<>(requestList, result);
+        PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
         pagedMetadata.setBody(dtoList);
         return pagedMetadata;
     }

@@ -19,7 +19,7 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
     @Test
     public void testGetEntityTypes_1() {
         RestListRequest restListRequest = new RestListRequest();
-        PagedMetadata<EntityTypeDto> dtos = this.entityManagerService.getEntityTypes(SystemConstants.USER_PROFILE_MANAGER, restListRequest);
+        PagedMetadata<EntityTypeShortDto> dtos = this.entityManagerService.getShortEntityTypes(SystemConstants.USER_PROFILE_MANAGER, restListRequest);
         assertNotNull(dtos);
         assertEquals(1, dtos.getBody().size());
     }
@@ -93,7 +93,7 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
     @Test
     public void testGetEntityTypes_2() {
         RestListRequest restListRequest = new RestListRequest();
-        PagedMetadata<EntityTypeDto> dtos = this.entityManagerService.getEntityTypes(JacmsSystemConstants.CONTENT_MANAGER, restListRequest);
+        PagedMetadata<EntityTypeShortDto> dtos = this.entityManagerService.getShortEntityTypes(JacmsSystemConstants.CONTENT_MANAGER, restListRequest);
         assertNotNull(dtos);
         assertEquals(4, dtos.getBody().size());
     }

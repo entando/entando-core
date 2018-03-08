@@ -15,12 +15,10 @@ package org.entando.entando.web.dataobject;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.role.Permission;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.entity.IEntityManagerService;
-import org.entando.entando.aps.system.services.entity.model.EntityPropertyView;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -52,11 +50,10 @@ public class DataTypeController {
         this.entityManagerService = entityManagerService;
     }
 
-    @JsonView(EntityPropertyView.Short.class)
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataTypes(RestListRequest requestList) throws JsonProcessingException {
-        PagedMetadata<EntityTypeDto> result = this.getEntityManagerService().getEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
+        PagedMetadata<EntityTypeShortDto> result = this.getEntityManagerService().getShortEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }

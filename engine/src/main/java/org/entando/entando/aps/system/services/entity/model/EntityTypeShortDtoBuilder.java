@@ -13,18 +13,14 @@
  */
 package org.entando.entando.aps.system.services.entity.model;
 
-/**
- * @author E.Santoboni
- */
-public class EntityPropertyView {
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import org.entando.entando.aps.system.services.DtoBuilder;
 
-    public static class Short {
-    }
+public class EntityTypeShortDtoBuilder extends DtoBuilder<IApsEntity, EntityTypeShortDto> {
 
-    public static class Medium extends Short {
-    }
-
-    public static class Complete extends Medium {
+    @Override
+    protected EntityTypeShortDto toDto(IApsEntity src) {
+        return new EntityTypeShortDto(src);
     }
 
 }

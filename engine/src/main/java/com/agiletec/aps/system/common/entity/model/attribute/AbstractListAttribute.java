@@ -116,7 +116,7 @@ public abstract class AbstractListAttribute extends AbstractComplexAttribute
      *
      * @return The prototype attribute.
      */
-    public AttributeInterface getNestedAttributeType() {
+    protected AttributeInterface getNestedAttributeType() {
         return this._nestedType;
     }
 

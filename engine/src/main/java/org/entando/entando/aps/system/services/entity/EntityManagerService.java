@@ -29,6 +29,8 @@ import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -60,6 +62,10 @@ public class EntityManagerService implements IEntityManagerService {
                 return new EntityTypeShortDto(src);
             }
         };
+    }
+
+    protected IDtoBuilder<IApsEntity, EntityTypeFullDto> getEntityTypeFullDtoBuilder(IEntityManager masterManager) {
+        return new EntityTypeFullDtoBuilder(masterManager.getAttributeRoles());
     }
 
     protected List<IEntityManager> getEntityManagers() {
@@ -108,7 +114,17 @@ public class EntityManagerService implements IEntityManagerService {
         return pagedMetadata;
     }
 
-    private IEntityManager extractEntityManager(String entityManagerCode) {
+    public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityManager) {
+            logger.warn("no entity type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException("entityTypeCode", entityTypeCode);
+        }
+        return this.getEntityTypeFullDtoBuilder(entityManager).convert(entityType);
+    }
+
+    protected IEntityManager extractEntityManager(String entityManagerCode) {
         IEntityManager entityManager = null;
         List<IEntityManager> managers = this.getEntityManagers();
         for (IEntityManager manager : managers) {

@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.entity;
 
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -28,5 +29,7 @@ public interface IEntityManagerService {
     public EntityManagerDto getEntityManager(String entityManagerCode);
 
     public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList);
+
+    public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode);
 
 }

@@ -18,6 +18,7 @@ import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.entity.IEntityManagerService;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,15 +59,14 @@ public class DataTypeController {
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
-    /*
-    @JsonView(EntityPropertyView.Medium.class)
+
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{entityManagerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getEntityManager(@PathVariable String entityManagerCode) throws JsonProcessingException {
-        logger.debug("Requested manager -> " + entityManagerCode);
-        EntityManagerDto dto = this.getEntityManagerService().getEntityManager(entityManagerCode);
+    @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getDataType(@PathVariable String dataTypeCode) throws JsonProcessingException {
+        logger.debug("Requested data type -> " + dataTypeCode);
+        EntityTypeFullDto dto = this.getEntityManagerService().getFullEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
-     */
+
 }

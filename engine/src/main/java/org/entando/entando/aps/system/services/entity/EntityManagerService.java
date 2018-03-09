@@ -22,6 +22,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.beanutils.BeanComparator;
@@ -85,7 +86,8 @@ public class EntityManagerService implements IEntityManagerService {
         List<String> codes = new ArrayList<>();
         Filter[] filters = requestList.getFilter();
         List<IEntityManager> managers = this.getEntityManagers();
-        managers.stream().filter(i -> this.filterObjects(i, filters)).forEach(i -> codes.add(((IManager) i).getName()));
+        Map<String, String> fieldMapping = this.getEntityManagerFieldNameMapping();
+        managers.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> codes.add(i.getName()));
         Collections.sort(codes);
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(codes);
@@ -94,6 +96,12 @@ public class EntityManagerService implements IEntityManagerService {
         PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
         pagedMetadata.setBody(codes);
         return pagedMetadata;
+    }
+
+    protected Map<String, String> getEntityManagerFieldNameMapping() {
+        Map<String, String> mapping = new HashMap<>();
+        mapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
+        return mapping;
     }
 
     @Override
@@ -106,8 +114,9 @@ public class EntityManagerService implements IEntityManagerService {
     public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
-        entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilter()));
-        Collections.sort(entityTypes, new BeanComparator(this.getEntityTypeFieldName(requestList.getSort())));
+        Map<String, String> fieldMapping = this.getEntityTypeFieldNameMapping();
+        entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilter(), fieldMapping));
+        Collections.sort(entityTypes, new BeanComparator(this.getFieldName(requestList.getSort(), fieldMapping)));
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(entityTypes);
         }
@@ -118,15 +127,16 @@ public class EntityManagerService implements IEntityManagerService {
         return pagedMetadata;
     }
 
-    protected String getEntityTypeFieldName(String dtoFieldName) {
-        switch (dtoFieldName) {
-            case "code":
-                return "typeCode";
-            case "name":
-                return "typeDescription";
-            default:
-                return "typeCode";
-        }
+    protected Map<String, String> getEntityTypeFieldNameMapping() {
+        Map<String, String> mapping = new HashMap<>();
+        mapping.put(RestListRequest.SORT_VALUE_DEFAULT, "typeCode");
+        mapping.put("name", "typeDescription");
+        return mapping;
+    }
+
+    protected String getFieldName(String dtoFieldName, Map<String, String> mapping) {
+        String name = mapping.get(dtoFieldName);
+        return ((null != name) ? name : mapping.get(RestListRequest.SORT_VALUE_DEFAULT));
     }
 
     public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode) {
@@ -193,15 +203,16 @@ public class EntityManagerService implements IEntityManagerService {
         return entityManager;
     }
 
-    protected boolean filterObjects(Object bean, Filter[] filters) {
+    protected boolean filterObjects(Object bean, Filter[] filters, Map<String, String> mapping) {
         try {
             if (null == filters) {
                 return true;
             }
             Map<String, Object> properties = BeanUtils.describe(bean);
             for (Filter filter : filters) {
-                String value = (null != properties.get(filter.getAttribute()))
-                        ? properties.get(filter.getAttribute()).toString() : null;
+                String fieldName = this.getFieldName(filter.getAttribute(), mapping);
+                String value = (null != properties.get(fieldName))
+                        ? properties.get(fieldName).toString() : null;
                 if (null == value) {
                     continue;
                 }

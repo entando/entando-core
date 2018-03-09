@@ -76,10 +76,14 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
         assertEquals(4, dto.getEntityTypes().size());
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
+    @Test
     public void testGetNotExistingManager() throws RestRourceNotFoundException {
-        this.entityManagerService.getEntityManager("customManagerName");
-        fail();
+        try {
+            this.entityManagerService.getEntityManager("customManagerName");
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof RestRourceNotFoundException);
+        }
     }
 
     @Test

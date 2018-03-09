@@ -107,7 +107,7 @@ public class EntityManagerService implements IEntityManagerService {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
         entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilter()));
-        Collections.sort(entityTypes, new BeanComparator(requestList.getSort()));
+        Collections.sort(entityTypes, new BeanComparator(this.getEntityTypeFieldName(requestList.getSort())));
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(entityTypes);
         }
@@ -116,6 +116,17 @@ public class EntityManagerService implements IEntityManagerService {
         PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
         pagedMetadata.setBody(dtoList);
         return pagedMetadata;
+    }
+
+    protected String getEntityTypeFieldName(String dtoFieldName) {
+        switch (dtoFieldName) {
+            case "code":
+                return "typeCode";
+            case "name":
+                return "typeDescription";
+            default:
+                return "typeCode";
+        }
     }
 
     public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode) {
@@ -184,6 +195,9 @@ public class EntityManagerService implements IEntityManagerService {
 
     protected boolean filterObjects(Object bean, Filter[] filters) {
         try {
+            if (null == filters) {
+                return true;
+            }
             Map<String, Object> properties = BeanUtils.describe(bean);
             for (Filter filter : filters) {
                 String value = (null != properties.get(filter.getAttribute()))

@@ -42,6 +42,7 @@
 		<property name="contentManager" ref="jacmsContentManager" />	
 	</bean>
 
+
 	<!-- === WIDGET PROCESSORS === -->
 		
 	<bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetProcessorFactory" />
@@ -49,6 +50,7 @@
 	<bean id="RowContentListViewerConfigProcessor" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerConfigProcessor" />
 
 
+	<!-- === BUILDERS === -->
 
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
     
@@ -68,8 +70,12 @@
 		<property name="widgetTypeManager" ref="WidgetTypeManager" />
 	</bean>
 
-	<bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
+    <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
 	
+    <bean id="EntityManagerDtoBuilder" class="org.entando.entando.aps.system.services.entity.model.EntityManagerDtoBuilder" />
+
+
+	<!-- === WIDGET SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
         <property name="dtoBuilder" ref="GroupDtoBuilder" />
@@ -80,7 +86,6 @@
     <bean id="PageSettingsService" class="org.entando.entando.aps.system.services.pagesettings.PageSettingsService" >
         <property name="dtoBuilder" ref="PageSettingsDtoBuilder" />
         <property name="configManager" ref="BaseConfigManager" />
-
     </bean>
 
 
@@ -89,6 +94,7 @@
         <property name="pageManager" ref="PageManager" />
         <property name="pageModelManager" ref="PageModelManager" />
         <property name="widgetValidatorFactory" ref="WidgetValidatorFactory" />
+        <property name="widgetProcessorFactory" ref="WidgetProcessorFactory" />
     </bean>
   
     <bean id="WidgetService" class="org.entando.entando.aps.system.services.widget.WidgetService" >
@@ -111,5 +117,9 @@
         <property name="dtoBuilder" ref="DataObjectModelBuilder" />
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>
-	
+
+    <bean id="EntityManagerService" class="org.entando.entando.aps.system.services.entity.EntityManagerService" >
+        <property name="dtoBuilder" ref="EntityManagerDtoBuilder" />
+    </bean>
+   
 </beans>

@@ -140,7 +140,7 @@ public class GroupControllerTest extends AbstractControllerTest {
                                                               .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
-        String response = result.andReturn().getResponse().getContentAsString();
+        //String response = result.andReturn().getResponse().getContentAsString();
         //System.out.println(response);
     }
 
@@ -165,8 +165,5 @@ public class GroupControllerTest extends AbstractControllerTest {
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP)));
     }
-
-
-
-
+    
 }

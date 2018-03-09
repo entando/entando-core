@@ -5,6 +5,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
+import org.entando.entando.web.entity.EntityManagerControllerTest;
 import org.entando.entando.web.group.GroupControllerTest;
 import org.entando.entando.web.guifragment.GuiFragmentControllerTest;
 import org.entando.entando.web.page.PageControllerTest;
@@ -22,6 +23,7 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(GuiFragmentControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(PageModelControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(EntityManagerControllerTest.class));
         return suite;
     }
 

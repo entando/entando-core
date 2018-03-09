@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.List;
 
@@ -27,7 +28,12 @@ public class EntityTypeFullDto extends EntityTypeDto {
     }
 
     public EntityTypeFullDto(IApsEntity entityType, List<AttributeRole> roles) {
-        super(entityType, roles);
+        super(entityType);
+        List<AttributeInterface> entityAttributes = entityType.getAttributeList();
+        for (AttributeInterface attribute : entityAttributes) {
+            EntityAttributeFullDto attributeDto = new EntityAttributeFullDto(attribute, roles);
+            this.getAttributes().add(attributeDto);
+        }
     }
 
 }

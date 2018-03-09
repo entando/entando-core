@@ -30,6 +30,10 @@ public class EntityTypeDto extends EntityTypeShortDto {
         super();
     }
 
+    public EntityTypeDto(IApsEntity entityType) {
+        super(entityType);
+    }
+
     public EntityTypeDto(IApsEntity entityType, List<AttributeRole> roles) {
         super(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();

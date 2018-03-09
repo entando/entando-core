@@ -7,8 +7,6 @@ package org.entando.entando.aps.system.services.page;
 
 import java.util.List;
 import org.entando.entando.aps.system.services.page.model.PageDto;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.page.model.PageRequest;
 
 /**

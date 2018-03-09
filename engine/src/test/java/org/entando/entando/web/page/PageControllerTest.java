@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.PageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.AbstractControllerTest;
@@ -55,6 +56,9 @@ public class PageControllerTest extends AbstractControllerTest {
 
     @Mock
     private PageService pageService;
+
+    @Mock
+    private PageAuthorizationService authorizationService;
 
     @InjectMocks
     private PageController controller;
@@ -175,7 +179,7 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "    ]";
         List<PageDto> mockResult = (List<PageDto>) this.createMetadataList(mockJsonResult);
         when(pageService.getPages(any(String.class))).thenReturn(mockResult);
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 get("/pages/{parentCode}", "mock_page")
                         .sessionAttr("user", user)
@@ -220,9 +224,10 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "        }";
         PageDto mockResult = (PageDto) this.createMetadata(mockJsonResult, PageDto.class);
         when(pageService.updatePage(any(String.class), any(PageRequest.class))).thenReturn(mockResult);
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 put("/page/{pageCode}", "wrong_page")
+                        .sessionAttr("user", user)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mockJsonResult)
                         .header("Authorization", "Bearer " + accessToken)
@@ -244,6 +249,7 @@ public class PageControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pages/{parentCode}", "mock_page")
+                        .sessionAttr("user", user)
                         .header("Authorization", "Bearer " + accessToken)
         );
 
@@ -258,10 +264,11 @@ public class PageControllerTest extends AbstractControllerTest {
 
         PageRequest page = new PageRequest();
         page.setCode("existing_page");
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(new Page());
         ResultActions result = mockMvc.perform(
                 post("/pages")
+                        .sessionAttr("user", user)
                         .content(convertObjectToJsonBytes(page))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken));
@@ -276,10 +283,11 @@ public class PageControllerTest extends AbstractControllerTest {
     public void shouldValidateDeleteOnlinePage() throws ApsSystemException, Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         when(this.controller.getPageValidator().getPageManager().getOnlinePage(any(String.class))).thenReturn(new Page());
         ResultActions result = mockMvc.perform(
                 delete("/pages/{pageCode}", "online_page")
+                        .sessionAttr("user", user)
                         .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
@@ -296,10 +304,11 @@ public class PageControllerTest extends AbstractControllerTest {
         Page page = new Page();
         page.setCode("page_with_children");
         page.addChildCode("child");
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(page);
         ResultActions result = mockMvc.perform(
                 delete("/pages/{pageCode}", "page_with_children")
+                        .sessionAttr("user", user)
                         .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
@@ -317,9 +326,10 @@ public class PageControllerTest extends AbstractControllerTest {
         request.setCode("page_to_move");
         request.setParentCode(null);
         request.setPosition(0);
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 put("/page/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
                         .content(convertObjectToJsonBytes(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken));
@@ -349,11 +359,12 @@ public class PageControllerTest extends AbstractControllerTest {
         newParent.setCode("new_parent_page");
         newParent.setParentCode("another_parent_page");
         newParent.setGroup("another_group");
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         when(this.controller.getPageValidator().getPageManager().getDraftPage("page_to_move")).thenReturn(pageToMove);
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
                 put("/page/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
                         .content(convertObjectToJsonBytes(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken));
@@ -383,11 +394,12 @@ public class PageControllerTest extends AbstractControllerTest {
         newParent.setCode("new_parent_page");
         newParent.setParentCode("another_parent_page");
         newParent.setGroup("valid_group");
-
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         when(this.controller.getPageValidator().getPageManager().getDraftPage("page_to_move")).thenReturn(pageToMove);
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
                 put("/page/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
                         .content(convertObjectToJsonBytes(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken));

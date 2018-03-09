@@ -99,6 +99,16 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         assertEquals(2, modPage.getTitles().size());
         assertEquals("Pagina 1-2 mod", modPage.getTitles().stream()
                 .filter(title -> title.getLang().equals("it")).findFirst().get().getTitle());
+
+        pageRequest.getTitles().stream()
+                .filter(title -> title.getLang().equals("it")).findFirst().get().setTitle("Pagina 1-2");
+        modPage = pageService.updatePage("pagina_12", pageRequest);
+
+        modPage = pageService.getPage("pagina_12", "draft");
+        assertNotNull(modPage);
+        assertEquals(2, modPage.getTitles().size());
+        assertEquals("Pagina 1-2", modPage.getTitles().stream()
+                .filter(title -> title.getLang().equals("it")).findFirst().get().getTitle());
     }
 
     @Test

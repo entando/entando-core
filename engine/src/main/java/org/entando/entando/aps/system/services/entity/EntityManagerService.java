@@ -26,10 +26,10 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
+import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDtoBuilder;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -44,7 +44,23 @@ public class EntityManagerService implements IEntityManagerService {
     @Autowired
     private List<IEntityManager> entityManagers;
 
-    private IDtoBuilder<IEntityManager, EntityManagerDto> dtoBuilder;
+    protected IDtoBuilder<IEntityManager, EntityManagerDto> getEntityManagerDtoBuilder() {
+        return new DtoBuilder<IEntityManager, EntityManagerDto>() {
+            @Override
+            protected EntityManagerDto toDto(IEntityManager src) {
+                return new EntityManagerDto(src);
+            }
+        };
+    }
+
+    protected IDtoBuilder<IApsEntity, EntityTypeShortDto> getEntityTypeShortDtoBuilder() {
+        return new DtoBuilder<IApsEntity, EntityTypeShortDto>() {
+            @Override
+            protected EntityTypeShortDto toDto(IApsEntity src) {
+                return new EntityTypeShortDto(src);
+            }
+        };
+    }
 
     protected List<IEntityManager> getEntityManagers() {
         return entityManagers;
@@ -52,14 +68,6 @@ public class EntityManagerService implements IEntityManagerService {
 
     public void setEntityManagers(List<IEntityManager> entityManagers) {
         this.entityManagers = entityManagers;
-    }
-
-    protected IDtoBuilder<IEntityManager, EntityManagerDto> getDtoBuilder() {
-        return dtoBuilder;
-    }
-
-    public void setDtoBuilder(IDtoBuilder<IEntityManager, EntityManagerDto> dtoBuilder) {
-        this.dtoBuilder = dtoBuilder;
     }
 
     @Override
@@ -81,21 +89,19 @@ public class EntityManagerService implements IEntityManagerService {
     @Override
     public EntityManagerDto getEntityManager(String entityManagerCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
-        return this.getDtoBuilder().convert(entityManager);
+        return this.getEntityManagerDtoBuilder().convert(entityManager);
     }
 
     @Override
     public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
-        //List<AttributeRole> roles = entityManager.getAttributeRoles();
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
         entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilter()));
         Collections.sort(entityTypes, new BeanComparator(requestList.getSort()));
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(entityTypes);
         }
-        IDtoBuilder<IApsEntity, EntityTypeShortDto> builder = new EntityTypeShortDtoBuilder();
-        List<EntityTypeShortDto> dtoList = builder.convert(entityTypes);
+        List<EntityTypeShortDto> dtoList = this.getEntityTypeShortDtoBuilder().convert(entityTypes);
         SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(entityTypes.size(), dtoList);
         PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
         pagedMetadata.setBody(dtoList);

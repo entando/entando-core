@@ -27,11 +27,11 @@ public class EntityTypeDto extends EntityTypeShortDto {
     private List<EntityAttributeDto> attributes = new ArrayList<>();
 
     public EntityTypeDto() {
+        super();
     }
 
     public EntityTypeDto(IApsEntity entityType, List<AttributeRole> roles) {
-        this.setCode(entityType.getTypeCode());
-        this.setName(entityType.getTypeDescription());
+        super(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
             EntityAttributeDto attributeDto = new EntityAttributeDto(attribute, roles);

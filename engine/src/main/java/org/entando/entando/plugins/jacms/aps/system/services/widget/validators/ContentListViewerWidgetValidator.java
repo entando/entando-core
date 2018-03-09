@@ -74,10 +74,8 @@ public class ContentListViewerWidgetValidator extends AbstractListViewerWidgetVa
         if (null == this.getContentManager().getSmallContentTypesMap().get(contentType)) {
             errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{contentType}, WIDGET_CODE + ".contentType.invalid");
             return;
-
         }
     }
-
 
     protected void validateFilters(WidgetConfigurationRequest widget, BeanPropertyBindingResult errors) {
         WidgetType type = this.getWidgetTypeManager().getWidgetType(widget.getCode());
@@ -94,6 +92,5 @@ public class ContentListViewerWidgetValidator extends AbstractListViewerWidgetVa
             errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{}, WIDGET_CODE + ".parameters.invalid");
         }
     }
-
 
 }

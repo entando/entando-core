@@ -28,7 +28,6 @@ import org.entando.entando.aps.system.services.widget.validators.WidgetProcessor
 import org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
-import org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerConfigProcessor;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.Title;
@@ -253,7 +252,7 @@ public class PageService implements IPageService {
                 throw new ValidationConflictException(validation);
             }
 
-            ApsProperties properties = (ApsProperties) this.getWidgetProcessorFactory().get(widgetReq.getCode()).buildConfig(widgetReq);
+            ApsProperties properties = (ApsProperties) this.getWidgetProcessorFactory().get(widgetReq.getCode()).buildConfiguration(widgetReq);
 
             WidgetType widgetType = this.getWidgetType(widgetReq.getCode());
             Widget widget = new Widget();
@@ -261,8 +260,8 @@ public class PageService implements IPageService {
             widget.setConfig(properties);
             this.getPageManager().joinWidget(pageCode, widget, frameId);
 
-            RowContentListViewerConfigProcessor p = (RowContentListViewerConfigProcessor) this.getWidgetProcessorFactory().get(widgetReq.getCode());
-            return new WidgetConfigurationDto(widget.getType().getCode(), p.extractContentsConfiguration(widget.getConfig()));
+            ApsProperties outProperties = this.getWidgetProcessorFactory().get(widgetReq.getCode()).extractConfiguration(widget.getConfig());
+            return new WidgetConfigurationDto(widget.getType().getCode(), outProperties);
         } catch (ApsSystemException e) {
             logger.error("Error in update widget configuration {}", pageCode, e);
             throw new RestServerError("error in update widget configuration", e);

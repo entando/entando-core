@@ -13,7 +13,7 @@ public class NoOpWidgetConfigurationProcessor implements WidgetConfigurationProc
     }
 
     @Override
-    public Object buildConfig(WidgetConfigurationRequest widget) {
+    public Object buildConfiguration(WidgetConfigurationRequest widget) {
         if (null == widget.getConfig()) {
             return null;
         }
@@ -23,7 +23,7 @@ public class NoOpWidgetConfigurationProcessor implements WidgetConfigurationProc
     }
 
     @Override
-    public ApsProperties extractContentsConfiguration(ApsProperties properties) {
+    public ApsProperties extractConfiguration(ApsProperties properties) {
         return properties;
     }
 

@@ -27,7 +27,7 @@ public class RowContentListViewerConfigProcessor implements WidgetConfigurationP
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object buildConfig(WidgetConfigurationRequest widget) {
+    public Object buildConfiguration(WidgetConfigurationRequest widget) {
         ApsProperties properties = new ApsProperties();
         List<RowContentListConfigurationEntry> entryList = (List<RowContentListConfigurationEntry>) widget.getProcessInfo().get(WidgetConfigurationValidator.PROCESS_INFO_CONFIG);
         if (null != entryList && !entryList.isEmpty()) {
@@ -53,7 +53,7 @@ public class RowContentListViewerConfigProcessor implements WidgetConfigurationP
      * @throws JsonParseException 
      */
     @Override
-    public ApsProperties extractContentsConfiguration(ApsProperties widgetProperties) {
+    public ApsProperties extractConfiguration(ApsProperties widgetProperties) {
         List<Properties> props = RowContentListHelper.fromParameterToContents(widgetProperties.getProperty(WIDGET_CONFIG_KEY_CONTENTS));
         Map<String, List<Properties>> map = new HashMap<>();
         map.put(WIDGET_CONFIG_KEY_CONTENTS, props);

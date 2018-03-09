@@ -88,15 +88,14 @@ public class PageController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/pages/{parentCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPages(@ModelAttribute("user") UserDetails user, @PathVariable String parentCode) {
-        logger.info("user details for user {} with group {}", user.getUsername(), user.getAuthorizations().get(0).getGroup().getName());
+    @RequestMapping(value = "/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPages(@ModelAttribute("user") UserDetails user, @RequestParam(value = "parentCode", required = false, defaultValue = "homepage") String parentCode) {
         List<PageDto> result = this.getAuthorizationService().filterList(user, this.getPageService().getPages(parentCode));
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/page/{pageCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
@@ -106,7 +105,7 @@ public class PageController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/page/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
 
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {

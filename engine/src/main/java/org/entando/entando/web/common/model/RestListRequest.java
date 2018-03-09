@@ -84,21 +84,17 @@ public class RestListRequest {
     @SuppressWarnings("rawtypes")
     public List<FieldSearchFilter> buildFieldSearchFilters() {
         List<FieldSearchFilter> fieldSearchFilters = new ArrayList<>();
-
         if (null != filter && filter.length > 0) {
             Arrays.stream(filter).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
         }
-
         FieldSearchFilter pageFilter = this.getPaginationFilter();
         if (null != pageFilter) {
             fieldSearchFilters.add(pageFilter);
         }
-
         FieldSearchFilter sortFilter = this.getSortFilter();
         if (null != sortFilter) {
             fieldSearchFilters.add(sortFilter);
         }
-
         return fieldSearchFilters;
     }
 
@@ -111,11 +107,23 @@ public class RestListRequest {
         return null;
     }
 
+    public List getSublist(List master) {
+        if (null == master) {
+            return null;
+        }
+        FieldSearchFilter pagFilter = this.getPaginationFilter();
+        int offset = pagFilter.getOffset();
+        int limit = pagFilter.getLimit();
+        int size = master.size();
+        int offsetToApply = (offset >= size) ? size : offset;
+        int limitToApply = ((offsetToApply + limit) > size) ? size : (offsetToApply + limit);
+        return master.subList(offsetToApply, limitToApply);
+    }
+
     @SuppressWarnings("rawtypes")
     private FieldSearchFilter getSortFilter() {
         if (StringUtils.isNotBlank(StringEscapeUtils.escapeSql(this.getSort()))) {
             FieldSearchFilter sort = new FieldSearchFilter(this.getSort());
-
             if (StringUtils.isNotBlank(this.getDirection())) {
                 if (!this.getDirection().equals(FieldSearchFilter.ASC_ORDER) || !this.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
                     this.setDirection(DIRECTION_VALUE_DEFAULT);

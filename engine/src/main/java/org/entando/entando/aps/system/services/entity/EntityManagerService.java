@@ -92,9 +92,10 @@ public class EntityManagerService implements IEntityManagerService {
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(codes);
         }
-        SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(managers.size(), codes);
+        List<String> sublist = requestList.getSublist(codes);
+        SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(codes.size(), sublist);
         PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
-        pagedMetadata.setBody(codes);
+        pagedMetadata.setBody(sublist);
         return pagedMetadata;
     }
 
@@ -120,10 +121,11 @@ public class EntityManagerService implements IEntityManagerService {
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(entityTypes);
         }
-        List<EntityTypeShortDto> dtoList = this.getEntityTypeShortDtoBuilder().convert(entityTypes);
-        SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(entityTypes.size(), dtoList);
+        List<IApsEntity> sublist = requestList.getSublist(entityTypes);
+        SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(entityTypes.size(), sublist);
         PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
-        pagedMetadata.setBody(dtoList);
+        List<EntityTypeShortDto> body = this.getEntityTypeShortDtoBuilder().convert(sublist);
+        pagedMetadata.setBody(body);
         return pagedMetadata;
     }
 

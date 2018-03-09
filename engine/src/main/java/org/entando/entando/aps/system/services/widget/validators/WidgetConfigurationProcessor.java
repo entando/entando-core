@@ -20,17 +20,17 @@ public interface WidgetConfigurationProcessor {
     boolean supports(String widgetCode);
 
     /**
-     * Process the widgetConfiguration and returns as the service layer demands
+     * Process the widgetConfiguration and returns it as the service layer expects
      * @param widget
      * @return
      */
-    public Object buildConfig(WidgetConfigurationRequest widget);
+    public Object buildConfiguration(WidgetConfigurationRequest widget);
 
     /**
-     * Process the configuration as provided by the service layer and and transforms it as the web layer demands
+     * Process the configuration as provided by the service layer and and transforms it as the web layer expects
      * @param widgetProperties
      * @return
      */
-    public ApsProperties extractContentsConfiguration(ApsProperties widgetProperties);
+    public ApsProperties extractConfiguration(ApsProperties widgetProperties);
 
 }

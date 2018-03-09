@@ -13,11 +13,12 @@
  */
 package org.entando.entando.aps.system.services.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
-import java.util.ArrayList;
-import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
@@ -76,7 +77,7 @@ public class EntityManagerService implements IEntityManagerService {
         }
         if (null == entityManager) {
             logger.warn("no entity manager found with code {}", entityManagerCode);
-            throw new RestRourceNotFoundException("entityManagerCode", entityManagerCode);
+            throw new RestRourceNotFoundException(null, "entityManagerCode", entityManagerCode);
         }
         return this.getDtoBuilder().convert(entityManager);
     }

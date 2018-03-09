@@ -15,7 +15,6 @@ import org.entando.entando.aps.system.services.page.PageServiceIntegrationTest;
 import org.entando.entando.aps.system.services.page.PageService_WidgetIntegrationTest;
 import org.entando.entando.aps.system.services.pagemodel.PageModelDtoTest;
 import org.entando.entando.aps.system.services.pagemodel.PageModelServiceTest;
-import org.entando.entando.aps.system.services.page.PageServiceIntegrationTest;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsServiceIntegrationTest;
 
 public class ServicesAllTests extends TestCase {

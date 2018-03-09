@@ -26,6 +26,7 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
 
     private static final String WIDGET_CONFIG_KEY_CONTENTS = "contents";
 
+
     private IContentManager contentManager;
 
     protected IContentManager getContentManager() {
@@ -88,6 +89,7 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
 
         }
     }
+
 
     /**
      * try to build the configuration from a complex structure or from a string

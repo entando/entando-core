@@ -35,7 +35,7 @@ public class RowContentListConfigurationEntry {
 
     public String toCfg() {
         String contentIdBlock = "contentId=" + this.getContentId();
-        String modelIdBlock = StringUtils.isBlank(modelId) ? "" : ";modelId=" + this.getContentId();
+        String modelIdBlock = StringUtils.isBlank(this.getModelId()) ? "" : ",modelId=" + this.getModelId();
         return "{" + contentIdBlock + modelIdBlock + "}";
     }
 

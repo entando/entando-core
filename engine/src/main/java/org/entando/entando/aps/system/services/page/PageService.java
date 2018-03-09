@@ -28,6 +28,7 @@ import org.entando.entando.aps.system.services.widget.validators.WidgetProcessor
 import org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerConfigProcessor;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.Title;
@@ -260,7 +261,8 @@ public class PageService implements IPageService {
             widget.setConfig(properties);
             this.getPageManager().joinWidget(pageCode, widget, frameId);
 
-            return new WidgetConfigurationDto(widget);
+            RowContentListViewerConfigProcessor p = (RowContentListViewerConfigProcessor) this.getWidgetProcessorFactory().get(widgetReq.getCode());
+            return new WidgetConfigurationDto(widget.getType().getCode(), p.extractContentsConfiguration(widget.getConfig()));
         } catch (ApsSystemException e) {
             logger.error("Error in update widget configuration {}", pageCode, e);
             throw new RestServerError("error in update widget configuration", e);

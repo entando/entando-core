@@ -15,8 +15,10 @@ package org.entando.entando.aps.system.services.entity;
 
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,9 +37,11 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.entity.validator.EntityTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 public class EntityManagerService implements IEntityManagerService {
 
@@ -122,6 +126,44 @@ public class EntityManagerService implements IEntityManagerService {
             throw new RestRourceNotFoundException("entityTypeCode", entityTypeCode);
         }
         return this.getEntityTypeFullDtoBuilder(entityManager).convert(entityType);
+    }
+
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeFullDto request) {
+        /*
+        Group group = this.getGroupManager().getGroup(groupCode);
+        if (null == group) {
+            throw new RestRourceNotFoundException("group", groupCode);
+        }
+        group.setDescription(descr);
+        try {
+            this.getGroupManager().updateGroup(group);
+            return this.getDtoBuilder().convert(group);
+        } catch (ApsSystemException e) {
+            logger.error("Error updating group {}", groupCode, e);
+            throw new RestServerError("error in update group", e);
+        }
+         */
+        return null;
+    }
+
+    @Override
+    public void deleteEntityType(String entityManagerCode, String entityTypeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        try {
+            IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+            if (null == entityType) {
+                return;
+            }
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entityType, "entityType");
+            List<String> ids = entityManager.searchId(entityTypeCode, null);
+            if (null != ids && ids.size() > 0) {
+                bindingResult.reject(EntityTypeValidator.ERRCODE_ENTITY_TYPE_REFERENCES, new Object[]{entityTypeCode}, "entityType.cannot.delete.references");
+            }
+            ((IEntityTypesConfigurer) entityManager).removeEntityPrototype(entityTypeCode);
+        } catch (ApsSystemException e) {
+            logger.error("Error in delete entityType {}", entityTypeCode, e);
+            throw new RestServerError("error in delete entityType", e);
+        }
     }
 
     protected IEntityManager extractEntityManager(String entityManagerCode) {

@@ -32,4 +32,8 @@ public interface IEntityManagerService {
 
     public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode);
 
+    public void deleteEntityType(String entityManagerCode, String entityTypeCode);
+
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeFullDto request);
+
 }

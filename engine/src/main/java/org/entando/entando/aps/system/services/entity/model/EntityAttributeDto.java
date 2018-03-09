@@ -28,7 +28,7 @@ public class EntityAttributeDto {
     private String name;
     private List<AttributeRoleDto> roles = new ArrayList<>();
     private boolean mandatory;
-    private boolean canBeUsedAsFilterInList;
+    private boolean listFilter;
 
     public EntityAttributeDto() {
     }
@@ -48,7 +48,7 @@ public class EntityAttributeDto {
             }
         }
         this.mandatory = attribute.isRequired();
-        this.canBeUsedAsFilterInList = attribute.isSearchable();
+        this.listFilter = attribute.isSearchable();
         if (attribute.isSimple()) {
             return;
         }
@@ -94,12 +94,12 @@ public class EntityAttributeDto {
         this.mandatory = mandatory;
     }
 
-    public boolean isCanBeUsedAsFilterInList() {
-        return canBeUsedAsFilterInList;
+    public boolean isListFilter() {
+        return listFilter;
     }
 
-    public void setCanBeUsedAsFilterInList(boolean canBeUsedAsFilterInList) {
-        this.canBeUsedAsFilterInList = canBeUsedAsFilterInList;
+    public void setListFilter(boolean listFilter) {
+        this.listFilter = listFilter;
     }
 
 }

@@ -39,6 +39,7 @@
 	<bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
 			class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentListViewerWidgetValidator">
 		<property name="widgetTypeManager" ref="WidgetTypeManager" />
+		<property name="contentManager" ref="jacmsContentManager" />	
 	</bean>
 
 	<!-- === WIDGET PROCESSORS === -->

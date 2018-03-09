@@ -3,6 +3,7 @@ package org.entando.entando.plugins.jacms.aps.system.services.widget.validators;
 import java.util.Map;
 
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
@@ -24,8 +25,8 @@ public class ContentListViewerWidgetValidator extends AbstractListViewerWidgetVa
     public static final String WIDGET_CONFIG_KEY_CONTENTTYPE = "contentType";
 
 
-
     private IWidgetTypeManager widgetTypeManager;
+    private IContentManager contentManager;
 
     protected IWidgetTypeManager getWidgetTypeManager() {
         return widgetTypeManager;
@@ -33,6 +34,14 @@ public class ContentListViewerWidgetValidator extends AbstractListViewerWidgetVa
 
     public void setWidgetTypeManager(IWidgetTypeManager widgetTypeManager) {
         this.widgetTypeManager = widgetTypeManager;
+    }
+
+    protected IContentManager getContentManager() {
+        return contentManager;
+    }
+
+    public void setContentManager(IContentManager contentManager) {
+        this.contentManager = contentManager;
     }
 
     @Override
@@ -47,6 +56,7 @@ public class ContentListViewerWidgetValidator extends AbstractListViewerWidgetVa
             logger.debug("validating widget {} for page {}", widget.getCode(), page.getCode());
             WidgetValidatorCmsHelper.validateTitle(widget, getLangManager(), bindingResult);
             WidgetValidatorCmsHelper.validateLink(widget, getLangManager(), getPageManager(), bindingResult);
+            this.validateContentType(widget, bindingResult);
             this.validateFilters(widget, bindingResult);
         } catch (Throwable e) {
             logger.error("error in validate wiget {} in page {}", widget.getCode(), page.getCode());
@@ -54,6 +64,20 @@ public class ContentListViewerWidgetValidator extends AbstractListViewerWidgetVa
         }
         return bindingResult;
     }
+
+    protected void validateContentType(WidgetConfigurationRequest widget, BeanPropertyBindingResult errors) {
+        String contentType = WidgetValidatorCmsHelper.extractConfigParam(widget, WIDGET_CONFIG_KEY_CONTENTTYPE);
+        if (StringUtils.isBlank(contentType)) {
+            errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{}, WIDGET_CODE + ".contentType.required");
+            return;
+        }
+        if (null == this.getContentManager().getSmallContentTypesMap().get(contentType)) {
+            errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{contentType}, WIDGET_CODE + ".contentType.invalid");
+            return;
+
+        }
+    }
+
 
     protected void validateFilters(WidgetConfigurationRequest widget, BeanPropertyBindingResult errors) {
         WidgetType type = this.getWidgetTypeManager().getWidgetType(widget.getCode());
@@ -70,5 +94,6 @@ public class ContentListViewerWidgetValidator extends AbstractListViewerWidgetVa
             errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{}, WIDGET_CODE + ".parameters.invalid");
         }
     }
+
 
 }

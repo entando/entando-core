@@ -20,6 +20,7 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 
 /**
  * @author E.Santoboni
@@ -36,7 +37,7 @@ public interface IEntityManagerService {
 
     public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest);
 
-    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeFullDto request);
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request);
 
     public void deleteEntityType(String entityManagerCode, String entityTypeCode);
 

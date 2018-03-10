@@ -14,13 +14,12 @@
 package org.entando.entando.web.entity.model;
 
 import java.util.List;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 
 /**
  * @author E.Santoboni
  */
 public interface IEntityTypesBodyRequest {
-    
-    public List<EntityTypeFullDto> getEntityTypes();
-    
+
+    public List<EntityTypeDtoRequest> getEntityTypes();
+
 }

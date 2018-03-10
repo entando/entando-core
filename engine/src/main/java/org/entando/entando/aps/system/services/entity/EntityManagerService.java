@@ -18,7 +18,12 @@ import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.ApsEntity;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
+import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -26,12 +31,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.entity.model.AttributeRoleDto;
+import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityAttributeOgnlValidationDto;
+import org.entando.entando.aps.system.services.entity.model.EntityAttributeValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDtoBuilder;
@@ -40,6 +51,7 @@ import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.entando.entando.web.entity.validator.EntityTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,14 +165,14 @@ public class EntityManagerService implements IEntityManagerService {
         }
         return this.getEntityTypeFullDtoBuilder(entityManager).convert(entityType);
     }
-    
+
     @Override
     public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest) {
         List<EntityTypeFullDto> response = new ArrayList<>();
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             IDtoBuilder<IApsEntity, EntityTypeFullDto> builder = this.getEntityTypeFullDtoBuilder(entityManager);
-            for (EntityTypeFullDto dto : bodyRequest.getDataTypes()) {
+            for (EntityTypeDtoRequest dto : bodyRequest.getDataTypes()) {
                 IApsEntity entityPrototype = this.createEntityType(entityManager, dto);
                 ((IEntityTypesConfigurer) entityManager).addEntityPrototype(entityPrototype);
                 response.add(builder.convert(entityPrototype));
@@ -173,7 +185,7 @@ public class EntityManagerService implements IEntityManagerService {
     }
 
     @Override
-    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeFullDto request) {
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request) {
         /*
         Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
@@ -190,13 +202,81 @@ public class EntityManagerService implements IEntityManagerService {
          */
         return null;
     }
-    
-    private IApsEntity createEntityType(IEntityManager entityManager, EntityTypeFullDto dto) throws Throwable {
+
+    private IApsEntity createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto) throws Throwable {
         Class entityClass = entityManager.getEntityClass();
         ApsEntity entityType = (ApsEntity) entityClass.newInstance();
         entityType.setTypeCode(dto.getCode());
         entityType.setTypeDescription(dto.getName());
+        Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
+        List<EntityAttributeFullDto> attributeDtos = dto.getAttributes();
+        if (null != attributeDtos) {
+            for (EntityAttributeFullDto attributeDto : attributeDtos) {
+                AttributeInterface attribute = this.buildAttribute(attributeDto, attributeMap);
+                if (null != attribute) {
+                    entityType.addAttribute(attribute);
+                } else {
+                    logger.warn("Create Entity Type - Attribute type {} undefined in manager {}", attributeDto.getType(), entityManager.getName());
+                }
+            }
+        }
         return entityType;
+    }
+
+    private AttributeInterface buildAttribute(EntityAttributeFullDto attributeDto, Map<String, AttributeInterface> attributeMap) {
+        String type = attributeDto.getType();
+        AttributeInterface prototype = attributeMap.get(type);
+        if (null == prototype) {
+            // to check into validator
+            return null;
+        }
+        AttributeInterface attribute = (AttributeInterface) prototype.getAttributePrototype();
+        attribute.setName(attributeDto.getCode());
+        attribute.setDescription(attributeDto.getName());
+        attribute.setIndexingType(attributeDto.isIndexable() ? IndexableAttributeInterface.INDEXING_TYPE_TEXT : null);
+        List<AttributeRoleDto> dtoRoles = attributeDto.getRoles();
+        if (null != dtoRoles && !dtoRoles.isEmpty()) {
+            List<String> codes = dtoRoles.stream().map(AttributeRoleDto::getCode).collect(Collectors.toList());
+            attribute.setRoles(codes.toArray(new String[codes.size()]));
+        }
+        attribute.setRequired(attributeDto.isMandatory());
+        attribute.setSearchable(attributeDto.isListFilter());
+        if (attribute instanceof EnumeratorAttribute) {
+            // to check into validator
+            ((EnumeratorAttribute) attribute).setStaticItems(attributeDto.getEnumeratorStaticItems());
+            ((EnumeratorAttribute) attribute).setExtractorBeanName(attributeDto.getEnumeratorExtractorBean());
+            ((EnumeratorAttribute) attribute).setCustomSeparator(attributeDto.getEnumeratorStaticItemsSeparator());
+        }
+        IAttributeValidationRules validationRules = attribute.getValidationRules();
+        validationRules.setRequired(attributeDto.isMandatory());
+        EntityAttributeValidationDto validationDto = attributeDto.getValidationRules();
+        if (null != validationDto) {
+            EntityAttributeOgnlValidationDto ognlValidationDto = validationDto.getOgnlValidation();
+            if (null != ognlValidationDto && !StringUtils.isEmpty(ognlValidationDto.getOgnlExpression())) {
+                // to check into validator
+                OgnlValidationRule ognlValidationRule = new OgnlValidationRule();
+                ognlValidationRule.setErrorMessage(ognlValidationDto.getErrorMessage());
+                ognlValidationRule.setErrorMessageKey(ognlValidationDto.getKeyForErrorMessage());
+                ognlValidationRule.setEvalExpressionOnValuedAttribute(ognlValidationDto.isApplyOnlyToFilledAttr());
+                ognlValidationRule.setExpression(ognlValidationDto.getOgnlExpression());
+                ognlValidationRule.setHelpMessage(ognlValidationDto.getHelpMessage());
+                ognlValidationRule.setHelpMessageKey(ognlValidationDto.getKeyForHelpMessage());
+            }
+        }
+        /*
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+        attribute.set(attributeDto.get);
+         */
+        return null;
     }
 
     @Override

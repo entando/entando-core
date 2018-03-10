@@ -17,35 +17,34 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.entando.entando.web.entity.model.*;
 import java.util.List;
 import javax.validation.constraints.NotNull;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 
 /**
  * @author E.Santoboni
  */
 public class DataTypesBodyRequest implements IEntityTypesBodyRequest {
-    
+
     @NotNull(message = "dataTypes.list.notBlank")
-    private List<EntityTypeFullDto> dataTypes;
-    
+    private List<EntityTypeDtoRequest> dataTypes;
+
     public DataTypesBodyRequest() {
-	}
-
-	public DataTypesBodyRequest(List<EntityTypeFullDto> dataTypes) {
-		this.dataTypes = dataTypes;
-	}
-    
-    @Override
-    @JsonIgnore
-    public List<EntityTypeFullDto> getEntityTypes() {
-        return dataTypes;
     }
 
-    public List<EntityTypeFullDto> getDataTypes() {
-        return dataTypes;
-    }
-
-    public void setDataTypes(List<EntityTypeFullDto> dataTypes) {
+    public DataTypesBodyRequest(List<EntityTypeDtoRequest> dataTypes) {
         this.dataTypes = dataTypes;
     }
-    
+
+    @Override
+    @JsonIgnore
+    public List<EntityTypeDtoRequest> getEntityTypes() {
+        return dataTypes;
+    }
+
+    public List<EntityTypeDtoRequest> getDataTypes() {
+        return dataTypes;
+    }
+
+    public void setDataTypes(List<EntityTypeDtoRequest> dataTypes) {
+        this.dataTypes = dataTypes;
+    }
+
 }

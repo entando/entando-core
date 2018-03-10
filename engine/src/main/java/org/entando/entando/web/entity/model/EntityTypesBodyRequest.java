@@ -15,31 +15,30 @@ package org.entando.entando.web.entity.model;
 
 import java.util.List;
 import javax.validation.constraints.NotNull;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 
 /**
  * @author E.Santoboni
  */
 public class EntityTypesBodyRequest implements IEntityTypesBodyRequest {
-    
+
     @NotNull(message = "entityTypes.list.notBlank")
-    private List<EntityTypeFullDto> entityTypes;
-    
+    private List<EntityTypeDtoRequest> entityTypes;
+
     public EntityTypesBodyRequest() {
 
-	}
+    }
 
-	public EntityTypesBodyRequest(List<EntityTypeFullDto> entityTypes) {
-		this.entityTypes = entityTypes;
-	}
-    
+    public EntityTypesBodyRequest(List<EntityTypeDtoRequest> entityTypes) {
+        this.entityTypes = entityTypes;
+    }
+
     @Override
-    public List<EntityTypeFullDto> getEntityTypes() {
+    public List<EntityTypeDtoRequest> getEntityTypes() {
         return entityTypes;
     }
 
-    public void setEntityTypes(List<EntityTypeFullDto> entityTypes) {
+    public void setEntityTypes(List<EntityTypeDtoRequest> entityTypes) {
         this.entityTypes = entityTypes;
     }
-    
+
 }

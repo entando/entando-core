@@ -19,13 +19,23 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 /**
  * @author E.Santoboni
  */
-public class DataTypesBodyResponse extends DataTypesBodyRequest {
+public class DataTypesBodyResponse {
+
+    private List<EntityTypeFullDto> dataTypes;
 
     public DataTypesBodyResponse() {
     }
 
     public DataTypesBodyResponse(List<EntityTypeFullDto> dataTypes) {
-        super(dataTypes);
+        this.setDataTypes(dataTypes);
     }
-    
+
+    public List<EntityTypeFullDto> getDataTypes() {
+        return dataTypes;
+    }
+
+    public void setDataTypes(List<EntityTypeFullDto> dataTypes) {
+        this.dataTypes = dataTypes;
+    }
+
 }

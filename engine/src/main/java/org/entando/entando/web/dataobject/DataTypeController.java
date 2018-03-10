@@ -32,6 +32,7 @@ import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyResponse;
+import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,28 +92,28 @@ public class DataTypeController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> addDataTypes(@Valid @RequestBody DataTypesBodyRequest bodyRequest, 
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addDataTypes(@Valid @RequestBody DataTypesBodyRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
-		//field validations
-		if (bindingResult.hasErrors()) {
-			throw new ValidationGenericException(bindingResult);
-		}
-		//business validations
-		this.getDataTypeValidator().validate(bodyRequest, bindingResult);
-		if (bindingResult.hasErrors()) {
-			throw new ValidationConflictException(bindingResult);
-		}
-		List<EntityTypeFullDto> result = this.getEntityManagerService().addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest);
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        //business validations
+        this.getDataTypeValidator().validate(bodyRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationConflictException(bindingResult);
+        }
+        List<EntityTypeFullDto> result = this.getEntityManagerService().addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest);
         DataTypesBodyResponse response = new DataTypesBodyResponse(result);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(response));
-		return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
-	}
-    
+        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
+    }
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateDataType(@PathVariable String dataTypeCode, 
-            @Valid @RequestBody EntityTypeFullDto request, BindingResult bindingResult) throws JsonProcessingException {
+    public ResponseEntity<?> updateDataType(@PathVariable String dataTypeCode,
+            @Valid @RequestBody EntityTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

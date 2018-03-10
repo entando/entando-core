@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.entity;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
+import com.agiletec.aps.system.common.entity.model.ApsEntity;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -38,6 +39,7 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.validator.EntityTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,6 +143,7 @@ public class EntityManagerService implements IEntityManagerService {
         return ((null != name) ? name : mapping.get(RestListRequest.SORT_VALUE_DEFAULT));
     }
 
+    @Override
     public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
@@ -150,7 +153,26 @@ public class EntityManagerService implements IEntityManagerService {
         }
         return this.getEntityTypeFullDtoBuilder(entityManager).convert(entityType);
     }
+    
+    @Override
+    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest) {
+        List<EntityTypeFullDto> response = new ArrayList<>();
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        try {
+            IDtoBuilder<IApsEntity, EntityTypeFullDto> builder = this.getEntityTypeFullDtoBuilder(entityManager);
+            for (EntityTypeFullDto dto : bodyRequest.getDataTypes()) {
+                IApsEntity entityPrototype = this.createEntityType(entityManager, dto);
+                ((IEntityTypesConfigurer) entityManager).addEntityPrototype(entityPrototype);
+                response.add(builder.convert(entityPrototype));
+            }
+        } catch (Throwable e) {
+            logger.error("Error adding entity types", e);
+            throw new RestServerError("error add entity types", e);
+        }
+        return response;
+    }
 
+    @Override
     public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeFullDto request) {
         /*
         Group group = this.getGroupManager().getGroup(groupCode);
@@ -167,6 +189,14 @@ public class EntityManagerService implements IEntityManagerService {
         }
          */
         return null;
+    }
+    
+    private IApsEntity createEntityType(IEntityManager entityManager, EntityTypeFullDto dto) throws Throwable {
+        Class entityClass = entityManager.getEntityClass();
+        ApsEntity entityType = (ApsEntity) entityClass.newInstance();
+        entityType.setTypeCode(dto.getCode());
+        entityType.setTypeDescription(dto.getName());
+        return entityType;
     }
 
     @Override

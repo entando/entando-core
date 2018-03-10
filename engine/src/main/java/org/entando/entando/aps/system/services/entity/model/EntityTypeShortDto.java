@@ -21,9 +21,9 @@ import javax.validation.constraints.NotNull;
  */
 public class EntityTypeShortDto {
 
-    @NotNull(message = "entity.code.notBlank")
+    @NotNull(message = "entityType.code.notBlank")
     private String code;
-    @NotNull(message = "entity.name.notBlank")
+    @NotNull(message = "entityType.name.notBlank")
     private String name;
 
     public EntityTypeShortDto() {

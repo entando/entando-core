@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.dataobject;
+package org.entando.entando.web.dataobject.validator;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;

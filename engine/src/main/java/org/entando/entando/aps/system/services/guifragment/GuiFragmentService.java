@@ -171,8 +171,12 @@ public class GuiFragmentService implements IGuiFragmentService {
 		if (null == fragment) {
 			return bindingResult;
 		}
-		if (!bindingResult.hasErrors() && (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty())) {
+		if (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty()) {
 			bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.references");
+		}
+        
+		if (fragment.isLocked()) {
+			bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_LOCKED, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.locked");
 		}
 		return bindingResult;
 	}

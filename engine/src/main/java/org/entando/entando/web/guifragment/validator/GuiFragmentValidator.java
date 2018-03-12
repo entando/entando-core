@@ -31,10 +31,12 @@ public class GuiFragmentValidator implements Validator {
 
 	public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "1";
     public static final String ERRCODE_FRAGMENT_INVALID_CODE = "2";
-    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "2";
+    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "3";
     
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-    public static final String ERRCODE_FRAGMENT_REFERENCES = "3";
+    public static final String ERRCODE_URINAME_MISMATCH = "11";
+    
+    public static final String ERRCODE_FRAGMENT_REFERENCES = "21";
+    public static final String ERRCODE_FRAGMENT_LOCKED = "22";
     
 	@Autowired
 	private IGuiFragmentManager guiFragmentManager;

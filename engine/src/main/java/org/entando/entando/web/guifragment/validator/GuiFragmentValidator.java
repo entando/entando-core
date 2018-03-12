@@ -28,15 +28,17 @@ import org.springframework.validation.Validator;
 public class GuiFragmentValidator implements Validator {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_FRAGMENT_INVALID_CODE = "2";
-    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "3";
     
-    public static final String ERRCODE_URINAME_MISMATCH = "11";
+    public static final String ERRCODE_FRAGMENT_DOES_NOT_EXISTS = "1";
     
-    public static final String ERRCODE_FRAGMENT_REFERENCES = "21";
-    public static final String ERRCODE_FRAGMENT_LOCKED = "22";
+	public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "11";
+    public static final String ERRCODE_FRAGMENT_INVALID_CODE = "12";
+    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "13";
+    
+    public static final String ERRCODE_URINAME_MISMATCH = "21";
+    
+    public static final String ERRCODE_FRAGMENT_REFERENCES = "31";
+    public static final String ERRCODE_FRAGMENT_LOCKED = "32";
     
 	@Autowired
 	private IGuiFragmentManager guiFragmentManager;

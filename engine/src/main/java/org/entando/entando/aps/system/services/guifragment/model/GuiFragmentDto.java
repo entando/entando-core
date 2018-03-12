@@ -24,112 +24,112 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
  */
 public class GuiFragmentDto extends GuiFragmentDtoSmall {
 
-	private List<FragmentRef> fragments = new ArrayList<>();
-	private List<PageModelRef> pageModels = new ArrayList<>();
-	private String defaultGuiCode;
-	private String guiCode;
+    private List<FragmentRef> fragments = new ArrayList<>();
+    private List<PageModelRef> pageModels = new ArrayList<>();
+    private String defaultGuiCode;
+    private String guiCode;
 
-	public GuiFragmentDto() {
-	}
+    public GuiFragmentDto() {
+    }
 
-	public GuiFragmentDto(GuiFragment guiFragment, WidgetType type) {
-		super(guiFragment, type);
-		this.setDefaultGuiCode(guiFragment.getDefaultGui());
-		this.setGuiCode(guiFragment.getGui());
-	}
+    public GuiFragmentDto(GuiFragment guiFragment, WidgetType type) {
+        super(guiFragment, type);
+        this.setDefaultGuiCode(guiFragment.getDefaultGui());
+        this.setGuiCode(guiFragment.getGui());
+    }
 
-	public void addFragmentRef(GuiFragment fragment) {
-		if (null == fragment) {
-			return;
-		}
-		FragmentRef ref = new FragmentRef(fragment.getCode());
-		this.getFragments().add(ref);
-	}
+    public void addFragmentRef(GuiFragment fragment) {
+        if (null == fragment) {
+            return;
+        }
+        FragmentRef ref = new FragmentRef(fragment.getCode());
+        this.getFragments().add(ref);
+    }
 
-	public List<FragmentRef> getFragments() {
-		return fragments;
-	}
+    public List<FragmentRef> getFragments() {
+        return fragments;
+    }
 
-	public void setFragments(List<FragmentRef> fragments) {
-		this.fragments = fragments;
-	}
+    public void setFragments(List<FragmentRef> fragments) {
+        this.fragments = fragments;
+    }
 
-	public void addPageModelRef(PageModel pageModel) {
-		if (null == pageModel) {
-			return;
-		}
-		PageModelRef ref = new PageModelRef(pageModel.getCode(), pageModel.getDescription());
-		this.getPageModels().add(ref);
-	}
+    public void addPageModelRef(PageModel pageModel) {
+        if (null == pageModel) {
+            return;
+        }
+        PageModelRef ref = new PageModelRef(pageModel.getCode(), pageModel.getDescription());
+        this.getPageModels().add(ref);
+    }
 
-	public List<PageModelRef> getPageModels() {
-		return pageModels;
-	}
+    public List<PageModelRef> getPageModels() {
+        return pageModels;
+    }
 
-	public void setPageModels(List<PageModelRef> pageModels) {
-		this.pageModels = pageModels;
-	}
+    public void setPageModels(List<PageModelRef> pageModels) {
+        this.pageModels = pageModels;
+    }
 
-	public String getDefaultGuiCode() {
-		return defaultGuiCode;
-	}
+    public String getDefaultGuiCode() {
+        return defaultGuiCode;
+    }
 
-	public void setDefaultGuiCode(String defaultGuiCode) {
-		this.defaultGuiCode = defaultGuiCode;
-	}
+    public void setDefaultGuiCode(String defaultGuiCode) {
+        this.defaultGuiCode = defaultGuiCode;
+    }
 
-	public String getGuiCode() {
-		return guiCode;
-	}
+    public String getGuiCode() {
+        return guiCode;
+    }
 
-	public void setGuiCode(String guiCode) {
-		this.guiCode = guiCode;
-	}
+    public void setGuiCode(String guiCode) {
+        this.guiCode = guiCode;
+    }
 
-	protected class FragmentRef {
+    public class FragmentRef {
 
-		private String code;
+        private String code;
 
-		public FragmentRef(String code) {
-			this.setCode(code);
-		}
+        public FragmentRef(String code) {
+            this.setCode(code);
+        }
 
-		public String getCode() {
-			return code;
-		}
+        public String getCode() {
+            return code;
+        }
 
-		public void setCode(String code) {
-			this.code = code;
-		}
+        public void setCode(String code) {
+            this.code = code;
+        }
 
-	}
+    }
 
-	protected class PageModelRef {
+    public class PageModelRef {
 
-		private String code;
-		private String name;
+        private String code;
+        private String name;
 
-		public PageModelRef(String code, String name) {
-			this.setCode(code);
-			this.setName(name);
-		}
+        public PageModelRef(String code, String name) {
+            this.setCode(code);
+            this.setName(name);
+        }
 
-		public String getCode() {
-			return code;
-		}
+        public String getCode() {
+            return code;
+        }
 
-		public void setCode(String code) {
-			this.code = code;
-		}
+        public void setCode(String code) {
+            this.code = code;
+        }
 
-		public String getName() {
-			return name;
-		}
+        public String getName() {
+            return name;
+        }
 
-		public void setName(String name) {
-			this.name = name;
-		}
+        public void setName(String name) {
+            this.name = name;
+        }
 
-	}
+    }
 
 }

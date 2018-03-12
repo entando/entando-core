@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.guifragment;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -162,7 +163,10 @@ public class GuiFragmentService implements IGuiFragmentService {
             return bindingResult;
         }
         if (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty()) {
-            bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.references");
+            List<String> fragments = dto.getFragments().stream().map(GuiFragmentDto.FragmentRef::getCode).collect(Collectors.toList());
+            List<String> pagemodels = dto.getPageModels().stream().map(GuiFragmentDto.PageModelRef::getCode).collect(Collectors.toList());
+            bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES,
+                    new Object[]{fragment.getCode(), fragments, pagemodels}, "guifragment.cannot.delete.references");
         }
         if (fragment.isLocked()) {
             bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_LOCKED, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.locked");

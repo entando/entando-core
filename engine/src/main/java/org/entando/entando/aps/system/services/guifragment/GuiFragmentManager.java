@@ -13,6 +13,11 @@
  */
 package org.entando.entando.aps.system.services.guifragment;
 
+import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,23 +26,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
 import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.entando.entando.aps.system.services.guifragment.event.GuiFragmentChangedEvent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
-import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
  * @author E.Santoboni
@@ -79,8 +77,8 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
             }
             pagedResult = new SearcherDaoPaginatedResult<>(count, fragments);
         } catch (Throwable t) {
-            logger.error("Error searching fragments", t);
-            throw new ApsSystemException("Error searching fragments", t);
+            logger.error("Error searching GuiFragments", t);
+            throw new ApsSystemException("Error searching GuiFragments", t);
         }
         return pagedResult;
     }
@@ -165,7 +163,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)")
     @CacheableInfo(groups = "'GuiFragment_uniqueByWidgetTypeGroup'")//TODO improve group handling
     public GuiFragment getUniqueGuiFragmentByWidgetType(String widgetTypeCode) throws ApsSystemException {
         GuiFragment guiFragment = null;
@@ -185,7 +183,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)")
     @CacheableInfo(groups = "'GuiFragment_codesByWidgetTypeGroup'")//TODO improve group handling
     public List<String> getGuiFragmentCodesByWidgetType(String widgetTypeCode) throws ApsSystemException {
         List<String> codes = null;
@@ -206,7 +204,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
         List<GuiFragment> utilizers = new ArrayList<GuiFragment>();
         try {
             String strToSearch = "code=\"" + guiFragmentCode + "\"";
-            Set<String> results = new HashSet<String>();
+            Set<String> results = new HashSet<>();
             results.addAll(this.searchFragments(strToSearch, "gui"));
             results.addAll(this.searchFragments(strToSearch, "defaultgui"));
             if (!results.isEmpty()) {
@@ -245,14 +243,14 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
         FieldSearchFilter filterCode = new FieldSearchFilter(column, strToSearch, true);
         FieldSearchFilter[] filters2 = new FieldSearchFilter[]{filterCode};
         List<String> result2 = this.searchGuiFragments(filters2);
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         result.addAll(result1);
         result.addAll(result2);
         return result;
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
     public List<String> loadGuiFragmentPluginCodes() throws ApsSystemException {
         List<String> codes = null;
         try {

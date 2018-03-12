@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.init.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,33 +21,33 @@ import java.util.Map;
 /**
  * @author E.Santoboni
  */
-public abstract class AbstractReport {
-	
-	public SystemInstallationReport.Status getStatus() {
-		if (null == this.getDatabaseStatus() || this.getDatabaseStatus().isEmpty()) {
-			return SystemInstallationReport.Status.INIT;
-		}
-		if (this.getDatabaseStatus().containsValue(SystemInstallationReport.Status.INCOMPLETE)) {
-			return SystemInstallationReport.Status.INCOMPLETE;
-		}
-		if (this.getDatabaseStatus().containsValue(SystemInstallationReport.Status.UNINSTALLED)) {
-			return SystemInstallationReport.Status.UNINSTALLED;
-		}
-		return SystemInstallationReport.Status.OK;
-	}
-	
-	public void upgradeDatabaseStatus(SystemInstallationReport.Status status) {
-		Iterator<String> iter = this.getDatabaseStatus().keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			this.getDatabaseStatus().put(key, status);
-		}
-	}
-	
-	public Map<String, SystemInstallationReport.Status> getDatabaseStatus() {
-		return _databaseStatus;
-	}
-	
-	private Map<String, SystemInstallationReport.Status> _databaseStatus = new HashMap<String, SystemInstallationReport.Status>();
-	
+public abstract class AbstractReport implements Serializable {
+
+    private Map<String, SystemInstallationReport.Status> databaseStatus = new HashMap<>();
+
+    public SystemInstallationReport.Status getStatus() {
+        if (null == this.getDatabaseStatus() || this.getDatabaseStatus().isEmpty()) {
+            return SystemInstallationReport.Status.INIT;
+        }
+        if (this.getDatabaseStatus().containsValue(SystemInstallationReport.Status.INCOMPLETE)) {
+            return SystemInstallationReport.Status.INCOMPLETE;
+        }
+        if (this.getDatabaseStatus().containsValue(SystemInstallationReport.Status.UNINSTALLED)) {
+            return SystemInstallationReport.Status.UNINSTALLED;
+        }
+        return SystemInstallationReport.Status.OK;
+    }
+
+    public void upgradeDatabaseStatus(SystemInstallationReport.Status status) {
+        Iterator<String> iter = this.getDatabaseStatus().keySet().iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            this.getDatabaseStatus().put(key, status);
+        }
+    }
+
+    public Map<String, SystemInstallationReport.Status> getDatabaseStatus() {
+        return databaseStatus;
+    }
+
 }

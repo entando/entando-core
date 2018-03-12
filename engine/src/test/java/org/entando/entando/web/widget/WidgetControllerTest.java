@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.widget;
 
 import java.util.Date;
@@ -6,13 +19,10 @@ import java.util.Map;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.system.services.group.GroupService;
 import org.entando.entando.aps.system.services.widget.WidgetService;
 import org.entando.entando.aps.system.services.widget.model.WidgetDto;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.group.GroupController;
-import org.entando.entando.web.group.validator.GroupValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.entando.entando.web.widget.validator.WidgetValidator;
@@ -23,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Matchers.any;
@@ -53,7 +62,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testGetWidget() throws Exception{
+    public void testGetWidget() throws Exception {
 
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -61,7 +70,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets/1")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -69,7 +78,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testGetWidgetList() throws Exception{
+    public void testGetWidgetList() throws Exception {
 
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -81,7 +90,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -96,7 +105,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 delete("/widgets/1")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -113,9 +122,9 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 post("/widgets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(convertObjectToJsonBytes(createMockRequest()))
-                        .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createMockRequest()))
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -133,9 +142,9 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 put("/widgets/test")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(convertObjectToJsonBytes(createMockRequest()))
-                        .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createMockRequest()))
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -151,7 +160,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/widgets")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -159,9 +168,9 @@ public class WidgetControllerTest extends AbstractControllerTest {
         result.andExpect(status().isUnauthorized());
     }
 
-    private WidgetRequest createMockRequest(){
+    private WidgetRequest createMockRequest() {
 
-        Map<String,String> titles = new HashMap<>();
+        Map<String, String> titles = new HashMap<>();
         titles.put("it", "il titolo");
         titles.put("en", "the test title");
 

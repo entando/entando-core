@@ -105,7 +105,7 @@ public class GuiFragmentController {
 		if (bindingResult.hasErrors()) {
 			throw new ValidationGenericException(bindingResult);
 		}
-		this.getGuiFragmentValidator().validateBodyName(fragmentCode, guiFragmentRequest, bindingResult);
+		this.getGuiFragmentValidator().validateBody(fragmentCode, guiFragmentRequest, bindingResult);
 		if (bindingResult.hasErrors()) {
 			throw new ValidationGenericException(bindingResult);
 		}

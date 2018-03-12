@@ -30,10 +30,12 @@ public class GuiFragmentValidator implements Validator {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "1";
-	public static final String ERRCODE_URINAME_MISMATCH = "2";
-
-	public static final String ERRCODE_FRAGMENT_REFERENCES = "4";
-
+    public static final String ERRCODE_FRAGMENT_INVALID_CODE = "2";
+    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "2";
+    
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
+    public static final String ERRCODE_FRAGMENT_REFERENCES = "3";
+    
 	@Autowired
 	private IGuiFragmentManager guiFragmentManager;
 
@@ -48,18 +50,30 @@ public class GuiFragmentValidator implements Validator {
 		String code = request.getCode();
 		try {
 			if (null != this.guiFragmentManager.getGuiFragment(code)) {
-				errors.reject(ERRCODE_FRAGMENT_ALREADY_EXISTS, new String[]{code}, "guifragment.exists");
-			}
+				errors.rejectValue("code", ERRCODE_FRAGMENT_ALREADY_EXISTS, new String[]{code}, "guifragment.exists");
+			} else if (code.length() > 50) {
+				errors.rejectValue("code", ERRCODE_FRAGMENT_INVALID_CODE, new String[]{String.valueOf(50)}, "guifragment.code.wrongLength");
+            } else if (!code.matches("^[a-zA-Z0-9_]*$")) {
+				errors.rejectValue("code", ERRCODE_FRAGMENT_INVALID_CODE, new String[]{code}, "guifragment.code.wrongCharacters");
+            }
+            this.validateGuiCode(request, errors);
 		} catch (Exception e) {
 			logger.error("Error extracting fragment {}", code, e);
 			throw new RestServerError("error extracting fragment", e);
 		}
 	}
 
-	public void validateBodyName(String fragmentCode, GuiFragmentRequestBody guiFragmentRequest, Errors errors) {
-		if (!StringUtils.equals(fragmentCode, guiFragmentRequest.getCode())) {
-			errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, guiFragmentRequest.getCode()}, "guifragment.code.mismatch");
+	public void validateBody(String fragmentCode, GuiFragmentRequestBody request, Errors errors) {
+		if (!StringUtils.equals(fragmentCode, request.getCode())) {
+			errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, request.getCode()}, "guifragment.code.mismatch");
 		}
+        this.validateGuiCode(request, errors);
 	}
-
+    
+    private void validateGuiCode(GuiFragmentRequestBody request, Errors errors) {
+        if (StringUtils.isEmpty(request.getGuiCode())) {
+            errors.rejectValue("guiCode", ERRCODE_FRAGMENT_INVALID_GUI_CODE, new String[]{}, "guifragment.gui.notBlank");
+        }
+    }
+    
 }

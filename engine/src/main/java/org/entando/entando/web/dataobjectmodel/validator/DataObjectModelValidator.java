@@ -58,9 +58,15 @@ public class DataObjectModelValidator implements Validator {
     }
 
     public int checkModelId(String dataModelId, Errors errors) {
+        Long dataModelLong = null;
         try {
-            Long.parseLong(dataModelId);
-        } catch (Exception e) {
+            dataModelLong = Long.parseLong(dataModelId);
+            if (null == this.dataObjectModelManager.getDataObjectModel(dataModelLong)) {
+                errors.rejectValue("modelId", ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST,
+                        new String[]{dataModelId, String.valueOf(dataModelLong)}, "dataObjectModel.doesNotExist");
+                return 404;
+            }
+        } catch (NumberFormatException e) {
             errors.rejectValue("modelId", ERRCODE_DATAOBJECTID_INVALID,
                     new String[]{String.valueOf(dataModelId)}, "dataObjectModel.modelId.invalid");
             return 400;

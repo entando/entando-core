@@ -21,7 +21,7 @@ import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmall;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
@@ -140,7 +140,7 @@ public class GuiFragmentService implements IGuiFragmentService {
             GuiFragmentDto dto = this.getDtoBuilder().convert(fragment);
             BeanPropertyBindingResult validationResult = this.checkFragmentForDelete(fragment, dto);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             this.getGuiFragmentManager().deleteGuiFragment(guiFragmentCode);
         } catch (ApsSystemException e) {

@@ -21,6 +21,9 @@ import org.entando.entando.web.entity.model.IEntityTypesBodyRequest;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+/**
+ * @author E.Santoboni
+ */
 //@Component
 public abstract class EntityTypeValidator implements Validator {
 

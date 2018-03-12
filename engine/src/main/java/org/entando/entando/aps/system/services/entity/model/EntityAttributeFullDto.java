@@ -17,10 +17,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribu
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
-import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,24 +46,15 @@ public class EntityAttributeFullDto extends EntityAttributeDto {
         if (null != indexingType) {
             this.setIndexable(indexingType.equalsIgnoreCase(IndexableAttributeInterface.INDEXING_TYPE_TEXT));
         }
-        EntityAttributeValidationDto validationDto = null;
-        IAttributeValidationRules attributeValidationRules = attribute.getValidationRules();
         if (attribute.isTextAttribute()) {
-            validationDto = new TextAttributeValidationDto(attributeValidationRules);
             if (attribute instanceof EnumeratorAttribute) {
                 EnumeratorAttribute enumeratorAttribute = (EnumeratorAttribute) attribute;
                 this.setEnumeratorStaticItems(enumeratorAttribute.getStaticItems());
                 this.setEnumeratorStaticItemsSeparator(enumeratorAttribute.getCustomSeparator());
                 this.setEnumeratorExtractorBean(enumeratorAttribute.getExtractorBeanName());
             }
-        } else if (attribute instanceof DateAttribute) {
-            validationDto = new DateAttributeValidationDto(attributeValidationRules);
-        } else if (attribute instanceof NumberAttribute) {
-            validationDto = new NumberAttributeValidationDto(attributeValidationRules);
-        } else {
-            validationDto = new EntityAttributeValidationDto(attributeValidationRules);
         }
-        this.setValidationRules(validationDto);
+        this.setValidationRules(new EntityAttributeValidationDto(attribute));
         if (attribute instanceof AbstractListAttribute) {
             AttributeInterface nestedAttribute = ((AbstractListAttribute) attribute).getNestedAttributeType();
             this.setNestedAttribute(new EntityAttributeFullDto(nestedAttribute, roles));

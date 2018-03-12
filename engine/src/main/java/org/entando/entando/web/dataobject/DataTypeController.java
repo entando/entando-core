@@ -46,6 +46,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author E.Santoboni
+ */
 @RestController
 @RequestMapping(value = "/dataTypes")
 public class DataTypeController {

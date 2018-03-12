@@ -18,7 +18,9 @@ import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.ApsEntity;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
 import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
@@ -58,6 +60,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
 
+/**
+ * @author E.Santoboni
+ */
 public class EntityManagerService implements IEntityManagerService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -227,7 +232,7 @@ public class EntityManagerService implements IEntityManagerService {
         String type = attributeDto.getType();
         AttributeInterface prototype = attributeMap.get(type);
         if (null == prototype) {
-            // to check into validator
+            logger.warn("Undefined attribute of type {}", type);
             return null;
         }
         AttributeInterface attribute = (AttributeInterface) prototype.getAttributePrototype();
@@ -263,20 +268,20 @@ public class EntityManagerService implements IEntityManagerService {
                 ognlValidationRule.setHelpMessageKey(ognlValidationDto.getKeyForHelpMessage());
             }
         }
-        /*
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-        attribute.set(attributeDto.get);
-         */
-        return null;
+        if (attribute instanceof AbstractListAttribute && null != attributeDto.getNestedAttribute()) {
+            EntityAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
+            ((AbstractListAttribute) attribute).setNestedAttributeType(this.buildAttribute(nestedAttributeDto, attributeMap));
+        } else if (attribute instanceof CompositeAttribute
+                && null != attributeDto.getCompositeAttributes()
+                && !attributeDto.getCompositeAttributes().isEmpty()) {
+            List<EntityAttributeFullDto> attributes = attributeDto.getCompositeAttributes();
+            for (EntityAttributeFullDto attributeElementDto : attributes) {
+                AttributeInterface attributeElement = this.buildAttribute(attributeElementDto, attributeMap);
+                ((CompositeAttribute) attribute).getAttributeMap().put(attributeElement.getName(), attributeElement);
+                ((CompositeAttribute) attribute).getAttributes().add(attributeElement);
+            }
+        }
+        return attribute;
     }
 
     @Override

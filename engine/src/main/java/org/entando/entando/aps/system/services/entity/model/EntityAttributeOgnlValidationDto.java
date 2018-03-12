@@ -27,6 +27,10 @@ public class EntityAttributeOgnlValidationDto {
     private String errorMessage;
     private String keyForErrorMessage;
 
+    public EntityAttributeOgnlValidationDto() {
+
+    }
+
     public EntityAttributeOgnlValidationDto(OgnlValidationRule ognlValidationRule) {
         this.setApplyOnlyToFilledAttr(ognlValidationRule.isEvalExpressionOnValuedAttribute());
         this.setErrorMessage(ognlValidationRule.getErrorMessage());

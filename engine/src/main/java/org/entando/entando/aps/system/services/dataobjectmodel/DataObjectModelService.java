@@ -69,13 +69,13 @@ public class DataObjectModelService implements IDataObjectModelService {
             filters.stream().filter(searchFilter -> searchFilter.getKey() != null)
                     .forEach(searchFilter -> {
                         searchFilter.setKey(DataModelDto.getEntityFieldName(searchFilter.getKey()));
-                        if (searchFilter.getKey().equals("modelid")) {
+                        if (searchFilter.getKey().equals("modelid") && null != searchFilter.getValue()) {
                             String stringValue = searchFilter.getValue().toString();
                             Long value = Long.parseLong(stringValue);
                             searchFilter = new FieldSearchFilter("modelid", value, true);
                         }
                     });
-            SearcherDaoPaginatedResult<DataObjectModel> models = this.getDataObjectModelManager().getDataObjectModels(restListReq.buildFieldSearchFilters());
+            SearcherDaoPaginatedResult<DataObjectModel> models = this.getDataObjectModelManager().getDataObjectModels(filters);
             List<DataModelDto> dtoList = this.getDtoBuilder().convert(models.getList());
             pagedMetadata = new PagedMetadata<>(restListReq, models);
             pagedMetadata.setBody(dtoList);

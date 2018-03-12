@@ -21,7 +21,6 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelService;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -103,9 +102,9 @@ public class DataObjectModelController {
         //business validations
         this.getDataObjectModelValidator().validate(dataObjectModelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
+            throw new ValidationGenericException(bindingResult);
         }
-        int result = this.getDataObjectModelValidator().validateDataTypeCode(dataObjectModelRequest, false, bindingResult);
+        int result = this.getDataObjectModelValidator().validateBody(dataObjectModelRequest, false, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
                 throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
@@ -128,7 +127,7 @@ public class DataObjectModelController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        int result = this.getDataObjectModelValidator().validateDataTypeCode(dataObjectModelRequest, true, bindingResult);
+        int result = this.getDataObjectModelValidator().validateBody(dataObjectModelRequest, true, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
                 throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());

@@ -14,6 +14,7 @@
 package org.entando.entando.web.dataobjectmodel.validator;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
@@ -32,6 +33,8 @@ public class DataObjectModelValidator implements Validator {
 
     //POST
     public static final String ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST = "1";
+
+    public static final String ERRCODE_DATAOBJECT_MODEL_INVALID = "3";
 
     //PUT
     public static final String ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS = "1";
@@ -56,8 +59,8 @@ public class DataObjectModelValidator implements Validator {
     public void validate(Object target, Errors errors) {
         DataObjectModelRequest request = (DataObjectModelRequest) target;
         String modelId = request.getModelId();
-        int result = this.checkModelId(modelId, errors);
-        if (result == 0 && null != this.dataObjectModelManager.getDataObjectModel(Long.parseLong(modelId))) {
+        Long dataModelLong = this.checkValidModelId(modelId, errors);
+        if (null != dataModelLong && null != this.dataObjectModelManager.getDataObjectModel(dataModelLong)) {
             errors.reject(ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, new String[]{String.valueOf(modelId)}, "dataObjectModel.exists");
         }
     }
@@ -70,7 +73,7 @@ public class DataObjectModelValidator implements Validator {
         this.checkValidModelId(modelId, errors);
     }
 
-    public int validateDataTypeCode(DataObjectModelRequest request, boolean isPut, Errors errors) {
+    public int validateBody(DataObjectModelRequest request, boolean isPut, Errors errors) {
         Long dataModelId = Long.parseLong(request.getModelId());
         String typeCode = request.getType();
         try {
@@ -80,11 +83,21 @@ public class DataObjectModelValidator implements Validator {
                         new String[]{typeCode}, "dataObjectModel.type.doesNotExist");
                 return 404;
             }
-            DataObjectModel dataModels = this.dataObjectModelManager.getDataObjectModel(dataModelId);
-            if (isPut && !dataModels.getDataType().equals(typeCode)) {
-                errors.rejectValue("type", ERRCODE_PUT_EXTRACTED_MISMATCH,
-                        new String[]{typeCode, dataModels.getDataType()}, "dataObjectModel.type.doesNotMachWithModel");
+            if (StringUtils.isEmpty(request.getModel())) {
+                errors.rejectValue("model", ERRCODE_DATAOBJECT_MODEL_INVALID, new String[]{}, "dataObjectModel.model.notBlank");
                 return 400;
+            }
+            if (isPut) {
+                DataObjectModel dataModel = this.dataObjectModelManager.getDataObjectModel(dataModelId);
+                if (null == dataModel) {
+                    errors.rejectValue("modelId", ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST,
+                            new String[]{String.valueOf(dataModelId)}, "dataObjectModel.doesNotExist");
+                    return 404;
+                } else if (!dataModel.getDataType().equals(typeCode)) {
+                    errors.rejectValue("type", ERRCODE_PUT_EXTRACTED_MISMATCH,
+                            new String[]{typeCode, dataModel.getDataType()}, "dataObjectModel.type.doesNotMachWithModel");
+                    return 400;
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Error extracting model", e);

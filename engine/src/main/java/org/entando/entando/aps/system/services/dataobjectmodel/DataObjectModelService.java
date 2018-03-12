@@ -110,11 +110,12 @@ public class DataObjectModelService implements IDataObjectModelService {
 
     @Override
     public DataModelDto updateDataObjectModel(DataObjectModelRequest dataObjectModelRequest) {
-        Long code = dataObjectModelRequest.getModelId();
+        String code = dataObjectModelRequest.getModelId();
         try {
-            DataObjectModel dataObjectModel = this.getDataObjectModelManager().getDataObjectModel(code);
+            Long modelId = Long.parseLong(code);
+            DataObjectModel dataObjectModel = this.getDataObjectModelManager().getDataObjectModel(modelId);
             if (null == dataObjectModel) {
-                throw new RestRourceNotFoundException("dataObjectModel", String.valueOf(code));
+                throw new RestRourceNotFoundException("dataObjectModel", code);
             }
             dataObjectModel.setDataType(dataObjectModelRequest.getType());
             dataObjectModel.setDescription(dataObjectModelRequest.getDescr());
@@ -153,7 +154,7 @@ public class DataObjectModelService implements IDataObjectModelService {
         DataObjectModel model = new DataObjectModel();
         model.setDataType(dataObjectModelRequest.getType());
         model.setDescription(dataObjectModelRequest.getDescr());
-        model.setId(dataObjectModelRequest.getModelId());
+        model.setId(Long.parseLong(dataObjectModelRequest.getModelId()));
         model.setShape(dataObjectModelRequest.getModel());
         model.setStylesheet(dataObjectModelRequest.getStylesheet());
         return model;

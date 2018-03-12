@@ -23,6 +23,10 @@ import org.springframework.validation.Validator;
 @Component
 public class DataObjectModelValidator implements Validator {
 
+    //GET
+    public static final String ERRCODE_DATAOBJECTID_INVALID = "1";
+    public static final String ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST = "1";
+
     public static final String ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS = "1";
     public static final String ERRCODE_URINAME_MISMATCH = "2";
     public static final String ERRCODE_URINAME_INVALID = "3";
@@ -39,17 +43,29 @@ public class DataObjectModelValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         DataObjectModelRequest request = (DataObjectModelRequest) target;
-        Long modelId = request.getModelId();
-        if (null != this.dataObjectModelManager.getDataObjectModel(modelId)) {
+        String modelId = request.getModelId();
+        int result = this.checkModelId(modelId, errors);
+        if (result == 0 && null != this.dataObjectModelManager.getDataObjectModel(Long.parseLong(modelId))) {
             errors.reject(ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, new String[]{String.valueOf(modelId)}, "dataObjectModel.exists");
         }
     }
 
-    public void validateBodyName(Long modelId, DataObjectModelRequest request, Errors errors) {
+    public void validateBodyName(String modelId, DataObjectModelRequest request, Errors errors) {
         if (!modelId.equals(request.getModelId())) {
             errors.rejectValue("modelId", ERRCODE_URINAME_MISMATCH,
                     new String[]{String.valueOf(modelId), String.valueOf(request.getModelId())}, "dataObjectModel.modelId.mismatch");
         }
+    }
+
+    public int checkModelId(String dataModelId, Errors errors) {
+        try {
+            Long.parseLong(dataModelId);
+        } catch (Exception e) {
+            errors.rejectValue("modelId", ERRCODE_DATAOBJECTID_INVALID,
+                    new String[]{String.valueOf(dataModelId)}, "dataObjectModel.modelId.invalid");
+            return 400;
+        }
+        return 0;
     }
 
 }

@@ -13,6 +13,9 @@
  */
 package org.entando.entando.web.dataobjectmodel.validator;
 
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
+import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +30,22 @@ public class DataObjectModelValidator implements Validator {
     public static final String ERRCODE_DATAOBJECTID_INVALID = "1";
     public static final String ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST = "1";
 
+    //POST
+    public static final String ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST = "1";
+
+    //PUT
     public static final String ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS = "1";
+    public static final String ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST = "2";
+    public static final String ERRCODE_PUT_EXTRACTED_MISMATCH = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "2";
     public static final String ERRCODE_URINAME_INVALID = "3";
     public static final String ERRCODE_DATAOBJECTMODEL_REFERENCES = "4";
 
     @Autowired
     private IDataObjectModelManager dataObjectModelManager;
+
+    @Autowired
+    private IDataObjectManager dataObjectManager;
 
     @Override
     public boolean supports(Class<?> paramClass) {
@@ -55,21 +67,60 @@ public class DataObjectModelValidator implements Validator {
             errors.rejectValue("modelId", ERRCODE_URINAME_MISMATCH,
                     new String[]{String.valueOf(modelId), String.valueOf(request.getModelId())}, "dataObjectModel.modelId.mismatch");
         }
+        this.checkValidModelId(modelId, errors);
+    }
+
+    public int validateDataTypeCode(DataObjectModelRequest request, boolean isPut, Errors errors) {
+        Long dataModelId = Long.parseLong(request.getModelId());
+        String typeCode = request.getType();
+        try {
+            IApsEntity prototype = this.dataObjectManager.getEntityPrototype(typeCode);
+            if (null == prototype) {
+                errors.rejectValue("type", (isPut) ? ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST : ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST,
+                        new String[]{typeCode}, "dataObjectModel.type.doesNotExist");
+                return 404;
+            }
+            DataObjectModel dataModels = this.dataObjectModelManager.getDataObjectModel(dataModelId);
+            if (isPut && !dataModels.getDataType().equals(typeCode)) {
+                errors.rejectValue("type", ERRCODE_PUT_EXTRACTED_MISMATCH,
+                        new String[]{typeCode, dataModels.getDataType()}, "dataObjectModel.type.doesNotMachWithModel");
+                return 400;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error extracting model", e);
+        }
+        return 0;
     }
 
     public int checkModelId(String dataModelId, Errors errors) {
+        Long dataModelLong = this.checkValidModelId(dataModelId, errors);
+        if (null == dataModelLong) {
+            return 400;
+        }
+        return this.checkExistingModelId(dataModelLong, errors);
+    }
+
+    protected Long checkValidModelId(String dataModelId, Errors errors) {
         Long dataModelLong = null;
         try {
             dataModelLong = Long.parseLong(dataModelId);
-            if (null == this.dataObjectModelManager.getDataObjectModel(dataModelLong)) {
-                errors.rejectValue("modelId", ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST,
-                        new String[]{dataModelId, String.valueOf(dataModelLong)}, "dataObjectModel.doesNotExist");
-                return 404;
-            }
         } catch (NumberFormatException e) {
             errors.rejectValue("modelId", ERRCODE_DATAOBJECTID_INVALID,
                     new String[]{String.valueOf(dataModelId)}, "dataObjectModel.modelId.invalid");
-            return 400;
+            return null;
+        }
+        return dataModelLong;
+    }
+
+    protected int checkExistingModelId(Long dataModelId, Errors errors) {
+        try {
+            if (null == this.dataObjectModelManager.getDataObjectModel(dataModelId)) {
+                errors.rejectValue("modelId", ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST,
+                        new String[]{String.valueOf(dataModelId)}, "dataObjectModel.doesNotExist");
+                return 404;
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException("Error extracting model", e);
         }
         return 0;
     }

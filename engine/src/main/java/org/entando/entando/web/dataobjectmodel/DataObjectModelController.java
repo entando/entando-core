@@ -105,6 +105,14 @@ public class DataObjectModelController {
         if (bindingResult.hasErrors()) {
             throw new ValidationConflictException(bindingResult);
         }
+        int result = this.getDataObjectModelValidator().validateDataTypeCode(dataObjectModelRequest, false, bindingResult);
+        if (bindingResult.hasErrors()) {
+            if (404 == result) {
+                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+            } else {
+                throw new ValidationGenericException(bindingResult);
+            }
+        }
         DataModelDto dataModelDto = this.getDataObjectModelService().addDataObjectModel(dataObjectModelRequest);
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
@@ -119,6 +127,14 @@ public class DataObjectModelController {
         this.getDataObjectModelValidator().validateBodyName(dataModelId, dataObjectModelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
+        }
+        int result = this.getDataObjectModelValidator().validateDataTypeCode(dataObjectModelRequest, true, bindingResult);
+        if (bindingResult.hasErrors()) {
+            if (404 == result) {
+                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+            } else {
+                throw new ValidationGenericException(bindingResult);
+            }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);

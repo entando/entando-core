@@ -130,7 +130,11 @@ public class DataObjectModelController {
         int result = this.getDataObjectModelValidator().validateBody(dataObjectModelRequest, true, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
-                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+                if (1 == bindingResult.getFieldErrorCount("type")) {
+                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+                } else {
+                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, "modelId", dataObjectModelRequest.getModelId());
+                }
             } else {
                 throw new ValidationGenericException(bindingResult);
             }
@@ -141,9 +145,14 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGroup(@Valid @PathVariable Long dataModelId) throws ApsSystemException {
+    public ResponseEntity<?> deleteGroup(@PathVariable String dataModelId) throws ApsSystemException {
         logger.info("deleting {}", dataModelId);
-        this.getDataObjectModelService().removeDataObjectModel(dataModelId);
+        MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "dataModels");
+        Long dataId = this.getDataObjectModelValidator().checkValidModelId(dataModelId, bindingResult);
+        if (null == dataId) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getDataObjectModelService().removeDataObjectModel(Long.parseLong(dataModelId));
         return new ResponseEntity<>(new RestResponse(dataModelId), HttpStatus.OK);
     }
 

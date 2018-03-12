@@ -113,7 +113,7 @@ public class DataObjectModelValidator implements Validator {
         return this.checkExistingModelId(dataModelLong, errors);
     }
 
-    protected Long checkValidModelId(String dataModelId, Errors errors) {
+    public Long checkValidModelId(String dataModelId, Errors errors) {
         Long dataModelLong = null;
         try {
             dataModelLong = Long.parseLong(dataModelId);

@@ -20,8 +20,6 @@ import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
@@ -32,7 +30,7 @@ import org.springframework.validation.MapBindingResult;
  * @author E.Santoboni
  */
 public class GuiFragmentValidatorTest {
-    
+
     @Mock
     private IGuiFragmentManager guiFragmentManager;
 
@@ -43,7 +41,7 @@ public class GuiFragmentValidatorTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     public void validateRightFragment() throws Exception {
         when(this.guiFragmentManager.getGuiFragment("not_existing")).thenReturn(null);
@@ -53,7 +51,7 @@ public class GuiFragmentValidatorTest {
         Assert.assertFalse(bindingResult.hasErrors());
         Assert.assertEquals(0, bindingResult.getErrorCount());
     }
-    
+
     @Test
     public void validateExistingFragment() throws Exception {
         GuiFragment existing = new GuiFragment();
@@ -65,7 +63,7 @@ public class GuiFragmentValidatorTest {
         Assert.assertTrue(bindingResult.hasErrors());
         Assert.assertEquals(1, bindingResult.getErrorCount());
     }
-    
+
     @Test
     public void validateExistingAndInvalidFragment() throws Exception {
         GuiFragment existing = new GuiFragment();
@@ -77,7 +75,7 @@ public class GuiFragmentValidatorTest {
         Assert.assertTrue(bindingResult.hasErrors());
         Assert.assertEquals(2, bindingResult.getErrorCount());
     }
-    
+
     @Test
     public void validateInvalidFragmentCode_1() throws Exception {
         String code = "very_long";
@@ -91,7 +89,7 @@ public class GuiFragmentValidatorTest {
         Assert.assertTrue(bindingResult.hasErrors());
         Assert.assertEquals(1, bindingResult.getErrorCount());
     }
-    
+
     @Test
     public void validateInvalidFragmentCode_2() throws Exception {
         String code = "wrong_characters_&_$_123";
@@ -102,5 +100,5 @@ public class GuiFragmentValidatorTest {
         Assert.assertTrue(bindingResult.hasErrors());
         Assert.assertEquals(1, bindingResult.getErrorCount());
     }
-    
+
 }

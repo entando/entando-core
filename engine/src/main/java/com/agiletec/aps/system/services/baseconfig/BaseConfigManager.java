@@ -120,7 +120,6 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 	protected Properties extractSecurityConfiguration() throws IOException {
 		Properties props = new Properties();
         InputStream is = this.getServletContext().getResourceAsStream(this.getSecurityConfigPath());
-        //InputStream is = new FileInputStream(this.getSecurityConfigPath());
 		if (null == is) {
 			throw new RuntimeException("Null security configuration inside " + this.getSecurityConfigPath());
 		}

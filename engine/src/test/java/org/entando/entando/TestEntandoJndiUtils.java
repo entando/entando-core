@@ -19,18 +19,13 @@ public class TestEntandoJndiUtils {
 	private static final Logger logger = LoggerFactory.getLogger(TestEntandoJndiUtils.class);
 
 
-	public static void setupJndi() throws Exception {
+    public static void setupJndi() {
 		SimpleNamingContextBuilder builder = null;
 		try {
+            String path = "target/test/conf/contextTestParams.properties";
+            logger.info("CREATING JNDI RESOURCES BASED ON {} (test)", path);
 
-			System.out.println("");
-			System.out.println("*******************");
-			System.out.println("");
-			System.out.println("\tCREATING JNDI RESOURCES BASED ON contextTestParams.properties (test)");
-			System.out.println("");
-			System.out.println("*******************");
-
-            InputStream in = new FileInputStream("target/test/conf/contextTestParams.properties");
+            InputStream in = new FileInputStream(path);
 			builder = SimpleNamingContextBuilder.emptyActivatedContextBuilder();
 			Properties testConfig = new Properties();
 			testConfig.load(in);
@@ -68,6 +63,7 @@ public class TestEntandoJndiUtils {
 		while (configIter.hasNext()) {
 			Entry<Object, Object> entry = configIter.next();
 			builder.bind("java:comp/env/" + (String) entry.getKey(), (String) entry.getValue());
+            logger.trace("{} : {}", entry.getKey(), entry.getValue());
 		}
 	}
 
@@ -106,5 +102,6 @@ public class TestEntandoJndiUtils {
 		} catch (Throwable t) {
 			throw new RuntimeException("Error on creation datasource '" + beanName + "'", t);
 		}
+        logger.info("created datasource {}", beanName);
 	}
 }

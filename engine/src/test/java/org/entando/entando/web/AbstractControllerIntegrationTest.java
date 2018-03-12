@@ -1,7 +1,5 @@
 package org.entando.entando.web;
 
-import java.io.FileInputStream;
-
 import javax.annotation.Resource;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -44,7 +42,7 @@ import static org.mockito.Mockito.when;
 
 })
 
-@WebAppConfiguration
+@WebAppConfiguration(value = "")
 public class AbstractControllerIntegrationTest {
 
     protected MockMvc mockMvc;
@@ -77,8 +75,7 @@ public class AbstractControllerIntegrationTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                                  .build();
-        when(webApplicationContext.getServletContext().getResourceAsStream("target/test/conf/security.properties")).thenReturn(new FileInputStream(
-                                                                                                                                                   "/dati/lavoro/repos/github/entando-core/engine/target/test/conf/security.properties"));
+
 
     }
 

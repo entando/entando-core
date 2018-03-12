@@ -27,39 +27,65 @@ import org.springframework.validation.Validator;
 @Component
 public class GuiFragmentValidator implements Validator {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "1";
-	public static final String ERRCODE_URINAME_MISMATCH = "2";
+    //GET //PUT
+    public static final String ERRCODE_FRAGMENT_DOES_NOT_EXISTS = "1";
 
-	public static final String ERRCODE_FRAGMENT_REFERENCES = "4";
+    //POST
+    public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "3";
+    public static final String ERRCODE_FRAGMENT_INVALID_CODE = "1";
+    //POST PUT
+    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "2";
 
-	@Autowired
-	private IGuiFragmentManager guiFragmentManager;
+    //PUT
+    public static final String ERRCODE_URINAME_MISMATCH = "3";
 
-	@Override
-	public boolean supports(Class<?> paramClass) {
-		return GuiFragmentRequestBody.class.equals(paramClass);
-	}
+    //DELETE
+    public static final String ERRCODE_FRAGMENT_REFERENCES = "1";
+    public static final String ERRCODE_FRAGMENT_LOCKED = "2";
 
-	@Override
-	public void validate(Object target, Errors errors) {
-		GuiFragmentRequestBody request = (GuiFragmentRequestBody) target;
-		String code = request.getCode();
-		try {
-			if (null != this.guiFragmentManager.getGuiFragment(code)) {
-				errors.reject(ERRCODE_FRAGMENT_ALREADY_EXISTS, new String[]{code}, "guifragment.exists");
-			}
-		} catch (Exception e) {
-			logger.error("Error extracting fragment {}", code, e);
-			throw new RestServerError("error extracting fragment", e);
-		}
-	}
+    @Autowired
+    private IGuiFragmentManager guiFragmentManager;
 
-	public void validateBodyName(String fragmentCode, GuiFragmentRequestBody guiFragmentRequest, Errors errors) {
-		if (!StringUtils.equals(fragmentCode, guiFragmentRequest.getCode())) {
-			errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, guiFragmentRequest.getCode()}, "guifragment.code.mismatch");
-		}
-	}
+    @Override
+    public boolean supports(Class<?> paramClass) {
+        return GuiFragmentRequestBody.class.equals(paramClass);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+        GuiFragmentRequestBody request = (GuiFragmentRequestBody) target;
+        String code = request.getCode();
+        try {
+            if (null != this.guiFragmentManager.getGuiFragment(code)) {
+                errors.rejectValue("code", ERRCODE_FRAGMENT_ALREADY_EXISTS, new String[]{code}, "guifragment.exists");
+            } else if (code.length() > 50) {
+                errors.rejectValue("code", ERRCODE_FRAGMENT_INVALID_CODE, new String[]{}, "guifragment.code.invalid");
+            } else if (!code.matches("^[a-zA-Z0-9_]*$")) {
+                errors.rejectValue("code", ERRCODE_FRAGMENT_INVALID_CODE, new String[]{}, "guifragment.code.invalid");
+            }
+            this.validateGuiCode(request, errors);
+        } catch (Exception e) {
+            logger.error("Error extracting fragment {}", code, e);
+            throw new RestServerError("error extracting fragment", e);
+        }
+    }
+
+    public int validateBody(String fragmentCode, GuiFragmentRequestBody request, Errors errors) {
+        if (!StringUtils.equals(fragmentCode, request.getCode())) {
+            errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, request.getCode()}, "guifragment.code.mismatch");
+            return 404;
+        }
+        return this.validateGuiCode(request, errors);
+    }
+
+    private int validateGuiCode(GuiFragmentRequestBody request, Errors errors) {
+        if (StringUtils.isEmpty(request.getGuiCode())) {
+            errors.rejectValue("guiCode", ERRCODE_FRAGMENT_INVALID_GUI_CODE, new String[]{}, "guifragment.gui.notBlank");
+            return 400;
+        }
+        return 0;
+    }
 
 }

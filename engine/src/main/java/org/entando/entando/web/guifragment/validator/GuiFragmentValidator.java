@@ -29,16 +29,20 @@ public class GuiFragmentValidator implements Validator {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    //GET //POST
     public static final String ERRCODE_FRAGMENT_DOES_NOT_EXISTS = "1";
 
-    public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "11";
-    public static final String ERRCODE_FRAGMENT_INVALID_CODE = "12";
-    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "13";
+    //POST
+    public static final String ERRCODE_FRAGMENT_ALREADY_EXISTS = "2";
+    public static final String ERRCODE_FRAGMENT_INVALID_CODE = "1";
+    public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "5";
 
-    public static final String ERRCODE_URINAME_MISMATCH = "21";
+    //PUT
+    public static final String ERRCODE_URINAME_MISMATCH = "6";
 
-    public static final String ERRCODE_FRAGMENT_REFERENCES = "31";
-    public static final String ERRCODE_FRAGMENT_LOCKED = "32";
+    //DELETE
+    public static final String ERRCODE_FRAGMENT_REFERENCES = "1";
+    public static final String ERRCODE_FRAGMENT_LOCKED = "2";
 
     @Autowired
     private IGuiFragmentManager guiFragmentManager;

@@ -33,150 +33,141 @@ import org.springframework.validation.BeanPropertyBindingResult;
 
 public class GuiFragmentService implements IGuiFragmentService {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private IGuiFragmentManager guiFragmentManager;
+    @Autowired
+    private IGuiFragmentManager guiFragmentManager;
 
-	@Autowired
-	private IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder;
+    @Autowired
+    private IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder;
 
-	@Autowired
-	private IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder;
+    @Autowired
+    private IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder;
 
-	protected IGuiFragmentManager getGuiFragmentManager() {
-		return guiFragmentManager;
-	}
-
-	public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
-		this.guiFragmentManager = guiFragmentManager;
-	}
-
-	protected IDtoBuilder<GuiFragment, GuiFragmentDto> getDtoBuilder() {
-		return dtoBuilder;
-	}
-
-	public void setDtoBuilder(IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder) {
-		this.dtoBuilder = dtoBuilder;
-	}
-
-	protected IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> getDtoSmallBuilder() {
-		return dtoSmallBuilder;
-	}
-
-	public void setDtoSmallBuilder(IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder) {
-		this.dtoSmallBuilder = dtoSmallBuilder;
-	}
-
-	@Override
-	public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq) {
-		PagedMetadata<GuiFragmentDtoSmall> pagedMetadata = null;
-		try {
-			SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.buildFieldSearchFilters());
-			List<GuiFragmentDtoSmall> dtoList = this.getDtoSmallBuilder().convert(fragments.getList());
-			pagedMetadata = new PagedMetadata<>(restListReq, fragments);
-			pagedMetadata.setBody(dtoList);
-		} catch (Throwable t) {
-			logger.error("error in search fragments", t);
-			throw new RestServerError("error in search fragments", t);
-		}
-		return pagedMetadata;
-	}
-
-	@Override
-	public GuiFragmentDto getGuiFragment(String code) {
-		GuiFragment fragment = null;
-		try {
-			fragment = this.getGuiFragmentManager().getGuiFragment(code);
-		} catch (Exception e) {
-			logger.error("Error extracting fragment {}", code, e);
-			throw new RestServerError("error extracting fragment", e);
-		}
-		if (null == fragment) {
-			logger.warn("no fragment found with code {}", code);
-			throw this.createException(fragment, GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, 
-                    new Object[]{code}, "guifragment.doesNotExist");
-		}
-		return this.getDtoBuilder().convert(fragment);
-	}
-
-	@Override
-	public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
-		try {
-			GuiFragment fragment = this.createGuiFragment(guiFragmentRequest);
-			this.getGuiFragmentManager().addGuiFragment(fragment);
-			return this.getDtoBuilder().convert(fragment);
-		} catch (ApsSystemException e) {
-			logger.error("Error adding fragment", e);
-			throw new RestServerError("error add fragment", e);
-		}
-	}
-
-	@Override
-	public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
-		String code = guiFragmentRequest.getCode();
-		try {
-			GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(code);
-			if (null == fragment) {
-                throw this.createException(fragment, GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, 
-                        new Object[]{code}, "guifragment.doesNotExist");
-			}
-			fragment.setGui(guiFragmentRequest.getGuiCode());
-			this.getGuiFragmentManager().updateGuiFragment(fragment);
-			return this.getDtoBuilder().convert(fragment);
-		} catch (RestRourceNotFoundException e) {
-			throw e;
-		} catch (ApsSystemException e) {
-			logger.error("Error updating fragment {}", code, e);
-			throw new RestServerError("error in update fragment", e);
-		}
-	}
-
-	@Override
-	public void removeGuiFragment(String guiFragmentCode) {
-		try {
-			GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(guiFragmentCode);
-			if (null == fragment) {
-				return;
-			}
-			GuiFragmentDto dto = this.getDtoBuilder().convert(fragment);
-			BeanPropertyBindingResult validationResult = this.checkFragmentForDelete(fragment, dto);
-			if (validationResult.hasErrors()) {
-				throw new ValidationConflictException(validationResult);
-			}
-			this.getGuiFragmentManager().deleteGuiFragment(guiFragmentCode);
-		} catch (ApsSystemException e) {
-			logger.error("Error in delete guiFragmentCode {}", guiFragmentCode, e);
-			throw new RestServerError("error in delete guiFragmentCode", e);
-		}
-	}
-
-	private GuiFragment createGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
-		GuiFragment fragment = new GuiFragment();
-		fragment.setCode(guiFragmentRequest.getCode());
-		fragment.setGui(guiFragmentRequest.getGuiCode());
-		return fragment;
-	}
-    
-    protected ValidationConflictException createException(GuiFragment fragment, 
-            String errorCode, Object[] errorArgs, String defaultMessage) {
-        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(fragment, "fragment");
-        bindingResult.reject(errorCode, errorArgs, defaultMessage);
-        return new ValidationConflictException(bindingResult);
+    protected IGuiFragmentManager getGuiFragmentManager() {
+        return guiFragmentManager;
     }
-    
-	protected BeanPropertyBindingResult checkFragmentForDelete(GuiFragment fragment, GuiFragmentDto dto) throws ApsSystemException {
-		BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(fragment, "fragment");
-		if (null == fragment) {
-			return bindingResult;
-		}
-		if (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty()) {
-			bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.references");
-		}
-		if (fragment.isLocked()) {
-			bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_LOCKED, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.locked");
-		}
-		return bindingResult;
-	}
+
+    public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
+        this.guiFragmentManager = guiFragmentManager;
+    }
+
+    protected IDtoBuilder<GuiFragment, GuiFragmentDto> getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
+    }
+
+    protected IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> getDtoSmallBuilder() {
+        return dtoSmallBuilder;
+    }
+
+    public void setDtoSmallBuilder(IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder) {
+        this.dtoSmallBuilder = dtoSmallBuilder;
+    }
+
+    @Override
+    public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq) {
+        PagedMetadata<GuiFragmentDtoSmall> pagedMetadata = null;
+        try {
+            SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.buildFieldSearchFilters());
+            List<GuiFragmentDtoSmall> dtoList = this.getDtoSmallBuilder().convert(fragments.getList());
+            pagedMetadata = new PagedMetadata<>(restListReq, fragments);
+            pagedMetadata.setBody(dtoList);
+        } catch (Throwable t) {
+            logger.error("error in search fragments", t);
+            throw new RestServerError("error in search fragments", t);
+        }
+        return pagedMetadata;
+    }
+
+    @Override
+    public GuiFragmentDto getGuiFragment(String code) {
+        GuiFragment fragment = null;
+        try {
+            fragment = this.getGuiFragmentManager().getGuiFragment(code);
+        } catch (Exception e) {
+            logger.error("Error extracting fragment {}", code, e);
+            throw new RestServerError("error extracting fragment", e);
+        }
+        if (null == fragment) {
+            logger.warn("no fragment found with code {}", code);
+            throw new RestRourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", code);
+        }
+        return this.getDtoBuilder().convert(fragment);
+    }
+
+    @Override
+    public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
+        try {
+            GuiFragment fragment = this.createGuiFragment(guiFragmentRequest);
+            this.getGuiFragmentManager().addGuiFragment(fragment);
+            return this.getDtoBuilder().convert(fragment);
+        } catch (ApsSystemException e) {
+            logger.error("Error adding fragment", e);
+            throw new RestServerError("error add fragment", e);
+        }
+    }
+
+    @Override
+    public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
+        String code = guiFragmentRequest.getCode();
+        try {
+            GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(code);
+            if (null == fragment) {
+                throw new RestRourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", code);
+            }
+            fragment.setGui(guiFragmentRequest.getGuiCode());
+            this.getGuiFragmentManager().updateGuiFragment(fragment);
+            return this.getDtoBuilder().convert(fragment);
+        } catch (RestRourceNotFoundException e) {
+            throw e;
+        } catch (ApsSystemException e) {
+            logger.error("Error updating fragment {}", code, e);
+            throw new RestServerError("error in update fragment", e);
+        }
+    }
+
+    @Override
+    public void removeGuiFragment(String guiFragmentCode) {
+        try {
+            GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(guiFragmentCode);
+            if (null == fragment) {
+                return;
+            }
+            GuiFragmentDto dto = this.getDtoBuilder().convert(fragment);
+            BeanPropertyBindingResult validationResult = this.checkFragmentForDelete(fragment, dto);
+            if (validationResult.hasErrors()) {
+                throw new ValidationConflictException(validationResult);
+            }
+            this.getGuiFragmentManager().deleteGuiFragment(guiFragmentCode);
+        } catch (ApsSystemException e) {
+            logger.error("Error in delete guiFragmentCode {}", guiFragmentCode, e);
+            throw new RestServerError("error in delete guiFragmentCode", e);
+        }
+    }
+
+    private GuiFragment createGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
+        GuiFragment fragment = new GuiFragment();
+        fragment.setCode(guiFragmentRequest.getCode());
+        fragment.setGui(guiFragmentRequest.getGuiCode());
+        return fragment;
+    }
+
+    protected BeanPropertyBindingResult checkFragmentForDelete(GuiFragment fragment, GuiFragmentDto dto) throws ApsSystemException {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(fragment, "fragment");
+        if (null == fragment) {
+            return bindingResult;
+        }
+        if (!dto.getFragments().isEmpty() || !dto.getPageModels().isEmpty()) {
+            bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.references");
+        }
+        if (fragment.isLocked()) {
+            bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_LOCKED, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.locked");
+        }
+        return bindingResult;
+    }
 
 }

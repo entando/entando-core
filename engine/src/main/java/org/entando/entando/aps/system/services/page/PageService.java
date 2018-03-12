@@ -15,13 +15,13 @@ import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.Title;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,10 +167,10 @@ public class PageService implements IPageService {
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
         page.setUseExtraTitles(pageRequest.isSeo());
-        Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
+        Optional<Map<String, String>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
-        titles.ifPresent(values -> values.forEach((title) -> {
-            apsTitles.put(title.getLang(), title.getTitle());
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
         }));
         page.setTitles(apsTitles);
         page.setGroup(pageRequest.getOwnerGroup());
@@ -198,10 +198,10 @@ public class PageService implements IPageService {
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
         page.setUseExtraTitles(pageRequest.isSeo());
-        Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
+        Optional<Map<String, String>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
-        titles.ifPresent(values -> values.forEach((title) -> {
-            apsTitles.put(title.getLang(), title.getTitle());
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
         }));
         page.setTitles(apsTitles);
         page.setGroup(pageRequest.getOwnerGroup());

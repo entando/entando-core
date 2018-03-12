@@ -6,7 +6,9 @@
 package org.entando.entando.web.page.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -24,7 +26,7 @@ public class PageRequest {
     private String contentType;
     private String parentCode;
     private boolean seo;
-    private List<Title> titles = new ArrayList<>();
+    private Map<String, String> titles = new HashMap<>();
     private String ownerGroup;
     private List<String> joinGroups = new ArrayList<>();
     private int position;
@@ -93,11 +95,11 @@ public class PageRequest {
         this.seo = seo;
     }
 
-    public List<Title> getTitles() {
+    public Map<String, String> getTitles() {
         return titles;
     }
 
-    public void setTitles(List<Title> titles) {
+    public void setTitles(Map<String, String> titles) {
         this.titles = titles;
     }
 

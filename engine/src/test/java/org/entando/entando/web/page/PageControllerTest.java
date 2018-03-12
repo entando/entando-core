@@ -90,16 +90,9 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "            \"contentType\": null,\n"
                 + "            \"parentCode\": \"service\",\n"
                 + "            \"seo\": false,\n"
-                + "            \"titles\": [\n"
-                + "                {\n"
-                + "                    \"lang\": \"en\",\n"
-                + "                    \"title\": \"Page not found\"\n"
+                + "            \"titles\": {\"en\": \"Page not found\",\n"
+                + "                \"it\": \"Pagina non trovata\"\n"
                 + "                },\n"
-                + "                {\n"
-                + "                    \"lang\": \"it\",\n"
-                + "                    \"title\": \"Pagina non trovata\"\n"
-                + "                }\n"
-                + "            ],\n"
                 + "            \"ownerGroup\": \"free\",\n"
                 + "            \"joinGroups\": [],\n"
                 + "            \"position\": 4\n"
@@ -113,16 +106,10 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "            \"contentType\": null,\n"
                 + "            \"parentCode\": \"service\",\n"
                 + "            \"seo\": false,\n"
-                + "            \"titles\": [\n"
-                + "                {\n"
-                + "                    \"lang\": \"en\",\n"
-                + "                    \"title\": \"Error page\"\n"
+                + "            \"titles\": {\n"
+                + "                \"en\": \"Error page\",\n"
+                + "                \"it\": \"Pagina di errore\"\n"
                 + "                },\n"
-                + "                {\n"
-                + "                    \"lang\": \"it\",\n"
-                + "                    \"title\": \"Pagina di errore\"\n"
-                + "                }\n"
-                + "            ],\n"
                 + "            \"ownerGroup\": \"free\",\n"
                 + "            \"joinGroups\": [],\n"
                 + "            \"position\": 5\n"
@@ -136,16 +123,10 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "            \"contentType\": null,\n"
                 + "            \"parentCode\": \"service\",\n"
                 + "            \"seo\": false,\n"
-                + "            \"titles\": [\n"
-                + "                {\n"
-                + "                    \"lang\": \"en\",\n"
-                + "                    \"title\": \"Login\"\n"
+                + "            \"titles\": {\n"
+                + "                    \"en\": \"Login\",\n"
+                + "                \"it\": \"Pagina di login\"\n"
                 + "                },\n"
-                + "                {\n"
-                + "                    \"lang\": \"it\",\n"
-                + "                    \"title\": \"Pagina di login\"\n"
-                + "                }\n"
-                + "            ],\n"
                 + "            \"ownerGroup\": \"free\",\n"
                 + "            \"joinGroups\": [],\n"
                 + "            \"position\": 6\n"
@@ -159,16 +140,10 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "            \"contentType\": \"text/html\",\n"
                 + "            \"parentCode\": \"service\",\n"
                 + "            \"seo\": false,\n"
-                + "            \"titles\": [\n"
-                + "                {\n"
-                + "                    \"lang\": \"en\",\n"
-                + "                    \"title\": \"My Title\"\n"
+                + "            \"titles\": {\n"
+                + "                    \"en\": \"My Title\",\n"
+                + "                \"it\": \"Mio Titolo\"\n"
                 + "                },\n"
-                + "                {\n"
-                + "                    \"lang\": \"it\",\n"
-                + "                    \"title\": \"Mio Titolo\"\n"
-                + "                }\n"
-                + "            ],\n"
                 + "            \"ownerGroup\": \"free\",\n"
                 + "            \"joinGroups\": [\n"
                 + "                \"free\",\n"
@@ -181,7 +156,8 @@ public class PageControllerTest extends AbstractControllerTest {
         when(pageService.getPages(any(String.class))).thenReturn(mockResult);
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
-                get("/pages/{parentCode}", "mock_page")
+                get("/pages").
+                        param("parentCode", "service")
                         .sessionAttr("user", user)
                         .header("Authorization", "Bearer " + accessToken)
         );
@@ -205,16 +181,10 @@ public class PageControllerTest extends AbstractControllerTest {
                 + "            \"contentType\": \"text/html\",\n"
                 + "            \"parentCode\": \"service\",\n"
                 + "            \"seo\": false,\n"
-                + "            \"titles\": [\n"
-                + "                {\n"
-                + "                    \"lang\": \"en\",\n"
-                + "                    \"title\": \"My Title\"\n"
+                + "            \"titles\": {\n"
+                + "                    \"en\": \"My Title\",\n"
+                + "                \"it\": \"Mio Titolo\"\n"
                 + "                },\n"
-                + "                {\n"
-                + "                    \"lang\": \"it\",\n"
-                + "                    \"title\": \"Mio Titolo\"\n"
-                + "                }\n"
-                + "            ],\n"
                 + "            \"ownerGroup\": \"free\",\n"
                 + "            \"joinGroups\": [\n"
                 + "                \"free\",\n"
@@ -226,7 +196,7 @@ public class PageControllerTest extends AbstractControllerTest {
         when(pageService.updatePage(any(String.class), any(PageRequest.class))).thenReturn(mockResult);
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
-                put("/page/{pageCode}", "wrong_page")
+                put("/pages/{pageCode}", "wrong_page")
                         .sessionAttr("user", user)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mockJsonResult)
@@ -328,7 +298,7 @@ public class PageControllerTest extends AbstractControllerTest {
         request.setPosition(0);
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
-                put("/page/{pageCode}/position", "page_to_move")
+                put("/pages/{pageCode}/position", "page_to_move")
                         .sessionAttr("user", user)
                         .content(convertObjectToJsonBytes(request))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -363,7 +333,7 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage("page_to_move")).thenReturn(pageToMove);
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
-                put("/page/{pageCode}/position", "page_to_move")
+                put("/pages/{pageCode}/position", "page_to_move")
                         .sessionAttr("user", user)
                         .content(convertObjectToJsonBytes(request))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -398,7 +368,7 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage("page_to_move")).thenReturn(pageToMove);
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
-                put("/page/{pageCode}/position", "page_to_move")
+                put("/pages/{pageCode}/position", "page_to_move")
                         .sessionAttr("user", user)
                         .content(convertObjectToJsonBytes(request))
                         .contentType(MediaType.APPLICATION_JSON)

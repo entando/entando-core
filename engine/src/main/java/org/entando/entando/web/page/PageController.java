@@ -8,14 +8,19 @@ package org.entando.entando.web.page;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
+import org.entando.entando.aps.system.common.model.DeleteDto;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.validator.PageValidator;
@@ -46,13 +51,13 @@ public class PageController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERRCODE_PAGE_ALREADY_EXISTS = "101";
-    public static final String ERRCODE_URINAME_MISMATCH = "102";
-    public static final String ERRCODE_ONLINE_PAGE = "103";
-    public static final String ERRCODE_PAGE_HAS_CHILDREN = "104";
-    public static final String ERRCODE_GROUP_MISMATCH = "105";
-    public static final String ERRCODE_STATUS_PAGE_MISMATCH = "106";
-    public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "107";
+    public static final String ERRCODE_PAGE_ALREADY_EXISTS = "1";
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
+    public static final String ERRCODE_ONLINE_PAGE = "1";
+    public static final String ERRCODE_PAGE_HAS_CHILDREN = "2";
+    public static final String ERRCODE_GROUP_MISMATCH = "2";
+    public static final String ERRCODE_STATUS_PAGE_MISMATCH = "6";
+    public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
 
     @Autowired
     private IPageService pageService;
@@ -91,7 +96,9 @@ public class PageController {
     @RequestMapping(value = "/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPages(@ModelAttribute("user") UserDetails user, @RequestParam(value = "parentCode", required = false, defaultValue = "homepage") String parentCode) {
         List<PageDto> result = this.getAuthorizationService().filterList(user, this.getPageService().getPages(parentCode));
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("parentCode", parentCode);
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
@@ -101,7 +108,9 @@ public class PageController {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
         }
         PageDto page = this.getPageService().getPage(pageCode, status);
-        return new ResponseEntity<>(new RestResponse(page), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("status", status);
+        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
@@ -121,7 +130,8 @@ public class PageController {
         }
 
         PageDto page = this.getPageService().updatePage(pageCode, pageRequest);
-        return new ResponseEntity<>(new RestResponse(page), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
@@ -137,7 +147,8 @@ public class PageController {
             throw new ValidationConflictException(bindingResult);
         }
         PageDto dto = this.getPageService().addPage(pageRequest);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        return new ResponseEntity<>(new RestResponse(dto, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
@@ -164,7 +175,9 @@ public class PageController {
             throw new ValidationGenericException(bindingResult);
         }
         this.getPageService().removePage(pageCode);
-        return new ResponseEntity<>(new RestResponse(pageCode), HttpStatus.OK);
+        DeleteDto dto = new DeleteDto(pageCode);
+        Map<String, String> metadata = new HashMap<>();
+        return new ResponseEntity<>(new RestResponse(dto, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
@@ -195,6 +208,7 @@ public class PageController {
         }
 
         PageDto page = this.getPageService().movePage(pageCode, pageRequest);
-        return new ResponseEntity<>(new RestResponse(page), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 }

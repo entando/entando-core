@@ -12,6 +12,7 @@ import org.entando.entando.web.guifragment.validator.GuiFragmentValidatorTest;
 import org.entando.entando.web.page.PageControllerTest;
 import org.entando.entando.web.pagemodel.PageModelControllerTest;
 import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
+import org.entando.entando.web.system.ReloadConfigurationControllerTest;
 
 public class ControllersAllTests extends TestCase {
 
@@ -26,6 +27,7 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(PageModelControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(EntityManagerControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(ReloadConfigurationControllerTest.class));
         return suite;
     }
 

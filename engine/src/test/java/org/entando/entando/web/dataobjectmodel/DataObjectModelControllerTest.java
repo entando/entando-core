@@ -122,7 +122,7 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         ObjectMapper mapper = new ObjectMapper();
         DataObjectModelRequest group = new DataObjectModelRequest();
-        group.setModelId(2l);
+        group.setModelId("2l");
         group.setDescr("Description");
         group.setType("AAA");
         group.setModel("<p>Test</p>");

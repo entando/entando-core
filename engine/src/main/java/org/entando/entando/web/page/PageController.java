@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
-import org.entando.entando.aps.system.common.model.DeleteDto;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
@@ -175,9 +174,10 @@ public class PageController {
             throw new ValidationGenericException(bindingResult);
         }
         this.getPageService().removePage(pageCode);
-        DeleteDto dto = new DeleteDto(pageCode);
+        Map<String, String> payload = new HashMap<>();
+        payload.put("code", pageCode);
         Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(dto, new ArrayList<>(), metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(payload, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)

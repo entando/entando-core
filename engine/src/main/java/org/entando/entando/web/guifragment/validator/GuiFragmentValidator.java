@@ -39,7 +39,7 @@ public class GuiFragmentValidator implements Validator {
     public static final String ERRCODE_FRAGMENT_INVALID_GUI_CODE = "2";
 
     //PUT
-    public static final String ERRCODE_URINAME_MISMATCH = "3";
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
 
     //DELETE
     public static final String ERRCODE_FRAGMENT_REFERENCES = "1";
@@ -75,7 +75,7 @@ public class GuiFragmentValidator implements Validator {
     public int validateBody(String fragmentCode, GuiFragmentRequestBody request, Errors errors) {
         if (!StringUtils.equals(fragmentCode, request.getCode())) {
             errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{fragmentCode, request.getCode()}, "guifragment.code.mismatch");
-            return 404;
+            return 400;
         }
         return this.validateGuiCode(request, errors);
     }

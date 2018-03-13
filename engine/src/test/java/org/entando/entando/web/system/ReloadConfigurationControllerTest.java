@@ -27,6 +27,12 @@ public class ReloadConfigurationControllerTest extends AbstractControllerIntegra
                 .perform(post("/reloadConfiguration")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+
+        /**
+         * The response should have the correct CORS headers and the CORS
+         * configuration should reflect the one set in
+         * org.entando.entando.aps.servlet.CORSFilter class
+         */
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type"));

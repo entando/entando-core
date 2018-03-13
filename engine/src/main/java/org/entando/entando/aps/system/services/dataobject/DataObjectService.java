@@ -16,14 +16,14 @@ package org.entando.entando.aps.system.services.dataobject;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
-import org.entando.entando.aps.system.services.dataobject.model.DataTypeDtoBuilder;
-import org.entando.entando.aps.system.services.entity.EntityManagerService;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
+import org.entando.entando.aps.system.services.entity.AbstractEntityService;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
@@ -31,10 +31,16 @@ import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 /**
  * @author E.Santoboni
  */
-public class DataObjectService extends EntityManagerService implements IDataObjectService {
+public class DataObjectService extends AbstractEntityService<DataObject, DataTypeDto> implements IDataObjectService {
 
-    protected IDtoBuilder<IApsEntity, DataTypeDto> getDataTypeDtoBuilder(IEntityManager masterManager) {
-        return new DataTypeDtoBuilder(masterManager.getAttributeRoles());
+    @Override
+    public PagedMetadata<EntityTypeShortDto> getShortDataTypes(RestListRequest requestList) {
+        return super.getShortEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
+    }
+
+    @Override
+    protected IDtoBuilder<DataObject, DataTypeDto> getEntityTypeFullDtoBuilder(IEntityManager masterManager) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -44,14 +50,11 @@ public class DataObjectService extends EntityManagerService implements IDataObje
 
     @Override
     public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest) {
-        List<EntityTypeFullDto> etdto = super.addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest);
-        List<DataTypeDto> list = new ArrayList<>();
-        etdto.stream().forEach(i -> list.add((DataTypeDto) i));
-        return list;
+        return super.addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest);
     }
 
     @Override
-    protected IApsEntity createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto) throws Throwable {
+    protected DataObject createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto) throws Throwable {
         IApsEntity type = super.createEntityType(entityManager, dto);
         DataTypeDtoRequest dtr = (DataTypeDtoRequest) dto;
         DataObject dataObject = (DataObject) type;

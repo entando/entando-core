@@ -15,21 +15,25 @@ package org.entando.entando.aps.system.services.dataobject;
 
 import java.util.List;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
-import org.entando.entando.aps.system.services.entity.IEntityManagerService;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 
 /**
  * @author E.Santoboni
  */
-public interface IDataObjectService extends IEntityManagerService {
+public interface IDataObjectService {
 
-    public DataTypeDto getDataType(String entityTypeCode);
+    public PagedMetadata<EntityTypeShortDto> getShortDataTypes(RestListRequest requestList);
+
+    public DataTypeDto getDataType(String dataTypeCode);
 
     public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest);
 
     public DataTypeDto updateDataType(DataTypeDtoRequest request);
 
-    public void deleteDataType(String entityTypeCode);
+    public void deleteDataType(String dataTypeCode);
 
 }

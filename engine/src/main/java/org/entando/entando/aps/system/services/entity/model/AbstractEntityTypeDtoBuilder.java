@@ -16,19 +16,27 @@ package org.entando.entando.aps.system.services.entity.model;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.List;
+import org.entando.entando.aps.system.services.DtoBuilder;
 
 /**
  * @author E.Santoboni
+ * @param <I>
+ * @param <O>
  */
-public class EntityTypeFullDtoBuilder extends AbstractEntityTypeDtoBuilder<IApsEntity, EntityTypeFullDto> {
+public abstract class AbstractEntityTypeDtoBuilder<I extends IApsEntity, O extends EntityTypeFullDto> extends DtoBuilder<I, O> {
 
-    public EntityTypeFullDtoBuilder(List<AttributeRole> roles) {
-        super(roles);
+    private List<AttributeRole> roles;
+
+    public AbstractEntityTypeDtoBuilder(List<AttributeRole> roles) {
+        this.setRoles(roles);
     }
 
-    @Override
-    protected EntityTypeFullDto toDto(IApsEntity src) {
-        return new EntityTypeFullDto(src, this.getRoles());
+    public List<AttributeRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<AttributeRole> roles) {
+        this.roles = roles;
     }
 
 }

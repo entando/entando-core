@@ -8,30 +8,20 @@ package org.entando.entando.aps.system.services.dataobject.model;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.List;
-import org.entando.entando.aps.system.services.DtoBuilder;
+import org.entando.entando.aps.system.services.entity.model.AbstractEntityTypeDtoBuilder;
 
 /**
  * @author E.Santoboni
  */
-public class DataTypeDtoBuilder extends DtoBuilder<IApsEntity, DataTypeDto> {
-
-    private List<AttributeRole> roles;
+public class DataTypeDtoBuilder extends AbstractEntityTypeDtoBuilder<IApsEntity, DataTypeDto> {
 
     public DataTypeDtoBuilder(List<AttributeRole> roles) {
-        this.setRoles(roles);
+        super(roles);
     }
 
     @Override
     protected DataTypeDto toDto(IApsEntity src) {
         return new DataTypeDto(src, this.getRoles());
-    }
-
-    public List<AttributeRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<AttributeRole> roles) {
-        this.roles = roles;
     }
 
 }

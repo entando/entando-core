@@ -14,7 +14,6 @@
 package org.entando.entando.web.dataobject;
 
 import org.entando.entando.web.dataobject.validator.DataTypeValidator;
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,7 +79,7 @@ public class DataTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataTypes(RestListRequest requestList) throws JsonProcessingException {
-        PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
+        PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortDataTypes(requestList);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }

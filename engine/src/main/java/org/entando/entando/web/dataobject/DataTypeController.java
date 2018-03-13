@@ -89,7 +89,7 @@ public class DataTypeController {
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataType(@PathVariable String dataTypeCode) throws JsonProcessingException {
         logger.debug("Requested data type -> " + dataTypeCode);
-        if (this.getDataTypeValidator().existType(dataTypeCode)) {
+        if (!this.getDataTypeValidator().existType(dataTypeCode)) {
             throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Data Type", dataTypeCode);
         }
         DataTypeDto dto = this.getDataObjectService().getDataType(dataTypeCode);

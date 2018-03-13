@@ -27,6 +27,8 @@ import org.springframework.validation.Validator;
 //@Component
 public abstract class EntityTypeValidator implements Validator {
 
+    public static final String ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST = "1";
+
     public static final String ERRCODE_ENTITY_TYPE_ALREADY_EXISTS = "1";
     public static final String ERRCODE_ENTITY_TYPE_NOT_EXISTS = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "3";
@@ -71,6 +73,10 @@ public abstract class EntityTypeValidator implements Validator {
         if (null != this.getEntityManager().getEntityPrototype(typeCode)) {
             errors.reject(ERRCODE_ENTITY_TYPE_NOT_EXISTS, new String[]{typeCode}, "entityType.notExists");
         }
+    }
+
+    public boolean existType(String typeCode) {
+        return (null != this.getEntityManager().getEntityPrototype(typeCode));
     }
 
     protected abstract IEntityManager getEntityManager();

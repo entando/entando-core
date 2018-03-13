@@ -126,7 +126,7 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isNotFound());
+        result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println(response);
     }

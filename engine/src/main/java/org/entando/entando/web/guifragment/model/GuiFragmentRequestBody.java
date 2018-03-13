@@ -17,35 +17,34 @@ import javax.validation.constraints.NotNull;
 
 public class GuiFragmentRequestBody {
 
-	@NotNull(message = "guifragment.code.notBlank")
-	private String code;
+    @NotNull(message = "guifragment.code.notBlank")
+    private String code;
 
-	@NotNull(message = "guifragment.gui.notBlank")
-	private String guiCode;
+    private String guiCode;
 
-	public GuiFragmentRequestBody() {
+    public GuiFragmentRequestBody() {
 
-	}
+    }
 
-	public GuiFragmentRequestBody(String code, String guiCode) {
-		this.code = code;
-		this.guiCode = guiCode;
-	}
+    public GuiFragmentRequestBody(String code, String guiCode) {
+        this.code = code;
+        this.guiCode = guiCode;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getGuiCode() {
-		return guiCode;
-	}
+    public String getGuiCode() {
+        return guiCode;
+    }
 
-	public void setGuiCode(String guiCode) {
-		this.guiCode = guiCode;
-	}
+    public void setGuiCode(String guiCode) {
+        this.guiCode = guiCode;
+    }
 
 }

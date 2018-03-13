@@ -8,6 +8,7 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.TestEntandoJndiUtils;
+import org.entando.entando.aps.servlet.CORSFilter;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -34,57 +35,53 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-                                   "classpath*:spring/testpropertyPlaceholder.xml",
-                                   "classpath*:spring/baseSystemConfig.xml",
-                                   "classpath*:spring/aps/**/**.xml",
-                                   "classpath*:spring/plugins/**/aps/**/**.xml",
-                                   "classpath*:spring/web/**.xml",
-
-})
+    "classpath*:spring/testpropertyPlaceholder.xml",
+    "classpath*:spring/baseSystemConfig.xml",
+    "classpath*:spring/aps/**/**.xml",
+    "classpath*:spring/plugins/**/aps/**/**.xml",
+    "classpath*:spring/web/**.xml",})
 
 @WebAppConfiguration(value = "")
 public class AbstractControllerIntegrationTest {
-
+    
     protected MockMvc mockMvc;
-
+    
     @Resource
     protected WebApplicationContext webApplicationContext;
-
-
+    
     @Mock
     protected IApiOAuth2TokenManager apiOAuth2TokenManager;
-
+    
     @Mock
     protected IAuthenticationProviderManager authenticationProviderManager;
-
+    
     @Mock
     protected IAuthorizationManager authorizationManager;
-
+    
     @Autowired
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
-
-
+    
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
     }
-
+    
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                                 .build();
-
-
+                .addFilters(new CORSFilter())
+                .build();
+        
     }
-
+    
     protected String mockOAuthInterceptor(UserDetails user) throws Exception, ApsSystemException {
         String accessToken = OAuth2TestUtils.getValidAccessToken();
         when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
         when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
         when(authorizationManager.isAuthOnPermission(any(UserDetails.class), anyString())).then(new Answer<Boolean>() {
-
+            
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 UserDetails user = (UserDetails) invocation.getArguments()[0];

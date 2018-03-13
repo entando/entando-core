@@ -15,11 +15,12 @@ package org.entando.entando.web.dataobjectmodel;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.HashMap;
 import javax.validation.Valid;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelService;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -33,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,8 +78,17 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataObjectModel(@Valid @PathVariable Long dataModelId) {
-        DataModelDto dataModelDto = this.getDataObjectModelService().getDataObjectModel(dataModelId);
+    public ResponseEntity<?> getDataObjectModel(@PathVariable String dataModelId) {
+        MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "dataModels");
+        int result = this.getDataObjectModelValidator().checkModelId(dataModelId, bindingResult);
+        if (bindingResult.hasErrors()) {
+            if (404 == result) {
+                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST, "dataObjectModel", dataModelId);
+            } else {
+                throw new ValidationGenericException(bindingResult);
+            }
+        }
+        DataModelDto dataModelDto = this.getDataObjectModelService().getDataObjectModel(Long.parseLong(dataModelId));
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
@@ -91,7 +102,15 @@ public class DataObjectModelController {
         //business validations
         this.getDataObjectModelValidator().validate(dataObjectModelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
+            throw new ValidationGenericException(bindingResult);
+        }
+        int result = this.getDataObjectModelValidator().validateBody(dataObjectModelRequest, false, bindingResult);
+        if (bindingResult.hasErrors()) {
+            if (404 == result) {
+                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+            } else {
+                throw new ValidationGenericException(bindingResult);
+            }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().addDataObjectModel(dataObjectModelRequest);
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
@@ -99,7 +118,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@Valid @PathVariable Long dataModelId, @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> updateGroup(@PathVariable String dataModelId, @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -108,15 +127,32 @@ public class DataObjectModelController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
+        int result = this.getDataObjectModelValidator().validateBody(dataObjectModelRequest, true, bindingResult);
+        if (bindingResult.hasErrors()) {
+            if (404 == result) {
+                if (1 == bindingResult.getFieldErrorCount("type")) {
+                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+                } else {
+                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, "modelId", dataObjectModelRequest.getModelId());
+                }
+            } else {
+                throw new ValidationGenericException(bindingResult);
+            }
+        }
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGroup(@Valid @PathVariable Long dataModelId) throws ApsSystemException {
+    public ResponseEntity<?> deleteGroup(@PathVariable String dataModelId) throws ApsSystemException {
         logger.info("deleting {}", dataModelId);
-        this.getDataObjectModelService().removeDataObjectModel(dataModelId);
+        MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "dataModels");
+        Long dataId = this.getDataObjectModelValidator().checkValidModelId(dataModelId, bindingResult);
+        if (null == dataId) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getDataObjectModelService().removeDataObjectModel(Long.parseLong(dataModelId));
         return new ResponseEntity<>(new RestResponse(dataModelId), HttpStatus.OK);
     }
 

@@ -1,11 +1,14 @@
 package org.entando.entando.aps.system.exception;
 
-
 public class RestRourceNotFoundException extends RuntimeException {
 
     private String errorCode;
     private String objectName;
     private String objectCode;
+
+    public RestRourceNotFoundException(String objectName, String objectCode) {
+        this("1", objectName, objectCode);
+    }
 
     public RestRourceNotFoundException(String errorCode, String objectName, String objectCode) {
         this.errorCode = errorCode;
@@ -43,4 +46,5 @@ public class RestRourceNotFoundException extends RuntimeException {
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
     }
+
 }

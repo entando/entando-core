@@ -13,14 +13,13 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmodel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -70,13 +69,13 @@ public class DataObjectModelService implements IDataObjectModelService {
             filters.stream().filter(searchFilter -> searchFilter.getKey() != null)
                     .forEach(searchFilter -> {
                         searchFilter.setKey(DataModelDto.getEntityFieldName(searchFilter.getKey()));
-                        if (searchFilter.getKey().equals("modelid")) {
+                        if (searchFilter.getKey().equals("modelid") && null != searchFilter.getValue()) {
                             String stringValue = searchFilter.getValue().toString();
                             Long value = Long.parseLong(stringValue);
                             searchFilter = new FieldSearchFilter("modelid", value, true);
                         }
                     });
-            SearcherDaoPaginatedResult<DataObjectModel> models = this.getDataObjectModelManager().getDataObjectModels(restListReq.buildFieldSearchFilters());
+            SearcherDaoPaginatedResult<DataObjectModel> models = this.getDataObjectModelManager().getDataObjectModels(filters);
             List<DataModelDto> dtoList = this.getDtoBuilder().convert(models.getList());
             pagedMetadata = new PagedMetadata<>(restListReq, models);
             pagedMetadata.setBody(dtoList);
@@ -92,7 +91,7 @@ public class DataObjectModelService implements IDataObjectModelService {
         DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(dataModelId);
         if (null == model) {
             logger.warn("no model found with code {}", dataModelId);
-            throw new RestRourceNotFoundException(null, "dataModelId", String.valueOf(dataModelId));
+            throw new RestRourceNotFoundException("dataModelId", String.valueOf(dataModelId));
         }
         return this.getDtoBuilder().convert(model);
     }
@@ -111,11 +110,12 @@ public class DataObjectModelService implements IDataObjectModelService {
 
     @Override
     public DataModelDto updateDataObjectModel(DataObjectModelRequest dataObjectModelRequest) {
-        Long code = dataObjectModelRequest.getModelId();
+        String code = dataObjectModelRequest.getModelId();
         try {
-            DataObjectModel dataObjectModel = this.getDataObjectModelManager().getDataObjectModel(code);
+            Long modelId = Long.parseLong(code);
+            DataObjectModel dataObjectModel = this.getDataObjectModelManager().getDataObjectModel(modelId);
             if (null == dataObjectModel) {
-                throw new RestRourceNotFoundException(null, "dataObjectModel", String.valueOf(code));
+                throw new RestRourceNotFoundException("dataObjectModel", code);
             }
             dataObjectModel.setDataType(dataObjectModelRequest.getType());
             dataObjectModel.setDescription(dataObjectModelRequest.getDescr());
@@ -154,7 +154,7 @@ public class DataObjectModelService implements IDataObjectModelService {
         DataObjectModel model = new DataObjectModel();
         model.setDataType(dataObjectModelRequest.getType());
         model.setDescription(dataObjectModelRequest.getDescr());
-        model.setId(dataObjectModelRequest.getModelId());
+        model.setId(Long.parseLong(dataObjectModelRequest.getModelId()));
         model.setShape(dataObjectModelRequest.getModel());
         model.setStylesheet(dataObjectModelRequest.getStylesheet());
         return model;

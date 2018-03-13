@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.guifragment;
 
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,7 +40,7 @@ public class GuiFragmentServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = ValidationConflictException.class)
+    @Test(expected = ValidationGenericException.class)
     public void should_raise_exception_on_delete_reserved_fragment() throws Throwable {
         GuiFragment reference = new GuiFragment();
         reference.setCode("referenced_code");

@@ -96,7 +96,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         PageModel pageModel = this.getPageModelManager().getPageModel(code);
         if (null == pageModel) {
             logger.warn("no pageModel found with code {}", code);
-            throw new RestRourceNotFoundException("pageModel", code);
+            throw new RestRourceNotFoundException(null, "pageModel", code);
         }
         return this.getDtoBuilder().convert(pageModel);
     }
@@ -122,7 +122,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         try {
             PageModel pageModel = this.getPageModelManager().getPageModel(pageModelRequest.getCode());
             if (null == pageModel) {
-                throw new RestRourceNotFoundException("pageModel", pageModelRequest.getCode());
+                throw new RestRourceNotFoundException(null, "pageModel", pageModelRequest.getCode());
             }
             this.copyProperties(pageModelRequest, pageModel);
             this.getPageModelManager().updatePageModel(pageModel);

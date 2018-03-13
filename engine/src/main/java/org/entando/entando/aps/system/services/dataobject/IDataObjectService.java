@@ -11,31 +11,25 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.dataobject.model;
+package org.entando.entando.aps.system.services.dataobject;
 
 import java.util.List;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
+import org.entando.entando.aps.system.services.entity.IEntityManagerService;
+import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
+import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 
 /**
  * @author E.Santoboni
  */
-public class DataTypesBodyResponse {
+public interface IDataObjectService extends IEntityManagerService {
 
-    private List<DataTypeDto> dataTypes;
+    public DataTypeDto getDataType(String entityTypeCode);
 
-    public DataTypesBodyResponse() {
-    }
+    public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest);
 
-    public DataTypesBodyResponse(List<DataTypeDto> dataTypes) {
-        this.setDataTypes(dataTypes);
-    }
+    public DataTypeDto updateDataType(DataTypeDtoRequest request);
 
-    public List<DataTypeDto> getDataTypes() {
-        return dataTypes;
-    }
-
-    public void setDataTypes(List<DataTypeDto> dataTypes) {
-        this.dataTypes = dataTypes;
-    }
+    public void deleteDataType(String entityTypeCode);
 
 }

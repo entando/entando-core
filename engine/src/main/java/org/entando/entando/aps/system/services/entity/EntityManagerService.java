@@ -161,13 +161,17 @@ public class EntityManagerService implements IEntityManagerService {
     }
 
     @Override
-    public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode) {
+    public EntityTypeFullDto getFullEntityType(String entityManagerCode, String entityTypeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityManager) {
             logger.warn("no entity type found with code {}", entityTypeCode);
             throw new RestRourceNotFoundException("entityTypeCode", entityTypeCode);
         }
+        return this.convertEntityType(entityManager, entityType);
+    }
+
+    protected EntityTypeFullDto convertEntityType(IEntityManager entityManager, IApsEntity entityType) {
         return this.getEntityTypeFullDtoBuilder(entityManager).convert(entityType);
     }
 
@@ -208,7 +212,7 @@ public class EntityManagerService implements IEntityManagerService {
         return null;
     }
 
-    private IApsEntity createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto) throws Throwable {
+    protected IApsEntity createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto) throws Throwable {
         Class entityClass = entityManager.getEntityClass();
         ApsEntity entityType = (ApsEntity) entityClass.newInstance();
         entityType.setTypeCode(dto.getCode());

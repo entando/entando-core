@@ -14,6 +14,7 @@
 package org.entando.entando.web.dataobject.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
 import org.entando.entando.web.entity.model.*;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -24,26 +25,28 @@ import javax.validation.constraints.NotNull;
 public class DataTypesBodyRequest implements IEntityTypesBodyRequest {
 
     @NotNull(message = "dataTypes.list.notBlank")
-    private List<EntityTypeDtoRequest> dataTypes;
+    private List<DataTypeDtoRequest> dataTypes;
 
     public DataTypesBodyRequest() {
     }
 
-    public DataTypesBodyRequest(List<EntityTypeDtoRequest> dataTypes) {
+    public DataTypesBodyRequest(List<DataTypeDtoRequest> dataTypes) {
         this.dataTypes = dataTypes;
     }
 
     @Override
     @JsonIgnore
     public List<EntityTypeDtoRequest> getEntityTypes() {
+        List<EntityTypeDtoRequest> list = new ArrayList<>();
+        this.getDataTypes().stream().forEach(i -> list.add(i));
+        return list;
+    }
+
+    public List<DataTypeDtoRequest> getDataTypes() {
         return dataTypes;
     }
 
-    public List<EntityTypeDtoRequest> getDataTypes() {
-        return dataTypes;
-    }
-
-    public void setDataTypes(List<EntityTypeDtoRequest> dataTypes) {
+    public void setDataTypes(List<DataTypeDtoRequest> dataTypes) {
         this.dataTypes = dataTypes;
     }
 

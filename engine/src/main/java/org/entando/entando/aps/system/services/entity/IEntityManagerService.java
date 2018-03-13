@@ -33,7 +33,7 @@ public interface IEntityManagerService {
 
     public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList);
 
-    public EntityTypeFullDto getFullEntityTypes(String entityManagerCode, String entityTypeCode);
+    public EntityTypeFullDto getFullEntityType(String entityManagerCode, String entityTypeCode);
 
     public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest);
 

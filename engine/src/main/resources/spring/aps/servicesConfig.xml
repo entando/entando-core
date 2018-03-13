@@ -75,4 +75,6 @@
 	
 	<bean id="EntityManagerService" class="org.entando.entando.aps.system.services.entity.EntityManagerService" />
 	
+	<bean id="DataObjectService" class="org.entando.entando.aps.system.services.dataobject.DataObjectService" />
+	
 </beans>

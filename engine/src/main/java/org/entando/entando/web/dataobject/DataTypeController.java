@@ -21,8 +21,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import javax.validation.Valid;
-import org.entando.entando.aps.system.services.entity.IEntityManagerService;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
+import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -30,9 +30,9 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyResponse;
-import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,17 +56,17 @@ public class DataTypeController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private IEntityManagerService entityManagerService;
+    private IDataObjectService dataObjectService;
 
     @Autowired
     private DataTypeValidator dataTypeValidator;
 
-    protected IEntityManagerService getEntityManagerService() {
-        return entityManagerService;
+    protected IDataObjectService getDataObjectService() {
+        return dataObjectService;
     }
 
-    public void setEntityManagerService(IEntityManagerService entityManagerService) {
-        this.entityManagerService = entityManagerService;
+    public void setDataObjectService(IDataObjectService dataObjectService) {
+        this.dataObjectService = dataObjectService;
     }
 
     public DataTypeValidator getDataTypeValidator() {
@@ -80,7 +80,7 @@ public class DataTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataTypes(RestListRequest requestList) throws JsonProcessingException {
-        PagedMetadata<EntityTypeShortDto> result = this.getEntityManagerService().getShortEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
+        PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
@@ -89,7 +89,7 @@ public class DataTypeController {
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataType(@PathVariable String dataTypeCode) throws JsonProcessingException {
         logger.debug("Requested data type -> " + dataTypeCode);
-        EntityTypeFullDto dto = this.getEntityManagerService().getFullEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode);
+        DataTypeDto dto = this.getDataObjectService().getDataType(dataTypeCode);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
@@ -107,7 +107,7 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationConflictException(bindingResult);
         }
-        List<EntityTypeFullDto> result = this.getEntityManagerService().addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest);
+        List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest);
         DataTypesBodyResponse response = new DataTypesBodyResponse(result);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(response));
         return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
@@ -116,7 +116,7 @@ public class DataTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateDataType(@PathVariable String dataTypeCode,
-            @Valid @RequestBody EntityTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
+            @Valid @RequestBody DataTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -125,7 +125,7 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        EntityTypeFullDto dto = this.getEntityManagerService().updateEntityType(SystemConstants.DATA_OBJECT_MANAGER, request);
+        DataTypeDto dto = this.getDataObjectService().updateDataType(request);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
@@ -134,7 +134,7 @@ public class DataTypeController {
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteDataType(@PathVariable String dataTypeCode) throws ApsSystemException {
         logger.debug("Deleting data type -> " + dataTypeCode);
-        this.getEntityManagerService().deleteEntityType(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode);
+        this.getDataObjectService().deleteDataType(dataTypeCode);
         return new ResponseEntity<>(new RestResponse(dataTypeCode), HttpStatus.OK);
     }
 

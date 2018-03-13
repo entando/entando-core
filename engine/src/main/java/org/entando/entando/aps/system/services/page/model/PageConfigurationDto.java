@@ -8,14 +8,11 @@ import com.agiletec.aps.system.services.page.Widget;
 
 public class PageConfigurationDto {
 
-    private String code; //
-    private String parentCode; //
-    private String status; //
-
-    private int position; //
-    private String ownerGroup;//
-
-    //i campi sopra sono comuni a pageDto e vanno unificati
+    private String code;
+    private String parentCode;
+    private String status;
+    private int position;
+    private String ownerGroup;
 
     private PageMetadataDto metadata;
     private WidgetConfigurationDto[] widgets;
@@ -32,7 +29,7 @@ public class PageConfigurationDto {
         this.setPosition(src.getPosition());
         this.setRoot(src.isRoot());
         this.setStatus(status);
-        this.setWidgets(src.getWidgets());
+        this.buildWidgetsDto(src.getWidgets());
         this.setChanged(src.isChanged());
     }
 
@@ -117,7 +114,7 @@ public class PageConfigurationDto {
         this.changed = changed;
     }
 
-    protected void setWidgets(Widget[] widgets) {
+    protected void buildWidgetsDto(Widget[] widgets) {
         if (null == widgets) {
             return;
         }

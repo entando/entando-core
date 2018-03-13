@@ -19,7 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class PageService_WidgetIntegrationTest extends BaseTestCase {
+public class PageServiceWidgetIntegrationTest extends BaseTestCase {
 
     private IPageService pageService;
     private IPageManager pageManager;
@@ -40,7 +40,7 @@ public class PageService_WidgetIntegrationTest extends BaseTestCase {
         }
     }
 
-    public void test_get_page_configuration() throws JsonProcessingException {
+    public void testGetPageConfiguration() throws JsonProcessingException {
         IPage draftRoot = this.pageManager.getDraftRoot();
         PageConfigurationDto pageConfigurationDto = (PageConfigurationDto) this.pageService.getPageConfiguration(draftRoot.getCode(), IPageService.STATUS_DRAFT);
         ObjectMapper mapper = new ObjectMapper();
@@ -48,13 +48,13 @@ public class PageService_WidgetIntegrationTest extends BaseTestCase {
         System.out.println(out);
     }
 
-    public void test_get_page_widget() throws JsonProcessingException {
+    public void testGetPageWidget() throws JsonProcessingException {
         IPage draftRoot = this.pageManager.getDraftRoot();
         WidgetConfigurationDto widgetConfigurationDto = this.pageService.getWidgetConfiguration(draftRoot.getCode(), 0, IPageService.STATUS_DRAFT);
         assertThat(widgetConfigurationDto.getCode(), is("content_viewer_list"));
     }
 
-    public void test_update_page_widget() throws JsonProcessingException, ApsSystemException {
+    public void testUpdatePageWidget() throws JsonProcessingException, ApsSystemException {
         String pageCode = "temp001";
         IPage parentPage = pageManager.getDraftRoot();
         PageModel pageModel = parentPage.getMetadata().getModel();
@@ -80,7 +80,7 @@ public class PageService_WidgetIntegrationTest extends BaseTestCase {
 
     }
 
-    public void test_remove_page_widget() throws JsonProcessingException, ApsSystemException {
+    public void testRemovePageWidget() throws JsonProcessingException, ApsSystemException {
         String pageCode = "temp001";
         IPage parentPage = pageManager.getDraftRoot();
         PageModel pageModel = parentPage.getMetadata().getModel();
@@ -106,7 +106,6 @@ public class PageService_WidgetIntegrationTest extends BaseTestCase {
             pageManager.deletePage(pageCode);
         }
     }
-
 
 
 }

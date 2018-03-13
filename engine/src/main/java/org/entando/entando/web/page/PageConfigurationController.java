@@ -46,6 +46,7 @@ public class PageConfigurationController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPageConfiguration(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+        logger.trace("requested {} configuration", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().getPageConfiguration(pageCode, status);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
@@ -55,6 +56,7 @@ public class PageConfigurationController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPageWidgets(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+        logger.trace("requested {} widgets detail", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().getPageConfiguration(pageCode, status);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
@@ -64,6 +66,7 @@ public class PageConfigurationController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPageWidget(@PathVariable String pageCode, @PathVariable int frameId, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+        logger.trace("requested widget detail for page {} and frame {}", pageCode, frameId);
         WidgetConfigurationDto widgetConfiguration = this.getPageService().getWidgetConfiguration(pageCode, frameId, status);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
@@ -78,6 +81,7 @@ public class PageConfigurationController {
                                               @PathVariable int frameId, 
                                               @Valid @RequestBody WidgetConfigurationRequest widget,
                                               BindingResult bindingResult) {
+        logger.trace("updating widget configuration in page {} and frame {}", pageCode, frameId);
         WidgetConfigurationDto widgetConfiguration = this.getPageService().updateWidgetConfiguration(pageCode, frameId, widget);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", IPageService.STATUS_DRAFT);
@@ -89,6 +93,7 @@ public class PageConfigurationController {
     public ResponseEntity<?> deletePageWidget(
                                               @PathVariable String pageCode,
                                               @PathVariable int frameId) {
+        logger.trace("removing widget configuration in page {} and frame {}", pageCode, frameId);
         this.getPageService().deleteWidgetConfiguration(pageCode, frameId);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", IPageService.STATUS_DRAFT);

@@ -25,7 +25,6 @@ import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -108,7 +107,7 @@ public class DataTypeController {
         //business validations
         this.getDataTypeValidator().validate(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
+            throw new ValidationGenericException(bindingResult);
         }
         List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest);
         DataTypesBodyResponse response = new DataTypesBodyResponse(result);

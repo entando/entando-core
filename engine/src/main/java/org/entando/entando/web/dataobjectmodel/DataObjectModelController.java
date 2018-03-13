@@ -15,6 +15,8 @@ package org.entando.entando.web.dataobjectmodel;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -79,6 +81,7 @@ public class DataObjectModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataObjectModel(@PathVariable String dataModelId) {
+        logger.debug("Requested data object model -> {}", dataModelId);
         MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "dataModels");
         int result = this.getDataObjectModelValidator().checkModelId(dataModelId, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -94,7 +97,9 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addDataObjectModel(@Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<?> addDataObjectModel(@Valid @RequestBody DataObjectModelRequest dataObjectModelRequest,
+            BindingResult bindingResult) throws JsonProcessingException {
+        logger.debug("Adding data object model -> {}", dataObjectModelRequest.getModelId());
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -113,12 +118,15 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().addDataObjectModel(dataObjectModelRequest);
+        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dataModelDto));
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@PathVariable String dataModelId, @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> updateGroup(@PathVariable String dataModelId,
+            @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) throws JsonProcessingException {
+        logger.debug("Updating data object model -> {}", dataObjectModelRequest.getModelId());
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -140,13 +148,14 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
+        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dataModelDto));
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGroup(@PathVariable String dataModelId) throws ApsSystemException {
-        logger.info("deleting {}", dataModelId);
+        logger.info("deleting data object model -> {}", dataModelId);
         MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "dataModels");
         Long dataId = this.getDataObjectModelValidator().checkValidModelId(dataModelId, bindingResult);
         if (null == dataId) {

@@ -20,6 +20,7 @@ import java.util.List;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
+import org.entando.entando.aps.system.services.dataobject.model.DataTypeDtoBuilder;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -40,7 +41,7 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
 
     @Override
     protected IDtoBuilder<DataObject, DataTypeDto> getEntityTypeFullDtoBuilder(IEntityManager masterManager) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DataTypeDtoBuilder(masterManager.getAttributeRoles());
     }
 
     @Override

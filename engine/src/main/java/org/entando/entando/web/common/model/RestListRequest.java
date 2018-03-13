@@ -26,11 +26,11 @@ public class RestListRequest {
 
     public static final Integer PAGE_SIZE_DEFAULT = 25;
     public static final String SORT_VALUE_DEFAULT = "code";
-    public static final String DIRECDTION_VALUE_DEFAULT = FieldSearchFilter.ASC_ORDER;
+    public static final String DIRECTION_VALUE_DEFAULT = FieldSearchFilter.ASC_ORDER;
 
     private String sort = SORT_VALUE_DEFAULT;
 
-    private String direction = DIRECDTION_VALUE_DEFAULT;
+    private String direction = DIRECTION_VALUE_DEFAULT;
 
     private Integer page = 0;
     private Integer pageSize = PAGE_SIZE_DEFAULT;
@@ -89,12 +89,12 @@ public class RestListRequest {
             Arrays.stream(filter).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
         }
 
-        FieldSearchFilter pageFilter = this.getPaginationFilter();
+        FieldSearchFilter pageFilter = this.buildPaginationFilter();
         if (null != pageFilter) {
             fieldSearchFilters.add(pageFilter);
         }
 
-        FieldSearchFilter sortFilter = this.getSortFilter();
+        FieldSearchFilter sortFilter = this.buildSortFilter();
         if (null != sortFilter) {
             fieldSearchFilters.add(sortFilter);
         }
@@ -103,7 +103,7 @@ public class RestListRequest {
     }
 
     @SuppressWarnings("rawtypes")
-    private FieldSearchFilter getPaginationFilter() {
+    private FieldSearchFilter buildPaginationFilter() {
         if (null != this.getPageSize() && this.getPageSize() > 0) {
             FieldSearchFilter pageFilter = new FieldSearchFilter(this.getPageSize(), this.getOffset());
             return pageFilter;
@@ -112,13 +112,13 @@ public class RestListRequest {
     }
 
     @SuppressWarnings("rawtypes")
-    private FieldSearchFilter getSortFilter() {
+    private FieldSearchFilter buildSortFilter() {
         if (StringUtils.isNotBlank(StringEscapeUtils.escapeSql(this.getSort()))) {
             FieldSearchFilter sort = new FieldSearchFilter(this.getSort());
 
             if (StringUtils.isNotBlank(this.getDirection())) {
                 if (!this.getDirection().equals(FieldSearchFilter.ASC_ORDER) || !this.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
-                    this.setDirection(DIRECDTION_VALUE_DEFAULT);
+                    this.setDirection(DIRECTION_VALUE_DEFAULT);
                 }
                 sort.setOrder(FieldSearchFilter.Order.valueOf(StringEscapeUtils.escapeSql(this.getDirection())));
             }

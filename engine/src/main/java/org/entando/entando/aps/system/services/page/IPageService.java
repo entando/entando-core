@@ -32,4 +32,6 @@ public interface IPageService {
 
     public List<PageDto> getPages(String parentCode);
 
+    public PageDto updatePageStatus(String pageCode, String status);
+
 }

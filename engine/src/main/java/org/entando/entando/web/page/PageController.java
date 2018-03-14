@@ -22,6 +22,7 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.page.validator.PageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,8 @@ public class PageController {
     public static final String ERRCODE_GROUP_MISMATCH = "2";
     public static final String ERRCODE_STATUS_PAGE_MISMATCH = "6";
     public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
+    public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "1";
+    public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "2";
 
     @Autowired
     private IPageService pageService;
@@ -130,6 +133,27 @@ public class PageController {
 
         PageDto page = this.getPageService().updatePage(pageCode, pageRequest);
         Map<String, String> metadata = new HashMap<>();
+        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updatePageStatus(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
+        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
+            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
+        }
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getPageValidator().validateReferences(pageCode, pageStatusRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        PageDto page = this.getPageService().updatePageStatus(pageCode, pageStatusRequest.getStatus());
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("status", pageStatusRequest.getStatus());
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 

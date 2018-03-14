@@ -30,7 +30,9 @@ import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.PageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.AbstractControllerTest;
+import org.entando.entando.web.common.validator.StringValidator;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.page.validator.PageValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
@@ -52,6 +54,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.web.bind.WebDataBinder;
 
 /**
  *
@@ -216,6 +219,61 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_URINAME_MISMATCH)));
 
+    }
+
+    @Test
+    public void shouldValidateStatusPutInvalidReq() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PageStatusRequest request = new PageStatusRequest();
+        request.setStatus("invalid_status");
+        WebDataBinder binder = new WebDataBinder(request);
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/status", "page_to_move")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest());
+        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_STATUS_PAGE_MISMATCH)));
+    }
+
+    @Test
+    public void shouldValidateStatusPutOnlineRef() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PageStatusRequest request = new PageStatusRequest();
+        request.setStatus("published");
+
+        PageM pageToMove = new PageM(true);
+        pageToMove.setCode("page_to_move");
+        pageToMove.setParentCode("old_parent_page");
+        pageToMove.setGroup("valid_group");
+
+        PageM newParent = new PageM(false);
+        newParent.setCode("new_parent_page");
+        newParent.setParentCode("another_parent_page");
+        newParent.setGroup("valid_group");
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage("page_to_move")).thenReturn(pageToMove);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest());
+        String response = result.andReturn().getResponse().getContentAsString();
+        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_STATUS_PAGE_MISMATCH)));
     }
 
     @Test

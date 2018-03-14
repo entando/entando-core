@@ -28,7 +28,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                                                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
 
         /**
          * The response should have the correct CORS headers and the CORS
@@ -50,7 +50,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                       .perform(get("/languages/{code}", new Object[]{"en"})
                                                                                            .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
 
     }
 
@@ -66,5 +66,16 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
 
     }
 
+    @Test
+    public void testGetLangInvalid() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/languages/{code}", new Object[]{"xx"})
+                                                                                           .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isNotFound());
+
+    }
 
 }

@@ -14,6 +14,7 @@
 package org.entando.entando.web.common.handlers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,6 +95,7 @@ public class RestExceptionHandler {
         List<RestError> errors = new ArrayList<>();
         errors.add(error);
         response.setErrors(errors);
+        response.setMetadata(new HashMap<>());
         return response;
     }
 

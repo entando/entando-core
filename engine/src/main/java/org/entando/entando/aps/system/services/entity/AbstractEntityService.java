@@ -48,6 +48,7 @@ import org.entando.entando.aps.system.services.entity.model.EntityAttributeValid
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -142,6 +143,11 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             List<I> entityTypesToAdd = new ArrayList<>();
             IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
             for (EntityTypeDtoRequest dto : bodyRequest.getDataTypes()) {
+                if (null != entityManager.getEntityPrototype(dto.getCode())) {
+                    this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS,
+                            bindingResult, new String[]{dto.getCode()}, "entityType.exists");
+                    continue;
+                }
                 I entityPrototype = this.createEntityType(entityManager, dto, bindingResult);
                 entityTypesToAdd.add(entityPrototype);
             }
@@ -160,22 +166,27 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return response;
     }
 
-    protected EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
-        /*
-        Group group = this.getGroupManager().getGroup(groupCode);
-        if (null == group) {
-            throw new RestRourceNotFoundException("group", groupCode);
-        }
-        group.setDescription(descr);
+    protected synchronized EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
-            this.getGroupManager().updateGroup(group);
-            return this.getDtoBuilder().convert(group);
-        } catch (ApsSystemException e) {
-            logger.error("Error updating group {}", groupCode, e);
-            throw new RestServerError("error in update group", e);
+            if (null == entityManager.getEntityPrototype(request.getCode())) {
+                this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST,
+                        bindingResult, new String[]{request.getCode()}, "entityType.notExists");
+                return null;
+            }
+            IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
+            I entityPrototype = this.createEntityType(entityManager, request, bindingResult);
+            if (bindingResult.hasErrors()) {
+                return null;
+            } else {
+                ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityPrototype);
+                I newPrototype = (I) entityManager.getEntityPrototype(request.getCode());
+                return builder.convert(newPrototype);
+            }
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
         }
-         */
-        return null;
     }
 
     protected void addError(String errorCode, BindingResult bindingResult, String[] args, String message) {
@@ -293,10 +304,11 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             if (null == entityType) {
                 return;
             }
-            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entityType, "entityType");
             List<String> ids = entityManager.searchId(entityTypeCode, null);
             if (null != ids && ids.size() > 0) {
+                BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entityType, "entityType");
                 bindingResult.reject(EntityTypeValidator.ERRCODE_ENTITY_TYPE_REFERENCES, new Object[]{entityTypeCode}, "entityType.cannot.delete.references");
+                throw new ValidationConflictException(bindingResult);
             }
             ((IEntityTypesConfigurer) entityManager).removeEntityPrototype(entityTypeCode);
         } catch (ApsSystemException e) {

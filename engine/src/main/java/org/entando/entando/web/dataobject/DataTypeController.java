@@ -109,7 +109,7 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest);
+        List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest, bindingResult);
         DataTypesBodyResponse response = new DataTypesBodyResponse(result);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(response));
         return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
@@ -123,11 +123,15 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getDataTypeValidator().validateBodyName(dataTypeCode, request, bindingResult);
+        int result = this.getDataTypeValidator().validateBodyName(dataTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
+            if (result == 404) {
+                throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "data type", dataTypeCode);
+            } else {
+                throw new ValidationGenericException(bindingResult);
+            }
         }
-        DataTypeDto dto = this.getDataObjectService().updateDataType(request);
+        DataTypeDto dto = this.getDataObjectService().updateDataType(request, bindingResult);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }

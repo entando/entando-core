@@ -48,6 +48,7 @@ import org.entando.entando.aps.system.services.entity.model.EntityAttributeValid
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -58,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -144,16 +146,24 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
     //    return new EntityTypeFullDtoBuilder(masterManager.getAttributeRoles());
     //}
 
-    protected List<O> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest) {
+    protected synchronized List<O> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
         List<O> response = new ArrayList<>();
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
+            List<I> entityTypesToAdd = new ArrayList<>();
             //IDtoBuilder<IApsEntity, EntityTypeFullDto> builder = this.getEntityTypeFullDtoBuilder(entityManager);
             IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
             for (EntityTypeDtoRequest dto : bodyRequest.getDataTypes()) {
-                I entityPrototype = this.createEntityType(entityManager, dto);
-                ((IEntityTypesConfigurer) entityManager).addEntityPrototype(entityPrototype);
-                response.add(builder.convert(entityPrototype));
+                I entityPrototype = this.createEntityType(entityManager, dto, bindingResult);
+                entityTypesToAdd.add(entityPrototype);
+            }
+            if (bindingResult.hasErrors()) {
+                throw new ValidationGenericException(bindingResult);
+            } else {
+                for (I i : entityTypesToAdd) {
+                    ((IEntityTypesConfigurer) entityManager).addEntityPrototype(i);
+                    response.add(builder.convert(i));
+                }
             }
         } catch (Throwable e) {
             logger.error("Error adding entity types", e);
@@ -162,7 +172,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return response;
     }
 
-    protected EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request) {
+    protected EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
         /*
         Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
@@ -180,7 +190,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return null;
     }
 
-    protected I createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto) throws Throwable {
+    protected I createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
         Class entityClass = entityManager.getEntityClass();
         ApsEntity entityType = (ApsEntity) entityClass.newInstance();
         entityType.setTypeCode(dto.getCode());

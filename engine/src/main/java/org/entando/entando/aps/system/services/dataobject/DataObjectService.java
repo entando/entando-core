@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.services.dataobject;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
-import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import java.util.List;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
@@ -28,6 +27,7 @@ import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -50,24 +50,23 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
     }
 
     @Override
-    public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest) {
-        return super.addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest);
+    public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
+        return super.addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest, bindingResult);
     }
 
     @Override
-    protected DataObject createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto) throws Throwable {
-        IApsEntity type = super.createEntityType(entityManager, dto);
+    public DataTypeDto updateDataType(DataTypeDtoRequest request, BindingResult bindingResult) {
+        return (DataTypeDto) super.updateEntityType(SystemConstants.DATA_OBJECT_MANAGER, request, bindingResult);
+    }
+
+    @Override
+    protected DataObject createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
+        DataObject dataObject = super.createEntityType(entityManager, dto, bindingResult);
         DataTypeDtoRequest dtr = (DataTypeDtoRequest) dto;
-        DataObject dataObject = (DataObject) type;
         dataObject.setDefaultModel(dtr.getDefaultModel());
         dataObject.setListModel(dtr.getListModel());
         dataObject.setViewPage(dtr.getViewPage());
         return dataObject;
-    }
-
-    @Override
-    public DataTypeDto updateDataType(DataTypeDtoRequest request) {
-        return (DataTypeDto) super.updateEntityType(SystemConstants.DATA_OBJECT_MANAGER, request);
     }
 
     @Override

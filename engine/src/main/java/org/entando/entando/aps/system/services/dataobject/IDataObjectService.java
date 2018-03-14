@@ -20,6 +20,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -30,9 +31,9 @@ public interface IDataObjectService {
 
     public DataTypeDto getDataType(String dataTypeCode);
 
-    public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest);
+    public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest, BindingResult bindingResult);
 
-    public DataTypeDto updateDataType(DataTypeDtoRequest request);
+    public DataTypeDto updateDataType(DataTypeDtoRequest request, BindingResult bindingResult);
 
     public void deleteDataType(String dataTypeCode);
 

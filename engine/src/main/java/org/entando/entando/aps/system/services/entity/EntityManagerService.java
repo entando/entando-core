@@ -33,6 +33,7 @@ import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -89,13 +90,13 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     }
 
     @Override
-    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest) {
-        return super.addEntityTypes(entityManagerCode, bodyRequest);
+    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
+        return super.addEntityTypes(entityManagerCode, bodyRequest, bindingResult);
     }
 
     @Override
-    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request) {
-        return super.updateEntityType(entityManagerCode, request);
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
+        return super.updateEntityType(entityManagerCode, request, bindingResult);
     }
 
     @Override

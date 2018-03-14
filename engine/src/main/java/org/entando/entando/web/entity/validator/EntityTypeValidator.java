@@ -30,9 +30,9 @@ public abstract class EntityTypeValidator implements Validator {
     public static final String ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST = "1";
 
     public static final String ERRCODE_ENTITY_TYPE_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_ENTITY_TYPE_NOT_EXISTS = "2";
-    public static final String ERRCODE_URINAME_MISMATCH = "3";
-    public static final String ERRCODE_ENTITY_TYPE_REFERENCES = "4";
+
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
+    public static final String ERRCODE_ENTITY_TYPE_REFERENCES = "3";
 
     public static final String ERRCODE_ENTITY_TYPES_EMPTY = "5";
 
@@ -66,13 +66,16 @@ public abstract class EntityTypeValidator implements Validator {
         }
     }
 
-    public void validateBodyName(String typeCode, EntityTypeDtoRequest request, Errors errors) {
+    public int validateBodyName(String typeCode, EntityTypeDtoRequest request, Errors errors) {
         if (!StringUtils.equals(typeCode, request.getCode())) {
             errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{typeCode, request.getCode()}, "entityType.code.mismatch");
+            return 400;
         }
-        if (null != this.getEntityManager().getEntityPrototype(typeCode)) {
-            errors.reject(ERRCODE_ENTITY_TYPE_NOT_EXISTS, new String[]{typeCode}, "entityType.notExists");
+        if (!this.existType(typeCode)) {
+            errors.reject(ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, new String[]{typeCode}, "entityType.notExists");
+            return 404;
         }
+        return 0;
     }
 
     public boolean existType(String typeCode) {

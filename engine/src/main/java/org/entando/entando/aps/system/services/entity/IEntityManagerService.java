@@ -21,6 +21,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -35,9 +36,9 @@ public interface IEntityManagerService {
 
     public EntityTypeFullDto getFullEntityType(String entityManagerCode, String entityTypeCode);
 
-    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest);
+    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult);
 
-    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request);
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult);
 
     public void deleteEntityType(String entityManagerCode, String entityTypeCode);
 

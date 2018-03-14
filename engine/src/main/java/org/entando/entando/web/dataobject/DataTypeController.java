@@ -110,6 +110,9 @@ public class DataTypeController {
             throw new ValidationGenericException(bindingResult);
         }
         List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         DataTypesBodyResponse response = new DataTypesBodyResponse(result);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(response));
         return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
@@ -132,6 +135,9 @@ public class DataTypeController {
             }
         }
         DataTypeDto dto = this.getDataObjectService().updateDataType(request, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }

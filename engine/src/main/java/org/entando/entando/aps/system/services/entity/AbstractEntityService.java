@@ -48,7 +48,6 @@ import org.entando.entando.aps.system.services.entity.model.EntityAttributeValid
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
-import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -147,7 +146,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                 entityTypesToAdd.add(entityPrototype);
             }
             if (bindingResult.hasErrors()) {
-                throw new ValidationGenericException(bindingResult);
+                return response;
             } else {
                 for (I i : entityTypesToAdd) {
                     ((IEntityTypesConfigurer) entityManager).addEntityPrototype(i);
@@ -179,19 +178,19 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return null;
     }
 
-    protected void addError(BindingResult bindingResult, String[] args, String message) {
-        bindingResult.reject(EntityTypeValidator.ERRCODE_GENERIC_VALIDATION, args, message);
+    protected void addError(String errorCode, BindingResult bindingResult, String[] args, String message) {
+        bindingResult.reject(errorCode, args, message);
     }
 
     protected I createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
         Class entityClass = entityManager.getEntityClass();
         ApsEntity entityType = (ApsEntity) entityClass.newInstance();
         if (StringUtils.isEmpty(dto.getCode()) || dto.getCode().length() != 3) {
-            this.addError(bindingResult, new String[]{dto.getCode()}, "entityType.typeCode.invalid");
+            this.addError(EntityTypeValidator.ERRCODE_INVALID_TYPE_CODE, bindingResult, new String[]{dto.getCode()}, "entityType.typeCode.invalid");
         }
         entityType.setTypeCode(dto.getCode());
         if (StringUtils.isEmpty(dto.getName())) {
-            this.addError(bindingResult, new String[]{}, "entityType.typeDescription.invalid");
+            this.addError(EntityTypeValidator.ERRCODE_INVALID_TYPE_DESCR, bindingResult, new String[]{}, "entityType.typeDescription.invalid");
         }
         entityType.setTypeDescription(dto.getName());
         if (bindingResult.hasErrors()) {
@@ -218,7 +217,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         AttributeInterface prototype = attributeMap.get(type);
         if (null == prototype) {
             logger.warn("Undefined attribute of type {}", type);
-            this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.type.invalid");
+            this.addError(EntityTypeValidator.ERRCODE_INVALID_ATTRIBUTE_TYPE, bindingResult, new String[]{typeCode, type}, "entityType.attribute.type.invalid");
             return null;
         }
         AttributeInterface attribute = (AttributeInterface) prototype.getAttributePrototype();
@@ -237,7 +236,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             String staticItems = attributeDto.getEnumeratorStaticItems();
             String extractor = attributeDto.getEnumeratorExtractorBean();
             if (StringUtils.isEmpty(staticItems) && StringUtils.isEmpty(extractor)) {
-                this.addError(bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.enumerator.invalid");
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_ENUMERATOR, bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.enumerator.invalid");
             }
             ((EnumeratorAttribute) attribute).setStaticItems(staticItems);
             ((EnumeratorAttribute) attribute).setExtractorBeanName(extractor);
@@ -252,10 +251,10 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                 // to check into validator
                 OgnlValidationRule ognlValidationRule = new OgnlValidationRule();
                 if (StringUtils.isEmpty(ognlValidationDto.getErrorMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForErrorMessage())) {
-                    this.addError(bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingErrorMessage");
+                    this.addError(EntityTypeValidator.ERRCODE_INVALID_OGNL_ERROR, bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingErrorMessage");
                 }
                 if (StringUtils.isEmpty(ognlValidationDto.getHelpMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForHelpMessage())) {
-                    this.addError(bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingHelpMessage");
+                    this.addError(EntityTypeValidator.ERRCODE_INVALID_OGNL_HELP, bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingHelpMessage");
                 }
                 ognlValidationRule.setErrorMessage(ognlValidationDto.getErrorMessage());
                 ognlValidationRule.setErrorMessageKey(ognlValidationDto.getKeyForErrorMessage());
@@ -270,7 +269,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                 EntityAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
                 ((AbstractListAttribute) attribute).setNestedAttributeType(this.buildAttribute(typeCode, nestedAttributeDto, attributeMap, bindingResult));
             } else {
-                this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.list.missingNestedAttribute");
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_LIST, bindingResult, new String[]{typeCode, type}, "entityType.attribute.list.missingNestedAttribute");
             }
         } else if (attribute instanceof CompositeAttribute) {
             List<EntityAttributeFullDto> compositeElementsDto = attributeDto.getCompositeAttributes();
@@ -281,7 +280,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                     ((CompositeAttribute) attribute).getAttributes().add(attributeElement);
                 }
             } else {
-                this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.composite.missingElements");
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_COMPOSITE, bindingResult, new String[]{typeCode, type}, "entityType.attribute.composite.missingElements");
             }
         }
         return attribute;

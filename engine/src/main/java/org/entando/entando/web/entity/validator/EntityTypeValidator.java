@@ -38,6 +38,15 @@ public abstract class EntityTypeValidator implements Validator {
 
     public static final String ERRCODE_GENERIC_VALIDATION = "6";
 
+    public static final String ERRCODE_INVALID_TYPE_CODE = "11";
+    public static final String ERRCODE_INVALID_TYPE_DESCR = "12";
+    public static final String ERRCODE_INVALID_ATTRIBUTE_TYPE = "13";
+    public static final String ERRCODE_INVALID_ENUMERATOR = "14";
+    public static final String ERRCODE_INVALID_OGNL_ERROR = "15";
+    public static final String ERRCODE_INVALID_OGNL_HELP = "16";
+    public static final String ERRCODE_INVALID_LIST = "17";
+    public static final String ERRCODE_INVALID_COMPOSITE = "18";
+
     @Override
     public boolean supports(Class<?> paramClass) {
         return EntityTypeDtoRequest.class.equals(paramClass);

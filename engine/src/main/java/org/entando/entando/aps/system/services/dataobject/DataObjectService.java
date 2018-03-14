@@ -30,6 +30,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.entando.entando.web.dataobject.validator.DataTypeValidator;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.springframework.validation.BindingResult;
 
@@ -70,10 +71,10 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
     protected DataObject createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
         DataObject dataObject = super.createEntityType(entityManager, dto, bindingResult);
         DataTypeDtoRequest dtr = (DataTypeDtoRequest) dto;
-        if (this.checkModel(dataObject.getTypeCode(), dtr.getListModel(), bindingResult)) {
+        if (this.checkModel(false, dataObject.getTypeCode(), dtr.getListModel(), bindingResult)) {
             dataObject.setListModel(dtr.getListModel());
         }
-        if (this.checkModel(dataObject.getTypeCode(), dtr.getDefaultModel(), bindingResult)) {
+        if (this.checkModel(true, dataObject.getTypeCode(), dtr.getDefaultModel(), bindingResult)) {
             dataObject.setDefaultModel(dtr.getDefaultModel());
         }
         if (this.checkPage(dataObject.getTypeCode(), dtr.getViewPage(), bindingResult)) {
@@ -82,7 +83,7 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
         return dataObject;
     }
 
-    private boolean checkModel(String typeCode, String modelIdString, BindingResult bindingResult) {
+    private boolean checkModel(boolean isDefault, String typeCode, String modelIdString, BindingResult bindingResult) {
         if (StringUtils.isEmpty(modelIdString)) {
             return false;
         }
@@ -90,15 +91,18 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
         try {
             longId = Long.parseLong(modelIdString);
         } catch (Exception e) {
-            this.addError(bindingResult, new String[]{typeCode, modelIdString}, "dataType.modelId.invalid");
+            this.addError((isDefault ? DataTypeValidator.ERRCODE_INVALID_DEFAULT_MODEL : DataTypeValidator.ERRCODE_INVALID_LIST_MODEL),
+                    bindingResult, new String[]{typeCode, modelIdString}, "dataType.modelId.invalid");
             return false;
         }
         DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(longId);
         if (null == model) {
-            this.addError(bindingResult, new String[]{typeCode, modelIdString}, "dataType.modelId.doesNotExist");
+            this.addError((isDefault ? DataTypeValidator.ERRCODE_DEFAULT_MODEL_DOES_NOT_EXIST : DataTypeValidator.ERRCODE_LIST_MODEL_DOES_NOT_EXIST),
+                    bindingResult, new String[]{typeCode, modelIdString}, "dataType.modelId.doesNotExist");
             return false;
         } else if (model.getDataType().equals(typeCode)) {
-            this.addError(bindingResult, new String[]{typeCode, modelIdString, model.getDataType()}, "dataType.modelId.mismatch");
+            this.addError((isDefault ? DataTypeValidator.ERRCODE_DEFAULT_MODEL_MISMATCH : DataTypeValidator.ERRCODE_LIST_MODEL_MISMATCH),
+                    bindingResult, new String[]{typeCode, modelIdString, model.getDataType()}, "dataType.modelId.mismatch");
             return false;
         }
         return true;
@@ -109,7 +113,7 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
             return false;
         }
         if (null == this.getPageManager().getOnlinePage(pageCode)) {
-            this.addError(bindingResult, new String[]{typeCode, pageCode}, "dataType.pageCode.invalid");
+            this.addError(DataTypeValidator.ERRCODE_INVALID_VIEW_PAGE, bindingResult, new String[]{typeCode, pageCode}, "dataType.pageCode.invalid");
             return false;
         }
         return true;

@@ -25,6 +25,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataTypeValidator extends EntityTypeValidator {
 
+    public static final String ERRCODE_INVALID_DEFAULT_MODEL = "21";
+    public static final String ERRCODE_DEFAULT_MODEL_DOES_NOT_EXIST = "22";
+    public static final String ERRCODE_DEFAULT_MODEL_MISMATCH = "23";
+
+    public static final String ERRCODE_INVALID_LIST_MODEL = "24";
+    public static final String ERRCODE_LIST_MODEL_DOES_NOT_EXIST = "25";
+    public static final String ERRCODE_LIST_MODEL_MISMATCH = "26";
+
+    public static final String ERRCODE_INVALID_VIEW_PAGE = "27";
+
     @Autowired
     private IDataObjectManager dataObjectManager;
 

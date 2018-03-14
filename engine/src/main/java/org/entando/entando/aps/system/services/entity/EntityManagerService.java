@@ -47,14 +47,13 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
         return new EntityTypeFullDtoBuilder(masterManager.getAttributeRoles());
     }
 
-    //@Autowired
-    //private List<IEntityManager> entityManagers;
     @Override
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
         List<String> codes = new ArrayList<>();
         Filter[] filters = requestList.getFilter();
         List<IEntityManager> managers = this.getEntityManagers();
-        Map<String, String> fieldMapping = this.getEntityManagerFieldNameMapping();
+        Map<String, String> fieldMapping = new HashMap<>();
+        fieldMapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
         managers.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> codes.add(i.getName()));
         Collections.sort(codes);
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
@@ -70,12 +69,6 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     @Override
     public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList) {
         return super.getShortEntityTypes(entityManagerCode, requestList);
-    }
-
-    protected Map<String, String> getEntityManagerFieldNameMapping() {
-        Map<String, String> mapping = new HashMap<>();
-        mapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
-        return mapping;
     }
 
     @Override

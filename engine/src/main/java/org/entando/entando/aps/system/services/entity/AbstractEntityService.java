@@ -190,7 +190,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             this.addError(bindingResult, new String[]{dto.getCode()}, "entityType.typeCode.invalid");
         }
         entityType.setTypeCode(dto.getCode());
-        if (StringUtils.isEmpty(dto.getCode()) || dto.getCode().length() != 3) {
+        if (StringUtils.isEmpty(dto.getName())) {
             this.addError(bindingResult, new String[]{}, "entityType.typeDescription.invalid");
         }
         entityType.setTypeDescription(dto.getName());
@@ -237,7 +237,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             String staticItems = attributeDto.getEnumeratorStaticItems();
             String extractor = attributeDto.getEnumeratorExtractorBean();
             if (StringUtils.isEmpty(staticItems) && StringUtils.isEmpty(extractor)) {
-                this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.enumerator.invalid");
+                this.addError(bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.enumerator.invalid");
             }
             ((EnumeratorAttribute) attribute).setStaticItems(staticItems);
             ((EnumeratorAttribute) attribute).setExtractorBeanName(extractor);
@@ -252,10 +252,10 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                 // to check into validator
                 OgnlValidationRule ognlValidationRule = new OgnlValidationRule();
                 if (StringUtils.isEmpty(ognlValidationDto.getErrorMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForErrorMessage())) {
-                    this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.ognl.missingErrorMessage");
+                    this.addError(bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingErrorMessage");
                 }
                 if (StringUtils.isEmpty(ognlValidationDto.getHelpMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForHelpMessage())) {
-                    this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.ognl.missingHelpMessage");
+                    this.addError(bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingHelpMessage");
                 }
                 ognlValidationRule.setErrorMessage(ognlValidationDto.getErrorMessage());
                 ognlValidationRule.setErrorMessageKey(ognlValidationDto.getKeyForErrorMessage());

@@ -2,17 +2,23 @@ package org.entando.entando.aps.system.services.language;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
-import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.language.validator.LanguageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 public class LanguageService implements ILanguageService {
 
@@ -21,7 +27,7 @@ public class LanguageService implements ILanguageService {
     @Autowired
     private ILangManager langManager;
 
-    private IDtoBuilder<Lang, LanguageDto> languageDtoBuilder;
+    private LanguageDtoBuilder languageDtoBuilder;
 
     protected ILangManager getLangManager() {
         return langManager;
@@ -32,27 +38,24 @@ public class LanguageService implements ILanguageService {
     }
 
     protected IDtoBuilder<Lang, LanguageDto> getLanguageDtoBuilder() {
-        if (null == languageDtoBuilder) {
-            this.languageDtoBuilder = new DtoBuilder<Lang, LanguageDto>() {
-                @Override
-                protected LanguageDto toDto(Lang src) {
-                    return new LanguageDto(src);
-                }
-            };
-        }
         return languageDtoBuilder;
     }
 
+    @PostConstruct
+    public void setUpDto() {
+        this.languageDtoBuilder = new LanguageDtoBuilder();
+        this.languageDtoBuilder.setLangManager(getLangManager());
+    }
 
     @Override
     public PagedMetadata<LanguageDto> getLanguages(RestListRequest requestList) {
         try {
-            List<Lang> langs = this.getLangManager().getLangs();
-            SearcherDaoPaginatedResult<Lang> langsRes = new SearcherDaoPaginatedResult<>(langs.size(), langs);
-            List<LanguageDto> dtoList = this.getLanguageDtoBuilder().convert(langsRes.getList());
-            langsRes.setCount(langs.size());
+            List<Lang> langs = this.getLangManager().getAssignableLangs();
+            SearcherDaoPaginatedResult<Lang> langsResult = new SearcherDaoPaginatedResult<>(langs.size(), langs);
+            List<LanguageDto> dtoList = this.getLanguageDtoBuilder().convert(langsResult.getList());
+            langsResult.setCount(langs.size());
 
-            PagedMetadata<LanguageDto> pagedMetadata = new PagedMetadata<>(requestList, langsRes);
+            PagedMetadata<LanguageDto> pagedMetadata = new PagedMetadata<>(requestList, langsResult);
             pagedMetadata.setBody(dtoList);
 
             return pagedMetadata;
@@ -62,5 +65,74 @@ public class LanguageService implements ILanguageService {
         }
     }
 
+    @Override
+    public LanguageDto getLanguage(String code) {
+        try {
+            Lang lang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
+            if (null == lang) {
+                logger.warn("no lang found with code {}", code);
+                throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
+            }
+            return this.getLanguageDtoBuilder().convert(lang);
+        } catch (ApsSystemException ex) {
+            throw new RestServerError("error in getting language " + code, ex);
+        }
+    }
+
+    @Override
+    public LanguageDto updateLanguage(String code, boolean status) {
+        if (status) {
+            return this.enableLang(code);
+        } else {
+            return this.disableLang(code);
+        }
+    }
+
+    protected LanguageDto disableLang(String code) {
+        try {
+            Lang lang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
+            if (null == lang) {
+                logger.warn("no lang found with code {}", code);
+                throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
+            }
+            //idempotent
+            if (null != this.getLangManager().getLang(code)) {
+                BeanPropertyBindingResult validations = this.validateDisable(lang);
+                if (validations.hasErrors()) {
+                    throw new ValidationConflictException(validations);
+                }
+            }
+            return this.getLanguageDtoBuilder().convert(lang);
+        } catch (ApsSystemException ex) {
+            throw new RestServerError("error in getting language " + code, ex);
+        }
+    }
+
+    protected LanguageDto enableLang(String code) {
+        try {
+            Lang lang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
+            if (null == lang) {
+                logger.warn("no lang found with code {}", code);
+                throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
+            }
+            //idempotent
+            if (null == this.getLangManager().getLang(code)) {                
+                logger.warn("the lang {} is already active", code);
+                this.getLangManager().addLang(lang.getCode());
+            }
+            return this.getLanguageDtoBuilder().convert(lang);
+        } catch (ApsSystemException ex) {
+            throw new RestServerError("error enabling lang " + code, ex);
+        }
+    }
+
+    protected BeanPropertyBindingResult validateDisable(Lang lang) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(lang, "lang");
+        if (lang.isDefault()) {
+            bindingResult.reject(LanguageValidator.ERRCODE_LANGUAGE_CANNOT_DISABLE_DEFAULT, new Object[]{lang.getCode(), lang.getDescr()}, "language.cannot.disable.default");
+        }
+        return bindingResult;
+
+    }
 
 }

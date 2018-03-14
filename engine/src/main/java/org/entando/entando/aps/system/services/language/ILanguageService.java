@@ -9,4 +9,9 @@ public interface ILanguageService {
 
     public PagedMetadata<LanguageDto> getLanguages(RestListRequest requestList);
 
+    public LanguageDto getLanguage(String code);
+
+    public LanguageDto updateLanguage(String code, boolean active);
+
 }
+

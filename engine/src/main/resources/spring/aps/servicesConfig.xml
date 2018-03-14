@@ -79,4 +79,13 @@
         <property name="dtoBuilder" ref="EntityManagerDtoBuilder" />
     </bean>
 	
+	
+	
+    <bean id="LanguageService" class="org.entando.entando.aps.system.services.language.LanguageService" >
+        <property name="langManager" ref="LangManager" />
+    </bean>
+	
+	
+	
+	
 </beans>

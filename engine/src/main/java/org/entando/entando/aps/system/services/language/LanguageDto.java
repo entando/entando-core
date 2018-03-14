@@ -1,5 +1,7 @@
 package org.entando.entando.aps.system.services.language;
 
+import java.util.List;
+
 import com.agiletec.aps.system.services.lang.Lang;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,8 +21,15 @@ public class LanguageDto {
     public LanguageDto(Lang src) {
         this.setCode(src.getCode());
         this.setDescription(src.getDescr());
-        this.setActive(src.isDefault());
+        this.setActive(true);
         this.setDefaultLang(src.isDefault());
+    }
+
+    public LanguageDto(Lang src, List<String> codes, String defaultCode) {
+        this.setCode(src.getCode());
+        this.setDescription(src.getDescr());
+        this.setActive(codes.contains(src.getCode()));
+        this.setDefaultLang(src.getCode().equals(defaultCode));
     }
 
     public String getCode() {

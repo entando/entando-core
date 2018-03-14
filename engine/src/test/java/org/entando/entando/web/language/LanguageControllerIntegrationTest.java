@@ -1,18 +1,33 @@
 package org.entando.entando.web.language;
 
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.system.services.language.ILanguageService;
+import org.entando.entando.aps.system.services.language.LanguageDto;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LanguageControllerIntegrationTest extends AbstractControllerIntegrationTest {
+
+    @Autowired
+    private ILanguageService languageService;
+
+    @Autowired
+    private ILangManager langManager;
 
     @Autowired
     @InjectMocks
@@ -28,7 +43,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                                                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
 
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
 
         /**
          * The response should have the correct CORS headers and the CORS
@@ -63,8 +78,8 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                                                                            .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
-
     }
+
 
     @Test
     public void testGetLangInvalid() throws Exception {
@@ -75,7 +90,87 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                                                                            .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
-
     }
+
+    @Test
+    public void testActivateDeactivateLang() throws Exception {
+        String langCode = "de";
+        try {
+            LanguageDto lang = this.languageService.getLanguage(langCode);
+            assertThat(lang, is(not(nullValue())));
+            assertThat(lang.isActive(), is(false));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String payload = "{\"isActive\": true}";
+            ResultActions result = mockMvc
+                                          .perform(put("/languages/{code}", new Object[]{langCode})
+                                                                                                   .content(payload)
+                                                                                                   .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                                   .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            LanguageDto updatedLang = this.languageService.getLanguage(langCode);
+            assertThat(updatedLang, is(not(nullValue())));
+            assertThat(updatedLang.isActive(), is(true));
+
+            //--
+            payload = "{\"isActive\": false}";
+            result = mockMvc
+                            .perform(put("/languages/{code}", new Object[]{langCode})
+                                                                                     .content(payload)
+                                                                                     .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                     .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            updatedLang = this.languageService.getLanguage(langCode);
+            assertThat(updatedLang, is(not(nullValue())));
+            assertThat(updatedLang.isActive(), is(false));
+
+        } finally {
+            this.languageService.updateLanguage(langCode, false);
+        }
+    }
+
+    @Test
+    public void testDeactivateDefaultLang() throws Exception {
+        String langCode = this.langManager.getDefaultLang().getCode();
+        try {
+            LanguageDto lang = this.languageService.getLanguage(langCode);
+            assertThat(lang, is(not(nullValue())));
+            assertThat(lang.isActive(), is(true));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String payload = "{\"isActive\": true}";
+            ResultActions result = mockMvc
+                                          .perform(put("/languages/{code}", new Object[]{langCode})
+                                                                                                   .content(payload)
+                                                                                                   .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                                   .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            LanguageDto updatedLang = this.languageService.getLanguage(langCode);
+            assertThat(updatedLang, is(not(nullValue())));
+            assertThat(updatedLang.isActive(), is(true));
+
+            //--
+            payload = "{\"isActive\": false}";
+            result = mockMvc
+                            .perform(put("/languages/{code}", new Object[]{langCode})
+                                                                                     .content(payload)
+                                                                                     .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                     .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isConflict());
+
+            updatedLang = this.languageService.getLanguage(langCode);
+            assertThat(updatedLang, is(not(nullValue())));
+            assertThat(updatedLang.isActive(), is(true));
+
+        } finally {
+            this.languageService.updateLanguage(langCode, true);
+        }
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package org.entando.entando.aps.system.services.language;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -51,10 +52,12 @@ public class LanguageService implements ILanguageService {
     public PagedMetadata<LanguageDto> getLanguages(RestListRequest requestList) {
         try {
             List<Lang> langs = this.getLangManager().getAssignableLangs();
+            Collections.sort(langs, (o1, o2) -> o1.getCode().compareTo(o2.getCode()));
             SearcherDaoPaginatedResult<Lang> langsResult = new SearcherDaoPaginatedResult<>(langs.size(), langs);
             List<LanguageDto> dtoList = this.getLanguageDtoBuilder().convert(langsResult.getList());
             langsResult.setCount(langs.size());
 
+            requestList.setPageSize(langs.size());
             PagedMetadata<LanguageDto> pagedMetadata = new PagedMetadata<>(requestList, langsResult);
             pagedMetadata.setBody(dtoList);
 
@@ -90,21 +93,23 @@ public class LanguageService implements ILanguageService {
 
     protected LanguageDto disableLang(String code) {
         try {
-            Lang lang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
-            if (null == lang) {
+            Lang sysLang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
+            if (null == sysLang) {
                 logger.warn("no lang found with code {}", code);
                 throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
             }
             //idempotent
+            Lang lang = this.getLangManager().getLang(code);
             if (null != this.getLangManager().getLang(code)) {
                 BeanPropertyBindingResult validations = this.validateDisable(lang);
                 if (validations.hasErrors()) {
                     throw new ValidationConflictException(validations);
                 }
             }
-            return this.getLanguageDtoBuilder().convert(lang);
+            this.getLangManager().removeLang(code);
+            return this.getLanguageDtoBuilder().convert(sysLang);
         } catch (ApsSystemException ex) {
-            throw new RestServerError("error in getting language " + code, ex);
+            throw new RestServerError("error disabling language " + code, ex);
         }
     }
 

@@ -123,12 +123,6 @@ public class PageService implements IPageService {
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
-            if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_ONLINE)) {
-                this.getPageManager().setPageOnline(pageCode);
-                newPage = this.getPageManager().getOnlinePage(pageCode);
-            } else if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_DRAFT)) {
-                this.getPageManager().setPageOffline(pageCode);
-            }
             return this.getDtoBuilder().convert(newPage);
         } catch (ApsSystemException e) {
             logger.error("Error updating page {}", pageCode, e);

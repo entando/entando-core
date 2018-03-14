@@ -122,7 +122,7 @@ public class WidgetService implements IWidgetService {
         WidgetType type = this.widgetManager.getWidgetType(widgetCode);
 
         if(type == null) {
-            throw new RestRourceNotFoundException("widget", widgetCode);
+            throw new RestRourceNotFoundException(null, "widget", widgetCode);
         }
 
         processWidgetType(type, widgetRequest);

@@ -6,10 +6,12 @@
 package org.entando.entando.aps.system.services.page;
 
 import java.util.List;
+
+import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 
 /**
  *
@@ -30,8 +32,16 @@ public interface IPageService {
 
     public PageDto updatePage(String pageCode, PageRequest pageRequest);
 
+    public List<PageDto> getPages(String parentCode);
+
     public PageDto movePage(String pageCode, PageRequest pageRequest);
 
-    public List<PageDto> getPages(String parentCode);
+    public PageConfigurationDto getPageConfiguration(String pageCode, String status);
+
+    public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status);
+
+    public WidgetConfigurationDto updateWidgetConfiguration(String pageCode, int frameId, WidgetConfigurationRequest widget);
+
+    public void deleteWidgetConfiguration(String pageCode, int frameId);
 
 }

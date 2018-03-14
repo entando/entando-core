@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class GroupControllerTest extends AbstractControllerTest {
+public class GroupControllerUnitTest extends AbstractControllerTest {
 
     @Mock
     private GroupService groupService;
@@ -52,7 +52,7 @@ public class GroupControllerTest extends AbstractControllerTest {
                                  .build();
     }
 
-    @SuppressWarnings("unchecked")
+
     @Test
     public void should_load_the_list_of_groups() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -72,7 +72,6 @@ public class GroupControllerTest extends AbstractControllerTest {
         Mockito.verify(groupService, Mockito.times(1)).getGroups(restListReq);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void should_load_the_list_of_groups_2() throws Exception {
 
@@ -111,8 +110,6 @@ public class GroupControllerTest extends AbstractControllerTest {
                                                .header("Authorization", "Bearer " + accessToken)
         );
 
-        String response = result.andReturn().getResponse().getContentAsString();
-        //System.out.println(response);
         result.andExpect(status().isUnauthorized());
     }
 
@@ -137,8 +134,6 @@ public class GroupControllerTest extends AbstractControllerTest {
                                                               .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
-        //String response = result.andReturn().getResponse().getContentAsString();
-        //System.out.println(response);
     }
 
     @Test

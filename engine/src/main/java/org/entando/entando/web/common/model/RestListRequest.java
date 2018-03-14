@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class RestListRequest {
 
-    public static final Integer PAGE_SIZE_DEFAULT = 25;
+    public static final Integer PAGE_SIZE_DEFAULT = 100;
     public static final String SORT_VALUE_DEFAULT = "code";
     public static final String DIRECTION_VALUE_DEFAULT = FieldSearchFilter.ASC_ORDER;
 
@@ -130,7 +130,7 @@ public class RestListRequest {
             FieldSearchFilter sort = new FieldSearchFilter(this.getSort());
 
             if (StringUtils.isNotBlank(this.getDirection())) {
-                if (!this.getDirection().equals(FieldSearchFilter.ASC_ORDER) || !this.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+                if (!this.getDirection().equalsIgnoreCase(FieldSearchFilter.ASC_ORDER) && !this.getDirection().equalsIgnoreCase(FieldSearchFilter.DESC_ORDER)) {
                     this.setDirection(DIRECTION_VALUE_DEFAULT);
                 }
                 sort.setOrder(FieldSearchFilter.Order.valueOf(StringEscapeUtils.escapeSql(this.getDirection())));

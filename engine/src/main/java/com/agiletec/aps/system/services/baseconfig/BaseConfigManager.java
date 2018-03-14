@@ -13,20 +13,20 @@
  */
 package com.agiletec.aps.system.services.baseconfig;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.ServletContext;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.cache.IConfigManagerCacheWrapper;
 import de.mkammerer.argon2.Argon2Factory;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.servlet.ServletContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -119,7 +119,7 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
 	protected Properties extractSecurityConfiguration() throws IOException {
 		Properties props = new Properties();
-		InputStream is = this.getServletContext().getResourceAsStream(this.getSecurityConfigPath());
+        InputStream is = this.getServletContext().getResourceAsStream(this.getSecurityConfigPath());
 		if (null == is) {
 			throw new RuntimeException("Null security configuration inside " + this.getSecurityConfigPath());
 		}

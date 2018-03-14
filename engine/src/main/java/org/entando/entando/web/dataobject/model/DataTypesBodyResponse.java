@@ -11,16 +11,31 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.entity.model;
+package org.entando.entando.web.dataobject.model;
 
-import com.agiletec.aps.system.common.entity.IEntityManager;
-import org.entando.entando.aps.system.services.DtoBuilder;
+import java.util.List;
+import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 
-public class EntityManagerDtoBuilder extends DtoBuilder<IEntityManager, EntityManagerDto> {
+/**
+ * @author E.Santoboni
+ */
+public class DataTypesBodyResponse {
 
-    @Override
-    protected EntityManagerDto toDto(IEntityManager src) {
-        return new EntityManagerDto(src);
+    private List<DataTypeDto> dataTypes;
+
+    public DataTypesBodyResponse() {
+    }
+
+    public DataTypesBodyResponse(List<DataTypeDto> dataTypes) {
+        this.setDataTypes(dataTypes);
+    }
+
+    public List<DataTypeDto> getDataTypes() {
+        return dataTypes;
+    }
+
+    public void setDataTypes(List<DataTypeDto> dataTypes) {
+        this.dataTypes = dataTypes;
     }
 
 }

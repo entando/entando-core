@@ -13,9 +13,15 @@
  */
 package org.entando.entando.aps.system.services.entity;
 
+import java.util.List;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -25,5 +31,15 @@ public interface IEntityManagerService {
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList);
 
     public EntityManagerDto getEntityManager(String entityManagerCode);
+
+    public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList);
+
+    public EntityTypeFullDto getFullEntityType(String entityManagerCode, String entityTypeCode);
+
+    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult);
+
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult);
+
+    public void deleteEntityType(String entityManagerCode, String entityTypeCode);
 
 }

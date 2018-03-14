@@ -20,7 +20,7 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
  */
 public class DataModelDto {
 
-    private Long modelId;
+    private String modelId;
     private String descr;
     private String type;
     private String model;
@@ -30,18 +30,18 @@ public class DataModelDto {
     }
 
     public DataModelDto(DataObjectModel objectModel) {
-        this.setModelId(objectModel.getId());
+        this.setModelId(String.valueOf(objectModel.getId()));
         this.setDescr(objectModel.getDescription());
         this.setModel(objectModel.getShape());
         this.setStylesheet(objectModel.getStylesheet());
         this.setType(objectModel.getDataType());
     }
 
-    public Long getModelId() {
+    public String getModelId() {
         return modelId;
     }
 
-    public void setModelId(Long modelId) {
+    public void setModelId(String modelId) {
         this.modelId = modelId;
     }
 

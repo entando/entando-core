@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class DataObjectModelRequest {
 
     @NotNull(message = "dataObjectModel.modelId.notBlank")
-    private Long modelId;
+    private String modelId;
 
     @NotNull(message = "dataObjectModel.descr.notBlank")
     private String descr;
@@ -34,11 +34,11 @@ public class DataObjectModelRequest {
     public DataObjectModelRequest() {
     }
 
-    public Long getModelId() {
+    public String getModelId() {
         return modelId;
     }
 
-    public void setModelId(Long modelId) {
+    public void setModelId(String modelId) {
         this.modelId = modelId;
     }
 

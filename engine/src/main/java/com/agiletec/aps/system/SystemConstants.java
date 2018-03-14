@@ -238,6 +238,18 @@ public interface SystemConstants {
 
     public static final String OAUTH2_AUTHORIZATION_CODE_MANAGER = "OAuth2AuthorizationCodeManager";
 
+    public static final String DATA_OBJECT_MANAGER = "DataObjectManager";
+
+    public static final String DATA_OBJECT_MODEL_MANAGER = "DataObjectModelManager";
+
+    public static final String DATA_OBJECT_RENDERER_MANAGER = "BaseDataObjectRenderer";
+
+    public static final String DATA_OBJECT_PAGE_MAPPER_MANAGER = "DataObjectPageMapperManager";
+
+    public static final String DATA_OBJECT_DISPENSER_MANAGER = "DataObjectDispenserManager";
+
+    public static final String DATA_OBJECT_ENGINE_MANAGER = "DataObjectSearchEngineManager";
+
     /**
      * Prefisso del nome del gruppo di oggetti in cache a servizio di una
      * pagina. Il nome và completato con il codice della pagina specifica.

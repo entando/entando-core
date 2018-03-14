@@ -202,56 +202,7 @@ public interface IDataObjectManager extends IEntityManager {
     public List<String> loadDataObjectsId(String[] categories, boolean orClauseCategoryFilter,
             EntitySearchFilter[] filters, Collection<String> userGroupCodes) throws ApsSystemException;
 
-    /**
-     * Carica una lista di identificativi di DataObject in base ai parametri
-     * immessi.
-     *
-     * @param categories La categorie dei DataObject da cercare.
-     * @param filters L'insieme dei filtri sugli attibuti, su cui la ricerca
-     * deve essere effettuata.
-     * @param userGroupCodes I codici dei gruppi utenti dell'utente richiedente
-     * la lista. Se la collezione è vuota o nulla, gli identificativi di
-     * DataObject erogati saranno relativi al gruppo definito "ad accesso
-     * libero". Nel caso nella collezione sia presente il codice del gruppo
-     * degli amministratori, non sarà applicato alcun filtro sul gruppo.
-     * @param onlyOwner Implica se il filtro sulla ricerca và applicato anche
-     * sui gruppi extra dei DataObject e non esclusivamente sul gruppo
-     * proprietario.
-     * @return La lista degli id dei DataObject cercati.
-     * @throws ApsSystemException in caso di errore nell'accesso al db.
-     * @deprecated From jAPS 2.0 version 2.0.9. Use loadWorkDataObjectsId or
-     * loadPublicDataObjectsId
-     */
-    public List<String> loadDataObjectsId(String[] categories, EntitySearchFilter[] filters,
-            Collection<String> userGroupCodes, boolean onlyOwner) throws ApsSystemException;
-
     public DataObjectsStatus getDataObjectsStatus();
-
-    /**
-     * Restituisce la lista di tutti identificativi dei DataObject.
-     *
-     * @return La lista di tutti identificativi dei DataObject.
-     * @throws ApsSystemException In caso di errore
-     * @deprecated From jAPS 2.0 version 2.0.9, use
-     * searchId(EntitySearchFilter[]) method
-     */
-    public List<String> getAllDataObjectsId() throws ApsSystemException;
-
-    /**
-     * Restituisce lo stato del servizio.
-     *
-     * @return Lo stato del servizio.
-     * @deprecated From jAPS 2.0 version 2.0.9, use getStatus
-     */
-    public int getState();
-
-    /**
-     * Identificativo stato servizio: stato pronto.
-     *
-     * @deprecated From jAPS 2.0 version 2.0.9, use {@link IEntityManager}
-     * constants
-     */
-    public static final int ID_STATE_READY = STATUS_READY;
 
     public static final String DATA_OBJECT_DESCR_FILTER_KEY = "descr";
 

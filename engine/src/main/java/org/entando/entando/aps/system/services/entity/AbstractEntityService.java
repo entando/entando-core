@@ -91,14 +91,6 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         };
     }
 
-    protected List<IEntityManager> getEntityManagers() {
-        return entityManagers;
-    }
-
-    public void setEntityManagers(List<IEntityManager> entityManagers) {
-        this.entityManagers = entityManagers;
-    }
-
     protected PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
@@ -142,16 +134,13 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return this.getEntityTypeFullDtoBuilder(entityManager).convert(entityType);
     }
 
-    protected abstract IDtoBuilder<I, O> getEntityTypeFullDtoBuilder(IEntityManager masterManager);// {
-    //    return new EntityTypeFullDtoBuilder(masterManager.getAttributeRoles());
-    //}
+    protected abstract IDtoBuilder<I, O> getEntityTypeFullDtoBuilder(IEntityManager masterManager);
 
     protected synchronized List<O> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
         List<O> response = new ArrayList<>();
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             List<I> entityTypesToAdd = new ArrayList<>();
-            //IDtoBuilder<IApsEntity, EntityTypeFullDto> builder = this.getEntityTypeFullDtoBuilder(entityManager);
             IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
             for (EntityTypeDtoRequest dto : bodyRequest.getDataTypes()) {
                 I entityPrototype = this.createEntityType(entityManager, dto, bindingResult);
@@ -190,10 +179,20 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return null;
     }
 
+    protected void addError(BindingResult bindingResult, String[] args, String message) {
+        bindingResult.reject(EntityTypeValidator.ERRCODE_GENERIC_VALIDATION, args, message);
+    }
+
     protected I createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
         Class entityClass = entityManager.getEntityClass();
         ApsEntity entityType = (ApsEntity) entityClass.newInstance();
+        if (StringUtils.isEmpty(dto.getCode()) || dto.getCode().length() != 3) {
+            this.addError(bindingResult, new String[]{dto.getCode()}, "entityType.typeCode.invalid");
+        }
         entityType.setTypeCode(dto.getCode());
+        if (StringUtils.isEmpty(dto.getCode()) || dto.getCode().length() != 3) {
+            this.addError(bindingResult, new String[]{}, "entityType.typeDescription.invalid");
+        }
         entityType.setTypeDescription(dto.getName());
         Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
         List<EntityAttributeFullDto> attributeDtos = dto.getAttributes();
@@ -323,6 +322,14 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             throw new RestServerError("error filtering bean " + bean.getClass().getName(), e);
         }
         return true;
+    }
+
+    protected List<IEntityManager> getEntityManagers() {
+        return entityManagers;
+    }
+
+    public void setEntityManagers(List<IEntityManager> entityManagers) {
+        this.entityManagers = entityManagers;
     }
 
 }

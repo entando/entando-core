@@ -36,6 +36,8 @@ public abstract class EntityTypeValidator implements Validator {
 
     public static final String ERRCODE_ENTITY_TYPES_EMPTY = "5";
 
+    public static final String ERRCODE_GENERIC_VALIDATION = "6";
+
     @Override
     public boolean supports(Class<?> paramClass) {
         return EntityTypeDtoRequest.class.equals(paramClass);

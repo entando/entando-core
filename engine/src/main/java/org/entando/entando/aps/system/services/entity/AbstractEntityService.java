@@ -194,11 +194,14 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             this.addError(bindingResult, new String[]{}, "entityType.typeDescription.invalid");
         }
         entityType.setTypeDescription(dto.getName());
+        if (bindingResult.hasErrors()) {
+            return (I) entityType;
+        }
         Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
         List<EntityAttributeFullDto> attributeDtos = dto.getAttributes();
         if (null != attributeDtos) {
             for (EntityAttributeFullDto attributeDto : attributeDtos) {
-                AttributeInterface attribute = this.buildAttribute(attributeDto, attributeMap);
+                AttributeInterface attribute = this.buildAttribute(dto.getCode(), attributeDto, attributeMap, bindingResult);
                 if (null != attribute) {
                     entityType.addAttribute(attribute);
                 } else {
@@ -209,11 +212,13 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return (I) entityType;
     }
 
-    private AttributeInterface buildAttribute(EntityAttributeFullDto attributeDto, Map<String, AttributeInterface> attributeMap) {
+    protected AttributeInterface buildAttribute(String typeCode,
+            EntityAttributeFullDto attributeDto, Map<String, AttributeInterface> attributeMap, BindingResult bindingResult) {
         String type = attributeDto.getType();
         AttributeInterface prototype = attributeMap.get(type);
         if (null == prototype) {
             logger.warn("Undefined attribute of type {}", type);
+            this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.type.invalid");
             return null;
         }
         AttributeInterface attribute = (AttributeInterface) prototype.getAttributePrototype();
@@ -229,8 +234,13 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         attribute.setSearchable(attributeDto.isListFilter());
         if (attribute instanceof EnumeratorAttribute) {
             // to check into validator
-            ((EnumeratorAttribute) attribute).setStaticItems(attributeDto.getEnumeratorStaticItems());
-            ((EnumeratorAttribute) attribute).setExtractorBeanName(attributeDto.getEnumeratorExtractorBean());
+            String staticItems = attributeDto.getEnumeratorStaticItems();
+            String extractor = attributeDto.getEnumeratorExtractorBean();
+            if (StringUtils.isEmpty(staticItems) && StringUtils.isEmpty(extractor)) {
+                this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.enumerator.invalid");
+            }
+            ((EnumeratorAttribute) attribute).setStaticItems(staticItems);
+            ((EnumeratorAttribute) attribute).setExtractorBeanName(extractor);
             ((EnumeratorAttribute) attribute).setCustomSeparator(attributeDto.getEnumeratorStaticItemsSeparator());
         }
         IAttributeValidationRules validationRules = attribute.getValidationRules();
@@ -241,6 +251,12 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             if (null != ognlValidationDto && !StringUtils.isEmpty(ognlValidationDto.getOgnlExpression())) {
                 // to check into validator
                 OgnlValidationRule ognlValidationRule = new OgnlValidationRule();
+                if (StringUtils.isEmpty(ognlValidationDto.getErrorMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForErrorMessage())) {
+                    this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.ognl.missingErrorMessage");
+                }
+                if (StringUtils.isEmpty(ognlValidationDto.getHelpMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForHelpMessage())) {
+                    this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.ognl.missingHelpMessage");
+                }
                 ognlValidationRule.setErrorMessage(ognlValidationDto.getErrorMessage());
                 ognlValidationRule.setErrorMessageKey(ognlValidationDto.getKeyForErrorMessage());
                 ognlValidationRule.setEvalExpressionOnValuedAttribute(ognlValidationDto.isApplyOnlyToFilledAttr());
@@ -249,17 +265,23 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                 ognlValidationRule.setHelpMessageKey(ognlValidationDto.getKeyForHelpMessage());
             }
         }
-        if (attribute instanceof AbstractListAttribute && null != attributeDto.getNestedAttribute()) {
-            EntityAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
-            ((AbstractListAttribute) attribute).setNestedAttributeType(this.buildAttribute(nestedAttributeDto, attributeMap));
-        } else if (attribute instanceof CompositeAttribute
-                && null != attributeDto.getCompositeAttributes()
-                && !attributeDto.getCompositeAttributes().isEmpty()) {
-            List<EntityAttributeFullDto> attributes = attributeDto.getCompositeAttributes();
-            for (EntityAttributeFullDto attributeElementDto : attributes) {
-                AttributeInterface attributeElement = this.buildAttribute(attributeElementDto, attributeMap);
-                ((CompositeAttribute) attribute).getAttributeMap().put(attributeElement.getName(), attributeElement);
-                ((CompositeAttribute) attribute).getAttributes().add(attributeElement);
+        if (attribute instanceof AbstractListAttribute) {
+            if (null != attributeDto.getNestedAttribute()) {
+                EntityAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
+                ((AbstractListAttribute) attribute).setNestedAttributeType(this.buildAttribute(typeCode, nestedAttributeDto, attributeMap, bindingResult));
+            } else {
+                this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.list.missingNestedAttribute");
+            }
+        } else if (attribute instanceof CompositeAttribute) {
+            List<EntityAttributeFullDto> compositeElementsDto = attributeDto.getCompositeAttributes();
+            if (null != compositeElementsDto && !compositeElementsDto.isEmpty()) {
+                for (EntityAttributeFullDto attributeElementDto : compositeElementsDto) {
+                    AttributeInterface attributeElement = this.buildAttribute(typeCode, attributeElementDto, attributeMap, bindingResult);
+                    ((CompositeAttribute) attribute).getAttributeMap().put(attributeElement.getName(), attributeElement);
+                    ((CompositeAttribute) attribute).getAttributes().add(attributeElement);
+                }
+            } else {
+                this.addError(bindingResult, new String[]{typeCode, type}, "entityType.attribute.composite.missingElements");
             }
         }
         return attribute;

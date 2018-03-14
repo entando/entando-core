@@ -111,6 +111,19 @@ public class RestListRequest {
         return null;
     }
 
+    public List getSublist(List master) {
+        if (null == master) {
+            return null;
+        }
+        FieldSearchFilter pagFilter = this.buildPaginationFilter();
+        int offset = pagFilter.getOffset();
+        int limit = pagFilter.getLimit();
+        int size = master.size();
+        int offsetToApply = (offset >= size) ? size : offset;
+        int limitToApply = ((offsetToApply + limit) > size) ? size : (offsetToApply + limit);
+        return master.subList(offsetToApply, limitToApply);
+    }
+
     @SuppressWarnings("rawtypes")
     private FieldSearchFilter buildSortFilter() {
         if (StringUtils.isNotBlank(StringEscapeUtils.escapeSql(this.getSort()))) {
@@ -180,5 +193,6 @@ public class RestListRequest {
             return false;
         return true;
     }
+
 
 }

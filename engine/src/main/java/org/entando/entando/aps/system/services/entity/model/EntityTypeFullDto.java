@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,39 +16,24 @@ package org.entando.entando.aps.system.services.entity.model;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author E.Santoboni
  */
-public class EntityTypeDto extends EntityTypeShortDto {
+public class EntityTypeFullDto extends EntityTypeDto {
 
-    private List<EntityAttributeDto> attributes = new ArrayList<>();
-
-    public EntityTypeDto() {
+    public EntityTypeFullDto() {
         super();
     }
 
-    public EntityTypeDto(IApsEntity entityType) {
-        super(entityType);
-    }
-
-    public EntityTypeDto(IApsEntity entityType, List<AttributeRole> roles) {
+    public EntityTypeFullDto(IApsEntity entityType, List<AttributeRole> roles) {
         super(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
-            EntityAttributeDto attributeDto = new EntityAttributeDto(attribute, roles);
+            EntityAttributeFullDto attributeDto = new EntityAttributeFullDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
-    }
-
-    public List<EntityAttributeDto> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(List<EntityAttributeDto> attributes) {
-        this.attributes = attributes;
     }
 
 }

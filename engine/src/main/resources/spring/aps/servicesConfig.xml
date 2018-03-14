@@ -72,10 +72,7 @@
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
 	
-    <bean id="EntityManagerDtoBuilder" class="org.entando.entando.aps.system.services.entity.model.EntityManagerDtoBuilder" />
-
-
-	<!-- === WIDGET SERVICES === -->
+    <!-- === WIDGET SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
         <property name="dtoBuilder" ref="GroupDtoBuilder" />
@@ -118,8 +115,8 @@
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>
 
-    <bean id="EntityManagerService" class="org.entando.entando.aps.system.services.entity.EntityManagerService" >
-        <property name="dtoBuilder" ref="EntityManagerDtoBuilder" />
-    </bean>
-   
+    <bean id="EntityManagerService" class="org.entando.entando.aps.system.services.entity.EntityManagerService" />
+	
+	<bean id="DataObjectService" class="org.entando.entando.aps.system.services.dataobject.DataObjectService" />
+	
 </beans>

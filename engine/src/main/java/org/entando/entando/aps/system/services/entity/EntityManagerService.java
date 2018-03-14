@@ -13,73 +13,95 @@
  */
 package org.entando.entando.aps.system.services.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDtoBuilder;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 
-public class EntityManagerService implements IEntityManagerService {
+/**
+ * @author E.Santoboni
+ */
+public class EntityManagerService extends AbstractEntityService<IApsEntity, EntityTypeFullDto> implements IEntityManagerService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private List<IEntityManager> entityManagers;
-
-    private IDtoBuilder<IEntityManager, EntityManagerDto> dtoBuilder;
-
-    protected List<IEntityManager> getEntityManagers() {
-        return entityManagers;
+    @Override
+    protected IDtoBuilder<IApsEntity, EntityTypeFullDto> getEntityTypeFullDtoBuilder(IEntityManager masterManager) {
+        return new EntityTypeFullDtoBuilder(masterManager.getAttributeRoles());
     }
 
-    public void setEntityManagers(List<IEntityManager> entityManagers) {
-        this.entityManagers = entityManagers;
-    }
-
-    protected IDtoBuilder<IEntityManager, EntityManagerDto> getDtoBuilder() {
-        return dtoBuilder;
-    }
-
-    public void setDtoBuilder(IDtoBuilder<IEntityManager, EntityManagerDto> dtoBuilder) {
-        this.dtoBuilder = dtoBuilder;
-    }
-
+    //@Autowired
+    //private List<IEntityManager> entityManagers;
     @Override
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
-        PagedMetadata<String> pagedMetadata = null;
         List<String> codes = new ArrayList<>();
+        Filter[] filters = requestList.getFilter();
         List<IEntityManager> managers = this.getEntityManagers();
-        managers.stream().forEach(i -> codes.add(((IManager) i).getName()));
-        SearcherDaoPaginatedResult result = new SearcherDaoPaginatedResult(managers.size(), codes);
-        pagedMetadata = new PagedMetadata<>(requestList, result);
-        pagedMetadata.setBody(codes);
+        Map<String, String> fieldMapping = this.getEntityManagerFieldNameMapping();
+        managers.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> codes.add(i.getName()));
+        Collections.sort(codes);
+        if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
+            Collections.reverse(codes);
+        }
+        List<String> sublist = requestList.getSublist(codes);
+        SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(codes.size(), sublist);
+        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
+        pagedMetadata.setBody(sublist);
         return pagedMetadata;
     }
 
     @Override
+    public PagedMetadata<EntityTypeShortDto> getShortEntityTypes(String entityManagerCode, RestListRequest requestList) {
+        return super.getShortEntityTypes(entityManagerCode, requestList);
+    }
+
+    protected Map<String, String> getEntityManagerFieldNameMapping() {
+        Map<String, String> mapping = new HashMap<>();
+        mapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
+        return mapping;
+    }
+
+    @Override
     public EntityManagerDto getEntityManager(String entityManagerCode) {
-        IEntityManager entityManager = null;
-        List<IEntityManager> managers = this.getEntityManagers();
-        for (IEntityManager manager : managers) {
-            if (((IManager) manager).getName().equals(entityManagerCode)) {
-                entityManager = manager;
-                break;
-            }
-        }
-        if (null == entityManager) {
-            logger.warn("no entity manager found with code {}", entityManagerCode);
-            throw new RestRourceNotFoundException(null, "entityManagerCode", entityManagerCode);
-        }
-        return this.getDtoBuilder().convert(entityManager);
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        return this.getEntityManagerDtoBuilder().convert(entityManager);
+    }
+
+    @Override
+    public EntityTypeFullDto getFullEntityType(String entityManagerCode, String entityTypeCode) {
+        return super.getFullEntityType(entityManagerCode, entityTypeCode);
+    }
+
+    @Override
+    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
+        return super.addEntityTypes(entityManagerCode, bodyRequest, bindingResult);
+    }
+
+    @Override
+    public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
+        return super.updateEntityType(entityManagerCode, request, bindingResult);
+    }
+
+    @Override
+    public void deleteEntityType(String entityManagerCode, String entityTypeCode) {
+        super.deleteEntityType(entityManagerCode, entityTypeCode);
     }
 
 }

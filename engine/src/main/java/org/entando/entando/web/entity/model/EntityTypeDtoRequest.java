@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -11,8 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.entity.model;
+package org.entando.entando.web.entity.model;
 
+import org.entando.entando.aps.system.services.entity.model.*;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
@@ -22,32 +23,32 @@ import java.util.List;
 /**
  * @author E.Santoboni
  */
-public class EntityTypeDto extends EntityTypeShortDto {
+public class EntityTypeDtoRequest extends EntityTypeShortDto {
 
-    private List<EntityAttributeDto> attributes = new ArrayList<>();
+    private List<EntityAttributeFullDto> attributes = new ArrayList<>();
 
-    public EntityTypeDto() {
+    public EntityTypeDtoRequest() {
         super();
     }
 
-    public EntityTypeDto(IApsEntity entityType) {
+    public EntityTypeDtoRequest(IApsEntity entityType) {
         super(entityType);
     }
 
-    public EntityTypeDto(IApsEntity entityType, List<AttributeRole> roles) {
+    public EntityTypeDtoRequest(IApsEntity entityType, List<AttributeRole> roles) {
         super(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
-            EntityAttributeDto attributeDto = new EntityAttributeDto(attribute, roles);
+            EntityAttributeFullDto attributeDto = new EntityAttributeFullDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
     }
 
-    public List<EntityAttributeDto> getAttributes() {
+    public List<EntityAttributeFullDto> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(List<EntityAttributeDto> attributes) {
+    public void setAttributes(List<EntityAttributeFullDto> attributes) {
         this.attributes = attributes;
     }
 

@@ -6,7 +6,6 @@
 package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.Page;
 import org.entando.entando.aps.system.services.DtoBuilder;
 
 /**

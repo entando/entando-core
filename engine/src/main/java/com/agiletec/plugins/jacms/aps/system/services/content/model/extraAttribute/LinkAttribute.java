@@ -170,8 +170,8 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
     }
 
     @Override
-    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
-        super.valueFrom(jaxbAttribute, langCode);
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
+        super.valueFrom(jaxbAttribute);
         JAXBLinkValue value = ((JAXBLinkAttribute) jaxbAttribute).getLinkValue();
         if (null == value) {
             return;
@@ -181,8 +181,7 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         if (null == textValue) {
             return;
         }
-        String langToSet = (null != langCode) ? langCode : this.getDefaultLangCode();
-        this.getTextMap().put(langToSet, textValue);
+        this.getTextMap().put(this.getDefaultLangCode(), textValue);
     }
 
     @Override

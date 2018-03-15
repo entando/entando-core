@@ -30,7 +30,11 @@ public class LabelDtoBuilder extends DtoBuilder<ApsProperties, LabelDto> {
     }
 
     public LabelDto convert(String key, ApsProperties entity) {
-        return convert(key, entity);
+        LabelDto dto = null;
+        if (null != entity) {
+            dto = toDto(key, entity);
+        }
+        return dto;
     }
 
     public List<LabelDto> convert(Map<String, ApsProperties> list) {

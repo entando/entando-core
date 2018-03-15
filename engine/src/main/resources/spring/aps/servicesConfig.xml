@@ -122,5 +122,12 @@
     <bean id="LanguageService" class="org.entando.entando.aps.system.services.language.LanguageService" >
         <property name="langManager" ref="LangManager" />
     </bean>
+
+    <bean id="LabelService" class="org.entando.entando.aps.system.services.label.LabelService" >
+        <property name="langManager" ref="LangManager" />
+        <property name="i18nManager" ref="I18nManager"></property>
+    </bean>
+    
+    
     
 </beans>

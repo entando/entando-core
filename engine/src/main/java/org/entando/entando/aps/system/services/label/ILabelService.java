@@ -8,7 +8,7 @@ public interface ILabelService {
 
     String BEAN_NAME = "LabelService";
 
-    PagedMetadata<LabelDto> getLabels(RestListRequest restRequest);
+    PagedMetadata<LabelDto> getLabelGroups(RestListRequest restRequest);
 
     LabelDto getLabelGroup(String code);
 

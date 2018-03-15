@@ -1,13 +1,21 @@
 package org.entando.entando.web.label;
 
+import java.util.HashMap;
+
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import org.entando.entando.aps.system.services.label.ILabelService;
+import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,6 +31,28 @@ public class LabelController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    private ILabelService labelService;
+
+    @Autowired
+    private LabelValidator labelValidator;
+
+    protected ILabelService getLabelService() {
+        return labelService;
+    }
+
+    public void setLabelService(ILabelService labelService) {
+        this.labelService = labelService;
+    }
+
+    protected LabelValidator getLabelValidator() {
+        return labelValidator;
+    }
+
+    public void setLabelValidator(LabelValidator labelValidator) {
+        this.labelValidator = labelValidator;
+    }
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getLables(RestListRequest requestList) {
@@ -33,53 +63,36 @@ public class LabelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> geLabel(@PathVariable String labelCode) {
-        //        GroupDto group = this.getGroupService().getGroup(groupCode);
-        //        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
-        return null;
+    public ResponseEntity<?> geLabelGroup(@PathVariable String labelCode) {
+        LabelDto label = this.getLabelService().getLabelGroup(labelCode);
+        return new ResponseEntity<>(new RestResponse(label, null, new HashMap<>()), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@PathVariable String labelCode, @Valid @RequestBody LabelRequest labelRequest, BindingResult bindingResult) {
-        //        //field validations
-        //        if (bindingResult.hasErrors()) {
-        //            throw new ValidationGenericException(bindingResult);
-        //        }
-        //        this.getGroupValidator().validateBodyName(groupCode, groupRequest, bindingResult);
-        //        if (bindingResult.hasErrors()) {
-        //            throw new ValidationGenericException(bindingResult);
-        //        }
-        //
-        //        GroupDto group = this.getGroupService().updateGroup(groupCode, groupRequest.getName());
-        //        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
-        return null;
+    public ResponseEntity<?> updateLabelGroup(@PathVariable String labelCode, @Valid @RequestBody LabelRequest labelRequest, BindingResult bindingResult) {
+        this.getLabelValidator().validateBodyName(labelCode, labelRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        LabelDto group = this.getLabelService().updateLabelGroup(labelRequest);
+        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addGroup(@Valid @RequestBody LabelRequest labelRequest, BindingResult bindingResult) throws ApsSystemException {
-        //        //field validations
-        //        if (bindingResult.hasErrors()) {
-        //            throw new ValidationGenericException(bindingResult);
-        //        }
-        //        //business validations 
-        //        getGroupValidator().validate(groupRequest, bindingResult);
-        //        if (bindingResult.hasErrors()) {
-        //            throw new ValidationConflictException(bindingResult);
-        //        }
-        //        GroupDto dto = this.getGroupService().addGroup(groupRequest);
-        //        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
-        return null;
+    public ResponseEntity<?> addLabelGroup(@Valid @RequestBody LabelRequest labelRequest) throws ApsSystemException {
+        LabelDto group = this.getLabelService().addLabelGroup(labelRequest);
+        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = "group_delete")
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGroup(@PathVariable String groupName) throws ApsSystemException {
-        //        logger.info("deleting {}", groupName);
-        //        this.getGroupService().removeGroup(groupName);
-        //        return new ResponseEntity<>(new RestResponse(groupName), HttpStatus.OK);
-        return null;
+    public ResponseEntity<?> deleteLabelGroup(@PathVariable String labelCode) throws ApsSystemException {
+        logger.info("deleting {}", labelCode);
+        this.getLabelService().removeLabelGroup(labelCode);
+        return new ResponseEntity<>(new RestResponse(labelCode), HttpStatus.OK);
     }
 
 }
+

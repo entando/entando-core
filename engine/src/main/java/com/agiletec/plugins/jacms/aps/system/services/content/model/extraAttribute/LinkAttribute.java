@@ -34,26 +34,27 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.linkresolver.ILinkResolverManager;
 
 /**
- * Rappresenta una informazione di tipo "link". La destinazione del link è
- * la stessa per tutte le lingue, ma il testo associato varia con la lingua.
+ * Rappresenta una informazione di tipo "link". La destinazione del link è la
+ * stessa per tutte le lingue, ma il testo associato varia con la lingua.
+ *
  * @author W.Ambu - S.Didaci
  */
 public class LinkAttribute extends TextAttribute implements IReferenceableAttribute {
 
-	private static final Logger _logger = LoggerFactory.getLogger(LinkAttribute.class);
-	
-	@Override
+    private static final Logger logger = LoggerFactory.getLogger(LinkAttribute.class);
+
+    @Override
     public Object getAttributePrototype() {
         LinkAttribute prototype = (LinkAttribute) super.getAttributePrototype();
-		prototype.setContentManager(this.getContentManager());
+        prototype.setContentManager(this.getContentManager());
         prototype.setLinkResolverManager(this.getLinkResolverManager());
         prototype.setPageManager(this.getPageManager());
         return prototype;
     }
-	
-	@Override
+
+    @Override
     public Element getJDOMElement() {
-		Element attributeElement = this.createRootElement("attribute");
+        Element attributeElement = this.createRootElement("attribute");
         if (null != this.getSymbolicLink()) {
             Element linkElement = new Element("link");
             attributeElement.addContent(linkElement);
@@ -94,12 +95,13 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         super.addTextElements(attributeElement);
         return attributeElement;
     }
-    
+
     /**
-     * Restituisce la stringa rappresentante la destinazione simbolica.
-     * Il metodo è atto ad essere utilizzato nel modello di renderizzazione 
-     * e la stringa restituita sarà successivamente risolta in fase di 
+     * Restituisce la stringa rappresentante la destinazione simbolica. Il
+     * metodo è atto ad essere utilizzato nel modello di renderizzazione e la
+     * stringa restituita sarà successivamente risolta in fase di
      * renderizzazione dal servizio linkResolver.
+     *
      * @return La stringa rappresentante la destinazione simbolica.
      */
     public String getDestination() {
@@ -112,25 +114,27 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         }
         return destination;
     }
-    
+
     /**
      * Sovrascrittura del metodo della classe astratta da cui deriva. Poichè
-     * questo tipo di attributo non può mai essere "searchable", restituisce sempre false.
+     * questo tipo di attributo non può mai essere "searchable", restituisce
+     * sempre false.
+     *
      * @return Restituisce sempre false
      */
-	@Override
+    @Override
     public boolean isSearchable() {
         return false;
     }
-    
-	@Override
+
+    @Override
     public boolean isSearchableOptionSupported() {
         return false;
     }
-    
-	@Override
+
+    @Override
     public List<CmsAttributeReference> getReferences(List<Lang> systemLangs) {
-        List<CmsAttributeReference> refs = new ArrayList<CmsAttributeReference>();
+        List<CmsAttributeReference> refs = new ArrayList<>();
         SymbolicLink symbLink = this.getSymbolicLink();
         if (null != symbLink && (symbLink.getDestType() != SymbolicLink.URL_TYPE)) {
             CmsAttributeReference ref = new CmsAttributeReference(symbLink.getPageDest(),
@@ -139,115 +143,128 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         }
         return refs;
     }
-    
-	@Override
+
+    @Override
     public Object getValue() {
         return this.getSymbolicLink();
     }
-	
-	@Override
-	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
-		return new JAXBLinkAttribute();
-	}
-	
-	@Override
-	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
-		JAXBLinkAttribute jaxbAttribute = (JAXBLinkAttribute) super.createJAXBAttribute(langCode);
-		if (null == jaxbAttribute || null == this.getSymbolicLink()) {
-			return jaxbAttribute;
-		}
-		JAXBLinkValue value = new JAXBLinkValue();
-		String text = this.getTextForLang(langCode);
+
+    @Override
+    protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+        return new JAXBLinkAttribute();
+    }
+
+    @Override
+    public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+        JAXBLinkAttribute jaxbAttribute = (JAXBLinkAttribute) super.createJAXBAttribute(langCode);
+        if (null == jaxbAttribute || null == this.getSymbolicLink()) {
+            return jaxbAttribute;
+        }
+        JAXBLinkValue value = new JAXBLinkValue();
+        String text = this.getTextForLang(langCode);
         value.setText(text);
         value.setUrl(this.getLinkResolverManager().resolveLink(this.getSymbolicLink(), this.getParentEntity().getId(), null));
         value.setSymbolicLink(this.getSymbolicLink());
-		jaxbAttribute.setLinkValue(value);
-		return jaxbAttribute;
-	}
-	
-	@Override
+        jaxbAttribute.setLinkValue(value);
+        return jaxbAttribute;
+    }
+
+    @Override
     public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-		super.valueFrom(jaxbAttribute);
+        super.valueFrom(jaxbAttribute);
         JAXBLinkValue value = ((JAXBLinkAttribute) jaxbAttribute).getLinkValue();
-		if (null == value) return;
-		this.setSymbolicLink(value.getSymbolicLink());
-		String textValue = value.getText();
-		if (null == textValue) return;
+        if (null == value) {
+            return;
+        }
+        this.setSymbolicLink(value.getSymbolicLink());
+        String textValue = value.getText();
+        if (null == textValue) {
+            return;
+        }
         this.getTextMap().put(this.getDefaultLangCode(), textValue);
     }
-    
-	@Override
+
+    @Override
     public Status getStatus() {
         Status textStatus = super.getStatus();
         Status linkStatus = (null != this.getSymbolicLink()) ? Status.VALUED : Status.EMPTY;
-		if (!textStatus.equals(linkStatus)) return Status.INCOMPLETE;
-        if (textStatus.equals(linkStatus) && textStatus.equals(Status.VALUED)) return Status.VALUED;
+        if (!textStatus.equals(linkStatus)) {
+            return Status.INCOMPLETE;
+        }
+        if (textStatus.equals(linkStatus) && textStatus.equals(Status.VALUED)) {
+            return Status.VALUED;
+        }
         return Status.EMPTY;
     }
-    
-	@Override
+
+    @Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
         try {
             SymbolicLink symbolicLink = this.getSymbolicLink();
             if (null == symbolicLink) {
-				return errors;
-			}
+                return errors;
+            }
             SymbolicLinkValidator sler = new SymbolicLinkValidator(this.getContentManager(), this.getPageManager());
             String linkErrorCode = sler.scan(symbolicLink, (Content) this.getParentEntity());
             if (null != linkErrorCode) {
                 AttributeFieldError error = new AttributeFieldError(this, linkErrorCode, tracer);
-                error.setMessage("Invalid link - page " + symbolicLink.getPageDest() 
+                error.setMessage("Invalid link - page " + symbolicLink.getPageDest()
                         + " - content " + symbolicLink.getContentDest() + " - Error code " + linkErrorCode);
                 errors.add(error);
             }
         } catch (Throwable t) {
-        	_logger.error("Error validating link attribute", t);
+            logger.error("Error validating link attribute", t);
             throw new RuntimeException("Error validating link attribute", t);
         }
         return errors;
     }
-    
+
     /**
      * Setta il link simbolico caratterizzante l'attributo.
+     *
      * @param symbolicLink Il link simbolico.
      */
     public void setSymbolicLink(SymbolicLink symbolicLink) {
-        this._symbolicLink = symbolicLink;
+        this.symbolicLink = symbolicLink;
     }
-    
+
     /**
      * Restituisce il link simbolico caratterizzante l'attributo.
+     *
      * @return Il link simbolico.
      */
     public SymbolicLink getSymbolicLink() {
-        return _symbolicLink;
+        return symbolicLink;
     }
-	
-	protected IContentManager getContentManager() {
-		return _contentManager;
-	}
-	public void setContentManager(IContentManager contentManager) {
-		this._contentManager = contentManager;
-	}
-	
-	protected IPageManager getPageManager() {
-		return _pageManager;
-	}
-	public void setPageManager(IPageManager pageManager) {
-		this._pageManager = pageManager;
-	}
-	
-	protected ILinkResolverManager getLinkResolverManager() {
-		return _linkResolverManager;
-	}
-	public void setLinkResolverManager(ILinkResolverManager linkResolverManager) {
-		this._linkResolverManager = linkResolverManager;
-	}
-    
-    private SymbolicLink _symbolicLink;
-	private IContentManager _contentManager;
-	private IPageManager _pageManager;
-	private ILinkResolverManager _linkResolverManager;
-	
+
+    protected IContentManager getContentManager() {
+        return contentManager;
+    }
+
+    public void setContentManager(IContentManager contentManager) {
+        this.contentManager = contentManager;
+    }
+
+    protected IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
+    }
+
+    protected ILinkResolverManager getLinkResolverManager() {
+        return linkResolverManager;
+    }
+
+    public void setLinkResolverManager(ILinkResolverManager linkResolverManager) {
+        this.linkResolverManager = linkResolverManager;
+    }
+
+    private transient SymbolicLink symbolicLink;
+    private transient IContentManager contentManager;
+    private transient IPageManager pageManager;
+    private transient ILinkResolverManager linkResolverManager;
+
 }

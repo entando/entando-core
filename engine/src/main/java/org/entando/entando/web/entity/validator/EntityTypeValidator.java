@@ -41,11 +41,18 @@ public abstract class EntityTypeValidator implements Validator {
     public static final String ERRCODE_INVALID_TYPE_CODE = "11";
     public static final String ERRCODE_INVALID_TYPE_DESCR = "12";
     public static final String ERRCODE_INVALID_ATTRIBUTE_TYPE = "13";
-    public static final String ERRCODE_INVALID_ENUMERATOR = "14";
-    public static final String ERRCODE_INVALID_OGNL_ERROR = "15";
-    public static final String ERRCODE_INVALID_OGNL_HELP = "16";
-    public static final String ERRCODE_INVALID_LIST = "17";
-    public static final String ERRCODE_INVALID_COMPOSITE = "18";
+
+    public static final String ERRCODE_INVALID_TEXT_RANGE = "16";
+    public static final String ERRCODE_INVALID_DATE_RANGE_START = "17";
+    public static final String ERRCODE_INVALID_DATE_RANGE_END = "18";
+    public static final String ERRCODE_INVALID_DATE_VALUE = "19";
+    public static final String ERRCODE_INVALID_NUMBER_RANGE = "20";
+    public static final String ERRCODE_INVALID_OGNL_ERROR = "21";
+    public static final String ERRCODE_INVALID_OGNL_HELP = "22";
+
+    public static final String ERRCODE_INVALID_ENUMERATOR = "25";
+    public static final String ERRCODE_INVALID_LIST = "26";
+    public static final String ERRCODE_INVALID_COMPOSITE = "27";
 
     @Override
     public boolean supports(Class<?> paramClass) {

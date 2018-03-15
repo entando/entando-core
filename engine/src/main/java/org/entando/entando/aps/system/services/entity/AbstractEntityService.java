@@ -23,7 +23,6 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
-import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -43,7 +42,6 @@ import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.AttributeRoleDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeOgnlValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
@@ -257,23 +255,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         validationRules.setRequired(attributeDto.isMandatory());
         EntityAttributeValidationDto validationDto = attributeDto.getValidationRules();
         if (null != validationDto) {
-            EntityAttributeOgnlValidationDto ognlValidationDto = validationDto.getOgnlValidation();
-            if (null != ognlValidationDto && !StringUtils.isEmpty(ognlValidationDto.getOgnlExpression())) {
-                // to check into validator
-                OgnlValidationRule ognlValidationRule = new OgnlValidationRule();
-                if (StringUtils.isEmpty(ognlValidationDto.getErrorMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForErrorMessage())) {
-                    this.addError(EntityTypeValidator.ERRCODE_INVALID_OGNL_ERROR, bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingErrorMessage");
-                }
-                if (StringUtils.isEmpty(ognlValidationDto.getHelpMessage()) && StringUtils.isEmpty(ognlValidationDto.getKeyForHelpMessage())) {
-                    this.addError(EntityTypeValidator.ERRCODE_INVALID_OGNL_HELP, bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.ognl.missingHelpMessage");
-                }
-                ognlValidationRule.setErrorMessage(ognlValidationDto.getErrorMessage());
-                ognlValidationRule.setErrorMessageKey(ognlValidationDto.getKeyForErrorMessage());
-                ognlValidationRule.setEvalExpressionOnValuedAttribute(ognlValidationDto.isApplyOnlyToFilledAttr());
-                ognlValidationRule.setExpression(ognlValidationDto.getOgnlExpression());
-                ognlValidationRule.setHelpMessage(ognlValidationDto.getHelpMessage());
-                ognlValidationRule.setHelpMessageKey(ognlValidationDto.getKeyForHelpMessage());
-            }
+            validationDto.buildAttributeValidation(typeCode, attribute, bindingResult);
         }
         if (attribute instanceof AbstractListAttribute) {
             if (null != attributeDto.getNestedAttribute()) {

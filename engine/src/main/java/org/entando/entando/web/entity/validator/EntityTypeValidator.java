@@ -70,21 +70,11 @@ public abstract class EntityTypeValidator implements Validator {
                 return;
             }
             for (EntityTypeDtoRequest type : types) {
-                this.validateEntityType(type, errors);
+                this.validateBody(type, errors);
             }
         } else {
             EntityTypeDtoRequest request = (EntityTypeDtoRequest) target;
-            this.validateEntityType(request, errors);
-        }
-    }
-
-    private void validateEntityType(EntityTypeDtoRequest request, Errors errors) {
-        this.validateBody(request, errors);
-        if (!errors.hasErrors()) {
-            String typeCode = request.getCode();
-            if (null != this.getEntityManager().getEntityPrototype(typeCode)) {
-                errors.reject(ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{typeCode}, "entityType.exists");
-            }
+            this.validateBody(request, errors);
         }
     }
 
@@ -102,11 +92,11 @@ public abstract class EntityTypeValidator implements Validator {
 
     private int validateBody(EntityTypeDtoRequest request, Errors errors) {
         if (StringUtils.isEmpty(request.getCode())) {
-            errors.rejectValue("code", ERRCODE_ENTITY_TYPE_CODE_REQUIRED, new String[]{}, "entityType.code.notBlank");
+            errors.reject(ERRCODE_ENTITY_TYPE_CODE_REQUIRED, new String[]{}, "entityType.code.notBlank");
             return 400;
         }
         if (StringUtils.isEmpty(request.getName())) {
-            errors.rejectValue("name", ERRCODE_ENTITY_TYPE_DESCR_REQUIRED, new String[]{}, "entityType.name.notBlank");
+            errors.reject(ERRCODE_ENTITY_TYPE_DESCR_REQUIRED, new String[]{}, "entityType.name.notBlank");
             return 400;
         }
         return 0;

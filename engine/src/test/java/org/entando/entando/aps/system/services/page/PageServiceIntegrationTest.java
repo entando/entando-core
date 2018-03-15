@@ -12,6 +12,7 @@ import java.util.Map;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageStatusRequest;
 import org.junit.Test;
 
 /**
@@ -103,6 +104,33 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         assertNotNull(modPage);
         assertEquals(2, modPage.getTitles().size());
         assertEquals("Pagina 1-2", modPage.getTitles().get("it"));
+    }
+
+    @Test
+    public void testUpdatePageStatus() {
+        PageDto pageToClone = pageService.getPage("pagina_11", "draft");
+        assertNotNull(pageToClone);
+        PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+        pageRequest.setCode("pagina_13");
+        PageDto addedPage = pageService.addPage(pageRequest);
+        assertNotNull(addedPage);
+        assertEquals("pagina_13", addedPage.getCode());
+        assertEquals("pagina_1", addedPage.getParentCode());
+
+        addedPage = pageService.getPage("pagina_13", "draft");
+        assertEquals("draft", addedPage.getStatus());
+
+        PageStatusRequest pageStatusRequest = new PageStatusRequest();
+        pageStatusRequest.setStatus("published");
+        PageDto modPage = pageService.updatePageStatus("pagina_13", pageStatusRequest.getStatus());
+        assertNotNull(modPage);
+        assertEquals("published", modPage.getStatus());
+
+        addedPage = pageService.getPage("pagina_13", "published");
+        assertNotNull(addedPage);
+        assertEquals("published", addedPage.getStatus());
+
+        pageService.removePage("pagina_13");
     }
 
     @Test

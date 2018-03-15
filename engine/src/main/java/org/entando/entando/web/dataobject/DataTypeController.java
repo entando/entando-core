@@ -25,6 +25,7 @@ import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -108,8 +109,11 @@ public class DataTypeController {
         //business validations
         for (DataTypeDtoRequest dtdr : bodyRequest.getDataTypes()) {
             if (this.getDataTypeValidator().existType(dtdr.getCode())) {
-                throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, "Data Type", dtdr.getCode());
+                bindingResult.reject(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{dtdr.getCode()}, "entityType.exists");
             }
+        }
+        if (bindingResult.hasErrors()) {
+            throw new ValidationConflictException(bindingResult);
         }
         List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {

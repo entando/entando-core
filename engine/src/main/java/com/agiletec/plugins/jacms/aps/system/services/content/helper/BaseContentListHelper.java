@@ -26,7 +26,6 @@ import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.common.entity.helper.BaseFilterUtils;
 import com.agiletec.aps.system.common.entity.helper.IEntityFilterBean;
@@ -37,18 +36,19 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.springframework.cache.annotation.CachePut;
 
 /**
  * @author E.Santoboni
  */
 public class BaseContentListHelper implements IContentListHelper {
-  
-	private static final Logger _logger = LoggerFactory.getLogger(BaseContentListHelper.class);
-	
-	private IContentManager contentManager;
-	private ICacheInfoManager cacheInfoManager;
-	
-	@Override
+
+    private static final Logger _logger = LoggerFactory.getLogger(BaseContentListHelper.class);
+
+    private IContentManager contentManager;
+    private ICacheInfoManager cacheInfoManager;
+
+    @Override
     public EntitySearchFilter[] getFilters(String contentType, String filtersShowletParam, String langCode) {
         Content contentPrototype = this.getContentManager().createContentType(contentType);
         if (null == filtersShowletParam || filtersShowletParam.trim().length() == 0 || null == contentPrototype) {
@@ -57,16 +57,17 @@ public class BaseContentListHelper implements IContentListHelper {
         BaseFilterUtils dom = new BaseFilterUtils();
         return dom.getFilters(contentPrototype, filtersShowletParam, langCode);
     }
-    
+
     /**
-     * @deprecated From Entando 2.0 version 2.4.1. Use getFilter(String contentType, IEntityFilterBean, String) method
+     * @deprecated From Entando 2.0 version 2.4.1. Use getFilter(String
+     * contentType, IEntityFilterBean, String) method
      */
-	@Override
+    @Override
     public EntitySearchFilter getFilter(String contentType, IContentListFilterBean bean, String langCode) {
         return this.getFilter(contentType, (IEntityFilterBean) bean, langCode);
     }
-    
-	@Override
+
+    @Override
     public EntitySearchFilter getFilter(String contentType, IEntityFilterBean bean, String langCode) {
         BaseFilterUtils dom = new BaseFilterUtils();
         Content contentPrototype = this.getContentManager().createContentType(contentType);
@@ -75,20 +76,20 @@ public class BaseContentListHelper implements IContentListHelper {
         }
         return dom.getFilter(contentPrototype, bean, langCode);
     }
-    
-	@Override
+
+    @Override
     public String getFilterParam(EntitySearchFilter[] filters) {
         BaseFilterUtils dom = new BaseFilterUtils();
         return dom.getFilterParam(filters);
     }
-    
-	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, 
-			key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)", condition = "#bean.cacheable")
-	@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENTS_ID_CACHE_GROUP_PREFIX.concat(#bean.contentType)", expiresInMinute = 30)
+
+    @Override
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+            key = "T(com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper).buildCacheKey(#bean, #user)", condition = "#bean.cacheable")
+    @CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENTS_ID_CACHE_GROUP_PREFIX.concat(#bean.contentType)", expiresInMinute = 30)
     public List<String> getContentsId(IContentListBean bean, UserDetails user) throws Throwable {
-		this.releaseCache(bean, user);
-		List<String> contentsId = null;
+        this.releaseCache(bean, user);
+        List<String> contentsId = null;
         try {
             if (null == bean.getContentType()) {
                 throw new ApsSystemException("Content type not defined");
@@ -96,51 +97,52 @@ public class BaseContentListHelper implements IContentListHelper {
             Collection<String> userGroupCodes = getAllowedGroupCodes(user); //this.getAllowedGroups(user);
             contentsId = this.getContentManager().loadPublicContentsId(bean.getContentType(), bean.getCategories(), bean.getFilters(), userGroupCodes);
         } catch (Throwable t) {
-        	_logger.error("Error extracting contents id", t);
+            _logger.error("Error extracting contents id", t);
             throw new ApsSystemException("Error extracting contents id", t);
         }
         return contentsId;
     }
-	
-	private void releaseCache(IContentListBean bean, UserDetails user) {
-		String key = BaseContentListHelper.buildCacheKey(bean, user);
-		boolean isExpired = this.getCacheInfoManager().isExpired(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
-		if (isExpired) {
-			this.getCacheInfoManager().flushEntry(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
-		}
-	}
-	
+
+    private void releaseCache(IContentListBean bean, UserDetails user) {
+        String key = BaseContentListHelper.buildCacheKey(bean, user);
+        boolean isExpired = this.getCacheInfoManager().isExpired(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
+        if (isExpired) {
+            this.getCacheInfoManager().flushEntry(ICacheInfoManager.DEFAULT_CACHE_NAME, key);
+        }
+    }
+
     /**
-     * Return the groups to witch execute the filter to contents.
-     * The User object is non null, extract the groups from the user, else 
-     * return a collection with only the "free" group. 
+     * Return the groups to witch execute the filter to contents. The User
+     * object is non null, extract the groups from the user, else return a
+     * collection with only the "free" group.
+     *
      * @param user The user. Can be null.
      * @return The groups to witch execute the filter to contents.
-	 * @deprecated 
+     * @deprecated
      */
     protected Collection<String> getAllowedGroups(UserDetails user) {
         return getAllowedGroupCodes(user);
     }
-	
+
     public static Collection<String> getAllowedGroupCodes(UserDetails user) {
         Set<String> codes = new HashSet<String>();
-		codes.add(Group.FREE_GROUP_NAME);
-		List<Authorization> auths = (null != user) ? user.getAuthorizations() : null;
+        codes.add(Group.FREE_GROUP_NAME);
+        List<Authorization> auths = (null != user) ? user.getAuthorizations() : null;
         if (null != auths) {
-			for (Authorization auth : auths) {
-				if (null != auth && null != auth.getGroup()) {
-					codes.add(auth.getGroup().getName());
-				}
-			}
+            for (Authorization auth : auths) {
+                if (null != auth && null != auth.getGroup()) {
+                    codes.add(auth.getGroup().getName());
+                }
+            }
         }
         return codes;
     }
-	
-	public static String buildCacheKey(IContentListBean bean, UserDetails user) {
-		Collection<String> userGroupCodes = getAllowedGroupCodes(user);
-		return buildCacheKey(bean, userGroupCodes);
-	}
-	
+
+    public static String buildCacheKey(IContentListBean bean, UserDetails user) {
+        Collection<String> userGroupCodes = getAllowedGroupCodes(user);
+        return buildCacheKey(bean, userGroupCodes);
+    }
+
     protected static String buildCacheKey(IContentListBean bean, Collection<String> userGroupCodes) {
         StringBuilder cacheKey = new StringBuilder();
         if (null != bean.getListName()) {
@@ -205,25 +207,27 @@ public class BaseContentListHelper implements IContentListHelper {
         List<String> values = new ArrayList<String>();
         if (concatedValues != null && concatedValues.trim().length() > 0) {
             String[] codes = concatedValues.split(separator);
-			for (String code : codes) {
-				values.add(code);
+            for (String code : codes) {
+                values.add(code);
             }
         }
         return values;
     }
-	
+
     protected IContentManager getContentManager() {
         return contentManager;
     }
+
     public void setContentManager(IContentManager contentManager) {
         this.contentManager = contentManager;
     }
-	
-	protected ICacheInfoManager getCacheInfoManager() {
-		return cacheInfoManager;
-	}
-	public void setCacheInfoManager(ICacheInfoManager cacheInfoManager) {
-		this.cacheInfoManager = cacheInfoManager;
-	}
-    
+
+    protected ICacheInfoManager getCacheInfoManager() {
+        return cacheInfoManager;
+    }
+
+    public void setCacheInfoManager(ICacheInfoManager cacheInfoManager) {
+        this.cacheInfoManager = cacheInfoManager;
+    }
+
 }

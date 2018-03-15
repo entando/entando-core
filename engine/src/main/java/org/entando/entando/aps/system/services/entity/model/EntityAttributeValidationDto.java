@@ -22,6 +22,8 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.NumberAttribut
 import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
 import com.agiletec.aps.system.common.entity.model.attribute.util.TextAttributeValidationRules;
 import com.agiletec.aps.util.DateConverter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.entity.validator.EntityTypeValidator;
@@ -184,10 +186,11 @@ public class EntityAttributeValidationDto {
         if (StringUtils.isEmpty(dateString)) {
             return null;
         }
+        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
         Date date = null;
         try {
-            date = DateConverter.parseDate(dateString, DATE_FORMAT);
-        } catch (Exception e) {
+            date = format.parse(dateString.trim());
+        } catch (ParseException ex) {
             this.addError(errorCode, bindingResult, new String[]{typeCode, attributeName}, errorMessage);
         }
         return date;

@@ -39,27 +39,29 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
 
 /**
  * Classe astratta di appoggio agli attributi di tipo Risorsa.
+ *
  * @author E.Santoboni
  */
 public abstract class AbstractResourceAttribute extends TextAttribute
         implements IReferenceableAttribute, ResourceAttributeInterface {
-	
-	private static final Logger _logger = LoggerFactory.getLogger(AbstractResourceAttribute.class);
-	
-	@Override
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractResourceAttribute.class);
+
+    @Override
     public Object getAttributePrototype() {
         AbstractResourceAttribute prototype = (AbstractResourceAttribute) super.getAttributePrototype();
-		prototype.setConfigManager(this.getConfigManager());
+        prototype.setConfigManager(this.getConfigManager());
         prototype.setResourceManager(this.getResourceManager());
         return prototype;
     }
-	
+
     /**
      * Setta una risorsa sull'attributo.
+     *
      * @param resource La risorsa da associare all'attributo.
      * @param langCode il codice della lingua.
      */
-	@Override
+    @Override
     public void setResource(ResourceInterface resource, String langCode) {
         if (null == langCode) {
             langCode = this.getDefaultLangCode();
@@ -73,19 +75,21 @@ public abstract class AbstractResourceAttribute extends TextAttribute
 
     /**
      * Restituisce la risorsa associata all'attributo.
+     *
      * @param langCode il codice della lingua.
      * @return la risorsa associata all'attributo.
      */
-	@Override
+    @Override
     public ResourceInterface getResource(String langCode) {
         return (ResourceInterface) this.getResources().get(langCode);
     }
 
     /**
      * Restituisce la risorsa associata all'attributo.
+     *
      * @return la risorsa associata all'attributo.
      */
-	@Override
+    @Override
     public ResourceInterface getResource() {
         ResourceInterface res = this.getResource(this.getRenderingLang());
         if (null == res) {
@@ -93,26 +97,29 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         }
         return res;
     }
-	
-	/**
+
+    /**
      * Sovrascrittura del metodo della classe astratta da cui deriva. Poichè
-     * questo tipo di attributo non può mai essere "searchable", restituisce sempre false.
+     * questo tipo di attributo non può mai essere "searchable", restituisce
+     * sempre false.
+     *
      * @return Restituisce sempre false
-     * @see com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface#isSearchable()
+     * @see
+     * com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface#isSearchable()
      */
-	@Override
-	public boolean isSearchable() {
+    @Override
+    public boolean isSearchable() {
         return false;
     }
-	
-	@Override
+
+    @Override
     public boolean isSearchableOptionSupported() {
         return false;
     }
-    
-	@Override
+
+    @Override
     public Element getJDOMElement() {
-		Element attributeElement = this.createRootElement("attribute");
+        Element attributeElement = this.createRootElement("attribute");
         Iterator<String> langIter = this.getResources().keySet().iterator();
         while (langIter.hasNext()) {
             String currentLangCode = (String) langIter.next();
@@ -129,12 +136,13 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         super.addTextElements(attributeElement);
         return attributeElement;
     }
-	
+
     /**
-     * Appende, nella stringa rappresentante l'url della risorsa interna ad un entità, 
-     * il riferimento al entità padre con la sintassi 
-     * <baseUrl>/<REFERENCED_RESOURCE_INDICATOR>/<PARENT_CONTENT_ID>/. 
-     * Tale operazione viene effettuata nel caso che la risorsa non sia libera.
+     * Appende, nella stringa rappresentante l'url della risorsa interna ad un
+     * entità, il riferimento al entità padre con la sintassi
+     * <baseUrl>/<REFERENCED_RESOURCE_INDICATOR>/<PARENT_CONTENT_ID>/. Tale
+     * operazione viene effettuata nel caso che la risorsa non sia libera.
+     *
      * @param basePath Il path base della risorsa.
      * @return Il path corretto.
      */
@@ -154,10 +162,10 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         }
         return basePath;
     }
-    
-	@Override
+
+    @Override
     public List<CmsAttributeReference> getReferences(List<Lang> systemLangs) {
-        List<CmsAttributeReference> refs = new ArrayList<CmsAttributeReference>();
+        List<CmsAttributeReference> refs = new ArrayList<>();
         for (int i = 0; i < systemLangs.size(); i++) {
             Lang lang = systemLangs.get(i);
             ResourceInterface res = this.getResource(lang.getCode());
@@ -168,123 +176,124 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         }
         return refs;
     }
-    
-	@Override
+
+    @Override
     public Object getValue() {
         if (null == this.getResources() || this.getResources().isEmpty()) {
             return null;
         }
         return this.getResources();
     }
-	
-	@Override
-	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
-		return new JAXBResourceAttribute();
-	}
-	
+
     @Override
-	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
-		JAXBResourceAttribute jaxbResourceAttribute = (JAXBResourceAttribute) super.createJAXBAttribute(langCode);
-		if (null == jaxbResourceAttribute) return null;
-		if (null == langCode) {
-			langCode = this.getDefaultLangCode();
-		}
-		ResourceInterface resource = this.getResource(langCode);
-		if (null == resource) {
-			return jaxbResourceAttribute;
-		}
-		JAXBResourceValue value = new JAXBResourceValue();
-		try {
-			String text = this.getTextForLang(langCode);
-			value.setText(text);
-			this.setRenderingLang(langCode);
-			String path = this.getDefaultPath();
-			value.setPath(path);
-			value.setResourceId(resource.getId());
-			StringBuilder restResourcePath = new StringBuilder();
-			restResourcePath.append(this.getConfigManager().getParam("applicationBaseURL"));
-			restResourcePath.append("api/rs/").append(langCode).append("/jacms/");
-			if (this.getType().equals(JacmsSystemConstants.RESOURE_ATTACH_CODE)) {
-				restResourcePath.append("attachment");
-			} else {
-				restResourcePath.append("image");
-			}
-			restResourcePath.append("?id=").append(resource.getId());
-			value.setRestResourcePath(restResourcePath.toString());
-		} catch (Throwable t) {
-			_logger.error("Error creating jaxb response. lang: {}", langCode, t);
-			throw new RuntimeException("Error creating jaxb response", t);
-		}
-		jaxbResourceAttribute.setResource(value);
+    protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+        return new JAXBResourceAttribute();
+    }
+
+    @Override
+    public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+        JAXBResourceAttribute jaxbResourceAttribute = (JAXBResourceAttribute) super.createJAXBAttribute(langCode);
+        if (null == jaxbResourceAttribute) {
+            return null;
+        }
+        if (null == langCode) {
+            langCode = this.getDefaultLangCode();
+        }
+        ResourceInterface resource = this.getResource(langCode);
+        if (null == resource) {
+            return jaxbResourceAttribute;
+        }
+        JAXBResourceValue value = new JAXBResourceValue();
+        try {
+            String text = this.getTextForLang(langCode);
+            value.setText(text);
+            this.setRenderingLang(langCode);
+            String path = this.getDefaultPath();
+            value.setPath(path);
+            value.setResourceId(resource.getId());
+            StringBuilder restResourcePath = new StringBuilder();
+            restResourcePath.append(this.getConfigManager().getParam("applicationBaseURL"));
+            restResourcePath.append("api/rs/").append(langCode).append("/jacms/");
+            if (this.getType().equals(JacmsSystemConstants.RESOURE_ATTACH_CODE)) {
+                restResourcePath.append("attachment");
+            } else {
+                restResourcePath.append("image");
+            }
+            restResourcePath.append("?id=").append(resource.getId());
+            value.setRestResourcePath(restResourcePath.toString());
+        } catch (Throwable t) {
+            logger.error("Error creating jaxb response. lang: {}", langCode, t);
+            throw new RuntimeException("Error creating jaxb response", t);
+        }
+        jaxbResourceAttribute.setResource(value);
         return jaxbResourceAttribute;
     }
-    
-	@Override
+
+    @Override
     public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-		super.valueFrom(jaxbAttribute);
+        super.valueFrom(jaxbAttribute);
         JAXBResourceValue value = ((JAXBResourceAttribute) jaxbAttribute).getResource();
         if (null == value) {
-			return;
-		}
+            return;
+        }
         Object resourceId = value.getResourceId();
         if (null == resourceId) {
-			return;
-		}
+            return;
+        }
         try {
-            IResourceManager resourceManager = this.getResourceManager();
-            ResourceInterface resource = resourceManager.loadResource(resourceId.toString());
+            ResourceInterface resource = this.getResourceManager().loadResource(resourceId.toString());
             if (null != resource) {
                 this.setResource(resource, this.getDefaultLangCode());
             }
             Object text = value.getText();
             if (null == text) {
-				return;
-			}
+                return;
+            }
             this.getTextMap().put(this.getDefaultLangCode(), text.toString());
         } catch (Exception e) {
-        	_logger.error("Error extracting resource from jaxbAttribute", e);
+            logger.error("Error extracting resource from jaxbAttribute", e);
         }
     }
-    
-	@Override
+
+    @Override
     public Status getStatus() {
         Status textStatus = super.getStatus();
         Status resourceStatus = (null != this.getResource()) ? Status.VALUED : Status.EMPTY;
         if (!textStatus.equals(resourceStatus)) {
-			return Status.INCOMPLETE;
-		}
+            return Status.INCOMPLETE;
+        }
         if (textStatus.equals(resourceStatus) && textStatus.equals(Status.VALUED)) {
-			return Status.VALUED;
-		}
+            return Status.VALUED;
+        }
         return Status.EMPTY;
     }
-    
+
     protected abstract String getDefaultPath();
-    
+
     public Map<String, ResourceInterface> getResources() {
-        return this._resources;
+        return this.resources;
     }
-    
-	@Override
+
+    @Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
         try {
             if (null == this.getResources()) {
-				return errors;
-			}
+                return errors;
+            }
             List<Lang> langs = super.getLangManager().getLangs();
             for (int i = 0; i < langs.size(); i++) {
                 Lang lang = langs.get(i);
                 ResourceInterface resource = this.getResource(lang.getCode());
                 if (null == resource) {
-					continue;
-				}
+                    continue;
+                }
                 AttributeTracer resourceTracer = (AttributeTracer) tracer.clone();
                 resourceTracer.setLang(lang);
                 String resourceMainGroup = resource.getMainGroup();
                 Content parentContent = (Content) this.getParentEntity();
-                if (!resourceMainGroup.equals(Group.FREE_GROUP_NAME) 
-                        && !resourceMainGroup.equals(parentContent.getMainGroup()) 
+                if (!resourceMainGroup.equals(Group.FREE_GROUP_NAME)
+                        && !resourceMainGroup.equals(parentContent.getMainGroup())
                         && !parentContent.getGroups().contains(resourceMainGroup)) {
                     AttributeFieldError fieldError = new AttributeFieldError(this, ICmsAttributeErrorCodes.INVALID_RESOURCE_GROUPS, resourceTracer);
                     fieldError.setMessage("Invalid resource group - " + resourceMainGroup);
@@ -292,31 +301,33 @@ public abstract class AbstractResourceAttribute extends TextAttribute
                 }
             }
         } catch (Throwable t) {
-        	_logger.error("Error validating text attribute", t);
+            logger.error("Error validating text attribute", t);
             throw new RuntimeException("Error validating text attribute", t);
         }
         return errors;
     }
-	
-	protected ConfigInterface getConfigManager() {
-		return _configManager;
-	}
-	public void setConfigManager(ConfigInterface configManager) {
-		this._configManager = configManager;
-	}
-	
-	protected IResourceManager getResourceManager() {
-		return _resourceManager;
-	}
-	public void setResourceManager(IResourceManager resourceManager) {
-		this._resourceManager = resourceManager;
-	}
-    
-    private Map<String, ResourceInterface> _resources = new HashMap<String, ResourceInterface>();
-    
-	public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
-	
-	private ConfigInterface _configManager;
-	private IResourceManager _resourceManager;
-    
+
+    protected ConfigInterface getConfigManager() {
+        return configManager;
+    }
+
+    public void setConfigManager(ConfigInterface configManager) {
+        this.configManager = configManager;
+    }
+
+    protected IResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
+    public void setResourceManager(IResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
+    }
+
+    private Map<String, ResourceInterface> resources = new HashMap<>();
+
+    public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
+
+    private transient ConfigInterface configManager;
+    private transient IResourceManager resourceManager;
+
 }

@@ -26,6 +26,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import junit.framework.Assert;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.PageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
@@ -54,6 +60,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.WebDataBinder;
 
 /**
@@ -74,9 +81,13 @@ public class PageControllerTest extends AbstractControllerTest {
     @InjectMocks
     private PageController controller;
 
+    private static Validator validator;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
@@ -228,6 +239,10 @@ public class PageControllerTest extends AbstractControllerTest {
 
         PageStatusRequest request = new PageStatusRequest();
         request.setStatus("invalid_status");
+
+        Set<ConstraintViolation<PageStatusRequest>> constraintViolations = validator.validate(request);
+
+        Assert.assertEquals(1, constraintViolations.size());
         WebDataBinder binder = new WebDataBinder(request);
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
 
@@ -241,6 +256,8 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_STATUS_PAGE_MISMATCH)));
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println("RESPONSE: " + response);
     }
 
     @Test

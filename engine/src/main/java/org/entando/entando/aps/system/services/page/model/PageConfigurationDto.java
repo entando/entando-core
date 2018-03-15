@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PageConfigurationDto {
 
@@ -16,6 +17,8 @@ public class PageConfigurationDto {
 
     private PageMetadataDto metadata;
     private WidgetConfigurationDto[] widgets;
+
+    @JsonProperty(value = "online")
     private boolean onLine;
     private boolean changed;
     private boolean root;

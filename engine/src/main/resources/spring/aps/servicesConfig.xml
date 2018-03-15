@@ -122,4 +122,8 @@
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>
 	
+    <bean id="LanguageService" class="org.entando.entando.aps.system.services.language.LanguageService" >
+        <property name="langManager" ref="LangManager" />
+    </bean>
+    
 </beans>

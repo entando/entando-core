@@ -30,6 +30,7 @@ import org.entando.entando.aps.system.services.widget.validators.WidgetValidator
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
@@ -130,10 +131,10 @@ public class PageService implements IPageService {
 
     @Override
     public PageDto getPage(String pageCode, String status) {
-        IPage page = status.equals(STATUS_ONLINE) ? this.getPageManager().getOnlinePage(pageCode) : this.getPageManager().getDraftPage(pageCode);
+        IPage page = this.loadPage(pageCode, status);
         if (null == page) {
             logger.warn("no page found with code {}", pageCode);
-            throw new RestRourceNotFoundException("page", pageCode);
+            throw new RestRourceNotFoundException(null, "page", pageCode);
         }
         return this.getDtoBuilder().convert(page);
     }
@@ -352,7 +353,9 @@ public class PageService implements IPageService {
                 break;
         }
         if (status.equals(STATUS_ONLINE) && null == page && null != this.getPageManager().getDraftPage(pageCode)) {
-            throw new RestRourceNotFoundException(ERRCODE_PAGE_ONLY_DRAFT, "page", pageCode);
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(page, "page");
+            bindingResult.reject(ERRCODE_PAGE_ONLY_DRAFT, new Object[]{pageCode}, "page.status.draftOnly");
+            throw new ValidationGenericException(bindingResult);
         }
         return page;
     }

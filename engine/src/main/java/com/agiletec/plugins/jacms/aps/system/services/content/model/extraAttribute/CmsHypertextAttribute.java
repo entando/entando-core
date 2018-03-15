@@ -33,23 +33,25 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 
 /**
  * Rappresenta una informazione di tipo "ipertesto" specifico per il cms.
+ *
  * @author W.Ambu - E.Santoboni
  */
 public class CmsHypertextAttribute extends HypertextAttribute implements IReferenceableAttribute {
 
-	private static final Logger _logger = LoggerFactory.getLogger(CmsHypertextAttribute.class);
-	
-	@Override
+    private static final Logger logger = LoggerFactory.getLogger(CmsHypertextAttribute.class);
+
+    @Override
     public Object getAttributePrototype() {
         CmsHypertextAttribute prototype = (CmsHypertextAttribute) super.getAttributePrototype();
-		prototype.setContentManager(this.getContentManager());
+        prototype.setContentManager(this.getContentManager());
         prototype.setPageManager(this.getPageManager());
         return prototype;
     }
-	
+
     /**
-     * Restituisce il testo con modificato con eliminate 
-     * l'apertura del primo paragrafo e la chiusura dell'ultimo.
+     * Restituisce il testo con modificato con eliminate l'apertura del primo
+     * paragrafo e la chiusura dell'ultimo.
+     *
      * @return Il testo modificato.
      */
     public String getTextPLess() {
@@ -64,14 +66,16 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
     }
 
     /**
-     * Restituisce la porzione di testo totale antecedente ad una 
-     * eventuale immagine da inserire internamente all'ipertesto.
-     * Il testo viene ricavato dal testo principale la cui fine è corrispondente 
-     * all'inizio del paragrafo (apertura inclusa) più vicino al punto 
-     * del testo completo ricavato dalla percentuale specificata.
-     * @param percent La percentuale, rispetto all'inizio del testo, 
-     * rispetto al quale ricavare il punto di taglio.
-     * @return La porzione di testo totale antecedente ad una eventuale immagine.
+     * Restituisce la porzione di testo totale antecedente ad una eventuale
+     * immagine da inserire internamente all'ipertesto. Il testo viene ricavato
+     * dal testo principale la cui fine è corrispondente all'inizio del
+     * paragrafo (apertura inclusa) più vicino al punto del testo completo
+     * ricavato dalla percentuale specificata.
+     *
+     * @param percent La percentuale, rispetto all'inizio del testo, rispetto al
+     * quale ricavare il punto di taglio.
+     * @return La porzione di testo totale antecedente ad una eventuale
+     * immagine.
      */
     public String getTextBeforeImage(int percent) {
         String text = super.getText();
@@ -81,13 +85,14 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
     }
 
     /**
-     * Restituisce la porzione di testo totale successivo ad una 
-     * eventuale immagine da inserire internamente all'ipertesto.
-     * Il testo viene ricavato dal testo principale il cui inizio è corrispondente 
-     * all'inizio del paragrafo (apertura esclusa) più vicino al punto 
-     * del testo completo ricavato dalla percentuale specificata.
-     * @param percent La percentuale, rispetto all'inizio del testo, 
-     * rispetto al quale ricavare il punto di taglio.
+     * Restituisce la porzione di testo totale successivo ad una eventuale
+     * immagine da inserire internamente all'ipertesto. Il testo viene ricavato
+     * dal testo principale il cui inizio è corrispondente all'inizio del
+     * paragrafo (apertura esclusa) più vicino al punto del testo completo
+     * ricavato dalla percentuale specificata.
+     *
+     * @param percent La percentuale, rispetto all'inizio del testo, rispetto al
+     * quale ricavare il punto di taglio.
      * @return La porzione di testo totale successiva ad una eventuale immagine.
      */
     public String getTextAfterImage(int percent) {
@@ -98,18 +103,21 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
     }
 
     /**
-     * Restituisce la porzione di testo totale interposto tra due 
-     * eventuali immagini da inserire internamente all'ipertesto.
-     * Il testo viene ricavato dal testo principale il cui inizio è corrispondente 
-     * all'inizio del paragrafo (apertura esclusa) più vicino al punto 
-     * del testo completo ricavato dalla percentuale start specificata, e la cui fine 
-     * è corrispondente all'inizio del paragrafo (apertura inclusa) più vicina al punto 
-     * del testo completo ricavato dalla percentuale percentEnd specificata.
-     * @param percentStart La percentuale, rispetto all'inizio del testo, 
+     * Restituisce la porzione di testo totale interposto tra due eventuali
+     * immagini da inserire internamente all'ipertesto. Il testo viene ricavato
+     * dal testo principale il cui inizio è corrispondente all'inizio del
+     * paragrafo (apertura esclusa) più vicino al punto del testo completo
+     * ricavato dalla percentuale start specificata, e la cui fine è
+     * corrispondente all'inizio del paragrafo (apertura inclusa) più vicina al
+     * punto del testo completo ricavato dalla percentuale percentEnd
+     * specificata.
+     *
+     * @param percentStart La percentuale, rispetto all'inizio del testo,
      * rispetto al quale ricavare il punto di taglio iniziale.
-     * @param percentEnd La percentuale, rispetto all'inizio del testo, 
-     * rispetto al quale ricavare il punto di taglio finale.
-     * @return La porzione di testo totale interposto tra due eventuali immagini.
+     * @param percentEnd La percentuale, rispetto all'inizio del testo, rispetto
+     * al quale ricavare il punto di taglio finale.
+     * @return La porzione di testo totale interposto tra due eventuali
+     * immagini.
      */
     public String getTextByRange(int percentStart, int percentEnd) {
         String text = super.getText();
@@ -118,17 +126,15 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
         String textByRange = text.substring(firstCutPoint, endCutPoint);
         return textByRange;
     }
-    
-	@Override
+
+    @Override
     public List<CmsAttributeReference> getReferences(List<Lang> systemLangs) {
-        List<CmsAttributeReference> refs = new ArrayList<CmsAttributeReference>();
-        for (int i = 0; i < systemLangs.size(); i++) {
-            Lang lang = systemLangs.get(i);
+        List<CmsAttributeReference> refs = new ArrayList<>();
+        for (Lang lang : systemLangs) {
             String text = this.getTextMap().get(lang.getCode());
             List<SymbolicLink> links = HypertextAttributeUtil.getSymbolicLinksOnText(text);
             if (null != links && !links.isEmpty()) {
-                for (int j = 0; j < links.size(); j++) {
-                    SymbolicLink symbLink = links.get(j);
+                for (SymbolicLink symbLink : links) {
                     if (symbLink.getDestType() != SymbolicLink.URL_TYPE) {
                         CmsAttributeReference ref = new CmsAttributeReference(symbLink.getPageDest(),
                                 symbLink.getContentDest(), symbLink.getResourceDest());
@@ -139,55 +145,57 @@ public class CmsHypertextAttribute extends HypertextAttribute implements IRefere
         }
         return refs;
     }
-    
-	@Override
+
+    @Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
         try {
             List<Lang> langs = this.getLangManager().getLangs();
-            for (int i = 0; i < langs.size(); i++) {
-                Lang lang = langs.get(i);
+            for (Lang lang : langs) {
                 AttributeTracer textTracer = (AttributeTracer) tracer.clone();
                 textTracer.setLang(lang);
                 String text = this.getTextMap().get(lang.getCode());
-                if (null == text) continue;
+                if (null == text) {
+                    continue;
+                }
                 List<SymbolicLink> links = HypertextAttributeUtil.getSymbolicLinksOnText(text);
                 if (null != links && !links.isEmpty()) {
                     SymbolicLinkValidator sler = new SymbolicLinkValidator(this.getContentManager(), this.getPageManager());
-                    for (int j = 0; j < links.size(); j++) {
-                        SymbolicLink symbLink = links.get(j);
+                    for (SymbolicLink symbLink : links) {
                         String linkErrorCode = sler.scan(symbLink, (Content) this.getParentEntity());
                         if (null != linkErrorCode) {
                             AttributeFieldError error = new AttributeFieldError(this, linkErrorCode, textTracer);
-                            error.setMessage("Invalid link - page " + symbLink.getPageDest() 
-                                + " - content " + symbLink.getContentDest() + " - Error code " + linkErrorCode);
+                            error.setMessage("Invalid link - page " + symbLink.getPageDest()
+                                    + " - content " + symbLink.getContentDest() + " - Error code " + linkErrorCode);
                             errors.add(error);
                         }
                     }
                 }
             }
         } catch (Throwable t) {
-        	_logger.error("Error validating Attribute '{}'", this.getName(), t);
+            logger.error("Error validating Attribute '{}'", this.getName(), t);
             throw new RuntimeException("Error validating Attribute '" + this.getName() + "'", t);
         }
         return errors;
     }
-	
+
     protected IContentManager getContentManager() {
-		return _contentManager;
-	}
-	public void setContentManager(IContentManager contentManager) {
-		this._contentManager = contentManager;
-	}
-	
-	protected IPageManager getPageManager() {
-		return _pageManager;
-	}
-	public void setPageManager(IPageManager pageManager) {
-		this._pageManager = pageManager;
-	}
-	
-	private IContentManager _contentManager;
-	private IPageManager _pageManager;
-	
+        return contentManager;
+    }
+
+    public void setContentManager(IContentManager contentManager) {
+        this.contentManager = contentManager;
+    }
+
+    protected IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
+    }
+
+    private transient IContentManager contentManager;
+    private transient IPageManager pageManager;
+
 }

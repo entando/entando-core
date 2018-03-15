@@ -31,12 +31,13 @@ public abstract class EntityTypeValidator implements Validator {
 
     public static final String ERRCODE_ENTITY_TYPE_ALREADY_EXISTS = "1";
 
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-    public static final String ERRCODE_ENTITY_TYPE_REFERENCES = "3";
+    public static final String ERRCODE_ENTITY_TYPE_CODE_REQUIRED = "2";
+    public static final String ERRCODE_ENTITY_TYPE_DESCR_REQUIRED = "3";
 
-    public static final String ERRCODE_ENTITY_TYPES_EMPTY = "5";
+    public static final String ERRCODE_URINAME_MISMATCH = "6";
+    public static final String ERRCODE_ENTITY_TYPE_REFERENCES = "7";
 
-    public static final String ERRCODE_GENERIC_VALIDATION = "6";
+    public static final String ERRCODE_ENTITY_TYPES_EMPTY = "8";
 
     public static final String ERRCODE_INVALID_TYPE_CODE = "11";
     public static final String ERRCODE_INVALID_TYPE_DESCR = "12";
@@ -78,9 +79,12 @@ public abstract class EntityTypeValidator implements Validator {
     }
 
     private void validateEntityType(EntityTypeDtoRequest request, Errors errors) {
-        String typeCode = request.getCode();
-        if (null != this.getEntityManager().getEntityPrototype(typeCode)) {
-            errors.reject(ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{typeCode}, "entityType.exists");
+        this.validateBody(request, errors);
+        if (!errors.hasErrors()) {
+            String typeCode = request.getCode();
+            if (null != this.getEntityManager().getEntityPrototype(typeCode)) {
+                errors.reject(ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{typeCode}, "entityType.exists");
+            }
         }
     }
 
@@ -92,6 +96,18 @@ public abstract class EntityTypeValidator implements Validator {
         if (!this.existType(typeCode)) {
             errors.reject(ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, new String[]{typeCode}, "entityType.notExists");
             return 404;
+        }
+        return this.validateBody(request, errors);
+    }
+
+    private int validateBody(EntityTypeDtoRequest request, Errors errors) {
+        if (StringUtils.isEmpty(request.getCode())) {
+            errors.rejectValue("code", ERRCODE_ENTITY_TYPE_CODE_REQUIRED, new String[]{}, "entityType.code.notBlank");
+            return 400;
+        }
+        if (StringUtils.isEmpty(request.getName())) {
+            errors.rejectValue("name", ERRCODE_ENTITY_TYPE_DESCR_REQUIRED, new String[]{}, "entityType.name.notBlank");
+            return 400;
         }
         return 0;
     }

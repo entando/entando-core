@@ -101,13 +101,15 @@ public class DataTypeController {
     public ResponseEntity<?> addDataTypes(@Valid @RequestBody DataTypesBodyRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         //field validations
+        this.getDataTypeValidator().validate(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         //business validations
-        this.getDataTypeValidator().validate(bodyRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
+        for (DataTypeDtoRequest dtdr : bodyRequest.getDataTypes()) {
+            if (this.getDataTypeValidator().existType(dtdr.getCode())) {
+                throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, "Data Type", dtdr.getCode());
+            }
         }
         List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -122,10 +124,6 @@ public class DataTypeController {
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateDataType(@PathVariable String dataTypeCode,
             @Valid @RequestBody DataTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
         int result = this.getDataTypeValidator().validateBodyName(dataTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
             if (result == 404) {

@@ -1,14 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.aps.system.services.page;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
@@ -18,6 +21,11 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -31,7 +39,6 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.Title;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,12 +128,11 @@ public class PageService implements IPageService {
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
         IPage parent = this.getPageManager().getDraftPage(parentCode);
-        Optional<String[]> optional = Optional.ofNullable(parent.getChildrenCodes());
-        optional.ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
+        Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(parent.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
             IPage child = this.getPageManager().getOnlinePage(childCode) != null
                     ? this.getPageManager().getOnlinePage(childCode) : this.getPageManager().getDraftPage(childCode);
             res.add(dtoBuilder.convert(child));
-        }));
+        })));
         return res;
     }
 
@@ -174,16 +180,28 @@ public class PageService implements IPageService {
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
-            if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_ONLINE)) {
-                this.getPageManager().setPageOnline(pageCode);
-                newPage = this.getPageManager().getOnlinePage(pageCode);
-            } else if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_DRAFT)) {
-                this.getPageManager().setPageOffline(pageCode);
-            }
             return this.getDtoBuilder().convert(newPage);
         } catch (ApsSystemException e) {
             logger.error("Error updating page {}", pageCode, e);
             throw new RestServerError("error in update page", e);
+        }
+    }
+
+    @Override
+    public PageDto updatePageStatus(String pageCode, String status) {
+        IPage newPage = null;
+        try {
+            if (status != null && status.equals(STATUS_ONLINE)) {
+                this.getPageManager().setPageOnline(pageCode);
+                newPage = this.getPageManager().getOnlinePage(pageCode);
+            } else if (status != null && status.equals(STATUS_DRAFT)) {
+                this.getPageManager().setPageOffline(pageCode);
+                newPage = this.getPageManager().getDraftPage(pageCode);
+            }
+            return this.getDtoBuilder().convert(newPage);
+        } catch (ApsSystemException e) {
+            logger.error("Error updating page {} status", pageCode, e);
+            throw new RestServerError("error in update page status", e);
         }
     }
 
@@ -300,10 +318,10 @@ public class PageService implements IPageService {
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
         page.setUseExtraTitles(pageRequest.isSeo());
-        Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
+        Optional<Map<String, String>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
-        titles.ifPresent(values -> values.forEach((title) -> {
-            apsTitles.put(title.getLang(), title.getTitle());
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
         }));
         page.setTitles(apsTitles);
         page.setGroup(pageRequest.getOwnerGroup());
@@ -331,10 +349,10 @@ public class PageService implements IPageService {
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
         page.setUseExtraTitles(pageRequest.isSeo());
-        Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
+        Optional<Map<String, String>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
-        titles.ifPresent(values -> values.forEach((title) -> {
-            apsTitles.put(title.getLang(), title.getTitle());
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
         }));
         page.setTitles(apsTitles);
         page.setGroup(pageRequest.getOwnerGroup());
@@ -345,7 +363,6 @@ public class PageService implements IPageService {
         page.setParentCode(pageRequest.getParentCode());
         return page;
     }
-
 
     private IPage loadPage(String pageCode, String status) {
         IPage page = null;
@@ -367,7 +384,4 @@ public class PageService implements IPageService {
         return page;
     }
 
-
-
 }
-

@@ -79,12 +79,15 @@
         <property name="groupManager" ref="GroupManager" />
     </bean>
 
-
     <bean id="PageSettingsService" class="org.entando.entando.aps.system.services.pagesettings.PageSettingsService" >
         <property name="dtoBuilder" ref="PageSettingsDtoBuilder" />
         <property name="configManager" ref="BaseConfigManager" />
     </bean>
 
+    <bean id="PageAuthorizationService" class="org.entando.entando.aps.system.services.page.PageAuthorizationService" >
+        <property name="pageManager" ref="PageManager" />
+        <property name="authorizationManager" ref="AuthorizationManager"/>
+    </bean>
 
     <bean id="PageService" class="org.entando.entando.aps.system.services.page.PageService" >
         <property name="dtoBuilder" ref="PageDtoBuilder" />

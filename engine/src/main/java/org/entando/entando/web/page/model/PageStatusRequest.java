@@ -11,21 +11,30 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.pagesettings;
+package org.entando.entando.web.page.model;
 
-import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
-import org.entando.entando.web.pagesettings.model.PageSettingsRequest;
+import org.entando.entando.web.common.annotation.ValidateString;
 
 /**
  *
  * @author paddeo
  */
-public interface IPageSettingsService {
+public class PageStatusRequest {
 
-    String BEAN_NAME = "PageSettingsService";
+    @ValidateString(acceptedValues = {"draft", "published"}, message = "{page.status.invalid}")
+    private String status;
 
-    PageSettingsDto getPageSettings();
+    public String getStatus() {
+        return status;
+    }
 
-    PageSettingsDto updatePageSettings(PageSettingsRequest request);
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "PageStatusRequest{" + "status=" + status + '}';
+    }
 
 }

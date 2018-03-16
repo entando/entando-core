@@ -11,21 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.pagesettings;
+package org.entando.entando.aps.system.services.auth;
 
-import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
-import org.entando.entando.web.pagesettings.model.PageSettingsRequest;
+import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.web.common.model.PagedMetadata;
 
 /**
  *
  * @author paddeo
  */
-public interface IPageSettingsService {
+public abstract class AuthorizationService<T> implements IAuthorizationService<T> {
 
-    String BEAN_NAME = "PageSettingsService";
-
-    PageSettingsDto getPageSettings();
-
-    PageSettingsDto updatePageSettings(PageSettingsRequest request);
+    public PagedMetadata<T> filterList(UserDetails user, PagedMetadata<T> metadata) {
+        metadata.setBody(this.filterList(user, metadata.getBody()));
+        return metadata;
+    }
 
 }

@@ -38,7 +38,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.user.AbstractUser;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
 
 /**
  * Implementation of ProfileManager. The service is included in a transparent
@@ -171,7 +171,7 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
     @CacheableInfo(groups = "'UserProfileTypes_cacheGroup'")
     public IUserProfile getProfile(String username) throws ApsSystemException {
         IUserProfile profile = null;

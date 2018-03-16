@@ -34,7 +34,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
 
 /**
  * Data Access Object per gli oggetti risorsa.
@@ -305,7 +305,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
      * @return Il record della risorsa.
      */
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)", condition = "null != #id")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'jacms_resource_'.concat(#id)", condition = "null != #id")
     public ResourceRecordVO loadResourceVo(String id) {
         Connection conn = null;
         ResourceRecordVO resourceVo = null;

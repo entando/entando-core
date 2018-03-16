@@ -27,7 +27,6 @@ import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.entando.entando.aps.system.services.searchengine.IEntitySearchEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
@@ -44,9 +43,11 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentListFilterBean;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.util.FilterUtils;
+import org.springframework.cache.annotation.CachePut;
 
 /**
  * Classe helper per la widget di erogazione contenuti in lista.
+ *
  * @author E.Santoboni
  */
 public class ContentListHelper extends BaseContentListHelper implements IContentListWidgetHelper {
@@ -77,7 +78,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
         return super.getFilter(contentType, bean, currentLang.getCode());
     }
-	
+
     /**
      * @deprecated From Entando 3.0 version 3.0.1. Use
      * getUserFilterOption(String, IEntityFilterBean, RequestContext) method
@@ -100,7 +101,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
             key = "T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).buildCacheKey(#bean, #reqCtx)",
             condition = "#bean.cacheable && !T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).isUserFilterExecuted(#bean)")
     @CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentListCacheGroupsCsv(#bean, #reqCtx)", expiresInMinute = 30)
@@ -203,17 +204,17 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
             }
         }
         if (fullTextUserFilter != null && null != fullTextUserFilter.getFormFieldValues()) {
-			String word = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[0]);
-			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-			List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(currentLang.getCode(), word, this.getAllowedGroups(reqCtx));
-			if (null != fullTextResult) {
-				return ListUtils.intersection(fullTextResult, masterContentsId);
-			} else {
-				return new ArrayList<String>();
-			}
-		} else {
-			return masterContentsId;
-		}
+            String word = fullTextUserFilter.getFormFieldValues().get(fullTextUserFilter.getFormFieldNames()[0]);
+            Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
+            List<String> fullTextResult = this.getSearchEngineManager().searchEntityId(currentLang.getCode(), word, this.getAllowedGroups(reqCtx));
+            if (null != fullTextResult) {
+                return ListUtils.intersection(fullTextResult, masterContentsId);
+            } else {
+                return new ArrayList<String>();
+            }
+        } else {
+            return masterContentsId;
+        }
     }
 
     protected String[] getCategories(String[] categories, ApsProperties config, List<UserFilterOptionBean> userFilters) {
@@ -285,24 +286,24 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         Collection<String> userGroupCodes = getAllowedGroupCodes(currentUser);
         return buildCacheKey(bean.getListName(), userGroupCodes, reqCtx);
     }
-	
-	protected static String buildCacheKey(String listName, Collection<String> userGroupCodes, RequestContext reqCtx) {
+
+    protected static String buildCacheKey(String listName, Collection<String> userGroupCodes, RequestContext reqCtx) {
         IPage page = (null != reqCtx) ? (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE) : null;
         StringBuilder cacheKey = (null != page) ? new StringBuilder(page.getCode()) : new StringBuilder("NOTFOUND");
         Widget currentWidget = (null != reqCtx) ? (Widget) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_WIDGET) : null;
         if (null != currentWidget && null != currentWidget.getType()) {
             cacheKey.append("_").append(currentWidget.getType().getCode());
         }
-		if (null != reqCtx) {
-			Integer frame = (Integer) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME);
-			if (null != frame) {
-				cacheKey.append("_").append(frame.intValue());
-			}
-			Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-			if (null != currentLang) {
-				cacheKey.append("_LANG").append(currentLang.getCode()).append("_");
-			}
-		}
+        if (null != reqCtx) {
+            Integer frame = (Integer) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME);
+            if (null != frame) {
+                cacheKey.append("_").append(frame.intValue());
+            }
+            Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
+            if (null != currentLang) {
+                cacheKey.append("_LANG").append(currentLang.getCode()).append("_");
+            }
+        }
         List<String> groupCodes = new ArrayList<String>(userGroupCodes);
         if (!groupCodes.contains(Group.FREE_GROUP_NAME)) {
             groupCodes.add(Group.FREE_GROUP_NAME);
@@ -361,7 +362,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
     protected String getUserFilterDateFormat() {
         return userFilterDateFormat;
     }
-    
+
     public void setUserFilterDateFormat(String userFilterDateFormat) {
         this.userFilterDateFormat = userFilterDateFormat;
     }
@@ -369,7 +370,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
     protected IEntitySearchEngineManager getSearchEngineManager() {
         return searchEngineManager;
     }
-    
+
     public void setSearchEngineManager(IEntitySearchEngineManager searchEngineManager) {
         this.searchEngineManager = searchEngineManager;
     }

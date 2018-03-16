@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * @author E.Santoboni
@@ -51,7 +50,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_'.concat(#code)")
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_'.concat(#code)")
     public GuiFragment getGuiFragment(String code) throws ApsSystemException {
         GuiFragment guiFragment = null;
         try {

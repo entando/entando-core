@@ -97,6 +97,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPages(@ModelAttribute("user") UserDetails user, @RequestParam(value = "parentCode", required = false, defaultValue = "homepage") String parentCode) {
+        logger.debug("getting page tree for parent {}", parentCode);
         List<PageDto> result = this.getAuthorizationService().filterList(user, this.getPageService().getPages(parentCode));
         Map<String, String> metadata = new HashMap<>();
         metadata.put("parentCode", parentCode);
@@ -106,6 +107,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+        logger.debug("getting page {}", pageCode);
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
         }
@@ -118,6 +120,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
+        logger.debug("updating page {}", pageCode);
 
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
@@ -139,6 +142,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageStatus(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
+        logger.debug("changing status for page {} to {}", pageCode, pageStatusRequest.getStatus());
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
         }
@@ -160,6 +164,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addPage(@ModelAttribute("user") UserDetails user, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) throws ApsSystemException {
+        logger.debug("creating page {}", pageRequest.getCode());
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -207,6 +212,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/position", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> movePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
+        logger.debug("changing position for page {}", pageCode);
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
         }

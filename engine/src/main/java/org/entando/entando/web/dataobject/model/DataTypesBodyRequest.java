@@ -38,7 +38,9 @@ public class DataTypesBodyRequest implements IEntityTypesBodyRequest {
     @JsonIgnore
     public List<EntityTypeDtoRequest> getEntityTypes() {
         List<EntityTypeDtoRequest> list = new ArrayList<>();
-        this.getDataTypes().stream().forEach(i -> list.add(i));
+        if (null != this.getDataTypes()) {
+            this.getDataTypes().stream().forEach(i -> list.add(i));
+        }
         return list;
     }
 

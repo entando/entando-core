@@ -23,7 +23,6 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
-import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -43,12 +42,11 @@ import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.AttributeRoleDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeOgnlValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
-import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -143,11 +141,16 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             List<I> entityTypesToAdd = new ArrayList<>();
             IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
             for (EntityTypeDtoRequest dto : bodyRequest.getDataTypes()) {
+                if (null != entityManager.getEntityPrototype(dto.getCode())) {
+                    this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS,
+                            bindingResult, new String[]{dto.getCode()}, "entityType.exists");
+                    continue;
+                }
                 I entityPrototype = this.createEntityType(entityManager, dto, bindingResult);
                 entityTypesToAdd.add(entityPrototype);
             }
             if (bindingResult.hasErrors()) {
-                throw new ValidationGenericException(bindingResult);
+                return response;
             } else {
                 for (I i : entityTypesToAdd) {
                     ((IEntityTypesConfigurer) entityManager).addEntityPrototype(i);
@@ -161,44 +164,52 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return response;
     }
 
-    protected EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
-        /*
-        Group group = this.getGroupManager().getGroup(groupCode);
-        if (null == group) {
-            throw new RestRourceNotFoundException("group", groupCode);
-        }
-        group.setDescription(descr);
+    protected synchronized EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
-            this.getGroupManager().updateGroup(group);
-            return this.getDtoBuilder().convert(group);
-        } catch (ApsSystemException e) {
-            logger.error("Error updating group {}", groupCode, e);
-            throw new RestServerError("error in update group", e);
+            if (null == entityManager.getEntityPrototype(request.getCode())) {
+                this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST,
+                        bindingResult, new String[]{request.getCode()}, "entityType.notExists");
+                return null;
+            }
+            IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
+            I entityPrototype = this.createEntityType(entityManager, request, bindingResult);
+            if (bindingResult.hasErrors()) {
+                return null;
+            } else {
+                ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityPrototype);
+                I newPrototype = (I) entityManager.getEntityPrototype(request.getCode());
+                return builder.convert(newPrototype);
+            }
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
         }
-         */
-        return null;
     }
 
-    protected void addError(BindingResult bindingResult, String[] args, String message) {
-        bindingResult.reject(EntityTypeValidator.ERRCODE_GENERIC_VALIDATION, args, message);
+    protected void addError(String errorCode, BindingResult bindingResult, String[] args, String message) {
+        bindingResult.reject(errorCode, args, message);
     }
 
     protected I createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
         Class entityClass = entityManager.getEntityClass();
         ApsEntity entityType = (ApsEntity) entityClass.newInstance();
         if (StringUtils.isEmpty(dto.getCode()) || dto.getCode().length() != 3) {
-            this.addError(bindingResult, new String[]{dto.getCode()}, "entityType.typeCode.invalid");
+            this.addError(EntityTypeValidator.ERRCODE_INVALID_TYPE_CODE, bindingResult, new String[]{dto.getCode()}, "entityType.typeCode.invalid");
         }
         entityType.setTypeCode(dto.getCode());
-        if (StringUtils.isEmpty(dto.getCode()) || dto.getCode().length() != 3) {
-            this.addError(bindingResult, new String[]{}, "entityType.typeDescription.invalid");
+        if (StringUtils.isEmpty(dto.getName())) {
+            this.addError(EntityTypeValidator.ERRCODE_INVALID_TYPE_DESCR, bindingResult, new String[]{}, "entityType.typeDescription.invalid");
         }
         entityType.setTypeDescription(dto.getName());
+        if (bindingResult.hasErrors()) {
+            return (I) entityType;
+        }
         Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
         List<EntityAttributeFullDto> attributeDtos = dto.getAttributes();
         if (null != attributeDtos) {
             for (EntityAttributeFullDto attributeDto : attributeDtos) {
-                AttributeInterface attribute = this.buildAttribute(attributeDto, attributeMap);
+                AttributeInterface attribute = this.buildAttribute(dto.getCode(), attributeDto, attributeMap, bindingResult);
                 if (null != attribute) {
                     entityType.addAttribute(attribute);
                 } else {
@@ -209,11 +220,13 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return (I) entityType;
     }
 
-    private AttributeInterface buildAttribute(EntityAttributeFullDto attributeDto, Map<String, AttributeInterface> attributeMap) {
+    protected AttributeInterface buildAttribute(String typeCode,
+            EntityAttributeFullDto attributeDto, Map<String, AttributeInterface> attributeMap, BindingResult bindingResult) {
         String type = attributeDto.getType();
         AttributeInterface prototype = attributeMap.get(type);
         if (null == prototype) {
             logger.warn("Undefined attribute of type {}", type);
+            this.addError(EntityTypeValidator.ERRCODE_INVALID_ATTRIBUTE_TYPE, bindingResult, new String[]{typeCode, type}, "entityType.attribute.type.invalid");
             return null;
         }
         AttributeInterface attribute = (AttributeInterface) prototype.getAttributePrototype();
@@ -229,37 +242,38 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         attribute.setSearchable(attributeDto.isListFilter());
         if (attribute instanceof EnumeratorAttribute) {
             // to check into validator
-            ((EnumeratorAttribute) attribute).setStaticItems(attributeDto.getEnumeratorStaticItems());
-            ((EnumeratorAttribute) attribute).setExtractorBeanName(attributeDto.getEnumeratorExtractorBean());
+            String staticItems = attributeDto.getEnumeratorStaticItems();
+            String extractor = attributeDto.getEnumeratorExtractorBean();
+            if (StringUtils.isEmpty(staticItems) && StringUtils.isEmpty(extractor)) {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_ENUMERATOR, bindingResult, new String[]{typeCode, attributeDto.getCode()}, "entityType.attribute.enumerator.invalid");
+            }
+            ((EnumeratorAttribute) attribute).setStaticItems(staticItems);
+            ((EnumeratorAttribute) attribute).setExtractorBeanName(extractor);
             ((EnumeratorAttribute) attribute).setCustomSeparator(attributeDto.getEnumeratorStaticItemsSeparator());
         }
         IAttributeValidationRules validationRules = attribute.getValidationRules();
         validationRules.setRequired(attributeDto.isMandatory());
         EntityAttributeValidationDto validationDto = attributeDto.getValidationRules();
         if (null != validationDto) {
-            EntityAttributeOgnlValidationDto ognlValidationDto = validationDto.getOgnlValidation();
-            if (null != ognlValidationDto && !StringUtils.isEmpty(ognlValidationDto.getOgnlExpression())) {
-                // to check into validator
-                OgnlValidationRule ognlValidationRule = new OgnlValidationRule();
-                ognlValidationRule.setErrorMessage(ognlValidationDto.getErrorMessage());
-                ognlValidationRule.setErrorMessageKey(ognlValidationDto.getKeyForErrorMessage());
-                ognlValidationRule.setEvalExpressionOnValuedAttribute(ognlValidationDto.isApplyOnlyToFilledAttr());
-                ognlValidationRule.setExpression(ognlValidationDto.getOgnlExpression());
-                ognlValidationRule.setHelpMessage(ognlValidationDto.getHelpMessage());
-                ognlValidationRule.setHelpMessageKey(ognlValidationDto.getKeyForHelpMessage());
-            }
+            validationDto.buildAttributeValidation(typeCode, attribute, bindingResult);
         }
-        if (attribute instanceof AbstractListAttribute && null != attributeDto.getNestedAttribute()) {
-            EntityAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
-            ((AbstractListAttribute) attribute).setNestedAttributeType(this.buildAttribute(nestedAttributeDto, attributeMap));
-        } else if (attribute instanceof CompositeAttribute
-                && null != attributeDto.getCompositeAttributes()
-                && !attributeDto.getCompositeAttributes().isEmpty()) {
-            List<EntityAttributeFullDto> attributes = attributeDto.getCompositeAttributes();
-            for (EntityAttributeFullDto attributeElementDto : attributes) {
-                AttributeInterface attributeElement = this.buildAttribute(attributeElementDto, attributeMap);
-                ((CompositeAttribute) attribute).getAttributeMap().put(attributeElement.getName(), attributeElement);
-                ((CompositeAttribute) attribute).getAttributes().add(attributeElement);
+        if (attribute instanceof AbstractListAttribute) {
+            if (null != attributeDto.getNestedAttribute()) {
+                EntityAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
+                ((AbstractListAttribute) attribute).setNestedAttributeType(this.buildAttribute(typeCode, nestedAttributeDto, attributeMap, bindingResult));
+            } else {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_LIST, bindingResult, new String[]{typeCode, type}, "entityType.attribute.list.missingNestedAttribute");
+            }
+        } else if (attribute instanceof CompositeAttribute) {
+            List<EntityAttributeFullDto> compositeElementsDto = attributeDto.getCompositeAttributes();
+            if (null != compositeElementsDto && !compositeElementsDto.isEmpty()) {
+                for (EntityAttributeFullDto attributeElementDto : compositeElementsDto) {
+                    AttributeInterface attributeElement = this.buildAttribute(typeCode, attributeElementDto, attributeMap, bindingResult);
+                    ((CompositeAttribute) attribute).getAttributeMap().put(attributeElement.getName(), attributeElement);
+                    ((CompositeAttribute) attribute).getAttributes().add(attributeElement);
+                }
+            } else {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_COMPOSITE, bindingResult, new String[]{typeCode, type}, "entityType.attribute.composite.missingElements");
             }
         }
         return attribute;
@@ -272,10 +286,11 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             if (null == entityType) {
                 return;
             }
-            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entityType, "entityType");
             List<String> ids = entityManager.searchId(entityTypeCode, null);
             if (null != ids && ids.size() > 0) {
+                BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entityType, "entityType");
                 bindingResult.reject(EntityTypeValidator.ERRCODE_ENTITY_TYPE_REFERENCES, new Object[]{entityTypeCode}, "entityType.cannot.delete.references");
+                throw new ValidationConflictException(bindingResult);
             }
             ((IEntityTypesConfigurer) entityManager).removeEntityPrototype(entityTypeCode);
         } catch (ApsSystemException e) {

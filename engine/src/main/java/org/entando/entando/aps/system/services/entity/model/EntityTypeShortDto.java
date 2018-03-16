@@ -14,16 +14,15 @@
 package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author E.Santoboni
  */
 public class EntityTypeShortDto {
 
-    @NotNull(message = "entityType.code.notBlank")
+    //@NotNull(message = "entityType.code.notBlank")
     private String code;
-    @NotNull(message = "entityType.name.notBlank")
+    //@NotNull(message = "entityType.name.notBlank")
     private String name;
 
     public EntityTypeShortDto() {

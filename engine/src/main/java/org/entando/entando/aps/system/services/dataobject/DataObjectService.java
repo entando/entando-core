@@ -15,17 +15,22 @@ package org.entando.entando.aps.system.services.dataobject;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.services.page.IPageManager;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDtoBuilder;
+import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
+import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.entando.entando.web.dataobject.validator.DataTypeValidator;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.springframework.validation.BindingResult;
 
@@ -33,6 +38,9 @@ import org.springframework.validation.BindingResult;
  * @author E.Santoboni
  */
 public class DataObjectService extends AbstractEntityService<DataObject, DataTypeDto> implements IDataObjectService {
+
+    private IPageManager pageManager;
+    private IDataObjectModelManager dataObjectModelManager;
 
     @Override
     public PagedMetadata<EntityTypeShortDto> getShortDataTypes(RestListRequest requestList) {
@@ -63,15 +71,73 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
     protected DataObject createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
         DataObject dataObject = super.createEntityType(entityManager, dto, bindingResult);
         DataTypeDtoRequest dtr = (DataTypeDtoRequest) dto;
-        dataObject.setDefaultModel(dtr.getDefaultModel());
-        dataObject.setListModel(dtr.getListModel());
-        dataObject.setViewPage(dtr.getViewPage());
+        if (this.checkModel(false, dataObject.getTypeCode(), dtr.getListModel(), bindingResult)) {
+            dataObject.setListModel(dtr.getListModel());
+        }
+        if (this.checkModel(true, dataObject.getTypeCode(), dtr.getDefaultModel(), bindingResult)) {
+            dataObject.setDefaultModel(dtr.getDefaultModel());
+        }
+        if (this.checkPage(dataObject.getTypeCode(), dtr.getViewPage(), bindingResult)) {
+            dataObject.setViewPage(dtr.getViewPage());
+        }
         return dataObject;
+    }
+
+    private boolean checkModel(boolean isDefault, String typeCode, String modelIdString, BindingResult bindingResult) {
+        if (StringUtils.isEmpty(modelIdString)) {
+            return false;
+        }
+        Long longId = null;
+        try {
+            longId = Long.parseLong(modelIdString);
+        } catch (Exception e) {
+            this.addError((isDefault ? DataTypeValidator.ERRCODE_INVALID_DEFAULT_MODEL : DataTypeValidator.ERRCODE_INVALID_LIST_MODEL),
+                    bindingResult, new String[]{typeCode, modelIdString}, "dataType.modelId.invalid");
+            return false;
+        }
+        DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(longId);
+        if (null == model) {
+            this.addError((isDefault ? DataTypeValidator.ERRCODE_DEFAULT_MODEL_DOES_NOT_EXIST : DataTypeValidator.ERRCODE_LIST_MODEL_DOES_NOT_EXIST),
+                    bindingResult, new String[]{typeCode, modelIdString}, "dataType.modelId.doesNotExist");
+            return false;
+        } else if (model.getDataType().equals(typeCode)) {
+            this.addError((isDefault ? DataTypeValidator.ERRCODE_DEFAULT_MODEL_MISMATCH : DataTypeValidator.ERRCODE_LIST_MODEL_MISMATCH),
+                    bindingResult, new String[]{typeCode, modelIdString, model.getDataType()}, "dataType.modelId.mismatch");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkPage(String typeCode, String pageCode, BindingResult bindingResult) {
+        if (StringUtils.isEmpty(pageCode)) {
+            return false;
+        }
+        if (null == this.getPageManager().getOnlinePage(pageCode)) {
+            this.addError(DataTypeValidator.ERRCODE_INVALID_VIEW_PAGE, bindingResult, new String[]{typeCode, pageCode}, "dataType.pageCode.invalid");
+            return false;
+        }
+        return true;
     }
 
     @Override
     public void deleteDataType(String entityTypeCode) {
         super.deleteEntityType(SystemConstants.DATA_OBJECT_MANAGER, entityTypeCode);
+    }
+
+    protected IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
+    }
+
+    protected IDataObjectModelManager getDataObjectModelManager() {
+        return dataObjectModelManager;
+    }
+
+    public void setDataObjectModelManager(IDataObjectModelManager dataObjectModelManager) {
+        this.dataObjectModelManager = dataObjectModelManager;
     }
 
 }

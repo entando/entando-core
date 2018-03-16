@@ -120,7 +120,10 @@
 
     <bean id="EntityManagerService" class="org.entando.entando.aps.system.services.entity.EntityManagerService" />
 	
-	<bean id="DataObjectService" class="org.entando.entando.aps.system.services.dataobject.DataObjectService" />
+	<bean id="DataObjectService" class="org.entando.entando.aps.system.services.dataobject.DataObjectService" >
+        <property name="pageManager" ref="PageManager" />
+        <property name="dataObjectModelManager" ref="DataObjectModelManager" />
+    </bean>
 	
     <bean id="LanguageService" class="org.entando.entando.aps.system.services.language.LanguageService" >
         <property name="langManager" ref="LangManager" />

@@ -21,12 +21,20 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeVali
 import com.agiletec.aps.system.common.entity.model.attribute.util.NumberAttributeValidationRules;
 import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
 import com.agiletec.aps.system.common.entity.model.attribute.util.TextAttributeValidationRules;
+import com.agiletec.aps.util.DateConverter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.web.entity.validator.EntityTypeValidator;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
  */
 public class EntityAttributeValidationDto {
+
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private Integer minLength;
     private Integer maxLength;
@@ -38,11 +46,11 @@ public class EntityAttributeValidationDto {
     private String equalString;
     private String equalStringAttribute;
 
-    private Date rangeStartDate;
-    private Date rangeEndDate;
+    private String rangeStartDate;
+    private String rangeEndDate;
     private String rangeStartDateAttribute;
     private String rangeEndDateAttribute;
-    private Date equalDate;
+    private String equalDate;
     private String equalDateAttribute;
 
     private Integer rangeStartNumber;
@@ -85,25 +93,21 @@ public class EntityAttributeValidationDto {
             this.setRangeEndStringAttribute(textValRule.getRangeEndAttribute());
             this.setRangeStartStringAttribute(textValRule.getRangeStartAttribute());
             this.setEqualStringAttribute(textValRule.getValueAttribute());
-            /*
-            if (attribute instanceof EnumeratorAttribute) {
-                EnumeratorAttribute enumeratorAttribute = (EnumeratorAttribute) attribute;
-                this.setEnumeratorStaticItems(enumeratorAttribute.getStaticItems());
-                this.setEnumeratorStaticItemsSeparator(enumeratorAttribute.getCustomSeparator());
-                this.setEnumeratorExtractorBean(enumeratorAttribute.getExtractorBeanName());
-            }
-             */
-        }
-        if (attribute instanceof DateAttribute) {
+        } else if (attribute instanceof DateAttribute) {
             DateAttributeValidationRules dateValRule = (DateAttributeValidationRules) validationRules;
-            this.setRangeEndDate((Date) dateValRule.getRangeEnd());
-            this.setRangeStartDate((Date) dateValRule.getRangeStart());
-            this.setEqualDate((Date) dateValRule.getValue());
+            if (null != dateValRule.getRangeEnd()) {
+                this.setRangeEndDate(DateConverter.getFormattedDate((Date) dateValRule.getRangeEnd(), DATE_FORMAT));
+            }
+            if (null != dateValRule.getRangeEnd()) {
+                this.setRangeStartDate(DateConverter.getFormattedDate((Date) dateValRule.getRangeStart(), DATE_FORMAT));
+            }
+            if (null != dateValRule.getRangeEnd()) {
+                this.setEqualDate(DateConverter.getFormattedDate((Date) dateValRule.getValue(), DATE_FORMAT));
+            }
             this.setRangeEndDateAttribute(dateValRule.getRangeEndAttribute());
             this.setRangeStartDateAttribute(dateValRule.getRangeStartAttribute());
             this.setEqualDateAttribute(dateValRule.getValueAttribute());
-        }
-        if (attribute instanceof NumberAttribute) {
+        } else if (attribute instanceof NumberAttribute) {
             NumberAttributeValidationRules nulValRule = (NumberAttributeValidationRules) validationRules;
             this.setRangeEndNumber((Integer) nulValRule.getRangeEnd());
             this.setRangeStartNumber((Integer) nulValRule.getRangeStart());
@@ -116,6 +120,84 @@ public class EntityAttributeValidationDto {
         if (null != ognlValidationRule) {
             this.setOgnlValidation(new EntityAttributeOgnlValidationDto(ognlValidationRule));
         }
+    }
+
+    public void buildAttributeValidation(String typeCode, AttributeInterface attribute, BindingResult bindingResult) {
+        EntityAttributeOgnlValidationDto ognlValidationDto = this.getOgnlValidation();
+        if (null != ognlValidationDto) {
+            ognlValidationDto.buildAttributeOgnlValidation(typeCode, attribute, bindingResult);
+        }
+        IAttributeValidationRules validationRules = attribute.getValidationRules();
+        if (attribute.isTextAttribute()) {
+            TextAttributeValidationRules textValRule = (TextAttributeValidationRules) validationRules;
+            if (StringUtils.isEmpty(this.getRegex())) {
+                textValRule.setRegexp(this.getRegex());
+            }
+            if (null != this.getMinLength() && null != this.getMaxLength() && (this.getMinLength() > this.getMaxLength())) {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_TEXT_RANGE, bindingResult,
+                        new String[]{typeCode, attribute.getName()}, "entityType.attribute.text.invalidRange");
+            } else {
+                if (null != this.getMinLength()) {
+                    textValRule.setMinLength(this.getMinLength());
+                }
+                if (null != this.getMinLength()) {
+                    textValRule.setMaxLength(this.getMaxLength());
+                }
+            }
+            if (StringUtils.isEmpty(this.getRangeStartString()) || StringUtils.isEmpty(this.getRangeEndString())
+                    || StringUtils.isEmpty(this.getRangeStartStringAttribute()) || StringUtils.isEmpty(this.getRangeEndStringAttribute())) {
+                textValRule.setRangeEnd(this.getRangeEndString());
+                textValRule.setRangeStart(this.getRangeStartString());
+                textValRule.setRangeEndAttribute(this.getRangeEndStringAttribute());
+                textValRule.setRangeStartAttribute(this.getRangeStartStringAttribute());
+            } else {
+                textValRule.setValue(this.getEqualString());
+                textValRule.setValueAttribute(this.getEqualStringAttribute());
+            }
+        } else if (attribute instanceof DateAttribute) {
+            DateAttributeValidationRules dateValRule = (DateAttributeValidationRules) validationRules;
+            dateValRule.setRangeStart(this.extractDate(this.getRangeStartDate(), typeCode, attribute.getName(),
+                    EntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_START, "entityType.attribute.date.invalidRangeStart", bindingResult));
+            dateValRule.setRangeEnd(this.extractDate(this.getRangeEndDate(), typeCode, attribute.getName(),
+                    EntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_END, "entityType.attribute.date.invalidRangeEnd", bindingResult));
+            dateValRule.setValue(this.extractDate(this.getEqualDate(), typeCode, attribute.getName(),
+                    EntityTypeValidator.ERRCODE_INVALID_DATE_VALUE, "entityType.attribute.date.invalidValue", bindingResult));
+            dateValRule.setRangeStartAttribute(this.getRangeStartDateAttribute());
+            dateValRule.setRangeEndAttribute(this.getRangeEndDateAttribute());
+            dateValRule.setValueAttribute(this.getEqualDateAttribute());
+        } else if (attribute instanceof NumberAttribute) {
+            NumberAttributeValidationRules nulValRule = (NumberAttributeValidationRules) validationRules;
+            nulValRule.setRangeEnd(this.getRangeEndNumber());
+            nulValRule.setRangeStart(this.getRangeStartNumber());
+            if (null != this.getRangeStartNumber() && null != this.getRangeEndNumber()
+                    && (this.getRangeEndNumber() < this.getRangeStartNumber())) {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_NUMBER_RANGE,
+                        bindingResult, new String[]{typeCode, attribute.getName()}, "entityType.attribute.number.invalidRange");
+            }
+            nulValRule.setValue(this.getEqualNumber());
+            nulValRule.setRangeEndAttribute(this.getRangeEndNumberAttribute());
+            nulValRule.setRangeStartAttribute(this.getRangeStartNumberAttribute());
+            nulValRule.setValueAttribute(nulValRule.getValueAttribute());
+        }
+    }
+
+    private Date extractDate(String dateString, String typeCode, String attributeName,
+            String errorCode, String errorMessage, BindingResult bindingResult) {
+        if (StringUtils.isEmpty(dateString)) {
+            return null;
+        }
+        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+        Date date = null;
+        try {
+            date = format.parse(dateString.trim());
+        } catch (ParseException ex) {
+            this.addError(errorCode, bindingResult, new String[]{typeCode, attributeName}, errorMessage);
+        }
+        return date;
+    }
+
+    protected void addError(String errorCode, BindingResult bindingResult, String[] args, String message) {
+        bindingResult.reject(errorCode, args, message);
     }
 
     public Integer getMinLength() {
@@ -190,19 +272,19 @@ public class EntityAttributeValidationDto {
         this.equalStringAttribute = equalStringAttribute;
     }
 
-    public Date getRangeStartDate() {
+    public String getRangeStartDate() {
         return rangeStartDate;
     }
 
-    public void setRangeStartDate(Date rangeStartDate) {
+    public void setRangeStartDate(String rangeStartDate) {
         this.rangeStartDate = rangeStartDate;
     }
 
-    public Date getRangeEndDate() {
+    public String getRangeEndDate() {
         return rangeEndDate;
     }
 
-    public void setRangeEndDate(Date rangeEndDate) {
+    public void setRangeEndDate(String rangeEndDate) {
         this.rangeEndDate = rangeEndDate;
     }
 
@@ -222,11 +304,11 @@ public class EntityAttributeValidationDto {
         this.rangeEndDateAttribute = rangeEndDateAttribute;
     }
 
-    public Date getEqualDate() {
+    public String getEqualDate() {
         return equalDate;
     }
 
-    public void setEqualDate(Date equalDate) {
+    public void setEqualDate(String equalDate) {
         this.equalDate = equalDate;
     }
 

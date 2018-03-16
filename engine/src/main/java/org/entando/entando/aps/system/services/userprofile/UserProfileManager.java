@@ -28,7 +28,6 @@ import org.entando.entando.aps.system.services.userprofile.model.UserProfileReco
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
@@ -39,19 +38,21 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.user.AbstractUser;
 import com.agiletec.aps.system.services.user.UserDetails;
+import org.springframework.cache.annotation.CachePut;
 
 /**
- * Implementation of ProfileManager.
- * The service is included in a transparent manner in the workflow of required 
- * to insert, update or delete user, using the Aspect-oriented programming. 
- * In that way, you can join a user with his Profile whatever implementation of User Management.
+ * Implementation of ProfileManager. The service is included in a transparent
+ * manner in the workflow of required to insert, update or delete user, using
+ * the Aspect-oriented programming. In that way, you can join a user with his
+ * Profile whatever implementation of User Management.
+ *
  * @author E.Santoboni
  */
 @Aspect
 public class UserProfileManager extends ApsEntityManager implements IUserProfileManager {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(UserProfileManager.class);
-	
+    private static final Logger logger = LoggerFactory.getLogger(UserProfileManager.class);
+
     @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.getUser(..))", returning = "user")
     public void injectProfile(Object user) {
         if (user != null) {
@@ -61,12 +62,12 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
                     IUserProfile profile = this.getProfile(userDetails.getUsername());
                     userDetails.setProfile(profile);
                 } catch (Throwable t) {
-                	_logger.error("Error injecting profile on user {}", userDetails.getUsername(), t);
+                    logger.error("Error injecting profile on user {}", userDetails.getUsername(), t);
                 }
             }
         }
     }
-	
+
     @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.addUser(..)) && args(user,..)")
     public void addProfile(Object user) {
         if (user != null) {
@@ -76,14 +77,14 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
                 try {
                     this.addProfile(userDetails.getUsername(), (IUserProfile) profile);
                 } catch (Throwable t) {
-                	_logger.error("Error adding profile on user {}", userDetails.getUsername(), t);
+                    logger.error("Error adding profile on user {}", userDetails.getUsername(), t);
                 }
             }
         }
     }
-	
+
     @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.updateUser(..)) && args(user,..)")
-	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#user.username)")
+    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#user.username)")
     public void updateProfile(Object user) {
         if (user != null) {
             UserDetails userDetails = (UserDetails) user;
@@ -92,14 +93,14 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
                 try {
                     this.updateProfile(userDetails.getUsername(), (IUserProfile) profile);
                 } catch (Throwable t) {
-                	_logger.error("Error updating profile to user {}", userDetails.getUsername(), t);
+                    logger.error("Error updating profile to user {}", userDetails.getUsername(), t);
                 }
             }
         }
     }
-	
+
     @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.removeUser(..)) && args(key)")
-	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#key)")
+    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#key)")
     public void deleteProfile(Object key) {
         String username = null;
         if (key instanceof String) {
@@ -112,21 +113,21 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
             try {
                 this.deleteProfile(username);
             } catch (Throwable t) {
-            	_logger.error("Error deleting profile. user: {}", username, t);
+                logger.error("Error deleting profile. user: {}", username, t);
             }
         }
     }
-	
-	@Override
+
+    @Override
     public IApsEntity getEntity(String entityId) throws ApsSystemException {
         return this.getProfile(entityId);
     }
-    
-	@Override
+
+    @Override
     public IUserProfile getDefaultProfileType() {
         IUserProfile profileType = (IUserProfile) super.getEntityPrototype(SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
         if (null == profileType) {
-            List<String> entityTypes = new ArrayList<String>();
+            List<String> entityTypes = new ArrayList<>();
             entityTypes.addAll(this.getEntityPrototypes().keySet());
             if (!entityTypes.isEmpty()) {
                 Collections.sort(entityTypes);
@@ -135,26 +136,26 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
         }
         return profileType;
     }
-    
+
     @Override
     public IUserProfile getProfileType(String typeCode) {
         return (IUserProfile) super.getEntityPrototype(typeCode);
     }
-    
-	@Override
+
+    @Override
     public void addProfile(String username, IUserProfile profile) throws ApsSystemException {
         try {
             profile.setId(username);
             this.getProfileDAO().addEntity(profile);
             this.notifyProfileChanging(profile, ProfileChangedEvent.INSERT_OPERATION_CODE);
         } catch (Throwable t) {
-        	_logger.error("Error saving profile - user: {}", username, t);
+            logger.error("Error saving profile - user: {}", username, t);
             throw new ApsSystemException("Error saving profile", t);
         }
     }
-    
-	@Override
-	@CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
+
+    @Override
+    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
     public void deleteProfile(String username) throws ApsSystemException {
         try {
             IUserProfile profileToDelete = this.getProfile(username);
@@ -164,15 +165,15 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
             this.getProfileDAO().deleteEntity(username);
             this.notifyProfileChanging(profileToDelete, ProfileChangedEvent.REMOVE_OPERATION_CODE);
         } catch (Throwable t) {
-        	_logger.error("Error deleting user profile {}", username, t);
+            logger.error("Error deleting user profile {}", username, t);
             throw new ApsSystemException("Error deleting user profile", t);
         }
     }
-    
-	@Override
-	@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
-	@CacheableInfo(groups = "'UserProfileTypes_cacheGroup'")
-	public IUserProfile getProfile(String username) throws ApsSystemException {
+
+    @Override
+    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
+    @CacheableInfo(groups = "'UserProfileTypes_cacheGroup'")
+    public IUserProfile getProfile(String username) throws ApsSystemException {
         IUserProfile profile = null;
         try {
             UserProfileRecord profileVO = (UserProfileRecord) this.getProfileDAO().loadEntityRecord(username);
@@ -181,54 +182,54 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
                 profile.setPublicProfile(profileVO.isPublicProfile());
             }
         } catch (Throwable t) {
-        	_logger.error("Error loading profile. user: {} ", username, t);
+            logger.error("Error loading profile. user: {} ", username, t);
             throw new ApsSystemException("Error loading profile", t);
         }
         return profile;
     }
-    
-	@Override
+
+    @Override
     @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
-	public void updateProfile(String username, IUserProfile profile) throws ApsSystemException {
+    public void updateProfile(String username, IUserProfile profile) throws ApsSystemException {
         try {
             profile.setId(username);
             this.getProfileDAO().updateEntity(profile);
             this.notifyProfileChanging(profile, ProfileChangedEvent.UPDATE_OPERATION_CODE);
         } catch (Throwable t) {
-        	_logger.error("Error updating profile {}", username, t);
+            logger.error("Error updating profile {}", username, t);
             throw new ApsSystemException("Error updating profile", t);
         }
     }
-	
+
     private void notifyProfileChanging(IUserProfile profile, int operationCode) throws ApsSystemException {
         ProfileChangedEvent event = new ProfileChangedEvent();
         event.setProfile(profile);
         event.setOperationCode(operationCode);
         this.notifyEvent(event);
     }
-	
-	@Override
-	@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, groups = "'UserProfileTypes_cacheGroup'")
-	public void removeEntityPrototype(String entityTypeCode) throws ApsSystemException {
-		super.removeEntityPrototype(entityTypeCode);
-	}
-	
-	@Override
-	@CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, groups = "'UserProfileTypes_cacheGroup'")
-	public void updateEntityPrototype(IApsEntity entityType) throws ApsSystemException {
-		super.updateEntityPrototype(entityType);
-	}
-	
-	@Override
+
+    @Override
+    @CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, groups = "'UserProfileTypes_cacheGroup'")
+    public void removeEntityPrototype(String entityTypeCode) throws ApsSystemException {
+        super.removeEntityPrototype(entityTypeCode);
+    }
+
+    @Override
+    @CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, groups = "'UserProfileTypes_cacheGroup'")
+    public void updateEntityPrototype(IApsEntity entityType) throws ApsSystemException {
+        super.updateEntityPrototype(entityType);
+    }
+
+    @Override
     protected ICategoryManager getCategoryManager() {
         return null;
     }
-    
+
     @Override
     protected IEntityDAO getEntityDao() {
         return (IEntityDAO) this.getProfileDAO();
     }
-    
+
     @Override
     protected IEntitySearcherDAO getEntitySearcherDao() {
         return _entitySearcherDAO;
@@ -237,6 +238,7 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
     protected IUserProfileDAO getProfileDAO() {
         return _profileDAO;
     }
+
     public void setProfileDAO(IUserProfileDAO profileDAO) {
         this._profileDAO = profileDAO;
     }
@@ -244,11 +246,12 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
     protected IEntitySearcherDAO getEntitySearcherDAO() {
         return _entitySearcherDAO;
     }
+
     public void setEntitySearcherDAO(IEntitySearcherDAO entitySearcherDAO) {
         this._entitySearcherDAO = entitySearcherDAO;
     }
-    
+
     private IUserProfileDAO _profileDAO;
     private IEntitySearcherDAO _entitySearcherDAO;
-    
+
 }

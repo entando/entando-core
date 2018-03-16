@@ -18,6 +18,7 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Map;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -31,7 +32,6 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.Title;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,12 +121,11 @@ public class PageService implements IPageService {
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
         IPage parent = this.getPageManager().getDraftPage(parentCode);
-        Optional<String[]> optional = Optional.ofNullable(parent.getChildrenCodes());
-        optional.ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
+        Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(parent.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
             IPage child = this.getPageManager().getOnlinePage(childCode) != null
                     ? this.getPageManager().getOnlinePage(childCode) : this.getPageManager().getDraftPage(childCode);
             res.add(dtoBuilder.convert(child));
-        }));
+        })));
         return res;
     }
 
@@ -174,12 +173,6 @@ public class PageService implements IPageService {
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
-            if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_ONLINE)) {
-                this.getPageManager().setPageOnline(pageCode);
-                newPage = this.getPageManager().getOnlinePage(pageCode);
-            } else if (pageRequest.getStatus() != null && pageRequest.getStatus().equals(STATUS_DRAFT)) {
-                this.getPageManager().setPageOffline(pageCode);
-            }
             return this.getDtoBuilder().convert(newPage);
         } catch (ApsSystemException e) {
             logger.error("Error updating page {}", pageCode, e);
@@ -300,10 +293,10 @@ public class PageService implements IPageService {
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
         page.setUseExtraTitles(pageRequest.isSeo());
-        Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
+        Optional<Map<String, String>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
-        titles.ifPresent(values -> values.forEach((title) -> {
-            apsTitles.put(title.getLang(), title.getTitle());
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
         }));
         page.setTitles(apsTitles);
         page.setGroup(pageRequest.getOwnerGroup());
@@ -331,10 +324,10 @@ public class PageService implements IPageService {
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
         page.setUseExtraTitles(pageRequest.isSeo());
-        Optional<List<Title>> titles = Optional.ofNullable(pageRequest.getTitles());
+        Optional<Map<String, String>> titles = Optional.ofNullable(pageRequest.getTitles());
         ApsProperties apsTitles = new ApsProperties();
-        titles.ifPresent(values -> values.forEach((title) -> {
-            apsTitles.put(title.getLang(), title.getTitle());
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
         }));
         page.setTitles(apsTitles);
         page.setGroup(pageRequest.getOwnerGroup());

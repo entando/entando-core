@@ -100,7 +100,7 @@ public class OAuth2TestUtils {
 
         public UserBuilder grantedToRoleAdmin() {
 
-            OAuth2TestUtils.addAuthorization(this.user, null, "admin", new String[]{Permission.SUPERUSER});
+            OAuth2TestUtils.addAuthorization(this.user, "administrators", "admin", new String[]{Permission.SUPERUSER});
             return this;
         }
 

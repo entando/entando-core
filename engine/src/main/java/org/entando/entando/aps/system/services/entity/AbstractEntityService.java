@@ -50,8 +50,8 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
+import org.entando.entando.web.entity.model.IEntityTypesBodyRequest;
 import org.entando.entando.web.entity.validator.EntityTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,13 +134,13 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
 
     protected abstract IDtoBuilder<I, O> getEntityTypeFullDtoBuilder(IEntityManager masterManager);
 
-    protected synchronized List<O> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
+    protected synchronized List<O> addEntityTypes(String entityManagerCode, IEntityTypesBodyRequest bodyRequest, BindingResult bindingResult) {
         List<O> response = new ArrayList<>();
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             List<I> entityTypesToAdd = new ArrayList<>();
             IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
-            for (EntityTypeDtoRequest dto : bodyRequest.getDataTypes()) {
+            for (EntityTypeDtoRequest dto : bodyRequest.getEntityTypes()) {
                 if (null != entityManager.getEntityPrototype(dto.getCode())) {
                     this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS,
                             bindingResult, new String[]{dto.getCode()}, "entityType.exists");
@@ -164,7 +164,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return response;
     }
 
-    protected synchronized EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
+    protected synchronized O updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             if (null == entityManager.getEntityPrototype(request.getCode())) {

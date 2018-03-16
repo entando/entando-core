@@ -14,6 +14,7 @@
 package org.entando.entando.web.common.handlers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -90,11 +91,11 @@ public class RestExceptionHandler {
     public RestResponse processRestRourceNotFoundEx(RestRourceNotFoundException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         RestResponse response = new RestResponse();
-
-        RestError error = new RestError("1", this.resolveLocalizedErrorMessage("NOT_FOUND", new Object[]{ex.getObjectName(), ex.getObjectCode()}));
+        RestError error = new RestError(ex.getErrorCode(), this.resolveLocalizedErrorMessage("NOT_FOUND", new Object[]{ex.getObjectName(), ex.getObjectCode()}));
         List<RestError> errors = new ArrayList<>();
         errors.add(error);
         response.setErrors(errors);
+        response.setMetadata(new HashMap<>());
         return response;
     }
 

@@ -22,7 +22,6 @@ public abstract class DtoBuilder<I, O> implements IDtoBuilder<I, O> {
     public O convert(I entity) {
         O dto = null;
         if (null != entity) {
-
             dto = toDto(entity);
         }
         return dto;

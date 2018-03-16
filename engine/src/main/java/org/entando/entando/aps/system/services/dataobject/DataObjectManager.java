@@ -50,7 +50,7 @@ import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
  */
 public class DataObjectManager extends ApsEntityManager implements IDataObjectManager, GroupUtilizer, CategoryUtilizer {
 
-    private static final Logger _logger = LoggerFactory.getLogger(DataObjectManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataObjectManager.class);
 
     private IDataObjectDAO dataObjectDao;
 
@@ -61,7 +61,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     @Override
     public void init() throws Exception {
         super.init();
-        _logger.debug("{} ready. Initialized {} DataObject types", this.getClass().getName(), super.getEntityTypes().size());
+        logger.debug("{} ready. Initialized {} DataObject types", this.getClass().getName(), super.getEntityTypes().size());
     }
 
     @Override
@@ -110,13 +110,13 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     @Override
     public Map<String, SmallDataType> getSmallDataTypesMap() {
         Map<String, SmallDataType> smallDataTypes = new HashMap<>();
-		List<SmallEntityType> entityTypes = super.getSmallEntityTypes();
-		for (SmallEntityType entityType : entityTypes) {
-			SmallDataType sdt = new SmallDataType();
-			sdt.setCode(entityType.getCode());
-			sdt.setDescription(entityType.getDescription());
-			smallDataTypes.put(entityType.getCode(), sdt);
-		}
+        List<SmallEntityType> entityTypes = super.getSmallEntityTypes();
+        for (SmallEntityType entityType : entityTypes) {
+            SmallDataType sdt = new SmallDataType();
+            sdt.setCode(entityType.getCode());
+            sdt.setDescription(entityType.getDescription());
+            smallDataTypes.put(entityType.getCode(), sdt);
+        }
         return smallDataTypes;
     }
 
@@ -182,7 +182,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
             DataObjectRecordVO dataobjectVo = this.loadDataObjectVO(id);
             dataobject = this.createDataObject(dataobjectVo, onLine);
         } catch (ApsSystemException e) {
-            _logger.error("Error while loading dataobject : id {}", id, e);
+            logger.error("Error while loading dataobject : id {}", id, e);
             throw new ApsSystemException("Error while loading dataobject : id " + id, e);
         }
         return dataobject;
@@ -226,7 +226,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
                 }
             }
         } catch (ApsSystemException e) {
-            _logger.error("Error while creating dataobject by vo", e);
+            logger.error("Error while creating dataobject by vo", e);
             throw new ApsSystemException("Error while creating dataobject by vo", e);
         }
         return dataobject;
@@ -246,7 +246,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
         try {
             dataobjectVo = (DataObjectRecordVO) this.getDataObjectDAO().loadEntityRecord(id);
         } catch (Throwable t) {
-            _logger.error("Error while loading dataobject vo : id {}", id, t);
+            logger.error("Error while loading dataobject vo : id {}", id, t);
             throw new ApsSystemException("Error while loading dataobject vo : id " + id, t);
         }
         return dataobjectVo;
@@ -302,7 +302,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
                 this.getDataObjectDAO().updateDataObject(dataobject, updateDate);
             }
         } catch (Throwable t) {
-            _logger.error("Error while saving dataobject", t);
+            logger.error("Error while saving dataobject", t);
             throw new ApsSystemException("Error while saving dataobject", t);
         }
     }
@@ -333,22 +333,9 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
             }
             this.notifyPublicDataObjectChanging(dataobject, operationEventCode);
         } catch (Throwable t) {
-            _logger.error("Error while inserting dataobject on line", t);
+            logger.error("Error while inserting dataobject on line", t);
             throw new ApsSystemException("Error while inserting dataobject on line", t);
         }
-    }
-
-    /**
-     * Return the list of all the dataobject IDs.
-     *
-     * @return The list of all the dataobject IDs.
-     * @throws ApsSystemException In case of error
-     * @deprecated Since Entando 2.0 version 2.0.9, use
-     * searchId(EntitySearchFilter[]) method
-     */
-    @Override
-    public List<String> getAllDataObjectsId() throws ApsSystemException {
-        return super.getAllEntityId();
     }
 
     @Override
@@ -359,9 +346,9 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
             if (dataobject != null) {
                 this.getDataObjectDAO().reloadDataObjectReferences(dataobject);
             }
-            _logger.debug("Reloaded dataobject references for dataobject {}", entityId);
+            logger.debug("Reloaded dataobject references for dataobject {}", entityId);
         } catch (Throwable t) {
-            _logger.error("Error while reloading dataobject references for dataobject {}", entityId, t);
+            logger.error("Error while reloading dataobject references for dataobject {}", entityId, t);
         }
     }
 
@@ -383,7 +370,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
             this.getDataObjectDAO().removeDataObject(dataobject);
             this.notifyPublicDataObjectChanging(dataobject, PublicDataChangedEvent.REMOVE_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error while removing onLine dataobject", t);
+            logger.error("Error while removing onLine dataobject", t);
             throw new ApsSystemException("Error while removing onLine dataobject", t);
         }
     }
@@ -427,7 +414,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
         try {
             this.getDataObjectDAO().deleteEntity(dataobject.getId());
         } catch (Throwable t) {
-            _logger.error("Error while deleting dataobject {}", dataobject.getId(), t);
+            logger.error("Error while deleting dataobject {}", dataobject.getId(), t);
             throw new ApsSystemException("Error while deleting dataobject " + dataobject.getId(), t);
         }
     }
@@ -445,7 +432,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
         try {
             dataobjectsId = this.getDataObjectSearcherDAO().loadDataObjectsId(dataobjectType, categories, orClauseCategoryFilter, filters, userGroupCodes);
         } catch (Throwable t) {
-            _logger.error("Error while loading dataobjects", t);
+            logger.error("Error while loading dataobjects", t);
             throw new ApsSystemException("Error while loading dataobjects", t);
         }
         return dataobjectsId;
@@ -464,20 +451,10 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
         try {
             dataobjectsId = this.getDataObjectSearcherDAO().loadDataObjectsId(categories, orClauseCategoryFilter, filters, userGroupCodes);
         } catch (Throwable t) {
-            _logger.error("Error while loading dataobjects", t);
+            logger.error("Error while loading dataobjects", t);
             throw new ApsSystemException("Error while loading dataobjects", t);
         }
         return dataobjectsId;
-    }
-
-    /**
-     * @deprecated From jAPS 2.0 version 2.0.9. Use loadWorkDataObjectsId or
-     * loadPublicDataObjectsId
-     */
-    @Override
-    public List<String> loadDataObjectsId(String[] categories, EntitySearchFilter[] filters,
-            Collection<String> userGroupCodes, boolean onlyOwner) throws ApsSystemException {
-        throw new ApsSystemException("'loadDataObjectsId' method deprecated From jAPS 2.0 version 2.0.9. Use loadWorkDataObjectsId or loadPublicDataObjectsId");
     }
 
     @Override
@@ -502,7 +479,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
 
     @Override
     public List getCategoryUtilizersForReloadReferences(String categoryCode) {
-        List<String> dataIdToReload = new ArrayList<String>();
+        List<String> dataIdToReload = new ArrayList<>();
         try {
             Set<String> dataobjects = this.getDataObjectUpdaterService().getDataObjectsId(categoryCode);
             if (null != dataobjects) {
@@ -536,7 +513,7 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
         try {
             status = this.getDataObjectDAO().loadDataObjectsStatus();
         } catch (Throwable t) {
-            _logger.error("error in getDataObjectsStatus");
+            logger.error("error in getDataObjectsStatus");
         }
         return status;
     }
@@ -583,14 +560,6 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     @Override
     public IApsEntity getEntity(String entityId) throws ApsSystemException {
         return this.loadDataObject(entityId, false);
-    }
-
-    /**
-     * @deprecated From jAPS 2.0 version 2.0.9, use getStatus()
-     */
-    @Override
-    public int getState() {
-        return super.getStatus();
     }
 
 }

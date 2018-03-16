@@ -22,39 +22,25 @@ import java.util.List;
 /**
  * @author E.Santoboni
  */
-public class EntityTypeDto {
+public class EntityTypeDto extends EntityTypeShortDto {
 
-    private String code;
-    private String name;
     private List<EntityAttributeDto> attributes = new ArrayList<>();
 
     public EntityTypeDto() {
+        super();
+    }
+
+    public EntityTypeDto(IApsEntity entityType) {
+        super(entityType);
     }
 
     public EntityTypeDto(IApsEntity entityType, List<AttributeRole> roles) {
-        this.setCode(entityType.getTypeCode());
-        this.setName(entityType.getTypeDescription());
+        super(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
             EntityAttributeDto attributeDto = new EntityAttributeDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<EntityAttributeDto> getAttributes() {

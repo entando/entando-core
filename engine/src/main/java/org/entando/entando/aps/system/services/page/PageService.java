@@ -1,14 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.aps.system.services.page;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
@@ -18,7 +21,11 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -181,6 +188,24 @@ public class PageService implements IPageService {
     }
 
     @Override
+    public PageDto updatePageStatus(String pageCode, String status) {
+        IPage newPage = null;
+        try {
+            if (status != null && status.equals(STATUS_ONLINE)) {
+                this.getPageManager().setPageOnline(pageCode);
+                newPage = this.getPageManager().getOnlinePage(pageCode);
+            } else if (status != null && status.equals(STATUS_DRAFT)) {
+                this.getPageManager().setPageOffline(pageCode);
+                newPage = this.getPageManager().getDraftPage(pageCode);
+            }
+            return this.getDtoBuilder().convert(newPage);
+        } catch (ApsSystemException e) {
+            logger.error("Error updating page {} status", pageCode, e);
+            throw new RestServerError("error in update page status", e);
+        }
+    }
+
+    @Override
     public PageDto movePage(String pageCode, PageRequest pageRequest) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
                 page = this.getPageManager().getDraftPage(pageCode);
@@ -339,7 +364,6 @@ public class PageService implements IPageService {
         return page;
     }
 
-
     private IPage loadPage(String pageCode, String status) {
         IPage page = null;
         switch (status) {
@@ -360,7 +384,4 @@ public class PageService implements IPageService {
         return page;
     }
 
-
-
 }
-

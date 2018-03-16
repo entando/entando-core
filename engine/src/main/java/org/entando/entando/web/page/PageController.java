@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.web.page;
 
@@ -22,6 +30,7 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.page.validator.PageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +66,8 @@ public class PageController {
     public static final String ERRCODE_GROUP_MISMATCH = "2";
     public static final String ERRCODE_STATUS_PAGE_MISMATCH = "6";
     public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
+    public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "1";
+    public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "2";
 
     @Autowired
     private IPageService pageService;
@@ -94,6 +105,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPages(@ModelAttribute("user") UserDetails user, @RequestParam(value = "parentCode", required = false, defaultValue = "homepage") String parentCode) {
+        logger.debug("getting page tree for parent {}", parentCode);
         List<PageDto> result = this.getAuthorizationService().filterList(user, this.getPageService().getPages(parentCode));
         Map<String, String> metadata = new HashMap<>();
         metadata.put("parentCode", parentCode);
@@ -103,6 +115,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+        logger.debug("getting page {}", pageCode);
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
         }
@@ -115,6 +128,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
+        logger.debug("updating page {} with request {}", pageCode, pageRequest);
 
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
@@ -133,9 +147,32 @@ public class PageController {
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updatePageStatus(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
+        logger.debug("changing status for page {} with request {}", pageCode, pageStatusRequest);
+        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
+            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
+        }
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getPageValidator().validateReferences(pageCode, pageStatusRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        PageDto page = this.getPageService().updatePageStatus(pageCode, pageStatusRequest.getStatus());
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("status", pageStatusRequest.getStatus());
+        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addPage(@ModelAttribute("user") UserDetails user, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) throws ApsSystemException {
+        logger.debug("creating page with request {}", pageRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -183,6 +220,7 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/position", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> movePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
+        logger.debug("changing position for page {} with request {}", pageCode, pageRequest);
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
         }

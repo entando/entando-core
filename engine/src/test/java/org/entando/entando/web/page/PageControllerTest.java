@@ -21,16 +21,27 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import junit.framework.Assert;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.PageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.AbstractControllerTest;
+import org.entando.entando.web.common.validator.StringValidator;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.page.validator.PageValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
@@ -46,12 +57,16 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.bind.WebDataBinder;
 
 /**
  *
@@ -63,6 +78,12 @@ public class PageControllerTest extends AbstractControllerTest {
     IPageManager pageManager;
 
     @Mock
+    IContentManager contentManager;
+
+    @Mock
+    PageUtilizer pageUtilizer;
+
+    @Mock
     private PageService pageService;
 
     @Mock
@@ -71,15 +92,21 @@ public class PageControllerTest extends AbstractControllerTest {
     @InjectMocks
     private PageController controller;
 
+    private static Validator validator;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
         PageValidator pageValidator = new PageValidator();
         pageValidator.setPageManager(pageManager);
+        pageValidator.setContentManager(contentManager);
+        pageValidator.setPageUtilizer(pageUtilizer);
         this.controller.setPageValidator(pageValidator);
     }
 
@@ -216,6 +243,78 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_URINAME_MISMATCH)));
 
+    }
+
+    @Test
+    public void shouldValidateStatusPutDraftRef() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PageStatusRequest request = new PageStatusRequest();
+        request.setStatus("draft");
+
+        PageM pageToUnpublish = new PageM(true);
+        pageToUnpublish.setCode("page_to_unpublish");
+        pageToUnpublish.setParentCode("service");
+        pageToUnpublish.setChildrenCodes(new String[]{"child_page"});
+
+        PageM child = new PageM(true);
+        child.setCode("child_page");
+        child.setParentCode("page_to_unpublish");
+
+        PageM root = new PageM(true);
+        root.setCode("home");
+        root.setParentCode("home");
+
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(pageToUnpublish, child);
+        when(this.controller.getPageValidator().getPageManager().getOnlineRoot()).thenReturn(root);
+        when(this.controller.getPageValidator().getPageUtilizer().getPageUtilizers(any(String.class))).thenReturn(new ArrayList());
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/status", "page_to_publish")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest());
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println("RESPONSE: " + response);
+        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_DRAFT_PAGE)));
+    }
+
+    @Test
+    public void shouldValidateStatusPutOnlineRef() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PageStatusRequest request = new PageStatusRequest();
+        request.setStatus("published");
+
+        PageM pageToPublish = new PageM(false);
+        pageToPublish.setCode("page_to_publish");
+        pageToPublish.setParentCode("unpublished");
+
+        PageM unpublished = new PageM(false);
+        unpublished.setCode("unpublished");
+        unpublished.setParentCode("service");
+
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(pageToPublish, unpublished);
+        when(this.controller.getPageValidator().getPageUtilizer().getPageUtilizers(any(String.class))).thenReturn(new ArrayList());
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/status", "page_to_publish")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest());
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println("RESPONSE: " + response);
+        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_ONLINE_PAGE)));
     }
 
     @Test

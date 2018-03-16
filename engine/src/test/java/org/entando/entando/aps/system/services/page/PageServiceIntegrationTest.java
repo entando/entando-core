@@ -6,12 +6,12 @@
 package org.entando.entando.aps.system.services.page;
 
 import com.agiletec.aps.BaseTestCase;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.Title;
 import org.junit.Test;
 
 /**
@@ -82,23 +82,27 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         PageDto oldPages = pageService.getPage("pagina_12", "draft");
         assertNotNull(oldPages);
         assertEquals(2, oldPages.getTitles().size());
-        assertEquals("Pagina 1-2", oldPages.getTitles().stream()
-                .filter(title -> title.getLang().equals("it")).findFirst().get().getTitle());
+        assertEquals("Pagina 1-2", oldPages.getTitles().get("it"));
 
         PageRequest pageRequest = this.createRequestFromDto(oldPages);
-        pageRequest.getTitles().stream()
-                .filter(title -> title.getLang().equals("it")).findFirst().get().setTitle("Pagina 1-2 mod");
+        pageRequest.getTitles().put("it", "Pagina 1-2 mod");
         PageDto modPage = pageService.updatePage("pagina_12", pageRequest);
         assertNotNull(modPage);
         assertEquals(2, modPage.getTitles().size());
-        assertEquals("Pagina 1-2 mod", modPage.getTitles().stream()
-                .filter(title -> title.getLang().equals("it")).findFirst().get().getTitle());
+        assertEquals("Pagina 1-2 mod", modPage.getTitles().get("it"));
 
         modPage = pageService.getPage("pagina_12", "draft");
         assertNotNull(modPage);
         assertEquals(2, modPage.getTitles().size());
-        assertEquals("Pagina 1-2 mod", modPage.getTitles().stream()
-                .filter(title -> title.getLang().equals("it")).findFirst().get().getTitle());
+        assertEquals("Pagina 1-2 mod", modPage.getTitles().get("it"));
+
+        pageRequest.getTitles().put("it", "Pagina 1-2");
+        modPage = pageService.updatePage("pagina_12", pageRequest);
+
+        modPage = pageService.getPage("pagina_12", "draft");
+        assertNotNull(modPage);
+        assertEquals(2, modPage.getTitles().size());
+        assertEquals("Pagina 1-2", modPage.getTitles().get("it"));
     }
 
     @Test
@@ -165,8 +169,8 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         request.setPosition(pageToClone.getPosition());
         request.setSeo(pageToClone.isSeo());
         request.setStatus(pageToClone.getStatus());
-        List<Title> titles = new ArrayList<>();
-        pageToClone.getTitles().forEach(title -> titles.add(new Title(title.getLang(), title.getTitle())));
+        Map<String, String> titles = new HashMap<>();
+        pageToClone.getTitles().keySet().forEach(lang -> titles.put(lang, pageToClone.getTitles().get(lang)));
         request.setTitles(titles);
         return request;
     }

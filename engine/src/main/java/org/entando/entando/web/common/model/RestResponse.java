@@ -14,52 +14,55 @@
 package org.entando.entando.web.common.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RestResponse {
 
-	private Object payload;
-	private List<RestError> errors = new ArrayList<>();
-	private Object metadata;
+    private Object payload = new ArrayList<>();
+    private List<RestError> errors = new ArrayList<>();
+    private Object metadata = new HashMap<>();
 
-    public RestResponse() {}
+    public RestResponse() {
+    }
 
-	public RestResponse(Object payload) {
-		this.payload = payload;
-	}
+    public RestResponse(Object payload) {
+        this.payload = payload;
+    }
 
-	public RestResponse(Object payload, List<RestError> errors, Object metadata) {
-		this.payload = payload;
-		this.errors = errors;
-		this.metadata = metadata;
-	}
+    public RestResponse(Object payload, List<RestError> errors, Object metadata) {
+        this.payload = payload;
+        this.errors = errors;
+        this.metadata = metadata;
+    }
 
-	public Object getPayload() {
-		return payload;
-	}
+    public Object getPayload() {
+        return payload;
+    }
 
-	public void setPayload(Object payload) {
-		this.payload = payload;
-	}
+    public void setPayload(Object payload) {
+        this.payload = payload;
+    }
 
-	public Object getMetadata() {
-		return metadata;
-	}
-	public void setMetadata(Object metadata) {
-		this.metadata = metadata;
-	}
+    public Object getMetadata() {
+        return metadata;
+    }
 
-	public List<RestError> getErrors() {
-		return errors;
-	}
+    public void setMetadata(Object metadata) {
+        this.metadata = metadata;
+    }
 
-	public void setErrors(List<RestError> errors) {
-		this.errors = errors;
-	}
+    public List<RestError> getErrors() {
+        return errors;
+    }
 
-	public void addErrors(List<RestError> errors) {
+    public void setErrors(List<RestError> errors) {
+        this.errors = errors;
+    }
+
+    public void addErrors(List<RestError> errors) {
         this.errors.addAll(errors);
 
-	}
+    }
 
 }

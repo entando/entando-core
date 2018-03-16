@@ -25,10 +25,11 @@ import org.springframework.validation.Validator;
 @Component
 public class GroupValidator implements Validator {
 
-    public static final String ERRCODE_GROUP_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-    public static final String ERRCODE_CANNOT_DELETE_RESERVED_GROUP = "3";
-    public static final String ERRCODE_GROUP_REFERENCES = "4";
+    public static final String ERRCODE_GROUP_NOT_FOUND = "1";
+    public static final String ERRCODE_GROUP_ALREADY_EXISTS = "2";
+    public static final String ERRCODE_URINAME_MISMATCH = "3";
+    public static final String ERRCODE_CANNOT_DELETE_RESERVED_GROUP = "4";
+    public static final String ERRCODE_GROUP_REFERENCES = "5";
 
     @Autowired
     private IGroupManager groupManager;
@@ -42,9 +43,9 @@ public class GroupValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
 		GroupRequest request = (GroupRequest) target;
-		String groupName = request.getName();
-		if (null != groupManager.getGroup(groupName)) {
-            errors.reject(ERRCODE_GROUP_ALREADY_EXISTS, new String[]{groupName}, "group.exists");
+        String groupCode = request.getCode();
+        if (null != groupManager.getGroup(groupCode)) {
+            errors.reject(ERRCODE_GROUP_ALREADY_EXISTS, new String[]{groupCode}, "group.exists");
 		}
 	}
 

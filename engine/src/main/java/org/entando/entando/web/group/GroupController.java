@@ -101,7 +101,7 @@ public class GroupController {
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = "group_delete")
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{groupName}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGroup(@PathVariable String groupName) throws ApsSystemException {
         logger.info("deleting {}", groupName);

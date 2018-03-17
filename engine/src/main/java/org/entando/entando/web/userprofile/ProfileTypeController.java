@@ -81,7 +81,7 @@ public class ProfileTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
-        PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortDataTypes(requestList);
+        PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
@@ -93,7 +93,7 @@ public class ProfileTypeController {
         if (!this.getProfileTypeValidator().existType(profileTypeCode)) {
             throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
         }
-        UserProfileTypeDto dto = this.getUserProfileTypeService().getDataType(profileTypeCode);
+        UserProfileTypeDto dto = this.getUserProfileTypeService().getUserProfileType(profileTypeCode);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
@@ -108,7 +108,7 @@ public class ProfileTypeController {
             throw new ValidationGenericException(bindingResult);
         }
         //business validations
-        for (ProfileTypeDtoRequest ptdr : bodyRequest.getDataTypes()) {
+        for (ProfileTypeDtoRequest ptdr : bodyRequest.getProfileTypes()) {
             if (this.getProfileTypeValidator().existType(ptdr.getCode())) {
                 bindingResult.reject(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{ptdr.getCode()}, "entityType.exists");
             }
@@ -116,7 +116,7 @@ public class ProfileTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationConflictException(bindingResult);
         }
-        List<UserProfileTypeDto> result = this.getUserProfileTypeService().addDataTypes(bodyRequest, bindingResult);
+        List<UserProfileTypeDto> result = this.getUserProfileTypeService().addUserProfileTypes(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
@@ -137,7 +137,7 @@ public class ProfileTypeController {
                 throw new ValidationGenericException(bindingResult);
             }
         }
-        UserProfileTypeDto dto = this.getUserProfileTypeService().updateDataType(request, bindingResult);
+        UserProfileTypeDto dto = this.getUserProfileTypeService().updateUserProfileType(request, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
@@ -149,7 +149,7 @@ public class ProfileTypeController {
     @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteDataType(@PathVariable String profileTypeCode) throws ApsSystemException {
         logger.debug("Deleting profile type -> " + profileTypeCode);
-        this.getUserProfileTypeService().deleteDataType(profileTypeCode);
+        this.getUserProfileTypeService().deleteUserProfileType(profileTypeCode);
         return new ResponseEntity<>(new RestResponse(profileTypeCode), HttpStatus.OK);
     }
 

@@ -25,29 +25,29 @@ import javax.validation.constraints.NotNull;
 public class ProfileTypesBodyRequest implements IEntityTypesBodyRequest {
 
     @NotNull(message = "dataTypes.list.notBlank")
-    private List<ProfileTypeDtoRequest> dataTypes;
+    private List<ProfileTypeDtoRequest> profileTypes;
 
     public ProfileTypesBodyRequest() {
     }
 
-    public ProfileTypesBodyRequest(List<ProfileTypeDtoRequest> dataTypes) {
-        this.dataTypes = dataTypes;
+    public ProfileTypesBodyRequest(List<ProfileTypeDtoRequest> profileTypes) {
+        this.setProfileTypes(profileTypes);
     }
 
     @Override
     @JsonIgnore
     public List<EntityTypeDtoRequest> getEntityTypes() {
         List<EntityTypeDtoRequest> list = new ArrayList<>();
-        this.getDataTypes().stream().forEach(i -> list.add(i));
+        this.getProfileTypes().stream().forEach(i -> list.add(i));
         return list;
     }
 
-    public List<ProfileTypeDtoRequest> getDataTypes() {
-        return dataTypes;
+    public List<ProfileTypeDtoRequest> getProfileTypes() {
+        return profileTypes;
     }
 
-    public void setDataTypes(List<ProfileTypeDtoRequest> dataTypes) {
-        this.dataTypes = dataTypes;
+    public void setProfileTypes(List<ProfileTypeDtoRequest> profileTypes) {
+        this.profileTypes = profileTypes;
     }
 
 }

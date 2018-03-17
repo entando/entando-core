@@ -27,14 +27,14 @@ import org.springframework.validation.BindingResult;
  */
 public interface IUserProfileTypeService {
 
-    public PagedMetadata<EntityTypeShortDto> getShortDataTypes(RestListRequest requestList);
+    public PagedMetadata<EntityTypeShortDto> getShortUserProfileTypes(RestListRequest requestList);
 
-    public UserProfileTypeDto getDataType(String profileTypeCode);
+    public UserProfileTypeDto getUserProfileType(String profileTypeCode);
 
-    public List<UserProfileTypeDto> addDataTypes(ProfileTypesBodyRequest bodyRequest, BindingResult bindingResult);
+    public List<UserProfileTypeDto> addUserProfileTypes(ProfileTypesBodyRequest bodyRequest, BindingResult bindingResult);
 
-    public UserProfileTypeDto updateDataType(ProfileTypeDtoRequest request, BindingResult bindingResult);
+    public UserProfileTypeDto updateUserProfileType(ProfileTypeDtoRequest request, BindingResult bindingResult);
 
-    public void deleteDataType(String profileTypeCode);
+    public void deleteUserProfileType(String profileTypeCode);
 
 }

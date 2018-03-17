@@ -35,7 +35,7 @@ import org.springframework.validation.BindingResult;
 public class UserProfileTypeService extends AbstractEntityService<IUserProfile, UserProfileTypeDto> implements IUserProfileTypeService {
 
     @Override
-    public PagedMetadata<EntityTypeShortDto> getShortDataTypes(RestListRequest requestList) {
+    public PagedMetadata<EntityTypeShortDto> getShortUserProfileTypes(RestListRequest requestList) {
         return super.getShortEntityTypes(SystemConstants.USER_PROFILE_MANAGER, requestList);
     }
 
@@ -45,17 +45,17 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     }
 
     @Override
-    public UserProfileTypeDto getDataType(String dataTypeCode) {
+    public UserProfileTypeDto getUserProfileType(String dataTypeCode) {
         return super.getFullEntityType(SystemConstants.USER_PROFILE_MANAGER, dataTypeCode);
     }
 
     @Override
-    public List<UserProfileTypeDto> addDataTypes(ProfileTypesBodyRequest bodyRequest, BindingResult bindingResult) {
+    public List<UserProfileTypeDto> addUserProfileTypes(ProfileTypesBodyRequest bodyRequest, BindingResult bindingResult) {
         return super.addEntityTypes(SystemConstants.USER_PROFILE_MANAGER, bodyRequest, bindingResult);
     }
 
     @Override
-    public UserProfileTypeDto updateDataType(ProfileTypeDtoRequest request, BindingResult bindingResult) {
+    public UserProfileTypeDto updateUserProfileType(ProfileTypeDtoRequest request, BindingResult bindingResult) {
         return super.updateEntityType(SystemConstants.USER_PROFILE_MANAGER, request, bindingResult);
     }
 
@@ -72,8 +72,8 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     }
 
     @Override
-    public void deleteDataType(String entityTypeCode) {
-        super.deleteEntityType(SystemConstants.USER_PROFILE_MANAGER, entityTypeCode);
+    public void deleteUserProfileType(String profileTypeCode) {
+        super.deleteEntityType(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode);
     }
 
 }

@@ -101,6 +101,10 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(entityTypes.size(), sublist);
         PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
         List<EntityTypeShortDto> body = this.getEntityTypeShortDtoBuilder().convert(sublist);
+        for (EntityTypeShortDto entityTypeShortDto : body) {
+            String code = entityTypeShortDto.getCode();
+            entityTypeShortDto.setStatus(String.valueOf(entityManager.getStatus(code)));
+        }
         pagedMetadata.setBody(body);
         return pagedMetadata;
     }
@@ -124,7 +128,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             logger.warn("no entity type found with code {}", entityTypeCode);
             throw new RestRourceNotFoundException("entityTypeCode", entityTypeCode);
         }
-        return this.convertEntityType(entityManager, entityType);
+        O type = this.convertEntityType(entityManager, entityType);
+        type.setStatus(String.valueOf(entityManager.getStatus(entityTypeCode)));
+        return type;
     }
 
     protected O convertEntityType(IEntityManager entityManager, I entityType) {
@@ -171,7 +177,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             } else {
                 ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityPrototype);
                 I newPrototype = (I) entityManager.getEntityPrototype(request.getCode());
-                return builder.convert(newPrototype);
+                O newType = builder.convert(newPrototype);
+                newType.setStatus(String.valueOf(entityManager.getStatus(request.getCode())));
+                return newType;
             }
         } catch (Throwable e) {
             logger.error("Error updating entity type", e);

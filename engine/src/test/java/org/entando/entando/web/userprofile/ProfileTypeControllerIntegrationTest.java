@@ -88,8 +88,6 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
     public void testAddUpdateUserProfileType_1() throws Exception {
         try {
             Assert.assertNull(this.userProfileManager.getEntityPrototype("AAA"));
-            Assert.assertNull(this.userProfileManager.getEntityPrototype("BBB"));
-            Assert.assertNull(this.userProfileManager.getEntityPrototype("CCC"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
             InputStream isJsonPost = this.getClass().getResourceAsStream("1_POST_valid.json");
@@ -101,10 +99,8 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                             .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isOk());
             Assert.assertNotNull(this.userProfileManager.getEntityPrototype("AAA"));
-            Assert.assertNotNull(this.userProfileManager.getEntityPrototype("BBB"));
-            Assert.assertNotNull(this.userProfileManager.getEntityPrototype("CCC"));
             UserProfile addedType = (UserProfile) this.userProfileManager.getEntityPrototype("AAA");
-            Assert.assertEquals("Type AAA", addedType.getTypeDescription());
+            Assert.assertEquals("Profile Type AAA", addedType.getTypeDescription());
             Assert.assertEquals(1, addedType.getAttributeList().size());
 
             InputStream isJsonPutInvalid = this.getClass().getResourceAsStream("1_PUT_invalid.json");
@@ -126,23 +122,17 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             result3.andExpect(status().isOk());
 
             addedType = (UserProfile) this.userProfileManager.getEntityPrototype("AAA");
-            Assert.assertEquals("Type AAA Modified", addedType.getTypeDescription());
+            Assert.assertEquals("Profile Type AAA Modified", addedType.getTypeDescription());
             Assert.assertEquals(2, addedType.getAttributeList().size());
 
             ResultActions result4 = mockMvc
-                    .perform(delete("/profileTypes/{profileTypeCode}", new Object[]{"BBB"})
+                    .perform(delete("/profileTypes/{profileTypeCode}", new Object[]{"AAA"})
                             .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
-            Assert.assertNull(this.userProfileManager.getEntityPrototype("BBB"));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("AAA"));
         } finally {
             if (null != this.userProfileManager.getEntityPrototype("AAA")) {
                 ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("AAA");
-            }
-            if (null != this.userProfileManager.getEntityPrototype("BBB")) {
-                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("BBB");
-            }
-            if (null != this.userProfileManager.getEntityPrototype("CCC")) {
-                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("CCC");
             }
         }
     }

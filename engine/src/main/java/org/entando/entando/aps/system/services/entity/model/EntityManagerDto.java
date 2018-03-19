@@ -59,29 +59,3 @@ public class EntityManagerDto {
     }
 
 }
-
-/*
-{
-    "payload": [{
-        "code": "userProfileManager",
-        "entityTypes": [{
-            "code": "PFL",
-            "name": "Default user profile",
-            "attributes": [{
-                "code": "fullName",
-                "type": "Monotext",
-                "name": "Full Name",
-                "roles": [{
-                    "code": "userprofile:fullname",
-                    "descr": "The attr containing the full name"
-                }],
-                "isMandatory": true,
-                "canBeUsedAsFilterInList": true
-            }]
-
-        }]
-    }],
-    "errors": [],
-    "metadata": {}
-}
- */

@@ -24,18 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ProfileTypeValidator extends EntityTypeValidator {
-
-    /*
-    public static final String ERRCODE_INVALID_DEFAULT_MODEL = "31";
-    public static final String ERRCODE_DEFAULT_MODEL_DOES_NOT_EXIST = "32";
-    public static final String ERRCODE_DEFAULT_MODEL_MISMATCH = "33";
-
-    public static final String ERRCODE_INVALID_LIST_MODEL = "34";
-    public static final String ERRCODE_LIST_MODEL_DOES_NOT_EXIST = "35";
-    public static final String ERRCODE_LIST_MODEL_MISMATCH = "36";
-
-    public static final String ERRCODE_INVALID_VIEW_PAGE = "37";
-     */
+    
     @Autowired
     private IUserProfileManager userProfileManager;
 

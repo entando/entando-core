@@ -1,6 +1,6 @@
 {
     "code": "AAA",
-    "name": "Type AAA Modified",
+    "name": "Profile Type AAA Modified",
     "attributes": [
         {
             "code": "TextAttribute",
@@ -57,8 +57,5 @@
             "nestedAttribute": null,
             "compositeAttributes": null
         }
-    ],
-    "viewPage": "homepage",
-    "listModel": null,
-    "defaultModel": null
+    ]
 }

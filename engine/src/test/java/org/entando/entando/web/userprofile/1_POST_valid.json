@@ -2,7 +2,7 @@
     "profileTypes": [
         {
             "code": "AAA",
-            "name": "Type AAA",
+            "name": "Profile Type AAA",
             "attributes": [
                 {
                     "code": "TextAttribute",
@@ -41,7 +41,7 @@
         },
         {
             "code": "BBB",
-            "name": "Type CCC",
+            "name": "Profile Type CCC",
             "attributes": [
                 {
                     "code": "DataAttribute",
@@ -70,7 +70,7 @@
         },
         {
             "code": "CCC",
-            "name": "Type CCC",
+            "name": "Profile Type CCC",
             "attributes": [
                 {
                     "code": "list",

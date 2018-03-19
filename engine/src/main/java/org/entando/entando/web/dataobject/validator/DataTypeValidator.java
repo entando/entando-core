@@ -38,6 +38,14 @@ public class DataTypeValidator extends EntityTypeValidator {
     @Autowired
     private IDataObjectManager dataObjectManager;
 
+    public IDataObjectManager getDataObjectManager() {
+        return dataObjectManager;
+    }
+
+    public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+        this.dataObjectManager = dataObjectManager;
+    }
+
     @Override
     protected IEntityManager getEntityManager() {
         return this.dataObjectManager;

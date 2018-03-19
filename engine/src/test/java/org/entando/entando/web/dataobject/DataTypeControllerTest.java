@@ -16,9 +16,10 @@ package org.entando.entando.web.dataobject;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
+import org.entando.entando.aps.system.services.dataobject.DataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.DataObjectService;
 import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
+import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.validator.DataTypeValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
@@ -38,9 +39,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class DataTypeControllerTest extends AbstractControllerTest {
 
     @Mock
-    private DataObjectService dataObjectService;
+    private DataObjectManager dataObjectManager;
 
     @Mock
+    private DataObjectService dataObjectService;
+
+    @InjectMocks
     private DataTypeValidator dataTypeValidator;
 
     @InjectMocks
@@ -53,6 +57,7 @@ public class DataTypeControllerTest extends AbstractControllerTest {
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
+        controller.setDataTypeValidator(this.dataTypeValidator);
     }
 
     @Test
@@ -78,7 +83,7 @@ public class DataTypeControllerTest extends AbstractControllerTest {
                         .content(jsonPost)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        Mockito.verify(dataObjectService, Mockito.times(1)).addDataTypes(any(DataTypesBodyRequest.class), any(BindingResult.class));
+        Mockito.verify(dataObjectService, Mockito.times(1)).addDataType(any(DataTypeDtoRequest.class), any(BindingResult.class));
         result.andExpect(status().isOk());
     }
 

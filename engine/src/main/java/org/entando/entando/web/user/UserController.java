@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.entando.entando.web.user.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,55 +50,58 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}/authorities", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUserAuthorities(@PathVariable String username, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-
-        return new ResponseEntity<>(new RestResponse(null), HttpStatus.OK);
-    }
-
-    @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addUserAuthorities(@PathVariable String username, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<?> updateUserAuthorities(@PathVariable String username, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         //business validations 
-        getPageValidator().validate(pageRequest, bindingResult);
+        getUserValidator().validate(authRequest, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
+            throw new ValidationGenericException(bindingResult);
         }
-        PageDto dto = this.getPageService().addPage(pageRequest);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+        getUserValidator().validateUpdateSelf(username, username, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        return new ResponseEntity<>(new RestResponse(null), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addUserAuthorities(@PathVariable String username, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        //business validations 
+        getUserValidator().validate(authRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        getUserValidator().validateUpdateSelf(username, username, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        return new ResponseEntity<>(new RestResponse(null), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}/authorities", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteUserAuthorities(@PathVariable String username) throws ApsSystemException {
-        DataBinder binder = new DataBinder(pageCode);
+        DataBinder binder = new DataBinder(username);
         BindingResult bindingResult = binder.getBindingResult();
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         //business validations 
-        getPageValidator().validateOnlinePage(pageCode, bindingResult);
+        getUserValidator().validateUpdateSelf(username, username, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        //business validations 
-        getPageValidator().validateChildren(pageCode, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageService().removePage(pageCode);
-        return new ResponseEntity<>(new RestResponse(pageCode), HttpStatus.OK);
+
+        return new ResponseEntity<>(new RestResponse(null), HttpStatus.OK);
     }
 
 }

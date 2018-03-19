@@ -16,7 +16,6 @@ package org.entando.entando.aps.system.services.dataobject;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.services.page.IPageManager;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
@@ -29,7 +28,6 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.dataobject.validator.DataTypeValidator;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.springframework.validation.BindingResult;
@@ -58,8 +56,8 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
     }
 
     @Override
-    public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
-        return super.addEntityTypes(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest, bindingResult);
+    public DataTypeDto addDataType(DataTypeDtoRequest bodyRequest, BindingResult bindingResult) {
+        return super.addEntityType(SystemConstants.DATA_OBJECT_MANAGER, bodyRequest, bindingResult);
     }
 
     @Override

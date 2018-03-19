@@ -88,8 +88,6 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
     public void testAddUpdateDataType_1() throws Exception {
         try {
             Assert.assertNull(this.dataObjectManager.getEntityPrototype("AAA"));
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("BBB"));
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("CCC"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
             InputStream isJsonPost = this.getClass().getResourceAsStream("1_POST_valid.json");
@@ -100,10 +98,8 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isOk());
-            Assert.assertNotNull(this.dataObjectManager.getEntityPrototype("AAA"));
-            Assert.assertNotNull(this.dataObjectManager.getEntityPrototype("BBB"));
-            Assert.assertNotNull(this.dataObjectManager.getEntityPrototype("CCC"));
             DataObject addedType = (DataObject) this.dataObjectManager.getEntityPrototype("AAA");
+            Assert.assertNotNull(addedType);
             Assert.assertEquals("Type AAA", addedType.getTypeDescription());
             Assert.assertEquals(1, addedType.getAttributeList().size());
 
@@ -130,19 +126,13 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             Assert.assertEquals(2, addedType.getAttributeList().size());
 
             ResultActions result4 = mockMvc
-                    .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"BBB"})
+                    .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
                             .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("BBB"));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype("AAA"));
         } finally {
             if (null != this.dataObjectManager.getEntityPrototype("AAA")) {
                 ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("AAA");
-            }
-            if (null != this.dataObjectManager.getEntityPrototype("BBB")) {
-                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("BBB");
-            }
-            if (null != this.dataObjectManager.getEntityPrototype("CCC")) {
-                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("CCC");
             }
         }
     }

@@ -13,13 +13,11 @@
  */
 package org.entando.entando.aps.system.services.userprofile;
 
-import java.util.List;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
-import org.entando.entando.web.userprofile.model.ProfileTypesBodyRequest;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -31,7 +29,7 @@ public interface IUserProfileTypeService {
 
     public UserProfileTypeDto getUserProfileType(String profileTypeCode);
 
-    public List<UserProfileTypeDto> addUserProfileTypes(ProfileTypesBodyRequest bodyRequest, BindingResult bindingResult);
+    public UserProfileTypeDto addUserProfileType(ProfileTypeDtoRequest bodyRequest, BindingResult bindingResult);
 
     public UserProfileTypeDto updateUserProfileType(ProfileTypeDtoRequest request, BindingResult bindingResult);
 

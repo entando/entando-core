@@ -18,7 +18,6 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
@@ -31,8 +30,6 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
-import org.entando.entando.web.userprofile.model.ProfileTypesBodyRequest;
-import org.entando.entando.web.userprofile.model.ProfileTypesBodyResponse;
 import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +97,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addUserProfileTypes(@Valid @RequestBody ProfileTypesBodyRequest bodyRequest,
+    public ResponseEntity<?> addUserProfileTypes(@Valid @RequestBody ProfileTypeDtoRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         //field validations
         this.getProfileTypeValidator().validate(bodyRequest, bindingResult);
@@ -108,21 +105,18 @@ public class ProfileTypeController {
             throw new ValidationGenericException(bindingResult);
         }
         //business validations
-        for (ProfileTypeDtoRequest ptdr : bodyRequest.getProfileTypes()) {
-            if (this.getProfileTypeValidator().existType(ptdr.getCode())) {
-                bindingResult.reject(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{ptdr.getCode()}, "entityType.exists");
-            }
+        if (this.getProfileTypeValidator().existType(bodyRequest.getCode())) {
+            bindingResult.reject(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{bodyRequest.getCode()}, "entityType.exists");
         }
         if (bindingResult.hasErrors()) {
             throw new ValidationConflictException(bindingResult);
         }
-        List<UserProfileTypeDto> result = this.getUserProfileTypeService().addUserProfileTypes(bodyRequest, bindingResult);
+        UserProfileTypeDto result = this.getUserProfileTypeService().addUserProfileType(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        ProfileTypesBodyResponse response = new ProfileTypesBodyResponse(result);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(response));
-        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
+        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

@@ -1,109 +1,42 @@
 {
-    "dataTypes": [
+    "code": "AAA",
+    "name": "Type AAA",
+    "attributes": [
         {
-            "code": "AAA",
-            "name": "Type AAA",
-            "attributes": [
-                {
-                    "code": "TextAttribute",
-                    "type": "Text",
-                    "name": "Description of text attribute",
-                    "roles": [],
-                    "mandatory": false,
-                    "listFilter": false,
-                    "indexable": true,
-                    "enumeratorStaticItems": null,
-                    "enumeratorStaticItemsSeparator": null,
-                    "enumeratorExtractorBean": null,
-                    "validationRules": {
-                        "minLength": 67,
-                        "maxLength": 895,
-                        "regex": null,
-                        "rangeStartString": null,
-                        "rangeEndString": null,
-                        "rangeStartStringAttribute": null,
-                        "rangeEndStringAttribute": null,
-                        "equalString": null,
-                        "equalStringAttribute": null,
-                        "ognlValidation": {
-                            "ognlExpression": "expression",
-                            "applyOnlyToFilledAttr": false,
-                            "helpMessage": "Help Message",
-                            "keyForHelpMessage": null,
-                            "errorMessage": "Error Message",
-                            "keyForErrorMessage": null
-                        }
-                    },
-                    "nestedAttribute": null,
-                    "compositeAttributes": null
+            "code": "TextAttribute",
+            "type": "Text",
+            "name": "Description of text attribute",
+            "roles": [],
+            "mandatory": false,
+            "listFilter": false,
+            "indexable": true,
+            "enumeratorStaticItems": null,
+            "enumeratorStaticItemsSeparator": null,
+            "enumeratorExtractorBean": null,
+            "validationRules": {
+                "minLength": 67,
+                "maxLength": 895,
+                "regex": null,
+                "rangeStartString": null,
+                "rangeEndString": null,
+                "rangeStartStringAttribute": null,
+                "rangeEndStringAttribute": null,
+                "equalString": null,
+                "equalStringAttribute": null,
+                "ognlValidation": {
+                    "ognlExpression": "expression",
+                    "applyOnlyToFilledAttr": false,
+                    "helpMessage": "Help Message",
+                    "keyForHelpMessage": null,
+                    "errorMessage": "Error Message",
+                    "keyForErrorMessage": null
                 }
-            ],
-            "viewPage": "homepage",
-            "listModel": null,
-            "defaultModel": null
-        },
-        {
-            "code": "BBB",
-            "name": "Type CCC",
-            "attributes": [
-                {
-                    "code": "DataAttribute",
-                    "type": "Date",
-                    "name": "Description of date attribute",
-                    "roles": [],
-                    "mandatory": true,
-                    "listFilter": true,
-                    "indexable": true,
-                    "enumeratorStaticItems": null,
-                    "enumeratorStaticItemsSeparator": null,
-                    "enumeratorExtractorBean": null,
-                    "validationRules": {
-                        "rangeStartDate": "2000-03-24 00:00:00",
-                        "rangeEndDate": "2010-03-24 00:00:00",
-                        "rangeStartDateAttribute": null,
-                        "rangeEndDateAttribute": null,
-                        "equalDate": null,
-                        "equalDateAttribute": null,
-                        "ognlValidation": null
-                    },
-                    "nestedAttribute": null,
-                    "compositeAttributes": null
-                }
-            ],
-            "viewPage": "homepage",
-            "listModel": null,
-            "defaultModel": null
-        },
-        {
-            "code": "CCC",
-            "name": "Type CCC",
-            "attributes": [
-                {
-                    "code": "list",
-                    "type": "Monolist",
-                    "name": "LIST Description",
-                    "roles": [],
-                    "mandatory": false,
-                    "listFilter": false,
-                    "indexable": false,
-                    "enumeratorStaticItems": null,
-                    "enumeratorStaticItemsSeparator": null,
-                    "enumeratorExtractorBean": null,
-                    "validationRules": null,
-                    "nestedAttribute": {
-                        "code": "list",
-                        "type": "Text",
-                        "name": null,
-                        "roles": [],
-                        "mandatory": false,
-                        "listFilter": false
-                    },
-                    "compositeAttributes": null
-                }
-            ],
-            "viewPage": "homepage",
-            "listModel": null,
-            "defaultModel": null
+            },
+            "nestedAttribute": null,
+            "compositeAttributes": null
         }
-    ]
+    ],
+    "viewPage": "homepage",
+    "listModel": null,
+    "defaultModel": null
 }

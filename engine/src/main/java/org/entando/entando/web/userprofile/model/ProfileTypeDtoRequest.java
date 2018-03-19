@@ -17,7 +17,6 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.List;
-import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 
@@ -26,20 +25,12 @@ import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
  */
 public class ProfileTypeDtoRequest extends EntityTypeDtoRequest {
 
-    private String viewPage;
-    private String listModel;
-    private String defaultModel;
-
     public ProfileTypeDtoRequest() {
         super();
     }
 
     public ProfileTypeDtoRequest(IApsEntity entityType) {
         super(entityType);
-        DataObject dataObject = (DataObject) entityType;
-        this.setListModel(dataObject.getListModel());
-        this.setDefaultModel(dataObject.getDefaultModel());
-        this.setViewPage(dataObject.getViewPage());
     }
 
     public ProfileTypeDtoRequest(IApsEntity entityType, List<AttributeRole> roles) {
@@ -49,30 +40,6 @@ public class ProfileTypeDtoRequest extends EntityTypeDtoRequest {
             EntityAttributeFullDto attributeDto = new EntityAttributeFullDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
-    }
-
-    public String getViewPage() {
-        return this.viewPage;
-    }
-
-    public void setViewPage(String viewPage) {
-        this.viewPage = viewPage;
-    }
-
-    public String getListModel() {
-        return this.listModel;
-    }
-
-    public void setListModel(String listModel) {
-        this.listModel = listModel;
-    }
-
-    public String getDefaultModel() {
-        return this.defaultModel;
-    }
-
-    public void setDefaultModel(String defaultModel) {
-        this.defaultModel = defaultModel;
     }
 
 }

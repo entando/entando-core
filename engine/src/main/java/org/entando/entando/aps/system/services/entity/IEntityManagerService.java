@@ -13,13 +13,11 @@
  */
 package org.entando.entando.aps.system.services.entity;
 
-import java.util.List;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.springframework.validation.BindingResult;
 
@@ -36,7 +34,7 @@ public interface IEntityManagerService {
 
     public EntityTypeFullDto getFullEntityType(String entityManagerCode, String entityTypeCode);
 
-    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult);
+    public EntityTypeFullDto addEntityType(String entityManagerCode, EntityTypeDtoRequest bodyRequest, BindingResult bindingResult);
 
     public EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult);
 

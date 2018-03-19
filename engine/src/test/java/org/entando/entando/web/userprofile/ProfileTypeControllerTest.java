@@ -16,9 +16,10 @@ package org.entando.entando.web.userprofile;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
+import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.userprofile.model.ProfileTypesBodyRequest;
+import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
 import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
@@ -38,9 +39,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class ProfileTypeControllerTest extends AbstractControllerTest {
 
     @Mock
-    private IUserProfileTypeService userProfileTypeService;
+    private IUserProfileManager userProfileManager;
 
     @Mock
+    private IUserProfileTypeService userProfileTypeService;
+
+    @InjectMocks
     private ProfileTypeValidator profileTypeValidator;
 
     @InjectMocks
@@ -53,6 +57,7 @@ public class ProfileTypeControllerTest extends AbstractControllerTest {
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
+        controller.setProfileTypeValidator(this.profileTypeValidator);
     }
 
     @Test
@@ -78,7 +83,7 @@ public class ProfileTypeControllerTest extends AbstractControllerTest {
                         .content(jsonPost)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        Mockito.verify(userProfileTypeService, Mockito.times(1)).addUserProfileTypes(any(ProfileTypesBodyRequest.class), any(BindingResult.class));
+        Mockito.verify(userProfileTypeService, Mockito.times(1)).addUserProfileType(any(ProfileTypeDtoRequest.class), any(BindingResult.class));
         result.andExpect(status().isOk());
     }
 

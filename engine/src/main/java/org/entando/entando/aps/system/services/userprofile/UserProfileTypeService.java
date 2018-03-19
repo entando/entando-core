@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.services.userprofile;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
-import java.util.List;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
@@ -26,7 +25,6 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
-import org.entando.entando.web.userprofile.model.ProfileTypesBodyRequest;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -50,8 +48,8 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     }
 
     @Override
-    public List<UserProfileTypeDto> addUserProfileTypes(ProfileTypesBodyRequest bodyRequest, BindingResult bindingResult) {
-        return super.addEntityTypes(SystemConstants.USER_PROFILE_MANAGER, bodyRequest, bindingResult);
+    public UserProfileTypeDto addUserProfileType(ProfileTypeDtoRequest bodyRequest, BindingResult bindingResult) {
+        return super.addEntityType(SystemConstants.USER_PROFILE_MANAGER, bodyRequest, bindingResult);
     }
 
     @Override

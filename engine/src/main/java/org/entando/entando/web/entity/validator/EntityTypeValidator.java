@@ -14,17 +14,14 @@
 package org.entando.entando.web.entity.validator;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
-import org.entando.entando.web.entity.model.IEntityTypesBodyRequest;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
  * @author E.Santoboni
  */
-//@Component
 public abstract class EntityTypeValidator implements Validator {
 
     public static final String ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST = "1";
@@ -62,20 +59,8 @@ public abstract class EntityTypeValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        if (target instanceof IEntityTypesBodyRequest) {
-            IEntityTypesBodyRequest request = (IEntityTypesBodyRequest) target;
-            List<EntityTypeDtoRequest> types = request.getEntityTypes();
-            if (null == types || types.isEmpty()) {
-                errors.reject(ERRCODE_ENTITY_TYPES_EMPTY, "entityTypes.list.notBlank");
-                return;
-            }
-            for (EntityTypeDtoRequest type : types) {
-                this.validateBody(type, errors);
-            }
-        } else {
-            EntityTypeDtoRequest request = (EntityTypeDtoRequest) target;
-            this.validateBody(request, errors);
-        }
+        EntityTypeDtoRequest request = (EntityTypeDtoRequest) target;
+        this.validateBody(request, errors);
     }
 
     public int validateBodyName(String typeCode, EntityTypeDtoRequest request, Errors errors) {
@@ -91,11 +76,11 @@ public abstract class EntityTypeValidator implements Validator {
     }
 
     private int validateBody(EntityTypeDtoRequest request, Errors errors) {
-        if (StringUtils.isEmpty(request.getCode())) {
+        if (StringUtils.isBlank(request.getCode())) {
             errors.reject(ERRCODE_ENTITY_TYPE_CODE_REQUIRED, new String[]{}, "entityType.code.notBlank");
             return 400;
         }
-        if (StringUtils.isEmpty(request.getName())) {
+        if (StringUtils.isBlank(request.getName())) {
             errors.reject(ERRCODE_ENTITY_TYPE_DESCR_REQUIRED, new String[]{}, "entityType.name.notBlank");
             return 400;
         }

@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.entity.model;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ public class EntityAttributeDto {
     private String type;
     private String name;
     private List<AttributeRoleDto> roles = new ArrayList<>();
+    private List<String> disablingCodes = new ArrayList<>();
     private boolean mandatory;
     private boolean listFilter;
 
@@ -46,6 +48,10 @@ public class EntityAttributeDto {
                     }
                 }
             }
+        }
+        String[] attributeDisablingCodes = attribute.getDisablingCodes();
+        if (null != attributeDisablingCodes) {
+            this.disablingCodes.addAll(Arrays.asList(attributeDisablingCodes));
         }
         this.mandatory = attribute.isRequired();
         this.listFilter = attribute.isSearchable();
@@ -84,6 +90,14 @@ public class EntityAttributeDto {
 
     public void setRoles(List<AttributeRoleDto> roles) {
         this.roles = roles;
+    }
+
+    public List<String> getDisablingCodes() {
+        return disablingCodes;
+    }
+
+    public void setDisablingCodes(List<String> disablingCodes) {
+        this.disablingCodes = disablingCodes;
     }
 
     public boolean isMandatory() {

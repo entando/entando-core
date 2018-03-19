@@ -65,6 +65,7 @@
                 <directory>src/test/java</directory>
                 <includes>
                     <include>**/*.sql</include>
+                    <include>**/*.json</include>
                 </includes>
             </resource>
             <resource>

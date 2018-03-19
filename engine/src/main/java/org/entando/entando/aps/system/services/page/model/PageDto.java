@@ -1,14 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.entando.entando.aps.system.services.page.IPageService;
@@ -27,7 +37,7 @@ public class PageDto {
     private String contentType;
     private String parentCode;
     private boolean seo;
-    private List<TitleDto> titles = new ArrayList<>();
+    private Map<String, String> titles = new HashMap<>();
     private String ownerGroup;
     private List<String> joinGroups = new ArrayList<>();
     private int position;
@@ -46,7 +56,7 @@ public class PageDto {
         this.setSeo(page.isUseExtraTitles());
         Optional<ApsProperties> apsTitles = Optional.ofNullable(page.getTitles());
         apsTitles.ifPresent(values -> values.keySet().forEach((lang) -> {
-            this.titles.add(new TitleDto((String) lang, (String) values.get(lang)));
+            this.titles.put((String) lang, (String) values.get(lang));
         }));
         this.setOwnerGroup(page.getGroup());
         Optional<Set<String>> groups = Optional.ofNullable(page.getExtraGroups());
@@ -120,16 +130,16 @@ public class PageDto {
         this.seo = seo;
     }
 
-    public List<TitleDto> getTitles() {
+    public Map<String, String> getTitles() {
         return titles;
     }
 
-    public void setTitles(List<TitleDto> titles) {
+    public void setTitles(Map<String, String> titles) {
         this.titles = titles;
     }
 
-    public void addTitle(TitleDto title) {
-        this.titles.add(title);
+    public void addTitle(String lang, String title) {
+        this.titles.put(lang, title);
     }
 
     public String getOwnerGroup() {

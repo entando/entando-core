@@ -25,6 +25,7 @@ import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -101,15 +102,23 @@ public class DataTypeController {
     public ResponseEntity<?> addDataTypes(@Valid @RequestBody DataTypesBodyRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        //business validations
         this.getDataTypeValidator().validate(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
+        //business validations
+        for (DataTypeDtoRequest dtdr : bodyRequest.getDataTypes()) {
+            if (this.getDataTypeValidator().existType(dtdr.getCode())) {
+                bindingResult.reject(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{dtdr.getCode()}, "entityType.exists");
+            }
+        }
+        if (bindingResult.hasErrors()) {
+            throw new ValidationConflictException(bindingResult);
+        }
         List<DataTypeDto> result = this.getDataObjectService().addDataTypes(bodyRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         DataTypesBodyResponse response = new DataTypesBodyResponse(result);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(response));
         return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
@@ -119,10 +128,6 @@ public class DataTypeController {
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateDataType(@PathVariable String dataTypeCode,
             @Valid @RequestBody DataTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
         int result = this.getDataTypeValidator().validateBodyName(dataTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
             if (result == 404) {
@@ -132,6 +137,9 @@ public class DataTypeController {
             }
         }
         DataTypeDto dto = this.getDataObjectService().updateDataType(request, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }

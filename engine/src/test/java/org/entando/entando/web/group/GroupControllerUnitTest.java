@@ -4,6 +4,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.group.GroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.web.AbstractControllerTest;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -157,5 +159,29 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP)));
     }
-    
+
+    @Test
+    public void testParamSize() throws ApsSystemException, Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        GroupRequest groupRequest = new GroupRequest();
+        groupRequest.setCode(StringUtils.repeat("a", 21));
+        groupRequest.setName(StringUtils.repeat("a", 51));
+
+        ObjectMapper mapper = new ObjectMapper();
+        String payload = mapper.writeValueAsString(groupRequest);
+
+        this.controller.setGroupValidator(new GroupValidator());
+        ResultActions result = mockMvc.perform(
+                                               post("/groups")
+                                                              .content(payload)
+                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                              .header("Authorization", "Bearer " + accessToken));
+
+        // System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isBadRequest());
+
+    }
+
 }

@@ -77,7 +77,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<RestResponse> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
         PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
@@ -85,7 +85,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
+    public ResponseEntity<RestResponse> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
         logger.debug("Requested profile type -> " + profileTypeCode);
         if (!this.getProfileTypeValidator().existType(profileTypeCode)) {
             throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
@@ -97,7 +97,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addUserProfileTypes(@Valid @RequestBody ProfileTypeDtoRequest bodyRequest,
+    public ResponseEntity<RestResponse> addUserProfileTypes(@Valid @RequestBody ProfileTypeDtoRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         //field validations
         this.getProfileTypeValidator().validate(bodyRequest, bindingResult);
@@ -121,7 +121,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUserProfileType(@PathVariable String profileTypeCode,
+    public ResponseEntity<RestResponse> updateUserProfileType(@PathVariable String profileTypeCode,
             @Valid @RequestBody ProfileTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
         int result = this.getProfileTypeValidator().validateBodyName(profileTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -141,7 +141,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteDataType(@PathVariable String profileTypeCode) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteDataType(@PathVariable String profileTypeCode) throws ApsSystemException {
         logger.debug("Deleting profile type -> " + profileTypeCode);
         this.getUserProfileTypeService().deleteUserProfileType(profileTypeCode);
         return new ResponseEntity<>(new RestResponse(profileTypeCode), HttpStatus.OK);

@@ -24,51 +24,17 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
  */
 public class UserProfileTypeDto extends EntityTypeFullDto {
 
-    /*
-    private String viewPage;
-    private String listModel;
-    private String defaultModel;
-     */
     public UserProfileTypeDto() {
         super();
     }
 
     public UserProfileTypeDto(IUserProfile userProfile, List<AttributeRole> roles) {
         super(userProfile, roles);
-        /*
-        this.setListModel(dataObject.getListModel());
-        this.setDefaultModel(dataObject.getDefaultModel());
-        this.setViewPage(dataObject.getViewPage());
-         */
         List<AttributeInterface> entityAttributes = userProfile.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
             EntityAttributeDto attributeDto = new EntityAttributeDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
     }
-    /*
-    public String getViewPage() {
-        return this.viewPage;
-    }
-
-    public void setViewPage(String viewPage) {
-        this.viewPage = viewPage;
-    }
-
-    public String getListModel() {
-        return this.listModel;
-    }
-
-    public void setListModel(String listModel) {
-        this.listModel = listModel;
-    }
-
-    public String getDefaultModel() {
-        return this.defaultModel;
-    }
-
-    public void setDefaultModel(String defaultModel) {
-        this.defaultModel = defaultModel;
-    }
-     */
+    
 }

@@ -59,14 +59,7 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
 
     @Override
     protected IUserProfile createEntityType(IEntityManager entityManager, EntityTypeDtoRequest dto, BindingResult bindingResult) throws Throwable {
-        IUserProfile userProfile = super.createEntityType(entityManager, dto, bindingResult);
-        /*
-        ProfileTypeDtoRequest dtr = (ProfileTypeDtoRequest) dto;
-        userProfile.setDefaultModel(dtr.getDefaultModel());
-        userProfile.setListModel(dtr.getListModel());
-        userProfile.setViewPage(dtr.getViewPage());
-         */
-        return userProfile;
+        return super.createEntityType(entityManager, dto, bindingResult);
     }
 
     @Override

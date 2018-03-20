@@ -129,4 +129,6 @@
         <property name="langManager" ref="LangManager" />
     </bean>
     
+    <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
+    
 </beans>

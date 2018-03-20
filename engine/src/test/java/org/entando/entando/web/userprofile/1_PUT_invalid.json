@@ -1,0 +1,61 @@
+{
+    "code": "AAA",
+    "name": "Profile Type AAA Modified",
+    "attributes": [
+        {
+            "code": "TextAttribute",
+            "type": "Text",
+            "name": "Description of text attribute",
+            "roles": [],
+            "mandatory": false,
+            "listFilter": false,
+            "indexable": true,
+            "enumeratorStaticItems": null,
+            "enumeratorStaticItemsSeparator": null,
+            "enumeratorExtractorBean": null,
+            "validationRules": {
+                "minLength": 500,
+                "maxLength": 100,
+                "regex": null,
+                "rangeStartString": null,
+                "rangeEndString": null,
+                "rangeStartStringAttribute": null,
+                "rangeEndStringAttribute": null,
+                "equalString": null,
+                "equalStringAttribute": null,
+                "ognlValidation": {
+                    "ognlExpression": "expression",
+                    "applyOnlyToFilledAttr": false,
+                    "helpMessage": "",
+                    "keyForHelpMessage": null,
+                    "errorMessage": "Error Message",
+                    "keyForErrorMessage": null
+                }
+            },
+            "nestedAttribute": null,
+            "compositeAttributes": null
+        }, {
+            "code": "AddedDate",
+            "type": "Date",
+            "name": "",
+            "roles": [],
+            "mandatory": true,
+            "listFilter": true,
+            "indexable": true,
+            "enumeratorStaticItems": null,
+            "enumeratorStaticItemsSeparator": null,
+            "enumeratorExtractorBean": null,
+            "validationRules": {
+                "rangeStartDate": "2000-03-24 00:00:00",
+                "rangeEndDate": "1990-03-24 00:00:00",
+                "rangeStartDateAttribute": null,
+                "rangeEndDateAttribute": null,
+                "equalDate": null,
+                "equalDateAttribute": null,
+                "ognlValidation": null
+            },
+            "nestedAttribute": null,
+            "compositeAttributes": null
+        }
+    ]
+}

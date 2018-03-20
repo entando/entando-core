@@ -5,10 +5,17 @@
  */
 package org.entando.entando.aps.system.services.user;
 
+import java.util.List;
+import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
+import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+
 /**
  *
  * @author paddeo
  */
 public interface IUserService {
 
+    public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request);
+
+    public void deleteUserAuthorities(String username);
 }

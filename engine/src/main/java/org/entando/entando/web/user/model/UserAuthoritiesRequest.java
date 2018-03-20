@@ -14,6 +14,7 @@
 package org.entando.entando.web.user.model;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.Size;
@@ -25,13 +26,13 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class UserAuthoritiesRequest {
 
-    @JsonRawValue
     @Size(min = 1)
     private List<UserAuthority> authorities;
 
     public UserAuthoritiesRequest() {
     }
 
+    @JsonValue
     public List<UserAuthority> getAuthorities() {
         return authorities;
     }

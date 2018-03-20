@@ -8,7 +8,11 @@ package org.entando.entando.web.user;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.ArrayList;
+import java.util.List;
 import javax.validation.Valid;
+import org.entando.entando.aps.system.services.user.IUserService;
+import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
@@ -42,7 +46,18 @@ public class UserController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
+    private IUserService userService;
+
+    @Autowired
     private UserValidator userValidator;
+
+    public IUserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(IUserService userService) {
+        this.userService = userService;
+    }
 
     public UserValidator getUserValidator() {
         return userValidator;
@@ -53,8 +68,9 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username}/authorities", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String username, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
+    @RequestMapping(value = "/{target}/authorities", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
+        logger.info("user {} requesting update for username {} with req {}", user.getUsername(), target, authRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -64,16 +80,18 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        getUserValidator().validateUpdateSelf(username, user.getUsername(), bindingResult);
+        getUserValidator().validateUpdateSelf(target, user.getUsername(), bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        return new ResponseEntity<>(new RestResponse(null), HttpStatus.OK);
+        List<UserAuthorityDto> authorities = this.getUserService().addUserAuthorities(target, authRequest);
+        return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String username, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
+    @RequestMapping(value = "/{target}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
+
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -83,29 +101,30 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        getUserValidator().validateUpdateSelf(username, user.getUsername(), bindingResult);
+        getUserValidator().validateUpdateSelf(target, user.getUsername(), bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        return new ResponseEntity<>(new RestResponse(null), HttpStatus.OK);
+        List<UserAuthorityDto> authorities = this.getUserService().addUserAuthorities(target, authRequest);
+        return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username}/authorities", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String username) throws ApsSystemException {
-        DataBinder binder = new DataBinder(username);
+    @RequestMapping(value = "/{target}/authorities", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) throws ApsSystemException {
+        DataBinder binder = new DataBinder(target);
         BindingResult bindingResult = binder.getBindingResult();
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         //business validations 
-        getUserValidator().validateUpdateSelf(username, user.getUsername(), bindingResult);
+        getUserValidator().validateUpdateSelf(target, user.getUsername(), bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
-        return new ResponseEntity<>(new RestResponse(null), HttpStatus.OK);
+        this.getUserService().deleteUserAuthorities(target);
+        return new ResponseEntity<>(new RestResponse(new ArrayList<>()), HttpStatus.OK);
     }
 
 }

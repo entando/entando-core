@@ -24,6 +24,9 @@ public class LabelControllerUnitTest extends AbstractControllerTest {
     @Mock
     private LabelService labelService;
 
+    @Mock
+    private LabelValidator labelValidator = new LabelValidator();
+
     @InjectMocks
     private LabelController controller;
 
@@ -52,7 +55,7 @@ public class LabelControllerUnitTest extends AbstractControllerTest {
                                                                                                .content(payload)
                                                                                                .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                                                .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
     }
 
@@ -63,7 +66,7 @@ public class LabelControllerUnitTest extends AbstractControllerTest {
 
         ObjectMapper mapper = new ObjectMapper();
         LabelRequest labelRequest = new LabelRequest();
-        labelRequest.setLanguages(new HashMap<>());
+        labelRequest.setTitles(new HashMap<>());
 
         String payload = mapper.writeValueAsString(labelRequest);
 

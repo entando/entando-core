@@ -1,10 +1,14 @@
 package org.entando.entando.aps.system.services.label;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
@@ -14,6 +18,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.label.LabelValidator;
@@ -25,6 +30,9 @@ public class LabelService implements ILabelService {
 
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final String LABEL_KEY_FILTER_KEY = "key";
+    private static final String LABEL_KEY_FILTER_VALUE = "value";
 
     private II18nManager i18nManager;
     private ILangManager langManager;
@@ -50,25 +58,39 @@ public class LabelService implements ILabelService {
         return dtoBuilder;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public PagedMetadata<LabelDto> getLabelGroups(RestListRequest restRequest) {
-        //        restRequest.getSort();
-        //        restRequest.getDirection();
-        //        Comparator<Entry<String, ApsProperties>> comparator = null;
-        //        if ("aaa".equals(restRequest.getSort())) {
-        //            comparator = (o1, o2) -> {
-        //                return o1.getKey().compareTo(o2.getKey());
-        //            };
-        //        }
-        //
-        //        this.getI18nManager().getLabelGroups().entrySet().stream().sorted((o1, o2) -> {
-        //            return o1.getKey().compareTo(o2.getKey());
-        //        });
 
-        //this.getI18nManager().s
-        // TODO Auto-generated method stub
+        Map<String, ApsProperties> result = this.i18nManager.getLabelGroups();
+        List<LabelDto> dtoList = this.getDtoBuilder().convert(result);
+        if (restRequest.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+            dtoList = dtoList.stream().sorted(Comparator.comparing(LabelDto::getKey).reversed()).collect(Collectors.toList());
+        } else {
+            dtoList = dtoList.stream().sorted(Comparator.comparing(LabelDto::getKey)).collect(Collectors.toList());
+        }
 
-        return null;
+        if (null != restRequest.getFilter()) {
+            for (Filter f : restRequest.getFilter()) {
+                if (f.getAttributeName().equals(LABEL_KEY_FILTER_KEY)) {
+                    dtoList = dtoList
+                                     .stream()
+                                     .filter(i -> i.getKey().toLowerCase().contains(f.getValue()))
+                                     .collect(Collectors.toList());
+                }
+                if (f.getAttributeName().equals(LABEL_KEY_FILTER_VALUE)) {
+                    dtoList = dtoList
+                                     .stream()
+                                     .filter(i -> i.getTitles().values().stream().filter(k -> k.contains(f.getValue())).collect(Collectors.toList()).size() > 0)
+                                     .collect(Collectors.toList());
+                }
+            }
+        }
+        List<?> subList = restRequest.getSublist(dtoList);
+        SearcherDaoPaginatedResult<LabelDto> resultx = new SearcherDaoPaginatedResult(subList.size(), subList);
+        PagedMetadata<LabelDto> pagedMetadata = new PagedMetadata<>(restRequest, resultx);
+        pagedMetadata.setBody((List<LabelDto>) subList);
+        return pagedMetadata;
     }
 
     @Override
@@ -97,7 +119,7 @@ public class LabelService implements ILabelService {
                 throw new RestRourceNotFoundException(null, "label", code);
             }
             Properties languages = new Properties();
-            languages.putAll(labelRequest.getLanguages());
+            languages.putAll(labelRequest.getTitles());
             this.getI18nManager().updateLabelGroup(code, new ApsProperties(languages));
 
             return labelRequest;
@@ -119,7 +141,7 @@ public class LabelService implements ILabelService {
 
             String code = labelRequest.getKey();
             Properties languages = new Properties();
-            languages.putAll(labelRequest.getLanguages());
+            languages.putAll(labelRequest.getTitles());
             this.getI18nManager().addLabelGroup(code, new ApsProperties(languages));
 
             return labelRequest;
@@ -154,22 +176,20 @@ public class LabelService implements ILabelService {
             String code = labelDto.getKey();
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
 
-            // 1) NON deve esistere
             if (null != labelGroup) {
                 bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_EXISTS, new String[]{code}, "labelGroup.code.already.present");
                 return bindingResult;
             }
 
-            // 2) deve essre presente la lingua di default
             String defaultLang = this.getLangManager().getDefaultLang().getCode();
-            if (!labelDto.getLanguages().keySet().contains(defaultLang)) {
+            if (!labelDto.getTitles().keySet().contains(defaultLang)) {
                 bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_DEFAULT_LANG_REQUIRED, new String[]{defaultLang}, "labelGroup.langs.defaultLang.required");
                 return bindingResult;
             }
 
             List<String> configuredLangs = this.getLangManager().getLangs().stream().map(i -> i.getCode()).collect(Collectors.toList());
 
-            labelDto.getLanguages().entrySet().forEach(i -> validateLangEntry(i, configuredLangs, defaultLang, bindingResult));
+            labelDto.getTitles().entrySet().forEach(i -> validateLangEntry(i, configuredLangs, defaultLang, bindingResult));
 
             return bindingResult;
 
@@ -181,17 +201,14 @@ public class LabelService implements ILabelService {
 
     private void validateLangEntry(Entry<String, String> entry, List<String> configuredLangs, String defaultLangCode, BeanPropertyBindingResult bindingResult) {
         String currentLangCode = entry.getKey();
-        // 3) nella mappa key deve essere una lingua attiva
         if (!configuredLangs.contains(currentLangCode)) {
             bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_INVALID_LANG, new String[]{currentLangCode}, "labelGroup.langs.lang.invalid");
         }
 
-        // 4) nella mappa value non deve essere nullo se defaultlang
         if (currentLangCode.equals(defaultLangCode) && StringUtils.isBlank(entry.getValue())) {
             bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_TEXT_REQURED, new String[]{currentLangCode}, "labelGroup.langs.defaultLang.textRequired");
         }
 
     }
-
 
 }

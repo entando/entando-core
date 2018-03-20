@@ -3,6 +3,7 @@ package org.entando.entando.web.label;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -17,11 +18,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LabelControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -32,6 +35,30 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
     @Autowired
     private ILangManager langManager;
 
+    @Test
+    public void testGetLabels() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/labels").header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void testGetLabels2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/labels")
+                                                             .param("direction", FieldSearchFilter.DESC_ORDER)
+                                                             .param("filter[0].attribute", "value")
+                                                             .param("filter[0].value", "gina")
+                                                             .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", hasSize(3)));
+
+    }
 
     @Test
     public void testGetLabelGroupOk() throws Exception {
@@ -42,7 +69,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
                                                                                  .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
 
     }
 
@@ -71,7 +97,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             request.setKey(code);
             Map<String, String> languages = new HashMap<>();
             languages.put(langManager.getDefaultLang().getCode(), "this label has no name");
-            request.setLanguages(languages);
+            request.setTitles(languages);
             String payLoad = mapper.writeValueAsString(request);
 
             ResultActions result =
@@ -90,7 +116,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             request.setKey(code);
             languages = new HashMap<>();
             languages.put(langManager.getDefaultLang().getCode(), "this label has no name");
-            request.setLanguages(languages);
+            request.setTitles(languages);
             payLoad = mapper.writeValueAsString(request);
 
             result = mockMvc.perform(put("/labels/{labelCode}", "THIS_LABEL_DO_NOT_EXISTS")
@@ -107,7 +133,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             request.setKey(code);
             languages = new HashMap<>();
             languages.put(langManager.getDefaultLang().getCode(), "this label has no name");
-            request.setLanguages(languages);
+            request.setTitles(languages);
             payLoad = mapper.writeValueAsString(request);
 
             result = mockMvc.perform(put("/labels/{labelCode}", code)
@@ -151,7 +177,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             request.setKey(code);
             Map<String, String> languages = new HashMap<>();
             languages.put(langManager.getDefaultLang().getCode(), "");
-            request.setLanguages(languages);
+            request.setTitles(languages);
             String payLoad = mapper.writeValueAsString(request);
 
             ResultActions result =
@@ -182,7 +208,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             Map<String, String> languages = new HashMap<>();
             languages.put(langManager.getDefaultLang().getCode(), "hello");
             languages.put("de", "hello");
-            request.setLanguages(languages);
+            request.setTitles(languages);
             String payLoad = mapper.writeValueAsString(request);
 
             ResultActions result =
@@ -215,7 +241,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             languages.put("en", "hello");
             languages.put("de", "hello");
             languages.put("KK", "hello");
-            request.setLanguages(languages);
+            request.setTitles(languages);
             String payLoad = mapper.writeValueAsString(request);
 
             ResultActions result =

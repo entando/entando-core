@@ -5,7 +5,7 @@ import java.util.Map;
 public class LabelDto {
 
     private String key;
-    private Map<String, String> languages;
+    private Map<String, String> titles;
 
     public String getKey() {
         return key;
@@ -15,12 +15,12 @@ public class LabelDto {
         this.key = key;
     }
 
-    public Map<String, String> getLanguages() {
-        return languages;
+    public Map<String, String> getTitles() {
+        return titles;
     }
 
-    public void setLanguages(Map<String, String> languages) {
-        this.languages = languages;
+    public void setTitles(Map<String, String> titles) {
+        this.titles = titles;
     }
 
 }

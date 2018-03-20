@@ -16,15 +16,10 @@ public class LabelRequest extends LabelDto {
         return super.getKey();
     }
 
-    @NotEmpty(message = "labelRequest.languages.required")
+    @NotEmpty(message = "labelRequest.titles.required")
     @Override
-    public Map<String, String> getLanguages() {
-        return super.getLanguages();
-    }
-
-    @Override
-    public void setLanguages(Map<String, String> languages) {
-        super.setLanguages(languages);
+    public Map<String, String> getTitles() {
+        return super.getTitles();
     }
 
 }

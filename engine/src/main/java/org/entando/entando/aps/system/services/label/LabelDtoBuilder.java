@@ -51,7 +51,7 @@ public class LabelDtoBuilder extends DtoBuilder<ApsProperties, LabelDto> {
         labelDto.setKey(key);
         Map<String, String> languages = new HashMap<>();
         src.entrySet().stream().forEach(e -> languages.put((String) e.getKey(), (String) e.getValue()));
-        labelDto.setLanguages(languages);
+        labelDto.setTitles(languages);
         return labelDto;
     }
 

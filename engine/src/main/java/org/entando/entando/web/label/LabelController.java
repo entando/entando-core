@@ -1,6 +1,7 @@
 package org.entando.entando.web.label;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -10,6 +11,7 @@ import org.entando.entando.aps.system.services.label.ILabelService;
 import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
@@ -56,9 +58,8 @@ public class LabelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getLables(RestListRequest requestList) {
-        //        PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
-        //        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
-        return null;
+        PagedMetadata<LabelDto> result = this.getLabelService().getLabelGroups(requestList);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -91,7 +92,9 @@ public class LabelController {
     public ResponseEntity<?> deleteLabelGroup(@PathVariable String labelCode) throws ApsSystemException {
         logger.info("deleting {}", labelCode);
         this.getLabelService().removeLabelGroup(labelCode);
-        return new ResponseEntity<>(new RestResponse(labelCode), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("key", labelCode);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
 }

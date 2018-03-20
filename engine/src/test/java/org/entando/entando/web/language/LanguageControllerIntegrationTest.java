@@ -52,7 +52,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
          */
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type"));
+        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 

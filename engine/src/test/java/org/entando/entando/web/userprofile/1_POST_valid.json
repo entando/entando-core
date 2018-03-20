@@ -1,0 +1,39 @@
+{
+    "code": "AAA",
+    "name": "Profile Type AAA",
+    "attributes": [
+        {
+            "code": "TextAttribute",
+            "type": "Text",
+            "name": "Description of text attribute",
+            "roles": [],
+            "mandatory": false,
+            "listFilter": false,
+            "indexable": true,
+            "enumeratorStaticItems": null,
+            "enumeratorStaticItemsSeparator": null,
+            "enumeratorExtractorBean": null,
+            "validationRules": {
+                "minLength": 67,
+                "maxLength": 895,
+                "regex": null,
+                "rangeStartString": null,
+                "rangeEndString": null,
+                "rangeStartStringAttribute": null,
+                "rangeEndStringAttribute": null,
+                "equalString": null,
+                "equalStringAttribute": null,
+                "ognlValidation": {
+                    "ognlExpression": "expression",
+                    "applyOnlyToFilledAttr": false,
+                    "helpMessage": "Help Message",
+                    "keyForHelpMessage": null,
+                    "errorMessage": "Error Message",
+                    "keyForErrorMessage": null
+                }
+            },
+            "nestedAttribute": null,
+            "compositeAttributes": null
+        }
+    ]
+}

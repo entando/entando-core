@@ -4,6 +4,7 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.system.services.dataobject.DataObjectServiceTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelServiceTest;
 import org.entando.entando.aps.system.services.entity.EntityManagerServiceIntegrationTest;
 import org.entando.entando.aps.system.services.entity.EntityManagerServiceTest;
@@ -37,6 +38,7 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(EntityManagerServiceTest.class));
         suite.addTestSuite(EntityManagerServiceIntegrationTest.class);
         suite.addTest(new JUnit4TestAdapter(PageServiceWidgetIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(DataObjectServiceTest.class));
 
         return suite;
     }

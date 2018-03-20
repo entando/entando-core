@@ -13,7 +13,12 @@
  */
 package org.entando.entando.aps.system.services.entity.model;
 
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
 import com.agiletec.aps.system.common.entity.model.attribute.util.OgnlValidationRule;
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.web.entity.validator.EntityTypeValidator;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -38,6 +43,31 @@ public class EntityAttributeOgnlValidationDto {
         this.setKeyForErrorMessage(ognlValidationRule.getErrorMessageKey());
         this.setKeyForHelpMessage(ognlValidationRule.getHelpMessageKey());
         this.setOgnlExpression(ognlValidationRule.getExpression());
+    }
+
+    public void buildAttributeOgnlValidation(String typeCode, AttributeInterface attribute, BindingResult bindingResult) {
+        IAttributeValidationRules validationRules = attribute.getValidationRules();
+        if (!StringUtils.isEmpty(this.getOgnlExpression())) {
+            // to check into validator
+            OgnlValidationRule ognlValidationRule = new OgnlValidationRule();
+            if (StringUtils.isEmpty(this.getErrorMessage()) && StringUtils.isEmpty(this.getKeyForErrorMessage())) {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_OGNL_ERROR, bindingResult, new String[]{typeCode, attribute.getName()}, "entityType.attribute.ognl.missingErrorMessage");
+            }
+            if (StringUtils.isEmpty(this.getHelpMessage()) && StringUtils.isEmpty(this.getKeyForHelpMessage())) {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_OGNL_HELP, bindingResult, new String[]{typeCode, attribute.getName()}, "entityType.attribute.ognl.missingHelpMessage");
+            }
+            ognlValidationRule.setErrorMessage(this.getErrorMessage());
+            ognlValidationRule.setErrorMessageKey(this.getKeyForErrorMessage());
+            ognlValidationRule.setEvalExpressionOnValuedAttribute(this.isApplyOnlyToFilledAttr());
+            ognlValidationRule.setExpression(this.getOgnlExpression());
+            ognlValidationRule.setHelpMessage(this.getHelpMessage());
+            ognlValidationRule.setHelpMessageKey(this.getKeyForHelpMessage());
+            validationRules.setOgnlValidationRule(ognlValidationRule);
+        }
+    }
+
+    protected void addError(String errorCode, BindingResult bindingResult, String[] args, String message) {
+        bindingResult.reject(errorCode, args, message);
     }
 
     public String getOgnlExpression() {

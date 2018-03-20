@@ -13,18 +13,19 @@
  */
 package org.entando.entando.aps.system.services.entity.model;
 
+import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author E.Santoboni
  */
 public class EntityTypeShortDto {
 
-    @NotNull(message = "entityType.code.notBlank")
     private String code;
-    @NotNull(message = "entityType.name.notBlank")
+
     private String name;
+
+    private String status = String.valueOf(IEntityManager.STATUS_READY);
 
     public EntityTypeShortDto() {
     }
@@ -48,6 +49,14 @@ public class EntityTypeShortDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

@@ -29,7 +29,6 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,14 +46,13 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
         return new EntityTypeFullDtoBuilder(masterManager.getAttributeRoles());
     }
 
-    //@Autowired
-    //private List<IEntityManager> entityManagers;
     @Override
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
         List<String> codes = new ArrayList<>();
         Filter[] filters = requestList.getFilter();
         List<IEntityManager> managers = this.getEntityManagers();
-        Map<String, String> fieldMapping = this.getEntityManagerFieldNameMapping();
+        Map<String, String> fieldMapping = new HashMap<>();
+        fieldMapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
         managers.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> codes.add(i.getName()));
         Collections.sort(codes);
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
@@ -72,12 +70,6 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
         return super.getShortEntityTypes(entityManagerCode, requestList);
     }
 
-    protected Map<String, String> getEntityManagerFieldNameMapping() {
-        Map<String, String> mapping = new HashMap<>();
-        mapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
-        return mapping;
-    }
-
     @Override
     public EntityManagerDto getEntityManager(String entityManagerCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
@@ -90,8 +82,8 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     }
 
     @Override
-    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
-        return super.addEntityTypes(entityManagerCode, bodyRequest, bindingResult);
+    public EntityTypeFullDto addEntityType(String entityManagerCode, EntityTypeDtoRequest bodyRequest, BindingResult bindingResult) {
+        return super.addEntityType(entityManagerCode, bodyRequest, bindingResult);
     }
 
     @Override

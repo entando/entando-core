@@ -1,13 +1,22 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * 
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +41,7 @@ public class PageDto {
     private Map<String, String> titles = new HashMap<>();
     private String ownerGroup;
     private List<String> joinGroups = new ArrayList<>();
+    private List<String> children = new ArrayList<>();
     private int position;
 
     public PageDto() {
@@ -47,14 +57,13 @@ public class PageDto {
         this.setParentCode(page.getParentCode());
         this.setSeo(page.isUseExtraTitles());
         Optional<ApsProperties> apsTitles = Optional.ofNullable(page.getTitles());
-        apsTitles.ifPresent(values -> values.keySet().forEach((lang) -> {
-            this.titles.put((String) lang, (String) values.get(lang));
-        }));
+        apsTitles.ifPresent(values -> values.keySet().forEach((lang)
+                -> this.titles.put((String) lang, (String) values.get(lang))));
         this.setOwnerGroup(page.getGroup());
         Optional<Set<String>> groups = Optional.ofNullable(page.getExtraGroups());
-        groups.ifPresent(values -> values.forEach((group) -> {
-            this.joinGroups.add(group);
-        }));
+        groups.ifPresent(values -> values.forEach((group) -> this.joinGroups.add(group)));
+        Optional.ofNullable(page.getChildrenCodes()).
+                ifPresent(values -> Arrays.asList(values).forEach((child) -> this.children.add(child)));
         this.setPosition(page.getPosition());
     }
 
@@ -152,6 +161,18 @@ public class PageDto {
 
     public void addJoinGroup(String joinGroup) {
         this.joinGroups.add(joinGroup);
+    }
+
+    public List<String> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<String> children) {
+        this.children = children;
+    }
+
+    public void addChild(String child) {
+        this.children.add(child);
     }
 
     public int getPosition() {

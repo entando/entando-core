@@ -13,13 +13,11 @@
  */
 package org.entando.entando.aps.system.services.dataobject;
 
-import java.util.List;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -31,7 +29,7 @@ public interface IDataObjectService {
 
     public DataTypeDto getDataType(String dataTypeCode);
 
-    public List<DataTypeDto> addDataTypes(DataTypesBodyRequest bodyRequest, BindingResult bindingResult);
+    public DataTypeDto addDataType(DataTypeDtoRequest bodyRequest, BindingResult bindingResult);
 
     public DataTypeDto updateDataType(DataTypeDtoRequest request, BindingResult bindingResult);
 

@@ -15,8 +15,11 @@ package org.entando.entando.web.user.model;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -24,26 +27,11 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author paddeo
  */
-public class UserAuthoritiesRequest {
-
-    @Size(min = 1)
-    private List<UserAuthority> authorities;
-
-    public UserAuthoritiesRequest() {
-    }
-
-    @JsonValue
-    public List<UserAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(List<UserAuthority> authorities) {
-        this.authorities = authorities;
-    }
+public class UserAuthoritiesRequest extends ArrayList<UserAuthority> {
 
     @Override
     public String toString() {
-        return "UserAuthoritiesRequest{" + "authorities:[" + authorities.stream().iterator().next().toString() + "]}";
+        return "UserAuthoritiesRequest: [" + this.stream().map(e -> e.toString()).collect(Collectors.joining(",")) + "]";
     }
 
 }

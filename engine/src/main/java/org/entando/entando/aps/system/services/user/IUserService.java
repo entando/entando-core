@@ -15,6 +15,8 @@ import org.entando.entando.web.user.model.UserAuthoritiesRequest;
  */
 public interface IUserService {
 
+    String BEAN_NAME = "UserService";
+
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request);
 
     public void deleteUserAuthorities(String username);

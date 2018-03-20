@@ -45,7 +45,7 @@ public class UserAuthority {
 
     @Override
     public String toString() {
-        return "UserAuthority{" + "group=" + group + ", role=" + role + '}';
+        return "{" + "group=" + group + ", role=" + role + '}';
     }
 
 }

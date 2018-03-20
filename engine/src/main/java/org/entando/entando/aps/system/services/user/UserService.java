@@ -53,7 +53,7 @@ public class UserService implements IUserService {
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request) {
         List<UserAuthorityDto> authorizations = new ArrayList<>();
         try {
-            request.getAuthorities().forEach(authorization
+            request.forEach(authorization
                     -> {
                 try {
                     this.getAuthorizationManager().getUserAuthorizations(username);

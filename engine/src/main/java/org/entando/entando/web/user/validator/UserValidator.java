@@ -33,9 +33,6 @@ public class UserValidator implements Validator {
     IUserManager userManager;
 
     @Autowired
-    IAuthorizationManager authorizationManager;
-
-    @Autowired
     IGroupManager groupManager;
 
     @Autowired
@@ -47,14 +44,6 @@ public class UserValidator implements Validator {
 
     public void setUserManager(IUserManager userManager) {
         this.userManager = userManager;
-    }
-
-    public IAuthorizationManager getAuthorizationManager() {
-        return authorizationManager;
-    }
-
-    public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
-        this.authorizationManager = authorizationManager;
     }
 
     public IGroupManager getGroupManager() {
@@ -91,7 +80,7 @@ public class UserValidator implements Validator {
 
     public void validateGroupsAndRoles(UserAuthoritiesRequest request, Errors errors) {
         List<String> invalidAuths = new ArrayList<>();
-        request.getAuthorities().forEach(authority -> {
+        request.forEach(authority -> {
             if (this.getGroupManager().getGroup(authority.getGroup()) == null) {
                 invalidAuths.add(authority.getGroup());
             }

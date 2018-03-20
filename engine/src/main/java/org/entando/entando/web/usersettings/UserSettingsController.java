@@ -6,6 +6,7 @@ import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.usersettings.IUserSettingsService;
 import org.entando.entando.aps.system.services.usersettings.model.UserSettingsDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.usersettings.model.UserSettingsRequest;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,9 +46,13 @@ public class UserSettingsController {
         return new ResponseEntity<>(new RestResponse(userSettings), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = "pageSettings_write")
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePageSettings(@Valid @RequestBody UserSettingsRequest request) {
+    public ResponseEntity<?> updatePageSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
+        //params validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         UserSettingsDto settings = this.getUserSettingsService().updateUserSettings(request);
         return new ResponseEntity<>(new RestResponse(settings), HttpStatus.OK);
     }

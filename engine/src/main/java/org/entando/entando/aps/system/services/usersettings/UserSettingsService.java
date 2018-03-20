@@ -54,6 +54,7 @@ public class UserSettingsService implements IUserSettingsService {
     @Override
     public UserSettingsDto updateUserSettings(UserSettingsRequest request) {
         try {
+
             Map<String, String> params = request.toMap();
             Map<String, String> systemParams = this.getSystemParams();
             params.keySet().forEach((param) -> {

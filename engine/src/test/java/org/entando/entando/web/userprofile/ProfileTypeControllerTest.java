@@ -11,16 +11,16 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.dataobject;
+package org.entando.entando.web.userprofile;
 
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
-import org.entando.entando.aps.system.services.dataobject.DataObjectManager;
-import org.entando.entando.aps.system.services.dataobject.DataObjectService;
+import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
+import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
-import org.entando.entando.web.dataobject.validator.DataTypeValidator;
+import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
+import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,19 +36,19 @@ import org.springframework.validation.BindingResult;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-public class DataTypeControllerTest extends AbstractControllerTest {
+public class ProfileTypeControllerTest extends AbstractControllerTest {
 
     @Mock
-    private DataObjectManager dataObjectManager;
+    private IUserProfileManager userProfileManager;
 
     @Mock
-    private DataObjectService dataObjectService;
+    private IUserProfileTypeService userProfileTypeService;
 
     @InjectMocks
-    private DataTypeValidator dataTypeValidator;
+    private ProfileTypeValidator profileTypeValidator;
 
     @InjectMocks
-    private DataTypeController controller;
+    private ProfileTypeController controller;
 
     @Before
     public void setUp() throws Exception {
@@ -57,7 +57,7 @@ public class DataTypeControllerTest extends AbstractControllerTest {
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
-        controller.setDataTypeValidator(this.dataTypeValidator);
+        controller.setProfileTypeValidator(this.profileTypeValidator);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DataTypeControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(post("/dataTypes")
+                .perform(post("/profileTypes")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
@@ -79,11 +79,11 @@ public class DataTypeControllerTest extends AbstractControllerTest {
         InputStream isJsonPost = this.getClass().getResourceAsStream("1_POST_valid.json");
         String jsonPost = FileTextReader.getText(isJsonPost);
         ResultActions result = mockMvc
-                .perform(post("/dataTypes")
+                .perform(post("/profileTypes")
                         .content(jsonPost)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        Mockito.verify(dataObjectService, Mockito.times(1)).addDataType(any(DataTypeDtoRequest.class), any(BindingResult.class));
+        Mockito.verify(userProfileTypeService, Mockito.times(1)).addUserProfileType(any(ProfileTypeDtoRequest.class), any(BindingResult.class));
         result.andExpect(status().isOk());
     }
 

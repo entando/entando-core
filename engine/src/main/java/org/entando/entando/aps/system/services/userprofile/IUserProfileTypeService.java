@@ -11,28 +11,28 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.dataobject;
+package org.entando.entando.aps.system.services.userprofile;
 
-import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
+import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
 import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
  */
-public interface IDataObjectService {
+public interface IUserProfileTypeService {
 
-    public PagedMetadata<EntityTypeShortDto> getShortDataTypes(RestListRequest requestList);
+    public PagedMetadata<EntityTypeShortDto> getShortUserProfileTypes(RestListRequest requestList);
 
-    public DataTypeDto getDataType(String dataTypeCode);
+    public UserProfileTypeDto getUserProfileType(String profileTypeCode);
 
-    public DataTypeDto addDataType(DataTypeDtoRequest bodyRequest, BindingResult bindingResult);
+    public UserProfileTypeDto addUserProfileType(ProfileTypeDtoRequest bodyRequest, BindingResult bindingResult);
 
-    public DataTypeDto updateDataType(DataTypeDtoRequest request, BindingResult bindingResult);
+    public UserProfileTypeDto updateUserProfileType(ProfileTypeDtoRequest request, BindingResult bindingResult);
 
-    public void deleteDataType(String dataTypeCode);
+    public void deleteUserProfileType(String profileTypeCode);
 
 }

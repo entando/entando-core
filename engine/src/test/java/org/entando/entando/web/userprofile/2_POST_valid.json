@@ -1,6 +1,6 @@
 {
     "code": "TST",
-    "name": "Type TST",
+    "name": "Profile Type TST",
     "attributes": [
         {
             "code": "TextAttribute",
@@ -15,7 +15,7 @@
             "enumeratorExtractorBean": null,
             "validationRules": {
                 "minLength": 100,
-                "maxLength": 50,
+                "maxLength": 800,
                 "regex": null,
                 "rangeStartString": null,
                 "rangeEndString": null,
@@ -26,7 +26,7 @@
                 "ognlValidation": {
                     "ognlExpression": "expression",
                     "applyOnlyToFilledAttr": false,
-                    "helpMessage": "",
+                    "helpMessage": "Help Message",
                     "keyForHelpMessage": null,
                     "errorMessage": "Error Message",
                     "keyForErrorMessage": null
@@ -47,7 +47,7 @@
             "enumeratorExtractorBean": null,
             "validationRules": {
                 "rangeStartDate": "2000-03-24 00:00:00",
-                "rangeEndDate": "1910-03-24 00:00:00",
+                "rangeEndDate": "2010-03-24 00:00:00",
                 "rangeStartDateAttribute": null,
                 "rangeEndDateAttribute": null,
                 "equalDate": null,
@@ -78,8 +78,5 @@
             },
             "compositeAttributes": null
         }
-    ],
-    "viewPage": "homepage",
-    "listModel": null,
-    "defaultModel": null
+    ]
 }

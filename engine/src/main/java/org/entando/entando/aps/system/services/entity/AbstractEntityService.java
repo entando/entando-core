@@ -50,7 +50,6 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.entando.entando.web.entity.validator.EntityTypeValidator;
 import org.slf4j.Logger;
@@ -102,6 +101,10 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(entityTypes.size(), sublist);
         PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
         List<EntityTypeShortDto> body = this.getEntityTypeShortDtoBuilder().convert(sublist);
+        for (EntityTypeShortDto entityTypeShortDto : body) {
+            String code = entityTypeShortDto.getCode();
+            entityTypeShortDto.setStatus(String.valueOf(entityManager.getStatus(code)));
+        }
         pagedMetadata.setBody(body);
         return pagedMetadata;
     }
@@ -125,7 +128,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             logger.warn("no entity type found with code {}", entityTypeCode);
             throw new RestRourceNotFoundException("entityTypeCode", entityTypeCode);
         }
-        return this.convertEntityType(entityManager, entityType);
+        O type = this.convertEntityType(entityManager, entityType);
+        type.setStatus(String.valueOf(entityManager.getStatus(entityTypeCode)));
+        return type;
     }
 
     protected O convertEntityType(IEntityManager entityManager, I entityType) {
@@ -134,37 +139,30 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
 
     protected abstract IDtoBuilder<I, O> getEntityTypeFullDtoBuilder(IEntityManager masterManager);
 
-    protected synchronized List<O> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
-        List<O> response = new ArrayList<>();
+    protected synchronized O addEntityType(String entityManagerCode, EntityTypeDtoRequest bodyRequest, BindingResult bindingResult) {
+        O response = null;
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
-            List<I> entityTypesToAdd = new ArrayList<>();
             IDtoBuilder<I, O> builder = this.getEntityTypeFullDtoBuilder(entityManager);
-            for (EntityTypeDtoRequest dto : bodyRequest.getDataTypes()) {
-                if (null != entityManager.getEntityPrototype(dto.getCode())) {
-                    this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS,
-                            bindingResult, new String[]{dto.getCode()}, "entityType.exists");
-                    continue;
-                }
-                I entityPrototype = this.createEntityType(entityManager, dto, bindingResult);
-                entityTypesToAdd.add(entityPrototype);
+            if (null != entityManager.getEntityPrototype(bodyRequest.getCode())) {
+                this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS,
+                        bindingResult, new String[]{bodyRequest.getCode()}, "entityType.exists");
             }
+            I entityPrototype = this.createEntityType(entityManager, bodyRequest, bindingResult);
             if (bindingResult.hasErrors()) {
                 return response;
             } else {
-                for (I i : entityTypesToAdd) {
-                    ((IEntityTypesConfigurer) entityManager).addEntityPrototype(i);
-                    response.add(builder.convert(i));
-                }
+                ((IEntityTypesConfigurer) entityManager).addEntityPrototype(entityPrototype);
+                response = builder.convert(entityPrototype);
             }
         } catch (Throwable e) {
-            logger.error("Error adding entity types", e);
-            throw new RestServerError("error add entity types", e);
+            logger.error("Error adding entity type", e);
+            throw new RestServerError("error add entity type", e);
         }
         return response;
     }
 
-    protected synchronized EntityTypeFullDto updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
+    protected synchronized O updateEntityType(String entityManagerCode, EntityTypeDtoRequest request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             if (null == entityManager.getEntityPrototype(request.getCode())) {
@@ -179,7 +177,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             } else {
                 ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityPrototype);
                 I newPrototype = (I) entityManager.getEntityPrototype(request.getCode());
-                return builder.convert(newPrototype);
+                O newType = builder.convert(newPrototype);
+                newType.setStatus(String.valueOf(entityManager.getStatus(request.getCode())));
+                return newType;
             }
         } catch (Throwable e) {
             logger.error("Error updating entity type", e);

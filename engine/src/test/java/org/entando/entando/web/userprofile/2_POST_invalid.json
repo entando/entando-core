@@ -1,6 +1,6 @@
 {
     "code": "TST",
-    "name": "Type TST",
+    "name": "Profile Type TST",
     "attributes": [
         {
             "code": "TextAttribute",
@@ -78,8 +78,5 @@
             },
             "compositeAttributes": null
         }
-    ],
-    "viewPage": "homepage",
-    "listModel": null,
-    "defaultModel": null
+    ]
 }

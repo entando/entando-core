@@ -34,9 +34,10 @@ public class EntityManagerDto {
     public EntityManagerDto(IEntityManager src) {
         this.setCode(((IManager) src).getName());
         List<AttributeRole> roles = src.getAttributeRoles();
-        List<IApsEntity> entityTypes = new ArrayList<>(src.getEntityPrototypes().values());
-        for (IApsEntity entityType : entityTypes) {
+        List<IApsEntity> extractedEntityTypes = new ArrayList<>(src.getEntityPrototypes().values());
+        for (IApsEntity entityType : extractedEntityTypes) {
             EntityTypeDto dto = new EntityTypeDto(entityType, roles);
+            dto.setStatus(String.valueOf(src.getStatus(dto.getCode())));
             this.getEntityTypes().add(dto);
         }
     }
@@ -58,29 +59,3 @@ public class EntityManagerDto {
     }
 
 }
-
-/*
-{
-    "payload": [{
-        "code": "userProfileManager",
-        "entityTypes": [{
-            "code": "PFL",
-            "name": "Default user profile",
-            "attributes": [{
-                "code": "fullName",
-                "type": "Monotext",
-                "name": "Full Name",
-                "roles": [{
-                    "code": "userprofile:fullname",
-                    "descr": "The attr containing the full name"
-                }],
-                "isMandatory": true,
-                "canBeUsedAsFilterInList": true
-            }]
-
-        }]
-    }],
-    "errors": [],
-    "metadata": {}
-}
- */

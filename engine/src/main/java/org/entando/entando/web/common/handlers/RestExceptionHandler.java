@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.RestErrorCodes;
 import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
+import org.entando.entando.web.common.exceptions.EntandoTokenException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.exceptions.ValidationUpdateSelfException;
@@ -77,6 +78,19 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public RestResponse processEntandoAuthorizationException(EntandoAuthorizationException ex) {
+        logger.debug("Handling {} error", ex.getClass().getSimpleName());
+        RestResponse response = new RestResponse();
+        RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED", new Object[]{ex.getUsername(), ex.getRequestURI(), ex.getMethod()}));
+        List<RestError> errors = new ArrayList<>();
+        errors.add(error);
+        response.setErrors(errors);
+        return response;
+    }
+
+    @ExceptionHandler(value = EntandoTokenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public RestResponse processEntandoTokenException(EntandoAuthorizationException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         RestResponse response = new RestResponse();
         RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED", new Object[]{ex.getUsername(), ex.getRequestURI(), ex.getMethod()}));

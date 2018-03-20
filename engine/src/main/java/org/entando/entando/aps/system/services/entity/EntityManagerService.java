@@ -29,7 +29,6 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.dataobject.model.DataTypesBodyRequest;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +82,8 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     }
 
     @Override
-    public List<EntityTypeFullDto> addEntityTypes(String entityManagerCode, DataTypesBodyRequest bodyRequest, BindingResult bindingResult) {
-        return super.addEntityTypes(entityManagerCode, bodyRequest, bindingResult);
+    public EntityTypeFullDto addEntityType(String entityManagerCode, EntityTypeDtoRequest bodyRequest, BindingResult bindingResult) {
+        return super.addEntityType(entityManagerCode, bodyRequest, bindingResult);
     }
 
     @Override

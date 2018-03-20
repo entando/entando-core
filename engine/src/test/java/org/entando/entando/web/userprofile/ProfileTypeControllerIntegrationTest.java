@@ -11,15 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.dataobject;
+package org.entando.entando.web.userprofile;
 
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
-import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
-import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
-import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
+import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
+import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Assert;
@@ -36,24 +36,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
-public class DataTypeControllerIntegrationTest extends AbstractControllerIntegrationTest {
+public class ProfileTypeControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
     @Autowired
-    private IDataObjectService dataObjectService;
+    private IUserProfileTypeService userProfileTypeService;
 
     @Autowired
-    private IDataObjectManager dataObjectManager;
+    private IUserProfileManager userProfileManager;
 
     @Autowired
     @InjectMocks
-    private DataTypeController controller;
+    private ProfileTypeController controller;
 
     @Test
-    public void testGetDataTypes() throws Exception {
+    public void testGetUserProfileTypes() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/dataTypes")
+                .perform(get("/profileTypes")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         System.out.println(result.andReturn().getResponse().getContentAsString());
@@ -64,49 +64,49 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
     }
 
     @Test
-    public void testGetValidDataType() throws Exception {
+    public void testGetValidUserProfileType() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/dataTypes/{code}", new Object[]{"RAH"})
+                .perform(get("/profileTypes/{profileTypeCode}", new Object[]{"PFL"})
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
     @Test
-    public void testGetInvalidDataType() throws Exception {
+    public void testGetInvalidUserProfileType() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/dataTypes/{code}", new Object[]{"XXX"})
+                .perform(get("/profileTypes/{profileTypeCode}", new Object[]{"XXX"})
                         .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
     }
 
     @Test
-    public void testAddUpdateDataType_1() throws Exception {
+    public void testAddUpdateUserProfileType_1() throws Exception {
         try {
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("AAA"));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("AAA"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
             InputStream isJsonPost = this.getClass().getResourceAsStream("1_POST_valid.json");
             String jsonPost = FileTextReader.getText(isJsonPost);
             ResultActions result1 = mockMvc
-                    .perform(post("/dataTypes")
+                    .perform(post("/profileTypes")
                             .content(jsonPost)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isOk());
-            DataObject addedType = (DataObject) this.dataObjectManager.getEntityPrototype("AAA");
-            Assert.assertNotNull(addedType);
-            Assert.assertEquals("Type AAA", addedType.getTypeDescription());
+            Assert.assertNotNull(this.userProfileManager.getEntityPrototype("AAA"));
+            UserProfile addedType = (UserProfile) this.userProfileManager.getEntityPrototype("AAA");
+            Assert.assertEquals("Profile Type AAA", addedType.getTypeDescription());
             Assert.assertEquals(1, addedType.getAttributeList().size());
 
             InputStream isJsonPutInvalid = this.getClass().getResourceAsStream("1_PUT_invalid.json");
             String jsonPutInvalid = FileTextReader.getText(isJsonPutInvalid);
             ResultActions result2 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
+                    .perform(put("/profileTypes/{profileTypeCode}", new Object[]{"AAA"})
                             .content(jsonPutInvalid)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
@@ -115,58 +115,58 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             InputStream isJsonPutValid = this.getClass().getResourceAsStream("1_PUT_valid.json");
             String jsonPutValid = FileTextReader.getText(isJsonPutValid);
             ResultActions result3 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
+                    .perform(put("/profileTypes/{profileTypeCode}", new Object[]{"AAA"})
                             .content(jsonPutValid)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result3.andExpect(status().isOk());
 
-            addedType = (DataObject) this.dataObjectManager.getEntityPrototype("AAA");
-            Assert.assertEquals("Type AAA Modified", addedType.getTypeDescription());
+            addedType = (UserProfile) this.userProfileManager.getEntityPrototype("AAA");
+            Assert.assertEquals("Profile Type AAA Modified", addedType.getTypeDescription());
             Assert.assertEquals(2, addedType.getAttributeList().size());
 
             ResultActions result4 = mockMvc
-                    .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
+                    .perform(delete("/profileTypes/{profileTypeCode}", new Object[]{"AAA"})
                             .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("AAA"));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("AAA"));
         } finally {
-            if (null != this.dataObjectManager.getEntityPrototype("AAA")) {
-                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("AAA");
+            if (null != this.userProfileManager.getEntityPrototype("AAA")) {
+                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("AAA");
             }
         }
     }
 
     @Test
-    public void testAddUpdateDataType_2() throws Exception {
+    public void testAddUpdateUserProfileType_2() throws Exception {
         try {
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
             InputStream isJsonPostInvalid = this.getClass().getResourceAsStream("2_POST_invalid.json");
             String jsonPostInvalid = FileTextReader.getText(isJsonPostInvalid);
             ResultActions result1 = mockMvc
-                    .perform(post("/dataTypes")
+                    .perform(post("/profileTypes")
                             .content(jsonPostInvalid)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isBadRequest());
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
 
             InputStream isJsonPostValid = this.getClass().getResourceAsStream("2_POST_valid.json");
             String jsonPostValid = FileTextReader.getText(isJsonPostValid);
             ResultActions result2 = mockMvc
-                    .perform(post("/dataTypes")
+                    .perform(post("/profileTypes")
                             .content(jsonPostValid)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isOk());
-            DataObject addedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
+            UserProfile addedDataObject = (UserProfile) this.userProfileManager.getEntityPrototype("TST");
             Assert.assertNotNull(addedDataObject);
             Assert.assertEquals(3, addedDataObject.getAttributeList().size());
 
             ResultActions result2_bis = mockMvc
-                    .perform(post("/dataTypes")
+                    .perform(post("/profileTypes")
                             .content(jsonPostValid)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
@@ -175,31 +175,31 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             InputStream isJsonPutValid = this.getClass().getResourceAsStream("2_PUT_valid.json");
             String jsonPutValid = FileTextReader.getText(isJsonPutValid);
             ResultActions result3 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
+                    .perform(put("/profileTypes/{profileTypeCode}", new Object[]{"AAA"})
                             .content(jsonPutValid)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result3.andExpect(status().isBadRequest());
 
             ResultActions result3_bis = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"TST"})
+                    .perform(put("/profileTypes/{profileTypeCode}", new Object[]{"TST"})
                             .content(jsonPutValid)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result3_bis.andExpect(status().isOk());
 
-            DataObject modifiedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
+            UserProfile modifiedDataObject = (UserProfile) this.userProfileManager.getEntityPrototype("TST");
             Assert.assertNotNull(modifiedDataObject);
             Assert.assertEquals(5, modifiedDataObject.getAttributeList().size());
 
             ResultActions result4 = mockMvc
-                    .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"TST"})
+                    .perform(delete("/profileTypes/{profileTypeCode}", new Object[]{"TST"})
                             .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
         } finally {
-            if (null != this.dataObjectManager.getEntityPrototype("TST")) {
-                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TST");
+            if (null != this.userProfileManager.getEntityPrototype("TST")) {
+                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("TST");
             }
         }
     }

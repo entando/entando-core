@@ -86,7 +86,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
 
         } catch (OAuthSystemException | ApsSystemException | OAuthProblemException ex) {
             logger.error("System exception {}", ex.getMessage());
-            throw new RestServerError("error parsing OAuth parameters", ex);
+            throw new EntandoTokenException("error parsing OAuth parameters", request, "guest");
         }
     }
 
@@ -107,11 +107,11 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
 
     protected void validateToken(HttpServletRequest request, String accessToken, final OAuth2Token token) {
         if (null == token) {
-            throw new EntandoTokenException("no token found", request, null);
+            throw new EntandoTokenException("no token found", request, "guest");
         } else if (!token.getAccessToken().equals(accessToken)) {
-            throw new EntandoTokenException("invalid token", request, null);
+            throw new EntandoTokenException("invalid token", request, "guest");
         } else if (token.getExpiresIn().getTime() < System.currentTimeMillis()) {
-            throw new EntandoTokenException("expired token", request, null);
+            throw new EntandoTokenException("expired token", request, "guest");
         }
     }
 

@@ -1,5 +1,8 @@
 package org.entando.entando.web.group;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -106,7 +109,9 @@ public class GroupController {
     public ResponseEntity<?> deleteGroup(@PathVariable String groupName) throws ApsSystemException {
         logger.info("deleting {}", groupName);
         this.getGroupService().removeGroup(groupName);
-        return new ResponseEntity<>(new RestResponse(groupName), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", groupName);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
 

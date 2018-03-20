@@ -108,6 +108,7 @@ public class GroupController {
     @RequestMapping(value = "/{groupName}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGroup(@PathVariable String groupName) throws ApsSystemException {
         logger.info("deleting {}", groupName);
+        this.getGroupService().removeGroup(groupName);
         Map<String, String> result = new HashMap<>();
         result.put("code", groupName);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);

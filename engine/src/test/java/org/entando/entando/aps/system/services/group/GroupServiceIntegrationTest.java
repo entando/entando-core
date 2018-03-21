@@ -34,25 +34,25 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 		RestListRequest restListRequest = new RestListRequest();
 		restListRequest.setPageSize(5);
 		PagedMetadata<GroupDto> res = this.groupService.getGroups(restListRequest);
-		assertThat(res.getPage(), is(0));
+        assertThat(res.getPage(), is(1));
 		assertThat(res.getPageSize(), is(5));
-		assertThat(res.getLastPage(), is(1));
+        assertThat(res.getLastPage(), is(2));
 		assertThat(res.getCount(), is(6));
 
 		//
 		restListRequest.setPageSize(2);
 		res = this.groupService.getGroups(restListRequest);
-		assertThat(res.getPage(), is(0));
+        assertThat(res.getPage(), is(1));
 		assertThat(res.getPageSize(), is(2));
-		assertThat(res.getLastPage(), is(2));
+        assertThat(res.getLastPage(), is(3));
 		assertThat(res.getCount(), is(6));
 
 		//
 		restListRequest.setPageSize(4);
 		res = this.groupService.getGroups(restListRequest);
-		assertThat(res.getPage(), is(0));
+        assertThat(res.getPage(), is(1));
 		assertThat(res.getPageSize(), is(4));
-		assertThat(res.getLastPage(), is(1));
+        assertThat(res.getLastPage(), is(2));
 		assertThat(res.getCount(), is(6));
 
 		//
@@ -60,8 +60,8 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 		restListRequest.setPage(1);
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(1));
-		assertThat(res.getPageSize(), is(2));
-		assertThat(res.getLastPage(), is(1));
+        assertThat(res.getPageSize(), is(4));
+        assertThat(res.getLastPage(), is(2));
 		assertThat(res.getCount(), is(6));
 		//
 		restListRequest.setPageSize(4);
@@ -69,7 +69,7 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(1000));
 		assertThat(res.getPageSize(), is(0));
-		assertThat(res.getLastPage(), is(1));
+        assertThat(res.getLastPage(), is(2));
 		assertThat(res.getCount(), is(6));
 	}
 
@@ -79,9 +79,9 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 		restListRequest.addFilter(new Filter("groupname", "fr"));
 
 		PagedMetadata<GroupDto> res = this.groupService.getGroups(restListRequest);
-		assertThat(res.getPage(), is(0));
+        assertThat(res.getPage(), is(1));
 		assertThat(res.getPageSize(), is(1));
-		assertThat(res.getLastPage(), is(0));
+        assertThat(res.getLastPage(), is(1));
 		assertThat(res.getCount(), is(1));
 	}
 
@@ -92,23 +92,23 @@ public class GroupServiceIntegrationTest extends BaseTestCase {
 		restListRequest.addFilter(new Filter("groupname", "s"));
 
 		PagedMetadata<GroupDto> res = this.groupService.getGroups(restListRequest);
-		assertThat(res.getPage(), is(0));
+        assertThat(res.getPage(), is(1));
 		assertThat(res.getPageSize(), is(2));
-		assertThat(res.getLastPage(), is(1));
+        assertThat(res.getLastPage(), is(2));
 		assertThat(res.getCount(), is(3));
 
 		restListRequest.setPage(1);
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(1));
-		assertThat(res.getPageSize(), is(1));
-		assertThat(res.getLastPage(), is(1));
+        assertThat(res.getPageSize(), is(2));
+        assertThat(res.getLastPage(), is(2));
 		assertThat(res.getCount(), is(3));
 
 		restListRequest.setPage(2);
 		res = this.groupService.getGroups(restListRequest);
 		assertThat(res.getPage(), is(2));
-		assertThat(res.getPageSize(), is(0));
-		assertThat(res.getLastPage(), is(1));
+        assertThat(res.getPageSize(), is(1));
+        assertThat(res.getLastPage(), is(2));
 		assertThat(res.getCount(), is(3));
 	}
 

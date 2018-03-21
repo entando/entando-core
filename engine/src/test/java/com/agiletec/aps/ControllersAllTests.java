@@ -36,6 +36,8 @@ import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
 import org.entando.entando.web.system.ReloadConfigurationControllerTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerTest;
+import org.entando.entando.web.user.UserControllerIntegrationTest;
+import org.entando.entando.web.user.UserControllerTest;
 
 public class ControllersAllTests extends TestCase {
 
@@ -66,6 +68,9 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerTest.class));
+      
+        suite.addTest(new JUnit4TestAdapter(UserControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(UserControllerTest.class));
 
         return suite;
     }

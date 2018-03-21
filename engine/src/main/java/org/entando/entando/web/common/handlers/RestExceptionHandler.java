@@ -25,6 +25,7 @@ import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
 import org.entando.entando.web.common.exceptions.EntandoTokenException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.exceptions.ValidationUpdateSelfException;
 import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
@@ -127,6 +128,16 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public RestResponse processValidationError(ValidationGenericException ex) {
+        logger.debug("Handling {} error", ex.getClass().getSimpleName());
+        BindingResult result = ex.getBindingResult();
+        RestResponse response = processAllErrors(result);
+        return response;
+    }
+
+    @ExceptionHandler(value = ValidationUpdateSelfException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public RestResponse processValidationError(ValidationUpdateSelfException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         BindingResult result = ex.getBindingResult();
         RestResponse response = processAllErrors(result);

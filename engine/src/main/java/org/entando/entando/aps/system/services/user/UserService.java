@@ -8,6 +8,7 @@ package org.entando.entando.aps.system.services.user;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
+import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,21 @@ public class UserService implements IUserService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
+    private IUserManager userManager;
+
+    @Autowired
     private IAuthorizationManager authorizationManager;
 
     @Autowired
     private IAuthenticationProviderManager authenticationProvider;
+
+    public IUserManager getUserManager() {
+        return userManager;
+    }
+
+    public void setUserManager(IUserManager userManager) {
+        this.userManager = userManager;
+    }
 
     public IAuthorizationManager getAuthorizationManager() {
         return authorizationManager;
@@ -51,23 +63,27 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request) {
-        List<UserAuthorityDto> authorizations = new ArrayList<>();
         try {
+            List<UserAuthorityDto> authorizations = new ArrayList<>();
+
+            final UserDetails user = this.getUserManager().getUser(username);;
             request.forEach(authorization
                     -> {
                 try {
-                    this.getAuthorizationManager().getUserAuthorizations(username);
-                    this.getAuthorizationManager().addUserAuthorization(username, authorization.getGroup(), authorization.getRole());
+                    if (!this.getAuthorizationManager().isAuthOnGroupAndRole(user, authorization.getGroup(), authorization.getRole(), true)) {
+                        this.getAuthorizationManager().addUserAuthorization(username, authorization.getGroup(), authorization.getRole());
+                    }
                 } catch (ApsSystemException ex) {
-                    throw new RuntimeException(ex);
+                    logger.error("Error in add authorities for {}", username, ex);
+                    throw new RestServerError("Error in add authorities", ex);
                 }
                 authorizations.add(new UserAuthorityDto(authorization.getGroup(), authorization.getRole()));
             });
-        } catch (RuntimeException e) {
-            logger.error("Error in delete authorities for {}", username, e);
-            throw new RestServerError("Error in delete authorities", e);
+            return authorizations;
+        } catch (ApsSystemException ex) {
+            logger.error("Error in add authorities for {}", username, ex);
+            throw new RestServerError("Error in add authorities", ex);
         }
-        return authorizations;
     }
 
     @Override

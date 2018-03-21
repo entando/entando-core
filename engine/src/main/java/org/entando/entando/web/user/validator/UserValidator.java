@@ -12,7 +12,6 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
-import org.entando.entando.web.user.model.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -64,14 +63,11 @@ public class UserValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> paramClass) {
-        return UserRequest.class.equals(paramClass) || UserAuthoritiesRequest.class.equals(paramClass);
+        return UserAuthoritiesRequest.class.equals(paramClass);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        if (target instanceof UserRequest) {
-
-        }
         if (target instanceof UserAuthoritiesRequest) {
             UserAuthoritiesRequest request = (UserAuthoritiesRequest) target;
             validateGroupsAndRoles(request, errors);

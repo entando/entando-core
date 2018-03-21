@@ -1,6 +1,10 @@
 package org.entando.entando.web.group;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.group.IGroupService;
@@ -25,6 +29,99 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
     @Autowired
     private IGroupService groupService;
+
+    @Autowired
+    private IGroupManager groupManager;
+
+    @Test
+    public void testGetGroupsPagination() throws Exception {
+        List<Group> testGroups = new ArrayList<>();
+        try {
+            for (int i = 0; i < 25; i++) {
+                String x = ("tmp_" + i);
+                Group group = new Group();
+                group.setDescription(x);
+                group.setName(x);
+                testGroups.add(group);
+                this.groupManager.addGroup(group);
+            }
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc.perform(
+                                                   get("/groups")
+                                                   .param("pageSize", "5")
+                                                   .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isOk());
+
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(jsonPath("$.metadata.pageSize", is(5)));
+            result.andExpect(jsonPath("$.metadata.count", is(31)));
+            result.andExpect(jsonPath("$.metadata.page", is(1)));
+            result.andExpect(jsonPath("$.metadata.lastPage", is(7)));
+            result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
+
+            //-------------
+
+            result = mockMvc.perform(
+                                     get("/groups")
+                                     .param("pageSize", "5")
+                                     .param("page", "1")
+                                     .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isOk());
+
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(jsonPath("$.metadata.pageSize", is(5)));
+            result.andExpect(jsonPath("$.metadata.count", is(31)));
+            result.andExpect(jsonPath("$.metadata.page", is(1)));
+            result.andExpect(jsonPath("$.metadata.lastPage", is(7)));
+            result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
+
+
+            //-------------
+
+            result = mockMvc.perform(
+                                     get("/groups")
+                                     .param("pageSize", "5")
+                                     .param("page", "7")
+                                     .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isOk());
+
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(jsonPath("$.metadata.pageSize", is(1)));
+            result.andExpect(jsonPath("$.metadata.count", is(31)));
+            result.andExpect(jsonPath("$.metadata.page", is(7)));
+            result.andExpect(jsonPath("$.metadata.lastPage", is(7)));
+            result.andExpect(jsonPath("$.payload[0].code", is("tmp_9")));
+
+            //-------------
+
+            result = mockMvc.perform(
+                                     get("/groups")
+                                     .param("pageSize", "0")
+                                     .param("page", "7")
+                                     .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isOk());
+
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(jsonPath("$.metadata.pageSize", is(31)));
+            result.andExpect(jsonPath("$.metadata.count", is(31)));
+            result.andExpect(jsonPath("$.metadata.page", is(1)));
+            result.andExpect(jsonPath("$.metadata.lastPage", is(1)));
+            result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
+
+
+        } finally {
+            for (Group group : testGroups) {
+                this.groupManager.removeGroup(group);
+            }
+        }
+    }
 
     @Test
     public void testGetGroupsSort() throws Exception {

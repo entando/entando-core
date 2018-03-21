@@ -28,6 +28,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -56,7 +57,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
 
     @Test
-    public void should_load_the_list_of_groups() throws Exception {
+    public void testSeachGroups() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
@@ -75,7 +76,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
     }
 
     @Test
-    public void should_load_the_list_of_groups_2() throws Exception {
+    public void testSearchGroupsWithFilters() throws Exception {
 
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -101,7 +102,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
 
     @Test
-    public void should_be_unauthorized() throws Exception {
+    public void testValidatePermission() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
                 .withGroup(Group.FREE_GROUP_NAME)
                 .build();
@@ -117,7 +118,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
 
     @Test
-    public void should_validate_put_path_mismatch() throws ApsSystemException, Exception {
+    public void testValidateOnUpdateWithInvalidPathAndPayload() throws ApsSystemException, Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
@@ -139,7 +140,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
     }
 
     @Test
-    public void should_validate_delete_reserved_groups() throws ApsSystemException, Exception {
+    public void testValidateOnDeleteReservedGroups() throws ApsSystemException, Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
@@ -184,4 +185,23 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
     }
 
+    @Test
+    public void testDeleteGroup() throws Exception {
+        String code = "group_to_delete";
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        doNothing().when(groupService).removeGroup(Mockito.anyString());
+
+        ResultActions result = mockMvc.perform(
+                                               delete("/groups/{code}", code)
+                                                                                   .header("Authorization", "Bearer " + accessToken));
+
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
+        result
+            .andExpect(status().isOk())
+              .andExpect(jsonPath("$.payload.code", is(code)));
+
+
+    }
 }

@@ -129,6 +129,11 @@
         <property name="langManager" ref="LangManager" />
     </bean>
 
+    <bean id="LabelService" class="org.entando.entando.aps.system.services.label.LabelService" >
+        <property name="langManager" ref="LangManager" />
+        <property name="i18nManager" ref="I18nManager"></property>
+    </bean>
+
     <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
     
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >

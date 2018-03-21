@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.dataobject.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 
@@ -21,7 +22,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
  */
 public class DataTypesBodyResponse {
 
-    private List<DataTypeDto> dataTypes;
+    private List<DataTypeDto> dataTypes = new ArrayList<>();
 
     public DataTypesBodyResponse() {
     }

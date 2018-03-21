@@ -8,9 +8,8 @@ public class FrameDto {
 
     private String description;
     private boolean mainFrame;
-    private DefaultWidgetDto defaultWidget;
-    private FrameSketch sketch;
-
+    private DefaultWidgetDto defaultWidget = new DefaultWidgetDto();
+    private FrameSketch sketch = new FrameSketch();
 
     public int getPos() {
         return pos;

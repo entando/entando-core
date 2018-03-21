@@ -39,7 +39,7 @@ public class PageModelDtoTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writer().writeValueAsString(dto);
 
-        String actual = "{\"code\":\"code\",\"description\":\"description\",\"mainFrame\":-1,\"pluginCode\":null,\"template\":null,\"configuration\":{\"frames\":[{\"pos\":0,\"description\":\"description\",\"mainFrame\":false,\"defaultWidget\":null,\"sketch\":null}]}}";
+        String actual = "{\"code\":\"code\",\"description\":\"description\",\"mainFrame\":-1,\"pluginCode\":null,\"template\":null,\"configuration\":{\"frames\":[{\"pos\":0,\"description\":\"description\",\"mainFrame\":false,\"defaultWidget\":{\"code\":null,\"properties\":{}},\"sketch\":{\"x1\":0,\"y1\":0,\"x2\":0,\"y2\":0}}]}}";
         assertThat(json, is(actual));
     }
 }

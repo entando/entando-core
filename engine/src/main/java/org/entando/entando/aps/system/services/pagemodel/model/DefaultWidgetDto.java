@@ -1,11 +1,12 @@
 package org.entando.entando.aps.system.services.pagemodel.model;
 
+import com.agiletec.aps.util.ApsProperties;
 import java.util.Properties;
 
 public class DefaultWidgetDto {
 
     private String code;
-    private Properties properties;
+    private Properties properties = new ApsProperties();
 
     public String getCode() {
         return code;

@@ -17,10 +17,10 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.entando.entando.web.category.CategoryControllerIntegrationTest;
+import org.entando.entando.web.category.CategoryControllerTest;
 import org.entando.entando.web.dataobject.DataTypeControllerIntegrationTest;
 import org.entando.entando.web.dataobject.DataTypeControllerTest;
-import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
-import org.entando.entando.web.userprofile.ProfileTypeControllerTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
 import org.entando.entando.web.entity.EntityManagerControllerTest;
 import org.entando.entando.web.group.GroupControllerIntegrationTest;
@@ -34,6 +34,8 @@ import org.entando.entando.web.page.PageControllerTest;
 import org.entando.entando.web.pagemodel.PageModelControllerTest;
 import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
 import org.entando.entando.web.system.ReloadConfigurationControllerTest;
+import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
+import org.entando.entando.web.userprofile.ProfileTypeControllerTest;
 
 public class ControllersAllTests extends TestCase {
 
@@ -61,6 +63,9 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(CategoryControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(CategoryControllerTest.class));
 
         return suite;
     }

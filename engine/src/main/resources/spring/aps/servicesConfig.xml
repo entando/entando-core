@@ -130,5 +130,9 @@
     </bean>
     
     <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
+	
+    <bean id="CategoryService" class="org.entando.entando.aps.system.services.category.CategoryService" >
+        <property name="categoryManager" ref="CategoryManager" />
+    </bean>
     
 </beans>

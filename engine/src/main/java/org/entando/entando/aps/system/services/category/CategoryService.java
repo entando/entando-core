@@ -14,18 +14,22 @@
 package org.entando.entando.aps.system.services.category;
 
 import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.category.validator.CategoryValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author E.Santoboni
@@ -35,6 +39,8 @@ public class CategoryService implements ICategoryService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ICategoryManager categoryManager;
+    @Autowired
+    private List<CategoryUtilizer> categoryUtilizers;
 
     protected IDtoBuilder<Category, CategoryDto> getDtoBuilder() {
         return new DtoBuilder<Category, CategoryDto>() {
@@ -67,17 +73,34 @@ public class CategoryService implements ICategoryService {
         if (null == category) {
             throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryCode);
         }
-        CategoryDto dto = this.getDtoBuilder().convert(category);
-
+        CategoryDto dto = null;
+        try {
+            dto = this.getDtoBuilder().convert(category);
+            for (CategoryUtilizer categoryUtilizer : this.getCategoryUtilizers()) {
+                Map.Entry<String, List> entry = categoryUtilizer.getCategoryUtilizersForApi(categoryCode);
+                dto.getReferences().put(entry.getKey(), entry.getValue());
+            }
+        } catch (Exception e) {
+            logger.error("error extracting category " + categoryCode, e);
+            throw new RestServerError("error extracting category " + categoryCode, e);
+        }
         return dto;
     }
 
-    public ICategoryManager getCategoryManager() {
+    protected ICategoryManager getCategoryManager() {
         return categoryManager;
     }
 
     public void setCategoryManager(ICategoryManager categoryManager) {
         this.categoryManager = categoryManager;
+    }
+
+    protected List<CategoryUtilizer> getCategoryUtilizers() {
+        return categoryUtilizers;
+    }
+
+    public void setCategoryUtilizers(List<CategoryUtilizer> categoryUtilizers) {
+        this.categoryUtilizers = categoryUtilizers;
     }
 
 }

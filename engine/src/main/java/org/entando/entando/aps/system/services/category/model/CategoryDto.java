@@ -31,6 +31,7 @@ public class CategoryDto {
     private String parentCode;
     private Map<String, String> titles = new HashMap<>();
     private List<String> children = new ArrayList<>();
+    private Map<String, List> references = new HashMap<>();
 
     public CategoryDto() {
     }
@@ -83,6 +84,14 @@ public class CategoryDto {
 
     public void addChild(String child) {
         this.children.add(child);
+    }
+
+    public Map<String, List> getReferences() {
+        return references;
+    }
+
+    public void setReferences(Map<String, List> references) {
+        this.references = references;
     }
 
     public static String getEntityFieldName(String dtoFieldName) {

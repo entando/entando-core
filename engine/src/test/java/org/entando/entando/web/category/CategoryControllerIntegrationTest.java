@@ -55,7 +55,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     }
 
     @Test
-    public void testGetValidCategory() throws Exception {
+    public void testGetValidCategoryTree() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -67,7 +67,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     }
 
     @Test
-    public void testGetInvalidCategory() throws Exception {
+    public void testGetInvalidCategoryTree() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -77,6 +77,29 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
     }
+
+    @Test
+    public void testGetValidCategory() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/categories/{categoryCode}", new Object[]{"cat1"})
+                        .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetInvalidCategory() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/categories/{categoryCode}", new Object[]{"invalid_code"})
+                        .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isNotFound());
+    }
+
     /*
     @Test
     public void testAddUpdateDataType_1() throws Exception {

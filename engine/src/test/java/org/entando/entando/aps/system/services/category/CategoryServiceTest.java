@@ -14,7 +14,6 @@
 package org.entando.entando.aps.system.services.category;
 
 import com.agiletec.aps.system.services.category.ICategoryManager;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +38,13 @@ public class CategoryServiceTest {
     }
 
     @Test(expected = RestRourceNotFoundException.class)
-    public void getTreeWithInvalidParent() throws JsonProcessingException {
+    public void getTreeWithInvalidParent() {
+        when(categoryManager.getCategory(ArgumentMatchers.anyString())).thenReturn(null);
+        this.categoryService.getTree("some_code");
+    }
+
+    @Test(expected = RestRourceNotFoundException.class)
+    public void getInvalidCategory() {
         when(categoryManager.getCategory(ArgumentMatchers.anyString())).thenReturn(null);
         this.categoryService.getTree("some_code");
     }

@@ -23,4 +23,6 @@ public interface ICategoryService {
 
     public List<CategoryDto> getTree(String parentCode);
 
+    public CategoryDto getCategory(String categoryCode);
+
 }

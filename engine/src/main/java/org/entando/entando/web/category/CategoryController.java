@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -84,21 +85,18 @@ public class CategoryController {
         metadata.put("parentCode", parentCode);
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-    /*
+
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/{pageCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
-        logger.debug("getting page {}", pageCode);
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
-        }
-        PageDto page = this.getPageService().getPage(pageCode, status);
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("status", status);
-        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
+    @RequestMapping(value = "/{categoryCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getCategory(@PathVariable String categoryCode) {
+        logger.debug("getting category {}", categoryCode);
+        CategoryDto page = this.getCategoryService().getCategory(categoryCode);
+        //Map<String, String> metadata = new HashMap<>();
+        //metadata.put("status", status);
+        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), null), HttpStatus.OK);
     }
-     */
- /*
+
+    /*
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {

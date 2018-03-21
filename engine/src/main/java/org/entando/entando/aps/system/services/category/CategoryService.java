@@ -61,6 +61,17 @@ public class CategoryService implements ICategoryService {
         return res;
     }
 
+    @Override
+    public CategoryDto getCategory(String categoryCode) {
+        Category category = this.getCategoryManager().getCategory(categoryCode);
+        if (null == category) {
+            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryCode);
+        }
+        CategoryDto dto = this.getDtoBuilder().convert(category);
+
+        return dto;
+    }
+
     public ICategoryManager getCategoryManager() {
         return categoryManager;
     }

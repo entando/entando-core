@@ -32,7 +32,7 @@ public class RestListRequest {
 
     private String direction = DIRECTION_VALUE_DEFAULT;
 
-    private Integer page = 0;
+    private Integer page = 1;
     private Integer pageSize = PAGE_SIZE_DEFAULT;
 
     private Filter[] filter;
@@ -141,7 +141,7 @@ public class RestListRequest {
     }
 
     private Integer getOffset() {
-        int page = this.getPage();
+        int page = this.getPage() - 1;
         if (null == this.getPage() || this.getPage() == 0) {
             return 0;
         }

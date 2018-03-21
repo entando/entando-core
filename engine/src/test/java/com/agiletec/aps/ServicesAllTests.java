@@ -18,6 +18,7 @@ import org.entando.entando.aps.system.services.page.PageServiceWidgetIntegration
 import org.entando.entando.aps.system.services.pagemodel.PageModelDtoTest;
 import org.entando.entando.aps.system.services.pagemodel.PageModelServiceTest;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsServiceIntegrationTest;
+import org.entando.entando.web.common.EntandoMessageCodesResolverTest;
 
 public class ServicesAllTests extends TestCase {
 
@@ -40,6 +41,7 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(PageServiceWidgetIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(DataObjectServiceTest.class));
 
+        suite.addTest(new JUnit4TestAdapter(EntandoMessageCodesResolverTest.class));
         return suite;
     }
 

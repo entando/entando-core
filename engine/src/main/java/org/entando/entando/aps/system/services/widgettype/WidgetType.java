@@ -240,7 +240,7 @@ public class WidgetType implements Serializable, GroupUtilizerEntry {
 	}
 
     @Override
-    public String getId() {
+    public String getUtilizerId() {
         return this.getCode();
     }
 

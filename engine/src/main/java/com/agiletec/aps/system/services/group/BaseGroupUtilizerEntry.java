@@ -3,21 +3,21 @@ package com.agiletec.aps.system.services.group;
 
 public class BaseGroupUtilizerEntry implements GroupUtilizerEntry {
 
-    private String id;
+    private String utilizerId;
 
     public BaseGroupUtilizerEntry() {}
 
     public BaseGroupUtilizerEntry(String id) {
-        this.id = id;
+        this.utilizerId = id;
     }
 
-    @Override
-    public String getId() {
-        return id;
+    public String getUtilizerId() {
+        return utilizerId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUtilizerId(String utilizerId) {
+        this.utilizerId = utilizerId;
     }
+
 }
 

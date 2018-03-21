@@ -31,7 +31,7 @@ import com.agiletec.aps.util.ApsProperties;
 public class Page extends TreeNode implements IPage, Serializable {
 
     @Override
-    public String getId() {
+    public String getUtilizerId() {
         return this.getCode();
     }
 

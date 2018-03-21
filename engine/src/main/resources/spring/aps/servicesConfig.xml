@@ -17,61 +17,61 @@
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
 
-	<!-- === WIDGET VALIDATORS === -->
+    <!-- === WIDGET VALIDATORS === -->
 
-	<bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory" />
-
-
-	<bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
-		<property name="contentManager" ref="jacmsContentManager" />
-	</bean>
-	
-	<bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.AbstractListViewerWidgetValidator">
-		<property name="langManager" ref="LangManager" />
-		<property name="pageManager" ref="PageManager" />
-	</bean>
-
-	<bean id="RowContentListViewerWidgetValidator" parent="AbstractListViewerWidgetValidator"
-			class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerWidgetValidator" >
-		<property name="contentManager" ref="jacmsContentManager" />	
-	</bean>
-
-	<bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
-			class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentListViewerWidgetValidator">
-		<property name="widgetTypeManager" ref="WidgetTypeManager" />
-		<property name="contentManager" ref="jacmsContentManager" />	
-	</bean>
+    <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory" />
 
 
-	<!-- === WIDGET PROCESSORS === -->
-		
-	<bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetProcessorFactory" />
+    <bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
+        <property name="contentManager" ref="jacmsContentManager" />
+    </bean>
 
-	<bean id="RowContentListViewerConfigProcessor" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerConfigProcessor" />
+    <bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.AbstractListViewerWidgetValidator">
+        <property name="langManager" ref="LangManager" />
+        <property name="pageManager" ref="PageManager" />
+    </bean>
+
+    <bean id="RowContentListViewerWidgetValidator" parent="AbstractListViewerWidgetValidator"
+          class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerWidgetValidator" >
+        <property name="contentManager" ref="jacmsContentManager" />
+    </bean>
+
+    <bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
+          class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentListViewerWidgetValidator">
+        <property name="widgetTypeManager" ref="WidgetTypeManager" />
+        <property name="contentManager" ref="jacmsContentManager" />
+    </bean>
 
 
-	<!-- === BUILDERS === -->
+    <!-- === WIDGET PROCESSORS === -->
+
+    <bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetProcessorFactory" />
+
+    <bean id="RowContentListViewerConfigProcessor" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerConfigProcessor" />
+
+
+    <!-- === BUILDERS === -->
 
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
-    
+
     <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widget.model.WidgetDtoBuilder" />
-    
+
     <bean id="PageSettingsDtoBuilder" class="org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDtoBuilder" />
-    
+
     <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" />
-    
+
     <bean id="PageModelDtoBuilder" class="org.entando.entando.aps.system.services.pagemodel.model.PageModelDtoBuilder" />
 
     <bean id="GuiFragmentDtoBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder">
-		<property name="widgetTypeManager" ref="WidgetTypeManager" />
-	</bean>
-    
+        <property name="widgetTypeManager" ref="WidgetTypeManager" />
+    </bean>
+
     <bean id="GuiFragmentDtoSmallBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmallBuilder">
-		<property name="widgetTypeManager" ref="WidgetTypeManager" />
-	</bean>
+        <property name="widgetTypeManager" ref="WidgetTypeManager" />
+    </bean>
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
-	
+
     <!-- === WIDGET SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
@@ -96,12 +96,12 @@
         <property name="widgetValidatorFactory" ref="WidgetValidatorFactory" />
         <property name="widgetProcessorFactory" ref="WidgetProcessorFactory" />
     </bean>
-  
+
     <bean id="WidgetService" class="org.entando.entando.aps.system.services.widget.WidgetService" >
         <property name="dtoBuilder" ref="WidgetDtoBuilder" />
         <property name="widgetManager" ref="WidgetTypeManager" />
     </bean>
-	
+
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >
         <property name="dtoBuilder" ref="GuiFragmentDtoBuilder" />
         <property name="dtoSmallBuilder" ref="GuiFragmentDtoSmallBuilder" />
@@ -111,7 +111,7 @@
     <bean id="PageModelService" class="org.entando.entando.aps.system.services.pagemodel.PageModelService" >
         <property name="dtoBuilder" ref="PageModelDtoBuilder" />
         <property name="pageModelManager" ref="PageModelManager" />
-    </bean>	
+    </bean>
 
     <bean id="DataObjectModelService" class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelService" >
         <property name="dtoBuilder" ref="DataObjectModelBuilder" />
@@ -119,16 +119,18 @@
     </bean>
 
     <bean id="EntityManagerService" class="org.entando.entando.aps.system.services.entity.EntityManagerService" />
-	
-	<bean id="DataObjectService" class="org.entando.entando.aps.system.services.dataobject.DataObjectService" >
+
+    <bean id="DataObjectService" class="org.entando.entando.aps.system.services.dataobject.DataObjectService" >
         <property name="pageManager" ref="PageManager" />
         <property name="dataObjectModelManager" ref="DataObjectModelManager" />
     </bean>
-	
+
     <bean id="LanguageService" class="org.entando.entando.aps.system.services.language.LanguageService" >
         <property name="langManager" ref="LangManager" />
     </bean>
 
+    <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
+    
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>

@@ -36,9 +36,11 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
+import java.util.AbstractMap;
 import java.util.Set;
 import org.entando.entando.aps.system.services.dataobject.event.PublicDataChangedEvent;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.model.DataObjectCategoryReferenceDto;
 import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
 import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
 
@@ -458,14 +460,25 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     }
 
     @Override
-    public List getCategoryUtilizers(String resourceId) throws ApsSystemException {
+    public List<String> getCategoryUtilizers(String categoryCode) throws ApsSystemException {
         List<String> dataIds = null;
         try {
-            dataIds = this.getDataObjectDAO().getCategoryUtilizers(resourceId);
+            dataIds = this.getDataObjectDAO().getCategoryUtilizers(categoryCode);
         } catch (Throwable t) {
-            throw new ApsSystemException("Error while loading referenced dataobjects : category " + resourceId, t);
+            throw new ApsSystemException("Error while loading referenced dataobjects : category " + categoryCode, t);
         }
         return dataIds;
+    }
+
+    @Override
+    public Map.Entry<String, List> getCategoryUtilizersForApi(String categoryCode) throws ApsSystemException {
+        List<String> dataIds = this.getCategoryUtilizers(categoryCode);
+        List<DataObjectCategoryReferenceDto> dtos = new ArrayList<>();
+        for (String dataId : dataIds) {
+            DataObjectRecordVO vo = this.loadDataObjectVO(dataId);
+            dtos.add(new DataObjectCategoryReferenceDto(vo));
+        }
+        return new AbstractMap.SimpleEntry("dataObjects", dtos);
     }
 
     @Override

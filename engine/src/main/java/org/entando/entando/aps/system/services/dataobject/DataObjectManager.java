@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.dataobject;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,10 +20,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
 import com.agiletec.aps.system.common.entity.IEntityDAO;
@@ -34,13 +32,16 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
+import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
-import java.util.Set;
 import org.entando.entando.aps.system.services.dataobject.event.PublicDataChangedEvent;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
 import org.entando.entando.aps.system.services.dataobject.model.SmallDataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DataObjects manager. This implements all the methods needed to create and
@@ -492,14 +493,20 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     }
 
     @Override
-    public List getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<String> dataIds = null;
         try {
             dataIds = this.getDataObjectDAO().getGroupUtilizers(groupName);
+            if (null != dataIds) {
+                List<UtilizerEntry> list = new ArrayList<>();
+                dataIds.stream().forEach(i -> list.add(new BaseGroupUtilizerEntry(i)));
+                return list;
+            }
+            return null;
         } catch (Throwable t) {
             throw new ApsSystemException("Error while loading referenced dataobjects : group " + groupName, t);
         }
-        return dataIds;
+
     }
 
     @Override

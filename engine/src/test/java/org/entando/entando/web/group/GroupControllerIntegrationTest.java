@@ -211,4 +211,20 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
     }
 
+    @Test
+    public void testGetGroupDetails() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        ResultActions result = mockMvc.perform(
+                                               get("/groups/{code}", Group.FREE_GROUP_NAME)
+
+                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                           .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.references.length()", is(5)));
+    }
+
+
 }

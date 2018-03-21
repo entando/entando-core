@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 
 /**
@@ -37,6 +38,6 @@ public interface IGroupActionHelper {
 	 * @return La mappa della lista di oggetti referenzianti.
 	 * @throws ApsSystemException In caso di errore.
 	 */
-	public Map<String, List<Object>> getReferencingObjects(Group group, HttpServletRequest request) throws ApsSystemException;
+    public Map<String, List<UtilizerEntry>> getReferencingObjects(Group group, HttpServletRequest request) throws ApsSystemException;
 	
 }

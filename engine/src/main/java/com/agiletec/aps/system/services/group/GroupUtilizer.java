@@ -35,6 +35,6 @@ public interface GroupUtilizer {
 	 * @return The list of the objects members of the given group.
 	 * @throws ApsSystemException In case of error
 	 */
-	public List getGroupUtilizers(String groupName) throws ApsSystemException;
+    public List<GroupUtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException;
 	
 }

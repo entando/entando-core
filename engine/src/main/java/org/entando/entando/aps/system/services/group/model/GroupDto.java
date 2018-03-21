@@ -13,7 +13,13 @@
  */
 package org.entando.entando.aps.system.services.group.model;
 
+import java.util.List;
+import java.util.Map;
+
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
 public class GroupDto {
@@ -21,9 +27,13 @@ public class GroupDto {
     private String code;
     private String name;
 
+    @JsonInclude(Include.NON_NULL)
+    private Map<String, List<GroupUtilizerEntry>> references;
+
     public GroupDto() {
 
     }
+
 
     public GroupDto(String code, String name) {
         this.code = code;
@@ -60,6 +70,14 @@ public class GroupDto {
             default:
                 return dtoFieldName;
         }
+    }
+
+    public Map<String, List<GroupUtilizerEntry>> getReferences() {
+        return references;
+    }
+
+    public void setReferences(Map<String, List<GroupUtilizerEntry>> references) {
+        this.references = references;
     }
 
 }

@@ -25,6 +25,8 @@ import org.entando.entando.web.group.GroupControllerIntegrationTest;
 import org.entando.entando.web.group.GroupControllerUnitTest;
 import org.entando.entando.web.guifragment.GuiFragmentControllerTest;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidatorTest;
+import org.entando.entando.web.label.LabelControllerIntegrationTest;
+import org.entando.entando.web.label.LabelControllerUnitTest;
 import org.entando.entando.web.language.LanguageControllerIntegrationTest;
 import org.entando.entando.web.language.LanguageControllerUnitTest;
 import org.entando.entando.web.page.PageConfigurationControllerIntegrationTest;
@@ -57,6 +59,9 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(LanguageControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(LanguageControllerUnitTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(LabelControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(LabelControllerUnitTest.class));
 
         suite.addTest(new JUnit4TestAdapter(DataTypeControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(DataTypeControllerTest.class));

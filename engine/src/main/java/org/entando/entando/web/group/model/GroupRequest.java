@@ -4,10 +4,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-/**
- * group add payload 
- *
- */
+
 public class GroupRequest {
 
     @Size(max = 20, message = "string.size.invalid")

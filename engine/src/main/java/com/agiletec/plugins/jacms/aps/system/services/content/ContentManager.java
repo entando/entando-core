@@ -32,9 +32,9 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
@@ -557,12 +557,12 @@ public class ContentManager extends ApsEntityManager
     }
 
     @Override
-    public List<GroupUtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<String> contentIds = null;
         try {
             contentIds = this.getContentDAO().getGroupUtilizers(groupName);
             if (null != contentIds) {
-                List<GroupUtilizerEntry> list = new ArrayList<>();
+                List<UtilizerEntry> list = new ArrayList<>();
                 contentIds.stream().forEach(i -> list.add(new BaseGroupUtilizerEntry(i)));
                 return list;
             }

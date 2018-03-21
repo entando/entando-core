@@ -24,10 +24,10 @@ import java.util.Set;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.role.IRoleManager;
@@ -714,10 +714,10 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     }
 
     @Override
-    public List<GroupUtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<String> users = this.getUsersByGroup(groupName, false);
         if (null != users) {
-            List<GroupUtilizerEntry> list = new ArrayList<>();
+            List<UtilizerEntry> list = new ArrayList<>();
             users.stream().forEach(i -> list.add(new BaseGroupUtilizerEntry(i)));
             return list;
         }

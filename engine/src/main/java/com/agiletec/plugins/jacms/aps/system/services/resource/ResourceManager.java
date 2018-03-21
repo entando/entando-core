@@ -32,9 +32,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.plugins.jacms.aps.system.services.resource.cache.IResourceManagerCacheWrapper;
@@ -439,13 +439,13 @@ public class ResourceManager extends AbstractService implements IResourceManager
     }
     
 	@Override
-    public List<GroupUtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
     	try {
 	    	List<String> allowedGroups = new ArrayList<String>(1);
 	    	allowedGroups.add(groupName);
 	    	List<String> resources = this.getResourceDAO().searchResourcesId(null, null, null, null, allowedGroups);
 	    	if (null != resources) {
-                List<GroupUtilizerEntry> resourcesId = new ArrayList<>();
+                List<UtilizerEntry> resourcesId = new ArrayList<>();
                 resources.stream().forEach(i -> resourcesId.add(new BaseGroupUtilizerEntry(i)));
                 return resourcesId;
 	    	}

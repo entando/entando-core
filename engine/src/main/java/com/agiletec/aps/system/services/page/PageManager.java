@@ -22,9 +22,9 @@ import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
 import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
 import com.agiletec.aps.system.services.lang.events.LangsChangedObserver;
 import com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper;
@@ -479,7 +479,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 	@SuppressWarnings("rawtypes")
 	@Override
-    public List<GroupUtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<IPage> pageUtilizers = new ArrayList<IPage>();
 		try {
 			IPage root = this.getDraftRoot();
@@ -498,7 +498,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw new ApsSystemException(message, t);
 		}
 
-        List<GroupUtilizerEntry> utilizers = new ArrayList<>();
+        List<UtilizerEntry> utilizers = new ArrayList<>();
         if (null != pageUtilizers) {
             pageUtilizers.stream().forEach(i -> utilizers.add(i));
         }

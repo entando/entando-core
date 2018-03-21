@@ -1,6 +1,7 @@
 package org.entando.entando.web.group;
 
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.group.IGroupService;
@@ -25,6 +26,9 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
     @Autowired
     private IGroupService groupService;
+
+    @Autowired
+    private IGroupManager groupManager;
 
     @Test
     public void testGetGroupsSort() throws Exception {
@@ -122,5 +126,21 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_GROUP_NOT_FOUND)));
 
     }
+
+    @Test
+    public void testGetGroupDetails() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        ResultActions result = mockMvc.perform(
+                                               get("/groups/{code}", Group.FREE_GROUP_NAME)
+
+                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                           .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.references.length()", is(5)));
+    }
+
 
 }

@@ -32,9 +32,9 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import org.entando.entando.aps.system.services.dataobject.event.PublicDataChangedEvent;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
@@ -493,12 +493,12 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     }
 
     @Override
-    public List<GroupUtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<String> dataIds = null;
         try {
             dataIds = this.getDataObjectDAO().getGroupUtilizers(groupName);
             if (null != dataIds) {
-                List<GroupUtilizerEntry> list = new ArrayList<>();
+                List<UtilizerEntry> list = new ArrayList<>();
                 dataIds.stream().forEach(i -> list.add(new BaseGroupUtilizerEntry(i)));
                 return list;
             }

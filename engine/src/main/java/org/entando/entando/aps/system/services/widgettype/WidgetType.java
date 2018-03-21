@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
@@ -28,7 +28,7 @@ import com.agiletec.aps.util.ApsProperties;
  *
  * @author M.Diana - E.Santoboni
  */
-public class WidgetType implements Serializable, GroupUtilizerEntry {
+public class WidgetType implements Serializable, UtilizerEntry {
 
 	@Override
 	public WidgetType clone() {

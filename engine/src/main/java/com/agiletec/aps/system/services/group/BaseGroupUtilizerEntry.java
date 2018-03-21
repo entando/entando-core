@@ -1,7 +1,8 @@
 package com.agiletec.aps.system.services.group;
 
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 
-public class BaseGroupUtilizerEntry implements GroupUtilizerEntry {
+public class BaseGroupUtilizerEntry implements UtilizerEntry {
 
     private String utilizerId;
 

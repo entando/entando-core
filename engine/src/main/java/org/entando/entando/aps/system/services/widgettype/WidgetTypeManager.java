@@ -21,9 +21,9 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
 import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
 import com.agiletec.aps.system.services.lang.events.LangsChangedObserver;
 import com.agiletec.aps.util.ApsProperties;
@@ -219,8 +219,8 @@ public class WidgetTypeManager extends AbstractService
 	}
 
 	@Override
-    public List<GroupUtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
-        List<GroupUtilizerEntry> utilizers = null;
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+        List<UtilizerEntry> utilizers = null;
 		try {
 			boolean freeTypes = (null == groupName || groupName.equals(Group.FREE_GROUP_NAME));
 			List<WidgetType> allTypes = this.getWidgetTypes();
@@ -229,7 +229,7 @@ public class WidgetTypeManager extends AbstractService
 				String typeGroup = type.getMainGroup();
 				if ((freeTypes && null == typeGroup) || groupName.equals(typeGroup)) {
 					if (null == utilizers) {
-                        utilizers = new ArrayList<GroupUtilizerEntry>();
+                        utilizers = new ArrayList<UtilizerEntry>();
 					}
 					utilizers.add(type);
 				}

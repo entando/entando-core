@@ -17,13 +17,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
+import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
-import com.agiletec.aps.system.services.group.GroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -178,7 +180,7 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         }
         if (!bindingResult.hasErrors()) {
 
-            Map<String, List<GroupUtilizerEntry>> references = this.getReferencingObjects(group);
+            Map<String, List<UtilizerEntry>> references = this.getReferencingObjects(group);
             if (references.size() > 0) {
                 bindingResult.reject(GroupValidator.ERRCODE_GROUP_REFERENCES, new Object[]{group.getName(), references}, "group.cannot.delete.references");
             }
@@ -187,8 +189,8 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         return bindingResult;
     }
 
-    public Map<String, List<GroupUtilizerEntry>> getReferencingObjects(Group group) {
-        Map<String, List<GroupUtilizerEntry>> references = new HashMap<String, List<GroupUtilizerEntry>>();
+    public Map<String, List<UtilizerEntry>> getReferencingObjects(Group group) {
+        Map<String, List<UtilizerEntry>> references = new HashMap<String, List<UtilizerEntry>>();
         try {
             String[] defNames = applicationContext.getBeanNamesForType(GroupUtilizer.class);
             for (int i = 0; i < defNames.length; i++) {
@@ -201,9 +203,9 @@ public class GroupService implements IGroupService, ApplicationContextAware {
                 }
                 if (service != null) {
                     GroupUtilizer groupUtilizer = (GroupUtilizer) service;
-                    List<GroupUtilizerEntry> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
+                    List<UtilizerEntry> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
                     if (utilizers != null && !utilizers.isEmpty()) {
-                        references.put(groupUtilizer.getName() + "Utilizers", utilizers);
+                        references.put(groupUtilizer.getName(), utilizers.stream().map(u -> new BaseGroupUtilizerEntry(u.getUtilizerId())).collect(Collectors.toList()));
                     }
                 }
             }

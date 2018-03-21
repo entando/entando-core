@@ -1,7 +1,6 @@
 package org.entando.entando.aps.system.services.label;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,11 +45,11 @@ public class LabelDtoBuilder extends DtoBuilder<ApsProperties, LabelDto> {
         return dtoList;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected LabelDto toDto(String key, ApsProperties src) {
         LabelDto labelDto = new LabelDto();
         labelDto.setKey(key);
-        Map<String, String> languages = new HashMap<>();
-        src.entrySet().stream().forEach(e -> languages.put((String) e.getKey(), (String) e.getValue()));
+        Map<String, String> languages = (Map) src;
         labelDto.setTitles(languages);
         return labelDto;
     }

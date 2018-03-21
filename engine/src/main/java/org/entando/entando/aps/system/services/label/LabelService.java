@@ -138,7 +138,6 @@ public class LabelService implements ILabelService {
             if (validationResult.hasErrors()) {
                 throw new ValidationConflictException(validationResult);
             }
-
             String code = labelRequest.getKey();
             Properties languages = new Properties();
             languages.putAll(labelRequest.getTitles());
@@ -170,27 +169,20 @@ public class LabelService implements ILabelService {
 
     protected BeanPropertyBindingResult validateAddLabelGroup(LabelDto labelDto) {
         try {
-
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(labelDto, "labelGroup");
-
             String code = labelDto.getKey();
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
-
             if (null != labelGroup) {
                 bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_EXISTS, new String[]{code}, "labelGroup.code.already.present");
                 return bindingResult;
             }
-
             String defaultLang = this.getLangManager().getDefaultLang().getCode();
             if (!labelDto.getTitles().keySet().contains(defaultLang)) {
                 bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_DEFAULT_LANG_REQUIRED, new String[]{defaultLang}, "labelGroup.langs.defaultLang.required");
                 return bindingResult;
             }
-
             List<String> configuredLangs = this.getLangManager().getLangs().stream().map(i -> i.getCode()).collect(Collectors.toList());
-
             labelDto.getTitles().entrySet().forEach(i -> validateLangEntry(i, configuredLangs, defaultLang, bindingResult));
-
             return bindingResult;
 
         } catch (ApsSystemException t) {
@@ -208,7 +200,6 @@ public class LabelService implements ILabelService {
         if (currentLangCode.equals(defaultLangCode) && StringUtils.isBlank(entry.getValue())) {
             bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_TEXT_REQURED, new String[]{currentLangCode}, "labelGroup.langs.defaultLang.textRequired");
         }
-
     }
 
 }

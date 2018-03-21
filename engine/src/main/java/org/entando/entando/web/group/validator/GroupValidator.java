@@ -36,7 +36,6 @@ public class GroupValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> paramClass) {
-
 		return GroupRequest.class.equals(paramClass);
 	}
 

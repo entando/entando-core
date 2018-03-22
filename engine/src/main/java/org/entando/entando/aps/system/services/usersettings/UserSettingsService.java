@@ -57,9 +57,7 @@ public class UserSettingsService implements IUserSettingsService {
 
             Map<String, String> params = request.toMap();
             Map<String, String> systemParams = this.getSystemParams();
-            params.keySet().forEach((param) -> {
-                systemParams.put(param, params.get(param));
-            });
+            systemParams.putAll(params);
             String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
             String newXmlParams = SystemParamsUtils.getNewXmlParams(xmlParams, systemParams);
             this.getConfigManager().updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);

@@ -7,7 +7,6 @@ import org.entando.entando.aps.system.services.usersettings.IUserSettingsService
 import org.entando.entando.aps.system.services.usersettings.model.UserSettingsDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.usersettings.model.UserSettingsRequest;
 import org.slf4j.Logger;
@@ -41,14 +40,16 @@ public class UserSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUserSettings(RestListRequest requestList) {
+    public ResponseEntity<?> getUserSettings() {
+        logger.debug("loading user settings");
         UserSettingsDto userSettings = this.getUserSettingsService().getUserSettings();
         return new ResponseEntity<>(new RestResponse(userSettings), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePageSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> updateUserSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
+        logger.debug("updatinug user settings");
         //params validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

@@ -12,6 +12,16 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.DefaultMessageCodesResolver;
 import org.springframework.validation.MessageCodeFormatter;
 
+/**
+ * Extends the {@link DefaultMessageCodesResolver} in order to append a custom error code into the code array.
+ * <p>
+ * When and errorCode is found into <code>validationErrorCodeMapping</code> then the specific value is appended to the returned code array
+ * <p>
+ * The purpose in to translate {@link javax.validation.constraints} codes into custom codes
+ * 
+ * @author spuddu
+ *
+ */
 public class EntandoMessageCodesResolver extends DefaultMessageCodesResolver {
 
 

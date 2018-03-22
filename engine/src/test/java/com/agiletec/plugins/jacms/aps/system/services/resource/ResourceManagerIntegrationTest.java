@@ -21,6 +21,7 @@ import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.group.IGroupManager;
@@ -253,12 +254,12 @@ public class ResourceManagerIntegrationTest extends BaseTestCase {
     
     public void testGetGroupUtilizers() throws Throwable {
     	assertTrue(this._resourceManager instanceof GroupUtilizer);
-    	List utilizers = ((GroupUtilizer) this._resourceManager).getGroupUtilizers(Group.FREE_GROUP_NAME);
+        List<UtilizerEntry> utilizers = ((GroupUtilizer) this._resourceManager).getGroupUtilizers(Group.FREE_GROUP_NAME);
     	assertEquals(3, utilizers.size());
     	
     	utilizers = ((GroupUtilizer) this._resourceManager).getGroupUtilizers("customers");
     	assertEquals(1, utilizers.size());
-    	String resourceId = (String) utilizers.get(0);
+        String resourceId = utilizers.get(0).getUtilizerId();
     	assertEquals("82", resourceId);
     }
     

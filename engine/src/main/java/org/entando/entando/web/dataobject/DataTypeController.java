@@ -18,6 +18,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
@@ -143,7 +145,9 @@ public class DataTypeController {
     public ResponseEntity<?> deleteDataType(@PathVariable String dataTypeCode) throws ApsSystemException {
         logger.debug("Deleting data type -> " + dataTypeCode);
         this.getDataObjectService().deleteDataType(dataTypeCode);
-        return new ResponseEntity<>(new RestResponse(dataTypeCode), HttpStatus.OK);
+        Map<String, String> payload = new HashMap<>();
+        payload.put("code", dataTypeCode);
+        return new ResponseEntity<>(new RestResponse(payload), HttpStatus.OK);
     }
 
 }

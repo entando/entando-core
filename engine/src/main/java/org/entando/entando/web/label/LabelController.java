@@ -58,6 +58,7 @@ public class LabelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getLables(RestListRequest requestList) {
+        logger.debug("loading labels");
         PagedMetadata<LabelDto> result = this.getLabelService().getLabelGroups(requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }

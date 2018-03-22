@@ -3,10 +3,12 @@ package org.entando.entando.web.group;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.group.IGroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
@@ -227,4 +229,26 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
     }
 
 
+    @Test
+    public void testParamSize() throws ApsSystemException, Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        GroupRequest groupRequest = new GroupRequest();
+        groupRequest.setCode(StringUtils.repeat("a", 21));
+        groupRequest.setName(StringUtils.repeat("a", 51));
+
+        ObjectMapper mapper = new ObjectMapper();
+        String payload = mapper.writeValueAsString(groupRequest);
+
+        ResultActions result = mockMvc.perform(
+                                               post("/groups")
+                                                              .content(payload)
+                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                              .header("Authorization", "Bearer " + accessToken));
+
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isBadRequest());
+
+    }
 }

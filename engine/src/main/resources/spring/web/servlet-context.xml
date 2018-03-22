@@ -3,6 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
 	http://www.springframework.org/schema/context  
@@ -11,6 +12,7 @@
 	http://www.springframework.org/schema/tx/spring-tx.xsd
 	http://www.springframework.org/schema/mvc  
 	http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
 	">
 
 
@@ -18,7 +20,8 @@
 	<context:component-scan base-package="org.entando.entando.web.*" />
 	<context:annotation-config />
 
-	<mvc:annotation-driven conversion-service="conversionService">
+	<mvc:annotation-driven conversion-service="conversionService"
+		message-codes-resolver="messageCodesResolver">
 		<mvc:message-converters>
 			<bean id="jacksonMessageConverter" name="jacksonMessageConverter"
 				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
@@ -37,6 +40,24 @@
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="10485760" />
+	</bean>
+
+
+	<util:map id="validationCodesMapping" map-class="java.util.HashMap">
+		<entry key="NotNull">
+			<value>51</value>
+		</entry>
+		<entry key="Size">
+			<value>52</value>
+		</entry>
+		<entry key="Min">
+			<value>53</value>
+		</entry>
+	</util:map>
+
+	<bean id="messageCodesResolver"
+		class="org.entando.entando.web.common.EntandoMessageCodesResolver">
+		<property name="validationErrorCodeMapping" ref="validationCodesMapping" />
 	</bean>
 
 	<bean id="messageSource"
@@ -82,13 +103,14 @@
 			</set>
 		</property>
 	</bean>
-	
-		<bean id="entandoInterceptor"
-			class="org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor" />
+
+	<bean id="entandoInterceptor"
+		class="org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor" />
 	<mvc:interceptors>
-			<ref bean="entandoInterceptor"/>
+
+		<ref bean="entandoInterceptor" />
 	</mvc:interceptors>
-	
+
 </beans>
 
 

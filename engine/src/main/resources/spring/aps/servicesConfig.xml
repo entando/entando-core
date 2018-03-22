@@ -135,6 +135,11 @@
     </bean>
 
     <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
+
+    <bean id="UserSettingsService" class="org.entando.entando.aps.system.services.usersettings.UserSettingsService">
+    	<property name="configManager" ref="BaseConfigManager" />
+    </bean>
+    
     
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >
         <property name="authorizationManager" ref="AuthorizationManager" />

@@ -16,6 +16,7 @@ package com.agiletec.aps.system.services.group;
 import java.util.List;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 
 /**
  * Basic interface for those services whose handled elements are based on groups.
@@ -35,6 +36,6 @@ public interface GroupUtilizer {
 	 * @return The list of the objects members of the given group.
 	 * @throws ApsSystemException In case of error
 	 */
-	public List getGroupUtilizers(String groupName) throws ApsSystemException;
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException;
 	
 }

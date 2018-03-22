@@ -39,6 +39,7 @@ import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
@@ -163,6 +164,7 @@ public class PageService implements IPageService {
 
     @Override
     public PageDto addPage(PageRequest pageRequest) {
+        this.validateRequest(pageRequest);
         try {
             IPage page = this.createPage(pageRequest);
             this.getPageManager().addPage(page);
@@ -192,6 +194,7 @@ public class PageService implements IPageService {
         if (null == oldPage) {
             throw new RestRourceNotFoundException(null, "page", pageCode);
         }
+        this.validateRequest(pageRequest);
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
@@ -221,7 +224,7 @@ public class PageService implements IPageService {
     }
 
     @Override
-    public PageDto movePage(String pageCode, PageRequest pageRequest) {
+    public PageDto movePage(String pageCode, PagePositionRequest pageRequest) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
                 page = this.getPageManager().getDraftPage(pageCode);
         boolean moved = true;
@@ -400,9 +403,20 @@ public class PageService implements IPageService {
     }
 
     private void validateRequest(PageRequest request) {
-        if (request.getPageModel() == null) {
-            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+        if (this.getPageModelManager().getPageModel(request.getPageModel()) == null) {
+            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "pageModel", request.getPageModel());
         }
+        if (this.getPageManager().getDraftPage(request.getParentCode()) == null) {
+            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "parent", request.getParentCode());
+        }
+        if (this.getGroupManager().getGroup(request.getOwnerGroup()) == null) {
+            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "group", request.getOwnerGroup());
+        }
+        Optional.ofNullable(request.getJoinGroups()).ifPresent(groups -> groups.forEach(group -> {
+            if (this.getGroupManager().getGroup(group) == null) {
+                throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "joingroup", group);
+            }
+        }));
     }
 
 }

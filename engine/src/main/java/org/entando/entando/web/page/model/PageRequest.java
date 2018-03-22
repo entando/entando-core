@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -25,19 +25,21 @@ import javax.validation.constraints.NotNull;
  */
 public class PageRequest {
 
-    @NotNull(message = "page.code.NotBlank")
+    @NotBlank(message = "page.code.NotBlank")
     private String code;
     private String status;
     private boolean displayedInMenu;
+    @NotBlank(message = "pageModel.code.NotBlank")
     private String pageModel;
     private String charset;
     private String contentType;
+    @NotBlank(message = "parent.code.NotBlank")
     private String parentCode;
     private boolean seo;
     private Map<String, String> titles = new HashMap<>();
+    @NotBlank(message = "group.code.NotBlank")
     private String ownerGroup;
     private List<String> joinGroups = new ArrayList<>();
-    private int position;
 
     public String getCode() {
         return code;
@@ -127,17 +129,9 @@ public class PageRequest {
         this.joinGroups = joinGroups;
     }
 
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
     @Override
     public String toString() {
-        return "PageRequest{" + "code=" + code + ", status=" + status + ", displayedInMenu=" + displayedInMenu + ", pageModel=" + pageModel + ", charset=" + charset + ", contentType=" + contentType + ", parentCode=" + parentCode + ", seo=" + seo + ", titles=" + titles + ", ownerGroup=" + ownerGroup + ", joinGroups=" + joinGroups + ", position=" + position + '}';
+        return "PageRequest{" + "code=" + code + ", status=" + status + ", displayedInMenu=" + displayedInMenu + ", pageModel=" + pageModel + ", charset=" + charset + ", contentType=" + contentType + ", parentCode=" + parentCode + ", seo=" + seo + ", titles=" + titles + ", ownerGroup=" + ownerGroup + ", joinGroups=" + joinGroups + '}';
     }
 
 }

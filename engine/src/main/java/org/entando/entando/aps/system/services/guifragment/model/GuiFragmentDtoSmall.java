@@ -22,83 +22,86 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
  */
 public class GuiFragmentDtoSmall {
 
-	private String code;
-	private boolean locked;
-	private WidgetTypeRef widgetType;
-	private String pluginCode;
+    private String code;
+    private boolean locked;
+    private WidgetTypeRef widgetType = new WidgetTypeRef();
+    private String pluginCode;
 
-	public GuiFragmentDtoSmall() {
-	}
+    public GuiFragmentDtoSmall() {
+    }
 
-	public GuiFragmentDtoSmall(GuiFragment guiFragment, WidgetType type) {
-		this.setCode(guiFragment.getCode());
-		this.setLocked(guiFragment.isLocked());
-		if (!StringUtils.isEmpty(guiFragment.getWidgetTypeCode())) {
-			WidgetTypeRef widgetType = new WidgetTypeRef(guiFragment.getWidgetTypeCode(), null);
-			this.setWidgetType(widgetType);
-		}
-		if (!StringUtils.isEmpty(guiFragment.getPluginCode())) {
-			this.setPluginCode(guiFragment.getPluginCode());
-		}
-	}
+    public GuiFragmentDtoSmall(GuiFragment guiFragment, WidgetType type) {
+        this.setCode(guiFragment.getCode());
+        this.setLocked(guiFragment.isLocked());
+        if (!StringUtils.isEmpty(guiFragment.getWidgetTypeCode())) {
+            WidgetTypeRef widgetType = new WidgetTypeRef(guiFragment.getWidgetTypeCode(), null);
+            this.setWidgetType(widgetType);
+        }
+        if (!StringUtils.isEmpty(guiFragment.getPluginCode())) {
+            this.setPluginCode(guiFragment.getPluginCode());
+        }
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public boolean isLocked() {
-		return locked;
-	}
+    public boolean isLocked() {
+        return locked;
+    }
 
-	public void setLocked(boolean locked) {
-		this.locked = locked;
-	}
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
 
-	public WidgetTypeRef getWidgetType() {
-		return widgetType;
-	}
+    public WidgetTypeRef getWidgetType() {
+        return widgetType;
+    }
 
-	public void setWidgetType(WidgetTypeRef widgetType) {
-		this.widgetType = widgetType;
-	}
+    public void setWidgetType(WidgetTypeRef widgetType) {
+        this.widgetType = widgetType;
+    }
 
-	public String getPluginCode() {
-		return pluginCode;
-	}
+    public String getPluginCode() {
+        return pluginCode;
+    }
 
-	public void setPluginCode(String pluginCode) {
-		this.pluginCode = pluginCode;
-	}
+    public void setPluginCode(String pluginCode) {
+        this.pluginCode = pluginCode;
+    }
 
-	protected class WidgetTypeRef {
+    protected class WidgetTypeRef {
 
-		private String code;
-		private String title;
+        private String code;
+        private String title;
 
-		public WidgetTypeRef(String code, String title) {
-			this.setCode(code);
-			this.setTitle(title);
-		}
+        public WidgetTypeRef(String code, String title) {
+            this.setCode(code);
+            this.setTitle(title);
+        }
 
-		public String getCode() {
-			return code;
-		}
+        private WidgetTypeRef() {
+        }
 
-		public void setCode(String code) {
-			this.code = code;
-		}
+        public String getCode() {
+            return code;
+        }
 
-		public String getTitle() {
-			return title;
-		}
+        public void setCode(String code) {
+            this.code = code;
+        }
 
-		public void setTitle(String title) {
-			this.title = title;
-		}
-	}
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+    }
 
 }

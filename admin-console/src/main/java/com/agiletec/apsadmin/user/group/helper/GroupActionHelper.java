@@ -19,14 +19,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.system.BaseActionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Classe action helper della gestione Gruppi.
@@ -38,8 +38,8 @@ public class GroupActionHelper extends BaseActionHelper implements IGroupActionH
 	private static final Logger _logger = LoggerFactory.getLogger(GroupActionHelper.class);
 	
 	@Override
-	public Map<String, List<Object>> getReferencingObjects(Group group, HttpServletRequest request) throws ApsSystemException {
-		Map<String, List<Object>> references = new HashMap<String, List<Object>>();
+    public Map<String, List<UtilizerEntry>> getReferencingObjects(Group group, HttpServletRequest request) throws ApsSystemException {
+        Map<String, List<UtilizerEntry>> references = new HashMap<String, List<UtilizerEntry>>();
     	try {
     		String[] defNames = ApsWebApplicationUtils.getWebApplicationContext(request).getBeanNamesForType(GroupUtilizer.class);
 			for (int i=0; i<defNames.length; i++) {
@@ -53,7 +53,7 @@ public class GroupActionHelper extends BaseActionHelper implements IGroupActionH
 				}
 				if (service != null) {
 					GroupUtilizer groupUtilizer = (GroupUtilizer) service;
-					List<Object> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
+                    List<UtilizerEntry> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
 					if (utilizers != null && !utilizers.isEmpty()) {
 						//FIXME UNIFORMARE E STUDIARE CHIAVE IDONEA
 						references.put(groupUtilizer.getName()+"Utilizers", utilizers);

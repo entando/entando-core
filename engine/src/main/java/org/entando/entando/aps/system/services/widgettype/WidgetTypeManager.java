@@ -13,28 +13,26 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
 import com.agiletec.aps.system.services.lang.events.LangsChangedObserver;
 import com.agiletec.aps.util.ApsProperties;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.beanutils.BeanComparator;
-
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentUtilizer;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.aps.system.services.widgettype.cache.IWidgetTypeManagerCacheWrapper;
 import org.entando.entando.aps.system.services.widgettype.events.WidgetTypeChangedEvent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,8 +219,8 @@ public class WidgetTypeManager extends AbstractService
 	}
 
 	@Override
-	public List<WidgetType> getGroupUtilizers(String groupName) throws ApsSystemException {
-		List<WidgetType> utilizers = null;
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+        List<UtilizerEntry> utilizers = null;
 		try {
 			boolean freeTypes = (null == groupName || groupName.equals(Group.FREE_GROUP_NAME));
 			List<WidgetType> allTypes = this.getWidgetTypes();
@@ -231,7 +229,7 @@ public class WidgetTypeManager extends AbstractService
 				String typeGroup = type.getMainGroup();
 				if ((freeTypes && null == typeGroup) || groupName.equals(typeGroup)) {
 					if (null == utilizers) {
-						utilizers = new ArrayList<WidgetType>();
+                        utilizers = new ArrayList<UtilizerEntry>();
 					}
 					utilizers.add(type);
 				}

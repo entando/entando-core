@@ -13,7 +13,6 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.content;
 
-import com.agiletec.aps.system.ApsSystemUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,13 +20,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
-import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-
+import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.ApsEntityManager;
 import com.agiletec.aps.system.common.entity.IEntityDAO;
@@ -37,6 +32,8 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
+import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.page.PageUtilizer;
@@ -46,7 +43,11 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceUtilizer;
-import java.util.Set;
+import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 
 /**
  * Contents manager. This implements all the methods needed to create and manage
@@ -556,14 +557,19 @@ public class ContentManager extends ApsEntityManager
     }
 
     @Override
-    public List getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<String> contentIds = null;
         try {
             contentIds = this.getContentDAO().getGroupUtilizers(groupName);
+            if (null != contentIds) {
+                List<UtilizerEntry> list = new ArrayList<>();
+                contentIds.stream().forEach(i -> list.add(new BaseGroupUtilizerEntry(i)));
+                return list;
+            }
+            return null;
         } catch (Throwable t) {
             throw new ApsSystemException("Error while loading referenced contents : group " + groupName, t);
         }
-        return contentIds;
     }
 
     @Override

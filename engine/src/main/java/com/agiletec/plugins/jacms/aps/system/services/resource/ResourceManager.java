@@ -32,6 +32,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
+import com.agiletec.aps.system.services.common.model.UtilizerEntry;
+import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.util.DateConverter;
@@ -437,17 +439,21 @@ public class ResourceManager extends AbstractService implements IResourceManager
     }
     
 	@Override
-	public List getGroupUtilizers(String groupName) throws ApsSystemException {
-		List<String> resourcesId = null;
+    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
     	try {
 	    	List<String> allowedGroups = new ArrayList<String>(1);
 	    	allowedGroups.add(groupName);
-	    	resourcesId = this.getResourceDAO().searchResourcesId(null, null, null, null, allowedGroups);
-		} catch (Throwable t) {
+	    	List<String> resources = this.getResourceDAO().searchResourcesId(null, null, null, null, allowedGroups);
+	    	if (null != resources) {
+                List<UtilizerEntry> resourcesId = new ArrayList<>();
+                resources.stream().forEach(i -> resourcesId.add(new BaseGroupUtilizerEntry(i)));
+                return resourcesId;
+	    	}
+    	} catch (Throwable t) {
             logger.error("Error searching group utilizers : group '{}'", groupName, t);
 			throw new ApsSystemException("Error searching group utilizers : group '" + groupName + "'", t);
 		}
-		return resourcesId;
+        return null;
 	}
     
     @Override

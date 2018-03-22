@@ -21,7 +21,7 @@ public class RestResponse {
 
     private Object payload = new ArrayList<>();
     private List<RestError> errors = new ArrayList<>();
-    private Object metadata = new HashMap<>();
+    private Object metaData = new HashMap<>();
 
     public RestResponse() {
     }
@@ -30,10 +30,10 @@ public class RestResponse {
         this.payload = payload;
     }
 
-    public RestResponse(Object payload, List<RestError> errors, Object metadata) {
+    public RestResponse(Object payload, List<RestError> errors, Object metaData) {
         this.payload = payload;
         this.errors = errors;
-        this.metadata = metadata;
+        this.metaData = metaData;
     }
 
     public Object getPayload() {
@@ -44,12 +44,12 @@ public class RestResponse {
         this.payload = payload;
     }
 
-    public Object getMetadata() {
-        return metadata;
+    public Object getMetaData() {
+        return metaData;
     }
 
-    public void setMetadata(Object metadata) {
-        this.metadata = metadata;
+    public void setMetaData(Object metaData) {
+        this.metaData = metaData;
     }
 
     public List<RestError> getErrors() {

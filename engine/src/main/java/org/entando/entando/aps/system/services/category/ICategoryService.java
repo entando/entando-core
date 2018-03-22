@@ -25,4 +25,6 @@ public interface ICategoryService {
 
     public CategoryDto getCategory(String categoryCode);
 
+    public CategoryDto addCategory(CategoryDto categoryDto);
+
 }

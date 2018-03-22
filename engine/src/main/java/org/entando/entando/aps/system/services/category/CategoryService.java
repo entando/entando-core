@@ -27,9 +27,11 @@ import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.category.validator.CategoryValidator;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 /**
  * @author E.Santoboni
@@ -83,6 +85,33 @@ public class CategoryService implements ICategoryService {
         } catch (Exception e) {
             logger.error("error extracting category " + categoryCode, e);
             throw new RestServerError("error extracting category " + categoryCode, e);
+        }
+        return dto;
+    }
+
+    @Override
+    public CategoryDto addCategory(CategoryDto categoryDto) {
+        Category parentCategory = this.getCategoryManager().getCategory(categoryDto.getParentCode());
+        if (null == parentCategory) {
+            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "category", categoryDto.getParentCode());
+        }
+        Category category = this.getCategoryManager().getCategory(categoryDto.getCode());
+        if (null != category) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
+            bindingResult.reject(CategoryValidator.ERRCODE_CATEGORY_ALREADY_EXISTS, new String[]{category.getCode()}, "category.exists");
+            throw new ValidationGenericException(bindingResult);
+        }
+        CategoryDto dto = null;
+        try {
+            Category categoryToAdd = new Category();
+            categoryToAdd.setCode(categoryDto.getCode());
+            categoryToAdd.setParentCode(categoryDto.getParentCode());
+            categoryToAdd.getTitles().putAll(categoryDto.getTitles());
+            this.getCategoryManager().addCategory(categoryToAdd);
+            dto = this.getDtoBuilder().convert(this.getCategoryManager().getCategory(categoryDto.getCode()));
+        } catch (Exception e) {
+            logger.error("error adding category " + categoryDto.getCode(), e);
+            throw new RestServerError("error adding category " + categoryDto.getCode(), e);
         }
         return dto;
     }

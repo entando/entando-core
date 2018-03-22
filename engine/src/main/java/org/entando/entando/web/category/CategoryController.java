@@ -13,15 +13,19 @@
  */
 package org.entando.entando.web.category;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.category.ICategoryService;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.category.validator.CategoryValidator;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,10 +96,29 @@ public class CategoryController {
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCategory(@PathVariable String categoryCode) {
         logger.debug("getting category {}", categoryCode);
-        CategoryDto page = this.getCategoryService().getCategory(categoryCode);
-        //Map<String, String> metadata = new HashMap<>();
-        //metadata.put("status", status);
-        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), null), HttpStatus.OK);
+        CategoryDto category = this.getCategoryService().getCategory(categoryCode);
+        return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), new HashMap<>()), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
+        //field validations
+        this.getCategoryValidator().validate(categoryRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        //business validations
+        int result = this.getCategoryValidator().validatePostReferences(categoryRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            if (result == 404) {
+                throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryRequest.getParentCode());
+            } else {
+                throw new ValidationGenericException(bindingResult);
+            }
+        }
+        CategoryDto category = this.getCategoryService().addCategory(categoryRequest);
+        return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), new HashMap<>()), HttpStatus.OK);
     }
 
     /*

@@ -14,6 +14,8 @@
 package org.entando.entando.web.category.validator;
 
 import com.agiletec.aps.system.services.category.ICategoryManager;
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -27,53 +29,76 @@ public class CategoryValidator implements Validator {
 
     public static final String ERRCODE_PARENT_CATEGORY_NOT_FOUND = "1";
     public static final String ERRCODE_CATEGORY_NOT_FOUND = "1";
+    public static final String ERRCODE_CATEGORY_VALIDATION = "2";
+    public static final String ERRCODE_CATEGORY_ALREADY_EXISTS = "3";
+    public static final String ERRCODE_URINAME_MISMATCH = "4";
 
     @Autowired
     private ICategoryManager categoryManager;
 
     @Override
     public boolean supports(Class<?> paramClass) {
-        return false;
-        //return EntityTypeDtoRequest.class.equals(paramClass);
+        return CategoryDto.class.equals(paramClass);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        //EntityTypeDtoRequest request = (EntityTypeDtoRequest) target;
-        //this.validateBody(request, errors);
+        CategoryDto request = (CategoryDto) target;
+        this.validateBody(request, errors);
+        /*
+        if (errors.hasErrors()) {
+            return;
+        }
+        if (null != this.getCategoryManager().getCategory(request.getCode())) {
+            errors.reject(ERRCODE_CATEGORY_ALREADY_EXISTS, new String[]{request.getCode()}, "category.exists");
+        }
+        if (null == this.getCategoryManager().getCategory(request.getParentCode())) {
+            errors.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
+        }
+         */
     }
 
-    /*
-    public int validateBodyName(String typeCode, EntityTypeDtoRequest request, Errors errors) {
+    public int validatePutReferences(String typeCode, CategoryDto request, Errors errors) {
         if (!StringUtils.equals(typeCode, request.getCode())) {
             errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{typeCode, request.getCode()}, "entityType.code.mismatch");
             return 400;
         }
-        if (!this.existType(typeCode)) {
-            errors.reject(ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, new String[]{typeCode}, "entityType.notExists");
+        if (null == this.getCategoryManager().getCategory(request.getCode())) {
+            errors.reject(ERRCODE_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.notexists");
             return 404;
         }
-        return this.validateBody(request, errors);
-    }
-
-    private int validateBody(EntityTypeDtoRequest request, Errors errors) {
-        if (StringUtils.isBlank(request.getCode())) {
-            errors.reject(ERRCODE_ENTITY_TYPE_CODE_REQUIRED, new String[]{}, "entityType.code.notBlank");
-            return 400;
-        }
-        if (StringUtils.isBlank(request.getName())) {
-            errors.reject(ERRCODE_ENTITY_TYPE_DESCR_REQUIRED, new String[]{}, "entityType.name.notBlank");
-            return 400;
+        if (null == this.getCategoryManager().getCategory(request.getParentCode())) {
+            errors.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
+            return 404;
         }
         return 0;
     }
 
-    public boolean existType(String typeCode) {
-        return (null != this.getEntityManager().getEntityPrototype(typeCode));
+    public int validatePostReferences(CategoryDto request, Errors errors) {
+        if (null != this.getCategoryManager().getCategory(request.getCode())) {
+            errors.reject(ERRCODE_CATEGORY_ALREADY_EXISTS, new String[]{request.getCode()}, "category.exists");
+            return 400;
+        }
+        if (null == this.getCategoryManager().getCategory(request.getParentCode())) {
+            errors.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
+            return 404;
+        }
+        return 0;
     }
 
-    protected abstract IEntityManager getEntityManager();
-     */
+    public int validateBody(CategoryDto request, Errors errors) {
+        if (StringUtils.isBlank(request.getCode())) {
+            errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.code.notBlank");
+        }
+        if (StringUtils.isBlank(request.getParentCode())) {
+            errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.description.notBlank");
+        }
+        if (null == request.getTitles() || request.getTitles().isEmpty()) {
+            errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.titles.notBlank");
+        }
+        return (errors.hasErrors()) ? 400 : 0;
+    }
+
     public ICategoryManager getCategoryManager() {
         return categoryManager;
     }

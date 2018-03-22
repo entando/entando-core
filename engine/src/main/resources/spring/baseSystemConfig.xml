@@ -20,21 +20,12 @@
     <bean id="ApsSystemUtils" class="com.agiletec.aps.system.ApsSystemUtils" init-method="init" >
         <property name="systemParams">
             <map>
-                <entry key="logName">
-                    <jee:jndi-lookup jndi-name="java:comp/env/logName" />
-                </entry>
-                <entry key="logFilePrefix">
-                    <jee:jndi-lookup jndi-name="java:comp/env/logFilePrefix" />
-                </entry>
-                <entry key="logLevel">
-                    <jee:jndi-lookup jndi-name="java:comp/env/logLevel" />
-                </entry>
-                <entry key="logFileSize">
-                    <jee:jndi-lookup jndi-name="java:comp/env/logFileSize" />
-                </entry>
-                <entry key="logFilesCount">
-                    <jee:jndi-lookup jndi-name="java:comp/env/logFilesCount" />
-                </entry>
+                <entry key="logActiveFileOutput"><jee:jndi-lookup jndi-name="java:comp/env/logActiveFileOutput" /></entry>
+                <entry key="logName"><jee:jndi-lookup jndi-name="java:comp/env/logName" /></entry>
+                <entry key="logFilePrefix"><jee:jndi-lookup jndi-name="java:comp/env/logFilePrefix" /></entry>
+                <entry key="logLevel"><jee:jndi-lookup jndi-name="java:comp/env/logLevel" /></entry>
+                <entry key="logFileSize"><jee:jndi-lookup jndi-name="java:comp/env/logFileSize" /></entry>
+                <entry key="logFilesCount"><jee:jndi-lookup jndi-name="java:comp/env/logFilesCount" /></entry>
             </map>
         </property>
     </bean>

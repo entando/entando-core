@@ -13,10 +13,11 @@
  */
 package org.entando.entando.aps.system.services.entity;
 
+import java.util.List;
+
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
@@ -52,7 +53,7 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
         PagedMetadata<String> res = this.entityManagerService.getEntityManagers(restListRequest);
         assertThat(res.getPage(), is(1));
         assertThat(res.getPageSize(), is(3));
-        assertThat(res.getLastPage(), is(0));
+        assertThat(res.getLastPage(), is(1));
         assertThat(res.getTotalItems(), is(3));
         List<String> result = res.getBody();
         assertNotNull(result);

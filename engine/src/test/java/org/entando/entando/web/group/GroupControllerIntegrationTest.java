@@ -60,7 +60,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(1)));
-            result.andExpect(jsonPath("$.metaData.lastPage", is(6)));
+            result.andExpect(jsonPath("$.metaData.lastPage", is(7)));
             result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
 
             //-------------
@@ -76,7 +76,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(1)));
-            result.andExpect(jsonPath("$.metaData.lastPage", is(6)));
+            result.andExpect(jsonPath("$.metaData.lastPage", is(7)));
             result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
 
             //-------------
@@ -92,7 +92,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             result.andExpect(jsonPath("$.metaData.pageSize", is(1)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(7)));
-            result.andExpect(jsonPath("$.metaData.lastPage", is(6)));
+            result.andExpect(jsonPath("$.metaData.lastPage", is(7)));
             result.andExpect(jsonPath("$.payload[0].code", is("tmp_9")));
 
             //-------------
@@ -107,8 +107,8 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.metaData.pageSize", is(31)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
-            result.andExpect(jsonPath("$.metaData.page", is(7)));
-            result.andExpect(jsonPath("$.metaData.lastPage", is(2147483646)));
+            result.andExpect(jsonPath("$.metaData.page", is(1)));
+            result.andExpect(jsonPath("$.metaData.lastPage", is(1)));
             result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
 
         } finally {

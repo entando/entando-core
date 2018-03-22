@@ -12,10 +12,13 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
+import org.entando.entando.aps.system.services.user.model.UserDto;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +97,31 @@ public class UserService implements IUserService {
             logger.error("Error in delete authorities for {}", username, e);
             throw new RestServerError("Error in delete authorities", e);
         }
+    }
+
+    @Override
+    public PagedMetadata<UserDto> getUsers(RestListRequest requestList) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UserDto getUser(String username) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UserDto updateUser(UserRequest userRequest) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UserDto addUser(UserRequest userRequest) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeUser(String username) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

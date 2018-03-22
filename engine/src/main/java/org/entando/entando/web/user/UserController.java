@@ -9,14 +9,21 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.user.IUserService;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
+import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.entando.entando.web.user.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +72,62 @@ public class UserController {
 
     public void setUserValidator(UserValidator userValidator) {
         this.userValidator = userValidator;
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUsers(RestListRequest requestList) {
+        PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUser(@PathVariable String username) {
+        UserDto user = this.getUserService().getUser(username);
+        return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateGroup(@PathVariable String username, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getUserValidator();
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        UserDto user = this.getUserService().updateUser(userRequest);
+        return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addGroup(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        //business validations 
+        this.getUserValidator();
+        if (bindingResult.hasErrors()) {
+            throw new ValidationConflictException(bindingResult);
+        }
+        UserDto dto = this.getUserService().addUser(userRequest);
+        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteGroup(@PathVariable String username) throws ApsSystemException {
+        logger.info("deleting {}", username);
+        this.getUserService().removeUser(username);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", username);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)

@@ -3,6 +3,7 @@ package org.entando.entando.plugins.jacms.aps.system.services.widget.validators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
@@ -13,6 +14,7 @@ import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.IContentListWidgetHelper;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelManager;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
@@ -27,6 +29,15 @@ public class WidgetValidatorCmsHelper {
     public static final String ERRCODE_INVALID_CONFIGURATION = "1";
     public static final String ERRCODE_CONTENT_ID_NULL = "11";
     public static final String ERRCODE_CONTENT_INVALID = "12";
+
+    public static void validateContentModel(String widgetCode, String typeCode, String modelId, IContentModelManager contentModelManager, BeanPropertyBindingResult errors) {
+        List<String> contentModels = contentModelManager.getModelsForContentType(typeCode).stream().map(i -> String.valueOf(i.getId())).collect(Collectors.toList());
+        contentModels.add("list");
+        contentModels.add("default");
+        if (!contentModels.contains(modelId)) {
+            errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{modelId, typeCode}, widgetCode + ".contentmodel.invalid");
+        }
+    }
 
     public static void validateSingleContentOnPage(String widgetCode, IPage page, String contentId, IContentManager contentManager, BeanPropertyBindingResult errors) throws ApsSystemException {
         if (StringUtils.isBlank(contentId)) {
@@ -47,7 +58,8 @@ public class WidgetValidatorCmsHelper {
             if (null != metadata.getExtraGroups()) {
                 pageGroups.addAll(metadata.getExtraGroups());
             }
-            errors.reject(ERRCODE_CONTENT_INVALID, new String[]{pageGroups.toString()}, widgetCode + ".contentId.invalid");
+            List<String> contentGroups = CmsPageUtil.getContentGroups(publishingContent);
+            errors.reject(ERRCODE_CONTENT_INVALID, new String[]{StringUtils.join(pageGroups, ", "), StringUtils.join(contentGroups, ", ")}, widgetCode + ".contentId.group.invalid");
             return;
         }
     }

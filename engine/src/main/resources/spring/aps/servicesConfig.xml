@@ -24,6 +24,7 @@
 
     <bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
         <property name="contentManager" ref="jacmsContentManager" />
+        <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
     <bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.AbstractListViewerWidgetValidator">
@@ -34,12 +35,14 @@
     <bean id="RowContentListViewerWidgetValidator" parent="AbstractListViewerWidgetValidator"
           class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerWidgetValidator" >
         <property name="contentManager" ref="jacmsContentManager" />
+        <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
     <bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
           class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentListViewerWidgetValidator">
         <property name="widgetTypeManager" ref="WidgetTypeManager" />
         <property name="contentManager" ref="jacmsContentManager" />
+        <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
 

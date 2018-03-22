@@ -116,8 +116,11 @@ public class RestListRequest {
             return null;
         }
         FieldSearchFilter pagFilter = this.buildPaginationFilter();
-        int offset = pagFilter.getOffset();
-        int limit = pagFilter.getLimit();
+        int limit = (null != pagFilter) ? pagFilter.getLimit() : PAGE_SIZE_DEFAULT;
+        if (null == pagFilter) {
+            this.setPageSize(PAGE_SIZE_DEFAULT);
+        }
+        int offset = (null != pagFilter) ? pagFilter.getOffset() : this.getOffset();
         int size = master.size();
         int offsetToApply = (offset >= size) ? size : offset;
         int limitToApply = ((offsetToApply + limit) > size) ? size : (offsetToApply + limit);
@@ -162,37 +165,48 @@ public class RestListRequest {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         RestListRequest other = (RestListRequest) obj;
         if (direction == null) {
-            if (other.direction != null)
+            if (other.direction != null) {
                 return false;
-        } else if (!direction.equals(other.direction))
+            }
+        } else if (!direction.equals(other.direction)) {
             return false;
-        if (!Arrays.equals(filter, other.filter))
+        }
+        if (!Arrays.equals(filter, other.filter)) {
             return false;
+        }
         if (page == null) {
-            if (other.page != null)
+            if (other.page != null) {
                 return false;
-        } else if (!page.equals(other.page))
+            }
+        } else if (!page.equals(other.page)) {
             return false;
+        }
         if (pageSize == null) {
-            if (other.pageSize != null)
+            if (other.pageSize != null) {
                 return false;
-        } else if (!pageSize.equals(other.pageSize))
+            }
+        } else if (!pageSize.equals(other.pageSize)) {
             return false;
+        }
         if (sort == null) {
-            if (other.sort != null)
+            if (other.sort != null) {
                 return false;
-        } else if (!sort.equals(other.sort))
+            }
+        } else if (!sort.equals(other.sort)) {
             return false;
+        }
         return true;
     }
-
 
 }

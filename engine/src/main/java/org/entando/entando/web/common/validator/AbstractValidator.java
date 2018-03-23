@@ -37,6 +37,9 @@ public abstract class AbstractValidator implements Validator {
         }
         if (listRequest.getPageSize() < 0) {
             bindingResult.reject(ERRCODE_PAGE_SIZE_INVALID, new Object[]{}, "pagination.page.size.invalid");
+        } else if (listRequest.getPage() > 1 && listRequest.getPageSize() == 0) {
+            bindingResult.reject(ERRCODE_NO_ITEM_ON_PAGE, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
+            throw new RestRourceNotFoundException(bindingResult);
         }
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

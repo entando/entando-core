@@ -35,7 +35,6 @@ public class PagedMetadata<T> {
         if (0 == req.getPageSize()) {
             // no pagination
             req.setPageSize(result.getCount());
-            req.setPage(1);
         }
         this.page = req.getPage();
         this.pageSize = result.getList().size();

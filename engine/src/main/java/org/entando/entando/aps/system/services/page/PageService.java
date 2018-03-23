@@ -13,7 +13,15 @@
  */
 package org.entando.entando.aps.system.services.page;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
@@ -21,14 +29,10 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
@@ -49,7 +53,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
  *
  * @author paddeo
  */
-public class PageService implements IPageService {
+public class PageService implements IPageService, GroupServiceUtilizer<PageDto> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -384,6 +388,23 @@ public class PageService implements IPageService {
             throw new ValidationGenericException(bindingResult);
         }
         return page;
+    }
+
+    @Override
+    public String getManagerName() {
+        return ((IManager) this.getPageManager()).getName();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<PageDto> getGroupUtilizer(String groupName) {
+        try {
+            List<IPage> pages = ((GroupUtilizer<IPage>) this.getPageManager()).getGroupUtilizers(groupName);
+            return this.getDtoBuilder().convert(pages);
+        } catch (ApsSystemException ex) {
+            logger.error("Error loading page references for group {}", groupName, ex);
+            throw new RestServerError("Error loading page references for group", ex);
+        }
     }
 
 }

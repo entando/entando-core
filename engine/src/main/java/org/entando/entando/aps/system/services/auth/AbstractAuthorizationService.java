@@ -20,7 +20,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
  *
  * @author paddeo
  */
-public abstract class AuthorizationService<T> implements IAuthorizationService<T> {
+public abstract class AbstractAuthorizationService<T> implements IAuthorizationService<T> {
 
     public PagedMetadata<T> filterList(UserDetails user, PagedMetadata<T> metadata) {
         metadata.setBody(this.filterList(user, metadata.getBody()));

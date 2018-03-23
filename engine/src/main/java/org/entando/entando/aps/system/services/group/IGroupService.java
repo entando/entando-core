@@ -32,4 +32,6 @@ public interface IGroupService {
     GroupDto addGroup(GroupRequest groupRequest);
 
     void removeGroup(String groupName);
+
+    PagedMetadata<?> getGroupReferences(String groupCode, String managerName, RestListRequest restListRequest);
 }

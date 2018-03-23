@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.util.Set;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
-import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 
@@ -26,7 +25,7 @@ import com.agiletec.aps.util.ApsProperties;
  *
  * @author E.Santoboni
  */
-public interface IPage extends ITreeNode, Serializable, UtilizerEntry {
+public interface IPage extends ITreeNode, Serializable {
 
 	/**
 	 * Returns a properties with the titles of the page, where the keys are the

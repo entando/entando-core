@@ -52,9 +52,9 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc.perform(
-                    get("/groups")
-                            .param("pageSize", "5")
-                            .header("Authorization", "Bearer " + accessToken));
+                                                   get("/groups")
+                                                                 .param("pageSize", "5")
+                                                                 .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
@@ -67,10 +67,10 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
             //-------------
             result = mockMvc.perform(
-                    get("/groups")
-                            .param("pageSize", "5")
-                            .param("page", "1")
-                            .header("Authorization", "Bearer " + accessToken));
+                                     get("/groups")
+                                                   .param("pageSize", "5")
+                                                   .param("page", "1")
+                                                   .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
@@ -83,10 +83,10 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
             //-------------
             result = mockMvc.perform(
-                    get("/groups")
-                            .param("pageSize", "5")
-                            .param("page", "7")
-                            .header("Authorization", "Bearer " + accessToken));
+                                     get("/groups")
+                                                   .param("pageSize", "5")
+                                                   .param("page", "7")
+                                                   .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
@@ -99,10 +99,10 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
             //-------------
             result = mockMvc.perform(
-                    get("/groups")
-                            .param("pageSize", "0")
-                            .param("page", "7")
-                            .header("Authorization", "Bearer " + accessToken));
+                                     get("/groups")
+                                                   .param("pageSize", "0")
+                                                   .param("page", "7")
+                                                   .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
@@ -126,18 +126,18 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
-                get("/groups").param("page", "0")
-                        .param("direction", "DESC")
-                        .header("Authorization", "Bearer " + accessToken));
+                                               get("/groups").param("page", "0")
+                                                             .param("direction", "DESC")
+                                                             .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.[0].code", is("management")));
 
         result = mockMvc.perform(
-                get("/groups").param("page", "0")
-                        .param("pageSize", "4")
-                        .param("direction", "ASC")
-                        .header("Authorization", "Bearer " + accessToken));
+                                 get("/groups").param("page", "0")
+                                               .param("pageSize", "4")
+                                               .param("direction", "ASC")
+                                               .header("Authorization", "Bearer " + accessToken));
 
         //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
@@ -159,10 +159,10 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         String payload = mapper.writeValueAsString(groupRequest);
 
         ResultActions result = mockMvc.perform(
-                post("/groups")
-                        .content(payload)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                                               post("/groups")
+                                                              .content(payload)
+                                                              .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                              .header("Authorization", "Bearer " + accessToken));
 
         //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isConflict());
@@ -180,8 +180,8 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         groupRequest.setName(group.getName());
 
         ResultActions result = mockMvc.perform(
-                get("/groups/{code}", "invalid_code")
-                        .header("Authorization", "Bearer " + accessToken));
+                                               get("/groups/{code}", "invalid_code")
+                                                                                    .header("Authorization", "Bearer " + accessToken));
 
         //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
@@ -202,12 +202,11 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         String payload = mapper.writeValueAsString(groupRequest);
 
         ResultActions result = mockMvc.perform(
-                put("/groups/{code}", groupRequest.getCode())
-                        .content(payload)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                                               put("/groups/{code}", groupRequest.getCode())
+                                                                                            .content(payload)
+                                                                                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                            .header("Authorization", "Bearer " + accessToken));
 
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_GROUP_NOT_FOUND)));
 
@@ -224,8 +223,29 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                                                                                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                                            .header("Authorization", "Bearer " + accessToken));
 
+        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload.references.length()", is(5)));
+        result.andExpect(jsonPath("$.payload.references.length()", is(6)));
+
+        //String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
+        String[] managers = "jacmsResourceManager".split(",");
+
+
+        for (String managerName : managers) {
+
+            System.out.println("-----------------------------------------------");
+            System.out.println("----------- " + managerName + " ---------------");
+            System.out.println("-----------------------------------------------");
+            result = mockMvc.perform(
+                                     get("/groups/{code}/references/{manager}", Group.FREE_GROUP_NAME, managerName)
+
+                                                                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                 .header("Authorization", "Bearer " + accessToken));
+
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            System.out.println("---------------------------------------------------");
+        }
+
     }
 
 

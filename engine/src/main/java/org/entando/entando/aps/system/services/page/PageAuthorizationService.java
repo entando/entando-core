@@ -13,15 +13,16 @@
  */
 package org.entando.entando.aps.system.services.page;
 
-import com.agiletec.aps.system.services.authorization.AuthorizationManager;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.entando.entando.aps.system.services.auth.AuthorizationService;
+
+import com.agiletec.aps.system.services.authorization.AuthorizationManager;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.system.services.auth.AbstractAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author paddeo
  */
-public class PageAuthorizationService extends AuthorizationService<PageDto> {
+public class PageAuthorizationService extends AbstractAuthorizationService<PageDto> {
 
     @Autowired
     private IPageManager pageManager;

@@ -44,14 +44,14 @@
 	</profiles>
 	<distributionManagement>
 		<repository>
-			<id>nexus</id>
+			<id>nexus-release</id>
 			<name>Releases</name>
-			<url>${maven-repository-url}</url>
+			<url>${maven-repository-url-release}</url>
 		</repository>
 		<snapshotRepository>
-			<id>nexus</id>
+			<id>nexus-snapshot</id>
 			<name>Snapshot</name>
-			<url>${maven-repository-url}</url>
+			<url>${maven-repository-url-snapshot}</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>

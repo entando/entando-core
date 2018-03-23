@@ -186,8 +186,8 @@
 						<phase>deploy</phase>
 						<configuration>
 							<file>${project.build.directory}/${project.build.finalName}.jar</file>
-							<url>${maven-repository-url}</url>
-							<repositoryId>nexus</repositoryId>
+							<url>${maven-repository-url-release}</url>
+							<repositoryId>nexus-release</repositoryId>
 							<generatePom>false</generatePom>
 							<pomFile>pom.xml</pomFile>
 							<packaging>jar</packaging>

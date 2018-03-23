@@ -76,8 +76,10 @@ public class DataTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataTypes(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<?> getDataTypes(@Valid RestListRequest requestList) throws JsonProcessingException {
+        this.getDataTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortDataTypes(requestList);
+        this.getDataTypeValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }

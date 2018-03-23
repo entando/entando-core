@@ -115,6 +115,9 @@ public class RestListRequest {
         if (null == master) {
             return null;
         }
+        if (0 == this.getPage()) {
+            return master;
+        }
         FieldSearchFilter pagFilter = this.buildPaginationFilter();
         int limit = (null != pagFilter) ? pagFilter.getLimit() : PAGE_SIZE_DEFAULT;
         if (null == pagFilter) {

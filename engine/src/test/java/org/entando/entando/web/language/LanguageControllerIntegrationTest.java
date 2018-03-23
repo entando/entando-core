@@ -43,7 +43,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                                                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
 
         /**
          * The response should have the correct CORS headers and the CORS
@@ -52,7 +52,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
          */
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type"));
+        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 
@@ -76,7 +76,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                                       .perform(get("/languages/{code}", new Object[]{"de"})
                                                                                            .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
     }
 
@@ -88,7 +88,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                                       .perform(get("/languages/{code}", new Object[]{"xx"})
                                                                                            .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
     }
 

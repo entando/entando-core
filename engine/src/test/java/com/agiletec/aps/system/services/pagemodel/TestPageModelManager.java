@@ -62,12 +62,12 @@ public class TestPageModelManager extends BaseTestCase {
         List<FieldSearchFilter> filters = restListRequest.buildFieldSearchFilters();
         SearcherDaoPaginatedResult<PageModel> result = this._pageModelManager.searchPageModels(filters);
         assertThat(result.getCount(), is(3));
-        assertThat(result.getList().size(), is(1));
+        assertThat(result.getList().size(), is(2));
 
         restListRequest.addFilter(new Filter("descr", "modello"));
         result = this._pageModelManager.searchPageModels(restListRequest.buildFieldSearchFilters());
         assertThat(result.getCount(), is(2));
-        assertThat(result.getList().size(), is(0));
+        assertThat(result.getList().size(), is(2));
 
         restListRequest.setPage(0);
         result = this._pageModelManager.searchPageModels(restListRequest.buildFieldSearchFilters());

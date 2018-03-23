@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,6 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
-import java.io.Serializable;
 
 /**
  * This is the representation of a portal page
@@ -29,6 +29,11 @@ import java.io.Serializable;
  * @author M.Diana - E.Santoboni
  */
 public class Page extends TreeNode implements IPage, Serializable {
+
+    @Override
+    public String getUtilizerId() {
+        return this.getCode();
+    }
 
     /**
      * Set the position of the page with regard to its sisters
@@ -325,5 +330,6 @@ public class Page extends TreeNode implements IPage, Serializable {
     private boolean online;
     private boolean onlineInstance;
     private boolean changed;
+
 
 }

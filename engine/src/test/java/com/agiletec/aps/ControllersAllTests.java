@@ -27,6 +27,8 @@ import org.entando.entando.web.group.GroupControllerIntegrationTest;
 import org.entando.entando.web.group.GroupControllerUnitTest;
 import org.entando.entando.web.guifragment.GuiFragmentControllerTest;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidatorTest;
+import org.entando.entando.web.label.LabelControllerIntegrationTest;
+import org.entando.entando.web.label.LabelControllerUnitTest;
 import org.entando.entando.web.language.LanguageControllerIntegrationTest;
 import org.entando.entando.web.language.LanguageControllerUnitTest;
 import org.entando.entando.web.page.PageConfigurationControllerIntegrationTest;
@@ -34,8 +36,12 @@ import org.entando.entando.web.page.PageControllerTest;
 import org.entando.entando.web.pagemodel.PageModelControllerTest;
 import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
 import org.entando.entando.web.system.ReloadConfigurationControllerTest;
+import org.entando.entando.web.user.UserControllerIntegrationTest;
+import org.entando.entando.web.user.UserControllerTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerTest;
+import org.entando.entando.web.usersettings.UserSettigsControllerUnitTest;
+import org.entando.entando.web.usersettings.UserSettingsControllerIntegrationTest;
 
 public class ControllersAllTests extends TestCase {
 
@@ -58,11 +64,20 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(LanguageControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(LanguageControllerUnitTest.class));
 
+        suite.addTest(new JUnit4TestAdapter(LabelControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(LabelControllerUnitTest.class));
+
         suite.addTest(new JUnit4TestAdapter(DataTypeControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(DataTypeControllerTest.class));
 
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(UserControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(UserControllerTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(UserSettingsControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(UserSettigsControllerUnitTest.class));
 
         suite.addTest(new JUnit4TestAdapter(CategoryControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(CategoryControllerTest.class));

@@ -25,6 +25,7 @@ import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
 import org.entando.entando.web.common.exceptions.EntandoTokenException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.exceptions.ValidationUpdateSelfException;
 import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
@@ -104,12 +105,18 @@ public class RestExceptionHandler {
     @ResponseBody
     public RestResponse processRestRourceNotFoundEx(RestRourceNotFoundException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = new RestResponse();
-        RestError error = new RestError(ex.getErrorCode(), this.resolveLocalizedErrorMessage("NOT_FOUND", new Object[]{ex.getObjectName(), ex.getObjectCode()}));
-        List<RestError> errors = new ArrayList<>();
-        errors.add(error);
-        response.setErrors(errors);
-        response.setMetadata(new HashMap<>());
+        RestResponse response = null;
+        if (null != ex.getBindingResult()) {
+            BindingResult result = ex.getBindingResult();
+            response = processAllErrors(result);
+        } else {
+            response = new RestResponse();
+            RestError error = new RestError(ex.getErrorCode(), this.resolveLocalizedErrorMessage("NOT_FOUND", new Object[]{ex.getObjectName(), ex.getObjectCode()}));
+            List<RestError> errors = new ArrayList<>();
+            errors.add(error);
+            response.setErrors(errors);
+            response.setMetaData(new HashMap<>());
+        }
         return response;
     }
 
@@ -127,6 +134,16 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public RestResponse processValidationError(ValidationGenericException ex) {
+        logger.debug("Handling {} error", ex.getClass().getSimpleName());
+        BindingResult result = ex.getBindingResult();
+        RestResponse response = processAllErrors(result);
+        return response;
+    }
+
+    @ExceptionHandler(value = ValidationUpdateSelfException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public RestResponse processValidationError(ValidationUpdateSelfException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         BindingResult result = ex.getBindingResult();
         RestResponse response = processAllErrors(result);

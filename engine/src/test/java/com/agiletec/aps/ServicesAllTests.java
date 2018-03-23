@@ -32,13 +32,14 @@ import org.entando.entando.aps.system.services.page.PageServiceWidgetIntegration
 import org.entando.entando.aps.system.services.pagemodel.PageModelDtoTest;
 import org.entando.entando.aps.system.services.pagemodel.PageModelServiceTest;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsServiceIntegrationTest;
+import org.entando.entando.aps.system.services.user.UserServiceIntegrationTest;
+import org.entando.entando.web.common.EntandoMessageCodesResolverTest;
 
 public class ServicesAllTests extends TestCase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite(ServicesAllTests.class.getName());
 
-        //
         suite.addTestSuite(GroupServiceIntegrationTest.class);
         suite.addTestSuite(PageSettingsServiceIntegrationTest.class);
         suite.addTestSuite(PageServiceIntegrationTest.class);
@@ -54,7 +55,9 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(PageServiceWidgetIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(DataObjectServiceTest.class));
         suite.addTest(new JUnit4TestAdapter(CategoryServiceTest.class));
+        suite.addTestSuite(UserServiceIntegrationTest.class);
 
+        suite.addTest(new JUnit4TestAdapter(EntandoMessageCodesResolverTest.class));
         return suite;
     }
 

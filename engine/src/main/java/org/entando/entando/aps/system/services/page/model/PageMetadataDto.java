@@ -5,12 +5,13 @@ import java.util.Set;
 
 import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.HashSet;
 import org.springframework.beans.BeanUtils;
 
 public class PageMetadataDto {
 
     private ApsProperties titles = new ApsProperties();
-    private Set<String> extraGroups;
+    private Set<String> extraGroups = new HashSet<>();
     private String model;
     private boolean showable = false;
     private boolean useExtraTitles = false;
@@ -90,6 +91,5 @@ public class PageMetadataDto {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 
 }

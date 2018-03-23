@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.common;
+package org.entando.entando.web.common.validator;
 
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
@@ -46,9 +46,8 @@ public abstract class AbstractValidator implements Validator {
     public void validateRestListResult(RestListRequest listRequest, PagedMetadata<?> result) {
         if (listRequest.getPage() > 0 && (null == result.getBody() || result.getBody().isEmpty())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
-            bindingResult.reject(ERRCODE_PAGE_SIZE_INVALID, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
+            bindingResult.reject(ERRCODE_NO_ITEM_ON_PAGE, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
             throw new RestRourceNotFoundException(bindingResult);
-            // no items found on page <page>
         }
     }
 

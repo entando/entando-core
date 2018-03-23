@@ -272,7 +272,7 @@ public class PageControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("RESPONSE: " + response);
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_DRAFT_PAGE)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_ONLINE_PAGE)));
     }
 
     @Test
@@ -305,7 +305,7 @@ public class PageControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("RESPONSE: " + response);
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_ONLINE_PAGE)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_DRAFT_PAGE)));
     }
 
     @Test

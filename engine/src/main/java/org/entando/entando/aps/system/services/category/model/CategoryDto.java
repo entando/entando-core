@@ -31,7 +31,7 @@ public class CategoryDto {
     private String parentCode;
     private Map<String, String> titles = new HashMap<>();
     private List<String> children = new ArrayList<>();
-    private Map<String, List> references = new HashMap<>();
+    private Map<String, Boolean> references = new HashMap<>();
 
     public CategoryDto() {
     }
@@ -86,11 +86,11 @@ public class CategoryDto {
         this.children.add(child);
     }
 
-    public Map<String, List> getReferences() {
+    public Map<String, Boolean> getReferences() {
         return references;
     }
 
-    public void setReferences(Map<String, List> references) {
+    public void setReferences(Map<String, Boolean> references) {
         this.references = references;
     }
 

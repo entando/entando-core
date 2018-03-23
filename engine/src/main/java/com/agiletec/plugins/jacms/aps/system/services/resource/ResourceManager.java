@@ -39,13 +39,11 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.cache.IResourceMa
 import com.agiletec.plugins.jacms.aps.system.services.resource.event.ResourceChangedEvent;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMonoInstanceResource;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMultiInstanceResource;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceCategoryReferenceDto;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
-import java.util.AbstractMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -481,17 +479,6 @@ public class ResourceManager extends AbstractService implements IResourceManager
             throw new ApsSystemException("Error searching category utilizers : category code '" + categoryCode + "'", t);
         }
         return resourcesIds;
-    }
-
-    @Override
-    public Map.Entry<String, List> getCategoryUtilizersForApi(String categoryCode) throws ApsSystemException {
-        List<String> resourcesIds = this.getCategoryUtilizers(categoryCode);
-        List<ResourceCategoryReferenceDto> dtos = new ArrayList<>();
-        for (String resourcesId : resourcesIds) {
-            ResourceRecordVO resourceVo = this.getResourceDAO().loadResourceVo(resourcesId);
-            dtos.add(new ResourceCategoryReferenceDto(resourceVo));
-        }
-        return new AbstractMap.SimpleEntry("resources", dtos);
     }
 
     @Override

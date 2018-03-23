@@ -13,13 +13,13 @@
  */
 package org.entando.entando.aps.system.services.category;
 
+import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -79,8 +79,8 @@ public class CategoryService implements ICategoryService {
         try {
             dto = this.getDtoBuilder().convert(category);
             for (CategoryUtilizer categoryUtilizer : this.getCategoryUtilizers()) {
-                Map.Entry<String, List> entry = categoryUtilizer.getCategoryUtilizersForApi(categoryCode);
-                dto.getReferences().put(entry.getKey(), entry.getValue());
+                List references = categoryUtilizer.getCategoryUtilizers(categoryCode);
+                dto.getReferences().put(((IManager) categoryUtilizer).getName(), (null != references && !references.isEmpty()));
             }
         } catch (Exception e) {
             logger.error("error extracting category " + categoryCode, e);

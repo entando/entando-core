@@ -16,7 +16,6 @@ package com.agiletec.aps.system.services.category;
 import java.util.List;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import java.util.Map;
 
 /**
  * Interfaccia base per i servizi, i cui elementi gestiti, fanno uso delle
@@ -43,8 +42,6 @@ public interface CategoryUtilizer {
      * @throws ApsSystemException In caso di errore.
      */
     public List getCategoryUtilizers(String categoryCode) throws ApsSystemException;
-
-    public Map.Entry<String, List> getCategoryUtilizersForApi(String categoryCode) throws ApsSystemException;
 
     /**
      * Reload the category references.

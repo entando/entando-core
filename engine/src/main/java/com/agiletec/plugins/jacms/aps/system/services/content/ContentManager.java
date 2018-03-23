@@ -43,11 +43,9 @@ import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.event.PublicContentChangedEvent;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentCategoryReferenceDto;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceUtilizer;
-import java.util.AbstractMap;
 import java.util.Set;
 
 /**
@@ -588,17 +586,6 @@ public class ContentManager extends ApsEntityManager
             throw new ApsSystemException("Error while loading referenced contents : category " + categoryCode, t);
         }
         return contentIds;
-    }
-
-    @Override
-    public Map.Entry<String, List> getCategoryUtilizersForApi(String categoryCode) throws ApsSystemException {
-        List<String> contentIds = this.getCategoryUtilizers(categoryCode);
-        List<ContentCategoryReferenceDto> dtos = new ArrayList<>();
-        for (String contentId : contentIds) {
-            ContentRecordVO vo = this.loadContentVO(contentId);
-            dtos.add(new ContentCategoryReferenceDto(vo));
-        }
-        return new AbstractMap.SimpleEntry("contents", dtos);
     }
 
     @Override

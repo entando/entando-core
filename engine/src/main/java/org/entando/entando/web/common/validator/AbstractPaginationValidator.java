@@ -23,7 +23,7 @@ import org.springframework.validation.Validator;
 /**
  * @author E.Santoboni
  */
-public abstract class AbstractValidator implements Validator {
+public abstract class AbstractPaginationValidator implements Validator {
 
     public static final String ERRCODE_PAGE_INVALID = "110";
     public static final String ERRCODE_NO_ITEM_ON_PAGE = "111";

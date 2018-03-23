@@ -27,4 +27,6 @@ public interface ICategoryService {
 
     public CategoryDto addCategory(CategoryDto categoryDto);
 
+    public CategoryDto updateCategory(CategoryDto categoryDto);
+
 }

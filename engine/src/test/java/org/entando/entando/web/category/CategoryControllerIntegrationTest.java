@@ -45,7 +45,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     private CategoryController controller;
 
     @Test
-    public void testGetDataTypes() throws Exception {
+    public void testGetCategories() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -55,7 +55,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type"));
+        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 

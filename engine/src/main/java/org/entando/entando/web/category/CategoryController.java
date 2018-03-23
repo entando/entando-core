@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.category.ICategoryService;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.category.validator.CategoryValidator;
@@ -49,17 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    /*
-    public static final String ERRCODE_PAGE_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-    public static final String ERRCODE_ONLINE_PAGE = "1";
-    public static final String ERRCODE_PAGE_HAS_CHILDREN = "2";
-    public static final String ERRCODE_GROUP_MISMATCH = "2";
-    public static final String ERRCODE_STATUS_PAGE_MISMATCH = "6";
-    public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
-    public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "1";
-    public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "2";
-     */
+
     @Autowired
     private ICategoryService categoryService;
 
@@ -84,7 +73,7 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
+    public ResponseEntity<?> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
         logger.debug("getting category tree for parent {}", parentCode);
         List<CategoryDto> result = this.getCategoryService().getTree(parentCode);
         Map<String, String> metadata = new HashMap<>();
@@ -109,62 +98,28 @@ public class CategoryController {
             throw new ValidationGenericException(bindingResult);
         }
         //business validations
-        int result = this.getCategoryValidator().validatePostReferences(categoryRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            if (result == 404) {
-                throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryRequest.getParentCode());
-            } else {
-                throw new ValidationGenericException(bindingResult);
-            }
-        }
+        this.getCategoryValidator().validatePostReferences(categoryRequest, bindingResult);
         CategoryDto category = this.getCategoryService().addCategory(categoryRequest);
         return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), new HashMap<>()), HttpStatus.OK);
     }
 
-    /*
-    @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
-        logger.debug("updating page {} with request {}", pageCode, pageRequest);
-
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
-        }
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validateBodyCode(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-
-        PageDto page = this.getPageService().updatePage(pageCode, pageRequest);
-        Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
-    }
-
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePageStatus(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
-        logger.debug("changing status for page {} with request {}", pageCode, pageStatusRequest);
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
-        }
+    @RequestMapping(value = "/{categoryCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
+        logger.debug("updating category {} with request {}", categoryCode, categoryRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getPageValidator().validateReferences(pageCode, pageStatusRequest, bindingResult);
+        this.getCategoryValidator().validatePutReferences(categoryCode, categoryRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
-        PageDto page = this.getPageService().updatePageStatus(pageCode, pageStatusRequest.getStatus());
+        CategoryDto category = this.getCategoryService().updateCategory(categoryRequest);
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("status", pageStatusRequest.getStatus());
-        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), metadata), HttpStatus.OK);
     }
+    /*
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

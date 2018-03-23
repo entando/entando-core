@@ -21,15 +21,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author E.Santoboni
  */
 public class CategoryDto {
 
+    @NotBlank(message = "category.code.notBlank")
     private String code;
+
+    @NotBlank(message = "category.description.notBlank")
     private String parentCode;
+
+    @NotEmpty(message = "category.titles.notBlank")
     private Map<String, String> titles = new HashMap<>();
+
     private List<String> children = new ArrayList<>();
     private Map<String, Boolean> references = new HashMap<>();
 

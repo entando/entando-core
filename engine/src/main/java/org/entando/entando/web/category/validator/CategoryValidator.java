@@ -15,9 +15,12 @@ package org.entando.entando.web.category.validator;
 
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -43,50 +46,38 @@ public class CategoryValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        CategoryDto request = (CategoryDto) target;
-        this.validateBody(request, errors);
-        /*
-        if (errors.hasErrors()) {
-            return;
-        }
-        if (null != this.getCategoryManager().getCategory(request.getCode())) {
-            errors.reject(ERRCODE_CATEGORY_ALREADY_EXISTS, new String[]{request.getCode()}, "category.exists");
-        }
-        if (null == this.getCategoryManager().getCategory(request.getParentCode())) {
-            errors.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
-        }
-         */
+        //CategoryDto request = (CategoryDto) target;
+        //this.validateBody(request, errors);
     }
 
-    public int validatePutReferences(String typeCode, CategoryDto request, Errors errors) {
-        if (!StringUtils.equals(typeCode, request.getCode())) {
-            errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{typeCode, request.getCode()}, "entityType.code.mismatch");
-            return 400;
+    public void validatePutReferences(String categoryCode, CategoryDto request, BindingResult bindingResult) {
+        if (!StringUtils.equals(categoryCode, request.getCode())) {
+            bindingResult.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{categoryCode, request.getCode()}, "category.code.mismatch");
+            throw new ValidationGenericException(bindingResult);
         }
         if (null == this.getCategoryManager().getCategory(request.getCode())) {
-            errors.reject(ERRCODE_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.notexists");
-            return 404;
+            bindingResult.reject(ERRCODE_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.notexists");
+            throw new RestRourceNotFoundException(bindingResult);
         }
         if (null == this.getCategoryManager().getCategory(request.getParentCode())) {
-            errors.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
-            return 404;
+            bindingResult.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
+            throw new RestRourceNotFoundException(bindingResult);
         }
-        return 0;
     }
 
-    public int validatePostReferences(CategoryDto request, Errors errors) {
+    public void validatePostReferences(CategoryDto request, BindingResult bindingResult) {
         if (null != this.getCategoryManager().getCategory(request.getCode())) {
-            errors.reject(ERRCODE_CATEGORY_ALREADY_EXISTS, new String[]{request.getCode()}, "category.exists");
-            return 400;
+            bindingResult.reject(ERRCODE_CATEGORY_ALREADY_EXISTS, new String[]{request.getCode()}, "category.exists");
+            throw new ValidationGenericException(bindingResult);
         }
         if (null == this.getCategoryManager().getCategory(request.getParentCode())) {
-            errors.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
-            return 404;
+            bindingResult.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
+            throw new RestRourceNotFoundException(bindingResult);
         }
-        return 0;
     }
 
-    public int validateBody(CategoryDto request, Errors errors) {
+    /*
+    public void validateBody(CategoryDto request, Errors errors) {
         if (StringUtils.isBlank(request.getCode())) {
             errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.code.notBlank");
         }
@@ -96,9 +87,8 @@ public class CategoryValidator implements Validator {
         if (null == request.getTitles() || request.getTitles().isEmpty()) {
             errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.titles.notBlank");
         }
-        return (errors.hasErrors()) ? 400 : 0;
     }
-
+     */
     public ICategoryManager getCategoryManager() {
         return categoryManager;
     }

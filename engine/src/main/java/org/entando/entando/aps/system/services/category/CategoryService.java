@@ -93,7 +93,7 @@ public class CategoryService implements ICategoryService {
     public CategoryDto addCategory(CategoryDto categoryDto) {
         Category parentCategory = this.getCategoryManager().getCategory(categoryDto.getParentCode());
         if (null == parentCategory) {
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "category", categoryDto.getParentCode());
+            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryDto.getParentCode());
         }
         Category category = this.getCategoryManager().getCategory(categoryDto.getCode());
         if (null != category) {
@@ -112,6 +112,30 @@ public class CategoryService implements ICategoryService {
         } catch (Exception e) {
             logger.error("error adding category " + categoryDto.getCode(), e);
             throw new RestServerError("error adding category " + categoryDto.getCode(), e);
+        }
+        return dto;
+    }
+
+    @Override
+    public CategoryDto updateCategory(CategoryDto categoryDto) {
+        Category parentCategory = this.getCategoryManager().getCategory(categoryDto.getParentCode());
+        if (null == parentCategory) {
+            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryDto.getParentCode());
+        }
+        Category category = this.getCategoryManager().getCategory(categoryDto.getCode());
+        if (null == category) {
+            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryDto.getCode());
+        }
+        CategoryDto dto = null;
+        try {
+            category.setParentCode(categoryDto.getParentCode());
+            category.getTitles().clear();
+            category.getTitles().putAll(categoryDto.getTitles());
+            this.getCategoryManager().updateCategory(category);
+            dto = this.getDtoBuilder().convert(this.getCategoryManager().getCategory(categoryDto.getCode()));
+        } catch (Exception e) {
+            logger.error("error updating category " + categoryDto.getCode(), e);
+            throw new RestServerError("error updating category " + categoryDto.getCode(), e);
         }
         return dto;
     }

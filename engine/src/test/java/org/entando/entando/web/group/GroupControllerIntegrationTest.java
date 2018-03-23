@@ -109,8 +109,8 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.metaData.pageSize", is(31)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
-            result.andExpect(jsonPath("$.metaData.page", is(7)));
-            result.andExpect(jsonPath("$.metaData.lastPage", is(2147483647)));
+            result.andExpect(jsonPath("$.metaData.page", is(1)));
+            result.andExpect(jsonPath("$.metaData.lastPage", is(1)));
             result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
 
         } finally {

@@ -1,10 +1,13 @@
 package org.entando.entando.aps.system.exception;
 
+import org.springframework.validation.BindingResult;
+
 public class RestRourceNotFoundException extends RuntimeException {
 
     private String errorCode;
     private String objectName;
     private String objectCode;
+    private BindingResult bindingResult;
 
     public RestRourceNotFoundException(String objectName, String objectCode) {
         this("1", objectName, objectCode);
@@ -21,6 +24,10 @@ public class RestRourceNotFoundException extends RuntimeException {
         this.errorCode = errorCode;
         this.objectName = objectName;
         this.objectCode = objectCode;
+    }
+
+    public RestRourceNotFoundException(BindingResult bindingResult) {
+        this.setBindingResult(bindingResult);
     }
 
     public String getObjectName() {
@@ -45,6 +52,14 @@ public class RestRourceNotFoundException extends RuntimeException {
 
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
+    }
+
+    public BindingResult getBindingResult() {
+        return bindingResult;
+    }
+
+    public void setBindingResult(BindingResult bindingResult) {
+        this.bindingResult = bindingResult;
     }
 
 }

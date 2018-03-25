@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.group;
 
 import java.util.HashMap;
@@ -7,6 +20,8 @@ import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.group.IGroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -60,8 +75,11 @@ public class GroupController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGroups(RestListRequest requestList) {
+    public ResponseEntity<?> getGroups(RestListRequest requestList) throws JsonProcessingException {
+        this.getGroupValidator().validateRestListRequest(requestList);
         PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
+        this.getGroupValidator().validateRestListResult(requestList, result);
+        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
@@ -95,7 +113,7 @@ public class GroupController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        //business validations 
+        //business validations
         getGroupValidator().validate(groupRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationConflictException(bindingResult);
@@ -114,6 +132,4 @@ public class GroupController {
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
-
 }
-

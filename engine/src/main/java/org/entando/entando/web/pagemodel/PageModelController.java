@@ -1,9 +1,24 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.pagemodel;
 
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.HashMap;
+import java.util.Map;
 import org.entando.entando.aps.system.services.pagemodel.IPageModelService;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -57,10 +72,12 @@ public class PageModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPageModels(RestListRequest requestList) {
+        logger.trace("loading page models");
+        this.getPagemModelValidator().validateRestListRequest(requestList);
         PagedMetadata<PageModelDto> result = this.getPageModelService().getPageModels(requestList);
+        this.getPagemModelValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
-
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,8 +122,9 @@ public class PageModelController {
     public ResponseEntity<?> deletePageModel(@PathVariable String code) throws ApsSystemException {
         logger.debug("deleting {}", code);
         this.getPageModelService().removePageModel(code);
-        return new ResponseEntity<>(new RestResponse(code), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", code);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
-
 
 }

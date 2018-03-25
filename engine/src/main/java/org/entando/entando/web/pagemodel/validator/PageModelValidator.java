@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,20 +18,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.web.common.validator.AbstractValidator;
 import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-
 
 @Component
-public class PageModelValidator implements Validator {
+public class PageModelValidator extends AbstractValidator {
 
     public static final String ERRCODE_FRAMES_POS_MISMATCH = "1";
     public static final String ERRCODE_CODE_EXISTS = "2";
     public static final String ERRCODE_PAGEMODEL_REFERENCES = "3";
-    public static final String ERRCODE_URINAME_MISMATCH = "4";;
+    public static final String ERRCODE_URINAME_MISMATCH = "4";
+
+    ;
 
 
     @Override
@@ -52,9 +53,9 @@ public class PageModelValidator implements Validator {
         }
         //frame positions should start from 0 and be progressive
         List<Integer> positions = conf
-                                      .stream()
-                                      .sorted((e1, e2) -> Integer.compare(e1.getPos(), e2.getPos()))
-                                      .map(i -> i.getPos()).collect(Collectors.toList());
+                .stream()
+                .sorted((e1, e2) -> Integer.compare(e1.getPos(), e2.getPos()))
+                .map(i -> i.getPos()).collect(Collectors.toList());
         int firstPosition = positions.get(0);
         if (firstPosition != 0) {
             errors.reject(ERRCODE_FRAMES_POS_MISMATCH, new String[]{}, "pageModel.frames.pos.mismatch");
@@ -79,6 +80,5 @@ public class PageModelValidator implements Validator {
         }
 
     }
-
 
 }

@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.category;
 
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
@@ -26,11 +27,13 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 public class CategoryControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -75,6 +78,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     public void testGetInvalidCategoryTree() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
+        this.executeGet("invalid_code", accessToken, status().isNotFound());
         ResultActions result = mockMvc
                 .perform(get("/categories")
                         .param("parentCode", "invalid_code")
@@ -87,171 +91,82 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     public void testGetValidCategory() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/categories/{categoryCode}", new Object[]{"cat1"})
-                        .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-        result.andExpect(status().isOk());
+        this.executeGet("cat1", accessToken, status().isOk());
     }
 
     @Test
     public void testGetInvalidCategory() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/categories/{categoryCode}", new Object[]{"invalid_code"})
-                        .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-        result.andExpect(status().isNotFound());
+        this.executeGet("invalid_code", accessToken, status().isNotFound());
     }
 
     @Test
-    public void testAddUpdateCategory_1() throws Exception {
+    public void testAddCategory() throws Exception {
         try {
             Assert.assertNotNull(this.categoryManager.getCategory("cat1"));
             Assert.assertNull(this.categoryManager.getCategory("test_cat"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-            InputStream isJsonPost1 = this.getClass().getResourceAsStream("1_POST_invalid_1.json");
-            String jsonPost1 = FileTextReader.getText(isJsonPost1);
-            ResultActions result1 = mockMvc
-                    .perform(post("/categories")
-                            .content(jsonPost1)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result1.andExpect(status().isBadRequest());
-
-            InputStream isJsonPost2 = this.getClass().getResourceAsStream("1_POST_invalid_2.json");
-            String jsonPost2 = FileTextReader.getText(isJsonPost2);
-            ResultActions result2 = mockMvc
-                    .perform(post("/categories")
-                            .content(jsonPost2)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result2.andExpect(status().isBadRequest());
-
-            InputStream isJsonPost3 = this.getClass().getResourceAsStream("1_POST_invalid_3.json");
-            String jsonPost3 = FileTextReader.getText(isJsonPost3);
-            ResultActions result3 = mockMvc
-                    .perform(post("/categories")
-                            .content(jsonPost3)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result3.andExpect(status().isNotFound());
-
-            InputStream isJsonPost4 = this.getClass().getResourceAsStream("1_POST_valid.json");
-            String jsonPost4 = FileTextReader.getText(isJsonPost4);
-            ResultActions result4 = mockMvc
-                    .perform(post("/categories")
-                            .content(jsonPost4)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result4.andExpect(status().isOk());
+            this.executePost("1_POST_invalid_1.json", accessToken, status().isBadRequest());
+            this.executePost("1_POST_invalid_2.json", accessToken, status().isBadRequest());
+            this.executePost("1_POST_invalid_3.json", accessToken, status().isNotFound());
+            this.executePost("1_POST_valid.json", accessToken, status().isOk());
             Assert.assertNotNull(this.categoryManager.getCategory("test_cat"));
-            /*
-            DataObject addedType = (DataObject) this.dataObjectManager.getEntityPrototype("AAA");
-            Assert.assertNotNull(addedType);
-            Assert.assertEquals("Type AAA", addedType.getTypeDescription());
-            Assert.assertEquals(1, addedType.getAttributeList().size());
-
-            InputStream isJsonPutInvalid = this.getClass().getResourceAsStream("1_PUT_invalid.json");
-            String jsonPutInvalid = FileTextReader.getText(isJsonPutInvalid);
-            ResultActions result2 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .content(jsonPutInvalid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result2.andExpect(status().isBadRequest());
-
-            InputStream isJsonPutValid = this.getClass().getResourceAsStream("1_PUT_valid.json");
-            String jsonPutValid = FileTextReader.getText(isJsonPutValid);
-            ResultActions result3 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .content(jsonPutValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result3.andExpect(status().isOk());
-
-            addedType = (DataObject) this.dataObjectManager.getEntityPrototype("AAA");
-            Assert.assertEquals("Type AAA Modified", addedType.getTypeDescription());
-            Assert.assertEquals(2, addedType.getAttributeList().size());
-
-            ResultActions result4 = mockMvc
-                    .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .header("Authorization", "Bearer " + accessToken));
-            result4.andExpect(status().isOk());
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("AAA"));
-             */
         } finally {
             this.categoryManager.deleteCategory("test_cat");
         }
     }
-    /*
+
     @Test
-    public void testAddUpdateDataType_2() throws Exception {
+    public void testUpdateCategory() throws Exception {
+        String categoryCode = "test_cat2";
         try {
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
+            Assert.assertNotNull(this.categoryManager.getCategory("cat1"));
+            Assert.assertNull(this.categoryManager.getCategory(categoryCode));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-            InputStream isJsonPostInvalid = this.getClass().getResourceAsStream("2_POST_invalid.json");
-            String jsonPostInvalid = FileTextReader.getText(isJsonPostInvalid);
-            ResultActions result1 = mockMvc
-                    .perform(post("/dataTypes")
-                            .content(jsonPostInvalid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result1.andExpect(status().isBadRequest());
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
-
-            InputStream isJsonPostValid = this.getClass().getResourceAsStream("2_POST_valid.json");
-            String jsonPostValid = FileTextReader.getText(isJsonPostValid);
-            ResultActions result2 = mockMvc
-                    .perform(post("/dataTypes")
-                            .content(jsonPostValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result2.andExpect(status().isOk());
-            DataObject addedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
-            Assert.assertNotNull(addedDataObject);
-            Assert.assertEquals(3, addedDataObject.getAttributeList().size());
-
-            ResultActions result2_bis = mockMvc
-                    .perform(post("/dataTypes")
-                            .content(jsonPostValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result2_bis.andExpect(status().isConflict());
-
-            InputStream isJsonPutValid = this.getClass().getResourceAsStream("2_PUT_valid.json");
-            String jsonPutValid = FileTextReader.getText(isJsonPutValid);
-            ResultActions result3 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .content(jsonPutValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result3.andExpect(status().isBadRequest());
-
-            ResultActions result3_bis = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"TST"})
-                            .content(jsonPutValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result3_bis.andExpect(status().isOk());
-
-            DataObject modifiedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
-            Assert.assertNotNull(modifiedDataObject);
-            Assert.assertEquals(5, modifiedDataObject.getAttributeList().size());
-
-            ResultActions result4 = mockMvc
-                    .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"TST"})
-                            .header("Authorization", "Bearer " + accessToken));
-            result4.andExpect(status().isOk());
-            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
+            this.executePost("2_POST_valid.json", accessToken, status().isOk());
+            this.executePut("2_PUT_invalid_1.json", categoryCode, accessToken, status().isBadRequest());
+            this.executePut("2_PUT_invalid_2.json", categoryCode, accessToken, status().isBadRequest());
+            this.executePut("2_PUT_valid.json", "home", accessToken, status().isBadRequest());
+            this.executePut("2_PUT_valid.json", categoryCode, accessToken, status().isOk());
+            Category modified = this.categoryManager.getCategory(categoryCode);
+            Assert.assertNotNull(modified);
+            Assert.assertTrue(modified.getTitle("en").startsWith("New "));
+            Assert.assertTrue(modified.getTitle("it").startsWith("Nuovo "));
         } finally {
-            if (null != this.dataObjectManager.getEntityPrototype("TST")) {
-                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TST");
-            }
+            this.categoryManager.deleteCategory("test_cat");
         }
     }
-     */
+
+    private void executeGet(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
+        ResultActions result = mockMvc
+                .perform(get("/categories/{categoryCode}", new Object[]{categoryCode})
+                        .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(rm);
+    }
+
+    private void executePost(String filename, String accessToken, ResultMatcher rm) throws Exception {
+        InputStream isJsonPost = this.getClass().getResourceAsStream(filename);
+        String jsonPost = FileTextReader.getText(isJsonPost);
+        ResultActions result = mockMvc
+                .perform(post("/categories").content(jsonPost)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(rm);
+    }
+
+    private void executePut(String filename, String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
+        InputStream isJsonPut = this.getClass().getResourceAsStream(filename);
+        String jsonPut = FileTextReader.getText(isJsonPut);
+        ResultActions result = mockMvc
+                .perform(put("/categories/{categoryCode}", new Object[]{categoryCode})
+                        .content(jsonPut)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(rm);
+    }
+
 }

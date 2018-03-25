@@ -1,10 +1,24 @@
-
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.widget;
 
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.HashMap;
+import java.util.Map;
 import org.entando.entando.aps.system.services.widget.IWidgetService;
 import org.entando.entando.aps.system.services.widget.model.WidgetDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -32,7 +46,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class WidgetController {
 
     //TODO check permissions
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -44,8 +57,7 @@ public class WidgetController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getWidget(@PathVariable String widgetCode) {
-
-        logger.trace("getWidget by code {}",widgetCode);
+        logger.trace("getWidget by code {}", widgetCode);
         WidgetDto group = this.widgetService.getWidget(widgetCode);
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
     }
@@ -55,14 +67,15 @@ public class WidgetController {
     public ResponseEntity<?> deleteWidget(@PathVariable String widgetCode) throws ApsSystemException {
         logger.info("deleting widget {}", widgetCode);
         this.widgetService.removeWidget(widgetCode);
-        return new ResponseEntity<>(new RestResponse(widgetCode), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", widgetCode);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")
     public ResponseEntity<?> updateWidget(@PathVariable String widgetCode, @Valid @RequestBody WidgetRequest widgetRequest, BindingResult bindingResult) {
-
-        logger.trace("update widget. Code: {} and body {}: ",widgetCode, widgetRequest);
+        logger.trace("update widget. Code: {} and body {}: ", widgetCode, widgetRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -71,7 +84,6 @@ public class WidgetController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
         WidgetDto widgetDto = this.widgetService.updateWidget(widgetCode, widgetRequest);
         return new ResponseEntity<>(new RestResponse(widgetDto), HttpStatus.OK);
     }
@@ -79,9 +91,7 @@ public class WidgetController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")
     public ResponseEntity<?> addWidget(@Valid @RequestBody WidgetRequest widgetRequest, BindingResult bindingResult) throws ApsSystemException {
-
         logger.trace("add widget. body {}: ", widgetRequest);
-
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -98,9 +108,10 @@ public class WidgetController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getWidgets(RestListRequest requestList) {
-
         logger.trace("get widget list {}", requestList);
+        this.getWidgetValidator().validateRestListRequest(requestList);
         PagedMetadata<WidgetDto> result = this.widgetService.getWidgets(requestList);
+        this.getWidgetValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

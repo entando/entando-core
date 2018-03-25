@@ -1,21 +1,29 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.widget.validator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-import org.entando.entando.web.group.GroupController;
+import org.entando.entando.web.common.validator.AbstractValidator;
 import org.entando.entando.web.widget.model.WidgetRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 @Component
-public class WidgetValidator implements Validator {
-
+public class WidgetValidator extends AbstractValidator {
 
     public static final String ERRCODE_CANNOT_DELETE_USED_WIDGET = "1";
     public static final String ERRCODE_URINAME_MISMATCH = "2";
-
 
     @Override
     public boolean supports(Class<?> paramClass) {

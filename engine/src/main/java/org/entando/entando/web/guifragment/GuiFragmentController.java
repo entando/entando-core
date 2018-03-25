@@ -15,6 +15,10 @@ package org.entando.entando.web.guifragment;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentService;
@@ -70,8 +74,11 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGuiFragments(RestListRequest requestList) {
+    public ResponseEntity<?> getGuiFragments(RestListRequest requestList) throws JsonProcessingException {
+        this.getGuiFragmentValidator().validateRestListRequest(requestList);
         PagedMetadata<GuiFragmentDtoSmall> result = this.getGuiFragmentService().getGuiFragments(requestList);
+        this.getGuiFragmentValidator().validateRestListResult(requestList, result);
+        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
@@ -122,7 +129,9 @@ public class GuiFragmentController {
     public ResponseEntity<?> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
         logger.info("deleting {}", fragmentCode);
         this.getGuiFragmentService().removeGuiFragment(fragmentCode);
-        return new ResponseEntity<>(new RestResponse(fragmentCode), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", fragmentCode);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
 }

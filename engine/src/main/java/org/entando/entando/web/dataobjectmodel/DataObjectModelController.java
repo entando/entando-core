@@ -164,7 +164,7 @@ public class DataObjectModelController {
         }
         this.getDataObjectModelService().removeDataObjectModel(Long.parseLong(dataModelId));
         Map<String, String> payload = new HashMap<>();
-        payload.put("code", dataModelId);
+        payload.put("modelId", dataModelId);
         return new ResponseEntity<>(new RestResponse(payload), HttpStatus.OK);
     }
 

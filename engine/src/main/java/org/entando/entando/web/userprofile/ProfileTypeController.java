@@ -18,6 +18,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
@@ -78,8 +80,10 @@ public class ProfileTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
+        this.getProfileTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        this.getProfileTypeValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
@@ -144,7 +148,9 @@ public class ProfileTypeController {
     public ResponseEntity<RestResponse> deleteDataType(@PathVariable String profileTypeCode) throws ApsSystemException {
         logger.debug("Deleting profile type -> " + profileTypeCode);
         this.getUserProfileTypeService().deleteUserProfileType(profileTypeCode);
-        return new ResponseEntity<>(new RestResponse(profileTypeCode), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", profileTypeCode);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
 }

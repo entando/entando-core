@@ -29,4 +29,6 @@ public interface ICategoryService {
 
     public CategoryDto updateCategory(CategoryDto categoryDto);
 
+    public void deleteCategory(String categoryCode);
+
 }

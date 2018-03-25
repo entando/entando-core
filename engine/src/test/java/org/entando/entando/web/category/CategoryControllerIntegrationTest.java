@@ -34,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 public class CategoryControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -103,18 +104,21 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testAddCategory() throws Exception {
+        String categoryCode = "test_cat";
         try {
             Assert.assertNotNull(this.categoryManager.getCategory("cat1"));
-            Assert.assertNull(this.categoryManager.getCategory("test_cat"));
+            Assert.assertNull(this.categoryManager.getCategory(categoryCode));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
             this.executePost("1_POST_invalid_1.json", accessToken, status().isBadRequest());
             this.executePost("1_POST_invalid_2.json", accessToken, status().isBadRequest());
             this.executePost("1_POST_invalid_3.json", accessToken, status().isNotFound());
             this.executePost("1_POST_valid.json", accessToken, status().isOk());
-            Assert.assertNotNull(this.categoryManager.getCategory("test_cat"));
+            Assert.assertNotNull(this.categoryManager.getCategory(categoryCode));
+            this.executeDelete(categoryCode, accessToken, status().isOk());
+            Assert.assertNull(this.categoryManager.getCategory(categoryCode));
         } finally {
-            this.categoryManager.deleteCategory("test_cat");
+            this.categoryManager.deleteCategory(categoryCode);
         }
     }
 
@@ -135,8 +139,29 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             Assert.assertNotNull(modified);
             Assert.assertTrue(modified.getTitle("en").startsWith("New "));
             Assert.assertTrue(modified.getTitle("it").startsWith("Nuovo "));
+            this.executeDelete(categoryCode, accessToken, status().isOk());
+            Assert.assertNull(this.categoryManager.getCategory(categoryCode));
         } finally {
-            this.categoryManager.deleteCategory("test_cat");
+            this.categoryManager.deleteCategory(categoryCode);
+        }
+    }
+
+    @Test
+    public void testDeleteCategory() throws Exception {
+        String categoryCode = "test_cat";
+        try {
+            Assert.assertNotNull(this.categoryManager.getCategory("cat1"));
+            Assert.assertNull(this.categoryManager.getCategory(categoryCode));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            this.executePost("1_POST_valid.json", accessToken, status().isOk());
+            Assert.assertNotNull(this.categoryManager.getCategory(categoryCode));
+            this.executeDelete(categoryCode, accessToken, status().isOk());
+            Assert.assertNull(this.categoryManager.getCategory(categoryCode));
+            this.executeDelete("invalid_category", accessToken, status().isOk());
+            this.executeDelete("cat1", accessToken, status().isBadRequest());
+        } finally {
+            this.categoryManager.deleteCategory(categoryCode);
         }
     }
 
@@ -164,6 +189,14 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(put("/categories/{categoryCode}", new Object[]{categoryCode})
                         .content(jsonPut)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(rm);
+    }
+
+    private void executeDelete(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
+        ResultActions result = mockMvc
+                .perform(delete("/categories/{categoryCode}", new Object[]{categoryCode})
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);

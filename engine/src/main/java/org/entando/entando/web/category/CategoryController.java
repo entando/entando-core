@@ -119,87 +119,15 @@ public class CategoryController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-    /*
 
-    @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/pages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addPage(@ModelAttribute("user") UserDetails user, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) throws ApsSystemException {
-        logger.debug("creating page with request {}", pageRequest);
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        //business validations
-        getPageValidator().validate(pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
-        }
-        PageDto dto = this.getPageService().addPage(pageRequest);
-        Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(dto, new ArrayList<>(), metadata), HttpStatus.OK);
-    }
-
-    @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deletePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode) throws ApsSystemException {
-        logger.info("deleting {}", pageCode);
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
-        }
-        DataBinder binder = new DataBinder(pageCode);
-        BindingResult bindingResult = binder.getBindingResult();
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        //business validations
-        getPageValidator().validateOnlinePage(pageCode, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        //business validations
-        getPageValidator().validateChildren(pageCode, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageService().removePage(pageCode);
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{categoryCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> deleteCategory(@PathVariable String categoryCode) throws ApsSystemException {
+        logger.debug("Deleting category -> " + categoryCode);
+        this.getCategoryService().deleteCategory(categoryCode);
         Map<String, String> payload = new HashMap<>();
-        payload.put("code", pageCode);
-        Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(payload, new ArrayList<>(), metadata), HttpStatus.OK);
+        payload.put("code", categoryCode);
+        return new ResponseEntity<>(new RestResponse(payload), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/pages/{pageCode}/position", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> movePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
-        logger.debug("changing position for page {} with request {}", pageCode, pageRequest);
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
-        }
-        //field validations
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validateBodyCode(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validateChangePositionRequest(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validateGroups(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validatePagesStatus(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-
-        PageDto page = this.getPageService().movePage(pageCode, pageRequest);
-        Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
-    }
-     */
 }

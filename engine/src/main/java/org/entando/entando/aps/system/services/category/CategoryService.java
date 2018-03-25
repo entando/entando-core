@@ -140,6 +140,30 @@ public class CategoryService implements ICategoryService {
         return dto;
     }
 
+    @Override
+    public void deleteCategory(String categoryCode) {
+        Category category = this.getCategoryManager().getCategory(categoryCode);
+        if (null == category) {
+            return;
+        }
+        try {
+            for (CategoryUtilizer categoryUtilizer : this.getCategoryUtilizers()) {
+                List references = categoryUtilizer.getCategoryUtilizers(categoryCode);
+                if (null != references && !references.isEmpty()) {
+                    BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
+                    bindingResult.reject(CategoryValidator.ERRCODE_FRAGMENT_REFERENCES, new String[]{categoryCode}, "category.cannot.delete.references");
+                    throw new ValidationGenericException(bindingResult);
+                }
+            }
+            this.getCategoryManager().deleteCategory(categoryCode);
+        } catch (ValidationGenericException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("error deleting category " + categoryCode, e);
+            throw new RestServerError("error deleting category " + categoryCode, e);
+        }
+    }
+
     protected ICategoryManager getCategoryManager() {
         return categoryManager;
     }

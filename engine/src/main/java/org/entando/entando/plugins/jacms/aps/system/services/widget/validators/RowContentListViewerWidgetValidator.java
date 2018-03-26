@@ -3,11 +3,11 @@ package org.entando.entando.plugins.jacms.aps.system.services.widget.validators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -28,6 +28,7 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
 
 
     private IContentManager contentManager;
+    private IContentModelManager contentModelManager;
 
     protected IContentManager getContentManager() {
         return contentManager;
@@ -35,6 +36,14 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
 
     public void setContentManager(IContentManager contentManager) {
         this.contentManager = contentManager;
+    }
+
+    protected IContentModelManager getContentModelManager() {
+        return contentModelManager;
+    }
+
+    public void setContentModelManager(IContentModelManager contentModelManager) {
+        this.contentModelManager = contentModelManager;
     }
 
     @Override
@@ -58,37 +67,35 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
     }
 
     private void validateContents(WidgetConfigurationRequest widget, IPage page, BeanPropertyBindingResult errors) throws ApsSystemException {
-        List<Object> contents = extractContentsConfiguration(widget);
+        List<Object> contentsConfig = extractContentsConfiguration(widget);
 
-        if (null == contents) {
+        if (null == contentsConfig) {
             errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{}, widget.getCode() + ".contents.required");
             return;
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        List<RowContentListConfigurationEntry> list = new ArrayList<>();
-        for (Object map : contents) {
-            RowContentListConfigurationEntry entry = mapper.convertValue(map, RowContentListConfigurationEntry.class);
-            list.add(entry);
+        List<RowContentListConfigurationEntry> contentsConfigEntries = new ArrayList<>();
+        for (Object contentConfEntry : contentsConfig) {
+            RowContentListConfigurationEntry entry = mapper.convertValue(contentConfEntry, RowContentListConfigurationEntry.class);
+            contentsConfigEntries.add(entry);
         }
 
-        widget.getProcessInfo().put(WidgetConfigurationValidator.PROCESS_INFO_CONFIG, list);
+        widget.getProcessInfo().put(WidgetConfigurationValidator.PROCESS_INFO_CONFIG, contentsConfigEntries);
 
-        List<String> contentIdList = list
-                                         .stream()
-                                         .map(i -> i.getContentId()).collect(Collectors.toList());
-
-        if (null == contentIdList || contentIdList.isEmpty()) {
+        if (contentsConfigEntries.isEmpty()) {
             errors.reject(WidgetValidatorCmsHelper.ERRCODE_INVALID_CONFIGURATION, new String[]{}, widget.getCode() + ".contents.required");
             return;
         }
 
-        //TODO validate MODEL if present
-        for (String contentId : contentIdList) {
-            WidgetValidatorCmsHelper.validateSingleContentOnPage(widget.getCode(), page, contentId, this.getContentManager(), errors);
-
+        for (RowContentListConfigurationEntry entry : contentsConfigEntries) {
+            WidgetValidatorCmsHelper.validateSingleContentOnPage(widget.getCode(), page, entry.getContentId(), this.getContentManager(), errors);
+            String typeCode = entry.getContentId().substring(0, 3);
+            WidgetValidatorCmsHelper.validateContentModel(widget.getCode(), typeCode, entry.getModelId(), this.getContentModelManager(), errors);
         }
     }
+
+
 
 
     /**
@@ -103,7 +110,7 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
             if (StringUtils.isNotBlank(configuration)) {
                 List<Properties> props = RowContentListHelper.fromParameterToContents(configuration);
                 if (null != props && !props.isEmpty()) {
-                    final List<Object> validProps = new ArrayList<>(); //fix fromParameterToContents when also modelId is defined
+                    final List<Object> validProps = new ArrayList<>();
                     props.stream().filter(i -> !i.isEmpty())
                          .forEach(i -> validProps.add(i));
                     contents = validProps;

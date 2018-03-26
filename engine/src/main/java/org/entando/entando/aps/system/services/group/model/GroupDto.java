@@ -25,6 +25,11 @@ public class GroupDto {
     private String code;
     private String name;
 
+    /**
+     * The references grouped by service name.
+     * <p>
+     * Lists all the managers that may contain references by indicating with <code>true</code> the presence of references
+     */
     @JsonInclude(Include.NON_NULL)
     private Map<String, Boolean> references;
 

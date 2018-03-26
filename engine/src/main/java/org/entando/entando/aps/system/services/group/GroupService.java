@@ -251,31 +251,4 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         return null;
     }
 
-    //    public Map<String, List<UtilizerEntry>> getReferencingObjects(Group group) {
-    //        Map<String, List<UtilizerEntry>> references = new HashMap<String, List<UtilizerEntry>>();
-    //        try {
-    //            String[] defNames = applicationContext.getBeanNamesForType(GroupUtilizer.class);
-    //            for (int i = 0; i < defNames.length; i++) {
-    //                Object service = null;
-    //                try {
-    //                    service = applicationContext.getBean(defNames[i]);
-    //                } catch (Throwable t) {
-    //                    logger.error("error in hasReferencingObjects", t);
-    //                    service = null;
-    //                }
-    //                if (service != null) {
-    //                    GroupUtilizer groupUtilizer = (GroupUtilizer) service;
-    //                    List<UtilizerEntry> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
-    //                    if (utilizers != null && !utilizers.isEmpty()) {
-    //                        references.put(groupUtilizer.getName(), utilizers);
-    //                    }
-    //                }
-    //            }
-    //        } catch (ApsSystemException ex) {
-    //            logger.error("error loading references for group {}", group.getName(), ex);
-    //            throw new RestServerError("error in getReferencingObjects ", ex);
-    //        }
-    //        return references;
-    //    }
-
 }

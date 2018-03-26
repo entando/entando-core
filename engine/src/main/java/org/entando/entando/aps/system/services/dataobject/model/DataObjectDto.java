@@ -10,12 +10,6 @@ public class DataObjectDto {
     private String description;
     private String mainGroup;
     private Set<String> groups;
-    //private List<AttributeInterface> _attributeList;
-    //private Map<String, AttributeInterface> _attributeMap;
-    //private List<Category> _categories;
-    //private String _renderingLang;
-    //private String _defaultLang;
-    //private IApsEntityDOM _entityDom;
 
     public String getId() {
         return id;

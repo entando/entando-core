@@ -82,7 +82,7 @@ public class ProfileTypeController {
     public ResponseEntity<RestResponse> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
         this.getProfileTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", result);
         this.getProfileTypeValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
@@ -95,7 +95,7 @@ public class ProfileTypeController {
             throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
         }
         UserProfileTypeDto dto = this.getUserProfileTypeService().getUserProfileType(profileTypeCode);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", dto);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 

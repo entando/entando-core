@@ -21,7 +21,6 @@ import javax.validation.Valid;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.group.IGroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -79,7 +78,7 @@ public class GroupController {
         this.getGroupValidator().validateRestListRequest(requestList);
         PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
         this.getGroupValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

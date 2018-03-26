@@ -57,7 +57,7 @@ public class EntityManagerController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getEntityManagers(RestListRequest requestList) throws JsonProcessingException {
         PagedMetadata<String> result = this.getEntityManagerService().getEntityManagers(requestList);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

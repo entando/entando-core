@@ -16,7 +16,6 @@ package org.entando.entando.web.guifragment;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -78,7 +77,7 @@ public class GuiFragmentController {
         this.getGuiFragmentValidator().validateRestListRequest(requestList);
         PagedMetadata<GuiFragmentDtoSmall> result = this.getGuiFragmentService().getGuiFragments(requestList);
         this.getGuiFragmentValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

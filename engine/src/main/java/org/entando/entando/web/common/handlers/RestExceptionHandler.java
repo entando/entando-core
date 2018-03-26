@@ -105,12 +105,18 @@ public class RestExceptionHandler {
     @ResponseBody
     public RestResponse processRestRourceNotFoundEx(RestRourceNotFoundException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = new RestResponse();
-        RestError error = new RestError(ex.getErrorCode(), this.resolveLocalizedErrorMessage("NOT_FOUND", new Object[]{ex.getObjectName(), ex.getObjectCode()}));
-        List<RestError> errors = new ArrayList<>();
-        errors.add(error);
-        response.setErrors(errors);
-        response.setMetaData(new HashMap<>());
+        RestResponse response = null;
+        if (null != ex.getBindingResult()) {
+            BindingResult result = ex.getBindingResult();
+            response = processAllErrors(result);
+        } else {
+            response = new RestResponse();
+            RestError error = new RestError(ex.getErrorCode(), this.resolveLocalizedErrorMessage("NOT_FOUND", new Object[]{ex.getObjectName(), ex.getObjectCode()}));
+            List<RestError> errors = new ArrayList<>();
+            errors.add(error);
+            response.setErrors(errors);
+            response.setMetaData(new HashMap<>());
+        }
         return response;
     }
 

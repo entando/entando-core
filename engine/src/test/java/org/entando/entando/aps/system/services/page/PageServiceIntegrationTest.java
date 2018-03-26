@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.junit.Test;
@@ -152,11 +153,11 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         assertEquals("pagina_1", addedPage.getParentCode());
         assertEquals(3, addedPage.getPosition());
 
-        pageRequest = new PageRequest();
-        pageRequest.setCode("pagina_13");
-        pageRequest.setParentCode("pagina_1");
-        pageRequest.setPosition(1);
-        addedPage = pageService.movePage("pagina_13", pageRequest);
+        PagePositionRequest pagePosRequest = new PagePositionRequest();
+        pagePosRequest.setCode("pagina_13");
+        pagePosRequest.setParentCode("pagina_1");
+        pagePosRequest.setPosition(1);
+        addedPage = pageService.movePage("pagina_13", pagePosRequest);
         assertNotNull(addedPage);
         assertEquals("pagina_1", addedPage.getParentCode());
         assertEquals(1, addedPage.getPosition());
@@ -175,11 +176,11 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         assertEquals("pagina_1", addedPage.getParentCode());
         assertEquals(3, addedPage.getPosition());
 
-        pageRequest = new PageRequest();
-        pageRequest.setCode("pagina_13");
-        pageRequest.setParentCode("pagina_2");
-        pageRequest.setPosition(1);
-        addedPage = pageService.movePage("pagina_13", pageRequest);
+        PagePositionRequest pagePosRequest = new PagePositionRequest();
+        pagePosRequest.setCode("pagina_13");
+        pagePosRequest.setParentCode("pagina_2");
+        pagePosRequest.setPosition(1);
+        addedPage = pageService.movePage("pagina_13", pagePosRequest);
         assertNotNull(addedPage);
         assertEquals("pagina_2", addedPage.getParentCode());
         assertEquals(1, addedPage.getPosition());
@@ -202,7 +203,6 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         request.setOwnerGroup(pageToClone.getOwnerGroup());
         request.setPageModel(pageToClone.getPageModel());
         request.setParentCode(pageToClone.getParentCode());
-        request.setPosition(pageToClone.getPosition());
         request.setSeo(pageToClone.isSeo());
         request.setStatus(pageToClone.getStatus());
         Map<String, String> titles = new HashMap<>();

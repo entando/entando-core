@@ -13,11 +13,10 @@
  */
 package org.entando.entando.aps.system.services.entity;
 
-import java.util.List;
-
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
+import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;

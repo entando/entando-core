@@ -18,6 +18,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
@@ -76,8 +78,10 @@ public class DataTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataTypes(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<?> getDataTypes(@Valid RestListRequest requestList) throws JsonProcessingException {
+        this.getDataTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortDataTypes(requestList);
+        this.getDataTypeValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
@@ -143,7 +147,9 @@ public class DataTypeController {
     public ResponseEntity<?> deleteDataType(@PathVariable String dataTypeCode) throws ApsSystemException {
         logger.debug("Deleting data type -> " + dataTypeCode);
         this.getDataObjectService().deleteDataType(dataTypeCode);
-        return new ResponseEntity<>(new RestResponse(dataTypeCode), HttpStatus.OK);
+        Map<String, String> payload = new HashMap<>();
+        payload.put("code", dataTypeCode);
+        return new ResponseEntity<>(new RestResponse(payload), HttpStatus.OK);
     }
 
 }

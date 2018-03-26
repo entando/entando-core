@@ -23,7 +23,7 @@ public class TestEntandoJndiUtils {
 		SimpleNamingContextBuilder builder = null;
 		try {
             String path = "target/test/conf/contextTestParams.properties";
-            logger.info("CREATING JNDI RESOURCES BASED ON {} (test)", path);
+            logger.debug("CREATING JNDI RESOURCES BASED ON {} (test)", path);
 
             InputStream in = new FileInputStream(path);
 			builder = SimpleNamingContextBuilder.emptyActivatedContextBuilder();

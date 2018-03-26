@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,14 +32,14 @@ public class PagedMetadata<T> {
     }
 
     public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
-        this.pageSize = result.getList().size();
-        this.page = req.getPageSize() > 0 ? req.getPage() : 1;
-        if (req.getPageSize() > 0) {
-            Double pages = Math.ceil((new Double(result.getCount()) / new Double(req.getPageSize())));
-            this.lastPage = pages.intValue();
-        } else {
-            this.lastPage = page;
+        if (0 == req.getPageSize()) {
+            // no pagination
+            req.setPageSize(result.getCount());
         }
+        this.page = req.getPage();
+        this.pageSize = result.getList().size();
+        Double pages = Math.ceil(new Double(result.getCount()) / new Double(req.getPageSize()));
+        this.lastPage = pages.intValue();
         this.totalItems = result.getCount();
     }
 

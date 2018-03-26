@@ -159,6 +159,10 @@
         <property name="resourceManager" ref="jacmsResourceManager" />
     </bean>
 
+    <bean id="ContentService" class="com.agiletec.plugins.jacms.aps.system.services.content.ContentService" >
+        <property name="contentManager" ref="jacmsContentManager" />
+    </bean>
+
 
 
 </beans>

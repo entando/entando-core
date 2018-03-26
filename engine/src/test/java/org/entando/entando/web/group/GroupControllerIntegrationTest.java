@@ -229,7 +229,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         result.andExpect(jsonPath("$.payload.references.length()", is(6)));
 
         //String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
-        String[] managers = "jacmsResourceManager".split(",");
+        String[] managers = "jacmsContentManager".split(",");
 
 
         for (String managerName : managers) {

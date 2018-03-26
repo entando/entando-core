@@ -16,9 +16,13 @@ package org.entando.entando.aps.system.services.database;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import java.util.ArrayList;
 import java.util.List;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
+import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
+import org.entando.entando.aps.system.services.database.model.ComponentDto;
+import org.entando.entando.aps.system.services.database.model.DumpReportDto;
 import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -33,6 +37,7 @@ public class DatabaseService implements IDatabaseService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private IDatabaseManager databaseManager;
+    private IComponentManager componentManager;
     
     @Override
     public int getStatus() {
@@ -40,7 +45,7 @@ public class DatabaseService implements IDatabaseService {
     }
 
     @Override
-    public PagedMetadata<ShortDumpReportDto> getShortDumpReportDto(RestListRequest requestList) {
+    public PagedMetadata<ShortDumpReportDto> getShortDumpReportDtos(RestListRequest requestList) {
         PagedMetadata<ShortDumpReportDto> result = null;
         List<ShortDumpReportDto> dtos = new ArrayList<>();
         try {
@@ -57,6 +62,33 @@ public class DatabaseService implements IDatabaseService {
         return result;
     }
 
+    @Override
+    public DumpReportDto getDumpReportDto(String reportCode) {
+        DumpReportDto dtos = null;
+        try {
+            DataSourceDumpReport report = this.getDatabaseManager().getBackupReport(reportCode);
+            if (null == report) {
+                logger.warn("no dump found with code {}", reportCode);
+                throw new RestRourceNotFoundException("reportCode", reportCode);
+            }
+            dtos = new DumpReportDto(report, this.getComponentManager());
+        } catch (RestRourceNotFoundException r) {
+            throw r;
+        } catch (Throwable t) {
+            logger.error("error extracting database report {}", reportCode, t);
+            throw new RestServerError("error extracting database report " + reportCode, t);
+        }
+        return dtos;
+    }
+
+    @Override
+    public List<ComponentDto> getCurrentComponents() {
+        List<ComponentDto> dtos = new ArrayList<>();
+        this.getComponentManager().getCurrentComponents()
+                .stream().forEach(component -> dtos.add(new ComponentDto(component)));
+        return dtos;
+    }
+    
     public IDatabaseManager getDatabaseManager() {
         return databaseManager;
     }
@@ -65,4 +97,12 @@ public class DatabaseService implements IDatabaseService {
         this.databaseManager = databaseManager;
     }
 
+    public IComponentManager getComponentManager() {
+        return componentManager;
+    }
+
+    public void setComponentManager(IComponentManager componentManager) {
+        this.componentManager = componentManager;
+    }
+    
 }

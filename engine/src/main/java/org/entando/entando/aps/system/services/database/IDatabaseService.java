@@ -13,6 +13,9 @@
  */
 package org.entando.entando.aps.system.services.database;
 
+import java.util.List;
+import org.entando.entando.aps.system.services.database.model.ComponentDto;
+import org.entando.entando.aps.system.services.database.model.DumpReportDto;
 import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -23,7 +26,11 @@ import org.entando.entando.web.common.model.RestListRequest;
 public interface IDatabaseService {
     
     public int getStatus();
-
-    public PagedMetadata<ShortDumpReportDto> getShortDumpReportDto(RestListRequest requestList);
-
+    
+    public PagedMetadata<ShortDumpReportDto> getShortDumpReportDtos(RestListRequest requestList);
+    
+    public List<ComponentDto> getCurrentComponents();
+    
+    public DumpReportDto getDumpReportDto(String reportCode);
+    
 }

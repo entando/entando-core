@@ -155,4 +155,10 @@
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>
     </bean>
 
+    <bean id="ResourceService" class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceService" >
+        <property name="resourceManager" ref="jacmsResourceManager" />
+    </bean>
+
+
+
 </beans>

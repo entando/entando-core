@@ -18,6 +18,7 @@ import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelService;
@@ -73,17 +74,14 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataObjectModels(RestListRequest requestList) throws JsonProcessingException {
-        this.getDataObjectModelValidator().validateRestListRequest(requestList);
+    public ResponseEntity<RestResponse> getDataObjectModels(RestListRequest requestList) {
         PagedMetadata<DataModelDto> result = this.getDataObjectModelService().getDataObjectModels(requestList);
-        this.getDataObjectModelValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataObjectModel(@PathVariable String dataModelId) {
+    public ResponseEntity<RestResponse> getDataObjectModel(@PathVariable String dataModelId) {
         logger.debug("Requested data object model -> {}", dataModelId);
         MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "dataModels");
         int result = this.getDataObjectModelValidator().checkModelId(dataModelId, bindingResult);
@@ -100,7 +98,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addDataObjectModel(@Valid @RequestBody DataObjectModelRequest dataObjectModelRequest,
+    public ResponseEntity<RestResponse> addDataObjectModel(@Valid @RequestBody DataObjectModelRequest dataObjectModelRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Adding data object model -> {}", dataObjectModelRequest.getModelId());
         //field validations
@@ -121,13 +119,13 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().addDataObjectModel(dataObjectModelRequest);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dataModelDto));
+        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dataModelDto));
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@PathVariable String dataModelId,
+    public ResponseEntity<RestResponse> updateGroup(@PathVariable String dataModelId,
             @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Updating data object model -> {}", dataObjectModelRequest.getModelId());
         //field validations
@@ -151,21 +149,23 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dataModelDto));
+        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dataModelDto));
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGroup(@PathVariable String dataModelId) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteGroup(@PathVariable String dataModelId) throws ApsSystemException {
         logger.info("deleting data object model -> {}", dataModelId);
-        MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "dataModels");
+        MapBindingResult bindingResult = new MapBindingResult(new HashMap<>(), "dataModels");
         Long dataId = this.getDataObjectModelValidator().checkValidModelId(dataModelId, bindingResult);
         if (null == dataId) {
             throw new ValidationGenericException(bindingResult);
         }
         this.getDataObjectModelService().removeDataObjectModel(Long.parseLong(dataModelId));
-        return new ResponseEntity<>(new RestResponse(dataModelId), HttpStatus.OK);
+        Map<String, String> payload = new HashMap<>();
+        payload.put("modelId", dataModelId);
+        return new ResponseEntity<>(new RestResponse(payload), HttpStatus.OK);
     }
 
 }

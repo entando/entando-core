@@ -32,6 +32,6 @@ public class ReloadConfigurationController {
         logger.debug("reload configuration: done!");
         Map<String, String> result = new HashMap<>();
         result.put("status", "success");
-        return new ResponseEntity<>(new RestResponse(), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 }

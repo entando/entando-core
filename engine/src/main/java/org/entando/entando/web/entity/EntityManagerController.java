@@ -15,7 +15,6 @@ package org.entando.entando.web.entity;
 
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.entity.IEntityManagerService;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -66,7 +65,7 @@ public class EntityManagerController {
     public ResponseEntity<RestResponse> getEntityManager(@PathVariable String entityManagerCode) throws JsonProcessingException {
         logger.debug("Requested manager -> {}", entityManagerCode);
         EntityManagerDto dto = this.getEntityManagerService().getEntityManager(entityManagerCode);
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", dto);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 

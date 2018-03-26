@@ -68,7 +68,7 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getLanguages(RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getLanguages(RestListRequest requestList) {
         logger.trace("loading languages list");
         this.getLanguageValidator().validateRestListRequest(requestList);
         PagedMetadata<LanguageDto> result = this.getLanguageService().getLanguages(requestList);
@@ -78,7 +78,7 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getLanguage(@PathVariable String code) {
+    public ResponseEntity<RestResponse> getLanguage(@PathVariable String code) {
         logger.trace("loading language {}", code);
         LanguageDto result = this.getLanguageService().getLanguage(code);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
@@ -86,10 +86,8 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateLanguage(
-            @PathVariable String code,
-            @Valid @RequestBody LanguageRequest languageRequest,
-            BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateLanguage(@PathVariable String code,
+            @Valid @RequestBody LanguageRequest languageRequest, BindingResult bindingResult) {
         logger.trace("loading language {}", code);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

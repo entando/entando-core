@@ -40,7 +40,7 @@ public class UserSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUserSettings() {
+    public ResponseEntity<RestResponse> getUserSettings() {
         logger.debug("loading user settings");
         UserSettingsDto userSettings = this.getUserSettingsService().getUserSettings();
         return new ResponseEntity<>(new RestResponse(userSettings), HttpStatus.OK);
@@ -48,7 +48,7 @@ public class UserSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUserSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateUserSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
         logger.debug("updatinug user settings");
         //params validations
         if (bindingResult.hasErrors()) {

@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -50,14 +50,14 @@ public class PageSettingsController {
 
     @RestAccessControl(permission = "pageSettings_read")
     @RequestMapping(value = "/pageSettings", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageSettings() {
+    public ResponseEntity<RestResponse> getPageSettings() {
         PageSettingsDto pageSettings = this.getPageSettingsService().getPageSettings();
         return new ResponseEntity<>(new RestResponse(pageSettings), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = "pageSettings_write")
     @RequestMapping(value = "/pageSettings", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePageSettings(@Valid @RequestBody PageSettingsRequest request, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updatePageSettings(@Valid @RequestBody PageSettingsRequest request, BindingResult bindingResult) {
         //params validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

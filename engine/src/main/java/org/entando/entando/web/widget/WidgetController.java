@@ -56,7 +56,7 @@ public class WidgetController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getWidget(@PathVariable String widgetCode) {
+    public ResponseEntity<RestResponse> getWidget(@PathVariable String widgetCode) {
         logger.trace("getWidget by code {}", widgetCode);
         WidgetDto group = this.widgetService.getWidget(widgetCode);
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
@@ -64,7 +64,7 @@ public class WidgetController {
 
     @RestAccessControl(permission = "widget_delete")
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")
-    public ResponseEntity<?> deleteWidget(@PathVariable String widgetCode) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteWidget(@PathVariable String widgetCode) throws ApsSystemException {
         logger.info("deleting widget {}", widgetCode);
         this.widgetService.removeWidget(widgetCode);
         Map<String, String> result = new HashMap<>();
@@ -74,7 +74,7 @@ public class WidgetController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")
-    public ResponseEntity<?> updateWidget(@PathVariable String widgetCode, @Valid @RequestBody WidgetRequest widgetRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateWidget(@PathVariable String widgetCode, @Valid @RequestBody WidgetRequest widgetRequest, BindingResult bindingResult) {
         logger.trace("update widget. Code: {} and body {}: ", widgetCode, widgetRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -90,7 +90,7 @@ public class WidgetController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")
-    public ResponseEntity<?> addWidget(@Valid @RequestBody WidgetRequest widgetRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> addWidget(@Valid @RequestBody WidgetRequest widgetRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.trace("add widget. body {}: ", widgetRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -107,7 +107,7 @@ public class WidgetController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getWidgets(RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getWidgets(RestListRequest requestList) {
         logger.trace("get widget list {}", requestList);
         this.getWidgetValidator().validateRestListRequest(requestList);
         PagedMetadata<WidgetDto> result = this.widgetService.getWidgets(requestList);

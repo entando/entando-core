@@ -16,7 +16,6 @@ package org.entando.entando.web.dataobjectmodel;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -122,7 +121,7 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().addDataObjectModel(dataObjectModelRequest);
-        logger.debug("Main Response -> " + dataModelDto);
+        logger.debug("Main Response -> {}", dataModelDto);
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
@@ -152,7 +151,7 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dataModelDto));
+        logger.debug("Main Response -> {}" + dataModelDto);
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 

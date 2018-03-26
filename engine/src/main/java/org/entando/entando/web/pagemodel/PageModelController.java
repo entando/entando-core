@@ -71,7 +71,7 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageModels(RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getPageModels(RestListRequest requestList) {
         logger.trace("loading page models");
         this.getPagemModelValidator().validateRestListRequest(requestList);
         PagedMetadata<PageModelDto> result = this.getPageModelService().getPageModels(requestList);
@@ -81,14 +81,14 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageModel(@PathVariable String code) {
+    public ResponseEntity<RestResponse> getPageModel(@PathVariable String code) {
         PageModelDto pageModelDto = this.getPageModelService().getPageModel(code);
         return new ResponseEntity<>(new RestResponse(pageModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
-    public ResponseEntity<?> updatePageModel(@PathVariable String code, @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updatePageModel(@PathVariable String code, @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -97,14 +97,13 @@ public class PageModelController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
         PageModelDto pageModel = this.getPageModelService().updatePageModel(pageModelRequest);
         return new ResponseEntity<>(new RestResponse(pageModel), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addPageModel(@Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> addPageModel(@Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -119,7 +118,7 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deletePageModel(@PathVariable String code) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deletePageModel(@PathVariable String code) throws ApsSystemException {
         logger.debug("deleting {}", code);
         this.getPageModelService().removePageModel(code);
         Map<String, String> result = new HashMap<>();

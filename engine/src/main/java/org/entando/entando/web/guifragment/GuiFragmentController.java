@@ -73,7 +73,7 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGuiFragments(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<RestResponse> getGuiFragments(RestListRequest requestList) throws JsonProcessingException {
         this.getGuiFragmentValidator().validateRestListRequest(requestList);
         PagedMetadata<GuiFragmentDtoSmall> result = this.getGuiFragmentService().getGuiFragments(requestList);
         this.getGuiFragmentValidator().validateRestListResult(requestList, result);
@@ -83,14 +83,14 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGuiFragment(@PathVariable String fragmentCode) {
+    public ResponseEntity<RestResponse> getGuiFragment(@PathVariable String fragmentCode) {
         GuiFragmentDto fragment = this.getGuiFragmentService().getGuiFragment(fragmentCode);
         return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> addGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -106,7 +106,7 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGuiFragment(@PathVariable String fragmentCode, @Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateGuiFragment(@PathVariable String fragmentCode, @Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -125,7 +125,7 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
         logger.info("deleting {}", fragmentCode);
         this.getGuiFragmentService().removeGuiFragment(fragmentCode);
         Map<String, String> result = new HashMap<>();

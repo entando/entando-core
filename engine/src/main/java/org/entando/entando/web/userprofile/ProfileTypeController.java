@@ -17,7 +17,6 @@ import org.entando.entando.web.dataobject.validator.DataTypeValidator;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -119,7 +118,7 @@ public class ProfileTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
@@ -139,7 +138,7 @@ public class ProfileTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", dto);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 

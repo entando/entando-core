@@ -43,6 +43,9 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
     @Mock
     private GroupService groupService;
 
+    @Mock
+    private GroupValidator groupValidator;
+
     @InjectMocks
     private GroupController controller;
 
@@ -50,11 +53,10 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                                 .addInterceptors(entandoOauth2Interceptor)
-                                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
-                                 .build();
+                .addInterceptors(entandoOauth2Interceptor)
+                .setHandlerExceptionResolvers(createHandlerExceptionResolver())
+                .build();
     }
-
 
     @Test
     public void testSeachGroups() throws Exception {
@@ -62,10 +64,10 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
         ResultActions result = mockMvc.perform(
-                                               get("/groups").param("page", "1")
-                                               .param("pageSize", "4")
-                                               .header("Authorization", "Bearer " + accessToken)
-                );
+                get("/groups").param("page", "1")
+                .param("pageSize", "4")
+                .header("Authorization", "Bearer " + accessToken)
+        );
 
         result.andExpect(status().isOk());
 
@@ -82,14 +84,13 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
 
-
         ResultActions result = mockMvc.perform(
-                                               get("/groups").param("page", "1")
-                                               .param("pageSize", "4")
-                                               .param("filter[0].attribute", "code")
-                                               .param("filter[0].value", "free")
-                                               .header("Authorization", "Bearer " + accessToken)
-                );
+                get("/groups").param("page", "1")
+                .param("pageSize", "4")
+                .param("filter[0].attribute", "code")
+                .param("filter[0].value", "free")
+                .header("Authorization", "Bearer " + accessToken)
+        );
 
         result.andExpect(status().isOk());
 
@@ -100,7 +101,6 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         Mockito.verify(groupService, Mockito.times(1)).getGroups(restListReq);
     }
 
-
     @Test
     public void testValidatePermission() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
@@ -109,13 +109,12 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
-                                               get("/groups")
-                                               .header("Authorization", "Bearer " + accessToken)
+                get("/groups")
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         result.andExpect(status().isUnauthorized());
     }
-
 
     @Test
     public void testValidateOnUpdateWithInvalidPathAndPayload() throws ApsSystemException, Exception {
@@ -130,11 +129,11 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         this.controller.setGroupValidator(new GroupValidator());
         ResultActions result = mockMvc.perform(
-                                               put("/groups/{groupCode}",
-                                                   "helpdesk")
-                                                              .content(payload)
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .header("Authorization", "Bearer " + accessToken));
+                put("/groups/{groupCode}",
+                        "helpdesk")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }
@@ -146,17 +145,16 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         String groupName = Group.FREE_GROUP_NAME;
 
-
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult("group", "group");
         bindingResult.reject(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP, new String[]{groupName}, "group.cannot.delete.reserved");
         doThrow(new ValidationConflictException(bindingResult)).when(groupService).removeGroup(groupName);
 
         this.controller.setGroupValidator(new GroupValidator());
         ResultActions result = mockMvc.perform(
-                                               delete("/groups/{groupName}",
-                                                      groupName)
-                                                                .contentType(MediaType.APPLICATION_JSON)
-                                                                .header("Authorization", "Bearer " + accessToken));
+                delete("/groups/{groupName}",
+                        groupName)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP)));
     }
@@ -175,10 +173,10 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         this.controller.setGroupValidator(new GroupValidator());
         ResultActions result = mockMvc.perform(
-                                               post("/groups")
-                                                              .content(payload)
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .header("Authorization", "Bearer " + accessToken));
+                post("/groups")
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         // System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
@@ -194,14 +192,13 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         doNothing().when(groupService).removeGroup(Mockito.anyString());
 
         ResultActions result = mockMvc.perform(
-                                               delete("/groups/{code}", code)
-                                                                                   .header("Authorization", "Bearer " + accessToken));
+                delete("/groups/{code}", code)
+                .header("Authorization", "Bearer " + accessToken));
 
         //System.out.println(result.andReturn().getResponse().getContentAsString());
         result
-            .andExpect(status().isOk())
-              .andExpect(jsonPath("$.payload.code", is(code)));
-
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload.code", is(code)));
 
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,15 +15,14 @@ package org.entando.entando.web.group.validator;
 
 import com.agiletec.aps.system.services.group.IGroupManager;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.web.common.validator.AbstractValidator;
 import org.entando.entando.web.group.model.GroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-
 
 @Component
-public class GroupValidator implements Validator {
+public class GroupValidator extends AbstractValidator {
 
     public static final String ERRCODE_GROUP_NOT_FOUND = "1";
     public static final String ERRCODE_GROUP_ALREADY_EXISTS = "2";
@@ -34,19 +33,19 @@ public class GroupValidator implements Validator {
     @Autowired
     private IGroupManager groupManager;
 
-	@Override
-	public boolean supports(Class<?> paramClass) {
-		return GroupRequest.class.equals(paramClass);
-	}
+    @Override
+    public boolean supports(Class<?> paramClass) {
+        return GroupRequest.class.equals(paramClass);
+    }
 
     @Override
     public void validate(Object target, Errors errors) {
-		GroupRequest request = (GroupRequest) target;
+        GroupRequest request = (GroupRequest) target;
         String groupCode = request.getCode();
         if (null != groupManager.getGroup(groupCode)) {
             errors.reject(ERRCODE_GROUP_ALREADY_EXISTS, new String[]{groupCode}, "group.exists");
-		}
-	}
+        }
+    }
 
     public void validateBodyName(String groupCode, GroupRequest groupRequest, Errors errors) {
         if (!StringUtils.equals(groupCode, groupRequest.getCode())) {

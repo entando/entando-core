@@ -26,7 +26,7 @@ public class ReloadConfigurationController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> reloadConfiguration(HttpServletRequest request) throws Throwable {
+    public ResponseEntity<RestResponse> reloadConfiguration(HttpServletRequest request) throws Throwable {
         logger.debug("reload configuration: start..");
         ApsWebApplicationUtils.executeSystemRefresh(request);
         logger.debug("reload configuration: done!");

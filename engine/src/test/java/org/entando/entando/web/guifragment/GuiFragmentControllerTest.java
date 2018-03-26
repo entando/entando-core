@@ -49,6 +49,9 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
     @Mock
     private GuiFragmentService guiFragmentService;
 
+    @Mock
+    private GuiFragmentValidator guiFragmentValidator;
+
     @InjectMocks
     private GuiFragmentController controller;
 

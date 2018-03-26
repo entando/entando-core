@@ -50,6 +50,9 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
     @Mock
     private DataObjectModelService dataObjectModelService;
 
+    @Mock
+    private DataObjectModelValidator dataObjectModelValidator;
+
     @InjectMocks
     private DataObjectModelController controller;
 

@@ -15,6 +15,9 @@ package org.entando.entando.web.guifragment;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentService;
@@ -70,21 +73,24 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGuiFragments(RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getGuiFragments(RestListRequest requestList) throws JsonProcessingException {
+        this.getGuiFragmentValidator().validateRestListRequest(requestList);
         PagedMetadata<GuiFragmentDtoSmall> result = this.getGuiFragmentService().getGuiFragments(requestList);
+        this.getGuiFragmentValidator().validateRestListResult(requestList, result);
+        logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGuiFragment(@PathVariable String fragmentCode) {
+    public ResponseEntity<RestResponse> getGuiFragment(@PathVariable String fragmentCode) {
         GuiFragmentDto fragment = this.getGuiFragmentService().getGuiFragment(fragmentCode);
         return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> addGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -100,7 +106,7 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGuiFragment(@PathVariable String fragmentCode, @Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateGuiFragment(@PathVariable String fragmentCode, @Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -119,10 +125,12 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
         logger.info("deleting {}", fragmentCode);
         this.getGuiFragmentService().removeGuiFragment(fragmentCode);
-        return new ResponseEntity<>(new RestResponse(fragmentCode), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", fragmentCode);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
 }

@@ -18,6 +18,7 @@ import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -27,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -145,7 +147,16 @@ public class PageService implements IPageService {
         Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(parent.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
             IPage childO = this.getPageManager().getOnlinePage(childCode),
                     childD = this.getPageManager().getDraftPage(childCode);
-            PageDto child = childO != null ? dtoBuilder.convert(childO) : dtoBuilder.convert(childD);
+            PageDto child = null;
+            if (childO != null) {
+                child = dtoBuilder.convert(childO);
+                if (childO.isChanged()) {
+                    child.setStatus(STATUS_DRAFT);
+                }
+            } else {
+                child = dtoBuilder.convert(childD);
+                child.setStatus(STATUS_UNPUBLISHED);
+            }
             child.setChildren(Arrays.asList(childD.getChildrenCodes()));
             res.add(child);
         })));
@@ -352,6 +363,9 @@ public class PageService implements IPageService {
             IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
             page.setParent(parent);
         }
+        PageMetadata metadata = new PageMetadata();
+        this.valueMetadataFromRequest(metadata, pageRequest);
+        page.setMetadata(metadata);
         return page;
     }
 
@@ -379,7 +393,39 @@ public class PageService implements IPageService {
             page.addExtraGroup(group);
         }));
         page.setParentCode(pageRequest.getParentCode());
+        PageMetadata metadata = oldPage.getMetadata();
+        if (metadata == null) {
+            metadata = new PageMetadata();
+        }
+        this.valueMetadataFromRequest(metadata, pageRequest);
+        page.setMetadata(metadata);
         return page;
+    }
+
+    private void valueMetadataFromRequest(PageMetadata metadata, PageRequest request) {
+        if (metadata.getModel() == null || !metadata.getModel().getCode().equals(request.getPageModel())) {
+            // Ho cambiato modello e allora cancello tutte le showlets
+            // Precedenti
+            PageModel model = this.getPageModelManager().getPageModel(request.getPageModel());
+            metadata.setModel(model);
+        }
+        metadata.setShowable(request.isDisplayedInMenu());
+        metadata.setUseExtraTitles(request.isSeo());
+        Optional<Map<String, String>> titles = Optional.ofNullable(request.getTitles());
+        ApsProperties apsTitles = new ApsProperties();
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
+        }));
+        metadata.setTitles(apsTitles);
+        Optional<List<String>> groups = Optional.ofNullable(request.getJoinGroups());
+        groups.ifPresent(values -> values.forEach((group) -> {
+            metadata.addExtraGroup(group);
+        }));
+        String charset = request.getCharset();
+        metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
+
+        String mimetype = request.getContentType();
+        metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
     }
 
     private IPage loadPage(String pageCode, String status) {

@@ -172,7 +172,7 @@ public class PageValidator implements Validator {
                 parent = this.getPageManager().getDraftPage(page.getParentCode());
             }
             if (!invalidRefs.isEmpty() || !parent.isOnline()) {
-                errors.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
+                errors.reject(PageController.ERRCODE_REFERENCED_DRAFT_PAGE, new String[]{pageCode}, "page.status.invalid.draft.ref");
             }
         } else {
             boolean isRoot = this.getPageManager().getOnlineRoot().getCode().equals(pageCode);
@@ -185,7 +185,7 @@ public class PageValidator implements Validator {
                 }));
             }
             if (isRoot || !contents.isEmpty() || !invalidRefs.isEmpty()) {
-                errors.reject(PageController.ERRCODE_REFERENCED_DRAFT_PAGE, new String[]{pageCode}, "page.status.invalid.draft.ref");
+                errors.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
             }
         }
     }

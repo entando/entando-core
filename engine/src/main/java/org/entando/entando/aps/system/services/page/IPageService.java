@@ -32,6 +32,7 @@ public interface IPageService {
 
     public static final String STATUS_ONLINE = "published";
     public static final String STATUS_DRAFT = "draft";
+    public static final String STATUS_UNPUBLISHED = "unpublished";
 
     public PageDto getPage(String pageCode, String status);
 

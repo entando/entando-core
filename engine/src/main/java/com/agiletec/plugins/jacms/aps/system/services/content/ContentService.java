@@ -64,7 +64,7 @@ public class ContentService implements GroupServiceUtilizer<ContentDto> {
             List<String> resourcesId = ((GroupUtilizer<String>) this.getContentManager()).getGroupUtilizers(groupCode);
             List<ContentDto> dtoList = new ArrayList<>();
             if (null != resourcesId) {
-                resourcesId.parallelStream().forEach(i -> {
+                resourcesId.stream().forEach(i -> {
                     try {
                         dtoList.add(this.getDtoBuilder().convert(this.getContentManager().loadContent(i, false)));
                     } catch (ApsSystemException e) {

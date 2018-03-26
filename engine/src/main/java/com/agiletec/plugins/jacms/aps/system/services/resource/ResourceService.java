@@ -65,7 +65,7 @@ public class ResourceService implements IResourceService, GroupServiceUtilizer<R
             List<String> resourcesId = ((GroupUtilizer<String>) this.getResourceManager()).getGroupUtilizers(groupCode);
             List<ResourceDto> dtoList = new ArrayList<>();
             if (null != resourcesId) {
-                resourcesId.parallelStream().forEach(i -> {
+                resourcesId.stream().forEach(i -> {
                     try {
                         dtoList.add(this.getDtoBuilder().convert(this.getResourceManager().loadResource(i)));
                     } catch (ApsSystemException e) {

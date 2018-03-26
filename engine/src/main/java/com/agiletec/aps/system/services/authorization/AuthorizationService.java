@@ -85,7 +85,7 @@ public class AuthorizationService implements GroupServiceUtilizer<UserDto> {
             List<String> usernames = ((GroupUtilizer<String>) this.getAuthorizationManager()).getGroupUtilizers(groupCode);
             List<UserDto> dtoList = new ArrayList<>();
             if (null != usernames) {
-                usernames.parallelStream().forEach(i -> {
+                usernames.stream().forEach(i -> {
                     try {
                         dtoList.add(this.getDtoBuilder().convert(this.getUserManager().getUser(i)));
                     } catch (ApsSystemException e) {

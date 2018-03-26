@@ -1,8 +1,26 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.pagemodel;
 
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import org.entando.entando.aps.system.services.pagemodel.PageModelService;
+import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -24,6 +42,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import org.mockito.Spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,8 +55,8 @@ public class PageModelControllerTest extends AbstractControllerTest {
     @Mock
     private PageModelService pageModelService;
 
-    @Mock
-    private PageModelValidator pagemModelValidator;
+    @Spy
+    private PageModelValidator pageModelValidator = new PageModelValidator();
 
     @InjectMocks
     private PageModelController controller;
@@ -52,13 +71,22 @@ public class PageModelControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void should_load_the_list_of_pageModels() throws Exception {
+    public void should_load_the_list_of_pageModels_1() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-
-        when(pageModelService.getPageModels(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
+        PageModelDto singleDto = new PageModelDto();
+        List<PageModelDto> dtos = new ArrayList<>();
+        dtos.add(singleDto);
+        PageModel model = new PageModel();
+        List<PageModel> models = new ArrayList<>();
+        models.add(model);
+        SearcherDaoPaginatedResult<PageModel> sdpr = new SearcherDaoPaginatedResult<>(1, models);
+        PagedMetadata<PageModelDto> meta = new PagedMetadata<>(new RestListRequest(), sdpr);
+        meta.setBody(dtos);
+        when(pageModelService.getPageModels(any(RestListRequest.class))).thenReturn(meta);
         ResultActions result = mockMvc.perform(get("/pagemodels")
                 .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
         Mockito.verify(pageModelService, Mockito.times(1)).getPageModels(restListReq);

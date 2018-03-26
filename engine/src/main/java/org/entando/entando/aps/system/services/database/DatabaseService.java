@@ -33,6 +33,11 @@ public class DatabaseService implements IDatabaseService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private IDatabaseManager databaseManager;
+    
+    @Override
+    public int getStatus() {
+        return this.getDatabaseManager().getStatus();
+    }
 
     @Override
     public PagedMetadata<ShortDumpReportDto> getShortDumpReportDto(RestListRequest requestList) {

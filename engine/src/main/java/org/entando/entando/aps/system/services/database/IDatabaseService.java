@@ -21,6 +21,8 @@ import org.entando.entando.web.common.model.RestListRequest;
  * @author E.Santoboni
  */
 public interface IDatabaseService {
+    
+    public int getStatus();
 
     public PagedMetadata<ShortDumpReportDto> getShortDumpReportDto(RestListRequest requestList);
 

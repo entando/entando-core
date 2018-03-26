@@ -14,11 +14,15 @@
 package org.entando.entando.web.database;
 
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.database.IDatabaseService;
 import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.database.validator.DatabaseValidator;
@@ -45,12 +49,19 @@ public class DatabaseController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataTypes(@Valid RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getDumpReports(@Valid RestListRequest requestList) {
         this.getDatabaseValidator().validateRestListRequest(requestList);
         PagedMetadata<ShortDumpReportDto> result = this.getDatabaseService().getShortDumpReportDto(requestList);
         this.getDatabaseValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> {}", result);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), new ArrayList<>(), result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getStatus() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", String.valueOf(this.getDatabaseService().getStatus()));
+        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
     }
 
     public DatabaseValidator getDatabaseValidator() {

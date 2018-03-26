@@ -87,7 +87,7 @@ public class LabelService implements ILabelService {
             }
         }
         List<?> subList = restRequest.getSublist(dtoList);
-        SearcherDaoPaginatedResult<LabelDto> resultx = new SearcherDaoPaginatedResult(subList.size(), subList);
+        SearcherDaoPaginatedResult<LabelDto> resultx = new SearcherDaoPaginatedResult(dtoList.size(), subList);
         PagedMetadata<LabelDto> pagedMetadata = new PagedMetadata<>(restRequest, resultx);
         pagedMetadata.setBody((List<LabelDto>) subList);
         return pagedMetadata;

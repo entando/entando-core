@@ -96,8 +96,8 @@ public class AuthorizationService implements GroupServiceUtilizer<UserDto> {
             }
             return dtoList;
         } catch (ApsSystemException ex) {
-            logger.error("Error loading page references for group {}", groupCode, ex);
-            throw new RestServerError("Error loading page references for group", ex);
+            logger.error("Error loading user references for group {}", groupCode, ex);
+            throw new RestServerError("Error loading user references for group", ex);
         }
     }
 

@@ -228,8 +228,8 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.references.length()", is(6)));
 
-        //String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
-        String[] managers = "jacmsResourceManager".split(",");
+        String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
+        //String[] managers = "jacmsResourceManager".split(",");
 
 
         for (String managerName : managers) {
@@ -240,6 +240,8 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             result = mockMvc.perform(
                                      get("/groups/{code}/references/{manager}", Group.FREE_GROUP_NAME, managerName)
 
+                                                                                                                   .param("page", "1")
+                                                                                                                   .param("pageSize", "3")
                                                                                  .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                                  .header("Authorization", "Bearer " + accessToken));
 

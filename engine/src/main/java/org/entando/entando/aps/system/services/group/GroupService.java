@@ -121,14 +121,13 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         GroupServiceUtilizer<?> utilizer = this.getGroupServiceUtilizer(managerName);
         if (null == utilizer) {
             logger.warn("no references found for {}", managerName);
-            //FIXME change message
-            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
+
+            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_REFERENCES, "reference", managerName);
         }
         List<?> dtoList = utilizer.getGroupUtilizer(groupCode);
-
         List<?> subList = restRequest.getSublist(dtoList);
-        SearcherDaoPaginatedResult<?> resultx = new SearcherDaoPaginatedResult(subList.size(), subList);
-        PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(restRequest, resultx);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(restRequest, pagedResult);
         pagedMetadata.setBody((List<Object>) subList);
         return pagedMetadata;
     }

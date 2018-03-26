@@ -151,7 +151,7 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
-        logger.debug("Main Response -> {}" + dataModelDto);
+        logger.debug("Main Response -> {}", dataModelDto);
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 

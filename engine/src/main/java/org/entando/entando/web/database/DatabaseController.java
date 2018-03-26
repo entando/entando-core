@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.database.IDatabaseService;
+import org.entando.entando.aps.system.services.database.model.DumpReportDto;
 import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.database.validator.DatabaseValidator;
@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +52,7 @@ public class DatabaseController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDumpReports(@Valid RestListRequest requestList) {
         this.getDatabaseValidator().validateRestListRequest(requestList);
-        PagedMetadata<ShortDumpReportDto> result = this.getDatabaseService().getShortDumpReportDto(requestList);
+        PagedMetadata<ShortDumpReportDto> result = this.getDatabaseService().getShortDumpReportDtos(requestList);
         this.getDatabaseValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), new ArrayList<>(), result), HttpStatus.OK);
     }
@@ -62,6 +63,25 @@ public class DatabaseController {
         Map<String, String> response = new HashMap<>();
         response.put("status", String.valueOf(this.getDatabaseService().getStatus()));
         return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/report/{reportCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getDumpReport(@PathVariable String reportCode) {
+        DumpReportDto result = this.getDatabaseService().getDumpReportDto(reportCode);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+    
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/report/{reportCode}/{dataSource}/{tableName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getTableDumpReport(@PathVariable String reportCode, 
+            @PathVariable String dataSource, @PathVariable String tableName) {
+        byte[] base64 = this.getDatabaseService().getTableDump(reportCode, dataSource, tableName);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("reportCode", reportCode);
+        metadata.put("dataSource", dataSource);
+        metadata.put("tableName", tableName);      
+        return new ResponseEntity<>(new RestResponse(base64, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     public DatabaseValidator getDatabaseValidator() {

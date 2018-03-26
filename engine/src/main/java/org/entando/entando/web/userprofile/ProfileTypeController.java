@@ -82,7 +82,7 @@ public class ProfileTypeController {
     public ResponseEntity<RestResponse> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
         this.getProfileTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         this.getProfileTypeValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
@@ -90,12 +90,12 @@ public class ProfileTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
-        logger.debug("Requested profile type -> " + profileTypeCode);
+        logger.debug("Requested profile type -> {}", profileTypeCode);
         if (!this.getProfileTypeValidator().existType(profileTypeCode)) {
             throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
         }
         UserProfileTypeDto dto = this.getUserProfileTypeService().getUserProfileType(profileTypeCode);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
@@ -119,7 +119,7 @@ public class ProfileTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
@@ -146,7 +146,7 @@ public class ProfileTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deleteDataType(@PathVariable String profileTypeCode) throws ApsSystemException {
-        logger.debug("Deleting profile type -> " + profileTypeCode);
+        logger.debug("Deleting profile type -> {}", profileTypeCode);
         this.getUserProfileTypeService().deleteUserProfileType(profileTypeCode);
         Map<String, String> result = new HashMap<>();
         result.put("code", profileTypeCode);

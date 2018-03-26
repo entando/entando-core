@@ -77,7 +77,7 @@ public class DataObjectModelController {
         this.getDataObjectModelValidator().validateRestListRequest(requestList);
         PagedMetadata<DataModelDto> result = this.getDataObjectModelService().getDataObjectModels(requestList);
         this.getDataObjectModelValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
@@ -121,7 +121,7 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().addDataObjectModel(dataObjectModelRequest);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dataModelDto));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dataModelDto));
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 
@@ -151,7 +151,7 @@ public class DataObjectModelController {
             }
         }
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dataModelDto));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dataModelDto));
         return new ResponseEntity<>(new RestResponse(dataModelDto), HttpStatus.OK);
     }
 

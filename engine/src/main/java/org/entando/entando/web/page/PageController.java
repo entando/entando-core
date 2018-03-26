@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -27,7 +27,6 @@ import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
@@ -50,7 +49,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
- *
  * @author paddeo
  */
 @RestController
@@ -177,7 +175,7 @@ public class PageController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        //business validations 
+        //business validations
         getPageValidator().validate(pageRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationConflictException(bindingResult);
@@ -200,12 +198,12 @@ public class PageController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        //business validations 
+        //business validations
         getPageValidator().validateOnlinePage(pageCode, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        //business validations 
+        //business validations
         getPageValidator().validateChildren(pageCode, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

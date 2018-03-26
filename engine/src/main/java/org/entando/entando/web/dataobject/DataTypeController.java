@@ -82,19 +82,19 @@ public class DataTypeController {
         this.getDataTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortDataTypes(requestList);
         this.getDataTypeValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataType(@PathVariable String dataTypeCode) throws JsonProcessingException {
-        logger.debug("Requested data type -> " + dataTypeCode);
+        logger.debug("Requested data type -> {}", dataTypeCode);
         if (!this.getDataTypeValidator().existType(dataTypeCode)) {
             throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Data Type", dataTypeCode);
         }
         DataTypeDto dto = this.getDataObjectService().getDataType(dataTypeCode);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
@@ -118,7 +118,7 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
@@ -138,14 +138,14 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(dto));
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteDataType(@PathVariable String dataTypeCode) throws ApsSystemException {
-        logger.debug("Deleting data type -> " + dataTypeCode);
+        logger.debug("Deleting data type -> {}", dataTypeCode);
         this.getDataObjectService().deleteDataType(dataTypeCode);
         Map<String, String> payload = new HashMap<>();
         payload.put("code", dataTypeCode);

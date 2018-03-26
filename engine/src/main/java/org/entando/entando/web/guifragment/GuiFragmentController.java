@@ -78,7 +78,7 @@ public class GuiFragmentController {
         this.getGuiFragmentValidator().validateRestListRequest(requestList);
         PagedMetadata<GuiFragmentDtoSmall> result = this.getGuiFragmentService().getGuiFragments(requestList);
         this.getGuiFragmentValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

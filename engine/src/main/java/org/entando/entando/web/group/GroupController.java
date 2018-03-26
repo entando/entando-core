@@ -79,7 +79,7 @@ public class GroupController {
         this.getGroupValidator().validateRestListRequest(requestList);
         PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
         this.getGroupValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", new ObjectMapper().writeValueAsString(result));
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

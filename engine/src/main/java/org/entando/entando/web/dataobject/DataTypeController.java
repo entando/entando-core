@@ -17,7 +17,6 @@ import org.entando.entando.web.dataobject.validator.DataTypeValidator;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -78,29 +77,29 @@ public class DataTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataTypes(@Valid RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<RestResponse> getDataTypes(@Valid RestListRequest requestList) throws JsonProcessingException {
         this.getDataTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortDataTypes(requestList);
         this.getDataTypeValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataType(@PathVariable String dataTypeCode) throws JsonProcessingException {
-        logger.debug("Requested data type -> " + dataTypeCode);
+    public ResponseEntity<RestResponse> getDataType(@PathVariable String dataTypeCode) throws JsonProcessingException {
+        logger.debug("Requested data type -> {}", dataTypeCode);
         if (!this.getDataTypeValidator().existType(dataTypeCode)) {
             throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Data Type", dataTypeCode);
         }
         DataTypeDto dto = this.getDataObjectService().getDataType(dataTypeCode);
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", dto);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addDataTypes(@Valid @RequestBody DataTypeDtoRequest bodyRequest,
+    public ResponseEntity<RestResponse> addDataTypes(@Valid @RequestBody DataTypeDtoRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         //field validations
         this.getDataTypeValidator().validate(bodyRequest, bindingResult);
@@ -118,13 +117,13 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(result));
+        logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateDataType(@PathVariable String dataTypeCode,
+    public ResponseEntity<RestResponse> updateDataType(@PathVariable String dataTypeCode,
             @Valid @RequestBody DataTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
         int result = this.getDataTypeValidator().validateBodyName(dataTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -138,14 +137,14 @@ public class DataTypeController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> " + new ObjectMapper().writeValueAsString(dto));
+        logger.debug("Main Response -> {}", dto);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteDataType(@PathVariable String dataTypeCode) throws ApsSystemException {
-        logger.debug("Deleting data type -> " + dataTypeCode);
+    public ResponseEntity<RestResponse> deleteDataType(@PathVariable String dataTypeCode) throws ApsSystemException {
+        logger.debug("Deleting data type -> {}", dataTypeCode);
         this.getDataObjectService().deleteDataType(dataTypeCode);
         Map<String, String> payload = new HashMap<>();
         payload.put("code", dataTypeCode);

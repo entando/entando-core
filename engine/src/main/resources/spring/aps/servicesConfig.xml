@@ -145,5 +145,9 @@
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>
     </bean>
-
+    
+    <bean id="DatabaseService" class="org.entando.entando.aps.system.services.database.DatabaseService" >
+        <property name="databaseManager" ref="DatabaseManager" />
+    </bean>
+    
 </beans>

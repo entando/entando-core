@@ -13,9 +13,15 @@
  */
 package org.entando.entando.aps.system.services.database;
 
+import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
+
 /**
  * @author E.Santoboni
  */
 public interface IDatabaseService {
+
+    public PagedMetadata<ShortDumpReportDto> getShortDumpReportDto(RestListRequest requestList);
 
 }

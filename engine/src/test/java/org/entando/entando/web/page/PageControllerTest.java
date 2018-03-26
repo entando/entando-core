@@ -35,6 +35,7 @@ import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.PageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.AbstractControllerTest;
+import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.page.validator.PageValidator;
@@ -272,7 +273,7 @@ public class PageControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("RESPONSE: " + response);
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_DRAFT_PAGE)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_ONLINE_PAGE)));
     }
 
     @Test
@@ -305,7 +306,7 @@ public class PageControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("RESPONSE: " + response);
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_ONLINE_PAGE)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_DRAFT_PAGE)));
     }
 
     @Test
@@ -332,6 +333,9 @@ public class PageControllerTest extends AbstractControllerTest {
 
         PageRequest page = new PageRequest();
         page.setCode("existing_page");
+        page.setPageModel("existing_model");
+        page.setParentCode("existing_parent");
+        page.setOwnerGroup("existing_group");
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(new Page());
         ResultActions result = mockMvc.perform(
@@ -390,7 +394,7 @@ public class PageControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        PageRequest request = new PageRequest();
+        PagePositionRequest request = new PagePositionRequest();
         request.setCode("page_to_move");
         request.setParentCode(null);
         request.setPosition(0);
@@ -405,7 +409,7 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_CHANGE_POSITION_INVALID_REQUEST)));
+        result.andExpect(jsonPath("$.errors[0].code", is("NotBlank")));
     }
 
     @Test
@@ -413,7 +417,7 @@ public class PageControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        PageRequest request = new PageRequest();
+        PagePositionRequest request = new PagePositionRequest();
         request.setCode("page_to_move");
         request.setParentCode("new_parent_page");
         request.setPosition(1);
@@ -448,7 +452,7 @@ public class PageControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        PageRequest request = new PageRequest();
+        PagePositionRequest request = new PagePositionRequest();
         request.setCode("page_to_move");
         request.setParentCode("new_parent_page");
         request.setPosition(1);

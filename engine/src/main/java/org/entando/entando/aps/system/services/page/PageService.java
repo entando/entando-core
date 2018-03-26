@@ -22,13 +22,16 @@ import java.util.Optional;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
+import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -42,6 +45,7 @@ import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
@@ -58,6 +62,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final String ERRCODE_PAGE_NOT_FOUND = "1";
+    private static final String ERRCODE_RESOURCE_NOT_FOUND = "2";
     private static final String ERRCODE_PAGE_ONLY_DRAFT = "2";
     private static final String ERRCODE_FRAME_INVALID = "3";
     private static final String ERRCODE_WIDGET_INVALID = "4";
@@ -67,6 +72,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
 
     @Autowired
     private IPageModelManager pageModelManager;
+
+    @Autowired
+    private IGroupManager groupManager;
 
     @Autowired
     private IWidgetTypeManager widgetTypeManager;
@@ -94,6 +102,14 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
 
     public void setPageModelManager(IPageModelManager pageModelManager) {
         this.pageModelManager = pageModelManager;
+    }
+
+    public IGroupManager getGroupManager() {
+        return groupManager;
+    }
+
+    public void setGroupManager(IGroupManager groupManager) {
+        this.groupManager = groupManager;
     }
 
     protected IDtoBuilder<IPage, PageDto> getDtoBuilder() {
@@ -135,7 +151,16 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(parent.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
             IPage childO = this.getPageManager().getOnlinePage(childCode),
                     childD = this.getPageManager().getDraftPage(childCode);
-            PageDto child = childO != null ? dtoBuilder.convert(childO) : dtoBuilder.convert(childD);
+            PageDto child = null;
+            if (childO != null) {
+                child = dtoBuilder.convert(childO);
+                if (childO.isChanged()) {
+                    child.setStatus(STATUS_DRAFT);
+                }
+            } else {
+                child = dtoBuilder.convert(childD);
+                child.setStatus(STATUS_UNPUBLISHED);
+            }
             child.setChildren(Arrays.asList(childD.getChildrenCodes()));
             res.add(child);
         })));
@@ -154,6 +179,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
 
     @Override
     public PageDto addPage(PageRequest pageRequest) {
+        this.validateRequest(pageRequest);
         try {
             IPage page = this.createPage(pageRequest);
             this.getPageManager().addPage(page);
@@ -183,6 +209,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         if (null == oldPage) {
             throw new RestRourceNotFoundException(null, "page", pageCode);
         }
+        this.validateRequest(pageRequest);
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
@@ -212,7 +239,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
     }
 
     @Override
-    public PageDto movePage(String pageCode, PageRequest pageRequest) {
+    public PageDto movePage(String pageCode, PagePositionRequest pageRequest) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
                 page = this.getPageManager().getDraftPage(pageCode);
         boolean moved = true;
@@ -340,6 +367,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
             IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
             page.setParent(parent);
         }
+        PageMetadata metadata = new PageMetadata();
+        this.valueMetadataFromRequest(metadata, pageRequest);
+        page.setMetadata(metadata);
         return page;
     }
 
@@ -367,7 +397,39 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
             page.addExtraGroup(group);
         }));
         page.setParentCode(pageRequest.getParentCode());
+        PageMetadata metadata = oldPage.getMetadata();
+        if (metadata == null) {
+            metadata = new PageMetadata();
+        }
+        this.valueMetadataFromRequest(metadata, pageRequest);
+        page.setMetadata(metadata);
         return page;
+    }
+
+    private void valueMetadataFromRequest(PageMetadata metadata, PageRequest request) {
+        if (metadata.getModel() == null || !metadata.getModel().getCode().equals(request.getPageModel())) {
+            // Ho cambiato modello e allora cancello tutte le showlets
+            // Precedenti
+            PageModel model = this.getPageModelManager().getPageModel(request.getPageModel());
+            metadata.setModel(model);
+        }
+        metadata.setShowable(request.isDisplayedInMenu());
+        metadata.setUseExtraTitles(request.isSeo());
+        Optional<Map<String, String>> titles = Optional.ofNullable(request.getTitles());
+        ApsProperties apsTitles = new ApsProperties();
+        titles.ifPresent(values -> values.keySet().forEach((lang) -> {
+            apsTitles.put(lang, values.get(lang));
+        }));
+        metadata.setTitles(apsTitles);
+        Optional<List<String>> groups = Optional.ofNullable(request.getJoinGroups());
+        groups.ifPresent(values -> values.forEach((group) -> {
+            metadata.addExtraGroup(group);
+        }));
+        String charset = request.getCharset();
+        metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
+
+        String mimetype = request.getContentType();
+        metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
     }
 
     private IPage loadPage(String pageCode, String status) {
@@ -390,6 +452,23 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         return page;
     }
 
+    private void validateRequest(PageRequest request) {
+        if (this.getPageModelManager().getPageModel(request.getPageModel()) == null) {
+            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "pageModel", request.getPageModel());
+        }
+        if (this.getPageManager().getDraftPage(request.getParentCode()) == null) {
+            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "parent", request.getParentCode());
+        }
+        if (this.getGroupManager().getGroup(request.getOwnerGroup()) == null) {
+            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "group", request.getOwnerGroup());
+        }
+        Optional.ofNullable(request.getJoinGroups()).ifPresent(groups -> groups.forEach(group -> {
+            if (this.getGroupManager().getGroup(group) == null) {
+                throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "joingroup", group);
+            }
+        }));
+    }
+
     @Override
     public String getManagerName() {
         return ((IManager) this.getPageManager()).getName();
@@ -406,5 +485,4 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
             throw new RestServerError("Error loading page references for group", ex);
         }
     }
-
 }

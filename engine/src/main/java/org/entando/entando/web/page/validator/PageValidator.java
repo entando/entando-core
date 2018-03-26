@@ -24,12 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.web.page.PageController;
+import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.slf4j.LoggerFactory;
@@ -114,8 +113,10 @@ public class PageValidator implements Validator {
         }
     }
 
-    public void validateChangePositionRequest(String pageCode, PageRequest pageRequest, Errors errors) {
-        this.validateBodyCode(pageCode, pageRequest, errors);
+    public void validateChangePositionRequest(String pageCode, PagePositionRequest pageRequest, Errors errors) {
+        if (!StringUtils.equals(pageCode, pageRequest.getCode())) {
+            errors.rejectValue("code", PageController.ERRCODE_URINAME_MISMATCH, new String[]{pageCode, pageRequest.getCode()}, "page.code.mismatch");
+        }
         IPage parent = null;
         if (pageRequest.getParentCode() == null || pageRequest.getPosition() <= 0
                 || (parent = this.getPageManager().getDraftPage(pageRequest.getParentCode())) == null) {
@@ -123,7 +124,7 @@ public class PageValidator implements Validator {
         }
     }
 
-    public void validateGroups(String pageCode, PageRequest pageRequest, Errors errors) {
+    public void validateGroups(String pageCode, PagePositionRequest pageRequest, Errors errors) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
                 page = this.getPageManager().getDraftPage(pageCode);
         if (!page.getGroup().equals(Group.FREE_GROUP_NAME)
@@ -132,7 +133,7 @@ public class PageValidator implements Validator {
         }
     }
 
-    public void validatePagesStatus(String pageCode, PageRequest pageRequest, Errors errors) {
+    public void validatePagesStatus(String pageCode, PagePositionRequest pageRequest, Errors errors) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
                 page = this.getPageManager().getDraftPage(pageCode);
         if (page.isOnline() && !parent.isOnline()) {
@@ -171,7 +172,7 @@ public class PageValidator implements Validator {
                 parent = this.getPageManager().getDraftPage(page.getParentCode());
             }
             if (!invalidRefs.isEmpty() || !parent.isOnline()) {
-                errors.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
+                errors.reject(PageController.ERRCODE_REFERENCED_DRAFT_PAGE, new String[]{pageCode}, "page.status.invalid.draft.ref");
             }
         } else {
             boolean isRoot = this.getPageManager().getOnlineRoot().getCode().equals(pageCode);
@@ -184,7 +185,7 @@ public class PageValidator implements Validator {
                 }));
             }
             if (isRoot || !contents.isEmpty() || !invalidRefs.isEmpty()) {
-                errors.reject(PageController.ERRCODE_REFERENCED_DRAFT_PAGE, new String[]{pageCode}, "page.status.invalid.draft.ref");
+                errors.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
             }
         }
     }

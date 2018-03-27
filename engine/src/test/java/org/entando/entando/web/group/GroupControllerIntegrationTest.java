@@ -1,12 +1,13 @@
 package org.entando.entando.web.group;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.group.IGroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
@@ -16,10 +17,10 @@ import org.entando.entando.web.group.validator.GroupValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
-import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -163,6 +164,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
+
     }
 
     @Test
@@ -239,13 +241,36 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
-                get("/groups/{code}", Group.FREE_GROUP_NAME)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken));
+                                               get("/groups/{code}", Group.FREE_GROUP_NAME)
 
+                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                           .header("Authorization", "Bearer " + accessToken));
+
+        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload.references.length()", is(5)));
+        result.andExpect(jsonPath("$.payload.references.length()", is(6)));
+
+        String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
+
+
+
+
+
+        for (String managerName : managers) {
+
+            result = mockMvc.perform(
+                                     get(
+                                         "/groups/{code}/references/{manager}",
+                                         Group.FREE_GROUP_NAME, managerName)
+                                                                            .param("page", "1")
+                                                                            .param("pageSize", "3")
+                                                                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                            .header("Authorization", "Bearer " + accessToken));
+
+        }
+
     }
+
 
     @Test
     public void testParamSize() throws ApsSystemException, Exception {

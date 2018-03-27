@@ -30,11 +30,6 @@ import com.agiletec.aps.util.ApsProperties;
  */
 public class Page extends TreeNode implements IPage, Serializable {
 
-    @Override
-    public String getUtilizerId() {
-        return this.getCode();
-    }
-
     /**
      * Set the position of the page with regard to its sisters
      *

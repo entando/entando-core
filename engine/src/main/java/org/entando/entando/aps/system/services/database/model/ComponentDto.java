@@ -13,34 +13,63 @@
  */
 package org.entando.entando.aps.system.services.database.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.init.model.Component;
+import org.entando.entando.aps.system.init.util.TableFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author E.Santoboni
  */
 public class ComponentDto {
-    
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private String code;
-	private String description;
-	private String artifactId;
-	private String artifactGroupId;
-	private String artifactVersion;
-	
-	private Map<String, List<String>> tableMapping;
-    
+    private String description;
+    private String artifactId;
+    private String artifactGroupId;
+    private String artifactVersion;
+
+    private Map<String, List<String>> tableMapping = new HashMap<>();
+
     public ComponentDto() {
-        
+
     }
-    
+
     public ComponentDto(Component component) {
         this.setArtifactGroupId(component.getArtifactGroupId());
         this.setArtifactId(component.getArtifactId());
         this.setArtifactVersion(component.getArtifactVersion());
         this.setCode(component.getCode());
         this.setDescription(component.getDescription());
-        this.setTableMapping(component.getTableMapping());
+        Map<String, List<String>> mapping = component.getTableMapping();
+        if (null == mapping) {
+            return;
+        }
+        try {
+            Iterator<String> iter = mapping.keySet().iterator();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                List<String> tableNames = new ArrayList<>();
+                List<String> tableClasses = mapping.get(key);
+                for (String className : tableClasses) {
+                    Class tableClass = Class.forName(className);
+                    String tableName = TableFactory.getTableName(tableClass);
+                    tableNames.add(tableName);
+                }
+                this.getTableMapping().put(key, tableNames);
+            }
+        } catch (Throwable t) {
+            logger.error("error starting backup", t);
+            throw new RestServerError("error starting backup", t);
+        }
     }
 
     public String getCode() {
@@ -90,5 +119,5 @@ public class ComponentDto {
     public void setTableMapping(Map<String, List<String>> tableMapping) {
         this.tableMapping = tableMapping;
     }
-    
+
 }

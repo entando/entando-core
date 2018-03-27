@@ -103,15 +103,17 @@ public class DatabaseController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/report/{reportCode}/dump/{dataSource}/{tableName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getTableDumpReport(@PathVariable String reportCode,
+    public ResponseEntity<RestResponse> getTableDump(@PathVariable String reportCode,
             @PathVariable String dataSource, @PathVariable String tableName) {
         logger.debug("Required dump report -> code {} - database {} - table {}", reportCode, dataSource, tableName);
         byte[] base64 = this.getDatabaseService().getTableDump(reportCode, dataSource, tableName);
+        Map<String, Object> response = new HashMap<>();
+        response.put("base64", base64);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("reportCode", reportCode);
         metadata.put("dataSource", dataSource);
         metadata.put("tableName", tableName);
-        return new ResponseEntity<>(new RestResponse(base64, new ArrayList<>(), metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(response, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
     public DatabaseValidator getDatabaseValidator() {

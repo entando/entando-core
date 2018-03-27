@@ -69,6 +69,4 @@ public class RoleDto {
             permissionCodes.forEach(i -> this.getPermissions().put(i, src.getPermissions().contains(i)));
         }
     }
-
-
 }

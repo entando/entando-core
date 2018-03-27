@@ -196,14 +196,14 @@ public class RoleService implements IRoleService {
         return pagedMetadata;
     }
 
-    private BeanPropertyBindingResult validateRoleForAdd(Role role) {
+    protected BeanPropertyBindingResult validateRoleForAdd(Role role) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(role, "role");
         validateCodeExists(role, errors);
         validatePermissions(role, errors);
         return errors;
     }
 
-    private BeanPropertyBindingResult validateRoleForDelete(Role role) {
+    protected BeanPropertyBindingResult validateRoleForDelete(Role role) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(role, "role");
         List<UserDto> users = this.getAuthorizationService().getRoleUtilizer(role.getName());
         if (!users.isEmpty()) {
@@ -212,7 +212,7 @@ public class RoleService implements IRoleService {
         return errors;
     }
 
-    private BeanPropertyBindingResult validateRoleForUpdate(Role role) {
+    protected BeanPropertyBindingResult validateRoleForUpdate(Role role) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(role, "role");
         validatePermissions(role, errors);
         return errors;
@@ -233,7 +233,6 @@ public class RoleService implements IRoleService {
         }
     }
 
-
     protected Role createRole(RoleRequest roleRequest) {
         Role role = new Role();
         role.setName(roleRequest.getCode());
@@ -243,7 +242,6 @@ public class RoleService implements IRoleService {
         }
         return role;
     }
-
 
     protected List<Role> sortList(RestListRequest restRequest, List<Role> roles) {
         if (restRequest.getSort().equals(KEY_FILTER_DESCR)) {
@@ -266,7 +264,5 @@ public class RoleService implements IRoleService {
         return this.getAuthorizationService().getRoleUtilizer(code);
 
     }
-
-
 
 }

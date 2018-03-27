@@ -72,6 +72,7 @@
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
 
+    <bean id="UserDtoBuilder" class="org.entando.entando.aps.system.services.user.model.UserDtoBuilder" />
     <!-- === WIDGET SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
@@ -135,10 +136,11 @@
     </bean>
 
     <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
-    
+
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>
+        <property name="dtoBuilder" ref="UserDtoBuilder" />
     </bean>
 
 </beans>

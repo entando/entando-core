@@ -17,12 +17,12 @@ import org.entando.entando.aps.system.services.user.IUserService;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserPasswordRequest;
 import org.entando.entando.web.user.model.UserRequest;
 import org.entando.entando.web.user.validator.UserValidator;
 import org.slf4j.Logger;
@@ -51,6 +51,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public static final String ERRCODE_USERNAME_MISMATCH = "2";
+    public static final String ERRCODE_OLD_PASSWORD_FORMAT = "4";
+    public static final String ERRCODE_NEW_PASSWORD_FORMAT = "5";
 
     @Autowired
     private IUserService userService;
@@ -90,12 +94,16 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateGroup(@PathVariable String username, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> updateUser(@PathVariable String username, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getUserValidator();
+        this.getUserValidator().validateBody(username, userRequest.getUsername(), bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getUserValidator().validatePassword(username, userRequest.getPassword(), bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
@@ -105,16 +113,31 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addGroup(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
+    @RequestMapping(value = "/{username}/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        //business validations 
-        this.getUserValidator();
+        this.getUserValidator().validateBody(username, passwordRequest.getUsername(), bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getUserValidator().validatePasswords(passwordRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        UserDto user = this.getUserService().updateUserPassword(passwordRequest);
+        return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
         }
         UserDto dto = this.getUserService().addUser(userRequest);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
@@ -122,7 +145,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteGroup(@PathVariable String username) throws ApsSystemException {
+    public ResponseEntity<?> deleteUser(@PathVariable String username) throws ApsSystemException {
         logger.info("deleting {}", username);
         this.getUserService().removeUser(username);
         Map<String, String> result = new HashMap<>();

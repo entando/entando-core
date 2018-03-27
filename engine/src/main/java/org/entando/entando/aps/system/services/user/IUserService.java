@@ -11,6 +11,7 @@ import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserPasswordRequest;
 import org.entando.entando.web.user.model.UserRequest;
 
 /**
@@ -19,7 +20,11 @@ import org.entando.entando.web.user.model.UserRequest;
  */
 public interface IUserService {
 
-    String BEAN_NAME = "UserService";
+    public final static String BEAN_NAME = "UserService";
+
+    public final static String STATUS_ACTIVE = "active";
+
+    public final static String STATUS_DISABLED = "inactive";
 
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request);
 
@@ -34,4 +39,6 @@ public interface IUserService {
     public UserDto addUser(UserRequest userRequest);
 
     public void removeUser(String username);
+
+    public UserDto updateUserPassword(UserPasswordRequest passwordRequest);
 }

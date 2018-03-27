@@ -293,7 +293,8 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn = this.getConnection();
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(UPDATE_USER);
-            stat.setString(1, user.getPassword());
+            String encrypdedPassword = user.getPassword() != null ? this.getEncryptedPassword(user.getPassword()) : null;
+            stat.setString(1, encrypdedPassword);
             if (null != entandoUser && null != entandoUser.getLastAccess()) {
                 stat.setDate(2, new java.sql.Date(entandoUser.getLastAccess().getTime()));
             } else {

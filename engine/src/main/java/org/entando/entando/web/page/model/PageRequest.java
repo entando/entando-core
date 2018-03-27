@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
  */
 public class PageRequest {
 
-    @NotNull(message = "page.code.NotBlank")
+    @NotBlank(message = "page.code.NotBlank")
     private String code;
     private String status;
     private boolean displayedInMenu;

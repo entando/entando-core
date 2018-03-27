@@ -11,20 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.user.model;
+package org.entando.entando.aps.system.services.user.model;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.system.services.DtoBuilder;
 
 /**
  *
  * @author paddeo
  */
-public class UserAuthoritiesRequest extends ArrayList<UserAuthority> {
+public class UserDtoBuilder extends DtoBuilder<UserDetails, UserDto> {
 
     @Override
-    public String toString() {
-        return "UserAuthoritiesRequest: [" + this.stream().map(e -> e.toString()).collect(Collectors.joining(",")) + "]";
+    protected UserDto toDto(UserDetails src) {
+        return new UserDto(src);
     }
 
 }

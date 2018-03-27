@@ -13,23 +13,20 @@
  */
 package org.entando.entando.web.user.model;
 
-import javax.validation.constraints.Size;
-import org.entando.entando.aps.system.services.user.IUserService;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
  * @author paddeo
  */
-public class UserRequest {
+public class UserPasswordRequest {
 
     @NotBlank(message = "user.username.NotBlank")
     private String username;
-    private String status = IUserService.STATUS_DISABLED;
-    private boolean passwordChangeRequired = true;
-    @NotBlank(message = "user.password.NotBlank")
-    @Size(min = 6, message = "user.password.size")
-    private String password;
+    @NotBlank(message = "user.old.password.NotBlank")
+    private String oldPassword;
+    @NotBlank(message = "user.new.password.NotBlank")
+    private String newPassword;
 
     public String getUsername() {
         return username;
@@ -39,28 +36,20 @@ public class UserRequest {
         this.username = username;
     }
 
-    public String getStatus() {
-        return status;
+    public String getOldPassword() {
+        return oldPassword;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 
-    public boolean isPasswordChangeRequired() {
-        return passwordChangeRequired;
+    public String getNewPassword() {
+        return newPassword;
     }
 
-    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
-        this.passwordChangeRequired = passwordChangeRequired;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 
 }

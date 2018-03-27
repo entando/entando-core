@@ -5,19 +5,25 @@
  */
 package org.entando.entando.aps.system.services.user;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
+import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
+import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserPasswordRequest;
 import org.entando.entando.web.user.model.UserRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +37,8 @@ public class UserService implements IUserService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private static final String ERRCODE_USER_NOT_FOUND = "1";
+
     @Autowired
     private IUserManager userManager;
 
@@ -39,6 +47,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private IAuthenticationProviderManager authenticationProvider;
+
+    @Autowired
+    private IDtoBuilder<UserDetails, UserDto> dtoBuilder;
 
     public IUserManager getUserManager() {
         return userManager;
@@ -62,6 +73,14 @@ public class UserService implements IUserService {
 
     public void setAuthenticationProvider(IAuthenticationProviderManager authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
+    }
+
+    public IDtoBuilder<UserDetails, UserDto> getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(IDtoBuilder<UserDetails, UserDto> dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
     }
 
     @Override
@@ -101,27 +120,118 @@ public class UserService implements IUserService {
 
     @Override
     public PagedMetadata<UserDto> getUsers(RestListRequest requestList) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            //transforms the filters by overriding the key specified in the request with the correct one known by the dto
+            List<FieldSearchFilter> filters = new ArrayList<FieldSearchFilter>(requestList.buildFieldSearchFilters());
+            filters
+                    .stream()
+                    .filter(i -> ((i.getKey() != null) && (UserDto.getEntityFieldName(i.getKey()) != null)))
+                    .forEach(i -> i.setKey(UserDto.getEntityFieldName(i.getKey())));
+            List<UserDetails> users = null;
+            if (filters.size() > 0) {
+                String text = (String) filters.get(0).getValue();
+                users = this.getUserManager().searchUsers(text);
+            } else {
+                users = this.getUserManager().getUsers();
+            }
+            List<UserDto> dtoList = dtoBuilder.convert(users);
+            SearcherDaoPaginatedResult<UserDetails> result = new SearcherDaoPaginatedResult<>(users.size(), users);
+            PagedMetadata<UserDto> pagedMetadata = new PagedMetadata<>(requestList, result);
+            pagedMetadata.setBody(dtoList);
+
+            return pagedMetadata;
+        } catch (Throwable t) {
+            logger.error("error in search groups", t);
+            throw new RestServerError("error in search groups", t);
+        }
     }
 
     @Override
     public UserDto getUser(String username) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        UserDetails user = this.loadUser(username);
+        return dtoBuilder.convert(user);
     }
 
     @Override
     public UserDto updateUser(UserRequest userRequest) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            UserDetails user = this.loadUser(userRequest.getUsername());
+            UserDetails newUser = this.updateUser(user, userRequest);
+            this.getUserManager().updateUser(newUser);
+            return dtoBuilder.convert(newUser);
+        } catch (ApsSystemException e) {
+            logger.error("Error in updating user {}", userRequest.getUsername(), e);
+            throw new RestServerError("Error in updating user", e);
+        }
     }
 
     @Override
     public UserDto addUser(UserRequest userRequest) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            UserDetails newUser = this.createUser(userRequest);
+            this.getUserManager().addUser(newUser);
+            return dtoBuilder.convert(newUser);
+        } catch (ApsSystemException e) {
+            logger.error("Error in adding user {}", userRequest.getUsername(), e);
+            throw new RestServerError("Error in adding user", e);
+        }
     }
 
     @Override
     public void removeUser(String username) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            this.getUserManager().removeUser(username);
+        } catch (ApsSystemException e) {
+            logger.error("Error in deleting user {}", username, e);
+            throw new RestServerError("Error in deleting user", e);
+        }
     }
 
+    @Override
+    public UserDto updateUserPassword(UserPasswordRequest passwordRequest) {
+        UserDetails user = this.loadUser(passwordRequest.getUsername());
+        try {
+            this.getUserManager().changePassword(passwordRequest.getUsername(), passwordRequest.getNewPassword());
+            return dtoBuilder.convert(user);
+        } catch (ApsSystemException e) {
+            logger.error("Error in updating password for user {}", passwordRequest.getUsername(), e);
+            throw new RestServerError("Error in updating password", e);
+        }
+    }
+
+    private UserDetails loadUser(String username) {
+        try {
+            UserDetails user = this.getUserManager().getUser(username);
+            if (user == null) {
+                throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "user", username);
+            }
+            return user;
+        } catch (ApsSystemException e) {
+            logger.error("Error in loading user {}", username, e);
+            throw new RestServerError("Error in loading user", e);
+        }
+    }
+
+    private UserDetails updateUser(UserDetails oldUser, UserRequest userRequest) {
+        User user = new User();
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(userRequest.getPassword());
+        user.setDisabled(userRequest.getStatus() != null && !userRequest.getStatus().equals(IUserService.STATUS_ACTIVE)
+                && userRequest.isPasswordChangeRequired());
+        if (oldUser.isEntandoUser()) {
+            User userToClone = (User) oldUser;
+            user.setLastAccess(userToClone.getLastAccess());
+            user.setLastPasswordChange(userToClone.getLastPasswordChange());
+        }
+        return user;
+    }
+
+    private UserDetails createUser(UserRequest userRequest) {
+        User user = new User();
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(userRequest.getPassword());
+        user.setDisabled(userRequest.getStatus() != null && !userRequest.getStatus().equals(IUserService.STATUS_ACTIVE)
+                && userRequest.isPasswordChangeRequired());
+        return user;
+    }
 }

@@ -27,12 +27,13 @@ import org.springframework.validation.Errors;
 @Component
 public class PageModelValidator extends AbstractValidator {
 
+
     public static final String ERRCODE_FRAMES_POS_MISMATCH = "1";
     public static final String ERRCODE_CODE_EXISTS = "2";
     public static final String ERRCODE_PAGEMODEL_REFERENCES = "3";
     public static final String ERRCODE_URINAME_MISMATCH = "4";
 
-    ;
+    public static final String ERRCODE_PAGEMODEL_NOT_FOUND = "5";
 
 
     @Override

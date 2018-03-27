@@ -96,7 +96,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         PageModel pageModel = this.getPageModelManager().getPageModel(code);
         if (null == pageModel) {
             logger.warn("no pageModel found with code {}", code);
-            throw new RestRourceNotFoundException(null, "pageModel", code);
+            throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", code);
         }
         return this.getDtoBuilder().convert(pageModel);
     }
@@ -161,7 +161,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     protected void copyProperties(PageModelRequest srcPpageModelRequest, PageModel descPageModel) {
         descPageModel.setCode(srcPpageModelRequest.getCode());
-        descPageModel.setDescription(srcPpageModelRequest.getDescription());
+        descPageModel.setDescription(srcPpageModelRequest.getDescr());
         descPageModel.setTemplate(srcPpageModelRequest.getTemplate());
         descPageModel.setPluginCode(srcPpageModelRequest.getPluginCode());
         descPageModel.setConfiguration(this.createPageModelConfiguration(srcPpageModelRequest));

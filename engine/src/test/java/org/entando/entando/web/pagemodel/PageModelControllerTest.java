@@ -233,7 +233,7 @@ public class PageModelControllerTest extends AbstractControllerTest {
                          "    \"template\": \"ciao\"\n" +
                          " }";
 
-        System.out.println(payload);
+        //System.out.println(payload);
         ResultActions result = mockMvc.perform(
                 post("/pagemodels")
                 .content(payload)
@@ -279,14 +279,14 @@ public class PageModelControllerTest extends AbstractControllerTest {
                          "    \"template\": \"<html></html>\"\n" +
                          "}";
 
-        System.out.println(payload);
+        // System.out.println(payload);
         ResultActions result = mockMvc.perform(
                                                post("/pagemodels")
                                                                   .content(payload)
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .header("Authorization", "Bearer " + accessToken));
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        // System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         Mockito.verify(pageModelService, Mockito.times(1)).addPageModel(Mockito.any());
 

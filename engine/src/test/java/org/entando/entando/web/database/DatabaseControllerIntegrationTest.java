@@ -28,12 +28,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DatabaseControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
     @Test
-    public void testReports() throws Exception {
+    public void testReports_1() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/database").header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testReports_2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/database")
+                        .param("page", "2")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isNotFound());
     }
 
     @Test

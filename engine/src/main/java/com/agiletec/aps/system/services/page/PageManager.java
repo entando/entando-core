@@ -22,7 +22,6 @@ import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
@@ -477,9 +476,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		return this.getOnlinePage(code);
 	}
 
-	@SuppressWarnings("rawtypes")
+
 	@Override
-    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<IPage> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<IPage> pageUtilizers = new ArrayList<IPage>();
 		try {
 			IPage root = this.getDraftRoot();
@@ -498,12 +497,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			throw new ApsSystemException(message, t);
 		}
 
-        List<UtilizerEntry> utilizers = new ArrayList<>();
-        if (null != pageUtilizers) {
-            pageUtilizers.stream().forEach(i -> utilizers.add(i));
-        }
-
-        return utilizers;
+        return pageUtilizers;
 	}
 
 	private void searchUtilizers(String groupName, List<IPage> utilizers, IPage page, boolean draft) {

@@ -16,9 +16,11 @@ package org.entando.entando.web.database;
 import com.agiletec.aps.system.services.role.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.database.IDatabaseService;
+import org.entando.entando.aps.system.services.database.model.ComponentDto;
 import org.entando.entando.aps.system.services.database.model.DumpReportDto;
 import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -28,6 +30,7 @@ import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.database.validator.DatabaseValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +48,9 @@ public class DatabaseController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
     private DatabaseValidator databaseValidator;
+    @Autowired
     private IDatabaseService databaseService;
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -60,9 +65,20 @@ public class DatabaseController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getStatus() {
+        Integer status = this.getDatabaseService().getStatus();
         Map<String, String> response = new HashMap<>();
-        response.put("status", String.valueOf(this.getDatabaseService().getStatus()));
+        response.put("status", String.valueOf(status));
+        logger.debug("Required database status -> {}", status);
         return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/initBackup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> initBackup() {
+        logger.debug("Required actual component configuration");
+        List<ComponentDto> dtos = this.getDatabaseService().getCurrentComponents();
+        logger.debug("Actual component configuration -> {}", dtos);
+        return new ResponseEntity<>(new RestResponse(dtos), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -73,13 +89,15 @@ public class DatabaseController {
         Map<String, String> response = new HashMap<>();
         response.put("status", String.valueOf(this.getDatabaseService().getStatus()));
         logger.debug("Database backup started");
-        return new ResponseEntity<>(new RestResponse(), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/report/{reportCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDumpReport(@PathVariable String reportCode) {
+        logger.debug("Required dump report -> code {}", reportCode);
         DumpReportDto result = this.getDatabaseService().getDumpReportDto(reportCode);
+        logger.debug("Extracted dump report -> {}", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
@@ -87,6 +105,7 @@ public class DatabaseController {
     @RequestMapping(value = "/report/{reportCode}/dump/{dataSource}/{tableName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getTableDumpReport(@PathVariable String reportCode,
             @PathVariable String dataSource, @PathVariable String tableName) {
+        logger.debug("Required dump report -> code {} - database {} - table {}", reportCode, dataSource, tableName);
         byte[] base64 = this.getDatabaseService().getTableDump(reportCode, dataSource, tableName);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("reportCode", reportCode);

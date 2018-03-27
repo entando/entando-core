@@ -19,11 +19,43 @@ import org.entando.entando.aps.system.init.model.TableDumpReport;
  * @author E.Santoboni
  */
 public class TableDumpReportDto {
-    
+
+    private String tableName;
+    private Integer rows;
+    private Long requiredTime;
+
     public TableDumpReportDto() {
-        
+
     }
+
     public TableDumpReportDto(TableDumpReport report) {
-        
+        this.setRequiredTime(report.getRequiredTime());
+        this.setRows(report.getRows());
+        this.setTableName(report.getTableName());
     }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public Integer getRows() {
+        return rows;
+    }
+
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
+
+    public Long getRequiredTime() {
+        return requiredTime;
+    }
+
+    public void setRequiredTime(Long requiredTime) {
+        this.requiredTime = requiredTime;
+    }
+
 }

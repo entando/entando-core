@@ -38,12 +38,12 @@ public class PageModelServiceTest {
 
         String payload = " {\n" +
                          "            \"code\": \"test\",\n" +
-                         "            \"description\": \"test\",\n" +
+                         "            \"descr\": \"test\",\n" +
                          "            \"configuration\": {\n" +
                          "                \"frames\": [\n" +
                          "                    {\n" +
                          "                        \"pos\": 0,\n" +
-                         "                        \"description\": \"test_frame\",\n" +
+                         "                        \"descr\": \"test_frame\",\n" +
                          "                        \"mainFrame\": false,\n" +
                          "                        \"defaultWidget\": null,\n" +
                          "                        \"sketch\": null\n" +

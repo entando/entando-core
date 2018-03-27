@@ -13,8 +13,6 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.IApsEncrypter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;

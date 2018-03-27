@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.role;
 
+import com.agiletec.aps.system.services.authorization.model.UserDto;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -31,5 +32,7 @@ public interface IRoleService {
     public void removeRole(String roleCode);
 
     public RoleDto getRole(String roleCode);
+
+    public PagedMetadata<UserDto> getRoleReferences(String roleCode, RestListRequest requestList);
 
 }

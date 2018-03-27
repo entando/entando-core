@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.authorization.model.UserDto;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.entando.entando.aps.system.services.role.IRoleService;
@@ -53,8 +54,7 @@ public class RoleController {
     @Autowired
     private IRoleService roleService;
 
-    @Autowired
-    private RoleValidator roleValidator;
+    private RoleValidator roleValidator = new RoleValidator();
 
     public IRoleService getRoleService() {
         return roleService;
@@ -87,6 +87,13 @@ public class RoleController {
     public ResponseEntity<RestResponse> getRole(@PathVariable String roleCode) {
         RoleDto role = this.getRoleService().getRole(roleCode);
         return new ResponseEntity<>(new RestResponse(role), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{roleCode}/references", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getRoleReferences(@PathVariable String roleCode, RestListRequest requestList) {
+        PagedMetadata<UserDto> result = this.getRoleService().getRoleReferences(roleCode, requestList);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

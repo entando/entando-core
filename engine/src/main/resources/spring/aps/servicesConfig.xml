@@ -173,6 +173,7 @@
     <bean id="RoleService" class="org.entando.entando.aps.system.services.role.RoleService" >
         <property name="roleManager" ref="RoleManager" />
         <property name="dtoBuilder" ref="RoleDtoBuilder" />
+        <property name="authorizationService" ref="AuthorizationService"></property>
     </bean>
 
 

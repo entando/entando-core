@@ -7,4 +7,5 @@ public interface GroupServiceUtilizer<T> {
     public String getManagerName();
 
     public List<T> getGroupUtilizer(String groupCode);
+
 }

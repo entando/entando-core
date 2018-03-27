@@ -19,7 +19,7 @@ import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuthorizationService implements GroupServiceUtilizer<UserDto> {
+public class AuthorizationService implements IAuthorizationService, GroupServiceUtilizer<UserDto> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private IAuthorizationManager authorizationManager;
@@ -97,7 +97,29 @@ public class AuthorizationService implements GroupServiceUtilizer<UserDto> {
             return dtoList;
         } catch (ApsSystemException ex) {
             logger.error("Error loading user references for group {}", groupCode, ex);
-            throw new RestServerError("Error loading user references for group", ex);
+            throw new RestServerError("Error loading user references by group", ex);
+        }
+    }
+
+    @Override
+    public List<UserDto> getRoleUtilizer(String roleCode) {
+        try {
+            List<String> usernames = this.getAuthorizationManager().getUsersByRole(roleCode, false);
+            List<UserDto> dtoList = new ArrayList<>();
+            if (null != usernames) {
+                usernames.stream().forEach(i -> {
+                    try {
+                        dtoList.add(this.getDtoBuilder().convert(this.getUserManager().getUser(i)));
+                    } catch (ApsSystemException e) {
+                        logger.error("error loading {}", i, e);
+
+                    }
+                });
+            }
+            return dtoList;
+        } catch (ApsSystemException ex) {
+            logger.error("Error loading user references for role {}", roleCode, ex);
+            throw new RestServerError("Error loading user references by role", ex);
         }
     }
 

@@ -35,13 +35,13 @@ import org.entando.entando.web.page.PageControllerTest;
 import org.entando.entando.web.pagemodel.PageModelControllerIntegrationTest;
 import org.entando.entando.web.pagemodel.PageModelControllerTest;
 import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
+import org.entando.entando.web.role.RoleControllerIntegrationTest;
+import org.entando.entando.web.role.RoleControllerUnitTest;
 import org.entando.entando.web.system.ReloadConfigurationControllerTest;
 import org.entando.entando.web.user.UserControllerIntegrationTest;
 import org.entando.entando.web.user.UserControllerTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerTest;
-import org.entando.entando.web.user.UserControllerIntegrationTest;
-import org.entando.entando.web.user.UserControllerTest;
 import org.entando.entando.web.usersettings.UserSettigsControllerUnitTest;
 import org.entando.entando.web.usersettings.UserSettingsControllerIntegrationTest;
 
@@ -85,6 +85,9 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(UserSettingsControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(UserSettigsControllerUnitTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(RoleControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(RoleControllerUnitTest.class));
 
         return suite;
     }

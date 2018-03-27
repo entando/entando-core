@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.authorization.IAuthorizationService;
+import com.agiletec.aps.system.services.authorization.model.UserDto;
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Role;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -44,6 +46,7 @@ public class RoleService implements IRoleService {
 
     private IRoleManager roleManager;
     private RoleDdoBuilder dtoBuilder;
+    private IAuthorizationService authorizationService;
 
     protected IRoleManager getRoleManager() {
         return roleManager;
@@ -61,6 +64,13 @@ public class RoleService implements IRoleService {
         this.dtoBuilder = dtoBuilder;
     }
 
+    protected IAuthorizationService getAuthorizationService() {
+        return authorizationService;
+    }
+
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
@@ -104,20 +114,22 @@ public class RoleService implements IRoleService {
                 throw new RestRourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleRequest.getCode());
             }
 
+            role.setDescription(roleRequest.getName());
+            role.getPermissions().clear();
+            if (null != roleRequest.getPermissions()) {
+                roleRequest.getPermissions().forEach(i -> role.addPermission(i));
+            }
             BeanPropertyBindingResult validationResult = this.validateRoleForUpdate(role);
             if (validationResult.hasErrors()) {
                 throw new ValidationConflictException(validationResult);
             }
-            role.setDescription(roleRequest.getName());
-            
-            TODO APPLY permissions
-            
+
             this.getRoleManager().updateRole(role);
             RoleDto dto = this.getDtoBuilder().toDto(role, this.getRoleManager().getPermissionsCodes());
             return dto;
         } catch (ApsSystemException e) {
-            logger.error("Error adding a role", e);
-            throw new RestServerError("error in add role", e);
+            logger.error("Error updating a role", e);
+            throw new RestServerError("error in update role", e);
         }
     }
 
@@ -140,8 +152,21 @@ public class RoleService implements IRoleService {
 
     @Override
     public void removeRole(String roleCode) {
-        // TODO Auto-generated method stub
-
+        try {
+            Role role = this.getRoleManager().getRole(roleCode);
+            if (null == role) {
+                logger.info("role {} does not exists", roleCode);
+                return;
+            }
+            BeanPropertyBindingResult validationResult = this.validateRoleForDelete(role);
+            if (validationResult.hasErrors()) {
+                throw new ValidationConflictException(validationResult);
+            }
+            this.getRoleManager().removeRole(role);
+        } catch (ApsSystemException e) {
+            logger.error("Error in delete role {}", roleCode, e);
+            throw new RestServerError("error in delete role", e);
+        }
     }
 
     @Override
@@ -155,10 +180,35 @@ public class RoleService implements IRoleService {
         return dto;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public PagedMetadata<UserDto> getRoleReferences(String roleCode, RestListRequest restRequest) {
+        Role role = this.getRoleManager().getRole(roleCode);
+        if (null == role) {
+            logger.warn("no role found with code {}", roleCode);
+            throw new RestRourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleCode);
+        }
+        List<UserDto> dtoList = this.getAuthorizationService().getRoleUtilizer(roleCode);
+        List<UserDto> subList = restRequest.getSublist(dtoList);
+        SearcherDaoPaginatedResult<UserDto> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        PagedMetadata<UserDto> pagedMetadata = new PagedMetadata<>(restRequest, pagedResult);
+        pagedMetadata.setBody(subList);
+        return pagedMetadata;
+    }
+
     private BeanPropertyBindingResult validateRoleForAdd(Role role) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(role, "role");
         validateCodeExists(role, errors);
         validatePermissions(role, errors);
+        return errors;
+    }
+
+    private BeanPropertyBindingResult validateRoleForDelete(Role role) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(role, "role");
+        List<UserDto> users = this.getAuthorizationService().getRoleUtilizer(role.getName());
+        if (!users.isEmpty()) {
+            errors.reject(RoleValidator.ERRCODE_ROLE_REFERENCES, new String[]{role.getName()}, "role.references");
+        }
         return errors;
     }
 
@@ -211,5 +261,12 @@ public class RoleService implements IRoleService {
         }
         return roles;
     }
+
+    protected List<UserDto> userReferences(String code) throws ApsSystemException {
+        return this.getAuthorizationService().getRoleUtilizer(code);
+
+    }
+
+
 
 }

@@ -13,13 +13,15 @@
  */
 package org.entando.entando.aps.system.services.auth;
 
-import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.List;
 
+import com.agiletec.aps.system.services.user.UserDetails;
+
 /**
- *
+ * RENAME
  * @author paddeo
  */
+@Deprecated
 public interface IAuthorizationService<T> {
 
     String BEAN_NAME_FOR_PAGE = "PageAuthorizationService";

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,9 +31,15 @@ public class RestResponse {
     }
 
     public RestResponse(Object payload, List<RestError> errors, Object metaData) {
-        this.payload = payload;
-        this.errors = errors;
-        this.metaData = metaData;
+        if (null != payload) {
+            this.setPayload(payload);
+        }
+        if (null != errors) {
+            this.setErrors(errors);
+        }
+        if (null != metaData) {
+            this.setMetaData(metaData);
+        }
     }
 
     public Object getPayload() {

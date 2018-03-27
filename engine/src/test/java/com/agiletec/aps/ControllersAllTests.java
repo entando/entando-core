@@ -17,6 +17,8 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.entando.entando.web.database.DatabaseControllerIntegrationTest;
+import org.entando.entando.web.database.DatabaseControllerTest;
 import org.entando.entando.web.dataobject.DataTypeControllerIntegrationTest;
 import org.entando.entando.web.dataobject.DataTypeControllerTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
@@ -85,6 +87,9 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(UserSettingsControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(UserSettigsControllerUnitTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(DatabaseControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(DatabaseControllerTest.class));
 
         suite.addTest(new JUnit4TestAdapter(RoleControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(RoleControllerUnitTest.class));

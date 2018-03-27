@@ -6,7 +6,7 @@ public class FrameDto {
 
     private int pos;
 
-    private String description;
+    private String descr;
     private boolean mainFrame;
     private DefaultWidgetDto defaultWidget = new DefaultWidgetDto();
     private FrameSketch sketch = new FrameSketch();
@@ -19,12 +19,12 @@ public class FrameDto {
         this.pos = pos;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescr() {
+        return descr;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
     public boolean isMainFrame() {
@@ -50,5 +50,6 @@ public class FrameDto {
     public void setSketch(FrameSketch sketch) {
         this.sketch = sketch;
     }
+
 
 }

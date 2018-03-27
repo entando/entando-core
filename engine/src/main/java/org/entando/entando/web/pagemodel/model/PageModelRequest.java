@@ -22,7 +22,7 @@ public class PageModelRequest {
     private String code;
 
     @NotNull(message = "pageModel.descr.notBlank")
-    private String description;
+    private String descr;
 
     @Valid
     @NotNull(message = "pageModel.configuration.notBlank")
@@ -39,12 +39,12 @@ public class PageModelRequest {
         this.code = code;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescr() {
+        return descr;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
     public PageModelConfigurationRequest getConfiguration() {

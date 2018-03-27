@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.services.pagemodel;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.entando.entando.aps.system.services.pagemodel.model.FrameDto;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.junit.Test;
@@ -27,11 +26,11 @@ public class PageModelDtoTest {
 
         FrameDto frameDto = new FrameDto();
         frameDto.setPos(0);
-        frameDto.setDescription("description");
+        frameDto.setDescr("description");
 
         PageModelDto dto = new PageModelDto();
         dto.setCode("code");
-        dto.setDescription("description");
+        dto.setDescr("description");
         dto.getConfiguration().getFrames().add(frameDto);
 
         ObjectMapper mapper = new ObjectMapper();

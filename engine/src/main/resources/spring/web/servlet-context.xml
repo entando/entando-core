@@ -53,7 +53,11 @@
 		<entry key="Min">
 			<value>53</value>
 		</entry>
+		<entry key="NotEmpty">
+			<value>54</value>
+		</entry>
 	</util:map>
+
 
 	<bean id="messageCodesResolver"
 		class="org.entando.entando.web.common.EntandoMessageCodesResolver">

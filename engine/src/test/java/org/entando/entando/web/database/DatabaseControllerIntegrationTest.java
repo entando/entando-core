@@ -32,7 +32,8 @@ public class DatabaseControllerIntegrationTest extends AbstractControllerIntegra
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/database").header("Authorization", "Bearer " + accessToken));
+                .perform(get("/database").param("page", "1")
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -52,7 +53,7 @@ public class DatabaseControllerIntegrationTest extends AbstractControllerIntegra
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/database/").header("Authorization", "Bearer " + accessToken));
+                .perform(get("/database/initBackup").header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 

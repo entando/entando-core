@@ -50,7 +50,8 @@ public class DatabaseServiceTest {
 
     @Test
     public void getValidReport() throws Throwable {
-        DataSourceDumpReport report = new DataSourceDumpReport(String.valueOf(null));
+        String xml = null;
+        DataSourceDumpReport report = new DataSourceDumpReport(xml);
         when(databaseManager.getBackupReport(ArgumentMatchers.anyString())).thenReturn(report);
         DumpReportDto dto = this.databaseService.getDumpReportDto("reportCode");
         Assert.assertNotNull(dto);

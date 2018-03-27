@@ -13,18 +13,12 @@
  */
 package org.entando.entando.web.database;
 
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.services.user.UserDetails;
-import java.util.ArrayList;
-import java.util.List;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.init.DatabaseManager;
+import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
 import org.entando.entando.aps.system.services.database.DatabaseService;
-import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
 import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.database.validator.DatabaseValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
@@ -40,7 +34,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.mockito.ArgumentMatchers;
-import static org.mockito.ArgumentMatchers.any;
+import org.mockito.Spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -49,14 +43,17 @@ public class DatabaseControllerTest extends AbstractControllerTest {
 
     private MockMvc mockMvc;
 
-    @Mock
-    private DatabaseService databaseService;
+    @Spy
+    private DatabaseService databaseService = new DatabaseService();
 
     @Mock
     private DatabaseValidator databaseValidator;
 
     @Mock
     private DatabaseManager databaseManager;
+
+    @Mock
+    private IComponentManager componentManager;
 
     @InjectMocks
     private DatabaseController controller;
@@ -68,37 +65,27 @@ public class DatabaseControllerTest extends AbstractControllerTest {
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
-        this.databaseService.setDatabaseManager(this.databaseManager);
+        databaseService.setDatabaseManager(this.databaseManager);
+        databaseService.setComponentManager(this.componentManager);
+        controller.setDatabaseService(databaseService);
     }
 
     @Test
     public void getReports() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        ShortDumpReportDto singleDto = new ShortDumpReportDto();
-        List<ShortDumpReportDto> dtos = new ArrayList<>();
-        dtos.add(singleDto);
-        String xml = null;
-        DataSourceDumpReport report = new DataSourceDumpReport(xml);
-        List<DataSourceDumpReport> reports = new ArrayList<>();
-        reports.add(report);
-        SearcherDaoPaginatedResult<DataSourceDumpReport> sdpr = new SearcherDaoPaginatedResult<>(1, reports);
-        PagedMetadata<ShortDumpReportDto> meta = new PagedMetadata<>(new RestListRequest(), sdpr);
-        meta.setBody(dtos);
-        when(databaseService.getShortDumpReportDtos(any(RestListRequest.class))).thenReturn(meta);
         ResultActions result = mockMvc.perform(get("/database")
                 .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
-        RestListRequest restListReq = new RestListRequest();
-        Mockito.verify(databaseService, Mockito.times(1)).getShortDumpReportDtos(restListReq);
     }
 
     @Test
     public void getReport_1() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        DataSourceDumpReport report = new DataSourceDumpReport(String.valueOf(null));
+        String xml = null;
+        DataSourceDumpReport report = new DataSourceDumpReport(xml);
         when(databaseManager.getBackupReport(ArgumentMatchers.anyString())).thenReturn(report);
 
         ResultActions result = mockMvc.perform(
@@ -107,7 +94,7 @@ public class DatabaseControllerTest extends AbstractControllerTest {
         result.andExpect(status().isOk());
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
+    @Test
     public void getReport_2() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -122,28 +109,28 @@ public class DatabaseControllerTest extends AbstractControllerTest {
     public void startBackup() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        DataSourceDumpReport report = new DataSourceDumpReport(String.valueOf(null));
+        String xml = null;
+        DataSourceDumpReport report = new DataSourceDumpReport(xml);
         when(databaseManager.getBackupReport(ArgumentMatchers.anyString())).thenReturn(report);
         ResultActions result = mockMvc.perform(
                 post("/database/startBackup").content("{}")
                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         Mockito.verify(databaseService, Mockito.times(1)).startDatabaseBackup();
-        Mockito.verify(databaseManager, Mockito.times(1)).createBackup();
     }
 
     @Test
     public void deleteReport() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        DataSourceDumpReport report = new DataSourceDumpReport(String.valueOf(null));
+        String xml = null;
+        DataSourceDumpReport report = new DataSourceDumpReport(xml);
         when(databaseManager.getBackupReport(ArgumentMatchers.anyString())).thenReturn(report);
         ResultActions result = mockMvc.perform(
                 delete("/database/report/{reportCode}", new Object[]{"reportCode"})
                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         Mockito.verify(databaseService, Mockito.times(1)).deleteDumpReport("reportCode");
-        Mockito.verify(databaseManager, Mockito.times(1)).deleteBackup("reportCode");
     }
 
 }

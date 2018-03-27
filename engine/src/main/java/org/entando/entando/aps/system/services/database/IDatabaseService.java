@@ -35,6 +35,8 @@ public interface IDatabaseService {
 
     public DumpReportDto getDumpReportDto(String reportCode);
 
+    public void deleteDumpReport(String reportCode);
+
     public byte[] getTableDump(String reportCode, String dataSource, String tableName);
 
 }

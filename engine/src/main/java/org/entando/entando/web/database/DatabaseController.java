@@ -102,6 +102,17 @@ public class DatabaseController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/report/{reportCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> deleteDumpReport(@PathVariable String reportCode) {
+        logger.debug("Deleting dump report -> code {}", reportCode);
+        this.getDatabaseService().deleteDumpReport(reportCode);
+        logger.debug("Deleted dump report -> {}", reportCode);
+        Map<String, String> response = new HashMap<>();
+        response.put("code", reportCode);
+        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/report/{reportCode}/dump/{dataSource}/{tableName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getTableDump(@PathVariable String reportCode,
             @PathVariable String dataSource, @PathVariable String tableName) {

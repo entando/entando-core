@@ -89,6 +89,16 @@ public class DatabaseService implements IDatabaseService {
     }
 
     @Override
+    public void deleteDumpReport(String reportCode) {
+        try {
+            this.getDatabaseManager().deleteBackup(reportCode);
+        } catch (Throwable t) {
+            logger.error("error deleting database report {}", reportCode, t);
+            throw new RestServerError("error deleting database report " + reportCode, t);
+        }
+    }
+
+    @Override
     public List<ComponentDto> getCurrentComponents() {
         List<ComponentDto> dtos = new ArrayList<>();
         this.getComponentManager().getCurrentComponents()

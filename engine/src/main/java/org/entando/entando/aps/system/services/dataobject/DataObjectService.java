@@ -189,7 +189,7 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
             List<String> idList = ((GroupUtilizer<String>) entityManager).getGroupUtilizers(groupCode);
             List<DataObjectDto> dtoList = new ArrayList<>();
             if (null != idList) {
-                idList.parallelStream().forEach(i -> {
+                idList.stream().forEach(i -> {
                     try {
                         dtoList.add(this.getDtoBuilder().convert(entityManager.loadDataObject(i, onLine)));
                     } catch (ApsSystemException ex) {

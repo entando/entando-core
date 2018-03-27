@@ -18,13 +18,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.cache.IPermissionCacheWrapper;
 import com.agiletec.aps.system.services.role.cache.IRoleCacheWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servizio di gestione dei ruoli.
@@ -133,6 +132,13 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	}
 
 	@Override
+    public List<String> getPermissionsCodes() {
+        List<String> permissions = this.getPermissionCacheWrapper().getPermissionsCodes();
+        Collections.sort(permissions);
+        return permissions;
+    }
+
+    @Override
 	public Permission getPermission(String permissionName) {
 		return this.getPermissionCacheWrapper().getPermission(permissionName);
 	}

@@ -113,4 +113,6 @@ public interface IRoleManager {
 	 */
 	public List<Role> getRolesWithPermission(String permissionName);
 
+    public List<String> getPermissionsCodes();
+
 }

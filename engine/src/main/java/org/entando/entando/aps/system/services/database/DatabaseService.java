@@ -45,7 +45,7 @@ public class DatabaseService implements IDatabaseService {
 
     private IDatabaseManager databaseManager;
     private IComponentManager componentManager;
-    
+
     @Override
     public int getStatus() {
         return this.getDatabaseManager().getStatus();
@@ -95,7 +95,17 @@ public class DatabaseService implements IDatabaseService {
                 .stream().forEach(component -> dtos.add(new ComponentDto(component)));
         return dtos;
     }
-    
+
+    @Override
+    public void startDatabaseBackup() {
+        try {
+            this.getDatabaseManager().createBackup();
+        } catch (Throwable t) {
+            logger.error("error starting backup", t);
+            throw new RestServerError("error starting backup", t);
+        }
+    }
+
     @Override
     public byte[] getTableDump(String reportCode, String dataSource, String tableName) {
         byte[] bytes = null;
@@ -103,7 +113,7 @@ public class DatabaseService implements IDatabaseService {
             InputStream stream = this.getDatabaseManager().getTableDump(tableName, dataSource, reportCode);
             if (null == stream) {
                 logger.warn("no dump found with code {}, dataSource {}, table {}", reportCode, dataSource, tableName);
-                throw new RestRourceNotFoundException("code - dataSource - table", 
+                throw new RestRourceNotFoundException("code - dataSource - table",
                         "'" + reportCode + "' - '" + dataSource + "' - '" + tableName + "'");
             }
             File tempFile = this.createTempFile(new Random().nextInt(100) + reportCode + "_" + dataSource + "_" + tableName, stream);
@@ -117,53 +127,53 @@ public class DatabaseService implements IDatabaseService {
         }
         return bytes;
     }
-	
-	protected File createTempFile(String filename, InputStream is) throws IOException {
-		String tempDir = System.getProperty("java.io.tmpdir");
-		String filePath = tempDir + File.separator + filename;
-		FileOutputStream outStream = null;
-		try {
-			byte[] buffer = new byte[1024];
-			int length = -1;
-			outStream = new FileOutputStream(filePath);
-			while ((length = is.read(buffer)) != -1) {
-				outStream.write(buffer, 0, length);
-				outStream.flush();
-			}
-		} catch (IOException t) {
-			logger.error("Error on saving temporary file", t);
-			throw t;
-		} finally {
-			if (null != outStream) {
-				outStream.close();
-			}
-			if (null != is) {
-				is.close();
-			}
-		}
-		return new File(filePath);
-	}
-	
-	private byte[] fileToByteArray(File file) throws IOException {
-		FileInputStream fis = null;
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try {
-			fis = new FileInputStream(file);
-			byte[] buf = new byte[1024];
-			for (int readNum; (readNum = fis.read(buf)) != -1;) {
-				bos.write(buf, 0, readNum);
-			}
-		} catch (IOException ex) {
-			logger.error("Error creating byte array", ex);
-			throw ex;
-		} finally {
-			if (null != fis) {
-				fis.close();
-			}
-		}
-		return bos.toByteArray();
-	}
-    
+
+    protected File createTempFile(String filename, InputStream is) throws IOException {
+        String tempDir = System.getProperty("java.io.tmpdir");
+        String filePath = tempDir + File.separator + filename;
+        FileOutputStream outStream = null;
+        try {
+            byte[] buffer = new byte[1024];
+            int length = -1;
+            outStream = new FileOutputStream(filePath);
+            while ((length = is.read(buffer)) != -1) {
+                outStream.write(buffer, 0, length);
+                outStream.flush();
+            }
+        } catch (IOException t) {
+            logger.error("Error on saving temporary file", t);
+            throw t;
+        } finally {
+            if (null != outStream) {
+                outStream.close();
+            }
+            if (null != is) {
+                is.close();
+            }
+        }
+        return new File(filePath);
+    }
+
+    private byte[] fileToByteArray(File file) throws IOException {
+        FileInputStream fis = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            fis = new FileInputStream(file);
+            byte[] buf = new byte[1024];
+            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum);
+            }
+        } catch (IOException ex) {
+            logger.error("Error creating byte array", ex);
+            throw ex;
+        } finally {
+            if (null != fis) {
+                fis.close();
+            }
+        }
+        return bos.toByteArray();
+    }
+
     public IDatabaseManager getDatabaseManager() {
         return databaseManager;
     }
@@ -179,5 +189,5 @@ public class DatabaseService implements IDatabaseService {
     public void setComponentManager(IComponentManager componentManager) {
         this.componentManager = componentManager;
     }
-    
+
 }

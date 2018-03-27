@@ -17,10 +17,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Rappresentazione di un'utente.
+ * Rappresentazione di un utente.
  * @author M.Diana - E.Santoboni
  */
-public class User extends AbstractUser{
+public class User extends AbstractUser {
 	
 	@Override
 	@Deprecated

@@ -1,9 +1,24 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.pagemodel;
 
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.HashMap;
+import java.util.Map;
 import org.entando.entando.aps.system.services.pagemodel.IPageModelService;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -56,22 +71,24 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageModels(RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getPageModels(RestListRequest requestList) {
+        logger.trace("loading page models");
+        this.getPagemModelValidator().validateRestListRequest(requestList);
         PagedMetadata<PageModelDto> result = this.getPageModelService().getPageModels(requestList);
+        this.getPagemModelValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
-
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageModel(@PathVariable String code) {
+    public ResponseEntity<RestResponse> getPageModel(@PathVariable String code) {
         PageModelDto pageModelDto = this.getPageModelService().getPageModel(code);
         return new ResponseEntity<>(new RestResponse(pageModelDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, name = "roleGroup")
-    public ResponseEntity<?> updatePageModel(@PathVariable String code, @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updatePageModel(@PathVariable String code, @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -80,14 +97,13 @@ public class PageModelController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
         PageModelDto pageModel = this.getPageModelService().updatePageModel(pageModelRequest);
         return new ResponseEntity<>(new RestResponse(pageModel), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addPageModel(@Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> addPageModel(@Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -102,11 +118,12 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deletePageModel(@PathVariable String code) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deletePageModel(@PathVariable String code) throws ApsSystemException {
         logger.debug("deleting {}", code);
         this.getPageModelService().removePageModel(code);
-        return new ResponseEntity<>(new RestResponse(code), HttpStatus.OK);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", code);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
-
 
 }

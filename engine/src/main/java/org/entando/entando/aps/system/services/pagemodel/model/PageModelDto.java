@@ -7,7 +7,7 @@ public class PageModelDto {
     public static final int NO_MAIN_FRAME = -1;
 
     private String code;
-    private String description;
+    private String descr;
 
     @JsonProperty(value = "configuration")
     private PageModelConfigurationDto configuration = new PageModelConfigurationDto();
@@ -23,14 +23,13 @@ public class PageModelDto {
         this.code = code;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescr() {
+        return descr;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
-
 
 
     public int getMainFrame() {
@@ -77,5 +76,6 @@ public class PageModelDto {
     public void setConfiguration(PageModelConfigurationDto configuration) {
         this.configuration = configuration;
     }
+
 
 }

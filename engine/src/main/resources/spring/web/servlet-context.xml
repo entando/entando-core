@@ -61,6 +61,7 @@
 		</entry>
 	</util:map>
 
+
 	<bean id="messageCodesResolver"
 		class="org.entando.entando.web.common.EntandoMessageCodesResolver">
 		<property name="validationErrorCodeMapping" ref="validationCodesMapping" />

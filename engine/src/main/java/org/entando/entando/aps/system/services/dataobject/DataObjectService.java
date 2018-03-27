@@ -13,18 +13,29 @@
  */
 package org.entando.entando.aps.system.services.dataobject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.page.IPageManager;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.exception.RestServerError;
+import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
+import org.entando.entando.aps.system.services.dataobject.model.DataObjectDto;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDtoBuilder;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
@@ -35,10 +46,37 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  */
-public class DataObjectService extends AbstractEntityService<DataObject, DataTypeDto> implements IDataObjectService {
+public class DataObjectService extends AbstractEntityService<DataObject, DataTypeDto> implements IDataObjectService, GroupServiceUtilizer<DataObjectDto> {
 
     private IPageManager pageManager;
     private IDataObjectModelManager dataObjectModelManager;
+    private IDtoBuilder<DataObject, DataObjectDto> dtoBuilder;
+
+    @PostConstruct
+    protected void setUp() {
+        this.setDtoBuilder(new DtoBuilder<DataObject, DataObjectDto>() {
+
+            @Override
+            protected DataObjectDto toDto(DataObject src) {
+                DataObjectDto dto = new DataObjectDto();
+                dto.setId(src.getId());
+                dto.setTypeCode(src.getTypeCode());
+                dto.setTypeDescription(src.getTypeDescription());
+                dto.setDescription(src.getDescription());
+                dto.setMainGroup(src.getMainGroup());
+                dto.setGroups(src.getGroups());
+                return dto;
+            }
+        });
+    }
+
+    protected IDtoBuilder<DataObject, DataObjectDto> getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(IDtoBuilder<DataObject, DataObjectDto> dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
+    }
 
     @Override
     public PagedMetadata<EntityTypeShortDto> getShortDataTypes(RestListRequest requestList) {
@@ -137,5 +175,35 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
     public void setDataObjectModelManager(IDataObjectModelManager dataObjectModelManager) {
         this.dataObjectModelManager = dataObjectModelManager;
     }
+
+    @Override
+    public String getManagerName() {
+        return SystemConstants.DATA_OBJECT_MANAGER;
+    }
+
+    @Override
+    public List<DataObjectDto> getGroupUtilizer(String groupCode) {
+        try {
+            boolean onLine = true;
+            DataObjectManager entityManager = (DataObjectManager) this.extractEntityManager(getManagerName());
+            List<String> idList = ((GroupUtilizer<String>) entityManager).getGroupUtilizers(groupCode);
+            List<DataObjectDto> dtoList = new ArrayList<>();
+            if (null != idList) {
+                idList.stream().forEach(i -> {
+                    try {
+                        dtoList.add(this.getDtoBuilder().convert(entityManager.loadDataObject(i, onLine)));
+                    } catch (ApsSystemException ex) {
+                        logger.warn("error loading data object {}", i, ex);
+                    }
+                });
+            }
+
+            return dtoList;
+        } catch (ApsSystemException ex) {
+            logger.error("Error loading dataobject references for group {}", groupCode, ex);
+            throw new RestServerError("Error loading dataobject references for group", ex);
+        }
+    }
+
 
 }

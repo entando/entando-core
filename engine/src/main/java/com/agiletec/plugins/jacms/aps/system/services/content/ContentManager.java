@@ -32,8 +32,6 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
-import com.agiletec.aps.system.services.common.model.UtilizerEntry;
-import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.page.PageUtilizer;
@@ -56,7 +54,7 @@ import org.springframework.cache.annotation.CacheEvict;
  * @author M.Diana - E.Santoboni
  */
 public class ContentManager extends ApsEntityManager
-        implements IContentManager, GroupUtilizer, PageUtilizer, ContentUtilizer, ResourceUtilizer, CategoryUtilizer {
+                            implements IContentManager, GroupUtilizer<String>, PageUtilizer, ContentUtilizer, ResourceUtilizer, CategoryUtilizer {
 
     private static final Logger _logger = LoggerFactory.getLogger(ContentManager.class);
 
@@ -557,19 +555,14 @@ public class ContentManager extends ApsEntityManager
     }
 
     @Override
-    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<String> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<String> contentIds = null;
         try {
             contentIds = this.getContentDAO().getGroupUtilizers(groupName);
-            if (null != contentIds) {
-                List<UtilizerEntry> list = new ArrayList<>();
-                contentIds.stream().forEach(i -> list.add(new BaseGroupUtilizerEntry(i)));
-                return list;
-            }
-            return null;
         } catch (Throwable t) {
             throw new ApsSystemException("Error while loading referenced contents : group " + groupName, t);
         }
+        return contentIds;
     }
 
     @Override

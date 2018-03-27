@@ -17,13 +17,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.common.model.UtilizerEntry;
-import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.group.IGroupManager;
@@ -109,10 +107,29 @@ public class GroupService implements IGroupService, ApplicationContextAware {
             throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
         }
         GroupDto dto = this.getDtoBuilder().convert(group);
-
-        dto.setReferences(this.getReferencingObjects(group));
+        dto.setReferences(this.getReferencesInfo(group));
         return dto;
+    }
 
+    @Override
+    public PagedMetadata<?> getGroupReferences(String groupCode, String managerName, RestListRequest restRequest) {
+        Group group = this.getGroupManager().getGroup(groupCode);
+        if (null == group) {
+            logger.warn("no group found with code {}", groupCode);
+            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
+        }
+        GroupServiceUtilizer<?> utilizer = this.getGroupServiceUtilizer(managerName);
+        if (null == utilizer) {
+            logger.warn("no references found for {}", managerName);
+
+            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_REFERENCES, "reference", managerName);
+        }
+        List<?> dtoList = utilizer.getGroupUtilizer(groupCode);
+        List<?> subList = restRequest.getSublist(dtoList);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(restRequest, pagedResult);
+        pagedMetadata.setBody((List<Object>) subList);
+        return pagedMetadata;
     }
 
     @Override
@@ -180,17 +197,22 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         }
         if (!bindingResult.hasErrors()) {
 
-            Map<String, List<UtilizerEntry>> references = this.getReferencingObjects(group);
+            Map<String, Boolean> references = this.getReferencesInfo(group);
             if (references.size() > 0) {
-                bindingResult.reject(GroupValidator.ERRCODE_GROUP_REFERENCES, new Object[]{group.getName(), references}, "group.cannot.delete.references");
+                for (Map.Entry<String, Boolean> entry : references.entrySet()) {
+                    if (true == entry.getValue().booleanValue()) {
+
+                        bindingResult.reject(GroupValidator.ERRCODE_GROUP_REFERENCES, new Object[]{group.getName(), entry.getKey()}, "group.cannot.delete.references");
+                    }
+                }
             }
         }
 
         return bindingResult;
     }
 
-    public Map<String, List<UtilizerEntry>> getReferencingObjects(Group group) {
-        Map<String, List<UtilizerEntry>> references = new HashMap<String, List<UtilizerEntry>>();
+    public Map<String, Boolean> getReferencesInfo(Group group) {
+        Map<String, Boolean> references = new HashMap<String, Boolean>();
         try {
             String[] defNames = applicationContext.getBeanNamesForType(GroupUtilizer.class);
             for (int i = 0; i < defNames.length; i++) {
@@ -202,10 +224,12 @@ public class GroupService implements IGroupService, ApplicationContextAware {
                     service = null;
                 }
                 if (service != null) {
-                    GroupUtilizer groupUtilizer = (GroupUtilizer) service;
-                    List<UtilizerEntry> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
+                    GroupUtilizer<?> groupUtilizer = (GroupUtilizer<?>) service;
+                    List<?> utilizers = groupUtilizer.getGroupUtilizers(group.getName());
                     if (utilizers != null && !utilizers.isEmpty()) {
-                        references.put(groupUtilizer.getName(), utilizers.stream().map(u -> new BaseGroupUtilizerEntry(u.getUtilizerId())).collect(Collectors.toList()));
+                        references.put(groupUtilizer.getName(), true);
+                    } else {
+                        references.put(groupUtilizer.getName(), false);
                     }
                 }
             }
@@ -215,4 +239,16 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         }
         return references;
     }
+
+    private GroupServiceUtilizer<?> getGroupServiceUtilizer(String managerName) {
+        Map<String, GroupServiceUtilizer> beans = applicationContext.getBeansOfType(GroupServiceUtilizer.class);
+        Optional<GroupServiceUtilizer> defName = beans.values().stream()
+                                               .filter(service -> service.getManagerName().equals(managerName))
+                                                      .findFirst();
+        if (defName.isPresent()) {
+            return defName.get();
+        }
+        return null;
+    }
+
 }

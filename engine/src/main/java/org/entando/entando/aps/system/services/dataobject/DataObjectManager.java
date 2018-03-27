@@ -32,8 +32,6 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
-import com.agiletec.aps.system.services.common.model.UtilizerEntry;
-import com.agiletec.aps.system.services.group.BaseGroupUtilizerEntry;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import org.entando.entando.aps.system.services.dataobject.event.PublicDataChangedEvent;
@@ -49,7 +47,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author M.Diana - E.Santoboni
  */
-public class DataObjectManager extends ApsEntityManager implements IDataObjectManager, GroupUtilizer, CategoryUtilizer {
+public class DataObjectManager extends ApsEntityManager implements IDataObjectManager, GroupUtilizer<String>, CategoryUtilizer {
 
     private static final Logger logger = LoggerFactory.getLogger(DataObjectManager.class);
 
@@ -493,20 +491,14 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     }
 
     @Override
-    public List<UtilizerEntry> getGroupUtilizers(String groupName) throws ApsSystemException {
+    public List<String> getGroupUtilizers(String groupName) throws ApsSystemException {
         List<String> dataIds = null;
         try {
             dataIds = this.getDataObjectDAO().getGroupUtilizers(groupName);
-            if (null != dataIds) {
-                List<UtilizerEntry> list = new ArrayList<>();
-                dataIds.stream().forEach(i -> list.add(new BaseGroupUtilizerEntry(i)));
-                return list;
-            }
-            return null;
         } catch (Throwable t) {
             throw new ApsSystemException("Error while loading referenced dataobjects : group " + groupName, t);
         }
-
+        return dataIds;
     }
 
     @Override

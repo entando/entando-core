@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.common.model.UtilizerEntry;
 import com.agiletec.aps.system.services.group.Group;
 
 /**
@@ -28,16 +27,16 @@ import com.agiletec.aps.system.services.group.Group;
  * @author E.Santoboni
  */
 public interface IGroupActionHelper {
-	
-	/**
-	 * Restituisce l'insieme delle referenze sul gruppo specificato.
-	 * Il metodo restituisce la mappa della lista degli oggetti referenzianti, indicizzata in base al nome 
-	 * del manager che gestisce gli oggetti specifici.
-	 * @param group Il gruppo cui ricavare le referenze.
-	 * @param request La request.
-	 * @return La mappa della lista di oggetti referenzianti.
-	 * @throws ApsSystemException In caso di errore.
-	 */
-    public Map<String, List<UtilizerEntry>> getReferencingObjects(Group group, HttpServletRequest request) throws ApsSystemException;
-	
+    
+    /**
+     * Restituisce l'insieme delle referenze sul gruppo specificato.
+     * Il metodo restituisce la mappa della lista degli oggetti referenzianti, indicizzata in base al nome 
+     * del manager che gestisce gli oggetti specifici.
+     * @param group Il gruppo cui ricavare le referenze.
+     * @param request La request.
+     * @return La mappa della lista di oggetti referenzianti.
+     * @throws ApsSystemException In caso di errore.
+     */
+    public Map<String, List<Object>> getReferencingObjects(Group group, HttpServletRequest request) throws ApsSystemException;
+    
 }

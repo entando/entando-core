@@ -33,8 +33,10 @@ import org.entando.entando.aps.system.services.database.model.DumpReportDto;
 import org.entando.entando.aps.system.services.database.model.ShortDumpReportDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.database.validator.DatabaseValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 /**
  * @author E.Santoboni
@@ -57,9 +59,12 @@ public class DatabaseService implements IDatabaseService {
         List<ShortDumpReportDto> dtos = new ArrayList<>();
         try {
             List<DataSourceDumpReport> reports = this.getDatabaseManager().getBackupReports();
-            reports.stream().forEach(report -> dtos.add(new ShortDumpReportDto(report)));
+            if (null != reports) {
+                reports.stream().forEach(report -> dtos.add(new ShortDumpReportDto(report)));
+            }
             List<ShortDumpReportDto> sublist = requestList.getSublist(dtos);
-            SearcherDaoPaginatedResult searchResult = new SearcherDaoPaginatedResult(reports.size(), sublist);
+            int size = (null != reports) ? reports.size() : 0;
+            SearcherDaoPaginatedResult searchResult = new SearcherDaoPaginatedResult(size, sublist);
             result = new PagedMetadata<>(requestList, searchResult);
             result.setBody(sublist);
         } catch (Throwable t) {
@@ -76,7 +81,7 @@ public class DatabaseService implements IDatabaseService {
             DataSourceDumpReport report = this.getDatabaseManager().getBackupReport(reportCode);
             if (null == report) {
                 logger.warn("no dump found with code {}", reportCode);
-                throw new RestRourceNotFoundException("reportCode", reportCode);
+                throw new RestRourceNotFoundException(DatabaseValidator.ERRCODE_NO_DUMP_FOUND, "reportCode", reportCode);
             }
             dtos = new DumpReportDto(report, this.getComponentManager());
         } catch (RestRourceNotFoundException r) {
@@ -123,6 +128,8 @@ public class DatabaseService implements IDatabaseService {
             InputStream stream = this.getDatabaseManager().getTableDump(tableName, dataSource, reportCode);
             if (null == stream) {
                 logger.warn("no dump found with code {}, dataSource {}, table {}", reportCode, dataSource, tableName);
+                BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(tableName, "tableName");
+                bindingResult.reject(DatabaseValidator.ERRCODE_NO_TABLE_DUMP_FOUND, new Object[]{reportCode, dataSource, tableName}, "database.dump.table.notFound");
                 throw new RestRourceNotFoundException("code - dataSource - table",
                         "'" + reportCode + "' - '" + dataSource + "' - '" + tableName + "'");
             }

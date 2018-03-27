@@ -23,6 +23,9 @@ import org.springframework.validation.Errors;
 @Component
 public class DatabaseValidator extends AbstractValidator {
 
+    public static final String ERRCODE_NO_DUMP_FOUND = "1";
+    public static final String ERRCODE_NO_TABLE_DUMP_FOUND = "1";
+
     @Override
     public boolean supports(Class<?> type) {
         //nothing to do

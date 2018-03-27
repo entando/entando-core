@@ -24,6 +24,7 @@
 
     <bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
         <property name="contentManager" ref="jacmsContentManager" />
+        <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
     <bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.AbstractListViewerWidgetValidator">
@@ -34,12 +35,14 @@
     <bean id="RowContentListViewerWidgetValidator" parent="AbstractListViewerWidgetValidator"
           class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerWidgetValidator" >
         <property name="contentManager" ref="jacmsContentManager" />
+        <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
     <bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
           class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentListViewerWidgetValidator">
         <property name="widgetTypeManager" ref="WidgetTypeManager" />
         <property name="contentManager" ref="jacmsContentManager" />
+        <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
 
@@ -137,6 +140,11 @@
 
     <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
 
+    <bean id="UserSettingsService" class="org.entando.entando.aps.system.services.usersettings.UserSettingsService">
+    	<property name="configManager" ref="BaseConfigManager" />
+    </bean>
+    
+    
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>

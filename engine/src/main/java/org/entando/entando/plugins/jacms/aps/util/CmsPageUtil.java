@@ -17,16 +17,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author E.Santoboni
@@ -173,7 +172,7 @@ public class CmsPageUtil {
 		return false;
 	}
 
-	private static List<String> getContentGroups(Content content) {
+    public static List<String> getContentGroups(Content content) {
 		List<String> contentGroups = new ArrayList<String>();
 		contentGroups.add(content.getMainGroup());
 		if (null != content.getGroups()) {

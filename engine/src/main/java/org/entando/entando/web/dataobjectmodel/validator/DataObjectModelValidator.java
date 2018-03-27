@@ -18,14 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
+import org.entando.entando.web.common.validator.AbstractValidator;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 @Component
-public class DataObjectModelValidator implements Validator {
+public class DataObjectModelValidator extends AbstractValidator {
 
     //GET
     public static final String ERRCODE_DATAOBJECTID_INVALID = "1";

@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.language;
 
 import javax.validation.Valid;
@@ -11,6 +24,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.language.model.LanguageRequest;
+import org.entando.entando.web.language.validator.LanguageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +46,10 @@ public class LanguageController {
 
     @Autowired
     private ILanguageService languageService;
-    
+
+    @Autowired
+    private LanguageValidator languageValidator;
+
     protected ILanguageService getLanguageService() {
         return languageService;
     }
@@ -40,18 +57,28 @@ public class LanguageController {
     public void setLanguageService(ILanguageService languageService) {
         this.languageService = languageService;
     }
-    
+
+    protected LanguageValidator getLanguageValidator() {
+        return languageValidator;
+    }
+
+    public void setLanguageValidator(LanguageValidator languageValidator) {
+        this.languageValidator = languageValidator;
+    }
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getLanguages(RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getLanguages(RestListRequest requestList) {
         logger.trace("loading languages list");
+        this.getLanguageValidator().validateRestListRequest(requestList);
         PagedMetadata<LanguageDto> result = this.getLanguageService().getLanguages(requestList);
+        this.getLanguageValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getLanguage(@PathVariable String code) {
+    public ResponseEntity<RestResponse> getLanguage(@PathVariable String code) {
         logger.trace("loading language {}", code);
         LanguageDto result = this.getLanguageService().getLanguage(code);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
@@ -59,10 +86,8 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateLanguage(
-                                            @PathVariable String code,
-                                            @Valid @RequestBody LanguageRequest languageRequest,
-                                            BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateLanguage(@PathVariable String code,
+            @Valid @RequestBody LanguageRequest languageRequest, BindingResult bindingResult) {
         logger.trace("loading language {}", code);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

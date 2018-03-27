@@ -43,8 +43,8 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     }
 
     @Override
-    public UserProfileTypeDto getUserProfileType(String dataTypeCode) {
-        return super.getFullEntityType(SystemConstants.USER_PROFILE_MANAGER, dataTypeCode);
+    public UserProfileTypeDto getUserProfileType(String profileTypeCode) {
+        return super.getFullEntityType(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode);
     }
 
     @Override

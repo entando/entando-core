@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.label;
 
 import java.util.HashMap;
@@ -57,14 +70,17 @@ public class LabelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getLables(RestListRequest requestList) {
+    public ResponseEntity<RestResponse> getLables(RestListRequest requestList) {
+        logger.debug("loading labels");
+        this.getLabelValidator().validateRestListRequest(requestList);
         PagedMetadata<LabelDto> result = this.getLabelService().getLabelGroups(requestList);
+        this.getLabelValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> geLabelGroup(@PathVariable String labelCode) {
+    public ResponseEntity<RestResponse> geLabelGroup(@PathVariable String labelCode) {
         logger.debug("loading label {}", labelCode);
         LabelDto label = this.getLabelService().getLabelGroup(labelCode);
         return new ResponseEntity<>(new RestResponse(label, null, new HashMap<>()), HttpStatus.OK);
@@ -72,7 +88,7 @@ public class LabelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateLabelGroup(@PathVariable String labelCode, @Valid @RequestBody LabelRequest labelRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateLabelGroup(@PathVariable String labelCode, @Valid @RequestBody LabelRequest labelRequest, BindingResult bindingResult) {
         logger.debug("updating label {}", labelRequest.getKey());
         this.getLabelValidator().validateBodyName(labelCode, labelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -84,7 +100,7 @@ public class LabelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addLabelGroup(@Valid @RequestBody LabelRequest labelRequest) throws ApsSystemException {
+    public ResponseEntity<RestResponse> addLabelGroup(@Valid @RequestBody LabelRequest labelRequest) throws ApsSystemException {
         logger.debug("adding label {}", labelRequest.getKey());
         LabelDto group = this.getLabelService().addLabelGroup(labelRequest);
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
@@ -92,7 +108,7 @@ public class LabelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteLabelGroup(@PathVariable String labelCode) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteLabelGroup(@PathVariable String labelCode) throws ApsSystemException {
         logger.debug("deleting label {}", labelCode);
         this.getLabelService().removeLabelGroup(labelCode);
         Map<String, String> result = new HashMap<>();
@@ -101,4 +117,3 @@ public class LabelController {
     }
 
 }
-

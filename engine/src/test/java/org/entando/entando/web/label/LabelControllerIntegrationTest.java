@@ -40,8 +40,16 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/labels").header("Authorization", "Bearer " + accessToken));
+                                      .perform(get("/labels")
+                                                             .param("pageSize", "2")
+                                                             .param("page", "1")
+                                                             .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(jsonPath("$.metaData.pageSize", is(2)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
+        result.andExpect(jsonPath("$.metaData.page", is(1)));
+        result.andExpect(jsonPath("$.metaData.lastPage", is(5)));
 
     }
 

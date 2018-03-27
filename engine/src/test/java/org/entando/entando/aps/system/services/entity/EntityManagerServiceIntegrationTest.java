@@ -52,7 +52,7 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
         PagedMetadata<String> res = this.entityManagerService.getEntityManagers(restListRequest);
         assertThat(res.getPage(), is(1));
         assertThat(res.getPageSize(), is(3));
-        assertThat(res.getLastPage(), is(0));
+        assertThat(res.getLastPage(), is(1));
         assertThat(res.getTotalItems(), is(3));
         List<String> result = res.getBody();
         assertNotNull(result);

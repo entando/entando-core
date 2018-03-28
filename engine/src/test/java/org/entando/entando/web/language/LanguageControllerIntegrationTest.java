@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LanguageControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -162,6 +163,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                                                                      .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                                      .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isConflict());
+            result.andExpect(jsonPath("$.errors[0].code", is("1")));
 
             updatedLang = this.languageService.getLanguage(langCode);
             assertThat(updatedLang, is(not(nullValue())));
@@ -170,6 +172,26 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         } finally {
             this.languageService.updateLanguage(langCode, true);
         }
+    }
+
+    @Test
+    public void testDeactivateDefaultLangUnexistingCode() throws Exception {
+        String langCode = "xx";
+
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        String payload = "{\"isActive\": true}";
+        ResultActions result = mockMvc
+                                      .perform(put("/languages/{code}", new Object[]{langCode})
+                                                                                               .content(payload)
+                                                                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                               .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isNotFound());
+
+        result.andExpect(jsonPath("$.errors[0].code", is("2")));
+
     }
 
 

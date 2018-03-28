@@ -13,8 +13,8 @@
  */
 package org.entando.entando.web.role.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.constraints.Size;
 
@@ -30,8 +30,7 @@ public class RoleRequest {
     @NotBlank(message = "group.code.notBlank")
     private String name;
 
-    //@NotEmpty(message = "role.permissions.required")
-    Set<String> permissions = new HashSet<>();
+    private Map<String, Boolean> permissions = new HashMap<>();
 
     public String getCode() {
         return code;
@@ -49,12 +48,13 @@ public class RoleRequest {
         this.name = name;
     }
 
-    public Set<String> getPermissions() {
+    public Map<String, Boolean> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(Set<String> permissions) {
+    public void setPermissions(Map<String, Boolean> permissions) {
         this.permissions = permissions;
     }
+
 
 }

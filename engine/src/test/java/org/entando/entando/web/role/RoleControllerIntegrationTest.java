@@ -189,7 +189,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
             request = new RoleRequest();
             request.setCode(code);
             request.setName(code.toUpperCase());
-            request.getPermissions().add("editContents");
+            request.getPermissions().put("editContents", true);
             payload = mapper.writeValueAsString(request);
 
             result = mockMvc
@@ -209,8 +209,8 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
             request = new RoleRequest();
             request.setCode(code);
             request.setName(code.toUpperCase());
-            request.getPermissions().add("editContents");
-            request.getPermissions().add("WRONG");
+            request.getPermissions().put("editContents", true);
+            request.getPermissions().put("WRONG", true);
             payload = mapper.writeValueAsString(request);
 
             result = mockMvc
@@ -229,8 +229,9 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
             request = new RoleRequest();
             request.setCode(code);
             request.setName(code.toUpperCase());
-            request.getPermissions().add("editContents");
-            request.getPermissions().add("manageResources");
+            request.getPermissions().put("editContents", true);
+            request.getPermissions().put("manageResources", true);
+            request.getPermissions().put("manageCategories", false);
             payload = mapper.writeValueAsString(request);
 
             result = mockMvc

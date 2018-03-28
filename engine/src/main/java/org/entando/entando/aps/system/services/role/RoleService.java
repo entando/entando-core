@@ -117,7 +117,7 @@ public class RoleService implements IRoleService {
             role.setDescription(roleRequest.getName());
             role.getPermissions().clear();
             if (null != roleRequest.getPermissions()) {
-                roleRequest.getPermissions().forEach(i -> role.addPermission(i));
+                roleRequest.getPermissions().entrySet().stream().filter(entry -> null != entry.getValue() && entry.getValue().booleanValue()).forEach(i -> role.addPermission(i.getKey()));
             }
             BeanPropertyBindingResult validationResult = this.validateRoleForUpdate(role);
             if (validationResult.hasErrors()) {
@@ -207,7 +207,7 @@ public class RoleService implements IRoleService {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(role, "role");
         List<UserDto> users = this.getAuthorizationService().getRoleUtilizer(role.getName());
         if (!users.isEmpty()) {
-            errors.reject(RoleValidator.ERRCODE_ROLE_REFERENCES, new String[]{role.getName()}, "role.references");
+            errors.reject(RoleValidator.ERRCODE_ROLE_REFERENCES, new String[]{role.getName()}, "role.cannot.delete.references");
         }
         return errors;
     }
@@ -238,7 +238,7 @@ public class RoleService implements IRoleService {
         role.setName(roleRequest.getCode());
         role.setDescription(roleRequest.getName());
         if (null != roleRequest.getPermissions()) {
-            roleRequest.getPermissions().forEach(i -> role.addPermission(i));
+            roleRequest.getPermissions().entrySet().stream().filter(entry -> null != entry.getValue() && entry.getValue().booleanValue()).forEach(i -> role.addPermission(i.getKey()));
         }
         return role;
     }

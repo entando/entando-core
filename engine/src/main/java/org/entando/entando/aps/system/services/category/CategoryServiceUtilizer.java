@@ -14,25 +14,11 @@
 package org.entando.entando.aps.system.services.category;
 
 import java.util.List;
-import org.entando.entando.aps.system.services.category.model.CategoryDto;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
 
-/**
- * @author E.Santoboni
- */
-public interface ICategoryService {
+public interface CategoryServiceUtilizer<T> {
 
-    public List<CategoryDto> getTree(String parentCode);
+    public String getManagerName();
 
-    public CategoryDto getCategory(String categoryCode);
-
-    public CategoryDto addCategory(CategoryDto categoryDto);
-
-    public CategoryDto updateCategory(CategoryDto categoryDto);
-
-    public void deleteCategory(String categoryCode);
-
-    public PagedMetadata<?> getCategoryReferences(String categoryCode, String managerName, RestListRequest restListRequest);
+    public List<T> getCategoryUtilizer(String categoryCode);
 
 }

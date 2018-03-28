@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.category;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -165,6 +166,17 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         }
     }
 
+    @Test
+    public void testGetCategoryReferences() throws Exception {
+        Assert.assertNotNull(this.categoryManager.getCategory("cat1"));
+        Assert.assertNull(this.categoryManager.getCategory("test_test"));
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = this.mockOAuthInterceptor(user);
+        this.executeReference("cat1", accessToken, SystemConstants.DATA_OBJECT_MANAGER, status().isOk());
+        this.executeReference("test_test", accessToken, SystemConstants.DATA_OBJECT_MANAGER, status().isNotFound());
+        this.executeReference("cat1", accessToken, SystemConstants.GROUP_MANAGER, status().isNotFound());
+    }
+
     private void executeGet(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
                 .perform(get("/categories/{categoryCode}", new Object[]{categoryCode})
@@ -197,6 +209,14 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     private void executeDelete(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
                 .perform(delete("/categories/{categoryCode}", new Object[]{categoryCode})
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(rm);
+    }
+
+    private void executeReference(String categoryCode, String accessToken, String managerName, ResultMatcher rm) throws Exception {
+        ResultActions result = mockMvc
+                .perform(get("/categories/{categoryCode}/references/{holder}", new Object[]{categoryCode, managerName})
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);

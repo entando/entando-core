@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.category;
 
 import com.agiletec.aps.system.common.IManager;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
@@ -28,6 +29,8 @@ import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.category.validator.CategoryValidator;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,8 @@ public class CategoryService implements ICategoryService {
     private ICategoryManager categoryManager;
     @Autowired
     private List<CategoryUtilizer> categoryUtilizers;
+    @Autowired
+    private List<CategoryServiceUtilizer> categoryServiceUtilizers;
 
     protected IDtoBuilder<Category, CategoryDto> getDtoBuilder() {
         return new DtoBuilder<Category, CategoryDto>() {
@@ -87,6 +92,36 @@ public class CategoryService implements ICategoryService {
             throw new RestServerError("error extracting category " + categoryCode, e);
         }
         return dto;
+    }
+
+    @Override
+    public PagedMetadata<?> getCategoryReferences(String categoryCode, String managerName, RestListRequest restListRequest) {
+        Category group = this.getCategoryManager().getCategory(categoryCode);
+        if (null == group) {
+            logger.warn("no category found with code {}", categoryCode);
+            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryCode);
+        }
+        CategoryServiceUtilizer<?> utilizer = this.getCategoryServiceUtilizer(managerName);
+        if (null == utilizer) {
+            logger.warn("no references found for {}", managerName);
+            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NO_REFERENCES, "reference", managerName);
+        }
+        List<?> dtoList = utilizer.getCategoryUtilizer(categoryCode);
+        List<?> subList = restListRequest.getSublist(dtoList);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(restListRequest, pagedResult);
+        pagedMetadata.setBody((List<Object>) subList);
+        return pagedMetadata;
+    }
+
+    private CategoryServiceUtilizer<?> getCategoryServiceUtilizer(String managerName) {
+        List<CategoryServiceUtilizer> beans = this.getCategoryServiceUtilizers();
+        Optional<CategoryServiceUtilizer> defName = beans.stream()
+                .filter(service -> service.getManagerName().equals(managerName)).findFirst();
+        if (defName.isPresent()) {
+            return defName.get();
+        }
+        return null;
     }
 
     @Override
@@ -151,7 +186,7 @@ public class CategoryService implements ICategoryService {
                 List references = categoryUtilizer.getCategoryUtilizers(categoryCode);
                 if (null != references && !references.isEmpty()) {
                     BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
-                    bindingResult.reject(CategoryValidator.ERRCODE_FRAGMENT_REFERENCES, new String[]{categoryCode}, "category.cannot.delete.references");
+                    bindingResult.reject(CategoryValidator.ERRCODE_CATEGORY_REFERENCES, new String[]{categoryCode}, "category.cannot.delete.references");
                     throw new ValidationGenericException(bindingResult);
                 }
             }
@@ -178,6 +213,14 @@ public class CategoryService implements ICategoryService {
 
     public void setCategoryUtilizers(List<CategoryUtilizer> categoryUtilizers) {
         this.categoryUtilizers = categoryUtilizers;
+    }
+
+    public List<CategoryServiceUtilizer> getCategoryServiceUtilizers() {
+        return categoryServiceUtilizers;
+    }
+
+    public void setCategoryServiceUtilizers(List<CategoryServiceUtilizer> categoryServiceUtilizers) {
+        this.categoryServiceUtilizers = categoryServiceUtilizers;
     }
 
 }

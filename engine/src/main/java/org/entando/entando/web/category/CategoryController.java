@@ -25,6 +25,8 @@ import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.category.validator.CategoryValidator;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +75,7 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
+    public ResponseEntity<RestResponse> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
         logger.debug("getting category tree for parent {}", parentCode);
         List<CategoryDto> result = this.getCategoryService().getTree(parentCode);
         Map<String, String> metadata = new HashMap<>();
@@ -83,15 +85,23 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getCategory(@PathVariable String categoryCode) {
+    public ResponseEntity<RestResponse> getCategory(@PathVariable String categoryCode) {
         logger.debug("getting category {}", categoryCode);
         CategoryDto category = this.getCategoryService().getCategory(categoryCode);
         return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), new HashMap<>()), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{categoryCode}/references/{holder}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getCategoryReferences(@PathVariable String categoryCode, @PathVariable String holder, RestListRequest requestList) {
+        logger.debug("getting category references - {}", categoryCode);
+        PagedMetadata<?> result = this.getCategoryService().getCategoryReferences(categoryCode, holder, requestList);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         this.getCategoryValidator().validate(categoryRequest, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -105,7 +115,7 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
         logger.debug("updating category {} with request {}", categoryCode, categoryRequest);
         //field validations
         if (bindingResult.hasErrors()) {

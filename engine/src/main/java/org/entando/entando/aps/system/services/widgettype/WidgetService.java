@@ -29,7 +29,7 @@ import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;
@@ -89,7 +89,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         try {
             BeanPropertyBindingResult validationResult = checkWidgetForDelete(type);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             this.widgetManager.deleteWidgetType(widgetCode);
         } catch (ApsSystemException e) {

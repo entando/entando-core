@@ -7,6 +7,7 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -88,6 +89,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                 mockMvc.perform(get("/labels/{labelCode}", "THIS_LABEL_DO_NOT_EXISTS")
                                                                                       .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
+        result.andExpect(jsonPath("$.errors[0].code", is("1")));
         //System.out.println(result.andReturn().getResponse().getContentAsString());
     }
 
@@ -140,7 +142,27 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             request = new LabelRequest();
             request.setKey(code);
             languages = new HashMap<>();
-            languages.put(langManager.getDefaultLang().getCode(), "this label has no name");
+            languages.put("en", "this label has no name");
+            request.setTitles(languages);
+            payLoad = mapper.writeValueAsString(request);
+
+            result = mockMvc.perform(put("/labels/{labelCode}", code)
+                                                                     .content(payLoad)
+                                                                     .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                     .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
+
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+
+            //-------------------------------------------------
+
+            String lang = langManager.getDefaultLang().getCode();
+            request = new LabelRequest();
+            request.setKey(code);
+            languages = new HashMap<>();
+            languages.put(lang, "this label has no name");
             request.setTitles(languages);
             payLoad = mapper.writeValueAsString(request);
 
@@ -151,7 +173,8 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isOk());
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
+            String enlabel = this.ii18nManager.getLabel(code, lang);
+            assertThat(enlabel, is(languages.get(lang)));
 
             //-------------------------------------------------
 
@@ -194,7 +217,37 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                                                    .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                    .header("Authorization", "Bearer " + accessToken));
             System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(status().isConflict());
+            result.andExpect(status().isBadRequest());
+
+        } finally {
+            this.ii18nManager.deleteLabelGroup(code);
+        }
+    }
+
+    @Test
+    public void testAddLabelWithMissingDefaultLang() throws Exception {
+        String code = "THIS_LABEL_HAS_NO_NAME";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            assertThat(this.ii18nManager.getLabelGroup(code), is(nullValue()));
+
+            LabelRequest request = new LabelRequest();
+            request.setKey(code);
+            Map<String, String> languages = new HashMap<>();
+            languages.put("en", "hello");
+            request.setTitles(languages);
+            String payLoad = mapper.writeValueAsString(request);
+
+            ResultActions result =
+                    mockMvc.perform(post("/labels")
+                                                   .content(payLoad)
+                                                   .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                   .header("Authorization", "Bearer " + accessToken));
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(status().isBadRequest());
 
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
@@ -225,7 +278,109 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                                                    .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                    .header("Authorization", "Bearer " + accessToken));
             System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(status().isConflict());
+            result.andExpect(status().isBadRequest());
+
+        } finally {
+            this.ii18nManager.deleteLabelGroup(code);
+        }
+    }
+
+    @Test
+    public void testUpdateLabelWithInvalidLang() throws Exception {
+        String code = "THIS_LABEL_HAS_NO_NAME";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            assertThat(this.ii18nManager.getLabelGroup(code), is(nullValue()));
+
+            ApsProperties labels = new ApsProperties();
+            labels.put(this.langManager.getDefaultLang().getCode(), "hello");
+            this.ii18nManager.addLabelGroup(code, labels);
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+
+            LabelRequest request = new LabelRequest();
+            request.setKey(code);
+            Map<String, String> languages = new HashMap<>();
+            languages.put(langManager.getDefaultLang().getCode(), "hello");
+            languages.put("de", "hello");
+            request.setTitles(languages);
+            String payLoad = mapper.writeValueAsString(request);
+
+            ResultActions result =
+                    mockMvc.perform(put("/labels/{code}", code)
+                                                  .content(payLoad)
+                                                  .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                  .header("Authorization", "Bearer " + accessToken));
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(status().isBadRequest());
+
+        } finally {
+            this.ii18nManager.deleteLabelGroup(code);
+        }
+    }
+
+    @Test
+    public void testUpdateLabelWithUnexistingLang() throws Exception {
+        String code = "THIS_LABEL_HAS_NO_NAME";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            assertThat(this.ii18nManager.getLabelGroup(code), is(nullValue()));
+
+            ApsProperties labels = new ApsProperties();
+            labels.put(this.langManager.getDefaultLang().getCode(), "hello");
+            this.ii18nManager.addLabelGroup(code, labels);
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            LabelRequest request = new LabelRequest();
+            request.setKey(code);
+            Map<String, String> languages = new HashMap<>();
+            languages.put(langManager.getDefaultLang().getCode(), "hello");
+            languages.put("kk", "hello");
+            request.setTitles(languages);
+            String payLoad = mapper.writeValueAsString(request);
+
+            ResultActions result =
+                    mockMvc.perform(put("/labels/{code}", code)
+                                                               .content(payLoad)
+                                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                               .header("Authorization", "Bearer " + accessToken));
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(status().isBadRequest());
+
+        } finally {
+            this.ii18nManager.deleteLabelGroup(code);
+        }
+    }
+
+    @Test
+    public void testUpdateLabelWithUnexistingCode() throws Exception {
+        String code = "THIS_LABEL_HAS_NO_NAME";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            assertThat(this.ii18nManager.getLabelGroup(code), is(nullValue()));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            LabelRequest request = new LabelRequest();
+            request.setKey(code);
+            Map<String, String> languages = new HashMap<>();
+            languages.put(langManager.getDefaultLang().getCode(), "hello");
+
+            request.setTitles(languages);
+            String payLoad = mapper.writeValueAsString(request);
+
+            ResultActions result =
+                    mockMvc.perform(put("/labels/{code}", code)
+                                                               .content(payLoad)
+                                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                               .header("Authorization", "Bearer " + accessToken));
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(status().isNotFound());
 
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
@@ -258,7 +413,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                                                    .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                    .header("Authorization", "Bearer " + accessToken));
             System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(status().isConflict());
+            result.andExpect(status().isBadRequest());
 
         } finally {
             this.ii18nManager.deleteLabelGroup(code);

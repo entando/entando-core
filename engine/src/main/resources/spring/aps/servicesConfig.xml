@@ -75,6 +75,10 @@
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
 
+	<bean id="RoleDtoBuilder" class="org.entando.entando.aps.system.services.role.RoleDtoBuilder">
+		<property name="roleManager" ref="RoleManager" />
+	</bean>
+	
     <!-- === WIDGET SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
@@ -168,6 +172,12 @@
 
     <bean id="ContentService" class="com.agiletec.plugins.jacms.aps.system.services.content.ContentService" >
         <property name="contentManager" ref="jacmsContentManager" />
+    </bean>
+
+    <bean id="RoleService" class="org.entando.entando.aps.system.services.role.RoleService" >
+        <property name="roleManager" ref="RoleManager" />
+        <property name="dtoBuilder" ref="RoleDtoBuilder" />
+        <property name="authorizationService" ref="AuthorizationService"></property>
     </bean>
 
 

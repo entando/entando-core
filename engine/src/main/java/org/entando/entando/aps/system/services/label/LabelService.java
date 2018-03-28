@@ -75,7 +75,7 @@ public class LabelService implements ILabelService {
                 if (f.getAttributeName().equals(LABEL_KEY_FILTER_KEY)) {
                     dtoList = dtoList
                                      .stream()
-                                     .filter(i -> i.getKey().toLowerCase().contains(f.getValue()))
+                                     .filter(i -> i.getKey().toLowerCase().contains(f.getValue().toLowerCase()))
                                      .collect(Collectors.toList());
                 }
                 if (f.getAttributeName().equals(LABEL_KEY_FILTER_VALUE)) {

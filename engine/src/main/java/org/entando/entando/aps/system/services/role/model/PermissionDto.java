@@ -11,14 +11,27 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.group;
+package org.entando.entando.aps.system.services.role.model;
 
-import java.util.List;
 
-public interface GroupServiceUtilizer<T> {
+public class PermissionDto {
 
-    public String getManagerName();
+    private String code;
+    private String descr;
 
-    public List<T> getGroupUtilizer(String groupCode);
+    public String getCode() {
+        return code;
+    }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescr() {
+        return descr;
+    }
+
+    public void setDescr(String descr) {
+        this.descr = descr;
+    }
 }

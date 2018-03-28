@@ -11,14 +11,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.group;
+package org.entando.entando.web.permission.validator;
 
-import java.util.List;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
+import org.entando.entando.web.permission.model.PermissionRequest;
+import org.springframework.validation.Errors;
 
-public interface GroupServiceUtilizer<T> {
+public class PermissionValidator extends AbstractPaginationValidator {
 
-    public String getManagerName();
 
-    public List<T> getGroupUtilizer(String groupCode);
+    @Override
+    public boolean supports(Class<?> paramClass) {
+        return PermissionRequest.class.equals(paramClass);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+
+    }
 
 }
+

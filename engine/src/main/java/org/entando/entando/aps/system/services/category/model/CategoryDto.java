@@ -53,7 +53,7 @@ public class CategoryDto {
         apsTitles.ifPresent(values -> values.keySet().forEach((lang)
                 -> {
             this.getTitles().put((String) lang, (String) values.get(lang));
-            this.getTitles().put((String) lang, (String) values.get(lang));
+            this.getFullTitles().put((String) lang, (String) page.getFullTitle((String) lang));
         }
         ));
         Optional.ofNullable(page.getChildrenCodes()).
@@ -88,6 +88,14 @@ public class CategoryDto {
         this.titles.put(lang, title);
     }
 
+	public Map<String, String> getFullTitles() {
+		return fullTitles;
+	}
+
+	public void setFullTitles(Map<String, String> fullTitles) {
+		this.fullTitles = fullTitles;
+	}
+	
     public List<String> getChildren() {
         return children;
     }

@@ -24,8 +24,12 @@ public class WidgetValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_WIDGET_NOT_FOUND = "1";
 
-    public static final String ERRCODE_CANNOT_DELETE_USED_WIDGET = "1";
     public static final String ERRCODE_URINAME_MISMATCH = "2";
+
+    public static final String ERRCODE_CANNOT_DELETE_LOCKED = "1";
+    public static final String ERRCODE_CANNOT_DELETE_USED_PAGES = "2";
+    public static final String ERRCODE_CANNOT_DELETE_USED_FRAGMENTS = "3";
+    public static final String ERRCODE_CANNOT_DELETE_USED_PAGE_MODELS = "4";
 
     @Override
     public boolean supports(Class<?> paramClass) {

@@ -19,27 +19,26 @@
 
     <!-- === WIDGET VALIDATORS === -->
 
-    <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetValidatorFactory" />
-
-
-    <bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentViewerWidgetValidator">
+    <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory" />
+    
+    <bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.ContentViewerWidgetValidator">
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
-    <bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.AbstractListViewerWidgetValidator">
+    <bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.AbstractListViewerWidgetValidator">
         <property name="langManager" ref="LangManager" />
         <property name="pageManager" ref="PageManager" />
     </bean>
 
     <bean id="RowContentListViewerWidgetValidator" parent="AbstractListViewerWidgetValidator"
-          class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerWidgetValidator" >
+          class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.RowContentListViewerWidgetValidator" >
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="contentModelManager" ref="jacmsContentModelManager" />
     </bean>
 
     <bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
-          class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.ContentListViewerWidgetValidator">
+          class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.ContentListViewerWidgetValidator">
         <property name="widgetTypeManager" ref="WidgetTypeManager" />
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="contentModelManager" ref="jacmsContentModelManager" />
@@ -48,16 +47,16 @@
 
     <!-- === WIDGET PROCESSORS === -->
 
-    <bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widget.validators.WidgetProcessorFactory" />
+    <bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory" />
 
-    <bean id="RowContentListViewerConfigProcessor" class="org.entando.entando.plugins.jacms.aps.system.services.widget.validators.RowContentListViewerConfigProcessor" />
+    <bean id="RowContentListViewerConfigProcessor" class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.RowContentListViewerConfigProcessor" />
 
 
     <!-- === BUILDERS === -->
 
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
 
-    <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widget.model.WidgetDtoBuilder" >
+    <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widgettype.model.WidgetDtoBuilder" >
         <property name="pageManager" ref="PageManager" />
     </bean>
 
@@ -112,13 +111,11 @@
         <property name="widgetProcessorFactory" ref="WidgetProcessorFactory" />
     </bean>
 
-    <bean id="WidgetService" class="org.entando.entando.aps.system.services.widget.WidgetService" >
+    <bean id="WidgetService" class="org.entando.entando.aps.system.services.widgettype.WidgetService" >
         <property name="dtoBuilder" ref="WidgetDtoBuilder" />
         <property name="widgetManager" ref="WidgetTypeManager" />
-    </bean>
-
-    <bean id="WidgetTypeService" class="org.entando.entando.aps.system.services.widgettype.WidgetTypeService" >
-        <property name="widgetTypeManager" ref="WidgetTypeManager" />
+        <property name="pageManager" ref="PageManager" />
+        <property name="guiFragmentManager" ref="GuiFragmentManager" />
     </bean>
 
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >

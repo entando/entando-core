@@ -11,9 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.widget;
+package org.entando.entando.aps.system.services.widgettype;
 
-import org.entando.entando.aps.system.services.widget.model.WidgetDto;
+import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;

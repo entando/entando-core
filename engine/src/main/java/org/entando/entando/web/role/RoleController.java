@@ -78,13 +78,14 @@ public class RoleController {
         this.getRoleValidator().validateRestListRequest(requestList);
         PagedMetadata<RoleDto> result = this.getRoleService().getRoles(requestList);
         this.getRoleValidator().validateRestListResult(requestList, result);
-        logger.debug("Main Response -> {}", result);
+        logger.debug("loading role list -> {}", result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{roleCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getRole(@PathVariable String roleCode) {
+        logger.debug("loading role {}", roleCode);
         RoleDto role = this.getRoleService().getRole(roleCode);
         return new ResponseEntity<>(new RestResponse(role), HttpStatus.OK);
     }
@@ -92,6 +93,7 @@ public class RoleController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{roleCode}/userreferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getRoleReferences(@PathVariable String roleCode, RestListRequest requestList) {
+        logger.debug("loading user references for role {}", roleCode);
         PagedMetadata<UserDto> result = this.getRoleService().getRoleReferences(roleCode, requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
@@ -99,6 +101,7 @@ public class RoleController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{roleCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updateRole(@PathVariable String roleCode, @Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) {
+        logger.debug("updating role {}", roleCode);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -107,7 +110,6 @@ public class RoleController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
         RoleDto role = this.getRoleService().updateRole(roleRequest);
         return new ResponseEntity<>(new RestResponse(role), HttpStatus.OK);
     }
@@ -115,6 +117,7 @@ public class RoleController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> addRole(@Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) throws ApsSystemException {
+        logger.debug("adding role");
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

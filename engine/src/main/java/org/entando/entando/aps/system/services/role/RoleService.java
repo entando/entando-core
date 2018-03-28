@@ -54,7 +54,7 @@ public class RoleService implements IRoleService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IRoleManager roleManager;
-    private RoleDdoBuilder dtoBuilder;
+    private RoleDtoBuilder dtoBuilder;
     private IDtoBuilder<Permission, PermissionDto> permissionDtoBuilder;
     private IAuthorizationService authorizationService;
 
@@ -66,11 +66,11 @@ public class RoleService implements IRoleService {
         this.roleManager = roleManager;
     }
 
-    protected RoleDdoBuilder getDtoBuilder() {
+    protected RoleDtoBuilder getDtoBuilder() {
         return dtoBuilder;
     }
 
-    public void setDtoBuilder(RoleDdoBuilder dtoBuilder) {
+    public void setDtoBuilder(RoleDtoBuilder dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
     }
 

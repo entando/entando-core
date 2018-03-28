@@ -75,7 +75,7 @@
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
 
-	<bean id="RoleDtoBuilder" class="org.entando.entando.aps.system.services.role.RoleDdoBuilder">
+	<bean id="RoleDtoBuilder" class="org.entando.entando.aps.system.services.role.RoleDtoBuilder">
 		<property name="roleManager" ref="RoleManager" />
 	</bean>
 	

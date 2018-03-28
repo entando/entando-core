@@ -27,7 +27,7 @@ public class PermissionValidator extends AbstractValidator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        // 
+
     }
 
 }

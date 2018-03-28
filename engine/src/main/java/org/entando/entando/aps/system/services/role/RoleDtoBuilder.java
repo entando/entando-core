@@ -21,7 +21,7 @@ import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 
 
-public class RoleDdoBuilder extends DtoBuilder<Role, RoleDto> {
+public class RoleDtoBuilder extends DtoBuilder<Role, RoleDto> {
 
     private IRoleManager roleManager;
 
@@ -38,8 +38,8 @@ public class RoleDdoBuilder extends DtoBuilder<Role, RoleDto> {
         return new RoleDto(src);
     }
 
-
     protected RoleDto toDto(Role src, List<String> permissionsCodes) {
         return new RoleDto(src, permissionsCodes);
     }
+
 }

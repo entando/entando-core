@@ -104,7 +104,6 @@ public interface IRoleManager {
      */
     public void addPermission(Permission permission) throws ApsSystemException;
 
-    //public int getRoleUses(Role role) throws ApsSystemException;
     /**
      * Restituisce la lista di ruoli comprendente il permesso specificato.
      *
@@ -113,6 +112,11 @@ public interface IRoleManager {
      */
     public List<Role> getRolesWithPermission(String permissionName);
 
+    /**
+     * Return the permission codes list
+     * 
+     * @return the permission codes list
+     */
     public List<String> getPermissionsCodes();
 
 }

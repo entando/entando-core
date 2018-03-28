@@ -21,11 +21,13 @@ import org.springframework.validation.Errors;
 @Component
 public class LabelValidator extends AbstractPaginationValidator {
 
+    public static final String ERRCODE_LABELGROUP_NOT_FOUND = "1";
+
     public static final String ERRCODE_LABELGROUP_EXISTS = "1";
 
     public static final String ERRCODE_URINAME_MISMATCH = "2";
 
-    public static final String ERRCODE_LABELGROUP_LANGS_DEFAULT_LANG_REQUIRED = "3";
+    public static final String ERRCODE_LABELGROUP_LANGS_DEFAULT_LANG_REQUIRED = "2";
 
     public static final String ERRCODE_LABELGROUP_LANGS_INVALID_LANG = "4";
 

@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.label.model.LabelDto;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -99,7 +99,7 @@ public class LabelService implements ILabelService {
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
             if (null == labelGroup) {
                 logger.warn("no label found with key {}", code);
-                throw new RestRourceNotFoundException(null, "label", code);
+                throw new RestRourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
             }
             return this.getDtoBuilder().convert(code, labelGroup);
 
@@ -116,10 +116,16 @@ public class LabelService implements ILabelService {
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
             if (null == labelGroup) {
                 logger.warn("no label found with key {}", code);
-                throw new RestRourceNotFoundException(null, "label", code);
+                throw new RestRourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
             }
+            BeanPropertyBindingResult validationResult = this.validateUpdateLabelGroup(labelRequest);
+            if (validationResult.hasErrors()) {
+                throw new ValidationGenericException(validationResult);
+            }
+
             Properties languages = new Properties();
             languages.putAll(labelRequest.getTitles());
+
             this.getI18nManager().updateLabelGroup(code, new ApsProperties(languages));
 
             return labelRequest;
@@ -136,7 +142,7 @@ public class LabelService implements ILabelService {
 
             BeanPropertyBindingResult validationResult = this.validateAddLabelGroup(labelRequest);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             String code = labelRequest.getKey();
             Properties languages = new Properties();
@@ -167,6 +173,22 @@ public class LabelService implements ILabelService {
         }
     }
 
+    protected BeanPropertyBindingResult validateUpdateLabelGroup(LabelDto labelDto) {
+
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(labelDto, "labelGroup");
+
+        String defaultLang = this.getLangManager().getDefaultLang().getCode();
+        boolean isDefaultLangValid = validateDefaultLang(labelDto, bindingResult, defaultLang);
+        if (!isDefaultLangValid) {
+            return bindingResult;
+        }
+
+        List<String> configuredLangs = this.getLangManager().getLangs().stream().map(i -> i.getCode()).collect(Collectors.toList());
+        labelDto.getTitles().entrySet().forEach(i -> validateLangEntry(i, configuredLangs, defaultLang, bindingResult));
+        return bindingResult;
+
+    }
+
     protected BeanPropertyBindingResult validateAddLabelGroup(LabelDto labelDto) {
         try {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(labelDto, "labelGroup");
@@ -177,10 +199,12 @@ public class LabelService implements ILabelService {
                 return bindingResult;
             }
             String defaultLang = this.getLangManager().getDefaultLang().getCode();
-            if (!labelDto.getTitles().keySet().contains(defaultLang)) {
-                bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_DEFAULT_LANG_REQUIRED, new String[]{defaultLang}, "labelGroup.langs.defaultLang.required");
+
+            boolean isDefaultLangValid = validateDefaultLang(labelDto, bindingResult, defaultLang);
+            if (!isDefaultLangValid) {
                 return bindingResult;
             }
+
             List<String> configuredLangs = this.getLangManager().getLangs().stream().map(i -> i.getCode()).collect(Collectors.toList());
             labelDto.getTitles().entrySet().forEach(i -> validateLangEntry(i, configuredLangs, defaultLang, bindingResult));
             return bindingResult;
@@ -189,6 +213,14 @@ public class LabelService implements ILabelService {
             logger.error("error in validate add label group with code {}", labelDto.getKey(), t);
             throw new RestServerError("error in validate add label group", t);
         }
+    }
+
+    protected boolean validateDefaultLang(LabelDto labelDto, BeanPropertyBindingResult bindingResult, String defaultLang) {
+        if (!labelDto.getTitles().keySet().contains(defaultLang)) {
+            bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_DEFAULT_LANG_REQUIRED, new String[]{defaultLang}, "labelGroup.langs.defaultLang.required");
+            return false;
+        }
+        return true;
     }
 
     private void validateLangEntry(Entry<String, String> entry, List<String> configuredLangs, String defaultLangCode, BeanPropertyBindingResult bindingResult) {

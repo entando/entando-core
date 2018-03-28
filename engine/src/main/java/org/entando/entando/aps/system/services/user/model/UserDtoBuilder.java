@@ -11,30 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.page.model;
+package org.entando.entando.aps.system.services.user.model;
 
-import org.entando.entando.web.common.annotation.ValidateString;
+import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.system.services.DtoBuilder;
 
 /**
  *
  * @author paddeo
  */
-public class PageStatusRequest {
-
-    @ValidateString(acceptedValues = {"draft", "published"}, message = "page.status.invalid")
-    private String status;
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+public class UserDtoBuilder extends DtoBuilder<UserDetails, UserDto> {
 
     @Override
-    public String toString() {
-        return "PageStatusRequest{" + "status=" + status + '}';
+    protected UserDto toDto(UserDetails src) {
+        return new UserDto(src);
     }
 
 }

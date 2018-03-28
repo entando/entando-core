@@ -211,6 +211,7 @@ public class TestUserAction extends ApsAdminBaseTestCase {
             this.verifyErrors(result, 1, "password", 1);
         } catch (RuntimeException e) {
             this._userManager.updateUser(oldUser);
+            this._userManager.changePassword(oldUser.getUsername(), oldUser.getUsername());
             throw e;
         }
     }
@@ -393,28 +394,7 @@ public class TestUserAction extends ApsAdminBaseTestCase {
     }
 
     private void init() {
-        try {
-            this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
-            List<UserDetails> users = this._userManager.getUsers();
-            for (UserDetails user : users) {
-                User cur = (User) user;
-                try {
-                    if (cur.isDisabled()) {
-                        String pwd = cur.getPassword();
-                        if (!pwd.contains("argon2")) {
-                            pwd = this._userManager.encrypt(pwd);
-                        }
-                        cur.setPassword(pwd);
-                        cur.setDisabled(false);
-                        this._userManager.updateUser(cur);
-                    }
-                } catch (Exception e) {
-
-                }
-            }
-        } catch (ApsSystemException ex) {
-            Logger.getLogger(TestUserAction.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
     }
 
     private IUserManager _userManager;

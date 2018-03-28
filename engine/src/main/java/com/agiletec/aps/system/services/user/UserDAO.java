@@ -293,27 +293,26 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn = this.getConnection();
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(UPDATE_USER);
-            stat.setString(1, user.getPassword());
             if (null != entandoUser && null != entandoUser.getLastAccess()) {
-                stat.setDate(2, new java.sql.Date(entandoUser.getLastAccess().getTime()));
+                stat.setDate(1, new java.sql.Date(entandoUser.getLastAccess().getTime()));
+            } else {
+                stat.setNull(1, Types.DATE);
+            }
+            if (null != entandoUser && null != entandoUser.getLastPasswordChange()) {
+                stat.setDate(2, new java.sql.Date(entandoUser.getLastPasswordChange().getTime()));
             } else {
                 stat.setNull(2, Types.DATE);
             }
-            if (null != entandoUser && null != entandoUser.getLastPasswordChange()) {
-                stat.setDate(3, new java.sql.Date(entandoUser.getLastPasswordChange().getTime()));
-            } else {
-                stat.setNull(3, Types.DATE);
-            }
             if (null != entandoUser) {
                 if (!entandoUser.isDisabled()) {
-                    stat.setInt(4, 1);
+                    stat.setInt(3, 1);
                 } else {
-                    stat.setInt(4, 0);
+                    stat.setInt(3, 0);
                 }
             } else {
-                stat.setNull(4, Types.NUMERIC);
+                stat.setNull(3, Types.NUMERIC);
             }
-            stat.setString(5, user.getUsername());
+            stat.setString(4, user.getUsername());
             stat.executeUpdate();
             conn.commit();
         } catch (Throwable t) {
@@ -450,7 +449,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             = "UPDATE authusers SET passwd = ? , lastpasswordchange = ? WHERE username = ? ";
 
     private final String UPDATE_USER
-            = "UPDATE authusers SET passwd = ? , lastaccess = ? , lastpasswordchange = ? , active = ? WHERE username = ? ";
+            = "UPDATE authusers SET lastaccess = ? , lastpasswordchange = ? , active = ? WHERE username = ? ";
 
     private final String UPDATE_LAST_ACCESS
             = "UPDATE authusers SET lastaccess = ? WHERE username = ? ";

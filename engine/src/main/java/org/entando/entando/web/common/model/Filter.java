@@ -118,4 +118,9 @@ public class Filter {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Filter{" + "attribute=" + attribute + ", operator=" + operator + ", value=" + value + '}';
+    }
+
 }

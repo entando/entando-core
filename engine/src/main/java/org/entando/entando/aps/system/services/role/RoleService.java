@@ -23,7 +23,6 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationService;
-import com.agiletec.aps.system.services.authorization.model.UserDto;
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
@@ -33,6 +32,7 @@ import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.role.model.PermissionDto;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
+import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -115,15 +115,15 @@ public class RoleService implements IRoleService {
             for (Filter f : restRequest.getFilter()) {
                 if (f.getAttributeName().equals(KEY_FILTER_ROLE_CODE)) {
                     roles = roles
-                                 .stream()
-                                 .filter(i -> i.getName().toLowerCase().contains(f.getValue().toLowerCase()))
-                                 .collect(Collectors.toList());
+                            .stream()
+                            .filter(i -> i.getName().toLowerCase().contains(f.getValue().toLowerCase()))
+                            .collect(Collectors.toList());
                 }
                 if (f.getAttributeName().equals(KEY_FILTER_ROLE_DESCR)) {
                     roles = roles
-                                 .stream()
-                                 .filter(i -> i.getDescription().toLowerCase().contains(f.getValue().toLowerCase()))
-                                 .collect(Collectors.toList());
+                            .stream()
+                            .filter(i -> i.getDescription().toLowerCase().contains(f.getValue().toLowerCase()))
+                            .collect(Collectors.toList());
                 }
             }
         }
@@ -147,15 +147,15 @@ public class RoleService implements IRoleService {
             for (Filter f : requestList.getFilter()) {
                 if (f.getAttributeName().equals(KEY_FILTER_PERMISSION_CODE)) {
                     permissions = permissions
-                                 .stream()
-                                             .filter(i -> i.getName().toLowerCase().contains(f.getValue().toLowerCase()))
-                                 .collect(Collectors.toList());
+                            .stream()
+                            .filter(i -> i.getName().toLowerCase().contains(f.getValue().toLowerCase()))
+                            .collect(Collectors.toList());
                 }
                 if (f.getAttributeName().equals(KEY_FILTER_PERMISSION_DESCR)) {
                     permissions = permissions
-                                 .stream()
-                                             .filter(i -> i.getDescription().toLowerCase().contains(f.getValue().toLowerCase()))
-                                 .collect(Collectors.toList());
+                            .stream()
+                            .filter(i -> i.getDescription().toLowerCase().contains(f.getValue().toLowerCase()))
+                            .collect(Collectors.toList());
                 }
             }
         }
@@ -345,6 +345,5 @@ public class RoleService implements IRoleService {
         return this.getAuthorizationService().getRoleUtilizer(code);
 
     }
-
 
 }

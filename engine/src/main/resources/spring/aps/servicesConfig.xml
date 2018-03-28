@@ -81,6 +81,7 @@
 		<property name="roleManager" ref="RoleManager" />
 	</bean>
 	
+    <bean id="UserDtoBuilder" class="org.entando.entando.aps.system.services.user.model.UserDtoBuilder" />
     <!-- === WIDGET SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >

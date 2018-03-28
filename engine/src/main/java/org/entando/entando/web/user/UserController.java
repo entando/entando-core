@@ -9,14 +9,21 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.user.IUserService;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
+import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserPasswordRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.entando.entando.web.user.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +52,10 @@ public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    public static final String ERRCODE_USERNAME_MISMATCH = "2";
+    public static final String ERRCODE_OLD_PASSWORD_FORMAT = "4";
+    public static final String ERRCODE_NEW_PASSWORD_FORMAT = "5";
+
     @Autowired
     private IUserService userService;
 
@@ -65,6 +76,86 @@ public class UserController {
 
     public void setUserValidator(UserValidator userValidator) {
         this.userValidator = userValidator;
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUsers(RestListRequest requestList) {
+        logger.debug("getting users details with request {}", requestList);
+        PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUser(@PathVariable String username) {
+        logger.debug("getting user {} details", username);
+        UserDto user = this.getUserService().getUser(username);
+        return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUser(@PathVariable String username, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
+        logger.debug("updating user {} with request {}", username, userRequest);
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getUserValidator().validateBody(username, userRequest.getUsername(), bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getUserValidator().validatePassword(username, userRequest.getPassword(), bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        UserDto user = this.getUserService().updateUser(userRequest);
+        return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
+        logger.debug("changing pasword for user {} with request {}", username, passwordRequest);
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getUserValidator().validateBody(username, passwordRequest.getUsername(), bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getUserValidator().validatePasswords(passwordRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        UserDto user = this.getUserService().updateUserPassword(passwordRequest);
+        return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
+        logger.debug("adding user with request {}", userRequest);
+        //field validations
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        UserDto dto = this.getUserService().addUser(userRequest);
+        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteUser(@PathVariable String username) throws ApsSystemException {
+        logger.debug("deleting {}", username);
+        this.getUserService().removeUser(username);
+        Map<String, String> result = new HashMap<>();
+        result.put("code", username);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)

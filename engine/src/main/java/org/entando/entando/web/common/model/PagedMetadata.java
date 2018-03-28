@@ -24,6 +24,9 @@ public class PagedMetadata<T> {
     private int pageSize;
     private int lastPage;
     private int totalItems;
+    private String sort;
+    private String direction;
+    private Filter[] filters = new Filter[0];
 
     @JsonIgnore
     private List<T> body;
@@ -37,10 +40,13 @@ public class PagedMetadata<T> {
             req.setPageSize(result.getCount());
         }
         this.page = req.getPage();
-        this.pageSize = result.getList().size();
+        this.pageSize = req.getPageSize();
         Double pages = Math.ceil(new Double(result.getCount()) / new Double(req.getPageSize()));
         this.lastPage = pages.intValue();
         this.totalItems = result.getCount();
+        this.setSort(req.getSort());
+        this.setDirection(req.getDirection());
+        this.setFilters(req.getFilters());
     }
 
     public PagedMetadata(int page, int size, int last, int totalItems) {
@@ -88,6 +94,30 @@ public class PagedMetadata<T> {
 
     public void setTotalItems(int totalItems) {
         this.totalItems = totalItems;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public Filter[] getFilters() {
+        return filters;
+    }
+
+    public void setFilters(Filter[] filters) {
+        this.filters = filters;
     }
 
 }

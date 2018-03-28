@@ -23,7 +23,7 @@ import org.springframework.validation.Validator;
 /**
  * @author E.Santoboni
  */
-public abstract class AbstractValidator implements Validator {
+public abstract class AbstractPaginationValidator implements Validator {
 
     public static final String ERRCODE_PAGE_INVALID = "110";
     public static final String ERRCODE_NO_ITEM_ON_PAGE = "111";
@@ -47,7 +47,7 @@ public abstract class AbstractValidator implements Validator {
     }
 
     public void validateRestListResult(RestListRequest listRequest, PagedMetadata<?> result) {
-        if (listRequest.getPage() > 0 && (null == result.getBody() || result.getBody().isEmpty())) {
+        if (listRequest.getPage() > 1 && (null == result.getBody() || result.getBody().isEmpty())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
             bindingResult.reject(ERRCODE_NO_ITEM_ON_PAGE, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
             throw new RestRourceNotFoundException(bindingResult);

@@ -404,4 +404,6 @@ public interface SystemConstants {
 
     public static final String CONFIG_ITEM_DATA_OBJECT_INDEX_SUB_DIR = "dataobjectsubdir";
 
+    public static final String API_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
 }

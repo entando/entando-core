@@ -17,15 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.Cache;
-
 import com.agiletec.aps.system.common.AbstractGenericCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Permission;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.Cache;
 
 /**
  * @author E.Santoboni
@@ -54,6 +53,12 @@ public class PermissionCacheWrapper extends AbstractGenericCacheWrapper<Permissi
 	}
 
 	@Override
+    public List<String> getPermissionsCodes() {
+        List<String> codes = (List<String>) this.get(this.getCache(), this.getCodesCacheKey(), List.class);
+        return codes;
+    }
+
+    @Override
 	public Permission getPermission(String code) {
 		return this.get(this.getCache(), PERMISSION_CACHE_NAME_PREFIX + code, Permission.class);
 	}

@@ -13,10 +13,11 @@
  */
 package com.agiletec.aps.system.services.role.cache;
 
+import java.util.List;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.IPermissionDAO;
 import com.agiletec.aps.system.services.role.Permission;
-import java.util.List;
 
 /**
  * @author E.Santoboni
@@ -37,5 +38,7 @@ public interface IPermissionCacheWrapper {
 	public void updatePermission(Permission permission);
 
 	public void removePermission(String permissionName);
+
+    List<String> getPermissionsCodes();
 
 }

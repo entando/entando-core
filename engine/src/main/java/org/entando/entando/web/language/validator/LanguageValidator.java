@@ -13,13 +13,13 @@
  */
 package org.entando.entando.web.language.validator;
 
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.language.model.LanguageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
-public class LanguageValidator extends AbstractValidator {
+public class LanguageValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_LANGUAGE_DOES_NOT_EXISTS = "1";
     public static final String ERRCODE_LANGUAGE_CANNOT_DISABLE_DEFAULT = "2";

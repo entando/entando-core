@@ -18,7 +18,6 @@ import javax.validation.constraints.NotNull;
 
 import com.agiletec.aps.system.services.pagemodel.FrameSketch;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PageModelFrameReq {
@@ -27,7 +26,6 @@ public class PageModelFrameReq {
     private int pos;
 
     @NotNull(message = "pageModelFrame.descr.notBlank")
-    @JsonProperty("description")
     private String descr;
 
     private boolean mainFrame;

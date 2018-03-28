@@ -75,6 +75,10 @@
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
 
+	<bean id="RoleDtoBuilder" class="org.entando.entando.aps.system.services.role.RoleDtoBuilder">
+		<property name="roleManager" ref="RoleManager" />
+	</bean>
+	
     <bean id="UserDtoBuilder" class="org.entando.entando.aps.system.services.user.model.UserDtoBuilder" />
     <!-- === WIDGET SERVICES === -->
 
@@ -153,11 +157,14 @@
     	<property name="configManager" ref="BaseConfigManager" />
     </bean>
     
+	
+    <bean id="CategoryService" class="org.entando.entando.aps.system.services.category.CategoryService" >
+        <property name="categoryManager" ref="CategoryManager" />
+    </bean>
     
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>
-        <property name="dtoBuilder" ref="UserDtoBuilder" />
     </bean>
 
     <bean id="ResourceService" class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceService" >
@@ -168,6 +175,18 @@
         <property name="contentManager" ref="jacmsContentManager" />
     </bean>
 
+    <bean id="RoleService" class="org.entando.entando.aps.system.services.role.RoleService" >
+        <property name="roleManager" ref="RoleManager" />
+        <property name="dtoBuilder" ref="RoleDtoBuilder" />
+        <property name="authorizationService" ref="AuthorizationService"></property>
+    </bean>
 
 
+
+    
+    <bean id="DatabaseService" class="org.entando.entando.aps.system.services.database.DatabaseService" >
+        <property name="databaseManager" ref="DatabaseManager" />
+        <property name="componentManager" ref="ComponentManager" />
+    </bean>
+    
 </beans>

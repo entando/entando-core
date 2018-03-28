@@ -1,0 +1,8 @@
+{
+    "code": "test_cat",
+    "parentCode": "invalid_code",
+    "titles": {
+        "en": "en_title",
+        "it": "it_title"
+    }
+}

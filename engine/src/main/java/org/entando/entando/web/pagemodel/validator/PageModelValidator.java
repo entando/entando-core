@@ -18,21 +18,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
-public class PageModelValidator extends AbstractValidator {
+public class PageModelValidator extends AbstractPaginationValidator {
+
 
     public static final String ERRCODE_FRAMES_POS_MISMATCH = "1";
     public static final String ERRCODE_CODE_EXISTS = "2";
     public static final String ERRCODE_PAGEMODEL_REFERENCES = "3";
     public static final String ERRCODE_URINAME_MISMATCH = "4";
 
-    ;
+    public static final String ERRCODE_PAGEMODEL_NOT_FOUND = "5";
 
 
     @Override

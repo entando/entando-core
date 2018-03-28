@@ -17,6 +17,10 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.entando.entando.web.category.CategoryControllerIntegrationTest;
+import org.entando.entando.web.category.CategoryControllerTest;
+import org.entando.entando.web.database.DatabaseControllerIntegrationTest;
+import org.entando.entando.web.database.DatabaseControllerTest;
 import org.entando.entando.web.dataobject.DataTypeControllerIntegrationTest;
 import org.entando.entando.web.dataobject.DataTypeControllerTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
@@ -35,6 +39,9 @@ import org.entando.entando.web.page.PageControllerTest;
 import org.entando.entando.web.pagemodel.PageModelControllerIntegrationTest;
 import org.entando.entando.web.pagemodel.PageModelControllerTest;
 import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
+import org.entando.entando.web.permission.PermissionControllerIntegrationTest;
+import org.entando.entando.web.role.RoleControllerIntegrationTest;
+import org.entando.entando.web.role.RoleControllerUnitTest;
 import org.entando.entando.web.system.ReloadConfigurationControllerTest;
 import org.entando.entando.web.user.UserControllerUnitTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
@@ -77,12 +84,23 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerTest.class));
-
+      
         suite.addTest(new JUnit4TestAdapter(UserControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(UserControllerUnitTest.class));
 
         suite.addTest(new JUnit4TestAdapter(UserSettingsControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(UserSettigsControllerUnitTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(DatabaseControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(DatabaseControllerTest.class));
+        
+        suite.addTest(new JUnit4TestAdapter(CategoryControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(CategoryControllerTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(RoleControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(RoleControllerUnitTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(PermissionControllerIntegrationTest.class));
 
         return suite;
     }

@@ -24,93 +24,99 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  */
 public interface IRoleManager {
 
-	public static final String ROLE_MANAGER_CACHE_NAME = "Entando_RoleManager";
+    public static final String ROLE_MANAGER_CACHE_NAME = "Entando_RoleManager";
 
-	/**
-	 * Restituisce la lista ordinata dei ruoli esistenti.
-	 *
-	 * @return La lista ordinata dei ruoli esistenti.
-	 */
-	public List<Role> getRoles();
+    /**
+     * Restituisce la lista ordinata dei ruoli esistenti.
+     *
+     * @return La lista ordinata dei ruoli esistenti.
+     */
+    public List<Role> getRoles();
 
-	/**
-	 * Restituisce un ruolo in base al nome.
-	 *
-	 * @param roleName Il nome del ruolo richesto.
-	 * @return Il ruolo cercato.
-	 */
-	public Role getRole(String roleName);
+    /**
+     * Restituisce un ruolo in base al nome.
+     *
+     * @param roleName Il nome del ruolo richesto.
+     * @return Il ruolo cercato.
+     */
+    public Role getRole(String roleName);
 
-	/**
-	 * Rimuove un ruolo.
-	 *
-	 * @param role Oggetto di tipo Role relativo al ruolo da rimuovere.
-	 * @throws ApsSystemException in caso di errore.
-	 */
-	public void removeRole(Role role) throws ApsSystemException;
+    /**
+     * Rimuove un ruolo.
+     *
+     * @param role Oggetto di tipo Role relativo al ruolo da rimuovere.
+     * @throws ApsSystemException in caso di errore.
+     */
+    public void removeRole(Role role) throws ApsSystemException;
 
-	/**
-	 * Aggiorna un ruolo.
-	 *
-	 * @param role Il ruolo da aggiornare.
-	 * @throws ApsSystemException in caso di errore.
-	 */
-	public void updateRole(Role role) throws ApsSystemException;
+    /**
+     * Aggiorna un ruolo.
+     *
+     * @param role Il ruolo da aggiornare.
+     * @throws ApsSystemException in caso di errore.
+     */
+    public void updateRole(Role role) throws ApsSystemException;
 
-	/**
-	 * Aggiunge un ruolo.
-	 *
-	 * @param role Oggetto di tipo Role relativo al ruolo da aggiungere.
-	 * @throws ApsSystemException in caso di errore.
-	 */
-	public void addRole(Role role) throws ApsSystemException;
+    /**
+     * Aggiunge un ruolo.
+     *
+     * @param role Oggetto di tipo Role relativo al ruolo da aggiungere.
+     * @throws ApsSystemException in caso di errore.
+     */
+    public void addRole(Role role) throws ApsSystemException;
 
-	/**
-	 * Restituisce la lista ordinata dei permessi di autorizzazione.
-	 *
-	 * @return La lista ordinata dei permessi
-	 */
-	public List<Permission> getPermissions();
+    /**
+     * Restituisce la lista ordinata dei permessi di autorizzazione.
+     *
+     * @return La lista ordinata dei permessi
+     */
+    public List<Permission> getPermissions();
 
-	/**
-	 * Restituisce un permesso in base al nome.
-	 *
-	 * @param permissionName Il nome del permesso richiesto.
-	 * @return Il permesso richiesto.
-	 */
-	public Permission getPermission(String permissionName);
+    /**
+     * Restituisce un permesso in base al nome.
+     *
+     * @param permissionName Il nome del permesso richiesto.
+     * @return Il permesso richiesto.
+     */
+    public Permission getPermission(String permissionName);
 
-	/**
-	 * Rimuove il permesso specificato e dai ruoli.
-	 *
-	 * @param permissionName Il permesso da rimuovere dal ruolo.
-	 * @throws ApsSystemException in caso di errore.
-	 */
-	public void removePermission(String permissionName) throws ApsSystemException;
+    /**
+     * Rimuove il permesso specificato e dai ruoli.
+     *
+     * @param permissionName Il permesso da rimuovere dal ruolo.
+     * @throws ApsSystemException in caso di errore.
+     */
+    public void removePermission(String permissionName) throws ApsSystemException;
 
-	/**
-	 * Aggiorna un permesso di autorizzazione.
-	 *
-	 * @param permission Il permesso da aggiornare.
-	 * @throws ApsSystemException in caso di errore.
-	 */
-	public void updatePermission(Permission permission) throws ApsSystemException;
+    /**
+     * Aggiorna un permesso di autorizzazione.
+     *
+     * @param permission Il permesso da aggiornare.
+     * @throws ApsSystemException in caso di errore.
+     */
+    public void updatePermission(Permission permission) throws ApsSystemException;
 
-	/**
-	 * Aggiunge un permesso di autorizzazione.
-	 *
-	 * @param permission Il permesso da aggiungere.
-	 * @throws ApsSystemException in caso di errore.
-	 */
-	public void addPermission(Permission permission) throws ApsSystemException;
+    /**
+     * Aggiunge un permesso di autorizzazione.
+     *
+     * @param permission Il permesso da aggiungere.
+     * @throws ApsSystemException in caso di errore.
+     */
+    public void addPermission(Permission permission) throws ApsSystemException;
 
-	//public int getRoleUses(Role role) throws ApsSystemException;
-	/**
-	 * Restituisce la lista di ruoli comprendente il permesso specificato.
-	 *
-	 * @param permissionName Il nome del permesso.
-	 * @return La lista di ruoli.
-	 */
-	public List<Role> getRolesWithPermission(String permissionName);
+    /**
+     * Restituisce la lista di ruoli comprendente il permesso specificato.
+     *
+     * @param permissionName Il nome del permesso.
+     * @return La lista di ruoli.
+     */
+    public List<Role> getRolesWithPermission(String permissionName);
+
+    /**
+     * Return the permission codes list
+     * 
+     * @return the permission codes list
+     */
+    public List<String> getPermissionsCodes();
 
 }

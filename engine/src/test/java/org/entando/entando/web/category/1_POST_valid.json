@@ -1,0 +1,8 @@
+{
+    "code": "test_cat",
+    "parentCode": "cat1",
+    "titles": {
+        "en": "en_title",
+        "it": "it_title"
+    }
+}

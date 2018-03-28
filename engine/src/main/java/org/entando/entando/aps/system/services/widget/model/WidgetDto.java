@@ -1,7 +1,19 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.widget.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,14 +21,12 @@ import java.util.Map;
 public class WidgetDto {
 
     private String code;
-    private String name;
-    private Boolean used;
+    private Integer used = 0;
     private Map<String, String> titles = new HashMap<>();
-    private List<GuiFragmentRef> guiFragments = new ArrayList<>();
-    private String pluginCode;
     private String group;
-    private Date createdAt;
-    private Date updatedAt;
+    private String pluginCode;
+    private List<GuiFragmentRef> guiFragments = new ArrayList<>();
+    private boolean hasConfig = false;
 
     protected class GuiFragmentRef {
 
@@ -50,12 +60,10 @@ public class WidgetDto {
     }
 
     public void addGuiFragmentRef(String code, String customUi, String defaultUi) {
-
         GuiFragmentRef ref = new GuiFragmentRef();
         ref.code = code;
         ref.customUi = customUi;
         ref.defaultUi = defaultUi;
-
         guiFragments.add(ref);
     }
 
@@ -71,19 +79,11 @@ public class WidgetDto {
         this.code = code;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean getUsed() {
+    public Integer getUsed() {
         return used;
     }
 
-    public void setUsed(boolean used) {
+    public void setUsed(Integer used) {
         this.used = used;
     }
 
@@ -103,24 +103,12 @@ public class WidgetDto {
         this.group = group;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public String getPluginCode() {
+        return pluginCode;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void setUsed(Boolean used) {
-        this.used = used;
+    public void setPluginCode(String pluginCode) {
+        this.pluginCode = pluginCode;
     }
 
     public List<GuiFragmentRef> getGuiFragments() {
@@ -131,11 +119,12 @@ public class WidgetDto {
         this.guiFragments = guiFragments;
     }
 
-    public String getPluginCode() {
-        return pluginCode;
+    public boolean isHasConfig() {
+        return hasConfig;
     }
 
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
+    public void setHasConfig(boolean hasConfig) {
+        this.hasConfig = hasConfig;
     }
+
 }

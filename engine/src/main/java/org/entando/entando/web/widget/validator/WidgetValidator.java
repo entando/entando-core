@@ -22,6 +22,8 @@ import org.springframework.validation.Errors;
 @Component
 public class WidgetValidator extends AbstractPaginationValidator {
 
+    public static final String ERRCODE_WIDGET_NOT_FOUND = "1";
+
     public static final String ERRCODE_CANNOT_DELETE_USED_WIDGET = "1";
     public static final String ERRCODE_URINAME_MISMATCH = "2";
 

@@ -35,14 +35,24 @@ public class RestListRequest {
     private Integer page = 1;
     private Integer pageSize = PAGE_SIZE_DEFAULT;
 
-    private Filter[] filter;
+    private Filter[] filters;
 
+    @Deprecated
     public Filter[] getFilter() {
-        return filter;
+        return this.getFilters();
     }
 
-    public void setFilter(Filter[] filter) {
-        this.filter = filter;
+    @Deprecated
+    public void setFilter(Filter[] filters) {
+        this.setFilters(filters);
+    }
+
+    public Filter[] getFilters() {
+        return filters;
+    }
+
+    public void setFilters(Filter[] filters) {
+        this.filters = filters;
     }
 
     public String getSort() {
@@ -78,27 +88,23 @@ public class RestListRequest {
     }
 
     public void addFilter(Filter filter) {
-        this.filter = ArrayUtils.add(this.filter, filter);
+        this.filters = ArrayUtils.add(this.filters, filter);
     }
 
     @SuppressWarnings("rawtypes")
     public List<FieldSearchFilter> buildFieldSearchFilters() {
         List<FieldSearchFilter> fieldSearchFilters = new ArrayList<>();
-
-        if (null != filter && filter.length > 0) {
-            Arrays.stream(filter).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
+        if (null != filters && filters.length > 0) {
+            Arrays.stream(filters).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
         }
-
         FieldSearchFilter pageFilter = this.buildPaginationFilter();
         if (null != pageFilter) {
             fieldSearchFilters.add(pageFilter);
         }
-
         FieldSearchFilter sortFilter = this.buildSortFilter();
         if (null != sortFilter) {
             fieldSearchFilters.add(sortFilter);
         }
-
         return fieldSearchFilters;
     }
 
@@ -134,7 +140,6 @@ public class RestListRequest {
     private FieldSearchFilter buildSortFilter() {
         if (StringUtils.isNotBlank(StringEscapeUtils.escapeSql(this.getSort()))) {
             FieldSearchFilter sort = new FieldSearchFilter(this.getSort());
-
             if (StringUtils.isNotBlank(this.getDirection())) {
                 if (!this.getDirection().equalsIgnoreCase(FieldSearchFilter.ASC_ORDER) && !this.getDirection().equalsIgnoreCase(FieldSearchFilter.DESC_ORDER)) {
                     this.setDirection(DIRECTION_VALUE_DEFAULT);
@@ -159,7 +164,7 @@ public class RestListRequest {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((direction == null) ? 0 : direction.hashCode());
-        result = prime * result + Arrays.hashCode(filter);
+        result = prime * result + Arrays.hashCode(filters);
         result = prime * result + ((page == null) ? 0 : page.hashCode());
         result = prime * result + ((pageSize == null) ? 0 : pageSize.hashCode());
         result = prime * result + ((sort == null) ? 0 : sort.hashCode());
@@ -185,7 +190,7 @@ public class RestListRequest {
         } else if (!direction.equals(other.direction)) {
             return false;
         }
-        if (!Arrays.equals(filter, other.filter)) {
+        if (!Arrays.equals(filters, other.filters)) {
             return false;
         }
         if (page == null) {
@@ -211,6 +216,5 @@ public class RestListRequest {
         }
         return true;
     }
-
 
 }

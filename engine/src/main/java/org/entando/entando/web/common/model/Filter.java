@@ -15,8 +15,8 @@ package org.entando.entando.web.common.model;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.FieldSearchFilter.LikeOptionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringEscapeUtils;
-
 
 public class Filter {
 
@@ -48,8 +48,8 @@ public class Filter {
         this.value = value;
     }
 
-
-    public Filter() {}
+    public Filter() {
+    }
 
     public Filter(String attribute, String value) {
         this.attribute = attribute;
@@ -65,6 +65,7 @@ public class Filter {
         return this.getAttribute();
     }
 
+    @JsonIgnore
     @SuppressWarnings("rawtypes")
     public FieldSearchFilter getFieldSearchFilter() {
         FieldSearchFilter filter = new FieldSearchFilter(StringEscapeUtils.escapeSql(this.getAttributeName()), StringEscapeUtils.escapeSql(this.getValue()), true, LikeOptionType.COMPLETE);
@@ -83,28 +84,37 @@ public class Filter {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Filter other = (Filter) obj;
         if (attribute == null) {
-            if (other.attribute != null)
+            if (other.attribute != null) {
                 return false;
-        } else if (!attribute.equals(other.attribute))
+            }
+        } else if (!attribute.equals(other.attribute)) {
             return false;
+        }
         if (operator == null) {
-            if (other.operator != null)
+            if (other.operator != null) {
                 return false;
-        } else if (!operator.equals(other.operator))
+            }
+        } else if (!operator.equals(other.operator)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
 

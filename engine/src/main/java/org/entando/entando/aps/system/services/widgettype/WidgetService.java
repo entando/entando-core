@@ -21,6 +21,8 @@ import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -36,7 +38,6 @@ import org.entando.entando.web.widget.model.WidgetRequest;
 import org.entando.entando.web.widget.validator.WidgetValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 
@@ -45,13 +46,12 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
     private IWidgetTypeManager widgetManager;
 
-    @Autowired
+    private IPageManager pageManager;
+
     private IGuiFragmentManager guiFragmentManager;
 
-    @Autowired
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
 
     @Override
@@ -74,7 +74,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     public WidgetDto addWidget(WidgetRequest widgetRequest) {
         WidgetType widgetType = this.createWidget(widgetRequest);
         try {
-            widgetManager.addWidgetType(widgetType);
+            this.getWidgetManager().addWidgetType(widgetType);
         } catch (ApsSystemException e) {
             logger.error("Failed to add widget type for request {} ", widgetRequest);
             throw new RestServerError("error in update group", e);
@@ -85,8 +85,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     @Override
     public void removeWidget(String widgetCode) {
-        WidgetType type = widgetManager.getWidgetType(widgetCode);
         try {
+            WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
             BeanPropertyBindingResult validationResult = checkWidgetForDelete(type);
             if (validationResult.hasErrors()) {
                 throw new ValidationGenericException(validationResult);
@@ -106,7 +106,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());
             filters.stream().filter(i -> i.getKey() != null)
                     .forEach(i -> i.setKey(WidgetDto.getEntityFieldName(i.getKey())));
-            SearcherDaoPaginatedResult<WidgetType> widgets = this.widgetManager.getWidgetTypes(filters);
+            SearcherDaoPaginatedResult<WidgetType> widgets = this.getWidgetManager().getWidgetTypes(filters);
             List<WidgetDto> dtoList = dtoBuilder.convert(widgets.getList());
             for (WidgetDto widgetDto : dtoList) {
                 this.addFragments(widgetDto);
@@ -122,14 +122,14 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     @Override
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest) {
-        WidgetType type = this.widgetManager.getWidgetType(widgetCode);
+        WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
         if (type == null) {
             throw new RestRourceNotFoundException(null, "widget", widgetCode);
         }
         this.processWidgetType(type, widgetRequest);
         WidgetDto widgetDto = dtoBuilder.convert(type);
         try {
-            widgetManager.updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
+            getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
             this.addFragments(widgetDto);
         } catch (Throwable e) {
             logger.error("failed to update widget type", e);
@@ -155,29 +155,13 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     }
 
     private void addFragments(WidgetDto widgetDto) throws Exception {
-        List<String> fragmentCodes = guiFragmentManager.getGuiFragmentCodesByWidgetType(widgetDto.getCode());
+        List<String> fragmentCodes = this.getGuiFragmentManager().getGuiFragmentCodesByWidgetType(widgetDto.getCode());
         if (fragmentCodes != null) {
             for (String fragmentCode : fragmentCodes) {
-                GuiFragment fragment = guiFragmentManager.getGuiFragment(fragmentCode);
+                GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(fragmentCode);
                 widgetDto.addGuiFragmentRef(fragment.getCode(), fragment.getCurrentGui(), fragment.getDefaultGui());
             }
         }
-    }
-
-    public IWidgetTypeManager getWidgetManager() {
-        return widgetManager;
-    }
-
-    public void setWidgetManager(IWidgetTypeManager widgetManager) {
-        this.widgetManager = widgetManager;
-    }
-
-    public IDtoBuilder<WidgetType, WidgetDto> getDtoBuilder() {
-        return dtoBuilder;
-    }
-
-    public void setDtoBuilder(IDtoBuilder<WidgetType, WidgetDto> dtoBuilder) {
-        this.dtoBuilder = dtoBuilder;
     }
 
     private BeanPropertyBindingResult checkWidgetForDelete(WidgetType widgetType) throws ApsSystemException {
@@ -186,7 +170,16 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             return bindingResult;
         }
         if (widgetType.isLocked()) {
-            bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_USED_WIDGET, new String[]{widgetType.getCode()}, widgetType.getCode() + " cannot be deleted because it is referenced in use");
+            bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_LOCKED, new String[]{widgetType.getCode()}, "widgettype.delete.locked");
+        }
+        List<String> fragments = this.getGuiFragmentManager().getGuiFragmentCodesByWidgetType(widgetType.getCode());
+        if (null != fragments && fragments.size() > 0) {
+            bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_USED_FRAGMENTS, new String[]{widgetType.getCode()}, "widgettype.delete.references.fragment");
+        }
+        List<IPage> onLinePages = this.getPageManager().getOnlineWidgetUtilizers(widgetType.getCode());
+        List<IPage> draftPages = this.getPageManager().getDraftWidgetUtilizers(widgetType.getCode());
+        if ((null != onLinePages && onLinePages.size() > 0) || (null != draftPages && draftPages.size() > 0)) {
+            bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_USED_PAGES, new String[]{widgetType.getCode()}, "widgettype.delete.references.page");
         }
         return bindingResult;
     }
@@ -205,6 +198,38 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             logger.error("Error loading WidgetType references for group {}", groupCode, ex);
             throw new RestServerError("Error loading WidgetType references for group", ex);
         }
+    }
+
+    public IWidgetTypeManager getWidgetManager() {
+        return widgetManager;
+    }
+
+    public void setWidgetManager(IWidgetTypeManager widgetManager) {
+        this.widgetManager = widgetManager;
+    }
+
+    public IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
+    }
+
+    public IGuiFragmentManager getGuiFragmentManager() {
+        return guiFragmentManager;
+    }
+
+    public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
+        this.guiFragmentManager = guiFragmentManager;
+    }
+
+    public IDtoBuilder<WidgetType, WidgetDto> getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(IDtoBuilder<WidgetType, WidgetDto> dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
     }
 
 }

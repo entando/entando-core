@@ -113,6 +113,8 @@
     <bean id="WidgetService" class="org.entando.entando.aps.system.services.widgettype.WidgetService" >
         <property name="dtoBuilder" ref="WidgetDtoBuilder" />
         <property name="widgetManager" ref="WidgetTypeManager" />
+        <property name="pageManager" ref="PageManager" />
+        <property name="guiFragmentManager" ref="GuiFragmentManager" />
     </bean>
 
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >

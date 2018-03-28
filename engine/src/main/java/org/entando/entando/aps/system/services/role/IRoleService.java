@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.role;
 
 import com.agiletec.aps.system.services.authorization.model.UserDto;
+import org.entando.entando.aps.system.services.role.model.PermissionDto;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -35,4 +36,7 @@ public interface IRoleService {
 
     public PagedMetadata<UserDto> getRoleReferences(String roleCode, RestListRequest requestList);
 
+    public PagedMetadata<PermissionDto> getPermissions(RestListRequest requestList);
+
 }
+

@@ -23,11 +23,11 @@ import org.hibernate.validator.constraints.NotBlank;
 public class RoleRequest {
 
     @Size(max = 20, message = "string.size.invalid")
-    @NotBlank(message = "group.code.notBlank")
+    @NotBlank(message = "role.code.notBlank")
     private String code;
 
     @Size(max = 50, message = "string.size.invalid")
-    @NotBlank(message = "group.code.notBlank")
+    @NotBlank(message = "role.name.notBlank")
     private String name;
 
     private Map<String, Boolean> permissions = new HashMap<>();

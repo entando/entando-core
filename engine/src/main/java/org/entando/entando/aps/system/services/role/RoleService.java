@@ -17,15 +17,21 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationService;
 import com.agiletec.aps.system.services.authorization.model.UserDto;
 import com.agiletec.aps.system.services.role.IRoleManager;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
+import org.entando.entando.aps.system.services.DtoBuilder;
+import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.role.model.PermissionDto;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.Filter;
@@ -39,13 +45,17 @@ import org.springframework.validation.BeanPropertyBindingResult;
 
 public class RoleService implements IRoleService {
 
-    private static final Object KEY_FILTER_CODE = "code";
-    private static final Object KEY_FILTER_DESCR = "name";
+    private static final String KEY_FILTER_ROLE_CODE = "code";
+    private static final String KEY_FILTER_ROLE_DESCR = "name";
+
+    private static final String KEY_FILTER_PERMISSION_CODE = "code";
+    private static final String KEY_FILTER_PERMISSION_DESCR = "descr";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IRoleManager roleManager;
     private RoleDdoBuilder dtoBuilder;
+    private IDtoBuilder<Permission, PermissionDto> permissionDtoBuilder;
     private IAuthorizationService authorizationService;
 
     protected IRoleManager getRoleManager() {
@@ -72,25 +82,47 @@ public class RoleService implements IRoleService {
         this.authorizationService = authorizationService;
     }
 
+    protected IDtoBuilder<Permission, PermissionDto> getPermissionDtoBuilder() {
+        return permissionDtoBuilder;
+    }
+
+    public void setPermissionDtoBuilder(IDtoBuilder<Permission, PermissionDto> permissionDtoBuilder) {
+        this.permissionDtoBuilder = permissionDtoBuilder;
+    }
+
+    @PostConstruct
+    public void setUp() {
+        this.setPermissionDtoBuilder(new DtoBuilder<Permission, PermissionDto>() {
+
+            @Override
+            protected PermissionDto toDto(Permission src) {
+                PermissionDto dto = new PermissionDto();
+                dto.setCode(src.getName());
+                dto.setDescr(src.getDescription());
+                return dto;
+            }
+        });
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public PagedMetadata<RoleDto> getRoles(RestListRequest restRequest) {
         List<Role> roles = this.getRoleManager().getRoles();
-        roles = sortList(restRequest, roles);
+        roles = sortRoleList(restRequest, roles);
 
         if (null != restRequest.getFilter()) {
 
             for (Filter f : restRequest.getFilter()) {
-                if (f.getAttributeName().equals(KEY_FILTER_CODE)) {
+                if (f.getAttributeName().equals(KEY_FILTER_ROLE_CODE)) {
                     roles = roles
                                  .stream()
-                                 .filter(i -> i.getName().toLowerCase().contains(f.getValue()))
+                                 .filter(i -> i.getName().toLowerCase().contains(f.getValue().toLowerCase()))
                                  .collect(Collectors.toList());
                 }
-                if (f.getAttributeName().equals(KEY_FILTER_DESCR)) {
+                if (f.getAttributeName().equals(KEY_FILTER_ROLE_DESCR)) {
                     roles = roles
                                  .stream()
-                                 .filter(i -> i.getDescription().toLowerCase().contains(f.getValue()))
+                                 .filter(i -> i.getDescription().toLowerCase().contains(f.getValue().toLowerCase()))
                                  .collect(Collectors.toList());
                 }
             }
@@ -100,6 +132,38 @@ public class RoleService implements IRoleService {
         List<RoleDto> dtoSlice = this.getDtoBuilder().convert(subList);
         SearcherDaoPaginatedResult<RoleDto> paginatedResult = new SearcherDaoPaginatedResult(roles.size(), dtoSlice);
         PagedMetadata<RoleDto> pagedMetadata = new PagedMetadata<>(restRequest, paginatedResult);
+        pagedMetadata.setBody(dtoSlice);
+        return pagedMetadata;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public PagedMetadata<PermissionDto> getPermissions(RestListRequest requestList) {
+        List<Permission> permissions = this.getRoleManager().getPermissions();
+        permissions = sortPermissionList(requestList, permissions);
+
+        if (null != requestList.getFilter()) {
+
+            for (Filter f : requestList.getFilter()) {
+                if (f.getAttributeName().equals(KEY_FILTER_PERMISSION_CODE)) {
+                    permissions = permissions
+                                 .stream()
+                                             .filter(i -> i.getName().toLowerCase().contains(f.getValue().toLowerCase()))
+                                 .collect(Collectors.toList());
+                }
+                if (f.getAttributeName().equals(KEY_FILTER_PERMISSION_DESCR)) {
+                    permissions = permissions
+                                 .stream()
+                                             .filter(i -> i.getDescription().toLowerCase().contains(f.getValue().toLowerCase()))
+                                 .collect(Collectors.toList());
+                }
+            }
+        }
+
+        List<Permission> subList = requestList.getSublist(permissions);
+        List<PermissionDto> dtoSlice = this.getPermissionDtoBuilder().convert(subList);
+        SearcherDaoPaginatedResult<PermissionDto> paginatedResult = new SearcherDaoPaginatedResult(permissions.size(), dtoSlice);
+        PagedMetadata<PermissionDto> pagedMetadata = new PagedMetadata<>(requestList, paginatedResult);
         pagedMetadata.setBody(dtoSlice);
         return pagedMetadata;
     }
@@ -243,8 +307,8 @@ public class RoleService implements IRoleService {
         return role;
     }
 
-    protected List<Role> sortList(RestListRequest restRequest, List<Role> roles) {
-        if (restRequest.getSort().equals(KEY_FILTER_DESCR)) {
+    protected List<Role> sortRoleList(RestListRequest restRequest, List<Role> roles) {
+        if (restRequest.getSort().equals(KEY_FILTER_ROLE_DESCR)) {
             if (restRequest.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
                 roles = roles.stream().sorted(Comparator.comparing(Role::getDescription).reversed()).collect(Collectors.toList());
             } else {
@@ -260,9 +324,27 @@ public class RoleService implements IRoleService {
         return roles;
     }
 
+    protected List<Permission> sortPermissionList(RestListRequest restRequest, List<Permission> permissions) {
+        if (restRequest.getSort().equals(KEY_FILTER_PERMISSION_DESCR)) {
+            if (restRequest.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+                permissions = permissions.stream().sorted(Comparator.comparing(Permission::getDescription).reversed()).collect(Collectors.toList());
+            } else {
+                permissions = permissions.stream().sorted(Comparator.comparing(Permission::getName)).collect(Collectors.toList());
+            }
+        } else {
+            if (restRequest.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+                permissions = permissions.stream().sorted(Comparator.comparing(Permission::getDescription).reversed()).collect(Collectors.toList());
+            } else {
+                permissions = permissions.stream().sorted(Comparator.comparing(Permission::getName)).collect(Collectors.toList());
+            }
+        }
+        return permissions;
+    }
+
     protected List<UserDto> userReferences(String code) throws ApsSystemException {
         return this.getAuthorizationService().getRoleUtilizer(code);
 
     }
+
 
 }

@@ -81,6 +81,7 @@ public class UserController {
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUsers(RestListRequest requestList) {
+        logger.debug("getting users details with request {}", requestList);
         PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
@@ -88,6 +89,7 @@ public class UserController {
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUser(@PathVariable String username) {
+        logger.debug("getting user {} details", username);
         UserDto user = this.getUserService().getUser(username);
         return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
     }
@@ -95,6 +97,7 @@ public class UserController {
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUser(@PathVariable String username, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
+        logger.debug("updating user {} with request {}", username, userRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -115,6 +118,7 @@ public class UserController {
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
+        logger.debug("changing pasword for user {} with request {}", username, passwordRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -135,6 +139,7 @@ public class UserController {
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
+        logger.debug("adding user with request {}", userRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -146,7 +151,7 @@ public class UserController {
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteUser(@PathVariable String username) throws ApsSystemException {
-        logger.info("deleting {}", username);
+        logger.debug("deleting {}", username);
         this.getUserService().removeUser(username);
         Map<String, String> result = new HashMap<>();
         result.put("code", username);

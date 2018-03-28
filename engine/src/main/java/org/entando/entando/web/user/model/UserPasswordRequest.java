@@ -52,4 +52,9 @@ public class UserPasswordRequest {
         this.newPassword = newPassword;
     }
 
+    @Override
+    public String toString() {
+        return "UserPasswordRequest{" + "username=" + username + ", oldPassword=....., newPassword=.....}";
+    }
+
 }

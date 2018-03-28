@@ -15,6 +15,7 @@ package org.entando.entando.web.user.model;
 
 import javax.validation.constraints.Size;
 import org.entando.entando.aps.system.services.user.IUserService;
+import org.entando.entando.web.common.annotation.ValidateString;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -25,8 +26,8 @@ public class UserRequest {
 
     @NotBlank(message = "user.username.NotBlank")
     private String username;
+    @ValidateString(acceptedValues = {IUserService.STATUS_ACTIVE, IUserService.STATUS_DISABLED}, message = "user.status.invalid")
     private String status = IUserService.STATUS_DISABLED;
-    private boolean passwordChangeRequired = true;
     @NotBlank(message = "user.password.NotBlank")
     @Size(min = 6, message = "user.password.size")
     private String password;
@@ -47,20 +48,17 @@ public class UserRequest {
         this.status = status;
     }
 
-    public boolean isPasswordChangeRequired() {
-        return passwordChangeRequired;
-    }
-
-    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
-        this.passwordChangeRequired = passwordChangeRequired;
-    }
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRequest{" + "username=" + username + ", status=" + status + ", password=....}";
     }
 
 }

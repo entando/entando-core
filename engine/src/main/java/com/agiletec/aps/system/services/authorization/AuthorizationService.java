@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.model.UserDto;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
@@ -16,6 +15,8 @@ import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
+import org.entando.entando.aps.system.services.user.model.UserDto;
+import org.entando.entando.aps.system.services.user.model.UserDtoBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,25 +53,7 @@ public class AuthorizationService implements GroupServiceUtilizer<UserDto> {
 
     @PostConstruct
     public void setUp() {
-        setDtoBuilder(new DtoBuilder<UserDetails, UserDto>() {
-            @Override
-            protected UserDto toDto(UserDetails src) {
-                UserDto dto = new UserDto();
-                if (src.isEntandoUser()) {
-
-                    dto.setRegistrationDate(((User) src).getCreationDate());
-                    dto.setLastAccess(((User) src).getLastAccess());
-                    dto.setLastPasswordChange(((User) src).getLastPasswordChange());
-                    dto.setMaxMonthsSinceLastAccess(((User) src).getMaxMonthsSinceLastAccess());
-                    dto.setMaxMonthsSinceLastPasswordChange(((User) src).getMaxMonthsSinceLastPasswordChange());
-
-                }
-                dto.setDisabled(src.isDisabled());
-                dto.setAccountNotExpired(src.isAccountNotExpired());
-                dto.setCredentialsNotExpired(src.isCredentialsNotExpired());
-                return dto;
-            }
-        });
+        setDtoBuilder(new UserDtoBuilder());
     }
 
     @Override
@@ -100,6 +83,5 @@ public class AuthorizationService implements GroupServiceUtilizer<UserDto> {
             throw new RestServerError("Error loading user references for group", ex);
         }
     }
-
 
 }

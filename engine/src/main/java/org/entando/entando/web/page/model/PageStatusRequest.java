@@ -21,7 +21,7 @@ import org.entando.entando.web.common.annotation.ValidateString;
  */
 public class PageStatusRequest {
 
-    @ValidateString(acceptedValues = {"draft", "published"}, message = "{page.status.invalid}")
+    @ValidateString(acceptedValues = {"draft", "published"}, message = "page.status.invalid")
     private String status;
 
     public String getStatus() {

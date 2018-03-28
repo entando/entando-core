@@ -29,17 +29,24 @@ public class UserDto {
     private Date lastLogin;
     private Date lastPasswordChange;
     private String status;
-    private boolean passwordChangeRequired = false;
+    private boolean accountNotExpired;
+    private boolean credentialsNotExpired;
+
+    private int maxMonthsSinceLastAccess;
+    private int maxMonthsSinceLastPasswordChange;
 
     public UserDto(UserDetails user) {
         this.username = user.getUsername();
+        this.status = user.isDisabled() ? IUserService.STATUS_DISABLED : IUserService.STATUS_ACTIVE;
+        this.accountNotExpired = user.isAccountNotExpired();
+        this.credentialsNotExpired = user.isCredentialsNotExpired();
         if (user.isEntandoUser()) {
             User entandoUser = (User) user;
             this.registration = entandoUser.getCreationDate();
             this.lastLogin = entandoUser.getLastAccess();
             this.lastPasswordChange = entandoUser.getLastPasswordChange();
-            this.status = entandoUser.isDisabled() ? IUserService.STATUS_DISABLED : IUserService.STATUS_ACTIVE;
-            this.passwordChangeRequired = !(entandoUser.isAccountNotExpired() || entandoUser.isCredentialsNotExpired() || entandoUser.isDisabled());
+            this.maxMonthsSinceLastAccess = entandoUser.getMaxMonthsSinceLastAccess();
+            this.maxMonthsSinceLastPasswordChange = entandoUser.getMaxMonthsSinceLastPasswordChange();
         }
     }
 
@@ -83,12 +90,36 @@ public class UserDto {
         this.status = status;
     }
 
-    public boolean isPasswordChangeRequired() {
-        return passwordChangeRequired;
+    public boolean isAccountNotExpired() {
+        return accountNotExpired;
     }
 
-    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
-        this.passwordChangeRequired = passwordChangeRequired;
+    public void setAccountNotExpired(boolean accountNotExpired) {
+        this.accountNotExpired = accountNotExpired;
+    }
+
+    public boolean isCredentialsNotExpired() {
+        return credentialsNotExpired;
+    }
+
+    public void setCredentialsNotExpired(boolean credentialsNotExpired) {
+        this.credentialsNotExpired = credentialsNotExpired;
+    }
+
+    public int getMaxMonthsSinceLastAccess() {
+        return maxMonthsSinceLastAccess;
+    }
+
+    public void setMaxMonthsSinceLastAccess(int maxMonthsSinceLastAccess) {
+        this.maxMonthsSinceLastAccess = maxMonthsSinceLastAccess;
+    }
+
+    public int getMaxMonthsSinceLastPasswordChange() {
+        return maxMonthsSinceLastPasswordChange;
+    }
+
+    public void setMaxMonthsSinceLastPasswordChange(int maxMonthsSinceLastPasswordChange) {
+        this.maxMonthsSinceLastPasswordChange = maxMonthsSinceLastPasswordChange;
     }
 
     public static String getEntityFieldName(String dtoFieldName) {

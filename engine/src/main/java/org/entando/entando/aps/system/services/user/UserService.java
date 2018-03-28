@@ -216,8 +216,7 @@ public class UserService implements IUserService {
         User user = new User();
         user.setUsername(userRequest.getUsername());
         user.setPassword(userRequest.getPassword());
-        user.setDisabled(userRequest.getStatus() != null && !userRequest.getStatus().equals(IUserService.STATUS_ACTIVE)
-                && userRequest.isPasswordChangeRequired());
+        user.setDisabled(userRequest.getStatus() != null && !userRequest.getStatus().equals(IUserService.STATUS_ACTIVE));
         if (oldUser.isEntandoUser()) {
             User userToClone = (User) oldUser;
             user.setLastAccess(userToClone.getLastAccess());
@@ -230,8 +229,7 @@ public class UserService implements IUserService {
         User user = new User();
         user.setUsername(userRequest.getUsername());
         user.setPassword(userRequest.getPassword());
-        user.setDisabled(userRequest.getStatus() != null && !userRequest.getStatus().equals(IUserService.STATUS_ACTIVE)
-                && userRequest.isPasswordChangeRequired());
+        user.setDisabled(userRequest.getStatus() != null && !userRequest.getStatus().equals(IUserService.STATUS_ACTIVE));
         return user;
     }
 }

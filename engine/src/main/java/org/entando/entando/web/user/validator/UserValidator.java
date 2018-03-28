@@ -124,15 +124,17 @@ public class UserValidator implements Validator {
 
     public void validatePassword(String username, String password, Errors errors) {
         if (!this.verifyPassword(username, password)) {
-            errors.rejectValue("oldPassword", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
+            errors.rejectValue("password", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.invalid");
         }
     }
 
     public void validatePasswords(UserPasswordRequest passwordRequest, Errors errors) {
         if (StringUtils.equals(passwordRequest.getNewPassword(), passwordRequest.getOldPassword())) {
-            errors.rejectValue("oldPassword", UserController.ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
+            errors.rejectValue("newPassword", UserController.ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
         } else {
-            this.validatePassword(passwordRequest.getUsername(), passwordRequest.getOldPassword(), errors);
+            if (!this.verifyPassword(passwordRequest.getUsername(), passwordRequest.getOldPassword())) {
+                errors.rejectValue("oldPassword", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
+            }
         }
     }
 

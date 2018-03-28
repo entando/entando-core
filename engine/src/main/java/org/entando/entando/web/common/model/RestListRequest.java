@@ -212,5 +212,9 @@ public class RestListRequest {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "RestListRequest{" + "sort=" + sort + ", direction=" + direction + ", page=" + page + ", pageSize=" + pageSize + ", filter=" + Arrays.toString(filter) + '}';
+    }
 
 }

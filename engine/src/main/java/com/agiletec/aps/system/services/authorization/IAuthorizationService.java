@@ -14,8 +14,7 @@
 package com.agiletec.aps.system.services.authorization;
 
 import java.util.List;
-
-import com.agiletec.aps.system.services.authorization.model.UserDto;
+import org.entando.entando.aps.system.services.user.model.UserDto;
 
 public interface IAuthorizationService {
 

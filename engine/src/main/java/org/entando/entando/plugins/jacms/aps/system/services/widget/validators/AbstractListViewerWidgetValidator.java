@@ -4,7 +4,7 @@ import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import org.entando.entando.aps.system.exception.RestServerError;
-import org.entando.entando.aps.system.services.widget.validators.WidgetConfigurationValidator;
+import org.entando.entando.aps.system.services.widgettype.validators.WidgetConfigurationValidator;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

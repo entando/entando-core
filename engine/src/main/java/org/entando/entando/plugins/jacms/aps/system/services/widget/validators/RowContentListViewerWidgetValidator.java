@@ -11,7 +11,7 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModel
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
-import org.entando.entando.aps.system.services.widget.validators.WidgetConfigurationValidator;
+import org.entando.entando.aps.system.services.widgettype.validators.WidgetConfigurationValidator;
 import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;

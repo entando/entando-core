@@ -11,23 +11,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.widget;
+package org.entando.entando.aps.system.services.widgettype;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-import org.entando.entando.aps.system.services.widget.model.WidgetDto;
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -40,7 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 
 @Service
-public class WidgetService implements IWidgetService {
+public class WidgetService implements IWidgetService, GroupServiceUtilizer<WidgetDto> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -188,6 +189,22 @@ public class WidgetService implements IWidgetService {
             bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_USED_WIDGET, new String[]{widgetType.getCode()}, widgetType.getCode() + " cannot be deleted because it is referenced in use");
         }
         return bindingResult;
+    }
+
+    @Override
+    public String getManagerName() {
+        return ((IManager) this.getWidgetManager()).getName();
+    }
+
+    @Override
+    public List<WidgetDto> getGroupUtilizer(String groupCode) {
+        try {
+            List<WidgetType> list = ((GroupUtilizer<WidgetType>) this.getWidgetManager()).getGroupUtilizers(groupCode);
+            return this.getDtoBuilder().convert(list);
+        } catch (ApsSystemException ex) {
+            logger.error("Error loading WidgetType references for group {}", groupCode, ex);
+            throw new RestServerError("Error loading WidgetType references for group", ex);
+        }
     }
 
 }

@@ -11,8 +11,8 @@ import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.widget.validators.WidgetConfigurationProcessor;
-import org.entando.entando.aps.system.services.widget.validators.WidgetConfigurationValidator;
+import org.entando.entando.aps.system.services.widgettype.validators.WidgetConfigurationProcessor;
+import org.entando.entando.aps.system.services.widgettype.validators.WidgetConfigurationValidator;
 import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 

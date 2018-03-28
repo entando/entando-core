@@ -11,8 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.widget.model;
+package org.entando.entando.aps.system.services.widgettype.model;
 
+import org.entando.entando.aps.system.services.widget.model.*;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import java.util.Hashtable;

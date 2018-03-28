@@ -11,8 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.widget.model;
+package org.entando.entando.aps.system.services.widgettype.model;
 
+import org.entando.entando.aps.system.services.widget.model.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -91,7 +91,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             result.andExpect(status().isOk());
 
             System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(jsonPath("$.metaData.pageSize", is(1)));
+            result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(7)));
             result.andExpect(jsonPath("$.metaData.lastPage", is(7)));
@@ -241,10 +241,9 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
-                                               get("/groups/{code}", Group.FREE_GROUP_NAME)
-
-                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                           .header("Authorization", "Bearer " + accessToken));
+                get("/groups/{code}", Group.FREE_GROUP_NAME)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken));
 
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
@@ -252,25 +251,20 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
         String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
 
-
-
-
-
         for (String managerName : managers) {
 
             result = mockMvc.perform(
-                                     get(
-                                         "/groups/{code}/references/{manager}",
-                                         Group.FREE_GROUP_NAME, managerName)
-                                                                            .param("page", "1")
-                                                                            .param("pageSize", "3")
-                                                                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                            .header("Authorization", "Bearer " + accessToken));
+                    get(
+                            "/groups/{code}/references/{manager}",
+                            Group.FREE_GROUP_NAME, managerName)
+                    .param("page", "1")
+                    .param("pageSize", "3")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .header("Authorization", "Bearer " + accessToken));
 
         }
 
     }
-
 
     @Test
     public void testParamSize() throws ApsSystemException, Exception {

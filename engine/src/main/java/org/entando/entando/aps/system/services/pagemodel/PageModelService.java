@@ -122,7 +122,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         try {
             PageModel pageModel = this.getPageModelManager().getPageModel(pageModelRequest.getCode());
             if (null == pageModel) {
-                throw new RestRourceNotFoundException(null, "pageModel", pageModelRequest.getCode());
+                throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelRequest.getCode());
             }
             this.copyProperties(pageModelRequest, pageModel);
             this.getPageModelManager().updatePageModel(pageModel);

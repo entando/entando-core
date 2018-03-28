@@ -40,7 +40,7 @@ public class PagedMetadata<T> {
             req.setPageSize(result.getCount());
         }
         this.page = req.getPage();
-        this.pageSize = req.getPageSize();//result.getList().size();
+        this.pageSize = req.getPageSize();
         Double pages = Math.ceil(new Double(result.getCount()) / new Double(req.getPageSize()));
         this.lastPage = pages.intValue();
         this.totalItems = result.getCount();

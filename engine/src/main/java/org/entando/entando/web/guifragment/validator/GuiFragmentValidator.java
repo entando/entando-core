@@ -16,7 +16,7 @@ package org.entando.entando.web.guifragment.validator;
 import org.apache.commons.lang.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
-public class GuiFragmentValidator extends AbstractValidator {
+public class GuiFragmentValidator extends AbstractPaginationValidator {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -13,7 +13,7 @@
  */
 package org.entando.entando.web.database.validator;
 
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
@@ -21,7 +21,7 @@ import org.springframework.validation.Errors;
  * @author E.Santoboni
  */
 @Component
-public class DatabaseValidator extends AbstractValidator {
+public class DatabaseValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_NO_DUMP_FOUND = "1";
     public static final String ERRCODE_NO_TABLE_DUMP_FOUND = "1";

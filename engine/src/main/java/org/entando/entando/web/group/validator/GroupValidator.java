@@ -15,14 +15,14 @@ package org.entando.entando.web.group.validator;
 
 import com.agiletec.aps.system.services.group.IGroupManager;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.group.model.GroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
-public class GroupValidator extends AbstractValidator {
+public class GroupValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_GROUP_NOT_FOUND = "1";
     public static final String ERRCODE_GROUP_ALREADY_EXISTS = "2";

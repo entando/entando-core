@@ -90,7 +90,7 @@ public class RoleController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{roleCode}/references", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{roleCode}/userreferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getRoleReferences(@PathVariable String roleCode, RestListRequest requestList) {
         PagedMetadata<UserDto> result = this.getRoleService().getRoleReferences(roleCode, requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);

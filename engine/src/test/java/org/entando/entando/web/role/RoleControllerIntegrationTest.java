@@ -113,12 +113,12 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testGetRoleReferences() throws Exception {
+    public void testGetRoleUserReferences() throws Exception {
         String code = "editor";
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/roles/{rolecode}/references", code)
+                                      .perform(get("/roles/{rolecode}/userreferences", code)
 
                                                                                         .header("Authorization", "Bearer " + accessToken));
         //System.out.println(result.andReturn().getResponse().getContentAsString());

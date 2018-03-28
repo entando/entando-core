@@ -1,16 +1,3 @@
-package org.entando.entando.web.permission;
-
-import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.web.AbstractControllerIntegrationTest;
-import org.entando.entando.web.utils.OAuth2TestUtils;
-import org.junit.Test;
-import org.springframework.test.web.servlet.ResultActions;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 /*
  * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
@@ -24,6 +11,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+package org.entando.entando.web.permission;
+
+import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.junit.Test;
+import org.springframework.test.web.servlet.ResultActions;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 public class PermissionControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
 

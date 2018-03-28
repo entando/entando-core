@@ -14,12 +14,12 @@
 package org.entando.entando.web.role.validator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.role.model.RoleRequest;
 import org.springframework.validation.Errors;
 
 
-public class RoleValidator extends AbstractValidator {
+public class RoleValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_ROLE_NOT_FOUND = "1";
     public static final String ERRCODE_ROLE_ALREADY_EXISTS = "2";

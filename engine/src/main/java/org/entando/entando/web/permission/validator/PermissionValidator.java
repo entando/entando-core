@@ -13,11 +13,11 @@
  */
 package org.entando.entando.web.permission.validator;
 
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.permission.model.PermissionRequest;
 import org.springframework.validation.Errors;
 
-public class PermissionValidator extends AbstractValidator {
+public class PermissionValidator extends AbstractPaginationValidator {
 
 
     @Override

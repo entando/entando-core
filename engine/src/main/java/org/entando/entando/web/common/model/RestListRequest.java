@@ -37,21 +37,23 @@ public class RestListRequest {
 
     private Filter[] filters;
 
-	/**
-	 * Return the filters.
-	 * @return the filters.
-	 * @deprecated Wrong name for an array, use getFilters method.
-	 */
+    /**
+     * Return the filters.
+     *
+     * @return the filters.
+     * @deprecated Wrong name for an array, use getFilters method.
+     */
     @Deprecated
     public Filter[] getFilter() {
         return this.getFilters();
     }
 
-	/**
-	 * Set the filters
-	 * @param filters the filters to set.
-	 * @deprecated Wrong name for an array, use setFilters method 
-	 */
+    /**
+     * Set the filters
+     *
+     * @param filters the filters to set.
+     * @deprecated Wrong name for an array, use setFilters method
+     */
     @Deprecated
     public void setFilter(Filter[] filters) {
         this.setFilters(filters);
@@ -226,8 +228,9 @@ public class RestListRequest {
         }
         return true;
     }
+
     @Override
     public String toString() {
-        return "RestListRequest{" + "sort=" + sort + ", direction=" + direction + ", page=" + page + ", pageSize=" + pageSize + ", filter=" + Arrays.toString(filter) + '}';
+        return "RestListRequest{" + "sort=" + sort + ", direction=" + direction + ", page=" + page + ", pageSize=" + pageSize + ", filter=" + Arrays.toString(filters) + '}';
     }
 }

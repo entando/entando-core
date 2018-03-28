@@ -50,8 +50,6 @@ public class CategoryValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        //CategoryDto request = (CategoryDto) target;
-        //this.validateBody(request, errors);
     }
 
     public void validatePutReferences(String categoryCode, CategoryDto request, BindingResult bindingResult) {
@@ -84,19 +82,6 @@ public class CategoryValidator implements Validator {
         }
     }
 
-    /*
-    public void validateBody(CategoryDto request, Errors errors) {
-        if (StringUtils.isBlank(request.getCode())) {
-            errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.code.notBlank");
-        }
-        if (StringUtils.isBlank(request.getParentCode())) {
-            errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.description.notBlank");
-        }
-        if (null == request.getTitles() || request.getTitles().isEmpty()) {
-            errors.reject(ERRCODE_CATEGORY_VALIDATION, new String[]{}, "category.titles.notBlank");
-        }
-    }
-     */
     public ICategoryManager getCategoryManager() {
         return categoryManager;
     }

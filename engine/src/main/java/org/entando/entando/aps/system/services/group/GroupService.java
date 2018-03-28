@@ -82,9 +82,9 @@ public class GroupService implements IGroupService, ApplicationContextAware {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             List<FieldSearchFilter> filters = new ArrayList<FieldSearchFilter>(restListReq.buildFieldSearchFilters());
             filters
-            .stream()
-            .filter(i -> i.getKey() != null)
-            .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
+                    .stream()
+                    .filter(i -> i.getKey() != null)
+                    .forEach(i -> i.setKey(GroupDto.getEntityFieldName(i.getKey())));
 
             SearcherDaoPaginatedResult<Group> groups = this.getGroupManager().getGroups(filters);
             List<GroupDto> dtoList = dtoBuilder.convert(groups.getList());
@@ -243,8 +243,8 @@ public class GroupService implements IGroupService, ApplicationContextAware {
     private GroupServiceUtilizer<?> getGroupServiceUtilizer(String managerName) {
         Map<String, GroupServiceUtilizer> beans = applicationContext.getBeansOfType(GroupServiceUtilizer.class);
         Optional<GroupServiceUtilizer> defName = beans.values().stream()
-                                               .filter(service -> service.getManagerName().equals(managerName))
-                                                      .findFirst();
+                .filter(service -> service.getManagerName().equals(managerName))
+                .findFirst();
         if (defName.isPresent()) {
             return defName.get();
         }

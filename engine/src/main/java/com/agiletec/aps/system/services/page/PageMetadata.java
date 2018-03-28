@@ -20,14 +20,16 @@ import java.util.TreeSet;
 
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This is the representation of a portal page metadata
+ *
  * @author E.Mezzano, spuddu
  */
-public class PageMetadata implements Cloneable {
+public class PageMetadata implements Cloneable, Serializable {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -58,9 +60,10 @@ public class PageMetadata implements Cloneable {
     }
 
     /**
-     * Set the titles of the node. 
-     * @param titles A set of properties with the titles, 
-     * where the keys are the codes of language.
+     * Set the titles of the node.
+     *
+     * @param titles A set of properties with the titles, where the keys are the
+     * codes of language.
      */
     public void setTitles(ApsProperties titles) {
         this.titles = titles;
@@ -72,6 +75,7 @@ public class PageMetadata implements Cloneable {
 
     /**
      * Return the related model of page
+     *
      * @return the page model
      */
     public PageModel getModel() {
@@ -81,6 +85,7 @@ public class PageMetadata implements Cloneable {
     /**
      * WARNING: This method is for the page manager service only exclusive use
      * Assign the given page model to the current object
+     *
      * @param pageModel the model of the page to assign
      */
     public void setModel(PageModel pageModel) {
@@ -97,19 +102,22 @@ public class PageMetadata implements Cloneable {
     }
 
     /**
-     * WARING: this method is reserved to the page manager service only.
-     * This returns a boolean values indicating whether the page is
-     * displayed in the menus or similar.
-     * @return true if the page must be shown in the menu, false otherwise. 
+     * WARING: this method is reserved to the page manager service only. This
+     * returns a boolean values indicating whether the page is displayed in the
+     * menus or similar.
+     *
+     * @return true if the page must be shown in the menu, false otherwise.
      */
     public boolean isShowable() {
         return showable;
     }
 
     /**
-     * WARING: this method is reserved to the page manager service only.
-     * Toggle the visibility of the current page in the menu or similar.
-     * @param showable a boolean which toggles the visibility on when true, off otherwise.
+     * WARING: this method is reserved to the page manager service only. Toggle
+     * the visibility of the current page in the menu or similar.
+     *
+     * @param showable a boolean which toggles the visibility on when true, off
+     * otherwise.
      */
     public void setShowable(boolean showable) {
         this.showable = showable;
@@ -148,14 +156,16 @@ public class PageMetadata implements Cloneable {
     }
 
     public void addExtraGroup(String groupName) {
-        if (null == this.getExtraGroups())
+        if (null == this.getExtraGroups()) {
             this.setExtraGroups(new HashSet<String>());
+        }
         this.getExtraGroups().add(groupName);
     }
 
     public void removeExtraGroup(String groupName) {
-        if (null == this.getExtraGroups())
+        if (null == this.getExtraGroups()) {
             return;
+        }
         this.getExtraGroups().remove(groupName);
     }
 
@@ -216,58 +226,75 @@ public class PageMetadata implements Cloneable {
         if (equalConf) {
             PageMetadata other = (PageMetadata) obj;
             if (updatedAt == null) {
-                if (other.updatedAt != null)
+                if (other.updatedAt != null) {
                     return false;
-            } else if (!updatedAt.equals(other.updatedAt))
+                }
+            } else if (!updatedAt.equals(other.updatedAt)) {
                 return false;
+            }
         }
         return equalConf;
     }
 
     /**
      * all but lastUpdate
+     *
      * @param obj
      * @return
      */
     public boolean hasEqualConfiguration(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PageMetadata other = (PageMetadata) obj;
         if (charset == null) {
-            if (other.charset != null)
+            if (other.charset != null) {
                 return false;
-        } else if (!charset.equals(other.charset))
+            }
+        } else if (!charset.equals(other.charset)) {
             return false;
+        }
         if (extraGroups == null) {
-            if (other.extraGroups != null)
+            if (other.extraGroups != null) {
                 return false;
-        } else if (!extraGroups.equals(other.extraGroups))
+            }
+        } else if (!extraGroups.equals(other.extraGroups)) {
             return false;
+        }
         if (mimeType == null) {
-            if (other.mimeType != null)
+            if (other.mimeType != null) {
                 return false;
-        } else if (!mimeType.equals(other.mimeType))
+            }
+        } else if (!mimeType.equals(other.mimeType)) {
             return false;
+        }
         if (model == null) {
-            if (other.model != null)
+            if (other.model != null) {
                 return false;
-        } else if (!model.equals(other.model))
+            }
+        } else if (!model.equals(other.model)) {
             return false;
-        if (showable != other.showable)
+        }
+        if (showable != other.showable) {
             return false;
+        }
         if (titles == null) {
-            if (other.titles != null)
+            if (other.titles != null) {
                 return false;
-        } else if (!titles.equals(other.titles))
+            }
+        } else if (!titles.equals(other.titles)) {
             return false;
-        if (useExtraTitles != other.useExtraTitles)
+        }
+        if (useExtraTitles != other.useExtraTitles) {
             return false;
+        }
         return true;
     }
-
 
 }

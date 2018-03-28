@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -39,6 +39,7 @@ public class PageDto {
     private String parentCode;
     private boolean seo;
     private Map<String, String> titles = new HashMap<>();
+    private Map<String, String> fullTitles = new HashMap<>();
     private String ownerGroup;
     private List<String> joinGroups = new ArrayList<>();
     private List<String> children = new ArrayList<>();
@@ -57,8 +58,12 @@ public class PageDto {
         this.setParentCode(page.getParentCode());
         this.setSeo(page.isUseExtraTitles());
         Optional<ApsProperties> apsTitles = Optional.ofNullable(page.getTitles());
-        apsTitles.ifPresent(values -> values.keySet().forEach((lang)
-                -> this.titles.put((String) lang, (String) values.get(lang))));
+        apsTitles.ifPresent(values -> values.keySet().forEach(lang
+                -> {
+            this.getTitles().put((String) lang, (String) values.get(lang));
+            this.getFullTitles().put((String) lang, (String) page.getFullTitle((String) lang));
+        }
+        ));
         this.setOwnerGroup(page.getGroup());
         Optional<Set<String>> groups = Optional.ofNullable(page.getExtraGroups());
         groups.ifPresent(values -> values.forEach((group) -> this.joinGroups.add(group)));
@@ -139,8 +144,12 @@ public class PageDto {
         this.titles = titles;
     }
 
-    public void addTitle(String lang, String title) {
-        this.titles.put(lang, title);
+    public Map<String, String> getFullTitles() {
+        return fullTitles;
+    }
+
+    public void setFullTitles(Map<String, String> fullTitles) {
+        this.fullTitles = fullTitles;
     }
 
     public String getOwnerGroup() {

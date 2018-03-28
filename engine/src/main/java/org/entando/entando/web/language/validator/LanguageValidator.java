@@ -21,8 +21,8 @@ import org.springframework.validation.Errors;
 @Component
 public class LanguageValidator extends AbstractPaginationValidator {
 
-    public static final String ERRCODE_LANGUAGE_DOES_NOT_EXISTS = "1";
-    public static final String ERRCODE_LANGUAGE_CANNOT_DISABLE_DEFAULT = "2";
+    public static final String ERRCODE_LANGUAGE_CANNOT_DISABLE_DEFAULT = "1";
+    public static final String ERRCODE_LANGUAGE_DOES_NOT_EXISTS = "2";
 
     @Override
     public boolean supports(Class<?> paramClass) {

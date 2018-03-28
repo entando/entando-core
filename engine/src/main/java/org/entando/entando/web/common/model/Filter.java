@@ -15,6 +15,7 @@ package org.entando.entando.web.common.model;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.FieldSearchFilter.LikeOptionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class Filter {
@@ -64,6 +65,7 @@ public class Filter {
         return this.getAttribute();
     }
 
+    @JsonIgnore
     @SuppressWarnings("rawtypes")
     public FieldSearchFilter getFieldSearchFilter() {
         FieldSearchFilter filter = new FieldSearchFilter(StringEscapeUtils.escapeSql(this.getAttributeName()), StringEscapeUtils.escapeSql(this.getValue()), true, LikeOptionType.COMPLETE);

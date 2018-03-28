@@ -38,6 +38,8 @@ public class CategoryDto {
     @NotEmpty(message = "category.titles.notBlank")
     private Map<String, String> titles = new HashMap<>();
 
+    private Map<String, String> fullTitles = new HashMap<>();
+
     private List<String> children = new ArrayList<>();
     private Map<String, Boolean> references = new HashMap<>();
 
@@ -49,7 +51,11 @@ public class CategoryDto {
         this.setParentCode(page.getParentCode());
         Optional<ApsProperties> apsTitles = Optional.ofNullable(page.getTitles());
         apsTitles.ifPresent(values -> values.keySet().forEach((lang)
-                -> this.titles.put((String) lang, (String) values.get(lang))));
+                -> {
+            this.getTitles().put((String) lang, (String) values.get(lang));
+            this.getFullTitles().put((String) lang, (String) page.getFullTitle((String) lang));
+        }
+        ));
         Optional.ofNullable(page.getChildrenCodes()).
                 ifPresent(values -> Arrays.asList(values).forEach((child) -> this.children.add(child)));
     }
@@ -82,6 +88,14 @@ public class CategoryDto {
         this.titles.put(lang, title);
     }
 
+	public Map<String, String> getFullTitles() {
+		return fullTitles;
+	}
+
+	public void setFullTitles(Map<String, String> fullTitles) {
+		this.fullTitles = fullTitles;
+	}
+	
     public List<String> getChildren() {
         return children;
     }

@@ -11,13 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.group;
+package org.entando.entando.aps.system.services.category;
 
 import java.util.List;
 
-public interface GroupServiceUtilizer<T> {
+public interface CategoryServiceUtilizer<T> {
 
     public String getManagerName();
 
-    public List<T> getGroupUtilizer(String groupCode);
+    public List<T> getCategoryUtilizer(String categoryCode);
+
 }

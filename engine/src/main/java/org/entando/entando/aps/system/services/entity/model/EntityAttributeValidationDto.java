@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.entity.model;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
@@ -33,8 +34,6 @@ import org.springframework.validation.BindingResult;
  * @author E.Santoboni
  */
 public class EntityAttributeValidationDto {
-
-    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private Integer minLength;
     private Integer maxLength;
@@ -96,13 +95,13 @@ public class EntityAttributeValidationDto {
         } else if (attribute instanceof DateAttribute) {
             DateAttributeValidationRules dateValRule = (DateAttributeValidationRules) validationRules;
             if (null != dateValRule.getRangeEnd()) {
-                this.setRangeEndDate(DateConverter.getFormattedDate((Date) dateValRule.getRangeEnd(), DATE_FORMAT));
+                this.setRangeEndDate(DateConverter.getFormattedDate((Date) dateValRule.getRangeEnd(), SystemConstants.API_DATE_FORMAT));
             }
             if (null != dateValRule.getRangeEnd()) {
-                this.setRangeStartDate(DateConverter.getFormattedDate((Date) dateValRule.getRangeStart(), DATE_FORMAT));
+                this.setRangeStartDate(DateConverter.getFormattedDate((Date) dateValRule.getRangeStart(), SystemConstants.API_DATE_FORMAT));
             }
             if (null != dateValRule.getRangeEnd()) {
-                this.setEqualDate(DateConverter.getFormattedDate((Date) dateValRule.getValue(), DATE_FORMAT));
+                this.setEqualDate(DateConverter.getFormattedDate((Date) dateValRule.getValue(), SystemConstants.API_DATE_FORMAT));
             }
             this.setRangeEndDateAttribute(dateValRule.getRangeEndAttribute());
             this.setRangeStartDateAttribute(dateValRule.getRangeStartAttribute());
@@ -186,7 +185,7 @@ public class EntityAttributeValidationDto {
         if (StringUtils.isEmpty(dateString)) {
             return null;
         }
-        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+        SimpleDateFormat format = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
         Date date = null;
         try {
             date = format.parse(dateString.trim());

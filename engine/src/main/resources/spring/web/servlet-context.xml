@@ -47,14 +47,17 @@
 		<entry key="NotNull">
 			<value>51</value>
 		</entry>
-		<entry key="Size">
+		<entry key="NotBlank">
 			<value>52</value>
 		</entry>
-		<entry key="Min">
+		<entry key="NotEmpty">
 			<value>53</value>
 		</entry>
-		<entry key="NotEmpty">
+		<entry key="Size">
 			<value>54</value>
+		</entry>
+		<entry key="Min">
+			<value>55</value>
 		</entry>
 	</util:map>
 

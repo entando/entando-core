@@ -14,12 +14,12 @@
 package org.entando.entando.web.label;
 
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.web.common.validator.AbstractValidator;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
-public class LabelValidator extends AbstractValidator {
+public class LabelValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_LABELGROUP_EXISTS = "1";
 

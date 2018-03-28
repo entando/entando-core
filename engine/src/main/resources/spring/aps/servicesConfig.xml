@@ -56,7 +56,7 @@
 
     <bean id="GroupDtoBuilder" class="org.entando.entando.aps.system.services.group.model.GroupDtoBuilder" />
 
-    <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widget.model.WidgetDtoBuilder" >
+    <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widgettype.model.WidgetDtoBuilder" >
         <property name="pageManager" ref="PageManager" />
     </bean>
 
@@ -110,7 +110,7 @@
         <property name="widgetProcessorFactory" ref="WidgetProcessorFactory" />
     </bean>
 
-    <bean id="WidgetService" class="org.entando.entando.aps.system.services.widget.WidgetService" >
+    <bean id="WidgetService" class="org.entando.entando.aps.system.services.widgettype.WidgetService" >
         <property name="dtoBuilder" ref="WidgetDtoBuilder" />
         <property name="widgetManager" ref="WidgetTypeManager" />
     </bean>

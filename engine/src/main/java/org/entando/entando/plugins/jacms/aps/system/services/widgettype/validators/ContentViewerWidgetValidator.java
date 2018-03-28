@@ -1,4 +1,17 @@
-package org.entando.entando.plugins.jacms.aps.system.services.widget.validators;
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+package org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
@@ -22,7 +35,6 @@ public class ContentViewerWidgetValidator implements WidgetConfigurationValidato
 
     public static final String WIDGET_CONFIG_KEY_CONTENT_ID = "contentId";
     public static final String WIDGET_CONFIG_KEY_MODEL_ID = "modelId";
-
 
     protected IContentManager getContentManager() {
         return contentManager;
@@ -68,6 +80,5 @@ public class ContentViewerWidgetValidator implements WidgetConfigurationValidato
         WidgetValidatorCmsHelper.validateContentModel(widget.getCode(), typeCode, contentModel, this.getContentModelManager(), errors);
 
     }
-
 
 }

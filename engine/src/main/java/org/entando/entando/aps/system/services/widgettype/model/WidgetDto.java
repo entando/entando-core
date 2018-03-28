@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.widgettype.model;
 
-import org.entando.entando.aps.system.services.widget.model.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

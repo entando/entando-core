@@ -1,4 +1,17 @@
-package org.entando.entando.plugins.jacms.aps.system.services.widget.validators;
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+package org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,8 +46,8 @@ public class RowContentListViewerConfigProcessor implements WidgetConfigurationP
         if (null != entryList && !entryList.isEmpty()) {
             StringBuffer sbuffer = new StringBuffer("[");
             List<String> configTokens = entryList
-                                            .stream()
-                                            .map(i -> i.toCfg()).collect(Collectors.toList());
+                    .stream()
+                    .map(i -> i.toCfg()).collect(Collectors.toList());
             sbuffer.append(StringUtils.join(configTokens, ","));
             sbuffer.append("]");
             properties.put("contents", sbuffer.toString());
@@ -46,11 +59,12 @@ public class RowContentListViewerConfigProcessor implements WidgetConfigurationP
 
     /**
      * try to build the configuration from a complex structure or from a string
+     *
      * @param widget
      * @return
-     * @throws IOException 
-     * @throws JsonMappingException 
-     * @throws JsonParseException 
+     * @throws IOException
+     * @throws JsonMappingException
+     * @throws JsonParseException
      */
     @Override
     public ApsProperties extractConfiguration(ApsProperties widgetProperties) {

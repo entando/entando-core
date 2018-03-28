@@ -1,4 +1,17 @@
-package org.entando.entando.plugins.jacms.aps.system.services.widget.validators;
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+package org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +38,6 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
     public static final String WIDGET_CODE = "row_content_viewer_list";
 
     private static final String WIDGET_CONFIG_KEY_CONTENTS = "contents";
-
 
     private IContentManager contentManager;
     private IContentModelManager contentModelManager;
@@ -95,11 +107,9 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
         }
     }
 
-
-
-
     /**
      * try to build the configuration from a complex structure or from a string
+     *
      * @param widget
      * @return
      */
@@ -112,7 +122,7 @@ public class RowContentListViewerWidgetValidator extends AbstractListViewerWidge
                 if (null != props && !props.isEmpty()) {
                     final List<Object> validProps = new ArrayList<>();
                     props.stream().filter(i -> !i.isEmpty())
-                         .forEach(i -> validProps.add(i));
+                            .forEach(i -> validProps.add(i));
                     contents = validProps;
                 }
 

@@ -25,7 +25,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
         ResultActions result = mockMvc
                                       .perform(get(BASE_URI)
                                                             .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].id", is(1)));
 
@@ -33,7 +33,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                         .perform(get(BASE_URI)
                                               .param("direction", FieldSearchFilter.DESC_ORDER)
                                               .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].id", is(11)));
 
@@ -49,7 +49,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                                                             .param("direction", FieldSearchFilter.ASC_ORDER)
                                                             .param("sort", "descr")
                                                             .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].descr", is("List Model")));
 
@@ -58,7 +58,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                                               .param("direction", FieldSearchFilter.DESC_ORDER)
                                               .param("sort", "descr")
                                               .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].descr", is("scheda di un articolo")));
 
@@ -76,9 +76,8 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                                                             .param("filters[0].attribute", "contentType")
                                                             .param("filters[0].value", "ART")
                                                             .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
-        // result.andExpect(jsonPath("$.payload[0].descr", is("List Model")));
         result.andExpect(jsonPath("$.payload.length()", is(4)));
 
         result = mockMvc
@@ -92,10 +91,10 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                                               .param("filters[1].value", "MoDeL")
 
                                               .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(2)));
-
     }
+
 
 }

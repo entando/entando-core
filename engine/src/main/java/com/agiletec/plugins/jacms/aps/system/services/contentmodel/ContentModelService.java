@@ -1,12 +1,13 @@
 package com.agiletec.plugins.jacms.aps.system.services.contentmodel;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.utils.ContentModelUtils;
@@ -62,21 +63,18 @@ public class ContentModelService implements IContentModelService {
 
         List<ContentModel> contentModels = this.getContentModelManager().getContentModels();
 
-        //sort
-        if (requestList.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
-            contentModels = contentModels.stream().sorted(ContentModelUtils.getComparator(requestList.getSort()).reversed()).collect(Collectors.toList());
-        } else {
-            contentModels = contentModels.stream().sorted(ContentModelUtils.getComparator(requestList.getSort())).collect(Collectors.toList());
-        }
-
         //filter
         List<Predicate<ContentModel>> filters = ContentModelUtils.getPredicates(requestList);
+        Stream<ContentModel> stream = contentModels.stream();
         for (Predicate<ContentModel> predicate : filters) {
-            contentModels = contentModels
-                                         .stream()
-                                         .filter(predicate)
-                                         .collect(Collectors.toList());
+            stream = stream.filter(predicate);
         }
+
+        //sort
+        Comparator<ContentModel> comparator = ContentModelUtils.getComparator(requestList.getSort(), requestList.getDirection());
+        stream = stream.sorted(comparator);
+        contentModels = stream.collect(Collectors.toList());
+
         //page
         List<ContentModel> subList = requestList.getSublist(contentModels);
         List<ContentModelDto> dtoSlice = this.getDtoBuilder().convert(subList);

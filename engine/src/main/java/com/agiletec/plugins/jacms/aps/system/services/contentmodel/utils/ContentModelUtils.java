@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModel;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -66,7 +67,7 @@ public class ContentModelUtils {
     }
 
 
-    public static Comparator<? super ContentModel> getComparator(String sort) {
+    public static Comparator<ContentModel> getComparator(String sort) {
         switch (sort) {
             case KEY_ID:
                 return Comparators.byId();
@@ -76,6 +77,18 @@ public class ContentModelUtils {
                 return Comparators.byDescr();
             default:
                 return Comparators.byId();
+        }
+    }
+
+    public static Comparator<ContentModel> getComparator(String sort, String direction) {
+        Comparator<ContentModel> comparator = getComparator(sort);
+        if (null == comparator) {
+            return null;
+        }
+        if (direction.equalsIgnoreCase(FieldSearchFilter.DESC_ORDER)) {
+            return comparator.reversed();
+        } else {
+            return comparator;
         }
     }
 

@@ -54,50 +54,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
 
-    @Override
-    public WidgetDto getWidget(String widgetCode) {
-        WidgetType widgetType = this.getWidgetManager().getWidgetType(widgetCode);
-        if (null == widgetType) {
-            logger.warn("no widget type found with code {}", widgetCode);
-            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_NOT_FOUND, "widget type", widgetCode);
-        }
-        WidgetDto widgetDto = dtoBuilder.convert(widgetType);
-        try {
-            this.addFragments(widgetDto);
-        } catch (Exception e) {
-            logger.error("Failed to fetch gui fragment for widget type code ", e);
-        }
-        return widgetDto;
-    }
-
-    @Override
-    public WidgetDto addWidget(WidgetRequest widgetRequest) {
-        WidgetType widgetType = this.createWidget(widgetRequest);
-        try {
-            this.getWidgetManager().addWidgetType(widgetType);
-        } catch (ApsSystemException e) {
-            logger.error("Failed to add widget type for request {} ", widgetRequest);
-            throw new RestServerError("error in update group", e);
-        }
-        WidgetDto widgetDto = this.dtoBuilder.convert(widgetType);
-        return widgetDto;
-    }
-
-    @Override
-    public void removeWidget(String widgetCode) {
-        try {
-            WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
-            BeanPropertyBindingResult validationResult = checkWidgetForDelete(type);
-            if (validationResult.hasErrors()) {
-                throw new ValidationGenericException(validationResult);
-            }
-            this.widgetManager.deleteWidgetType(widgetCode);
-        } catch (ApsSystemException e) {
-            logger.error("Failed to remove widget type for request {} ", widgetCode);
-            throw new RestServerError("failed to update widget type by code ", e);
-        }
-    }
-
     @SuppressWarnings("rawtypes")
     @Override
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restListReq) {
@@ -121,15 +77,51 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     }
 
     @Override
+    public WidgetDto getWidget(String widgetCode) {
+        WidgetType widgetType = this.getWidgetManager().getWidgetType(widgetCode);
+        if (null == widgetType) {
+            logger.warn("no widget type found with code {}", widgetCode);
+            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_NOT_FOUND, "widget type", widgetCode);
+        }
+        WidgetDto widgetDto = dtoBuilder.convert(widgetType);
+        try {
+            this.addFragments(widgetDto);
+        } catch (Exception e) {
+            logger.error("Failed to fetch gui fragment for widget type code ", e);
+        }
+        return widgetDto;
+    }
+
+    @Override
+    public WidgetDto addWidget(WidgetRequest widgetRequest) {
+        WidgetType widgetType = new WidgetType();
+        this.processWidgetType(widgetType, widgetRequest);
+        WidgetType oldWidgetType = this.getWidgetManager().getWidgetType(widgetType.getCode());
+        if (null != oldWidgetType) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(widgetType, "widget");
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_ALREADY_EXISTS, new String[]{widgetType.getCode()}, "widgettype.exists");
+            throw new ValidationGenericException(bindingResult);
+        }
+        try {
+            this.getWidgetManager().addWidgetType(widgetType);
+        } catch (ApsSystemException e) {
+            logger.error("Failed to add widget type for request {} ", widgetRequest);
+            throw new RestServerError("error in add widget", e);
+        }
+        WidgetDto widgetDto = this.dtoBuilder.convert(widgetType);
+        return widgetDto;
+    }
+
+    @Override
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest) {
         WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
         if (type == null) {
-            throw new RestRourceNotFoundException(null, "widget", widgetCode);
+            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
         }
         this.processWidgetType(type, widgetRequest);
         WidgetDto widgetDto = dtoBuilder.convert(type);
         try {
-            getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
+            this.getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
             this.addFragments(widgetDto);
         } catch (Throwable e) {
             logger.error("failed to update widget type", e);
@@ -138,15 +130,23 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         return widgetDto;
     }
 
-    private WidgetType createWidget(WidgetRequest widgetRequest) {
-        WidgetType type = new WidgetType();
-        this.processWidgetType(type, widgetRequest);
-        return type;
+    @Override
+    public void removeWidget(String widgetCode) {
+        try {
+            WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
+            BeanPropertyBindingResult validationResult = checkWidgetForDelete(type);
+            if (validationResult.hasErrors()) {
+                throw new ValidationGenericException(validationResult);
+            }
+            this.getWidgetManager().deleteWidgetType(widgetCode);
+        } catch (ApsSystemException e) {
+            logger.error("Failed to remove widget type for request {} ", widgetCode);
+            throw new RestServerError("failed to update widget type by code ", e);
+        }
     }
 
     private void processWidgetType(WidgetType type, WidgetRequest widgetRequest) {
         type.setCode(widgetRequest.getCode());
-        type.setLocked(widgetRequest.getUsed());
         ApsProperties titles = new ApsProperties();
         widgetRequest.getTitles().forEach((k, v) -> titles.put(k, v));
         type.setTitles(titles);

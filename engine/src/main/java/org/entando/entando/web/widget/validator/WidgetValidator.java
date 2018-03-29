@@ -24,12 +24,19 @@ public class WidgetValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_WIDGET_NOT_FOUND = "1";
 
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
+    public static final String ERRCODE_WIDGET_ALREADY_EXISTS = "1";
+
+    public static final String ERRCODE_WIDGET_GROUP_INVALID = "2";
+
+    public static final String ERRCODE_WIDGET_DOES_NOT_EXISTS = "1";
+    public static final String ERRCODE_URINAME_MISMATCH = "3";
 
     public static final String ERRCODE_CANNOT_DELETE_LOCKED = "1";
     public static final String ERRCODE_CANNOT_DELETE_USED_PAGES = "2";
     public static final String ERRCODE_CANNOT_DELETE_USED_FRAGMENTS = "3";
     public static final String ERRCODE_CANNOT_DELETE_USED_PAGE_MODELS = "4";
+
+    public static final String ERRCODE_NOT_BLANK = "52";
 
     @Override
     public boolean supports(Class<?> paramClass) {
@@ -38,11 +45,14 @@ public class WidgetValidator extends AbstractPaginationValidator {
 
     @Override
     public void validate(Object target, Errors errors) {
+        if (StringUtils.isEmpty(((WidgetRequest) target).getCustomUi())) {
+            errors.rejectValue("customUi", ERRCODE_NOT_BLANK, new String[]{}, "widgettype.customUi.notBlank");
+        }
     }
 
     public void validateWidgetCode(String widgetCode, WidgetRequest widgetRequest, Errors errors) {
         if (!StringUtils.equals(widgetCode, widgetRequest.getCode())) {
-            errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{widgetCode, widgetRequest.getCode()}, "widget.code.mismatch");
+            errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{widgetCode, widgetRequest.getCode()}, "widgettype.code.mismatch");
         }
     }
 }

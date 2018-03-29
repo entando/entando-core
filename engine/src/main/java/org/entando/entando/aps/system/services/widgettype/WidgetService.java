@@ -21,9 +21,11 @@ import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
+import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -52,51 +54,9 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     private IGuiFragmentManager guiFragmentManager;
 
+    private IGroupManager groupManager;
+
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
-
-    @Override
-    public WidgetDto getWidget(String widgetCode) {
-        WidgetType widgetType = this.getWidgetManager().getWidgetType(widgetCode);
-        if (null == widgetType) {
-            logger.warn("no widget type found with code {}", widgetCode);
-            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_NOT_FOUND, "widget type", widgetCode);
-        }
-        WidgetDto widgetDto = dtoBuilder.convert(widgetType);
-        try {
-            this.addFragments(widgetDto);
-        } catch (Exception e) {
-            logger.error("Failed to fetch gui fragment for widget type code ", e);
-        }
-        return widgetDto;
-    }
-
-    @Override
-    public WidgetDto addWidget(WidgetRequest widgetRequest) {
-        WidgetType widgetType = this.createWidget(widgetRequest);
-        try {
-            this.getWidgetManager().addWidgetType(widgetType);
-        } catch (ApsSystemException e) {
-            logger.error("Failed to add widget type for request {} ", widgetRequest);
-            throw new RestServerError("error in update group", e);
-        }
-        WidgetDto widgetDto = this.dtoBuilder.convert(widgetType);
-        return widgetDto;
-    }
-
-    @Override
-    public void removeWidget(String widgetCode) {
-        try {
-            WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
-            BeanPropertyBindingResult validationResult = checkWidgetForDelete(type);
-            if (validationResult.hasErrors()) {
-                throw new ValidationGenericException(validationResult);
-            }
-            this.widgetManager.deleteWidgetType(widgetCode);
-        } catch (ApsSystemException e) {
-            logger.error("Failed to remove widget type for request {} ", widgetCode);
-            throw new RestServerError("failed to update widget type by code ", e);
-        }
-    }
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -121,15 +81,94 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     }
 
     @Override
+    public WidgetDto getWidget(String widgetCode) {
+        WidgetType widgetType = this.getWidgetManager().getWidgetType(widgetCode);
+        if (null == widgetType) {
+            logger.warn("no widget type found with code {}", widgetCode);
+            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_NOT_FOUND, "widget type", widgetCode);
+        }
+        WidgetDto widgetDto = dtoBuilder.convert(widgetType);
+        try {
+            this.addFragments(widgetDto);
+        } catch (Exception e) {
+            logger.error("Failed to fetch gui fragment for widget type code ", e);
+        }
+        return widgetDto;
+    }
+
+    @Override
+    public WidgetDto addWidget(WidgetRequest widgetRequest) {
+        WidgetType widgetType = new WidgetType();
+        this.processWidgetType(widgetType, widgetRequest);
+        WidgetType oldWidgetType = this.getWidgetManager().getWidgetType(widgetType.getCode());
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(widgetType, "widget");
+        if (null != oldWidgetType) {
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_ALREADY_EXISTS, new String[]{widgetType.getCode()}, "widgettype.exists");
+            throw new ValidationGenericException(bindingResult);
+        } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
+            throw new ValidationGenericException(bindingResult);
+        }
+        WidgetDto widgetDto = null;
+        try {
+            this.getWidgetManager().addWidgetType(widgetType);
+            this.createAndAddFragment(widgetType, widgetRequest);
+            widgetDto = this.dtoBuilder.convert(widgetType);
+            this.addFragments(widgetDto);
+        } catch (Exception e) {
+            logger.error("Failed to add widget type for request {} ", widgetRequest);
+            throw new RestServerError("error in add widget", e);
+        }
+        return widgetDto;
+    }
+
+    private void createAndAddFragment(WidgetType widgetType, WidgetRequest widgetRequest) throws Exception {
+        GuiFragment guiFragment = new GuiFragment();
+        String code = this.extractUniqueGuiFragmentCode(widgetType.getCode());
+        guiFragment.setCode(code);
+        guiFragment.setPluginCode(widgetType.getPluginCode());
+        guiFragment.setGui(widgetRequest.getCustomUi());
+        guiFragment.setWidgetTypeCode(widgetType.getCode());
+        this.getGuiFragmentManager().addGuiFragment(guiFragment);
+    }
+
+    protected String extractUniqueGuiFragmentCode(String widgetTypeCode) throws ApsSystemException {
+        String uniqueCode = widgetTypeCode;
+        if (null != this.getGuiFragmentManager().getGuiFragment(uniqueCode)) {
+            int index = 0;
+            String currentCode = null;
+            do {
+                index++;
+                currentCode = uniqueCode + "_" + index;
+            } while (null != this.getGuiFragmentManager().getGuiFragment(currentCode));
+            uniqueCode = currentCode;
+        }
+        return uniqueCode;
+    }
+
+    @Override
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest) {
         WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
         if (type == null) {
-            throw new RestRourceNotFoundException(null, "widget", widgetCode);
+            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
+        } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
+            throw new ValidationGenericException(bindingResult);
         }
         this.processWidgetType(type, widgetRequest);
         WidgetDto widgetDto = dtoBuilder.convert(type);
         try {
-            getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
+            this.getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
+            if (!StringUtils.isEmpty(widgetCode)) {
+                GuiFragment guiFragment = this.getGuiFragmentManager().getUniqueGuiFragmentByWidgetType(widgetCode);
+                if (null == guiFragment) {
+                    this.createAndAddFragment(type, widgetRequest);
+                } else {
+                    guiFragment.setGui(widgetRequest.getCustomUi());
+                    this.getGuiFragmentManager().updateGuiFragment(guiFragment);
+                }
+            }
             this.addFragments(widgetDto);
         } catch (Throwable e) {
             logger.error("failed to update widget type", e);
@@ -138,19 +177,30 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         return widgetDto;
     }
 
-    private WidgetType createWidget(WidgetRequest widgetRequest) {
-        WidgetType type = new WidgetType();
-        this.processWidgetType(type, widgetRequest);
-        return type;
+    @Override
+    public void removeWidget(String widgetCode) {
+        try {
+            WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
+            BeanPropertyBindingResult validationResult = checkWidgetForDelete(type);
+            if (validationResult.hasErrors()) {
+                throw new ValidationGenericException(validationResult);
+            }
+            List<String> fragmentCodes = this.getGuiFragmentManager().getGuiFragmentCodesByWidgetType(widgetCode);
+            for (String fragmentCode : fragmentCodes) {
+                this.getGuiFragmentManager().deleteGuiFragment(fragmentCode);
+            }
+            this.getWidgetManager().deleteWidgetType(widgetCode);
+        } catch (ApsSystemException e) {
+            logger.error("Failed to remove widget type for request {} ", widgetCode);
+            throw new RestServerError("failed to update widget type by code ", e);
+        }
     }
 
     private void processWidgetType(WidgetType type, WidgetRequest widgetRequest) {
         type.setCode(widgetRequest.getCode());
-        type.setLocked(widgetRequest.getUsed());
         ApsProperties titles = new ApsProperties();
         widgetRequest.getTitles().forEach((k, v) -> titles.put(k, v));
         type.setTitles(titles);
-        type.setPluginCode(widgetRequest.getPluginCode());
         type.setMainGroup(widgetRequest.getGroup());
     }
 
@@ -214,6 +264,14 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     public void setPageManager(IPageManager pageManager) {
         this.pageManager = pageManager;
+    }
+
+    public IGroupManager getGroupManager() {
+        return groupManager;
+    }
+
+    public void setGroupManager(IGroupManager groupManager) {
+        this.groupManager = groupManager;
     }
 
     public IGuiFragmentManager getGuiFragmentManager() {

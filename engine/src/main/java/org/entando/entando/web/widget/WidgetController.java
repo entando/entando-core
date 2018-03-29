@@ -22,7 +22,6 @@ import java.util.Map;
 import org.entando.entando.aps.system.services.widgettype.IWidgetService;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -99,7 +98,7 @@ public class WidgetController {
         //business validations
         this.widgetValidator.validate(widgetRequest, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
+            throw new ValidationGenericException(bindingResult);
         }
         WidgetDto widgetDto = this.widgetService.addWidget(widgetRequest);
         return new ResponseEntity<>(new RestResponse(widgetDto), HttpStatus.OK);

@@ -110,9 +110,9 @@ public class RoleService implements IRoleService {
         List<Role> roles = this.getRoleManager().getRoles();
         roles = sortRoleList(restRequest, roles);
 
-        if (null != restRequest.getFilter()) {
+        if (null != restRequest.getFilters()) {
 
-            for (Filter f : restRequest.getFilter()) {
+            for (Filter f : restRequest.getFilters()) {
                 if (f.getAttributeName().equals(KEY_FILTER_ROLE_CODE)) {
                     roles = roles
                             .stream()
@@ -142,9 +142,9 @@ public class RoleService implements IRoleService {
         List<Permission> permissions = this.getRoleManager().getPermissions();
         permissions = sortPermissionList(requestList, permissions);
 
-        if (null != requestList.getFilter()) {
+        if (null != requestList.getFilters()) {
 
-            for (Filter f : requestList.getFilter()) {
+            for (Filter f : requestList.getFilters()) {
                 if (f.getAttributeName().equals(KEY_FILTER_PERMISSION_CODE)) {
                     permissions = permissions
                             .stream()

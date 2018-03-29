@@ -26,7 +26,11 @@ public class WidgetRequest {
     private Map<String, String> titles;
 
     private String pluginCode;
+
+    @NotBlank(message = "widgettype.group.notBlank")
     private String group;
+
+    @NotBlank(message = "widgettype.customUi.notBlank")
     private String customUi;
 
     public String getCode() {

@@ -21,6 +21,7 @@ import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
+import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsProperties;
@@ -51,6 +52,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private IPageManager pageManager;
 
     private IGuiFragmentManager guiFragmentManager;
+
+    private IGroupManager groupManager;
 
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
 
@@ -97,9 +100,12 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         WidgetType widgetType = new WidgetType();
         this.processWidgetType(widgetType, widgetRequest);
         WidgetType oldWidgetType = this.getWidgetManager().getWidgetType(widgetType.getCode());
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(widgetType, "widget");
         if (null != oldWidgetType) {
-            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(widgetType, "widget");
             bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_ALREADY_EXISTS, new String[]{widgetType.getCode()}, "widgettype.exists");
+            throw new ValidationGenericException(bindingResult);
+        } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetType.getMainGroup()}, "widgettype.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         try {
@@ -117,6 +123,10 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
         if (type == null) {
             throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
+        } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getCode()}, "widgettype.group.invalid");
+            throw new ValidationGenericException(bindingResult);
         }
         this.processWidgetType(type, widgetRequest);
         WidgetDto widgetDto = dtoBuilder.convert(type);
@@ -214,6 +224,14 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     public void setPageManager(IPageManager pageManager) {
         this.pageManager = pageManager;
+    }
+
+    public IGroupManager getGroupManager() {
+        return groupManager;
+    }
+
+    public void setGroupManager(IGroupManager groupManager) {
+        this.groupManager = groupManager;
     }
 
     public IGuiFragmentManager getGuiFragmentManager() {

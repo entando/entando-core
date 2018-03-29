@@ -29,7 +29,7 @@ public class WidgetValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_WIDGET_GROUP_INVALID = "2";
 
     public static final String ERRCODE_WIDGET_DOES_NOT_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
+    public static final String ERRCODE_URINAME_MISMATCH = "3";
 
     public static final String ERRCODE_CANNOT_DELETE_LOCKED = "1";
     public static final String ERRCODE_CANNOT_DELETE_USED_PAGES = "2";

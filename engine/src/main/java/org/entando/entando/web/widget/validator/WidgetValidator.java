@@ -36,6 +36,8 @@ public class WidgetValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_CANNOT_DELETE_USED_FRAGMENTS = "3";
     public static final String ERRCODE_CANNOT_DELETE_USED_PAGE_MODELS = "4";
 
+    public static final String ERRCODE_NOT_BLANK = "52";
+
     @Override
     public boolean supports(Class<?> paramClass) {
         return WidgetRequest.class.equals(paramClass);
@@ -44,7 +46,7 @@ public class WidgetValidator extends AbstractPaginationValidator {
     @Override
     public void validate(Object target, Errors errors) {
         if (StringUtils.isEmpty(((WidgetRequest) target).getCustomUi())) {
-            errors.rejectValue("customUi", "", new String[]{}, "widgettype.customUi.notBlank");
+            errors.rejectValue("customUi", ERRCODE_NOT_BLANK, new String[]{}, "widgettype.customUi.notBlank");
         }
     }
 

@@ -106,7 +106,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_ALREADY_EXISTS, new String[]{widgetType.getCode()}, "widgettype.exists");
             throw new ValidationGenericException(bindingResult);
         } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
-            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetType.getMainGroup()}, "widgettype.group.invalid");
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         WidgetDto widgetDto = null;
@@ -153,7 +153,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
         } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
-            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getCode()}, "widgettype.group.invalid");
+            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         this.processWidgetType(type, widgetRequest);

@@ -81,7 +81,8 @@
 	</bean>
 	
     <bean id="UserDtoBuilder" class="org.entando.entando.aps.system.services.user.model.UserDtoBuilder" />
-    <!-- === WIDGET SERVICES === -->
+    
+    <!-- === SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
         <property name="dtoBuilder" ref="GroupDtoBuilder" />
@@ -116,6 +117,7 @@
         <property name="widgetManager" ref="WidgetTypeManager" />
         <property name="pageManager" ref="PageManager" />
         <property name="guiFragmentManager" ref="GuiFragmentManager" />
+        <property name="groupManager" ref="GroupManager" />
     </bean>
 
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >

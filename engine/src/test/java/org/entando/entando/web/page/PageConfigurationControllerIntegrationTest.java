@@ -15,6 +15,7 @@ import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -22,6 +23,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,11 +109,57 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
 
     }
 
+    @Test
+    public void testPutPageConfiguration() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            Page mockPage = createPage(pageCode);
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc
+                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                                                                                                                 .param("status", IPageService.STATUS_DRAFT)
+                                                                                                                 .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            String getResult = result.andReturn().getResponse().getContentAsString();
+
+            String payloadWithInvalidModelId = "{\n" +
+                                               "  \"code\": \"content_viewer\",\n" +
+                                               "  \"config\": {\n" +
+                                               " \"contentId\": \"EVN24\",\n" +
+                                               " \"modelId\": \"default\"\n" +
+                                               "  }\n" +
+                                               "}";
+
+            result = mockMvc
+                            .perform(put("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                                                                                                        .param("status", IPageService.STATUS_DRAFT)
+                                                                                                        .content(payloadWithInvalidModelId)
+                                                                                                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                                        .header("Authorization", "Bearer " + accessToken));
+
+            String putResult = result.andReturn().getResponse().getContentAsString();
+            result.andExpect(status().isOk());
+            assertThat(putResult, is(getResult));
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+
+    }
+
     protected Page createPage(String pageCode) {
         IPage parentPage = pageManager.getDraftPage("service");
         PageModel pageModel = parentPage.getMetadata().getModel();
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, pageCode + "_title", null, null, false, null, null);
-        ApsProperties config = PageTestUtil.createProperties("temp", "tempValue", "contentId", "ART11");
+        ApsProperties config = PageTestUtil.createProperties("modelId", "default", "contentId", "EVN24");
         Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this.widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
